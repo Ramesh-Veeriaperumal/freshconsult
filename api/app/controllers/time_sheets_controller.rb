@@ -11,14 +11,14 @@ class TimeSheetsController < ApiApplicationController
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @time_sheet.save should be wrapped in a transaction.
-    update_running_timer params[cname][:user_id] if @timer_running
+    update_running_timer params[cname][:agent_id] if @timer_running
     @item.workable = @time_sheet_val.ticket
     super
   end
 
   def update
-    user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
-    # Should stop timer if the timer is on or if different user_id is set as part of update
+    user_stop_timer =  params[cname].key?(:agent_id) ? params[cname][:agent_id] : @item.user_id
+    # Should stop timer if the timer is on or if different agent_id is set as part of update
     update_running_timer user_stop_timer if should_stop_running_timer?
     super
   end
@@ -89,11 +89,13 @@ class TimeSheetsController < ApiApplicationController
     def manipulate_params
       params[cname][:timer_running] = @timer_running
       params[cname][:time_spent] = time_spent
-      params[cname][:user_id] ||= current_user.id if create?
+      params[cname][:agent_id] ||= current_user.id if create?
       current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
       params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
       params[cname].delete(:ticket_id)
+      ParamsHelper.assign_and_clean_params({ agent_id: :user_id },
+                                           params[cname])
     end
 
     def time_spent
@@ -121,8 +123,8 @@ class TimeSheetsController < ApiApplicationController
       # Should stop timer if the timer is on as part of this update call
       return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
 
-      # Should stop timer for the new user if different user_id is set as part of this update call
-      return true if params[cname].key?(:user_id) && params[cname][:user_id] != @item.user_id && !@timer_running
+      # Should stop timer for the new user if different agent_id is set as part of this update call
+      return true if params[cname].key?(:agent_id) && params[cname][:agent_id] != @item.user_id && !@timer_running
       false
     end
 

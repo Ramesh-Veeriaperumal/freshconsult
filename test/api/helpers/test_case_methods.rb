@@ -126,7 +126,7 @@ module TestCaseMethods
   def v2_time_sheet_payload
     {
       start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09', ticket_id: 1,
-      user_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
+      agent_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
     }.to_json
   end
 
@@ -190,7 +190,7 @@ module TestCaseMethods
   end
 
   def v2_group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, user_ids: [1, 3] }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: [1, 3] }
   end
 
   def api_company_params

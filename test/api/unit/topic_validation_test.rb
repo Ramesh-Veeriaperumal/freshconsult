@@ -10,13 +10,12 @@ class TopicValidationsTest < ActionView::TestCase
   end
 
   def test_numericality_params_invalid
-    controller_params = { 'forum_id' => 'x', 'user_id' => 'x', 'stamp_type' => 'x' }
+    controller_params = { 'forum_id' => 'x', 'stamp_type' => 'x' }
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
     assert error.include?('Forum is not a number')
-    assert error.include?('User is not a number')
     assert error.include?('Stamp type is not a number')
   end
 

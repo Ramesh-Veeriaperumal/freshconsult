@@ -3,8 +3,8 @@ json.partial! 'shared/utc_date_format', item: @item
 
 json.set! :custom_fields, @item.custom_field
 
-json.set! :tags, @item.tags.map { |x| x.name }
- 
+json.set! :tags, @item.tags.map(&:name)
+
 if @item.avatar
   json.set! :avatar_attributes do
     json.set! :avatar_url, @item.avatar.attachment_url_for_api

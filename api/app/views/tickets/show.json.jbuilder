@@ -3,17 +3,18 @@ json.cache! [controller_name, action_name, @item] do # ticket caching
   json.set! :fwd_emails, @item.cc_email[:fwd_emails]
   json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
 
-  json.(@item, :email_config_id, :group_id, :priority, :requester_id,  :responder_id, :to_email, :source, :status, :subject)
+  json.(@item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :to_email, :urgent)
 
   json.set! :ticket_id, @item.display_id
   json.set! :type, @item.ticket_type
   json.set! :to_emails, @item.schema_less_ticket.try(:to_emails)
   json.set! :product_id, @item.schema_less_ticket.try(:product_id)
 
-  json.set! :deleted, @item.deleted.to_s.to_bool if @item.deleted
+  json.set! :deleted, @item.deleted if @item.deleted
 
-  json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: @item.fr_escalated, spam: @item.spam, urgent: @item.urgent, is_escalated: @item.isescalated }
   json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
+
+  json.set! :is_escalated, @item.isescalated
 end
 
 json.cache! @item.ticket_body do |tbody| # changing desc does not modify ticket's updated_at

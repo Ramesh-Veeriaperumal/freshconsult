@@ -1,7 +1,6 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-
-  def validate_each(record, attribute, values)
-    unless allow_nil(values) 
+  def validate_each(record, _attribute, values)
+    unless allow_nil(values)
       custom_fields = @validatable_custom_fields.respond_to?(:call) ? @validatable_custom_fields.call : @validatable_custom_fields
       custom_fields.each do |custom_field|
         method = "validate_format_of_#{custom_field.field_type}"
@@ -24,10 +23,10 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   private
 
-    def validate_format_of_custom_text(record, field_name, value)
+    def validate_format_of_custom_text(_record, _field_name, _value)
     end
 
-    def validate_format_of_custom_paragraph(record,field_name, value)
+    def validate_format_of_custom_paragraph(_record, _field_name, _value)
     end
 
     def validate_format_of_custom_number(record, field_name, value)
@@ -42,8 +41,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
       ActiveModel::Validations::NumericalityValidator.new(options.merge(attributes: field_name)).validate_each(record, field_name, value)
     end
 
-    def validate_format_of_nested_field(record, field_name, value)
-      choices = @nested_field_choices
+    def validate_format_of_nested_field(_record, _field_name, _value)
+      # choices = @nested_field_choices
     end
 
     def validate_format_of_custom_dropdown(record, field_name, value)
@@ -51,8 +50,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name])).validate_each(record, field_name, value)
     end
 
+    def validate_format_of_custom_url(record, field_name, value)
+      record.errors.add(field_name, 'is not a url') unless value[field_name.to_s] =~ URI.regexp
+    end
+
+    def validate_format_of_custom_date(record, field_name, value)
+      DateTimeValidator.new(options.merge(attributes: field_name, allow_nil: true)).validate_each(record, field_name, value)
+    end
+
     def allow_nil(value) # if validation allows nil values and the value is nil, this will pass the validation.
       options[:allow_nil] == true && value.nil?
     end
-
 end

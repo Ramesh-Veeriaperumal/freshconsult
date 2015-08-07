@@ -66,6 +66,15 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('cf_invalid', 'invalid_field')])
   end
 
+  def test_create_company_with_duplicate_name
+    name = Faker::Lorem.characters(10)
+    post :create, construct_params({}, name: name, description: Faker::Lorem.paragraph,
+                                       domains: domain_array, note: Faker::Lorem.characters(10))
+    post :create, construct_params({}, name: name, description: Faker::Lorem.paragraph,
+                                       domains: domain_array, note: Faker::Lorem.characters(10))
+    match_json([bad_request_error_pattern('name', 'has already been taken')])
+  end
+
   def test_update_company
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
@@ -198,13 +207,71 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('domains', 'data_type_mismatch', data_type: 'String')])
   end
 
-  def test_create_company_with_invalid_customer_field_values
+  def test_create_company_with_invalid_custom_field_values
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
-                                       custom_fields: { 'cf_linetext' => 'test123', 'cf_testimony' => 123,
-                                                        'cf_agt_count' => '67', 'cf_date' => Faker::Lorem.characters(10),
+                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => 'test_date',
                                                         'cf_show_all_ticket' => Faker::Number.number(5) })
+
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'number'),
+                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
+                bad_request_error_pattern('cf_show_all_ticket', 'not_included', list: 'true,false')])
+  end
+
+  def test_create_company_with_invalid_custom_dropdown_field_values
+    dropdown_list = %w(First Second Third Freshman Tenth)
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: domain_array, note: Faker::Lorem.characters(10),
+                                       custom_fields: { 'cf_category' =>  Faker::Lorem.characters(10) })
+
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cf_category', 'not_included', list: dropdown_list.join(','))])
+  end
+
+  def test_create_company_with_valid_custom_field_values
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: domain_array, note: Faker::Lorem.characters(10),
+                                       custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '21-1-2015',
+                                                        'cf_show_all_ticket' => true, 'cf_category' => 'Second' })
+
     assert_response :created
+    match_json(company_pattern(Company.last))
+  end
+
+  def test_update_company_with_invalid_custom_fields
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: company.id }, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                                      domains: domain_array, note: Faker::Lorem.characters(10),
+                                                      custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => 'test_date',
+                                                                       'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'number'),
+                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
+                bad_request_error_pattern('cf_show_all_ticket', 'not_included', list: 'true,false'),
+                bad_request_error_pattern('cf_file_url', 'is not a url')])
+  end
+
+  def test_update_company_with_invalid_custom_dropdown_field_values
+    dropdown_list = %w(First Second Third Freshman Tenth)
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: company.id }, custom_fields: { 'cf_category' =>  Faker::Lorem.characters(10) })
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cf_category', 'not_included', list: dropdown_list.join(','))])
+  end
+
+  def test_update_company_with_duplicate_name
+    company1 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: company2.id }, name: company1.name)
+    match_json([bad_request_error_pattern('name', 'has already been taken')])
+  end
+
+  def test_update_delete_existing_domains
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
+    put :update, construct_params({ id: company.id }, domains: [])
+    assert_response :success
+    match_json(company_pattern(company.reload))
   end
 
   def clear_contact_field_cache

@@ -44,3 +44,4 @@ timer_running_duplicate: Can't set to the same value as before
 start_time_lt_now: Has to be lesser than current time
 not_included: Should be a value in the list '%{list}'
 required_and_inclusion: Should be a value in the list '%{list}'
+allowed_stamp_type: Allowed values are %{list}
