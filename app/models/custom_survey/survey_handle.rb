@@ -20,7 +20,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
   end
 
   def survey_url(ticket, rating)
-    Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host)
+    Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host, :protocol => ticket.account.url_protocol)
   end
   
   def create_survey_result rating
