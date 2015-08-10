@@ -174,8 +174,13 @@ module AuthenticationSystem
       unless current_user.day_pass_granted_on
         store_location
         log_out!
-        flash[:notice] = I18n.t('agent.day_pass_expired')
-        redirect_to login_url
+        respond_to do |format|
+          format.json { day_pass_expired_json }
+          format.all do 
+            flash[:notice] = I18n.t('agent.day_pass_expired')
+            redirect_to login_url
+          end
+        end
       end
     end
     

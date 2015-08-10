@@ -22,6 +22,13 @@ module Helpdesk
         build_ticket_body unless ticket_body
         sanitize_body_and_unhtml_it(ticket_body,"description") if ticket_body
       end
+      
+      def assign_description_html(ticket_body_attributes)
+        if ticket_body_attributes["description"] && ticket_body_attributes["description_html"].blank?
+          ticket_body_attributes["description_html"] = body_html_with_formatting(CGI.escapeHTML(ticket_body_attributes["description"])) 
+        end
+      end
+
     end
   end
 end

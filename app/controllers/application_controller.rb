@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
 
+  include Concerns::ApplicationConcern
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
@@ -46,7 +47,6 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   #
   
-
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
   end
@@ -73,11 +73,7 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-  
-  def set_time_zone
-    TimeZone.set_time_zone
-  end
-  
+ 
   def activerecord_error_list(errors)
     error_list = '<ul class="error_list">'
     error_list << errors.collect do |e, m|
@@ -96,24 +92,6 @@ class ApplicationController < ActionController::Base
   
   def set_default_locale
     I18n.locale = I18n.default_locale
-  end
-  
-  def unset_current_account
-    Thread.current[:account] = nil
-  end
-
-  def unset_current_portal
-    Thread.current[:portal] = nil
-  end
-  
-  def set_current_account
-    begin
-      current_account.make_current
-      User.current = current_user
-    rescue ActiveRecord::RecordNotFound
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      handle_unverified_request
-    end    
   end
 
   def render_404
@@ -156,13 +134,6 @@ class ApplicationController < ActionController::Base
       format.widget { render :json => {:errors =>result}.to_json and return } 
     end
   end
- 
-
-  def select_shard(&block)
-    Sharding.select_shard_of(request.host) do 
-        yield 
-    end
-  end
 
   def persist_user_agent
     Thread.current[:http_user_agent] = request.env['HTTP_USER_AGENT']
@@ -193,26 +164,6 @@ class ApplicationController < ActionController::Base
   private
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
-    end
-
-    # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters
-    # See https://rails.lighthouseapp.com/projects/8994/tickets/4807
-    # See http://jasoncodes.com/posts/ruby19-rails2-encodings (thanks for the following code, Jason!)
-    def force_utf8_params
-      traverse = lambda do |object, block|
-        if object.kind_of?(Hash)
-          object.each_value { |o| traverse.call(o, block) }
-        elsif object.kind_of?(Array)
-          object.each { |o| traverse.call(o, block) }
-        else
-          block.call(object)
-        end
-        object
-      end
-      force_encoding = lambda do |o|
-        RubyBridge.force_utf8_encoding(o)
-      end
-      traverse.call(params, force_encoding)
     end
 
     def handle_unverified_request
@@ -259,31 +210,6 @@ class ApplicationController < ActionController::Base
 
     def api_request?
       request.cookies["_helpkit_session"]
-    end
-
-    def determine_pod
-      shard = ShardMapping.lookup_with_domain(request.host)
-      if shard.nil?
-        return # fallback to the current pod.
-      elsif shard.pod_info.blank?
-        return # fallback to the current pod.
-      elsif shard.pod_info != PodConfig['CURRENT_POD']
-        Rails.logger.error "Current POD #{PodConfig['CURRENT_POD']}"
-        redirect_to_pod(shard)
-      end
-    end
-
-    def redirect_to_pod(shard)
-      return if shard.nil?
-
-      Rails.logger.error "Request URL: #{request.url}"
-      # redirect to the correct POD using Nginx specific redirect headers.
-      redirect_url = "/pod_redirect/#{shard.pod_info}" #Should match with the location directive in Nginx Proxy
-      Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
-      response.headers["X-Accel-Redirect"] = redirect_url
-      response.headers["X-Accel-Buffering"] = "off"
-
-      redirect_to redirect_url
     end
 end
 
