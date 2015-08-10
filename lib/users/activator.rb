@@ -41,7 +41,7 @@ module Users
     end
     
     def deliver_activation_instructions!(portal, force_notification, email_config = nil) #Need to refactor this.. Almost similar structure with the above one.
-      portal = Portal.current || account.main_portal
+      portal = Portal.current || account.main_portal_from_cache
       reply_email = email_config ? email_config.friendly_email : 
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 

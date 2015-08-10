@@ -72,6 +72,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def save_ticket_states
     self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
+    ticket_states.tickets = self
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = Time.zone.now if responder_id
@@ -87,7 +88,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_sender_email
     assign_sender_email
-    schema_less_ticket.save
+    
+    # save only if there are any changes. unnecessary transaction is avoided.
+    schema_less_ticket.save if schema_less_ticket.changed?
   end
 
   def update_ticket_states 
@@ -158,10 +161,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
         meta_note = self.notes.build(
           :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
           :private => true,
+          :notable => self,
+          :user => self.requester,
           :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id
         ) 
+        meta_note.attachments = []
         meta_note.save_note
       end
   end
@@ -290,7 +296,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_display_id?
-    account.features?(:redis_display_id)
+    Account.current.features?(:redis_display_id)
   end
 
   def assign_display_id
@@ -358,7 +364,7 @@ private
   end
 
   def auto_refresh_allowed?
-    account.features?(:auto_refresh)
+    Account.current.features?(:auto_refresh)
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
@@ -374,7 +380,7 @@ private
 
   def load_ticket_status
     if !self.new_record? && status_changed?
-      self.ticket_status = account.ticket_status_values.find_by_status_id(status)
+      self.ticket_status = Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == status }
     end
   end
 
@@ -408,7 +414,9 @@ private
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language }}, 
+        :phone => phone, :language => language, 
+        :account => account 
+        }}, 
         portal) # check @requester_name and active
       
       self.requester = requester
@@ -477,7 +485,7 @@ private
   end
 
   def publish_to_update_channel
-    return unless account.features?(:agent_collision)
+    return unless Account.current.features?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
     message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
                                                   :ticket_id => self.id, 
@@ -525,7 +533,7 @@ private
   end
 
   def previous_state_was_sla_stop_state?
-    account.ticket_statuses.find_by_status_id(@model_changes[:status][0]).stop_sla_timer? 
+    Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == @model_changes[:status][0] }.stop_sla_timer? 
   end
 
   def update_ticket_state_sla_timer
@@ -548,7 +556,7 @@ private
 
   def report_regenerate_fields
     regenerate_fields = [:deleted, :spam,:responder_id]
-    if account.features?(:report_field_regenerate)
+    if Account.current.features?(:report_field_regenerate)
       regenerate_fields.concat([:source, :ticket_type, :group_id, :priority])
       #account.event_flexifields_with_ticket_fields_from_cache.each {|tkt_field| regenerate_fields.push(tkt_field[:flexifield_name].to_sym)}
     end

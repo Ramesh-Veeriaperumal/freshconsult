@@ -179,12 +179,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def agent_permission user
-      permissions = {:all_tickets => [] , 
-                   :group_tickets => ["group_id in (?) OR responder_id=? OR requester_id=?", 
-                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
-                   :assigned_tickets =>["responder_id=?", user.id]}
-                   
-      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+      when :assigned_tickets
+        ["responder_id=?", user.id]
+      when :group_tickets
+        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
+      when :all_tickets
+        []
+      end
     end
 
     def find_by_param(token, account)
@@ -550,6 +553,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false if [:empty?, :to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
+    
+    # Should include methods like to_a, created_on, updated_on as record_time_stamps is calling these mthds before any write operation
+    # .blank? will call respond_to?(:empty)
+    return super(attribute, include_private) if [:to_a, :created_on, :updated_on, :empty?].include?(attribute)
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
@@ -811,6 +818,34 @@ class Helpdesk::Ticket < ActiveRecord::Base
     include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
+  end
+
+  def self.api_filter(ticket_filter = nil, current_user = nil)
+    {
+      spam: {
+        conditions: { spam: true }
+      },
+      deleted: {
+        conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
+        joins: :schema_less_ticket
+      },
+      new_and_my_open: {
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
+      },
+      requester_id: {
+        conditions: { requester_id: ticket_filter.try(:requester_id) }
+      },
+      company_id: { 
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
+        joins: :requester
+      },
+      created_since: {
+        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
+      },
+      updated_since: {
+        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+      }
+    }
   end
 
   private

@@ -2,6 +2,8 @@ class TopicObserver < ActiveRecord::Observer
 
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
+    #setting replied_by needed for API else api has to do item reloads while rendering the response
+    topic.replied_by = topic.user_id 
     topic.posts_count = 1 #Default count
     topic.published ||= (topic.user.agent? || topic.import_id?) #Agent Topics are approved by default.
     topic
@@ -52,7 +54,7 @@ class TopicObserver < ActiveRecord::Observer
   end
 
   def send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
-    topic.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+    topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitor|
       next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
       TopicMailer.stamp_change_email(monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
     end
