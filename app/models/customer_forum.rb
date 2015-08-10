@@ -11,7 +11,7 @@ class CustomerForum < ActiveRecord::Base
 
 	attr_protected :account_id , :forum_id 
 
-	validates_presence_of :customer_id
+	validates :customer, :presence => true
 
 	delegate :update_search_index, :to => :forum, :allow_nil => true
 	
@@ -20,7 +20,7 @@ class CustomerForum < ActiveRecord::Base
 	protected 
 
 	def set_account_id
-		self.account_id = customer.account_id
+		self.account_id = customer.account_id if customer
 	end
 
 end
