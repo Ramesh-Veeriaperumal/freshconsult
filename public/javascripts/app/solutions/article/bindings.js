@@ -107,6 +107,20 @@ window.App = window.App || {};
       });
     },
 
+    formValidate: function () {
+      var $this = this;
+      $('body').on('submit.articles', '#article-form', function (ev) {
+        var validation = $('#article-form').valid();
+        if (validation) {
+          if (!$.isEmptyObject($this.autoSave)) {
+            $this.autoSave.stopSaving();
+          }
+          $(window).off('beforeunload.articles');
+        }
+        return validation;
+      });
+    },
+
     unsavedContentNotif: function () {
       var $this = this;
 
@@ -119,13 +133,6 @@ window.App = window.App || {};
           }
           return msg;
         }
-      });
-
-      $('body').on('submit.articles', '.article-edit-form', function () {
-        if (!$.isEmptyObject($this.autoSave)) {
-          $this.autoSave.stopSaving();
-        }
-        $(window).off('beforeunload.articles');
       });
 
       $(document).on('pjax:beforeSend.articles', function (event, xhr, settings, options) {
