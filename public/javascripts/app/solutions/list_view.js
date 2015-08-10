@@ -70,7 +70,8 @@ window.App = window.App || {};
       //end
 
       //binding for visible to
-      $('body').on('click.folders_articles', '.visibility-selector', function () {
+      $('body').on('click.folders_articles', '.visibility-selector', function (ev) {
+        ev.preventDefault();
         $this.visibleToSelection($(this).data());
       });
 
