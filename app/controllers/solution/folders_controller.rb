@@ -14,6 +14,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
   before_filter :bulk_update_category, :only => [:move_to, :move_back]
+  after_filter  :clear_cache, :only => [:move_to, :move_back]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -246,4 +247,7 @@ class Solution::FoldersController < ApplicationController
                   )).html_safe
     end
 
+    def clear_cache
+      current_account.clear_solution_categories_from_cache
+    end
 end
