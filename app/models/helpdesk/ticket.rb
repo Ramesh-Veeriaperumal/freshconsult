@@ -408,7 +408,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_fwd_emails?(from_email)
-    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.downcase.include?(from_email.downcase) }) 
   end
   
   def included_in_cc?(from_email)
