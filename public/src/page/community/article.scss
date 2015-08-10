@@ -192,24 +192,22 @@
   }
 }
 
-.solution-sidebar {
-  #article-likes, #article-dislikes {
-    .voted-user{
-      width: 100%;
-      overflow: hidden;
-      border-bottom: 1px solid lightgrey;
-      margin-bottom: 5px;
-      padding-bottom: 3px;
-      .avatar-wrap {
-        @include float(left);
-      }
-      .user-name {
-        @include float(left);
-        margin-top: 5px;
-      }
-      .anonymous {
-        @include margin-left(-8px);
-      }
+#article-likes, #article-dislikes {
+  .voted-user{
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    .avatar-wrap {
+      @include float(left);
+    }
+    .user-name {
+      @include float(left);
+      margin-top: 5px;
+    }
+    .anonymous {
+      @include margin-left(-8px);
     }
   }
 }

@@ -1,6 +1,7 @@
 <% vote_type = (params[:vote] || 1).to_i %>
+<% user_votes = @article.votes.where(:vote => vote_type) %>
 
-<% anonymous_votes = (vote_type == 1 ? @article.thumbs_up : @article.thumbs_down) - @article.votes.count %>
+<% anonymous_votes = (vote_type == 1 ? @article.thumbs_up : @article.thumbs_down) - user_votes.size %>
 <% if anonymous_votes > 0 %>
 	<div class="voted-user">
 		<div class="avatar-wrap">
@@ -12,7 +13,7 @@
 	</div>
 <% end %>
 
-<% @article.votes.where(:vote => vote_type).each do |vote| %>
+<% user_votes.each do |vote| %>
 	<div class="voted-user">
 		<div class="avatar-wrap">
 			<%= user_avatar(vote.user, :small) %>
