@@ -160,7 +160,7 @@
 				this.$newTicketElem.show();
 			},
 			showExistingTicketOption: function(event){
-				this.$existingTicketElem.freshTicketSearch({ 
+				this.$existingTicketElem.liveChatTicketSearch({ 
 					className: 'chat_tkt_search_container'
 				});
 				var requester = (this.visitor && this.visitor.name) ? this.visitor.name : this.participant_id;
