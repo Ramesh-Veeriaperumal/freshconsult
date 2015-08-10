@@ -6,8 +6,4 @@ class ApiCompanyValidation < ApiValidation
   validates :custom_fields, custom_field: {
     validatable_custom_fields: proc { Helpers::CompaniesValidationHelper.custom_company_fields }
   }, allow_nil: true
-
-  def initialize(request_params, item)
-    super(request_params, item)
-  end
 end

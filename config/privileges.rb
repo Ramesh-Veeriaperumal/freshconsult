@@ -412,7 +412,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_company_field", :only => [:index]
     resource :"api_business_calendar", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
-    resource :"api_sla_policy"
+    resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]
   end
 

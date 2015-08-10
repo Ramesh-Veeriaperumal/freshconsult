@@ -197,6 +197,22 @@ module TestCaseMethods
     { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
   end
 
+  def sla_policy_params
+    { conditions: { company_ids: [1, 2] } }
+  end
+
+  def v1_sla_policy_params
+    { conditions: { company_id: '1,2' } }
+  end
+
+  def v2_sla_policy_payload
+    sla_policy_params.to_json
+  end
+
+  def v1_sla_policy_payload
+    { helpdesk_sla_policy: v1_sla_policy_params }.to_json
+  end
+
   def company_payload
     { company: api_company_params }.to_json
   end
