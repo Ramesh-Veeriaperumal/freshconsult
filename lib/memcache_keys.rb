@@ -102,6 +102,8 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v1/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
+  MOBILE_AGENT_FILTER_COUNT = "MOBILE_AGENT_FILTER_COUNT:%{account_id}:%{user_id}"
+
   class << self
 
     def newrelic_begin_rescue(&block)
