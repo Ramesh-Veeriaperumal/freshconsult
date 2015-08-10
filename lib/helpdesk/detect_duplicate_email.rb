@@ -4,9 +4,9 @@ module Helpdesk::DetectDuplicateEmail
 
   MAIL_PROCESS_TIME = 1800
 
-  def process_email_key
+  def process_email_key(message_id=nil)
     PROCESS_EMAIL_PROGRESS % { :account_id =>  Account.current.id, 
-                               :unique_key => get_message_id || received_time.to_i}
+                               :unique_key => message_id || get_message_id || received_time.to_i}
   end
 
   # Mailgun gives us the message id in the params with "Message-Id" key
@@ -16,7 +16,7 @@ module Helpdesk::DetectDuplicateEmail
   end
   
   def duplicate_email?(from, to, subject, message_id)
-    value = get_others_redis_hash process_email_key
+    value = get_others_redis_hash process_email_key(message_id)
     if value.present? && value == { "from" => from, 
                                     "to" => to, 
                                     "subject" => subject, 
