@@ -265,6 +265,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:index, :show]
   end
 
   # add_or_edit_contact
@@ -282,6 +285,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:create, :update]
   end
 
   delete_contact do
@@ -290,6 +296,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :company, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:destroy, :restore]
   end
 
   # ************** REPORTS **************************
@@ -335,6 +344,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:make_agent]
   end
 
   manage_canned_responses do
@@ -406,7 +418,6 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
-    resource :"api_contact", :only => [:show, :create, :update, :destroy, :restore, :index, :make_agent]
     resource :"api_contact_field", :only => [:index]
     resource :"api_company", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_company_field", :only => [:index]

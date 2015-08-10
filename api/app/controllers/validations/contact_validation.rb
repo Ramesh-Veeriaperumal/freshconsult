@@ -1,33 +1,51 @@
 class ContactValidation < ApiValidation
-  attr_accessor :address, :avatar_attributes, :client_manager, :custom_fields, :company_id, :description, :email, :fb_profile_id, :job_title, :language,
+  attr_accessor :avatar, :client_manager, :custom_fields, :company_id, :email, :helpdesk_agent, :job_title, :language,
                 :mobile, :name, :phone, :tags, :time_zone, :twitter_id
 
-  
-  validates :avatar_attributes, data_type: { rules: Hash }, allow_nil: true
+  validates :avatar, data_type: { rules: ContactConstants::UPLOADED_FILE_TYPE, allow_nil: true }
   validates :client_manager, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_nil: true
-  validates :company_id, required: { allow_nil: false }, if: :client_manager_set?, numericality: true
-  validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
-  validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, allow_nil: true
-  validates :language, custom_inclusion: { in: I18n.available_locales.map(&:to_s) }, allow_nil: true
-  validates :name, required: { allow_nil: false }
+  validates :company_id,  required: { allow_nil: false }, if: -> { client_manager.to_s == "true" }
+  validates :custom_fields, data_type: { rules: Hash }, custom_field: {
+    validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields }
+  }, allow_nil: true
+  validates :email, format: { with: AccountConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, allow_nil: true
+  validates :job_title, data_type: { rules: String }, allow_nil: true
+  validates :language, data_type: { rules: String }, custom_inclusion: { in: I18n.available_locales.map(&:to_s) }, allow_nil: true
+  validates :name, data_type: { rules: String }, required: true
   validates :tags, data_type: { rules: Array }, allow_nil: true
-  validates :time_zone, custom_inclusion: { in: proc {  ActiveSupport::TimeZone.all.map { |time_zone| time_zone.name } } }, allow_nil: true
-  
+  validates :time_zone, custom_inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }, allow_nil: true
+
   validate :contact_detail_missing
+  validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
+
+  validate :check_update_email, if: -> {email}, on: :update
+  
+  def initialize(request_params, item )
+    super(request_params, item)
+    @email_update = true if item && !item.email.nil? && !request_params[:email].nil? 
+  end
 
   private
 
     def client_manager_set?
-      client_manager == true
+      client_manager.to_s == "true"
     end
 
     def contact_detail_missing
       if email.blank? && mobile.blank? && phone.blank? && twitter_id.blank?
-        errors.add(:email,'Please fill at least 1 of email, mobile, phone, twitter_id fields.') 
-        errors.add(:phone,'Please fill at least 1 of email, mobile, phone, twitter_id fields.') 
-        errors.add(:mobile,'Please fill at least 1 of email, mobile, phone, twitter_id fields.') 
-        errors.add(:twitter,'Please fill at least 1 of email, mobile, phone, twitter_id fields.') 
-
+        errors.add(:email,'Please fill at least 1 of email, mobile, phone, twitter_id fields.')
       end
     end
+
+    def validate_avatar
+      errors.add(:avatar,'File size should be < 5 MB') if avatar.size > ContactConstants::ALLOWED_AVATAR_SIZE
+      unless ( avatar.original_filename.ends_with(".png") or avatar.original_filename.ends_with(".jpg") or avatar.original_filename.ends_with(".jpeg"))
+        errors.add(:avatar,'Invalid file type. Please upload a jpg or png file') 
+      end
+    end
+
+    def check_update_email
+      errors.add(:email, 'Email cannot be updated') if @email_update
+    end
+
 end

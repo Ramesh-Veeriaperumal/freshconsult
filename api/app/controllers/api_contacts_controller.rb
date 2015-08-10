@@ -1,11 +1,13 @@
 class ApiContactsController < ApiApplicationController
-  wrap_parameters :api_contact, exclude: [], format: [:json, :multipart_form]
 
   include Helpdesk::TagMethods
-  include APIHelperMethods
 
+  before_filter :check_demo_site, :only => [ :destroy, :update, :create ]
+  before_filter :set_required_fields, :only => [:create, :update]
   before_filter :validate_filter_params, only: [:index]
   before_filter :check_agent_limit, :can_make_agent, only: [:make_agent]
+  before_filter :check_parent, :only => :restore
+
 
   def index
     load_objects contacts_filter(scoper)
@@ -20,23 +22,31 @@ class ApiContactsController < ApiApplicationController
   end
 
   def create
-    @item  = scoper.new()
-    user = { user: params[cname] }
-    if @item.signup!(user)
+    api_add_tags(@tags, @item, "User") if @tags
+    assign_protected
+    contact_delegator = ContactDelegator.new(@item)
+    if !contact_delegator.valid?
+      render_error(contact_delegator.errors, contact_delegator.error_options)
+    elsif @item.api_signup!
       render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
       set_custom_errors
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+      render_error(@item.errors)
     end
   end
 
-  def update
-    if params[cname][:tags]
-      @item.tags = []
-      update_tags(params[cname][:tags], true, @item)
-      params[cname].delete(:tags)
+  def update    
+    assign_protected 
+
+    @item.assign_attributes(params[cname])
+    contact_delegator = ContactDelegator.new(@item)
+    if !contact_delegator.valid?
+      set_custom_errors(contact_delegator)
+      render_error(contact_delegator.errors, contact_delegator.error_options)
+    else
+      api_update_tags(@tags, @item, "User") if @tags
+      super
     end
-    super
   end
 
   def destroy
@@ -50,7 +60,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def make_agent
-    if @item.make_agent
+    if @item.api_make_agent
       @agent = Agent.find_by_user_id(@item.id)
     else
       render_error(@item.errors)
@@ -63,24 +73,28 @@ class ApiContactsController < ApiApplicationController
       current_account.all_contacts
     end
 
+    def set_custom_errors(item = @item)
+      ErrorHelper.rename_error_fields({ company: :company_id, base: :email, "primary_email.email".to_sym => :email }, item)
+    end
+
     def validate_params
-      allowed_custom_fields = current_account.contact_form.contact_fields_from_cache.select { |field| field[:column_name] != 'default' }.collect(&:name)
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields      
-      field = ContactConstants::CONTACT_FIELDS | [ 'custom_fields' => custom_fields ]
-      field = field | [ 'avatar_attributes' => ['content'] ] if params[cname][:avatar_attributes]
+      @contact_fields = current_account.contact_form.custom_contact_fields
+      allowed_custom_fields = @contact_fields.collect(&:name)
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
+      field = get_fields("ContactConstants::#{action_name.upcase}_CONTACT_FIELDS") | [ 'custom_fields' => custom_fields ]
       params[cname].permit(*(field))
       contact = ContactValidation.new(params[cname], @item)
-      render_error contact.errors, contact.error_options unless contact.valid?
+      render_error contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
     end
 
     def manipulate_params
-      params[cname][:tags] = params[cname][:tags].join(",") if params[cname][:tags]
-      params[cname][:client_manager] = params[cname][:client_manager].to_s if params[cname][:client_manager]
+      @tags = params[cname][:tags]
+      params[cname].delete(:tags) if @tags
+      # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for 
+      # making a contact as a client_manager
+      params[cname][:client_manager] = params[cname].delete(:client_manager).to_s if params[cname][:client_manager]
+      params[cname][:avatar_attributes] = { content: params[cname][:avatar] } if params[cname][:avatar]
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
-    end
-
-    def build_object
-
     end
 
     def validate_filter_params
@@ -97,19 +111,40 @@ class ApiContactsController < ApiApplicationController
       head :not_found unless @item
     end
     
+    def assign_protected
+      @item.deleted = true if (@item.email.present? && @item.email =~ /MAILER-DAEMON@(.+)/i)
+    end
+
     def check_agent_limit
-      if current_account.reached_agent_limit? 
-        # error_message = { :errors => { :message => t('maximum_agents_msg') }}  
-        # render :json => error_message, :status => :bad_request
-        @errors = [BadRequestError.new('id', 'You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.')]
-        render '/bad_request_error', status: 400
+      if !current_account.subscription.agent_limit.nil? && current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
+        errors = [[:id, ['reached the maximum number of agents']]]
+        render_error errors
       end
     end
     
     def can_make_agent
       unless @item.has_email?
-        @errors = [BadRequestError.new('email', 'Contact with email id can only be converted to agent')]
-        render '/bad_request_error', status: 400
+        errors = [[:email, ['Contact with email id can only be converted to agent']]]
+        render_error errors
       end
     end
+
+    def set_required_fields
+      @item.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
+                                :error_label => :label }
+    end
+
+    def check_demo_site
+      if AppConfig['demo_site'][Rails.env] == current_account.full_domain
+        errors = [[:error, ["Demo site doesn't have this access!"]]]
+        render_error errors
+      end
+    end
+
+    def check_parent
+      if @item.deleted && !@item.parent.nil?
+        head 404
+      end
+    end
+
 end

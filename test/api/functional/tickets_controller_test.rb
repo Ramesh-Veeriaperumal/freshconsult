@@ -26,7 +26,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def requester
-    user = User.find { |x| x.id != @agent.id && x.helpdesk_agent == false } || add_new_user(@account)
+    user = User.find { |x| x.id != @agent.id && x.helpdesk_agent == false && x.deleted == 0 && x.blocked == 0 } || add_new_user(@account)
     user
   end
 

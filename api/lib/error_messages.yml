@@ -45,3 +45,4 @@ start_time_lt_now: Has to be lesser than current time
 not_included: Should be a value in the list '%{list}'
 required_and_inclusion: Should be a value in the list '%{list}'
 allowed_stamp_type: Allowed values are %{list}
+reached the maximum number of agents: You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.

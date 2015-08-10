@@ -9,7 +9,7 @@ class TicketsController < ApiApplicationController
   before_filter :validate_action_params, only: [:assign, :restore]
 
   def create
-    api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
+    api_add_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
@@ -32,7 +32,7 @@ class TicketsController < ApiApplicationController
       set_custom_errors(ticket_delegator)
       render_error(ticket_delegator.errors, ticket_delegator.error_options)
     elsif @item.update_ticket_attributes(params[cname])
-      api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
+      api_update_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank? # notify cc_people on update too.
     else
       set_custom_errors

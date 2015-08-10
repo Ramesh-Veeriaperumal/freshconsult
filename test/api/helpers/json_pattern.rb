@@ -420,14 +420,15 @@ module JsonPattern
 
     if contact.avatar
       contact_avatar = {
-        content_type: contact.avatar.content_content_type,
-        file_size: contact.avatar.content_file_size,
-        file_name: contact.avatar.content_file_name,
-        avatar_url: String,
-        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        id: contact.avatar.id
-      }
+
+                        content_type: contact.avatar.content_content_type,
+                        size: contact.avatar.content_file_size,
+                        name: contact.avatar.content_file_name,
+                        avatar_url: String,
+                        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+                        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+                        id: contact.avatar.id
+                      }
     end
 
     {
@@ -437,8 +438,6 @@ module JsonPattern
       company_id: expected_output[:company_id] || contact.company_id,
       description: expected_output[:description] || contact.description,
       email: expected_output[:email] || contact.email,
-      fb_profile_id: expected_output[:fb_profile_id] || contact.fb_profile_id,
-      helpdesk_agent: expected_output[:helpdesk_agent] || contact.helpdesk_agent,
       id: Fixnum,
       job_title: expected_output[:job_title] || contact.job_title,
       language: expected_output[:language] || contact.language,
@@ -461,7 +460,7 @@ module JsonPattern
   end
 
   def index_contact_pattern(contact)
-    contact_pattern(contact).except(:avatar_attributes, :tags)
+    contact_pattern(contact).except(:avatar_attributes, :tags, :deleted)
   end
 
   def index_deleted_contact_pattern(contact)
@@ -471,19 +470,19 @@ module JsonPattern
   def contact_field_pattern(expected_output = {}, contact_field)
     {
       deleted: expected_output[:deleted] || contact_field.deleted,
-      editable_in_portal: expected_output[:editable_in_portal] || contact_field.editable_in_portal,
+      default: expected_output[:default] || contact_field.default_field?,
+      customers_can_edit: expected_output[:customers_can_edit] || contact_field.editable_in_portal,
       editable_in_signup: expected_output[:editable_in_signup] || contact_field.editable_in_signup,
-      field_options: expected_output[:field_options] || contact_field.field_options,
-      field_type: expected_output[:field_type] || contact_field.field_type,
+      field_type: expected_output[:field_type] || contact_field.field_type.to_s,
       id: Fixnum,
       label: expected_output[:label] || contact_field.label,
-      label_in_portal: expected_output[:label_in_portal] || contact_field.label_in_portal,
+      label_for_customers: expected_output[:label_for_customers] || contact_field.label_in_portal,
       name: expected_output[:name] || contact_field.name,
       position: expected_output[:position] || contact_field.position,
       required_for_agent: expected_output[:required_for_agent] || contact_field.required_for_agent,
-      required_in_portal: expected_output[:required_in_portal] || contact_field.required_in_portal,
-      visible_in_portal: expected_output[:visible_in_portal] || contact_field.visible_in_portal,
-      choices: expected_output[:choices] || contact_field.choices,
+      required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
+      displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
+      choices: expected_output[:choices] || contact_field.api_choices,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

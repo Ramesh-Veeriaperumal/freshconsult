@@ -120,7 +120,7 @@ module TestCaseMethods
   end
 
   def user_without_monitorships
-    User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
+    User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? && x.deleted == 0 && x.blocked == 0 } || add_new_user(@account) # changed as it should have user without any monitorship
   end
 
   def v2_time_sheet_payload
@@ -297,6 +297,40 @@ module TestCaseMethods
 
   def v2_reply_payload
     { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
+  end
+
+  def v1_contact_params
+    # comp  = Company.first || create_company
+    {
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: "1234567890",
+      mobile: "1234567891", description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: "en", time_zone: "Chennai", tag_names: "#{Faker::Lorem.characters(5)}, #{Faker::Lorem.characters(5)}"
+    }
+  end
+
+  def v2_contact_params
+    # comp  = Company.first || create_company
+    {
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: "1234567892",
+      mobile: "1234567893", description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: "en", time_zone: "Chennai", tags: [Faker::Lorem.characters(5), Faker::Lorem.characters(5)]
+    }
+  end
+
+  def v1_contact_payload
+    { user: v1_contact_params }.to_json
+  end
+
+  def v2_contact_payload
+    v2_contact_params.to_json
+  end
+
+  def v1_contact_update_payload
+    { user: v1_contact_params.except(:name, :email) }.to_json
+  end
+
+  def v2_contact_update_payload
+    v2_contact_params.except(:name, :email).to_json
   end
 end
 

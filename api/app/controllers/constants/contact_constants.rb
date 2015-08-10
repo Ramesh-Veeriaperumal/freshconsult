@@ -1,8 +1,9 @@
 module ContactConstants
   CONTACT_ARRAY_FIELDS = [{ 'tags' => [String] }]
-  CONTACT_FIELDS = %w(address avatar_attributes client_manager company_id description email fb_profile_id job_title language mobile name phone time_zone twitter_id) | CONTACT_ARRAY_FIELDS
+  UPDATE_CONTACT_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | CONTACT_ARRAY_FIELDS }
+  CREATE_CONTACT_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | CONTACT_ARRAY_FIELDS }
 
-  CONTACT_FILTER = %w( verified unverified all deleted blocked )
+  CONTACT_STATES = %w( verified unverified all deleted blocked )
 
   INDEX_CONTACT_FIELDS = %w( state email phone mobile company_id )
 
@@ -12,4 +13,8 @@ module ContactConstants
     'destroy' => false,
     'make_agent' => false,
   }
+
+  # Based on limitation specified in Helpdesk::Attachment ( def image? )
+  ALLOWED_AVATAR_SIZE = 5 * 1024 * 1024
+  UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 end

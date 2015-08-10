@@ -184,33 +184,36 @@ class User < ActiveRecord::Base
     end
 
     # Used by API V2
-    def api_filter(contact_filter = nil)
-      filters = {}
-
-      state = contact_filter.try(:state)
-      case state
-        when "verified", "unverified"
-          filters.merge!( state: { conditions: { deleted: false, active: state.eql?("verified") } })
-        when "deleted"
-          filters.merge!( state: { conditions: { deleted: true } })
-        when "blocked"
-          filters.merge!( state: { conditions: { blocked: true } })
-      end
-
-      filters.merge!(
+    def api_filter(contact_filter)
+      {
+        deleted: {
+          conditions: { deleted: true }
+        },
+        verified: {
+          conditions: { deleted: false, active: true }
+        },
+        unverified: {
+          conditions: { deleted: false, active: false }
+        },
+        blocked: {
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?",Time.now+5.days,Time.now+5.days ]
+        },
+        all: {
+          conditions: { deleted: false }
+        },
         company_id: {
-          conditions: { customer_id: contact_filter.try(:company_id) }
+          conditions: { customer_id: contact_filter.company_id }
         },
         email: {
-          conditions: { email: contact_filter.try(:email) }
+          conditions: { email: contact_filter.email }
         },
         phone: {
-          conditions: { phone: contact_filter.try(:phone) }
+          conditions: { phone: contact_filter.phone }
         },
         mobile: {
-          conditions: { phone: contact_filter.try(:mobile) }
-        })
-
+          conditions: { mobile: contact_filter.mobile }
+        }
+      }
     end
 
     # protected :find_by_email_or_name, :find_by_an_unique_id
@@ -343,6 +346,18 @@ class User < ActiveRecord::Base
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
+    end
+    true
+  end
+
+  # Used by API V2
+  def api_signup!
+    return false unless save_without_session_maintenance
+    if (!self.deleted and !self.email.blank?)
+      portal = nil
+      force_notification = false
+      args = [ portal, force_notification ]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end
@@ -648,6 +663,16 @@ class User < ActiveRecord::Base
       agent.occasional = !!args[:occasional]
       save ? true : (raise ActiveRecord::Rollback)
     end
+  end
+
+  # Used by API V2
+  def api_make_agent
+    self.user_emails = [self.primary_email] if has_multiple_user_emails?
+    self.deleted = false
+    self.helpdesk_agent = true
+    self.role_ids = [account.roles.find_by_name("Agent").id] 
+    agent = build_agent()
+    save
   end
 
   def update_search_index
