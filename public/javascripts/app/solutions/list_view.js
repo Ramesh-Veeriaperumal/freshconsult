@@ -12,7 +12,6 @@ window.App = window.App || {};
     COMPANY_VISIBILITY: 4,
 
     onVisit: function (data) {
-      console.log("Loaded the list_view.js");
       this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
