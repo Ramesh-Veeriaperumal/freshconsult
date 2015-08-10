@@ -205,9 +205,13 @@ module SolutionHelper
     end
     content << %{</ul>}
     content << pjax_link_to( t('solution.sidebar.view_all'),
-    												 solution_drafts_path, { :class => "view-all"}) if drafts.size > 3
+    												drafts_path(container_id), { :class => "view-all"}) if drafts.size > 3
 		content << %{</div>}
 		content.html_safe
+	end
+
+	def drafts_path container_id
+		container_id == 'drafts-all' ? solution_my_drafts_path('all') : solution_drafts_path
 	end
 
 

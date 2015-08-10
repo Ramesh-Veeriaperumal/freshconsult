@@ -33,7 +33,11 @@ class Solution::Category < ActiveRecord::Base
     :foreign_key => :solution_category_id, 
     :dependent => :delete_all
 
-  has_many :portals, :through => :portal_solution_categories
+  has_many :portals, 
+    :through => :portal_solution_categories,
+    :after_add => :clear_cache,
+    :after_remove => :clear_cache
+
   has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
           VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
@@ -102,14 +106,13 @@ class Solution::Category < ActiveRecord::Base
       update_mh_app_time(self.id)
     end
     
-    def clear_cache
+    def clear_cache(obj=nil)
       account.clear_solution_categories_from_cache
     end
     
     def clear_cache_with_condition
       account.clear_solution_categories_from_cache if self.name_changed?
     end
-
 
     def set_default_portal
       self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?

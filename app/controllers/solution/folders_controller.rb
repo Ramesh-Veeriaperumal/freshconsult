@@ -176,7 +176,7 @@ class Solution::FoldersController < ApplicationController
 
     def fetch_new_category
       if params[:solution_folder][:category_id]
-        @new_category = portal_scoper.find_by_id(params[:solution_folder][:category_id])
+        @new_category = current_account.solution_categories.find_by_id(params[:solution_folder][:category_id])
       end
       @new_category ||= @category
     end

@@ -9,10 +9,7 @@ class PortalSolutionCategory < ActiveRecord::Base
 	acts_as_list :scope => :portal
 
 	delegate :name, :to => :solution_category
-  
 
-  after_create :clear_cache
-  after_destroy :clear_cache
   after_update :clear_cache, :if => :position_changed?
 
   CACHEABLE_ATTRS = ["portal_id","position"]

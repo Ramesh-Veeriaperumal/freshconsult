@@ -57,7 +57,9 @@ class Portal < ActiveRecord::Base
   has_many :solution_categories,
     :class_name => 'Solution::Category',
     :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
+    :order => "portal_solution_categories.position",
+    :after_add => :clear_solution_cache,
+    :after_remove => :clear_solution_cache
 
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',
@@ -288,5 +290,9 @@ class Portal < ActiveRecord::Base
     def add_default_solution_category
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
+    end
+
+    def clear_solution_cache(obj=nil)
+      account.clear_solution_categories_from_cache
     end
 end

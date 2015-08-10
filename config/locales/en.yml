@@ -3577,7 +3577,7 @@ en:
       view_less: "View less"
       drafts:
         title: "Drafts"
-        me: "Your Drafts" 
+        me: "My Drafts" 
         all: "All Drafts"
         details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>" 
       feedbacks:
@@ -3592,7 +3592,7 @@ en:
     orphan: Orphan
     add_folder: New Folder
     add_article: New Article
-    view_feedback: View all feedbacks
+    view_feedback: View all feedback
     change_author: Change Author
     move_to: Move to
     details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
