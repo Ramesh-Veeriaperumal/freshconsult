@@ -112,7 +112,7 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "description", :value => t('description'), :domtype => "text",
           :operatortype => "text", :condition => !supervisor_rules_controller? },
         { :name => "subject_or_description", :value =>  t('subject_or_description'), 
-          :domtype => "text", :operatortype => "text" },
+          :domtype => "text", :operatortype => "text", :condition => !supervisor_rules_controller? },
         { :name => "last_interaction", :value => I18n.t('last_interaction'), :domtype => "text",
           :operatortype => "text", :condition => observer_rules_controller? },
         { :name => "priority", :value => t('ticket.priority'), :domtype => "dropdown", 

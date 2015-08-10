@@ -13,12 +13,13 @@ class Helpdesk::Email::HandleTicket
   include ActionView::Helpers
   include Helpdesk::DetectDuplicateEmail
 
-  attr_accessor :note, :email, :user, :account, :ticket
+  attr_accessor :note, :email, :user, :account, :ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
 
   def initialize email, user, account, ticket=nil
     self.email = email 
+    self.original_sender = email[:from][:email]
     #the param hash is a shallow duplicate. Reference to hashes and arrays inside are to the common_email_data in process.rb. 
     #Any changes here can reflect there.
     self.user = user
@@ -59,7 +60,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:subject],
                                                             email[:message_id][1..-2])
       finalize_ticket_save
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)
@@ -91,7 +92,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:message_id][1..-2])
       note.save_note
       cleanup_attachments note
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)

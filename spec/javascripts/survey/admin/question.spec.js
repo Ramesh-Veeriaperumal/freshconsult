@@ -49,19 +49,19 @@ describe("Survey Question Events",function(){
 	});
 
 	it("should use existing format",function(){
-		var choices =view.choice[2];
+		var choices =[-103,103];
 		var choiceKeys = [];
 		var choiceValues = view.choiceValues;
 		for(var  i=0;i<choiceValues.length;i++){
 			var array = [];
-			if(choiceValues[i]["id"] == choices[0]){
-				array = [choiceValues[i]["text"],choiceValues[i]["id"]];
-				choiceKeys.push(array);
-			}
 			if(choiceValues[i]["id"] == choices[1]){
 				array = [choiceValues[i]["text"],choiceValues[i]["id"]];
 				choiceKeys.push(array);
 			}
+			/*if(choiceValues[i]["id"] == choices[3]){
+				array = [choiceValues[i]["text"],choiceValues[i]["id"]];
+				choiceKeys.push(array);
+			}*/
 		}
 
 		var survey_questions = [{
@@ -84,6 +84,7 @@ describe("Survey Question Events",function(){
 		input.setAttribute("data-name","cf_thank_you_for_your_valuable_feedback");
 		input.setAttribute("name","survey_question[cf_thank_you_for_your_valuable_feedback]");
 		input.setAttribute("value", "Thank you for your valuable feedback.");
+		input.setAttribute("id",1);
 
 		var questions = SurveyQuestion.existingFormat(survey_questions,input,choiceKeys);
 		expect(questions).toBeDefined();

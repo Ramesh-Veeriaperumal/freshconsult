@@ -12,10 +12,10 @@ describe("Feedback events", function(){
 		expect(Feedback).toBeDefined();
 		expect(Feedback.submit).toBeDefined();
 		expect(Feedback.fetch).toBeDefined();
-		expect(Feedback.showGreyScreen).toBeDefined();
-		expect(Feedback.hideGreyScreen).toBeDefined();
+		expect(Feedback.showOverlay).toBeDefined();
+		expect(Feedback.hideOverlay).toBeDefined();
 		expect(Feedback.hide).toBeDefined();
-
+		expect(Feedback.refreshTab).toBeDefined();
 	});
 
 	it("should submit a feedback",function(){

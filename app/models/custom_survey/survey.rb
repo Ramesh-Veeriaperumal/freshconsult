@@ -59,7 +59,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
                                  I18n.t('admin.surveys.thanks_contents.message_text') :
                                  survey["thanks_text"]
     self.feedback_response_text = survey["feedback_response_text"].blank? ? 
-                                                    I18n.t('admin.surveys.new_thanks.thanks_feedback') 
+                                                    I18n.t('admin.surveys.new_thanks.thanks_feedback_v2') 
                                                     : survey["feedback_response_text"]
     self.comments_text = survey["comments_text"].blank? ?
                                        I18n.t('admin.surveys.new_thanks.comments_feedback') :

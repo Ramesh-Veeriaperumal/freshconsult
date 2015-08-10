@@ -53,6 +53,9 @@ class Reports::CustomSurveyReportsController < ApplicationController
                    })
     results = JSON.parse(results).collect{|obj| obj['survey_result']}
     results.each_with_index do |remark,index|
+    if remark["survey_remark"].blank?
+      results[index]["survey_remark"] = {"feedback" => {"body" => I18n.t('support.surveys.feedback_not_given')}}
+    end
     results[index]["rating"] = remark["rating"]
       results[index]["customer"]["avatar"] = customer_avatars[remark["id"]]
     end
@@ -69,9 +72,10 @@ private
 
   def unanswered
     survey_id = which_survey
-    requests = current_account.custom_surveys.find(survey_id).survey_handles.unrated
-    requests = filter requests
-    requests.count
+    date_range = {:start_date => start_date , :end_date => end_date}
+    handles = current_account.custom_surveys.find(survey_id).survey_handles.unrated(date_range)
+    handles = filter handles
+    handles.count
   end
   
   def load_survey
