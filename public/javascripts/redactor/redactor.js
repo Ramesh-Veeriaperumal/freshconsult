@@ -2084,7 +2084,7 @@ Redactor.prototype = {
 	                                              else if(subParts[0] == 'font-family')
 	                                              {
 	                                              	if(self.opts.setFontSettings){
-	                                              		$(this).css('font-family', subParts[1] + "," + self.opts.wrapFontSettings["font-family"]);
+	                                              		$(this).css('font-family',self.opts.wrapFontSettings["font-family"]);
 	                                              	} else {
 	                                              		$(this).css('font-family',subParts[1]);
 	                                              	}
@@ -2095,7 +2095,7 @@ Redactor.prototype = {
 	                                              }
 	                                              else if(subParts[0] == 'font-size')
 	                                              {
-	                                                $(this).css('font-size',subParts[1]);
+	                                                $(this).css('font-size',subParts[1].replace("pt","px"));
 	                                              }
 	                                              else if(subParts[0] == 'font-weight')
 	                                              {
