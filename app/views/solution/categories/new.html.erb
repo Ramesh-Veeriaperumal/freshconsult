@@ -8,15 +8,7 @@
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
-		  	<%= submit_tag t('solution_category.save_and_create'), :id => "save_and_create", :class => "btn" %>
 		  	<%= submit_tag t('save'), :class => "btn  btn-primary" %>
 		</div>
-	<% end %>
-	<% content_for :onload_script do %>
-		jQuery('#save_and_create').on('click', function (ev) {
-			ev.preventDefault();
-			setPostParam(this.form, "save_and_create", true);
-			this.form.submit();
-		});
 	<% end %>
 <% end %>
