@@ -4,8 +4,7 @@ class Solution::MetaObserver < ActiveRecord::Observer
 
 	observe Solution::CategoryMeta, Solution::FolderMeta, Solution::ArticleMeta
 
-	def after_commit(meta_obj)
-		return unless meta_obj.send(:"transaction_include_action?", :create)
+	def after_create(meta_obj)
 		klass = meta_obj.class.model_name.chomp("Meta").constantize
 		klass.where({
 				:id => meta_obj.id, 

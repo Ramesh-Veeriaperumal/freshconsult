@@ -236,7 +236,7 @@ class Solution::Article < ActiveRecord::Base
   private
 
     def set_mobihelp_solution_updated_time
-      self.solution_folder.category.update_mh_solutions_category_time
+      self.reload.folder.category.update_mh_solutions_category_time
     end
 
     def content_changed?
