@@ -214,7 +214,7 @@ class Solution::FoldersController < ApplicationController
         customer_ids, add_to_existing = [valid_customers(params[:companies]), (params[:addToExisting].to_i == 1)]
         change_result = @folders.map {|f| f.add_visibility(@visibility, customer_ids, add_to_existing)}.reduce(:&)
       else
-        change_result = @folders.update_all(:visibility => @visibility)
+        change_result = !(@folders.map {|f| f.update_attributes(:visibility => @visibility)}.include?(false))
       end
       flash[:notice] = t("solution.folders.visibility.#{change_result ? "success" : "failure"}")
     end

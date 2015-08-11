@@ -25,7 +25,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @article = current_account.solution_articles.find_by_id!(params[:id], :include => [:folder, :draft, :tickets])
+    @article = current_account.solution_articles.find_by_id!(params[:id])
     respond_to do |format|
       format.html {
         @current_item = @article.draft || @article
@@ -154,7 +154,7 @@ class Solution::ArticlesController < ApplicationController
   protected
 
     def load_article
-      @article = current_account.solution_articles.find(params[:id], :include =>[:draft])
+      @article = current_account.solution_articles.find(params[:id])
     end
 
     def scoper #possible dead code

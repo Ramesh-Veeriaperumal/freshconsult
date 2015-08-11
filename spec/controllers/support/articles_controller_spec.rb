@@ -237,16 +237,16 @@ RSpec.describe Support::Solutions::ArticlesController do
   it "should create ticket and update article_tickets while submitting feedback form for non logged in users" do
     agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
     test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
-      :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
+      :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
     description = Faker::Lorem.paragraph
     
     agent.user.make_customer
 
-		random_message = rand(4) + 1
+		random_message = rand(1..4)
     post :create_ticket, :id => test_article.id,
       :helpdesk_ticket => { :email => Faker::Internet.email },
       :helpdesk_ticket_description => description,
-      :message => [1]
+      :message => [random_message]
    
     ticket = @acc.tickets.find_by_subject("Article Feedback - #{test_article.title}")
     ticket.description.include? description

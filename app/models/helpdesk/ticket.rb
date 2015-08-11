@@ -169,13 +169,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
 
   scope :article_tickets_by_user, lambda { |user| {
-       :include => [{:article_ticket => :article}],
+       :include => [:article, :requester, :ticket_status],
        :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id and solution_articles.user_id = ?", user.id]
      }
    }
 
   scope :all_article_tickets,
-    :include => [:article_ticket],
+    :include => [:article, :requester, :ticket_status],
     :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"] 
 
   scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {

@@ -53,7 +53,7 @@ describe Solution::CategoriesController do
     put :reorder, :reorderlist => reorder_hash.to_json
     categories.reload
     categories.each do |c|
-      c.position.should be_eql(reorder_hash[c.id])
+      c.position.should be_eql(reorder_hash[c.id]) unless c.solution_category.is_default?
     end          
   end
 
@@ -132,9 +132,9 @@ describe Solution::CategoriesController do
     post :create, :solution_category => {:name => "#{name}",
                                        :description => "#{Faker::Lorem.sentence(3)}"
                                       }
-
-    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
-    response.should redirect_to(solution_categories_url)
+    category =  @account.solution_categories.find_by_name("#{name}")
+    category.should be_an_instance_of(Solution::Category)
+    response.should redirect_to(solution_category_path(category))
   end
 
   it "should edit a solution category" do
@@ -184,7 +184,7 @@ describe Solution::CategoriesController do
       portal_solution_category = @account.main_portal.portal_solution_categories.find_by_solution_category_id(category.id)
       portal_solution_category.should be_an_instance_of(PortalSolutionCategory)
       portal_solution_category.solution_category_meta_id.should be_eql(portal_solution_category.solution_category_id)
-      response.should redirect_to(solution_categories_url)
+      response.should redirect_to(solution_category_path(category))
     end
 
     it "should create a mobihelp_app_solution with the correct value set for solution_category_meta_id" do
