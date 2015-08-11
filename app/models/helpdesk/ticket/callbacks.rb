@@ -261,6 +261,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_dueby(ticket_status_changed=false)
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
+    if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
+      old_time_zone = Time.zone
+      TimeZone.set_time_zone
+      NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
+      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    end
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
