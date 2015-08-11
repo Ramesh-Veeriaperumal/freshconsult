@@ -25,7 +25,7 @@
 						<ul>
 							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
 								<li>
-									<%= link_to visibility[0], "javascipt:void(0);", 
+									<%= link_to visibility[0], "", 
 															:class => "visibility-selector #{option_selector_name(visibility[0])}", 
 															"data-visibility" => visibility[1],
 															"data-url" => "#{visible_to_solution_folders_path}" %>

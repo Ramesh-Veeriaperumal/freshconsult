@@ -6,6 +6,8 @@ window.Fjax = {
 		beforeNextPage: null,
 		afterNextPage: null,
 		unload: null,
+    pjax_traversal_count: 0,
+    pjax_traversal_limit: 10,
 
 		bodyClass: null,
 
@@ -56,6 +58,13 @@ window.Fjax = {
         soundManager.stopAll();
       }
       $(window).unbind('.pageless');
+    },
+
+    pjaxLimitExceeded: function (){
+      if((this.pjax_traversal_count >= this.pjax_traversal_limit) && !(window.freshfonecalls && window.freshfonecalls.tConn) ){
+        return true;
+      }
+      return false;
     },
 
     callAfterReceive: function() {
@@ -209,9 +218,15 @@ window.Fjax = {
       }
     },
     success : function()
-    {
+    { 
+      this.pjax_traversal_count = this.pjax_traversal_count + 1;
       window.history.state.body_class = $('body').attr('class');
       window.history.replaceState(window.history.state,'for_pjax');
+
+      if (this.pjaxLimitExceeded()) {
+        jQuery.pjax.disable();
+        jQuery(document).off("click.pjax", "a[data-pjax]");
+      }
     },
 
     _initParallelRequest: function(target,data){

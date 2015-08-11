@@ -35,25 +35,25 @@ describe("Survey Protocol events",function(){
 	it("should get the choice values",function(){
 		var choices = SurveyProtocol.content.choiceValues;
     	_.each(choices, function(element,i){
-    		if(element.id  == -3){
+    		if(element.id  == -103){
     			expect(element.className).toEqual("strongly-disagree");
     		}
-    		if(element.id == -2){
+    		if(element.id == -102){
     			expect(element.className).toEqual("some-what-disagree");
     		}
-    		if(element.id == -1){
+    		if(element.id == -101){
     			expect(element.className).toEqual("disagree");
     		}
-    		if (element.id == 0) {
+    		if (element.id == 100) {
     			expect(element.className).toEqual("satisfaction-neutral");
     		}
-    		if (element.id == 1) {
+    		if (element.id == 101) {
     			expect(element.className).toEqual("agree");
     		}
-    		if (element.id == 2) {
+    		if (element.id == 102) {
     			expect(element.className).toEqual("some-what-agree");
     		}
-    		if (element.id == 3) {
+    		if (element.id == 103) {
     			expect(element.className).toEqual("strongly-agree");
     		}
     	});
@@ -70,7 +70,7 @@ describe("Survey Protocol events",function(){
 
 	it("should define thanks elements",function(){
 		expect(SurveyProtocol.content.thanks.title).toBeDefined();
-		expect(SurveyProtocol.content.thanks.message).toBeDefined();
+		expect(SurveyProtocol.content.thanks.default_text).toBeDefined();
 		expect(SurveyProtocol.content.thanks.link).toBeDefined();
 		expect(SurveyProtocol.content.thanks.link.label).toBeDefined();
 		expect(SurveyProtocol.content.thanks.link.action).toBeDefined();

@@ -87,7 +87,7 @@ class Solution::Category < ActiveRecord::Base
       update_mh_app_time
     end
     
-    def clear_cache
+    def clear_cache(obj=nil)
       account.clear_solution_categories_from_cache
     end
     

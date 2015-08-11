@@ -723,8 +723,12 @@ module ApplicationHelper
  end
 
  def get_total_time time_sheets
-   total_time_in_sec = time_sheets.collect{|t| t.running_time}.sum
-   return get_time_in_hours(total_time_in_sec)
+   total_time_in_sec = total_time_in_seconds(time_sheets)
+   get_time_in_hours(total_time_in_sec)
+ end
+
+ def total_time_in_seconds time_sheets
+  time_sheets.collect{|t| t.running_time}.sum
  end
 
   def get_app_config(app_name)

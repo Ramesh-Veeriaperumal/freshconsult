@@ -14,6 +14,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
   before_filter :bulk_update_category, :only => [:move_to, :move_back]
+  after_filter  :clear_cache, :only => [:move_to, :move_back]
   
   def index
     redirect_to solution_category_path(params[:category_id])
@@ -62,14 +63,11 @@ class Solution::FoldersController < ApplicationController
     current_category = current_account.solution_categories.find(params[:category_id] || params[:solution_folder][:category_id])
     @folder = current_category.folders.new(params[nscname]) 
     @folder.category_id = @new_category.id
-
-    redirect_to_url = new_solution_category_folder_path(@new_category.id) unless
-      params[:save_and_create].nil?
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @folder.save
-        format.html { redirect_to redirect_to_url || solution_folder_path(@folder) }
+        format.html { redirect_to solution_folder_path(@folder) }
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }     
       else
@@ -176,7 +174,7 @@ class Solution::FoldersController < ApplicationController
 
     def fetch_new_category
       if params[:solution_folder][:category_id]
-        @new_category = portal_scoper.find_by_id(params[:solution_folder][:category_id])
+        @new_category = current_account.solution_categories.find_by_id(params[:solution_folder][:category_id])
       end
       @new_category ||= @category
     end
@@ -249,5 +247,9 @@ class Solution::FoldersController < ApplicationController
     #META-READ-HACK!!    
     def meta_article_scope
       current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
+    end
+
+    def clear_cache
+      current_account.clear_solution_categories_from_cache
     end
 end

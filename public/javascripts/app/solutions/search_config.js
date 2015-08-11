@@ -58,7 +58,7 @@ window.App.Solutions = window.App.Solutions || {};
       var resultList = $('#page_search_results'), resultHtml = '';
       if (data.results.length) {
         data.results.each(function (result) {
-          var templateName = ["app/search/templates/", result.result_type].join("");
+          var templateName = "app/search/templates/solution_context_search";
           if (result) {
             resultHtml += (JST[templateName](result));
           }

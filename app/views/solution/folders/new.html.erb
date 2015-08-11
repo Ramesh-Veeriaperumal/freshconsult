@@ -8,7 +8,6 @@
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_categories_path, :class => "btn" ) %>
-			<%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "btn" %>
 			<%= submit_tag t('save'), :class => "btn btn-primary" %>
 		</div>
 	<% end %>

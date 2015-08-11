@@ -39,6 +39,7 @@ window.App = window.App || {};
       this.setTagSelector();
       this.dummyActionButtonTriggers();
       this.unsavedContentNotif();
+      this.formValidate();
     },
 
     eventsForShowPage: function () {
@@ -46,6 +47,7 @@ window.App = window.App || {};
       this.setDataFromPage();
       this.showPageBindings();
       this.handleEdit();
+      this.formValidate();
       highlight_code();
     }
 

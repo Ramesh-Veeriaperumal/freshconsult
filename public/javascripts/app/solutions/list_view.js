@@ -12,7 +12,6 @@ window.App = window.App || {};
     COMPANY_VISIBILITY: 4,
 
     onVisit: function (data) {
-      console.log("Loaded the list_view.js");
       this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
@@ -70,7 +69,8 @@ window.App = window.App || {};
       //end
 
       //binding for visible to
-      $('body').on('click.folders_articles', '.visibility-selector', function () {
+      $('body').on('click.folders_articles', '.visibility-selector', function (ev) {
+        ev.preventDefault();
         $this.visibleToSelection($(this).data());
       });
 
@@ -233,7 +233,9 @@ window.App = window.App || {};
           parent_id: obj.data('parent-id'),
           items: obj.data('items')
         },
-        success: $.proxy(this.onSaveSuccess, this),
+        success: function () {
+          $.proxy(this.onSaveSuccess, this);
+        },
         error: $.proxy(this.onSaveError, this)
       });
     },
