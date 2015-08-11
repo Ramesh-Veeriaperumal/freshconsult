@@ -1,12 +1,15 @@
 class ApiSlaPoliciesController < ApiApplicationController
   def update
     conditions = @item.conditions
-    conditions[:company_id] = params[cname][:conditions][:company_ids] unless params[cname][:conditions][:company_ids].nil?
-    conditions.delete(:company_id) if params[cname][:conditions].key?(:company_ids) && params[cname][:conditions][:company_ids].blank?
+    conditions[:company_id] = params[cname][:applicable_to][:company_ids] unless params[cname][:applicable_to][:company_ids].nil?
+    conditions.delete(:company_id) if params[cname][:applicable_to].key?(:company_ids) && params[cname][:applicable_to][:company_ids].blank?
     sla_policy_delegator = SlaPolicyDelegator.new(@item)
     if !sla_policy_delegator.valid?
       render_error(sla_policy_delegator.errors, sla_policy_delegator.error_options)
-    elsif !@item.save
+    elsif @item.save
+      @conditions_hash = {}
+      conditions.each { |key, value| @conditions_hash[key.to_s.pluralize] = value } unless conditions.nil?
+    else
       render_error(@item.errors)
     end
   end

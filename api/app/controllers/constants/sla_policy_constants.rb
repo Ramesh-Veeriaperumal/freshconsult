@@ -4,5 +4,5 @@ module SlaPolicyConstants
 
   ALLOWED_HASH_FIELDS = [{ 'company_ids' => [] }, 'company_ids']
 
-  SLA_UPDATE_FIELDS = ['conditions' =>  ALLOWED_HASH_FIELDS]
+  SLA_UPDATE_FIELDS = ['applicable_to' =>  ALLOWED_HASH_FIELDS]
 end

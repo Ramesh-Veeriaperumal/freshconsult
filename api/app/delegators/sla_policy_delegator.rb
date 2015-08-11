@@ -17,6 +17,6 @@ class SlaPolicyDelegator < SimpleDelegator
   end
 
   def valid_conditions?
-    errors.add(:conditions, "can't be blank") if conditions.empty?
+    errors.add(:applicable_to, "can't be blank") if conditions.empty?
   end
 end

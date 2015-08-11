@@ -198,7 +198,7 @@ module TestCaseMethods
   end
 
   def sla_policy_params
-    { conditions: { company_ids: [1, 2] } }
+    { applicable_to: { company_ids: [1, 2] } }
   end
 
   def v1_sla_policy_params

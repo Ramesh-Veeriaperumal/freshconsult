@@ -22,7 +22,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_company_sla_policies
     company = create_company
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: { company_ids: [company.id] })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [company.id] })
     assert_response :success
     match_json(sla_policy_pattern(sla_policy.reload))
   end
@@ -30,14 +30,14 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_remove_company_sla_policy
     company = create_company
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: { company_ids: [] })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response :success
     match_json(sla_policy_pattern(sla_policy.reload))
   end
 
   def test_update_with_invalid_fields_in_conditions_hash
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: { group_ids: [1, 2], product_id: [1] })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { group_ids: [1, 2], product_id: [1] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('group_ids', 'invalid_field'),
                 bad_request_error_pattern('product_id', 'invalid_field')])
@@ -46,7 +46,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_with_invalid_company_ids
     company = create_company
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: { company_ids: [10_000, 1_000_001] })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [10_000, 1_000_001] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('company_ids', 'list is invalid', list: '10000, 1000001')])
   end
@@ -54,7 +54,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_with_invalid_company_ids_data_type
     company = create_company
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: { company_ids: '1,2' })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: '1,2' })
     assert_response :bad_request
     match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
   end
@@ -62,17 +62,17 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_with_empty_conditions
     company = create_company
     sla_policy = create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, conditions: {})
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response :bad_request
-    match_json([bad_request_error_pattern('conditions', "can't be blank")])
+    match_json([bad_request_error_pattern('applicable_to', "can't be blank")])
   end
 
   def test_update_emptying_conditions_with_blank_company_ids
     company = create_company
     sla_policy = create_sla_policy_with_only_company_ids
-    put :update, construct_params({ id: sla_policy.id }, conditions: { company_ids: [] })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response :bad_request
-    match_json([bad_request_error_pattern('conditions', "can't be blank")])
+    match_json([bad_request_error_pattern('applicable_to', "can't be blank")])
   end
 
   def create_sla_policy
