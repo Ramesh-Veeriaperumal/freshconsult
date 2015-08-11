@@ -115,6 +115,7 @@ module SolutionsHelper
                             :user_id => @agent.id, :status => "2", :art_type => "1" } )
         end
       end
+      cat.reload
     end
   end
 

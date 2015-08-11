@@ -19,10 +19,10 @@ class Solution::FoldersController < ApplicationController
     redirect_to solution_category_path(params[:category_id])
   end
 
-  def show    
-    @folder = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
+  def show
+    #META-READ-HACK!!    
+    @folder = current_account.folders.find(params[:id], :include => { meta_article_scope => [:draft, :user]})
     @page_title = @folder.name
-    #META-READ-CHECK
     respond_to do |format|
       format.html {
         redirect_to solution_my_drafts_path('all') if @folder.is_default?
@@ -207,7 +207,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def change_visibility
-      @folders = current_account.folders.where(:id => params[:folderIds])
+      @folders = current_account.folders.where(:id => params[:folderIds]).readonly(false)
       if @visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         if valid_customers(params[:companies]).blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')
@@ -246,4 +246,8 @@ class Solution::FoldersController < ApplicationController
                   )).html_safe
     end
 
+    #META-READ-HACK!!    
+    def meta_article_scope
+      current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
+    end
 end

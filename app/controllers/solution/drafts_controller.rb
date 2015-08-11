@@ -10,7 +10,7 @@ class Solution::DraftsController < ApplicationController
 	before_filter :load_attachment, :only => [:attachments_delete]
 
 	def index
-		@articles = current_account.solution_articles.send(*scope).paginate(:page => params[:page], :per_page => 10)
+		@articles = drafts_scoper.paginate(:page => params[:page], :per_page => 10)
 	end
 
 	def destroy
@@ -119,4 +119,24 @@ class Solution::DraftsController < ApplicationController
 			@draft.save
 		end
 
+		def drafts_scoper
+			if (params[:type] == 'all' and get_portal_id == 0)
+				current_account.solution_articles.all_drafts.includes(folder_scope_with_categories)
+			else
+				current_account.solution_articles.send(*scope).includes(meta_folder_scope)
+			end
+		end
+
+		#META-READ-HACK!!
+		def meta_folder_scope
+		  current_account.launched?(:meta_read) ?  :folders_through_meta : :folders
+		end
+
+		#META-READ-HACK!!
+		def folder_scope_with_categories
+		  unless Account.current.present? && Account.current.launched?(:meta_read)
+		    return { :folder => {:category => :portals} }
+		  end
+		  { :folder_through_meta => {:category_through_meta => :portals_through_meta} }
+		end
 end
