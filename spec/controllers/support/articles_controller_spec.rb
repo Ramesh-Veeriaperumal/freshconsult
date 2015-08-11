@@ -406,7 +406,7 @@ RSpec.describe Support::Solutions::ArticlesController do
       @meta_object = @test_article_for_hits.solution_article_meta
       @test_article_without_meta = create_article( {:title => "article1 #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder1.id, 
       :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )
-      @test_article_without_meta.reload.solution_article_meta.destroy
+      @test_article_without_meta.reload
     end
 
     it "should increment hits in meta object" do

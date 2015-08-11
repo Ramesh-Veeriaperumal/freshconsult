@@ -68,6 +68,7 @@ class Solution::ArticlesController < ApplicationController
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
+        @article.reload
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article)).html_safe if publish?
@@ -312,6 +313,7 @@ class Solution::ArticlesController < ApplicationController
       update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)
+          @article.reload 
           format.html { 
             flash[:notice] = t('solution.articles.published_success', 
               :url => support_solutions_article_path(@article)).html_safe if publish?

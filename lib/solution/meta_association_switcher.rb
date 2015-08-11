@@ -6,7 +6,7 @@ module Solution::MetaAssociationSwitcher
 	def self.included(base)
 		base::FEATURE_BASED_METHODS.each do |method|
 			define_method(%{#{method.to_s}_with_association}) do
-				if Account.current.launched?(:meta_read)
+				if Account.current.launched?(:meta_read) && !self.new_record?
 					send(%{#{method.to_s}_through_meta})
 				else
 					send(%{#{method.to_s}_without_association})
