@@ -72,6 +72,7 @@ jQuery(document).ready(function(){
         mouseenter:
            function()
            {
+           	focusedOnSearch = false
            	insideSearch = true;
            },
         mouseleave:
@@ -116,6 +117,7 @@ jQuery(document).ready(function(){
 						move(-1);
 						break;
 					case 13:
+						focusedOnSearch = true
 						$J(currentactive).trigger("click");
 						break; 
 				}
