@@ -111,5 +111,21 @@ module Solution::ArticlesHelper
     output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn", :"data-target-btn" => "#article-publish-btn")
     output.join(' ').html_safe
   end
+
+  def article_properties_edit_link(link_text)
+    return unless privilege?(:manage_solutions) || privilege?(:publish_solution)
+    link_to( link_text, 
+            properties_solution_article_path(@article, {:edit => true}),
+            :rel => "freshdialog",
+            :class => "article-properties",
+            :title => t('solution.articles.properties'),
+            :data => {
+              :target => "#article-prop",
+              :width => "700px",
+              "close-label" => t('cancel'),
+              "submit-label" => t('save'), 
+              "submit-loading" => t('saving')
+            }).html_safe
+  end
   
 end

@@ -1,3 +1,4 @@
 show_ajax_flash(page)
 page << "jQuery('#article-prop').modal('hide');jQuery('#article-prop').modal('destroy');"
+page << "jQuery('#solution_article_folder_id').select2(\"val\", \"#{@article.folder.id}\");"
 page.replace_html "sidebar-prop", render(:partial => "sidebar_properties", :locals => {:@article => @article}).html_safe

@@ -3614,7 +3614,7 @@ en:
     folders:
       view_all: "View all folders..."
       choose_folder: Choose folder
-      choose_folder_warning: Please select a folder for publishing the article
+      choose_folder_warning: Please select a folder for saving the article
       new:
         new_folder: Add Folder
       folder_form:

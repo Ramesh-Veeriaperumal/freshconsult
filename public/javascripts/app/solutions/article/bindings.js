@@ -109,7 +109,7 @@ window.App = window.App || {};
 
     formValidate: function () {
       var $this = this;
-      $('body').on('submit.articles', '#article-form', function (ev) {
+      $('body').on('submit.articles', '.article-edit #article-form', function (ev) {
         var validation = $('#article-form').valid();
         if (validation) {
           if (!$.isEmptyObject($this.autoSave)) {
@@ -150,6 +150,7 @@ window.App = window.App || {};
         if ($("#article-form").data().defaultFolder) {
           if ($('#solution_article_folder_id').val() === "") {
             $('.folder-warning-msg').show();
+            $('#solution_article_folder_id').select2('focus');
             return false;
           }
         }
