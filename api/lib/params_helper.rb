@@ -15,8 +15,5 @@ class ParamsHelper
       end
     end
 
-    def get_user_param(email)
-      email ? :email : :user_id
-    end
   end
 end
