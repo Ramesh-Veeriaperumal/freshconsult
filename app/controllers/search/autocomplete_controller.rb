@@ -104,7 +104,7 @@ class Search::AutocompleteController < ApplicationController
       items = Tire.search Search::EsIndexDefinition.searchable_aliases([User], current_account.id),options do |tire_search|
          tire_search.query do |q|
            q.filtered do |f|
-             f.query { |q| q.match [ 'email', 'name', 'phone', 'user_emails.email' ], SearchUtil.es_filter_key(params[:q], false), :analyzer => "include_stop", :type => :phrase_prefix }
+             f.query { |q| q.match [ 'email', 'name', 'phone', 'mobile', 'user_emails.email' ], SearchUtil.es_filter_key(params[:q], false), :type => :phrase_prefix }
              f.filter :term, { :helpdesk_agent => agent } if agent
              f.filter :term, { :account_id => current_account.id }
              f.filter :term, { :deleted => false }

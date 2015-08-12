@@ -13,12 +13,13 @@ class Helpdesk::Email::HandleTicket
   include ActionView::Helpers
   include Helpdesk::DetectDuplicateEmail
 
-  attr_accessor :note, :email, :user, :account, :ticket
+  attr_accessor :note, :email, :user, :account, :ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
 
   def initialize email, user, account, ticket=nil
     self.email = email 
+    self.original_sender = email[:from][:email]
     #the param hash is a shallow duplicate. Reference to hashes and arrays inside are to the common_email_data in process.rb. 
     #Any changes here can reflect there.
     self.user = user
@@ -59,7 +60,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:subject],
                                                             email[:message_id][1..-2])
       finalize_ticket_save
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)
@@ -91,7 +92,7 @@ class Helpdesk::Email::HandleTicket
                                                             email[:message_id][1..-2])
       note.save_note
       cleanup_attachments note
-      mark_email(process_email_key, email[:from][:email],
+      mark_email(process_email_key(email[:message_id][1..-2]), email[:from][:email],
                                     email[:to][:email],
                                     email[:subject],
                                     email[:message_id][1..-2]) if large_email(start_time)
@@ -104,10 +105,19 @@ class Helpdesk::Email::HandleTicket
     attachments = []
     content_id_hash = {}
     email[:attached_items].each_with_index do |(key,attached),i|
-      att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i))
-      if att.is_a? Helpdesk::Attachment
-        content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
-        attachments.push att
+      begin
+        att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i), true)
+        if att.is_a? Helpdesk::Attachment
+          content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
+          attachments.push att
+        end
+      rescue HelpdeskExceptions::AttachmentLimitException => ex
+        Rails.logger.error("ERROR ::: #{ex.message}")
+        add_notification_text item
+        break
+      rescue Exception => e
+        Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
+        break
       end
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?

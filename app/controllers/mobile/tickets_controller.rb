@@ -3,6 +3,7 @@ class Mobile::TicketsController < ApplicationController
   include Mobile::Controllers::Ticket
   include ActionView::Helpers::CsrfHelper
   include HelpdeskControllerMethods
+  include MemcacheKeys
 
   before_filter :require_user_login, :set_mobile
   
@@ -37,12 +38,15 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def mobile_filter_count
-    agent_filter = params[:agent_filter] == "true"
-    counts_hash  = {}
-    MOBILE_FILTERS.each do |element|
-      counts_hash[element] = {
-        :count => filter_count(element, (element != :new && agent_filter))
-      }
+    counts_hash = MemcacheKeys.fetch(filter_count_key,15.minutes) do
+      agent_filter = params[:agent_filter] == "true"
+      counts_hash  = {}
+      MOBILE_FILTERS.each do |element|
+        counts_hash[element] = {
+          :count => filter_count(element, (element != :new && agent_filter))
+        }
+      end
+      counts_hash
     end
     render :json => counts_hash
   end
@@ -145,6 +149,10 @@ class Mobile::TicketsController < ApplicationController
     false
    else
     true
+  end
+
+  def filter_count_key
+    MOBILE_AGENT_FILTER_COUNT % { :account_id => current_account.id, :user_id => current_user.id }
   end
 
 end
