@@ -441,6 +441,7 @@ describe Solution::ArticlesController do
     test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
     test_language_article.reload
+    old_language_id = test_language_article.language_id
     test_language_article.language = "fr"
     test_language_article.save
     lang = Language.find_by_code("fr")
@@ -448,6 +449,7 @@ describe Solution::ArticlesController do
     test_language_article.language_name.should be_eql(lang.name)
     test_language_article.language_code.should be_eql(lang.code)
     test_language_article.language.should be_eql(lang.code)
+    test_language_article.update_attribute(:language_id, old_language_id)
   end
 
   describe "Change Author[Prop Update]" do
