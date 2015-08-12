@@ -1,7 +1,7 @@
 module Solution::NavmenuHelper
   
   def navmenu_categories
-    [category_list(category_collection[:current]), category_list(category_collection[:others])].join('').html_safe
+    [category_list(current_categories), category_list(other_categories)].join('').html_safe
   end
   
   def category_list(categories)
