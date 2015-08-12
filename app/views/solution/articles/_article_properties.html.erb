@@ -22,7 +22,7 @@
 			%>
 		</div>
 		<div class="span4">
-			<%= f.label :name, t('solution.type'),:class =>"control-label" %>
+			<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
 			<div class="span12 pt3">
 				<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
 					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
@@ -49,7 +49,7 @@
 
 				<div class="muted">
 					<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
-					<%= t('solution.title_counter_message') %>
+					<%= t('solution.article_properties.title_counter_message') %>
 				</div>
 			</div>
 		</div>
@@ -63,7 +63,7 @@
 					:class => "solution-properties-description" %>
 				<div class="muted">
 		    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
-		    		<%= t('solution.description_counter_message') %>
+		    		<%= t('solution.article_properties.description_counter_message') %>
 	  		</div>
 	  	</div>
 	  </div>

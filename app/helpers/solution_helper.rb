@@ -30,11 +30,11 @@ module SolutionHelper
 	def search_placeholder(page)
 		case page
 			when :category
-				t('solutions.search_in', :search_scope => @category.name)
+				t('solution.articles.search_in', :search_scope => @category.name)
 			when :folder
-				t('solutions.search_in', :search_scope => @folder.name)
+				t('solution.articles.search_in', :search_scope => @folder.name)
 			else
-				t('solutions.search_all')
+				t('solution.articles.search_all')
 		end
 	end
 
