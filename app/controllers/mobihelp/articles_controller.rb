@@ -11,7 +11,7 @@ class Mobihelp::ArticlesController < MobihelpController
   private
 
     def load_article
-      @article = current_account.solution_articles.find(params[:id])
+      @article = current_account.solution_articles.find_by_id(params[:id], :readonly => false)
     end
 
     def validate_user
