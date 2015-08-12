@@ -44,6 +44,7 @@ module Solution::ArticlesHelper
   end
 
   def publish_link
+    return if @article.folder.is_default?
     link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])

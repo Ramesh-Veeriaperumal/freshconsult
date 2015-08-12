@@ -3656,7 +3656,7 @@ en:
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
       published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
-      published_failure: This article could not be published. Try again.
+      published_failure: This article could not be published.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
       edit: Edit Article
@@ -4943,8 +4943,8 @@ en:
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
         no_tickets: You don't have any tickets in current view
-        article_feedback: Article Feedbacks
-        my_article_feedback: My Articles Feedbacks
+        article_feedback: Article Feedback
+        my_article_feedback: My Articles Feedback
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:

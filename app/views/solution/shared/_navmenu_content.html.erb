@@ -1,7 +1,7 @@
 <li>
   <%= pjax_link_to(t('solution.home'), solution_categories_path, {:"data-page-name" => :home})%>
 </li>
-<% if privilege?(:publish_solution) %>
+<% if privilege?(:view_solutions) %>
 <li>
   <%= pjax_link_to(t('solution.draft.my_drafts'), solution_drafts_path, {:"data-page-name" => :my_drafts})%>
 </li>

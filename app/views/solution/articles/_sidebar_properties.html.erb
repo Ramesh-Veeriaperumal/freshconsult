@@ -30,7 +30,7 @@
 						"data-width" => "700px",
 						"data-close-label" => t('cancel'),
 						"data-submit-label" => t('save'), 
-					  "data-submit-loading" => t('saving') ) 
+					  "data-submit-loading" => t('saving') ) if (privilege?(:manage_solutions) || privilege?(:publish_solution))
 				%>
 			</p>
 		</div>
