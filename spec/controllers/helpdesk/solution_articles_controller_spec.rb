@@ -294,6 +294,7 @@ describe Solution::ArticlesController do
     describe "Move to" do
 
       it "should move selected articles to another folder" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         put :move_to, :items => @article_ids, :parent_id => @test_folder2.id
         [@test_article3, @test_article4].each do |article|
           article.reload
@@ -307,6 +308,7 @@ describe Solution::ArticlesController do
       end
 
       it "should reverse the changes done by move_to" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         put :move_back, :items => @article_ids, :parent_id => @test_folder.id
         [@test_article3, @test_article4].each do |article|
           article.reload
@@ -331,7 +333,7 @@ describe Solution::ArticlesController do
         [@test_article3, @test_article4].each do |article|
           article.user_id.should_not be_eql(@agent2.id)
         end
-
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         put :change_author, :items => @article_ids, :parent_id => @agent2.id
 
         #the author should be changed

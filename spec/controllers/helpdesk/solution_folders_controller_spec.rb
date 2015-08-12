@@ -219,6 +219,7 @@ describe Solution::FoldersController do
     describe "Move to action" do
 
       it "should move selected folders to another category" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         put :move_to, :items => @folder_ids, :parent_id => @test_category2.id
         [@test_folder3, @test_folder4].each do |folder|
           folder.reload
@@ -232,6 +233,7 @@ describe Solution::FoldersController do
       end
 
       it "should reverse the changes done by move_to" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
         put :move_back, :items => @folder_ids, :parent_id => @test_category.id
         [@test_folder3, @test_folder4].each do |folder|
           folder.reload
