@@ -2766,7 +2766,7 @@ en:
       workaround: Workaround
     search_all:
       placeholder: Search All Solutions
-    search_in:
+    search:
       placeholder: Search %{name}
     drafts:
       empty: There are no drafts here.
