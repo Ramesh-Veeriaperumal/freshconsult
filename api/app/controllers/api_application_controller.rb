@@ -111,12 +111,87 @@ class ApiApplicationController < MetalApiController
 
   private
 
+    def response_headers
+      response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
+    end
+
+    def render_500(e)
+      fail e if Rails.env.development? || Rails.env.test?
+      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      @error = BaseError.new(:internal_error)
+      render '/base_error', status: 500
+    end
+
+    def invalid_field_handler(exception) # called if extra fields are present in params.
+      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
+      invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
+      render_error invalid_fields
+    end
+
+    def ensure_proper_fd_domain # 404
+      return true if Rails.env.development?
+      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain
+    end
+
+    def ensure_proper_protocol
+      return true if Rails.env.test? || Rails.env.development?
+      render_request_error(:ssl_required, 403) unless request.ssl?
+    end
+
+    def render_request_error(code, status, params_hash = {})
+      @error = RequestError.new(code, params_hash)
+      render '/request_error', status: status
+    end
+
+    def check_account_state
+      render_request_error(:account_suspended, 403) unless current_account.active?
+    end
+
+    def set_cache_buster
+      response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+      response.headers['Pragma'] = 'no-cache'
+      response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
+    end
+
+    def feature_name
+      # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+
+    def before_load_object
+      # Template method to stop execution just before load_object
+    end
+
+    def load_object(items = scoper)
+      @item = items.find_by_id(params[:id])
+      unless @item
+        head :not_found # Do we need to put message inside response body for 404?
+      end
+    end    
+
+    def after_load_object
+      # Template method to stop execution immediately after load_object
+    end
+
+    def check_params # update withut any params, is not allowed.
+      render_request_error :missing_params, 400 if params[cname].blank?
+    end
+
     def before_validation
       # Template method - can be used to limit the parameters sent based on the permissions of the user before creating.
     end
 
-    def assign_protected
-      # Template method - Assign attributes that cannot be mass assigned.
+    def validate_params
+      # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
+    end
+
+    def manipulate_params
+      # This will be used to map incoming parameters to parameters that the model would understand
+    end
+
+    def build_object
+      # assign already loaded account object so that it will not be queried repeatedly in model
+      build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}
+      @item = scoper.new(build_params.merge(params[cname]))
     end
 
     def validate_filter_params
@@ -129,33 +204,70 @@ class ApiApplicationController < MetalApiController
       # the imput sent using strong params and custom validations.
     end
 
-    def feature_name
-      # Template method - Redefine if the controller needs requires_feature before_filter
+    def load_objects(items = scoper)
+      @items = items.paginate(paginate_options)
     end
 
-    def not_get_request?
-      @not_get_request ||= !request.get?
+    def assign_protected
+      # Template method - Assign attributes that cannot be mass assigned.
+    end
+
+    # Using optional parameters for extensibility
+    def render_201_with_location(template_name: "#{controller_path}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+      render template_name, location: send(location_url, item_id), status: 201
+    end
+
+    def nscname # namespaced controller name
+      controller_path.gsub('/', '_').singularize
+    end
+
+    def set_custom_errors(_item = @item)
+      # This is used to manipulate the model errors to a format that is acceptable.
+    end
+
+    def render_custom_errors(item, options)
+      Array.wrap(options[:remove]).each { |field| item.errors[field].clear }
+      render_error item.errors, (options || {}).except(:remove)
+    end
+
+    def render_error(errors, meta = nil)
+      @errors = ErrorHelper.format_error(errors, meta)
+      render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+    end
+
+    def cname
+      controller_name.singularize
+    end
+
+    def access_denied
+      if current_user
+        render_request_error :access_denied, 403
+      else
+        render_request_error :invalid_credentials, 401
+      end
     end
 
     def current_user
       return @current_user if defined?(@current_user)
-      if not_get_request?
+      if get_request?
+        if current_user_session # fall back to old session based auth
+          @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
+          if @current_user && @current_user.failed_login_count != 0
+            @current_user.update_failed_login_count(true)
+          end
+        end
+      else
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
           # string check for @ is used to avoid a query.
-          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password) : AuthHelper.get_token_user(username)
-        end
-      elsif current_user_session # fall back to old session based auth
-        @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
-        if @current_user && @current_user.failed_login_count != 0
-          AuthHelper.update_failed_login_count(@current_user, true)
+          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
         end
       end
       @current_user
     end
 
-    def set_custom_errors(_item = @item)
-      # This is used to manipulate the model errors to a format that is acceptable.
+    def get_request?
+      @get_request ||= request.get?
     end
 
     def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
@@ -172,47 +284,8 @@ class ApiApplicationController < MetalApiController
       true
     end
 
-    def set_cache_buster
-      response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
-      response.headers['Pragma'] = 'no-cache'
-      response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
-    end
-
-    def render_500(e)
-      fail e if Rails.env.development? || Rails.env.test?
-      Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      @error = BaseError.new(:internal_error)
-      render '/base_error', status: 500
-    end
-
-    def response_headers
-      response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
-    end
-
-    def invalid_field_handler(exception) # called if extra fields are present in params.
-      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
-      render_error invalid_fields
-    end
-
-    # Using optional parameters for extensibility
-    def render_201_with_location(template_name: "#{controller_path}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
-      render template_name, location: send(location_url, item_id), status: 201
-    end
-
-    def render_error(errors, meta = nil)
-      @errors = ErrorHelper.format_error(errors, meta)
-      render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
-    end
-
-    def render_request_error(code, status, params_hash = {})
-      @error = RequestError.new(code, params_hash)
-      render '/request_error', status: status
-    end
-
-    def render_custom_errors(item, options)
-      Array.wrap(options[:remove]).each { |field| item.errors[field].clear }
-      render_error item.errors, (options || {}).except(:remove)
+    def paginate_items(item)
+      item.paginate(paginate_options)
     end
 
     def paginate_options
@@ -231,76 +304,11 @@ class ApiApplicationController < MetalApiController
       end
     end
 
-    def cname
-      controller_name.singularize
-    end
-
-    def access_denied
-      if current_user
-        render_request_error :access_denied, 403
-      else
-        render_request_error :invalid_credentials, 401
-      end
-    end
-
-    def load_object(items = scoper)
-      @item = items.find_by_id(params[:id])
-      unless @item
-        head :not_found # Do we need to put message inside response body for 404?
-      end
-    end
-
-    def before_load_object
-    end
-
-    def after_load_object
-    end
-
-    def build_object
-      # assign already loaded account object so that it will not be queried repeatedly in model
-      build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}
-      @item = scoper.new(build_params.merge(params[cname]))
-    end
-
-    def load_objects(items = scoper)
-      @items = items.paginate(paginate_options)
-    end
-
-    def nscname # namespaced controller name
-      controller_path.gsub('/', '_').singularize
-    end
-
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
       fields = constant[:all]
       constant.keys.each { |key| fields += constant[key] if privilege?(key) }
       fields
-    end
-
-    def paginate_items(item)
-      item.paginate(paginate_options)
-    end
-
-    def check_params # update withut any params, is not allowed.
-      render_request_error :missing_params, 400 if params[cname].blank?
-    end
-
-    def ensure_proper_protocol
-      return true if Rails.env.test? || Rails.env.development?
-      render_request_error(:ssl_required, 403) unless request.ssl?
-    end
-
-    def ensure_proper_fd_domain # 404
-      return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain
-    end
-
-    def manipulate_params
-      # This will be used to map incoming parameters to parameters that the model would understand
-    end
-
-    def check_account_state
-      render_request_error(:account_suspended, 403) unless current_account.active?
     end
 
     def update?

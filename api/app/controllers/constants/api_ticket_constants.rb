@@ -13,7 +13,7 @@ module ApiTicketConstants
   # monitored_by is not inlcuded because it needs to be thought through to support different user_id as value
   TICKET_FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 3, 4)
 
-  TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s) + ['', nil]
+  TICKET_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
   INDEX_TICKET_FIELDS = %w(filter company_id requester_id order_by order_type created_since updated_since)
 
   ORDER_BY_SCOPE = {

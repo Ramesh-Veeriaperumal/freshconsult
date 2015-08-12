@@ -697,6 +697,24 @@ class User < ActiveRecord::Base
     self.customer_id
   end
 
+  # failed_login_count increases for each consecutive failed login.
+  # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
+  def update_failed_login_count(valid_pwd, user_name = nil, ip = nil)
+    if valid_pwd
+      # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
+      if self.failed_login_count != 0
+        self.failed_login_count = 0 
+        self.save
+      end
+      self
+    else
+      self.failed_login_count ||= 0
+      self.failed_login_count += 1
+      self.save
+      Rails.logger.error "API Unauthorized Error: Failed login attempt '#{self.failed_login_count}' for '#{user_name}' from #{ip} at #{Time.now.utc}"
+      nil
+    end
+  end
 
   private
     def name_part(part)

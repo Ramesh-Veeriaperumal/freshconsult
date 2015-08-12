@@ -3,21 +3,15 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
-      errors = [[:type, ["can't be blank"]]] if ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
+      errors = [[:type, ["can't be blank"]]] if params.key?(:type) && ApiTicketConstants::TICKET_FIELD_TYPES.exclude?(params[:type])
       render_error errors if errors
     end
 
     def scoper
-      filter = params[:type] ? { field_type: params[:type] } : {}
-      filter_on_products(current_account.ticket_fields).where(filter).includes(:nested_ticket_fields)
-    end
-
-    def filter_on_products(tkt_fields)
-      if exclude_products
-        tkt_fields.where(['helpdesk_ticket_fields.field_type != ?', 'default_product'])
-      else
-        tkt_fields
-      end
+      condition = "2 > 1"
+      condition += " AND field_type = \"#{params[:type]}\"" if params[:type]
+      condition += ' AND helpdesk_ticket_fields.field_type != "default_product"' if exclude_products
+      current_account.ticket_fields.where(condition).includes(:nested_ticket_fields)
     end
 
     def exclude_products
