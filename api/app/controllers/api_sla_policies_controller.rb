@@ -6,10 +6,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     sla_policy_delegator = SlaPolicyDelegator.new(@item)
     if !sla_policy_delegator.valid?
       render_error(sla_policy_delegator.errors, sla_policy_delegator.error_options)
-    elsif @item.save
-      @conditions_hash = {}
-      conditions.each { |key, value| @conditions_hash[key.to_s.pluralize] = value } unless conditions.nil?
-    else
+    elsif !@item.save
       render_error(@item.errors)
     end
   end

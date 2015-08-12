@@ -47,32 +47,31 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   #
   
-   def check_account_state
-    unless current_account.active?
+  def set_locale
+    I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
+  end
+ 
+  def check_account_state
+    unless current_account.active? 
       respond_to do |format|
-        account_suspended_hash = { account_suspended: true }
+        account_suspended_hash = {:account_suspended => true}
 
-        format.xml { render xml: account_suspended_hash.to_xml }
-        format.json { account_suspended_hash.to_json }
-        format.nmobile { render json: account_suspended_hash.to_json }
-        format.js { render json: account_suspended_hash.to_json }
-        format.widget { render json: account_suspended_hash.to_json }
-        format.html do
+        format.xml { render :xml => account_suspended_hash.to_xml }
+        format.json { render :json => account_suspended_hash.to_json }
+        format.nmobile { render :json => account_suspended_hash.to_json }
+        format.js { render :json => account_suspended_hash.to_json }
+        format.widget { render :json => account_suspended_hash.to_json }
+        format.html { 
           if privilege?(:manage_account)
             flash[:notice] = t('suspended_plan_info')
             return redirect_to(subscription_url)
           else
-            flash[:notice] = t('suspended_plan_admin_info', email: current_account.admin_email)
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+            flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
+            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
           end
-        end
+        }
       end
     end
-  end
-
-
-  def set_locale
-    I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
   end
  
   def activerecord_error_list(errors)
@@ -146,31 +145,6 @@ class ApplicationController < ActionController::Base
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def handle_unverified_request
-    super
-    post_process_unverified_request
-    portal_redirect_url = root_url
-    if params[:portal_type] == 'facebook'
-      portal_redirect_url += 'support/home'
-    else
-      portal_redirect_url += 'support/login'
-    end
-    respond_to do |format|
-      format.html  do
-        redirect_to portal_redirect_url
-      end
-      format.nmobile do
-        render json: { logout: 'success' }.to_json
-      end
-      format.json do
-        render json: { logout: 'success' }.to_json
-      end
-      format.widget do
-        render json: { logout: 'success' }
-      end
-    end
-  end
-
   protected
     # Possible dead code
     def silence_logging
@@ -190,6 +164,34 @@ class ApplicationController < ActionController::Base
   private
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
+    end
+
+    def handle_unverified_request
+      super
+      Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
+      cookies.delete 'user_credentials'
+      current_user_session.destroy unless current_user_session.nil?
+      @current_user_session = @current_user = nil
+      portal_redirect_url = root_url
+      if params[:portal_type] == "facebook"
+        portal_redirect_url = portal_redirect_url + "support/home"
+      else
+        portal_redirect_url = portal_redirect_url + "support/login"
+      end
+      respond_to do |format|
+        format.html  {
+          redirect_to portal_redirect_url
+        }
+        format.nmobile{
+          render :json => {:logout => 'success'}.to_json
+        }
+        format.json{
+          render :json => {:logout => 'success'}
+        }
+        format.widget{
+          render :json => {:logout => 'success'}
+        }
+      end
     end
 
     #Clear rails 2 flash TO DO : Remove once migrated completely to rails 3

@@ -554,40 +554,40 @@ class NotesControllerTest < ActionController::TestCase
     match_json(request_error_pattern('access_denied'))
   end
 
-  def test_notes
-    t = ticket
-    get :ticket_notes, construct_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    match_json(result_pattern)
-  end
+  # def test_notes
+  #   t = ticket
+  #   get :ticket_notes, construct_params(id: t.id)
+  #   assert_response :success
+  #   result_pattern = []
+  #   t.notes.visible.exclude_source('meta').each do |n|
+  #     result_pattern << note_pattern(n)
+  #   end
+  #   match_json(result_pattern)
+  # end
 
-  def test_notes_return_only_non_deleted_notes
-    t = ticket
-    create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+  # def test_notes_return_only_non_deleted_notes
+  #   t = ticket
+  #   create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
 
-    get :ticket_notes, construct_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
-    match_json(result_pattern)
+  #   get :ticket_notes, construct_params(id: t.id)
+  #   assert_response :success
+  #   result_pattern = []
+  #   t.notes.visible.exclude_source('meta').each do |n|
+  #     result_pattern << note_pattern(n)
+  #   end
+  #   assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
+  #   match_json(result_pattern)
 
-    Helpdesk::Note.where(notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :ticket_notes, construct_params(id: t.id)
-    assert_response :success
-    result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
-    end
-    assert JSON.parse(response.body).count == 0
-    match_json(result_pattern)
-  end
+  #   Helpdesk::Note.where(notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
+  #   get :ticket_notes, construct_params(id: t.id)
+  #   assert_response :success
+  #   result_pattern = []
+  #   t.notes.visible.exclude_source('meta').each do |n|
+  #     result_pattern << note_pattern(n)
+  #   end
+  #   assert JSON.parse(response.body).count == 0
+  #   match_json(result_pattern)
+  # end
 
   def test_notes_without_privilege
     t = ticket

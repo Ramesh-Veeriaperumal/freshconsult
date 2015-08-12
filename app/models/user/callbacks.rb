@@ -110,7 +110,7 @@ class User < ActiveRecord::Base
        # OPTIMIZE
        # query from cache.
        # comp = account.companies.domains_like(email_domain).first
-       comp = account.companies_from_cache.select{|x| x.domains.to_s.include?(email_domain)}.first
+       comp = account.companies_from_cache.detect{|x| x.domains.to_s.include?(email_domain)}
        self.company_id = comp.id unless comp.nil?    
    end
   end

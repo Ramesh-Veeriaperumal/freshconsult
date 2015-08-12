@@ -191,12 +191,8 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def support_email
-    hash = parse_email_text(self.from_email)
+    hash = parse_email_text(self.schema_less_note.try(:from_email))
     hash[:email]
-  end
-
-  def api_support_email
-    parse_email_text(self.schema_less_note.from_email)[:email]
   end
   
   def to_xml(options = {})

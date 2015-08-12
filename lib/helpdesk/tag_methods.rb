@@ -1,12 +1,12 @@
 module Helpdesk::TagMethods
 
   def create_tags(tag_list,item)
-    add_tag_list= tag_list.split(",").flatten.map { |tag| tag.to_s.strip}
+    add_tag_list= tag_list.split(",").map { |tag| tag.to_s.strip}
     add_ticket_tags(add_tag_list,item)
   end
 
   def update_tags(tag_list, remove_tags, item)
-    new_tag_list= tag_list.split(",").flatten.map { |tag| tag.to_s.strip}
+    new_tag_list= tag_list.split(",").map { |tag| tag.to_s.strip}
     old_tag_list = item.tags.map{|tag| tag.name.strip }
 
     add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) },item)
@@ -30,7 +30,6 @@ module Helpdesk::TagMethods
     unless tags.blank?
         tag_uses = item.tag_uses.tags_to_remove(item.id, tags.map{ |tag| tag.id }, "Helpdesk::Ticket")
         item.tag_uses.destroy tag_uses
-        item.tags.reject!{|tag| tags.include?(tag)}
     end
   end
 

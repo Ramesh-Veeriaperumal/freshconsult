@@ -31,6 +31,8 @@ class MetalApiController < ActionController::Metal
 
   # wrap params will wrap only attr_accessible fields if this is removed.
   def self.inherited(subclass)
-    subclass.wrap_parameters exclude: [], format: [:json, :multipart_form]
+    subclass.wrap_parameters exclude: []
+    # To enable accessing Helpers in views when using Metal
+    subclass.view_context_class.include ApiApplicationHelper
   end
 end

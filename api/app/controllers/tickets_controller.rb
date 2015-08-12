@@ -35,7 +35,6 @@ class TicketsController < ApiApplicationController
       api_update_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank? # notify cc_people on update too.
     else
-      set_custom_errors
       render_error(@item.errors)
     end
   end
@@ -104,7 +103,7 @@ class TicketsController < ApiApplicationController
     end
 
     def tickets_filter(tickets)
-      tickets = tickets.where(deleted: false, spam: false).api_permissible(current_user)
+      tickets = tickets.where(deleted: false, spam: false).permissible(current_user)
       @ticket_filter.conditions.each do |key|
         clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
@@ -173,8 +172,8 @@ class TicketsController < ApiApplicationController
       @item.account = current_account
       @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
       @item.cc_email = @cc_emails
-      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-      @item.attachments += (attachments || []) if create? # assign attachments so that it will not be queried again in model callbacks
+      build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
     end
 
     def verify_ticket_permission

@@ -12,12 +12,12 @@ class TimeSheetFilterValidation < ApiValidation
   end
 
   def valid_user?
-    user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id.to_i }
+    user = Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id.to_i }
     errors.add(:agent_id, "can't be blank") unless user
   end
 
   def valid_company?
-    user = Account.current.companies_from_cache.find { |x| x.id == @company_id.to_i }
+    user = Account.current.companies_from_cache.detect { |x| x.id == @company_id.to_i }
     errors.add(:company_id, "can't be blank") unless user
   end
 end

@@ -83,11 +83,4 @@ module Concerns::ApplicationConcern
     end
   end
 
-  def post_process_unverified_request
-    Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
-    cookies.delete 'user_credentials'
-    current_user_session.destroy unless current_user_session.nil?
-    @current_user_session = @current_user = nil
-  end
-
 end

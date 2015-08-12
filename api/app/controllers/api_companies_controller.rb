@@ -1,6 +1,4 @@
 class ApiCompaniesController < ApiApplicationController
-  before_filter :set_required_fields, only: [:create, :update]
-
   def create
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
@@ -39,7 +37,7 @@ class ApiCompaniesController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       fields = CompanyConstants::COMPANY_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
-      @item.domains = @item.api_domains if update? && @item.api_domains
+      manipulate_domains if update?
       company = ApiCompanyValidation.new(params[cname], @item)
       render_error company.errors, company.error_options unless company.valid?
     end
@@ -52,8 +50,8 @@ class ApiCompaniesController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 
-    def set_required_fields
-      @item.required_fields = { fields: current_account.company_form.agent_required_company_fields,
-                                error_label: :label }
+    def manipulate_domains
+      api_domains = api_item_array(@item.domains)
+      @item.domains = api_domains if api_domains
     end
 end

@@ -100,7 +100,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
 
-  def self.filter(filter_options=DEFAULT_FILTER_OPTIONS)
+  def self.filter(filter_options=FILTER_OPTIONS)
     relation = scoped
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
@@ -109,7 +109,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     relation
   end
 
-  def self.filter_conditions(filter_options=DEFAULT_FILTER_OPTIONS)
+  def self.filter_conditions(filter_options=FILTER_OPTIONS)
     {
       billable: {
         conditions: { billable: filter_options[:billable].to_s.to_bool }
@@ -222,15 +222,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       xml.tag!(:agent_email,user.email) 
       xml.tag!(:customer_name,self.customer_name)
       xml.tag!(:contact_email,workable.requester.email)
-    end
-  end
-
-  def api_time_spent
-    if time_spent.is_a? Numeric
-      # converts seconds to hh:mm format say 120 seconds to 00:02 
-      hours, minutes = time_spent.divmod(60).first.divmod(60)
-      #  formatting 9 to be displayed as 09
-      format('%02d:%02d', hours, minutes)
     end
   end
   

@@ -488,8 +488,6 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    # OPTIMIZE
-    # main_portal_from_cache
     if account.main_portal_from_cache.portal_url.blank? 
       return account.ssl_enabled? ? 'https' : 'http'
     else 

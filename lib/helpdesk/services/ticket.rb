@@ -14,8 +14,6 @@ module Helpdesk
       end
 
       def update_ticket_attributes(attributes)
-        #Needed for API if params has only description
-        assign_description_html(attributes[:ticket_body_attributes]) if attributes[:ticket_body_attributes]
         attributes = sanitize_body_hash(attributes,:ticket_body_attributes,"description") if(attributes)
         self.update_attributes(attributes)
       end
