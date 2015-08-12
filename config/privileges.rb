@@ -268,6 +268,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
+    resource :"api_company", :only => [:index, :show]
   end
 
   # add_or_edit_contact
@@ -288,6 +289,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
+    resource :"api_company", :only => [:create, :update]
   end
 
   delete_contact do
@@ -299,6 +301,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:destroy, :restore]
+    resource :"api_company", :only => [:destroy]
   end
 
   # ************** REPORTS **************************
@@ -419,7 +422,6 @@ Authority::Authorization::PrivilegeList.build do
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
     resource :"api_contact_field", :only => [:index]
-    resource :"api_company", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_company_field", :only => [:index]
     resource :"api_business_calendar", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
