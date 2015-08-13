@@ -3695,6 +3695,8 @@ en:
       all_drafts: All Drafts
       my_drafts: My Drafts
       kbase: KBase Email
+      portal:
+        all: All
       autosave:
         save_success: "Draft saved "
         somebody_editing: "%{name} is currently editing this article. "

@@ -26,24 +26,19 @@
 
 	<% unless (@articles.size == 0) %>
 		<%= render :partial => "drafts_list", :locals => { :articles => @articles} %>
+		<%= will_paginate @articles, :renderer => BootstrapPaginationRenderer,
+															:previous_label => "<b class='arrow-left'></b>",
+															:next_label => "<b class='arrow-right'></b>",
+															:class => "pagination pagination-centered" %>
 	<% else %>
 		<div class="solution-drafts">
 			<div class="draft_info_data"><%= t("solutions.drafts.empty") %></div>
 		</div>
 	<% end %> 
-	<%= will_paginate @articles, :renderer => BootstrapPaginationRenderer,
-															:previous_label => "<b class='arrow-left'></b>",
-															:next_label => "<b class='arrow-right'></b>",
-															:class => "pagination pagination-centered" %>
 </div>
 
 <% content_for :helpcard do %>
 	<h3 class="lead"><%= t('solution.draft.name').html_safe %></h3>
 	<%= t('solution.kbase_email_info', :domain_name => current_account.full_domain).html_safe %>
 	<%= helpcard_content([2, 3, 4, 5, 6], 'solution.info' ) %>
-<% end %>
-
-<%= javascript_tag do %>
-  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
-    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
 <% end %>
