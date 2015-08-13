@@ -32,7 +32,9 @@ class Solution::CategoriesController < ApplicationController
   def show
     @page_title = @category.name
     respond_to do |format|
-      format.html
+      format.html {
+        redirect_to solution_my_drafts_path('all') if @category.is_default?
+      }
       format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
       format.json  { render :json => @category.to_json(:except => [:account_id,:import_id],
                                                   :include => folder_scope) }

@@ -223,7 +223,11 @@ describe Solution::CategoriesController do
 
     it "should render a show page of a category if corresponding meta is destroyed" do
       get :show, :id => @test_category_for_meta.id
-      response.body.should =~ /#{@test_category_for_meta.name}/
+      if @test_category_for_meta.is_default?
+        response.should redirect_to(solution_my_drafts_path('all'))    
+      else
+        response.body.should =~ /#{@test_category_for_meta.name}/
+      end
     end
   end
 
@@ -233,6 +237,12 @@ describe Solution::CategoriesController do
     test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     test_category.destroy
     check_position(@account, "solution_categories")
+  end
+
+  it "should redirect to drafts index page when default catgeory is accessed" do
+    category = @account.solution_categories.where(:is_default => true).first
+    get :show, :id => category.id
+    response.should redirect_to(solution_my_drafts_path('all'))
   end
 
 end
