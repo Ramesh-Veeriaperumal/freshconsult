@@ -10,7 +10,8 @@ module SolutionsHelper
 
   def create_folder(params = {})
     test_folder = FactoryGirl.build(:solution_folders, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :visibility => params[:visibility], :category_id => params[:category_id])
+              :description => params[:description], :visibility => params[:visibility],
+              :category_id => params[:category_id], :is_default => params[:is_default] || false)
     test_folder.account_id = @account.id
     test_folder.save(validate: false)
     test_folder

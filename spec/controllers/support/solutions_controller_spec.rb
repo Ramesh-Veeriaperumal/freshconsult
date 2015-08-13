@@ -101,4 +101,12 @@ describe Support::SolutionsController do
     response.should render_template("support/solutions/show")
   end
 
+  it "should render 404 for default category" do
+    log_in(@user)
+    default_category = create_category( {:name => "category #{Faker::Name.name}",
+                       :description => "#{Faker::Lorem.sentence(3)}", :is_default => true} )
+    get 'show', id: default_category.id
+    response.status.should eql(404)
+  end
+
 end
