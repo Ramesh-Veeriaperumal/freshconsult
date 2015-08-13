@@ -2148,6 +2148,7 @@ Helpkit::Application.routes.draw do
         collection do 
           get :spam_details   
           put :block_user   
+          put :unblock_user
           put :hard_block   
           put :spam_user   
           put :internal_whitelist
