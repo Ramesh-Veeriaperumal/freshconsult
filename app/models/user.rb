@@ -619,7 +619,12 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    #Remove as part of Search-Resque cleanup
+    if Search::Job.sidekiq?
+      SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id })
+    else
+      Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    end if ES_ENABLED
   end
 
   def moderator_of?(forum)
