@@ -121,13 +121,17 @@ module SolutionsHelper
     ActionController::Base.perform_caching = true
     @current_account = Account.current
     @current_portal  = Portal.first.make_current
-    @cache_key = MemcacheKeys::ALL_SOLUTION_CATEGORIES % { :account_id => @current_account.id }
     solution_test_setup
   end
 
-  def check_cache_invalidation
-    $memcache.get(@cache_key).should be_nil
+  def solutions_cache_key(account)
+    MemcacheKeys::ALL_SOLUTION_CATEGORIES % { :account_id => account.id }
   end
+
+  def check_cache_invalidation(account)
+    $memcache.get(solutions_cache_key(account)).should be_nil
+  end
+
   def check_meta_integrity(object)
     meta_obj = object.reload.meta_object
     meta_obj.should be_an_instance_of(object.meta_class)

@@ -216,6 +216,7 @@ window.App = window.App || {};
           items: obj.data.selectedElementIds
         },
         success: function () {
+          App.Solutions.NavMenu.reload();
           $this.initialData();
           console.log('success');
         }
@@ -234,6 +235,7 @@ window.App = window.App || {};
           items: obj.data('items')
         },
         success: function () {
+          App.Solutions.NavMenu.reload();
           $.proxy(this.onSaveSuccess, this);
         },
         error: $.proxy(this.onSaveError, this)

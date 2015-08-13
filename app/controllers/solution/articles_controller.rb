@@ -347,7 +347,7 @@ class Solution::ArticlesController < ApplicationController
 
     def bulk_update_folder
       @articles = current_account.solution_articles.where(:id => params[:items])
-      @articles.update_all(:folder_id => params[:parent_id])
+      @articles.map { |a| a.update_attributes(:folder_id => params[:parent_id]) }
       @updated_items = @articles.map(&:id)
     end
 
