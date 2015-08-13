@@ -177,6 +177,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
+  outbound_email: Outbound Email
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook User
@@ -294,6 +295,7 @@ en:
       tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
+    properties: Properties
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
@@ -2222,6 +2224,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
@@ -2273,6 +2276,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
+  requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
@@ -2393,6 +2397,9 @@ en:
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} created a ticket"
+        long: "{{user_path}} created a ticket {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -3734,6 +3741,8 @@ en:
     welcome: Welcome
     new_ticket: New
     new_ticket_tip: New ticket
+    new_phone_ticket: Ticket
+    compose_email: Email
     search: Search ( / )
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
@@ -4033,6 +4042,7 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
+    outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
     ticket_updated: Ticket updated
@@ -4042,6 +4052,7 @@ en:
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_from: "From: %{username}"
+    ticket_to: "To: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -4151,7 +4162,11 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
+    learn_more: Learn more
+    submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications"
+    submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
       post_to_linked_forum: Post in linked forum
@@ -4442,6 +4457,15 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    send_email: Send an email
+    send: Send
+    send_and_new: Send and <strong> New </strong>
+    enter_subject: Enter Subject...
+    from: "From:"
+    to: "To:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:

@@ -1341,6 +1341,7 @@ Helpkit::Application.routes.draw do
         get :filter_options
         get :full_paginate
         get :summary
+        get :compose_email
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save

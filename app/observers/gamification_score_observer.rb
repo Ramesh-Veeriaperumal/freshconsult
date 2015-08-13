@@ -26,7 +26,7 @@ class GamificationScoreObserver < ActiveRecord::Observer
 	end
 
 	def process_ticket_score(ticket)
-		add_support_score(ticket) unless ticket.active?
+		add_support_score(ticket) unless (ticket.active? and !ticket.outbound_email?)
 	end
 
 	def process_surveyresult_score(sr)

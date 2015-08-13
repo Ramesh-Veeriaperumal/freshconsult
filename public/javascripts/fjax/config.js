@@ -40,7 +40,8 @@ window.Fjax = window.Fjax || {};
 			"/companies": 'companies',
 			"/helpdesk/tickets": 'tickets',
 			"/search": 'search',
-			"/helpdesk/agent_status": 'freshfoneagents'
+			"/helpdesk/agent_status": 'freshfoneagents',
+			"/helpdesk/tickets/compose_email": 'tickets'
 		},
 		LOADING_WAIT: 60
 	};

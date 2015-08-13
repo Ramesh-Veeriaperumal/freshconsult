@@ -11,6 +11,10 @@ RSpec.describe Helpdesk::TicketsController do
     @test_ticket = create_ticket({ :status => 2 }, create_group(@account, {:name => "Tickets"}))
     @group = @account.groups.first
     user = add_test_agent(@account)
+    @email_config =  @account.email_configs.new(:name => "consoleemailconfig", :to_email => "smething@teting.com", :reply_email => "somehintg@testing.com")
+    @email_config.save
+    @email_config.reload
+    @email_config.update_column(:active, true)
     sla_policy = create_sla_policy(user)
     $redis_tickets.keys("HELPDESK_TICKET_FILTERS*").each {|key| $redis_tickets.del(key)}
     $redis_tickets.keys("HELPDESK_TICKET_ADJACENTS*").each {|key| $redis_tickets.del(key)}
@@ -45,6 +49,16 @@ RSpec.describe Helpdesk::TicketsController do
     response.body.should =~ /#{ticket.description_html}/
   end
 
+
+  it "should create a outbound ticket" do
+    @account.features.compose_email.create
+
+    ticket = create_ticket({:status => 2, :source => 10, :email_config_id => @email_config.id})
+    get :show, :id => ticket.display_id
+    ticket.source..should = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+    Delayed::Job.last.handler.should_not include("biz_rules_check")
+    @account.features.compose_email.destroy
+  end
 
   it "should create a meta for created by for phone tickets" do
     ticket = create_ticket({:status => 2, :source => 3})
@@ -141,6 +155,52 @@ RSpec.describe Helpdesk::TicketsController do
                                        :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
                                       }
     @account.tickets.find_by_subject("New Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+  end
+
+  it "should create a new outbound email ticket" do
+    now = (Time.now.to_f*1000).to_i
+    @account.features.compose_email.create
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Oubound Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :cc_email => ["someone@cc.com", "somenew@cc.com"],
+                                       :email_config_id => @email_config.id,
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    Delayed::Job.last.handler.should_not include("biz_rules_check")                                  
+    t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
+    t.cc_email[:cc_email].include?("someone@cc.com")
+    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+    @account.features.compose_email.destroy
+  end
+
+  it "should create a new outbound email ticket for non feature account but outbound email check should return false" do
+    now = (Time.now.to_f*1000).to_i
+    post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
+                                       :requester_id => "",
+                                       :subject => "New Oubound Ticket #{now}",
+                                       :ticket_type => "Question",
+                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
+                                       :status => "2",
+                                       :priority => "1",
+                                       :group_id => "",
+                                       :responder_id => "",
+                                       :email_config_id => @email_config.id,
+                                       :ticket_body_attributes => {"description_html"=>"<p>Testing</p>"}
+                                      }
+    Delayed::Job.last.handler.should_not include("biz_rules_check")
+    t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
+    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    t.outbound_email?.should be false
+    @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
+
   end
 
   it "should create a new ticket with RabbitMQ enabled" do

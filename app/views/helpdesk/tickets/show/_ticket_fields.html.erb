@@ -15,7 +15,7 @@
 
 		<!--form values starts here-->
 		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements', 
-									:locals => {:form_builder => f} %>
+									:locals => {:form_builder => f, :ticket => @item} %>
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->
 	</ul>

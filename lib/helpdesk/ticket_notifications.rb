@@ -74,5 +74,9 @@ module Helpdesk::TicketNotifications
     e_notification.requester_notification? or e_notification.agent_notification?
   end
 
+  def send_outbound_email
+    Helpdesk::TicketNotifier.send_later(:deliver_notify_outbound_email, self)
+  end
+
 	end
 end
