@@ -110,20 +110,23 @@
       }
     }
     .select-folder{
-      margin-bottom: 20px;
+      margin: 15px 0px;
       .folder-warning-msg {
-        color: brown;
+        color: #A90329;
       }
       .control-label {
         @include float(left);
-        width: 130px;
         padding-top: 5px;
         font-weight: 500;
+        width: 60px;
       }
       .controls{
-        @include margin-left(150px);
+        @include margin-left(68px);
         input, textarea {
           margin-bottom: 0px;
+        }
+        .select2-container {
+          @include margin-right(20px);
         }
       }
       .control-label, controls {

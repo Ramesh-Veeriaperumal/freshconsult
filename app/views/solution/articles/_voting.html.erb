@@ -28,7 +28,7 @@
 		<%= form_for @article, :url => reset_url, :method => 'put', 
       :html => { "data-remote" => true } do |f| %>
 		
-		<%= t('solution.articles.reset_rating.dialog_msg',
+		<%= t('solution.articles.reset_rating.confirm_msg',
 									:no_of_likes => @article.thumbs_up,
 									:no_of_dislikes => @article.thumbs_down) %>
 		<% end %>

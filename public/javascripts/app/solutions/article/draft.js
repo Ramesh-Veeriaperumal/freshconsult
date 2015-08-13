@@ -37,7 +37,7 @@ window.App = window.App || {};
         draft_discard = {
           type: 'DELETE',
           url: $('.article-edit-form').data().draftDiscardUrl,
-          dataType: "json"
+          dataType: "script"
         },
         handlers = {
           success: function () {

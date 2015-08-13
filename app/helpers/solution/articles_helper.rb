@@ -44,6 +44,7 @@ module Solution::ArticlesHelper
   end
 
   def publish_link
+    return if @article.folder.is_default?
     link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
@@ -109,6 +110,22 @@ module Solution::ArticlesHelper
     output << submit_tag(t('save'), :name => "save_as_draft", :class => "btn", :id => save_btn || "save-as-draft-btn", :"data-target-btn" => "#save-as-draft-btn")
     output << submit_tag(t('solution.articles.publish'), :name => "publish", :class => "btn btn-primary", :id => publish_btn || "article-publish-btn", :"data-target-btn" => "#article-publish-btn")
     output.join(' ').html_safe
+  end
+
+  def article_properties_edit_link(link_text)
+    return unless privilege?(:manage_solutions) || privilege?(:publish_solution)
+    link_to( link_text, 
+            properties_solution_article_path(@article, {:edit => true}),
+            :rel => "freshdialog",
+            :class => "article-properties",
+            :title => t('solution.articles.properties'),
+            :data => {
+              :target => "#article-prop",
+              :width => "700px",
+              "close-label" => t('cancel'),
+              "submit-label" => t('save'), 
+              "submit-loading" => t('saving')
+            }).html_safe
   end
   
 end

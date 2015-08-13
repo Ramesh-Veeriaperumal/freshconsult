@@ -23,14 +23,22 @@ class Solution::DraftsController < ApplicationController
 		respond_to do |format|
 			format.html { redirect_to :back }
 			format.json { render :json => { :success => true} , :status => 200 }
+			format.js   { 
+        flash[:notice] = t('solution.articles.draft.revert_msg');
+        render 'solution/articles/draft_reset'
+      }
 		end
 	end
 
 	def publish
 		redirect_to :back and return if @article.draft.present? && @article.draft.locked?
-		@article.draft.present? ? @article.draft.publish! : @article.publish!
-		flash[:notice] = t('solution.articles.published_success',
+		if @article.folder.is_default?
+			flash[:notice] = t('solution.articles.published_failure')
+		else
+			@article.draft.present? ? @article.draft.publish! : @article.publish!
+			flash[:notice] = t('solution.articles.published_success',
 		                     :url => support_solutions_article_path(@article)).html_safe
+		end
 		redirect_to :back
 	end
 

@@ -60,7 +60,6 @@
     <% if !@article.new_record? && @article.folder.is_default? %>
       <div class="row-fluid select-folder">
         <div class="control-group">
-          <p class="folder-warning-msg hide">*<%= t('solution.folders.choose_folder_warning') %></p>
           <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
           <div class="controls">
             <%= f.select :folder_id , 
@@ -72,6 +71,7 @@
                   {:include_blank => t('solution.folders.choose_folder')}, 
                   :class => "select2 span4 required"
             %>
+            <div class="folder-warning-msg hide">*<%= t('solution.folders.choose_folder_warning') %></div>
           </div>
         </div>
       </div>

@@ -2678,6 +2678,7 @@ en:
     edit: Edit Solution Category
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
+    save_and_create: Save and Create Another
     delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
@@ -2762,8 +2763,10 @@ en:
     types:
       permanent: Permanent
       workaround: Workaround
-    search_all: Search Articles
-    search_in: "Search in %{search_scope}"
+    search_all:
+      placeholder: Search All Solutions
+    search:
+      placeholder: Search %{name}
     drafts:
       empty: There are no drafts here.
       discard: Discard
@@ -3610,7 +3613,7 @@ en:
     folders:
       view_all: "View all folders..."
       choose_folder: Choose folder
-      choose_folder_warning: Please select a folder for publishing the article
+      choose_folder_warning: Please select a folder for saving the article
       new:
         new_folder: Add Folder
       folder_form:
@@ -3625,6 +3628,9 @@ en:
           other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
+      search_all: Search Articles
+      search_in: "Search in %{search_scope}"
+      type: Article Type
       prop_tabs:
         tag_fol: "Tags & folders"
         meta: Meta
@@ -3649,7 +3655,7 @@ en:
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
       published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
-      published_failure: This article could not be published. Try again.
+      published_failure: This article could not be published.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."
       edit: Edit Article
@@ -3680,7 +3686,9 @@ en:
         dialog_title: "Reset likes and dislikes"
         dialog_submit: "Reset"
         resetting: "Resetting"
-        dialog_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
+        dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
+        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+        confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
     draft:
       name: Drafts
       all_drafts: All Drafts
@@ -3698,15 +3706,16 @@ en:
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
-    add: Add Article
+    add: Add Solution
     info10: Private (Visible to Agents only)
     add_new_solution: Add solution
     title: Solutions
     title_singular: Solution
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
+    no_solutions_info: No solutions in this folder
     info4: Solutions have a 3 level hierarchy - <b>Category --> Folder --> Article</b>
-    type: Article Type
+    type: Solution Type
     info5: Solutions can be of two types - <b>Workaround</b> or <b>Permanent</b> solutions
     info6: A Solution can have a <b>Draft</b> status when you are working on it and can be  changed to <b>Published</b> status once it is finished and reviewed
     visibility: Visibility
@@ -3732,11 +3741,11 @@ en:
     solution_meta_title: Title Tag
     solution_meta_keywords: Meta Keywords
     solution_meta_description: Meta Description
-    title_counter_message: Best SEO pages recommend a maximum of 72 characters for title.
-    description_counter_message: Best SEO pages recommend a maximum of 150 characters for description.
+    title_counter_message: Best SEO pages, recommend a maximum of 72 characters for title.
+    description_counter_message: Best SEO pages, recommend a maximum of 150 characters for description.
     char_count: characters
     meta_keywords_message: Seperate keywords with comma
-    user_details: "By <span class='user'>%{user}</span>, %{time}"
+    user_details: "By <span class='article-user'>%{user}</span>, %{time}"
     feedback_message_1: "Need more information"
     feedback_message_2: "Difficult to understand"
     feedback_message_3: "Inaccurate/irrelevant content"
@@ -3744,6 +3753,9 @@ en:
     properties: Properties
     solution_title: Title
     via: via
+    article_properties:
+      title_counter_message: Best SEO pages recommend 50-60 characters for title.
+      description_counter_message: Best SEO pages recommend 150-160 characters for description.
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -4930,8 +4942,8 @@ en:
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
         no_tickets: You don't have any tickets in current view
-        article_feedback: Article Feedbacks
-        my_article_feedback: My Articles Feedbacks
+        article_feedback: Article Feedback
+        my_article_feedback: My Articles Feedback
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
