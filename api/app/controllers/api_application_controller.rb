@@ -44,7 +44,7 @@ class ApiApplicationController < MetalApiController
   before_filter :validate_params, only: [:create, :update]
 
   # Manipulating the parameters similar to the attributes that the model understands.
-  before_filter :manipulate_params, only: [:create, :update]
+  before_filter :sanitize_params, only: [:create, :update]
 
   # This is not moved inside create because, controlelrs redefining create needn't call build_object again.
   before_filter :build_object, only: [:create]
@@ -63,8 +63,7 @@ class ApiApplicationController < MetalApiController
     if @item.save
       render_201_with_location
     else
-      set_custom_errors
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -75,8 +74,7 @@ class ApiApplicationController < MetalApiController
   def update
     assign_protected
     unless @item.update_attributes(params[cname])
-      set_custom_errors # this will set @error_options if necessary.
-      @error_options ? render_custom_errors(@item, @error_options) : render_error(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -125,7 +123,7 @@ class ApiApplicationController < MetalApiController
     def invalid_field_handler(exception) # called if extra fields are present in params.
       Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
-      render_error invalid_fields
+      render_errors invalid_fields
     end
 
     def ensure_proper_fd_domain # 404
@@ -150,7 +148,7 @@ class ApiApplicationController < MetalApiController
     def set_cache_buster
       response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
       response.headers['Pragma'] = 'no-cache'
-      response.headers['Expires'] = 'Fri, 01 Jan 1990 00:00:00 GMT'
+      response.headers['Expires'] = 'Wed, 13 Oct 2010 00:00:00 UTC'
     end
 
     def feature_name
@@ -184,7 +182,7 @@ class ApiApplicationController < MetalApiController
       # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
     end
 
-    def manipulate_params
+    def sanitize_params
       # This will be used to map incoming parameters to parameters that the model would understand
     end
 
@@ -225,12 +223,13 @@ class ApiApplicationController < MetalApiController
       # This is used to manipulate the model errors to a format that is acceptable.
     end
 
-    def render_custom_errors(item, options)
-      Array.wrap(options[:remove]).each { |field| item.errors[field].clear }
-      render_error item.errors, (options || {}).except(:remove)
+    def render_custom_errors(item = @item)
+      options = set_custom_errors(item) # this will set @error_options if necessary.
+      Array.wrap(options.delete(:remove)).each { |field| item.errors[field].clear } if options
+      render_errors(item.errors, options)
     end
 
-    def render_error(errors, meta = nil)
+    def render_errors(errors, meta = nil)
       @errors = ErrorHelper.format_error(errors, meta)
       render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
     end

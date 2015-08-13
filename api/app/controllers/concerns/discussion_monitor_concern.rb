@@ -19,7 +19,7 @@ module DiscussionMonitorConcern
     if skip_update || @monitorship.update_attributes(active: true, portal_id: current_portal.id)
       head 204
     else
-      render_error(@monitorship.errors)
+      render_errors(@monitorship.errors)
     end
   end
 
@@ -27,7 +27,7 @@ module DiscussionMonitorConcern
     if !@monitorship.active? || @monitorship.update_attributes(active: false)
       head 204
     else
-      render_error(@monitorship.errors)
+      render_errors(@monitorship.errors)
     end
   end
 
@@ -85,7 +85,7 @@ module DiscussionMonitorConcern
 
     def validate(params_hash)
       monitor = ApiDiscussions::MonitorValidation.new(params_hash)
-      render_error monitor.errors unless monitor.valid?
+      render_errors monitor.errors unless monitor.valid?
     end
 
     def privileged_to_send_user?

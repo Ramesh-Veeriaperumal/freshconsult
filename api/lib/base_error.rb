@@ -26,7 +26,7 @@ class BaseError
   DEFAULT_CUSTOM_CODE = 'invalid_value'
   DEFAULT_HTTP_CODE = 400
 
-  ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml'))
+  ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml'))["api_error_messages"]
 
   def initialize(value, params_hash = {})
     message = ERROR_MESSAGES.key?(value.to_s) ? ERROR_MESSAGES[value.to_s].to_s : value

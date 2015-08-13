@@ -42,7 +42,7 @@ module ApiDiscussions
         ErrorHelper.rename_error_fields({ topic: :topic_id, user: ParamsHelper.get_user_param(@email) }, @item)
       end
 
-      def manipulate_params
+      def sanitize_params
         @email = params[cname].delete(:email) if params[cname][:email]
       end
 
@@ -56,7 +56,7 @@ module ApiDiscussions
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_POST_FIELDS")
         params[cname].permit(*(fields))
         post = ApiDiscussions::PostValidation.new(params[cname], @item)
-        render_error post.errors, post.error_options unless post.valid?
+        render_errors post.errors, post.error_options unless post.valid?
       end
 
       def scoper

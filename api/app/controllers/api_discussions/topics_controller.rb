@@ -45,11 +45,11 @@ module ApiDiscussions
       end
 
       def set_custom_errors(_item = @item)
-        @error_options = { remove: :posts }
         ErrorHelper.rename_error_fields({ forum: :forum_id, user: ParamsHelper.get_user_param(@email) }, @item)
+        @error_options = { remove: :posts }
       end
 
-      def manipulate_params
+      def sanitize_params
         params[cname][:body_html] = params[cname].delete(:message_html) if params[cname].key?(:message_html)
         @email = params[cname].delete(:email) if params[cname].key?(:email)
       end
@@ -81,7 +81,7 @@ module ApiDiscussions
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-        render_error topic.errors, topic.error_options unless topic.valid?
+        render_errors topic.errors, topic.error_options unless topic.valid?
       end
 
       def scoper

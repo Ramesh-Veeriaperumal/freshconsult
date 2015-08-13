@@ -29,8 +29,8 @@ class TicketValidation < ApiValidation
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments && errors[:attachments].blank? }
 
-  validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
-  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
+  validates :cc_emails, array: { format: { with: ApiConstants::CC_EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 

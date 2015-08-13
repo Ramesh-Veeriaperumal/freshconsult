@@ -16,7 +16,7 @@ class NotesController < ApiApplicationController
 
   def reply
     return unless validate_params
-    manipulate_params
+    sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
     is_success = create_note
@@ -29,7 +29,7 @@ class NotesController < ApiApplicationController
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     @item.assign_element_html(params[cname][:note_body_attributes], "body", "full_text") if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
-      render_error(@item.errors)
+      render_custom_errors(@item)
     end
   end
 
@@ -75,9 +75,12 @@ class NotesController < ApiApplicationController
       if success
         render_201_with_location
       else
-        ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, @item)
-        render_error(@item.errors)
+        render_custom_errors(@item)
       end
+    end
+
+    def set_custom_errors(item=@item)
+      ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, item)
     end
 
     def can_update?
@@ -112,11 +115,11 @@ class NotesController < ApiApplicationController
       params[cname].permit(*(field))
       @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
       valid = @note_validation.valid?
-      render_error @note_validation.errors, @note_validation.error_options unless valid
+      render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid
     end
 
-    def manipulate_params
+    def sanitize_params
       # set source only for create/reply action not for update action. Hence NOTE_TYPE_FOR_ACTION is checked.
       params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] if NoteConstants::NOTE_TYPE_FOR_ACTION.keys.include?(action_name)
 

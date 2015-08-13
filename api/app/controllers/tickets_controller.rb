@@ -13,27 +13,26 @@ class TicketsController < ApiApplicationController
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_error(ticket_delegator.errors)
+      render_custom_errors(ticket_delegator)
     elsif @item.save_ticket
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
   def update
     assign_protected
     @item.assign_attributes(params[cname])
-    tckt_dlgtr = TicketDelegator.new(@item)
-    if !tckt_dlgtr.valid?
-      set_custom_errors(tckt_dlgtr)
-      render_error(tckt_dlgtr.errors)
+    ticket_delegator = TicketDelegator.new(@item)
+    if !ticket_delegator.valid?
+      render_custom_errors(ticket_delegator)
     elsif @item.update_ticket_attributes(params[cname])
       api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
@@ -46,7 +45,7 @@ class TicketsController < ApiApplicationController
     user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
     if user
       @item.responder = user
-      @item.save ? (head 204) : render_error(@item.errors)
+      @item.save ? (head 204) : render_errors(@item.errors)
     else
       @errors = [BadRequestError.new('responder', "can't be blank")]
       render '/bad_request_error', status: 400
@@ -65,7 +64,7 @@ class TicketsController < ApiApplicationController
 
   private
 
-    def set_custom_erros(item = @item)
+    def set_custom_errors(item = @item)
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                                         product: :product_id }, item)
     end
@@ -112,7 +111,7 @@ class TicketsController < ApiApplicationController
       params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS,
                     *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params)
-      render_error(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -127,11 +126,11 @@ class TicketsController < ApiApplicationController
       params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
         errors = [[:include, ["can't be blank"]]]
-        render_error errors
+        render_errors errors
       end
     end
 
-    def manipulate_params
+    def sanitize_params
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  (params[cname][:cc_emails] || [])
 
@@ -161,7 +160,7 @@ class TicketsController < ApiApplicationController
       field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item)
-      render_error ticket.errors, ticket.error_options unless ticket.valid?
+      render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
     def assign_protected

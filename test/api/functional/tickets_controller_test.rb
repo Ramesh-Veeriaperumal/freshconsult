@@ -215,9 +215,9 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(group_id: 89_089, product_id: 9090, email_config_id: 89_789, responder_id: 8987, requester_id: user.id)
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('group', "can't be blank"),
-                bad_request_error_pattern('responder', "can't be blank"),
-                bad_request_error_pattern('email_config', "can't be blank"),
+    match_json([bad_request_error_pattern('group_id', "can't be blank"),
+                bad_request_error_pattern('responder_id', "can't be blank"),
+                bad_request_error_pattern('email_config_id', "can't be blank"),
                 bad_request_error_pattern('requester_id', 'user_blocked')])
   end
 
@@ -484,9 +484,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('group', "can't be blank"),
-                bad_request_error_pattern('responder', "can't be blank"),
-                bad_request_error_pattern('email_config', "can't be blank"),
+    match_json([bad_request_error_pattern('group_id', "can't be blank"),
+                bad_request_error_pattern('responder_id', "can't be blank"),
+                bad_request_error_pattern('email_config_id', "can't be blank"),
                 bad_request_error_pattern('requester_id', 'user_blocked')])
   end
 
