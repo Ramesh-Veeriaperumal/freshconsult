@@ -253,16 +253,62 @@ body.community.cs-always-show #community-sidebar {
   display: inline-block;
 }
 
-.solutions-widget-header {
-  margin-top: 5px;
-  margin-bottom: 12px;
-}
-
 .solutions-widget {
   border-top: 2px solid #DDDCDC;
   padding-top: 6px;
   margin-top: 8px;
   margin-bottom: 23px;
+
+  .solutions-widget-header {
+    margin-top: 5px;
+    margin-bottom: 12px;
+
+    .sidebar-dropdown{
+      display: inline-block;
+      @include float(right);
+      margin-top: 4px;
+
+      .dropdown-menu {
+        min-width: 120px;
+      }
+    }
+
+    .lead-small{
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+  }
+
+  .sidebar-list ul {
+    li {
+      list-style-type: disc;
+      list-style-position: inside;
+      color: #ddd;
+      margin-bottom: 16px;
+
+      .sidebar-list-item {
+        @include padding-left(15px);
+        vertical-align: top;
+        display: inline-block;
+
+        .muted {
+          font-size: 11px;
+        }
+        .feedback-article {
+          color: #333;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .view-all {
+    margin-bottom: 16px;
+    @include margin-left(27px);
+    font-weight: 400;
+    font-size: 12px;
+    color: #78B1EA;
+  }
 }
 
 .widget-filter {
@@ -271,46 +317,6 @@ body.community.cs-always-show #community-sidebar {
 
 #solution-home-sidebar{
   margin: 0;
-}
-
-.sidebar-dropdown{
-  display: inline-block;
-  @include float(right);
-  margin-top: 4px;
-}
-
-.lead-small{
-  font-size: 13.5px;
-  font-weight: 500;
-}
-
-.sidebar-list ul {
-  li {
-    list-style-type: disc;
-    list-style-position: inside;
-    color: #ddd;
-    @include padding-left(6px);
-    margin-bottom: 16px;
-
-    a {
-      font-size: 13px;
-      @include padding-left(9px);
-    }
-  }    
-}
-
-.list-desc {
-  font-size: 11px;
-  @include margin-left(12px);
-  @include padding-left(10px);
-}
-
-.view-all {
-  margin-bottom: 16px;
-  @include margin-left(20px);
-  font-weight: 400;
-  font-size: 12px;
-  color: #78B1EA;
 }
 
 .orphan-cat-icon {
@@ -322,15 +328,6 @@ body.community.cs-always-show #community-sidebar {
   font-size: 11px;
   @include margin-left(27px);
   display: block;
-}
-
-.feedback-article {
-  color: #333;
-  @include margin-left(22px);
-}
-
-.sidebar-dropdown .dropdown-menu {
-  min-width: 120px;
 }
 
 @-webkit-keyframes fadeInLeft {

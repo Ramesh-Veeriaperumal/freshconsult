@@ -8,8 +8,9 @@
   <ul>
     <% @orphan_categories.first(3).each do |cat| %>
       <li> 
-              <%= pjax_link_to(cat['name'].truncate(27),
-                              solution_category_path(:id => cat['id'])) %>
+              <%= pjax_link_to( cat['name'].truncate(27),
+                                solution_category_path(:id => cat['id']), 
+                                {:class => "sidebar-list-item"} ) %>
       </li>
     <% end %>
     <% if @orphan_categories.size > 3 %>
@@ -17,8 +18,9 @@
       <span class="more-orphan-cat hide">
         <% @orphan_categories.drop(3).each do |cat| %>
           <li> 
-                  <%= pjax_link_to(cat['name'].truncate(27),
-                                  solution_category_path(:id => cat['id'])) %>
+                  <%= pjax_link_to( cat['name'].truncate(27),
+                                    solution_category_path(:id => cat['id']), 
+                                    {:class => "sidebar-list-item"} ) %>
           </li>
         <% end %>
       </span>
