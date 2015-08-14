@@ -72,7 +72,7 @@ module GoogleLoginHelper
   end
 
   def google_gadget_auth google_viewer_id_hash
-    domain_user = login_account.user_emails.user_for_email(email)
+    domain_user = login_account.all_users.find_by_email(email)
     verify_gadget_user(domain_user)
     verify_gadget_viewer_id(google_viewer_id_hash, domain_user) unless @gadget_error.present?
     # If the user is also an agent and no OAuth entry in authrizations table then create one.

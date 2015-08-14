@@ -25,8 +25,6 @@ class GoogleLoginController < AccountsController
       login_account.make_current
       activate_user_and_redirect
     end
-    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
-      redirect_to "#{login_account.url_protocol}://#{requested_portal_url}"
   end
 
   private
