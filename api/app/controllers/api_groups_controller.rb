@@ -1,11 +1,11 @@
 class ApiGroupsController < ApiApplicationController
-  before_filter :preparing_agents, only: [:create, :update]
+  before_filter :prepare_agents, only: [:create, :update]
   before_filter :set_round_robin_enbled
 
   private
 
     def validate_params
-      group_params = current_account.features_included?(:round_robin) ? GroupConstants::GROUP_FIELDS : GroupConstants::GROUP_FIELDS_WITHOUT_TICKET_ASSIGN
+      group_params = current_account.features_included?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
       render_errors group.errors, group.error_options unless group.valid?
@@ -36,7 +36,7 @@ class ApiGroupsController < ApiApplicationController
                                            params[cname])
     end
 
-    def preparing_agents
+    def prepare_agents
       initialize_agents
       drop_existing_agents if update? && @agents
       build_agents
