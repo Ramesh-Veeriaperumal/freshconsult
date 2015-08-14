@@ -24,7 +24,7 @@ class ApiCompaniesController < ApiApplicationController
   private
 
     def load_objects
-      super current_account.companies.includes(:flexifield)
+      super scoper.includes(:flexifield)
     end
 
     def scoper
@@ -37,7 +37,7 @@ class ApiCompaniesController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       fields = CompanyConstants::COMPANY_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
-      manipulate_domains if update?
+      convert_domains_to_array if update?
       company = ApiCompanyValidation.new(params[cname], @item)
       render_error company.errors, company.error_options unless company.valid?
     end
@@ -50,8 +50,12 @@ class ApiCompaniesController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 
-    def manipulate_domains
-      api_domains = api_item_array(@item.domains)
+    def convert_domains_to_array
+      api_domains = csv_to_array(@item.domains)
       @item.domains = api_domains if api_domains
+    end
+
+    def csv_to_array(string_csv)
+      string_csv.split(',') unless string_csv.nil?
     end
 end

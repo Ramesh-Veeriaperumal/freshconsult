@@ -274,6 +274,18 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern(company.reload))
   end
 
+  ## Will be unCommented once we have written Required validation in Custom Field Validator
+  # def test_create_company_without_required_custom_field
+  #   field = { :type=>"text", :field_type=>"custom_text", :label=>"cf_required_linetext", :required_for_agent => true}
+  #   params = company_params(field)
+  #   create_company_field params
+  #   clear_contact_field_cache
+  #   post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+  #                                      domains: domain_array)
+  #   assert_response :bad_request
+  #   match_json([bad_request_error_pattern('cf_required_linetext', 'missing_field')])
+  # end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key

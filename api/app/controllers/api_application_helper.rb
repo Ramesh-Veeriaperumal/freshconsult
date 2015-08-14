@@ -53,7 +53,11 @@ module ApiApplicationHelper
     return_hash
   end
 
-  def api_item_array(string_csv)
+  def csv_to_array(string_csv)
     string_csv.split(',') unless string_csv.nil?
+  end
+
+  def companies_custom_dropdown_choices(choices = [])
+    choices.map { |x| x[:value] }
   end
 end
