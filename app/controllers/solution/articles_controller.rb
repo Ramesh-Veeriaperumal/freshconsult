@@ -202,7 +202,7 @@ class Solution::ArticlesController < ApplicationController
       @article.tags.clear   
       @tags_input.each do |tag|      
         begin
-          @article.tags << Helpdesk::Tag.find_or_initialize_by_name_and_account_id(tag,current_account)
+          @article.tags << Helpdesk::Tag.find_or_initialize_by_name_and_account_id(tag, current_account.id)
         rescue ActiveRecord::RecordInvalid => e
         end
       end
