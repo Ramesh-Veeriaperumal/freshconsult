@@ -73,9 +73,7 @@ class ApiApplicationController < MetalApiController
 
   def update
     assign_protected
-    unless @item.update_attributes(params[cname])
-      render_custom_errors
-    end
+    render_custom_errors unless @item.update_attributes(params[cname])
   end
 
   def destroy
@@ -164,7 +162,7 @@ class ApiApplicationController < MetalApiController
       unless @item
         head :not_found # Do we need to put message inside response body for 404?
       end
-    end    
+    end
 
     def after_load_object
       # Template method to stop execution immediately after load_object

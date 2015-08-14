@@ -12,18 +12,10 @@ module ApiConstants
   DEFAULT_INDEX_FIELDS = %w(version format k id per_page page)
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
-  DELETED_SCOPE = {
-    'update' => false,
-    'restore' => true,
-    'destroy' => false,
-    'time_sheets' => false
-  }
-
   TIME_UNITS = %w(hours minutes seconds) # do not change the order.
 
   # ValidationConstants
   BOOLEAN_VALUES = [true, false, 'true', 'false'] # for boolean fields all these values are accepted.
-  CC_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
 

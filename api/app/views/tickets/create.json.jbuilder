@@ -9,7 +9,7 @@ json.set! :product_id, @item.schema_less_ticket.product_id
 json.set! :ticket_id, @item.display_id
 json.set! :type, @item.ticket_type
 
-json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: @item.fr_escalated, spam: @item.spam, urgent: @item.urgent, is_escalated: @item.isescalated }
+json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: @item.fr_escalated, spam: @item.spam, is_escalated: @item.isescalated }
 json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
 json.set! :custom_fields, @item.custom_field

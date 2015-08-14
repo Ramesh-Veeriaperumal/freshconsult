@@ -10,6 +10,12 @@ module ApiTicketConstants
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
 
+  SCOPE_BASED_ON_ACTION = {
+    'update'  => { deleted: false, spam: false },
+    'restore' => { deleted: true, spam: false },
+    'destroy' => { deleted: false }
+  }
+
   # all_tickets is not included because it is the default filter applied.
   # monitored_by is not inlcuded because it needs to be thought through to support different user_id as value
   FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 3, 4)

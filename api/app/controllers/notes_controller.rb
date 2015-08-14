@@ -27,7 +27,7 @@ class NotesController < ApiApplicationController
 
   def update
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-    @item.assign_element_html(params[cname][:note_body_attributes], "body", "full_text") if params[cname][:note_body_attributes]
+    @item.assign_element_html(params[cname][:note_body_attributes], 'body', 'full_text') if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
       render_custom_errors(@item)
     end
@@ -66,7 +66,7 @@ class NotesController < ApiApplicationController
       end # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
       @item.notable.account = current_account
-      attachments = build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
       @item.save_note
     end
@@ -79,7 +79,7 @@ class NotesController < ApiApplicationController
       end
     end
 
-    def set_custom_errors(item=@item)
+    def set_custom_errors(item = @item)
       ErrorHelper.rename_error_fields({ notable_id: :ticket_id, user: :user_id }, item)
     end
 

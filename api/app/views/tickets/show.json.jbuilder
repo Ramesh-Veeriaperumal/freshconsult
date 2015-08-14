@@ -12,7 +12,7 @@ json.cache! [controller_name, action_name, @item] do # ticket caching
 
   json.set! :deleted, @item.deleted.to_s.to_bool if @item.deleted
 
-  json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: @item.fr_escalated, spam: @item.spam, urgent: @item.urgent, is_escalated: @item.isescalated }
+  json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: @item.fr_escalated, spam: @item.spam, is_escalated: @item.isescalated }
   json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
 end
 

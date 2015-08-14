@@ -13,7 +13,7 @@ json.array! @items do |tkt|
     json.set! :ticket_id, tkt.display_id
     json.set! :type, tkt.ticket_type
 
-    json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: tkt.fr_escalated, spam: tkt.spam, urgent: tkt.urgent, is_escalated: tkt.isescalated }
+    json.partial! 'shared/boolean_format', boolean_fields: { fr_escalated: tkt.fr_escalated, spam: tkt.spam,  is_escalated: tkt.isescalated }
     json.partial! 'shared/utc_date_format', item: tkt, add: { due_by: :due_by, frDueBy: :fr_due_by }
   end
 

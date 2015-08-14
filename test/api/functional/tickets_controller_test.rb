@@ -544,7 +544,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_notifying_cc_email
     params_hash = update_ticket_params_hash
     t =  Helpdesk::Ticket.find do |ticket|
-      ticket.cc_email && ticket.cc_email[:cc_emails].present?
+      ticket.cc_email && ticket.cc_email[:cc_emails].present? && ticket.deleted == 0 && ticket.spam == 0
     end
     if t.nil?
       t = ticket
@@ -1377,5 +1377,39 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 10, response['notes'].size
     assert ticket.reload.notes.size > 10
+  end
+
+  def test_show_spam
+    t = ticket
+    t.update_column(:spam, true)
+    get :show, controller_params(id: t.display_id)
+    assert_response :success
+    match_json(ticket_pattern({}, ticket))
+    t.update_column(:spam, false)
+  end
+
+  def test_delete_spam
+    t = ticket
+    t.update_column(:spam, true)
+    delete :destroy, controller_params(id: t.display_id)
+    assert_response :not_found
+    t.update_column(:spam, false)
+  end
+
+  def test_update_spam
+    t = ticket
+    t.update_column(:spam, true)
+    put :update, construct_params({ id: t.display_id }, update_ticket_params_hash)
+    assert_response :not_found
+    t.update_column(:spam, false)
+  end
+
+  def test_restore_spam
+    t = create_ticket
+    t.update_column(:deleted, true)
+    t.update_column(:spam, true)
+    put :restore, construct_params(id: t.display_id)
+    assert_response :not_found
+    t.update_column(:spam, false)
   end
 end

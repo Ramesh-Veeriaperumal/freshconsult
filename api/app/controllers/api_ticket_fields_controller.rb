@@ -8,7 +8,7 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def scoper
-      condition = "2 > 1"
+      condition = '2 > 1'
       condition += " AND field_type = \"#{params[:type]}\"" if params[:type]
       condition += ' AND helpdesk_ticket_fields.field_type != "default_product"' if exclude_products
       current_account.ticket_fields.where(condition).includes(:nested_ticket_fields)

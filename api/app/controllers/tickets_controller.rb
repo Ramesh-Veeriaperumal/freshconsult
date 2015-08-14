@@ -25,6 +25,7 @@ class TicketsController < ApiApplicationController
   def update
     assign_protected
     @item.assign_attributes(params[cname])
+    @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
       render_custom_errors(ticket_delegator)
@@ -64,6 +65,7 @@ class TicketsController < ApiApplicationController
     end
 
     def after_load_object
+      return false unless verify_object_state
       verify_ticket_permission if show? || update?
     end
 
@@ -162,6 +164,17 @@ class TicketsController < ApiApplicationController
       @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
     end
 
+    def verify_object_state
+      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes.each_pair do |scope_attribute, value|
+        if @item.send(scope_attribute) != value
+          head(404)
+          return false
+        end
+      end
+      true
+    end
+
     def verify_ticket_permission
       # Should not allow to update ticket if item is deleted forever or current_user doesn't have permission
       render_request_error :access_denied, 403 unless current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.try(:trashed)
@@ -196,9 +209,7 @@ class TicketsController < ApiApplicationController
     end
 
     def load_object
-      condition = 'display_id = ? '
-      condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      @item = scoper.where(condition, params[:id]).first
+      @item = scoper.find_by_display_id(params[:id])
       head(:not_found) unless @item
     end
 end

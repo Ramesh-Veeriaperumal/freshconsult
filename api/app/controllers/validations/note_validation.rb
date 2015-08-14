@@ -7,7 +7,7 @@ class NoteValidation < ApiValidation
   validates :ticket_id, numericality: true, allow_nil: true, if: -> { can_validate_ticket }
   validates :private, :incoming, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }, allow_nil: true
-  validates :notify_emails, :cc_emails, :bcc_emails, array: { format: { with: ApiConstants::CC_EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :notify_emails, :cc_emails, :bcc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true, message: 'invalid_format' } }
 
   # Can't check for presence as ticket.blank? introduces 4 queries because of respond_to? override. Hence custom validation

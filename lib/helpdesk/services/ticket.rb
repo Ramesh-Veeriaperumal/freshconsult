@@ -25,7 +25,8 @@ module Helpdesk
       
       def assign_description_html(ticket_body_attributes)
         if ticket_body_attributes["description"] && ticket_body_attributes["description_html"].blank?
-          ticket_body_attributes["description_html"] = body_html_with_formatting(CGI.escapeHTML(ticket_body_attributes["description"])) 
+          formatted_text = body_html_with_formatting(CGI.escapeHTML(ticket_body_attributes["description"])) 
+          ticket_body_attributes["description_html"] = body_html_with_tags_renamed(formatted_text)
         end
       end
 
