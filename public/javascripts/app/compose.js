@@ -105,6 +105,14 @@ window.App.Tickets = window.App.Tickets || {};
                    }));
       _form.submit();
       });
+
+      jQuery('#ComposeTicket').bind("submit", function(){
+        var _form = jQuery(this);
+        if(_form.valid()) {
+          _form.find("button, a.btn").attr('disabled',true);
+        }
+      });
+
     },
 
     bindTypeChange: function () {
