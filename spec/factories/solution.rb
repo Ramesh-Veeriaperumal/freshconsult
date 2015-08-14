@@ -10,6 +10,7 @@ if Rails.env.test?
       name "TestingSolutionCategoryFolder"
       description "Test for Solution Categories Folders"
       visibility 1
+      is_default false
     end
 
     factory :solution_articles, :class => Solution::Article do

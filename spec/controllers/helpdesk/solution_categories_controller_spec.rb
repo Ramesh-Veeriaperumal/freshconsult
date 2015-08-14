@@ -214,6 +214,7 @@ describe Solution::CategoriesController do
       @account.solution_category_meta.find_by_id(test_destroy_category.id).should be_nil
       @account.main_portal.portal_solution_categories.find_by_solution_category_id(test_destroy_category.id).should be_nil
     end
+    
   end
 
   it "should change the position in meta table when category is destroyed" do
@@ -222,6 +223,12 @@ describe Solution::CategoriesController do
     test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     test_category.reload.destroy
     check_position(@account, "solution_categories")
+  end
+
+  it "should redirect to drafts index page when default catgeory is accessed" do
+    category = @account.solution_categories.where(:is_default => true).first
+    get :show, :id => category.id
+    response.should redirect_to(solution_my_drafts_path('all'))
   end
 
 end

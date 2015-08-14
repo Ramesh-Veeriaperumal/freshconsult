@@ -10,7 +10,8 @@ module SolutionsHelper
 
   def create_folder(params = {})
     test_folder = FactoryGirl.build(:solution_folders, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :visibility => params[:visibility], :category_id => params[:category_id])
+              :description => params[:description], :visibility => params[:visibility],
+              :category_id => params[:category_id], :is_default => params[:is_default] || false)
     test_folder.account_id = @account.id
     test_folder.save(validate: false)
     test_folder
@@ -129,13 +130,17 @@ module SolutionsHelper
     ActionController::Base.perform_caching = true
     @current_account = Account.current
     @current_portal  = Portal.first.make_current
-    @cache_key = MemcacheKeys::ALL_SOLUTION_CATEGORIES % { :account_id => @current_account.id }
     solution_test_setup
   end
 
-  def check_cache_invalidation
-    $memcache.get(@cache_key).should be_nil
+  def solutions_cache_key(account)
+    MemcacheKeys::ALL_SOLUTION_CATEGORIES % { :account_id => account.id }
   end
+
+  def check_cache_invalidation(account)
+    $memcache.get(solutions_cache_key(account)).should be_nil
+  end
+
   def check_meta_integrity(object)
     meta_obj = object.reload.meta_object
     meta_obj.should be_an_instance_of(object.meta_class)
