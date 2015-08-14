@@ -3648,7 +3648,7 @@ nl:
     inactive_info1: "Uw e-mailadressen voor ondersteuning zijn nog niet bevestigd. U moet ten minste één e-mailadres bevestigen."
     info14: "Alle e-mails die naar dit adres worden verstuurd, worden omgezet in tickets."
     info4: "<strong>Opmerking:</strong> als u meerdere e-mailadressen gebruikt om verschillende producten te kunnen ondersteunen, <a href='%{products_path}'>kunt ze hier toevoegen</a>."
-    spf_info: "<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">Voor antwoord-e-mails van Freshdesk worden uw e-mail-id's voor ondersteuning automatisch als verzendadres gebruikt. Als u een <a href='%{products_path}'>SPF-record</a> in het DNS-zonebestand maakt, worden uw e-mails correct bezorgd."
+    spf_info: "<a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">Voor antwoord-e-mails van Freshdesk worden uw e-mail-id's voor ondersteuning automatisch als verzendadres gebruikt."
     reply_email: "Uw e-mailadres voor ondersteuning"
     unverified_info1: "Activeer dit e-mailadres door op de bevestigingslink in uw postvak IN te klikken."
     inactive_info2: "Tot die tijd wordt het standaard-e-mailadres %{default_email} als het antwoord-e-mailadres gebruikt."
