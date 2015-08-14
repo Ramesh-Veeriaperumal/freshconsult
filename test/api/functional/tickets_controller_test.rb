@@ -1071,72 +1071,11 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.any_instance.unstub(:responder_id)
   end
 
-  def test_assign_load_object_not_present
-    put :assign, construct_params(id: 999)
-    assert_response :not_found
-    assert_equal ' ', @response.body
-  end
-
-  def test_assign_user_id_invalid
-    put :assign, construct_params({ id: ticket.display_id }, user_id: 999)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('responder', "can't be blank")])
-  end
-
-  def test_assign_extra_params
-    put :assign, construct_params({ id: ticket.display_id }, test: 1)
-    assert_response :bad_request
-    match_json [bad_request_error_pattern('test', 'invalid_field')]
-  end
-
   def test_restore_extra_params
     ticket.update_column(:deleted, true)
     put :restore, construct_params({ id: ticket.display_id }, test: 1)
     assert_response :bad_request
     match_json [bad_request_error_pattern('test', 'invalid_field')]
-  end
-
-  def test_assign_invalid_record
-    ticket.update_column(:requester_id, nil)
-    put :assign, construct_params(id: ticket.display_id)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', "can't be blank")])
-    ticket.update_column(:requester_id, User.first.id)
-  end
-
-  def test_assign_user_id_valid
-    agent = add_agent(@account, name: Faker::Name.name,
-                                email: Faker::Internet.email,
-                                active: 1,
-                                role: 1,
-                                agent: 1,
-                                role_ids: [@account.roles.find_by_name('Agent').id.to_s],
-                                ticket_permission: 1)
-    put :assign, construct_params({ id: ticket.display_id }, user_id: agent.id)
-    assert_response :no_content
-    assert_equal ticket.reload.responder, agent
-  end
-
-  def test_assign_without_permission
-    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
-    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
-    User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
-    put :assign, construct_params(id: Helpdesk::Ticket.first.display_id)
-    assert_response :forbidden
-    match_json(request_error_pattern('access_denied'))
-  end
-
-  def test_assign_with_permission
-    put :assign, construct_params(id: ticket.display_id)
-    assert_response :no_content
-    assert_equal ticket.responder_id, @agent.id
-  end
-
-  def test_assign_without_privilege
-    User.any_instance.stubs(:privilege?).with(:edit_ticket_properties).returns(false).at_most_once
-    put :assign, construct_params(id: Helpdesk::Ticket.first.display_id)
-    assert_response :forbidden
-    match_json(request_error_pattern('access_denied'))
   end
 
   def test_restore_load_object_not_present
@@ -1176,13 +1115,6 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_deleted
     ticket.update_column(:deleted, true)
     put :update, construct_params({ id: ticket.display_id }, source: 2)
-    assert_response :not_found
-    ticket.update_column(:deleted, false)
-  end
-
-  def test_assign_deleted
-    ticket.update_column(:deleted, true)
-    put :assign, construct_params(id: ticket.display_id)
     assert_response :not_found
     ticket.update_column(:deleted, false)
   end

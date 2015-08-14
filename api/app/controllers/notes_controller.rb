@@ -111,7 +111,7 @@ class NotesController < ApiApplicationController
     end
 
     def validate_params
-      field = "NoteConstants::#{action_name.upcase}_NOTE_FIELDS".constantize
+      field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
       @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
       valid = @note_validation.valid?
@@ -120,8 +120,8 @@ class NotesController < ApiApplicationController
     end
 
     def sanitize_params
-      # set source only for create/reply action not for update action. Hence NOTE_TYPE_FOR_ACTION is checked.
-      params[cname][:source] = NoteConstants::NOTE_TYPE_FOR_ACTION[action_name] if NoteConstants::NOTE_TYPE_FOR_ACTION.keys.include?(action_name)
+      # set source only for create/reply action not for update action. Hence TYPE_FOR_ACTION is checked.
+      params[cname][:source] = NoteConstants::TYPE_FOR_ACTION[action_name] if NoteConstants::TYPE_FOR_ACTION.keys.include?(action_name)
 
       # only note can have choices for private field. others will be set to false always.
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']

@@ -11,9 +11,8 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         update: 8,
         index: 6,
         destroy: 5,
-        restore: 5,
-        assign: 7
-      }
+        restore: 5
+        }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
       create_v2_payload = v2_ticket_payload
@@ -61,16 +60,6 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:update] -= 12
       # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
       v2[:update] -= 3
-
-      # assign
-      v2[:assign], v2[:api_assign] = count_api_queries do
-        put("/api/tickets/#{id1}/assign", { user_id: @agent.id }.to_json, @write_headers)
-        assert_response :success
-      end
-      v1[:assign] = count_queries do
-        put("/helpdesk/tickets/#{id2}/assign.json", { 'responder_id' => @agent.id }.to_json, @write_headers)
-        assert_response :success
-      end
 
       # index
       v2[:index], v2[:api_index] = count_api_queries do

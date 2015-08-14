@@ -5,8 +5,8 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :ticket_permission?, only: [:destroy, :assign]
-  before_filter :validate_action_params, only: [:assign, :restore]
+  before_filter :ticket_permission?, only: [:destroy]
+  before_filter :validate_restore_params, only: [:restore]
 
   def create
     api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
@@ -41,17 +41,6 @@ class TicketsController < ApiApplicationController
     head 204
   end
 
-  def assign
-    user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
-    if user
-      @item.responder = user
-      @item.save ? (head 204) : render_errors(@item.errors)
-    else
-      @errors = [BadRequestError.new('responder', "can't be blank")]
-      render '/bad_request_error', status: 400
-    end
-  end
-
   def restore
     @item.update_attribute(:deleted, false)
     head 204
@@ -70,8 +59,8 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      super tickets_filter(scoper).includes(:ticket_old_body,
-                                            :schema_less_ticket, flexifield: :flexifield_def)
+      super tickets_filter.includes(:ticket_old_body,
+                                            :schema_less_ticket, flexifield: {flexifield_def: :flexifield_def_entries})
     end
 
     def after_load_object
@@ -93,23 +82,24 @@ class TicketsController < ApiApplicationController
     end
 
     def order_clause
-      order_by =  params[:order_by] || 'created_at'
-      order_type = params[:order_type] || 'desc'
+      order_by =  params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY
+      order_type = params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
       "helpdesk_tickets.#{order_by} #{order_type} "
     end
 
-    def tickets_filter(tickets)
-      tickets = tickets.where(deleted: false, spam: false).permissible(current_user)
+    def tickets_filter
+      tickets = scoper.where(deleted: false, spam: false).permissible(current_user)
+      filter = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)
       @ticket_filter.conditions.each do |key|
-        clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
+        clause = filter[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
+        # method chaining is done here as, clause[:conditions] could be an array or a hash
       end
       tickets
     end
 
     def validate_filter_params
-      params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS,
-                    *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
@@ -118,12 +108,12 @@ class TicketsController < ApiApplicationController
       current_account.tickets
     end
 
-    def validate_action_params
-      params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
+    def validate_restore_params
+      params[cname].permit(*ApiTicketConstants::RESTORE_FIELDS)
     end
 
     def validate_url_params
-      params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
         errors = [[:include, ["can't be blank"]]]
         render_errors errors
@@ -157,7 +147,7 @@ class TicketsController < ApiApplicationController
       allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
+      field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?

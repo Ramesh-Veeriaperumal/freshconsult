@@ -9,12 +9,11 @@ module ApiConstants
   }
 
   DEFAULT_PARAMS = %w(version format k id)
-  DEFAULT_INDEX_FIELDS = [:per_page, :page]
+  DEFAULT_INDEX_FIELDS = %w(version format k id per_page page)
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
   DELETED_SCOPE = {
     'update' => false,
-    'assign' => false,
     'restore' => true,
     'destroy' => false,
     'time_sheets' => false
