@@ -9,8 +9,7 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
-
-  concerned_with :associations, :meta_associations
+  include Solution::MetaMethods
   
   self.table_name =  "solution_categories"
   
@@ -20,6 +19,8 @@ class Solution::Category < ActiveRecord::Base
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
 
+  concerned_with :associations, :meta_associations
+
   before_create :set_default_portal
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
@@ -28,7 +29,6 @@ class Solution::Category < ActiveRecord::Base
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
-  include Solution::MetaMethods
   include Solution::LanguageMethods
   include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
@@ -69,11 +69,16 @@ class Solution::Category < ActiveRecord::Base
   private 
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time
+      category_obj.update_mh_solutions_category_time
     end
 
     def set_mobihelp_app_updated_time
-      update_mh_app_time
+      category_obj.update_mh_app_time
+    end
+
+    def category_obj
+      self.reload
+      Account.current.launched?(:meta_read) ? self.solution_category_meta : self
     end
 
     ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!

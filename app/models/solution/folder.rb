@@ -15,6 +15,9 @@ class Solution::Folder < ActiveRecord::Base
   # before_create :populate_account
   before_update :clear_customer_folders, :backup_folder_changes
 
+  before_save :backup_category
+  before_destroy :backup_category
+
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
 
@@ -164,12 +167,16 @@ class Solution::Folder < ActiveRecord::Base
       @all_changes = self.changes.clone
     end
 
+    def backup_category
+      @category_obj = Account.current.launched?(:meta_read) ? category.solution_category_meta : category
+    end
+
     def visibility_updated?
       @all_changes.has_key?(:visibility)
     end
     
     def set_mobihelp_solution_updated_time
-      category.update_mh_solutions_category_time
+      @category_obj.update_mh_solutions_category_time
     end
 
 end

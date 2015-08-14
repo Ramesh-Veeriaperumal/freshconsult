@@ -236,7 +236,12 @@ class Solution::Article < ActiveRecord::Base
   private
 
     def set_mobihelp_solution_updated_time
-      self.reload.folder.category.update_mh_solutions_category_time
+      category_obj.update_mh_solutions_category_time
+    end
+
+    def category_obj
+      self.reload
+      Account.current.launched?(:meta_read) ? folder.solution_category_meta : folder.category
     end
 
     def content_changed?

@@ -16,9 +16,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
 			
 	has_one :solution_folder, :class_name => "Solution::Folder", :through => :solution_folder_meta
 
-	COMMON_ATTRIBUTES = ["account_id", "art_type", "position", "created_at"]
+	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 	
 	HITS_CACHE_THRESHOLD = 100
+
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
 	end

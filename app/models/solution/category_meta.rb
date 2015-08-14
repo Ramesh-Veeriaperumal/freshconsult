@@ -3,6 +3,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	self.primary_key = :id
 	self.table_name = 'solution_category_meta'
 
+	include Mobihelp::AppSolutionsUtils
+
 	belongs_to_account
 
 	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position
@@ -22,7 +24,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :destroy
 		
-	has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
+	has_many :mobihelp_apps, 
+		:class_name => 'Mobihelp::App', 
+		:through => :mobihelp_app_solutions,
+		:source => :app
 
-	COMMON_ATTRIBUTES = ["position", "is_default", "account_id", "created_at"]
+	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 end

@@ -79,6 +79,7 @@ module SolutionsHelper
       meta_obj.send(attrib).should be_eql(object.send(attrib))
     end
     parent_keys = object.assign_keys
+    meta_obj.account_id.should be_eql(object.account_id)
     meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
   end
 
