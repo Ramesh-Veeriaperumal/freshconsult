@@ -9,6 +9,7 @@ class Solution::Folder < ActiveRecord::Base
   attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id, :case_sensitive => false
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
 
   self.table_name =  "solution_folders"
   

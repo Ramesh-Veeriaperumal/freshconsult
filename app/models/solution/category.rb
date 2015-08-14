@@ -16,6 +16,7 @@ class Solution::Category < ActiveRecord::Base
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
 
   after_create :assign_portal
   

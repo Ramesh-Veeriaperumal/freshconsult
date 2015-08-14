@@ -9,8 +9,8 @@ module Solution::MetaMethods
 
 	def self.included(base)
 		base.class_eval do 
-			after_save :save_meta
-			after_destroy :destroy_meta,:decrement_positions_on_lower_meta_items
+			# after_save :save_meta
+			# after_destroy :destroy_meta,:decrement_positions_on_lower_meta_items
 		end
 	end
 

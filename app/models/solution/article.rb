@@ -42,6 +42,7 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
