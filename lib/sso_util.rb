@@ -68,7 +68,7 @@ module SsoUtil
     phone = sso_data[:phone]
     company = sso_data[:company]
 
-    @current_user = current_account.all_users.find_by_email(user_email_id)
+    @current_user = current_account.user_emails.user_for_email(user_email_id)
 
     if @current_user && @current_user.deleted?
       flash[:notice] = t(:'flash.login.deleted_user')

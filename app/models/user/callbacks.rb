@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
+  before_save :restrict_domain, :if => :email_or_deleted_has_changed?
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
@@ -129,6 +130,10 @@ class User < ActiveRecord::Base
 
   def no_password?
     !password and !crypted_password
+  end
+
+  def email_or_deleted_has_changed?
+    self.email_changed? || self.deleted_changed?
   end
 
   def validate_time_zone time_zone
