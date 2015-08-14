@@ -23,7 +23,7 @@ module HelpdeskControllerMethods
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     #create_attachments 
-    if @item.outbound_email?
+    if @item.is_a?(Helpdesk::Ticket) and @item.outbound_email?
       flash[:notice] = I18n.t('flash.general.create.compose_email_success')
     else
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
