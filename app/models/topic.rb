@@ -84,14 +84,6 @@ class Topic < ActiveRecord::Base
     }
   }
 
-  scope :followed_by, lambda { |user_id|
-    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
-                  and monitorships.monitorable_type = 'Topic' 
-                  and topics.account_id = monitorships.account_id),
-      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
-    }
-  } # Used by monitorship APIs
-
   scope :following, lambda { |ids|
     {
       :conditions => following_conditions(ids),
