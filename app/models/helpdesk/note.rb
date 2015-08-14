@@ -433,8 +433,10 @@ class Helpdesk::Note < ActiveRecord::Base
       ticket_state = notable.ticket_states
       if ticket_state.agent_responded_at.nil?
         ticket_state.requester_responded_at.nil?
-      else
+      elsif !ticket_state.requester_responded_at.nil?
         ticket_state.agent_responded_at > ticket_state.requester_responded_at
+      else
+        false
       end
     end
 

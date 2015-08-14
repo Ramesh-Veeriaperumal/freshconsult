@@ -58,7 +58,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   end
 
   def customer_responded_for_outbound?
-    if agent_responded_at.present?
+    if agent_responded_at and requester_responded_at
       requester_responded_at > agent_responded_at
     else
       requester_responded_at.present?
