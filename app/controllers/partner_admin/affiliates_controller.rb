@@ -234,7 +234,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
       unmapped_accounts = []
       domains.each do |domain|
         domain_mapping = DomainMapping.find_by_domain(domain)
-        if domain_mapping
+        if domain_mapping and domain_mapping.shard.status == 200
           Sharding.select_shard_of(domain) do 
             account = Account.find_by_full_domain(domain)
             SubscriptionAffiliate.add_affiliate(account, affiliate.token)
