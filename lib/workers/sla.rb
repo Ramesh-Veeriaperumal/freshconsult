@@ -85,9 +85,10 @@ end
                                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
                             :readonly => false , 
                             :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
-                                                helpdesk_ticket_states.first_response_time IS ?', 
+                                                helpdesk_ticket_states.first_response_time IS ? AND
+                                                source != ?', 
                           Time.zone.now.to_s(:db),false,
-                          Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
+                          Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil, Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]] )
                        }                       
     froverdue_tickets_start_time=Time.now.utc                   
     froverdue_tickets.each do |fr_ticket|

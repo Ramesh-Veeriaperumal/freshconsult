@@ -12,17 +12,11 @@
       <%= select_tag :widget_filter, options_for_select([[t('freshchat.all'),"0"]] + @widgetsSelectOption,"0"), :class => 'select2',:multiple => true %>
       <label class="control-label"><%=t('filter_options.created_date_range')%></label>
       <input class="ff_item date_range" id="date_range" type="text" value="<%=@dateRange%>" />
+      <label class="error" id="date_range_error"><%=t('validation.required')%></label>
       <label class="control-label"><%=t('filter_options.responder_id')%></label>  
       <%= select_tag :agent_filter, options_for_select([[t('freshchat.all'),"0"]] + @agentsAvailable,"0"), :class => 'select2',:multiple =>true%>
       <label class="control-label"><%=t('freshchat.chat_type')%></label>  
-      <select name="type" id="type_filter" class="select2">
-        <option value="0" selected><%=t('freshchat.all')%></option>
-        <option value="1"><%=t('freshchat.visitor_initiated')%></option>
-        <option value="2"><%=t('freshchat.agent_initiated')%></option>
-        <option value="3"><%=t('freshchat.proactive_title')%></option>
-        <option value="4"><%=t('freshchat.agent_to_agent')%></option>
-        <option value="5"><%=t('freshchat.missed_chat')%></option>
-      </select> 
+      <%= select_tag :type_filter, options_for_select(ChatSetting::FILTER_TYPES, :selected => 0), :class => 'select2'%>
       <input type="hidden" id="visitor_id" type="text" value="" />
       <input type="hidden" id="agent_ids" type="text" value="" />
     </form>

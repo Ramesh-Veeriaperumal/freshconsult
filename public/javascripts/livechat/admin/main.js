@@ -21,7 +21,7 @@ window.liveChat.adminSettings= function($){
 			if(widget.widget_id){
 				window.liveChat.mainSettings.renderWidget();
 			}else{
-				window.liveChat.mainSettings.createWidget(widget, "edit");
+				window.liveChat.mainSettings.createWidget("edit");
 			}
 		},
 

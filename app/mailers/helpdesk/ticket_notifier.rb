@@ -143,8 +143,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                          => note.from_email,
       :sent_on                       => Time.now,
       "Reply-to"                     => "#{note.from_email}", 
-      "Auto-Submitted"               => "auto-generated", 
-      "X-Auto-Response-Suppress"     => "DR, RN, OOF, AutoReply", 
       "References"                   => generate_email_references(ticket)
     }
 
@@ -195,8 +193,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
       "Reply-to"                              => "#{note.from_email}", 
-      "Auto-Submitted"                        => "auto-generated", 
-      "X-Auto-Response-Suppress"              => "DR, RN, OOF, AutoReply", 
       "References"                            => generate_email_references(ticket)
     }
 
@@ -236,8 +232,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
       "Reply-to"                              => "#{note.from_email}", 
-      "Auto-Submitted"                        => "auto-generated", 
-      "X-Auto-Response-Suppress"              => "DR, RN, OOF, AutoReply", 
       "References"                            => generate_email_references(ticket)
     }
 
@@ -403,6 +397,44 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       part.html { render "internal_email.text.html" }
     end.deliver
 
+  end
+
+  def notify_outbound_email(ticket)
+    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
+    headers = {
+      :subject                   => ticket.subject,
+      :to                        => ticket.from_email,
+      :from                      => ticket.friendly_reply_email,
+      :cc                        => ticket.cc_email[:cc_emails],
+      :bcc                       => account_bcc_email(ticket),
+      "Reply-to"                 => ticket.friendly_reply_email, 
+      "References"               => generate_email_references(ticket),
+      :sent_on                   => Time.now
+    }
+
+    inline_attachments   = []
+    @account = ticket.account
+    @ticket = ticket
+    @cloud_files= ticket.cloud_files
+    
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, ticket.description_html, ticket.account)
+    end
+
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      ticket.attachments.each do |a|
+        attachments[ a.content_file_name] = { 
+          :mime_type => a.content_content_type, 
+          :content => File.read(a.content.to_file.path, :mode => "rb")
+        }
+      end
+    end
+      
+    mail(headers) do |part|
+      part.text { render "notify_outbound_email.text.plain" }
+      part.html { render "notify_outbound_email.text.html" }
+    end.deliver
   end
 
   private

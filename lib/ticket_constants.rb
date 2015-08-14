@@ -21,7 +21,8 @@ module TicketConstants
     [ :facebook,         'facebook_source',  6 ],
     [ :chat,             'chat',             7 ],
     [ :mobihelp,         'mobihelp',         8 ],
-    [ :feedback_widget,  'feedback_widget',  9 ]
+    [ :feedback_widget,  'feedback_widget',  9 ],
+    [ :outbound_email,   'outbound_email',   10]
   
   ]
 

@@ -136,7 +136,7 @@
 					  		<%= link_to t('ticket.add_time'), "#", :rel => "triggerAddTimer", "data-keybinding" => shortcut('ticket_detail.add_time') %>
 					  	</li>
 					  	<% end %>
-					  	<% if privilege?(:edit_ticket_properties) %>
+					  	<% if privilege?(:edit_ticket_properties) and !@ticket.outbound_email?%>
 					  	<li>
 					  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 					  	</li>

@@ -40,11 +40,19 @@
 
 		<section class="user-comment" id="ticket-description">			
 			<div class="user-info">
+			{% if ticket.outbound_email? %}
+				{{ ticket.outbound_initiator | profile_image:'user-pointer-bottom', '40px', '40px' }}
+				<div class="user-details">
+					<h4 class="user-name">{{ ticket.outbound_initiator.name | h}}</h4>
+					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
+				</div>
+			{% else %}
 				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">
 					<h4 class="user-name">{{ ticket.requester.name | h}}</h4>
 					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
 				</div>
+			{% endif %}
 			</div>
 			<div class="p-content">
 				<div class="p-desc">

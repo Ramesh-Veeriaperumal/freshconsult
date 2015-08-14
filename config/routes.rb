@@ -1341,6 +1341,7 @@ Helpkit::Application.routes.draw do
         get :filter_options
         get :full_paginate
         get :summary
+        get :compose_email
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save
@@ -2148,6 +2149,7 @@ Helpkit::Application.routes.draw do
         collection do 
           get :spam_details   
           put :block_user   
+          put :unblock_user
           put :hard_block   
           put :spam_user   
           put :internal_whitelist
