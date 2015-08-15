@@ -19,8 +19,14 @@ module Helpdesk::TicketActivities
   
     def create_initial_activity
       unless spam?
-        create_activity(requester, 'activities.tickets.new_ticket.long', {},
-                              'activities.tickets.new_ticket.short')
+        if outbound_email?
+          base_text =  'new_outbound' 
+          who = responder
+        else
+          base_text =  'new_ticket' 
+          who = requester
+        end
+        create_activity(who, "activities.tickets.#{base_text}.long", {}, "activities.tickets.#{base_text}.short") 
       end
     end
 
