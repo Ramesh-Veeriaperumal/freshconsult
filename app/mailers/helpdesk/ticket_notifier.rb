@@ -405,10 +405,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     headers = {
       :subject                   => ticket.subject,
       :to                        => ticket.from_email,
-      :from                      => ticket.friendly_reply_email,
+      :from                      => ticket.friendly_reply_email_personalize(ticket.responder_name),
       :cc                        => ticket.cc_email[:cc_emails],
       :bcc                       => account_bcc_email(ticket),
-      "Reply-to"                 => ticket.friendly_reply_email, 
+      "Reply-to"                 => ticket.friendly_reply_email_personalize(ticket.responder_name), 
       "References"               => generate_email_references(ticket),
       :sent_on                   => Time.now
     }
