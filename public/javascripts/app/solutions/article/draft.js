@@ -99,7 +99,7 @@ window.App = window.App || {};
           var data = $('#article-form').data();
           if(data) {
             return $('<span />').attr('class', 'pull-right')
-                  .html($('<a>').attr('href', data.previewPath).attr('target', "_blank")
+                  .html($('<a>').attr('href', data.previewPath).attr('target', "draft-" + data.articleId)
                   .text(data.previewText));
           } else {
             return $('<span />');

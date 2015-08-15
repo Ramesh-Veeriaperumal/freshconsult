@@ -116,6 +116,13 @@ window.App = window.App || {};
             $this.autoSave.stopSaving();
           }
           $(window).off('beforeunload.articles');
+        } else {
+          var error_elem = $('#article-form .error:input:first');
+          if (error_elem.is('.select2')) {
+          	error_elem.select2('focus');
+          } else {
+          	error_elem.focus();
+          }
         }
         return validation;
       });
@@ -146,7 +153,7 @@ window.App = window.App || {};
     },
 
     defaultFolderValidate: function () {
-      $('body').on('click.articles', '#article-publish-btn, #save-as-draft-btn', function () {
+      $('body').on('submit.articles', '#article-form', function () {
         if ($("#article-form").data().defaultFolder) {
           if ($('#solution_article_folder_id').val() === "") {
             $('.folder-warning-msg').show();

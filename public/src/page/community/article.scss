@@ -1,4 +1,5 @@
 @import "../../settings/settings";
+@import "../../shared/mixins";
 .solutions {
   #article-form {
     #editortool {
@@ -66,6 +67,7 @@
     .article-content{
       margin-top: 15px;
       margin-bottom: 15px;
+      @include portal-text-formatting();
     }
   }
 
@@ -83,6 +85,7 @@
       .redactor_box{
         border: 0;
         .redactor_editor {
+          @include portal-text-formatting();
           min-height: 200px;
           padding: 15px 0px !important;
         }
@@ -107,6 +110,7 @@
 
       &:focus{
         box-shadow: none;
+        border-bottom: 1px solid #5897FB;
       }
     }
     .select-folder{

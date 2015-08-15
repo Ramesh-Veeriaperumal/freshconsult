@@ -59,7 +59,8 @@ module Solution::ArticlesHelper
       :"default-folder" => @article.folder.is_default,
       :"draft-discard-url" => "#{solution_article_draft_path(@article.id, @article.draft.present? ? @article.draft : 1)}",
       :"preview-path" => support_draft_preview_path(@article, 'preview'),
-      :"preview-text" =>  t('solution.articles.view_draft')
+      :"preview-text" =>  t('solution.articles.view_draft'),
+      :"article-id" => @article.id
     }
   end
 
