@@ -2077,8 +2077,18 @@ Helpkit::Application.routes.draw do
           get :deleted_customers
         end
       end
-      
+
+      resources :delayed_jobs, only: [:index,:show] do
+        collection do
+          put 'requeue'
+          put 'requeue_selected'
+          put 'remove_selected'
+          put 'destroy_job'
+        end
+      end
+
       get  "/accounts/show", to: 'accounts#show'
+
       resources :accounts, :only => :none do
         collection do
           get :tickets
