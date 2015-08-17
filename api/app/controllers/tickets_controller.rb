@@ -9,7 +9,6 @@ class TicketsController < ApiApplicationController
   before_filter :validate_restore_params, only: [:restore]
 
   def create
-    api_add_ticket_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
@@ -24,13 +23,12 @@ class TicketsController < ApiApplicationController
 
   def update
     assign_protected
-    @item.assign_attributes(params[cname])
+    @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
       render_custom_errors(ticket_delegator)
     elsif @item.update_ticket_attributes(params[cname])
-      api_update_ticket_tags(@tags, @item) if @tags # add tags if update is successful.
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
       render_errors(@item.errors)
@@ -123,6 +121,8 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
+      ParamsHelper.uniq_params([:cc_emails, :tags], params[cname])
+
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  (params[cname][:cc_emails] || [])
 
@@ -132,13 +132,13 @@ class TicketsController < ApiApplicationController
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
-      # Collect tags in instance variable as it should not be part of params before build item.
-      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
-      ParamsHelper.clean_params([:cc_emails, :tags], params[cname])
+      ParamsHelper.clean_params([:cc_emails], params[cname])
+
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
+      params[cname][:tags] = construct_ticket_tags(@tags) if @tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
