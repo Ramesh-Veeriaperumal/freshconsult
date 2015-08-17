@@ -1,0 +1,74 @@
+<% outbound_initiator = @ticket.outbound_initiator %>
+<%= link_to user_avatar(outbound_initiator, :thumb, 'preview_pic circle'), outbound_initiator, :class => 'avatar-wrap' %>
+<div class="commentbox commentbox-gray">
+  <div>
+  <h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %>">
+    <% if @ticket.spam %>
+      <span class='label spam'>
+        <%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
+                  :class => "tooltip", "data-placement" => "below", 
+                  :title => t('ticket.ham_btn_title')) unless params[:format]=='widget' %>
+        <%= t("ticket.spam") %>
+
+      </span>
+    <% end %>
+    <% if @ticket.deleted %>
+      <span class='label deleted'>
+        <%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
+              :class => "tooltip", "data-placement" => "below", 
+              :title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' 
+              %>
+        <%= t("ticket.deleted") %>
+      </span>
+      
+    <% end %>
+
+    <%
+        customer_opinion = ""                                
+        unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
+          customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
+        end  
+    %>        
+    <%=customer_opinion%>                 
+
+    <%= h(@ticket.subject) %>
+  </h2>
+  <div class="author-mail-detail">
+    <div>
+      <%= link_to_user(outbound_initiator).html_safe %> <%= t('ticket.outbound') %> 
+      <abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
+      (<%= formated_date(@ticket.created_at) %>)
+      <%= t('ticket.via')%>
+      <%= @ticket.source_name %>
+
+      <%= metainfo(@ticket) unless @ticket.mobihelp? %>
+    </div>
+    
+    <div class="info"> 
+      <span><%= multiple_emails_container(@to_emails, "From: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank?%></span>
+      <span>,<%= multiple_emails_container([@ticket.from_email], "To: ")%></span>
+
+      <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
+        </div> 
+  </div>
+  <div id="ticket_original_request" class="request_mail">
+      <%= @ticket.description_html.html_safe %>
+  </div>
+
+  <% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
+    <span class="seperator"></span>
+    <div class="attachments-wrap clearfix">
+      <h5><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+      <ul class="attachment_list">
+          <% @ticket.attachments.each do |attached| %> 
+            <%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
+          <% end %>
+
+          <% @ticket.cloud_files.each do |cloud_file| %> 
+            <%= attachment_list(cloud_file, privilege?(:edit_ticket_properties), "cloud_file",nil) %>
+          <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+</div>

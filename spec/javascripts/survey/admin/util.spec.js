@@ -13,8 +13,8 @@ jQuery.getScript("http://localhost:3000/packages/survey_admin.jst").done(functio
 
 describe("Survey Util events",function(){
 	it("should define essential properties of survey admin util",function(){
-		expect(SurveyAdminUtil.blockUI).toBeDefined();
-		expect(SurveyAdminUtil.unblockUI).toBeDefined();
+		expect(SurveyAdminUtil.showOverlay).toBeDefined();
+		expect(SurveyAdminUtil.hideOverlay).toBeDefined();
 		expect(SurveyAdminUtil.action).toBeDefined();
 		expect(SurveyAdminUtil.action.split).toBeDefined();
 		expect(SurveyAdminUtil.makeURL).toBeDefined();
@@ -25,18 +25,5 @@ describe("Survey Util events",function(){
 		action = SurveyAdminUtil.action.split(action);
 		expect(action).not.toBe(undefined);
 		expect(action.length).toBeGreaterThan(0);
-	});
-
-	it("should block UI",function(){
-		var msg = 'test msg';
-		SurveyAdminUtil.blockUI(msg);
-		expect(jQuery('.blockUI.blockOverlay')).toBeDefined();
-		expect(jQuery('.blockUI.blockMsg')).toBeDefined();
-		expect(jQuery(".blockUI.blockMsg").text()).toEqual(msg);
-		SurveyAdminUtil.unblockUI();
-	});
-	it("should unblock UI",function(){
-		SurveyAdminUtil.unblockUI();
-		expect(jQuery('.blockUI.blockMsg').length).toBeGreaterThan(0);
 	});
 });

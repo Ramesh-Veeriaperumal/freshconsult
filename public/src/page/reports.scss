@@ -991,3 +991,10 @@ $animation_timing: .1s;
 .select2-results .select2-result-label{
 	margin: 5px;
 }
+
+// Livechat date picker text field margin fix
+#freshchat_summary_report {
+	#date_range {
+		margin-bottom : 0px;
+	}
+}

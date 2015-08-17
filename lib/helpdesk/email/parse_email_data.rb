@@ -123,7 +123,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def get_user from_email, email_config, email_body
-		self.user = account.all_users.find_by_email(from_email[:email])
+		self.user = account.user_emails.user_for_email(from_email[:email])
 	    unless user
 	      self.user = account.contacts.new
 	      signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},

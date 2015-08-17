@@ -90,6 +90,12 @@
     .on("change", function(e){
     	var id = jQuery("option:selected", this).data("id");
       jQuery('div.ticket_section').remove();
-      jQuery(jQuery('.section-ticket-field-'+id).val().replace(new RegExp('&lt', 'g'), '<').replace(new RegExp('&gt', 'g'), '>')).insertAfter(jQuery("#ticket-field-ticket_type"));
+      var element = jQuery('.section-ticket-field-'+id).parent();
+      if(element.length != 0) {
+      	jQuery(jQuery('.section-ticket-field-'+id).val()
+      				.replace(new RegExp('&lt', 'g'), '<')
+      				.replace(new RegExp('&gt', 'g'), '>'))
+      		.insertAfter(jQuery("#ticket-field-ticket_type"));
+      }
   }).trigger('change');
 <% end %>

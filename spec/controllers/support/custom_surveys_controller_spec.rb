@@ -17,6 +17,9 @@ describe Support::CustomSurveysController do
     ticket = create_ticket({ :status => 2 }, @group)
     @survey = @account.custom_surveys.first
     @survey.update_attributes(send_while: 1)
+    survey_question = @survey.survey_questions.new(:name => 'default_survey_question' ,:field_type => :custom_survey_radio , :position => 1, :deleted => 0 ,
+                      :label => 'Please tell us what you think of your support experience.' , :column_name => 'cf_int01' ,:default =>1) 
+    survey_question.save!
     note = ticket.notes.build({:note_body_attributes => {:body => Faker::Lorem.sentence}, :user_id => @user.id})
     note.save_note
     s_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, false)

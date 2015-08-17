@@ -332,7 +332,13 @@
       .on("change", function(e){
         var id = jQuery('option:selected', this).data('id');
         jQuery('div.ticket_section').remove();
-      	jQuery(jQuery('.picklist_section_'+id).val().replace(new RegExp('&lt', 'g'), '<').replace(new RegExp('&gt', 'g'), '>')).insertAfter(jQuery(".default_ticket_type"));
+        var element = jQuery('#picklist_section_'+id).parent();
+        if(element.length != 0) {
+      		jQuery(jQuery('.picklist_section_'+id).val()
+      						.replace(new RegExp('&lt', 'g'), '<')
+      						.replace(new RegExp('&gt', 'g'), '>'))
+      					.insertAfter(jQuery(".default_ticket_type"));
+      	}
     });
 
 	});

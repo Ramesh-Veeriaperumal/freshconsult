@@ -77,6 +77,7 @@ module Redis::RedisKeys
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
 	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
+	COMPOSE_EMAIL_ENABLED = "COMPOSE_EMAIL_ENABLED"
 	BI_REPORTS_UI_ENABLED = "BI_REPORTS_UI"
 
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"

@@ -18,7 +18,8 @@ class Shortcut
 			:customers 			=> "g c",
 			:reports 			=> "g r",
 			:admin 				=> "g a",
-			:ticket_new			=> "g n"
+			:ticket_new			=> "g n",
+			:compose_email      => "g m"
 		},
 		:pagination	=> {
 			:previous			=> "alt+left",

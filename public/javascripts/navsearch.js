@@ -1,7 +1,8 @@
 jQuery(document).ready(function(){
 	var currentactive,
       position   		= -1, 
-      insideSearch 	= false;
+      insideSearch 	= false,
+      focusedOnSearch = true,
       currentString = "";
       
 	callbackToSearch = function(string, search_url){
@@ -71,6 +72,7 @@ jQuery(document).ready(function(){
         mouseenter:
            function()
            {
+           	focusedOnSearch = false
            	insideSearch = true;
            },
         mouseleave:
@@ -81,12 +83,14 @@ jQuery(document).ready(function(){
        });
 			
 			$J("#header_search").bind("focusout", function(ev){ 
+				focusedOnSearch = false;
 				if(!insideSearch){
 					hideSearchBar();					
 				}
 			});
 			
 			$J("#header_search").bind("focusin", function(ev){
+				focusedOnSearch = true;
 				searchString = this.value.replace(/^\s+|\s+$/g, "");
 				$J("#SearchBar").addClass("active");
 				$J("#header_search").attr("placeholder", "Search");
@@ -104,6 +108,7 @@ jQuery(document).ready(function(){
 			};
 			
 			var executeAction = function (keyCode){
+				focusedOnSearch = false;
 				 switch (keyCode) {
 					case 40:
 						move(1);
@@ -112,6 +117,7 @@ jQuery(document).ready(function(){
 						move(-1);
 						break;
 					case 13:
+						focusedOnSearch = true
 						$J(currentactive).trigger("click");
 						break; 
 				}
@@ -145,6 +151,11 @@ jQuery(document).ready(function(){
 				}
 			});
       jQuery('body').on('submit', '.nav_search', function(ev){ 
-        ev.preventDefault(); handleFullSearch();
+      	if(!focusedOnSearch){
+      		return false;
+      	} else {
+      		ev.preventDefault(); handleFullSearch();
+      	}
+        
       });
 })

@@ -17,7 +17,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		toggleReorderButton: function () {
-			if ($('.comm-items ul li').length < 2) {
+			if ($('.comm-items ul li:not(.no_order)').length < 2) {
 				$('#categories_reorder_btn').hide();
 			}
 		},
@@ -27,6 +27,7 @@ window.App.Discussions = window.App.Discussions || {};
 			$('body').on("click.discussions.reorder", "#categories_reorder_btn", function (ev) {
 				ev.preventDefault();
 				$this.classToggle();
+				$('.comm-items li.no_order').hide();
 			});
 		},
 
@@ -70,6 +71,7 @@ window.App.Discussions = window.App.Discussions || {};
 				});
 				var url = $this.submitUrl;
 				$this.classToggle();
+				$('.comm-items li.no_order').show();
 			});
 		},
 
@@ -79,12 +81,13 @@ window.App.Discussions = window.App.Discussions || {};
 				ev.preventDefault();
 				$('.comm-items ul').html($('.comm-items ul').data('list_item'));
 				$this.classToggle();
+				$('.comm-items li.no_order').show();
 			});
 		},
 
 		positionHash: function () {
 			var positionHash = $H();
-			$.each($('.comm-items li'), function (index, item) {
+			$.each($('.comm-items li:not(.no_order)'), function (index, item) {
 				positionHash.set(item.getAttribute('item_id'), index + 1);
 			});
 			return positionHash.toJSON();

@@ -76,11 +76,7 @@
 							</tr>
 							
 					 	<% if @time_sheets.size > 0 %>
-				     		<%= render :partial => "time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>	
-							<tr>
-				       			<th colspan="<%=colspan%>" class="align-right">&nbsp;<%=t('helpdesk.time_sheets.report.total')%></th>
-				       			<th class="hours"><div id="totaltime"></div></th>
-				     		</tr>
+							<%= render :partial => "time_sheet.html.erb", :object => @time_sheets ,:locals=>{:colspan=>colspan,:group_by=>grp_data} %>
 					    <%else%>
 						    <tr>
 						    	<td colspan="<%=(colspan+1)%>">		    		
