@@ -102,7 +102,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     user = get_user(account, from_email,email_config)
     
     article_params[:title] = params[:subject].gsub( encoded_display_id_regex(account), "" )
-    article_params[:description] = cleansed_html || params[:text]
+    article_params[:description] = cleansed_html || simple_format(params[:text])
     article_params[:user] = user.id
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
