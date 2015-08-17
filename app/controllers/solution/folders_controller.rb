@@ -220,7 +220,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @folders = current_account.folders.where(:id => params[:items])
+      @folders = current_account.folders.where(:id => params[:items]).readonly(false)
       @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
       @updated_items = @folders.map(&:id)
     end
