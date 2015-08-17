@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150729062952) do
+ActiveRecord::Schema.define(:version => 20150805133724) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -181,7 +181,12 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
     t.integer "application_id", :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.integer "account_id", :limit => 8
   end
+
+  add_index "app_business_rules", ["installed_application_id"], :name => 'index_app_business_rules_on_installed_app_id'
+  add_index "app_business_rules", ["va_rule_id"], :name => 'index_app_business_rules_on_varule_id'
 
   create_table "applications", :force => true do |t|
     t.string  "name"
@@ -192,6 +197,9 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
   end
+
+  add_index "applications", ["name"], :name => "index_applications_on_name"
+  add_index "applications", ["account_id"], :name => "index_applications_on_account_id"
 
   create_table "article_tickets", :force => true do |t|
     t.integer "article_id", :limit => 8
@@ -2020,6 +2028,7 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   end
 
   add_index "installed_applications", ["account_id"], :name => "index_account_id_on_installed_applications"
+  add_index "installed_applications", ["account_id","application_id"], :name => "index_installed_applications_on_account_id_and_application_id"
 
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
@@ -2031,6 +2040,8 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.datetime "updated_at"
   end
 
+  add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
+
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2039,6 +2050,8 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -2833,7 +2846,7 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.integer  "survey_id",        :limit => 8
     t.integer  "survey_result_id", :limit => 8
     t.boolean  "rated",                         :default => false
-    t.boolean  "preview", :default => false
+    t.boolean  "preview",                       :default => false
     t.integer  "agent_id",         :limit => 8
     t.integer  "group_id",         :limit => 8
   end
@@ -2856,7 +2869,7 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   create_table "survey_questions", :force => true do |t|
     t.integer  "account_id",  :limit => 8
     t.integer  "survey_id",   :limit => 8
-    t.text     "name"
+    t.string   "name"
     t.integer  "field_type"
     t.integer  "position"
     t.boolean  "deleted",                  :default => false
@@ -2881,30 +2894,91 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
 
   create_table "survey_result_data", :force => true do |t|
+    t.integer  "id",               :limit => 8,                :null => false
     t.integer  "account_id",       :limit => 8, :default => 0, :null => false
     t.integer  "survey_id",        :limit => 8
     t.integer  "survey_result_id", :limit => 8
-    t.integer  "cf_int01",         :limit => 8
-    t.integer  "cf_int02",         :limit => 8
-    t.integer  "cf_int03",         :limit => 8
-    t.integer  "cf_int04",         :limit => 8
-    t.integer  "cf_int05",         :limit => 8
-    t.integer  "cf_int06",         :limit => 8
-    t.integer  "cf_int07",         :limit => 8
-    t.integer  "cf_int08",         :limit => 8
-    t.integer  "cf_int09",         :limit => 8
-    t.integer  "cf_int10",         :limit => 8
-    t.integer  "cf_int11",         :limit => 8
-    t.integer  "cf_int12",         :limit => 8
-    t.integer  "cf_int13",         :limit => 8
-    t.integer  "cf_int14",         :limit => 8
-    t.integer  "cf_int15",         :limit => 8
-    t.integer  "cf_int16",         :limit => 8
-    t.integer  "cf_int17",         :limit => 8
-    t.integer  "cf_int18",         :limit => 8
-    t.integer  "cf_int19",         :limit => 8
-    t.integer  "cf_int20",         :limit => 8
-    t.integer  "cf_int21",         :limit => 8
+    t.integer  "cf_int01"
+    t.integer  "cf_int02"
+    t.integer  "cf_int03"
+    t.integer  "cf_int04"
+    t.integer  "cf_int05"
+    t.integer  "cf_int06"
+    t.integer  "cf_int07"
+    t.integer  "cf_int08"
+    t.integer  "cf_int09"
+    t.integer  "cf_int10"
+    t.integer  "cf_int11"
+    t.integer  "cf_int12"
+    t.integer  "cf_int13"
+    t.integer  "cf_int14"
+    t.integer  "cf_int15"
+    t.integer  "cf_int16"
+    t.integer  "cf_int17"
+    t.integer  "cf_int18"
+    t.integer  "cf_int19"
+    t.integer  "cf_int20"
+    t.integer  "cf_int21"
+    t.string   "cf_str01"
+    t.string   "cf_str02"
+    t.string   "cf_str03"
+    t.string   "cf_str04"
+    t.string   "cf_str05"
+    t.string   "cf_str06"
+    t.string   "cf_str07"
+    t.string   "cf_str08"
+    t.string   "cf_str09"
+    t.string   "cf_str10"
+    t.string   "cf_str11"
+    t.string   "cf_str12"
+    t.string   "cf_str13"
+    t.string   "cf_str14"
+    t.string   "cf_str15"
+    t.string   "cf_str16"
+    t.string   "cf_str17"
+    t.string   "cf_str18"
+    t.string   "cf_str19"
+    t.string   "cf_str20"
+    t.text     "cf_text01"
+    t.text     "cf_text02"
+    t.text     "cf_text03"
+    t.text     "cf_text04"
+    t.text     "cf_text05"
+    t.text     "cf_text06"
+    t.text     "cf_text07"
+    t.text     "cf_text08"
+    t.text     "cf_text09"
+    t.text     "cf_text10"
+    t.text     "cf_text11"
+    t.text     "cf_text12"
+    t.text     "cf_text13"
+    t.text     "cf_text14"
+    t.text     "cf_text15"
+    t.text     "cf_text16"
+    t.text     "cf_text17"
+    t.text     "cf_text18"
+    t.text     "cf_text19"
+    t.text     "cf_text20"
+    t.boolean  "cf_boolean01"
+    t.boolean  "cf_boolean02"
+    t.boolean  "cf_boolean03"
+    t.boolean  "cf_boolean04"
+    t.boolean  "cf_boolean05"
+    t.boolean  "cf_boolean06"
+    t.boolean  "cf_boolean07"
+    t.boolean  "cf_boolean08"
+    t.boolean  "cf_boolean09"
+    t.boolean  "cf_boolean10"
+    t.boolean  "cf_boolean11"
+    t.boolean  "cf_boolean12"
+    t.boolean  "cf_boolean13"
+    t.boolean  "cf_boolean14"
+    t.boolean  "cf_boolean15"
+    t.boolean  "cf_boolean16"
+    t.boolean  "cf_boolean17"
+    t.boolean  "cf_boolean18"
+    t.boolean  "cf_boolean19"
+    t.boolean  "cf_boolean20"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -2934,20 +3008,20 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
 
   create_table "surveys", :force => true do |t|
     t.integer  "account_id",             :limit => 8
-    t.text     "link_text"
     t.integer  "send_while"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "happy_text",                          :default => "Awesome"
-    t.string   "neutral_text",                        :default => "Just Okay"
-    t.string   "unhappy_text",                        :default => "Not Good"
-    t.text     "title_text"
+    t.string   "title_text",                          :default => ""
     t.integer  "active",                 :limit => 1, :default => 0
     t.text     "thanks_text"
     t.text     "feedback_response_text"
     t.integer  "can_comment",            :limit => 1, :default => 0
     t.text     "comments_text"
-    t.integer  "default",                 :limit => 1, :default => 0
+    t.integer  "default",                :limit => 1, :default => 0
+    t.text   "link_text"
+    t.string   "happy_text",                          :default => "Awesome"
+    t.string   "neutral_text",                        :default => "Neutral"
+    t.string   "unhappy_text",                        :default => "Not Good"
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"

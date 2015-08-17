@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
 
   # proc is used as inclusion array is not constant
   validates :status, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values } }, allow_nil: true
-  validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook).values }, allow_nil: true
+  validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook, :outbound_email).values }, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
 
@@ -29,7 +29,7 @@ class TicketValidation < ApiValidation
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments && errors[:attachments].blank? }
 
-  validates :email, format: { with: AccountConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
+  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }

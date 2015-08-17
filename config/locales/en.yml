@@ -177,6 +177,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
+  outbound_email: Outbound Email
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook User
@@ -294,6 +295,7 @@ en:
       tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
+    properties: Properties
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
@@ -488,6 +490,8 @@ en:
         feedback_info: Your feedback is very much appreciated.
         feedback_optional: Feedback is optional
         send: Send
+        submit: Submit
+        additional_comments: Additional Comments
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
@@ -1109,6 +1113,27 @@ en:
      You can learn more about satisfaction surveys from our solutions page.
      </p>"
      limit_exceed_error: You can only add upto %{count} surveys.
+     custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
+     <br><br>
+     <b>Satisfaction Survey</b><br>
+     You can ask one customer satisfaction survey question and additional survey questions. 
+     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions. 
+     The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
+     <br><br>
+     <b>Point scales</b><br>
+     You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
+      2 point (Eg: Yes, No)<br>
+      3 point (Eg: Agree, Undecided, Disagree)<br>
+      5 point (Eg: Always to Never)<br>
+      7 point (Eg: Very Poor to Exceptional)<br><br>
+
+      Once a customer takes the survey, the scales will be locked down and they cannot be edited.
+      </p>"
+
      questions:
         limit_exceed_error: You can only add upto %{count} questions.
      new_layout:
@@ -1122,26 +1147,37 @@ en:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
+        content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
+                      It appears below your signature at the bottom of the email sent to the customer.            
         survey_question: Survey question
+        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
+        point_scale_v2: Point scale
         scale_text: You have chosen 
         scale: point scale
 
      new_thanks:
         survey_feedback: Survey Feedback Page
+        survey_feedback_v2: Thank You Page
         thanks_feedback: Thank you for your valuable feedback.
+        thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
+        thanks_message_feedback_v2: Thank you message for Additional Questions
         default_question_text: Are you satisfied with our customer support experience?
         thanks_label: Message will appear after submitting the feedback survey
+        thanks_label_v2: Message will appear after submitting feedback for additional questions.
         feedback_response_text: Thank you. Your feedback has been sent.
         help_text: Follow-up survey appears in a new page after the customer takes the agent survey.
+                    Questions can be about product/company/agent.
+        help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
                     Questions can be about product/company/agent.
 
      new_questions_layout:
         title_text: Select the points scale for your questions
+        title_text_v2: Select the point scale for your questions
         add_question: Add Question
         questions: Questions
 
@@ -1172,6 +1208,7 @@ en:
         delete_survey: Delete Survey
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
+        survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         on: ON
         off: OFF
 
@@ -1187,13 +1224,16 @@ en:
 
      thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
+        title_text_v2: Thank you message for Customer Satisfaction Survey.
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
+        label_text_v2: Additional Survey Questions
         question_error_text: Question has been already entered.
         empty_text: Question value cannot be blank.
 
      satisfaction_settings:
         enable_label: Customer Satisfaction Rating
+        enable_label_v2: Customer Satisfaction Survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -2184,6 +2224,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
@@ -2235,6 +2276,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
+  requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
@@ -2355,6 +2397,9 @@ en:
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} created a ticket"
+        long: "{{user_path}} created a ticket {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -3696,6 +3741,8 @@ en:
     welcome: Welcome
     new_ticket: New
     new_ticket_tip: New ticket
+    new_phone_ticket: Ticket
+    compose_email: Email
     search: Search ( / )
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
@@ -3995,6 +4042,7 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
+    outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
     ticket_updated: Ticket updated
@@ -4004,6 +4052,7 @@ en:
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_from: "From: %{username}"
+    ticket_to: "To: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -4113,7 +4162,11 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
+    learn_more: Learn more
+    submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications"
+    submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
       post_to_linked_forum: Post in linked forum
@@ -4404,6 +4457,15 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    send_email: Send an email
+    send: Send
+    send_and_new: Send and <strong> New </strong>
+    enter_subject: Enter Subject...
+    from: "From:"
+    to: "To:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:
@@ -6894,7 +6956,6 @@ en:
     chat_availability: "Chat Availability"
     show_chat_hours: "Show chat"
     show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
-    show_chat_hours_info: "Note: Chat window will appear only when agents are available."
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select Business Hour"
@@ -7040,7 +7101,6 @@ en:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Please wait"
@@ -7108,6 +7168,7 @@ en:
     agent_initiated : "Agent Initiated"
     agent_to_agent : "Agent to Agent"
     missed_chat : "Missed"
+    spam_chat: "Spam"
     filter: "Filter"
     close: "Close"
     visitorId: "Visitor ID"
@@ -7140,6 +7201,15 @@ en:
     missed_chat_info: "Chat has been missed.!"
     change_livechat_tone: "LiveChat Notification Tone"
     message: "Message"
+    unmark_spam: "Mark As Not Spam"
+    mark_spam: "Mark As Spam"
+    convert: "Convert"
+    add_note: "Add Note"
+    conversation: "Conversation"
+    and: "and"
+    via_widget: "via"
+    reported: "reported"
+    view_ticket: "view ticket"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

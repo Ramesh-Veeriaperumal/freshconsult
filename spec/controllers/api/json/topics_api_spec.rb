@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require './app/controllers/topics_controller'
 RSpec.describe TopicsController do
 
   self.use_transactional_fixtures = false

@@ -95,13 +95,23 @@ body { background: $background; }
 .theme-tab, .title-highlight{ background-color: $tab_color; color: $tab_ctxt_color;  }
 .theme-tab:before{ border-left-color: $tab_color; }	
 
-.nav_search div.search_bar input, a.new_ticket, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
+.nav_search div.search_bar input, a.new_ticket, .new_ticket_button, ul.header-tabs li a ,.nav_search div.search_bar label.overlabel { color: $tab_ctxt_color; }
 .nav_search div.search_bar .search-icon-inactive{
 	background: inline-image($tab_search_image) no-repeat;
 	background-position: 0;
 }
 ul.header-tabs li a:hover { background: lighten($tab_color, 3%);  color: $tab_ctxt_color; }
-a.new_ticket:hover{ color: lighten($tab_ctxt_color, 3%); }
+a.new_ticket:hover, .new_ticket_button:hover { color: lighten($tab_ctxt_color, 3%); }
+
+.dropdown, .dropdown.open{
+	a.dropdown-toggle.new_ticket_button{
+		color: $tab_ctxt_color;
+
+		&:hover {
+			color: lighten($tab_ctxt_color, 3%);
+		}
+	}
+}
 /* -------------------------------------------------------------------------------------------  */
 /* 										Common settings 										*/
 /* -------------------------------------------------------------------------------------------  */

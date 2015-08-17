@@ -3,8 +3,8 @@ require_relative '../test_helper'
 class TicketsDependencyTest < ActionDispatch::IntegrationTest
   def test_before_filters_web_tickets_controller
     expected_filters =  [:activate_authlogic, :add_requester_filter, :add_to_history, :build_item, :build_ticket,
-                         :build_ticket_body_attributes, :cache_filter_params, :check_account_state, :check_autorefresh_feature,
-                         :check_day_pass_usage, :check_privilege, :check_ticket_status, :clean_temp_files, :clear_filter,
+                         :build_ticket_body_attributes, :cache_filter_params, :check_account_state, :check_autorefresh_feature, :check_compose_feature,
+                         :check_day_pass_usage, :check_outbound_permission, :check_privilege, :check_ticket_status, :clean_temp_files, :clear_filter,
                          :csv_date_range_in_days, :determine_pod, :disable_notification, :enable_notification, :ensure_proper_protocol,
                          :filter_params_ids, :find_topic, :force_utf8_params, :freshdesk_form_builder, :get_tag_name, :handle_send_and_set,
                          :load_cached_ticket_filters, :load_conversation_params, :load_email_params, :load_items, :load_multiple_items,

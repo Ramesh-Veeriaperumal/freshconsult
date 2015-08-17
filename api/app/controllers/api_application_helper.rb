@@ -41,8 +41,8 @@ module ApiApplicationHelper
 
   def api_nested_choices(picklist_values)
     picklist_values.collect do |c|
-      Hash[c.value, c.sub_picklist_values.collect do |c|
-        Hash[c.value, c.sub_picklist_values.collect(&:value)]
+      Hash[c.value, c.sub_picklist_values.collect do |x|
+        Hash[x.value, x.sub_picklist_values.collect(&:value)]
       end]
     end
   end

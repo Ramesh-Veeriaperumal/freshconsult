@@ -164,6 +164,7 @@ module JsonPattern
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
+    expected_output[:description_html] ||= format_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email[:cc_emails],
@@ -175,7 +176,6 @@ module JsonPattern
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
-      urgent:  (expected_output[:urgent] || ticket.urgent).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
       group_id:  expected_output[:group_id] || ticket.group_id,
       priority:  expected_output[:priority] || ticket.priority,
@@ -199,6 +199,7 @@ module JsonPattern
   end
 
   def note_pattern(expected_output = {}, note)
+    expected_output[:body_html] ||= format_html(note, expected_output[:body]) if expected_output[:body]
     {
       body: expected_output[:body] || note.body,
       body_html: expected_output[:body_html] || note.body_html,
@@ -381,6 +382,19 @@ module JsonPattern
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+  end
+
+  def format_html(ticket, body)
+    body_html = Rinku.auto_link(body) { |text| truncate(text, length: 100) }
+    textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [:hard_breaks])
+    textilized.hard_breaks = true if textilized.respond_to?('hard_breaks=')
+    formatted = ticket.white_list(textilized.to_html)
+    html_doc = Nokogiri::HTML(formatted)
+      unless html_doc.at_css("body").blank?
+        html_doc.xpath("//del").each { |div|  div.name= "span";}
+        html_doc.xpath("//p").each { |div|  div.name= "div";}
+      end
+    Rinku.auto_link(html_doc.at_css("body").inner_html, :urls)
   end
 
   def company_pattern(expected_output = {}, company)

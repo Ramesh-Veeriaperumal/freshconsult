@@ -1,4 +1,5 @@
 require 'spec_helper'
+require './app/controllers/forums_controller'
 describe ::ForumsController do
 
   self.use_transactional_fixtures = false

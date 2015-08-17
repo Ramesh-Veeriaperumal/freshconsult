@@ -1,0 +1,156 @@
+.compose_email{
+  &.tkt-wrapper-inner{
+    margin: 0;
+  }
+  .tkt-sidebar #TicketProperties .ticket_section{
+    @include margin-left(0);
+  }
+  .page-header-sticky{
+    border: none;
+    padding-top: 10px;
+    &.is_stuck{
+      .sticky-header-wrapper{
+        padding-top: 15px;
+        span.sub-text{
+          display: none;
+        }
+      }
+    }
+    .sticky-header-wrapper{
+      span.sub-text{
+        display: block;
+        padding-top: 20px;
+      }
+    }
+  }
+
+.page-header-sticky .sticky-header-wrapper {
+    padding-top: 15px;
+  }
+  .compose-cancel{
+    @include float(left);
+    @include margin-right(10px);
+  }
+  .compose-send{
+    @include float(left);
+  }
+  .new_ticket_body{
+  	border: 1px solid #cccccc;
+  	@include border-radius(5px);
+  	overflow: hidden;
+  	#helpdesk_ticket_subject{
+  		border: none;
+  		box-shadow: none;
+  		width: 98%;
+  		height: 30px;
+  		@include margin(0);
+  	}
+  	li + li { 
+  		border-top: 1px solid #f3f3f3;  
+  	}
+  	.redactor_toolbar{
+  		background: none;
+  		border: none;
+      li{
+        border: none;
+      }
+  	}
+  	.redactor_box{
+  		border: none;
+  		@include border-radius(0);
+  	}
+    .caption{
+      font-weight: bold;
+      display: inline-block;
+      @include margin(0 20px 0 10px);
+      line-height: 35px;
+    }
+    .attach-wrapper{
+      min-height: 40px;
+      padding-top: 10px;
+    }
+    .new-attach .attachments-wrap .item{
+      padding: 5px;
+    }
+    label.error{
+      display: block;
+      @include padding(10px);
+    }
+  }
+
+  .new_ticket_address{
+    margin-bottom: 10px;
+    select{
+      border: none;
+      margin: 0;
+    }
+    .add_requester_button{
+      font-weight: normal;
+      @include margin-left(10px);
+      line-height: 30px;
+      @include margin-right(10px);
+    }
+    #add_cc_btn{
+      @include margin-right(5px);
+    }
+    .new_ticket_cc_button{
+      @include margin(-27px 10px 0 0);
+    }
+    input.requester{
+      width: 63%;
+      border: none;
+      box-shadow: none;
+      @include margin(0 0 0 15px);
+    }
+    #cc_emails_sec, #bcc_emails_sec{
+      padding: 0;
+      min-height: 30px;
+      overflow: auto;
+      .multi_value_field{
+        display: inline-block;
+        width: 89%;
+        box-shadow: none;
+        border: none;
+        min-height: 30px;
+        @include float(right);
+      }
+    }
+
+    li#cc_emails_sec{
+      border-top: 1px solid #f3f3f3;
+    }
+
+  }
+
+  .tkt-sidebar{
+    .widget{
+      border: none;
+      .checkbox{
+      @include margin(3px 5px 0 0);
+      }
+    }
+  }
+
+  #tkt-inner{
+    .leftcontent{
+      width: 95%;
+    }
+  }
+
+.tkt-wrapper-inner {
+    width: 100%;
+    margin: 0 auto;
+}
+
+}
+
+.dropdown-menu.new-ticket-dropdown li a {
+      padding: 7px 14px;
+  }
+
+.dropdown-menu.new-ticket-dropdown {
+    top: 38px;
+    left: -50px;
+    border-radius: 4px;
+    min-width: 120px;
+  }

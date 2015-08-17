@@ -7,6 +7,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   include MemcacheKeys
   
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login", "emailparser", "mailboxparser","freshops"] 
+  SKIPPED_PATHS      = ["/reports/v2"]
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
@@ -43,6 +44,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @api_resource = env["PATH_INFO"]
     @mobihelp_auth = env["HTTP_X_FD_MOBIHELP_APPID"]
     @sub_domain = @host.split(".")[0]
+    @path_info = env["PATH_INFO"]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
@@ -72,6 +74,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def by_pass_throttle?
     return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
     return true unless @mobihelp_auth.blank?
+    SKIPPED_PATHS.each{|p| return true if @path_info.include? p}
     if @content_type.nil?
       return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
     else

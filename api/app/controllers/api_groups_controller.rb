@@ -1,16 +1,15 @@
 class ApiGroupsController < ApiApplicationController
-  before_filter :preparing_agents, only: [:create, :update]
+  before_filter :prepare_agents, only: [:create, :update]
   before_filter :set_round_robin_enbled
 
   def create
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
-      render_error(group_delegator.errors, group_delegator.error_options)
+      render_custom_errors(group_delegator)
     elsif @item.save
       render_201_with_location(item_id: @item.id)
     else
-      set_custom_errors
-      render_error(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -19,21 +18,20 @@ class ApiGroupsController < ApiApplicationController
     @item.agent_groups = @item.agent_groups
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
-      set_custom_errors(group_delegator)
-      render_error(group_delegator.errors, group_delegator.error_options)
+      render_custom_errors(group_delegator)
     elsif !@item.update_attributes(params[cname])
       set_custom_errors
-      render_error(@item.errors)
+      render_custom_errors
     end
   end
 
   private
 
     def validate_params
-      group_params = current_account.features_included?(:round_robin) ? GroupConstants::GROUP_FIELDS : GroupConstants::GROUP_FIELDS_WITHOUT_TICKET_ASSIGN
+      group_params = current_account.features_included?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
-      render_error group.errors, group.error_options unless group.valid?
+      render_errors group.errors, group.error_options unless group.valid?
     end
 
     def load_object
@@ -55,13 +53,13 @@ class ApiGroupsController < ApiApplicationController
       @agents = Array.wrap params[cname][:agent_ids] if params[cname].key?(:agent_ids)
     end
 
-    def manipulate_params
+    def sanitize_params
       params[cname][:unassigned_for] = GroupConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       ParamsHelper.assign_and_clean_params({ unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
                                            params[cname])
     end
 
-    def preparing_agents
+    def prepare_agents
       initialize_agents
       drop_existing_agents if update? && @agents
       build_agents

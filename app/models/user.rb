@@ -309,7 +309,7 @@ class User < ActiveRecord::Base
     super(params)
   end
 
-  def signup!(params , portal=nil)
+  def signup!(params , portal=nil, send_activation=true)
     normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
     params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
     self.name = params[:user][:name]
@@ -338,7 +338,7 @@ class User < ActiveRecord::Base
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
     portal.make_current if portal
-    if (!deleted and !email.blank?)
+    if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
@@ -674,7 +674,12 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    #Remove as part of Search-Resque cleanup
+    if Search::Job.sidekiq?
+      SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id })
+    else
+      Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    end if ES_ENABLED
   end
 
   def moderator_of?(forum)
@@ -752,6 +757,24 @@ class User < ActiveRecord::Base
     self.customer_id
   end
 
+  # failed_login_count increases for each consecutive failed login.
+  # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
+  def update_failed_login_count(valid_pwd, user_name = nil, ip = nil)
+    if valid_pwd
+      # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
+      if self.failed_login_count != 0
+        self.failed_login_count = 0 
+        self.save
+      end
+      self
+    else
+      self.failed_login_count ||= 0
+      self.failed_login_count += 1
+      self.save
+      Rails.logger.error "API Unauthorized Error: Failed login attempt '#{self.failed_login_count}' for '#{user_name}' from #{ip} at #{Time.now.utc}"
+      nil
+    end
+  end
 
   private
     def name_part(part)

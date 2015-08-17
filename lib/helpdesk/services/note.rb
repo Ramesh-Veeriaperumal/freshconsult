@@ -30,7 +30,8 @@ module Helpdesk
         elements.each do |element|
           element_html = "#{element}_html".to_sym
           if note_body_attributes[element] && note_body_attributes[element_html].blank?
-            note_body_attributes[element_html] = body_html_with_formatting(CGI.escapeHTML(note_body_attributes[element])) 
+            formatted_text = body_html_with_formatting(CGI.escapeHTML(note_body_attributes[element])) 
+            note_body_attributes[element_html] = body_html_with_tags_renamed(formatted_text)
           end
         end
       end

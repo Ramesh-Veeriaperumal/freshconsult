@@ -28,7 +28,7 @@ module ApiDiscussions
         current_account.forums
       end
 
-      def manipulate_params
+      def sanitize_params
         customers = params[cname]['company_ids'].try(:uniq) || []
         params[cname][:customer_forums_attributes] = { customer_id: customers }
       end
@@ -41,7 +41,7 @@ module ApiDiscussions
       def validate_params
         params[cname].permit(*(DiscussionConstants::FORUM_FIELDS))
         forum_val = ApiDiscussions::ForumValidation.new(params[cname], @item)
-        render_error forum_val.errors, forum_val.error_options unless forum_val.valid?
+        render_errors forum_val.errors, forum_val.error_options unless forum_val.valid?
       end
 
       def set_custom_errors(_item = @item)
@@ -49,6 +49,7 @@ module ApiDiscussions
         @item.errors.add('company_ids', 'list is invalid') if bad_customer_ids.present?
         @error_options = { remove: :customer_forums, company_ids: { list: "#{bad_customer_ids.join(', ')}" } }
         ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)
+        @error_options
       end
   end
 end

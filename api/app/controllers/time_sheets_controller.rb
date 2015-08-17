@@ -27,7 +27,7 @@ class TimeSheetsController < ApiApplicationController
     timer_running = @item.timer_running
     changed = fetch_changed_attributes(timer_running)
     changed.merge!(timer_running: !timer_running)
-    render_error @item.errors unless @item.update_attributes(changed)
+    render_errors @item.errors unless @item.update_attributes(changed)
   end
 
   def ticket_time_sheets
@@ -64,29 +64,29 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def time_sheet_filter
-      time_sheet_filter_params = params.slice(*TimeSheetConstants::INDEX_TIMESHEET_FIELDS)
+      time_sheet_filter_params = params.slice(*TimeSheetConstants::INDEX_FIELDS)
       scoper.filter(time_sheet_filter_params)
     end
 
     def validate_filter_params
-      params.permit(*TimeSheetConstants::INDEX_TIMESHEET_FIELDS, *ApiConstants::DEFAULT_PARAMS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*TimeSheetConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timesheet_filter = TimeSheetFilterValidation.new(params, nil)
-      render_error timesheet_filter.errors, timesheet_filter.error_options unless timesheet_filter.valid?
+      render_errors timesheet_filter.errors, timesheet_filter.error_options unless timesheet_filter.valid?
     end
 
     def validate_params
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
-      fields = get_fields("TimeSheetConstants::#{action_name.upcase}_TIME_SHEET_FIELDS")
+      fields = get_fields("TimeSheetConstants::#{action_name.upcase}_FIELDS")
       params[cname].permit(*fields)
       @time_sheet_val = TimeSheetValidation.new(params[cname], @item, @timer_running)
-      render_error @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
+      render_errors @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
     end
 
     def validate_toggle_params
       params[cname].permit({})
     end
 
-    def manipulate_params
+    def sanitize_params
       params[cname][:timer_running] = @timer_running
       params[cname][:time_spent] = time_spent
       params[cname][:agent_id] ||= current_user.id if create?

@@ -5,20 +5,19 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
 
-  before_filter :ticket_permission?, only: [:destroy, :assign]
-  before_filter :validate_action_params, only: [:assign, :restore]
+  before_filter :ticket_permission?, only: [:destroy]
+  before_filter :validate_restore_params, only: [:restore]
 
   def create
-    api_add_tags(@tags, @item) if @tags # Tags need to be built if not already available for the account.
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_error(ticket_delegator.errors, ticket_delegator.error_options)
+      render_custom_errors(ticket_delegator)
     elsif @item.save_ticket
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
@@ -26,34 +25,21 @@ class TicketsController < ApiApplicationController
     assign_protected
 
     # Assign attributes required as the ticket delegator needs it.
-    @item.assign_attributes(params[cname])
+    @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
+    @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      set_custom_errors(ticket_delegator)
-      render_error(ticket_delegator.errors, ticket_delegator.error_options)
+      render_custom_errors(ticket_delegator)
     elsif @item.update_ticket_attributes(params[cname])
-      api_update_tags(@tags, @item) if @tags # add tags if update is successful.
-      notify_cc_people @new_cc_emails unless @new_cc_emails.blank? # notify cc_people on update too.
+      notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
   def destroy
     @item.update_attribute(:deleted, true)
     head 204
-  end
-
-  def assign
-    # can unassign an agent too. Should support that too.
-    user = params[cname][:user_id] ? User.find_by_id(params[cname][:user_id]) : current_user
-    if user
-      @item.responder = user
-      @item.save ? (head 204) : render_error(@item.errors)
-    else
-      @errors = [BadRequestError.new('responder', "can't be blank")]
-      render '/bad_request_error', status: 400
-    end
   end
 
   def restore
@@ -68,17 +54,18 @@ class TicketsController < ApiApplicationController
 
   private
 
-    def set_custom_erros(item = @item)
+    def set_custom_errors(item = @item)
       ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                                         product: :product_id }, item)
     end
 
     def load_objects
-      super tickets_filter(scoper).includes(:ticket_old_body,
-                                            :schema_less_ticket, flexifield: :flexifield_def)
+      super tickets_filter.includes(:ticket_old_body,
+                                            :schema_less_ticket, flexifield: {flexifield_def: :flexifield_def_entries})
     end
 
     def after_load_object
+      return false unless verify_object_state
       verify_ticket_permission if show? || update?
     end
 
@@ -97,44 +84,47 @@ class TicketsController < ApiApplicationController
     end
 
     def order_clause
-      order_by =  params[:order_by] || 'created_at'
-      order_type = params[:order_type] || 'desc'
+      order_by =  params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY
+      order_type = params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
       "helpdesk_tickets.#{order_by} #{order_type} "
     end
 
-    def tickets_filter(tickets)
-      tickets = tickets.where(deleted: false, spam: false).permissible(current_user)
+    def tickets_filter
+      tickets = scoper.where(deleted: false, spam: false).permissible(current_user)
+      filter = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)
       @ticket_filter.conditions.each do |key|
-        clause = Helpdesk::Ticket.api_filter(@ticket_filter, current_user)[key.to_sym] || {}
+        clause = filter[key.to_sym] || {}
         tickets = tickets.where(clause[:conditions]).joins(clause[:joins])
+        # method chaining is done here as, clause[:conditions] could be an array or a hash
       end
       tickets
     end
 
     def validate_filter_params
-      params.permit(*ApiTicketConstants::INDEX_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS,
-                    *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params)
-      render_error(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
       current_account.tickets
     end
 
-    def validate_action_params
-      params[cname].permit(*("ApiTicketConstants::#{params[:action].upcase}_TICKET_FIELDS".constantize))
+    def validate_restore_params
+      params[cname].permit(*ApiTicketConstants::RESTORE_FIELDS)
     end
 
     def validate_url_params
-      params.permit(*ApiTicketConstants::SHOW_TICKET_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
         errors = [[:include, ["can't be blank"]]]
-        render_error errors
+        render_errors errors
       end
     end
 
-    def manipulate_params
+    def sanitize_params
+      ParamsHelper.uniq_params([:cc_emails, :tags], params[cname])
+
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  (params[cname][:cc_emails] || [])
 
@@ -143,16 +133,15 @@ class TicketsController < ApiApplicationController
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
-
-      # Collect tags in instance variable as it should not be part of params before build item.
-      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-
       assign_checkbox_value if params[cname][:custom_fields]
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
-      ParamsHelper.clean_params([:cc_emails, :tags], params[cname])
+      ParamsHelper.clean_params([:cc_emails], params[cname])
+
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
+      params[cname][:tags] = construct_ticket_tags(@tags) if @tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
@@ -163,10 +152,10 @@ class TicketsController < ApiApplicationController
       allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = ApiTicketConstants::TICKET_FIELDS | ['custom_fields' => custom_fields]
+      field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       ticket = TicketValidation.new(params[cname], @item)
-      render_error ticket.errors, ticket.error_options unless ticket.valid?
+      render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
     def assign_protected
@@ -176,6 +165,17 @@ class TicketsController < ApiApplicationController
       @item.cc_email = @cc_emails
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
+    end
+
+    def verify_object_state
+      action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
+      action_scopes.each_pair do |scope_attribute, value|
+        if @item.send(scope_attribute) != value
+          head(404)
+          return false
+        end
+      end
+      true
     end
 
     # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
@@ -220,9 +220,7 @@ class TicketsController < ApiApplicationController
     end
 
     def load_object
-      condition = 'display_id = ? '
-      condition += "and deleted = #{ApiConstants::DELETED_SCOPE[action_name]}" if ApiConstants::DELETED_SCOPE.keys.include?(action_name)
-      @item = scoper.where(condition, params[:id]).first
+      @item = scoper.find_by_display_id(params[:id])
       head(:not_found) unless @item
     end
 end

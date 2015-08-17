@@ -38,6 +38,29 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(invalid_json_error_pattern)
   end
 
+  def test_domain_not_ready
+    Sharding.stubs(:select_shard_of).raises(DomainNotReady)
+    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers
+    assert_response :not_found
+    response.body.must_match_json_expression(message: String)
+  end
+
+  def test_trusted_ip_invalid
+    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
+    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers.merge('rack.session' => { 'user_credentials_id' => '22' })
+    assert_response :forbidden
+    response.body.must_match_json_expression(message: String)
+  end
+
+  def test_globally_blacklisted_ip_invalid
+    GlobalBlacklistedIp.any_instance.stubs(:ip_list).returns(['127.0.0.1'])
+    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers
+    GlobalBlacklistedIp.any_instance.unstub(:ip_list)
+    assert_response :forbidden
+    response.body.must_match_json_expression(message: String)
+  end
+
   def test_unsupported_media_type_invalid_content_type
     post '/api/discussions/categories', '{"category": {"name": "true"}}', @headers.merge('CONTENT_TYPE' => 'text/plain')
     assert_response :unsupported_media_type
