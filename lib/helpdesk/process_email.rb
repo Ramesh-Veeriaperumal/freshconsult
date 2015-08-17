@@ -346,15 +346,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket
     end
     
-    def check_for_auto_responders(ticket)
+    def check_for_auto_responders(model)
       headers = params[:headers]
       if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
-        ticket.skip_notification = true
+        model.skip_notification = true
       end
     end
 
-    def check_support_emails_from(account, ticket, user, from_email)
-      ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
+    def check_support_emails_from(account, model, user, from_email)
+      model.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(from_email[:email]) == 0}
     end
 
     def ticket_from_email_body(account)
@@ -410,6 +410,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+      check_for_auto_responders(note)
+      check_support_emails_from(ticket.account, note, user, from_email)
       
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket, note)

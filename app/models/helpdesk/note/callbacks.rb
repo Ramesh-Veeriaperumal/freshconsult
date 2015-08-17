@@ -96,6 +96,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_notifications
+      return if skip_notification
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
