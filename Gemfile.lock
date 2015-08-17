@@ -191,7 +191,6 @@ GIT
   branch: master
   specs:
     launchparty (0.0.0)
-      launchparty
       redis
 
 PATH
