@@ -661,6 +661,33 @@ var scrollToError = function(){
 			}
 		});
 	});  
+	
+	 // For Twitter Replybox
+	$("body").on("change.ticket_details", '#tweet_type', function (){
+	  reply_type = $('#tweet_type').val();
+	       
+	  istwitter = $('#cnt-reply').data('isTwitter');
+	  if (!istwitter)        
+	    return ;
+	   
+	  if (reply_type == 'dm'){
+	    bindNobleCount(10000);
+	  }
+	  else{
+	    bindNobleCount(140);
+	  }
+	   
+	});  
+
+	function bindNobleCount(max_chars){
+	  $('#send-tweet-cnt-reply-body').unbind();
+	  
+	  $('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error", max_chars : max_chars }); 
+	  
+	  var char_val = $("#SendTweetCounter").text();
+	  $('#send-tweet-cnt-reply-body').data("tweet-count", char_val);
+	 }
+
 
 	//End of Twitter Replybox JS
 
