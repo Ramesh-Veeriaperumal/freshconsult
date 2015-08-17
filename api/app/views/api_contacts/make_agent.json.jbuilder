@@ -4,6 +4,6 @@ json.cache! @agent do
   json.partial! 'shared/utc_date_format', item: @agent.user
 
   json.set! :agnet do
-     json.(@agent, :active_since, :available, :created_at, :id, :occasional, :points, :scoreboard_level_id, :signature, :signature_html, :ticket_permission, :updated_at)
-  end 
+    json.(@agent, :active_since, :available, :created_at, :id, :occasional, :points, :scoreboard_level_id, :signature, :signature_html, :ticket_permission, :updated_at)
+  end
 end

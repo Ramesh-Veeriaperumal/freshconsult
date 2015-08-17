@@ -1,6 +1,5 @@
 require_relative '../test_helper'
 class ApiContactFieldsControllerTest < ActionController::TestCase
-
   def wrap_cname(params)
     { api_contact_field: params }
   end
@@ -18,5 +17,4 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern)
   end
-
 end

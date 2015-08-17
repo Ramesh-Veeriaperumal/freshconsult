@@ -1,7 +1,8 @@
 class DateTimeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, values)
     unless allow_nil(values) || self.class.parse_time(values)
-      record.errors[attribute] << 'data_type_mismatch'
+      message = options[:message] || 'data_type_mismatch'
+      record.errors[attribute] << message
       (record.error_options ||= {}).merge!(attribute => { data_type: 'date' })
     end
   end

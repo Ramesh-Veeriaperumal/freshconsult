@@ -1,6 +1,5 @@
 require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
-
   include ContactFieldsHelper
 
   def wrap_cname(params)
@@ -31,12 +30,12 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name','missing_field')])
+    match_json([bad_request_error_pattern('name', 'missing_field')])
   end
 
   def test_create_contact_without_any_contact_detail
     post :create, construct_params({},  name: Faker::Lorem.characters(10))
-    match_json([bad_request_error_pattern('email','Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
+    match_json([bad_request_error_pattern('email', 'Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
   end
 
   def test_create_contact_with_existing_email
@@ -51,18 +50,18 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_invalid_client_manager
     comp = get_company
-    post :create, construct_params({},  name: Faker::Lorem.characters(15), 
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: "String",
+                                        client_manager: 'String',
                                         company_id: comp.id)
-    match_json([bad_request_error_pattern('client_manager','not_included', list:'true,false')])
+    match_json([bad_request_error_pattern('client_manager', 'not_included', list: 'true,false')])
   end
 
   def test_create_contact_with_client_manager_without_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true)
-    match_json([bad_request_error_pattern('company_id','missing_field')])
+    match_json([bad_request_error_pattern('company_id', 'missing_field')])
   end
 
   def test_create_contact_with_valid_client_manager
@@ -84,9 +83,9 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: Faker::Lorem.characters(5),
                                         time_zone: Faker::Lorem.characters(5))
-    match_json([bad_request_error_pattern('language','not_included',
-      list: I18n.available_locales.map(&:to_s).join(',')),
-    bad_request_error_pattern('time_zone','not_included', list: ActiveSupport::TimeZone.all.map { |time_zone| time_zone.name }.join(','))])
+    match_json([bad_request_error_pattern('language', 'not_included',
+                                          list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern('time_zone', 'not_included', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
   end
 
   def test_create_contact_with_valid_language_and_timezone
@@ -95,8 +94,8 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        time_zone: "Mountain Time (US & Canada)")
+                                        language: 'en',
+                                        time_zone: 'Mountain Time (US & Canada)')
     assert_response :created
     match_json(deleted_contact_pattern(User.last))
   end
@@ -107,10 +106,9 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        tags: "tag1, tag2, tag3")
+                                        language: 'en',
+                                        tags: 'tag1, tag2, tag3')
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
-
   end
 
   def test_create_contact_with_invalid_avatar
@@ -119,7 +117,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 email: Faker::Internet.email,
                 client_manager: true,
                 company_id: comp.id,
-                language: "en",
+                language: 'en',
                 avatar: Faker::Internet.email }
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('avatar', 'data_type_mismatch', data_type: 'format')])
@@ -132,7 +130,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 email: Faker::Internet.email,
                 client_manager: true,
                 company_id: comp.id,
-                language: "en",
+                language: 'en',
                 avatar: file }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  params)
@@ -142,7 +140,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_with_invalid_avatar_file_size
     file = fixture_file_upload('files/a.jpg', 'image/jpg')
     params = {  name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true, company_id: 1,
-                language: "en", avatar: file }
+                language: 'en', avatar: file }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('avatar', 'File size should be < 5 MB')])
@@ -154,15 +152,14 @@ class ApiContactsControllerTest < ActionController::TestCase
                 email: Faker::Internet.email,
                 client_manager: true,
                 company_id: comp.id,
-                language: "en",
+                language: 'en',
                 custom_fields: { dummyfield: Faker::Lorem.characters(20) } }
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('dummyfield', 'invalid_field')])
-
   end
 
   def test_create_contact_with_tags_avatar_and_custom_fields
-    cf_dept = create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "Department", :editable_in_signup => "true"}))
+    cf_dept = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name]
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     comp = get_company
@@ -171,10 +168,10 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
+                                        language: 'en',
                                         tags: tags,
                                         avatar: file,
-                                        custom_fields: { "cf_department" => "Sample Dept" })
+                                        custom_fields: { 'cf_department' => 'Sample Dept' })
     assert_response :created
     match_json(deleted_contact_pattern(User.last))
   end
@@ -183,115 +180,113 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_with_custom_fields
     comp = get_company
 
-    create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "Department", :editable_in_signup => "true"}))
-    create_contact_field(cf_params({ :type=>"boolean", :field_type=>"custom_checkbox", :label=> "Sample check box", :editable_in_signup => "true"}))
-    create_contact_field(cf_params({ :type=>"date", :field_type=>"custom_date", :label=> "sample_date", :editable_in_signup => "true"}))
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Sample check box', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'sample_date', editable_in_signup: 'true'))
 
-    create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_dropdown", :label=> "sample_dropdown", :editable_in_signup => "true"}))
-    ContactFieldChoice.create( value: "Choice 1", position: 1)
-    ContactFieldChoice.create( value: "Choice 2", position: 2)
-    ContactFieldChoice.create( value: "Choice 3", position: 3)
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'sample_dropdown', editable_in_signup: 'true'))
+    ContactFieldChoice.create(value: 'Choice 1', position: 1)
+    ContactFieldChoice.create(value: 'Choice 2', position: 2)
+    ContactFieldChoice.create(value: 'Choice 3', position: 3)
     ContactFieldChoice.update_all(account_id: @account.id)
-    ContactFieldChoice.update_all(contact_field_id: ContactField.find_by_name("cf_sample_dropdown").id)
-
+    ContactFieldChoice.update_all(contact_field_id: ContactField.find_by_name('cf_sample_dropdown').id)
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        custom_fields: { "cf_department" => "Sample Dept", "cf_sample_check_box" => true, "cf_sample_date" => "2010-11-01", "cf_sample_dropdown" => "Choice 1"})
+                                        language: 'en',
+                                        custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_date' => '2010-11-01', 'cf_sample_dropdown' => 'Choice 1' })
     assert_response :created
-    assert User.last.custom_field["cf_sample_check_box"] == true
-    assert User.last.custom_field["cf_department"] == "Sample Dept"
-    assert User.last.custom_field["cf_sample_date"].to_date == Date.parse("2010-11-01")
-    assert User.last.custom_field["cf_sample_dropdown"] == "Choice 1"
+    assert User.last.custom_field['cf_sample_check_box'] == true
+    assert User.last.custom_field['cf_department'] == 'Sample Dept'
+    assert User.last.custom_field['cf_sample_date'].to_date == Date.parse('2010-11-01')
+    assert User.last.custom_field['cf_sample_dropdown'] == 'Choice 1'
     match_json(deleted_contact_pattern(User.last))
   end
 
   def test_create_contact_with_invalid_custom_fields
     comp = get_company
-    create_contact_field(cf_params({ :type=>"boolean", :field_type=>"custom_checkbox", :label=> "Check Me", :editable_in_signup => "true"}))
-    create_contact_field(cf_params({ :type=>"date", :field_type=>"custom_date", :label=> "DOJ", :editable_in_signup => "true"}))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Check Me', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'DOJ', editable_in_signup: 'true'))
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        custom_fields: { "cf_check_me" => "aaa", "cf_doj" => 2010 })
+                                        language: 'en',
+                                        custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cf_check_me','not_included', list:'true,false'),
-      bad_request_error_pattern('cf_doj','is not a date')])
+    match_json([bad_request_error_pattern('cf_check_me', 'not_included', list: 'true,false'),
+                bad_request_error_pattern('cf_doj', 'is not a date')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
     comp = get_company
 
-    create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_dropdown", :label=> "Choose Me", :editable_in_signup => "true"}))
-    ContactFieldChoice.create( value: "Choice 1", position: 1)
-    ContactFieldChoice.create( value: "Choice 2", position: 2)
-    ContactFieldChoice.create( value: "Choice 3", position: 3)
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'Choose Me', editable_in_signup: 'true'))
+    ContactFieldChoice.create(value: 'Choice 1', position: 1)
+    ContactFieldChoice.create(value: 'Choice 2', position: 2)
+    ContactFieldChoice.create(value: 'Choice 3', position: 3)
     ContactFieldChoice.where(account_id: nil).update_all(account_id: @account.id)
-    ContactFieldChoice.where(contact_field_id: nil).update_all(contact_field_id: ContactField.find_by_name("cf_choose_me").id)
-
+    ContactFieldChoice.where(contact_field_id: nil).update_all(contact_field_id: ContactField.find_by_name('cf_choose_me').id)
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        custom_fields: {"cf_choose_me" => "Choice 4"})
+                                        language: 'en',
+                                        custom_fields: { 'cf_choose_me' => 'Choice 4' })
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cf_choose_me','not_included', list:'Choice 1,Choice 2,Choice 3')])
+    match_json([bad_request_error_pattern('cf_choose_me', 'not_included', list: 'Choice 1,Choice 2,Choice 3')])
   end
 
   # Update user
   def test_update_user_with_blank_name
-    params_hash  = { name:"" }
+    params_hash  = { name: '' }
     sample_user = get_user
-    sample_user.update_attribute(:phone,"1234567890")
+    sample_user.update_attribute(:phone, '1234567890')
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('name', "can't be blank")])
   end
 
   def test_update_user_without_any_contact_detail
-    params_hash = { phone:"", mobile:"", twitter_id:"" }
+    params_hash = { phone: '', mobile: '', twitter_id: '' }
     sample_user = get_user
     sample_user.update_attribute(:email, nil)
-    put :update, construct_params({id: sample_user.id}, params_hash)
+    put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('email','Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
+    match_json([bad_request_error_pattern('email', 'Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
   end
 
   def test_update_user_with_valid_params
-    cf_dept = create_contact_field(cf_params({ :type=>"text", :field_type=>"custom_text", :label=> "city", :editable_in_signup => "true"}))
-    tags = [Faker::Name.name, Faker::Name.name, "tag_sample_test_3"]
-    cf = { "cf_city" => "Chennai" }
+    cf_dept = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
+    tags = [Faker::Name.name, Faker::Name.name, 'tag_sample_test_3']
+    cf = { 'cf_city' => 'Chennai' }
     comp = get_company
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true,
                                         company_id: comp.id,
-                                        language: "en",
-                                        tags: ["tag_sample_test_1","tag_sample_test_2","tag_sample_test_3"])
+                                        language: 'en',
+                                        tags: %w(tag_sample_test_1 tag_sample_test_2 tag_sample_test_3))
     assert_response :created
     sample_user = User.where(helpdesk_agent: false).last
-    params_hash = { language: "cs", 
-                    time_zone: "Tokyo",
-                    job_title: "emp",
+    params_hash = { language: 'cs',
+                    time_zone: 'Tokyo',
+                    job_title: 'emp',
                     custom_fields: cf,
                     tags: tags }
-     
+
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
-    assert sample_user.reload.language == "cs"
-    assert sample_user.reload.time_zone == "Tokyo"
-    assert sample_user.reload.job_title == "emp"
+    assert sample_user.reload.language == 'cs'
+    assert sample_user.reload.time_zone == 'Tokyo'
+    assert sample_user.reload.job_title == 'emp'
     assert sample_user.reload.tag_names.split(', ').sort == tags.sort
-    assert sample_user.reload.custom_field["cf_city"] == "Chennai"
+    assert sample_user.reload.custom_field['cf_city'] == 'Chennai'
     match_json(deleted_contact_pattern(sample_user.reload))
   end
 
@@ -309,14 +304,14 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_client_manager_with_invalid_company_id
     sample_user = get_user
     comp = get_company
-    params_hash = { company_id: comp.id, client_manager: true, phone: "1234567890" }
+    params_hash = { company_id: comp.id, client_manager: true, phone: '1234567890' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     sample_user.reload
     params_hash = { company_id: nil }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
-    assert sample_user.reload.company_id == nil
+    assert sample_user.reload.company_id.nil?
   end
 
   def test_update_client_manager_with_unavailable_company_id
@@ -324,11 +319,11 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     sample_user.update_attribute(:client_manager, false)
     sample_user.update_attribute(:company_id, nil)
-    params_hash = { company_id: 10000 }
+    params_hash = { company_id: 10_000 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
-    assert sample_user.reload.company_id == nil
-    match_json([bad_request_error_pattern('company_id', "Should not be invalid_value/blank")])
+    assert sample_user.reload.company_id.nil?
+    match_json([bad_request_error_pattern('company_id', 'Should not be invalid_value/blank')])
   end
 
   def test_update_the_email_of_a_contact
@@ -338,8 +333,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('email','Email cannot be updated')])
-    sample_user.update_attribute( :email, nil)
+    match_json([bad_request_error_pattern('email', 'Email cannot be updated')])
+    sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     sample_user.reload.email == email
@@ -350,7 +345,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_delete_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :no_content
     assert sample_user.reload.deleted == true
   end
@@ -358,39 +353,39 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_delete_a_deleted_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :no_content
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :not_found
   end
 
   def test_update_a_deleted_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :no_content
-    params_hash = { language: "cs" }
-    put :update, construct_params({id: sample_user.id}, params_hash)
+    params_hash = { language: 'cs' }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :not_found
   end
 
   def test_show_a_deleted_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :no_content
-    get :show, construct_params({id: sample_user.id})
+    get :show, construct_params(id: sample_user.id)
     match_json(deleted_contact_pattern(sample_user.reload))
   end
 
   def test_restore_a_deleted_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :no_content
-    put :restore, construct_params({id: sample_user.id})
+    put :restore, construct_params(id: sample_user.id)
     assert_response :no_content
-    get :show, construct_params({id: sample_user.id})
+    get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
   end
 
@@ -398,7 +393,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     (user1, user2) = @account.all_contacts.where(deleted: false).first(2)
     user2.update_attribute(:deleted, true)
     user2.update_attribute(:parent_id, user1.id)
-    put :restore, construct_params({id: user2.id})
+    put :restore, construct_params(id: user2.id)
     assert_response :not_found
     assert user2.deleted == true
   end
@@ -430,7 +425,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:deleted, true)
     sample_user.update_attribute(:blocked_at, Time.now)
     sample_user.update_attribute(:deleted_at, Time.now)
-    get :index, controller_params({state: 'blocked'})
+    get :index, controller_params(state: 'blocked')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -439,7 +434,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_contact_filter_phone
     @account.all_contacts.update_all(phone: nil)
     @account.all_contacts.first.update_column(:phone, '1234567890')
-    get :index, controller_params({phone: '1234567890'})
+    get :index, controller_params(phone: '1234567890')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -448,7 +443,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_contact_filter_mobile
     @account.all_contacts.update_all(mobile: nil)
     @account.all_contacts.first.update_column(:mobile, '1234567890')
-    get :index, controller_params({mobile: '1234567890'})
+    get :index, controller_params(mobile: '1234567890')
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -458,7 +453,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(email: nil)
     email = Faker::Internet.email
     @account.all_contacts.first.update_column(:email, email)
-    get :index, controller_params({email: email})
+    get :index, controller_params(email: email)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -468,7 +463,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     @account.all_contacts.update_all(customer_id: nil)
     @account.all_contacts.first.update_column(:customer_id, comp.id)
-    get :index, controller_params({company_id: comp.id})
+    get :index, controller_params(company_id: comp.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -481,24 +476,24 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     @account.all_contacts.first.update_column(:email, email)
     @account.all_contacts.last.update_column(:customer_id, comp.id)
-    get :index, controller_params({company_id: comp.id, email: email})
+    get :index, controller_params(company_id: comp.id, email: email)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_contact_filter_invalid
-    get :index, controller_params({customer_id: 1})
+    get :index, controller_params(customer_id: 1)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('customer_id', "invalid_field")])
+    match_json([bad_request_error_pattern('customer_id', 'invalid_field')])
   end
 
   # Make agent out of a user
   def test_make_agent
     assert_difference 'Agent.count', 1 do
       sample_user = get_user
-      sample_user.update_attribute(:email,Faker::Internet.email) if sample_user.email.blank?
-      put :make_agent, construct_params({id: sample_user.id})
+      sample_user.update_attribute(:email, Faker::Internet.email) if sample_user.email.blank?
+      put :make_agent, construct_params(id: sample_user.id)
       assert_response :success
       assert sample_user.reload.helpdesk_agent == true
       assert Agent.last.user.id = sample_user.id
@@ -508,21 +503,21 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_make_agent_out_of_a_user_without_email
     @account.subscription.update_attribute(:agent_limit, nil)
     sample_user = get_user
-    email = sample_user.email 
+    email = sample_user.email
     sample_user.update_attribute(:email, nil)
-    put :make_agent, construct_params({id: sample_user.id})
+    put :make_agent, construct_params(id: sample_user.id)
     assert_response :bad_request
     sample_user.update_attribute(:email, email)
-    match_json([bad_request_error_pattern('email','Contact with email id can only be converted to agent')])
+    match_json([bad_request_error_pattern('email', 'Contact with email id can only be converted to agent')])
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
     @account.subscription.update_attribute(:agent_limit, 1)
     sample_user = get_user
     sample_user.update_attribute(:email, Faker::Internet.email) if sample_user.email.blank?
-    put :make_agent, construct_params({id: sample_user.id})
+    put :make_agent, construct_params(id: sample_user.id)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('id','You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.')])
+    match_json([bad_request_error_pattern('id', 'You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.')])
   end
 
   def test_make_agent_fails_in_user_validation
@@ -532,21 +527,21 @@ class ApiContactsControllerTest < ActionController::TestCase
       twitter_handle = Faker::Internet.email
       last_user.update_attribute(:twitter_id, twitter_handle)
       sample_user.update_column(:twitter_id, twitter_handle)
-      put :make_agent, construct_params({id: sample_user.id})
+      put :make_agent, construct_params(id: sample_user.id)
       assert_response :conflict
       assert sample_user.helpdesk_agent == false
     end
   end
-  
+
   # Misc
   def test_demo_site
     old_value = AppConfig['demo_site'][Rails.env]
     AppConfig['demo_site'][Rails.env] = @account.full_domain
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params({id: sample_user.id})
+    delete :destroy, construct_params(id: sample_user.id)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('error',"Demo site doesn't have this access!")])
+    match_json([bad_request_error_pattern('error', "Demo site doesn't have this access!")])
     AppConfig['demo_site'][Rails.env] = old_value
   end
 end

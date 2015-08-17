@@ -19,7 +19,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       when 'default_requester'
         new_pattern = requester_ticket_field_pattern(field)
       when 'nested_field'
-        new_pattern = ticket_field_nested_pattern(field)
+        new_pattern = ticket_field_nested_pattern(field, choices: field.api_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
         new_pattern.merge!(choices: Hash) if api_choices(@account, field).class == Hash
@@ -165,10 +165,10 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     assert_equal @account.main_portal.ticket_fields.count, response.count
     field = @account.ticket_fields.where(field_type: 'nested_field').first
     relevant_response = response.find { |x| x['id'] == field.id }
-    match_custom_json(relevant_response.to_json, ticket_field_nested_pattern(field, choices: [
-      { 'Australia' => [{ 'New South Wales' => ['Sydney'] }, { 'Queensland' => ['Brisbane'] }] },
-      { 'USA' => [{ 'California' => ['Burlingame', 'Los Angeles'] },
-                  { 'Texas' => ['Houston', 'Dallas'] }] }]))
+    match_custom_json(relevant_response.to_json, ticket_field_nested_pattern(field, choices: {
+                                                                               'Australia' => { 'New South Wales' => ['Sydney'],  'Queensland' => ['Brisbane'] },
+                                                                               'USA' => { 'California' => ['Burlingame', 'Los Angeles'],
+                                                                                          'Texas' => ['Houston', 'Dallas'] } }))
     field.nested_ticket_fields.each do |x|
       relevant_ntf = relevant_response['nested_ticket_fields'].find { |ntf| ntf['id'] == x.id }
       match_custom_json(relevant_ntf.to_json, nested_ticket_fields_pattern(x))

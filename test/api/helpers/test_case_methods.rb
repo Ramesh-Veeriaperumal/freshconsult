@@ -302,18 +302,18 @@ module TestCaseMethods
   def v1_contact_params
     # comp  = Company.first || create_company
     {
-      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: "1234567890",
-      mobile: "1234567891", description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
-      language: "en", time_zone: "Chennai", tag_names: "#{Faker::Lorem.characters(5)}, #{Faker::Lorem.characters(5)}"
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: '1234567890',
+      mobile: '1234567891', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: 'en', time_zone: 'Chennai', tag_names: "#{Faker::Lorem.characters(5)}, #{Faker::Lorem.characters(5)}"
     }
   end
 
   def v2_contact_params
     # comp  = Company.first || create_company
     {
-      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: "1234567892",
-      mobile: "1234567893", description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
-      language: "en", time_zone: "Chennai", tags: [Faker::Lorem.characters(5), Faker::Lorem.characters(5)]
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
+      mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: 'en', time_zone: 'Chennai', tags: [Faker::Lorem.characters(5), Faker::Lorem.characters(5)]
     }
   end
 

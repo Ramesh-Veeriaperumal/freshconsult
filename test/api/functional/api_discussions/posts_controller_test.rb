@@ -128,7 +128,7 @@ module ApiDiscussions
       post :create, construct_params({}, :body_html => 'test', 'topic_id' => topic_obj.id,
                                          'user_id' => 999)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('user_id', "invalid_field")])
+      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
     end
 
     def test_posts_invalid_id

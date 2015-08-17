@@ -80,7 +80,7 @@ module ApiDiscussions
     def test_create_invalid_user_field
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('user_id', "invalid_field")])
+      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
       assert_response :bad_request
     end
 

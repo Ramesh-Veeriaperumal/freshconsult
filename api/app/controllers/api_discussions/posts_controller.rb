@@ -13,7 +13,7 @@ module ApiDiscussions
         super
         @item.user = current_user
         @item.portal = current_portal
-        @item.topic_id ||= params[cname]["topic_id"]
+        @item.topic_id ||= params[cname]['topic_id']
       end
 
       def load_topic
@@ -25,7 +25,7 @@ module ApiDiscussions
       end
 
       def set_custom_errors(_item = @item)
-        ErrorHelper.rename_error_fields({ topic: :topic_id}, @item)
+        ErrorHelper.rename_error_fields({ topic: :topic_id }, @item)
       end
 
       def manipulate_params

@@ -5,7 +5,7 @@ module DiscussionConstants
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type forum_id), edit_topic: ['sticky', 'locked'] }
   UPDATE_POST_FIELDS = ['body_html', 'answer']
-  CREATE_POST_FIELDS = ['body_html', 'answer', 'topic_id']
+  CREATE_POST_FIELDS = %w(body_html answer topic_id)
   IS_FOLLOWING_FIELDS = ['user_id', 'id']
   FOLLOWED_BY_FIELDS = ['user_id']
 

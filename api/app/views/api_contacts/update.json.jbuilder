@@ -5,7 +5,7 @@ json.cache! @item do
   json.set! :custom_fields, @item.custom_field
 
   json.set! :tags, @item.tags.map(&:name)
-   
+
   if @item.avatar
     json.set! :avatar_attributes do
       json.set! :avatar_url, @item.avatar.attachment_url_for_api

@@ -23,7 +23,7 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    assign_protected 
+    assign_protected
 
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname])
@@ -147,6 +147,8 @@ class TicketsController < ApiApplicationController
       # Collect tags in instance variable as it should not be part of params before build item.
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
 
+      assign_checkbox_value if params[cname][:custom_fields]
+
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
@@ -174,6 +176,14 @@ class TicketsController < ApiApplicationController
       @item.cc_email = @cc_emails
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
+    end
+
+    # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
+    def assign_checkbox_value
+      params[cname][:custom_fields].each_pair do |key, value|
+        next unless Helpers::TicketsValidationHelper.check_box_type_custom_field_names.include?(key.to_s)
+        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
+      end
     end
 
     def verify_ticket_permission

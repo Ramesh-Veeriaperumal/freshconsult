@@ -4,9 +4,10 @@ class ContactDelegator < SimpleDelegator
   attr_accessor :error_options
 
   validates :company, presence: true, if: -> { company_id }
-  validates :custom_field, custom_field: {
+  validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields_for_delegator },
-    drop_down_choices: proc { Helpers::ContactsValidationHelper.custom_contact_dropdown_fields }
-  }, allow_nil: true
-
+    drop_down_choices: proc { Helpers::ContactsValidationHelper.custom_contact_dropdown_fields },
+    required_attribute: :required_for_agent
+  }
+  }
 end

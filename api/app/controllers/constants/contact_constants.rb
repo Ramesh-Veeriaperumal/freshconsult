@@ -11,7 +11,7 @@ module ContactConstants
     'update' => false,
     'restore' => true,
     'destroy' => false,
-    'make_agent' => false,
+    'make_agent' => false
   }
 
   # Based on limitation specified in Helpdesk::Attachment ( def image? )

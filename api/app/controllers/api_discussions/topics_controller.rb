@@ -45,9 +45,9 @@ module ApiDiscussions
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
           allowed = Topic::FORUM_TO_STAMP_TYPE[@item.forum.forum_type]
-          allowed_string = allowed.join(",")
-          allowed_string += "nil" if allowed.include?(nil)
-          @item.errors[:stamp_type] = BaseError::ERROR_MESSAGES["allowed_stamp_type"] % {list: allowed_string}
+          allowed_string = allowed.join(',')
+          allowed_string += 'nil' if allowed.include?(nil)
+          @item.errors[:stamp_type] = BaseError::ERROR_MESSAGES['allowed_stamp_type'] % { list: allowed_string }
         end
         @error_options = { remove: :posts }
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)

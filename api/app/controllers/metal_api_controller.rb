@@ -10,13 +10,13 @@ class MetalApiController < ActionController::Metal
   include ActionController::Caching
   include Rails.application.routes.url_helpers # Need for location header in response
   include ActiveSupport::Rescuable # Dependency with strong params
-  include ActionController::MimeResponds  #Needed for respond_to/redirect_to
+  include ActionController::MimeResponds  # Needed for respond_to/redirect_to
   include ActionController::ImplicitRender
   include ActionController::StrongParameters
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include AbstractController::Callbacks # before filters
-  include ActionController::Rescue 
+  include ActionController::Rescue
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation  # need this for active support instrumentation.
 

@@ -10,16 +10,24 @@ class TicketsControllerTest < ActionController::TestCase
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal)
 
-  custom_fields_values = { 'number' => 32_234, 'decimal' => "90.89", 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
-  update_custom_fields_values = { 'number' => 12, 'decimal' => "8900.89",  'checkbox' => nil, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
-  custom_fields_values_invalid = { 'number' => "1.90", 'decimal' => "dd", 'checkbox' => "iu", 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
-  update_custom_fields_values_invalid = { 'number' => "1.89", 'decimal' => "addsad", 'checkbox' => "nmbm", 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  custom_fields_values = { 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  update_custom_fields_values = { 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  custom_fields_values_invalid = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
+  update_custom_fields_values_invalid = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
 
   ERROR_PARAMS =  {
-                    'number' => ['must be an integer'],
-                    'decimal' => ['data_type_mismatch', data_type: 'number'],
-                    'checkbox' => ['not_included', list: "true,false"]
-                  }
+    'number' => ['must be an integer'],
+    'decimal' => ['data_type_mismatch', data_type: 'number'],
+    'checkbox' => ['not_included', list: 'true,false']
+  }
+
+  ERROR_REQUIRED_PARAMS  =  {
+    'number' => ['required_integer'],
+    'decimal' => ['required_number'],
+    'checkbox' => ['required_and_inclusion', list: 'true,false'],
+    'text' => ['missing'],
+    'paragraph' => ['missing']
+  }
 
   def wrap_cname(params = {})
     { ticket: params }
@@ -393,12 +401,170 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_nested_custom_fields
-    # create_dependent_custom_field(%w(Country State City))
+    create_dependent_custom_field(%w(Country State City))
     params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
     post :create, construct_params({}, params)
     assert_response :created
-    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
-    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    t = Helpdesk::Ticket.find_by_subject(params[:subject])
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+  end
+
+  def test_create_with_nested_custom_fields_with_invalid_first
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_create_with_nested_custom_fields_with_invalid_first_children_valid
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_create_with_nested_custom_fields_with_invalid_first_children_invalid
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy', "state_#{@account.id}" => 'ss', "city_#{@account.id}" => 'ss' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_create_with_nested_custom_fields_with_valid_first_invalid_second_valid_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj', "city_#{@account.id}" => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_create_with_nested_custom_fields_with_valid_first_invalid_second_without_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_create_with_nested_custom_fields_with_valid_first_invalid_second_without_third_invalid_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj', "city_#{@account.id}" => 'sfs' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'ddd' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'not_included', list: 'Brisbane')])
+  end
+
+  def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_other_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Sydney' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'not_included', list: 'Brisbane')])
+  end
+
+  def test_create_with_nested_custom_fields_without_first_with_second_and_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'conditional_not_blank', child: "state_#{@account.id}")])
+  end
+
+  def test_create_with_nested_custom_fields_without_first_with_second_only
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "state_#{@account.id}" => 'Queensland' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'conditional_not_blank', child: "state_#{@account.id}")])
+  end
+
+  def test_create_with_nested_custom_fields_without_first_with_third_only
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "city_#{@account.id}" => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'conditional_not_blank', child: "city_#{@account.id}"),
+                bad_request_error_pattern("state_#{@account.id}", 'conditional_not_blank', child: "city_#{@account.id}")])
+  end
+
+  def test_create_with_nested_custom_fields_without_second_with_third
+    create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "city_#{@account.id}" => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'conditional_not_blank', child: "city_#{@account.id}")])
+  end
+
+  def test_create_with_nested_custom_fields_required_without_first_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash
+    ticket_field.update_attribute(:required, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'required_and_inclusion', list: 'Australia,USA')])
+  end
+
+  def test_create_with_nested_custom_fields_required_without_second_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia' })
+    ticket_field.update_attribute(:required, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'required_and_inclusion', list: 'New South Wales,Queensland')])
+  end
+
+  def test_create_with_nested_custom_fields_required_without_third_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland' })
+    ticket_field.update_attribute(:required, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'required_and_inclusion', list: 'Brisbane')])
+  end
+
+  def test_create_with_nested_custom_fields_required_for_closure_without_first_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
+    ticket_field.update_attribute(:required_for_closure, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'required_and_inclusion', list: 'Australia,USA')])
+  end
+
+  def test_create_with_nested_custom_fields_required_for_closure_without_second_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4, custom_fields: { "country_#{@account.id}" => 'Australia' })
+    ticket_field.update_attribute(:required_for_closure, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'required_and_inclusion', list: 'New South Wales,Queensland')])
+  end
+
+  def test_create_with_nested_custom_fields_required_for_closure_without_third_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4, custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland' })
+    ticket_field.update_attribute(:required_for_closure, true)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'required_and_inclusion', list: 'Brisbane')])
   end
 
   def test_create_with_custom_dropdown
@@ -417,6 +583,37 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern("movies_#{@account.id}", 'not_included', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
 
+  def test_create_with_custom_dropdown_required
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required, true)
+    params = ticket_params_hash
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'required_and_inclusion', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_create_with_custom_dropdown_required_for_closure
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required_for_closure, true)
+    params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'required_and_inclusion', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_create_with_custom_dropdown_required_for_closure_without_status_closed
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required_for_closure, true)
+    params = ticket_params_hash
+    post :create, construct_params({}, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   def test_create_notify_cc_emails
     params = ticket_params_hash
     controller.class.any_instance.expects(:notify_cc_people).once
@@ -428,7 +625,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   CUSTOM_FIELDS.each do |custom_field|
     define_method("test_create_with_custom_#{custom_field}") do
-      create_custom_field("test_custom_#{custom_field}", custom_field)
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
       params = ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => custom_fields_values[custom_field] })
       post :create, construct_params({}, params)
       assert_response :created
@@ -436,15 +633,46 @@ class TicketsControllerTest < ActionController::TestCase
       match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     end
 
+    define_method("test_create_with_custom_#{custom_field}_required_for_closure_with_status_closed") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5)
+      ticket_field.update_attribute(:required_for_closure, true)
+      post :create, construct_params({}, params)
+      ticket_field.update_attribute(:required_for_closure, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
+
+    define_method("test_create_with_custom_#{custom_field}_required_for_closure_with_status_resolved") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params = ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
+      ticket_field.update_attribute(:required_for_closure, true)
+      post :create, construct_params({}, params)
+      ticket_field.update_attribute(:required_for_closure, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
+
+    define_method("test_create_with_custom_#{custom_field}_required") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params = ticket_params_hash
+      ticket_field.update_attribute(:required, true)
+      post :create, construct_params({}, params)
+      ticket_field.update_attribute(:required, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
+
     define_method("test_create_with_custom_#{custom_field}_invalid") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
       params = ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => custom_fields_values_invalid[custom_field] })
       post :create, construct_params({}, params)
       assert_response :bad_request
       match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_PARAMS[custom_field]))])
     end if VALIDATABLE_CUSTOM_FIELDS.include?(custom_field)
 
-
     define_method("test_update_with_custom_#{custom_field}") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
       params_hash = update_ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values[custom_field] })
       t = ticket
       put :update, construct_params({ id: t.display_id }, params_hash)
@@ -454,6 +682,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
 
     define_method("test_update_with_custom_#{custom_field}_invalid") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
       params_hash = update_ticket_params_hash.merge(custom_fields: { "test_custom_#{custom_field}_#{@account.id}" => update_custom_fields_values_invalid[custom_field] })
       t = ticket
       put :update, construct_params({ id: t.display_id }, params_hash)
@@ -461,6 +690,38 @@ class TicketsControllerTest < ActionController::TestCase
       match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_PARAMS[custom_field]))])
     end if VALIDATABLE_CUSTOM_FIELDS.include?(custom_field)
 
+    define_method("test_update_with_custom_#{custom_field}_required_for_closure_with_status_closed") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5)
+      t = ticket
+      ticket_field.update_attribute(:required_for_closure, true)
+      put :update, construct_params({ id: t.display_id }, params_hash)
+      ticket_field.update_attribute(:required_for_closure, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
+
+    define_method("test_update_with_custom_#{custom_field}_required_for_closure_with_status_resolved") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
+      t = ticket
+      ticket_field.update_attribute(:required_for_closure, true)
+      put :update, construct_params({ id: t.display_id }, params_hash)
+      ticket_field.update_attribute(:required_for_closure, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
+
+    define_method("test_update_with_custom_#{custom_field}_required") do
+      ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
+      params_hash = update_ticket_params_hash
+      t = ticket
+      ticket_field.update_attribute(:required, true)
+      put :update, construct_params({ id: t.display_id }, params_hash)
+      ticket_field.update_attribute(:required, false)
+      assert_response :bad_request
+      match_json([bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))])
+    end
   end
 
   def test_update_with_attachment
@@ -1002,12 +1263,190 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_nested_custom_fields
+    create_dependent_custom_field(%w(Country State City))
     t = ticket
     params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'USA', "state_#{@account.id}" => 'California', "city_#{@account.id}" => 'Burlingame' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response :success
     match_json(ticket_pattern(params, t.reload))
     match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_nested_custom_fields_with_invalid_first
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_update_with_nested_custom_fields_with_invalid_first_children_valid
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_update_with_nested_custom_fields_with_invalid_first_children_invalid
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'uyiyiuy', "state_#{@account.id}" => 'ss', "city_#{@account.id}" => 'ss' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'not_included', list: 'Australia,USA')])
+  end
+
+  def test_update_with_nested_custom_fields_with_valid_first_invalid_second_valid_third
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj', "city_#{@account.id}" => 'Brisbane' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_update_with_nested_custom_fields_with_valid_first_invalid_second_without_third
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_update_with_nested_custom_fields_with_valid_first_invalid_second_without_third_invalid_third
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'hjhj', "city_#{@account.id}" => 'sfs' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'not_included', list: 'New South Wales,Queensland')])
+  end
+
+  def test_update_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'ddd' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'not_included', list: 'Brisbane')])
+  end
+
+  def test_update_with_nested_custom_fields_with_valid_first_valid_second_invalid_other_third
+    create_dependent_custom_field(%w(Country State City))
+    t = ticket
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Sydney' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'not_included', list: 'Brisbane')])
+  end
+
+  def test_update_with_nested_custom_fields_without_first_with_second_and_third
+    create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id, custom_field: { "country_#{@account.id}" => 'Australia' })
+    params = update_ticket_params_hash.merge(custom_fields: { "state_#{@account.id}" => 'Queensland', "city_#{@account.id}" => 'Brisbane' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+    match_json(ticket_pattern(params, Helpdesk::Ticket.find(t.id)))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.find(t.id)))
+  end
+
+  def test_update_with_nested_custom_fields_without_first_with_second_only
+    create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id, custom_field: { "country_#{@account.id}" => 'Australia' })
+    params = update_ticket_params_hash.merge(custom_fields: { "state_#{@account.id}" => 'Queensland' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+    match_json(ticket_pattern(params, Helpdesk::Ticket.find(t.id)))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.find(t.id)))
+  end
+
+  def test_update_with_nested_custom_fields_without_first_with_third_only
+    create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id, custom_field: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland' })
+    params = update_ticket_params_hash.merge(custom_fields: { "city_#{@account.id}" => 'Brisbane' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+    match_json(ticket_pattern(params, Helpdesk::Ticket.find(t.id)))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.find(t.id)))
+  end
+
+  def test_update_with_nested_custom_fields_without_second_with_third
+    create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "city_#{@account.id}" => 'Brisbane' })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'conditional_not_blank', child: "city_#{@account.id}")])
+  end
+
+  def test_update_with_nested_custom_fields_required_without_first_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash
+    ticket_field.update_attribute(:required, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'required_and_inclusion', list: 'Australia,USA')])
+  end
+
+  def test_update_with_nested_custom_fields_required_without_second_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia' })
+    ticket_field.update_attribute(:required, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'required_and_inclusion', list: 'New South Wales,Queensland')])
+  end
+
+  def test_update_with_nested_custom_fields_required_without_third_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.merge(custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland' })
+    ticket_field.update_attribute(:required, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'required_and_inclusion', list: 'Brisbane')])
+  end
+
+  def test_update_with_nested_custom_fields_required_for_closure_without_first_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4)
+    ticket_field.update_attribute(:required_for_closure, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("country_#{@account.id}", 'required_and_inclusion', list: 'Australia,USA')])
+  end
+
+  def test_update_with_nested_custom_fields_required_for_closure_without_second_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4, custom_fields: { "country_#{@account.id}" => 'Australia' })
+    ticket_field.update_attribute(:required_for_closure, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("state_#{@account.id}", 'required_and_inclusion', list: 'New South Wales,Queensland')])
+  end
+
+  def test_update_with_nested_custom_fields_required_for_closure_without_third_level
+    ticket_field = create_dependent_custom_field(%w(Country State City))
+    t = create_ticket(requester_id: @agent.id)
+    params = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4, custom_fields: { "country_#{@account.id}" => 'Australia', "state_#{@account.id}" => 'Queensland' })
+    ticket_field.update_attribute(:required_for_closure, true)
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("city_#{@account.id}", 'required_and_inclusion', list: 'Brisbane')])
   end
 
   def test_update_with_custom_dropdown
@@ -1019,12 +1458,46 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t.reload))
   end
 
-   def test_update_with_custom_dropdown_invalid
+  def test_update_with_custom_dropdown_invalid
     t = ticket
     params = update_ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => 'test' })
     put :update, construct_params({ id: t.display_id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern("movies_#{@account.id}", 'not_included', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_update_with_custom_dropdown_required
+    t = ticket
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required, true)
+    params = update_ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => nil })
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'required_and_inclusion', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_update_with_custom_dropdown_required_for_closure
+    t = ticket
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required_for_closure, true)
+    params = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 4, custom_fields: { "movies_#{@account.id}" => nil })
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("movies_#{@account.id}", 'required_and_inclusion', list: 'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_update_with_custom_dropdown_required_for_closure_without_status_closed
+    t = ticket
+    ticket_field = create_custom_field_dropdown('movies', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    ticket_field.update_attribute(:required_for_closure, true)
+    params = update_ticket_params_hash.merge(custom_fields: { "movies_#{@account.id}" => nil })
+    put :update, construct_params({ id: t.display_id }, params)
+    ticket_field.update_attribute(:required_for_closure, false)
+    assert_response :success
+    match_json(ticket_pattern(params, t.reload))
+    match_json(ticket_pattern({}, t.reload))
   end
 
   def test_destroy

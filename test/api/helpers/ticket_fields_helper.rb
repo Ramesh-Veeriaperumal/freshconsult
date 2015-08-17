@@ -2,6 +2,8 @@ module TicketFieldsHelper
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal' }
 
   def create_custom_field(name, type)
+    ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
+    return ticket_field_exists if ticket_field_exists
     flexifield_mapping = type == 'text' ? 'ffs_13' : "ff_#{FIELD_MAPPING[type]}05"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
@@ -20,9 +22,12 @@ module TicketFieldsHelper
                                                            description: '',
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
+    parent_custom_field
   end
 
   def create_custom_field_dropdown(name, choices)
+    ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
+    return ticket_field_exists if ticket_field_exists
     # ffs_04 is created here
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
@@ -54,16 +59,19 @@ module TicketFieldsHelper
                                                              value: l1_val)
       picklist_vals_l1.last.save
     end
+    parent_custom_field
   end
 
   def create_dependent_custom_field(labels)
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here
+    ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
+    return ticket_field_exists if ticket_field_exists
     (0..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
                                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                                 flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                flexifield_name: "ffs_0#{nested_field_id + 10}",
+                                                                flexifield_name: "ffs_0#{nested_field_id + 7}",
                                                                 flexifield_order: 6,
                                                                 flexifield_coltype: 'dropdown',
                                                                 account_id: @account.id)
@@ -91,29 +99,33 @@ module TicketFieldsHelper
       nested_field_vals[nf - 1].save
     end
 
-    field_choices = [['Australia', '0',
-                      [['New South Wales', '0', [['Sydney', '0']]],
-                       ['Queensland', '0', [['Brisbane', '0']]]
-                      ]
-                     ],
-                     ['USA', '0',
-                      [['California', '0', [['Burlingame', '0'], ['Los Angeles', '0']]],
-                       ['Texas', '0', [['Houston', '0'], ['Dallas', '0']]]
-                      ]
-                     ]
-                    ]
-    field_choices_del = [['Australia', '0',
-                          [['New South Wales', '0'], ['Queensland', '0']]
-                         ],
-                         ['USA', '0',
-                          [['California', '0'], ['Texas', '0']]
-                         ]
-                        ]
+    field_choices = { 'Country' => [['Australia', '0',
+                                     [['New South Wales', '0', [['Sydney', '0']]],
+                                      ['Queensland', '0', [['Brisbane', '0']]]
+                                     ]
+                                    ],
+                                    ['USA', '0',
+                                     [['California', '0', [['Burlingame', '0'], ['Los Angeles', '0']]],
+                                      ['Texas', '0', [['Houston', '0'], ['Dallas', '0']]]
+                                     ]
+                                    ]
+                                   ],
+                      'First' =>  [['001', '0',
+                                    [['011', '0', [['111', '0']]],
+                                     ['012', '0', [['121', '0']]]
+                                    ]
+                                   ],
+                                   ['002', '0',
+                                    [['021', '0', [['211', '0'], ['212', '0']]],
+                                     ['022', '0', [['221', '0'], ['222', '0']]]
+                                    ]
+                                   ]
+                                  ] }
 
     picklist_vals_l1 = []
     picklist_vals_l2 = []
     picklist_vals_l3 = []
-    field_choices.map(&:first).each_with_index do |l1_val, index1|
+    field_choices[labels[0]].map(&:first).each_with_index do |l1_val, index1|
       picklist_vals_l1 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                              pickable_type: 'Helpdesk::TicketField',
                                                              pickable_id: parent_custom_field.id,
@@ -121,14 +133,14 @@ module TicketFieldsHelper
                                                              value: l1_val)
       picklist_vals_l1.last.save
 
-      field_choices[index1][2].map(&:first).each_with_index do |l2_val, index2|
+      field_choices[labels[0]][index1][2].map(&:first).each_with_index do |l2_val, index2|
         picklist_vals_l2 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                                pickable_type: 'Helpdesk::PicklistValue',
                                                                pickable_id: picklist_vals_l1[picklist_vals_l1.length - 1].id,
                                                                position: index2 + 1,
                                                                value: l2_val)
         picklist_vals_l2.last.save
-        field_choices[index1][2][index2][2].map(&:first).each_with_index do |l3, index3|
+        field_choices[labels[0]][index1][2][index2][2].map(&:first).each_with_index do |l3, index3|
           picklist_vals_l3 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                                  pickable_type: 'Helpdesk::PicklistValue',
                                                                  pickable_id: picklist_vals_l2[picklist_vals_l2.length - 1].id,
@@ -138,6 +150,7 @@ module TicketFieldsHelper
         end
       end
     end
+    parent_custom_field
   end
 end
 include TicketFieldsHelper

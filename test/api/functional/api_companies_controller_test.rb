@@ -249,7 +249,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'number'),
                 bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
                 bad_request_error_pattern('cf_show_all_ticket', 'not_included', list: 'true,false'),
-                bad_request_error_pattern('cf_file_url', 'is not a url')])
+                bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
 
   def test_update_company_with_invalid_custom_dropdown_field_values
@@ -274,17 +274,18 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern(company.reload))
   end
 
-  ## Will be unCommented once we have written Required validation in Custom Field Validator
-  # def test_create_company_without_required_custom_field
-  #   field = { :type=>"text", :field_type=>"custom_text", :label=>"cf_required_linetext", :required_for_agent => true}
-  #   params = company_params(field)
-  #   create_company_field params
-  #   clear_contact_field_cache
-  #   post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-  #                                      domains: domain_array)
-  #   assert_response :bad_request
-  #   match_json([bad_request_error_pattern('cf_required_linetext', 'missing_field')])
-  # end
+  def test_create_company_without_required_custom_field
+    field = { type: 'text', field_type: 'custom_text', label: 'required_linetext', required_for_agent: true }
+    params = company_params(field)
+    create_company_field params
+    clear_contact_field_cache
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       domains: domain_array)
+    cf = CompanyField.find_by_label('required_linetext')
+    cf.destroy
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('cf_required_linetext', 'missing_field')])
+  end
 
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }

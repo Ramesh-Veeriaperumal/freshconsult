@@ -14,6 +14,5 @@ class ParamsHelper
         controller_params.delete(field)
       end
     end
-
   end
 end
