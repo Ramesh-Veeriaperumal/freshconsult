@@ -475,7 +475,7 @@ module JsonPattern
   def contact_field_pattern(expected_output = {}, contact_field)
     {
       deleted: expected_output[:deleted] || contact_field.deleted,
-      default: expected_output[:default] || contact_field.default_field?,
+      default: expected_output[:default] || default_contact_field?(contact_field),
       customers_can_edit: expected_output[:customers_can_edit] || contact_field.editable_in_portal,
       editable_in_signup: expected_output[:editable_in_signup] || contact_field.editable_in_signup,
       field_type: expected_output[:field_type] || contact_field.field_type.to_s,
@@ -487,7 +487,7 @@ module JsonPattern
       required_for_agent: expected_output[:required_for_agent] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
       displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      choices: expected_output[:choices] || contact_field.api_choices,
+      choices: expected_output[:choices] || api_contact_choices(contact_field),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -506,6 +506,36 @@ module JsonPattern
       active: sla_policy.active,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def agent_pattern(expected_output = {}, agent)
+    user = {
+      active: agent.user.active,
+      created_at: agent.user.created_at,
+      email: agent.user.email,
+      job_title: agent.user.job_title,
+      language: agent.user.language,
+      last_login_at: agent.user.last_login_at,
+      mobile: agent.user.mobile,
+      name: agent.user.name,
+      phone: agent.user.phone,
+      time_zone: agent.user.time_zone,
+      updated_at: agent.user.updated_at
+    }
+
+    {
+      available_since: expected_output[:available_since] || agent.active_since,
+      available: expected_output[:available] || agent.available,
+      created_at: agent.created_at,
+      id: Fixnum,
+      occasional: expected_output[:occasional] || agent.occasional,
+      scoreboard_level_id: expected_output[:scoreboard_level_id] || agent.scoreboard_level_id,
+      signature: expected_output[:signature] || agent.signature,
+      signature_html: expected_output[:signature_html] || agent.signature_html,
+      ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
+      updated_at: agent.updated_at,
+      user: expected_output[:user] || user
     }
   end
 end

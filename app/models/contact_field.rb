@@ -72,20 +72,4 @@ class ContactField < ActiveRecord::Base
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label_in_portal)
   end
 
-  # Used in V2 API
-  def api_choices
-    case field_type.to_s
-    when "default_language", "default_time_zone"
-      choices.map{ |x| x.values.reverse }.to_h
-    when "custom_dropdown"
-      choices.map{ |x| x[:value] }
-    else
-      []
-    end
-  end
-
-  def default_field?
-    column_name == "default"
-  end
-
 end
