@@ -42,25 +42,26 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                    to_email[:email], 
                                    params[:subject], 
                                    message_id)
-        params[:text] = params[:text] || run_with_timeout(HtmlSanitizerTimeoutError) {
-                                           Helpdesk::HTMLSanitizer.plain(params[:html])
-                                          }
-        user = get_user(account, from_email, email_config)        
-        if !user.blocked?
-            # Workaround for params[:html] containing empty tags
-          
-          self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
-            #need to format this code --Suman
-            if params[:html].blank? && !params[:text].blank? 
-             email_cmds_regex = get_email_cmd_regex(account) 
-             params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
-            end
-          end  
-            
-          
-          add_to_or_create_ticket(account, from_email, to_email, user, email_config)
-
+        user = existing_user(account, from_email)
+        unless user
+          text_part
+          create_new_user(account, from_email, email_config)
+        else
+          return if user.blocked?
+          text_part
         end
+        set_current_user(user)
+        
+        self.class.trace_execution_scoped(['Custom/Helpdesk::ProcessEmail/sanitize']) do
+          # Workaround for params[:html] containing empty tags
+          #need to format this code --Suman
+          if params[:html].blank? && !params[:text].blank? 
+           email_cmds_regex = get_email_cmd_regex(account) 
+           params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+          end
+        end
+          
+        add_to_or_create_ticket(account, from_email, to_email, user, email_config)
       end
       
       begin
@@ -463,22 +464,40 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def belong_to_same_company?(ticket,user)
       user.company_id and (user.company_id == ticket.requester.company_id)
     end
+
+    def text_part
+      params[:text] = params[:text] || run_with_timeout(HtmlSanitizerTimeoutError) {
+                                             Helpdesk::HTMLSanitizer.plain(params[:html])
+                                            }
+    end
     
     def get_user(account, from_email, email_config)
-      user = account.user_emails.user_for_email(from_email[:email])
+      user = existing_user(account, from_email)
       unless user
-        user = account.contacts.new
-        language = (account.features?(:dynamic_content)) ? nil : account.language
-        portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
-        signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-        text = text_for_detection
-        args = [user, text]  #user_email changed
-        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+        user = create_new_user(account, from_email, email_config)
       end
-      user.make_current
+      set_current_user(user)
+    end
+
+    def existing_user(account, from_email)
+      account.user_emails.user_for_email(from_email[:email])
+    end
+
+    def create_new_user(account, from_email, email_config)
+      user = account.contacts.new
+      language = (account.features?(:dynamic_content)) ? nil : account.language
+      portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
+      signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
+        :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
+      text = text_for_detection
+      args = [user, text]  #user_email changed
+      #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+      Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
       user
+    end
+
+    def set_current_user(user)
+      user.make_current
     end
 
     def text_for_detection

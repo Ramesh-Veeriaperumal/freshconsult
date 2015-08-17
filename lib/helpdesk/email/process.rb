@@ -46,9 +46,18 @@ class Helpdesk::Email::Process
     self.common_email_data = email_metadata #In parse_email_data
     return if mail_from_email_config?
     # encode_stuffs
-    construct_html_param
-    self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
-    return if (user.nil? or user.blocked?)
+    existing_user(common_email_data[:from])
+    unless user
+      construct_html_param
+      create_new_user(common_email_data[:from], 
+                      common_email_data[:email_config], 
+                      params["body-plain"]) #In parse_email_data
+      return if user.nil?
+    else
+      return if user.blocked?
+      construct_html_param
+    end
+    set_current_user
     get_necessary_details
     return if duplicate_email?(common_email_data[:from][:email],
                                common_email_data[:to][:email],
