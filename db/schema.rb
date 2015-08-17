@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150729062952) do
+ActiveRecord::Schema.define(:version => 20150805133724) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -181,7 +181,12 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
     t.integer "application_id", :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.integer "account_id", :limit => 8
   end
+
+  add_index "app_business_rules", ["installed_application_id"], :name => 'index_app_business_rules_on_installed_app_id'
+  add_index "app_business_rules", ["va_rule_id"], :name => 'index_app_business_rules_on_varule_id'
 
   create_table "applications", :force => true do |t|
     t.string  "name"
@@ -192,6 +197,9 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
   end
+
+  add_index "applications", ["name"], :name => "index_applications_on_name"
+  add_index "applications", ["account_id"], :name => "index_applications_on_account_id"
 
   create_table "article_tickets", :force => true do |t|
     t.integer "article_id", :limit => 8
@@ -2021,6 +2029,7 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
   end
 
   add_index "installed_applications", ["account_id"], :name => "index_account_id_on_installed_applications"
+  add_index "installed_applications", ["account_id","application_id"], :name => "index_installed_applications_on_account_id_and_application_id"
 
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
@@ -2032,6 +2041,8 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.datetime "updated_at"
   end
 
+  add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
+
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2040,6 +2051,8 @@ ActiveRecord::Schema.define(:version => 20150729062952) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0

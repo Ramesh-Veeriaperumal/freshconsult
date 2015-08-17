@@ -35,6 +35,12 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
     end
 	end
 
+  def unblock_user
+    if params[:user_id]
+      render :json => {:status => "success"} if User.update_all({:blocked => false, :blocked_at => nil}, {:id => params[:user_id]})
+    end
+  end
+
 	def hard_block
     if params[:user_id]
       render :json => {:status => "success"} if User.update_all({:blocked => true, :blocked_at => "2200-01-01 00:00:00"}, {:id => params[:user_id]})

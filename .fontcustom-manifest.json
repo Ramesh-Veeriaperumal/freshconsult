@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "f266e7a69ad229a23c9412a190fd8bfa9626c012239c93ee5f9e24e616092a4e",
-    "current": "f266e7a69ad229a23c9412a190fd8bfa9626c012239c93ee5f9e24e616092a4e"
+    "previous": "2b2bfc2023b57eda2c1ca6b176c35ce7660e0e84187a9b497a2538936cd964c2",
+    "current": "2b2bfc2023b57eda2c1ca6b176c35ce7660e0e84187a9b497a2538936cd964c2"
   },
   "fonts": [
-    "public/assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.ttf",
-    "public/assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.svg",
-    "public/assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.woff",
-    "public/assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.eot"
+    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.ttf",
+    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg",
+    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.woff",
+    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot"
   ],
   "glyphs": {
     "account": {
@@ -209,6 +209,10 @@
     "company": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/company.svg"
+    },
+    "compose-email": {
+      "codepoint": 61903,
+      "source": "public/glyphs/vectors/compose-email.svg"
     },
     "conversation": {
       "codepoint": 61743,
@@ -566,6 +570,14 @@
       "codepoint": 61828,
       "source": "public/glyphs/vectors/nested_field.svg"
     },
+    "new-phone-ticket": {
+      "codepoint": 61904,
+      "source": "public/glyphs/vectors/new-phone-ticket.svg"
+    },
+    "new-ticket": {
+      "codepoint": 61905,
+      "source": "public/glyphs/vectors/new-ticket.svg"
+    },
     "no-arrow-left": {
       "codepoint": 61829,
       "source": "public/glyphs/vectors/no-arrow-left.svg"
@@ -840,10 +852,6 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {

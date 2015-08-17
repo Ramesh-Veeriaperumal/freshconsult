@@ -2,9 +2,21 @@
 	<%= form_for items, :url => action_url, :html => { :method => :put, :class => "form-reorder" } do |f| %>
 	  <input name="reorderlist" type="hidden" value="" />
 	  <ul class="row-fluid" rel="sortlist">
-		  <% items.each do |forum_category| %>
+			<%
+				current_cats = (items.select do |cat|
+					cat.portal_ids.include?(current_portal.id)
+				end).sort do |x,y|
+					x.position_in_portal(current_portal) <=> y.position_in_portal(current_portal)
+				end
+				
+				other_cats = items.reject do |cat|
+					current_cats.map(&:id).include?(cat.id)
+				end
+			%>
+		  <% (current_cats + other_cats).each do |forum_category| %>
+				<% pfc_id = (forum_category.association_with(current_portal) || {})[:id] %>
 		  	<% disabled ||= nil %>
-		  	<%= content_tag :li, :item_id => forum_category.main_portal.id, :class => "comm-item" do %>
+		  	<%= content_tag :li, :item_id => pfc_id, :class => "comm-item #{'no_order' if pfc_id.blank?}" do %>
 		  		<% if privilege?(:manage_forums) %>
 			  		<div class="reorder-icon vertical-alignment handle-reorder">
 							<!-- <i class="community-reorder-icon" id="sortable-icon"></i> -->

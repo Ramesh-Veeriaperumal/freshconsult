@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.eot");
-  src: url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.woff") format("woff"),
-       url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.ttf") format("truetype"),
-       url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot");
+  src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.woff") format("woff"),
+       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.ttf") format("truetype"),
+       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_f266e7a69ad229a23c9412a190fd8bfa.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
   }
 }
 
@@ -187,6 +187,7 @@
 .ficon-comment-multi:before,
 .ficon-comments:before,
 .ficon-company:before,
+.ficon-compose-email:before,
 .ficon-conversation:before,
 .ficon-cross:before,
 .ficon-crown:before,
@@ -276,6 +277,8 @@
 .ficon-mobile:before,
 .ficon-multi-product:before,
 .ficon-nested_field:before,
+.ficon-new-phone-ticket:before,
+.ficon-new-ticket:before,
 .ficon-no-arrow-left:before,
 .ficon-no-arrow-right:before,
 .ficon-no-network:before,
@@ -407,6 +410,7 @@
 .ficon-comment-multi:before { content: "\f12c"; }
 .ficon-comments:before { content: "\f12d"; }
 .ficon-company:before { content: "\f12e"; }
+.ficon-compose-email:before { content: "\f1cf"; }
 .ficon-conversation:before { content: "\f12f"; }
 .ficon-cross:before { content: "\f130"; }
 .ficon-crown:before { content: "\f131"; }
@@ -496,6 +500,8 @@
 .ficon-mobile:before { content: "\f182"; }
 .ficon-multi-product:before { content: "\f183"; }
 .ficon-nested_field:before { content: "\f184"; }
+.ficon-new-phone-ticket:before { content: "\f1d0"; }
+.ficon-new-ticket:before { content: "\f1d1"; }
 .ficon-no-arrow-left:before { content: "\f185"; }
 .ficon-no-arrow-right:before { content: "\f186"; }
 .ficon-no-network:before { content: "\f187"; }
@@ -577,7 +583,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (206)</h1>
+      <h1>Font Icons (209)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1030,6 +1036,15 @@
         </div>
         <div class="usage">
           <span>company</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-compose-email" class="ficon-compose-email"></i></span>
+        </div>
+        <div class="usage">
+          <span>compose-email</span>
         </div>
       </div>
       
@@ -1831,6 +1846,24 @@
         </div>
         <div class="usage">
           <span>nested_field</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-new-phone-ticket" class="ficon-new-phone-ticket"></i></span>
+        </div>
+        <div class="usage">
+          <span>new-phone-ticket</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-new-ticket" class="ficon-new-ticket"></i></span>
+        </div>
+        <div class="usage">
+          <span>new-ticket</span>
         </div>
       </div>
       

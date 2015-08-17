@@ -147,6 +147,8 @@ window.Fjax = {
 
       sticky.destroy();
 
+      jQuery('#header_search').blur();
+
       if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
       window.pjaxPrevUnload = null;
       Fjax.callAtEnd();

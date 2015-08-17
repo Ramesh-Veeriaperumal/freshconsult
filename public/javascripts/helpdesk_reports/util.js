@@ -344,15 +344,15 @@ HelpdeskReports.CoreUtil = {
             latestDate: Date.parse('Today'),
             presetRanges: [{
                 text: 'Last 7 Days',
-                dateStart: 'Today-7',
+                dateStart: 'Today-6',
                 dateEnd: 'Today'
             }, {
                 text: 'Last 30 Days',
-                dateStart: 'Today-30',
+                dateStart: 'Today-29',
                 dateEnd: 'Today'
             }, {
                 text: 'Last 90 Days',
-                dateStart: 'Today-90',
+                dateStart: 'Today-89',
                 dateEnd: 'Today'
             }],
             presets: {

@@ -44,7 +44,6 @@ ol, ul, li{
 .tkt-wrapper-inner{
 	width: 98%; /* It must be adjust the width for ".leftcontent .at_the_top" class*/
 	margin: 0 auto;
-	@include padding-left(25px);
 }
 
 .tkt-wrap{

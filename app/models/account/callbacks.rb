@@ -46,7 +46,12 @@ class Account < ActiveRecord::Base
   end
 
   def enable_elastic_search
-    Resque.enqueue(Search::CreateAlias, { :account_id => self.id, :sign_up => true })
+    #Remove as part of Search-Resque cleanup
+    if Search::Job.sidekiq?
+      SearchSidekiq::CreateAlias.perform_async({ :sign_up => true })
+    else
+      Resque.enqueue(Search::CreateAlias, { :account_id => self.id, :sign_up => true })
+    end if ES_ENABLED
   end
 
   def populate_features

@@ -57,6 +57,14 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.requester.presence
 	end
 
+	def outbound_initiator
+		@source.outbound_initiator.presence
+	end
+
+	def outbound_email?
+		@source.outbound_email?
+	end
+
 	def agent
 		@source.responder.presence
 	end

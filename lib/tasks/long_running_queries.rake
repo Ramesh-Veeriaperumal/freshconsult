@@ -11,7 +11,7 @@ namespace :long_running_queries do
 
   def execute_long_running_query
     Sharding.run_on_all_shards do
-      query = ActiveRecord::Base.connection.exec_query("SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST WHERE COMMAND != 'Sleep' AND COMMAND != 'Binlog Dump'  AND TIME >= 5")
+      query = ActiveRecord::Base.connection.exec_query("SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST WHERE COMMAND != 'Sleep' AND COMMAND != 'Binlog Dump'  AND TIME >= 50")
       if query.count() > LONG_RUNNING_QUERIES_THRESHOLD
         shard_name = ActiveRecord::Base.current_shard_selection.shard
         query_string = construct_html(query.entries)

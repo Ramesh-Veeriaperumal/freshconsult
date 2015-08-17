@@ -21,6 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
+  before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
@@ -51,10 +52,12 @@ class Helpdesk::TicketsController < ApplicationController
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
       :activities, :status, :update_ticket_properties ]
+  before_filter :check_outbound_permission, :only => [:edit, :update]
 
-  skip_before_filter :build_item, :only => [:create]
+  skip_before_filter :build_item, :only => [:create, :compose_email]
   alias :build_ticket :build_item
-  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+  before_filter :build_ticket_body_attributes, :only => [:create]
+  before_filter :build_ticket, :only => [:create, :compose_email]
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -345,6 +348,11 @@ class Helpdesk::TicketsController < ApplicationController
         }
       end
     end
+  end
+
+  def compose_email
+    @item.build_ticket_body
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
   end
 
   def update_ticket_properties
@@ -654,7 +662,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup}
-    
+
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
@@ -665,7 +673,7 @@ class Helpdesk::TicketsController < ApplicationController
     persist_states_for_api
     if @item.save_ticket
       post_persist
-      notify_cc_people cc_emails unless cc_emails.blank? 
+      notify_cc_people cc_emails unless (cc_emails.blank? || @item.outbound_email?)
     else
       create_error
     end
@@ -816,6 +824,7 @@ class Helpdesk::TicketsController < ApplicationController
   protected
   
     def item_url
+      return compose_email_helpdesk_tickets_path if params[:save_and_compose]
       return new_helpdesk_ticket_path if params[:save_and_create]
       return helpdesk_tickets_path if save_and_close?
       @item
@@ -1081,6 +1090,10 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def check_compose_feature
+      access_denied unless current_account.compose_email_enabled?
+    end
+
     def build_ticket_body_attributes
       if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
         unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
@@ -1107,6 +1120,14 @@ class Helpdesk::TicketsController < ApplicationController
       end
       true
     end
+
+  def check_outbound_permission
+    if @item.outbound_email?
+      flash[:notice] = t("flash.general.access_denied") 
+      redirect_to helpdesk_tickets_url
+    end
+    true
+  end
  
   def save_and_close?
     !params[:save_and_close].blank?

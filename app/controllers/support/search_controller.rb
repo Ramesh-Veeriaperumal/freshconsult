@@ -135,15 +135,13 @@ class Support::SearchController < SupportController
                                 { :term => { :requester_id => current_user.id } }
                 end
               end
-              unless main_portal?
-                if search_in.include?(Solution::Article)
-                  f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                                { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
-                end
-                if search_in.include?(Topic)
-                    f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
-                                { :terms => { 'forum.forum_category_id' => current_portal.portal_forum_categories.map(&:forum_category_id) } }
-                end
+              if search_in.include?(Solution::Article)
+                f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
+                              { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
+              end
+              if search_in.include?(Topic)
+                  f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
+                              { :terms => { 'forum.forum_category_id' => current_portal.portal_forum_categories.map(&:forum_category_id) } }
               end
             end
           end

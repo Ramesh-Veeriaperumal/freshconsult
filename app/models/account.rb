@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
+  include Redis::OthersRedis
   include Redis::RoutesRedis
   include ErrorHandle
   include AccountConstants
@@ -105,6 +106,10 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     freshchat_enabled? and features?(:chat_routing)
+  end
+
+  def compose_email_enabled?
+    ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def freshfone_active?
