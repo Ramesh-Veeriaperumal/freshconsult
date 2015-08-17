@@ -291,7 +291,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # Hitting S3 outside create-ticket transaction
       self.class.trace_execution_scoped(['Custom/Sendgrid/ticket_attachments']) do
         # attachable info will be updated on ticket save
-        ticket.attachments = create_attachments(ticket, account)
+        ticket.attachments, ticket.inline_attachments = create_attachments(ticket, account)
       end
 
       begin
@@ -432,7 +432,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # Hitting S3 outside create-note transaction
       self.class.trace_execution_scoped(['Custom/Sendgrid/note_attachments']) do
         # attachable info will be updated on note save
-        note.attachments = create_attachments(note, ticket.account)
+        note.attachments, note.inline_attachments = create_attachments(note, ticket.account)
       end
 
       self.class.trace_execution_scoped(['Custom/Sendgrid/notes']) do
@@ -488,6 +488,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def create_attachments(item, account)
       attachments = []
+      inline_attachments = []
       content_id_hash = {}
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
 
@@ -496,8 +497,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
                   params["attachment#{i+1}"], i, content_ids["attachment#{i+1}"])
           if att.is_a? Helpdesk::Attachment
-            content_id_hash[att.content_file_name+"#{i}"] = content_ids["attachment#{i+1}"] if content_ids["attachment#{i+1}"]
-            attachments.push att
+            if content_ids["attachment#{i+1}"]
+              content_id_hash[att.content_file_name+"#{i}"] = content_ids["attachment#{i+1}"]
+              inline_attachments.push att
+            else
+              attachments.push att
+            end
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
@@ -509,7 +514,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
       end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
-      attachments
+      return attachments, inline_attachments
     end
 
     def add_notification_text item

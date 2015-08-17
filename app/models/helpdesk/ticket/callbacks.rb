@@ -447,10 +447,10 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index| 
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
