@@ -1,7 +1,7 @@
 class ApiAgentsController < ApiApplicationController
 
   def index
-    load_objects agents_filter(scoper)
+    load_objects agents_filter(scoper).includes(:user)
   end
 
   def agents_filter(agents)
