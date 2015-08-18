@@ -280,7 +280,7 @@ en:
     email: Email
     nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
-    default_field_error: Default Fields cannot be moved into Section
+    default_field_error: Default fields cannot be dropped into section
   ticket_fields:
     fields:
       source: Source

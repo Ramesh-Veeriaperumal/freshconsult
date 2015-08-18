@@ -353,6 +353,7 @@
 		&.custom-field-header {
 			padding-bottom: 0px;
 			&.is_stuck {
+				z-index:999;
 				.field-picker {
 					@include margin-right(-19px);
 				}
@@ -649,6 +650,11 @@
   		padding-left: 5px;
 			.control-label{width:150px; overflow: hidden}
 			.controls{ @include margin-left(160px);}
+			&.ticket-field-highlight{
+				@include margin-left(-10px);
+				@include padding-left(10px);
+				@include padding-right(9px);
+			}
 		}
 		.draggingfield{
 			  @include margin-left(-10px);
