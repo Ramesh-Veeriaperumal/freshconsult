@@ -19,7 +19,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def create
-    @item.tags = construct_ticket_tags(@tags) if @tags
+    @item.tags = construct_tags(@tags) if @tags
     assign_protected
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
@@ -38,9 +38,10 @@ class ApiContactsController < ApiApplicationController
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
+    elsif @item.update_attributes(params[cname])
+      @item.tags = construct_tags(@tags) if @tags
     else
-      @item.tags = construct_ticket_tags(@tags) if @tags
-      super
+      render_custom_errors
     end
   end
 

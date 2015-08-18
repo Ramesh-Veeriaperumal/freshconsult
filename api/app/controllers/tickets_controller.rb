@@ -141,7 +141,7 @@ class TicketsController < ApiApplicationController
       ParamsHelper.clean_params([:cc_emails], params[cname])
 
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-      params[cname][:tags] = construct_ticket_tags(@tags) if @tags
+      params[cname][:tags] = construct_tags(@tags) if @tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes

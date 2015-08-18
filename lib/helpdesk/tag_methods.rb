@@ -33,7 +33,7 @@ module Helpdesk::TagMethods
     end
   end
 
-  def construct_ticket_tags(tags_to_be_added)
+  def construct_tags(tags_to_be_added)
     tag_list = []
     # add tags to the item which already exists
     # not using cache as the tags can be added more often. Hence using cache will result in full array. 
