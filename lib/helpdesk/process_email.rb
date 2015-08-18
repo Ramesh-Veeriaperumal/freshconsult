@@ -685,8 +685,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
-      body_html = auto_link(body) { |text| truncate(text, :length => 100) }
-      to_html = text_to_html(body_html)
-      white_list(to_html)
+      to_html = text_to_html(body)
+      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      white_list(body_html)
     end    
 end
