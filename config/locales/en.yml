@@ -275,10 +275,12 @@ en:
     url: URL
     decimal: Decimal
     date: Date
+    delete: Delete
     regex: Regex
     email: Email
     nested_field: Nested Fields
     drag_and_drop_field: Drag & Drop Field
+    default_field_error: Default Fields cannot be moved into Section
   ticket_fields:
     fields:
       source: Source

@@ -141,6 +141,24 @@
 	}
 }
 .ticket_fields{
+	.default-error-wrap{
+		display: none;
+		position: absolute;
+		width: 100%;
+		height: calc(100% - 14px);
+		top: 10px;
+		background-color: rgba(255,255,255,0.8);
+		z-index: 99;
+		border-radius: 3px;
+		text-align: center;
+	}
+	.default-error-text{
+		height: 47%;
+		bottom: 0;
+		position: absolute;
+		width: 100%;
+		color: #d25a4a;
+	}
 	.custom-field-form {
 		@include pie-clearfix;
 		margin-top: $common-padding;
@@ -189,7 +207,6 @@
 		  margin-top: -1px;
 		}
 		$placeholderColor: #555555;
-
 		.ui-sortable-placeholder{
 			z-index: 999999;
 			height:0px !important;
@@ -231,6 +248,18 @@
 					margin-top: -12px;
 				}
 			}
+			&.default-field-error{
+				border-color: #d25a4a;
+				.ui-dragging-text{
+					background: #d25a4a;
+					&:after {
+						@include border-left-color(#d25a4a);
+					}
+				}
+			}
+		}
+		.section-body .ui-sortable-placeholder{
+			@include padding-left(3px);
 		}
 		.ui-sortable-helper {
 			display:none !important;
@@ -307,6 +336,12 @@
 				color: #999;
 			}
 		}
+	}
+	.ticket-field-highlight{ 
+		@include animation(ticket-field-blink 1s ease-out 2); 
+		@include margin-left(-20px);
+		@include padding-left(20px);
+		@include padding-right(18px);
 	}
 	.draggingfield{ // it will overwrite the hover effects for fields
 		background-color: #dcdcdc;
@@ -627,10 +662,7 @@
 			display:none;
 			text-align: center;
 			color: #aaa;
-			margin: 0 auto;
-			@include float(left);
 			width:100%;
-			@include box-sizing(border-box); 
 			i{
 				vertical-align: middle;
 				@include margin-right(10px);
@@ -639,4 +671,10 @@
 			}
 		}
 	}
+}
+
+@include keyframes(ticket-field-blink) {
+	0% { background-color: rgba(#F7F7DC,0);}
+	50% { background-color: rgba(#F7F7DC,1);}
+	100% { background-color: rgba(#F7F7DC,0);}
 }
