@@ -125,8 +125,8 @@ module SolutionsHelper
   end
 
   def check_language_by_assoc sol_assoc, lang_obj
-    @account.send(sol_assoc).each do |obj|
-      obj.language.should be_eql(lang_obj.code)
+    @account.send("#{sol_assoc}_without_association").each do |obj|
+      obj.language.should be_eql(lang_obj)
       obj.language_id.should be_eql(lang_obj.id)
     end
   end
