@@ -45,7 +45,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = existing_user(account, from_email)
         unless user
           text_part
-          create_new_user(account, from_email, email_config)
+          user = create_new_user(account, from_email, email_config)
         else
           return if user.blocked?
           text_part
