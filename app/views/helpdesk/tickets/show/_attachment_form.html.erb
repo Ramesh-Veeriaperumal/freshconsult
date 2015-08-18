@@ -7,7 +7,7 @@
   <div class="span8">   
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
-      <div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div>
+      <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
       <div class="attachment_contents">
         <div id="<%= attach_id %>-attachments" class="attachments-wrap shared_attachment_list">
         <% if original_attachments.present? %>

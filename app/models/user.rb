@@ -276,7 +276,7 @@ class User < ActiveRecord::Base
     super(params)
   end
 
-  def signup!(params , portal=nil)
+  def signup!(params , portal=nil, send_activation=true)
     normalize_params(params[:user]) # hack to facilitate contact_fields & deprecate customer
     params[:user][:tag_names] = params[:user][:tags] unless params[:user].include?(:tag_names)
     self.name = params[:user][:name]
@@ -305,7 +305,7 @@ class User < ActiveRecord::Base
     self.created_from_email = params[:user][:created_from_email] 
     return false unless save_without_session_maintenance
     portal.make_current if portal
-    if (!deleted and !email.blank?)
+    if (!deleted and !email.blank? and send_activation)
       if self.language.nil?
         args = [ portal,false, params[:email_config]]
         Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
@@ -619,7 +619,12 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    #Remove as part of Search-Resque cleanup
+    if Search::Job.sidekiq?
+      SearchSidekiq::IndexUpdate::UserTickets.perform_async({ :user_id => id })
+    else
+      Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+    end if ES_ENABLED
   end
 
   def moderator_of?(forum)

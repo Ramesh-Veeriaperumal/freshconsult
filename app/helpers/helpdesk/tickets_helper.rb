@@ -481,6 +481,31 @@ module Helpdesk::TicketsHelper
       return raw(dom)
   end
 
+  def ticket_body_form form_builder, to=false
+    contents = []
+    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('helpdesk.enter_subject')).html_safe)
+    form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
+      signature_value = current_user.agent.signature_value ? ("<p><br /></p>"*2)+current_user.agent.signature_value.to_s : ""
+      contents << content_tag(:li, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
+    end
+    contents << content_tag(:li) do 
+      render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" }
+    end
+    contents.join(" ").html_safe
+  end
+
+  def new_ticket_fields form_builder
+    content = []
+    current_portal.ticket_fields.each do |field|
+      if field.visible_in_view_form?
+        field_value = @item[field.field_name] if field.is_default_field? or !params[:topic_id].blank?
+        field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe : (field.label).html_safe
+        content << construct_ticket_element(form_builder, :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value , "" , false , false)
+      end
+    end
+    content.join(" ").html_safe
+  end
+
   # ITIL Related Methods starts here
 
   def load_sticky

@@ -136,14 +136,23 @@
 			            </div>
 			        <%end%>
 						<% if privilege?(:manage_tickets) then %>
-							<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path,
-									:class => "new_ticket tooltip" ,
-									:title => t("header.new_ticket_tip").html_safe,
-									'data-placement' => "below",
-									"data-keybinding" => shortcut('app_nav.ticket_new'),
-									"data-pjax" => "#body-container" ) %>
+						  <%if current_account.compose_email_enabled? %>
+							<div class="dropdown pull-left">
+								<a class="dropdown-toggle new_ticket_button" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span></span> <%= t('header.new_ticket') %>
+								</a>
+								<ul class="dropdown-menu new-ticket-dropdown" role="menu" aria-labelledby="dropdownMenu1">
+									<li>
+										<%= pjax_link_to content_tag(:span, "", :class => "ficon-new-ticket fsize-20")+t("header.new_phone_ticket").html_safe, new_helpdesk_ticket_path, 'data-keybinding'=>shortcut('app_nav.ticket_new') %></li>
+									<li>
+										<%= pjax_link_to content_tag(:span, "", :class => "ficon-compose-email fsize-20")+t("header.compose_email").html_safe, compose_email_helpdesk_tickets_path, 'data-keybinding' => shortcut('app_nav.compose_email') %></li>
+								</ul>
+							</div>
+						  <% else %>
+						  	<%= pjax_link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path,:class => "new_ticket_button tooltip" ,:title => t("header.new_ticket_tip").html_safe,'data-placement' => "below","data-keybinding" => shortcut('app_nav.ticket_new')) %>
+						  <% end %>
 						<% else %>
-							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
+							<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket_button tooltip" ) if allowed_in_portal?(:anonymous_tickets) %>
 						<% end %>
 						<% if current_user then %>
 							<%= form_tag('/search/all', :method => :get, :class => "nav_search") do %>
@@ -217,6 +226,12 @@
 		jQuery('#shortcut_help_chart').trigger('click');
 	});
 
+	//Toggle compose email and new ticket button active state
+	jQuery(".new-ticket-dropdown").on("click", "a", function(e){
+		var _currentTarget = e.currentTarget;
+		jQuery(_currentTarget).parent().siblings().removeClass('active');
+		jQuery(_currentTarget).parent().addClass('active');
+	});
 });
 
 

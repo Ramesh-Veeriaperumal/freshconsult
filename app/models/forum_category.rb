@@ -82,7 +82,14 @@ class ForumCategory < ActiveRecord::Base
       [ category.name, category.user_forums.map {|forum| [forum.id, forum.name] } ]
     }
   end
-
+  
+  def association_with(portal)
+    self.portal_forum_categories.select{|p| p.portal_id == portal.id}.first
+  end
+  
+  def position_in_portal(portal = Portal.current)
+    (self.association_with(portal) || {})[:position] || 1
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 2
