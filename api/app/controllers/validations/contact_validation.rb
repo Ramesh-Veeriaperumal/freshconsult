@@ -14,7 +14,7 @@ class ContactValidation < ApiValidation
   validates :job_title, data_type: { rules: String }, allow_nil: true
   validates :language, data_type: { rules: String }, custom_inclusion: { in: I18n.available_locales.map(&:to_s) }, allow_nil: true
   validates :name, data_type: { rules: String }, required: true
-  validates :tags, data_type: { rules: Array }, allow_nil: true
+  validates :tags,  data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String } }
   validates :time_zone, custom_inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }, allow_nil: true
 
   validate :contact_detail_missing

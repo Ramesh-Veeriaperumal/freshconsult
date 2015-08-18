@@ -523,5 +523,15 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
+
+    # def test_update_array_field_with_empty_array
+    #   fc = fc_obj
+    #   forum = create_test_forum(fc)
+    #   put :update, construct_params({ id: forum.id }, company_ids: [1, 2])
+    #   assert_response :success
+    #   put :update, construct_params({ id: forum.id }, company_ids: [])
+    #   assert_response :success
+    #   match_json(forum_pattern({company_ids: [] }, forum.reload))
+    # end
   end
 end

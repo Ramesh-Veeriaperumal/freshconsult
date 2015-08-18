@@ -544,4 +544,19 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('error', "Demo site doesn't have this access!")])
     AppConfig['demo_site'][Rails.env] = old_value
   end
+
+  def test_update_array_field_with_empty_array
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id }, tags: [])
+    assert_response :success
+    match_json(deleted_contact_pattern(sample_user.reload))
+  end
+
+  def test_update_array_fields_with_compacting_array
+    tag = Faker::Name.name
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id }, tags: [tag, '', ''])
+    assert_response :success
+    match_json(deleted_contact_pattern({ tags: [tag] }, sample_user.reload))
+  end
 end

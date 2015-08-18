@@ -181,6 +181,14 @@ class ApiApplicationController < MetalApiController
       # This will be used to map incoming parameters to parameters that the model would understand
     end
 
+    def prepare_array_fields(array_fields = [])
+      array_fields.each do |field|
+        value = Array.wrap params[cname][field] if params[cname].key? field
+        params[cname][field] = value.try(:uniq).reject { |f| f.to_s.empty? } unless value.nil?
+        params[cname][field] = [] if value.nil? && create?
+      end
+    end
+
     def build_object
       # assign already loaded account object so that it will not be queried repeatedly in model
       build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}

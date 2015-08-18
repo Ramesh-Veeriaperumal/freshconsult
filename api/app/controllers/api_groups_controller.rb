@@ -49,7 +49,8 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def initialize_agents
-      @agents = Array.wrap params[cname][:agent_ids] if params[cname].key?(:agent_ids)
+      prepare_array_fields [:agent_ids]
+      @agents = params[cname][:agent_ids]
     end
 
     def sanitize_params

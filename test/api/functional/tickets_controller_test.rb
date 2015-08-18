@@ -1927,4 +1927,21 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :not_found
     t.update_column(:spam, false)
   end
+
+  def test_update_array_fields_with_empty_array
+    params_hash = update_ticket_params_hash
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, tags: [], cc_emails: [])
+    assert_response :success
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_array_fields_with_compacting_array
+    tag = Faker::Name.name
+    params_hash = update_ticket_params_hash
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, tags: [tag, '', '', nil])
+    assert_response :success
+    match_json(ticket_pattern({ tags: [tag] }, t.reload))
+  end
 end

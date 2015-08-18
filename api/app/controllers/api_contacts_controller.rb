@@ -83,6 +83,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def sanitize_params
+      prepare_array_fields [:tags]
       @tags = params[cname][:tags]
       params[cname].delete(:tags) if @tags
       # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for

@@ -43,9 +43,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def sanitize_params
-      if params[cname][:domains].nil?
-        params[cname][:domains] = (params[cname].key?(:domains) ? '' : @item.domains) if update?
-      end
+      prepare_array_fields [:domains]
       params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end

@@ -287,6 +287,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('cf_required_linetext', 'missing_field')])
   end
 
+  def test_update_array_fields_with_compacting_array
+    domain = Faker::Name.name
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
+    put :update, construct_params({ id: company.id }, domains: [domain, '', '', nil])
+    assert_response :success
+    match_json(company_pattern({ domains: [domain] }, company.reload))
+  end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key

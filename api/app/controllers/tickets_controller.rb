@@ -123,13 +123,13 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      ParamsHelper.uniq_params([:cc_emails, :tags], params[cname])
+      prepare_array_fields [:cc_emails, :tags]
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
-      cc_emails =  (params[cname][:cc_emails] || [])
+      cc_emails =  params[cname][:cc_emails]
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup }
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
@@ -161,8 +161,10 @@ class TicketsController < ApiApplicationController
     def assign_protected
       @item.product ||= current_portal.product
       @item.account = current_account
-      @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
-      @item.cc_email = @cc_emails
+      unless @cc_emails.nil?
+        @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
+        @item.cc_email = @cc_emails
+      end
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
     end
