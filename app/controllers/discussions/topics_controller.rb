@@ -234,9 +234,7 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def find_topic
-			# To remove unused eager loading in API request. Temp HACK
-			@topic = [:json, :xml].include?(request.format.to_sym) ? current_account.topics.find(params[:id]) 
-								: current_account.topics.find(params[:id], :include => [:user, :forum])
+			@topic = current_account.topics.find(params[:id]) 
 			@forum = @topic.forum
 			@category = @forum.forum_category
 		end
