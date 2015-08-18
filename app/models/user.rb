@@ -196,7 +196,7 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, active: false }
         },
         blocked: {
-          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?",Time.now+5.days,Time.now+5.days ]
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.now+5.days, Time.now+5.days ]
         },
         all: {
           conditions: { deleted: false }
@@ -661,16 +661,6 @@ class User < ActiveRecord::Base
       agent.occasional = !!args[:occasional]
       save ? true : (raise ActiveRecord::Rollback)
     end
-  end
-
-  # Used by API V2
-  def api_make_agent
-    self.user_emails = [self.primary_email] if has_multiple_user_emails?
-    self.deleted = false
-    self.helpdesk_agent = true
-    self.role_ids = [account.roles.find_by_name("Agent").id] 
-    agent = build_agent()
-    save
   end
 
   def update_search_index

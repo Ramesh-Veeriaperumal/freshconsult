@@ -269,6 +269,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
+    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact
@@ -350,6 +351,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
+    resource :"api_agent", :only => [:show, :index]
   end
 
   manage_canned_responses do

@@ -16,5 +16,5 @@ class ContactFilterValidation < ApiValidation
     company = Account.current.companies_from_cache.find(@company_id.to_i)
     errors.add(:company_id, "can't be blank") unless company
   end
+
 end
-# Account.current.companies_from_cache.detect{ |x| x.id == @company_id.to_i}

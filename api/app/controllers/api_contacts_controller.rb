@@ -7,7 +7,7 @@ class ApiContactsController < ApiApplicationController
   before_filter :check_parent, only: :restore
 
   def index
-    load_objects contacts_filter(scoper)
+    load_objects contacts_filter(scoper).includes(:flexifield, :company)
   end
 
   def contacts_filter(contacts)
@@ -57,7 +57,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def make_agent
-    if @item.api_make_agent
+    if @item.make_agent
       @agent = Agent.find_by_user_id(@item.id)
     else
       render_error(@item.errors)
