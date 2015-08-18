@@ -40,10 +40,6 @@ module Concerns::ApplicationConcern
     traverse.call(params, force_encoding)
   end
 
-  def api_request?
-    request.cookies['_helpkit_session']
-  end
-
   def determine_pod
     shard = ShardMapping.lookup_with_domain(request.host)
     if shard.nil?

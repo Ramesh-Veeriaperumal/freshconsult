@@ -443,7 +443,7 @@ private
         :phone => phone, :language => language, 
         :account => account 
         }}, 
-        portal, !outbound_email?)# check @requester_name and active
+        portal, !outbound_email?) # check @requester_name and active
       
       self.requester = requester
     end

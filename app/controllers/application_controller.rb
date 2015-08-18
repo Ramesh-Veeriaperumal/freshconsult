@@ -207,5 +207,9 @@ class ApplicationController < ActionController::Base
       end
     end
     #End here
+
+    def api_request?
+      request.cookies["_helpkit_session"]
+    end
 end
 
