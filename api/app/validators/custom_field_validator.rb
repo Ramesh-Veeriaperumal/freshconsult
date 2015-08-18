@@ -8,7 +8,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       reset_attr_accessors
       assign_options(attribute)
       next if (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
-      
+
       # find if fields are required based on status
       @required_based_on_status = proc_to_object(@required, record)
 
@@ -19,7 +19,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         field_name = custom_field.name # assign field name
         value = values.try(:[], custom_field.name) # assign value
         @parent =  nested_field? ? get_parent(values) : {} # get parent if nested_field for computing required
-        @is_required = required_field? # find if the field is required 
+        @is_required = required_field? # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
         record.class.send(:attr_accessor, field_name)
@@ -48,30 +48,30 @@ class CustomFieldValidator < ActiveModel::EachValidator
     RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
   end
 
-  # Numericality validator for number field 
+  # Numericality validator for number field
   def validate_custom_number(record, field_name)
     numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@required }, 'required_integer')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 
-  # Inclusion validator for boolean field 
+  # Inclusion validator for boolean field
   def validate_custom_checkbox(record, field_name)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: ApiConstants::BOOLEAN_VALUES, required: @is_required)).validate(record)
   end
 
-  # Numericality validator for decimal field 
+  # Numericality validator for decimal field
   def validate_custom_decimal(record, field_name)
     numericality_options = construct_options({ attributes: field_name, allow_nil: !@required }, 'required_number')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 
-  # Inclusion validator for nested field level 0 
+  # Inclusion validator for nested field level 0
   def validate_nested_field_level_0(record, field_name)
     choices = get_choices(field_name, nil, 0)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
   end
 
-  # Inclusion validator for nested field level 2 
+  # Inclusion validator for nested field level 2
   # will not be validated if parent value (i.e., level 0 value) is nil
   def validate_nested_field_level_2(record, field_name)
     return unless @parent[:value]
@@ -80,7 +80,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
     end
   end
- 
+
   # Inclusion validator for nested field level 3
   # will not be validated if parent value (i.e., level 1 value) or ancestor value (i.e., level 0 value) is nil
   def validate_nested_field_level_3(record, field_name)
@@ -91,19 +91,19 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
   end
 
-  # Inclusion validator for dropdown field 
+  # Inclusion validator for dropdown field
   def validate_custom_dropdown(record, field_name)
     choices = proc_to_object(@drop_down_choices)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate(record)
   end
 
-  # Format validator for url field 
+  # Format validator for url field
   def validate_custom_url(record, field_name)
     format_options = construct_options({ attributes: field_name, with: URI.regexp,  allow_nil: !@required, message: 'invalid_format' }, 'required_format')
     ActiveModel::Validations::FormatValidator.new(format_options).validate(record)
   end
 
-  # Date validator for date field 
+  # Date validator for date field
   def validate_custom_date(record, field_name)
     date_options = construct_options({ attributes: field_name, allow_nil: !@required }, 'required_date')
     DateTimeValidator.new(date_options).validate(record)
@@ -141,7 +141,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       is_required
     end
 
-    # should allowed be validated satisfying any of the below conditions 
+    # should allowed be validated satisfying any of the below conditions
     # 1. required field
     # 2. value is not nil
     # 3. nested parent field with children not set

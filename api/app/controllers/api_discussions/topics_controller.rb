@@ -50,7 +50,7 @@ module ApiDiscussions
           @item.errors[:stamp_type] = BaseError::ERROR_MESSAGES['allowed_stamp_type'] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
- 		@error_options = { remove: :posts }
+        @error_options = { remove: :posts }
       end
 
       def sanitize_params

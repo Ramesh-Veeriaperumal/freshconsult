@@ -20,6 +20,5 @@ class ParamsHelper
         controller_params[field].try(:uniq!)
       end
     end
-
   end
 end

@@ -19,16 +19,15 @@ class ApiContactsController < ApiApplicationController
   end
 
   def create
-    api_add_tags(@tags, @item, 'User') if @tags
+    @item.tags = construct_ticket_tags(@tags) if @tags
     assign_protected
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
-      render_error(contact_delegator.errors, contact_delegator.error_options)
+      render_custom_errors(contact_delegator, true)
     elsif @item.api_signup!
       render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
-      set_custom_errors
-      render_error(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -38,10 +37,9 @@ class ApiContactsController < ApiApplicationController
     @item.assign_attributes(params[cname])
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
-      set_custom_errors(contact_delegator)
-      render_error(contact_delegator.errors, contact_delegator.error_options)
+      render_custom_errors(contact_delegator, true)
     else
-      api_update_tags(@tags, @item, 'User') if @tags
+      @item.tags = construct_ticket_tags(@tags) if @tags
       super
     end
   end
@@ -60,7 +58,7 @@ class ApiContactsController < ApiApplicationController
     if @item.make_agent
       @agent = Agent.find_by_user_id(@item.id)
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
@@ -78,13 +76,13 @@ class ApiContactsController < ApiApplicationController
       @contact_fields = current_account.contact_form.custom_contact_fields
       allowed_custom_fields = @contact_fields.collect(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = get_fields("ContactConstants::#{action_name.upcase}_CONTACT_FIELDS") | ['custom_fields' => custom_fields]
+      field = get_fields("ContactConstants::#{action_name.upcase}_FIELDS") | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       contact = ContactValidation.new(params[cname], @item)
-      render_error contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
+      render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
     end
 
-    def manipulate_params
+    def sanitize_params
       @tags = params[cname][:tags]
       params[cname].delete(:tags) if @tags
       # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for
@@ -95,10 +93,10 @@ class ApiContactsController < ApiApplicationController
     end
 
     def validate_filter_params
-      params.permit(*ContactConstants::INDEX_CONTACT_FIELDS, *ApiConstants::DEFAULT_PARAMS,
+      params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_PARAMS,
                     *ApiConstants::DEFAULT_INDEX_FIELDS)
       @contact_filter = ContactFilterValidation.new(params)
-      render_error(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+      render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
     def load_object
@@ -115,21 +113,21 @@ class ApiContactsController < ApiApplicationController
     def check_agent_limit
       if !current_account.subscription.agent_limit.nil? && current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
         errors = [[:id, ['reached the maximum number of agents']]]
-        render_error errors
+        render_errors errors
       end
     end
 
     def can_make_agent
       unless @item.has_email?
         errors = [[:email, ['Contact with email id can only be converted to agent']]]
-        render_error errors
+        render_errors errors
       end
     end
 
     def check_demo_site
       if AppConfig['demo_site'][Rails.env] == current_account.full_domain
         errors = [[:error, ["Demo site doesn't have this access!"]]]
-        render_error errors
+        render_errors errors
       end
     end
 

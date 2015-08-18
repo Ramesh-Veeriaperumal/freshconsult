@@ -2,11 +2,11 @@ class ApiCompaniesController < ApiApplicationController
   def create
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
-      render_error(company_delegator.errors, company_delegator.error_options)
+      render_errors(company_delegator.errors, company_delegator.error_options)
     elsif @item.save
       render_201_with_location(item_id: @item.id)
     else
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
@@ -15,9 +15,9 @@ class ApiCompaniesController < ApiApplicationController
     @item.custom_field = @item.custom_field
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
-      render_error(company_delegator.errors, company_delegator.error_options)
+      render_errors(company_delegator.errors, company_delegator.error_options)
     elsif !@item.update_attributes(params[cname])
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
@@ -35,14 +35,14 @@ class ApiCompaniesController < ApiApplicationController
       @company_fields = current_account.company_form.custom_company_fields
       allowed_custom_fields = @company_fields.collect(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      fields = CompanyConstants::COMPANY_FIELDS | ['custom_fields' => custom_fields]
+      fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
       convert_domains_to_array if update?
       company = ApiCompanyValidation.new(params[cname], @item)
-      render_error company.errors, company.error_options unless company.valid?
+      render_errors company.errors, company.error_options unless company.valid?
     end
 
-    def manipulate_params
+    def sanitize_params
       if params[cname][:domains].nil?
         params[cname][:domains] = (params[cname].key?(:domains) ? '' : @item.domains) if update?
       end

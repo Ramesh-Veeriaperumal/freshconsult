@@ -5,11 +5,11 @@ class ApiGroupsController < ApiApplicationController
   def create
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
-      render_custom_errors(group_delegator)
+      render_errors(group_delegator.errors, group_delegator.error_options)
     elsif @item.save
       render_201_with_location(item_id: @item.id)
     else
-      render_custom_errors
+      render_errors(@item.errors)
     end
   end
 
@@ -18,10 +18,9 @@ class ApiGroupsController < ApiApplicationController
     @item.agent_groups = @item.agent_groups
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
-      render_custom_errors(group_delegator)
+      render_errors(group_delegator.errors, group_delegator.error_options)
     elsif !@item.update_attributes(params[cname])
-      set_custom_errors
-      render_custom_errors
+      render_errors(@item.errors)
     end
   end
 

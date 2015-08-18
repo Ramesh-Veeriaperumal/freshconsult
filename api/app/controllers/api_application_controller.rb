@@ -218,9 +218,10 @@ class ApiApplicationController < MetalApiController
       # This is used to manipulate the model errors to a format that is acceptable.
     end
 
-    def render_custom_errors(item = @item)
+    def render_custom_errors(item = @item, merge_item_error_options = false)
       options = set_custom_errors(item) # this will set @error_options if necessary.
       Array.wrap(options.delete(:remove)).each { |field| item.errors[field].clear } if options
+      (options ||= {}).merge!(item.error_options) if merge_item_error_options && item.error_options
       render_errors(item.errors, options)
     end
 
@@ -304,7 +305,7 @@ class ApiApplicationController < MetalApiController
       constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
       fields
     end
-   
+
     def update?
       @update ||= current_action?('update')
     end
@@ -324,5 +325,4 @@ class ApiApplicationController < MetalApiController
     def current_action?(action)
       action_name.to_s == action
     end
-
 end

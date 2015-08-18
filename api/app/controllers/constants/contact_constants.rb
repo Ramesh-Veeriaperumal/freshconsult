@@ -1,11 +1,11 @@
 module ContactConstants
-  CONTACT_ARRAY_FIELDS = [{ 'tags' => [String] }]
-  UPDATE_CONTACT_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | CONTACT_ARRAY_FIELDS }
-  CREATE_CONTACT_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | CONTACT_ARRAY_FIELDS }
+  ARRAY_FIELDS = [{ 'tags' => [String] }]
+  UPDATE_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | ARRAY_FIELDS }
+  CREATE_FIELDS = { all: %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id) | ARRAY_FIELDS }
 
-  CONTACT_STATES = %w( verified unverified all deleted blocked )
+  STATES = %w( verified unverified all deleted blocked )
 
-  INDEX_CONTACT_FIELDS = %w( state email phone mobile company_id )
+  INDEX_FIELDS = %w( state email phone mobile company_id )
 
   DELETED_SCOPE = {
     'update' => false,

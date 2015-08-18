@@ -51,7 +51,7 @@ module DiscussionMonitorConcern
       fetch_monitorship
       delegator = MonitorshipDelegator.new(@monitorship)
       if delegator.invalid?
-        render_error delegator.errors
+        render_errors delegator.errors
         return true
       end
     end

@@ -5,19 +5,19 @@ class ApiSlaPoliciesController < ApiApplicationController
     conditions.delete(:company_id) if params[cname][:applicable_to].key?(:company_ids) && params[cname][:applicable_to][:company_ids].blank?
     sla_policy_delegator = SlaPolicyDelegator.new(@item)
     if !sla_policy_delegator.valid?
-      render_error(sla_policy_delegator.errors, sla_policy_delegator.error_options)
+      render_errors(sla_policy_delegator.errors, sla_policy_delegator.error_options)
     elsif !@item.save
-      render_error(@item.errors)
+      render_errors(@item.errors)
     end
   end
 
   private
 
     def validate_params
-      fields = SlaPolicyConstants::SLA_UPDATE_FIELDS
+      fields = SlaPolicyConstants::UPDATE_FIELDS
       params[cname].permit(*(fields))
       company = ApiSlaPolicyValidation.new(params[cname], @item)
-      render_error company.errors, company.error_options unless company.valid?
+      render_errors company.errors, company.error_options unless company.valid?
     end
 
     def scoper

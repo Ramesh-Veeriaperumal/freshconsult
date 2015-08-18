@@ -12,7 +12,7 @@ class TicketsController < ApiApplicationController
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_custom_errors(ticket_delegator)
+      render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
@@ -29,7 +29,7 @@ class TicketsController < ApiApplicationController
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_custom_errors(ticket_delegator)
+      render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
@@ -61,7 +61,7 @@ class TicketsController < ApiApplicationController
 
     def load_objects
       super tickets_filter.includes(:ticket_old_body,
-                                            :schema_less_ticket, flexifield: {flexifield_def: :flexifield_def_entries})
+                                    :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
     end
 
     def after_load_object
