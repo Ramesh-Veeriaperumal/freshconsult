@@ -278,7 +278,7 @@ en:
     delete: Delete
     regex: Regex
     email: Email
-    nested_field: Nested Fields
+    nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
     default_field_error: Default Fields cannot be moved into Section
   ticket_fields:
@@ -322,7 +322,7 @@ en:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
-      nested_label: "Nested field labels"
+      nested_label: "Dependent field labels"
       level: "Level"
       level1: "Level 1"
       level2: "Level 2"
@@ -731,7 +731,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -803,7 +803,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
