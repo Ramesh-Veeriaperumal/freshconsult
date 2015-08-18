@@ -1,6 +1,11 @@
 ### MULTILINGUAL SOLUTIONS - META READ HACK!!
 module Solution::MultipleThroughSetters
 
+# This file exists because
+# WE are doing multiple throughs
+# We are alias-method-chaining associations
+
+
 	def new(attributes={})
 		association_without_meta.new(attributes)
 	end

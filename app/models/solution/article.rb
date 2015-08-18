@@ -65,7 +65,7 @@ class Solution::Article < ActiveRecord::Base
     { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
         portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
       :joins => :folder,
-      :order => ['solution_folders.id', "solution_articles.position"] }
+      :order => ['solution_articles.folder_id', "solution_articles.position"] }
   end
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
@@ -73,7 +73,7 @@ class Solution::Article < ActiveRecord::Base
     { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
           portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
         :joins => :folder_through_meta,
-        :order => ["solution_folder_meta.id", "solution_article_meta.position"]
+        :order => ["solution_article_meta.solution_folder_meta_id", "solution_article_meta.position"]
       }
   end
 

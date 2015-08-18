@@ -41,4 +41,4 @@ Redis.class_eval {add_method_tracer :lrem}
 Redis::Client.class_eval {add_method_tracer :read}
 Redis::Client.class_eval {add_method_tracer :process}
 Redis::Client.class_eval {add_method_tracer :connect}
-LaunchParty.configure(:redis => $redis_others)
+LaunchParty.configure(:redis => Redis::Namespace.new(:launchparty, :redis => $redis_others))
