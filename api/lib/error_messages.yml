@@ -54,4 +54,5 @@ api_error_messages:
   required_and_inclusion: "Should be a value in the list '%{list}'"
   "allowed_stamp_type": "Allowed values are '%{list}'"
   "reached the maximum number of agents": "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
+  cannot_update_default_sla: "Default SLA policy cannot be updated"
 

@@ -7,10 +7,6 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_index_load_sla_policies
     get :index, request_params
     assert_equal Helpdesk::SlaPolicy.all, assigns(:items)
-  end
-
-  def test_index
-    get :index, request_params
     pattern = []
     Account.current.sla_policies.all.each do |sp|
       pattern << sla_policy_pattern(Helpdesk::SlaPolicy.find(sp.id))
@@ -33,6 +29,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response :success
     match_json(sla_policy_pattern(sla_policy.reload))
+    match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, sla_policy))
   end
 
   def test_update_with_invalid_fields_in_conditions_hash
@@ -73,6 +70,28 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('applicable_to', "can't be blank")])
+  end
+
+  def test_update_default_sla_policy
+    company = create_company
+    put :update, construct_params({ id: 1 }, applicable_to: { company_ids: [company.id] })
+    assert_response :bad_request
+    match_json(request_error_pattern('cannot_update_default_sla'))
+  end
+
+  def test_update_with_invalid_fields
+    company = create_company
+    sla_policy = create_sla_policy
+    put :update, construct_params({ id: sla_policy.id }, conditions: { company_id: [company.id] })
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('conditions', 'invalid_field')])
+  end
+
+  def test_update_with_invalid_data_type
+    sla_policy = create_sla_policy
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: [1, 2])
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('applicable_to', 'data_type_mismatch', data_type: 'key/value pair')])
   end
 
   def create_sla_policy

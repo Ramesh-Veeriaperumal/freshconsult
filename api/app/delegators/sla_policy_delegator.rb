@@ -3,9 +3,9 @@ class SlaPolicyDelegator < SimpleDelegator
 
   attr_accessor :error_options, :company_ids
 
-  validate :valid_company?, if: -> { !conditions[:company_id].nil? }
+  validate :valid_company?, if: -> { conditions[:company_id] }
 
-  validate :valid_conditions?, if: -> { conditions[:company_ids].nil? }
+  validate :valid_conditions?, if: -> { conditions[:company_id].nil? }
 
   def valid_company?
     company_ids = conditions[:company_id]
