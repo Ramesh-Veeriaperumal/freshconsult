@@ -260,8 +260,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => cleansed_html},
+        :ticket_body_attributes => {:description => params[:text] || "", 
+                          :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -400,7 +400,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :note_body_attributes => {:body => body,:body_html => body_html,
+        :note_body_attributes => {:body => body || "",:body_html => body_html || "",
                                   :full_text => full_text, :full_text_html => full_text_html} ,
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
@@ -489,10 +489,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
       signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
         :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-      text = text_for_detection
-      args = [user, text]  #user_email changed
-      #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-      Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+      if params[:text]
+        text = text_for_detection
+        args = [user, text]  #user_email changed
+        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+      end
       user
     end
 
