@@ -59,9 +59,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   delegate :trashed, :to_emails, :product, :to => :schema_less_ticket, :allow_nil => true
 
-  has_one :ticket_topic,:dependent => :destroy
+  has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-  
+
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :as => :surveyable, :dependent => :destroy
