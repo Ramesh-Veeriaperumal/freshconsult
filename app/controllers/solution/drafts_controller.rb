@@ -137,7 +137,7 @@ class Solution::DraftsController < ApplicationController
 
 		#META-READ-HACK!!
 		def meta_folder_scope
-		  current_account.launched?(:meta_read) ?  :folders_through_meta : :folders
+		  current_account.launched?(:meta_read) ?  :folder_through_meta : :folder
 		end
 
 		#META-READ-HACK!!
