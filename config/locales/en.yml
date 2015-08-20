@@ -2008,6 +2008,7 @@ en:
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
+      domain_restriction: Domain restriction in place. This email is not allowed.
 
     freshfone:
       credits:

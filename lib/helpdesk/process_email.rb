@@ -33,6 +33,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       encode_stuffs
       from_email = parse_from_email(account)
       return if from_email.nil?
+      if account.features?(:domain_restricted_access)
+        domain = (/@(.+)/).match(from_email[:email]).to_a[1]
+        wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+        return unless Array.wrap(wl_domain).include?(domain)
+      end
       kbase_email = account.kbase_email
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)

@@ -68,7 +68,7 @@ module SsoUtil
     phone = sso_data[:phone]
     company = sso_data[:company]
 
-    @current_user = current_account.all_users.find_by_email(user_email_id)
+    @current_user = current_account.user_emails.user_for_email(user_email_id)
 
     if @current_user && @current_user.deleted?
       flash[:notice] = t(:'flash.login.deleted_user')
@@ -90,7 +90,7 @@ module SsoUtil
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
-    if @user_session.save
+    if (!@current_user.new_record? && @user_session.save)
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
       if grant_day_pass
