@@ -75,7 +75,7 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def load_article
-			@article = current_account.solution_articles.find_by_id((params[:article_id] || params[:id]), :include => :draft)
+			@article = current_account.solution_articles.find_by_id((params[:article_id] || params[:id]), :include => :draft, :readonly => false)
 		end
 
 		def load_attachment

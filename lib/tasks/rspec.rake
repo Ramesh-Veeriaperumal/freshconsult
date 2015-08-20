@@ -148,6 +148,7 @@ if Rails.env.test?
     "spec/controllers/api/xml/solutions_folders_api_spec.rb",
     "spec/controllers/mobihelp/articles_controller_spec.rb",
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
+    "spec/controllers/solutions/drafts_controller_spec.rb",
     "spec/lib/solution/cache_spec.rb"
   ]
 
