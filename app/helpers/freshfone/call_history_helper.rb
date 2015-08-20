@@ -167,6 +167,7 @@ module Freshfone::CallHistoryHelper
   end
 
   def external_transfer?(call)
+    return if call.meta.blank?
     call.meta.device_type == Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
   end
 end
