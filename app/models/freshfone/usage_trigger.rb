@@ -10,9 +10,9 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
   TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
   TRIGGER_TYPE_BY_VALUE = TRIGGER_TYPE.invert
 
-	TRIGGER_DAILY_CREDIT_OPTIONS = { :trigger_type => :daily_credit_threshold,
-			:usage_category => 'totalprice',
-			:recurring => 'daily' }
+  TRIGGER_DAILY_CREDIT_OPTIONS = { :trigger_type => :daily_credit_threshold,
+    :usage_category => 'totalprice',
+    :recurring => 'daily' }
 
   scope :previous, lambda { |type| { 
     :conditions => ["trigger_type = ?", Freshfone::UsageTrigger::TRIGGER_TYPE[type.to_sym]], 
@@ -34,8 +34,8 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
   end
 
   def daily_credit_threshold?
-		trigger_type == :daily_credit_threshold
-	end
+    trigger_type == :daily_credit_threshold
+  end
 
   def self.create_trigger(account, attributes)
     #@twilio
@@ -57,50 +57,50 @@ class Freshfone::UsageTrigger < ActiveRecord::Base
   end
 
   def self.create_daily_threshold_trigger(triggers, account_id)
-		triggers.each do |_key, value|
-			TRIGGER_DAILY_CREDIT_OPTIONS[:account_id] = account_id
-			TRIGGER_DAILY_CREDIT_OPTIONS[:trigger_value] = value
-			Resque.enqueue(Freshfone::Jobs::UsageTrigger, TRIGGER_DAILY_CREDIT_OPTIONS)
-		end
+    triggers.each do |_key, value|
+      TRIGGER_DAILY_CREDIT_OPTIONS[:account_id] = account_id
+      TRIGGER_DAILY_CREDIT_OPTIONS[:trigger_value] = value
+      Resque.enqueue(Freshfone::Jobs::UsageTrigger, TRIGGER_DAILY_CREDIT_OPTIONS)
+    end
   end
 
   def self.remove_daily_threshold_with_level(freshfone_account, level)
-  	return unless freshfone_account.present? && level.present?
-  	Freshfone::UsageTrigger.where(
-  		:account_id => freshfone_account.account.id,
-  		:freshfone_account_id => freshfone_account.id,
-  		:trigger_type => TRIGGER_TYPE[:daily_credit_threshold],
-  		:trigger_value => freshfone_account.triggers[level]
-  	).destroy_all
+    return unless freshfone_account.present? && level.present?
+    Freshfone::UsageTrigger.where(
+      :account_id => freshfone_account.account.id,
+      :freshfone_account_id => freshfone_account.id,
+      :trigger_type => TRIGGER_TYPE[:daily_credit_threshold],
+      :trigger_value => freshfone_account.triggers[level]).destroy_all
   end
 
   def self.update_triggers(freshfone_account, params)
-		return unless freshfone_account.present? && params.present?
-  	
-  	usage_triggers = fetch_daily_threshold_with_freshfone(freshfone_account)
+    return unless freshfone_account.present? && params.present?
 
-  	usage_triggers.where('trigger_value NOT IN (?)', 
-			[params[:trigger_first].to_i, params[:trigger_second].to_i]).destroy_all
+    usage_triggers = fetch_daily_threshold_with_freshfone(freshfone_account)
 
-		freshfone_account.update_triggers(params)
+    usage_triggers.where('trigger_value NOT IN (?)',
+      [params[:trigger_first].to_i, params[:trigger_second].to_i]).destroy_all
 
-		Freshfone::UsageTrigger.create_daily_threshold_trigger(
-  		find_new_triggers(freshfone_account, usage_triggers),
-  		freshfone_account.account.id)
+    freshfone_account.update_triggers(params)
+
+    Freshfone::UsageTrigger.create_daily_threshold_trigger(
+      find_new_triggers(freshfone_account, usage_triggers),
+      freshfone_account.account.id)
   end
 
-	def self.find_new_triggers(ff_acc, us_triggers)
-		ff_acc.triggers.reject do |_k, v|
-			us_triggers.any? do |tr|
-				tr.trigger_value == v
-			end
-		end
-	end
+  def self.find_new_triggers(ff_acc, us_triggers)
+    ff_acc.triggers.reject do |_k, v|
+      us_triggers.any? do |tr|
+        tr.trigger_value == v
+      end
+    end
+  end
 
-	def self.fetch_daily_threshold_with_freshfone(freshfone_account)
-		Freshfone::UsageTrigger.where(
-				:account_id => freshfone_account.account.id,
-				:freshfone_account_id => freshfone_account.id,
-				:trigger_type => TRIGGER_TYPE[:daily_credit_threshold])
-	end
+  def self.fetch_daily_threshold_with_freshfone(freshfone_account)
+    Freshfone::UsageTrigger.where(
+      :account_id => freshfone_account.account.id,
+      :freshfone_account_id => freshfone_account.id,
+      :trigger_type => TRIGGER_TYPE[:daily_credit_threshold])
+  end
+
 end

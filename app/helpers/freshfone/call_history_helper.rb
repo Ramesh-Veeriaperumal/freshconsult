@@ -16,22 +16,21 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def numbers_hash
-		@numbers ||=current_account.all_freshfone_numbers.reduce({}){|obj,c| obj.merge!({c.id=>c.number})}
-	
+		@numbers ||=current_account.all_freshfone_numbers.reduce({}){|obj,c| obj.merge!({c.id=>c.number})}	
 	end
 
 	def link_to_caller(user, user_name, options = {})
-	   return if user.blank?
-	   if privilege?(:view_contacts)
-	   		default_opts = { :class => "username",
-	                       :rel => "contact-hover",
-	                       "data-contact-id" => user.id,
-	                       "data-contact-url" => hover_card_contact_path(user)  
-	                     }
-	      pjax_link_to(user_name, user, default_opts.merge(options))
-	    else
-	      content_tag(:strong, user_name , options)
-	    end
+	  return if user.blank?
+	  if privilege?(:view_contacts)
+   		default_opts = { :class => "username",
+                       :rel => "contact-hover",
+                       "data-contact-id" => user.id,
+                       "data-contact-url" => hover_card_contact_path(user)  
+                     }
+      pjax_link_to(user_name, user, default_opts.merge(options))
+    else
+      content_tag(:strong, user_name , options)
+    end
   end
 
   def trimmed_user_name(username)
@@ -115,6 +114,14 @@ module Freshfone::CallHistoryHelper
 		country ? country.name : nil
 	end
 
+
+	def billing_duration(call)
+		return 1 if (call.busy? || call.noanswer?)
+		duration = call.total_duration  if (call.total_duration && call.total_duration != 0)
+		duration = call.call_duration if (duration.blank? && call.call_duration && call.call_duration != 0)
+		duration || 1
+	end
+
 	def call_duration_formatted(duration)
 		if duration >= 3600
 			"%02d:%02d:%02d" % [duration / 3600, (duration / 60) % 60, duration % 60]
@@ -123,6 +130,20 @@ module Freshfone::CallHistoryHelper
 		end
 	end
 
+  def call_cost_splitup(call, pulse = 1)
+    pulse_rate = call.pulse_rate
+    duration = billing_duration(call)
+    pulse = (duration.to_f/60).ceil if (duration.present? && (duration.to_f != 0))
+    pulse
+  end
+
+  def call_cost_dom(call)
+    return if call.missed_conf_transfer? || call.blocked?
+    return content_tag(:b, nil, :class => "callhistory-payment-loader", :id => "ticket_list_count") if call.call_cost.blank?
+    return "$#{call.call_cost}" unless current_account.features?(:freshfone_conference)
+    content_tag(:span, "$#{call.call_cost}",:class => "ff_call_cost", :rel => "ff-cost-hover-popover", :data => {:total_duration => call_duration_formatted(billing_duration(call)), :no_of_unit => call_cost_splitup(call), :pulse_rate => call.pulse_rate })
+  end
+	
 	def export_options
 		[{ i18n: t('export_data.csv'), en: "CSV" }, { i18n: t('export_data.xls'), en: "Excel" }]
 	end
@@ -141,8 +162,11 @@ module Freshfone::CallHistoryHelper
   	end
   end
 
-
-   def cannot_make_calls(classname = nil)
+  def cannot_make_calls(classname = nil)
     content_tag :span, nil, {:class => "restrict-call #{classname}"}
+  end
+
+  def external_transfer?(call)
+    call.meta.device_type == Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
   end
 end

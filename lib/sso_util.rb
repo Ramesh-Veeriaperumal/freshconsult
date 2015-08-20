@@ -144,6 +144,14 @@ module SsoUtil
       return url
   end
 
+  def generate_saml_logout_url
+      return support_home_url unless current_user
+      saml_settings = get_saml_settings(current_account)
+      saml_settings.name_identifier_value = current_user.email if current_user
+      logout_request = OneLogin::RubySaml::Logoutrequest.new()
+      logout_request.create(saml_settings, :RelayState => support_home_url )
+  end
+
   private
     
     def get_first_match(attributes , keys)

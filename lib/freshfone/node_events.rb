@@ -4,22 +4,17 @@ module Freshfone::NodeEvents
 	include Redis::IntegrationsRedis
 
   def notify_socket(channel, message)
-    options = {
-      :channel => channel,
-      :message => message,
-      :freshfone_node_session => freshfone_node_session
-    }
-    Resque.enqueue(Freshfone::Jobs::NodeNotifier, options)
+    Freshfone::NodeWorker.perform_async(message, channel, freshfone_node_session)
   end
 
-  def unpublish_live_call(params)
-    remove_value_from_set(live_calls_key, [called_entity])
+  def unpublish_live_call(params = nil)
+    # remove_value_from_set(live_calls_key, [called_entity])
     notify_socket(call_channel("completed_call"), call_completed_message)
   end
 
-  def publish_live_call(params)
-    add_to_set(live_calls_key, [called_entity])
-    notify_socket(call_channel("new_call"), new_call_message)
+  def publish_live_call(params, account = nil, user_id = nil)
+    # add_to_set(live_calls_key, [called_entity])
+    notify_socket(call_channel("new_call", account), new_call_message(account, user_id))
   end
 
   def publish_freshfone_presence(user, deleted=false)
@@ -98,13 +93,14 @@ module Freshfone::NodeEvents
 
     def call_completed_message
       { :type => "completed_call", 
-        :calls => integ_set_members(live_calls_key).count }
+        :calls => current_account.freshfone_users.busy_agents.count }
     end
 
-    def new_call_message
+    def new_call_message(account = nil, user_id = nil)
+      account ||= current_account
       { :type => "new_call", 
-        :agent => called_entity, 
-        :calls => integ_set_members(live_calls_key).count }
+        :agent => user_id || called_entity, 
+        :calls => account.freshfone_users.busy_agents.count }
     end
 
     def success_transfer_message(success)
@@ -130,8 +126,9 @@ module Freshfone::NodeEvents
       "#{@user.account_id}/presence/#{status}"
     end
 
-    def call_channel(status)
-      "#{current_account.id}/calls/#{status}"
+    def call_channel(status, account = nil)
+      account ||= current_account
+      "#{account.id}/calls/#{status}"
     end
 
     def capability_token_channel

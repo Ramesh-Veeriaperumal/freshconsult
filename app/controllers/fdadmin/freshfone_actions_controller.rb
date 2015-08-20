@@ -5,7 +5,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	before_filter :load_account
 	before_filter :validate_triggers, :only => [:update_usage_triggers]
 	before_filter :validate_credits, :only => [:add_credits]
-	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers]
+	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers, :fetch_conference_state]
 
 	TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
 
@@ -245,7 +245,57 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 			end
 		end
 	end
-	
+
+  def fetch_conference_state
+    result = { :account_id => @account.id, :account_name => @account.name }
+    begin
+      result[:state] = @account.features?(:freshfone_conference) ? 'active' : 'inactive'
+      result[:status] = 'success'
+    rescue => e
+      Rails.logger.error "Error while fetching the Conference State for Freshfone Account for Account id #{@account.id}\n The Exception is #{e.message}\n"
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def enable_conference
+    result = { :account_id => @account.id, :account_name => @account.name }
+    begin
+      @account.freshfone_account.enable_conference
+      result[:status] = 'success'   
+    rescue => e
+      Rails.logger.error "Error while Changing Conference State for Freshfone Account for Account Id #{@account.id}\n
+      The Exception is #{e.message}\n#{e.backtrace.join("\n\t")}"
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def disable_conference
+    result = { :account_id => @account.id, :account_name => @account.name }
+    begin
+      @account.freshfone_account.disable_conference
+      result[:status] = 'success'   
+    rescue => e
+      Rails.logger.error "Error while Changing Conference State for Freshfone Account for Account Id #{@account.id}\n
+      The Exception is #{e.message}\n#{e.backtrace.join("\n\t")}"
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
 	private
 
 	def get_country_name_list

@@ -10,6 +10,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.bindChildCalls();
       this.bindDeleteRecordingModal();
       this.bindDeleteRecording();
+      this.bindCostSplitUp();
+      this.bindPopHover();
     },
     initializeElements: function () {
       this.$freshfoneCallHistory = $('.fresfone-call-history');
@@ -98,6 +100,54 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
         freshfoneendcall.directDialNumber = $(this).data("direct-dial-number");
         freshfoneendcall.showEndCallForm();
       });
+    },
+    bindCostSplitUp: function() {
+      var hidePopoverTimer, widgetPopup, hoverPopup;
+      $("span[rel=ff-cost-hover-popover]").live('mouseenter',function(ev) {
+        ev.preventDefault();
+        var element = $(this);
+        var timeoutDelayShow = setTimeout(function(){
+            clearTimeout(hidePopoverTimer);
+            hideActivePopovers(ev);
+            widgetPopup = element.popover('show');
+            hoverPopup = true;
+          }, 300);
+          element.data('timeoutDelayShow', timeoutDelayShow);
+
+        }).live('mouseleave',function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              if(widgetPopup) widgetPopup.popover('hide');
+              hoverPopup = false;
+            }, 300);
+
+       });
+      
+    },
+    bindPopHover: function() {
+      var self = this;
+      $("span[rel=ff-cost-hover-popover]").livequery(function(){
+        $(this).popover({ 
+          delayOut: 300,
+          trigger: 'manual',
+          offset: 5,
+          reloadContent: true,
+          html: true,
+          placement: 'above',
+          template: '<div class="dbl_left arrow"></div><div class="ff_hover_card inner"><div class="content ff_cost_splitup"><div></div></div></div>',
+          content: function(){
+            return self.buildCostSplitup(this);
+          }
+        }); 
+      });
+    },
+    buildCostSplitup: function (element) {
+      var template = $("#freshfone-cost-splitup").clone();
+      return template.tmpl({
+              "total_duration" : $(element).data("totalDuration"),
+              "no_of_unit" : $(element).data("noOfUnit"),
+              "pulse_rate" : $(element).data("pulseRate")
+            });
     },
     leave: function() {
       $('body').off('.freshfonecallhistory.calllogs');

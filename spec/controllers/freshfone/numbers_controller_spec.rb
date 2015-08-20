@@ -52,17 +52,6 @@ describe Admin::Freshfone::NumbersController do
     json[:errors].first.should be_eql("Unable to purchase number. Kindly make sure the address is a valid local address in Australia.")
   end
 
-  it 'should not create a new address required number on purchase if the provided address has incorrect postal code' do
-    @num = Faker::PhoneNumber.phone_number
-    create_ff_address
-    Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio)
-    params = { :phone_number => @num, :formatted_number => @num, 
-               :region => "Texas", :country => "AU", :type => 'local', :number_sid => "PNUMBER", :address_required => true }
-    ff_address_inspect(params[:country])
-    post :purchase, params
-    json.should be_eql({:success => false, :errors => ["Invalid Postal code"]})
-  end
-
   it 'should not create a new address required number on purchase if freshfone_address not exist' do
     @num = Faker::PhoneNumber.phone_number
     Freshfone::NumberObserver.any_instance.stubs(:add_number_to_twilio).raises(StandardError.new("PhoneNumber Requires a Local Address"))
@@ -107,7 +96,10 @@ describe Admin::Freshfone::NumbersController do
       "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
       "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
-      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"true", "business_calendar"=>"1",  "access_groups_added_list"=>"2,3",
        "access_groups_removed_list"=>"1", "id"=>@number.id}
@@ -124,7 +116,10 @@ describe Admin::Freshfone::NumbersController do
       "message"=>"unavailable"}, "max_queue_length"=>"3", "queue_wait_time"=>"2", 
       "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
-      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"true", "business_calendar"=>"1", "access_groups_added_list"=>"1",
        "access_groups_removed_list"=>"2,3", "id"=>@number.id}
@@ -141,7 +136,10 @@ describe Admin::Freshfone::NumbersController do
       "message"=>"unavailable"}, "max_queue_length"=>"13", "queue_wait_time"=>"2", 
       "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
-      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"false", "business_calendar"=>"1", "id"=>@number.id}
     put :update, params
@@ -158,7 +156,10 @@ describe Admin::Freshfone::NumbersController do
       "max_queue_length"=>"13", "queue_wait_time"=>"2", 
       "on_hold_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", 
       "message"=>"Busy"}, "non_business_hours_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"",
-      "message"=>"not working"}, "voicemail_active"=>"true", 
+      "message"=>"not working"},
+      "wait_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "hold_message" => {"message_type" => "1", "recording_url" => "http://google.com/123.mp3", "attachment_id" => "", "message" => ""},
+      "voicemail_active"=>"true", 
       "voicemail_message"=>{"message_type"=>"2", "recording_url"=>"", "attachment_id"=>"", "message"=>"test"}}, 
       "non_business_hour_calls"=>"false", "id"=>@number.id, "format" => "json"}
     put :update, params

@@ -4,6 +4,8 @@ defaults: &defaults
   :concurrency: 5
   :logfile: ./log/sidekiq.log
   :queues:
+    - [freshfone_notifications]
+    - [freshfone_node]
     - [merge_contacts]
     - [sla]
     - [premium_supervisor]

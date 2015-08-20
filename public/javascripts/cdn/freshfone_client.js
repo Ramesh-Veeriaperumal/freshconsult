@@ -21,3 +21,4 @@
 //= require freshfone/dialpad.js
 //= require freshfone/components/call_transfer.js
 //= require freshfone/freshfone_logger.js
+
