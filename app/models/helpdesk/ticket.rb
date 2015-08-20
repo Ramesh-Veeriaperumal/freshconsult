@@ -865,10 +865,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :requester
       },
       created_since: {
-        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
+        conditions: ['helpdesk_tickets.created_at >= ?', ticket_filter.try(:created_since).try(:to_time).try(:utc)]
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end

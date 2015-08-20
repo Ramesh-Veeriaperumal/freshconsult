@@ -1366,6 +1366,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_time_zone
+    tkt = Helpdesk::Ticket.where(deleted: false, spam: false).first
+    old_time_zone = Time.zone.name
+    Time.zone = "Chennai"
+    get :index, controller_params(created_since: tkt.created_at.to_s, updated_since: tkt.updated_at.to_s)
+    assert_response :success
+    response = parse_response @response.body
+    assert response.size > 0
+    assert response.map{|item| item["ticket_id"]}
+    Time.zone = old_time_zone
+  end
+
   def test_show_with_notes_exceeding_limit
     ticket.update_column(:deleted, false)
     (11 - ticket.notes.size).times do
