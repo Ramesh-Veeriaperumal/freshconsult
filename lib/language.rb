@@ -15,6 +15,13 @@ class Language
 									:name => lang.last) 
 					arr
 				end)
+	
+	alias :to_s :name
+	alias :to_i :id
+	
+	def to_sym
+		code.to_sym
+	end
 
 	class << self
 

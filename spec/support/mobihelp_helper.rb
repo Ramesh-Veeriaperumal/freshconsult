@@ -88,4 +88,10 @@ module MobihelpHelper
       }
     }
   end
+
+  def compare_updated_at(record_set1, record_set2)
+    (0..(record_set1.length-1)).each do |i|
+      (record_set2[i].updated_at > record_set1[i].updated_at).should be_eql(true)
+    end
+  end
 end

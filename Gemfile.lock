@@ -187,12 +187,12 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: 9b884e22f31af95f68b016c7ce203c70658fa90a
+  revision: f28908d6b32bf6d52448b771f0b882f782e64e63
   branch: master
   specs:
-    launchparty (0.0.0)
-      launchparty
-      redis
+    launchparty (0.1.1)
+      redis (>= 3)
+      redis-namespace (>= 1)
 
 PATH
   remote: vendor/gems/acts_as_voteable
@@ -981,7 +981,7 @@ DEPENDENCIES
   json-compare (= 0.1.8)
   jwt (= 1.0.0)
   koala (= 1.10.1)
-  launchparty!
+  launchparty (= 0.1.1)!
   lhm!
   liquid!
   lockfile (= 1.4.3)

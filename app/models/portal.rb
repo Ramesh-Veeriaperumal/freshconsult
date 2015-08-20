@@ -282,6 +282,8 @@ class Portal < ActiveRecord::Base
     end
     
     def add_default_solution_category
+      # Remove this method when new solution UI goes out
+      return if account.solution_categories_without_association.empty?
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
     end

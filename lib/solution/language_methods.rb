@@ -7,7 +7,7 @@ module Solution::LanguageMethods
 			Language.find_by_code(lang).id }}}
 	end
 
-	def language_obj
+	def language
 		Language.find(language_id)
 	end
 
@@ -15,16 +15,12 @@ module Solution::LanguageMethods
 		self.language_id = Language.find_by_code(value).id
 	end
 
-	def language
-		language_code 
-	end
-
 	def language_code
-		language_obj.code
+		language.code
 	end
 
 	def language_name
-		language_obj.name
+		language.name
 	end
 
 end
