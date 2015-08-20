@@ -40,7 +40,7 @@ class Solution::ArticlesController < ApplicationController
     @page_title = t("header.tabs.new_solution")
     current_folder = Solution::Folder.first
     current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
-    @article = current_folder.articles.new    
+    @article = current_folder.articles.new  
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html {
@@ -63,12 +63,12 @@ class Solution::ArticlesController < ApplicationController
   def create
     @article = @current_folder.articles.new(params[nscname]) 
     set_item_user 
-
     build_attachments
     @article.set_status(!save_as_draft?)
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
+        @article.reload
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article)).html_safe if publish?
@@ -181,7 +181,6 @@ class Solution::ArticlesController < ApplicationController
       @nscname ||= controller_path.gsub('/', '_').singularize
     end
     
-
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account
@@ -314,6 +313,7 @@ class Solution::ArticlesController < ApplicationController
       update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
       respond_to do |format|    
         if @article.update_attributes(update_params)
+          @article.reload 
           format.html { 
             flash[:notice] = t('solution.articles.published_success', 
               :url => support_solutions_article_path(@article)).html_safe if publish?

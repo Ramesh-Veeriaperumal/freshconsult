@@ -19,8 +19,12 @@ class Account < ActiveRecord::Base
 
   pod_filter "id"
   
-  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq
+  is_a_launch_target
+  
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations
+
   include CustomerDeprecationMethods
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   

@@ -5,7 +5,7 @@ class Mobihelp::AppSolution < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :app, :class_name => 'Mobihelp::App'
-  belongs_to :solution_category, :class_name => 'Solution::Category'
+  belongs_to :solution_category, :class_name => 'Solution::Category', :foreign_key => :category_id
   belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
   attr_protected :account_id

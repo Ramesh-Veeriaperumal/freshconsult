@@ -31,6 +31,13 @@ module SolutionsHelper
     test_article
   end
 
+  def create_customer_folders(folder)
+    3.times do
+      company = create_company
+      folder.customer_folders.create(:customer_id => company.id)
+    end
+  end
+
   def quick_create_artilce
     create_article(:folder_id => create_folder(:category_id => create_category.id).id)
   end
@@ -109,6 +116,7 @@ module SolutionsHelper
                             :user_id => @agent.id, :status => "2", :art_type => "1" } )
         end
       end
+      cat.reload
     end
   end
 
@@ -137,9 +145,11 @@ module SolutionsHelper
     meta_obj = object.reload.meta_object
     meta_obj.should be_an_instance_of(object.meta_class)
     object.common_meta_attributes.each do |attrib|
+      meta_obj.send(attrib).should be_eql(object.read_attribute(attrib))
       meta_obj.send(attrib).should be_eql(object.send(attrib))
     end
     parent_keys = object.assign_keys
+    meta_obj.account_id.should be_eql(object.account_id)
     meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
   end
 
@@ -147,6 +157,53 @@ module SolutionsHelper
     parent.reload.send(assoc_name).each do |obj|
       meta_assoc = obj.meta_association
       obj.position.should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
+      obj.read_attribute(:position).should be_eql(obj.send(meta_assoc).position) if obj.send(meta_assoc).present?
     end
+  end
+
+  def check_meta_assoc_equality(obj)
+    obj.class::FEATURE_BASED_METHODS.each do |meth|
+      @account.takeback(:meta_read)
+      reload_objects_and_models(obj)
+      result1 = obj.send("#{meth}")
+      @account.launch(:meta_read)
+      reload_objects_and_models(obj)
+      result2 = obj.send("#{meth}")
+      result1.should == result2
+    end
+  end
+
+  def check_meta_delegates(obj)
+    obj.meta_class::COMMON_ATTRIBUTES.each do |attrib|
+      @account.takeback(:meta_read)
+      reload_objects_and_models(obj)
+      result1 = obj.send("#{attrib}")
+      @account.launch(:meta_read)
+      reload_objects_and_models(obj)
+      result2 = obj.send("#{attrib}")
+      result1.should == result2
+    end
+  end 
+
+  def check_language_equality
+    lang_obj = Language.find_by_code(@account.language)
+    @account.make_current
+    ["solution_categories", "solution_folders", "solution_articles"].each do |solution_assoc|
+      check_language_by_assoc(solution_assoc, lang_obj)
+    end
+    Account.reset_current_account
+  end
+
+  def check_language_by_assoc sol_assoc, lang_obj
+    @account.send("#{sol_assoc}_without_association").each do |obj|
+      obj.language.should be_eql(lang_obj)
+      obj.language_id.should be_eql(lang_obj.id)
+    end
+  end
+
+  def reload_objects_and_models(obj)
+    @account.reload
+    @account.make_current
+    obj.reload
   end
 end

@@ -20,10 +20,10 @@ class Solution::FoldersController < ApplicationController
     redirect_to solution_category_path(params[:category_id])
   end
 
-  def show    
-    @folder = current_account.folders.find(params[:id], :include => {:articles => [:draft, :user]})
+  def show
+    #META-READ-HACK!!    
+    @folder = current_account.folders.find(params[:id], :include => { meta_article_scope => [:draft, :user]})
     @page_title = @folder.name
-    
     respond_to do |format|
       format.html {
         redirect_to solution_my_drafts_path('all') if @folder.is_default?
@@ -205,7 +205,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def change_visibility
-      @folders = current_account.folders.where(:id => params[:folderIds])
+      @folders = current_account.folders.where(:id => params[:folderIds]).readonly(false)
       if @visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         if valid_customers(params[:companies]).blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')
@@ -220,7 +220,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @folders = current_account.folders.where(:id => params[:items])
+      @folders = current_account.folders.where(:id => params[:items]).readonly(false)
       @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
       @updated_items = @folders.map(&:id)
     end
@@ -242,6 +242,11 @@ class Solution::FoldersController < ApplicationController
                                       :action_on => 'folders'
                                     })
                   )).html_safe
+    end
+
+    #META-READ-HACK!!    
+    def meta_article_scope
+      current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
     end
 
     def clear_cache

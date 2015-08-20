@@ -168,6 +168,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  #META-READ-HACK!!
+  # Check this while doing Meta Write Phase.
+  # See if the Tickets can be fetched properly from Articles.
+  # As of now Tickets are associated directly with Articles (not thru Meta)
+  # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
   scope :article_tickets_by_user, lambda { |user| {
        :include => [:article, :requester, :ticket_status],
        :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id and solution_articles.user_id = ?", user.id]
