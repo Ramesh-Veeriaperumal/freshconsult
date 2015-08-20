@@ -154,7 +154,7 @@ class Solution::Article < ActiveRecord::Base
             f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
                           { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
             f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } } unless current_portal.main_portal
+                         { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
           end
         end
         search.from options[:size].to_i * (options[:page].to_i-1)

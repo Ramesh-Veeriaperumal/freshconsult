@@ -3,11 +3,15 @@ module Helpdesk::TicketsHelperMethods
   include Helpdesk::Ticketfields::TicketStatus  
   
   def subject_style(ticket,onhold_and_closed_statuses)
-    cust_responded = customer_responded_to_ticket?(ticket)
+    if ticket.outbound_email?
+      cust_responded = customer_responded_for_outbound?(ticket) 
+    else
+      cust_responded = customer_responded_to_ticket?(ticket)
+    end
     overdue = ticket_overdue?(ticket,onhold_and_closed_statuses)
     ticket_active = ticket.active?
     type = "customer_responded" if cust_responded and ticket_active
-    type = "new" if new_ticket?(ticket,onhold_and_closed_statuses)
+    type = "new" if new_ticket?(ticket,onhold_and_closed_statuses) and !ticket.outbound_email?
     type = "elapsed" if ticket_elapsed?(ticket) and ticket_active
     type = "overdue" if overdue and ticket_active
     type = "customer_responded_overdue" if cust_responded and overdue and ticket_active
@@ -15,7 +19,7 @@ module Helpdesk::TicketsHelperMethods
   end
 
   def ticket_elapsed?(ticket)
-    ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now
+    !ticket.outbound_email? && ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now
   end
 
   def new_ticket?(ticket,onhold_and_closed_statuses)
@@ -24,6 +28,10 @@ module Helpdesk::TicketsHelperMethods
 
   def customer_responded_to_ticket?(ticket)
     ticket.ticket_states.customer_responded?
+  end
+
+  def customer_responded_for_outbound?(ticket)
+    ticket.ticket_states.customer_responded_for_outbound?
   end
 
   def ticket_overdue?(ticket,onhold_and_closed_statuses)
