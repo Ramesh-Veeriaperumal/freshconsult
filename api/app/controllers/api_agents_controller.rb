@@ -1,9 +1,5 @@
 class ApiAgentsController < ApiApplicationController
-
-  def index
-    load_objects agents_filter(scoper).includes(:user)
-  end
-
+  
   def agents_filter(agents)
     @agent_filter.conditions.each do |key|
       clause = agents.api_filter(@agent_filter)[key.to_sym] || {}
@@ -17,15 +13,17 @@ class ApiAgentsController < ApiApplicationController
       current_account.all_agents
     end
 
+    def load_objects
+      super agents_filter(scoper).includes(:user)
+    end
+
     def load_object
-      condition = 'user_id = ? '
-      @item = scoper.where(condition, params[:id]).first
+      @item = scoper.find_by_user_id(params[:id])
       head :not_found unless @item
     end
 
     def validate_filter_params
-      params.permit(*AgentConstants::INDEX_AGENT_FIELDS, *ApiConstants::DEFAULT_PARAMS,
-                    *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*AgentConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @agent_filter = AgentFilterValidation.new(params)
       render_error(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
     end

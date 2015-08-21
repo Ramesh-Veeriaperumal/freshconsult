@@ -2,7 +2,7 @@ class ContactFilterValidation < ApiValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }, allow_nil: true
-  validates :email, format: { with: AccountConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, allow_nil: true
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, allow_nil: true
   validates :company_id, numericality: true, allow_nil: true
   validate :check_company, if: -> { company_id }
 

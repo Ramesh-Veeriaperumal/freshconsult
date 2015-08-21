@@ -106,8 +106,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def validate_filter_params
-      params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_PARAMS,
-                    *ApiConstants::DEFAULT_INDEX_FIELDS)
+      params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @contact_filter = ContactFilterValidation.new(params)
       render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end

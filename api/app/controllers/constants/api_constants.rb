@@ -17,6 +17,7 @@ module ApiConstants
   # ValidationConstants
   BOOLEAN_VALUES = [true, false, 'true', 'false'] # for boolean fields all these values are accepted.
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
+  EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
 
   LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index] +
