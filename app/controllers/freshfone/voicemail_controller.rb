@@ -1,12 +1,17 @@
 class Freshfone::VoicemailController <  FreshfoneBaseController
   
-  include Freshfone::FreshfoneHelper
+  include Freshfone::FreshfoneUtil
   include Freshfone::CallHistory
   include Freshfone::TicketActions
   
   before_filter :add_additional_params
+
+  def initiate #Used only in conference currently
+    render :xml => telephony.return_non_availability(false)
+  end
   
   def quit_voicemail
+    current_call.set_call_duration(params)
     current_call.update_call(params)
     empty_twiml
   ensure
@@ -24,8 +29,16 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
       params.merge!({:DialCallStatus => 'no-answer', :voicemail => true})
     end
 
+    def current_number
+      current_account.freshfone_numbers.find params[:freshfone_number]
+    end
+
+    def telephony
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
+    end
+
     def validate_twilio_request
-      @callback_params = params.except(*[:cost_added])
+      @callback_params = params.except(*[:freshfone_number, :cost_added])
       super
     end
 end

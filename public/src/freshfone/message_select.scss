@@ -68,14 +68,7 @@
 			background-color: $ms-active-type-background;
 		}
 	}
-	.record_voice {	
-		@include border-left-radius(6px);
-		@include border-right(none);
-	}
-	.read_message {
-		@include border-right-radius(6px);
-		@include border-left(none);
-	}
+
 	.message_value_container {
 		@include clear(both);
 		display: block;
@@ -87,6 +80,14 @@
 	.message-type{
 		@include margin-left(-140px);
 		width:140px;
+		span:first-child {
+			@include border-left-radius(6px);
+			@include border-right(none);
+		}
+		span:last-child {
+			@include border-right-radius(6px);
+			@include border-left(none);
+		}
 	}
 	.attach-file-done { 
 		display: inline-block;

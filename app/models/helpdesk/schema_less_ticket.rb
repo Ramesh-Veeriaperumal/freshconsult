@@ -38,8 +38,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :text_tc01, Hash
 	serialize :text_tc02, Hash
 
-	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
-
 	def self.trashed_column
 		:boolean_tc02
 	end

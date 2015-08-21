@@ -664,20 +664,19 @@ var scrollToError = function(){
 	
 	 // For Twitter Replybox
 	$("body").on("change.ticket_details", '#tweet_type', function (){
-	  reply_type = $('#tweet_type').val();
-	       
-	  istwitter = $('#cnt-reply').data('isTwitter');
-	  if (!istwitter)        
-	    return ;
+	  var istwitter = $('#cnt-reply').data('isTwitter');
+	  
+	  if (!istwitter) return ;
 	   
-	  if (reply_type == 'dm'){
-	    bindNobleCount(10000);
-	  }
-	  else{
-	    bindNobleCount(140);
-	  }
-	   
+	  getTweetTypeAndBind();
 	});  
+
+	function getTweetTypeAndBind(){
+		var reply_type = $('#tweet_type').val(),
+	  		count = (reply_type == 'dm') ? 10000 : 140;
+	  
+	  bindNobleCount(count);
+	}
 
 	function bindNobleCount(max_chars){
 	  $('#send-tweet-cnt-reply-body').unbind();
@@ -807,6 +806,10 @@ var scrollToError = function(){
 		if (btn.data('cntId') == "cnt-reply") {
 			$('#cnt-reply-body').val(TICKET_DETAILS_DATA['draft']['default_reply']);
 		}
+		
+		if(_form.attr('rel') == 'tweet_form'){
+			getTweetTypeAndBind();
+		}
 
 		if (_form.attr('rel') == 'forward_form')  {
 			//Remove To Address
@@ -831,7 +834,7 @@ var scrollToError = function(){
 	}
 
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
-
+		
 		var _form = $(this);
 		if (_form.valid()) {
 
@@ -852,7 +855,6 @@ var scrollToError = function(){
 				alert('You can add upto ' + MAX_EMAILS + ' CC emails');
 				return false;
 			}
-
 
 			if (_form.find('input[name="helpdesk_note[bcc_emails][]"]').length >= MAX_EMAILS) {
 				alert('You can add upto ' + MAX_EMAILS + ' BCC emails');
@@ -992,7 +994,7 @@ var scrollToError = function(){
 			},
 			success: function(response, statusCode, xhr) {
 				var statusChangeField = $('#send_and_set');
-				
+								
 				if($('#response_added_alert').length > 0 && _form.parents('#all_notes').length < 1){
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -1067,6 +1069,11 @@ var scrollToError = function(){
 						triggerDraftSaving();
 					}
 				}
+				
+				if(_form.attr('rel') == 'tweet_form'){
+					getTweetTypeAndBind();
+				}
+				
 			},
 			error: function(response) {
 				

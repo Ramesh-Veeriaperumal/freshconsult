@@ -29,7 +29,7 @@ describe Integrations::GoogleAccountsController do
                                                   },
                                      :application_type => "google_contacts")
     @new_application.save(:validate => false)
-    @email = "admin@freshpo.com"
+    @email = "bala@freshdesk.com"
 
     @new_installed_application = FactoryGirl.build(:installed_application, 
                                                { :application_id => "#{@new_application.id}",
@@ -42,13 +42,13 @@ describe Integrations::GoogleAccountsController do
                                                                :sync_tag => "gmail", 
                                                                :overwrite_existing_user => "1", 
                                                                :sync_type => "0", 
-                                                               :sync_group_id => "327512740f81e6ac", 
+                                                               :sync_group_id => "", 
                                                                :sync_group_name => "Freshdesk Contacts", 
                                                                :id => "", 
-                                                               :name => "Freshpo Freshdesk", 
+                                                               :name => "Bala Kumar", 
                                                                :email => @email, 
-                                                               :token => "ya29.qgFSQvQ6Y5aaa9gKnJPB7sUvO4ZZdYBttM0g4cGBCKtzJeA6rH4WvlwRq0bU81aFRVz-b5hcpLvKbA", 
-                                                               :secret => "1/nVW5xOIfQTqP29QzsWU9sPCG4zsqwKBwSVXoOuag5bI"
+                                                               :token => "ya29.XAFwoYH0zcuKjPIEdxAAUp9SMsHZU7EYVCkf6tzsZV02iAaR1lh4569tWn8Num_lA5jGL47Z-_n37g", 
+                                                               :secret => "1/vx-IjnY5jpOPon7PjmAsPmR3SRdcOBL5TxT66z3p7Z8"
                                                               }, 
                               :omniauth_origin => "install", 
                               :commit => "Import & Activate", 
@@ -132,8 +132,11 @@ describe Integrations::GoogleAccountsController do
                                                  :configs => { :inputs => {"OAuth2" => []}}
                                                 })
     new_installed_application.save(:validate => false)
-    post :update, {"authenticity_token"=>"D5mxScIekFlDwgGWZqDNoiu3O+M0GCXW+fm1SIqlk5M=", 
-      "integrations_google_account"=> @google_account_attr[:integrations_google_account],
+    post :update, {"authenticity_token"=>"f9wl8U2PqEt21AyTrBXLUsIAwiNKR1ycRPVbSX1EI5E=", 
+      "integrations_google_account"=>{"import_groups"=>["6"], "sync_tag"=>"gmail", 
+      "overwrite_existing_user"=>"1", "sync_group_id"=>"5832418c0d2871cb", "sync_group_name"=>"Freshdesk Contacts", 
+      "id"=>"", "name"=>"Bala Kumar", "email"=>"bala@freshdesk.com", 
+      "token"=>"ya29.XAH4vYt6iKewn0wTTVLO6nSdaPWmz5ynBxIfh95G9TMhEZe0TQ_ewsrC9-bb5TUtL0N2_ntfpLyQfA", "secret"=>"1/DG4MH_SA-8v_79toMtGbCU4k4H7M4kdEi15njBo0eQ190RDknAdJa_sgfheVM0XT"}, 
       "omniauth_origin"=>"install", "commit"=>  "Import & Activate",
       "controller"=>"integrations/google_accounts", "action"=>"update"}
       Delayed::Job.last.invoke_job

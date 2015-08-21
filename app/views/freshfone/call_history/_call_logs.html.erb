@@ -45,9 +45,15 @@
 				<div class="callhistory_helpdesk_avatar vertical-alignment"></div>
 				<div class="vertical-alignment">
 					<% if call.parent.blank? %>
-						<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
-					<%else%>
+						<b class="ellipsis">
+						<%=  call.group.present? ? call.group.name : t('freshfone.call_history.helpdesk') %>
+						</b><br/>
+					<% elsif external_transfer?(call)%>
 						<b class="ellipsis"><%= t('freshfone.call_history.external') %></b><br/>
+					<% elsif call.group.present? %>
+						<b class="ellipsis"><%= call.group.name %></b><br/>
+					<%else%>
+						<b class="ellipsis"><%= t('freshfone.call_history.helpdesk') %></b><br/>
 					<%end%>
 					<div class="helpdesk_number ff-user-location muted">
 						<%= call.direct_dial_number || 	current_number %>
@@ -76,11 +82,7 @@
 	</td>
 	<td class="width4">
 		<div align="left">
-			<% if call.call_cost.blank? %>
-				<b id="ticket_list_count" class="callhistory-payment-loader"></b>
-			<%else%>
-				$<%= call.call_cost %>
-			<%end%>
+			<%= call_cost_dom(call) %>
 		</div>
 	</td>
 	<td class="width2">

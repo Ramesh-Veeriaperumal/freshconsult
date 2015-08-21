@@ -11,6 +11,7 @@
 	<%= form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {
 						:multipart => true,  
 						:id => "HelpdeskTweets",
+            :rel => 'tweet_form', 
 						"data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',

@@ -7,7 +7,7 @@ class Freshfone::IvrMethods
 	attr_accessor :params, :type, :response_object, :account, :number, :call_flow
 	
 	delegate	:incoming, :call_users_in_group,
-						:call_user_with_id, :call_user_with_number, :to => :call_flow
+						:call_user_with_id, :call_user_with_number, :set_hunt_options, :to => :call_flow
 	
 	RESPONSE_TYPE = {
 		:twiml_response => :twiml,
@@ -29,7 +29,6 @@ class Freshfone::IvrMethods
 	
 	def perform_action
 		(self.type, self.response_object) = ivr_scoper.perform_action(params)
-
 		if call_group?
 			call_users_in_group(response_object)
 		elsif call_agent?
@@ -54,4 +53,7 @@ class Freshfone::IvrMethods
 			@ivr_scoper ||= ( number.present? ? number.ivr : account.ivrs.find_by_id(params[:id]) )
 		end
 
+		def conference?
+			call_flow.class.name == 'Freshfone::ConferenceCallFlow' && !twiml_response?
+		end
 end

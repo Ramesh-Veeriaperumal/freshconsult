@@ -4,8 +4,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :set_default_values
 
-	before_validation :set_token, on: :create
-
   before_create :set_outbound_default_values, :if => :outbound_email?
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
@@ -491,11 +489,13 @@ private
   end
 
   def set_token   
-    self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    self.access_token ||= generate_token
   end
 
-  def generate_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+  def generate_token
+    # using Digest::SHA2.hexdigest for a 64 char hash
+    # using ticket id, current account id along with Time.now
+    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
   end
 
   def fire_update_event

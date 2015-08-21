@@ -33,6 +33,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       encode_stuffs
       from_email = parse_from_email(account)
       return if from_email.nil?
+      if account.features?(:domain_restricted_access)
+        domain = (/@(.+)/).match(from_email[:email]).to_a[1]
+        wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+        return unless Array.wrap(wl_domain).include?(domain)
+      end
       kbase_email = account.kbase_email
       
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
@@ -260,8 +265,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => cleansed_html},
+        :ticket_body_attributes => {:description => params[:text] || "", 
+                          :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -400,7 +405,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :note_body_attributes => {:body => body,:body_html => body_html,
+        :note_body_attributes => {:body => body || "",:body_html => body_html || "",
                                   :full_text => full_text, :full_text_html => full_text_html} ,
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
@@ -489,10 +494,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
       signup_status = user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
         :helpdesk_agent => false, :language => language, :created_from_email => true }, :email_config => email_config},portal)        
-      text = text_for_detection
-      args = [user, text]  #user_email changed
-      #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
-      Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+      if params[:text]
+        text = text_for_detection
+        args = [user, text]  #user_email changed
+        #Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::DetectUserLanguage, :set_user_language!, args), nil, 1.minutes.from_now) if language.nil? and signup_status
+        Resque::enqueue_at(1.minute.from_now, Workers::DetectUserLanguage, {:user_id => user.id, :text => text, :account_id => Account.current.id}) if language.nil? and signup_status
+      end
       user
     end
 
@@ -685,8 +692,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def body_html_with_formatting(body,email_cmds_regex)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
-      body_html = auto_link(body) { |text| truncate(text, :length => 100) }
-      to_html = text_to_html(body_html)
-      white_list(to_html)
+      to_html = text_to_html(body)
+      body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+      white_list(body_html)
     end    
 end

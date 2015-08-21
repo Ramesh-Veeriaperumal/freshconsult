@@ -54,6 +54,17 @@
 .access_groups_control {
 			height: 30px;
 		}
+	.wait_message, .hold_message {
+		.message-container{
+			padding: 0;
+		}
+		.message_value_container {
+			margin: 0;
+			.custom-file-upload{
+				margin-left:0;
+			}
+		}
+	}
 }
 .freshfone-title{
 	font-size: 18px;

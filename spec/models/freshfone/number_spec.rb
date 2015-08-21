@@ -1,9 +1,4 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
-
-RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
-end
 
 RSpec.describe Freshfone::Number do
   self.use_transactional_fixtures = false
@@ -20,9 +15,9 @@ RSpec.describe Freshfone::Number do
 
   it 'should return json of messages for the freshfone number' do
     number = @number.as_json
-    number.should have(4).message_types
-    number.map{|n| n[:type] }.sort.should be_eql([:non_availability_message, 
-      :non_business_hours_message, :on_hold_message, :voicemail_message])
+    number.should have(6).message_types
+    number.map{|n| n[:type] }.sort.should be_eql([:hold_message,:non_availability_message, 
+      :non_business_hours_message, :on_hold_message, :voicemail_message, :wait_message])
   end
 
   it 'should successfully renew number deducting credits' do
@@ -56,6 +51,60 @@ RSpec.describe Freshfone::Number do
 
   it 'should return false for insufficient renewal amount check with new recharge' do
     @number.insufficient_renewal_amount?.should be_falsey
+  end
+
+  it 'should have the queue wait time in minutes' do
+    @number.queue_wait_time_in_minutes.should_not be_falsey
+  end
+
+  it 'should have voice type' do
+    @number.voice_type.should_not be_falsey
+  end
+  
+  it 'should have recording visibility' do
+    @number.public_recording?.should be true
+  end
+  
+  it 'should have number type' do
+    @number.local?.should be true 
+  end
+  
+  it 'should have voice' do
+    @number.male_voice?.should be true
+  end
+
+  it 'should have a freshfone number' do
+    @number.number_name.should_not be_falsey
+  end
+
+  it 'should return false for non business hours' do
+    @number.non_business_hour_calls?.should be false
+  end
+
+  it 'should return empty string for unused attachments' do
+    @number.unused_attachments.should == []
+  end
+
+  it 'should return ringing duration' do
+    @number.ringing_duration.should == 30
+  end
+
+  it 'should have working hours' do
+    Freshfone::Number.any_instance.stubs(:within_business_hours?).returns(false)
+    @number.working_hours?.should be false
+    Freshfone::Number.any_instance.unstub(:within_business_hours?)
+  end
+
+  it 'should have within business hours value' do
+    @number.within_business_hours?.should_not == ""
+  end
+
+  it 'should be able to access an agent' do
+    @number.can_access_by_agent?(@agent).should be true
+  end
+
+  it 'should have accesilble numbers' do
+    Freshfone::Number.accessible_freshfone_numbers(@agent,["+12015524301"]).should_not be_falsey
   end
 
 end
