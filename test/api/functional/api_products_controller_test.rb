@@ -37,4 +37,12 @@ class ApiProductsControllerTest < ActionController::TestCase
     assert_response :missing
     assert_equal ' ', response.body
   end
+
+  def test_index_without_privilege
+    product = create_product
+    User.any_instance.stubs(:privilege?).returns(false).once
+    get :show, construct_params(id: product.id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
 end

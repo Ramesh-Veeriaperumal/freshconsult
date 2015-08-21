@@ -45,4 +45,12 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     @account.class.any_instance.unstub(:features_included?)
     assert_response :forbidden
   end
+
+  def test_index_without_privilege
+    business_calendar = create_business_calendar
+    User.any_instance.stubs(:privilege?).returns(false).once
+    get :show, construct_params(id: business_calendar.id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
 end
