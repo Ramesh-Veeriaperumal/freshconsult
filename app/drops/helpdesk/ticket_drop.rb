@@ -122,9 +122,9 @@ class Helpdesk::TicketDrop < BaseDrop
 	def public_url
 		return "" unless @source.account.features_included?(:public_ticket_url) || exists?(GLOBAL_PUBLIC_TICKET_URL_ENABLED)
 
-		@source.populate_access_token if @source.access_token.blank?
+		access_token = @source.get_access_token
 
-		public_ticket_url(@source.access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
+		public_ticket_url(access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
 	end
 
 	def portal_url

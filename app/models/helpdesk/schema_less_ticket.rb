@@ -56,7 +56,13 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	#updating access_token for old tickets
 	def update_access_token(token)  #for avoiding call back have put as separate method
-		update_attribute(:string_tc01, token)
+		token_updated = Helpdesk::SchemaLessTicket.where(id: self.id, account_id: self.account_id, string_tc01: nil).update_all(string_tc01: token)
+		if token_updated > 0
+			token
+		else
+			#wantedly doing this to avoid taking from self as it can contain changes. So avoid reloading self
+			Helpdesk::SchemaLessTicket.where(id: self.id, account_id: self.account_id).pluck(:string_tc01).first
+		end
 	end
 	
 	# Methods for new reports starts here

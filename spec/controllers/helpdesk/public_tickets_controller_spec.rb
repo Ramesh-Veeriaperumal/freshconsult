@@ -7,7 +7,7 @@ describe Public::TicketsController do
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 })
     @test_ticket.account.features.public_ticket_url.create
-    @test_ticket.populate_access_token
+    @test_ticket.get_access_token
   end
   
   describe "If access token of a ticket is valid" do
