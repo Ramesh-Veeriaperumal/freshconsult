@@ -270,7 +270,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def build_draft_from_article(opts ={})
-    opts = opts.merge(:article => self)
+    opts = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
     draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
     draft = self.account.solution_drafts.build(draft_attrs)
     draft

@@ -7,6 +7,7 @@ class Solution::Draft < ActiveRecord::Base
   belongs_to_account
   belongs_to :user
   belongs_to :article, :class_name => "Solution::Article"
+  belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
   has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
   has_many_attachments
