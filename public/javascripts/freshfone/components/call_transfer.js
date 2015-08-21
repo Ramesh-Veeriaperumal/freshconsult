@@ -193,10 +193,10 @@ var FreshfoneCallTransfer
       this.restoreAllControlles(); // should be reset the widget once reconnected to caller
     },
     disableAllOtherControlles: function () {
-      $("ul.ongoing  li:has(a:not(.transfer_call))").addClass('disabled inactive');
+      freshfonewidget.ongoingControl().addClass('disabled inactive');
     },
     restoreAllControlles: function () {
-      $("ul.ongoing  li:has(a:not(.transfer_call))").removeClass('disabled inactive');
+      freshfonewidget.ongoingControl().removeClass('disabled inactive');
     },
     bindAbortTransfer: function () {
       var self = this;

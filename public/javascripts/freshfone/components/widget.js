@@ -139,11 +139,11 @@ var FreshfoneWidget;
 			this.resetForm();
 		},
 		resetTransferingState: function(){
-			$('.ongoing .transfer_call').trigger('click');
+			$('.ongoing .transfer_call.active').trigger('click');
 			$(".ongoing .transfer_call").removeClass("transferring_state");
 		},
 		hideTransfer: function () {
-			$("ul.ongoing  li:has(a:not(.transfer_call))").removeClass('disabled inactive');
+			this.ongoingControl().removeClass('disabled inactive');
 			$('#freshfone_available_agents .transferring_call').html('');
 			$('#freshfone_available_agents .transfer_failed').hide();
 			$('#freshfone_available_agents .transferring_call').hide();
@@ -208,6 +208,10 @@ var FreshfoneWidget;
 		},
 		classForStrangeNumbers: function(num) {
 			return (freshfonewidget.checkForStrangeNumbers(num) ? "strikethrough" : "");
+		},
+		ongoingControl: function(){
+			return freshfone.isConferenceMode ?
+			$("ul.ongoing  li:has(a:not(.transfer_call))") : $("ul.ongoing  li");
 		}
 	};
 	
