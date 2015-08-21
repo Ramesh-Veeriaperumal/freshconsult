@@ -31,7 +31,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   def transfer_initiate
     parent_call = current_account.freshfone_calls.find(params[:call])
     notifier.notify_transfer_success(parent_call)
-    update_call_meta_for_forward_calls parent_call.children.last # updating call meta here as Params[:To] will be available here only.
+    update_call_meta_for_forward_calls parent_call.children.last if params[:external_transfer].blank?# updating call meta here as Params[:To] will be available here only.
     render :xml => transfer_leg.process_mobile_transfer
   end
 
