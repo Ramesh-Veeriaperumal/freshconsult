@@ -72,9 +72,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_content_ids
       header = self.header_info
-      return if attachments.empty? or header.nil? or header[:content_ids].blank?
+      return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
       
-      attachments.each_with_index do |attach, index| 
+      inline_attachments.each_with_index do |attach, index| 
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
         self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
@@ -96,6 +96,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_notifications
+      return if skip_notification
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)

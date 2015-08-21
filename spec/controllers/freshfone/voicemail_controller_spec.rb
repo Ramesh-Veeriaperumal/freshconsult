@@ -6,8 +6,16 @@ describe Freshfone::VoicemailController do
 
   before(:each) do
     create_test_freshfone_account
-    create_freshfone_call
+    create_freshfone_call('CA2db76c748cb6f081853f80dace462a04')
     @request.host = @account.full_domain
+  end
+
+  it "should intiate voicemail when conference feature is enabled." do
+    @account.features.freshfone_conference.create unless @account.features?(:freshfone_conference)
+    set_twilio_signature('freshfone/voicemail/initiate', voicemail_params)
+    post :initiate , voicemail_params.merge!({ :freshfone_number => @number.id })
+    xml.should have_key(:Response)
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
   end
 
   it 'should update call on quitting voicemail' do

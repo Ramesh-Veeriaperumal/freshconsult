@@ -83,7 +83,8 @@ class Freshfone::Menu < Tree::TreeNode
 			say_verb(r, "Please enter a valid option.") if options[:invalid]
 			preview_alert_message(r) if options[:preview_alert]
 			has_options? ? menu_gather(r) : ivr_message(r)
-			r.Redirect "#{status_url}?force_termination=true&preview=#{preview?}&number_id=#{freshfone_number_id}", :method => "POST"
+			r.Redirect "#{status_url}?force_termination=true&preview=#{preview?}&number_id=#{freshfone_number_id}", 
+				:method => "POST" unless account.features?(:freshfone_conference)
 		end
 		[:twiml, twiml.text]
 	end

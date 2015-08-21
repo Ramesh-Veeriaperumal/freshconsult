@@ -5,7 +5,8 @@
                       product.portal.logo.content.url(:logo) : spacer_image_url,
                       :on_error => "default_image_error(this)",
                       :"data-type" => "logo",
-                      :class => "portal-logo common-icon-default-logo", :alt => product.name %>
+                      :class => "portal-logo #{"common-icon-default-logo" unless (product.portal_enabled? && product.portal.logo)}", 
+                      :alt => product.name %>
     </div>
   </td>
   <td class="portal-text">

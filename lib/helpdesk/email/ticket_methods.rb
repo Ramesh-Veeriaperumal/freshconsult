@@ -66,8 +66,8 @@ module Helpdesk::Email::TicketMethods
   def check_valid_ticket
     check_for_chat_sources
     check_for_spam
-    check_for_auto_responders
-    check_support_emails_from
+    check_for_auto_responders(ticket, email[:headers])
+    check_support_emails_from(ticket, user, account)
   end
 
   def check_for_chat_sources
@@ -88,22 +88,6 @@ module Helpdesk::Email::TicketMethods
 
   def check_for_spam
     ticket.spam = true if ticket.requester.deleted?
-  end
-
-  def check_for_auto_responders
-    ticket.skip_notification = true if auto_responder?(email[:headers])
-  end
-
-  def auto_responder?(headers)
-    headers.present? && check_headers_for_responders(Hash[JSON.parse(headers)])
-  end
-
-  def check_headers_for_responders header_hash
-    (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
-  end
-
-  def check_support_emails_from
-    ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
   end
 
   def finalize_ticket_save

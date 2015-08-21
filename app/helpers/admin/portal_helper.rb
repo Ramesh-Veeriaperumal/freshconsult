@@ -5,7 +5,7 @@ module Admin::PortalHelper
 								portal.logo.content.url(:logo) : spacer_image_url,
 								:on_error => "default_image_error(this)",
 								:"data-type" => "logo",
-								:class => "common-icon-default-logo"
+								:class => ("common-icon-default-logo" unless (portal && portal.logo))
 	end
 	
 	def multiple_feature_radio_btn(group, features, options={})

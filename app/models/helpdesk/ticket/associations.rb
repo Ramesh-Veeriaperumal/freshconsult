@@ -6,6 +6,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_attachments
 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "Inline" },
+                                :foreign_key => "attachable_id",
+                                :dependent => :destroy
+
   has_many_cloud_files
 
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 

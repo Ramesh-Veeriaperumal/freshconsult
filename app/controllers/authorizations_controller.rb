@@ -167,6 +167,8 @@ class AuthorizationsController < ApplicationController
         redirect_to fb_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}"
       end
     end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      redirect_to portal_url(user_account)
   end
 
   def create_session
@@ -227,7 +229,7 @@ class AuthorizationsController < ApplicationController
     user.helpdesk_agent = false
     user.active = true
     user.language = account.language
-    user.save 
+    user.save!
     user.reset_persistence_token! 
     Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => account.id)
   end
