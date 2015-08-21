@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150805133724) do
+ActiveRecord::Schema.define(:version => 20150819153658) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2610,6 +2610,7 @@ ActiveRecord::Schema.define(:version => 20150805133724) do
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
   add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
+  add_index "solution_categories", ["account_id", "parent_id", "position"], :name => "index_solution_categories_on_account_id_parent_id_and_position"
 
   create_table "solution_category_meta", :force => true do |t|
     t.integer  "position"
