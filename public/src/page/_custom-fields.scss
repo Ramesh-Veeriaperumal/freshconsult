@@ -651,7 +651,7 @@
 			.control-label{width:150px; overflow: hidden}
 			.controls{ @include margin-left(160px);}
 			&.ticket-field-highlight{
-				@include margin-left(-10px);
+				@include margin-left(-5px);
 				@include padding-left(10px);
 				@include padding-right(9px);
 			}
