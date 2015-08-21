@@ -6,8 +6,8 @@ json.array! @items do |agent|
 
     json.set! :id, agent.user.id
 
-    json.(agent, :occasional, :scoreboard_level_id, :signature, :signature_html)
-
+    json.(agent, :occasional, :signature, :signature_html)
+    
     json.set! :ticket_scope, agent.ticket_permission
 
     json.(agent, :updated_at)

@@ -224,7 +224,7 @@ module JsonPattern
       agent_id: expected_output[:agent_id] || time_sheet.user_id,
       billable: (expected_output[:billable] || time_sheet.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_sheet.timer_running).to_s.to_bool,
-      time_spent: expected_output[:time_spent] || api_time_spent(time_sheet.time_spent),
+      time_spent: expected_output[:time_spent] || format_time_spent(time_sheet.time_spent),
       executed_at: expected_output[:executed_at] || time_sheet.executed_at,
       start_time: expected_output[:start_time] || time_sheet.start_time,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -469,7 +469,7 @@ module JsonPattern
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       custom_fields:  expected_custom_field || contact_custom_field,
-      avatar_attributes: expected_output[:avatar_attributes] || contact_avatar
+      avatar: expected_output[:avatar] || contact_avatar
 
     }
   end
@@ -479,7 +479,7 @@ module JsonPattern
   end
 
   def index_contact_pattern(contact)
-    contact_pattern(contact).except(:avatar_attributes, :tags, :deleted)
+    contact_pattern(contact).except(:avatar, :tags, :deleted)
   end
 
   def index_deleted_contact_pattern(contact)
@@ -501,7 +501,7 @@ module JsonPattern
       required_for_agent: expected_output[:required_for_agent] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
       displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      choices: expected_output[:choices] || api_contact_choices(contact_field),
+      choices: expected_output[:choices] || contact_choices(contact_field),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -544,7 +544,6 @@ module JsonPattern
       created_at: agent.created_at,
       id: Fixnum,
       occasional: expected_output[:occasional] || agent.occasional,
-      scoreboard_level_id: expected_output[:scoreboard_level_id] || agent.scoreboard_level_id,
       signature: expected_output[:signature] || agent.signature,
       signature_html: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,

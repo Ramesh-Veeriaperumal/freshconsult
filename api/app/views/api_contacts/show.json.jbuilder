@@ -9,7 +9,7 @@ json.cache! [controller_name, action_name, @item] do
   json.set! :deleted, @item.deleted if @item.deleted
 
   if @item.avatar
-    json.set! :avatar_attributes do
+    json.set! :avatar do
       json.set! :avatar_url, @item.avatar.attachment_url_for_api
       json.set! :content_type, @item.avatar.content_content_type
       json.set! :id, @item.avatar.id
@@ -18,6 +18,6 @@ json.cache! [controller_name, action_name, @item] do
       json.partial! 'shared/utc_date_format', item: @item.avatar
     end
   else
-    json.set! :avatar_attributes, nil
+    json.set! :avatar, nil
   end
 end

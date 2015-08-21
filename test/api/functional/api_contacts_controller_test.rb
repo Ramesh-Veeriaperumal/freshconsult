@@ -20,6 +20,19 @@ class ApiContactsControllerTest < ActionController::TestCase
     request_params.merge(params)
   end
 
+  # Show User
+  def test_show_a_contact
+    sample_user = get_user
+    get :show, construct_params(id: sample_user.id)
+    match_json(contact_pattern(sample_user.reload))
+  end
+
+  def test_show_a_non_existing_contact
+    sample_user = get_user
+    get :show, construct_params(id: 0)
+    assert_response :not_found
+  end
+
   # Create User
   def test_create_contact
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
@@ -61,7 +74,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
                                         client_manager: true)
-    match_json([bad_request_error_pattern('company_id', 'missing_field')])
+    match_json([bad_request_error_pattern('company_id', 'company_id_required')])
   end
 
   def test_create_contact_with_valid_client_manager
@@ -138,12 +151,14 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_with_invalid_avatar_file_size
-    file = fixture_file_upload('files/a.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = {  name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true, company_id: 1,
                 language: 'en', avatar: file }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
     post :create, construct_params({},  params)
-    match_json([bad_request_error_pattern('avatar', 'File size should be < 5 MB')])
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    match_json([bad_request_error_pattern('avatar', 'invalid_size', max_size: '5 MB')])
   end
 
   def test_create_contact_with_invalid_field_in_custom_fields
@@ -279,7 +294,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                     job_title: 'emp',
                     custom_fields: cf,
                     tags: tags }
-
+                    
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     assert sample_user.reload.language == 'cs'
@@ -508,7 +523,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :make_agent, construct_params(id: sample_user.id)
     assert_response :bad_request
     sample_user.update_attribute(:email, email)
-    match_json([bad_request_error_pattern('email', 'Contact with email id can only be converted to agent')])
+    match_json([bad_request_error_pattern('email', 'Should not be invalid_value/blank')])
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
@@ -517,7 +532,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, Faker::Internet.email) if sample_user.email.blank?
     put :make_agent, construct_params(id: sample_user.id)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('id', 'You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.')])
+    match_json(request_error_pattern('max_agents_reached'))
   end
 
   def test_make_agent_fails_in_user_validation
@@ -534,15 +549,39 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   # Misc
-  def test_demo_site
-    old_value = AppConfig['demo_site'][Rails.env]
-    AppConfig['demo_site'][Rails.env] = @account.full_domain
+  def test_demo_site_delete
     sample_user = get_user
     sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :bad_request
-    match_json([bad_request_error_pattern('error', "Demo site doesn't have this access!")])
-    AppConfig['demo_site'][Rails.env] = old_value
+
+    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+      delete :destroy, construct_params(id: sample_user.id)
+    end
+
+    assert_response :forbidden
+    match_json(request_error_pattern('unsupported_environment'))
+  end
+
+  def test_demo_site_update
+    sample_user = get_user
+    sample_user.update_column(:deleted, false)
+
+    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+      put :update, construct_params({ id: sample_user.id }, { time_zone: "Chennai"})
+    end
+
+    assert_response :forbidden
+    match_json(request_error_pattern('unsupported_environment'))
+  end
+
+  def test_demo_site_create
+    params = {name: Faker::Lorem.characters(15), email: Faker::Internet.email}
+
+    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+      post :create, construct_params({}, params)
+    end
+
+    assert_response :forbidden
+    match_json(request_error_pattern('unsupported_environment'))
   end
 
   def test_update_array_field_with_empty_array

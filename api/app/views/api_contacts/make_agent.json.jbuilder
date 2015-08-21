@@ -1,9 +1,17 @@
-json.cache! @agent do
-  json.(@agent.user, :active, :address, :client_manager, :company_id, :description, :email, :helpdesk_agent, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :deleted)
+json.(@agent.user, :active, :email, :job_title, :language, :mobile, :name, :phone, :time_zone)
 
-  json.partial! 'shared/utc_date_format', item: @agent.user
+json.partial! 'shared/utc_date_format', item: @agent.user
 
-  json.set! :agnet do
-    json.(@agent, :active_since, :available, :created_at, :id, :occasional, :points, :scoreboard_level_id, :signature, :signature_html, :ticket_permission, :updated_at)
-  end
+json.set! :agent do
+  json.set! :available_since, @agent.active_since
+
+  json.(@agent, :available, :created_at)
+
+  json.set! :id, @agent.user.id
+
+  json.(@agent, :occasional, :signature, :signature_html)
+
+  json.set! :ticket_scope, @agent.ticket_permission
+
+  json.(@agent, :updated_at)
 end

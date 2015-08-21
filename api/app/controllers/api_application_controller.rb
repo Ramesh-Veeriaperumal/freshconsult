@@ -44,7 +44,7 @@ class ApiApplicationController < MetalApiController
   before_filter :sanitize_params, only: [:create, :update]
 
   # This is not moved inside create because, controlelrs redefining create needn't call build_object again.
-  before_filter :build_object, only: [:create]
+  before_filter :before_build_object, :build_object, only: [:create]
 
   # Validating the filter params sent in the url for filtering collection of objects.
   before_filter :validate_filter_params, only: [:index]
@@ -148,6 +148,10 @@ class ApiApplicationController < MetalApiController
 
     def feature_name
       # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+
+    def before_build_object
+      # Template method to stop execution just before build_object
     end
 
     def before_load_object

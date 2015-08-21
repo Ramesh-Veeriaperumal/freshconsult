@@ -5,7 +5,7 @@ json.cache! [controller_name, action_name, @item] do
 
   json.set! :id, @item.user.id
 
-  json.(@item, :occasional, :scoreboard_level_id, :signature, :signature_html)
+  json.(@item, :occasional, :signature, :signature_html)
 
   json.set! :ticket_scope, @item.ticket_permission
 

@@ -15,7 +15,7 @@ json.array! @items do |tf|
   end
 
   if tf.field_type == 'nested_field'
-    json.set! :choices, api_nested_choices(tf.picklist_values)
+    json.set! :choices, nested_choices(tf.picklist_values)
 
     json.set! :nested_ticket_fields do
       json.array! tf.nested_ticket_fields do |tf_nested_field|
@@ -27,6 +27,6 @@ json.array! @items do |tf|
       end
     end
   else
-    json.set! :choices, api_choices(Account.current, tf)
+    json.set! :choices, ticket_field_choices(Account.current, tf)
   end
 end

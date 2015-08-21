@@ -1,11 +1,6 @@
 class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
 
-  before_filter :check_demo_site, only: [:destroy, :update, :create]
-  before_filter :validate_filter_params, only: [:index]
-  before_filter :check_agent_limit, :can_make_agent, only: [:make_agent]
-  before_filter :check_parent, only: :restore
-
   def index
     load_objects contacts_filter(scoper).includes(:flexifield, :company)
   end
@@ -33,7 +28,6 @@ class ApiContactsController < ApiApplicationController
 
   def update
     assign_protected
-
     @item.assign_attributes(params[cname])
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
@@ -51,15 +45,27 @@ class ApiContactsController < ApiApplicationController
   end
 
   def restore
-    @item.update_attribute(:deleted, false)
-    head 204
+    # Don't restore the contact if it has a parent
+    if @item.deleted && @item.parent_id != 0
+      head 404
+    else
+      @item.update_attribute(:deleted, false)
+      head 204
+    end
   end
 
   def make_agent
-    if @item.make_agent
-      @agent = Agent.find_by_user_id(@item.id)
+    if @item.email.blank?
+      errors = [[:email, ["should be a valid email address"]]]
+      render_errors errors
+    elsif !current_account.subscription.agent_limit.nil? && reached_agent_limit?
+      render_request_error :max_agents_reached, 400
     else
-      render_errors(@item.errors)
+      if @item.make_agent
+        @agent = Agent.find_by_user_id(@item.id)
+      else
+        render_errors(@item.errors)
+      end
     end
   end
 
@@ -74,23 +80,28 @@ class ApiContactsController < ApiApplicationController
     end
 
     def validate_params
-      @contact_fields = current_account.contact_form.custom_contact_fields
-      allowed_custom_fields = @contact_fields.collect(&:name)
+      contact_fields = current_account.contact_form.custom_contact_fields
+      allowed_custom_fields = contact_fields.collect(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      field = get_fields("ContactConstants::#{action_name.upcase}_FIELDS") | ['custom_fields' => custom_fields]
+      
+      field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
+
       contact = ContactValidation.new(params[cname], @item)
       render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
     end
 
     def sanitize_params
-      prepare_array_fields [:tags]
-      @tags = params[cname][:tags]
+      prepare_array_fields [:tags]      
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
       params[cname].delete(:tags) if @tags
+
       # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for
       # making a contact as a client_manager
       params[cname][:client_manager] = params[cname].delete(:client_manager).to_s if params[cname][:client_manager]
+
       params[cname][:avatar_attributes] = { content: params[cname][:avatar] } if params[cname][:avatar]
+
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 
@@ -102,38 +113,40 @@ class ApiContactsController < ApiApplicationController
     end
 
     def load_object
-      condition = 'id = ? '
-      condition += "and deleted = #{ContactConstants::DELETED_SCOPE[action_name]}" if ContactConstants::DELETED_SCOPE.keys.include?(action_name)
-      @item = scoper.where(condition, params[:id]).first
+      @item = scoper.find_by_id(params[:id])
       head :not_found unless @item
     end
 
+    def after_load_object
+      scope = ContactConstants::DELETED_SCOPE[action_name]
+      unless scope.nil?
+        if @item.deleted != scope 
+          head 404
+          return false
+        end
+      end
+
+      if ( destroy? || update? ) && demo_site?
+        render_request_error :unsupported_environment, 403
+      end
+    end
+
+    def before_build_object
+      if create? && demo_site?
+        render_request_error :unsupported_environment, 403
+      end
+    end
+
     def assign_protected
-      @item.deleted = true if @item.email.present? && @item.email =~ /MAILER-DAEMON@(.+)/i
+      @item.deleted = true if @item.email.present? && @item.email =~ ContactConstants::MAILER_DAEMON_REGEX
     end
 
-    def check_agent_limit
-      if !current_account.subscription.agent_limit.nil? && current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
-        errors = [[:id, ['reached the maximum number of agents']]]
-        render_errors errors
-      end
+    def reached_agent_limit?
+      current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
     end
 
-    def can_make_agent
-      unless @item.has_email?
-        errors = [[:email, ['Contact with email id can only be converted to agent']]]
-        render_errors errors
-      end
-    end
-
-    def check_demo_site
-      if AppConfig['demo_site'][Rails.env] == current_account.full_domain
-        errors = [[:error, ["Demo site doesn't have this access!"]]]
-        render_errors errors
-      end
-    end
-
-    def check_parent
-      head 404 if @item.deleted && !@item.parent.nil?
+    def demo_site?
+      return true if ContactConstants::DEMOSITE_URL == current_account.full_domain
+      false
     end
 end

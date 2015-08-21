@@ -6,7 +6,7 @@ json.set! :custom_fields, @item.custom_field
 json.set! :tags, @item.tags.map(&:name)
 
 if @item.avatar
-  json.set! :avatar_attributes do
+  json.set! :avatar do
     json.set! :avatar_url, @item.avatar.attachment_url_for_api
     json.set! :content_type, @item.avatar.content_content_type
     json.set! :id, @item.avatar.id
@@ -15,5 +15,5 @@ if @item.avatar
     json.partial! 'shared/utc_date_format', item: @item.avatar
   end
 else
-  json.set! :avatar_attributes, nil
+  json.set! :avatar, nil
 end

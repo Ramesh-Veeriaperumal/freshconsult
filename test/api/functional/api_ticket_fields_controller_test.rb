@@ -22,7 +22,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         new_pattern = ticket_field_nested_pattern(field, choices: field.api_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
-        new_pattern.merge!(choices: Hash) if api_choices(@account, field).class == Hash
+        new_pattern.merge!(choices: Hash) if ticket_field_choices(@account, field).class == Hash
       end
       pattern << new_pattern
     end

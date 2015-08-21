@@ -325,6 +325,14 @@ module TestCaseMethods
     v2_contact_params.to_json
   end
 
+  def v2_multipart_payload
+    {
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      avatar: Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/image33kb.jpg'), 'image/jpg')
+    }
+  end
+
   def v1_contact_update_payload
     { user: v1_contact_params.except(:name, :email) }.to_json
   end
