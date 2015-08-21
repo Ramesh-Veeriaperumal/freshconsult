@@ -2645,15 +2645,16 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
   end
 
   create_table "solution_drafts", :force => true do |t|
-    t.integer  "account_id",  :limit => 8, :null => false
-    t.integer  "article_id",  :limit => 8
+    t.integer  "account_id",       :limit => 8, :null => false
+    t.integer  "article_id",       :limit => 8
+    t.integer  "category_meta_id", :limit => 8
+    t.integer  "user_id",          :limit => 8
     t.string   "title"
-    t.integer  "user_id",     :limit => 8
     t.text     "meta"
     t.integer  "status"
     t.datetime "modified_at"
-    t.datetime "created_at",               :null => false
-    t.datetime "updated_at",               :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
   end
 
   create_table "solution_folder_meta", :force => true do |t|
