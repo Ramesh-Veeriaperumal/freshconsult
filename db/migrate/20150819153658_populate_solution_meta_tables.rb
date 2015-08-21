@@ -45,7 +45,7 @@ class PopulateSolutionMetaTables < ActiveRecord::Migration
 
 	def migrate_to_meta_table(account)
         meta_read_launched = account.launched?(:meta_read)
-        account.takeback(:meta_read) if meta_read_launched
+        account.rollback(:meta_read) if meta_read_launched
         account.make_current
         ["solution_categories", "solution_folders", "solution_articles"].each do |assoc|
             account.send("#{assoc}_without_association").find_in_batches(:batch_size => 100, 
