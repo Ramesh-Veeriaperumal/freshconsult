@@ -1,6 +1,6 @@
 class Freshfone::QueueController < FreshfoneBaseController
 
-  include Freshfone::FreshfoneHelper
+  include Freshfone::FreshfoneUtil
   include Freshfone::NumberMethods
   include Freshfone::Queue
   include Freshfone::CallHistory
@@ -8,6 +8,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   include Redis::IntegrationsRedis
 
   
+  before_filter :load_hunt_options_for_conf, :only => [:enqueue]
   before_filter :add_caller_to_redis_queue, :only => [:enqueue]
   before_filter :cleanup_redis_on_queue_complete, 
               :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
@@ -26,7 +27,11 @@ class Freshfone::QueueController < FreshfoneBaseController
 
   def trigger_non_availability
     call_initiator.queued = true #Makes sure welcome message is prevented
-    render :xml => call_initiator.return_non_availability
+    if freshfone_conference?
+      render :xml => telephony.return_non_availability(false)
+    else
+      render :xml => call_initiator.return_non_availability
+    end
   end
 
   def bridge
@@ -35,7 +40,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def dequeue
-    render :xml => current_call_flow.dequeue(params[:client])
+    render :xml => ( freshfone_conference? ? incoming_initiator.dequeue(params[:client])  : current_call_flow.dequeue(params[:client]) )
   end
 
   def hangup
@@ -64,7 +69,7 @@ class Freshfone::QueueController < FreshfoneBaseController
 
   private
     def update_call
-      current_call.update_call(params)
+      current_call.update_call(params) unless BRIDGE_STATUS.include?(params[:QueueResult])
     end
 
     def trigger_queue_wait
@@ -112,9 +117,17 @@ class Freshfone::QueueController < FreshfoneBaseController
 			@current_call_flow ||= Freshfone::CallFlow.new(params, current_account, current_number, current_user)
 		end
 
+    def incoming_initiator
+      @incoming_initiator ||= Freshfone::Initiator::Incoming.new(params, current_account, current_number)
+    end
+
     def validate_twilio_request
       @callback_params = params.except(*[:hunt_id, :hunt_type, :force_termination, :client])
       super
+    end
+
+    def freshfone_conference?
+      current_account.features?(:freshfone_conference)
     end
 end
 

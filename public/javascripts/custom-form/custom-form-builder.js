@@ -7,20 +7,20 @@
         active:                 true,
         required:               false,
         required_for_closure:   false,
-        visible_in_portal:      true, 
-        editable_in_portal:     true, 
+        visible_in_portal:      true,
+        editable_in_portal:     true,
         required_in_portal:     false,
         portalcc:               false,
         portalcc_to:            "all",
-        custom_form_type:      'ticket' 
+        custom_form_type:      'ticket'
       },
       'contact': {
-        label_in_portal:        "", 
-        visible_in_portal:      true, 
-        editable_in_portal:     true, 
-        editable_in_signup:     false, 
+        label_in_portal:        "",
+        visible_in_portal:      true,
+        editable_in_portal:     true,
+        editable_in_signup:     false,
         required_in_portal:     false,
-        custom_form_type:      'contact' 
+        custom_form_type:      'contact'
       },
       'company': {
         custom_form_type:      'company'
@@ -31,7 +31,7 @@
         customFieldItem:    '#custom-fields li',
         fieldValues:        '#field_values',
         submitForm:         '#Updateform',
-        customFieldsWrapper:'#custom-fields', 
+        customFieldsWrapper:'#custom-fields',
         saveBtn:            '.save-custom-form',
         fieldLabelClass:    '.custom-form-label',
         sectionbody:        '.section-body',
@@ -41,40 +41,39 @@
     }
     this.settings = $.extend({}, defaults, options);
     this.settings.fieldTemplate = fieldTemplate[this.settings.customFormType];
-    this.listSortObject = {},
-    this.fieldDialog = {},
-    this.builder_data = [],
-    this.position = 1,
-    this.element = null,
-    this.data = $H(),
-    this.section_instance = {},
-    this.sortSender = null
+    this.listSortObject = {};
+    this.fieldDialog = {};
+    this.builder_data = [];
+	this.dragField 	= null;
+    this.position = 1;
+    this.element = null;
+    this.data = $H();
+    this.section_instance = {};
+    this.sortSender = null;
   };
   customFieldsForm.prototype = {
-    uniqId: function() {
+    uniqId: function () {
       return Math.round(new Date().getTime() + (Math.random() * 100));
     },
     // Getting from jsonData
-    feedJsonForm: function(existingFields){
+    feedJsonForm: function (existingFields) {
       $(existingFields).each($.proxy(function(index, dataItem){
-
-          if(!dataItem.has_section){
+          if (!dataItem.has_section) {
             this.builder_data[dataItem.id] = this.domCreation(dataItem);  
-          }else{
+          } else {
             this.builder_data[dataItem.id] = "";  
           }
-
-      }, this) );
+      }, this));
     },
 
-    sectionJsonForm: function(existingFields){
+    sectionJsonForm: function (existingFields) {
       $(existingFields).each($.proxy(function(index, dataItem){
 
-          if(dataItem.has_section){
+          if (dataItem.has_section) {
             this.builder_data[dataItem.id] = this.domCreation(dataItem);  
           }
 
-      }, this) );
+      }, this));
       
     },
 
@@ -245,18 +244,12 @@
     },
 
     getFieldClass: function(domtype, fieldtype) {
-      if(domtype == 'dropdown' || domtype == 'dropdown_blank') {
-
+      if (domtype == 'dropdown' || domtype == 'dropdown_blank') {
         if(fieldtype == 'nested_field') return "CustomNestedField";
-        
         return "CustomDropdown";
-
-      } else if(domtype == 'nested_field') {
-
+      } else if (domtype == 'nested_field') {
           return "CustomNestedField";
-
       }
-
       return "CustomField";
     },
 
@@ -380,7 +373,6 @@
       delete data.custom_form_type;
       delete data.is_editable;
       delete data.has_section;
-
       return data;
     },
 
@@ -398,31 +390,35 @@
           revert: "invalid",
           appendTo: 'body'
       });
-
-      this.initSortableElements();         
+      this.initSortableElements();
       this.section_instance.initSectionSorting( $('.section-container').find( this.settings.sectionbody ));
       this.section_instance.sortEventsBind();
     },
 
-    initSortableElements: function() {
+    initSortableElements: function () {
         $(this.settings.formContainer)
           .smoothSort({
-
             revert: true,
-
             distance: 5,
-            start: $.proxy(function(ev, ui) {    
-                this.sortSender = ui.item.parents().first();
+            start: $.proxy(function (ev, ui) {
+                this.sortSender	= ui.item.parents().first();
+				if (!ui.item.data('fresh'))	this.dragField = ui.item;
             }, this),
-
-            stop: $.proxy(function(ev, ui) {    
-              this.setNewField(ui.item);
+			sort: $.proxy(function (ev, ui) {
+				if (this.dragField !== null) {
+                	this.section_instance.doWhileDrag(this.data.get(this.dragField.data('id')));
+				}
+            }, this),
+            stop: $.proxy(function (ev, ui) {
+				this.setNewField(ui.item);
+				this.dragField = null; //Reset
+				$('.default-error-wrap').hide();
             }, this),
 
           });
     },
 
-    initialize: function() {
+    initialize: function () {
       // Populating fields
       this.feedJsonForm(this.settings.existingFields);
       this.section_instance = new customSections({
@@ -440,10 +436,10 @@
         return false;
       }, this) );
 
-      $(this.settings.formContainer).on('mouseover', 'li.custom-field', function(e) {
-          if(!$( this ).parents('ul.custom-field-form').hasClass('sort-started'))
-            $( this ).find('.options-wrapper').first().show();
-      });
+      $(this.settings.formContainer).on('mouseover', 'li.custom-field', $.proxy(function(e) {
+          if(!$(this.settings.formContainer).hasClass('sort-started'))
+            $(e.currentTarget).find('.options-wrapper').first().show();
+      }, this));
 
       $(this.settings.formContainer).on('mouseout', 'li.custom-field', function(e) {
           $( this ).find('.options-wrapper').first().hide();
@@ -454,14 +450,14 @@
           this.showFieldDialog($(e.currentTarget));
         }
         return false;
-      }, this) );
+      }, this));
 
       //Delete Field
       $(this.settings.formContainer).on('click', '.delete-field', $.proxy(function(e) {
         e.stopPropagation();
         this.deleteField($(e.currentTarget).closest('.custom-field'));
         return false;
-      }, this) );
+      }, this));
 
       //Save Form
       $(this.settings.saveBtn).on('click', $.proxy(function(e) {

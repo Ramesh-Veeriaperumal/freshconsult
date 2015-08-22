@@ -6,7 +6,7 @@ var FreshfoneMessage;
 		this.containerClass = containerClass;
 		this.prefix = prefix;
 		this.messageType = settingsObject.messageType;
-		if (settingsObject.messageType === undefined) { settingsObject.messageType = 2; }
+		if (settingsObject.messageType === undefined) { settingsObject.messageType = this.selectMessageType(settingsObject); }
 		this.settingsObject = settingsObject;
 		this.init();
 	};
@@ -40,7 +40,23 @@ var FreshfoneMessage;
 				$('.queue_setting_div').toggle(!($('#admin_freshfone_number_max_queue_length').val()==="0"));
 				$('.voicmail_message_div').toggle(!($('#admin_freshfone_number_voicemail_active_false').is(":checked")===true));
 				$('.recording_visibility_div').toggle(!($('#admin_freshfone_number_record_false').is(":checked")===true));
+				this.removeOptions();
 				// $('.non_business_hours_message_container').toggle(!($('#admin_freshfone_number_non_business_hour_calls_false').is(":checked")===true));
+		},
+		removeOptions: function() {
+			var elements = ["wait_message", "hold_message"];
+			if (elements.include(this.settingsObject.type)) {
+				this.template.find(".upload_voice").addClass("current hide");
+				this.template.find(".read_message").remove();
+				this.template.find(".message-input").remove();
+				this.template.find(".message-recording").remove();
+				this.template.find(".record_voice").remove();
+			}
+		},
+		selectMessageType: function (settingsObject) {
+			var elements = ["wait_message", "hold_message"];
+			return elements.include(settingsObject.type) ? 1 : 2;	
+			
 		}
 	};
 

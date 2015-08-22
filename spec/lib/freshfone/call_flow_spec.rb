@@ -1,9 +1,7 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
 include Redis::RedisKeys
 
 RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
   c.include Redis::IntegrationsRedis
 end
 
@@ -17,6 +15,8 @@ RSpec.describe Freshfone::CallFlow do
 
   before(:each) do
     create_test_freshfone_account
+    @account.freshfone_calls.delete_all
+    @account.freshfone_callers.delete_all
     create_freshfone_user
   end
 

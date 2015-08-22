@@ -1,9 +1,7 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/freshfone_actions_spec_helper.rb'
 
 RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
   c.include FreshfoneActionsSpecHelper
 end
 

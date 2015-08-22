@@ -492,7 +492,6 @@ module ApplicationHelper
                       ['{{ticket.subject}}',          'Subject',          '',        'ticket_subject'],
                       ['{{ticket.description}}',      'Description',        '',         'ticket_description'],
                       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
-                      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
                       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
                       ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
@@ -543,6 +542,13 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
+    
+
+    # Ticket Public URL placeholder
+    place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
+                      'URL for accessing the tickets without login', 'ticket_public_url'
+                      ] if current_account.features?(:public_ticket_url)
+
     place_holders
   end
 

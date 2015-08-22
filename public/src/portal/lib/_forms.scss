@@ -589,10 +589,11 @@ label.required:after{
 }
 
 // Ticket form specific css
-.ticket-form{
+.ticket-form, .form-portal, .edit_helpdesk_ticket{
   .nested_field .level_2, 
   .nested_field .level_3,
   .control-tabbed-border{
+    display:none;
     @include border-left(1px dotted #333);    
     @include padding-left(15px);
     padding-top:15px;

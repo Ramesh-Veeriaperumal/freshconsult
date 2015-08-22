@@ -4,6 +4,8 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
     "use strict";
 	var callDirection = { NONE : 0, INCOMING : 1, OUTGOING : 2 },
 		callStatus = { NONE: 0, INCOMINGINIT : 1, OUTGOINGINIT : 2, ACTIVECALL : 3, AVAILABLE : 4 },
+		TRANSFER_FALLBACK_STATUS = ["ignored", "noAnswer"],
+		TRANSFERING_STATUS = ["inProgress", "connected"],
 		numbersHash = freshfone.numbersHash,
 		phoneNumber;
 	FreshfoneCalls = function () {
@@ -14,12 +16,16 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		this.freshfoneCallTransfer = {};
 		this.exceptionalNumber=false;
 		this.recentCaller = 0;
+		this.callInitiationTime = null;
 	};
 
 	FreshfoneCalls.prototype = {
 		init: function () {
 			this.tConn = false;
 			this.isMute = 0;
+			this.isHold = 0;
+			this.conferenceMode = false;
+			this.conferenceConn = false;
 			this.status = callStatus.NONE;
 			this.direction = callDirection.NONE;
 			this.callerId = null;
@@ -29,9 +35,16 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.error = null;
 			this.errorcode = null;
 			this.transfered = false;
+			this.transferSuccess = false;
 			this.recordingInstance = null;
 			this.group_id = null;
-			$('#freshfone_available_agents .transfering_call').hide();
+			this.resetCallTransferTimer();
+		},
+		resetFlags: function() {
+			this.errorcode = null;
+			this.lastAction = null;
+			this.transfered = false;
+			this.isHold = 0;
 		},
 		initGroup: function (group_id){
 			this.group_id = group_id
@@ -109,7 +122,11 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.status = callStatus.ACTIVECALL;
 		},
 		getCallSid: function () {
-			return this.callSid || this.tConn.parameters.CallSid;
+			var callSid = this.call || this.callSid 
+			if(callSid == undefined && this.tConn.parameters && this.tConn.parameters.CallSid){
+				callSid = this.tConn.parameters.CallSid;
+			}
+			return callSid;
 		},
 		setCallSid: function (call_sid) {
 			this.callSid = call_sid;
@@ -132,7 +149,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 			var self = this;
 			this.setDirectionOutgoing();
-			var params = { record: true, number_id: numberId, agent: this.currentUser };
+			var params = { record: true, number_id: numberId, agent: this.currentUser, type: "record" };
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 		},
 		resetRecordingState: function () {
@@ -181,7 +198,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.number = formatE164(this.callerLocation(), this.number);
 			
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
-										number_id: this.outgoingNumberId(), agent: this.currentUser };
+										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing" };
 
 			if(!this.call_validation(true)) {
 				return false;
@@ -272,8 +289,15 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.transfered = true;
 			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
 		},
+		isTransfering: function(){
+			var status = $(".transfer-status").children(":visible").data("status");
+			return ($.inArray(status, TRANSFERING_STATUS) > -1 ) ? true : false ;
+    },
 
 		dontShowEndCallForm: function () {
+			if(freshfone.isConferenceMode){
+				return (this.tConn.message || {}).preview || this.callError()  || this.isTransfering();
+			}
 			return (this.tConn.message || {}).preview || this.callError() || this.transfered;
 		},
 
@@ -320,7 +344,6 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		updateCountriesPreferred : function () {
 			$('#number').intlTelInput("updatePreferredCountries");
 		},
-
 		onCallStopSound : function () {
 			if(typeof threeSixtyPlayer != "undefined"){
 				var self = threeSixtyPlayer;
@@ -329,8 +352,93 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
                 }      		
 			}
 		},
+
+		//Conference method starts here
+
+		registerCall: function (call_sid) {
+			this.call = call_sid;
+		},
+		handleHold: function () {
+			$("#failed_hold").hide();
+			if (this.tConn && this.call ) {
+				this.toggleWidgetOnHold(false);
+				this.isHold ? this.unhold() : this.hold();
+				this.isHold ^= 1;
+			} else {
+				this.resetHoldUI();
+			}
+		},
+		resetHold: function() {
+			this.isHold ^= 1;
+			this.resetHoldUI();
+		},
+		resetHoldUI: function() {
+			$("#hold").removeClass('active');
+			$("#failed_hold").hide();
+			this.toggleWidgetOnHold(true);
+		},
+    hold: function () {
+      //Call hold
+      var self = this;
+      $.ajax({
+        dataType: "json",
+        data: { "CallSid": self.call },
+        url: '/freshfone/hold/add',
+        success: function(data) {
+          if (data.status != 'hold_initiated') {
+          	self.resetHold();
+          	if (self.tConn) { $("#failed_hold").show(); }
+          }
+        },
+        error: function () {
+          self.resetHold();
+          if (self.tConn) { $("#failed_hold").show(); }
+        }
+      });
+    },
+		unhold: function () {
+			var self = this;
+      $.ajax({
+        dataType: "json",
+        data: { "CallSid": self.call },
+        url: '/freshfone/hold/remove',
+        success: function(data) {
+        },
+        failure: function () {
+        	self.resetHold();
+        }
+      });
+		},
+		toggleWidgetOnHold: function(holded) {
+			var self = this;
+			if(holded) {
+				$('.freshfone_widget .end_call, .freshfone_widget .transfer_call, .freshfone_widget .hold').removeClass('disabled');
+					$('.freshfone_widget .hold').removeClass('loading');
+			} else {
+				$('.freshfone_widget .end_call, .freshfone_widget .transfer_call, .freshfone_widget .hold').addClass('disabled');
+				$('.freshfone_widget .hold').addClass('loading');
+				setTimeout(function() { 
+					self.toggleWidgetOnHold(true);
+				}, 10000);
+			}
+		},
+		connectCall: function (params) {
+			Twilio.Device.connect(params);
+			this.callInitiationTime = new Date();
+		},
+		getDialCallSid: function() {
+			return this.tConn.parameters.CallSid;
+		},
+		//Conference methods ends here
 		isCallActive : function () {
 			return (this.status == callStatus.ACTIVECALL);
+		},
+		resetCallTransferTimer: function() {
+			if((this.freshfoneCallTransfer == {}) || (typeof this.freshfoneCallTransfer == "undefined")) {return};
+			if (freshfonecalls.freshfoneCallTransfer  instanceof FreshfoneCallTransfer) {
+				this.freshfoneCallTransfer.cleanUpTimer();	
+			}
 		}
+
 	};
 }(jQuery));

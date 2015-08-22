@@ -285,7 +285,7 @@ var FreshfoneUser,
 				url: '/freshfone/users/in_call',
 				data: { 'From': this.freshfonecalls.tConn.parameters.From,
 								'To': this.freshfonecalls.tConn.parameters.To,
-								'CallSid': this.freshfonecalls.getCallSid(),
+								'CallSid': this.freshfonecalls.tConn.parameters.CallSid,
 								'outgoing': this.freshfonecalls.isOutgoing(),
 								'dont_update_call_count' : dontUpdateCallCount },
 				success: function (data) {
@@ -293,6 +293,7 @@ var FreshfoneUser,
 						self.status = self.previous_status;
 					} else {
 						self.freshfonecalls.setCallSid(data.call_sid); 
+						self.freshfonecalls.registerCall(data.call_sid); //used in conference. can be merged with above and used for both conf and non conf users
 					} 
 					ffLogger.log({'action': "Getting CallSid from in_Call ajax", 'params': data});
 				},

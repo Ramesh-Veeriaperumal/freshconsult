@@ -76,7 +76,8 @@ class Social::Twitter::DirectMessage
   
   def fetch_dms
     twt_sandbox(twt_handle, TWITTER_TIMEOUT[:dm]) do
-      twt_handle.last_dm_id.blank? ? twitter.direct_messages : twitter.direct_messages({:since_id => twt_handle.last_dm_id})
+      msg_params = twt_handle.last_dm_id.blank? ? {} : { :since_id => twt_handle.last_dm_id }
+      twitter.direct_messages(msg_params.merge(:full_text => true))
     end
   end
 

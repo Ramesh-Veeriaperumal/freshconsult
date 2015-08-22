@@ -10,11 +10,11 @@ module Freshfone::Call::EndCallActions
   def normal_end_call
     params[:agent] ||= called_agent_id
     current_call.update_call(params)
-    unpublish_live_call(params)
+    # unpublish_live_call(params)
   end
 
   def handle_forwarded_calls
-    unpublish_live_call(params)
+    # unpublish_live_call(params)
     current_call.update_call(params)
   ensure
     update_user_presence unless direct_dialled_call?

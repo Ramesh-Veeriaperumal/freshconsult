@@ -10,6 +10,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     update_caller_data(freshfone_call)
 	end
 
+  def after_update(freshfone_call)
+    trigger_cost_job freshfone_call if freshfone_call.account.features? :freshfone_conference
+  end    
+
 	private
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
@@ -48,6 +52,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 
 		def outgoing_customer_data(freshfone_call, params)
+      return if freshfone_call.caller.present?
       options = {
           :number  => params[:PhoneNumber] || params[:To],
           :country => params[:ToCountry].blank? ? params[:phone_country] : params[:ToCountry],
@@ -73,4 +78,22 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       caller.update_attributes(options)
       caller
     end
+
+    def call_ended?(freshfone_call)
+      [ Freshfone::Call::CALL_STATUS_HASH[:completed], Freshfone::Call::CALL_STATUS_HASH[:busy],
+          Freshfone::Call::CALL_STATUS_HASH[:'no-answer'], Freshfone::Call::CALL_STATUS_HASH[:failed],
+          Freshfone::Call::CALL_STATUS_HASH[:canceled], Freshfone::Call::CALL_STATUS_HASH[:voicemail] ].include?(freshfone_call.call_status)
+    end
+
+    def add_cost_job(freshfone_call)
+      cost_params = { :account_id => freshfone_call.account_id, :call =>  freshfone_call.id}
+      Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params) 
+      Rails.logger.debug "FreshfoneJob for sid : #{freshfone_call.call_sid} :: dsid : #{freshfone_call.dial_call_sid} :: Call Id :#{cost_params[:call]}"
+    end
+
+    def trigger_cost_job(freshfone_call)
+      return unless freshfone_call.call_status_changed? && freshfone_call.call_cost.blank?
+      add_cost_job freshfone_call if call_ended? freshfone_call
+    end
+
 end
