@@ -55,6 +55,7 @@ module Freshfone::NodeNotifier
       :message => message,
       :freshfone_node_session => freshfone_node_session
     }
+    message.merge!({:enqueued_time => Time.now})
     Freshfone::NodeWorker.perform_async(message, channel, freshfone_node_session)
   end
 

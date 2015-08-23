@@ -8,6 +8,12 @@ module Freshfone
       logger.info "JID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       logger.info "Start time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       
+      enqueued_time = message["enqueued_time"]
+      if enqueued_time
+        job_latency = Time.now - Time.parse(enqueued_time)
+        return if job_latency > 20
+      end
+      
       begin
         node_uri = "#{FreshfoneConfig['node_url']}/freshfone/#{channel}"
         logger.info "Node URI :: #{node_uri}"
