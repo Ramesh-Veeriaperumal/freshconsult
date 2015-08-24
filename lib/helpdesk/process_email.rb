@@ -516,6 +516,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       attachments = []
       inline_attachments = []
       content_id_hash = {}
+      inline_count = 0
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
 
       Integer(params[:attachments]).times do |i|
@@ -526,7 +527,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                   params["attachment#{i+1}"], i, content_id)
           if att.is_a? Helpdesk::Attachment
             if content_id
-              content_id_hash[att.content_file_name+"#{i}"] = content_ids["attachment#{i+1}"]
+              content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
+              inline_count+=1
               inline_attachments.push att
             else
               attachments.push att
