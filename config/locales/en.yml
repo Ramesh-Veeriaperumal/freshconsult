@@ -4168,10 +4168,10 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
-    learn_more: Learn more
+    learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
-    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications"
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
