@@ -362,7 +362,7 @@ en:
       cc_any_email: Can CC any email address
       field_delete_disabled: You cant delete default fields
       default_field_delete_disabled: Default fields cannot be deleted
-      dropdown_choice_disabled: Default choice cant be deleted 
+      dropdown_choice_disabled: Default choice cant be deleted
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
@@ -438,7 +438,7 @@ en:
   support:
     tickets:
       ticket_survey:
-        subject: Test mail for survey - %{title} 
+        subject: Test mail for survey - %{title}
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
         rating_sub_title: "You have rated us"
@@ -1084,13 +1084,13 @@ en:
      error_updated: Error while updating survey settings.
      custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
      Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
      <br><br>
      <b>Agent survey and follow-up surveys</b><br>
-     You can ask one agent survey question and multiple follow-up survey questions. 
-     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey. 
+     You can ask one agent survey question and multiple follow-up survey questions.
+     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
      The observer rules and gamification points will be based only on the agent survey rating.<br>
      <br><br>
      <b>Points scale</b><br>
@@ -1120,13 +1120,13 @@ en:
      limit_exceed_error: You can only add upto %{count} surveys.
      custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
      Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
      <br><br>
      <b>Satisfaction Survey</b><br>
-     You can ask one customer satisfaction survey question and additional survey questions. 
-     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions. 
+     You can ask one customer satisfaction survey question and additional survey questions.
+     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
      The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
      <br><br>
      <b>Point scales</b><br>
@@ -1153,13 +1153,13 @@ en:
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
-                      It appears below your signature at the bottom of the email sent to the customer.            
+                      It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
         survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
         point_scale_v2: Point scale
-        scale_text: You have chosen 
+        scale_text: You have chosen
         scale: point scale
 
      new_thanks:
@@ -2952,7 +2952,7 @@ en:
       other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
-      upvote: Upvote      
+      upvote: Upvote
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -3534,7 +3534,7 @@ en:
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
-      announce_users_voted_title: People who like this 
+      announce_users_voted_title: People who like this
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
@@ -4643,7 +4643,7 @@ en:
         since_now: Since 1 second
         header: Automatic ticket assignment
         view_agent_status: Agent Availability Status
-        no_agents: "- No Agents -" 
+        no_agents: "- No Agents -"
         back: Back
       freshfone:
         phone: Phone
@@ -5518,7 +5518,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
@@ -6352,6 +6352,10 @@ en:
   last_month: Last month
   two_months: Last 2 months
   six_months: Last 6 months
+  last_seven_days: Last 7 days
+  last_thirty_days: Last 30 days
+  last_sixty_days: Last 60 days
+  last_one_eighty_days: Last 180 days
   set_date: Select Time Period
   any_time: Any time
   any: Any
@@ -6403,7 +6407,7 @@ en:
     time_period: Select Time Period
     filter_by: Filter by
     edit_filter: Filter
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume
       time_trends:
         day: Day
