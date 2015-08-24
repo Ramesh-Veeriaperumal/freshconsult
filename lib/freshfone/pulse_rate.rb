@@ -16,7 +16,7 @@ class Freshfone::PulseRate
 		'default' => :standard
 	}
 	
-	def initialize(call, forwarded)
+	def initialize(call=nil, forwarded=nil)
 		self.call = call
 		self.forwarded = forwarded
 		self.credit = -1.0

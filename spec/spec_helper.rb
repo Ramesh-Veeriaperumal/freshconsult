@@ -5,6 +5,7 @@ require 'simplecov'
 require 'simplecov-csv'
 require 'pry'
 require 'rspec/collection_matchers'
+require 'sidekiq/testing'
 require 'simplecov-rcov'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}

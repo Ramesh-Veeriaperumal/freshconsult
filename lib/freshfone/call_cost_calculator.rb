@@ -26,7 +26,8 @@ class Freshfone::CallCostCalculator
 	end
 	
 	def calculate_cost
-		return missed_call_cost if missed_or_busy?
+		return if current_call.missed_conf_transfer?
+		return missed_call_cost if current_call.present? && current_call.missed_or_busy?
 		get_first_leg_cost
 		dial_call_cost unless one_leg_calls?
 
@@ -41,7 +42,8 @@ class Freshfone::CallCostCalculator
 
 		def get_first_leg_cost
 			self.first_leg_call = get_twilio_call
-			puts "Call cost for the first leg of #{args[:call_sid]} : #{first_leg_call.price}"
+			twilio_call_and_total_duration if no_call_duration?
+			puts "Call cost for the first leg of #{call_sid} : #{first_leg_call.price}"
 			self.total_charge = current_call.present? ? voicemail_cost : first_leg_call.price.to_f.abs
 		end
 	
@@ -50,7 +52,7 @@ class Freshfone::CallCostCalculator
 		end
 
 		def voicemail_cost
-			pulse_rate.voicemail_cost * no_of_pulse(duration_for_call)
+			pulse_rate.voicemail_cost * no_of_pulse(pick_duration_for_call)
 		end
 
 		def no_of_pulse(duration)
@@ -62,7 +64,7 @@ class Freshfone::CallCostCalculator
 		#have separate dial call cost for transfer-to-voicemail scenario
 		def dial_call_cost
 			pulse_cost = pulse_rate.pulse_charge
-			self.total_charge = pulse_cost.to_f * no_of_pulse(duration_for_call)
+			self.total_charge = pulse_cost.to_f * no_of_pulse(pick_duration_for_call)
 		end
 		
 		def update_call_cost
@@ -108,11 +110,11 @@ class Freshfone::CallCostCalculator
 		end
 
 		def call_sid
-			args[:call_sid]
+			args[:call_sid] || current_call.call_sid
 		end
 		
 		def dial_call_sid
-			args[:dial_call_sid] #voicemail will not pass this arg
+			args[:dial_call_sid] || current_call.dial_call_sid #voicemail will not pass this arg
 		end
 		
 		def get_twilio_call
@@ -131,13 +133,18 @@ class Freshfone::CallCostCalculator
 		end
 
 		def current_call_duration
-			current_call.call_duration
+			conference? ? current_call.total_duration : current_call.call_duration
 		end
 
 		def duration_for_call
 			return first_leg_duration if current_call.is_root? && current_call.is_childless?
 			return current_call_duration if current_call.is_childless? #not root, currently only one level of child is present.
 			parent_call_duration
+		end
+
+		def duration_for_conference_call
+			return first_leg_duration if current_call.is_root? && current_call.is_childless?
+			current_call_duration
 		end
 
 		def first_leg_duration
@@ -156,13 +163,20 @@ class Freshfone::CallCostCalculator
 			args[:billing_type].blank? and current_call.present?
 		end
 
-		def missed_or_busy?
-			return false if current_call.blank? #Recording or IVR Preview Cost
-			[ Freshfone::Call::CALL_STATUS_HASH[:busy],
-				 Freshfone::Call::CALL_STATUS_HASH[:'no-answer']].include?(current_call.call_status)
-		end
-
     def voicemail?
       (Freshfone::Call::CALL_STATUS_HASH[:voicemail] == current_call.call_status)
+    end
+
+    def conference?
+    	current_account.features?(:freshfone_conference)
+    end
+
+    def pick_duration_for_call
+    	conference? ? duration_for_conference_call : duration_for_call
+    end
+
+    def twilio_call_and_total_duration
+      current_call.call_duration = self.first_leg_call.duration if current_call.call_duration.blank?
+      current_call.total_duration = self.first_leg_call.duration if conference? && current_call.total_duration.blank?
     end
 end

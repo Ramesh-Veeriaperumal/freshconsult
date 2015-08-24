@@ -7,10 +7,12 @@ class Freshfone::Number < ActiveRecord::Base
 
 	require_dependency 'freshfone/number/message'
 
-	serialize :on_hold_message
+	serialize :on_hold_message #Queue Message
 	serialize :non_availability_message
 	serialize :non_business_hours_message
 	serialize :voicemail_message
+	serialize :wait_message #Message that plays after the welcome message
+	serialize :hold_message
 
 	belongs_to_account
 	has_many :freshfone_calls, :class_name => 'Freshfone::Call',
@@ -24,15 +26,20 @@ class Freshfone::Number < ActiveRecord::Base
 	has_many :attachments, :as => :attachable, :class_name => 'Helpdesk::Attachment', 
 						:dependent => :destroy
 
-	delegate :group_id, :group, :to => :ivr
+	delegate :group_id, :group, :read_welcome_message, :to => :ivr
 	attr_accessor :attachments_hash, :address_required, :skip_in_twilio
 	attr_protected :account_id
   after_find :assign_number_to_message
   after_create :assign_number_to_message
 
-	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message]
+  #on_hold_message is not HOLD message. it is queue message. Should be renamed
+	MESSAGE_FIELDS = [:on_hold_message, :non_availability_message, :voicemail_message, :non_business_hours_message, :wait_message, :hold_message]
 	STATE = { :active => 1, :expired => 2 }
 	STATE_BY_VALUE = STATE.invert
+	
+	DEFAULT_WAIT_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_Long_Winter.mp3"
+	DEFAULT_QUEUE_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
+	DEFAULT_WAIT_LOOP = 1
 
 	TYPE = [
 		[:local, 'local', 1],
@@ -176,12 +183,20 @@ class Freshfone::Number < ActiveRecord::Base
 		on_hold_message.speak(xml_builder) unless on_hold_message.blank?
 	end
 
+	def play_hold_message(xml_builder)
+		hold_message.speak(xml_builder, 50) unless hold_message.blank? # loop 50 
+	end
+
 	def read_non_availability_message(xml_builder)
 		non_availability_message.speak(xml_builder) unless non_availability_message.blank?
 	end
 
 	def read_non_business_hours_message(xml_builder)
 		non_business_hours_message.speak(xml_builder) unless non_business_hours_message.blank?
+	end
+
+	def play_wait_message(xml_builder)
+		wait_message.speak(xml_builder, 5) unless wait_message.blank?
 	end
 	
 	def message_changed?
@@ -192,6 +207,24 @@ class Freshfone::Number < ActiveRecord::Base
 	def unused_attachments
 		attachments.reject{ |a| inuse_attachment_ids.include? a.id }
 	end
+
+	def ringing_duration
+		round_robin? ? rr_timeout : ringing_time
+	end
+
+	def working_hours?
+    (non_business_hour_calls? or within_business_hours?)
+  end
+
+  def within_business_hours?
+    default_business_calendar = business_calendar 
+    default_business_calendar.blank? ? 
+      (default_business_calendar = Freshfone::Number.default_business_calendar(self)) :
+      (Time.zone = default_business_calendar.time_zone)  
+    business_hours = Time.working_hours?(Time.zone.now, default_business_calendar)
+    ensure
+      TimeZone.set_time_zone
+  end
 
 	def self.accessible_freshfone_numbers(current_user, freshfone_numbers=[])
 		all_numbers = numbers_with_groups

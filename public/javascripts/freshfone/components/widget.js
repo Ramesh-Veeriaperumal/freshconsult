@@ -129,15 +129,25 @@ var FreshfoneWidget;
 			this.callNote.val('');
 		},
 		resetToDefaultState: function () {
+			this.hideTransfer();
 			freshfonewidget.toggleWidgetInactive(false);
+			$("#failed_hold").hide();
 			freshfonewidget.handleWidgets('outgoing');
 			if (this.force_disable_widget) {
 				this.disableFreshfoneWidget();
 			};
 			this.resetForm();
 		},
+		resetTransferingState: function(){
+			$('.ongoing .transfer_call.active').trigger('click');
+			$(".ongoing .transfer_call").removeClass("transferring_state");
+		},
 		hideTransfer: function () {
-			$('#freshfone_available_agents .transfering_call').hide();
+			this.ongoingControl().removeClass('disabled inactive');
+			$('#freshfone_available_agents .transferring_call').html('');
+			$('#freshfone_available_agents .transfer_failed').hide();
+			$('#freshfone_available_agents .transferring_call').hide();
+			$('#freshfone_available_agents .transfer-call-header').show();
 		},
 		resetTransferMenuList: function(){
 			$('#transfer-menu-items li').first().trigger('click');
@@ -198,6 +208,10 @@ var FreshfoneWidget;
 		},
 		classForStrangeNumbers: function(num) {
 			return (freshfonewidget.checkForStrangeNumbers(num) ? "strikethrough" : "");
+		},
+		ongoingControl: function(){
+			return freshfone.isConferenceMode ?
+			$("ul.ongoing  li:has(a:not(.transfer_call))") : $("ul.ongoing  li");
 		}
 	};
 	

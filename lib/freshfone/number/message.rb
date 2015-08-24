@@ -51,13 +51,18 @@ class Freshfone::Number::Message
 		end
 	end
 	
-	def speak(xml_builder)
+	def speak(xml_builder, loop_count=Freshfone::Number::DEFAULT_WAIT_LOOP)
 		if transcript?
 			xml_builder.Say message, { :voice => voice_type }
 		else
-			xml_builder.Play(uploaded_audio? ? attachment_url : recording_url)
+			xml_builder.Play message_url, {:loop => loop_count}
 		end
 	end
+
+	def message_url
+		uploaded_audio? ? attachment_url : recording_url
+	end
+
 	private 
 		def new_attachment_reference
 			type

@@ -11,6 +11,7 @@
 	<%= form_for note, :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {
 						:multipart => true,  
 						:id => "HelpdeskTweets",
+            :rel => 'tweet_form', 
 						"data-panel" => cntid,
                         "data-show-pseudo-reply" => 'true',
                         "data-fetch-latest" => 'true',
@@ -40,7 +41,7 @@
 			</li>
 		</ul>
 
-		<span class="tweet-counter" id="SendTweetCounter">140</span>
+		<span class="tweet-counter" id="SendTweetCounter"></span>
 
 		<div class="btn-toolbar">
 			<span id="tweet_type_selector">
@@ -53,7 +54,7 @@
 	        </span>
 
 	        <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
-	          <a class="btn btn-primary submit_btn" id="tweet-reply-btn" data-tweet-type="<%=@ticket.tweet.tweet_type%>" data-confirm-message = "<%= t('ticket.reply_form.dm_confirm_message') %>">
+	          <a class="btn btn-primary submit_btn" id="tweet-reply-btn" data-tweet-type="<%=@ticket.tweet.tweet_type%>">
 	            <%= t('ticket.reply_form.send') %>
               <% if privilege?(:edit_ticket_properties) %>
 	              <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
@@ -82,5 +83,5 @@
 
 <% content_for :onload_script do %>
   jQuery("#HelpdeskTweets").validate();	
-  jQuery('#send-tweet-cnt-reply-body').NobleCount('#SendTweetCounter', { on_negative : "error" }); 
+  jQuery("#tweet_type").change();
 <% end %>

@@ -46,6 +46,10 @@ class Helpdesk::Email::Process
     self.common_email_data = email_metadata #In parse_email_data
     return if mail_from_email_config?
     # encode_stuffs
+    if account.features?(:domain_restricted_access)
+      wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+      return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+    end
     construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
     return if (user.nil? or user.blocked?)

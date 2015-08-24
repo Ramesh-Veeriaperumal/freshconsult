@@ -49,6 +49,7 @@ var FreshfoneNotification;
 		},
 
 		pushOngoingNotification: function (freshfoneConnection) {
+			var self = this;
 			ongoingNotifications[freshfoneConnection.callSid()] = freshfoneConnection;
 			if (!this.notifyTabsFlag) {
 				this.notifyTabs();
@@ -163,10 +164,10 @@ var FreshfoneNotification;
 
 		initializeCall: function (connection) {
 			var freshfoneConnection = incomingConnections[connection.parameters.CallSid];
-			this.freshfonecalls
-					.fetchCallerDetails({ number: freshfoneConnection.customerNumber,
-																callerName : freshfoneConnection.callerName,
-																callerId : freshfoneConnection.callerId });
+			this.freshfonecalls.fetchCallerDetails({
+				number: freshfoneConnection.customerNumber,
+				callerName : freshfoneConnection.callerName,
+				callerId : freshfoneConnection.callerId });
 			this.freshfonecalls.disableCallButton();
 			this.freshfonecalls.transfered = false;
 			this.setOngoingStatusAvatar($(freshfoneConnection.avatar));
@@ -190,6 +191,26 @@ var FreshfoneNotification;
 
 		canAllowUserPresenceChange: function () {
 			if (Object.keys(ongoingNotifications).length > 0){ return true; }
+		},
+		
+		getIncomingConnection: function (CallSid) {
+			return incomingConnections[CallSid];
+		},
+
+		setNotificationTimeout: function (CallSid, time){
+			var self = this,
+			conn = incomingConnections[CallSid];			
+			conn.callNotificationTimeout = setTimeout(function() {
+				conn.unanswered();
+        self.popOngoingNotification(conn.connection, conn);
+      }, parseInt(time,10)*1000);
+		},
+		alertCallWasPicked: function (callSid, agent) {
+			var conn = this.getIncomingConnection(callSid);
+			conn.freshfoneNotification.freshfoneUserInfo.setCallPickedAlert(agent);
+		},
+		setTransferMeta: function (type, agent){
+			this.freshfoneUserInfo.setTransferMeta(type, agent);
 		}
 };
 

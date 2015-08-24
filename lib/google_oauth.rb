@@ -4,7 +4,7 @@ module GoogleOauth
 
 	def create_user(account, name, email)
     user = account.users.new(:name => name, :email => email, :active => true)
-    user.save
+    user.save!
     user
   end
 

@@ -122,17 +122,28 @@ module Helpdesk::Email::ParseEmailData
 		account.email_configs.find_by_to_email(to_email[:email])
 	end
 
-	def get_user from_email, email_config, email_body
-		self.user = account.user_emails.user_for_email(from_email[:email])
-	    unless user
-	      self.user = account.contacts.new
-	      signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
-	      															get_portal(email_config))
-	      detect_user_language(signup_status, email_body)
-	    end
-	    user.make_current
-	  user
-	end
+  def get_user from_email, email_config, email_body
+    existing_user(from_email)
+    unless user
+      create_new_user from_email, email_config, email_body
+    end
+    set_current_user
+  end
+
+  def existing_user from_email
+    self.user = account.user_emails.user_for_email(from_email[:email])
+  end
+
+  def create_new_user from_email, email_config, email_body
+    self.user = account.contacts.new
+    signup_status = user.signup!({:user => user_params(from_email), :email_config => email_config},
+                                  get_portal(email_config))
+    detect_user_language(signup_status, email_body)
+  end
+
+  def set_current_user
+    user.make_current
+  end
 
 	def user_params from_email
 		{
