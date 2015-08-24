@@ -13,4 +13,12 @@
 <div id="end_call" class="hide ffone-end-call">
 	<%= render :partial => 'layouts/shared/freshfone/freshfone_end_call' %>
 </div>
+
+<div id="failed_hold" class='hide failed_hold'>
+  <div class='ffone_hold_message'>
+    <span class='hold_init'> <%= t('freshfone.widget.holding') %></span>
+    <span class='hold_success hide'> <%= t('freshfone.widget.hold_success') %></span>
+  </div>
+</div>
+
 <span class="triangle"></span>

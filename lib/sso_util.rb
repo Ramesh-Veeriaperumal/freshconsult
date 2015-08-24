@@ -68,7 +68,7 @@ module SsoUtil
     phone = sso_data[:phone]
     company = sso_data[:company]
 
-    @current_user = current_account.all_users.find_by_email(user_email_id)
+    @current_user = current_account.user_emails.user_for_email(user_email_id)
 
     if @current_user && @current_user.deleted?
       flash[:notice] = t(:'flash.login.deleted_user')
@@ -90,7 +90,7 @@ module SsoUtil
     end
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
-    if @user_session.save
+    if (!@current_user.new_record? && @user_session.save)
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
       if grant_day_pass
@@ -142,6 +142,14 @@ module SsoUtil
       host_url = "host_url=#{request.host}"
       url += (url.include? "?") ? "&#{host_url}" : "?#{host_url}"
       return url
+  end
+
+  def generate_saml_logout_url
+      return support_home_url unless current_user
+      saml_settings = get_saml_settings(current_account)
+      saml_settings.name_identifier_value = current_user.email if current_user
+      logout_request = OneLogin::RubySaml::Logoutrequest.new()
+      logout_request.create(saml_settings, :RelayState => support_home_url )
   end
 
   private

@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot");
-  src: font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.woff") format("woff"),
-       font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.ttf") format("truetype"),
-       font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
+  src: font-url("glyphs_ce7230476c50a68431accb2946e467b4.eot");
+  src: font-url("glyphs_ce7230476c50a68431accb2946e467b4.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_ce7230476c50a68431accb2946e467b4.woff") format("woff"),
+       font-url("glyphs_ce7230476c50a68431accb2946e467b4.ttf") format("truetype"),
+       font-url("glyphs_ce7230476c50a68431accb2946e467b4.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
+    src: font-url("glyphs_ce7230476c50a68431accb2946e467b4.svg#glyphs") format("svg");
   }
 }
 
@@ -109,12 +109,17 @@
 .ficon-ff-clock:before,
 .ficon-ff-dialpad:before,
 .ficon-ff-group:before,
+.ficon-ff-group-thin:before,
+.ficon-ff-hold:before,
+.ficon-ff-line-phone:before,
 .ficon-ff-mic:before,
 .ficon-ff-mute:before,
 .ficon-ff-on-browser:before,
 .ficon-ff-on-call:before,
 .ficon-ff-on-mobile:before,
 .ficon-ff-phone:before,
+.ficon-ff-phone-accept:before,
+.ficon-ff-phone-reject:before,
 .ficon-ff-via-browser:before,
 .ficon-ff-via-phone:before,
 .ficon-file:before,
@@ -332,12 +337,17 @@
 .ficon-ff-clock:before { content: "\f142"; }
 .ficon-ff-dialpad:before { content: "\f143"; }
 .ficon-ff-group:before { content: "\f1b2"; }
+.ficon-ff-group-thin:before { content: "\f1d3"; }
+.ficon-ff-hold:before { content: "\f1d4"; }
+.ficon-ff-line-phone:before { content: "\f1d5"; }
 .ficon-ff-mic:before { content: "\f144"; }
 .ficon-ff-mute:before { content: "\f145"; }
 .ficon-ff-on-browser:before { content: "\f146"; }
 .ficon-ff-on-call:before { content: "\f147"; }
 .ficon-ff-on-mobile:before { content: "\f1af"; }
 .ficon-ff-phone:before { content: "\f148"; }
+.ficon-ff-phone-accept:before { content: "\f1d6"; }
+.ficon-ff-phone-reject:before { content: "\f1d7"; }
 .ficon-ff-via-browser:before { content: "\f1ad"; }
 .ficon-ff-via-phone:before { content: "\f1ae"; }
 .ficon-file:before { content: "\f149"; }

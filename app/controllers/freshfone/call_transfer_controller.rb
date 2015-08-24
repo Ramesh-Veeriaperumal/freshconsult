@@ -1,15 +1,18 @@
 class Freshfone::CallTransferController < FreshfoneBaseController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::NumberMethods
+	include Freshfone::CallHistory
   include Freshfone::CallsRedisMethods
+  include Freshfone::Conference::TransferMethods
 
 	before_filter :validate_agent, :only => [:transfer_incoming_call, :transfer_outgoing_call]
-	before_filter :log_transfer, :only => [:initiate]
+	before_filter :log_transfer, :only => [:initiate], :unless => :conference_feature?
 	before_filter :set_native_mobile, :only => [:available_agents]
 	def initiate
+
 		respond_to do |format|
 			format.json {
-				render :json => { :call => call_transfer.initiate ? :success : :failure }
+				render :json => { :call => handle_transfer_initiate ? :success : :failure }
 			}
 		end
 	end
@@ -140,4 +143,32 @@ class Freshfone::CallTransferController < FreshfoneBaseController
     		:include=>[:meta], 
     		:order => "freshfone_calls_meta.created_at desc")
     end
+
+    def conference_feature?
+    	 current_account.features?(:freshfone_conference)
+    end
+
+    def handle_transfer_initiate
+    	# handle transfer request from old versions of native mobile app
+    	set_target_param
+    	if conference_feature?
+    		set_params_for_conference_transfer
+    		initiate_conference_transfer
+    		return true 
+    	else
+    		return call_transfer.initiate
+    	end
+    end
+
+    def set_target_param
+    	params.merge!({:target => params[:id]}) if params[:target].blank?
+    end
+
+    def set_params_for_conference_transfer
+    	@target_agent_id = params[:id]
+    	@source_agent_id = current_user.id
+    	params.except!(:id)
+    	params.merge!({:CallSid => params[:call_sid]})
+    end
+
 end

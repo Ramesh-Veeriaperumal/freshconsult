@@ -73,6 +73,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 		}
 		li{
 			text-align: center;
+			float: left;
 		}
 		[class*="#{$font-class}"]{
 			line-height: 27px;

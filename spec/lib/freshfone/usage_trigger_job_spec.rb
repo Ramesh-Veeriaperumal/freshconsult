@@ -1,10 +1,8 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/usage_triggers_spec_helper.rb'
 load 'spec/support/freshfone_actions_spec_helper.rb'
 
 RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
   c.include UsageTriggersSpecHelper
   c.include FreshfoneActionsSpecHelper
 end
@@ -38,8 +36,9 @@ RSpec.describe 'UsageTrigger' do
     twilio_ut.trigger_value.to_i.should be_eql(trigger.trigger_value.to_i)
     Twilio::REST::Trigger.any_instance.unstub(:delete)
     Account.any_instance.unstub(:full_url)
-    Twilio::REST::Triggers.any_instance.stubs(:create)
-    Twilio::REST::Triggers.any_instance.stubs(:get)
+    Twilio::REST::Triggers.any_instance.unstub(:create)
+    Twilio::REST::Triggers.any_instance.unstub(:get)
+    Twilio::REST::Trigger.any_instance.unstub(:delete)
   end
 
   it 'should create a new credit_overdraft trigger with 15% of purchased credit' do

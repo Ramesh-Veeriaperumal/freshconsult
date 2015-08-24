@@ -14,13 +14,13 @@
 		-ms-transition: 1s ease;
 		transition: 1s ease;
 		.notifier {
-			background-color: #3a3737;
-			color: #FFFFFF;
-			border: 1px #848484 solid;
+			background-color: #FFFFFF;
+			color: #000;
+			border: 1px #1B1B1B solid;
 			width: 300px;
-			padding-top: 10px;
 			@include border-radius(4px);
 			box-shadow: 0px 0px 20px #999;
+			margin-top: 5px;
 			.deskNotifier {
 				width: 30px;
 				height: 20px;
@@ -29,13 +29,9 @@
 				cursor: pointer;
 			}
 		}
-		.notifier img {
-			@include float(left);
-			top: 2px;
-			position: relative;
-			@include border-radius(4px);
-			border: 1px #7f7e78 solid;
-		 	@include left(12px);
+		.notifier .incoming-details img {
+			position: absolute;
+			@include border-radius(40px);
 			width: 42px;
 			height: 42px;
 			z-index: 1;
@@ -56,25 +52,37 @@
 		}
 		.accept, .ignore{
 			@include float(left);
-			padding: 10px 0;
+			padding: 15px 0;
 			@include text-align(center);
-			width: 148px;
-			border: 1px #fff solid;
+			width: 150px;
 			font-weight: bold;
 			color: #FFFDF1;
 			cursor: pointer;
+  		background-color: #F5F5F5;
 			i{
 				padding: 0px 2px;
 			}
-
+			&:hover {
+				background-color: #ddd;
+			}
 		}
 		.action{
-			background: #FFFDF1;
+			background: #444444;
 			position: relative;
 			@include clear(both);
+			padding-bottom: 5px;
+			div:first {
+				border-bottom-right-radius: 4px;
+			}
+			div:last {
+				border-bottom-left-radius: 4px;
+			}
 		}
-		.notifier_number{
-			font-size: 12px;
+		.notifier_number, .place-info{
+			font-size: 13px;
+		}
+		.place-info{ 
+			color: #555;
 		}
 		.accept{
 			color: #77924e;
@@ -82,31 +90,88 @@
 
 		.ignore{
 			color: #c53f42;
-			@include border-right(1px solid #000);
 		}
 		.customer {
 			display: inline-block;
-			@include padding(0px 0px 5px 10px);
-			width: 225px;
-			@include float(right);
-			color: #FFF;
+			width: 100%;
+			min-height: 80px;
+			color: #000;
+			border-bottom: 1px solid #ccc;
 			b{
 				font-size: 14px;
 				width: 100%;
 				display: inline-block;
 				padding-top: 0px;
 			}
+			.customer-info {
+				@include padding(15px 70px 9px 20px);
+			}
 		}
 		.call-meta{
+			.freshfone_number_info {
+				@include padding(10px 15px 10px 20px);
+				border-bottom: 1px solid #ccc;
+				min-height: 16px;
+				line-height: 25px;
+				i {
+					padding-right: 5px;
+				}
+			}
+		}
+		.transfer-meta {
 			text-align: center;
-			border-top: 1px solid #181717;
 			clear: both;
-			padding: 11px;
-			background: #4D4A4A;
-			min-height: 16px;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			padding-bottom: 11px;
+			background: #fff;
+			min-height: 16px;	
+		}
+		.transferNotifier {
+			display: inline-block;
+			clear: both;
+  		color: #000;
+  		padding: 5px 10px;
+  		width: 93%;
+  		border-bottom: 1px solid #eee;
+  		background-color: #F2F2F2;
+  		border-top-right-radius: 4px;
+  		border-top-left-radius: 4px;
+			.transfer_agent {
+				display: inline-block;
+			  border-radius: 20px;
+			  opacity: 1;
+			  width: 25px;
+			  height: 25px;
+			  background-color: #aaa;
+			  border: 1px solid #aaa;
+			  float: right;
+			  .ff-icon{
+		  		display: inline-block;
+				  font-size: 18px;
+				  @include padding(6px);
+				  color: #fff;
+			  }
+				img {
+						width: 25px;
+						height: 25px;
+						@include border-radius(20px);
+						opacity: 1;
+					}
+				.preview_pic {
+					margin:0;
+				}
+			}
+			.ff-arrow-direction{
+				float: left;
+				color: #888;
+				@include padding(8px 10px 0 10px);
+			}
+			.transfer-agent-name {
+				font-size: 13px;
+				margin-top: 8px;
+  			display: inline-block;
+  			float: left;
+  			width: 75%;
+			}
 		}
 		.country{
 			padding: 0px !important;
@@ -135,6 +200,19 @@
 		b {
 			display: inline-block;
 		}
+	}
+	.incoming-details {
+		border-radius: 4px;
+		background-color: #FFF;
+		.user_image{
+			top: 15px;
+  		left: 250px;
+  		position: relative;
+		}
+	}
+	.incoming-details .call-pickedalert-info {
+		padding: 10px;
+		padding-left: 15%;
 	}
 }
 //	slimmer notification
@@ -166,7 +244,7 @@
 			padding: 12px;
 			width: 120px;
 			@include float(left);
-			color: #FFF;
+			color: #000;
 			b {
 				width: 100%;
 				padding-top: 0px;
@@ -182,19 +260,18 @@
 			@include float(left);
 			width:34px;
 			height:34px;
-			border: 2px solid #F6F6F6;
 			cursor:pointer;
 			@include border-radius(20px);
+			background-color:#F5F5F5;
 			&:hover {
-				border-color: #555;
+				border-color: #ddd;
 			}
 		}
 		.ignore {
-			background-color:#ECEBEA;
+			
 		}
 		.accept {
 			@include margin-left(10px);
-			background-color:#547C3C;
 		}
 		.primary {
 			font-weight:bold;

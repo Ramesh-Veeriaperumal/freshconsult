@@ -20,6 +20,9 @@ class UserEmail < ActiveRecord::Base
   validates_uniqueness_of :email, :scope => [:account_id]
 
   before_validation :downcase_email
+  
+  before_save :restrict_domain, :if => :email_changed?
+  
   # Make the verified as false if the email is changed
   before_update :change_email_status, :if => [:email_changed?, :multiple_email_feature]
   # Set new perishable token for activation after email is changed

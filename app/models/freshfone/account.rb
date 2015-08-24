@@ -114,6 +114,21 @@ class Freshfone::Account < ActiveRecord::Base
 			})
 	end
 
+	def update_conference_status_url(callback_url = nil)
+		app = twilio_subaccount.applications.get(app_id)
+		app.update(:status_callback => callback_url)
+	end
+
+	def enable_conference
+		account.features.freshfone_conference.create unless account.features?(:freshfone_conference)
+		update_conference_status_url("#{host}/freshfone/conference_call/status")
+	end
+
+	def disable_conference
+		account.features.freshfone_conference.destroy if account.features?(:freshfone_conference)
+		update_conference_status_url
+	end
+
 	def suspended?
 		state == STATE_HASH[:suspended]
 	end

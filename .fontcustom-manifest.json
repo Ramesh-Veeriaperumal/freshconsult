@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "2b2bfc2023b57eda2c1ca6b176c35ce7660e0e84187a9b497a2538936cd964c2",
-    "current": "2b2bfc2023b57eda2c1ca6b176c35ce7660e0e84187a9b497a2538936cd964c2"
+    "previous": "ce7230476c50a68431accb2946e467b46720926e7608a171018b1119640351bb",
+    "current": "ce7230476c50a68431accb2946e467b46720926e7608a171018b1119640351bb"
   },
   "fonts": [
-    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.ttf",
-    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg",
-    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.woff",
-    "public/assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot"
+    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.ttf",
+    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.svg",
+    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.woff",
+    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.eot"
   ],
   "glyphs": {
     "account": {
@@ -354,6 +354,18 @@
       "codepoint": 61874,
       "source": "public/glyphs/vectors/ff-group.svg"
     },
+    "ff-group-thin": {
+      "codepoint": 61907,
+      "source": "public/glyphs/vectors/ff-group-thin.svg"
+    },
+    "ff-hold": {
+      "codepoint": 61908,
+      "source": "public/glyphs/vectors/ff-hold.svg"
+    },
+    "ff-line-phone": {
+      "codepoint": 61909,
+      "source": "public/glyphs/vectors/ff-line-phone.svg"
+    },
     "ff-mic": {
       "codepoint": 61764,
       "source": "public/glyphs/vectors/ff-mic.svg"
@@ -377,6 +389,14 @@
     "ff-phone": {
       "codepoint": 61768,
       "source": "public/glyphs/vectors/ff-phone.svg"
+    },
+    "ff-phone-accept": {
+      "codepoint": 61910,
+      "source": "public/glyphs/vectors/ff-phone-accept.svg"
+    },
+    "ff-phone-reject": {
+      "codepoint": 61911,
+      "source": "public/glyphs/vectors/ff-phone-reject.svg"
     },
     "ff-via-browser": {
       "codepoint": 61869,

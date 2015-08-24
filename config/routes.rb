@@ -386,6 +386,69 @@ Helpkit::Application.routes.draw do
       end
     end
 
+  resources :conference do
+      collection do
+        get  :initiate
+        post :wait
+        post :agent_wait
+        post :incoming_agent_wait
+        post :outgoing_accepted
+        post :pinged_agent_response
+        post :connect_incoming_caller
+        post :complete_customer_wait_conference
+        post :client_accept
+        post :connect_agent
+      end
+    end
+
+    resources :conference_transfer do
+      collection do 
+        get  :initiate_transfer
+        post :transfer_agent_wait
+        get  :complete_transfer
+        post :transfer_success
+        post :transfer_source_redirect
+        post :cancel_transfer
+        post :resume_transfer
+        get :disconnect_agent
+      end
+    end
+
+    resources :hold do
+      collection do
+        get  :add
+        get  :remove
+        post :initiate
+        post :wait
+        post :unhold
+        post :transfer_unhold
+        post :transfer_fallback_unhold
+      end
+    end
+
+    resources :forward do
+      collection do
+        post :initiate
+        post :complete
+        post :transfer_initiate
+        post :transfer_complete
+        post :transfer_wait
+        post :direct_dial_wait
+        post :direct_dial_accept
+        post :direct_dial_connect
+        post :direct_dial_success
+        post :direct_dial_complete
+      end
+    end
+
+    resources :conference_call do
+      collection do
+        post :status
+        post :in_call
+        post :update_recording
+      end
+    end
+
     resources :queue do
       collection do
         post :enqueue
@@ -401,12 +464,13 @@ Helpkit::Application.routes.draw do
     resources :voicemail do
       collection do
         post :quit_voicemail
+        post :initiate
       end
     end
 
     resources :call_transfer do
       collection do
-        post :initiate
+        get :initiate
         post :transfer_incoming_call
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
@@ -417,6 +481,7 @@ Helpkit::Application.routes.draw do
         get :available_external_numbers
       end
     end
+    match '/call_transfer/initiate/' => 'call_transfer#initiate', :via => :post
 
     resources :device do
       collection do
@@ -2123,8 +2188,18 @@ Helpkit::Application.routes.draw do
           get :deleted_customers
         end
       end
-      
+
+      resources :delayed_jobs, only: [:index,:show] do
+        collection do
+          put 'requeue'
+          put 'requeue_selected'
+          put 'remove_selected'
+          put 'destroy_job'
+        end
+      end
+
       get  "/accounts/show", to: 'accounts#show'
+
       resources :accounts, :only => :none do
         collection do
           get :tickets
@@ -2176,6 +2251,9 @@ Helpkit::Application.routes.draw do
           post :country_restriction
           post :new_freshfone_account
           put :undo_security_whitelist
+          get :fetch_conference_state
+          put :enable_conference
+          put :disable_conference
         end
       end
 

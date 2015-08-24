@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot");
-  src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.woff") format("woff"),
-       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.ttf") format("truetype"),
-       url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.eot");
+  src: url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.woff") format("woff"),
+       url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.ttf") format("truetype"),
+       url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_2b2bfc2023b57eda2c1ca6b176c35ce7.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_ce7230476c50a68431accb2946e467b4.svg#glyphs") format("svg");
   }
 }
 
@@ -223,12 +223,17 @@
 .ficon-ff-clock:before,
 .ficon-ff-dialpad:before,
 .ficon-ff-group:before,
+.ficon-ff-group-thin:before,
+.ficon-ff-hold:before,
+.ficon-ff-line-phone:before,
 .ficon-ff-mic:before,
 .ficon-ff-mute:before,
 .ficon-ff-on-browser:before,
 .ficon-ff-on-call:before,
 .ficon-ff-on-mobile:before,
 .ficon-ff-phone:before,
+.ficon-ff-phone-accept:before,
+.ficon-ff-phone-reject:before,
 .ficon-ff-via-browser:before,
 .ficon-ff-via-phone:before,
 .ficon-file:before,
@@ -446,12 +451,17 @@
 .ficon-ff-clock:before { content: "\f142"; }
 .ficon-ff-dialpad:before { content: "\f143"; }
 .ficon-ff-group:before { content: "\f1b2"; }
+.ficon-ff-group-thin:before { content: "\f1d3"; }
+.ficon-ff-hold:before { content: "\f1d4"; }
+.ficon-ff-line-phone:before { content: "\f1d5"; }
 .ficon-ff-mic:before { content: "\f144"; }
 .ficon-ff-mute:before { content: "\f145"; }
 .ficon-ff-on-browser:before { content: "\f146"; }
 .ficon-ff-on-call:before { content: "\f147"; }
 .ficon-ff-on-mobile:before { content: "\f1af"; }
 .ficon-ff-phone:before { content: "\f148"; }
+.ficon-ff-phone-accept:before { content: "\f1d6"; }
+.ficon-ff-phone-reject:before { content: "\f1d7"; }
 .ficon-ff-via-browser:before { content: "\f1ad"; }
 .ficon-ff-via-phone:before { content: "\f1ae"; }
 .ficon-file:before { content: "\f149"; }
@@ -583,7 +593,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (209)</h1>
+      <h1>Font Icons (214)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1365,6 +1375,33 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-group-thin" class="ficon-ff-group-thin"></i></span>
+        </div>
+        <div class="usage">
+          <span>ff-group-thin</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-hold" class="ficon-ff-hold"></i></span>
+        </div>
+        <div class="usage">
+          <span>ff-hold</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-line-phone" class="ficon-ff-line-phone"></i></span>
+        </div>
+        <div class="usage">
+          <span>ff-line-phone</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-mic" class="ficon-ff-mic"></i></span>
         </div>
         <div class="usage">
@@ -1414,6 +1451,24 @@
         </div>
         <div class="usage">
           <span>ff-phone</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-phone-accept" class="ficon-ff-phone-accept"></i></span>
+        </div>
+        <div class="usage">
+          <span>ff-phone-accept</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-ff-phone-reject" class="ficon-ff-phone-reject"></i></span>
+        </div>
+        <div class="usage">
+          <span>ff-phone-reject</span>
         </div>
       </div>
       

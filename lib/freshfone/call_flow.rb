@@ -1,5 +1,5 @@
 class Freshfone::CallFlow
-  include Freshfone::FreshfoneHelper
+  include Freshfone::FreshfoneUtil
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::CallsRedisMethods

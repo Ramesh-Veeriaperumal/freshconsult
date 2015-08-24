@@ -92,7 +92,7 @@ class Freshfone::Credit < ActiveRecord::Base
 	end
 
 	def auto_recharge_threshold_reached?
-		available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+		available_credit <= auto_recharge_threshold
 	end
 
 	def recharge_alert?
@@ -102,6 +102,15 @@ class Freshfone::Credit < ActiveRecord::Base
 	def valid_recharge_amount?
 		selected_credit >= RECHARGE_THRESHOLD
 	end
+
+  def call_time_limit
+    #15 mins for a throttled call. else 4 hours
+    below_safe_threshold? ? 900 : 14400
+  end
+
+  def direct_dial_time_limit
+    below_safe_threshold? ? 900 : 1800
+  end
 
 	private
 
@@ -115,7 +124,7 @@ class Freshfone::Credit < ActiveRecord::Base
 
 	  def valid_auto_recharge?
 	  	credit = Freshfone::Credit.find_by_account_id(account_id)
-	  	credit.available_credit <= CREDIT_LIMIT[:auto_recharge_threshold]
+	  	credit.available_credit <= credit.auto_recharge_threshold
 	  end
 
 	  def update_credit(credits)

@@ -275,10 +275,12 @@ en:
     url: URL
     decimal: Decimal
     date: Date
+    delete: Delete
     regex: Regex
     email: Email
-    nested_field: Nested Fields
+    nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
+    default_field_error: Default fields cannot be dropped into section
   ticket_fields:
     fields:
       source: Source
@@ -320,7 +322,7 @@ en:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
-      nested_label: "Nested field labels"
+      nested_label: "Dependent field labels"
       level: "Level"
       level1: "Level 1"
       level2: "Level 2"
@@ -729,7 +731,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -801,7 +803,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -858,6 +860,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
+        portal_security: "Portal Security"
+        enable_public_urls: "Enable public ticket URL"
+        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -2006,6 +2011,7 @@ en:
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
+      domain_restriction: Domain restriction in place. This email is not allowed.
 
     freshfone:
       credits:
@@ -6769,6 +6775,8 @@ en:
       voicemail: "Voicemail"
       restricted: "Restricted"
       all_calls: "All Calls"
+      answered: "Answered"
+      on-hold: "On Hold"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
@@ -6783,6 +6791,9 @@ en:
       accept: "Accept"
       end_call: "End Call"
       mute: "Mute"
+      hold: "Hold"
+      holding: "Sorry unable to hold.. \n Please try again later..."
+      hold_success: "Now call on hold"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       call_notes: "Call Notes"
@@ -6818,6 +6829,20 @@ en:
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
       network_error: "Check your Internet Connection"
+      transfer:
+        tranfer_via: "via "
+        to: "To: "
+        transferring: "Transferring..."
+        transfer_canceled: "Ignored"
+        tranfer_no_answer: "Not available"
+        tranfer_connected: "Transferred"
+        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_connected: "Connected with customer"
+        close: "Close"
+        resume: "Resume"
+        cancel: "Cancel"
+        cancelling: "Cancelling..."
+        resuming: "Resuming..."
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"
@@ -6883,6 +6908,8 @@ en:
       	unknown: "UNKNOWN"
       	anonymous: "ANONYMOUS"
       	empty: "EMPTY"
+      total_duration: "Duration"
+      minutes: "Minutes"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6935,7 +6962,7 @@ en:
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
-        wait_message: "Wait Message"
+        queue_message: "Queue Message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
         non_business_hours_message: "Non-Business hours message"
@@ -6950,7 +6977,8 @@ en:
         recorded_voice: "Recorded Voice"
         audio_upload: "Select file to upload"
         greeting_message: "Enter your message here"
-        attachment_help_info: "Accepts audio files < 5mb"
+        attachment_help_info: "Accepts audio file (mp3) < 5mb"
+        attachment_help_text: "Accepts audio file (mp3) < 5mb"
         recording_help_info: "Turn on the microphone. Duration < 5 mins."
         cancel: "Cancel"
         change: "Change"
@@ -6968,6 +6996,8 @@ en:
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
         number_accessible: "Accessible by"
+        wait_music: "Wait Music"
+        hold_music: "Hold Music"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
