@@ -1,0 +1,30 @@
+<div class="draft-list-item row-fluid span12">
+	<div class="span1">
+		<% icon_name = draft.category_meta.is_default ? 'ficon-mail fsize-20 draft-icon-mail' : 'ficon-file fsize-18 draft-icon-file' %>
+		<span class="<%= icon_name %>"></span>
+	</div>
+
+	<div class="span8">
+		<%= pjax_link_to h(draft.title).truncate(85), "#{solution_article_path(draft.article_id)}#edit", { :class => "draft-title ellipsis", :title => (h(draft.title) if draft.title.length > 85) } %>
+		<br/>
+		<div class="muted">
+			<% if draft.category_meta.is_default %>
+				<%= t('solution.via') %>
+				<%= t('solution.draft.kbase') %>
+			<% else %>
+				<%= t('search.in') %>
+				<%= pjax_link_to draft.folder.name, 
+						solution_folder_path(draft.folder),
+						{ :class => "parent-link" } %>
+			<% end %>
+		</div>
+	</div>
+
+	<div class="span3">
+		<span class="muted"> <%= t('solution.general.created_by') %> </span> <%= draft.user.name %>
+		<br/>
+		<div class="muted">
+			<span data-livestamp="<%= draft.updated_at.to_i %>" class="tooltip" title="<%= formated_date(draft.modified_at) %>"></span>
+		</div>
+	</div>
+</div>

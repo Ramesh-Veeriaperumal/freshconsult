@@ -62,31 +62,6 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
-  #META-READ-HACK!!
-  scope :all_drafts, {
-    :include => [{:draft => :user}, :user],
-    :conditions => ['solution_articles.status = ? or solution_drafts.article_id = solution_articles.id', STATUS_KEYS_BY_TOKEN[:draft]],
-    :order => ['solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC']
-  }
-
-  #META-READ-HACK!!
-  scope :portal_drafts, lambda { |portal|
-    {
-      :include => [{:draft => :user}, :user],
-      :conditions => ['(solution_articles.status = ? or solution_drafts.article_id = solution_articles.id) and portal_solution_categories.portal_id = ?', STATUS_KEYS_BY_TOKEN[:draft], portal],
-      :order => ['solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC']
-    }
-  }
-  
-  #META-READ-HACK!! 
-  scope :drafts_by_user, lambda { |user| 
-    {
-      :include => [{:draft => :user}, :user],
-      :conditions => ['(solution_articles.status = 1 AND solution_articles.user_id = ?) OR 
-        (solution_drafts.article_id = solution_articles.id AND solution_drafts.user_id = ?)', user.id, user.id],
-      :order => ['solution_drafts.updated_at DESC', 'solution_articles.updated_at DESC']
-    } 
-  }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
 

@@ -10,7 +10,7 @@ class Solution::DraftsController < ApplicationController
 	before_filter :load_attachment, :only => [:attachments_delete]
 
 	def index
-		@articles = drafts_scoper.paginate(:page => params[:page], :per_page => 10)
+		@drafts = drafts_scoper.as_list_view.paginate(:page => params[:page], :per_page => 10)
 	end
 
 	def destroy
@@ -58,7 +58,7 @@ class Solution::DraftsController < ApplicationController
 	private
 
 		def scope
-			(params[:type] == 'all') ? (get_portal_id == 0 ? [:all_drafts] : [:portal_drafts, get_portal_id]) : [:drafts_by_user, current_user]
+			params[:type] == 'all' ? [:in_portal, current_account.portals.find(get_portal_id)] : [:by_user, current_user]
 		end
 
 		def get_portal_id
@@ -129,9 +129,9 @@ class Solution::DraftsController < ApplicationController
 
 		def drafts_scoper
 			if (params[:type] == 'all' and get_portal_id == 0)
-				current_account.solution_articles.all_drafts.includes(folder_scope_with_categories)
+				current_account.solution_drafts
 			else
-				current_account.solution_articles.send(*scope).includes(meta_folder_scope)
+				current_account.solution_drafts.send(*scope)
 			end
 		end
 

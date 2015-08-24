@@ -1,5 +1,5 @@
 <%  
-  @my_drafts = @drafts.drafts_by_user(current_user)
+  @my_drafts = @drafts.by_user(current_user)
   @my_drafts_count = @my_drafts.size 
 %>
 <% if @my_drafts_count < 1 %>

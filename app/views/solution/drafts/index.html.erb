@@ -24,9 +24,11 @@
 
 <div id="drafts-section">
 
-	<% unless (@articles.size == 0) %>
-		<%= render :partial => "drafts_list", :locals => { :articles => @articles} %>
-		<%= will_paginate @articles, :renderer => BootstrapPaginationRenderer,
+	<% unless (@drafts.size == 0) %>
+		<div class="solution-drafts">
+			<%= render :partial => 'draft', :collection => @drafts %>
+		</div>
+		<%= will_paginate @drafts, :renderer => BootstrapPaginationRenderer,
 															:previous_label => "<b class='arrow-left'></b>",
 															:next_label => "<b class='arrow-right'></b>",
 															:class => "pagination pagination-centered" %>
@@ -34,7 +36,7 @@
 		<div class="solution-drafts">
 			<div class="draft_info_data"><%= t("solutions.drafts.empty") %></div>
 		</div>
-	<% end %> 
+	<% end %>
 </div>
 
 <% content_for :helpcard do %>

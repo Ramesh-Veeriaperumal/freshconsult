@@ -183,13 +183,13 @@ module SolutionHelper
 			<li>
         <div class="sidebar-list-item">
           #{pjax_link_to(a.title.truncate(27),
-                          solution_article_path(a.id)
+                          solution_article_path(a.article_id)
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',
 	                            :name => a.user.name, 
-	                            :time => a.modified_at.to_i,
-	                            :time_string => time_ago_in_words(a.modified_at)).html_safe}
+	                            :time => a.updated_at.to_i,
+	                            :time_string => time_ago_in_words(a.updated_at)).html_safe}
 					</div>
 				</div>
 	    </li>
@@ -198,7 +198,7 @@ module SolutionHelper
 
 	def sidebar_drafts_list(drafts, container_id, active='')
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    drafts.first(3).each do |draft|
+    drafts.for_sidebar.first(3).each do |draft|
       content << sidebar_drafts(draft)
     end
     content << %{</ul>}

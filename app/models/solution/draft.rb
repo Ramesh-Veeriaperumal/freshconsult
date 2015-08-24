@@ -9,6 +9,8 @@ class Solution::Draft < ActiveRecord::Base
   belongs_to :article, :class_name => "Solution::Article"
   belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
+  has_one :folder, :through => :article
+  
   has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
   has_many_attachments
   has_many_cloud_files
@@ -28,6 +30,25 @@ class Solution::Draft < ActiveRecord::Base
 
   alias_attribute :modified_by, :user_id
 
+  scope :as_list_view, :include => [:user, :folder, :category_meta]
+  scope :for_sidebar, :include => [:user]
+  
+  scope :by_user, lambda { |user|
+     { 
+       :conditions => ["user_id = ?", user.id ],
+       :order => :updated_at
+     }
+  }
+
+  scope :in_portal, lambda { |portal| 
+    {
+      :conditions => {
+        :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
+      },
+      :order => :updated_at
+    }
+  }
+
   STATUSES = [
     [ :editing,     "solutions.draft.status.editing",        0 ], 
     [ :work_in_progress, "solutions.draft.status.work_in_progress",    1 ]
@@ -42,11 +63,13 @@ class Solution::Draft < ActiveRecord::Base
   LOCKDOWN_PERIOD = 2.hours
 
   COMMON_ATTRIBUTES = ["title", "description"]
-
   #defining writer method for delegated attribute
   def description= content
     unless self.draft_body.present?
-      self.build_draft_body({:description => content, :account_id => Account.current.id}) and return
+      self.build_draft_body({
+        :description => content, 
+        :account_id => Account.current.id
+      }) and return content
     end
     self.draft_body.description = content
   end
