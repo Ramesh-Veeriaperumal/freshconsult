@@ -10,7 +10,7 @@ class TicketFilterValidation < ApiValidation
   validates :order_type, custom_inclusion: { in: ApiTicketConstants::ORDER_TYPE }, allow_nil: true
 
   def initialize(request_params)
-    @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS) - ["filter"] + [request_params["filter"]].compact
+    @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS) - ['filter'] + [request_params['filter']].compact
     super(request_params)
   end
 

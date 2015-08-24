@@ -12,7 +12,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         index: 6,
         destroy: 5,
         restore: 5
-        }
+      }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
       create_v2_payload = v2_ticket_payload

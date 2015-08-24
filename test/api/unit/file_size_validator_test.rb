@@ -27,21 +27,20 @@ class FileSizeValidatorTest < ActionView::TestCase
     test.attribute1 = [[1]]
     test.item_size = 100
     refute test.valid?
-    assert_equal(test.errors.to_h, {:attribute1=>"invalid_size"})
+    assert_equal(test.errors.to_h, attribute1: 'invalid_size')
   end
 
   def test_base_size_absent
     test = FileValidation.new
-    test.attribute2 = [1]*101
+    test.attribute2 = [1] * 101
     refute test.valid?
-    assert_equal(test.errors.to_h, {:attribute2=>"invalid_size"})
+    assert_equal(test.errors.to_h, attribute2: 'invalid_size')
   end
 
   def test_min_size_invalid
     test = FileValidation.new
     test.attribute2 = []
     refute test.valid?
-    assert_equal(test.errors.to_h, {:attribute2=>"invalid_size"})
+    assert_equal(test.errors.to_h, attribute2: 'invalid_size')
   end
-
 end

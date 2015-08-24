@@ -390,11 +390,11 @@ module JsonPattern
     textilized.hard_breaks = true if textilized.respond_to?('hard_breaks=')
     formatted = ticket.white_list(textilized.to_html)
     html_doc = Nokogiri::HTML(formatted)
-      unless html_doc.at_css("body").blank?
-        html_doc.xpath("//del").each { |div|  div.name= "span";}
-        html_doc.xpath("//p").each { |div|  div.name= "div";}
-      end
-    Rinku.auto_link(html_doc.at_css("body").inner_html, :urls)
+    unless html_doc.at_css('body').blank?
+      html_doc.xpath('//del').each { |div|  div.name = 'span'; }
+      html_doc.xpath('//p').each { |div|  div.name = 'div'; }
+    end
+    Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
   end
 end
 
