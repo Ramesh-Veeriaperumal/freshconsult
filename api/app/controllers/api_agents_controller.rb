@@ -1,5 +1,4 @@
 class ApiAgentsController < ApiApplicationController
-  
   def agents_filter(agents)
     @agent_filter.conditions.each do |key|
       clause = agents.api_filter(@agent_filter)[key.to_sym] || {}
@@ -9,6 +8,7 @@ class ApiAgentsController < ApiApplicationController
   end
 
   private
+
     def scoper
       current_account.all_agents
     end

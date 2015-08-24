@@ -294,7 +294,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                     job_title: 'emp',
                     custom_fields: cf,
                     tags: tags }
-                    
+
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     assert sample_user.reload.language == 'cs'
@@ -566,7 +566,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_column(:deleted, false)
 
     stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
-      put :update, construct_params({ id: sample_user.id }, { time_zone: "Chennai"})
+      put :update, construct_params({ id: sample_user.id }, time_zone: 'Chennai')
     end
 
     assert_response :forbidden
@@ -574,7 +574,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_demo_site_create
-    params = {name: Faker::Lorem.characters(15), email: Faker::Internet.email}
+    params = { name: Faker::Lorem.characters(15), email: Faker::Internet.email }
 
     stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
       post :create, construct_params({}, params)

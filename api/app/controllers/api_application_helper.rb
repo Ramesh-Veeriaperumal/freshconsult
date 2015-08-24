@@ -32,8 +32,6 @@ module ApiApplicationHelper
       Hash[current_account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }]
     when 'default_product'
       Hash[current_account.products_from_cache.collect { |e| [CGI.escapeHTML(e.name), e.id] }]
-    when 'nested_field'
-      ticket_field.picklist_values.collect(&:value)
     else
       []
     end
@@ -63,17 +61,16 @@ module ApiApplicationHelper
 
   def contact_choices(contact_field)
     case contact_field.field_type.to_s
-    when "default_language", "default_time_zone"
-      contact_field.choices.map{ |x| x.values.reverse }.to_h
-    when "custom_dropdown"
-      contact_field.choices.map{ |x| x[:value] }
+    when 'default_language', 'default_time_zone'
+      contact_field.choices.map { |x| x.values.reverse }.to_h
+    when 'custom_dropdown' # not_tested
+      contact_field.choices.map { |x| x[:value] }
     else
       []
     end
   end
 
   def default_contact_field?(contact_field)
-    contact_field.column_name == "default"
+    contact_field.column_name == 'default'
   end
-
 end

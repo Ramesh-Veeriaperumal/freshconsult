@@ -11,5 +11,4 @@ json.set! :agent do
   json.set! :ticket_scope, @agent.ticket_permission
 
   json.partial! 'shared/utc_date_format', item: @agent, add: { active_since: :available_since }
-
 end

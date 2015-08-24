@@ -29,7 +29,7 @@ class NotesController < ApiApplicationController
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     @item.assign_element_html(params[cname][:note_body_attributes], 'body', 'full_text') if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
-      render_custom_errors(@item)
+      render_custom_errors(@item) # not_tested
     end
   end
 

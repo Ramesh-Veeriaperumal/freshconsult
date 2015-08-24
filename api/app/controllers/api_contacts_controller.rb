@@ -35,7 +35,7 @@ class ApiContactsController < ApiApplicationController
     elsif @item.update_attributes(params[cname])
       @item.tags = construct_tags(@tags) if @tags
     else
-      render_custom_errors
+      render_custom_errors # not_tested
     end
   end
 
@@ -56,7 +56,7 @@ class ApiContactsController < ApiApplicationController
 
   def make_agent
     if @item.email.blank?
-      errors = [[:email, ["should be a valid email address"]]]
+      errors = [[:email, ['should be a valid email address']]] # use error_messages.yml instead of message hard coded here.
       render_errors errors
     elsif !current_account.subscription.agent_limit.nil? && reached_agent_limit?
       render_request_error :max_agents_reached, 400
@@ -83,7 +83,7 @@ class ApiContactsController < ApiApplicationController
       contact_fields = current_account.contact_form.custom_contact_fields
       allowed_custom_fields = contact_fields.collect(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-      
+
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
 
@@ -92,7 +92,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:tags]      
+      prepare_array_fields [:tags]
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
       params[cname].delete(:tags) if @tags
 
@@ -119,19 +119,19 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       scope = ContactConstants::DELETED_SCOPE[action_name]
       unless scope.nil?
-        if @item.deleted != scope 
+        if @item.deleted != scope
           head 404
           return false
         end
       end
 
-      if ( destroy? || update? ) && demo_site?
+      if (destroy? || update?) && demo_site?
         render_request_error :unsupported_environment, 403
       end
     end
 
     def before_build_object
-      if create? && demo_site?
+      if create? && demo_site? # create? check needed here???
         render_request_error :unsupported_environment, 403
       end
     end

@@ -1,16 +1,16 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :required_based_on_status, :custom_fields, :current_field_defined]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined]
   attr_accessor(*ATTRS)
 
   def validate(record)
     attributes.each do |attribute|
       values = record.read_attribute_for_validation(attribute)
+      next if (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
       reset_attr_accessors
       assign_options(attribute)
-      next if (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
 
       # find if fields are required based on status
-      @required_based_on_status = proc_to_object(@required, record)
+      @closure_status = proc_to_object(@required_based_on_status, record)
 
       # get all validatable custom fields
       @custom_fields = proc_to_object(@validatable_custom_fields)
@@ -18,7 +18,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         @current_field = custom_field
         field_name = custom_field.name # assign field name
         value = values.try(:[], custom_field.name) # assign value
-        @parent =  nested_field? ? get_parent(values) : {} # get parent if nested_field for computing required
+        @parent =  nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
         @is_required = required_field? # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
@@ -50,7 +50,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@required }, 'required_integer')
+    numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@is_required }, 'required_integer')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 
@@ -61,7 +61,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for decimal field
   def validate_custom_decimal(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, allow_nil: !@required }, 'required_number')
+    numericality_options = construct_options({ attributes: field_name, allow_nil: !@is_required }, 'required_number')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 
@@ -99,13 +99,13 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Format validator for url field
   def validate_custom_url(record, field_name)
-    format_options = construct_options({ attributes: field_name, with: URI.regexp,  allow_nil: !@required, message: 'invalid_format' }, 'required_format')
+    format_options = construct_options({ attributes: field_name, with: URI.regexp,  allow_nil: !@is_required, message: 'invalid_format' }, 'required_format')
     ActiveModel::Validations::FormatValidator.new(format_options).validate(record)
   end
 
   # Date validator for date field
   def validate_custom_date(record, field_name)
-    date_options = construct_options({ attributes: field_name, allow_nil: !@required }, 'required_date')
+    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required }, 'required_date')
     DateTimeValidator.new(date_options).validate(record)
   end
 
@@ -115,7 +115,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @validatable_custom_fields = options[attribute][:validatable_custom_fields] || []
       @nested_field_choices = options[attribute][:nested_field_choices] || {}
       @drop_down_choices = options[attribute][:drop_down_choices] || {}
-      @required = options[attribute][:required_based_on_status]
+      @required_based_on_status = options[attribute][:required_based_on_status]
       @required_attribute = options[attribute][:required_attribute]
     end
 
@@ -131,22 +131,23 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def get_parent(values)
       ancestor = @custom_fields.detect { |x| x.id == @current_field.parent_id }
       parent = @current_field.level == 2 ? ancestor : @custom_fields.detect { |x| x.parent_id == @current_field.parent_id && x.level == 2 }
-      parent && ancestor ? { name: ancestor.name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @required_based_on_status)) } : {}
+      parent && ancestor ? { name: ancestor.name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @closure_status)) } : {}
     end
 
     # required based on ticket field attribute or combination of status & ticket field attribute.
     def required_field?
-      is_required = @current_field.send(@required_attribute.to_sym) || (@required_based_on_status && @current_field.required_for_closure)
-      is_required = @parent[:required] if @parent.present?
+      # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
+      is_required = @current_field.send(@required_attribute.to_sym) || (@closure_status && @current_field.required_for_closure)
+      is_required ||= @parent[:required] if @parent.present?
       is_required
     end
 
-    # should allowed be validated satisfying any of the below conditions
+    # should allowed to be validated upon satisfying any of the below conditions
     # 1. required field
-    # 2. value is not nil
+    # 2. value present?
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
-      @is_required || values.try(:[], field_name) || (values.present? && nested_field? && no_children_set?(record, field_name, values))
+      @is_required || values.try(:[], field_name) || (values.present? && nested_field? && !children_set_or_blank?(record, field_name, values))
     end
 
     def key_exists?(values, key)
@@ -154,15 +155,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # Parent field should be set if children value is set in case of nested fields. otherwise error.
-    def no_children_set?(record, field_name, values)
+    def children_set_or_blank?(record, field_name, values)
       children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id) }
       children.each do |child|
         next if values[child.name].blank?
         record.errors.add(field_name.to_sym, 'conditional_not_blank')
         (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.name })
-        return false
+        return true
       end
-      false
+      true
     end
 
     def method_name
@@ -173,6 +174,10 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
     def nested_field?
       @current_field.field_type == 'nested_field'.freeze
+    end
+
+    def parent_exists?
+      @current_field.parent_id.present?
     end
 
     # construct options hash for diff validators

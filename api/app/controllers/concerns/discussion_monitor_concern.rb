@@ -23,7 +23,7 @@ module DiscussionMonitorConcern
     elsif @monitorship.update_attributes(active: true, portal_id: current_portal.id)
       head 204
     else
-      render_errors(@monitorship.errors)
+      render_errors(@monitorship.errors) # not_tested
     end
   end
 

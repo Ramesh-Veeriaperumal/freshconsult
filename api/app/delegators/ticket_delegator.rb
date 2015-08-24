@@ -15,7 +15,7 @@ class TicketDelegator < SimpleDelegator
                                 validatable_custom_fields: proc { Helpers::TicketsValidationHelper.choices_validatable_custom_fields },
                                 drop_down_choices: proc { Helpers::TicketsValidationHelper.dropdown_choices_by_field_name },
                                 nested_field_choices: proc { Helpers::TicketsValidationHelper.nested_fields_choices_by_name },
-                                required_based_on_status: proc { |x| x.required_for_closure? },
+                                required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }
                             }
@@ -23,7 +23,7 @@ class TicketDelegator < SimpleDelegator
     errors.add(:requester_id, 'user_blocked') if requester && requester.blocked?
   end
 
-  def required_for_closure?
+  def required_based_on_status?
     Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
   end
 

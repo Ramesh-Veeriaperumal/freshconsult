@@ -37,7 +37,7 @@ class TicketValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { Helpers::TicketsValidationHelper.data_type_validatable_custom_fields },
-                                required_based_on_status: proc { |x| x.required_for_closure? },
+                                required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }
                            }, if: -> { errors[:custom_fields].blank? }
@@ -74,7 +74,7 @@ class TicketValidation < ApiValidation
     end
   end
 
-  def required_for_closure?
+  def required_based_on_status?
     Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
   end
 

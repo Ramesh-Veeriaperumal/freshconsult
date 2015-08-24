@@ -13,7 +13,7 @@ class ApiContactFieldsDependencyTest < ActionDispatch::IntegrationTest
 
   def test_validations_agent
     actual = ContactField.validators.collect { |x| [x.class, x.attributes, x.options] }
-    expected = [[ActiveRecord::Validations::UniquenessValidator, [:name], {:case_sensitive=>true, :scope=>[:account_id, :contact_form_id]}], [ActiveModel::Validations::PresenceValidator, [:name, :column_name, :position], {}]]
+    expected = [[ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: true, scope: [:account_id, :contact_form_id] }], [ActiveModel::Validations::PresenceValidator, [:name, :column_name, :position], {}]]
     assert_equal expected, actual
   end
 end

@@ -5,7 +5,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     if !sla_policy_delegator.valid?
       render_errors(sla_policy_delegator.errors, sla_policy_delegator.error_options)
     elsif !@item.save
-      render_errors(@item.errors)
+      render_errors(@item.errors) # not_tested
     end
   end
 

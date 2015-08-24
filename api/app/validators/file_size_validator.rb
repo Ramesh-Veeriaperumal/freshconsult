@@ -1,6 +1,6 @@
 class FileSizeValidator < ActiveModel::EachValidator
   include ActionView::Helpers::NumberHelper
-  
+
   def validate_each(record, attribute, value)
     return unless value.respond_to?(:size)
     new_size = (value.is_a? Array) ? value.map(&:size).inject(:+) : value.size

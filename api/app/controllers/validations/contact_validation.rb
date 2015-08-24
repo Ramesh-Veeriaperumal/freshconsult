@@ -9,9 +9,9 @@ class ContactValidation < ApiValidation
   validates :company_id,  required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' }
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :custom_fields, custom_field: { custom_fields: {
-      validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields },
-      required_attribute: :required_for_agent
-    }
+    validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields },
+    required_attribute: :required_for_agent
+  }
   }, if: -> { custom_fields.is_a?(Hash) }
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, allow_nil: true
   validates :job_title, data_type: { rules: String }, allow_nil: true

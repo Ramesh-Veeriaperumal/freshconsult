@@ -17,7 +17,7 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
 
     # index
     v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/agents', nil, @headers) }
-    v1[:index] = count_queries { get("/agents.json", nil, @headers) }
+    v1[:index] = count_queries { get('/agents.json', nil, @headers) }
 
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
@@ -30,6 +30,5 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       assert v2[key] <= v1[key]
       assert_equal v2_expected[key], v2[api_key]
     end
-
   end
 end
