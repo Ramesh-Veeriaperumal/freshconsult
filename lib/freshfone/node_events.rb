@@ -4,6 +4,7 @@ module Freshfone::NodeEvents
 	include Redis::IntegrationsRedis
 
   def notify_socket(channel, message)
+    message.merge!({:enqueued_time => Time.now})
     Freshfone::NodeWorker.perform_async(message, channel, freshfone_node_session)
   end
 
