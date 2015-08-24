@@ -277,6 +277,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Rails.logger.info "Created at::: #{self.created_at}"
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
     #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
     if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))

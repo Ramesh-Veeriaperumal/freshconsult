@@ -39,7 +39,7 @@ class Freshfone::Number < ActiveRecord::Base
 	
 	DEFAULT_WAIT_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_Long_Winter.mp3"
 	DEFAULT_QUEUE_MUSIC = "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
-	DEFAULT_WAIT_LOOP = 5
+	DEFAULT_WAIT_LOOP = 1
 
 	TYPE = [
 		[:local, 'local', 1],
@@ -196,7 +196,7 @@ class Freshfone::Number < ActiveRecord::Base
 	end
 
 	def play_wait_message(xml_builder)
-		wait_message.speak(xml_builder) unless wait_message.blank?
+		wait_message.speak(xml_builder, 5) unless wait_message.blank?
 	end
 	
 	def message_changed?
