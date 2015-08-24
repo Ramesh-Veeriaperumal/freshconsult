@@ -16,8 +16,8 @@
 		<div class="control-label"><%= t('.allow_signup') %></div>
 		<div class="controls">
 			<%= feature_radio_button({
-					:signup_link => t('plain_yes'), 
-					:default => t('plain_no') }) %> 
+					:signup_link => t('plain_yes'),
+					:default => t('plain_no') }) %>
 		</div>
 	</div>
 
@@ -107,6 +107,21 @@
 	</div>
 <% end %>
 <div class="clear"></div>
+<div class="portal-section">
+	<%= content_tag( :div,  t('.portal_security'), :class => "heading" ) %>
+	<div class="control-group">
+		<div class="control-label">
+			<%= t('.enable_public_urls') %>
+			<%= content_tag( :div, t('.enable_public_urls_help'), :class => "muted" ) %>
+		</div>
+		<div class="controls">
+			<%= feature_radio_button({
+					:public_ticket_url => t('plain_yes'),
+					:default => t('plain_no'), 
+					}) %>
+		</div>
+	</div>
+</div>
 <div class="form-button itil-hide">
 	<%= pjax_link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
 	<%= f.submit t('save'), { :class => "btn btn-primary" } %>

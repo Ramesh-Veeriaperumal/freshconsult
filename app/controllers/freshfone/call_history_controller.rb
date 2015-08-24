@@ -1,6 +1,6 @@
 class Freshfone::CallHistoryController < ApplicationController
 	include Freshfone::CallHistory
-    include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
 	before_filter :set_cookies_for_filter, :only => [:custom_search, :export]
 	before_filter :get_cookies_for_filter, :only => [:index, :export]

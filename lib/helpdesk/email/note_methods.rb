@@ -7,6 +7,8 @@ module Helpdesk::Email::NoteMethods
     self.note = ticket.notes.build(note_params)     
     set_note_source
     note.subject = Helpdesk::HTMLSanitizer.clean(email[:subject])
+    check_for_auto_responders(note, email[:headers])
+    check_support_emails_from(note, user, account)
   end
 
   def set_note_source

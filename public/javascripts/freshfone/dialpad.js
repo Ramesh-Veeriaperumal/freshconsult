@@ -26,6 +26,7 @@
 		showOn: 'none',
 		onKeypress: function (key, value, inst) {
 			if (freshfonecalls.isOngoingCall()) {
+				console.log("Sending digits...");
 				freshfonecalls.tConn.sendDigits(key);
 			}
 			clearTimeout(timeout);
@@ -131,7 +132,7 @@
 	            $outgoing_numbers_list.select2({
 	            	dropdownCssClass: "outgoing_numbers_list_dropdown",
 	            	minimumResultsForSearch: 5,
-	            	attachtoContainerClass: ".popupbox-content",
+	            	attachtoContainerClass: ".freshfone_content_container.popupbox-content",
 
 		            formatResult: function(result, container,query){
 	                    var name = freshfone.namesHash[result.id],

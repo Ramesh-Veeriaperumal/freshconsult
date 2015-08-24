@@ -280,7 +280,7 @@ module ApiDiscussions
       forum = first_topic.forum
       forum.update_column(:forum_type, 2)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
-      match_json([bad_request_error_pattern('stamp_type', "Allowed values are '1,4,5,2,3,nil'")])
+      match_json([bad_request_error_pattern('stamp_type', 'is not valid')])
       assert_response :bad_request
     end
 

@@ -5,10 +5,21 @@
 	</li><li class="call_details no_action">
 		<div id="incall_user_info"></div>
 		<a href="#" id="call_timings" class="call_duration">00:00</a>
-	</li><li>
+	</li>
+	<li>
 		<a href="#no_popup" id="mute" class="mute tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.mute') %>"><%= font_icon "ff-mic", :size => 16 %><%= font_icon "ff-mute", :size => 16 %></a>
-	</li><li>
+	</li>
+	<% if current_account.features?(:freshfone_conference) %>
+	<li>
+		<a href="#no_popup" id="hold" class="hold tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.hold') %>">
+			 <%= font_icon "ff-hold", :size => 15, :class => "ff-hold-button" %>
+			 <div class='sloading loading-tiny ff-loader loading-align-center'></div>
+			</a>
+	</li>
+	<% end %>
+	<li>
 		<a href="#freshfone_available_agents" class="transfer_call tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.transfer_call') %>"><%= font_icon "arrow-right-2", :size => 16 %></a>
 	</li><li>

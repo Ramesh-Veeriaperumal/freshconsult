@@ -1,5 +1,5 @@
 class Freshfone::CallTransfer
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	attr_accessor :params, :current_account, :current_user, :current_number, :call_sid
 	
 	def initialize(params={}, current_account=nil, current_number=nil, current_user=nil)
@@ -7,7 +7,7 @@ class Freshfone::CallTransfer
 		self.current_account = current_account
 		self.current_number = current_number
 		self.current_user = current_user
-		self.call_sid = params[:call_sid]
+		self.call_sid = params[:CallSid] || params[:call_sid]
 	end
 	
 	def initiate
@@ -61,19 +61,43 @@ class Freshfone::CallTransfer
 		end
 
 		def transfer_incoming_call_url
-			"#{host}/freshfone/call_transfer/transfer_incoming_call?id=#{params[:id]}&source_agent=#{self.current_user.id}"
+			"#{host}/freshfone/call_transfer/transfer_incoming_call?id=#{params[:target]}&source_agent=#{self.current_user.id}"
 		end
 
 		def transfer_outgoing_call_url
-			"#{host}/freshfone/call_transfer/transfer_outgoing_call?id=#{params[:id]}&source_agent=#{self.current_user.id}"
+			"#{host}/freshfone/call_transfer/transfer_outgoing_call?id=#{params[:target]}&source_agent=#{self.current_user.id}"
 		end
 
 		def transfer_incoming_to_group_url
-			"#{host}/freshfone/call_transfer/transfer_incoming_to_group?id=#{params[:id]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
+			"#{host}/freshfone/call_transfer/transfer_incoming_to_group?id=#{params[:target]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
 		end
 
 		def transfer_outgoing_to_group_url
-			"#{host}/freshfone/call_transfer/transfer_outgoing_to_group?id=#{params[:id]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
+			"#{host}/freshfone/call_transfer/transfer_outgoing_to_group?id=#{params[:target]}&source_agent=#{self.current_user.id}#{group_transfer_url}"
+		end
+
+		def transfer_incoming_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_incoming_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_outgoing_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_outgoing_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_incoming_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_incoming_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_outgoing_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_outgoing_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_incoming_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_incoming_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
+		end
+
+		def transfer_outgoing_to_external_url
+			"#{host}/freshfone/call_transfer/transfer_outgoing_to_external?number=#{params[:external_number]}&source_agent=#{self.current_user.id}"
 		end
 
 		def transfer_incoming_to_external_url

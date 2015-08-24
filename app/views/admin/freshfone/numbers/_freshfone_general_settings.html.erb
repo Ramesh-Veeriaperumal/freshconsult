@@ -71,13 +71,21 @@
 		</div>
 	</div>
 
-	<div class="control-group">
-		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
-		<div class="controls">
-			<div class="freshfone-controls non_availability_message"></div>
+	<% if current_account.features?(:freshfone_conference) %>
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.wait_music') %></label>
+			<div class="controls">
+				<div class="freshfone-controls wait_message"></div>
+			</div>
 		</div>
-	</div>
 
+		<div class="control-group">
+			<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.hold_music') %></label>
+			<div class="controls">
+				<div class="freshfone-controls hold_message"></div>
+			</div>
+		</div>
+	<% end %>
 
 	<div class="control-group">
 		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.max_queue_calls') %></label>
@@ -93,9 +101,16 @@
 				</div>
 			</div>
 			<div class="queue_setting_div togglable_message">
-				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.wait_message') %></label>
+				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.queue_message') %></label>
 				<div class="freshfone-controls on_hold_message"></div>
 			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label settings-label"><%= t('freshfone.admin.number_settings.non_availability_message') %></label>
+		<div class="controls">
+			<div class="freshfone-controls non_availability_message"></div>
 		</div>
 	</div>
 

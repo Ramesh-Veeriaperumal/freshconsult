@@ -313,7 +313,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_TOKEN_BY_KEY[priority]
   end
 
-  def populate_access_token #for generating access_token for old tickets
+  def get_access_token #for generating access_token for old tickets
     set_token
     schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
   end
@@ -867,10 +867,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :requester
       },
       created_since: {
-        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
+        conditions: ['helpdesk_tickets.created_at >= ?', ticket_filter.try(:created_since).try(:to_time).try(:utc)]
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end

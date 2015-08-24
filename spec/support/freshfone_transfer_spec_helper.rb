@@ -65,5 +65,4 @@ module FreshfoneTransferSpecHelper
     twilio_call.stubs(:parent_call_sid).returns(@parent_call.call_sid)
     Twilio::REST::Calls.any_instance.stubs(:get).returns(twilio_call)
   end
-
 end

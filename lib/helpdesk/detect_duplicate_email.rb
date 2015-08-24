@@ -47,18 +47,38 @@ module Helpdesk::DetectDuplicateEmail
 
   def calculate_received_time
     headers = Mail::Header.new params[:headers]
-    headers[:received][0].to_s.to_time if headers[:received].any?
+    if headers[:received].present?
+      reveived_header = headers[:received].respond_to?(:first) ? headers[:received][0] : headers[:received]
+      reveived_header.to_s.to_time || Time.now.utc
+    else
+      check_for_date_header(headers)
+    end
+  rescue ArgumentError => e
+    check_for_date_header(headers)
   rescue Exception => e
+    notify_error(e)
+    Time.now.utc
+  end
+
+  def check_for_date_header(headers)
+    headers[:date].to_s.to_time if headers[:date].present?
+  rescue
+    notify_error(e)
+    Time.now.utc
+  end
+
+  def notify_error(e)
     subject = "ProcessEmail :: Received Time Calculation Error - Account ID #{Account.current.id}"
     msg     = {
-      :account_id => Account.current.id,
-      :subject    => params[:subject],
-      :headers    => params[:headers]
+      :account_id    => Account.current.id,
+      :subject       => params[:subject],
+      :headers       => params[:headers],
+      :error_subject => e.message,
+      :error_trace   => e.backtrace
     }
     NewRelic::Agent.notice_error(e, msg)
     Rails.logger.debug msg.to_json
     DevNotification.publish(email_topic, subject, msg.to_json)
-    nil
   end
 
   def email_topic

@@ -10,6 +10,23 @@ module EmailHelper
   MAX_TIMEOUT = 7 # Sendgrid's timeout is 25 seconds
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
+
+
+  def check_for_auto_responders(model, headers)
+    model.skip_notification = true if auto_responder?(headers)
+  end
+
+  def check_support_emails_from(model, user, account)
+    model.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
+  end
+
+  def auto_responder?(headers)
+    headers.present? && check_headers_for_responders(Hash[JSON.parse(headers)])
+  end
+
+  def check_headers_for_responders header_hash
+    (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
+  end
 	
 	def attachment_exceeded_message size
 		I18n.t('attachment_limit_failed_message', :size => number_to_human_size(size)).html_safe

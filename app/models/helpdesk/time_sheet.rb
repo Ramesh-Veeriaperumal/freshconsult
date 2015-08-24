@@ -116,11 +116,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       },
 
       executed_after: {
-        conditions: ['`helpdesk_time_sheets`.`executed_at` >= ?', Time.zone.parse(filter_options[:executed_after].to_s) ]
+        conditions: ['`helpdesk_time_sheets`.`executed_at` >= ?', filter_options[:executed_after].try(:to_time).try(:utc) ]
       },
 
       executed_before: {
-        conditions: ['`helpdesk_time_sheets`.`executed_at` <= ?', Time.zone.parse(filter_options[:executed_before].to_s) ]
+        conditions: ['`helpdesk_time_sheets`.`executed_at` <= ?', filter_options[:executed_before].try(:to_time).try(:utc) ]
       },
 
       agent_id: {
