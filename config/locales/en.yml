@@ -1420,7 +1420,7 @@ en:
       clone_rule:
         title: Supervisor - Clone Rule
     observer_rules:
-      info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
+      info_help_1: "For any event performed in a ticket, the Observer rules let you trigger specific actions."
       survey_disabled_rule: Surveys are disabled. Rules associated with survey might not work as expected.
       index:
         human_name: Observer Rule
@@ -4565,6 +4565,7 @@ en:
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?
+        delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Ticket
         tickets: Tickets

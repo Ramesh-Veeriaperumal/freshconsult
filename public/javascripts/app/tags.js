@@ -108,39 +108,10 @@ $(document).ready(function(){
     });
 
 
-    $('.tag-list').on('click.tag_index', '#tag-delete', function(e) {
-
-        //TODO:DIALOG remove dialog and convert to Bootstrap dialog
-        $( "#tag-delete-confirm" ).dialog({
-            resizable: false,
-            height: 150,
-            modal: true,
-            buttons: {
-
-                Cancel: {
-                    text:"Cancel",
-                    class:"btn",
-                    click:function() {
-                        $( this ).dialog( "close" );
-                    }
-                },
-
-                "Delete Tags": {
-                    text:"Delete Tags",
-                    class:"btn btn-primary",
-                    click:function() {
-                        var form = $("#tags-expanded");
-                        form.submit();
-                        $( this ).dialog( "close" );
-                    }
-                }
-
-
-            }
-        });
-
-    })
-
+    $( "#tag-delete-confirm-submit" ).live('click', function(e) {
+        $( "#tag-delete-confirm" ).modal('hide');
+        $("#tags-expanded").submit();
+    });
 
     var tag_sort = function(){
 
