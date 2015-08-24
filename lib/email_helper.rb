@@ -11,6 +11,14 @@ module EmailHelper
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
 
+  def verify_inline_attachments(item, content_id)
+    content = "cid:#{content_id}"
+    if item.is_a? Helpdesk::Ticket
+      item.description_html.include?(content)
+    elsif item.is_a? Helpdesk::Note
+      item.body_html.include?(content) || item.full_text_html.include?(content)
+    end
+  end
 
   def check_for_auto_responders(model, headers)
     model.skip_notification = true if auto_responder?(headers)

@@ -520,10 +520,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       Integer(params[:attachments]).times do |i|
         begin
+          content_id = content_ids["attachment#{i+1}"] && 
+                        verify_inline_attachments(item, content_ids["attachment#{i+1}"])
           att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_ids["attachment#{i+1}"])
+                  params["attachment#{i+1}"], i, content_id)
           if att.is_a? Helpdesk::Attachment
-            if content_ids["attachment#{i+1}"]
+            if content_id
               content_id_hash[att.content_file_name+"#{i}"] = content_ids["attachment#{i+1}"]
               inline_attachments.push att
             else
