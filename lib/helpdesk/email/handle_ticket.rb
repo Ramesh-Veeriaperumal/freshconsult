@@ -52,7 +52,7 @@ class Helpdesk::Email::HandleTicket
     # Hitting S3 outside create-ticket transaction
     # attachable info will be updated on ticket save
     self.class.trace_execution_scoped(['Custom/Mailgun/ticket_attachments']) do
-      ticket.attachments = build_attachments(ticket)
+      ticket.attachments, ticket.inline_attachments = build_attachments(ticket)
     end
     self.class.trace_execution_scoped(['Custom/Mailgun/tickets']) do
       return if large_email(start_time) && duplicate_email?(email[:from][:email],
@@ -81,7 +81,7 @@ class Helpdesk::Email::HandleTicket
     # Hitting S3 outside create-note transaction
     # attachable info will be updated on note save
     self.class.trace_execution_scoped(['Custom/Mailgun/note_attachments']) do
-      note.attachments = build_attachments(note)
+      note.attachments, note.inline_attachments = build_attachments(note)
     end
     
     self.class.trace_execution_scoped(['Custom/Mailgun/notes']) do
@@ -103,13 +103,21 @@ class Helpdesk::Email::HandleTicket
 
 	def build_attachments item
     attachments = []
+    inline_attachments = []
     content_id_hash = {}
-    email[:attached_items].each_with_index do |(key,attached),i|
+    email[:attached_items].count.times do |i|
       begin
-        att = Helpdesk::Attachment.create_for_3rd_party(account, item, attached, i, cid(i), true)
+        content_id = cid(i) && verify_inline_attachments(item, cid(i))
+        att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
+                                                        email[:attached_items]["attachment-#{i+1}"], 
+                                                        i, content_id, true)
         if att.is_a? Helpdesk::Attachment
-          content_id_hash[att.content_file_name+"#{i}"] = cid(i) if cid(i)
-          attachments.push att
+          if content_id
+            content_id_hash[att.content_file_name+"#{i}"] = cid(i)
+            inline_attachments.push att
+          else
+            attachments.push att
+          end
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex
         Rails.logger.error("ERROR ::: #{ex.message}")
@@ -121,7 +129,7 @@ class Helpdesk::Email::HandleTicket
       end
     end
     item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
-    attachments
+    return attachments, inline_attachments
 	end
 
   # Content-id for inline attachments

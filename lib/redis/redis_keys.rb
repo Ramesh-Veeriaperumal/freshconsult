@@ -46,19 +46,20 @@ module Redis::RedisKeys
 	FRESHFONE_DISABLED_WIDGET_ACCOUNTS = "FRESHFONE:DISABLED_WIDGET_ACCOUNTS"
 	FRESHFONE_LOW_CREDITS_NOTIFIY = "FRESHFONE:LOW_CREDITS_NOTIFIY"
 	FRESHFONE_AUTORECHARGE_TIRGGER = "FRESHFONE:AUTORECHARGE_TRGGER:%{account_id}"
+	FRESHFONE_CALL = "FRESHFONE:CALL:%{account_id}:%{child_sid}"
 	ADMIN_FRESHFONE_FILTER = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}"
-	
+	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
-	
+
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
-	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}" 
+	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}"
 	SEARCH_KEY = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}"
-	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}" 
+	ZENDESK_IMPORT_STATUS = "ZENDESK_IMPORT_STATUS:%{account_id}"
 	STREAM_RECENT_SEARCHES = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}"
 	STREAM_VOLUME = "STREAM_VOLUME:%{account_id}:%{stream_id}"
-	USER_OTP_KEY = "USER_OTP_KEY:%{email}" 
+	USER_OTP_KEY = "USER_OTP_KEY:%{email}"
 	MOBILE_NOTIFICATION_MESSAGE_CHANNEL = "MOBILE_NOTIFICATION_MESSAGE_CHANNEL_%{channel_id}"
 	MOBILE_NOTIFICATION_REGISTRATION_CHANNEL = "MOBILE_NOTIFICATION_REGISTRATION_CHANNEL"
 
@@ -66,20 +67,23 @@ module Redis::RedisKeys
 	RIAK_FAILED_TICKET_DELETION = "RIAK:FAILED_TICKET_DELETION"
 	RIAK_FAILED_NOTE_CREATION = "RIAK:FAILED_NOTE_CREATION"
 	RIAK_FAILED_NOTE_DELETION = "RIAK:FAILED_NOTE_DELETION"
-	
+
 	REPORT_TICKET_FILTERS = "REPORT_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}:%{report_type}"
 	TICKET_DISPLAY_ID = "TICKET_DISPLAY_ID:%{account_id}"
 	DISPLAY_ID_LOCK = "DISPLAY_ID_LOCK:%{account_id}"
 
 	SPAM_MIGRATION = "SPAM_MIGRATION:%{account_id}"
 	USER_EMAIL_MIGRATED = "user_email_migrated"
-	
+
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
 	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
+	COMPOSE_EMAIL_ENABLED = "COMPOSE_EMAIL_ENABLED"
 	BI_REPORTS_UI_ENABLED = "BI_REPORTS_UI"
 
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
+
+	GLOBAL_PUBLIC_TICKET_URL_ENABLED = "GLOBAL_PUBLIC_TICKET_URL_ENABLED"
 
 	def newrelic_begin_rescue
 	    begin
@@ -87,7 +91,7 @@ module Redis::RedisKeys
 	    rescue Exception => e
 	      NewRelic::Agent.notice_error(e)
 	      return
-	    end 
+	    end
   	end
 
 	# def increment(key)
@@ -168,7 +172,7 @@ module Redis::RedisKeys
 	# 		length = $redis.llen(key)
 	# 		$redis.lrange(key,0,length - 1)
 	#   rescue Exception => e
-	#   	NewRelic::Agent.notice_error(e,{:key => key, 
+	#   	NewRelic::Agent.notice_error(e,{:key => key,
  #        :value => length,
  #        :description => "Redis issue",
  #        :count => count})

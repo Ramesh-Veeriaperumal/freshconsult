@@ -181,7 +181,12 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
     t.integer "application_id", :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.integer "account_id", :limit => 8
   end
+
+  add_index "app_business_rules", ["installed_application_id"], :name => 'index_app_business_rules_on_installed_app_id'
+  add_index "app_business_rules", ["va_rule_id"], :name => 'index_app_business_rules_on_varule_id'
 
   create_table "applications", :force => true do |t|
     t.string  "name"
@@ -192,6 +197,9 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
   end
+
+  add_index "applications", ["name"], :name => "index_applications_on_name"
+  add_index "applications", ["account_id"], :name => "index_applications_on_account_id"
 
   create_table "article_tickets", :force => true do |t|
     t.integer "article_id", :limit => 8
@@ -1217,10 +1225,16 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.integer  "group_id",            :limit => 8
     t.boolean  "recording_deleted",                     :default => false
     t.text     "recording_deleted_info"
+    t.string   "conference_sid",      :limit => 50
+    t.string   "hold_queue",          :limit => 50
+    t.integer  "hold_duration",       :limit => 11     
+    t.integer  "total_duration",      :limit => 11
+    t.boolean  "business_hour_call",                    :default => false
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "freshfone_calls", ["account_id", "conference_sid"], :name => "index_freshfone_calls_on_account_id_and_conference_sid"
   add_index "freshfone_calls", ["account_id", "created_at"], :name => "index_freshfone_calls_on_account_id_and_created_at"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
   add_index "freshfone_calls", ["account_id", "customer_id", "created_at"], :name => "index_ff_calls_on_account_id_customer_id_created_at"
@@ -1318,6 +1332,8 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.integer  "rr_timeout",                                                              :default => 10
     t.integer  "ringing_time",                                                            :default => 30
     t.boolean  "recording_visibility",                                                    :default => true
+    t.text     "wait_message"
+    t.text     "hold_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1386,6 +1402,8 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.text     "meta_info"
     t.integer  "device_type"
     t.integer  "transfer_by_agent", :limit => 8
+    t.text     "pinged_agents"
+    t.integer  "hunt_type",  :limit => 1
   end
 
   add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
@@ -2020,6 +2038,7 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
   end
 
   add_index "installed_applications", ["account_id"], :name => "index_account_id_on_installed_applications"
+  add_index "installed_applications", ["account_id","application_id"], :name => "index_installed_applications_on_account_id_and_application_id"
 
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
@@ -2031,6 +2050,8 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.datetime "updated_at"
   end
 
+  add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
+
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2039,6 +2060,8 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0

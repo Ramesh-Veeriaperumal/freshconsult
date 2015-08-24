@@ -154,5 +154,7 @@ class Import::Customers::Base
   def cleanup_file
     FileUtils.rm_f(failed_file_path) unless @failed_items.blank?
     AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
+  rescue => e
+    NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
   end
 end

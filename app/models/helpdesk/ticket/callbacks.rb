@@ -4,7 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :set_default_values
 
-	before_validation :set_token, on: :create
+  before_create :set_outbound_default_values, :if => :outbound_email?
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
 
@@ -27,6 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :send_outbound_email, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :user_present?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
@@ -42,6 +43,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
 
+
+  def set_outbound_default_values
+    if User.current.try(:id) and User.current.agent?
+      self.responder_id ||= User.current.id
+    end
+    
+    if email_config
+      self.to_emails = [email_config.reply_email]
+      self.to_email = email_config.reply_email
+    end
+  end
 
   def construct_ticket_old_body_hash
     {
@@ -83,6 +95,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     ticket_states.status_updated_at    = created_at || Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
+    #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
+    if outbound_email?
+      ticket_states.inbound_count = 0 
+      ticket_states.outbound_count = 1
+    end
   end
 
   def update_sender_email
@@ -178,7 +195,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless import_id
+    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
   end
   
   def delayed_rule_check current_user, freshdesk_webhook
@@ -260,7 +277,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Rails.logger.info "Created at::: #{self.created_at}"
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
+    if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
+      old_time_zone = Time.zone
+      TimeZone.set_time_zone
+      NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
+      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    end
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
@@ -409,7 +434,7 @@ private
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone, :language => language }}, 
-        portal) # check @requester_name and active
+        portal, !outbound_email?) # check @requester_name and active
       
       self.requester = requester
     end
@@ -421,10 +446,10 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index| 
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
@@ -465,11 +490,13 @@ private
   end
 
   def set_token   
-    self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    self.access_token ||= generate_token
   end
 
-  def generate_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+  def generate_token
+    # using Digest::SHA2.hexdigest for a 64 char hash
+    # using ticket id, current account id along with Time.now
+    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
   end
 
   def fire_update_event

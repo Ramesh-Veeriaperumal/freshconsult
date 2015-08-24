@@ -176,6 +176,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
+  outbound_email: Outbound Email
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook User
@@ -273,10 +274,12 @@ en:
     url: URL
     decimal: Decimal
     date: Date
+    delete: Delete
     regex: Regex
     email: Email
-    nested_field: Nested Fields
+    nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
+    default_field_error: Default fields cannot be dropped into section
   ticket_fields:
     fields:
       source: Source
@@ -293,6 +296,7 @@ en:
       tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
+    properties: Properties
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
@@ -317,7 +321,7 @@ en:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
-      nested_label: "Nested field labels"
+      nested_label: "Dependent field labels"
       level: "Level"
       level1: "Level 1"
       level2: "Level 2"
@@ -726,7 +730,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -798,7 +802,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -855,6 +859,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
+        portal_security: "Portal Security"
+        enable_public_urls: "Enable public ticket URL"
+        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -2003,6 +2010,7 @@ en:
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
+      domain_restriction: Domain restriction in place. This email is not allowed.
 
     freshfone:
       credits:
@@ -2221,6 +2229,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
@@ -2272,6 +2281,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
+  requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
@@ -2392,6 +2402,9 @@ en:
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} created a ticket"
+        long: "{{user_path}} created a ticket {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -3733,6 +3746,8 @@ en:
     welcome: Welcome
     new_ticket: New
     new_ticket_tip: New ticket
+    new_phone_ticket: Ticket
+    compose_email: Email
     search: Search ( / )
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
@@ -4032,6 +4047,7 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
+    outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
     ticket_updated: Ticket updated
@@ -4041,6 +4057,7 @@ en:
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_from: "From: %{username}"
+    ticket_to: "To: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -4150,7 +4167,11 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
+    learn_more: Learn more
+    submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications"
+    submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
       post_to_linked_forum: Post in linked forum
@@ -4441,6 +4462,15 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    send_email: Send an email
+    send: Send
+    send_and_new: Send and <strong> New </strong>
+    enter_subject: Enter Subject...
+    from: "From:"
+    to: "To:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:
@@ -6599,6 +6629,8 @@ en:
       voicemail: "Voicemail"
       restricted: "Restricted"
       all_calls: "All Calls"
+      answered: "Answered"
+      on-hold: "On Hold"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
@@ -6613,6 +6645,9 @@ en:
       accept: "Accept"
       end_call: "End Call"
       mute: "Mute"
+      hold: "Hold"
+      holding: "Sorry unable to hold.. \n Please try again later..."
+      hold_success: "Now call on hold"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       call_notes: "Call Notes"
@@ -6648,6 +6683,20 @@ en:
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
       network_error: "Check your Internet Connection"
+      transfer:
+        tranfer_via: "via "
+        to: "To: "
+        transferring: "Transferring..."
+        transfer_canceled: "Ignored"
+        tranfer_no_answer: "Not available"
+        tranfer_connected: "Transferred"
+        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_connected: "Connected with customer"
+        close: "Close"
+        resume: "Resume"
+        cancel: "Cancel"
+        cancelling: "Cancelling..."
+        resuming: "Resuming..."
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"
@@ -6713,6 +6762,8 @@ en:
       	unknown: "UNKNOWN"
       	anonymous: "ANONYMOUS"
       	empty: "EMPTY"
+      total_duration: "Duration"
+      minutes: "Minutes"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6765,7 +6816,7 @@ en:
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
-        wait_message: "Wait Message"
+        queue_message: "Queue Message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
         non_business_hours_message: "Non-Business hours message"
@@ -6780,7 +6831,8 @@ en:
         recorded_voice: "Recorded Voice"
         audio_upload: "Select file to upload"
         greeting_message: "Enter your message here"
-        attachment_help_info: "Accepts audio files < 5mb"
+        attachment_help_info: "Accepts audio file (mp3) < 5mb"
+        attachment_help_text: "Accepts audio file (mp3) < 5mb"
         recording_help_info: "Turn on the microphone. Duration < 5 mins."
         cancel: "Cancel"
         change: "Change"
@@ -6798,6 +6850,8 @@ en:
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
         number_accessible: "Accessible by"
+        wait_music: "Wait Music"
+        hold_music: "Hold Music"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
@@ -6931,7 +6985,6 @@ en:
     chat_availability: "Chat Availability"
     show_chat_hours: "Show chat"
     show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
-    show_chat_hours_info: "Note: Chat window will appear only when agents are available."
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select Business Hour"
@@ -7077,7 +7130,6 @@ en:
     chatsettings_save: "Your changes have not been saved. Save changes?"
     transfer_accepted_msg: "Visitor transfer accepted"
     transfer_request_timeout_msg: "Transfer request timed out"
-    integrate_freshchat_info: "Note: Chat window will appear only when agents are online."
     click_to_go_online: "Not accepting visitor chats"
     click_to_go_offline: "Accepting visitor chats"
     fetching: "Please wait"
@@ -7145,6 +7197,7 @@ en:
     agent_initiated : "Agent Initiated"
     agent_to_agent : "Agent to Agent"
     missed_chat : "Missed"
+    spam_chat: "Spam"
     filter: "Filter"
     close: "Close"
     visitorId: "Visitor ID"
@@ -7177,6 +7230,15 @@ en:
     missed_chat_info: "Chat has been missed.!"
     change_livechat_tone: "LiveChat Notification Tone"
     message: "Message"
+    unmark_spam: "Mark As Not Spam"
+    mark_spam: "Mark As Spam"
+    convert: "Convert"
+    add_note: "Add Note"
+    conversation: "Conversation"
+    and: "and"
+    via_widget: "via"
+    reported: "reported"
+    view_ticket: "view ticket"
   facebook_tab:
     remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"

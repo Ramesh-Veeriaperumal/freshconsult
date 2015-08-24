@@ -12,7 +12,7 @@
 </div>
 <ul class="info">
 	<% if(visitorData.custom_field1 != null){ %> <li><%=visitorData.widget.textfield.title%> : <%=visitorData.custom_field1 %></li> <% } %>
-	<% if(visitorData.custom_field2 != -1 && visitorData.custom_field2 != null) { %> <li><%=visitorData.widget.dropdown.title%> : <%=visitorData.custom_field2 %></li> <% } %>
+	<% if(visitorData.custom_field2 && visitorData.custom_field2 != -1) { %> <li><%=visitorData.widget.dropdown.title%> : <%=visitorData.custom_field2 %></li> <% } %>
 	<li><i class="ficon-map-marker"></i><%=(visitorData.location == null )? "Unknown" : visitorData.location %></li>
 	<%if(userAgent){ %>
 	<li><i class="ficon-web-page"></i><a href="<%=userAgent.page%>" alt="<%=userAgent.page%>" title="<%=userAgent.page%>" target="_blank"><%=userAgent.title%></a></li>

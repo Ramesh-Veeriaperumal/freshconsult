@@ -16,7 +16,10 @@ jQuery('body').on('assetLoaded.fjax', function() {
 		</div>
 	  <%else%>		
 	   	<%= error_messages_for :user %>
-	   	<%= error_messages_for :user_emails %>
+	   	<% @user.user_emails.each do |user_email|%>
+	   	<% next if user_email.primary_role %>
+	   	<%= error_messages_for user_email %>
+	   	<% end unless @user.errors.any? %>
 	 <%end%>
 	 	 
 <div class="row-fluid">

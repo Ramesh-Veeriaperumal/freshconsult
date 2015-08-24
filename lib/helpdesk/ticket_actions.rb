@@ -192,6 +192,7 @@ module Helpdesk::TicketActions
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
     @note.attachments.update_all({:attachable_type =>"Helpdesk::Ticket" , :attachable_id => @item.id})
+    @note.inline_attachments.update_all({:attachable_type =>"Inline" , :attachable_id => @item.id})
   end
 
   def move_cloud_files #added to support cloud_file while spliting tickets

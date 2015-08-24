@@ -104,7 +104,7 @@ include Freshfone::CallHistoryHelper
 
   def helpdesk_handle_time(call_list)
     sum = 0
-    answered =  helpdesk_calls_count(call_list) - unanswered_calls_count(call_list)
+    answered =  calls_count(call_list) - (all_unanswered(call_list) + direct_dial_count(call_list) + external_transfers_count(call_list))
     call_list.each do |calls|
       next if calls.agent_name.blank? || calls.total_duration.blank?
       sum += calls.total_duration

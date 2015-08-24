@@ -14,7 +14,7 @@ module Fdadmin::AccountsControllerMethods
 
 	def fetch_agents_details(account)
 		agent_array = []
-		account.agents.each do |agent|
+		account.agents.includes(:user).each do |agent|
 			agent_hash = {}
 			agent_hash[:email] = agent.user.email
 			agent_hash[:active] = agent.user.active

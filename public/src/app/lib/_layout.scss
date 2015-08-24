@@ -463,7 +463,7 @@ ul.header-tabs{
 		color:#000000;
 	}
 }
-a.new_ticket, .nav_search, .nav_settings{
+a.new_ticket_button, .nav_search, .nav_settings{
 	@include float(left);
 }
 .nav_settings {
@@ -507,8 +507,7 @@ a.new_ticket, .nav_search, .nav_settings{
 		}
 	}
 }
-
-a.new_ticket{
+.new_ticket_button{
 	@include text-shadow(rgba(0, 0, 0, 0.1) 1px 1px 1px);
 	padding: 8px 20px;
 	font-size: $default-font-size;
@@ -516,27 +515,76 @@ a.new_ticket{
 	text-decoration:none;
 	color:#fff;
 	position:relative; 
-	@include margin-right(80px);
+	cursor: pointer;
+	@include margin-right(85px);
 	span{ 
-		background:none;
-		&:before{
-			content:"+";
-			position:absolute; 
-		 	@include left(0); 
-			font-size:22px;
-			top:6px;
-			font-weight:bold;
+			background:none;
+			&:before{
+				content:"+";
+				position:absolute; 
+			 	@include left(0); 
+				font-size:22px;
+				top:6px;
+				font-weight:bold;
+			}
+		}
+		&:hover{
+			border-color:#606c88;
+			color:#ffffff;
+		}
+}
+.dropdown, .dropdown.open{
+	a.dropdown-toggle.new_ticket_button{
+		color:#fff;
+		.caret{
+			border-top: 4px solid #fff;
 		}
 	}
-	&:hover{
-		border-color:#606c88;
-		color:#ffffff;
+}
+
+.dropdown-menu.new-ticket-dropdown{
+	top: 38px;
+	left: -50px;
+	@include border-radius(4px);
+	min-width: 175px;
+	li{
+		@include padding(0px);
+		a{
+			@include padding-left(10px);
+		}	
+		span{
+			vertical-align: middle;
+			color: #ccc;
+			@include margin-right(10px);
+		}
+	}
+	&:before{
+		position: absolute;
+		top: -7px;
+		left: 77px;
+		display: inline-block;
+		border-right: 7px solid transparent;
+		border-bottom: 7px solid #ccc;
+		border-left: 7px solid transparent;
+		border-bottom-color: rgba(0, 0, 0, 0.2);
+		content: '';
+	}
+	&:after {
+		position: absolute;
+		top: -6px;
+		left: 78px;
+		display: inline-block;
+		border-right: 6px solid transparent;
+		border-bottom: 6px solid #ffffff;
+		border-left: 6px solid transparent;
+		content: '';
 	}
 }
+
 .nav_search{
 	height:33px;
 	position:relative;
-	@include margin(0 0 0 6px);
+	@include margin(0px);
 	div.search_bar{ 
 		height:100%;
 		width:90px;

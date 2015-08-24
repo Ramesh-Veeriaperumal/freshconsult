@@ -66,8 +66,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        :content_file_size => attached.tempfile.size.to_i
                       }
         write_options = { :content_type => attached.content_type }
-        if content_id
-          attributes.merge!({:description => "content_id"})
+        if attached.content_type.include?("image") && content_id
+          attributes.merge!({:description => "content_id", :attachable_type => "Inline"})
           write_options.merge!({:acl => "public-read"})
         end
 
@@ -200,10 +200,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    if attachable and self.attachable.class.name=="Account"
-      self.account_id = self.attachable_id
-    elsif attachable
-      self.account_id = attachable.account_id
+    unless self.account_id
+      if attachable and self.attachable.class.name=="Account"
+        self.account_id = self.attachable_id
+      elsif attachable
+        self.account_id = attachable.account_id
+      end
     end
   end
 

@@ -1,9 +1,8 @@
 class Freshfone::UsersController < ApplicationController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::Presence
 	include Freshfone::NodeEvents
-	include Redis::RedisKeys
-	include Redis::IntegrationsRedis
+	include Freshfone::CallsRedisMethods
  	include Freshfone::Queue
 
 	EXPIRES = 3600
@@ -70,7 +69,7 @@ class Freshfone::UsersController < ApplicationController
 		respond_to do |format|
 			format.any(:json, :nmobile) { render :json => {
 				:update_status => update_presence_and_publish_call(params),
-				:call_sid => outgoing? ? current_call_sid : nil } }
+				:call_sid => outgoing? ? current_call_sid : incoming_sid } }
 		end
 	end
 
@@ -96,11 +95,19 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def reset_presence
-			@freshfone_user.reset_presence.save
+			previuos_state_is_busy = @freshfone_user.busy?
+			presence_updated = @freshfone_user.reset_presence.save
+			unpublish_live_call if previuos_state_is_busy && presence_updated
+			presence_updated
 		end
 		
 		def current_call_sid
 			(current_user.freshfone_calls.call_in_progress || {})[:call_sid]
+		end
+
+		def incoming_sid
+			return unless current_account.features?(:freshfone_conference)
+			get_browser_sid
 		end
 		
 		def outgoing?
@@ -126,8 +133,9 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def call_meta_info
+			return update_conf_meta if current_account.features?(:freshfone_conference)
 			call = current_user.freshfone_calls.call_in_progress #either way its inprogress call for current agent
-			update_call_meta(call) unless call.blank? #sometimes in_call reaches after call:in_call and status is already not in-progress.
+			update_call_meta(call) unless call.blank?
 		end
  
 		def customer_in_progress_calls

@@ -16,6 +16,9 @@ class GoogleSignupController < AccountsController
     else
       render :associate_google
     end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      flash.now[:error] = t(:'flash.g_app.domain_restriction')
+      render :signup_google_error
   end
 
   def associate_local_to_google
@@ -27,6 +30,9 @@ class GoogleSignupController < AccountsController
     else
       render :associate_google
     end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      flash.now[:error] = t(:'flash.g_app.domain_restriction')
+      render :signup_google_error
   end
 
   private

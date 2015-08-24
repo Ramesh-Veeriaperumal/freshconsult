@@ -27,7 +27,7 @@
     if($(element).data('tweet-count') >= 0){
       return true;
     }
-  }, "Your Tweet was over 140 characters. You'll have to be more clever." );
+  }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
