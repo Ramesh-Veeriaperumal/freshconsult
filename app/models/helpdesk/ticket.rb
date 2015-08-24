@@ -191,6 +191,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       find_by_display_id_and_account_id(token, account.id)
     end
 
+    def find_all_by_param(token)
+      find_all_by_display_id(token)
+    end
+
     def extract_id_token(text, delimeter)
       pieces = text.match(Regexp.new("\\[#{delimeter}([0-9]*)\\]")) #by Shan changed to just numeric
       pieces && pieces[1]
@@ -270,6 +274,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
   end
 
+  def outbound_email?
+    Account.current.compose_email_enabled? and (source == SOURCE_KEYS_BY_TOKEN[:outbound_email])
+  end
+
+  #This method will return the user who initiated the outbound email
+  #If it doesn't exist, returning requester.
+  def outbound_initiator
+    return requester unless outbound_email? 
+    begin
+      meta_note = self.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+      meta = YAML::load(meta_note.body) unless meta_note.blank?
+      if !meta.blank? && meta["created_by"].present?
+        user_id = meta["created_by"] 
+        user = account.all_users.find_by_id(user_id) if user_id #searching all_users to handle if the initiator is deleted later.
+        user.present? ? user : requester
+      else
+        requester
+      end
+    rescue ArgumentError => e
+      Rails.logger.info ":::Outbound Email Exception - #{e.message}"
+      requester
+    end
+  end
+
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -282,7 +310,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_TOKEN_BY_KEY[priority]
   end
 
-  def populate_access_token #for generating access_token for old tickets
+  def get_access_token #for generating access_token for old tickets
     set_token
     schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
   end
@@ -328,7 +356,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation(page = nil, no_of_records = 5, includes=[])
-    notes.visible.exclude_source('meta').newest_first(:include => includes).paginate(:page => page, :per_page => no_of_records)
+    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
@@ -336,7 +364,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_before(before_id)
-    return notes.visible.exclude_source('meta').newest_first.before(before_id)
+    includes = [:survey_remark, :user, :attachments, :schema_less_note, :cloud_files, :note_old_body]
+    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(includes)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
@@ -403,7 +432,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_fwd_emails?(from_email)
-    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }) 
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.downcase.include?(from_email.downcase) }) 
   end
   
   def included_in_cc?(from_email)
@@ -542,7 +571,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
+    return false if [:empty?, :to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
@@ -781,7 +810,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def first_response_status
-    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+    #Hack: for outbound emails, first response status needs to be blank. 
+    (outbound_email? or first_response_time.nil?) ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
   end
 
   def requester_fb_profile_id

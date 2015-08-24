@@ -1170,8 +1170,8 @@ es-LA:
         feedbackwidget_text_button: "Botón de texto"
         feedbackwidget_image_button: "Botón de imagen"
         feedbackwidget_button_text_placeholder: Soporte
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personalizar botón"
         feedbackwidget_form_customization: "Personalizar formulario"
         feedbackwidget_embedded_code: "Código de widget insertado"

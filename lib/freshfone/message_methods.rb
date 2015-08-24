@@ -6,6 +6,8 @@ module Freshfone::MessageMethods
 		:transcript => 2
 	}
 
+	OPTIONAL_MESSAGES = [:wait_message, :hold_message]
+
 	def audio
 		@audio ||= attachments.select {|a| a.id == attachment_id }.first unless attachment_id.blank?
 	end
@@ -33,7 +35,13 @@ module Freshfone::MessageMethods
 	end
 	
 	private
+		
+		def is_optional?
+			 is_settings_page? && OPTIONAL_MESSAGES.include?(type)
+		end
+
 		def has_message?
+			return true if is_optional?
 			(recording? && has_recording_url?) ||
 			(uploaded_audio? && has_attachment?) ||
 			(transcript? && !message.blank?)
@@ -41,5 +49,9 @@ module Freshfone::MessageMethods
 
 		def has_invalid_size?
 			(transcript? && (message.length > 4096) )
+		end
+
+		def is_settings_page?
+			(self.class == Freshfone::Number::Message)
 		end
 end

@@ -7,7 +7,7 @@ namespace :reports do
         accounts.each do |account|
           begin
             account.make_current
-            Workers::Reports::BuildNoActivity.perform_async({:date => Time.now.utc})  
+            Reports::BuildNoActivity.perform_async({:date => Time.now.utc})  
           rescue Exception => e
             puts e.inspect
             puts e.backtrace.join("\n")

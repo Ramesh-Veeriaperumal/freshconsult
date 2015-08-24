@@ -81,6 +81,7 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -176,6 +177,7 @@ en:
   security_code: Security code
   example: example
   pending: Pending
+  outbound_email: Outbound Email
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook User
@@ -273,10 +275,12 @@ en:
     url: URL
     decimal: Decimal
     date: Date
+    delete: Delete
     regex: Regex
     email: Email
-    nested_field: Nested Fields
+    nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
+    default_field_error: Default fields cannot be dropped into section
   ticket_fields:
     fields:
       source: Source
@@ -293,6 +297,7 @@ en:
       tags: Tags
     saving_ticket: "Saving ticket fields..."
     untitled: Untitled
+    properties: Properties
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
@@ -317,13 +322,13 @@ en:
       form_title: "Field properties"
       behavior: "Behavior"
       label: "Field Label"
-      nested_label: "Nested field labels"
+      nested_label: "Dependent field labels"
       level: "Level"
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
       nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
-      nested_field_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
+      nested_field_helptext: "Use the below textarea to add or edit items in your dropdown. Indent items by pressing the tab key once or twice. We will convert it to dropdown items based on the indentation. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       drop_down_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Dropdown items - Preview"
@@ -332,6 +337,7 @@ en:
       sla_timer: "SLA timer"
       section_type_change: Please save the ticket form to see the latest changes that you have made to type field.
       nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
+      nested_field_helptext_preview: "This is the preview of sample dropdown items. Click \"Edit\" to change the values for each drop down."
       delete_field: "Delete field"
       field_label_agents: "Field label for agents"
       field_label_customer: "Field label for customers"
@@ -355,7 +361,8 @@ en:
       cc_company_contacts: Can CC only company contacts
       cc_any_email: Can CC any email address
       field_delete_disabled: You cant delete default fields
-      dropdown_choice_disabled: Default choice cant be deleted 
+      default_field_delete_disabled: Default fields cannot be deleted
+      dropdown_choice_disabled: Default choice cant be deleted
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
@@ -431,7 +438,7 @@ en:
   support:
     tickets:
       ticket_survey:
-        subject: Test mail for survey - %{title} 
+        subject: Test mail for survey - %{title}
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
         rating_sub_title: "You have rated us"
@@ -485,6 +492,8 @@ en:
         feedback_info: Your feedback is very much appreciated.
         feedback_optional: Feedback is optional
         send: Send
+        submit: Submit
+        additional_comments: Additional Comments
         thanks: Thank you very much for rating us!
         sorry: But, really sorry for the inconvenience.
         happy_info: It has been our pleasure to serve you. We are glad you are happy with our service.
@@ -722,7 +731,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -794,7 +803,7 @@ en:
         form_title: Properties
         behavior: "Behavior"
         label: "Label"
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Level 1"
         level2: "Level 2"
         level3: "Level 3"
@@ -836,7 +845,12 @@ en:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
     portal:
-      index:
+      delete_confirm:
+        title: "Deleting this portal will remove"
+        info1: "All the settings in portal customization"
+        info2: "All the linked solution and forum categories"
+      settings:
+        title: 'Customer Portals'
         portal_customizer_title: "Customer Portal Configuration"
         signup_login: "User Signup and Login"
         allow_signup: "Allow users to Sign Up from the customer portal"
@@ -846,6 +860,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
+        portal_security: "Portal Security"
+        enable_public_urls: "Enable public ticket URL"
+        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -868,6 +885,13 @@ en:
         moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
         moderate_none: "Do not Moderate"
         moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
+      helpnote:
+        title: Setting up your portals
+        tour: Help me configure my portal
+        info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
+        info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
+        info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
+        info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -1060,13 +1084,13 @@ en:
      error_updated: Error while updating survey settings.
      custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
      Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
      <br><br>
      <b>Agent survey and follow-up surveys</b><br>
-     You can ask one agent survey question and multiple follow-up survey questions. 
-     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey. 
+     You can ask one agent survey question and multiple follow-up survey questions.
+     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
      The observer rules and gamification points will be based only on the agent survey rating.<br>
      <br><br>
      <b>Points scale</b><br>
@@ -1094,6 +1118,27 @@ en:
      You can learn more about satisfaction surveys from our solutions page.
      </p>"
      limit_exceed_error: You can only add upto %{count} surveys.
+     custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
+     Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
+     <br><br>
+     <b>Satisfaction Survey</b><br>
+     You can ask one customer satisfaction survey question and additional survey questions.
+     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
+     The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
+     <br><br>
+     <b>Point scales</b><br>
+     You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
+      2 point (Eg: Yes, No)<br>
+      3 point (Eg: Agree, Undecided, Disagree)<br>
+      5 point (Eg: Always to Never)<br>
+      7 point (Eg: Very Poor to Exceptional)<br><br>
+
+      Once a customer takes the survey, the scales will be locked down and they cannot be edited.
+      </p>"
+
      questions:
         limit_exceed_error: You can only add upto %{count} questions.
      new_layout:
@@ -1107,26 +1152,37 @@ en:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
+        content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
+                      It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
+        survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
-        scale_text: You have chosen 
+        point_scale_v2: Point scale
+        scale_text: You have chosen
         scale: point scale
 
      new_thanks:
         survey_feedback: Survey Feedback Page
+        survey_feedback_v2: Thank You Page
         thanks_feedback: Thank you for your valuable feedback.
+        thanks_feedback_v2: Thank you. Your feedback has been submitted.
         additional_comments_feedback: Collect additional feedback
         comments_feedback: Add more details about customer experience.
         thanks_message_feedback: Thank you message for Feedback survey
+        thanks_message_feedback_v2: Thank you message for Additional Questions
         default_question_text: Are you satisfied with our customer support experience?
         thanks_label: Message will appear after submitting the feedback survey
+        thanks_label_v2: Message will appear after submitting feedback for additional questions.
         feedback_response_text: Thank you. Your feedback has been sent.
         help_text: Follow-up survey appears in a new page after the customer takes the agent survey.
+                    Questions can be about product/company/agent.
+        help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
                     Questions can be about product/company/agent.
 
      new_questions_layout:
         title_text: Select the points scale for your questions
+        title_text_v2: Select the point scale for your questions
         add_question: Add Question
         questions: Questions
 
@@ -1157,6 +1213,7 @@ en:
         delete_survey: Delete Survey
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
+        survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         on: ON
         off: OFF
 
@@ -1172,13 +1229,16 @@ en:
 
      thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
+        title_text_v2: Thank you message for Customer Satisfaction Survey.
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
+        label_text_v2: Additional Survey Questions
         question_error_text: Question has been already entered.
         empty_text: Question value cannot be blank.
 
      satisfaction_settings:
         enable_label: Customer Satisfaction Rating
+        enable_label_v2: Customer Satisfaction Survey
         satisfaction_text: I am satisfied with the service provided to me by
         link_text_label: Satisfaction survey link text
         link_text_input_label: How would you rate your overall satisfaction for the resolution provided by the agent?
@@ -1522,26 +1582,31 @@ en:
         heading1: Multiple Products
         content1: You can support multiple products with separate branded portals from a single Freshdesk account. Configure separate support emails for each product and automatically queue them in a specific group.
         heading2: Configuring a separate portal for products
+        heading3: Supporting Multiple Products
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
+        content3: You can configure portals for these products ​by clicking on the Admin tab and then 'Portals​'​
       new:
         title: New Product
         saving: Saving...
       portal:
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
-        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">mycompanyname</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
+        cname_configure_info: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point <strong>help.<b id="domain_info_name">yourcompany</b>.com</strong> to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
         select_solution_category: Select a Solution Category...
         solution_categories_info: You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal.
         forum_categories_info: You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal.
-        portal_settings: Portal settings
+        settings: Settings
         portal_name_info: The name will be displayed in your product portal next to the header logo
         portal_url: Portal URL
         solution_categories: Solution Categories
         forum_categories: Forum Categories
-        portal_name: Portal name
+        portal_name: Portal Name
         portal_language: Portal Language
+        default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
-        portal_customization: Portal customization
+        portal_customization: Portal Customization
+        portal_settings: Portal Settings
+        edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
@@ -1549,10 +1614,17 @@ en:
         ago: ago
         last_published: Your portal was last published
         contact_us: Contact us
-        logo_and_favicon: "Logo & favicon"
+        logo_and_favicon: "Logo & Favicon"
+        customer_portal: Customer Portal
+        portal_settings: Portal Settings
+        categories_visible: Portal Categories
+        product_label: "Product: %{product_name}"
       edit:
         title: Edit Product
         updating: Updating...
+      footer:
+        edit_portal: "Save & Edit Portal"
+        enable_portal: "Save & Enable Portal"
       form:
         configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
@@ -1561,7 +1633,7 @@ en:
         email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
-        product_name: Product name
+        product_name: Product Name
         product_desc: Description
         forwarding_email_info: Forwarding email
         please_wait: Please wait...
@@ -1570,6 +1642,8 @@ en:
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
+        portal_disabled: "Portal disabled"
+        disable_portal: "Disable Portal"
         email_not_verified: Unverified
         view_portal: View Portal
         delete: Are you sure you want to delete this Product?
@@ -1679,6 +1753,7 @@ en:
         survey-settings: Customer Satisfaction
         gamification-settings: Arcade
         rebranding: Helpdesk Rebranding
+        helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
         canned-response: Canned Response
@@ -1718,6 +1793,7 @@ en:
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Customer Portal
+        portals: Portals
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -1917,12 +1993,25 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+      create:
+        success: "Portal has been enabled for '%{product_name}'"
+        failure: "Portal could not be enabled"
+      update:
+        success: "Portal has been updated"
+        failure: "Portal could not be updated"
+      destroy:
+        success: "Portal of '%{product_name}' has been disabled"
+        failure: "Main portal can not be disabled"
+      not_found:
+        portal: "The portal could not be found. It might have been deleted or the URL mistyped."
+        product: "The product could not be found. It might have been deleted or the URL mistyped."
     g_app:
       user_deleted: User is deleted!
       authentication_failed: Authentication Failed
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
       page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information.
+      domain_restriction: Domain restriction in place. This email is not allowed.
 
     freshfone:
       credits:
@@ -2141,6 +2230,7 @@ en:
       create:
         failure: Unable to save %{human_name}
         success: The %{human_name} has been created.
+        compose_email_success: Your email has been sent and a new ticket has been created.
       update:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
@@ -2192,6 +2282,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
+  requester_email: Requester Email
   feedbackwidget_image_button: Image URL
   activities:
     action_verb: 'updated'
@@ -2312,6 +2403,9 @@ en:
       new_ticket:
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} created a ticket"
+        long: "{{user_path}} created a ticket {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} has sent a {{reply_path}}"
@@ -2426,8 +2520,12 @@ en:
     helpcard:
       title: Rebranding your support portal
       tour: Help me rebrand my helpdesk
+      tour1: Help me setup my helpdesk
+      setup: Setting up your helpdesk
       info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
+      info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
+      info4: The 'Edit Portal' option will let you configure the portal for your product.
     cancel:
       cancel_account: Cancel your Freshdesk account
       info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
@@ -2854,7 +2952,7 @@ en:
       other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
-      upvote: Upvote      
+      upvote: Upvote
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -3207,6 +3305,7 @@ en:
   between: Between
   profile_settings: Profile settings
   portal_key: Portal
+  portals_key: Portals
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy:
@@ -3435,7 +3534,7 @@ en:
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
-      announce_users_voted_title: People who like this 
+      announce_users_voted_title: People who like this
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
@@ -3648,6 +3747,8 @@ en:
     welcome: Welcome
     new_ticket: New
     new_ticket_tip: New ticket
+    new_phone_ticket: Ticket
+    compose_email: Email
     search: Search ( / )
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
@@ -3947,6 +4048,7 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
+    outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
     ticket_updated: Ticket updated
@@ -3956,6 +4058,7 @@ en:
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_from: "From: %{username}"
+    ticket_to: "To: %{username}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -4065,7 +4168,11 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
+    learn_more: Learn more.
+    submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
+    submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
       post_to_linked_forum: Post in linked forum
@@ -4261,7 +4368,7 @@ en:
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
     page_colors:
-      title: Helpdesk colors
+      title: Helpdesk Colors
       background: Background
       header: Header
       tab_color: Tab Color
@@ -4278,7 +4385,9 @@ en:
     non_us: DAY-MONTH-YEAR
     us: MONTH-DAY-YEAR
     helpdesk_name: Helpdesk/Portal name
+    helpdesk_name_plain: Helpdesk Name
     rebrand: Rebrand your Helpdesk
+    helpdesk: Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
     primary_language: Primary Language
@@ -4354,6 +4463,15 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
+    send_email: Send an email
+    send: Send
+    send_and_new: Send and <strong> New </strong>
+    enter_subject: Enter Subject...
+    from: "From:"
+    to: "To:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
     ticket_notifier:
@@ -4525,7 +4643,7 @@ en:
         since_now: Since 1 second
         header: Automatic ticket assignment
         view_agent_status: Agent Availability Status
-        no_agents: "- No Agents -" 
+        no_agents: "- No Agents -"
         back: Back
       freshfone:
         phone: Phone
@@ -5400,7 +5518,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
@@ -5420,6 +5538,12 @@ en:
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
+      remote_configurations:
+        signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
+        disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
+        launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -6228,6 +6352,10 @@ en:
   last_month: Last month
   two_months: Last 2 months
   six_months: Last 6 months
+  last_seven_days: Last 7 days
+  last_thirty_days: Last 30 days
+  last_sixty_days: Last 60 days
+  last_one_eighty_days: Last 180 days
   set_date: Select Time Period
   any_time: Any time
   any: Any
@@ -6278,7 +6406,8 @@ en:
   helpdesk_reports:
     time_period: Select Time Period
     filter_by: Filter by
-    ticket_volume: 
+    edit_filter: Filter
+    ticket_volume:
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6286,10 +6415,10 @@ en:
         month: Month
         qtr: Quarter
         year: Year
-        title: Tickets Received and Resolution Trend
+        title: Trend of Tickets Received and Resolved
       day_trend:
         title: Day of the Week Trend of Tickets Received and Resolved
-        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly.
+        subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
     performance:
@@ -6483,6 +6612,7 @@ en:
       auto_recharge_amt: "Auto Recharge Amount"
       see_detailed_pricing: "See Detailed Pricing"
       followup: "worth phone credits"
+      followup_text: "worth phone credits"
     dialpad:
       not_valid_number: "Please enter a valid number"
       could_be_invalid_number: "Could be an invalid number."
@@ -6504,6 +6634,8 @@ en:
       voicemail: "Voicemail"
       restricted: "Restricted"
       all_calls: "All Calls"
+      answered: "Answered"
+      on-hold: "On Hold"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
@@ -6518,6 +6650,9 @@ en:
       accept: "Accept"
       end_call: "End Call"
       mute: "Mute"
+      hold: "Hold"
+      holding: "Sorry unable to hold.. \n Please try again later..."
+      hold_success: "Now call on hold"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       call_notes: "Call Notes"
@@ -6553,6 +6688,20 @@ en:
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
       network_error: "Check your Internet Connection"
+      transfer:
+        tranfer_via: "via "
+        to: "To: "
+        transferring: "Transferring..."
+        transfer_canceled: "Ignored"
+        tranfer_no_answer: "Not available"
+        tranfer_connected: "Transferred"
+        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_connected: "Connected with customer"
+        close: "Close"
+        resume: "Resume"
+        cancel: "Cancel"
+        cancelling: "Cancelling..."
+        resuming: "Resuming..."
     call_history:
       title: "Call History"
       sort_by: "Sorted by:"
@@ -6618,6 +6767,8 @@ en:
       	unknown: "UNKNOWN"
       	anonymous: "ANONYMOUS"
       	empty: "EMPTY"
+      total_duration: "Duration"
+      minutes: "Minutes"
     ticket:
       recording: "Play message"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6670,7 +6821,7 @@ en:
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
-        wait_message: "Wait Message"
+        queue_message: "Queue Message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
         non_business_hours_message: "Non-Business hours message"
@@ -6685,7 +6836,8 @@ en:
         recorded_voice: "Recorded Voice"
         audio_upload: "Select file to upload"
         greeting_message: "Enter your message here"
-        attachment_help_info: "Accepts audio files < 5mb"
+        attachment_help_info: "Accepts audio file (mp3) < 5mb"
+        attachment_help_text: "Accepts audio file (mp3) < 5mb"
         recording_help_info: "Turn on the microphone. Duration < 5 mins."
         cancel: "Cancel"
         change: "Change"
@@ -6703,6 +6855,8 @@ en:
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
         number_accessible: "Accessible by"
+        wait_music: "Wait Music"
+        hold_music: "Hold Music"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."

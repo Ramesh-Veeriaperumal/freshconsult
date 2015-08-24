@@ -21,6 +21,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
+  before_filter :check_compose_feature, :only => :compose_email
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
@@ -38,20 +39,23 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout 
   
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever]  
-  before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
+  before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
   before_filter :load_ticket, :verify_permission,
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
       :activities, :status, :update_ticket_properties ]
+  before_filter :check_outbound_permission, :only => [:edit, :update]
 
-  skip_before_filter :build_item, :only => [:create]
+  skip_before_filter :build_item, :only => [:create, :compose_email]
   alias :build_ticket :build_item
-  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+  before_filter :build_ticket_body_attributes, :only => [:create]
+  before_filter :build_ticket, :only => [:create, :compose_email]
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -62,11 +66,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
-  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
+  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv],
+    :unless => lambda { |controller| 
+      controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
   
  
   def user_ticket
@@ -212,7 +217,7 @@ class Helpdesk::TicketsController < ApplicationController
     if params['format'] == 'widget'
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
-      if @ticket.blank?
+      if @ticket.nil?
         @item = @ticket = Helpdesk::Ticket.new
         @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
@@ -282,7 +287,10 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!(current_user.as_json({:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket, :manage_scenarios,
                                                         :can_view_time_entries, :can_edit_time_entries, :can_forward_ticket, :can_edit_conversation, :can_manage_tickets]}, true))
         hash.merge!(current_account.as_json(:only=> [:id], :methods=>[:timesheets_feature]))                            
-        hash.merge!({:subscription => !@subscription.nil?})                                          
+        hash.merge!({:subscription => !@subscription.nil?}) 
+        hash.merge!({:reply_emails => @reply_emails})
+        hash.merge!({:to_cc_emails => @to_cc_emails})
+        hash.merge!({:bcc_drop_box_email => bcc_drop_box_email})                                         
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
@@ -339,6 +347,11 @@ class Helpdesk::TicketsController < ApplicationController
         }
       end
     end
+  end
+
+  def compose_email
+    @item.build_ticket_body
+    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
   end
 
   def update_ticket_properties
@@ -648,7 +661,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => [], :reply_cc => cc_emails.dup}
-    
+
     @item.status = CLOSED if save_and_close?
     @item.display_id = params[:helpdesk_ticket][:display_id]
     @item.email = params[:helpdesk_ticket][:email]
@@ -659,7 +672,7 @@ class Helpdesk::TicketsController < ApplicationController
     persist_states_for_api
     if @item.save_ticket
       post_persist
-      notify_cc_people cc_emails unless cc_emails.blank? 
+      notify_cc_people cc_emails unless (cc_emails.blank? || @item.outbound_email?)
     else
       create_error
     end
@@ -810,6 +823,7 @@ class Helpdesk::TicketsController < ApplicationController
   protected
   
     def item_url
+      return compose_email_helpdesk_tickets_path if params[:save_and_compose]
       return new_helpdesk_ticket_path if params[:save_and_create]
       return helpdesk_tickets_path if save_and_close?
       @item
@@ -872,7 +886,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files])
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files,:note_old_body])
     reply_to_all_emails
   end
 
@@ -1058,6 +1072,10 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def check_compose_feature
+      access_denied unless current_account.compose_email_enabled?
+    end
+
     def build_ticket_body_attributes
       if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
         unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
@@ -1084,6 +1102,14 @@ class Helpdesk::TicketsController < ApplicationController
       end
       true
     end
+
+  def check_outbound_permission
+    if @item.outbound_email?
+      flash[:notice] = t("flash.general.access_denied") 
+      redirect_to helpdesk_tickets_url
+    end
+    true
+  end
  
   def save_and_close?
     !params[:save_and_close].blank?

@@ -56,7 +56,7 @@ class SsoController < ApplicationController
     def get_redis_key
       redis_oauth_key = GOOGLE_OAUTH_SSO % {:domain => params['domain'],:uid => params['uid']}
       redis_oauth_value = get_others_redis_key(redis_oauth_key)
-      @current_user = current_account.all_users.find_by_email(redis_oauth_value)
+      @current_user = current_account.user_emails.user_for_email(redis_oauth_value)
       remove_others_redis_key(redis_oauth_key)
     end
 

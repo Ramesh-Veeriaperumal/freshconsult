@@ -9,6 +9,7 @@ describe Freshfone::AddressController do
   end
 
   before(:each) do
+    @account.freshfone_callers.delete_all
     create_test_freshfone_account
     @request.host = @account.full_domain
     log_in(@agent)
@@ -26,7 +27,8 @@ describe Freshfone::AddressController do
         :city => Faker::Address.city,
         :state => Faker::Address.state,
         :postal_code => Faker::Address.postcode,
-        :country => 'DE'
+        :country => 'DE',
+        :id => 1
     }
     post :create, params
     ff_address_inspect('DE').should be_eql(true)

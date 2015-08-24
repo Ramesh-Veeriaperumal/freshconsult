@@ -88,7 +88,7 @@ private
 
 
 	ACTIVITIES_NOT_TO_COMBINE = [
-									'new_ticket', 
+									'new_ticket', 'new_outbound',
 									'ticket_merge', 'ticket_split', 
 									'due_date_updated',
 									'deleted', 'restored',

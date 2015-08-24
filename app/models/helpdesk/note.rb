@@ -18,7 +18,8 @@ class Helpdesk::Note < ActiveRecord::Base
   concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id"
-  attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
+  attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
+                :skip_notification
   attr_protected :attachments, :notable_id
 
   has_many :shared_attachments,
@@ -27,6 +28,8 @@ class Helpdesk::Note < ActiveRecord::Base
            :dependent => :destroy
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
+
+  delegate :to_emails, :cc_emails, :bcc_emails, :subject, :to => :schema_less_note
 
   scope :newest_first, :order => "created_at DESC"
   scope :visible, :conditions => { :deleted => false } 
@@ -214,7 +217,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def respond_to?(attribute, include_private=false)
-    return false if [:to_ary].include? attribute.to_sym
+    return false if [:empty?, :to_ary].include? attribute.to_sym
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
@@ -222,14 +225,25 @@ class Helpdesk::Note < ActiveRecord::Base
     if human_note_for_ticket?
       ticket_state = notable.ticket_states   
       if user.customer?  
-        ticket_state.requester_responded_at = created_at unless(replied_by_third_party? or consecutive_customer_response?)
-        ticket_state.inbound_count = notable.notes.visible.customer_responses.count+1
+        if notable.outbound_email?
+          ticket_state.requester_responded_at = created_at  if can_set_requester_response?
+        else
+          ticket_state.requester_responded_at = created_at unless (replied_by_third_party? or consecutive_customer_response?)
+        end
+        #Hack - for outbound emails, the initial description is not considererd as inbound so not counting that for inbound_count column
+        ticket_state.inbound_count = notable.outbound_email? ? notable.notes.visible.customer_responses.count : notable.notes.visible.customer_responses.count+1
       elsif !private
         update_note_level_resp_time(ticket_state)
         
         ticket_state.set_avg_response_time
-        ticket_state.agent_responded_at = created_at
-        ticket_state.set_first_response_time(created_at)
+        if notable.outbound_email?
+          customer_resp = first_customer_note(notable,notable.created_at,created_at)
+          ticket_state.agent_responded_at = created_at if ticket_state.requester_responded_at
+          ticket_state.set_first_response_time(created_at, customer_resp.created_at) if customer_resp.present?
+        else
+          ticket_state.agent_responded_at = created_at
+          ticket_state.set_first_response_time(created_at)
+        end
       end 
       ticket_state.save
     end
@@ -241,24 +255,18 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def update_note_level_resp_time(ticket_state)
-    resp_time_bhrs = nil
+    resp_time_bhrs,resp_time = [nil,nil]
+
     if ticket_state.first_response_time.nil?
-      notable.schema_less_ticket.first_response_id = id
-      resp_time = created_at - notable.created_at
-      BusinessCalendar.execute(self.notable) {
-        resp_time_bhrs = calculate_time_in_bhrs(notable.created_at, created_at, notable.group)
-      }
-    else
-      customer_resp = notable.notes.visible.customer_responses.
-        created_between(ticket_state.agent_responded_at,created_at).first(
-        :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
-        :order => "helpdesk_notes.created_at ASC")
-      unless customer_resp.blank?
-        resp_time = created_at - customer_resp.created_at
-        BusinessCalendar.execute(self.notable) {
-          resp_time_bhrs = calculate_time_in_bhrs(customer_resp.created_at, created_at, notable.group)
-        }
+      if notable.outbound_email?
+        resp_time_bhrs,resp_time = outbound_note_level_response
+      else
+        notable.schema_less_ticket.first_response_id = id
+        resp_time,resp_time_bhrs = calculate_response_time(notable)
       end
+    else
+      customer_resp = first_customer_note(notable,ticket_state.agent_responded_at, self.created_at)
+      resp_time,resp_time_bhrs = calculate_response_time(customer_resp) unless customer_resp.blank?
     end
     
     schema_less_note.update_attributes(:response_time_in_seconds => resp_time,
@@ -397,4 +405,40 @@ class Helpdesk::Note < ActiveRecord::Base
     def only_kbase?
       (self.to_emails | self.cc_emails | self.bcc_emails).compact == [self.account.kbase_email]
     end
+
+    def first_customer_note(ticket, from_time, to_time)
+      notable.notes.visible.customer_responses.
+          created_between(from_time,to_time).first(
+          :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
+          :order => "helpdesk_notes.created_at ASC")
+    end
+
+    def outbound_note_level_response
+      customer_resp = first_customer_note(notable,notable.created_at, self.created_at)
+      unless customer_resp.blank?
+        resp_time,resp_time_bhrs = calculate_response_time(customer_resp)
+        notable.schema_less_ticket.first_response_id = id
+      end
+      [resp_time, resp_time_bhrs]
+    end
+
+    def calculate_response_time(object)
+      resp_time = self.created_at - object.created_at
+      resp_time_bhrs = BusinessCalendar.execute(self.notable) {
+          calculate_time_in_bhrs(object.created_at, self.created_at, notable.group)
+        }
+      [resp_time, resp_time_bhrs]
+    end
+
+    def can_set_requester_response?
+      ticket_state = notable.ticket_states
+      if ticket_state.agent_responded_at.nil?
+        ticket_state.requester_responded_at.nil?
+      elsif !ticket_state.requester_responded_at.nil?
+        ticket_state.agent_responded_at > ticket_state.requester_responded_at
+      else
+        false
+      end
+    end
+
 end

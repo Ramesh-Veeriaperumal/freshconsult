@@ -14,7 +14,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         DAY_MAPPING: {
             0 : 'Sundays',
             1 : 'Mondays',
-            2 : 'tuesdays',
+            2 : 'Tuesdays',
             3 : 'Wednesdays',
             4 : 'Thursdays',
             5 : 'Fridays',
@@ -165,16 +165,16 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
 
             switch (true) {
 
-                case (diff <= 31):
+                case (diff < 31):
                     return this.constraints['31'];
 
-                case (diff <= 217):
+                case (diff < 217):
                     return this.constraints['217'];
 
-                case (diff <= 930):
+                case (diff < 930):
                     return this.constraints['930'];
 
-                case (diff <= 2790):
+                case (diff < 2790):
                     return this.constraints['2790'];
 
                 case (diff < 10000000):
@@ -208,13 +208,12 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             });
         },
         redrawDayTrend: function (dow, prev_active, present) {
-            this.core_util.active_day = dow;
+            this.core_util.active_day = this.DAY_MAPPING[this.WEEKDAY_MAPPING[dow]];
             var chart = jQuery('#day_trend_chart').highcharts();
             for (i = 0; i < this.series.length; i++) {
                 chart.series[i].update({
                     data: _.values(this.core_util.chart_hash[this.core_util.metric][this.series[i]][this.week_trend][this.WEEKDAY_MAPPING[dow]])
                 }, false);
-                chart.series[i].show();
             }
             chart.redraw(true);
 
@@ -244,7 +243,6 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 chart.series[i].update({
                     data: _.values(this.core_util.chart_hash[this.core_util.metric][this.series[i]][trend])
                 }, false);
-                chart.series[i].show();
             }
             chart.zoomOut();
             chart.redraw(true);

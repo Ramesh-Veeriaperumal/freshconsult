@@ -87,6 +87,24 @@ class CRM::Salesforce < Resque::Job
     end
   end
 
+  # temporary method to update salesforce customer status
+  # previously done by Marketo campaigns
+  def update_customer_status
+    account = Account.current
+    crm_ids = search_crm_record(account.id)
+    state = account.subscription.state
+    if state == 'suspended' and account.subscription.subscription_payments.count > 0
+      record_attributes = { :Customer_Status__c => state }
+    else
+      record_attributes = { :Customer_Status__c => CUSTOMER_STATUS[state.to_sym] }
+    end
+    
+    [:account, :contact].each do |record|
+      record_attributes.merge!({:id => crm_ids[record]})
+      update_records_for_trial_accounts(RECORD_TYPES[record], record_attributes)
+    end
+  end
+
   private 
 
     def binding

@@ -20,7 +20,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
   end
 
   def survey_url(ticket, rating)
-    Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host)
+    Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host, :protocol => ticket.account.url_protocol)
   end
   
   def create_survey_result rating
@@ -81,12 +81,26 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
       s_handle.preview = preview
       s_handle.agent_id = note ? note.user_id : ticket.responder_id
       s_handle.group_id = ticket.group_id
-      s_handle.save
+      s_handle = find_duplicate_handle(s_handle)
+      s_handle.save if s_handle.id.blank?
       s_handle
     end
     
     def clear_survey_result
       survey_result.destroy
+    end
+
+    def self.find_duplicate_handle(s_handle)
+      if(s_handle.sent_while == CustomSurvey::Survey::PLACE_HOLDER)
+        survey_handle = self.where(:account_id => s_handle.account_id, 
+                        :sent_while => s_handle.sent_while , :rated => s_handle.rated , 
+                        :response_note_id => s_handle.response_note_id, 
+                        :surveyable_id => s_handle.surveyable_id,
+                        :response_note_id => s_handle.response_note_id, :survey_id => s_handle.survey_id,
+                        :agent_id => s_handle.agent_id , :group_id => s_handle.group_id).last
+        return survey_handle.blank? ? s_handle : survey_handle
+      end
+      s_handle
     end
     
 end

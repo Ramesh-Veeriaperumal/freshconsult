@@ -26,7 +26,7 @@
 
 <%= javascript_tag do -%>
   var ca_responses_search_url = "<%= search_helpdesk_canned_responses_path %>?ticket=<%= @ticket.id unless @ticket.nil? %>";
-  var ca_responses_recent_url = "<%= recent_helpdesk_canned_responses_path %>?ticket_id=<%= @ticket.id unless @ticket.blank? %>&ids=[";
+  var ca_responses_recent_url = "<%= recent_helpdesk_canned_responses_path %>?ticket_id=<%= @ticket.id unless @ticket.nil? %>&ids=[";
 
 jQuery('.ui-icon-closethick').bind('click', function(){
   if(!jQuery('#search-list').is(':hidden'))

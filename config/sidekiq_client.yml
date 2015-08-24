@@ -4,6 +4,8 @@ defaults: &defaults
   :concurrency: 5
   :logfile: ./log/sidekiq.log
   :queues:
+    - [freshfone_notifications]
+    - [freshfone_node]
     - [merge_contacts]
     - [sla]
     - [premium_supervisor]
@@ -22,6 +24,10 @@ defaults: &defaults
     - [rabbitmq_publish]
     - [update_tickets_company]
     - [reports_no_activity]
+    - [es_alias_queue]
+    - [es_index_queue]
+    - [reset_group]
+    - [reset_responder]
     - [default]
 
 development:

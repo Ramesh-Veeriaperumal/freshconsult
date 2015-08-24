@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :gamification, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
         :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :gamification, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -77,16 +77,17 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :custom_survey => false, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :auto_refresh => true, :cascade_dispatchr => false,
+    :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :agent_collision => false, :multiple_user_emails => true, :facebook_realtime => true, :social_revamp => false,
     :moderate_all_posts => false, :moderate_posts_with_links => true, :redis_display_id => false, 
     :hide_portal_forums => false, :reports_regenerate_data => false, :updated_twilio_client => false, :chat_enable => false,
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
-    :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => true, 
+    :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
     :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false, :es_multilang_solutions => false,
-    :disable_rr_toggle => false, :dynamic_sections => false }
+    :disable_rr_toggle => false, :dynamic_sections => false, :domain_restricted_access => false, :freshfone_conference => false,
+    :public_ticket_url => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features
@@ -94,5 +95,5 @@ class Account < ActiveRecord::Base
                             :open_forums, :google_signin, :twitter_signin, :facebook_signin,
                             :signup_link, :captcha,
                             :moderate_all_posts, :moderate_posts_with_links, :hide_portal_forums,
-                            :forum_captcha_disable ]
+                            :forum_captcha_disable, :public_ticket_url ]
 end

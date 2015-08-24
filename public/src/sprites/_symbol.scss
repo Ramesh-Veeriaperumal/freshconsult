@@ -133,6 +133,8 @@
 		&.source_8 { @include symbols-sprite(source-badge-mobihelp); }
 		// feedback widgets
 		&.source_9 { @include symbols-sprite(source-badge-feedback_widget); }
+		//outbound email
+		&.source_10 { @include symbols-sprite(source-badge-outbound_email); }
 	}
 }
 

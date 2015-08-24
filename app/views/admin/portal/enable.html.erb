@@ -1,0 +1,17 @@
+<% content_for :helpcard do %>
+  <%= render :partial => "helpnote" %>
+<% end %>
+<div class="row-fluid">
+  <%= form_for @portal, 
+        :url => { :controller => 'admin/portal', :action => 'create' }, 
+        :html => { 
+          :multipart => true, 
+          :rel => "validate", 
+          :method => :post, 
+          :id => "portal-form", 
+          "data-rebrand-form" => true, 
+          :class => "form-horizontal" 
+        } do |f| %>
+    <%= render :partial => "portal_form", :locals => {:f => f, :edit => false} %>
+  <% end %>
+</div>

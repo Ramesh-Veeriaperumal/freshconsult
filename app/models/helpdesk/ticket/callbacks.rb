@@ -4,7 +4,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :set_default_values
 
-	before_validation :set_token, on: :create
+  before_create :set_outbound_default_values, :if => :outbound_email?
 
   before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
 
@@ -27,13 +27,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :send_outbound_email, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :user_present?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
   after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
-  after_commit :publish_new_ticket_properties, on: :create, :if => :auto_refresh_allowed?
-  after_commit :publish_updated_ticket_properties, on: :update, :if => :model_changes?
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
@@ -44,6 +43,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
 
+
+  def set_outbound_default_values
+    if User.current.try(:id) and User.current.agent?
+      self.responder_id ||= User.current.id
+    end
+    
+    if email_config
+      self.to_emails = [email_config.reply_email]
+      self.to_email = email_config.reply_email
+    end
+  end
 
   def construct_ticket_old_body_hash
     {
@@ -85,6 +95,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     ticket_states.status_updated_at    = created_at || Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
+    #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
+    if outbound_email?
+      ticket_states.inbound_count = 0 
+      ticket_states.outbound_count = 1
+    end
   end
 
   def update_sender_email
@@ -180,7 +195,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless import_id
+    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
   end
   
   def delayed_rule_check current_user, freshdesk_webhook
@@ -262,7 +277,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Rails.logger.info "Created at::: #{self.created_at}"
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
+    if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
+      old_time_zone = Time.zone
+      TimeZone.set_time_zone
+      NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
+      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    end
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
@@ -289,47 +312,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
       set_account_time_zone
     end
-  end
- 
-  def publish_new_ticket_properties
-     publish_ticket_properties("new")
-  end
-
-  #Remove this function once we move all accounts to socket.io based AutoRefresh
-  def publish_updated_ticket_properties
-    return if !auto_refresh_allowed? or autorefresh_node_allowed?
-    publish_ticket_properties("update")
-  end
-
-  def publish_ticket_properties(type)
-    user_id = User.current ? User.current.id : ""
-    ticket_responder_id = responder_id ? responder_id : -1
-    message = {
-                "ticket_id" => display_id, 
-                "user_id" => user_id,
-                "type" => type,
-                "responder_id" => ticket_responder_id,
-                "group_id" => group_id,
-                "status" => status,
-                "priority" => priority,
-                "ticket_type" => ticket_type,
-                "source" => source,
-                "requester_id" => requester_id,
-                "due_by" => (due_by - Time.zone.now).div(3600),
-                "created_at" => "#{created_at}" 
-              }
-    custom_field_hash = custom_field
-    message.merge!(custom_field_hash) unless custom_field_hash.blank?
-
-    # check out which of the params you really need
-    # i think accountname is used for scoping
-    body = {
-        "channel" => Faye::AutoRefresh.channel(self.account),
-        "data" => message,
-        "messageType" => "publishMessage"
-      }.to_json
-    
-    $sqs_autorefresh.send_message(body) unless Rails.env.test?
   end
 
   def set_display_id?
@@ -404,10 +386,6 @@ private
     account.features?(:auto_refresh)
   end
 
-  def autorefresh_node_allowed?
-    account.features?(:autorefresh_node)
-  end
-
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
   #but observer excpects all keys to be symbols and not strings. So doing a workaround now.
   #After Rails3, we will cleanup this part
@@ -456,7 +434,7 @@ private
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone, :language => language }}, 
-        portal) # check @requester_name and active
+        portal, !outbound_email?) # check @requester_name and active
       
       self.requester = requester
     end
@@ -468,10 +446,10 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index| 
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
@@ -512,11 +490,13 @@ private
   end
 
   def set_token   
-    self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    self.access_token ||= generate_token
   end
 
-  def generate_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+  def generate_token
+    # using Digest::SHA2.hexdigest for a 64 char hash
+    # using ticket id, current account id along with Time.now
+    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
   end
 
   def fire_update_event

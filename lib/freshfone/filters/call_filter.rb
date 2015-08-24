@@ -8,7 +8,7 @@ class Freshfone::Filters::CallFilter < Wf::Filter
         :order => order_clause,
         :page => page, :per_page => per_page,
         :conditions => sql_conditions,
-        :include => [:ticket, :note, :recording_audio, :caller, :agent => [:avatar], :customer => [:avatar]] )
+        :include => [:ticket, :note, :recording_audio, :caller, :meta, :freshfone_number, :agent => [:avatar], :customer => [:avatar]] )
       recs.wf_filter = self
       recs
     end

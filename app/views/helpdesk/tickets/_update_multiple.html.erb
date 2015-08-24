@@ -181,6 +181,11 @@ jQuery('.ui-icon-closethick').live('click', function(){
       var id = jQuery("option:selected", this).data("id");
       jQuery('.ticket_section').remove();
       var element = jQuery('#picklist_section_'+id).parent();
-      jQuery(jQuery('#picklist_section_'+id).val().replace(new RegExp('&lt', 'g'), '<').replace(new RegExp('&gt', 'g'), '>')).insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
+      if(element.length != 0) {
+        jQuery(jQuery('#picklist_section_'+id).val()
+                .replace(new RegExp('&lt', 'g'), '<')
+                .replace(new RegExp('&gt', 'g'), '>'))
+              .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parent());
+      }
   });
 <% end %>

@@ -22,6 +22,20 @@ class ConversionMetric < ActiveRecord::Base
   
   REFERRER_TYPE = Hash[*REFERRER_CATEGORIES.map { |i| [i[2], i[0]] }.flatten]
   
+  TOP_LEVEL_DOMAINS = {
+      "freshdesk.com.br" => "freshdesk_brazil",
+      "freshdesk.de" => "freshdesk_germany",
+      "freshdesk.es" => "freshdesk_spain",
+      "freshdesk.fr" => "freshdesk_france",
+      "freshdesk.it" => "freshdesk_italy",
+      "freshdesk.nl" => "freshdesk_netherlands",
+      "freshdesk.co.za" => "freshdesk_southafrica"
+    }
+
+
+  TLDOMAINS = TOP_LEVEL_DOMAINS.map{ |tld, id| tld }
+  DEFAULT_DOMAIN = "freshdesk"
+
   def self.get_category_string(code)
     return CATEGORIES[code]
   end
@@ -248,4 +262,23 @@ class ConversionMetric < ActiveRecord::Base
          split_url(url)[7]
    end
    
+   def other_referrer
+     self.landing_url ? tld(self.landing_url) : DEFAULT_DOMAIN
+   end
+
+   def city_name
+     self.try(:[], :session_json).try(:[], :location).try(:[], 'cityName')
+   end
+
+   def region_name
+     self.try(:[], :session_json).try(:[], :location).try(:[], 'regionName')
+   end
+
+   def zip_code
+     self.try(:[], :session_json).try(:[], :location).try(:[], 'zipCode')
+   end
+   
+   def tld(landing_url)
+      TOP_LEVEL_DOMAINS[TLDOMAINS.select { |tld| landing_url.include?(tld) }.to_s]
+   end
 end

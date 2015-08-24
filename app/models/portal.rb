@@ -20,7 +20,7 @@ class Portal < ActiveRecord::Base
   before_save :downcase_portal_url
   after_save :update_chat_widget
   before_save :update_portal_forum_categories
-  before_save :save_route_info
+  before_save :save_route_info, :add_default_solution_category
   after_destroy :destroy_route_info
 
   include Mobile::Actions::Portal
@@ -182,6 +182,14 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  def full_url
+    main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
+  end
+
+  def full_name
+    main_portal && name.blank? ? Account.current.name : name
+  end
+
   private
 
     def update_users_language
@@ -275,5 +283,10 @@ class Portal < ActiveRecord::Base
     def destroy_route_info(old_portal_url = portal_url)
       Rails.logger.info "Deleting #{old_portal_url} route."
       delete_route_info(old_portal_url) unless old_portal_url.blank?
+    end
+    
+    def add_default_solution_category
+      default_category = account.solution_categories.find_by_is_default(true)
+      self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
     end
 end

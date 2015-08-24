@@ -9,10 +9,11 @@ describe Admin::CustomSurveysController do
   end
 
   it "should not create survey with invalid params" do
+    send_while = rand(100..103)
     expect{
-       post :create ,  :survey => {"default"=>false,"choices" => '[["Strongly Agree", 103],["Strongly Disagree", -103]]',
+       post '' ,  :survey => {"default"=>false,"choices" => '[["Strongly Agree", 103],["Strongly Disagree", -103]]',
                         "title_text" => nil,"link_text" => " How would you rate your overall satisfaction for the resolution provided by the agent?",
-                        "choice" => "2","send_while" => "1","thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
+                        "choice" => "2","send_while" => send_while,"thanks_text" => "Thank you for your valuable feedback. Please help us to serve you better by answering few more questions..",
                         "feedback_response_text" => "","can_comment" => true,"active" => false}.to_json,
                         :jsonData => [{"name" =>  "Q1", "type" => "survey_radio", "id" => nil,"field_type"=> "custom_survey_radio", 
                         "label" => "Are you satisfied with our customer support experience?", 
@@ -28,7 +29,7 @@ describe Admin::CustomSurveysController do
       put :update , {:id => nil ,
                       :survey => {"default" => false,"link_text" => nil,
                                   "title_text" => "dummy",
-                                  "send_while" => 2,
+                                  "send_while" => send_while,
                                   "thanks_text" =>  "Thank you for your valuable feedback.",
                                   "can_comment" => true,
                                   "choices" => '[["Strongly Agree Updated", 103],["Strongly Disagree Updated", -103]]' ,    

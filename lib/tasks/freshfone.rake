@@ -87,8 +87,15 @@ namespace :freshfone do
   desc "Freshfone abandoned accounts cleanup "
 	task :close_accounts => :environment do
 		Sharding.execute_on_all_shards do
-			Freshfone::Account.current_pod.find_due(2.months.ago).each do |account|
-		  	account.close
+			Freshfone::Account.current_pod.find_due(2.months.ago).each do |ff_account|
+				account = ff_account.account
+				account.make_current
+
+				last_call = account.freshfone_calls.last
+		  	account.close if last_call.created_at < 45.days.ago
+		  	Account.reset_current_account
+
+		  	FreshfoneNotifier.deliver_freshfone_account_closure(account)
 		  end	
 		end
 	end

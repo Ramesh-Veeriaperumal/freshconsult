@@ -2,6 +2,8 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	include Rails.application.routes.url_helpers
 	include TicketConstants
+	include Redis::RedisKeys
+	include Redis::OthersRedis
 
 	self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted	]
 
@@ -48,13 +50,21 @@ class Helpdesk::TicketDrop < BaseDrop
 	def freshfone_call
 		@source.freshfone_call
 	end
-	
+
 	def cloud_files
-	    @source.cloud_files 
+	    @source.cloud_files
 	end
 
 	def requester
 		@source.requester.presence
+	end
+
+	def outbound_initiator
+		@source.outbound_initiator.presence
+	end
+
+	def outbound_email?
+		@source.outbound_email?
 	end
 
 	def agent
@@ -110,9 +120,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def public_url
-		@source.populate_access_token if @source.access_token.blank?
+		return "" unless @source.account.features_included?(:public_ticket_url) || exists?(GLOBAL_PUBLIC_TICKET_URL_ENABLED)
 
-		public_ticket_url(@source.access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
+		access_token = @source.get_access_token
+
+		public_ticket_url(access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
 	end
 
 	def portal_url
@@ -148,7 +160,7 @@ class Helpdesk::TicketDrop < BaseDrop
 		@formatted_time ||= @source.time_tracked_hours
 	end
 
-	def satisfaction_survey	
+	def satisfaction_survey
 		if @source.account.custom_survey_enabled
 			CustomSurvey::Survey.satisfaction_survey_html(@source)
 		else

@@ -6,6 +6,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_attachments
 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "Inline" },
+                                :foreign_key => "attachable_id",
+                                :dependent => :destroy
+
   has_many_cloud_files
 
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
@@ -51,6 +56,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   delegate :closed_at, :resolved_at, :first_response_time, :to => :ticket_states, :allow_nil => true
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, 
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
+
+  delegate :trashed, :to_emails, :product, :to => :schema_less_ticket, :allow_nil => true
 
   has_one :ticket_topic,:dependent => :destroy
   has_one :topic, :through => :ticket_topic

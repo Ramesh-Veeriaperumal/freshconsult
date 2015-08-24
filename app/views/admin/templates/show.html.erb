@@ -1,6 +1,6 @@
 <% content_for :sidebar do %><% end %> 
 <h3 class="lead">
-  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
+  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.portal_name)%>
 </h3>
 <div>
   <ul data-tabs="tabs" class="tabs nav-tabs" id="portal-tabs">

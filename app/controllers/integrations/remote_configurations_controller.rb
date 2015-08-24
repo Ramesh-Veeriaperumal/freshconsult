@@ -18,6 +18,9 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
   def open_id
     url = Integrations::Quickbooks::Constant::OPENID_URL
     return_url = open_id_complete_integrations_remote_configurations_url + "?app=#{params[:app]}"
+    if (params[:operation])
+      return_url += "&operation=#{params[:operation]}"
+    end
     rqrd_data = ["http://axschema.org/contact/email","http://axschema.org/namePerson/first" ,"http://axschema.org/namePerson/last"]
     authenticate_with_open_id(url,{ :required =>rqrd_data, :return_to => return_url }) do |result|
     end     

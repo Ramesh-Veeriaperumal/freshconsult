@@ -68,7 +68,7 @@
       if (page == "cloud_file")
           output << content_tag(:div, '', :class => "file-types-#{attached.provider}")
       else
-        if attached.image?
+        if attached.image? && attached.has_thumbnail?
           output << image_tag(attached.expiring_url(:thumb), :class => "image",
                                 :alt => attached.content_file_name,
                                 :onerror => "default_image_error(this)",

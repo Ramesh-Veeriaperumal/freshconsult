@@ -315,18 +315,6 @@ RSpec.describe Helpdesk::ProcessEmail do
 			solutions_incremented?(@article_size)
 		end
 
-		it "should create an article by email and the content must get stored in article bodies table" do
-			email = new_email({:email_config => @account.kbase_email, :reply => @agent.user.email})
-			email[:from] = @agent.user.email
-			Helpdesk::ProcessEmail.new(email).perform
-			solution = Solution::Article.last
-			article_body = solution.original_article_body
-			article_body.should be_an_instance_of(Solution::ArticleBody)
-			Solution::Article::BODY_ATTRIBUTES.each do |attrib|
-				article_body.send(attrib).should be_eql(solution.read_attribute(attrib))
-			end
-		end
-
 		it "article failure - non agent" do
 			email = new_email({:email_config => @account.kbase_email})
 			Helpdesk::ProcessEmail.new(email).perform
@@ -615,6 +603,27 @@ RSpec.describe Helpdesk::ProcessEmail do
 			latest_ticket = @account.tickets.last
 			latest_ticket.cc_email_hash[:reply_cc].should include new_cc_email
 			latest_ticket.cc_email_hash[:reply_cc].should include cc_email
+		end
+	end
+
+	describe "Kbase email processing" do
+		it "should convert to html properly when html is not present in params" do
+			kbase_email = @account.kbase_email
+			email_subject = Faker::Lorem.words(5).join(" ")
+			content_arr = Faker::Lorem.sentences(5)
+			email = {
+								:dkim => "none", 
+								:to => kbase_email, 
+								:from => @agent.user.email, 
+								:text => content_arr.join("\r\n"),
+								:sender_ip => random_ip, 
+								:envelope => "{\"to\":[\"#{kbase_email}\"],\"from\":\"#{@agent.user.email}\"}", 
+								:attachments => 0, 
+								:subject => email_subject, 
+								:SPF => "pass" }
+			Helpdesk::ProcessEmail.new(email).perform
+			@article = @account.solution_articles.find_by_title(email_subject)
+			@article.description.should eql "<p>#{content_arr.join("\n<br>")}</p>"
 		end
 	end
   

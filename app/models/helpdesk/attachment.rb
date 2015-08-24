@@ -5,6 +5,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   self.primary_key = :id
 
+  include Helpdesk::Utils::Attachment
+
   MIME_TYPE_MAPPING = {"ppt" => "application/vnd.ms-powerpoint",
                        "doc" => "application/msword",
                        "xls" => "application/vnd.ms-excel",
@@ -46,21 +48,57 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     before_save :set_account_id
 
-   def s3_permissions
+  class << self
+
+    def s3_path(att_id, content_file_name)
+      "data/helpdesk/attachments/#{Rails.env}/#{att_id}/original/#{content_file_name}"
+    end
+
+    def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
+      limit = mailgun ? HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE : 
+                        HelpdeskAttachable::MAX_ATTACHMENT_SIZE
+      unless item.validate_attachment_size({:content => attached.tempfile},
+                                           {:attachment_limit => limit })
+        filename = self.new.utf8_name attached.original_filename,
+                             "attachment-#{i+1}"
+        attributes = { :content_file_name => filename,
+                       :content_content_type => attached.content_type,
+                       :content_file_size => attached.tempfile.size.to_i
+                      }
+        write_options = { :content_type => attached.content_type }
+        if content_id
+          attributes.merge!({:description => "content_id", :attachable_type => "Inline"})
+          write_options.merge!({:acl => "public-read"})
+        end
+
+        att = account.attachments.new(attributes)
+        if att.save
+          path = s3_path(att.id, att.content_file_name)
+          AwsWrapper::S3Object.store(path, 
+                                     attached.tempfile, 
+                                     S3_CONFIG[:bucket], 
+                                     write_options)
+          att
+        end
+      end
+    end
+  end
+
+  def s3_permissions
     public_permissions? ? "public-read" : "private"
-   end
+  end
 
-   def public_permissions?
+  def public_permissions?
     description and (description == "logo" || description == "fav_icon" || description == "public" || description == "content_id")
-   end
+  end
 
-   def set_content_type
+  def set_content_type
     mime_content_type = lookup_by_extension(File.extname(self.content_file_name).gsub('.',''))
     self.content_content_type = mime_content_type unless mime_content_type.blank?
-   end
+  end
 
-   def set_content_dispositon
-     self.content.options.merge({:s3_headers => {"Content-Disposition" => "attachment; filename="+self.content_file_name}})
+  def set_content_dispositon
+    self.content.options.merge({:s3_headers => {"Content-Disposition" => "attachment; filename="+self.content_file_name}})
   end
 
   def attachment_url
@@ -83,6 +121,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def mp3?
     audio? /^audio\/(mp3|mpeg)/
+  end
+
+  def has_thumbnail?
+    !["Helpdesk::Ticket", "Helpdesk::Note", "Account"].include?(attachable_type)
   end
 
   def attachment_sizes
@@ -158,10 +200,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    if attachable and self.attachable.class.name=="Account"
-      self.account_id = self.attachable_id
-    elsif attachable
-      self.account_id = attachable.account_id
+    unless self.account_id
+      if attachable and self.attachable.class.name=="Account"
+        self.account_id = self.attachable_id
+      elsif attachable
+        self.account_id = attachable.account_id
+      end
     end
   end
 

@@ -1,3 +1,14 @@
+// Icons
+@import "cdn-ignored/sprites/remote-configurations/*.png";
+@include all-remote-configurations-sprites(true);
+
+[class^="remote-configurations-"],
+[class*="remote-configurations-"]{
+  display:inline-block;
+  vertical-align: middle;
+}
+
+
 #integrations-list {
 	display:block;
 	overflow: hidden;
@@ -141,7 +152,29 @@ span.beta {
 	font-weight: 500;
 	border: 1px solid #DDDDDD;
 	border-radius: 4px;
-	margin-left: 14px;
+	@include margin-left(14px);
+}
+.quickbooks_c2qb {
+	.logo {
+		display: block;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px 0;
+    i{
+    	@include filter(saturate(0));
+    }
+	}
+  .connect_text {
+  	font-size: 13px;
+  	line-height: 1.4;
+  	font-weight: 400;
+  	padding: 10px;
+  }
+  .quickbooks_connect {
+    text-align: center;
+    padding-bottom: 20px;
+    padding-top: 40px;
+  }
 }
 
 //-------------------------------------------------------------------------------------------

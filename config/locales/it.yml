@@ -1173,8 +1173,8 @@ it:
         feedbackwidget_text_button: "Pulsante di testo"
         feedbackwidget_image_button: "Pulsante immagine"
         feedbackwidget_button_text_placeholder: Supporto
-        feedbackwidget_height_placeholder: 500
-        feedbackwidget_offset_placeholder: 235
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
         feedbackwidget_button_customization: "Personalizza pulsante"
         feedbackwidget_form_customization: "Personalizza modulo"
         feedbackwidget_embedded_code: "Codice widget incorporato"

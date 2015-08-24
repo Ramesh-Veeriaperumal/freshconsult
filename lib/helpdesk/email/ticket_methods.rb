@@ -3,10 +3,14 @@ module Helpdesk::Email::TicketMethods
   include Redis::OthersRedis
   include ParserUtil
   include AccountConstants
+  include EmailHelper
 
   def get_original_user
     email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
-    get_user(email_from_text , email[:email_config], email[:text]) unless email_from_text.blank?
+    unless email_from_text.blank?
+      self.original_sender = email_from_text[:email]
+      get_user(email_from_text , email[:email_config], email[:text])
+    end
   end
 
   def orig_email_from_text #To process mails fwd'ed from agents
@@ -30,6 +34,8 @@ module Helpdesk::Email::TicketMethods
   end
 
   def create_ticket_object
+    alter_forwarding_based_user if current_agent?
+
     self.ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => email[:subject],
@@ -45,20 +51,11 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
-
-    if current_agent?
-      ticket.sender_email = get_original_email || email[:from][:email]
-      alter_forwarding_based_user       
-    end
+    ticket.sender_email = self.original_sender
   end
 
   def alter_forwarding_based_user
     self.user = (get_original_user || user)
-    ticket.requester = user
-  end
-
-  def get_original_email
-    (orig_email_from_text.present?)  ? orig_email_from_text[:email] : nil
   end
 
   def hash_cc_emails
@@ -69,8 +66,8 @@ module Helpdesk::Email::TicketMethods
   def check_valid_ticket
     check_for_chat_sources
     check_for_spam
-    check_for_auto_responders
-    check_support_emails_from
+    check_for_auto_responders(ticket, email[:headers])
+    check_support_emails_from(ticket, user, account)
   end
 
   def check_for_chat_sources
@@ -91,22 +88,6 @@ module Helpdesk::Email::TicketMethods
 
   def check_for_spam
     ticket.spam = true if ticket.requester.deleted?
-  end
-
-  def check_for_auto_responders
-    ticket.skip_notification = true if auto_responder?(email[:headers])
-  end
-
-  def auto_responder?(headers)
-    headers.present? && check_headers_for_responders(Hash[JSON.parse(headers)])
-  end
-
-  def check_headers_for_responders header_hash
-    (header_hash["Auto-Submitted"] =~ /auto-(.)+/i || header_hash["Precedence"] =~ /(bulk|junk|auto_reply)/i).present?
-  end
-
-  def check_support_emails_from
-    ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
   end
 
   def finalize_ticket_save
@@ -131,6 +112,7 @@ module Helpdesk::Email::TicketMethods
     rescue ActiveRecord::RecordInvalid => e
       FreshdeskErrorsMailer.error_email(ticket,email,e)
     end
+    cleanup_attachments ticket
     create_redis_key_for_ticket(ticket_message_id) unless ticket_message_id.nil?
   end
 

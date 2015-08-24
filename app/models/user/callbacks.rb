@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
+  before_save :restrict_domain, :if => :email_changed?
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
@@ -74,7 +75,7 @@ class User < ActiveRecord::Base
         "company_id" => @all_changes[:customer_id] 
       }
     }
-    Workers::Reports::UpdateTicketsCompany.perform_async(args)
+    Reports::UpdateTicketsCompany.perform_async(args)
   end
 
   protected

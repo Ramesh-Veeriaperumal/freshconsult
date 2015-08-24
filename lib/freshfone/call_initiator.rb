@@ -1,5 +1,5 @@
 class Freshfone::CallInitiator
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::NumberMethods
 	include Freshfone::CallsRedisMethods
 	include Freshfone::CallValidator

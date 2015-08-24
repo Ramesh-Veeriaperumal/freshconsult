@@ -1,4 +1,4 @@
-<% if @ticket.present? %>
+<% unless @ticket.nil? %>
 <div id="add-people" class="hide">
 	<div class="alert"><%= t('portal.tickets.add_or_remove_emails') %></div>
 	<%= form_for @ticket, :url => add_people_support_ticket_path(@ticket.display_id), :method => :put, 

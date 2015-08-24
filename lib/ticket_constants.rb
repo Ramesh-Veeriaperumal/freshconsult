@@ -21,7 +21,8 @@ module TicketConstants
     [ :facebook,         'facebook_source',  6 ],
     [ :chat,             'chat',             7 ],
     [ :mobihelp,         'mobihelp',         8 ],
-    [ :feedback_widget,  'feedback_widget',  9 ]
+    [ :feedback_widget,  'feedback_widget',  9 ],
+    [ :outbound_email,   'outbound_email',   10]
   
   ]
 
@@ -118,11 +119,11 @@ module TicketConstants
     [ :today,            'today',             "today" ],
     [ :yesterday,        'yesterday',     "yesterday" ],
     [ :this_week,        'seven_days',         "week" ],
-    [ :last_week,        'last_week',     "last_week" ],
+    [ :last_week,        'last_seven_days',     "last_week" ],
     [ :this_month,       'thirty_days',       "month" ],
-    [ :last_month,       'last_month',    "last_month"],
-    [ :two_months,       'two_months',   "two_months" ], 
-    [ :six_months,       'six_months',   "six_months" ],
+    [ :last_month,       'last_thirty_days',    "last_month"],
+    [ :two_months,       'last_sixty_days',   "two_months" ], 
+    [ :six_months,       'last_one_eighty_days',   "six_months" ],
     [ :set_date,         'set_date',       "set_date" ]
   ]
 

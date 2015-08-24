@@ -343,7 +343,7 @@ module SupportHelper
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls">
+		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"}">
 
 		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
@@ -722,7 +722,7 @@ module SupportHelper
 	def default_attachment_type (attachment)
 		output = []
 
-		if attachment.is_image?
+		if attachment.is_image? && attachment.source.has_thumbnail?
 			output << %(<img src="#{attachment.thumbnail}" onerror="default_image_error(this)" class="file-thumbnail image" alt="#{attachment.filename}">)
 		else
 	      	filetype = attachment.filename.split(".")[-1] || ""

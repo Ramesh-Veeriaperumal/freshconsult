@@ -1,0 +1,129 @@
+<% @enable_pattern = true %>
+<% content_for :sidebar do -%><%- end %>
+<%= render :partial => 'header', :locals => { :active => :settings } %>
+<%= form_for(@account, 
+			:url => update_settings_admin_portal_index_path, 
+			:html => { 
+					:method => :put, 
+					:class => "form-horizontal customer-portal" 
+			}) do |f| %>
+
+<%= generate_breadcrumbs(params, f, :redirect_to_admin => true, :force_admin => true, :submit_text => 'save') %>
+
+<div class="portal-section">
+	<%= content_tag( :div,  t('.signup_login'),	   :class => "heading border-none" ) %>
+	<div class="control-group">
+		<div class="control-label"><%= t('.allow_signup') %></div>
+		<div class="controls">
+			<%= feature_radio_button({
+					:signup_link => t('plain_yes'),
+					:default => t('plain_no') }) %>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label"><%= t('.allow_signin') %></div>
+		<div class="controls multiple-check">
+			<%= f.feature_check_box :google_signin, {:id => 'google_signin'} %>
+				<%= label_for(t('.google'), 'google_signin')%>
+			<%= f.feature_check_box :twitter_signin, {:id => 'twitter_signin'} %>
+				<%= label_for(t('.twitter'), 'twitter_signin')%>
+			<%= f.feature_check_box :facebook_signin, {:id => 'facebook_signin'} %>
+				<%= label_for(t('.facebook'), 'facebook_signin')%>
+		</div>
+	</div>
+</div>
+
+<div class="portal-section">
+	<%= content_tag( :div,  t('.user_permissions'), :class => "heading" ) %>
+	<div class="control-group sub-section">
+		<div class="control-label"><%= t('.submit_ticket')%></div>
+		<div class="controls">
+			<%= feature_radio_button({
+					:default => t('.logged_in'), 
+					:anonymous_tickets => t('.everyone') }) %>
+			<div class="checkbox captcha">
+				<%= f.feature_check_box :captcha, { :id => 'captcha' } %>
+				<%= label_for(t('.captcha'), 'captcha')%>
+			</div>
+			<hr/>
+			<div class="checkbox">
+				<%= f.feature_check_box :auto_suggest_solutions, {:id => "auto_suggest_solutions"} %>
+				<%= label_for(t('.auto_suggest_solutions'), 'auto_suggest_solutions')%>
+				<%= content_tag( :div, t('.auto_suggest_solutions_help'), :class => "muted" ) %>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group sub-section">
+		<div class="control-label"><%= t('.view_solutions') %></div>
+		<div class="controls">
+			<%= feature_radio_button({
+						:default => t('.logged_in'), 
+						:open_solutions => t('.everyone')}) %> 
+		</div>
+	</div>
+	<% if current_account.features_included?(:forums) %>
+		<div class="control-group">
+			<div class="control-label"><%= t('.view_forums') %></div>
+			<div class="controls">
+				<%= multiple_feature_radio_btn(
+						"forums_visibility",
+						{ :default => t('.logged_in'),
+							:open_forums => t('.everyone'),
+							:hide_portal_forums => t('.simple_none')}) %>
+				<div id="forum_captcha_section">
+					<hr>
+					<div class="checkbox forum_captcha">
+						<%= f.feature_check_box :forum_captcha_disable, { :id => 'forum_captcha', :checked => !current_account.features_included?(:forum_captcha_disable) }, 0, 1 %>
+						<%= label_for(t('.forum_captcha'), 'forum_captcha')%>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+</div>
+<% if current_account.features_included?(:forums) %>
+	<div class="portal-section">
+		<%= content_tag( :div,  t('.moderation'),	:class => "heading" ) %>
+		<div class="span6 right-border ml0">
+			<%= multiple_feature_radio_btn(
+							"moderation", 
+							{ :moderate_posts_with_links => 
+									[t('.moderate_links'),  t('.moderate_links_help')],
+								:moderate_all_posts => 
+									[t('.moderate_all'),t('.moderate_all_help')], 
+								:default => 
+									[t('.moderate_none'), t('.moderate_none_help')]
+							}) %>
+		</div>
+		<div class="span4">
+			<%= content_tag( :div, t('.notify_agents'), :class => "control-label pb10")%>
+			<%= select_tag :forum_moderators, 
+					options_for_select( current_account.technicians.collect { |a| [a.name, a.id]}, 
+											:selected => current_account.forum_moderators.map(&:moderator_id)), 
+					{ :multiple => true, "data-placeholder"=>"Select Moderators", :class => "select2 span4 ml0" } %>
+		</div>
+	</div>
+<% end %>
+<div class="clear"></div>
+<div class="portal-section">
+	<%= content_tag( :div,  t('.portal_security'), :class => "heading" ) %>
+	<div class="control-group">
+		<div class="control-label">
+			<%= t('.enable_public_urls') %>
+			<%= content_tag( :div, t('.enable_public_urls_help'), :class => "muted" ) %>
+		</div>
+		<div class="controls">
+			<%= feature_radio_button({
+					:public_ticket_url => t('plain_yes'),
+					:default => t('plain_no'), 
+					}) %>
+		</div>
+	</div>
+</div>
+<div class="form-button itil-hide">
+	<%= pjax_link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
+	<%= f.submit t('save'), { :class => "btn btn-primary" } %>
+</div>
+<% end %>
