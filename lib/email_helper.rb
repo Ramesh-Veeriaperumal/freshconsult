@@ -12,7 +12,7 @@ module EmailHelper
   SENDGRID_RETRY_TIME = 4.hours
 
   def verify_inline_attachments(item, content_id)
-    content = "cid:#{content_id}"
+    content = "\"cid:#{content_id}\""
     if item.is_a? Helpdesk::Ticket
       item.description_html.include?(content)
     elsif item.is_a? Helpdesk::Note
