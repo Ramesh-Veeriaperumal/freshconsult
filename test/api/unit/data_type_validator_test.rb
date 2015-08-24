@@ -33,7 +33,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     assert test.errors.empty?
   end
 
-  def test_valid_values
+  def test_valid_values_invalid
     test = TestValidation.new
     test.array = 1
     test.hash = 2
