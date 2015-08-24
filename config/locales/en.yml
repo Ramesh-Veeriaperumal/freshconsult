@@ -3290,6 +3290,7 @@ en:
       verified : Active contacts
       unverified : Contacts with unverified emails
       deleted : Deleted contacts
+      blocked : Blocked contacts
       all: All contacts
     verified:
       no_contacts: You don't have any contacts.
