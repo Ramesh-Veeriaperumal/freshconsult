@@ -4089,6 +4089,12 @@ img.small{
 	width: 25px;
 	height: 25px;
 }
+.available-command-list{
+	display:inline-block;
+	width:80px;
+	font-weight:bold;
+	word-break: break-all;
+}
 @media  only screen and (min-device-pixel-ratio: 2), 
         only screen and (min-resolution: 192dpi) {
  $j: 9;

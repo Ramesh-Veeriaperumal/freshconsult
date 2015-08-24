@@ -2721,6 +2721,7 @@ en:
     clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
+    info_help: For each incoming ticket, execute first matching rule
     cascade: all matching rules
     no_cascade: first matching rule
     add_new_choice: Add New choice
@@ -4109,6 +4110,7 @@ en:
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
+    action: Action
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
@@ -4418,7 +4420,7 @@ en:
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
-    import_holiday: Import Holidays
+    holiday_calendar: Holiday Calendar
     title: Business Hours
     info1: Business Hours give you more control over SLAs in your helpdesk, and when a ticket is due. For example, if your helpdesk works between 9am to 6pm Mon-Fri and a customer logs a ticket at 7pm on Tuesday, the "Due by" timers do not start ticking till Wednesday morning at 9
     info2: Holidays work exactly like business hours. If your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
@@ -6032,6 +6034,7 @@ en:
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
       ticket_type_example: "Question"
+      note: "Note"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"

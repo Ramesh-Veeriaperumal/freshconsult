@@ -6,14 +6,6 @@ class Admin::EmailCommandsSettingsController < Admin::AdminController
     @email_content_commands = '"status":"pending", "priority":"medium", "agent":"John Robert"'
     
     delimeter = current_account.email_cmds_delimeter
-
-    @email_content_custom_commands = ""
-    @email_content_custom_commands += "action: note <br>"
-
-    current_account.ticket_fields.custom_fields.each do |field|
-      @email_content_custom_commands += "#{field.label}: [Custom Field Value] <br>" unless field.field_type == "nested_field"
-    end
-
     
     content_prefix = "Hi,\n\n";
     content_suffix = "\n\nYour issue is resolved now.\n\nThanks,\nAgent Name.\n"; 
