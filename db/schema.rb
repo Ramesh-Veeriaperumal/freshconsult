@@ -205,10 +205,13 @@ ActiveRecord::Schema.define(:version => 20150824192547) do
     t.integer "article_id", :limit => 8
     t.integer "ticket_id",  :limit => 8
     t.integer "account_id", :limit => 8
+    t.integer  "ticketable_id",   :limit => 8
+    t.string   "ticketable_type"
   end
 
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
+  add_index "article_tickets", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_article_tickets_on_account_id_and_ticketetable"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"

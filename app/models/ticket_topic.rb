@@ -16,7 +16,7 @@ class TicketTopic < ActiveRecord::Base
   private
     
   def set_account_id
-    self.account_id = ticket.account_id
+    self.account_id = ticket.account_id unless account_id
   end
   
 end

@@ -45,7 +45,8 @@ class Solution::Article < ActiveRecord::Base
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 
   has_many :article_ticket, :dependent => :destroy
-  has_many :tickets, :through => :article_ticket
+  has_many :tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::Ticket'
+  has_many :archive_tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::ArchiveTicket'
   
   include Mobile::Actions::Article
   include Solution::Constants

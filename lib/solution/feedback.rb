@@ -46,7 +46,8 @@ module Solution::Feedback
 		end
 
 		def add_to_article_ticket
-			ArticleTicket.create(:article_id => @article.id, :ticket_id => @ticket.id, :account_id => current_account.id)
+			article = @ticket.build_article_ticket(:article_id => @article_id)
+			article.save
 		end
 
 end
