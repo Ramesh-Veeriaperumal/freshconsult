@@ -84,6 +84,7 @@ module Redis::RedisKeys
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
 
 	GLOBAL_PUBLIC_TICKET_URL_ENABLED = "GLOBAL_PUBLIC_TICKET_URL_ENABLED"
+	PREMIUM_TICKET_EXPORT = "PREMIUM_TICKET_EXPORT"
 
 	def newrelic_begin_rescue
 	    begin
