@@ -139,7 +139,15 @@ if Rails.env.test?
     "spec/lib/language_spec.rb",
     "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
     "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
-    "spec/controllers/helpdesk/solution_categories_controller_spec.rb"
+    "spec/controllers/helpdesk/solution_categories_controller_spec.rb",
+    "spec/controllers/api/json/solutions_articles_api_spec.rb",
+    "spec/controllers/api/json/solutions_category_api_spec.rb",
+    "spec/controllers/api/json/solutions_folders_api_spec.rb",
+    "spec/controllers/api/xml/solutions_articles_api_spec.rb",
+    "spec/controllers/api/xml/solutions_category_api_spec.rb",
+    "spec/controllers/api/xml/solutions_folders_api_spec.rb",
+    "spec/controllers/mobihelp/articles_controller_spec.rb",
+    "spec/controllers/mobihelp/solutions_controller_spec.rb"
   ]
 
   HelpdeskTests = [ 

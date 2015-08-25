@@ -10,6 +10,12 @@
 		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
 		<div class="desktopNotifier"><%= font_icon "bell", :size => 16 %></div>
 	</div>
+	<div id="failed_hold" class='hide failed_hold'>
+  	<div class='ffone_hold_message popupbox-content'>
+    	<span class='message'> <%= t('freshfone.widget.holding') %></span>
+    	<span class="triangle"></span>
+  	</div>
+	</div>
 	<%= render 'layouts/shared/freshfone/freshfone_popup_tabs' %>
 </div>
 <div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
@@ -49,6 +55,8 @@
 	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
+	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
+  freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
           'id'        : '<%=current_user.id%>',

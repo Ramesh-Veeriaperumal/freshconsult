@@ -1,0 +1,226 @@
+:customer_interactions: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:agent_interactions: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:agent_reassign_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:group_reassign_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:reopen_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:first_response_time: 
+  - operator: less_than_eql
+    value: 900
+    label: < 15 mins
+  - operator: range
+    value: "900,1800"
+    label: 15-30 mins
+  - operator: range
+    value: "1800,3600"
+    label: 30-60 mins
+  - operator: range
+    value: "3600,7200"
+    label: 1-2 hrs
+  - operator: range
+    value: "7200,14400"
+    label: 2-4 hrs
+  - operator: range
+    value: "14400,28800"
+    label: 4-8 hrs
+  - operator: range
+    value: "28800,43200"
+    label: 8-12 hrs
+  - operator: range
+    value: "43200,86400"
+    label: 12-24 hrs
+  - operator: range
+    value: "86400,172800"
+    label: 1-2 days
+  - operator: greater_than_eql
+    value: 172800
+    label: 2+ days
+:response_time: 
+  - operator: less_than_eql
+    value: 900
+    label: < 15 mins
+  - operator: range
+    value: "900,1800"
+    label: 15-30 mins
+  - operator: range
+    value: "1800,3600"
+    label: 30-60 mins
+  - operator: range
+    value: "3600,7200"
+    label: 1-2 hrs
+  - operator: range
+    value: "7200,14400"
+    label: 2-4 hrs
+  - operator: range
+    value: "14400,28800"
+    label: 4-8 hrs
+  - operator: range
+    value: "28800,43200"
+    label: 8-12 hrs
+  - operator: range
+    value: "43200,86400"
+    label: 12-24 hrs
+  - operator: range
+    value: "86400,172800"
+    label: 1-2 days
+  - operator: greater_than_eql
+    value: 172800
+    label: 2+ days
+:resolution_time: 
+  - operator: less_than_eql
+    value: 7200
+    label: <2 hrs
+  - operator: range
+    value: "7200,14400"
+    label: 2-4 hrs
+  - operator: range
+    value: "14400,28800"
+    label: 4-8 hrs
+  - operator: range
+    value: "28800,43200"
+    label: 8-12 hrs
+  - operator: range
+    value: "43200,86400"
+    label: 12-24 hrs
+  - operator: range
+    value: "86400,172800"
+    label: 1-2 days  
+  - operator: range
+    value: "172800,345600"
+    label: 2-4 days  
+  - operator: range
+    value: "345600,691200"
+    label: 4-8 days 
+  - operator: range
+    value: "691200,1296000"
+    label: 8-15 days
+  - operator: greater_than_eql
+    value: 1296000
+    label: 15+ days
+:reply_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+
+:private_note_count: 
+  - operator: eql
+    value: 0
+    label: 0
+  - operator: eql
+    value: 1
+    label: 1
+  - operator: eql
+    value: 2
+    label: 2
+  - operator: eql
+    value: 3
+    label: 3
+  - operator: eql
+    value: 4
+    label: 4
+  - operator: greater_than_eql
+    value: 5
+    label: 5+

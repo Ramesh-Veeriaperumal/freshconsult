@@ -56,6 +56,7 @@ class Solution::ArticlesController < ApplicationController
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
+        @article.reload
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -74,7 +75,8 @@ class Solution::ArticlesController < ApplicationController
     build_attachments
     @article.tags_changed = set_solution_tags    
     respond_to do |format|    
-      if @article.update_attributes(params[nscname])  
+      if @article.update_attributes(params[nscname]) 
+        @article.reload 
         format.html { redirect_to @article }
         format.xml  { render :xml => @article, :status => :created, :location => @article }     
         format.json  { render :json => @article, :status => :ok, :location => @article }    

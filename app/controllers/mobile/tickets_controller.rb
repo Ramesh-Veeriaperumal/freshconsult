@@ -49,17 +49,13 @@ class Mobile::TicketsController < ApplicationController
 
   def get_filtered_tickets
     agent_filter = params[:agent_filter] == "true"
-    selector = params[:filter_name].to_sym 
-    from_display_id = params[:display_id].to_i
-    limit = params[:limit].to_i > MAX_TICKET_LIMIT ? MAX_TICKET_LIMIT : params[:limit].to_i
-    order_type = ["DESC","ASC"].include?(params[:order_type]) ? params[:order_type] : "ASC" 
-    ticket_set = filter_tickets(selector, agent_filter).mobile_filtered_tickets(from_display_id,limit,"created_at #{order_type}") 
-    tickets_json = ticket_set.map(&:to_mob_json_index)
+    params[:wf_per_page] = params[:limit].to_i > MAX_TICKET_LIMIT ? MAX_TICKET_LIMIT : params[:limit].to_i
+    ticket_list = filter_tickets(agent_filter)
+    tickets_json = ticket_list.map(&:to_mob_json_index)
     render :json => { :tickets => tickets_json, :top_view => top_view }
   end
 
   private
-
   # possible dead code
   def customer_view_list
     view_list = []
@@ -122,16 +118,33 @@ class Mobile::TicketsController < ApplicationController
 
   def filter_count(selector, agent_filter=false)
     Sharding.run_on_slave do
-      tickets = filter_tickets(selector, agent_filter)
-      tickets.count
+      tickets = filter_tickets(agent_filter,selector)
+      tickets.unresolved.count
     end
   end
 
-  def filter_tickets(selector, agent_filter)
-    filter_scope = current_account.tickets.permissible(current_user)
-    filter_scope = filter_scope.where(:responder_id => current_user.id) if agent_filter
-    filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
+  def filter_tickets(agent_filter,selector = nil)
+    filter_scope   = current_account.tickets.permissible(current_user)
+    filter_scope   = filter_scope.where(:responder_id => current_user.id) if agent_filter
+    unless selector.nil?  
+      filter_tickets = TicketsFilter.filter(filter(selector), current_user, filter_scope)
+    else
+      if is_num?(params[:filter_name])
+        @ticket_filter = current_account.ticket_filters.find_by_id(params[:filter_name])
+        @ticket_filter.query_hash = @ticket_filter.data[:data_hash]
+        params.merge!(@ticket_filter.attributes["data"])
+      end
+      filter_tickets = filter_scope.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    end 
     filter_tickets
+  end
+
+  def is_num?(str)
+    Integer(str.to_s)
+   rescue ArgumentError
+    false
+   else
+    true
   end
 
 end

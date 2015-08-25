@@ -1,5 +1,5 @@
 class Freshfone::DeviceController < FreshfoneBaseController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::NumberMethods
 	include Freshfone::Presence
 	include Redis::RedisKeys

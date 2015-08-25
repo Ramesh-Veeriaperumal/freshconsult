@@ -9,33 +9,33 @@ pl:
     second: sekunda
     seconds: sekund(y)
     minute: minuta
-    minutes: minuty
+    minutes: minut(y)
     hour: godzina
-    hours: godziny
+    hours: godzin(y)
     day: dzień
     days: dni
     week: tydzień
-    weeks: tygodnie
+    weeks: tygodni(e)
     month: miesiąc
-    months: miesiące
+    months: miesiące/miesięcy
     year: rok
-    years: lata
+    years: lat(a)
     day_names:
-      - Niedziela
-      - Poniedziałek
-      - Wtorek
-      - Środa
-      - Czwartek
-      - Piątek
-      - Sobota
+      - niedziela
+      - poniedziałek
+      - wtorek
+      - środa
+      - czwartek
+      - piątek
+      - sobota
     abbr_day_names:
-      - Nie
-      - Pon
-      - Wt
-      - Śr
-      - Czw
-      - Pt
-      - Nie
+      - nie
+      - pon
+      - wt
+      - śr
+      - czw
+      - pt
+      - sob
     month_names:
       - ~
       - Styczeń
@@ -210,7 +210,7 @@ pl:
   signup: <b>Zarejestruj</b>
   signup_title: "Zarejestruj się w %{current_portal}"
   signup_up_with_us: "Zarejestruj się u nas"
-  signup_help_information: "Po zarejestrowaniu się będziesz mieć pełen dostęp do naszych rozwiązań i często zadawanych pytań (FAQ), a także możliwość zadawania pytań oraz korzystania z doświadczeń naszej społeczności. Będziesz mógł również poruszać nowe problemy techniczne i śledzić ich status."
+  signup_help_information: "Po zarejestrowaniu się uzyskasz pełen dostęp do portalu samoobsługowego, a za pomocą konta można tworzyć zgłoszenia do pomocy technicznej i śledzić ich status."
   trial_expired_on: "Pilne! Twoja wersja próbna straciła ważność!"
   trial_will_expire_in: "Twoja wersja próbna straci ważność za <b>%{no_of_days}</b>"
   trial_one_more_day: "Masz jeszcze 1 dzień na korzystanie z wersji próbnej"
@@ -218,6 +218,10 @@ pl:
   trail_expiry_one_more_day: "Aby móc nadal korzystać z systemu Freshdesk, przeprowadź uaktualnienie konta do wersji płatnej lub darmowej."
   trail_expiry_after_trial: "Twoja wersja próbna zostanie unieważniona za <b>%{no_of_days}</b>. Aby nadal korzystać z systemu Freshdesk, wybierz plan."
   hard_pressed_for_time: "Nie masz czasu na samodzielne zapoznanie się z systemem? Zapoznaj się z naszymi wskazówkami, najlepszymi praktykami i poradami eksperta Freshdesk."
+  facebook_reauth: "Twój kanał Facebook jest niedostęny. Wydaje się, że twoja nazwa użytkownika, hasło lub uprawnienia zostały niedawno zmieione."
+  reauthorize_facebook: "Dokonaj ponownej autoryzacji swojego konta w serwisie Facebook."
+  twitter_reauth: "Twój kanał w serwisie Twitter jest niedostępny. Wydaje się, że twoja nazwa użytkownika, hasło lub uprawnienia zostały niedawno zmienione. "
+  reauthorize_twitter: "Wykonaj ponownie autoryzację nazwy użytkownika w serwisie Twitter."
   schedule_a_complimentary_session: "Zaplanuj sesję uzupełniającą"
   choose_a_plan: "Wybierz plan"
   upgrade_trial: "Dokonaj uaktualnienia swojej wersji próbnej!"
@@ -253,7 +257,7 @@ pl:
   dropbox_attach_label: "Dołącz z"
   dropbox_attach_from_text: "Dołącz z usługi <b>Dropbox</b>"
   dropbox_choose_file: "Wybierz plik"
-  dropbox_choose_file_from: "Choose file from Dropbox"
+  dropbox_choose_file_from: "Wybierz plik z usługi Dropbox"
   dropbox_plaintext: "Załączniki Dropbox"
   cloudfile_plaintext: "Załączniki w chmurze"
   box_attach_label: "Dołącz z"
@@ -282,6 +286,7 @@ pl:
   after_onemonth: "Za miesiąc"
   add_more_lang: "Dodaj do swojego centrum pomocy obsługiwane języki."
   support_multi_languge: "Udzielasz pomocy technicznej klientom w więcej niż jednym języku?"
+  many: wiele
   user:
     company: Firma
     photo: Zdjęcie
@@ -407,9 +412,9 @@ pl:
     add_folder: "Dodaj folder"
     delete_confirm:
       one: "Usunięcie tego folderu spowoduje usunięcie znajdującego się w nim artykułu."
-      few: "Usunięcie tego folderu spowoduje usunięcie %{count} znajdujących się w nim artykułów."
-      many: "Usunięcie tego folderu spowoduje usunięcie %{count} znajdujących się w nim artykułów."
-      other: "Usunięcie tego folderu spowoduje usunięcie %{count} znajdujących się w nim artykułów."
+      few: "Usunięcie tego folderu spowoduje usunięcie wszystkich %{count} znajdujących się w nim artykułów."
+      many: "Usunięcie tego folderu spowoduje usunięcie wszystkich %{count} znajdujących się w nim artykułów."
+      other: "Usunięcie tego folderu spowoduje usunięcie wszystkich %{count} znajdujących się w nim artykułów."
   amount_per_month: "$ %{amount} %{period}"
   amount_for_annual: "$%{amount} rocznie"
   agent_deleted_message: "Ten konsultant został usunięty"
@@ -449,7 +454,7 @@ pl:
     tickets:
       ticket_survey:
         title: "Ankieta dla klientów"
-        rating_sub_title: "Oceniłeś nas"
+        rating_sub_title: "Wystawiłaś/eś nam ocenę"
         survey_title: "Poświęć minutę, aby ocenić naszą pomoc techniczną"
         feedback_title: "Opisz swoje doświadczenia z naszą pomocą techniczną  (opcjonalne)"
         rated_on: "na %{rated_on}"
@@ -489,21 +494,21 @@ pl:
         thanks_info: "Dziękujemy za czas poświęcony na wystawienie oceny."
         feedback_info: "Bardzo dziękujemy za opinię."
         feedback_optional: "Wyrażenie opinii jest opcjonalne"
-        submit: Submit
-        happy: Awesome
-        neutral: "Just Okay"
-        unhappy: "Not Good"
-        additional_info: "Możesz również podzielić się swoimi uwagami na temat pracy z nami."
-        customer_satisfaction: "Customer satisfaction rating"
-        rating: "Your Rating"
+        submit: Prześlij
+        happy: Super
+        neutral: "W porządku"
+        unhappy: Słaba
+        additional_info: "Powiedz nam co myślisz o współpracy z nami."
+        customer_satisfaction: "Ocena satysfakcji klienta"
+        rating: "Twoja ocena"
       index:
-        thanks_info: "Thanks for taking time to rate our support experience."
-        thanks: "Thank you very much for rating us!"
-        sorry: "But, really sorry for the inconvenience."
-        happy_info: "It has been our pleasure to serve you. We are glad you are happy with our service."
-        neutral_info: "Wish you were a little more happy."
-        neutral_information: "Wish you were a little more happy."
-        unhappy_info: "We will ensure that we will take extra care the next time around."
+        thanks_info: "Dziękujemy za poświęcenie czasu na ocenę jakości naszych usług."
+        thanks: "Serdecznie dziękujemy za wystawienie oceny!"
+        sorry: "Przykro nam z powodu wszelkich niedogodności."
+        happy_info: "Zawsze chętnie pomagamy. Cieszymy się, że podobają Ci się nasze usługi."
+        neutral_info: "Zależy nam na zadowoleniu naszych klientów."
+        neutral_information: "Zależy nam na zadowoleniu naszych klientów."
+        unhappy_info: "Dołożymy wszelkich starań, aby następnym razem jakość naszych usług była wyższa."
   gamification:
     levels:
       beginner: Początkujący
@@ -599,7 +604,7 @@ pl:
       topic_view: "Widok wątku"
       new_topic: "Nowy wątek"
       submit_ticket: "Nowe zgłoszenie"
-      ticket_list: "Zgłoszenia użytkownika"
+      ticket_list: "Lista zgłoszeń"
       ticket_view: "Szczegóły zgłoszenia"
       my_topics: "Moje tematy"
   portal_meta:
@@ -627,8 +632,8 @@ pl:
       my_topics: "Moje wątki"
   admin:
     help_image_alt:
-      helpdesk_arcarde: "Helpdesk Arcade"
-      import_csv_file_pattern: "Import CSV file pattern"
+      helpdesk_arcarde: "Funkcja Arcade dla centrum pomocy"
+      import_csv_file_pattern: "Zaimportuj wzór w formacie CSV"
     social:
       helpcard:
         title1: "Dodawanie kont portali społecznościowych"
@@ -765,7 +770,7 @@ pl:
         cc_any_email: "W polu DW może dodać dowolny adres e-mail"
         regexp: "Wyrażenie regularne"
         validate_regexp: "Sprawdzaj z wykorzystaniem wyrażenia regularnego"
-        regexp_example_html: "Na przykład, aby znaleźć ciągi znaków zawierające same litery i liczby: <b> /^[a-zA-Z0-9]*$/ </b>. Aby znaleźć ciągi znaków rozpoczynające się od słowa „fresh\" <b> /^fresh\\w/ </b>."
+        regexp_example_html: "Na przykład, aby znaleźć ciągi znaków zawierające same litery i liczby: <b> /^[a-zA-Z0-9]*$/ </b>. Aby znaleźć ciągi znaków rozpoczynające się od słowa „fresh\" <b>  %{regex} </b>."
         max_choices: "Osiągnięto maksymalną liczbę pozycji"
     contact_fields:
       fields:
@@ -834,7 +839,7 @@ pl:
         cc_any_email: "W polu DW może dodać dowolny adres e-mail"
         regexp: "Wyrażenie regularne"
         validate_regexp: "Sprawdź za pomocą wyrażenia regularnego"
-        regexp_example_html: "Na przykład, aby znaleźć ciągi znaków złożone z samych liter i liczb:<b> /^[a-zA-Z0-9]*$/ </b>. Aby znaleźć ciągi rozpoczynające się do słowa „fresh”: <b> /^fresh\\w/ </b>."
+        regexp_example_html: "Na przykład, aby znaleźć ciągi znaków złożone z samych liter i liczb:<b> /^[a-zA-Z0-9]*$/ </b>. Aby znaleźć ciągi rozpoczynające się do słowa „fresh”: <b>  %{regex} </b>."
         max_choices: "Osiągnięto maksymalną liczbę pozycji"
     portal:
       index:
@@ -850,9 +855,11 @@ pl:
         logged_in: "Zalogowani użytkownicy"
         everyone: Wszyscy
         none: Nikt
+        simple_none: Brak
         auto_suggest_solutions: "Automatycznie sugeruj rozwiązania w czasie tworzenia nowego zgłoszenia"
         auto_suggest_solutions_help: "Dotyczy to również funkcji wyszukiwania w widżecie opinii."
         captcha: "Aktywuj zabezpieczenie CAPTCHA, aby uniknąć spamu"
+        forum_captcha: "Zalogowani użytkownicy powinni wpisać kod CAPTCHA przed utworzeniem wątku."
         view_solutions: "Kto może przeglądać rozwiązania"
         view_forums: "Kto może przeglądać fora"
         notify_agents: "Wysyłaj powiadomienia o konieczności moderacji i o spamie do:"
@@ -1245,7 +1252,7 @@ pl:
         help_title_2c: "Warunki zgłoszenia"
         help_info_2c: "Możesz również filtrować reguły, aby miały zastosowanie tylko do określonych zgłoszeń."
         help_title_2d: Czynności
-        help_info_2d: "Określają, co ma być wykonane w ramach danej reguły."
+        help_info_2d: "Wyjaśnia jakie zdanie ma dana reguła."
         help_info_3: "Możesz użyć funkcji obserwatora, aby modyfikować pola, zmieniać status lub nawet wysyłać powiadomienia alarmowe natychmiast po spełnieniu określonych warunków."
         help_info_4: "Więcej informacji na temat korzystania z funkcji obserwatora"
       new:
@@ -1520,7 +1527,7 @@ pl:
         create_topic: "Utwórz lub edytuj wątek na forum"
         edit_topic: "Edytuj wszystkie wątki na forum"
         edit_topic_false: "Edytuj tylko ich własne wątki na forum"
-        delete_topic: "Usuń wątek z forum"
+        delete_topic: "Skasuj i moderuj wątek forum"
         customers: Klienci
         view_contacts: "Wyświetl kartę klientów"
         manage_contacts: "Utwórz lub edytuj nowy kontakt lub firmę"
@@ -1555,7 +1562,7 @@ pl:
         import: "Importuj dane z Zendesk"
         agent: Konsultanci
         feedback: "Widżet opinii"
-        freshchat: Freshchat
+        freshchat: "Czat na żywo"
         integrations: Dodatki
         dispatcher: Dyspozytor
         supervisor: Nadzorca
@@ -1581,7 +1588,7 @@ pl:
         security: Zabezpieczenia
         email_commands_setting: "Polecenia e-mail"
         billing: "Plany i płatności"
-        freshfone: Freshfone
+        phone-channel: Telefon
         tags: Znaczniki
         mobihelp: Mobihelp
         customer-portal: "Portal klienta"
@@ -1722,6 +1729,9 @@ pl:
       agents: Konsultanci
       all: Wszystko
       select_company: "Wybierz firmy"
+    follower:
+      title: "Osoby obserwujące forum"
+      description: "Konsultanci dodani jako osoby obserwujące otrzymują powiadomienia e-mail o utworzeniu nowego wątku"
   password_reset_email: "Wiadomość e-mail z resetem hasła"
   default_reply_template: "Szablon odpowiedzi konsultanta"
   additional_email_verification: "Dodatkowa weryfikacja adresu e-mail"
@@ -1753,7 +1763,7 @@ pl:
         success: "Dodatek został włączony!"
         error: "Podczas włączania dodatku wystąpił błąd."
         cti_error: "Nie można włączyć kilku dodatków typu CTI."
-        freshfone_enabled: "Dodatku CTI nie można włączyć razem z dodatkiem FreshFone"
+        freshfone_alert: "Nie można włączyć dodatku CTI, gdy kanał telefoniczny jest włączony."
       update:
         success: "Dodatek został zaktualizowany!"
         error: "Błąd w konfiguracji dodatku."
@@ -1776,6 +1786,7 @@ pl:
             post: "Dziękujemy za opublikowanie wiadomości. Twoja odpowiedź pojawi się w wątku po sprawdzeniu pod kątem spamu."
           spam_check: "Dziękujemy za założenie nowego wątku. Twój wątek pojawi się na forum po przejściu standardowego procesu moderacji."
           success: "Dziękujemy za opublikowanie wiadomości. Twoja odpowiedź pojawi się w wątku po przejściu standardowego procesu moderacji."
+          not_allowed: "Wybierz inne forum. Nie masz uprawnień do publikowania na tym forum."
         posts:
           spam_check: "Dziękujemy za zamieszczenie wiadomości na naszych forach. Twoja wiadomość będzie widoczna po zatwierdzeniu."
       tickets:
@@ -1789,14 +1800,15 @@ pl:
       page_unavailable: "Przepraszamy. Ta strona jest w tej chwili niedostępna dla Ciebie. Aby uzyskać więcej informacji, skontaktuj się z administratorem."
     freshfone:
       credits:
-        success: "Zakup środków na koncie Freshfone przebiegł pomyślnie"
-        error: "Błąd podczas zakupu środków na koncie Freshfone"
+        successful_purchase: "Prawidłowo doładowano konto telefoniczne."
+        unsuccessful_purchase: "Błąd w czasie doładowywania konta telefonicznego."
         invalid_recharge_amount: "Wprowadź prawidłową ilość doładowania"
       number:
-        success: "Dodawanie numeru do konta Freshfone przebiegło pomyślnie"
-        error: "Błąd podczas zakupu numeru na koncie Freshfone"
+        successful_purchase: "Kupiono numer telefonu."
+        unsuccessful_purchase: "Błąd w czasie kupowania numeru telefonu."
+        invalide_address_error: "Nie można kupić numeru telefonu. Sprawdź, czy adres ma prawidłowy format dla kraju: %{country}."
         blank_message: "%{num_type} nie może być puste"
-        invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
+        invalid_message_length: "%{num_type} nie może przekraczać 4096 znaków"
         add_blacklist_success: "Numer został zablokowany"
         add_blacklist_failure: "Nie można zablokować numeru"
         remove_blacklist_success: "Numer został odblokowany"
@@ -1840,24 +1852,24 @@ pl:
       delete:
         not_allowed: "Nie możesz usunąć tej roli. Są z nią powiązani inni użytkownicy."
     customers_import:
-      failure: "Please try again"
-      no_file: "Please upload a file"
-      wrong_format: "The CSV file format is not supported. Please check the CSV file format!"
-      success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
+      failure: "Spróbuj ponownie"
+      no_file: "Prześlij plik"
+      wrong_format: "Format CSV nie jest obsługiwany. Sprawdź format pliku CSV!"
+      success: "Zaimportowano nowe kontakty (%{created_count}) oraz zaktualizowano (%{updated_count}) istniejących kontaktów!"
     import:
       already_running: "Obecnie uruchomiony jest jeden import z pliku csv. Możesz spróbować później!!"
       failure: "Spróbuj ponownie."
       no_file: "Wczytaj plik."
       success: "Rozpoczął się import danych z pliku csv, po jego zakończeniu otrzymasz wiadomość e-mail. Proces importowania może zająć kilka minut w zależności od wielkości danych."
-      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. "
-      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:"
-      created: "Created: %{count}"
-      updated: "Updated: %{count}"
-      failed: "Failed : %{count}"
-      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
-      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
-      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
-      info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
+      info1: "Import zakończył się powodzeniem. Możesz otworzyć swoje centrum pomocy i w menu Klient->%{uc_type} wyświetlić nowo-dodane elementy typu %{type}. "
+      info2: "Import wszystkich elementów typu %{type} z przesłanego pliku CSV był niemożliwy. Podsumowanie poniżej:"
+      created: "Utworzono: %{count}"
+      updated: "Zaktualizowano: %{count}"
+      failed: "Pominięto: %{count}"
+      info3: "Prawidłowo zaimportowane elementy typu %{type} można przejrzeć w menu Klient->%{uc_type}."
+      info4: "Pominięty(-e) element(y) typu %{type} i informacje o błędach podane są w załączniku."
+      info5: "Wykonaj instrukcje opisane w tym <a href = '%{solution_link}'>artykule</a>, aby sprawdzić formatowanie pliku CSV"
+      info6: "Wyślij plik na adres support@freshdesk.com, co umożliwi nam jego weryfikację i import po naszej stronie."
       help_desk: "W razie potrzeby skontaktuj się z nami."
       regards: "Pozdrawiamy,"
       freshdesk: "Zespół Freshdesk"
@@ -1968,7 +1980,7 @@ pl:
       verify_credentials: "Logowanie nie powiodło się. Sprawdź poprawność swoich danych"
       sso:
         expected_params: "Brakujące parametry to imię i nazwisko, adres e-mail i hash."
-        invalid_time_entry: "Nieważny wpis czasu"
+        invalid_time_entry: "Wpisano nieprawidłowy czas"
       success: "Zalogowano do systemu."
       failed: "Logowanie się nie udało!"
       deleted_user: "Przepraszamy. Nie możesz się zalogować, ponieważ twoje konto zostało usunięte. Skontaktuj się z administratorem konta, aby odzyskać do niego dostęp."
@@ -2022,8 +2034,8 @@ pl:
   downgrade_plan: "Uwaga: Jeśli zmienisz wersję planu na niższą, możesz utracić niektóre z istniejących funkcji"
   f_request: "Prośba o dodanie funkcji"
   save_and_create: "Zapisz i utwórz kolejną"
-  save_and_new: "Zapisz i dodaj nowy"
-  save_and_close: "Zapisz i zamknij"
+  save_and_new: "Zapisz i <strong>dodaj nowy<strong>"
+  save_and_close: "Zapisz i <strong>zamknij</strong>"
   undelete: Przywróć
   import_zendesk_title: "Importuj z systemu Zendesk"
   closed: Zamknięte
@@ -2035,6 +2047,7 @@ pl:
     add_page: "Dodaj stronę w serwisie Facebook"
     deleted: "Strona w serwisie Facebook %{facebook_page} została usunięta."
     error_on_reply_fb: "Twojej odpowiedzi nie można było opublikować na stronie Facebook. Spróbuj ponownie później lub skontaktuj się z administratorem."
+    user_blocked: "Ten użytkownik zablokował Twoją stronę. Nie możesz wysyłać mu żadnych wiadomości."
     not_authorized: "Brak autoryzacji z serwisu Facebook"
     realtime: "<b> Zatrzymano pobieranie aplikacji w czasie rzeczywistym</b> z powodu pewnych zmian na koncie Facebook <a href='%{realtime_url}' > Ponownie upoważnij i włącz </a>"
   import_user_notification: "Wyślij wiadomość e-mail aktywacji użytkownika podczas importowania z karty klientów"
@@ -2064,7 +2077,7 @@ pl:
       assigned_to_nobody: "Konsultant nieprzydzielony"
       reassigned: "Konsultant przydzielony ponownie"
       assigned: "Konsultant przydzielony"
-      priority_change: "{{value}}"
+      priority_change: "%{value}"
       new_ticket: "Nowe zgłoszenie"
       conversation:
         out_email:
@@ -2080,7 +2093,7 @@ pl:
       execute_scenario: "Wykonany scenariusz"
       ticket_merge: "Zgłoszenie połączone"
       ticket_split: "Zgłoszenie podzielone"
-      status_change: "{{value}}"
+      status_change: "%{value}"
       deleted: "Zgłoszenie usunięte"
       restored: "Zgłoszenie przywrócone"
       product_change: "Produkt uaktualniony"
@@ -2089,6 +2102,7 @@ pl:
       group_change: "Zmieniona grupa konsultantów"
       group_change_none: "Zmieniona grupa konsultantów"
       source_change: "Źródło zgłoszenia"
+      due_date_updated: "Zmieniono termin"
     solutions:
       new_solution:
         short: "{{user_path}} dodał nowe rozwiązanie"
@@ -2250,6 +2264,10 @@ pl:
         short: "{{user_path}} zaktualizował źródło do {{source_name}}"
         without_user: "zaktualizował źródło do <strong>{{source_name}}</strong>"
         long: "{{user_path}} zaktualizował źródło zgłoszenia z {{notable_path}} do {{source_name}}"
+      due_date_updated:
+        short: "Użytkownik {{user_path}} zmienił termin na {{due_date_updated}}"
+        without_user: "termin zmieniono na <strong>{{due_date_updated}}</strong>"
+        long: "Użytkownik {{user_path}} zaktualizował termin {{notable_path}} na {{due_date_updated}}"
   credit_card_info: "Dane karty kredytowej"
   zendesk_backup_info: "Wybierz plik kopii zapasowej Zendesk pobrany z programu Zendesk"
   backup_error_msg: "Rozmiar pliku przekracza ustalony limit 50 MB, aby kontynuować import <a href='#' id='import_request'>skontaktuj się z pomocą techniczną</a>."
@@ -2268,7 +2286,7 @@ pl:
   medium: Średni
   suspended_plan_admin_info: "Twoje konto zostało zawieszone, skontaktuj się z administratorem konta (%{email})"
   delete_confirm_scenario: "Czy na pewno chcesz usunąć ten scenariusz?"
-  days: dni
+  days: Dni
   basic_brief: "Dla małych zespołów"
   phone: Telefon
   edit: Edytuj
@@ -2316,7 +2334,7 @@ pl:
       billing: Płatności
       save_billing_information: "Zapisz informacje o płatnościach"
       save_billing_information_info: "spowoduje zapisanie informacji o „Planie i płatnościach”. Spowoduje obciążenie twojej karty i rozpoczęcie subskrypcji po zakończeniu okresu próbnego."
-      begin_subscription: "Rozpocznij subskrypcję teraz..."
+      begin_subscription: "Rozpocznij subskrypcję teraz"
     show:
       export_data: "Eksportuj dane"
       export_now: "Eksportuj teraz"
@@ -2348,9 +2366,9 @@ pl:
     posted_at: "Zamieszczone %{post_time} temu"
     delete_confirm:
       one: "Usunięcie tego wątku spowoduje usunięcie jednej znajdującej się w nim odpowiedzi."
-      few: "Usunięcie tego wątku spowoduje usunięcie %{count} znajdujących się w nim odpowiedzi."
-      many: "Usunięcie tego wątku spowoduje usunięcie %{count} znajdujących się w nim odpowiedzi."
-      other: "Usunięcie tego wątku spowoduje usunięcie %{count} znajdujących się w nim odpowiedzi."
+      few: "Usunięcie tego wątku spowoduje usunięcie wszystkich %{count} znajdujących się w nim odpowiedzi."
+      many: "Usunięcie tego wątku spowoduje usunięcie wszystkich %{count} znajdujących się w nim odpowiedzi."
+      other: "Usunięcie tego wątku spowoduje usunięcie wszystkich %{count} znajdujących się w nim odpowiedzi."
   non_covered_feature_error: "Ta funkcja jest w tej chwili zablokowana"
   unavailable_feature: "Funkcja %{feature} nie jest obsługiwana w twoim planie. Aby z niej korzystać, uaktualnij konto."
   requester_replies: "Zgłaszający odpowiada na zgłoszenie"
@@ -2382,7 +2400,7 @@ pl:
   change_my_plan: "Wybierz ten plan..."
   make_payment: "Wykonaj płatność"
   add_new_email: "Dodaj nowy e-mail"
-  chatwidget_title: "Ustawienia czatu"
+  chatwidget_title: "Czat na żywo"
   feedbackwidget_title: "Widżet opinii"
   errors_in_your_address: "Znaleziono błędy dotyczące twojego adresu:"
   set_priority_as: "Ustaw priorytet na"
@@ -2397,10 +2415,10 @@ pl:
     title: "Automatyzacje scenariuszy"
     tour: "Pomóż mi zautomatyzować częste scenariusze"
     helptext: "Automatyzacja scenariusza umożliwia przeprowadzić kilka aktualizacji zgłoszenia za pomocą jednego kliknięcia. Pomaga szybko obsługiwać powtarzające się scenariusze. Możesz na przykład utworzyć scenariusz „Oznacz zgłoszenie jako usterkę” oraz „Przypisz do zespołu QA” i wysłać e-mail do menadżera produktu. Dzięki temu możesz za pomocą jednego kliknięcia przetwarzać usterki zgłaszane przez klientów."
-    available_placeholders: "Symbole zastępcze"
+    available_placeholders: "Wstaw symbole zastępcze"
     info2: "Np. zanim zgłoszenie zostanie przydzielone do grupy QA, będziesz mógł ustawić typ zgłoszenia jako błąd, potem przydzielić do grupy QA i wysłać powiadomienie do menedżera o nowym błędzie."
     info3: "Automatyzacja scenariuszy umożliwia zautomatyzowanie tych czynności w jednym kliknięciu"
-    info4: "Wybierz poniższe symbole zastępcze, aby nadpisać zawartość e-maila; zostaną one przekonwertowane na właściwe dane"
+    info4: "Kliknij, aby wstawić symbole zastępcze w treści, które zostaną dynamicznie przekonwertowane na właściwe dane."
     info5: "Przydziel do QA"
     reorder: Uporządkuj
     info6: "Oznacz zgłoszenie jako błąd i przydziel do QA"
@@ -2410,6 +2428,7 @@ pl:
     shared: Udostępnione
     personal: Osobiste
     no_scenario: "Brak scenariuszy osobistych <a href=%{link}>Utwórz nowy</a>"
+    duplicate_title: "Zduplikowany scenariusz. Nazwa już istnieje."
     visibility:
       groups: "Konsultantów w grupie"
       all_agents: "Wszyscy konsultanci"
@@ -2440,7 +2459,7 @@ pl:
   feedbackwidget_btcustomize: "Dostosowywanie przycisku"
   chatwidget_agentsonline: "Kiedy konsultanci są online"
   solution_category:
-    name: "Nazwa kategorii"
+    name: Nazwa
     new: "Nowa kategoria rozwiązania"
     edit: "Edytuj kategorię rozwiązania"
     info1: "Czy na pewno chcesz usunąć tę kategorię?"
@@ -2574,6 +2593,12 @@ pl:
     open: "Otwórz ponownie ten wątek"
     close: "Zamknij wątek"
     mark_as_spam: "Oznacz jako spam"
+    vote:
+      one: "1 osoba"
+      few: ""
+      many: ""
+      other: "%{count} osoby/osób"
+    upvote_appended_text: "zagłosował na ten element"
     post: "Dodaj wątek"
     add_comment: "Dodaj komentarz"
     update_comment: "Aktualizuj komentarz"
@@ -2641,6 +2666,9 @@ pl:
     spam_action: "Zatwierdź i opublikuj"
     replied_time: " odpowiedziano, %{time_in_words} temu"
     visible_in: "Widoczny w"
+    follower:
+      title: "Osoby obserwujące ten wątek"
+      description: "Konsultanci dodani jako osoby obserwujące otrzymują powiadomienia e-mail o publikacji nowej odpowiedzi"
   activerecord:
     errors:
       models:
@@ -2679,7 +2707,7 @@ pl:
         email_not_unique: "Adres e-mail jest już zajęty"
         email_invalid: "Adres e-mail jest nieprawidłowy"
         user_emails: "Wpisz dane co najmniej jednej osoby kontaktowej"
-        max_user_emails: "A contact cannot have more than 5 emails"
+        max_user_emails: "Jeden kontakt nie może posiadać więcej niż 5 adresów e-mail"
       full_messages:
         format: "%{attribute}%{message}"
       template:
@@ -2699,8 +2727,19 @@ pl:
   save_reply: "Zapisz odpowiedź"
   forum_shared:
     follow_topic: "Obserwuj ten wątek"
+    followers:
+      one: "%{count} obserwujący"
+      few: ""
+      many: ""
+      other: "%{count} obserwujących"
+    followers_title:
+      one: "1 osoba obserwuje to forum"
+      few: ""
+      many: ""
+      other: "%{count} osoby/osób obserwuje to forum"
     edit_title: Edytuj
     topic_vote:
+      upvote: Zagłosuj
       unlike: Odrzucone
       ideas:
         vote_button: "Podoba mi się ten pomysł"
@@ -2724,6 +2763,13 @@ pl:
         vote_info_include_2: "Ty i <a id='users-voted' href='#' title=\"Zobacz, kto ma to\"> %{vote} osób</a> ma to pytanie"
         voted_users_widget_title: "Osoby, które mają to pytanie"
     post:
+      upvote: Zagłosuj
+      voted_up_title: "osoby/osób zagłosowało na ten wpis"
+      voted_up_message:
+        one: "osoba zagłosowała na ten wpis"
+        few: "osoby zagłosowały na ten wpis"
+        many: "osób zagłosowało na ten wpis"
+        other: "osób zagłosowało na ten wpis"
       posted_on: "%{post_date}na %{user_name}"
       edit_comment: "Edytuj komentarz"
       unmark_answer: "Odznacz jako odpowiedź"
@@ -2827,7 +2873,9 @@ pl:
     type: "Rodzaj konsultanta"
     delete_agent: "Usuń konsultanta"
     delete_agent_confirmation: "Usunięty konsultant będzie dostępny jako kontakt w centrum pomocy. Czy na pewno chcesz kontynuować?"
+    convert_agent_confirmation: "Ostrzeżenie - Konwersja konsultanta na kontakt spowoduje nieodwracalne usunięcie wszystkich danych. Czy chcesz kontynuować?"
     agent_restored: "Konsultant został przywrócony"
+    convert_to_contact: "Przekonwertuj na kontakt"
     status:
       active: Aktywny
       deleted: Usunięty
@@ -2952,6 +3000,7 @@ pl:
     edit_contact: "Edytuj kontakt"
     edit: "Edytuj kontakt"
     merged_into: "Kontakt scalony w"
+    merged_info: "Kontakt scalony z: "
     save_changes: "Zapisz zmiany"
     save: Zapisz
     export_start: "Twoje dane kontaktowe zostaną wkrótce wysłane na twój adres e-mail!"
@@ -2997,10 +3046,10 @@ pl:
       enter_tags: "Wpisz znaczniki"
     conversations:
       title: Rozmowy
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Utworzono wątek <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Odpowiedziano na wątek <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} temu w <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Utworzono wątek <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Odpowiedziano na wątek <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} temu w <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} temu,  Status: %{status} <span class='middot'> &middot; </span> Konsultant: %{agent_name}"
       company_ticket_timeinfo: "przez %{user_name}, %{time} temu <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Konsultant: %{agent_name}"
       contact_all: "Najnowsza aktywność na forach i w zgłoszeniach"
@@ -3009,10 +3058,11 @@ pl:
       no_conversations: "Brak rozmów"
       all: "Wszystkie rozmowy"
       tickets: Zgłoszenia
+      recent_tickets: "Ostatnie zgłoszenia"
       forums: Fora
       contact_tickets: "Najnowsza aktywność w zgłoszeniach"
       contact_forums: "Najnowsza aktywność na forach"
-    info5: "Użytkownik nie zarejestrował jeszcze żadnych zgłoszeń"
+    info5: "Użytkownik %{nick_name} nie zarejestrował jeszcze żadnych zgłoszeń"
     restore: Przywróć
     activation: "Wyślij wiadomość aktywacyjną"
     info6: "Dodaj uwagi na temat tego kontaktu"
@@ -3039,12 +3089,18 @@ pl:
     unverified:
       no_contacts: "Nie masz żadnych niezweryfikowanych kontaktów."
       no_contacts_with_letter: "Brak kontaktów zaczynających się na literę „%{alphabet}”"
+    segment_api:
+      invalid_type: "Nieprawidłowa operacja. Sprawdź typ."
+      email_blank: "Wiadomość e-mail nie może być pusta"
   between: Pomiędzy
   profile_settings: "Ustawienia profilu"
   portal_key: Portal
   add_new_forum: "dodaj nowe forum"
   no_forum_category: "Brak forum w tej kategorii"
   sla_policy:
+    assigned_agent:
+      text: "Przypisany konsultant"
+      description: "Konsultant zajmujący się zgłoszeniem"
     sla_rule: "<b>Ważne:</b> Czas reakcji i rozwiązania problemu powinny mieścić się w zakresie od <b>15 min do 12 miesięcy</b>."
     human_name: "Polityka SLA"
     sla_targets: "Cele SLA"
@@ -3133,7 +3189,7 @@ pl:
       privacy_policy: "Polityka prywatności"
     no_topics_in_this_view: "~ Brak wątków w tym widoku ~"
     reported: zgłosił
-    said: "wystawił ocenę"
+    said: "wystawił komentarz"
     solutions_home: "Rozwiązania – strona główna"
     print_title: "Drukuj ten artykuł"
     attach_file: "Dołącz <b>plik</b>"
@@ -3143,7 +3199,7 @@ pl:
     submit_new_ticket: "...lub wyślij nowe zgłoszenie"
     login: Zaloguj
     login_portal: "Zaloguj się do portalu pomocy technicznej"
-    login_details: "Wprowadź dane logowania, które podałeś przy rejestracji"
+    login_details: "Wpisz dane poniżej"
     login_options: "...lub zaloguj się za pomocą"
     reset_password: "Podaj swój adres e-mail, a my wyślemy ci instrukcję resetowania hasła."
     signup: "Zarejestruj się"
@@ -3172,6 +3228,8 @@ pl:
     my_topics: "Moje tematy"
     showing_recently_popular_topics: "Pokazuje ostatnio popularne wątki"
     topic_deleted: "Wydaje się, że ten wątek został usunięty. Nie można więc w nim publikować."
+    topic_not_found: "Zdaje się, że wątek został usunięty"
+    post_not_found: "Zdaje się, że wpis został usunięty"
     showing_my_topics: "Pokazuje wątki, które w tej chwili obserwujesz"
     community_forums: "Fora społeczności"
     knowledge_base: "Baza wiedzy"
@@ -3218,22 +3276,36 @@ pl:
         few: "Wątki scalone z tym wątkiem:"
         many: "Wątki scalone z tym wątkiem:"
         other: "Wątki scalone z tym wątkiem:"
-    topic_vote:
+      sort_heading: "Sortowanie wg:"
+      sort_order:
+        date: "Najpierw najstarszy"
+        recency: "Najpierw najnowszy"
+        popularity: Popularny
+      sort_by_most_recent: Najnowszy
+      sort_by_most_popular: Najpopularniejszy
+      sort_by_default: Domyślnie
+    vote:
       you:
-        one: Ty
-        few: "Ty i"
-        many: "Ty i"
-        other: "Ty i"
+        one: "Ty "
+        few: ""
+        many: ""
+        other: "Ty i "
       more:
-        one: "1 inna osoba"
-        few: "%{count} inne osoby"
-        many: "%{count} innych osób"
+        one: "1 inna osoba "
+        few: "inne osoby"
+        many: ""
         other: "%{count} innych osób"
       people:
-        one: "1 osoba"
-        few: "%{count} osoby"
-        many: "%{count} osób"
-        other: "%{count} osób"
+        one: "1 osoba "
+        few: osoby
+        many: ""
+        other: "%{count} osób "
+    topic_vote:
+      announce:
+        one: "lubi to"
+        few: "lubią to"
+        many: ""
+        other: "lubi to"
       ideas:
         one: "lubi ten pomysł"
         few: "lubią ten pomysł"
@@ -3249,15 +3321,30 @@ pl:
         few: "mają to pytanie"
         many: "ma to pytanie"
         other: "ma to pytanie"
+      votes: głosy
+      upvote: zagłosuj
+      upvoted: zagłosowano
+      user_upvote_list_title: "Osoby, które na to głosowały"
+      announce_button: "Czy podoba Ci się to?"
       ideas_button: "Podoba ci się ten pomysł?"
       problem_button: "Masz ten sam problem?"
       howto_button: "Masz to samo pytanie?"
+      announce_unlike_button: "przestań lubić!"
       ideas_unlike_button: "Nie podoba mi się!"
       problem_unlike_button: "Nie mam tego problemu!"
       howto_unlike_button: "Nie mam tego pytania!"
+      announce_users_voted_title: "Osoby, które to lubią"
       ideas_users_voted_title: "Osoby, którym podoba się ten pomysł"
       problem_users_voted_title: "Osoby, które mają ten problem"
       howto_users_voted_title: "Osoby, które mają to pytanie"
+    post_vote:
+      upvoted: Zagłosowano
+      upvote: Zagłosuj
+      like:
+        one: "lubi to"
+        few: "lubią to"
+        many: ""
+        other: "lubi to"
     tickets:
       merged_topic_note: "Scalonego wątku nie można przekształcić w zgłoszenie."
       export: "Eksportuj zgłoszenia"
@@ -3348,20 +3435,20 @@ pl:
     feedback_message_4: "Brakujące/zepsute łącze"
   import_updated: Zaktualizowano
   feedbackwidget_intro: "Dostosuj swój widżet Freshdesk umieszczony poniżej i zobacz podgląd w czasie rzeczywistym."
-  chatwidget_intro: "Dostosuj swój widżet Freshdesk umieszczony poniżej i zobacz podgląd w czasie rzeczywistym."
+  chatwidget_intro: "Dostosuj swój widżet czatu na żywo poniżej i zobacz podgląd w czasie rzeczywistym."
   save: Zapisz
   import_added_newly: "Ostatnio dodane"
   quick_create: "Szybkie tworzenie"
   select_a_plan_gain_access: "Wybierz jeden z poniższych planów, aby odzyskać dostęp do swojego konta."
   customer_import:
-    import_step2_info: "Map fields from your CSV with %{type} fields."
-    import_warning_info: "If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated."
-    import_csv: "Import %{type} from CSV"
-    sample_data: "Sample data"
-    contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
+    import_step2_info: "Zmapuj pola ze swojego pliku CSV z polami typu %{type}."
+    import_warning_info: "W przypadku napotkania istniejącego już pola %{type} %{field} w czasie importu pozostałe dane typu %{type} zostaną zaktualizowane."
+    import_csv: "Zaimportuj dane typu %{type} z pliku CSV"
+    sample_data: "Przykładowe dane"
+    contact_import_data_info: "Sprawdź, czy plik CSV jest zapisany w kodowaniu UTF-8, oraz czy w pierwszym wierszu znajdują się pola nagłówka (np. nazwisko, e-mail itp.). Można również zaimportować dane na temat języka i strefy czasowej określonego kontaktu w sposób opisany w <a href = '%{solution_link}' target = '_blank' >tych specyfikacjach</a>."
+    company_import_data_info: "Sprawdź, czy plik CSV jest zapisany w kodowaniu UTF-8, oraz czy w pierwszym wierszu znajdują się pola nagłówka (np. nazwa firmy, domeny itp.).  Więcej informacji na ten temat znaleźć można <a href = '%{solution_link}' target = '_blank' >tutaj.</a>"
   import_example_title: "Poniżej znajduje się przykład pliku CSV"
-  change_password: "Change Password"
+  change_password: "Zmień hasło"
   answered: Odpowiedziano
   errors_in_payment_info: "Znaleziono błędy dotyczące twoich danych płatności:"
   attach_files: "Dołącz pliki"
@@ -3404,7 +3491,7 @@ pl:
     forums: "Fora społeczności"
     gamification: Grywalizacja
     everything_in_blossom: "Wszystko w planie Blossom"
-    chat: "Zintegrowana funkcja Live Chat"
+    chat: "Zintegrowany czat na żywo"
     multiple_languages: "Wiele języków"
     multiple_products: "Obsługa wielu produktów"
     multiple_timezones: "Wiele stref czasowych"
@@ -3450,10 +3537,10 @@ pl:
   is_expiring_today: "kończy się dzisiaj"
   feedbackwidget_help_para1: "Widżet opinii umożliwia zagnieżdżenie formularza zgłoszenia bezpośrednio na twojej stronie internetowej lub produktu. Możesz spersonalizować wygląd i układ widżetu na swojej stronie. Po wykonaniu tych czynności skopiuj i wklej wygenerowany kod embed na swojej stronie lub do aplikacji, aby móc korzystać z widżetu opinii."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshchat umożliwia wyświetlanie użytkowników twojej strony internetowej oraz prowadzenie z nimi rozmów, korzystanie z oprogramowania online lub obsługiwanie portalu bezpośrednio z systemu Freshdesk. Możesz spersonalizować całe okno czatu (również domyślne teksty, kolory itp.), a także aktywnie rozpoczynać sesje czatu, jeśli odwiedzający spędzą odpowiednio dużo czasu na twojej stronie."
+    title: "Czat na żywo"
+    info1: "Funkcja czatu na żywo zintegrowana z systemem Freshdesk umożliwia wyświetlanie użytkowników oraz prowadzenie z nimi rozmów bezpośrednio ze strony internetowej, oprogramowania online lub bezpośrednio z systemu Freshdesk. Możesz spersonalizować całe okno czatu (również domyślne teksty, kolory itp.), a także aktywnie rozpoczynać sesje czatu, jeśli odwiedzający spędzą odpowiednio dużo czasu na twojej stronie."
     info2: "Każda sesja czatu będzie zbierała meta informacje na temat odwiedzających, m.in. ich lokalizację, urządzenia itp. oraz historię ich współpracy z tobą w ramach pomocy technicznej. Po zakończeniu sesji czatu możesz skonwertować rozmowę na zgłoszenie i kontynuować obserwowanie gościa strony za pośrednictwem wiadomości e-mail lub zarchiwizować zapis rozmowy."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Dowiedz się więcej na temat funkcji Freshchat w systemie Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Dowiedz się więcej na temat korzystania z funkcji czatu na żywo w systemie Freshdesk</a>"
   low: Niski
   agents: Konsultanci
   header:
@@ -3527,7 +3614,7 @@ pl:
     reset_confirm: "Po resecie wszystkie zmiany zostaną utracone. Czy nadal chcesz kontynuować?"
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\">Kliknij tutaj </a>, aby dowiedzieć się więcej"
-      info3: "Możesz również spersonalizować szablon wiadomości dla odpowiedzi konsultanta, a nawet dodać elementy w jej treści, stosując symbole zastępcze."
+      info3: "Możesz skonfigurować system Freshdesk, aby wysyłał automatyczne powiadomienia e-mail konsultantom i zgłaszającym w określonych sytuacjach. Powiadomienia te można spersonalizować z wykorzystaniem treści generowanych dynamicznie za pomocą symboli zastępczych. Można na przykład generować powiadomienia e-mail z łączem do zgłoszenia wysyłane klientom, informujące o dodaniu przez konsultanta komentarza lub notatki publicznej do zgłoszenia.<br/><br/>Jeżeli posiadany plan przewiduje obsługę wielu języków możliwe będzie określenie języka powiadomienia oraz stworzenie szablonów dla każdego języka. Ikona <i class=\"common-icon-outdated\"></i> wskazuje, że tłumaczenia powiadomienia mogą być nieaktualne."
       agent_template_10:
         topic: "E-mail aktywacyjny użytkownika"
         info1: "E-mail weryfikujący użytkownika jest wysyłany po dodaniu nowego konsultanta do centrum pomocy. E-mail weryfikujący musi obowiązkowo zawierać „łącze aktywacyjne dla konsultanta” {{activation_url}}, które umożliwia konsultantom utworzenie hasła oraz zakończenie procesu rejestracji.<br /><br />Jeżeli centrum pomocy skonfigurowano do obsługi wielu języków, to e-mail weryfikujący użytkownika można przygotować w każdym z nich. Ikona <i class=\"common-icon-outdated\"></i> informuje, że tłumaczenia powiadomień mogą być nieaktualne."
@@ -3590,10 +3677,10 @@ pl:
   step1: "Krok 1"
   next_charge_date: "Następne odnowienie"
   last_renewed_on: "Ostatnie odnowienie"
-  update_and_log_in: "Update & Log in"
-  activate_and_log_in: "Activate & Log in"
+  update_and_log_in: "Zaktualizuj i zaloguj"
+  activate_and_log_in: "Aktywuj i zaloguj"
   password: Hasło
-  enter_payment: "Wprowadź dane płatności..."
+  enter_payment: "Przejdź do płatności"
   downgrade_confirm: "<span class=\"label label-important\">Ważne</span>  Możesz w tej chwili zmienić wersję planu <b>%{from}</b> na niższą <b>%{to}</b>. Pamiętaj, że wszystkie dane i konfiguracje powiązane z funkcjami dostępnymi w planie %{from} zostaną trwale utracone.<br /><br /> Aby zobaczyć pełną listę planów i funkcji, wejdź do sekcji <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plany i ceny</a>. <br />Nie wiesz, co zrobić? <a href = \"mailto:support@freshdesk.com\" >Pozwól, że pomożemy ci się zdecydować</a>"
   sprout_free_plan: "<span class=\"label label-important\">Ważne</span>&nbsp;&nbsp;Wybrano opcję zakończenia okresu próbnego i aktywację planu <b>%{new_plan}</b> – 3 konsultantów bezpłatnych na zawsze. Proszę pamiętać, że w związku z zamianą planu <b>%{current_plan}</b> na <b>%{new_plan}</b> wszystkie dane i konfiguracja powiązana z funkcjami planu %{current_plan} zostaną trwale utracone.<br /><br /> Pełną listę planów i funkcji można zobaczyć pod adresem <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plany i cennik</a>. <br />Nadal masz wątpliwości? <a href = \"mailto:support@freshdesk.com\" >Pomożemy ci zdecydować</a>"
   downgrade_to_sprout: "<span class=\"label label-important\">Ważne</span>&nbsp;&nbsp;Wybrano opcję zakończenia okresu próbnego i aktywację planu <b>%{new_plan}</b>. Proszę pamiętać, że w związku z zamianą planu <b>%{current_plan}</b> na <b>%{new_plan}</b> wszystkie dane i konfiguracja powiązana z funkcjami planu %{current_plan} zostaną trwale utracone.<br /><br /> Pełną listę planów i funkcji można zobaczyć pod adresem <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plany i cennik</a>. <br />Nadal masz wątpliwości? <a href = \"mailto:support@freshdesk.com\" >Pomożemy ci wybrać</a>"
@@ -3624,8 +3711,8 @@ pl:
     info3: "Freshdesk pobierze te wiadomości e-maile i skonwertuje na zgłoszenia"
     inactive_info1: "Wszystkie twoje adresy e-mail pomocy technicznej pozostają niezweryfikowane. Musisz zweryfikować przynajmniej jeden adres e-mail pomocy."
     info14: "Każda wiadomość e-mail wysłana na ten adres zostanie przekształcona w zgłoszenie"
-    info4: "<strong>UWAGA:</strong> Jeśli masz oddzielny adres e-mail do obsługi każdego produktu, <a href='{{products_path}}'>możesz dodać go tutaj</a>."
-    spf_info: "Większość twoich wiadomości email będzie dostarczanych, jednak bezpieczniej jest stworzyć <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">rekord SPF</a> w twojej strefie DNS jeśli używasz konta email we własnej domenie. To zwiększa szansę na poprawne dostarczenie wiadomości."
+    info4: "<strong>UWAGA:</strong> Jeśli masz oddzielne adresy e-mail do obsługi każdego produktu, <a href='%{products_path}'>możesz je dodać tutaj</a>."
+    spf_info: "We wiadomościach e-mail wysłanych z systemu Freshdesk jako odpowiedzi pole nadawcy zostanie automatycznie uzupełnione odpowiednim identyfikatorem e-mail pomocy technicznej. Utworzenie <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">rekordu SPF</a> w pliku strefy DNS umożliwi prawidłowe dostarczenie wiadomości."
     reply_email: "Twój adres e-mail pomocy technicznej"
     unverified_info1: "Aktywuj ten adres e-mail, klikając łącze zawarte we wiadomości weryfikacyjnej w swojej skrzynce."
     inactive_info2: "Do tego czasu domyślny adres e-mail „%{default_email}” będzie używany jako zwrotny adres e-mail."
@@ -3633,8 +3720,8 @@ pl:
     helpcard:
       tour1: "Pomóż mi skonfigurować pocztę e-mail pomocy technicznej"
       tour2: "Pomóż mi skonfigurować wiele skrzynek pocztowych"
-      info5: "Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę."
-      info19: "Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mycompany.com, poprzez przesyłanie wiadomości e-mail z tego adresu na <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>."
+      info5: "Domyślny adres e-mail twojej pomocy technicznej to <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>. Każda wiadomość wysłana pod ten adres zostanie automatycznie przekształcona w zgłoszenie, nad którym możesz rozpocząć pracę."
+      info19: "Możesz skonfigurować swoje konto Freshdesk do użytku z adresem e-mail pomocy technicznej w swojej własnej domenie, np. support@mojafirma.com, poprzez przesyłanie wiadomości e-mail z tego adresu na adres <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>."
       edit_info: "Aby utworzyć nową skrzynkę pocztową, kliknij przycisk Edytuj w ustawieniach globalnych poczty e-mail."
       info20: "Korzystanie z wielu skrzynek pocztowych"
       info21: "W swoim centrum pomocy możesz dodać nieograniczoną liczbę skrzynek pocztowych przychodzących i wychodzących (na przykład info@mycompany.com, sales@mycompany.com itp.). Możesz nawet skonfigurować automatyczne przypisywanie wiadomości z konkretnej skrzynki pocztowej do określonej grupy."
@@ -3650,7 +3737,7 @@ pl:
     info18: "Automatyczny adres UDW dodawany do odpowiedzi związanych ze zgłoszeniem"
     email_added_succ_msg: "Adres e-mail został dodany"
     assign_to_product_msg: "Powiąż ten adres e-mail z produktem"
-    assign_to_product_info: "Jeśli chcesz powiązać ten adres e-mail z nowym produktem, najpierw <a href='{{products_path}}'> dodaj produkt</a>."
+    assign_to_product_info: "Jeśli chcesz połączyć e-mail z nowym produktem, musisz najpierw <a href='%{products_path}'> dodać produkt </a>"
     new_support_email: "Nowy adres e-mail pomocy technicznej"
     global_support_emails: "Globalne adresy e-mail pomocy technicznej"
     support_email: "Adres e-mail pomocy technicznej"
@@ -3666,12 +3753,14 @@ pl:
     set_bcc_email_text: "Ustaw automatyczny e-mail UDW"
     name_info_msg: "Nazwa adresu e-mail, który zostanie użyty przy odpowiedziach na zgłoszenia"
     Personalized_email_replies: "Użyć imion i nazwisk konsultantów dla spersonalizowanych odpowiedzi?"
-    Personalized_email_replies_info: "Jeśli TAK odpowiedzi agentów będą posiadały imiona agentów w polu nadawcy (Adres e-mail wciaż będzie taki jaki podano jako Adres e-mail wsparcia).  Przykładowo '%{current_user_name} <%{current_account_domain}>'."
+    Personalized_email_replies_info: "Jeśli TAK odpowiedzi agentów będą posiadały imiona agentów w polu nadawcy (Adres e-mail wciaż będzie taki jaki podano jako Adres e-mail wsparcia).  Przykładowo '%{current_user_name} &amp;amp;amp;lt;%{current_account_domain}&amp;amp;amp;gt;'."
     Personalized_email_replies_yes: Tak
     Personalized_email_replies_no: Nie
     config_saved_message: "Ustawienia zostały zapisane."
     reply_to_tickets: "Użyj adresu e-mail „Odpowiedz-do”, aby utworzyć kontakty zgłaszającego"
     reply_to_tickets_info: "Uwaga: Jeśli funkcja jest wyłączona, zgłaszający zostanie utworzony przy użyciu adresu „Od” we wiadomości e-mail."
+    disable_agent_forward: "Zastosuj oryginalnego nadawcę jako zgłaszającego dla wiadomości e-mail, które zostały przesłane dalej"
+    disable_agent_forward_info: "Gdy konsultant prześle dalej wiadomość e-mail ze swojej skrzynki do centrum pomocy, jako zgłaszający zostanie zapisany oryginalny nadawca. Gdy opcja jest wyłączona, zgłaszającym jest konsultant."
     primary_email_delete_alert: "Nie można usunąć podstawowego adresu e-mail"
     using_custom_mailbox: "Używanie niestandardowego serwera e-mail"
   step2: "Krok 2"
@@ -3686,7 +3775,7 @@ pl:
     deleted: "Konto Twitter @%{twitter_screen_name} zostało usunięte."
     sent: "Wiadomość tweet została pomyślnie wysłana"
     error_sending: "Podczas wysyłania wiadomości tweet wystąpił błąd! Serwis Twitter może być niestabilny. Spróbuj ponownie."
-    ticket_save: "Konwersja wiadomości tweet na zgłoszenie została zakończona pomyślnie."
+    ticket_save: "Zgłoszenie zostało utworzone."
     tkt_err_save: "Nie można przekonwertować wiadomości tweet na zgłoszenie lub została już przekonwertowana."
     usr_not_thr: "Nie ma tam użytkownika."
     duplicate_status: "Tweet jest duplikatem. Odpowiedz innym tekstem"
@@ -3966,6 +4055,8 @@ pl:
     non_monitor_flash: "Przestałeś obserwować to %{type}"
     follow_title: Obserwuj
     unfollow_title: "Przestań obserwować"
+    me: Ja
+    pick_agents: "Dodaj konsultantów"
   forums:
     search_all:
       placeholder: "Przeszukaj wszystkie wątki"
@@ -3979,7 +4070,7 @@ pl:
   company:
     created: "Firma została pomyślnie utworzona."
     updated: "Firma została pomyślnie zaktualizowana."
-    created_view: "Firma została pomyślnie utworzona. <a href=\"%{company_url}\"> Wyświetl firmę. </a>"
+    created_view: "Firma została pomyślnie utworzona. <a href=\"%{company_url}\" data-pjax=\"#body-container\"> Wyświetl firmę. </a>"
     info9: "Freshdesk automatycznie połączy kontakty do tej firmy, jeśli w adresie e-mail będzie ta sama domena"
     sla_policy_name: "Polityka SLA"
     name: "Nazwa firmy"
@@ -4118,8 +4209,8 @@ pl:
   portal_customizer_title: "Dostosuj swój publiczny portal klienta"
   your_trial_account: "Twoje konto próbne"
   reply_comment: "Dodaj komentarz"
-  create_password: "Create a Password"
-  retype_password: "Retype Password"
+  create_password: "Utwórz hasło"
+  retype_password: "Powtórz hasło"
   feedbackwidget_defaulttitle: "Pomoc i wsparcie"
   two: "2 godziny"
   set_status_as: "Ustaw status jako"
@@ -4128,7 +4219,7 @@ pl:
   connect_ticket: "Łącze do zgłoszenia"
   edit_agent: "Edytuj konsultanta"
   high: Wysoki
-  scenario_label: "Etykieta scenariusza"
+  scenario_label: "Nazwa scenariusza"
   email: E-mail
   linkback_overlabel: "URL łącza powrotnego"
   select_a_plan: "Wybierz plan"
@@ -4246,6 +4337,7 @@ pl:
       addcc: "Dodaj DW"
       cc: DW
       bcc: UDW
+      response_added_alert: "Zgłoszenie zostało zaktualizowane o nowe odpowiedzi. Zapoznaj się z nimi przed wysłaniem."
       reply_form:
         title: "Odpowiedz do %{email}"
         cc: DW
@@ -4268,7 +4360,9 @@ pl:
       history:
         recent_item: "Ostatnie elementy"
     dashboard:
+      agent_availability: "Dostępność konsultantów"
       round_robin:
+        ticket_assignment: "Przypisanie zgłoszeń"
         all_agents: "Wszyscy konsultanci"
         showing: Wyświetlane
         available_agents: "Dostępni konsultanci"
@@ -4277,8 +4371,19 @@ pl:
         na: N/D
         since_now: "Od 1 sekundy"
         header: "Automatyczne przypisywanie zgłoszeń"
-        view_agent_status: "Wyświetl status konsultantów"
-        no_agents_available: "Brak dostępnych konsultantów w grupie"
+        view_agent_status: "Dostępność konsultantów"
+        no_agents: "- Brak konsultantów -"
+        back: Wstecz
+      freshfone:
+        phone: Telefon
+        sort_by: "Sortowane wg"
+        last_modified: "Ostatnia aktywność"
+        name: Nazwa
+        accepting: Odbiera
+        not_accepting: "Nie odbiera"
+        call_in_progress: "Połączenie w toku"
+        no_agents: "- Brak konsultantów -"
+        no_activity: "Brak aktywności"
       index:
         todo_title: "Lista zadań"
       summary:
@@ -4360,7 +4465,7 @@ pl:
         ticket_saved_and_closed: "Zgłoszenie zostało utworzone i zamknięte."
         view_ticket: "Pokaż zgłoszenie"
       show:
-        meta: meta
+        meta: Meta
         custom: "Dane klienta"
         linked_ticket: "To zgłoszenie jest powiązane z forum"
         conversation: Rozmowa
@@ -4389,6 +4494,7 @@ pl:
           title: "Odpowiedz do %{user}"
         history:
           recent_item: "Najnowsze elementy"
+        max_tag_length_msg: "Znacznik nie może być dłuższy niż 32 znaki"
         due_date:
           when_is_it_due: "Kiedy przypada termin realizacji?"
           today: Dzisiaj
@@ -4497,7 +4603,7 @@ pl:
         mark_primary: "Oznacz jako główny"
         primary_ticket: "To jest twoje zgłoszenie podstawowe"
         remove: "Usuń to zgłoszenie"
-        target_merge_description: "Zgłoszenie {{ticket.id}}{{ticket.subject}} zostało połączone z tym żądaniem"
+        target_merge_description: "Zgłoszenie %{ticket.id} %{ticket.subject} jest połączone z tym wnioskiem"
         target_merge_description1: "Połączone ze zgłoszenia <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1:
           one: "Zgłoszenie o ID"
@@ -4598,7 +4704,7 @@ pl:
     out_of_sla: "Pogwałcenie zasad SLA"
     info: "Eksportuj zgłoszenia dostępne w bieżącym widoku do pliku CSV"
     contact_info: "Eksport aktywnych kontaktów do pliku CSV"
-    select_header: "Wybierz pola do wyeksportowania"
+    select_header: "Wybierz wszystkie pola"
     select_all: "Zaznacz wszystko"
     select_format: "Eksportuj jako:"
     csv: CSV
@@ -4621,6 +4727,7 @@ pl:
     closed_at: zamknięto
     from: Od
     to: Do
+    check_uncheck_title: "Zaznacz/odznacz wszystkie"
     data_backup:
       body: "Eksport danych gotowy do pobrania."
     no_tickets_mail:
@@ -4663,21 +4770,21 @@ pl:
       product: Produkt
     call_history:
       info:
-        success: "We have started exporting your call records. It will be mailed to you once completed."
-        error: "We were unable to start the export. Please try again or contact Freshdesk support."
-      subject: "Call Records within (%{range})"
+        success: "Rozpoczęto eksport rejestrów połączeń. Po zakończeniu otrzymasz wiadomość e-mail."
+        error: "Nie możemy rozpocząć eksportu. Spróbuj ponownie lub skontaktuj się z działem pomocy technicznej Freshdesk."
+      subject: "Rejestry połączeń w zakresie (%{range})"
       body:
-        call_record_export_complete: "<strong>Your call records have been successfully exported.</strong> It is now available for download"
-        call_records_download_link: "<a href=%{url}><strong>Download Call Records</strong></a>"
-        conditions_header: "----- Contains calls matching the following conditions -----"
-        alternate_link: "Alternatively, paste this link in your web browser to download the file:"
-        thanks: "Thank You"
+        call_record_export_complete: "<strong>Twoje rejestry połączeń zostały prawidłowo wyeksportowane.</strong> Są już dostępne do pobrania"
+        call_records_download_link: "<a href=%{url}><strong>Pobierz rejestry połączeń</strong></a>"
+        conditions_header: "----- Zawiera połączenia spełniające następujące kryteria -----"
+        alternate_link: "Możesz też wkleić łącze w pasku adresu przeglądarki internetowej, aby pobrać plik:"
+        thanks: Dziękujemy
       no_records_mail:
-        subject: "No records in range %{range}"
-        body: "Seems like there are no call records in the provided date range."
-      range_limit_message: "We only allow exporting call records in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience."
-      repeated_request: "Your call records are already being exported. Kindly check your mail for the download link."
-      export_limit_breached: "We currently allow only %{limit} concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused."
+        subject: "Brak rekordów w zakresie %{range}"
+        body: "Wydaje się, że w wybranym zakresie dat nie ma rekordów połączeń."
+      range_limit_message: "Możliwy jest tylko eksport rejestrów połączeń w zakresie %{range} miesięcy. Zmień parametry wyszukiwania. Przepraszamy za tę niedogodność."
+      repeated_request: "Twoje rejestry są już eksportowane. Łącze zostanie wysłane na Twoją skrzynkę pocztową."
+      export_limit_breached: "Aktualnie maksymalna liczba jednoczesnych operacji eksportu to: %{limit}. Spróbuj ponownie później. Przepraszamy za tę niedogodność."
   sla:
     minutes: Minuty
     hours: Godziny
@@ -4726,6 +4833,7 @@ pl:
         forbidden_error: "To działanie nie jest dozwolone na twoim koncie. Sprawdź uprawnienia konta w serwisie Twitter."
         client_error: "Nie można przetworzyć żądania. Spróbuj ponownie później."
         wrong_call: "Próbujesz usunąć z ulubionych tweet, który nie jest w ulubionych."
+        not_following: "Użytkownik nie odbiera bezpośrednich wiadomości od osób, które go nie obserwują. Prześlij swoją odpowiedź jako tweet"
         cannot_reply: "Nie masz uprawnień, aby odpowiadać na tweety."
         cannot_retweet: "Nie masz uprawnień, aby podawać tweety dalej."
         cannot_favorite: "Nie masz uprawnień, aby dodawać tweety do ulubionych."
@@ -4782,7 +4890,7 @@ pl:
         message_thread_time: "Czas wątku wiadomości"
         message_thread_time_info: "Maksymalny czas, w którym można zapoznać się z wiadomościami od tego samego użytkownika, wynosi"
         direct_messages: "Przekonwertuj <strong>„Bezpośrednie wiadomości”</strong> na zgłoszenia"
-        direct_messages_info: "Freshdesk przekonwertuje wszystkie bezpośrednie wiadomości na tej stronie serwisu Facebook na zgłoszenia. Jeśli uruchamiasz tę funkcję pierwszy raz, może zaistnieć konieczność wykonania opcji <a href='{{reauth_url}}'>Ponownie upoważnij serwis Facebook</a>"
+        direct_messages_info: "Freshdesk przekonwertuje wszystkie bezpośrednie wiadomości na tej stronie serwisu Facebook na zgłoszenia. Jeżeli korzystasz z tej funkcji po raz pierwszy konieczna może być <a href='%{reauth_url}'>ponowna autoryzacja w serwisie Facebook</a>"
     twitter_handles:
       index:
         go_to_ticket: "Idź do zgłoszenia"
@@ -4911,10 +5019,8 @@ pl:
       host_name_info: "Podaj adres IP z samym numerem portu, bez http np.: ip:port"
     five9:
       label: Five9
-      desc: "Pozwala zintegrować system CTI Five9 z systemem Freshdesk"
-      helptext: "To jest tekst pomocy systemu Five9"
-      recording_path_info: "W ustawieniach administracyjnych systemu Five9 należy ustawić taką samą ścieżkę do przechowywania nagrań połączeń"
-      recording_path: "Ścieżka dostępu do katalogu nagrań połączeń"
+      desc: "Wykonuj i odbieraj połączenia, zapisuj informacje o połączeniu oraz rejestruj je jako zgłoszenia w systemie Freshdesk"
+      helptext: "<h4>Pomoc dodatku Five9</h4><p><br/>Po zainstalowaniu zestawu narzędzi Five9 Agent Desktop Toolkit możesz zalogować się w systemie Five9 za pomocą swojej nazwy użytkownika i hasła.<br/>Teraz dla połączeń przychodzących pojawiać się będzie okno z danymi na temat klienta</p>"
     drishti:
       label: Ameyo
       desc: "Odbieraj połączenia lub inicjuj połączenia wychodzące korzystając z potężnych funkcji obsługi połączeń telefonicznych systemu Ameyo zintegrowanych z systemem Freshdesk"
@@ -5138,6 +5244,9 @@ pl:
     nimble:
       label: Nimble
       desc: "System Freshdesk umożliwia wyświetlanie informacji kontaktowych z CRM Nimble."
+    quickbooks:
+      label: "<span class='beta'>Podgląd</span>QuickBooks"
+      desc: "Wyświetlaj dane klienta z systemu QuickBooks i twórz/aktualizuj wpisy w kartach ewidencji czasu pracy dla klientów na koncie QuickBooks."
     zohocrm:
       label: "Zoho CRM"
       desc: "System Freshdesk umożliwia wyświetlanie informacji kontaktowych z Zoho CRM."
@@ -5169,6 +5278,37 @@ pl:
         widget_title: "Tytuł widżetu"
         username: "Nazwa użytkownika"
         password: Hasło
+    dynamicscrm:
+      label: "Dynamics CRM"
+      helptext: "<h4>Pomoc dodatku Dynamics CRM</h4><p><br/> Po włączeniu tego dodatku konsultanci zyskują dostęp do danych kontaktowych z systemu Dynamics CRM bezpośrednio na stronach zgłoszeń i kontaktów w systemie Freshdesk. <br /><br /> Należy pamiętać, że konsultanci mogą wyświetlać tylko te pola, które zostaną wybrane na stronie ustawień, a funkcja wyszukiwania oparta jest na mapowaniu adresów e-mail."
+      desc: "W systemie Freshdesk możesz wyświetlać dane kontaktowe z systemu Dynamics CRM."
+      form:
+        instance_type: "Typ instancji systemu Dynamics CRM"
+        password: Hasło
+        domain: "Identyfikator użytkownika"
+        endpoint: "Punkt końcowy SOAP usługi organizacji"
+        loginurl: "URL logowania"
+        region: Region
+        organization_name: "Unikalna nazwa organizacji"
+        contact_email: "E-mail kontaktu"
+        account_email: "E-mail klienta (opcjonalny)"
+        lead_email: "E-mail potencjalnego klienta (opcjonalny)"
+        instance_info: "Prawidłowe działanie instancji na żądanie w ramach tego dodatku wymaga przekonwertowania ich na IFD."
+        domain_info: "W przypadku instancji na żądanie należy użyć identyfikatora superadministratora office 365, takiego jak nazwisko@firma.onmicrosoft.com."
+        organization_name_info: "Można go znaleźć w menu Ustawienia Dynamics CRM -> Personalizacje -> Narzędzia deweloperskie -> Dane twojej organizacji -> Unikalna nazwa organizacji."
+        end_point_info: "Przykład: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. Można go znaleźć w menu Ustawienia Dynamics CRM -> Personalizacje -> Narzędzia deweloperskie -> Usługa organizacji dla protokołu SOAP na dole strony narzędzi deweloperskich."
+        account_email_info: "Wpisz prawidłowy adres e-mail powiązany z dowolnym klientem w systemie Dynamics CRM (na podstawie klienta powiązanego z polami CRM wymienionymi w następnym kroku)."
+        contact_email_info: "Wpisz prawidłowy adres e-mail powiązany z dowolnym kontaktem w systemie Dynamics CRM (na podstawie kontaktu powiązanego z polami CRM wymienionymi w następnym kroku)."
+        lead_email_info: "Wpisz prawidłowy adres e-mail powiązany z dowolnym potencjalnym klientem w systemie Dynamics CRM (na podstawie potencjalnego klienta powiązanego z polami CRM wymienionymi w następnym kroku)."
+        login_url: "Można go znaleźć w WSDL organizacji klienta. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 i znajdź adres URL logowania: Polityka -> Wystawca -> Adres."
+        region_info: "Można go znaleźć w WSDL organizacji klienta. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 i znaleźć region: SecureTokenService -> AppliesTo."
+        dynamicscrm_settings: "Ustawienia Dynamics CRM"
+        contact: "Pola kontaktów"
+        lead: "Pola potencjalnych klientów"
+        account: "Pola klientów"
+        error: "Chyba coś się nie zgadza! Sprawdź, czy wpisane dane są prawidłowe."
+        entity_error: "nie jest prawidłowym adresem e-mail dla tego typu obiektu"
+        api_error: "Problem w trakcie gromadzenia danych API!"
     google_calendar:
       label: "Kalendarz Google"
       desc: "Możesz zarządzać zdarzeniami dla każdego zgłoszenia za pomocą kalendarza Google."
@@ -5198,7 +5338,7 @@ pl:
       include_survey: "Uwzględnij ankietę"
       include_surveymonkey_link: "Uwzględnij łącze do SurveyMonkey"
       label: SurveyMonkey
-      helptext: "<h4>Dodatek SurveyMonkey</h4><p>Dzięki temu dodatkowi możesz połączyć niestandardową ankietę ze swoim kontem na SurveyMonkey z odpowiedzią na zgłoszenie w systemie Freshdesk. Takiej ankiety można użyć zamiast domyślnej ankiety satysfakcji w twoim centrum pomocy lub oprócz ankiety satysfakcji.</p><p>Po połączeniu z kontem na SurveyMonkey będziesz mieć możliwość wyboru ankiety oraz <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>elementu zbierającego</a>, używając pól z menu rozwijanym. </p><p>Możesz również zdecydować, kiedy chcesz, aby w odpowiedzi dodać łącze do ankiety. Przykładowo można wprowadzić ustawienia, które będą dołączać ankiety automatycznie w momencie zamknięcia lub rozwiązania zgłoszenia lub które będą wymagać od konsultanta ręcznego wstawienia ankiety w każdym zgłoszeniu. </p>"
+      helptext: "<h4>Dodatek SurveyMonkey</h4><p>Dzięki temu dodatkowi możesz połączyć niestandardową ankietę ze swojego konta w serwisie SurveyMonkey z odpowiedzią na zgłoszenie w systemie Freshdesk zależnie od grupy, do której należy zgłoszenie. Takiej ankiety można użyć zamiast domyślnej ankiety satysfakcji w twoim centrum pomocy lub oprócz ankiety satysfakcji.</p><p>Po połączeniu z kontem na SurveyMonkey będziesz mieć możliwość wyboru ankiety oraz <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>elementu zbierającego</a> za pomocą pól z listą rozwijaną umożliwiających mapowanie do poszczególnych grup zgłoszeń w systemie Freshdesk. </p><p>Możesz również zdecydować, kiedy w odpowiedzi ma zostać dodane łącze do ankiety. Przykładowo można skonfigurować automatyczne dołączanie ankiety w momencie zamknięcia lub rozwiązania zgłoszenia lub ustawić możliwość opcjonalnego, ręcznego wstawiania ankiety przez konsultanta. </p>"
       desc: "Zintegruj system Freshdesk z SurveyMonkey i pozwól swoim konsultantom dodawać łącze do dowolnej, niestandardowej ankiety we wiadomościach e-mail będących odpowiedziami na zgłoszenia."
       form:
         survey_settings: ""
@@ -5223,28 +5363,28 @@ pl:
         shop_name_info: "Na przykład, jeżeli adres URL w systemie Shopify jest taki: <strong>https://my_shop_name.shopify.com</strong>, wpisz <strong>my_shop_name</strong>."
     slack:
       label: Slack
-      desc: "Stay up to date about Freshdesk tickets in Slack"
-      helptext: "<h4>Slack Integration</h4><br><p>To enable the integration select the Slack channels from dropdown and choose notifications that you would like to see in Slack.<br>Get instant updates in Slack whenever a Freshdesk ticket is created or updated and proactively engage with your customers</p>"
+      desc: "Zawsze aktualne informacje o zgłoszeniach Freshdesk w aplikacji Slack"
+      helptext: "<h4>Dodatek Slack</h4><br><p>Aby włączyć ten dodatek, wybierz kanały serwisu Slack z listy rozwijanej i powiadomienia, które mają się w nim pojawiać.<br>Dzięki temu w systemie Slack będą pojawiać się powiadomienia o utworzeniu lub aktualizacji zgłoszeń w systemie Freshdesk oraz zyskasz możliwość aktywnej interakcji ze swoimi klientami.</p>"
       form:
         slack_setting: ""
         slack_info: ""
     slack_settings:
-      channels: "Channels to post"
-      notify: "Notification for"
-      note_create: "Note creation"
-      ticket_create: "Ticket creation"
-      status_update: "Status update"
+      channels: "Kanały do publikowania"
+      notify: "Powiadomienie dla"
+      note_create: "Utworzenie notatki"
+      ticket_create: "Utworzenie zgłoszenia"
+      status_update: "Aktualizacja statusu"
     slack_msg:
-      wrong_channel: "ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group"
-      invalid_api_key: "ERROR :Invalid Freshdesk Api key"
-      notify_on_ticket_update: "Status updated for  "
-      notify_on_ticket_create: "Ticket created by "
-      notify_on_private_note_create_by_agent: "Private Note added by "
-      notify_on_public_note_create_by_agent: "Public Note added by "
-      notify_on_response_by_customer: "Response from "
-      status_msg: "Ticket status changed to "
-      chat: "Chat Conversation with"
-      default_chat: "Chat Conversation of"
+      wrong_channel: "BŁĄD przy konwertowaniu transkrypcji kanału na zgłoszenie: Zgłoszenia można tworzyć tylko w grupie kanałów bezpośrednich"
+      invalid_api_key: "BŁĄD: nieprawidłowy klucz API systemu Freshdesk"
+      notify_on_ticket_update: "Status zaktualizowany dla  "
+      notify_on_ticket_create: "Zgłoszenie utworzone przez  "
+      notify_on_private_note_create_by_agent: "Prywatna notatka dodana przez "
+      notify_on_public_note_create_by_agent: "Publiczna notatka dodana przez "
+      notify_on_response_by_customer: "Odpowiedź od "
+      status_msg: "Status zgłoszenia zmieniony na "
+      chat: "Rozmowa czat z"
+      default_chat: "Rozmowa czat"
     highrise:
       label: Highrise
       helptext: "<h4>Dodatek Highrise</h4><p><br>Wprowadź swoją domenę i klucz API, aby wyświetlić dane kontaktowe z Highrise w systemie Freshdesk. Po zakończeniu procesu na stronach kontaktów i zgłoszeń pojawi się odpowiedni widżet. <br><br>Freshdesk wyświetli następujące pobrane z Highrise dane: imię i nazwisko, tytuł, nazwa firmy, adres kontaktu, numer telefonu stacjonarnego i komórkowego.<br><br>Wyszukiwanie kontaktów w Highrise odbywa się po adresie e-mail. Wyniki wyszukiwania zostaną wyświetlone w formie listy.</p>"
@@ -5341,6 +5481,9 @@ pl:
       desc: "Załączaj i udostępniaj swoje dane/pliki z usługi Box."
       helptext: "<h4>Pomoc dodatku Box</h4><br/><p>Dodatek Box umożliwia konsultantom i użytkownikom przeglądanie plików w swoim folderze w usłudze Box i udostępnienie ich w czasie zgłaszania lub odpowiadania na zgłoszenie w systemie Freshdesk. W zgłoszeniu udostępnione zostanie bezpośrednie łącze do pliku, co pozwala ominąć ograniczenia dla załączników i wielkości wiadomości e-mail.</p> Twój Box Chooser powinien być już gotowy do użycia. Może sprawdzić jego działanie w formularzu Nowe zgłoszenie.</p>"
       login_required: "Przepraszamy, tylko użytkownicy zalogowaniu w portalu pomocy technicznej %{helpdesk_name} mogą załączać pliki z systemu Box."
+    xero:
+      label: Xero
+      desc: "Możesz utworzyć nową fakturę za zalogowany dla danego zgłoszenia czas i wyświetlać najnowsze faktury z łączami umożliwiającymi ich modyfikację w systemie Xero."
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Twórz historie w systemie Pivotal Tracker i śledź je w systemie Freshdesk"
@@ -5400,7 +5543,7 @@ pl:
       range_exceed: "Zakres nie może przekraczać 90 dni"
       filter_by_title: "Filtrowane wg"
       time_period: Okres
-      report_title: "Podsumowanie Freshfone"
+      ff_report_title: "Podsumowanie połączenia"
       summary_title: "Podsumowanie połączeń konsultanta "
       agent: Konsultant
       group: Grupa
@@ -5421,13 +5564,17 @@ pl:
       agent_calls_count: Połączenia
       total_unanswered_calls: "Nieodebrane połączenia"
       num_of_transfered: "Liczba przekierowań"
+      num_of_external_transfers: "Zewnętrzne przekierowania"
       unanswered_transfers: "Nieodebrane przekierowania"
       answered_percentage: "% odebranych"
       generate_summary: Generuj
       filter_close: Zamknij
       unanswered_count: Nieodebrane
+      others: Inne
+      external: "Numery zewnętrzne"
       includes_transfer: "Wlicz połączenia przekierowane"
       no_agent: "– Brak konsultanta –"
+      no_external: "Przekierowania na numery zewnętrzne nie są uwzględnione"
     time_sheets:
       billable: "Godziny płatne"
       non_billable: "Godziny niepłatne"
@@ -5508,7 +5655,7 @@ pl:
         view_report_date: "Zobacz raporty z okresu"
         helptext: "<b>Do czego służy raport satysfakcji klienta?</b><p>Raport satysfakcji klienta odzwierciedla jakość usług pomocy technicznej świadczonych przez twoich konsultantów.<br>Raport pomaga zrozumieć współczynnik zadowolenia klientów, przedstawiony w formie wartości procentowej (zadowolony, nie ma opinii, niezadowolony) uzyskany przez każdego z twoich konsultantów.<br><br><b>Co więcej możesz zrobić?</b><br><p><ol class='ml15'><li>Przefiltruj wyniki raportu wg konsultantów, grup lub firmy</li><li>Wyświetl raporty za określone ramy czasowe</li></ol></p></p>"
     freshchat:
-      report_title: "Podsumowanie Freshchat"
+      report_title: "Podsumowanie czatu na żywo"
       filter_by_title: "Filtrowane wg"
       time_period: Okres
       widget: Widżet
@@ -5704,7 +5851,10 @@ pl:
     insert_placeholder: "Wstaw symbol zastępczy"
     important: "Ważne:"
     delete_canned_response: "Czy na pewno chcesz usunąć wybrane szablony odpowiedzi?"
-    delete_folder: "Czy na pewno chcesz usunąć folder i całą jego zawartość?"
+    delete_folder: |-
+        Skasowanie folderu spowoduje również skasowanie wszystkich zawartych w nim szablonów odpowiedzi.
+
+        Czy na pewno chcesz kontynuować?
     delete_empty_folder: "Czy na pewno chcesz usunąć ten folder?"
     new: "Nazwa folderu"
     move: Przenieś
@@ -5732,18 +5882,18 @@ pl:
     updated: "Folder szablonów odpowiedzi został zaktualizowany!"
     deleted: "Folder szablonów odpowiedzi został usunięty."
     no_folders: "Brak szablonów odpowiedzi"
-    folder_update: "Wybrane odpowiedzi zostały przeniesione do folderu: {{folder_name}}"
+    folder_update: "Wybrane odpowiedzi zostały przeniesione do folderu: %{folder_name}"
     update: "Szablon odpowiedzi został zaktualizowany."
     created: "Szablon odpowiedzi został utworzony."
     delete_multiple: "Wybrane szablony odpowiedzi zostały usunięte!"
     no_delete: "Nie można usunąć domyślnego folderu!"
     create_new: "Utwórz nowy"
-    no_response_admin: "Brak odpowiedzi w tym folderze <a href=%{link} id='new_resp'>Utwórz nowy</a>"
+    no_response_admin: "Brak odpowiedzi w tym folderze <a href=%{link} id='new_resp'>Utwórz nową</a>"
     select_folder: "Wybierz folder"
     select_group: "Wybierz grupę"
     visibility_change: "Zaraz przeniesiesz szablony odpowiedzi w liczbie {{num_responses}} ze swojego<b> Folderu osobistego</b>. Przed przeniesieniem zmień dostępność szablonu odpowiedzi."
     pfolder_visibility_alert: "<span class=\"label label-important\">Ważne</span> – Wybrane szablony odpowiedzi po przeniesieniu ich do Folderu osobistego będą dostępne tylko dla ciebie"
-    moved_responses_update: "Nie można przenieść odpowiedzi ({{responses}}) ponieważ tytuł już istnieje w folderze {{folder_name}}"
+    moved_responses_update: "Nie można przenieść odpowiedzi (%{responses}) ponieważ tytuł już istnieje w folderze %{folder_name}"
     folder_validation: "Folder nie istnieje."
     Personal: Osobisty
     General: Ogólny
@@ -5777,8 +5927,9 @@ pl:
   ca_response:
     delete_confirm: "Czy na pewno chcesz usunąć ten szablon odpowiedzi?"
   merge_contacts:
-    header: "Ważne:<br />Chcesz scalić kontakty w liczbie {{number}} z kontaktem {{name}}."
-    info: "Pamiętaj, że scalenie nie spowoduje przeniesienia całego zestawu adresów e-mail, zgłoszeń, notatek i danych kontaktowych z wybranych kontaktów do kontaktu {{name}}. Scalone kontakty oznaczone będą również jako usunięte i nie będzie można ich przywrócić. <br /><br />Kontynuuj, aby scalić kontakty z {{name}}"
+    header: "Ważne:<br />Chcesz scalić kontakty w liczbie %{number} z kontaktem %{name}."
+    info: "Pamiętaj, że scalenie nie spowoduje przeniesienia całego zestawu adresów e-mail, zgłoszeń, notatek i danych kontaktowych z wybranych kontaktów do kontaktu %{name}. Scalone kontakty oznaczone będą również jako usunięte i nie będzie można ich przywrócić. <br /><br />Kontynuuj, aby scalić kontakty z %{name}"
+    new_info: "Operacji tej nie można cofnąć.<br />Scalenie spowoduje przeniesienie wszystkich zgłoszeń, uwag i danych kontaktowych dla drugorzędnych kontaktów w %{name}. Drugorzędne kontakty zostaną usunięte, a ich przywrócenie będzie niemożliwe. <br /><br />Kliknij <b>Potwierdź i scal</b>, aby kontynuować."
     invalid: "Podany adres e-mail jest nieprawidłowy"
     loading: "Przygotowywanie scalenia <img src='/images/loading.gif'>"
     email_activated: "identyfikator e-mail już aktywowany"
@@ -5790,16 +5941,17 @@ pl:
     removed: "Usunięto identyfikator e-mail"
     confirm_and_merge: "Potwierdź i scal"
     activation_sent: "Wysłano aktywacyjną wiadomość e-mail. Potwierdź w ciągu jednego tygodnia."
-    client_manager: "Do scalenia wybrano kierownika klienta {{name}}."
+    client_manager: "Do scalenia wybrano kierownika klienta %{name}."
     cannot_restore: "Nie można przywrócić scalonego użytkownika"
     primary: "Domyślny adres e-mail"
     not_verified: Niezweryfikowany
     merge_contact: "Scal kontakt"
     verify: "Wyślij prośbę o weryfikację"
     remove: Usuń
+    validation: "Nie można dodać więcej niż "
     success: "Kontakty zostały scalone"
     verify_mail: "Wysłano wiadomość weryfikacyjną"
-    activate_email: "Activation email sent"
+    activate_email: "Wiadomość aktywacyjna została wysłana"
     show_primary: " (Domyślny)"
     unverified: "Adres e-mail niezweryfikowany"
     make_primary: "Oznacz jako domyślny"
@@ -5809,6 +5961,9 @@ pl:
     email_remove: "Czy na pewno chcesz usunąć ten adres e-mail?"
     default_email: "Domyślny adres e-mail"
     additional_email: "Weryfikacja dodatkowego adresu e-mail"
+    primary_contact: "Główny kontakt"
+    mark_as_primary: "Oznacz jako główny"
+    merge_progress: "Czekaj na zakończenie scalania kontaktów. Może to potrwać kilka minut."
   portalcss:
     reset_all_changes: "Zresetuj WSZYSTKIE zmiany"
     reset_all_confirm_message: "Ta czynność spowoduje przywrócenie wszystkich spersonalizowanych funkcji systemu Freshdesk do stanu domyślnego. Czy na pewno chcesz kontynuować?"
@@ -5862,6 +6017,8 @@ pl:
   yesterday: Wczoraj
   seven_days: "W tym tygodniu"
   thirty_days: "W tym miesiącu"
+  last_week: "Ostatni tydzień"
+  last_month: "Ostatni miesiąc"
   two_months: "W ciągu ostatnich 2 miesięcy"
   six_months: "W ciągu ostatnich 6 miesięcy"
   set_date: "Wybierz okres"
@@ -6079,17 +6236,17 @@ pl:
     recording_on_process: "Trwa nagrywanie. <a href='#' target='_parent' id='checkfreshfoneaudio'>Sprawdź</a> ponownie za kilka minut"
     not_enough_credit: "Brak wystarczającej ilości środków!"
     recharge: Doładuj
-    number: "Numer Freshfone"
+    ff_number: "Numer telefonu"
     subscription:
       auto_recharge_text: "Obciążamy twoje konto tylko, kiedy stan konta będzie poniżej 5 USD"
       current_balance: "Twój bieżący stan konta"
-      purchase: "Kup środki Freshfone"
+      purchase_text: "Doładuj konto telefoniczne"
       setup_auto_recharge: "Ustaw automatyczne doładowanie"
-      no_credit_card: "Podaj dane do płatności, aby kupić środki Freshfone"
+      no_credit_card_text: "Wpisz dane do wykonania płatności, aby doładować konto telefoniczne"
       recharge_now_text: "Doładuj swoje konto jednorazową płatnością"
       auto_recharge_amt: "Kwota automatycznego doładowania"
       see_detailed_pricing: "Pokaż szczegółowe ceny"
-      followup_text: "warte środków Freshfone"
+      followup: "doładowania konta telefonicznego"
     dialpad:
       not_valid_number: "Podaj prawidłowy numer"
       could_be_invalid_number: "Może być nieprawidłowym numerem."
@@ -6097,6 +6254,7 @@ pl:
       not_enough_credit: "Brak wystarczającej ilości środków"
       restricted_country: "Kraj zakazany"
       already_in_call: "Ograniczenie jednocześnie wychodzącej rozmowy"
+      strange_number: "Nie można oddzwonić na numer zastrzeżony"
     call_status:
       default: ""
       completed: Zakończono
@@ -6111,13 +6269,14 @@ pl:
       restricted: Zakazany
       all_calls: "Wszystkie połączenia"
     general:
-      suspended_account: "Twoje konto Freshfone jest w tej chwili zawieszone. Włącz konto Freshfone, aby nawiązywać i odbierać połączenia"
-      suspended_on_low_balance: "Twoje konto Freshfone jest w tej chwili zawieszone. Doładuj konto, aby je aktywować"
+      suspended_account_msg: "Twój kanał telefoniczny jest aktualnie zawieszony. Włącz funkcję telefonu, aby wykonywać i odbierać połączenia."
+      suspended_on_low_balance_msg: "Twój kanał telefoniczny został zawieszony ze względu na niski stan konta. Doładuj konto, aby aktywować."
     dashboard:
+      title: Telefon
       in_conversation: "Konwersacje wewnętrzne"
       available_agents: "Dostępni konsultanci"
-      freshfone_recharge_alert: "Usługa Freshfone jest w tej chwili niedostępna. Aby móc nawiązywać i odbierać połączenia, skontaktuj się z administratorem konta."
-      admin_freshfone_recharge_alert: "Usługa Freshfone jest w tej chwili niedostępna ze względu na brak środków na koncie. Natychmiast <a href='/subscription'>doładuj </a> konto, aby móc nawiązywać i odbierać połączenia."
+      freshfone_recharge_alert_new: "Stan Twojego konta telefonicznego jest za niski, aby wykonywać lub odbierać połączenia. Doładuj konto, aby kontynuować."
+      admin_freshfone_recharge_alert_new: "Stan twojego konta jest za niski, aby wykonywać lub odbierać połączenia. <a href='/subscription'> Doładuj konto</a>, aby kontynuować."
     widget:
       ignore: Ignoruj
       accept: Akceptuj
@@ -6130,14 +6289,16 @@ pl:
       on_browser: "Dostępne w przeglądarce"
       invalid_phone_number: "W ustawieniach profilu dodaj do swojego numeru prefiks „+” i numer kodowy kraju"
       no_calls: "Brak niedawnych połączeń"
-      available: "Możesz odbierać połączenia"
-      unavailable: "Nie możesz odbierać połączeń"
+      available: "Odbiera połączenia"
+      unavailable: "Nie odbiera połączeń"
       busy: "Trwające połączenie"
       recent_calls: "Niedawne połączenia"
       transferring: "<span>Przekazywanie połączenia</span><br />Czekaj..."
-      transfer_agents: "Wyszukaj dostępnych konsultantów"
+      transfer_agents: "Wpisz nazwę konsultanta lub grupy..."
+      transfer_numbers: "Wpisz numer zewnętrzny..."
       unavailable_agents: "Brak dostępnych konsultantów, aby przekazać połączenie"
-      agents_count_in_group: "Dostępnych konsultantów: %{count}"
+      no_transfers: "Brak ostatnich przekierowań"
+      agents_count_in_group: "%{count} konsultantów"
       ticket_info: "Utwórz nowe zgłoszenie lub dodaj notatkę do istniejącego zgłoszenia za pomocą opcji notatek i nagrywania."
       add_note: "Dodaj notatki"
       note_placeholder: "Dodaj notatki dot. połączenia..."
@@ -6152,12 +6313,13 @@ pl:
       save: Zapisz
       notes: Notatki
       new_requester: "Nowy zgłaszający"
-      inactive: "Freshfone niedostępny"
+      low_credit: "Niski stan konta telefonicznego. Skontaktuj się z administratorem konta."
       forward_number_alert: "Zaktualizuj swój numer telefonu w Ustawieniach profilu, aby przekazywać połączenia na twój telefon"
       desktop_notification: "Włącz powiadomienia na pulpicie"
+      network_error: "Sprawdź połączenie z Internetem"
     call_history:
       title: "Historia połączeń"
-      sort_by: "Sortuj wg:"
+      sort_by: "Sortowanie wg:"
       singular_active_number: "Aktywny numer"
       none_active_number: "– brak –"
       active_number: "Aktywny numer"
@@ -6168,7 +6330,7 @@ pl:
       blacklist_confirmation: "Czy na pewno zablokować?"
       show_deleted: "Pokaż usunięte numery"
       filtered_by: "Przefiltrowane wg:"
-      filter_by_number: Number
+      filter_by_number: Numer
       filter_by_time: Okres
       filter_by_agent: Konsultant
       filter_by_group: "Połączenia przychodzące do grupy"
@@ -6191,6 +6353,7 @@ pl:
       save_ticket: "Przekonwertuj na zgłoszenie"
       convert: Przekonwertuj
       helpdesk: "Centrum pomocy"
+      external: Zewnętrzny
       unblock_number: Odblokuj
       block_number_title: "Blokuj numer"
       filter_option_all_agents: "Wszyscy konsultanci"
@@ -6200,6 +6363,22 @@ pl:
       filter_option_missed_calls: Nieodebrane
       filter_option_voicemail: "Poczta głosowa"
       filter_option_blocked_calls: Zablokowane
+      recording_delete:
+        done_by: "Skasowane przez"
+        tooltip: "Skasuj nagranie"
+        confirmation_btn: Skasuj
+        confirmation_heading: Potwierdź..
+        confirmation_warning: "Spowoduje to nieodwracalne skasowanie nagranej wiadomości."
+        confirmation_notification: "Czy na pewno chcesz skasować?"
+        successful: "Nagranie połączenia zostało skasowane!"
+        unsuccessful: "Nie można skasować nagrania połączenia. Spróbuj ponownie później."
+        error: "Błąd w czasie kasowania nagrania połączenia!!! Spróbuj ponownie później"
+      strange_numbers: ~
+      restricted: ZASTRZEŻONY
+      blocked: ZABLOKOWANY
+      unknown: NIEZNANY
+      anonymous: ANONIMOWY
+      empty: PUSTY
     ticket:
       recording: "Odtwórz wiadomość"
       ticket_desc_with_name: "Rozmowa klienta <b> %{customer_name} </b> (%{customer_number}, %{location}) z konsultantem <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6225,10 +6404,10 @@ pl:
       settings: Ustawienia
       greetings: Powitania
       messages: Wiadomości
-      freshfone_numbers: "Numery Freshfone"
-      disable_alert: "<b>Ważne:</b> Wyłączenie konta Freshfone nie zapobiegnie miesięcznym opłatom za numery Freshfone. Aby uniknąć opłat, usuń zakupione numery."
-      purchase_credit: "Kup środki Freshfone, aby móc kupić lokalne i bezpłatne numery oraz zacząć korzystać z usługi Freshfone"
-      purchase_numbers: "Kup lokalne lub bezpłatne numery, aby zacząć korzystać z usługi Freshfone i obsługiwać swoich klientów przez telefon"
+      freshfone_numbers_title: Telefon
+      suspended_alert: "<b>Ważne:</b> Wyłączenie kanału telefonicznego nie powoduje przerwania naliczania comiesięcznej opłaty za dzierżawę numeru. Aby uniknąć opłat, usuń dzierżawione numery."
+      purchase_credit_text: "Doładuj konto, aby umożliwić kupowanie numerów, wykonywanie i odbieranie połączeń z wykorzystaniem kanału telefonicznego."
+      purchase_numbers_text: "Kup numer lokalny lub bezpłatny i udzielaj telefonicznej pomocy technicznej swoim klientom na całym świecie."
       search: "Wyszukaj wg cyfr lub fraz"
       local: Lokalny
       toll_free: Bezpłatny
@@ -6236,8 +6415,8 @@ pl:
         simultaneous: "Łącz ze wszystkimi konsultantami"
         round_robin: "Najpierw łącz z bezczynnymi konsultantami"
       number_settings:
-        title: "Zarządzania centrum telefonicznym za pomocą Freshfone"
-        info: "<b>Przypisywanie rozmów telefonicznych konsultantom i grupom</b><br/>Możesz używać usługi Freshfone, aby utworzyć interaktywny system reakcji głosowej (IVR) i przekierowywać połączenia do poszczególnych grup lub konsultantów twojego zespołu. Na przykład możesz przekazywać połączenia od klientów zespołowi pomocy technicznej, kiedy nacisną 1, a zespołowi działu sprzedaży, kiedy nacisną 2.<br/>Ponadto możesz również spersonalizować interaktywne komunikaty odtwarzane klientom z nagranej wiadomości, wgranego pliku lub odtwarzanych za pomocą funkcje text-to-speech.<br><br><b>Personalizacja numeru Freshfone</b><br>Możesz również skonfigurować każdy numer Freshfone oddzielnie i wprowadzić oddzielne ustawienia dla każdego numeru. Dotyczy to podstawowych ustawień, np. maksymalnej liczby osób oczekujących w kolejce oraz maksymalnego czasu oczekiwania w kolejce. Po przekroczeniu zadanego czasu system automatycznie odtworzy informację o braku możliwości połączenia.<br/>Po włączeniu opcji nagrywania rozmów każde połączenie realizowane w ramach twojego centrum pomocy będzie nagrywane i kojarzone z odpowiednim zgłoszeniem. Możesz również włączyć opcję odrzucania połączeń z Freshfone poza godzinami pracy. Przykładowo możesz skonfigurować dwie linie pomocy. Jedna z nich będzie przyjmować połączenia tylko w godzinach pracy, a druga linia dla zgłoszeń o wysokim priorytecie będzie dostępna całą dobę 7 dni w tygodniu.<br/><br/>"
+        title_text: "Zarządzanie biurem obsługi telefonicznej"
+        info_content: "<b>Przypisywanie połączeń telefonicznych do konsultantów i grup</b></br>Możesz skonfigurować system interaktywnej obsługi dzwoniącego (IVR) i kierować połączenia do różnych grup lub konsultantów. Na przykład połączenia klientów, którzy nacisną 1, można kierować do działu pomocy technicznej, a klientów, którzy nacisną 2 – do działu sprzedaży.<br/>Dodatkowo można również zastosować własne komunikaty odtwarzane klientom poprzez nagranie głosu, przesłanie pliku lub z wykorzystaniem funkcji tekst na mowę.<br><br><b>Dostosowanie numeru</b><br> Numery można również konfigurować indywidualnie, tak że każdy ma własne ustawienia. Obejmuje to podstawowe opcje, takie jak maksymalna liczba osób oczekujących oraz maksymalny czas oczekiwania. Po przekroczeniu któregokolwiek z tych limitów automatycznie odtwarzany jest komunikat o niedostępności usługi.<br/>Po włączeniu rejestracji połączeń każde połączenie w ramach centrum pomocy jest rejestrowane, a nagranie załączane do zgłoszeń, gdzie może zostać udostępnione publicznie lub prywatnie. Dostępność swojego kanału telefonicznego można również ograniczyć do godzin roboczych. Można na przykład utworzyć dwie linie pomocy, jedną dostępną w normalnych godzinach roboczych i drugą o podwyższonym priorytecie dostępną przez całą dobę siedem dni w tygodniu.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Przeczytaj więcej o sposobach dostosowywania swojej usługi telefonicznej</a>."
         non_business_hours: "Przyjmuj połączenia podczas..."
         business_calendar: "Wybierz godziny pracy"
         transcript_voice: "Transkrybuj głos"
@@ -6248,7 +6427,7 @@ pl:
         voicemail_off: Wył.
         record_all: "Nagrywaj wszystkie połączenia"
         record_none: "Nie nagrywaj połączeń"
-        record_alert: "Wytyczne regulujące nagrywanie połączeń nakazują, aby powiadamiać klientów, że rozmowy są nagrywane oraz o celu nagrywania. Skonfiguruj komunikat powitania."
+        record_alert: "Przepisy regulujące nagrywanie połączeń w większości krajów nakazują, aby powiadamiać klientów, że rozmowy są nagrywane. Przygotuj odpowiedni komunikat powitania."
         max_queue_calls: "Maksymalna liczba połączeń w kolejce"
         call_wait_time: "z maksymalnym czasem oczekiwania"
         call_wait_time_suffix: "na rozmowę"
@@ -6267,8 +6446,8 @@ pl:
         recorded_voice: "Nagrany głos"
         audio_upload: "Wybierz plik do wgrania"
         greeting_message: "Wprowadź tutaj swoją wiadomość"
-        attachment_help_info: "Przyjmuje pliki audio < 5 MB"
-        recording_help_info: "Włącz mikrofon. Czas trwania < 5 minut."
+        attachment_help_info: "Przyjmuje pliki audio &lt; 5 MB"
+        recording_help_info: "Włącz mikrofon. Czas trwania &lt; 5 minut."
         cancel: Anuluj
         change: Zmień
         group: "Odtwórz komunikat i połącz z konsultantami w"
@@ -6283,10 +6462,11 @@ pl:
         recording_privacy: "Wskazanie rejestracji rozmowy"
         recording_privacy_public: "Widoczne dla klienta i konsultanta"
         recording_privacy_private: "Widoczne tylko dla konsultantów"
-        name_maxlength: "Name cannot have more than 255 Characters"
+        name_maxlength: "Nazwa nie może być dłuższa niż 255 znaków"
+        number_accessible: "Dostępne dla"
       numbers:
-        title: "Obsługuj klientów za pomocą Freshfone"
-        info: "Freshfone to telefonia zintegrowana z systemem Freshdesk Możesz skonfigurować usługę Freshfone, aby odbierać połączenia w sprawie pomocy technicznej przez przeglądarkę lub telefon oraz nawiązywać wychodzące połączenia do klientów. Freshfone umożliwia również rejestrowanie wszystkich połączeń oraz konwertowanie ciekawych rozmów telefonicznych na zgłoszenia. Możesz także unikać odbierania połączeń od określonych numerów, blokując je w historii połączeń. <br/><br/> <b>Konfiguracja Freshfone</b><br/>Aby rozpocząć korzystanie z Freshfone, najpierw musisz włączyć tę usługę, a następnie wykupić numer obsługujący połączenia przychodzące. W tej chwili Freshdesk umożliwia zakup numerów telefonów w 28 krajach. Jeśli klienci będą dzwonić z krajów takich jak USA, Wielka Brytania lub Kanada, możesz również wykupić bezpłatne numery pomocy technicznej. <br/><br/><b>Korzystanie z inteligentnego systemu IVR</b><br/>We Freshfone możesz tworzyć inteligentne systemy odpowiedzi głosowych (IVR), aby lepiej kategoryzować klientów dzwoniących po pomoc oraz przekazywać ich do odpowiedniego działu, zespołu lub konsultanta. Freshfone umożliwia utworzenie maks. 2 poziomów inteligentnych IVR."
+        sidebar_title: "Wbudowany kanał telefoniczny systemu Freshdesk"
+        sidebar_content: "Kanał telefoniczny umożliwia wykonywanie i odbieranie połączeń telefonicznych w przeglądarce, na telefonie komórkowym lub za pomocą kanału telefonicznego w mobilnych aplikacjach Freshdesk. Jest on ściśle zintegrowany z systemem obsługi zgłoszeń w systemie Freshdesk. Tak więc możliwe jest śledzenie połączeń oraz ich nagrywanie i konwertowanie na zgłoszenia w razie potrzeby. <br/><br/> <b>Konfiguracja telefonu</b></br>Aby rozpocząć korzystanie z telefonu, najpierw trzeba włączyć i zakupić numer pomocy technicznej. Dostępne są lokalne numery z podanych tutaj krajów, które umożliwiają wykonywanie i odbieranie połączeń z dowolnego miejsca na świecie. Jeżeli posiadasz klientów w USA, Wielkiej Brytanii lub Kanadzie możesz również kupić bezpłatny numer pomocy technicznej. <br/><br/><b> Korzystanie z inteligentnych systemów IVR</b><br/> Możliwe jest tworzenie inteligentnych systemów (IVR) umożliwiających kategoryzację klientów dzwoniących na numery pomocy technicznej i kierowanie ich do odpowiedniego działu, zespołu lub konsultanta. </b><br/><br/> <a href='http://freshdesk.com/freshfone'>Dowiedz się, jakie możliwości daje usługa telefoniczna</a>."
         purchase_number: "Nabądź numer"
         purchase_phone_number: "Kup numer (%{number})"
         buy: "Kup numer"
@@ -6299,8 +6479,8 @@ pl:
         purchase_confirm: "Czy jesteś pewien?"
         delete_alert: "Nie można ponownie kupić raz usuniętego numeru. Czy na pewno chcesz usunąć ten numer?"
         manage: Zarządzaj
-        cannot_purchase: "Nie można kupić numeru na koncie Freshfone"
-        insuffcient_credits: "Masz za mało środków na koncie, aby kupić nowy numer. Doładuj konto i spróbuj ponownie"
+        failure_purchase: "Nie można kupić numeru telefonu. Sprawdź, czy adres ma odpowiedni format dla kraju: <span class='certification-country'></span>."
+        low_credits: "Stan Twojego konta telefonicznego jest za niski, żeby kupić nowy numer. Doładuj konto i spróbuj ponownie."
         address:
           name: "Firma / Imię i nazwisko"
           address: Adres
@@ -6310,8 +6490,8 @@ pl:
           country: Kraj
           required_field: "Wszystkie pola są obowiązkowe"
         setup:
-          title: "Konfiguracja Freshfone"
-          info: "Aby zacząć korzystać z usługi Freshfone, najpierw trzeba kupić numer obsługujący połączenia przychodzące od klientów. Możesz kupić lokalny numer w każdym z 28* krajów, które są w tej chwili obsługiwane przez usługę Freshfone. Jeśli klienci będą dzwonić z krajów takich jak USA, Wielka Brytania lub Kanada, możesz również wykupić bezpłatne numery pomocy technicznej.<br/><br/>Możesz kupić wiele numerów Freshfone w różnych krajach i skonfigurować darmowe linie pomocy w ramach systemu Freshdesk bez korzystania z usług trzeciej strony. Twoje konto będzie obciążane standardowymi stawkami za połączenia przychodzące, wychodzące oraz przekazywane z centrum pomocy.<br/><br/> Po zakupieniu numeru Freshfone dla swojej linii pomocy wszystkie przychodzące połączenia będą rozdzielane pomiędzy konsultantów zalogowanych w centrum pomocy. Ponadto twoi konsultanci mogą zdecydować się na odebranie połączenia przez przeglądarkę lub na automatyczne przekazywanie połączeń do centrali telefonicznej."
+          title_text: "Konfiguracja telefonicznego biura obsługi"
+          info_text: "Aby rozpocząć użytkowanie kanału telefonicznego, trzeba najpierw kupić numer połączeń przychodzących dostępny dla klientów. Dostępne są numery lokalne dla państw wymienionych na tej stronie. Jeżeli klienci będą dzwonić z terenu USA, Wielkiej Brytanii lub Kanady można również przygotować dla nich numer bezpłatny.<br/><br/>Można kupić kilka numerów telefonicznych z różnych krajów i skonfigurować bezpłatne linie pomocy technicznej wewnątrz systemu Freshdesk bez stosowania usług zewnętrznych. Konto zostanie obciążone standardowymi stawkami za połączenia przychodzące, wychodzące i przekazywane z i do centrum pomocy. Sprawdź <a href='http://freshdesk.com/freshfone/pricing'>stawki za połączenia tutaj</a>.<br/><br/> Po kupieniu numeru telefonu dla telefonicznej linii pomocy technicznej wszystkie przychodzące połączenia będą rozdzielane do zalogowanych w centrum konsultantów. Dodatkowo konsultanci mają możliwość odbierania połączeń w przeglądarce lub ustawienia automatycznego przekierowania na telefon stacjonarny."
       invalid_attachment: "Załącznik ’%{name}’ nie zawiera prawidłowego pliku audio / jest większy niż 5MB."
       ivr:
         simple_message_title: "Prosta wiadomość"
@@ -6352,36 +6532,37 @@ pl:
         seed_menu_name: "Witamy/Menu Start"
         invalid_number_format: "Wpisz prawidłowy numer telefonu z prefiksem „+” oraz poprzedzony kodem kraju"
       welcome_page:
-        title: "Witamy w Freshfone"
+        title_text: Telefon
       feature_request_content:
-        title: Freshfone
-        heading: "Obsługuj swoich klientów za pomocą Freshfone"
-        about_numbers: "Kup numery pomocy technicznej z całego świata"
-        about_ivr: "Twórz IVR i przekierowuj połączenia do odpowiednich konsultantów"
-        about_recording: "Rejestruj rozmowy z klientami i odtwarzaj je w dowolnej lokalizacji"
-        read_more: "Więcej informacji"
+        title_text: Telefon
+        heading_text: "Zapewniaj pomoc techniczną swoim klientom z wykorzystaniem kanału telefonicznego"
+        number_info: "Kup lokalne i bezpłatne numery z całego świata"
+        ivr_info: "Przekierowuj połączenia do odpowiedniego konsultanta i grupy za pomocą systemu IVR"
+        recording_info: "Rejestruj i konwertuj rozmowy na zgłoszenia, podobnie jak wiadomości e-mail"
+        learn_more: "Dowiedz się więcej"
         pricing: "Zobacz wszystkie taryfy połączeń i dostępne kraje"
-        email_subject: "Wniosek o Freshfone – %{account_name}"
+        request_subject: "Wniosek o telefon - %{account_name}"
         email_message: "Potrzebna funkcja Freshfone"
-        success_message_flash: "Dziękujemy za zainteresowanie systemem Freshfone. Skontaktujemy się z tobą wkrótce."
+        success: "Skontaktujemy się z Tobą w ciągu dwóch dni roboczych."
         error_message: "Przepraszamy, ale nie możemy zrealizować twojego żądania. Spróbuj później."
-        additional_note: "Realizacja żądania Freshfone trwa dwa dni robocze"
-        button_label: "Wniosek o system Freshfone"
+        additional_info: "Po aktywacji kanału telefonicznego na koncie będziesz mieć możliwość kupowania numerów, wykonywania i odbierania połączeń"
+        button_text: "Wystąp o telefon"
+        video_title: "Obejrzyj film demonstrujący możliwości kanału telefonicznego"
   freshchat:
     feature_request:
-      title: "Witamy w systemie Freshchat"
-      heading: "Obsługuj swoich klientów za pomocą Freshchat"
+      title: "Witamy w czacie na żywo"
+      heading: "Obsługuj swoich klientów za pomocą czatu na żywo"
       info1: "Oznacz widżet czatu na żywo logo swojej marki i firmy"
       info2: "Włącz czat na żywo na swoim portalu i stronie internetowej."
       info3: "Śledź wszystkie transkrypcje czatu i konwertuj je na zgłoszenia"
       read_more: "Więcej informacji"
-      email_subject: "Wniosek o funkcję Freshchat od klienta %{account_name}"
-      email_message: "Potrzebna funkcja Freshchat"
-      success_message: "Dziękujemy za zainteresowanie funkcją Freshchat. Skontaktujemy się z Tobą wkrótce."
+      email_subject: "Wniosek o funkcję czatu na żywo od klienta %{account_name}"
+      email_message: "Potrzebuję funkcji czatu na żywo"
+      success_message: "Dziękujemy za zainteresowanie funkcją czatu na żywo. Skontaktujemy się z Tobą wkrótce."
       error_message: "Przepraszamy, ale nie możemy teraz zrealizować twojego żądania. Spróbuj później."
-      additional_note: "Realizacja żądania funkcji Freshchat trwa dwa dni robocze"
-      button_label: "Wniosek o funkcję Freshchat"
-    title: Freshchat
+      additional_note: "Rozpatrywanie wniosku o funkcję czatu na żywo trwa dwa dni robocze"
+      button_label: "Wniosek o funkcję czatu na żywo"
+    title: "Czat na żywo"
     widget: Widżet
     messages: Wiadomości
     set_default_msgs: "Ustaw wiadomości domyślne"
@@ -6406,7 +6587,7 @@ pl:
     msg_waiting_agent_title: "Status w czasie oczekiwania na konsultanta"
     msg_joining_agent_title: "Wiadomość, gdy konsultant dołączy do czatu"
     msg_leaving_agent_title: "Wiadomość, gdy konsultant opuści czat"
-    chat_transfer_msg_title: "Chat transfer message"
+    chat_transfer_msg_title: "Komunikat przekazania rozmowy"
     help_text_wait_onhold_msg: "Ta wiadomość pojawi się odwiedzającym, którzy czekają na konsultanta przez ponad minutę."
     prechat_message: "Z niecierpliwością czekamy na rozmowę z Tobą. Jednak najpierw powiedz nam coś o sobie."
     showform: "Wyświetl formularz przed rozpoczęciem czatu"
@@ -6426,7 +6607,7 @@ pl:
     copy_to_clipboard: "Kopiuj do schowka"
     copied: Skopiowano!!
     show: Pokaż
-    required: "Pole wymagane"
+    required: Wymagane
     name: "Imię i nazwisko"
     phone: "Numer telefonu"
     mail: E-mail
@@ -6445,7 +6626,7 @@ pl:
     bottom_left: "Lewa dół"
     bottom_right: "Prawa dół"
     integrate_msg: "Skopiuj i wklej ten kod przed ostatnim </body>  znacznikiem na swojej stronie lub aplikacji"
-    integrate_freshchat_title: "Zintegruj usługę Freshchat ze swoją stroną internetową i aplikacją"
+    integrate_freshchat_title: "Zintegruj usługę czatu na żywo ze swoją stroną internetową i aplikacjami"
     custom_chat_window: "Spersonalizuj okno czatu"
     text_placeholder: "Twój komunikat"
     chatbox_bgcolor: "Kolor okna"
@@ -6487,29 +6668,29 @@ pl:
     back: Cofnij
     select_location: "Wybierz lokalizację"
     valid_code: "Podaj prawidłową wartość dla koloru"
-    visitor_left_chat_msg: "Visitor has left the chat."
-    visitor_disconnect_msg: "Odwiedzający opuścił czat"
-    agent_transfer_accept_msg: "{{agent_name}} has accepted. You can now close this chat."
-    agent_transfer_reject_msg: "{{agent_name}} has rejected your transfer request."
-    agent_transfer_missed_msg: "{{agent_name}} has not picked up the chat. Please try again."
-    chat_inactive_for_10_min: "This chat has been inactive for the past 10 minutes. If you have completed your conversation, please close the chat."
-    agent_transfer_waiting_msg: "Waiting for {{agent_name}} to accept"
-    agent_chat_accept_msg: "You have accepted the chat."
-    close_chat_tooltip: "End chat"
-    minimise_chat_tooltip: Minimise
-    settings_chat_tooltip: Options
-    visitor_details_tooltip: "Visitor details"
-    agent_chat_placeholder: "Type your message here"
-    visitor_block_notifier_msg: "This visitor has been blocked"
-    visitor_unblock_notifier_msg: "This visitor has been unblocked"
-    transfer_accepted_agent_msg: "Chat was transfered from {{agent_name}}"
+    visitor_left_chat_msg: "Odwiedzający opuścił czat"
+    visitor_disconnect_msg: "Odwiedzający rozłączył się."
+    agent_transfer_accept_msg: "Konsultant {{agent_name}} zaakceptował. Możesz teraz zamknąć ten czat."
+    agent_transfer_reject_msg: "Konsultant {{agent_name}} odrzucił prośbę o przekazanie."
+    agent_transfer_missed_msg: "Konsultant {{agent_name}} nie rozpoczął rozmowy. Spróbuj ponownie."
+    chat_inactive_for_10_min: "Ten czat jest nieaktywny od 10 minut. Jeżeli zakończono rozmowę, zamknij okno czatu."
+    agent_transfer_waiting_msg: "Oczekiwanie na akceptację konsultanta {{agent_name}}"
+    agent_chat_accept_msg: "Zaakceptowano ten czat."
+    close_chat_tooltip: "Zakończ czat"
+    minimise_chat_tooltip: Minimalizuj
+    settings_chat_tooltip: Opcje
+    visitor_details_tooltip: "Dane odwiedzającego"
+    agent_chat_placeholder: "Tutaj wpisz swoją wiadomość"
+    visitor_block_notifier_msg: "Odwiedzający został zablokowany"
+    visitor_unblock_notifier_msg: "Odwiedzający został odblokowany"
+    transfer_accepted_agent_msg: "Rozmowa została przekierowana od konsultanta {{agent_name}}"
     last_message: "Ostatnia wiadomość..."
-    chat_recent_empty_tip: "Nie rozmawiałeś z nikim na czacie ostatnio"
+    chat_recent_empty_tip: "Brak ostatnich wiadomości"
     add_agent_to_chat: "Brak dostępnych konsultantów"
     url_error_msg: "Taki URL nie istnieje"
     accept: Akceptuj
     ignore: Ignoruj
-    transfer_msg: "dokonał żądania przekazania czatu"
+    transfer_msg: "Przekierowane przez "
     unauthorized_attempt_msg: "Nieautoryzowana próba dostępu – wyloguj"
     update_success_msg: "Ustawienia czatu zostały zaktualizowane"
     update_error_msg: "Wystąpił błąd podczas aktualizacji ustawień czatu."
@@ -6537,7 +6718,7 @@ pl:
     returning_visitor: "Odwiedzający powracający"
     new_visitor: "Nowy odwiedzający"
     unknown: Nieznany
-    no_visitors: "Brak odwiedzających na twojej stronie"
+    no_visitors: "Brak nowych odwiedzających na twojej stronie"
     no_conversation: "Brak odwiedzających w trakcie rozmowy"
     no_return_visitors: "Brak powracających odwiedzających"
     tag_placeholder: "Wprowadź znaczniki"
@@ -6546,7 +6727,7 @@ pl:
     edit_visitor_details: "Edytuj szczegóły odwiedzającego"
     new_ticket_tip: "Zapisz jako <b>nowe</b> zgłoszenie"
     install_tip: "<a href='/admin/chat_setting' id='visitor-list-install'>Zamontuj skrypt</a> na swojej stronie, aby widzieć odwiedzających"
-    window_offset_error_msg: "Wprowadź prawidłową wartość odchylenia (<500px)."
+    window_offset_error_msg: "Wprowadź prawidłową wartość odchylenia (&lt;500px)."
     nochat: "Czat niedostępny"
     chat_with_archive: "<b>$1</b> i <b>$2</b>"
     chat_loadmore: "Wgraj więcej..."
@@ -6574,22 +6755,22 @@ pl:
     date_invalid: "Nieprawidłowa data"
     joining_chat: "Dołączanie do czatu"
     agent_joined_msg: "{{agent_name}} dołączył do czatu"
-    agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
-    agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
-    visitor_side_inactive_msg: "This chat has been inactive for the past 20 minutes."
-    agent_disconnect_msg: "{{agent_name}} has been disconnected"
+    agent_transfered_msg: "Twoja rozmowa została przekierowana do konsultanta {{agent_name}}"
+    agent_reopen_chat_msg: "Konsultant {{agent_name}} ponownie otworzył rozmowę"
+    visitor_side_inactive_msg: "Rozmowa jest nieaktywna od 20 minut."
+    agent_disconnect_msg: "Konsultant {{agent_name}} został rozłączony"
     agent_left_msg: "{{agent_name}} opuścił czat"
-    agent_transfer_msg_to_visitor: "Your chat has been transferred to {{agent_name}}"
+    agent_transfer_msg_to_visitor: "Rozmowa została przekierowana do konsultanta {{agent_name}}"
     help_text_agent_msg: "Użyj zmiennych {{agent_name}} i {{helpdesk_name}}, aby wyświetlić nazwisko konsultanta i nazwę centrum pomocy w swoich wiadomościach"
     connecting_msg: "Oczekiwanie na konsultanta"
-    non_availability_message: "Przepraszamy, wszyscy nasi konsultanci są zajęci. # Zostaw nam wiadomość #, to niezwłocznie się z Tobą skontaktujemy."
+    non_availability_message: "Wszyscy nasi konsultanci są zajęci. Przepraszamy za niedogodność. Zostaw nam wiadomość, to niezwłocznie się z Tobą skontaktujemy."
     installation: "Kod widżetu"
-    visitor_form: "Visitor Form"
-    preferences: Preferences
-    intro_title: "Dlaczego Freshchat?"
-    intro: "Ponieważ, aby zapewnić wyjątkową obsługę klienta trzeba być dla niego zawsze dostępnym, nawet zanim będzie miał problem. Dzięki funkcji Freshchat konsultanci będą w stanie nie tylko prowadzić czat między sobą, bez wychodzenia z systemu Freshdesk, ale również rozmawiać z odwiedzającymi w czasie rzeczywistym i natychmiast udzielać odpowiedzi. To kolejna strzała w kołczanie, dodatkowy kanał opracowany specjalnie z myślą o przybliżeniu Twojej firmy do klienta."
-    enable_chat: "Włącz Freshchat"
-    learn_freshchat: "Dowiedz się więcej na temat funkcji Freshchat"
+    visitor_form: "Formularz dla odwiedzającego"
+    preferences: Właściwości
+    intro_title: "Dlaczego czat na żywo?"
+    intro: "Zintegrowane rozwiązanie czatu na żywo umożliwia przeglądanie i rozmawianie z użytkownikami obecnymi na stronie, w oprogramowaniu online lub portalu pomocy technicznej bezpośrednio w systemie Freshdesk. Możesz również aktywnie inicjować rozmowy z odwiedzającymi na stronie. Po zakończeniu sesji czatu można ją przekonwertować na zgłoszenie lub skontaktować się z odwiedzającym za pośrednictwem wiadomości e-mail lub zarchiwizować transkrypcję czatu."
+    enable_chat: "Włącz czat na żywo"
+    learn_freshchat: "Dowiedz się więcej na temat czatu na żywo"
     support_portal: "Czat na portalu pomocy technicznej"
     logged_in_users: "Tylko zalogowani użytkownicy"
     everyone: Wszyscy
@@ -6606,7 +6787,7 @@ pl:
     feedback_widget: "Otwórz widżet opinii"
     new_ticket_page: "Przejdź do strony nowego zgłoszenia na portalu pomocy technicznej"
     custom_link: "Otwórz niestandardowe łącze"
-    use_custom_link: "Use Custom Link"
+    use_custom_link: "Użyj niestandardowego łącza"
     enter_custom_link: "Wpisz adres URL"
     widget_option_info: "Jeżeli widżet opinii nie jest dostępny, otworzona zostanie strona nowego zgłoszenia."
     no_matching_agents: "Brak odpowiednich konsultantów"
@@ -6633,38 +6814,38 @@ pl:
     visitorId: "ID odwiedzającego"
     createdAt: Utworzono
     enable: Włącz
-    widgets_list_info: "Pokazywane widżety czatu dla twoich produktów"
+    widgets_list_info: "Dla każdego produktu skonfigurowanego w systemie Freshdesk dostępny jest odpowiedni widżet czatu"
     text_yes: Tak
     text_no: Nie
     enabled: Włączono
     disabled: Wyłączono
-    offline_message: "Offline/Missed Chat Messages"
-    help_offline_title: Title
-    offline_title: "Leave us a message!"
-    offline_thank_msg: "Thank you for writing to us. We will get back to you shortly."
-    offline_thank_header_msg: "Thank you!"
-    help_offline_minimized_msg: "Title when chat is minimized"
-    help_offline_maximized_msg: "Title when chat is maximized"
-    help_offline_thank_msg: "Thank you message"
-    help_offline_thank_header_msg: "Thank you header"
-    missed_chat_title: "Missed Chat form"
-    missed_chat_desc: "This form is used to collect the visitor details when you are not available"
-    offline_chat_window: "Offline chat window"
-    offline_chat_window_desc: "Applicable during non-business hour or when agents offline."
-    hide_offline_chat_window: "Hide chat window"
-    show_offline_chat_window: "Show missed chat form for visitors to leave a message"
-    missed_chat_subject: "Sorry we missed your chat on %{date}"
-    missed_chat_content: "Created via Chat. Conversation with %{visitor_name} was missed."
-    offline_chat_subject: "Offline message from %{visitor_name} on %{date}"
-    offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
-    missed_chat_info: "Chat has been missed.!"
-    change_livechat_tone: "LiveChat Notification Tone"
-    message: Message
+    offline_message: "Offline/Nieodebrane wiadomości czatu"
+    help_offline_title: Tytuł
+    offline_title: "Zostaw nam wiadomość!"
+    offline_thank_msg: "Dziękujemy za wiadomość. Wkrótce skontaktujemy się z Tobą."
+    offline_thank_header_msg: Dziękujemy!
+    help_offline_minimized_msg: "Tytuł, gdy czat jest zminimalizowany"
+    help_offline_maximized_msg: "Tytuł, gdy czat jest zmaksymalizowany"
+    help_offline_thank_msg: "Treść podziękowania"
+    help_offline_thank_header_msg: "Nagłówek podziękowania"
+    missed_chat_title: "Formularz nieodebranej rozmowy"
+    missed_chat_desc: "Ten formularz przeznaczony jest do zbierania danych odwiedzających, gdy nikt nie jest dostępny"
+    offline_chat_window: "Okno czatu offline"
+    offline_chat_window_desc: "Stosowane poza godzinami pracy, lub gdy konsultant jest offline."
+    hide_offline_chat_window: "Ukryj okno czatu"
+    show_offline_chat_window: "Wyświetl formularz nieodebranej rozmowy umożliwiający odwiedzającemu pozostawienie wiadomości"
+    missed_chat_subject: "Przepraszamy, że nie mogliśmy odebrać Twojego czatu dnia %{date}"
+    missed_chat_content: "Utworzone za pomocą czatu. Nie odebrano rozmowy z %{visitor_name}."
+    offline_chat_subject: "Wiadomość offline of %{visitor_name} z dnia %{date}"
+    offline_chat_content: "Utworzone za pomocą czatu. Wiadomość offline od %{visitor_name}."
+    missed_chat_info: "Nie odebrano czatu!"
+    change_livechat_tone: "Dźwięk powiadomienia o czacie na żywo"
+    message: Wiadomość
   facebook_tab:
     remove_tab: "Usuń kartę strony"
     tab_not_removed: "Nie można usunąć karty"
     tab_removed: "Karta strony usunięta"
-    page_added: "Ta strona została już dodana do {{source}}. Usuń ją, a następnie spróbuj dodać"
+    page_added: "Ta strona została już dodana do %{source}. Usuń ją, a następnie spróbuj dodać"
     add_tab: "Dodaj kartę strony"
     tab_name: "Nazwa karty"
     tab_url: "URL obrazu karty:"
@@ -6824,6 +7005,11 @@ pl:
       replied: odpowiedziano
       spam: Spam
       waiting_for_approval: Nieopublikowane
+      comment:
+        one: "1 komentarz"
+        few: komentarze
+        many: komentarzy
+        other: "%{count} komentarze/-y"
       locked: Zablokowane
       locked_label: "Dodawanie komentarzy do wątku zostało zablokowane"
       merged_label: "Wątek został scalony z innym wątkiem"
@@ -6857,8 +7043,8 @@ pl:
       title_meta:
         replies:
           one: "1 odpowiedź"
-          few: "%{count} odpowiedzi"
-          many: "%{count} odpowiedzi"
+          few: ""
+          many: ""
           other: "%{count} odpowiedzi"
         voices: "Osoby uczestniczące w tym wątku (%{count})"
         following:
@@ -6868,8 +7054,8 @@ pl:
           other: "%{count} osób obserwuje ten wątek"
         hits:
           one: "1 wyświetlenie"
-          few: "%{count} wyświetlenia"
-          many: "%{count} wyświetleń"
+          few: ""
+          many: ""
           other: "%{count} wyświetleń"
         vote_info:
           ideas:
@@ -7050,13 +7236,14 @@ pl:
   edit_plan: "Edytuj plan"
   account_created: "Konto stworzone %{total_time} temu, dnia %{date}"
   short_code:
-    title: "Chat Shorthands"
-    helpnote: "Chat Shorthands are customisable abbreviations which you can use in place of preset messages while you're chatting with someone. You can map different shorthand abbreviations to expand into corresponding messages and access them during your chat by using the '/' symbol."
-    shorthand: Shorthand
-    message: Expansion
-    addNew: "Add New"
-    confirm: "Are you sure you want to delete chat shorthand ?"
-    no_code: "No shorthands available."
+    title: "Skróty do czatu"
+    helpnote: "Skrótowce czatu to modyfikowalne skróty, które można stosować na czacie zamiast wpisywania powiązanych z nimi komunikatów. Można utworzyć wiele skrótowców rozwijających się w odnośne komunikaty, aktywowane za pomocą symbolu „/\"."
+    shorthand: Skrótowiec
+    message: Rozwinięcie
+    addNew: "Dodaj nowy"
+    confirm: "Czy na pewno chcesz skasować skrótowiec czatu?"
+    no_code: "Brak skrótowców."
     alert:
-      code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
-      code_duplicate: "This shorthand is already in use."
+      code_mandatory: "Oba pola są obowiązkowe. Skrótowce mogą mieć do 10 znaków i nie mogą zawierać żadnych znaków specjalnych z wyjątkiem „-\"'."
+      code_duplicate: "Ten skrótowiec już istnieje."
+  new_label: NOWY

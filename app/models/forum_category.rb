@@ -39,8 +39,10 @@ class ForumCategory < ActiveRecord::Base
 
   acts_as_list :scope => :account
 
-  after_create :assign_portal, :set_activity_new_and_clear_cache
+  after_create :set_activity_new_and_clear_cache
   after_update :clear_sidebar_cache
+
+  before_create :set_default_portal
 
   before_destroy :set_destroy_activity_and_clear_cache
 
@@ -80,7 +82,14 @@ class ForumCategory < ActiveRecord::Base
       [ category.name, category.user_forums.map {|forum| [forum.id, forum.name] } ]
     }
   end
-
+  
+  def association_with(portal)
+    self.portal_forum_categories.select{|p| p.portal_id == portal.id}.first
+  end
+  
+  def position_in_portal(portal = Portal.current)
+    (self.association_with(portal) || {})[:position] || 1
+  end
 
   def to_xml(options = {})
     options[:indent] ||= 2
@@ -119,14 +128,12 @@ class ForumCategory < ActiveRecord::Base
     )
   end
 
-  def assign_portal
-    portal_forum_category = self.portal_forum_categories.build
-    portal_forum_category.portal_id = account.main_portal.id
-    portal_forum_category.save
-  end
-
   def main_portal
     self.portal_forum_categories.main_portal_category.first
+  end
+
+  def set_default_portal
+    self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
   end
 
 end

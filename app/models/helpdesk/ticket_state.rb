@@ -6,6 +6,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   include Reports::TicketStats
   include Redis::RedisKeys
   include Redis::ReportsRedis
+  include BusinessHoursCalculation
 
   # Attributes for populating data into monthly stats tables
   STATS_ATTRIBUTES = ['resolved_at','first_assigned_at','assigned_at','opened_at']
@@ -21,7 +22,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit :update_ticket_stats, on: :update, :if => :ent_reports_enabled?
   after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
-  after_commit :update_search_index, on: :update
+  after_commit :update_search_index,  on: :update
   
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
@@ -34,14 +35,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was ||= resolved_at
   end
   
-  def set_resolved_at_state
-    self.resolved_at=Time.zone.now
+  def set_resolved_at_state(time=Time.zone.now)
+    self.resolved_at = time 
     set_resolution_time_by_bhrs
   end
   
-  def set_closed_at_state
+  def set_closed_at_state(time=Time.zone.now)
     set_resolved_at_state if resolved_at.nil?
-    self.closed_at=Time.zone.now
+    self.closed_at = time
   end
   
   def need_attention
@@ -56,6 +57,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     (requester_responded_at && agent_responded_at && requester_responded_at > agent_responded_at)
   end
 
+  def customer_responded_for_outbound?
+    if agent_responded_at and requester_responded_at
+      requester_responded_at > agent_responded_at
+    else
+      requester_responded_at.present?
+    end
+  end
+
   def consecutive_customer_response?
     if (agent_responded_at && requester_responded_at)
       requester_responded_at > agent_responded_at
@@ -65,7 +74,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   end
 
   def first_call_resolution?
-      (inbound_count == 1)
+      (inbound_count == 1 and !tickets.outbound_email?)
   end
 
   def current_state
@@ -85,7 +94,12 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     
     return TICKET_LIST_VIEW_STATES[:resolved_at] if resolved_at
     
-    return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    if self.tickets.outbound_email?
+      return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded_for_outbound?
+    else
+      return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?
+    end
+    
     return TICKET_LIST_VIEW_STATES[:agent_responded_at] if agent_responded_at
     return TICKET_LIST_VIEW_STATES[:created_at]
   end
@@ -98,16 +112,16 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     closed_at || closed_at_dirty_fix
   end
 
-  def set_first_response_time(time)
+
+  def set_first_response_time(time, created_time = nil)
+    created_time ||= self.created_at
     self.first_response_time ||= time
     BusinessCalendar.execute(self.tickets) { 
       if self.first_resp_time_by_bhrs
         self.first_resp_time_by_bhrs
       else
         default_group = tickets.group if tickets
-        business_calendar_config = Group.default_business_calendar(default_group)
-        self.first_resp_time_by_bhrs = Time.zone.parse(created_at.to_s).
-                          business_time_until(Time.zone.parse(first_response_time.to_s),business_calendar_config)
+        self.first_resp_time_by_bhrs = calculate_time_in_bhrs(created_time, first_response_time, default_group)
       end
     }
   end
@@ -117,9 +131,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     time = created_at || Time.zone.now
     BusinessCalendar.execute(self.tickets) {
       default_group = tickets.group if tickets
-      business_calendar_config = Group.default_business_calendar(default_group)
-      self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
-                          business_time_until(Time.zone.parse(resolved_at.to_s),business_calendar_config)
+      self.resolution_time_by_bhrs = calculate_time_in_bhrs(time, resolved_at, default_group)
     }
   end
 
@@ -128,7 +140,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       :select => %(count(*) as outbounds, 
         round(avg(helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.resp_time_column}), 3) as avg_resp_time, 
         round(avg(helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.resp_time_by_bhrs_column}), 3) as avg_resp_time_bhrs))
-    self.outbound_count = tkt_values.outbounds
+    #Hack - for outbound emails, the initial description is considererd as outbound, so adding that for outbound_count column
+    self.outbound_count = tickets.outbound_email? ? tkt_values.outbounds + 1 : tkt_values.outbounds
     self.avg_response_time = tkt_values.avg_resp_time
     self.avg_response_time_by_bhrs = tkt_values.avg_resp_time_bhrs
   end

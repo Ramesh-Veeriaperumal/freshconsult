@@ -1,0 +1,67 @@
+<%= javascript_include_tag :'cdn/survey_admin'  %>
+<div class="cust-satisfaction mt20 survey" id="survey_new_layout" style="display:none;">
+	<div class="survey-overlay center" style="display:none;"><div class="sloading loading-small loading-center"> <div class="survey-overlay-text"><b> <%= t('admin.surveys.new_layout.loading') %> </b></div></div></div>
+	<form accept-charset="UTF-8" name="survey_fields" class="form-horizontal" novalidate="novalidate">
+		<div class="clearfix">
+			<div class="control-group">
+				<h3 class="lead itil-hide">
+					<a onclick="javascript:SurveyAdmin.list();">
+						<%=t('admin.surveys.index.custom_title')%>
+					</a> /
+					<%if @layout_params[:action] == 'create'%> 
+						<%=t('admin.surveys.index.new') %>
+					<%else%>  
+						<%=t('admin.surveys.index.edit')%> 
+					<%end %> 
+				</h3>
+				<label class="clearfix"> <%= t('admin.surveys.new_layout.title') %> </label>
+				<div class="clearfix">
+					<div class="pull-left survey-pull-left">
+						<input type="text" maxlength="150" class="input-xlarge" placeholder="<%= t('admin.surveys.new_layout.default_survey') %>" name="title_text" value="<%=@layout_params[:title]%>"/>
+						<label id="title_text-error" class="error" style="display:none;"><%= t('admin.surveys.new_layout.title_error_text') %></label>
+						<%if @layout_params[:id] != "" %>
+							<input type="checkbox" name="active"
+							class="pull-right pseudoCheckbox" rel="toggle"  data-checked-label='<%=t('admin.surveys.index.on')%>' 
+							data-unchecked-label='<%=t('admin.surveys.index.off') %>'
+							<%if @layout_params[:active]%> checked="checked" <%end%> style="display: none;"
+							onchange="javascript:SurveyStatus.change(<%=@layout_params[:id]%>,this.checked);"/>
+						<%end%>
+					</div>
+					<!-- test survey buttons starts-->
+					<div class="pull-right">
+            <a onclick="javascript:SurveyDetail.preview(<%=@layout_params[:id]%>);" id="previewFeedback" value="<%=t('admin.surveys.index.preview')%>" style="display:none;"><%=t('admin.surveys.index.preview')%>
+            </a>&nbsp;&nbsp;
+            <input type="button" value="<%=t('admin.surveys.index.save_survey')%>" onclick='jQuery("#surveyForm input:submit").submit();' class="btn btn-primary">
+						<input type="button" id="deleteSurvey" value="Delete Survey" class="btn" style="display:none;" onclick="javascript:SurveyList.destroy('<%=@layout_params[:id]%>',true);">
+					</div>
+					<!-- test survey buttons end-->
+				</div>
+			</div>
+		</div>
+		<div id="survey_rating" class="sub-container cust-satisfaction-rating">
+		</div>
+
+		<div class="selecting-info center">
+			<span>
+				<i class="ficon-arrow-click"></i>
+				<p class="muted"><%=t('admin.surveys.index.survey_help_msg_v2')%></p>
+			</span>
+		</div>
+
+		<div id="survey_thanks" class="sub-container cust-satisfaction-rating survey_thanks">
+		</div>
+	</form>
+	<form accept-charset="UTF-8" name="survey" class="pull-right" id="surveyForm" surveyId="<%=@layout_params[:id]%>" method="<%=@layout_params[:method]%>" action="<%=@layout_params[:url]%>" novalidate="novalidate">
+		<input type="hidden" value="javascript:SurveyAdminUtil.action.split(<%=@layout_params[:action]%>);" name="action">
+		<input type="hidden" value="" name="survey">
+		<input type="hidden" value="" name="jsonData">
+		<input type="hidden" id="deleted" name="deleted" value="">
+		<%= pjax_link_to t('admin.surveys.index.cancel'), admin_surveys_path ,:class=> 'btn' %>
+		<input type="submit" value="<%=t('admin.surveys.index.save_survey')%>" class="btn btn-primary">
+	</form>
+</div>
+<% content_for :helpcard do %>
+	<div class="helpcard">
+		<p>	<%= t('admin.surveys.custom_helptext_v2').html_safe %> </p>
+	</div>
+<%end%>

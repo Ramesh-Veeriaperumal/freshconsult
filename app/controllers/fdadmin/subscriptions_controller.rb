@@ -33,7 +33,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
 	def customers
 		result = {}
-		result[:signups_per_day] = fetch_signups_per_day if params[:requested_method] == "last_month"
+		result[:last_month] = fetch_signups_per_day if params[:requested_method] == "last_month"
 		result[:per_month] = fetch_signups_per_month if params[:requested_method] == "per_month"
 		result[:deleted] = fetch_deleted_customers if params[:requested_method] == "deleted"
 		result[:customers_converted] = converted_customers_per_month if params[:requested_method] == "customers_converted"

@@ -36,8 +36,7 @@
 				<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'time-sheet-report', :url => timesheet_reports_url}) %>
 			<%end%>
 			<% if feature?(:surveys) %>
-				<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'customer-satisfaction-report', :url => 
-					survey_activity_url}) %>
+				<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'customer-satisfaction-report', :url => survey_activity_url})%>
 			<%end%>
 			<% if freshfone_reports? %>
 				<%= report_item({:label => t('reports.freshfone.ff_report_title'), :class => 'summary-report-icon', :url => reports_freshfone_summary_reports_url}) %>
@@ -59,6 +58,9 @@
 		<ul class="report_icons">
 			<%= report_item({:label => t('adv_reports.helpdesk_load_analysis'), :class => 'helpdesk-load-analysis', :url => reports_analysis_reports_url}) %>
 			<%= report_item({:label => t('adv_reports.helpdesk_performance_analysis'), :class => 'helpdesk-performance-analysis', :url => reports_performance_analysis_reports_url}) %>
+			<% if bi_reports_ui_enabled? %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.ticket_volume.title'), :class => 'ticket-volume', :url => reports_v2_ticket_volume_index_url}) %>
+			<% end %>
 		</ul>
 		</div>
 	<div class="report-separation comparison">

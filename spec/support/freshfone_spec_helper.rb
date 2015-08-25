@@ -10,14 +10,15 @@ module FreshfoneSpecHelper
       :twilio_subaccount_token => "58aacda85de70e5cf4f0ba4ea50d78ab", 
       :twilio_application_id => "AP932260611f4e4830af04e4e3fed66276", 
       :queue => "QU81f8b9ad56f44a62a3f6ef69adc4d7c7",
-      :account_id => @account.id,
-      :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone,
-      :friendly_name => "RSpec Test" )
+      :account_id => @account.id, 
+      :friendly_name => "RSpec Test",
+      :triggers => Freshfone::Account::TRIGGER_LEVELS_HASH.clone )
     freshfone_account.sneaky_save
     @account.freshfone_account = freshfone_account
     create_freshfone_credit
     create_freshfone_number
     @account.features.freshfone.create
+    @account.features.freshfone_conference.create
     @account.reload
   end
 
@@ -41,15 +42,22 @@ module FreshfoneSpecHelper
         :voicemail_active => true,
         :number_type => 1,
         :state => 1,
-        :deleted => false )
+        :deleted => false,
+        :skip_in_twilio => true )
     else
       @number ||= @account.freshfone_numbers.first
     end
   end
 
-  def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
+  def create_freshfone_caller
+    @caller = @account.freshfone_callers.create(:number => "+1234567890",
+              :country => "US", 
+              :caller_type => 0 )
+  end
+
+  def create_freshfone_call(call_sid = "CA2db76c748cb6f081853f80dace462a04", call_type = Freshfone::Call::CALL_TYPE_HASH[:incoming])
     @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
-                                      :call_status => 0, :call_type => 1, :agent => @agent,
+                                      :call_status => 0, :call_type => call_type, :agent => @agent,
                                       :params => { :CallSid => call_sid })
   end
 
@@ -72,11 +80,11 @@ module FreshfoneSpecHelper
     @freshfone_call.update_attributes(:caller => caller)
   end
 
-  def create_freshfone_user(presence = 0)
+  def create_freshfone_user(presence = 0, agent = @agent)
     # @freshfone_user = @agent.build_freshfone_user({ :account => @account, :presence => presence })
-    @freshfone_user = Freshfone::User.find_by_user_id(@agent.id)
+    @freshfone_user = Freshfone::User.find_by_user_id(agent.id)
     if @freshfone_user.blank?
-      @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => @agent })
+      @freshfone_user = Freshfone::User.create({ :account => @account, :presence => presence, :user => agent })
     end
   end
 
@@ -87,7 +95,7 @@ module FreshfoneSpecHelper
 
   def create_call_family
     @parent_call = @account.freshfone_calls.create( :freshfone_number_id => @number.id, 
-      :call_status => 0, :call_type => 1,
+      :call_status => 0, :call_type => 1, :agent => @agent,
       :params => { :CallSid => "CABCDEFGHIJK" } )
     @parent_call.build_child_call({ :agent => @agent, 
         :CallSid => "CA1d4ae9fae956528fdf5e61a64084f191", 
@@ -180,7 +188,7 @@ module FreshfoneSpecHelper
 
   def create_ff_address(post_code = Faker::Address.postcode)
     name = Faker::Name.name
-    address_params = { :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
+    address_params = { :id => 1, :friendly_name => name, :business_name => name, :address => Faker::Address.street_address,
         :city => Faker::Address.city, :state => Faker::Address.state, :postal_code => post_code,
         :country => 'DE'
     }
@@ -201,4 +209,102 @@ module FreshfoneSpecHelper
     end
     groups
   end
+  
+  def conference_call_params
+    {:CallSid => (@freshfone_call || @parent_call).call_sid,
+      :ConferenceSid => 'ConSid',
+      :DialCallSid => 'DiCalSid',
+      :RecordingUrl => 'https://xyz.freshdesk.com/123.mp3',
+      :DialCallDuration => '6'
+    }
+  end
+
+  def create_call_meta(call = @freshfone_call)
+    @freshfone_call_meta = call.create_meta(:account => @account)
+  end
+
+  def create_ivr_call_option(group_id = 0)
+  	@account.ivrs.first.update_attributes(:ivr_data =>
+			{ '0' => create_ivr_menu(group_id) })
+  end
+
+  def create_ivr_menu(group_id)
+    Freshfone::Menu.new(
+      { 'menu_name' => 'Welcome/Start Menu',
+        'menu_id' => '0',
+        'message_type' => '2',
+        'recording_url' => '',
+        'attachment_id' => '',
+        'message' => 'Press 1 For Group, 2 For Agent & 3 For Direct Dial',
+        'options' => option_params(group_id, '0') })
+  end
+
+	def option_params(group_id, menu_id)
+  	[Freshfone::Option.new({ 'respond_to_key' => '1', 'performer' => :Group, 'performer_id' => "#{group_id}", 'performer_number' => '', 'menu' => menu_id }),
+			Freshfone::Option.new({ 'respond_to_key' => '2', 'performer' => :User, 'performer_id' => "#{@agent.id}", 'performer_number' => '', 'menu' => menu_id }),
+			Freshfone::Option.new({ 'respond_to_key' => '3', 'performer' => :Number, 'performer_id' => '', 'performer_number' => '+919999999999','menu' => menu_id })
+		]
+	end
+
+  def stub_twilio_queues(empty_queue = false)
+    queues = mock
+    members = mock
+    member = mock
+    member.stubs(:dequeue)
+    member.stubs(:update)
+    current_size = empty_queue ? 0 : 1
+    queues.stubs(:current_size).returns(current_size)
+    members.stubs(:get).returns(member)
+    members.stubs(:list).returns([member])
+    queues.stubs(:members).returns(members)
+    Twilio::REST::Queues.any_instance.stubs(:get).returns(queues)
+  end
+
+  def forward_complete_params
+    {
+      'Called'=>'+12407433321', 'ToState'=>'TX', 'CallerCountry'=>'US', 'Direction'=>'outbound-api', 'Timestamp'=>'Tue, 07 Jul 2015 12:01:53 +0000',
+      'CallbackSource'=>'call-progress-events', 'CallerState'=>'NV', 'ToZip'=>'77521', 'SequenceNumber'=>'0',
+      'To'=>'+12407433321', 'CallerZip'=>'89016', 'ToCountry'=>'US', 'CalledZip'=>'77521', 'ApiVersion'=>'2010-04-01',
+      'CallStatus'=>'completed', 'CalledCity'=>'BAYTOWN', 'From'=>'+16617480240', 'AccountSid'=>'AC626dc6e5b03904e6270f353f4a2f068f',
+      'CalledCountry'=>'US', 'CallerCity'=>'SEARCHLIGHT', 'FromCountry'=>'US', 'ToCity'=>'BAYTOWN', 'Caller'=>'+16617480240',
+      'FromCity'=>'SEARCHLIGHT', 'CalledState'=>'TX', 'FromZip'=>'89016', 'FromState'=>'NV'
+    }
+  end
+
+  def create_pinged_agents(accepted = false, call = @freshfone_call)
+    agent_response = accepted ? :accepted : :'no-answer'
+    @freshfone_call_meta.update_attributes!( {:pinged_agents => [{
+      :id => @agent.id,
+      :name => @agent.name,
+      :call_sid => call.call_sid,
+      :response => Freshfone::CallMeta::PINGED_AGENT_RESPONSE_HASH[agent_response]
+      }] } )
+  end
+
+  def stub_twilio_call(twilio_meth, mock_meths)
+    twilio_call = mock
+    mock_meths.each do |meth|
+      twilio_call.stubs(meth)
+    end
+    Twilio::REST::Calls.any_instance.stubs(twilio_meth).returns(twilio_call)
+    twilio_call
+  end
+
+  def completed_outgoing_conference_call
+    build_freshfone_caller
+    @freshfone_call.dial_call_sid = 'DDSid'
+    @freshfone_call.call_sid = 'CalSid'
+    @freshfone_call.total_duration = CALL_DURATION
+    @freshfone_call.call_type = Freshfone::Call::CALL_TYPE_HASH[:outgoing]
+    @freshfone_call.sneaky_save
+    @freshfone_call.caller.update_column(:country, 'US')
+  end
+
+  def freshfone_call_without_conference
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.reload
+    @freshfone_call.dial_call_sid = 'DDSid'
+    @freshfone_call.sneaky_save
+  end
+
 end

@@ -43,7 +43,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
   end
 
-  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment)
+  def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil)
       agent_template = e_notification.get_agent_template(agent)
       agent_plain_template = e_notification.get_agent_plain_template(agent)
       a_template = Liquid::Template.parse(agent_template.last) 
@@ -58,7 +58,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :receips => receips,
              :email_body_plain => plain_version,
              :email_body_html => html_version,
-             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
+             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+             :survey_id => survey_id
           }) unless receips.nil?
   end
 
@@ -94,9 +95,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket              = params[:ticket] 
     @body                = params[:email_body_plain]
     @cloud_files           = params[:cloud_files]
-    @survey_handle       = SurveyHandle.create_handle_for_notification(
-                            params[:ticket],params[:notification_type]
-                          )
+    if(params[:notification_type] == EmailNotification::PREVIEW_EMAIL_VERIFICATION)
+      @survey_feedback_preview = true
+    else
+      @survey_feedback_preview = false
+    end
+
+    if params[:ticket].account.features?(:custom_survey)
+      @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id], @survey_feedback_preview)
+    else
+      @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
+    end
+    
     @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
                             params[:notification_type], params[:ticket]
                           )
@@ -133,8 +143,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                          => note.from_email,
       :sent_on                       => Time.now,
       "Reply-to"                     => "#{note.from_email}", 
-      "Auto-Submitted"               => "auto-generated", 
-      "X-Auto-Response-Suppress"     => "DR, RN, OOF, AutoReply", 
       "References"                   => generate_email_references(ticket)
     }
 
@@ -145,12 +153,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @body = note.full_text
     @body_html = generate_body_html(note.full_text_html)
     @note = note 
-    @cloud_files = note.cloud_files
-    @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    @cloud_files = note.cloud_files    
     @include_quoted_text = options[:quoted_text]
     @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
     @ticket = ticket
-    @account = note.account
+    @account = note.account    
+
+    if ticket.account.features?(:custom_survey)
+       @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    else
+       @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
+    end
 
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, note.full_text_html, note.account)
@@ -180,8 +193,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
       "Reply-to"                              => "#{note.from_email}", 
-      "Auto-Submitted"                        => "auto-generated", 
-      "X-Auto-Response-Suppress"              => "DR, RN, OOF, AutoReply", 
       "References"                            => generate_email_references(ticket)
     }
 
@@ -221,8 +232,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
       "Reply-to"                              => "#{note.from_email}", 
-      "Auto-Submitted"                        => "auto-generated", 
-      "X-Auto-Response-Suppress"              => "DR, RN, OOF, AutoReply", 
       "References"                            => generate_email_references(ticket)
     }
 
@@ -388,6 +397,44 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       part.html { render "internal_email.text.html" }
     end.deliver
 
+  end
+
+  def notify_outbound_email(ticket)
+    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+    
+    headers = {
+      :subject                   => ticket.subject,
+      :to                        => ticket.from_email,
+      :from                      => ticket.friendly_reply_email_personalize(ticket.responder_name),
+      :cc                        => ticket.cc_email[:cc_emails],
+      :bcc                       => account_bcc_email(ticket),
+      "Reply-to"                 => ticket.friendly_reply_email_personalize(ticket.responder_name), 
+      "References"               => generate_email_references(ticket),
+      :sent_on                   => Time.now
+    }
+
+    inline_attachments   = []
+    @account = ticket.account
+    @ticket = ticket
+    @cloud_files= ticket.cloud_files
+    
+    if attachments.present? && attachments.inline.present?
+      handle_inline_attachments(attachments, ticket.description_html, ticket.account)
+    end
+
+    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
+      ticket.attachments.each do |a|
+        attachments[ a.content_file_name] = { 
+          :mime_type => a.content_content_type, 
+          :content => File.read(a.content.to_file.path, :mode => "rb")
+        }
+      end
+    end
+      
+    mail(headers) do |part|
+      part.text { render "notify_outbound_email.text.plain" }
+      part.html { render "notify_outbound_email.text.html" }
+    end.deliver
   end
 
   private

@@ -4,11 +4,29 @@
 <%= form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
-  <% current_portal.customer_editable_ticket_fields.each do |field| %>
+  <% current_portal.customer_editable_ticket_fields.each do |field| 
+      next if field.section_field?
+    %>
     <div class="control-group">
-      <%= ticket_field_container f,:helpdesk_ticket, field, helpdesk_ticket_values(field,@params) %>
+      <%= ticket_field_container f,:helpdesk_ticket, field, 
+            helpdesk_ticket_values(field,@params) %>
     </div>
-  <% end %>
+    <% if field.has_section?
+      field.picklist_values.each do |picklist|
+        next if picklist.section.blank? %>
+        <textarea class="picklist_section_<%=picklist.id%> hide">
+          <% picklist.section_ticket_fields.each do |section_tkt_field|
+            if section_tkt_field.editable_in_portal %>
+              <div class="control-group ticket_section">
+                <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field, 
+                                      helpdesk_ticket_values(section_tkt_field,@params), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt") %>
+              </div>  
+            <% end
+          end %>
+        </textarea>
+      <% end
+    end %>
+    <% end %>
 
   <% if is_application_installed?("screenr") %>
     <div class="controls">
@@ -94,6 +112,20 @@
       <% else %>
         Form.focusFirstElement(document.forms[0]); 
       <% end %> 
+
+      // Need to make the code generic to handle the custom dropdown fields sections.
+      jQuery('#helpdesk_ticket_ticket_type')
+        .on("change", function(e){
+          var id = jQuery("option:selected", this).data("id");
+          jQuery('div.ticket_section').remove();
+          var element = jQuery('.picklist_section_'+id).parent();
+          if(element.length != 0) {
+            jQuery(jQuery('.picklist_section_'+id).val()
+                  .replace(new RegExp('&lt', 'g'), '<')
+                  .replace(new RegExp('&gt', 'g'), '>'))
+                .insertAfter(jQuery("#helpdesk_ticket_ticket_type").parents('.control-group'));
+          }
+      });
     }); 
 
     jQuery('#new_helpdesk_ticket').bind("submit", function(){
@@ -112,6 +144,3 @@
 
   })(jQuery);
 <% end %>
-
-
-

@@ -17,9 +17,11 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobihelp] => SOURCE_KEYS_BY_TOKEN["mobihelp"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"]
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"],
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] => SOURCE_KEYS_BY_TOKEN["email"]
   }
 
+  # IMP: Whenever a new category is added, it must be handled in reports accordingly.
   CATEGORIES = {
     :customer_response => 1,
     :agent_private_response => 2,

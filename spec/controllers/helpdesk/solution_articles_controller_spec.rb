@@ -274,8 +274,7 @@ describe Solution::ArticlesController do
       time = Time.now.to_i
       @test_article_for_meta = create_article( {:title => "#{time} test_article_for_meta #{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-      @test_article_for_meta.reload.solution_article_meta.destroy
-      @test_article_for_meta.build_meta.save if @test_article_for_meta.reload.solution_article_meta.blank?
+      @test_article_for_meta.reload
     end
 
     it "should create a new meta solution article on solution article create" do
@@ -363,12 +362,27 @@ describe Solution::ArticlesController do
     test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
     test_language_article.reload
+    old_language_id = test_language_article.language_id
     test_language_article.language = "fr"
     test_language_article.save
     lang = Language.find_by_code("fr")
     test_language_article.language_id.should be_eql(lang.id)
     test_language_article.language_name.should be_eql(lang.name)
     test_language_article.language_code.should be_eql(lang.code)
-    test_language_article.language.should be_eql(lang.code)
+    test_language_article.language.should be_eql(lang)
+    test_language_article.update_attribute(:language_id, old_language_id)
+  end
+
+  it "should update solution categories/folders/articles' language_id if main portal's language is changed" do
+    old_language = @account.language
+    Resque.inline = true 
+    @account.main_portal.update_attribute(:language, "hu")
+    @account.reload
+    @account.main_portal.language.should match("hu")
+    check_language_equality
+    @account.reload
+    @account.make_current
+    @account.main_portal.update_attribute(:language, old_language)
+    Resque.inline = false
   end
 end

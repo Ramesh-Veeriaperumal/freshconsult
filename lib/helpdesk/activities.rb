@@ -57,7 +57,7 @@ module Helpdesk::Activities
 				tkt_act = []
 				performer.push({ "id" => activity[:user].id, "name" => activity[:user].name, "email" => activity[:user].email, 
 													 "agent" => activity[:user].helpdesk_agent })
-				if activity[:stack].first.activity_data.blank?
+				if activity[:stack].first.activity_data_blank?
 					result.push({ :ticket_activity => { :performer => performer, :activity => "Ticket created", 
 												:performed_time => activity[:time] }})
 					next
@@ -88,7 +88,7 @@ private
 
 
 	ACTIVITIES_NOT_TO_COMBINE = [
-									'new_ticket', 
+									'new_ticket', 'new_outbound',
 									'ticket_merge', 'ticket_split', 
 									'due_date_updated',
 									'deleted', 'restored',

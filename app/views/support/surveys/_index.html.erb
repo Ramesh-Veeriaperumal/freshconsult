@@ -2,7 +2,7 @@
 <html>
 <head>
 	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
-	<%= stylesheet_link_tag_with_rtl :'cdn/rating' %>
+	<%= stylesheet_link_tag_with_rtl :'cdn/old_rating' %>
 	<%= javascript_include_tag :'cdn/survey'  %>
 </head>
 <body>	
@@ -31,14 +31,14 @@
 				</div>
 				<div>
 				<%if @rating==Survey::HAPPY.to_s%>	
-					<h3><%= t('.thanks') %></h3>
-					<h4><%= t('.happy_info') %></h4>
+					<h3><%= t('support.surveys.new.thanks') %></h3>
+					<h4><%= t('support.surveys.new.happy_info') %></h4>
 				<%elsif @rating==Survey::UNHAPPY.to_s%>
-					<h3><%= t('.thanks') %> <%= t('.sorry') %></h3>
-					<h4><%= t('.unhappy_info') %></h4>					
+					<h3><%= t('support.surveys.new.thanks') %> <%= t('.sorry') %></h3>
+					<h4><%= t('support.surveys.new.unhappy_info') %></h4>					
 				<%else%>
-					<h3><%= t('.thanks') %></h3>
-					<h4><%= t('.neutral_information') %></h4>	
+					<h3><%= t('support.surveys.new.thanks') %></h3>
+					<h4><%= t('support.surveys.new.neutral_information') %></h4>	
 				<%end%>
 				</div>
 			</div>

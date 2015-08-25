@@ -11,7 +11,7 @@ class Group < ActiveRecord::Base
   after_commit :clear_cache
   after_commit  :create_round_robin_list, on: :create, :if => :round_robin_enabled?
   after_commit  :update_round_robin_list, on: :update
-  after_commit  :delete_round_robin_list, on: :destroy
+  after_commit  :delete_round_robin_list, :nullify_tickets, on: :destroy
   before_save :create_model_changes
 
   after_destroy :remove_group_from_chat_routing
@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
    
    has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
 
-   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
+   has_many :tickets, :class_name => 'Helpdesk::Ticket'
    has_many :email_configs, :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
@@ -231,6 +231,10 @@ class Group < ActiveRecord::Base
     if account.features?(:chat) && siteId
       Resque.enqueue(Workers::Livechat, {:worker_method => "remove_group_from_routing", :siteId => siteId, :group_id => id})
     end
+  end
+
+  def nullify_tickets
+    Helpdesk::ResetGroup.perform_async({:group_id => self.id })
   end
 
 end

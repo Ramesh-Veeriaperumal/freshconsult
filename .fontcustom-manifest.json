@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48",
-    "current": "3fdbf0e78e975053da7e6ce947002c406d9e42ab0494055a184bf0e03fc38b48"
+    "previous": "ed7eeb68c38dfe248254da5122f892f22af7fcd3b565d9f3bbb9d217e1c8eca2",
+    "current": "ed7eeb68c38dfe248254da5122f892f22af7fcd3b565d9f3bbb9d217e1c8eca2"
   },
   "fonts": [
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.ttf",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.svg",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.woff",
-    "public/assets/glyphs_3fdbf0e78e975053da7e6ce947002c40.eot"
+    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.ttf",
+    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.svg",
+    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.woff",
+    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.eot"
   ],
   "glyphs": {
     "account": {
@@ -25,6 +25,10 @@
     "agent-fchat-on": {
       "codepoint": 61873,
       "source": "public/glyphs/vectors/agent-fchat-on.svg"
+    },
+    "agent-summary": {
+      "codepoint": 61888,
+      "source": "public/glyphs/vectors/agent-summary.svg"
     },
     "all-streams": {
       "codepoint": 61698,
@@ -45,6 +49,10 @@
     "apple": {
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
+    },
+    "arrow-click": {
+      "codepoint": 61879,
+      "source": "public/glyphs/vectors/arrow-click.svg"
     },
     "arrow-down": {
       "codepoint": 61703,
@@ -110,6 +118,10 @@
       "codepoint": 61717,
       "source": "public/glyphs/vectors/business-hours.svg"
     },
+    "calendar": {
+      "codepoint": 61889,
+      "source": "public/glyphs/vectors/calendar.svg"
+    },
     "calling": {
       "codepoint": 61718,
       "source": "public/glyphs/vectors/calling.svg"
@@ -133,6 +145,10 @@
     "caret-up": {
       "codepoint": 61723,
       "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "chat": {
+      "codepoint": 61890,
+      "source": "public/glyphs/vectors/chat.svg"
     },
     "chat-bubble": {
       "codepoint": 61724,
@@ -182,6 +198,10 @@
       "codepoint": 61735,
       "source": "public/glyphs/vectors/company.svg"
     },
+    "compose-email": {
+      "codepoint": 61900,
+      "source": "public/glyphs/vectors/compose-email.svg"
+    },
     "conversation": {
       "codepoint": 61736,
       "source": "public/glyphs/vectors/conversation.svg"
@@ -202,6 +222,14 @@
       "codepoint": 61740,
       "source": "public/glyphs/vectors/customer-portal.svg"
     },
+    "customer-report": {
+      "codepoint": 61891,
+      "source": "public/glyphs/vectors/customer-report.svg"
+    },
+    "customer-satisfaction": {
+      "codepoint": 61892,
+      "source": "public/glyphs/vectors/customer-satisfaction.svg"
+    },
     "date": {
       "codepoint": 61741,
       "source": "public/glyphs/vectors/date.svg"
@@ -209,6 +237,10 @@
     "day_pass": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "decimal": {
+      "codepoint": 61893,
+      "source": "public/glyphs/vectors/decimal.svg"
     },
     "deleted": {
       "codepoint": 61875,
@@ -302,6 +334,18 @@
       "codepoint": 61874,
       "source": "public/glyphs/vectors/ff-group.svg"
     },
+    "ff-group-thin": {
+      "codepoint": 61884,
+      "source": "public/glyphs/vectors/ff-group-thin.svg"
+    },
+    "ff-hold": {
+      "codepoint": 61883,
+      "source": "public/glyphs/vectors/ff-hold.svg"
+    },
+    "ff-line-phone": {
+      "codepoint": 61885,
+      "source": "public/glyphs/vectors/ff-line-phone.svg"
+    },
     "ff-mic": {
       "codepoint": 61764,
       "source": "public/glyphs/vectors/ff-mic.svg"
@@ -325,6 +369,14 @@
     "ff-phone": {
       "codepoint": 61768,
       "source": "public/glyphs/vectors/ff-phone.svg"
+    },
+    "ff-phone-accept": {
+      "codepoint": 61886,
+      "source": "public/glyphs/vectors/ff-phone-accept.svg"
+    },
+    "ff-phone-reject": {
+      "codepoint": 61887,
+      "source": "public/glyphs/vectors/ff-phone-reject.svg"
     },
     "ff-via-browser": {
       "codepoint": 61869,
@@ -374,6 +426,10 @@
       "codepoint": 61777,
       "source": "public/glyphs/vectors/freshdesk.svg"
     },
+    "freshfone": {
+      "codepoint": 61894,
+      "source": "public/glyphs/vectors/freshfone.svg"
+    },
     "gamification-settings": {
       "codepoint": 61778,
       "source": "public/glyphs/vectors/gamification-settings.svg"
@@ -390,6 +446,10 @@
       "codepoint": 61781,
       "source": "public/glyphs/vectors/group.svg"
     },
+    "group-summary": {
+      "codepoint": 61895,
+      "source": "public/glyphs/vectors/group-summary.svg"
+    },
     "grouping-disable": {
       "codepoint": 61782,
       "source": "public/glyphs/vectors/grouping-disable.svg"
@@ -401,6 +461,14 @@
     "help": {
       "codepoint": 61784,
       "source": "public/glyphs/vectors/help.svg"
+    },
+    "helpdesk": {
+      "codepoint": 61896,
+      "source": "public/glyphs/vectors/helpdesk.svg"
+    },
+    "helpdesk-settings": {
+      "codepoint": 61901,
+      "source": "public/glyphs/vectors/helpdesk-settings.svg"
     },
     "ie": {
       "codepoint": 61785,
@@ -494,6 +562,18 @@
       "codepoint": 61807,
       "source": "public/glyphs/vectors/multi-product.svg"
     },
+    "nested_field": {
+      "codepoint": 61897,
+      "source": "public/glyphs/vectors/nested_field.svg"
+    },
+    "new-phone-ticket": {
+      "codepoint": 61902,
+      "source": "public/glyphs/vectors/new-phone-ticket.svg"
+    },
+    "new-ticket": {
+      "codepoint": 61903,
+      "source": "public/glyphs/vectors/new-ticket.svg"
+    },
     "no-arrow-left": {
       "codepoint": 61808,
       "source": "public/glyphs/vectors/no-arrow-left.svg"
@@ -542,6 +622,10 @@
       "codepoint": 61818,
       "source": "public/glyphs/vectors/pencil.svg"
     },
+    "performance-distribution": {
+      "codepoint": 61898,
+      "source": "public/glyphs/vectors/performance-distribution.svg"
+    },
     "phone": {
       "codepoint": 61819,
       "source": "public/glyphs/vectors/phone.svg"
@@ -561,6 +645,10 @@
     "plus": {
       "codepoint": 61822,
       "source": "public/glyphs/vectors/plus.svg"
+    },
+    "portals": {
+      "codepoint": 61904,
+      "source": "public/glyphs/vectors/portals.svg"
     },
     "post-edit": {
       "codepoint": 61823,
@@ -654,6 +742,18 @@
       "codepoint": 61845,
       "source": "public/glyphs/vectors/supervisor.svg"
     },
+    "survey-happy": {
+      "codepoint": 61880,
+      "source": "public/glyphs/vectors/survey-happy.svg"
+    },
+    "survey-neutral": {
+      "codepoint": 61881,
+      "source": "public/glyphs/vectors/survey-neutral.svg"
+    },
+    "survey-sad": {
+      "codepoint": 61882,
+      "source": "public/glyphs/vectors/survey-sad.svg"
+    },
     "survey-settings": {
       "codepoint": 61846,
       "source": "public/glyphs/vectors/survey-settings.svg"
@@ -673,6 +773,10 @@
     "ticket-fields": {
       "codepoint": 61850,
       "source": "public/glyphs/vectors/ticket-fields.svg"
+    },
+    "ticket-volume": {
+      "codepoint": 61899,
+      "source": "public/glyphs/vectors/ticket-volume.svg"
     },
     "timeline-forum": {
       "codepoint": 61851,
@@ -740,10 +844,6 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
-    "font_ascent": 448,
-    "font_descent": 64,
-    "font_design_size": 16,
-    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -758,7 +858,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

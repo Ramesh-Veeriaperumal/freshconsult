@@ -12,6 +12,7 @@ RSpec.describe Freshfone::TicketActions do
 
   before(:each) do
     create_test_freshfone_account
+    @account.freshfone_callers.delete_all
   end
   
   it 'create a new voicemail ticket' do

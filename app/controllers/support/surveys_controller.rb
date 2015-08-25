@@ -2,11 +2,16 @@ class Support::SurveysController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :load_handle, :except => [:create_for_portal]
-  
-  include SupportTicketControllerMethods
+  before_filter :delta_handle
+
+  include SupportTicketControllerMethods  
+    
+  def delta_handle
+   redirect_to params.merge!(:controller => "support/custom_surveys") if current_account.features?(:custom_survey)
+  end
 
   def new
-  	send_error and return if @survey_handle.rated?
+    send_error and return if @survey_handle.rated?
     @rating = Survey::CUSTOMER_RATINGS_BY_TOKEN.fetch(params[:rating], Survey::HAPPY)
     @account = Account.find_by_id @survey_handle.survey[:account_id]
     render :partial => 'new'
@@ -19,7 +24,7 @@ class Support::SurveysController < ApplicationController
       @survey_handle.survey_result.add_feedback(params[:survey][:feedback]) unless params[:survey][:feedback].blank?
       @survey_handle.destroy
     end
-    render :partial => 'index'
+    render :partial => 'index', :formats => [:html]
   end
   
   def create_for_portal
@@ -52,7 +57,7 @@ class Support::SurveysController < ApplicationController
     end
     
     def send_error
-      flash[:warning] = I18n.t('support.surveys.feedback_already_done')
+      flash[:notice] = I18n.t('support.surveys.feedback_already_done')
       redirect_to root_path
     end
     

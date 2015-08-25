@@ -4,23 +4,24 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => ContactField} %>
-<br/>
-<%= javascript_include_tag :'cdn/contact_fields' %>
-<%= form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
+<div class="contact_fields">
+  <%= render :partial => "/shared/customer_fields_header", :locals => { :field_class => ContactField} %>
+  <br/>
+  <%= javascript_include_tag :'cdn/contact_fields' %>
+  <%= form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
 
-  <div class="custom-form-outer">
-    <input type="hidden" name="jsonData" id="field_values" value="" />
-    <div class="row-fluid">
-      <div class='profile-pic-placeholder avatar-pic span3'>
-        <img alt="Profile_blank_medium" src="/assets/misc/profile_blank_medium.jpg">
-      </div>
-      <div class='span9'>
-        <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
-        <ul id="cloned-custom-field-form" class="form-horizontal custom-field-form cloned-custom-fields"></ul>
+    <div class="custom-form-outer">
+      <input type="hidden" name="jsonData" id="field_values" value="" />
+      <div class="row-fluid">
+        <div class='profile-pic-placeholder avatar-pic span3'>
+          <img alt="Profile_blank_medium" src="/assets/misc/profile_blank_medium.jpg">
+        </div>
+        <div class='span9'>
+          <ul id="custom-field-form" class="form-horizontal custom-field-form"></ul>
+          <ul id="cloned-custom-field-form" class="form-horizontal custom-field-form cloned-custom-fields"></ul>
+        </div>
       </div>
     </div>
-  </div>
   
 <%end%>
 
@@ -29,7 +30,7 @@
 
   </div>
 <% end %>
-
+</div>
 <% content_for :pagefixed do %>
   <%= javascript_tag do %>
     // Localizing ticket fields js elements

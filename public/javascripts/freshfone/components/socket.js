@@ -61,6 +61,13 @@ var FreshfoneSocket;
       // this.freshfone_socket_channel = false;
       this.connectionClosedAt = new Date();
     },
+    notify_ignore: function (CallSid) {
+      this.freshfone_socket_channel.emit('ignore', { 
+        call_sid: CallSid,
+        agent: freshfone.current_user,
+        account: freshfone.current_account
+      });
+    },
     connect: function () {
       this.freshfone_socket_channel = freshfone_io.connect(this.freshfone_nodejs_url(), 
                                         {'sync disconnect on unload': false,
@@ -87,7 +94,7 @@ var FreshfoneSocket;
           reconnectionAttempts = 1;
           reconnectTimeout = setTimeout(function () { self.freshfone_socket_channel.io.reconnect(); }, reconnectFailureDelay);
         }
-        self.freshfoneNetworkError.hideNetworkErrorWidget();
+        $(window).trigger('ffone.networkUp');//for non-chromium based browsers
       });
 
 			this.freshfone_socket_channel.on('agent_available', function (data) {
@@ -101,26 +108,20 @@ var FreshfoneSocket;
           self.toggleUserStatus(userStatus.ONLINE);
           return;
         }
-				if (data.user) { self.addToAvailableAgents(data.user); }
+				if (data.user) { 
+          self.addToAvailableAgents(data.user); 
+          ffLogger.logIssue("Freshfone Agent online :: ac_" + freshfone.current_account  + " :: user_" + freshfone.current_user_details.id , {
+              user_id: data.user.id,
+              user_name: data.user.name
+            });
+          self.updateAvailableGroups();
+          }
 			});
 
 				this.freshfone_socket_channel.on('rooms_count', function(data){ 
 					ffLogger.tabs_count = data.number_of_rooms;
 				});
 
-				this.freshfone_socket_channel.on('agent_available', function (data) {
-					data = JSON.parse(data) || {};
-					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.ONLINE); return;}
-
-					if (data.user) { 
-						self.addToAvailableAgents(data.user);
-						ffLogger.logIssue("Freshfone Agent online :: ac_" + freshfone.current_account  + " :: user_" + freshfone.current_user_details.id , {
-							user_id: data.user.id,
-							user_name: data.user.name
-						});
-            self.updateAvailableGroups();
-					}
-				});
 
 				this.freshfone_socket_channel.on('agent_unavailable', function (data) {
 					data = JSON.parse(data) || {};
@@ -131,11 +132,8 @@ var FreshfoneSocket;
 						user_id: data.user.id,
 						user_name: data.user.name
 					});
-          self.updateAvailableGroups();
-          if(!self.$externalNumbersList.is(':visible')){
-            self.noAvailableAgentsToggle();
-          }
-      
+          self.updateAgentListView();
+
           var result = {
             user: data.user,
             event: "agent_unavailable"
@@ -146,9 +144,9 @@ var FreshfoneSocket;
 				
 				this.freshfone_socket_channel.on('agent_busy', function (data) {
 					data = JSON.parse(data) || {};
-		
 					if (data.user && data.user.id) { self.removeFromAvailableAgents(data.user.id); }
 					if(data.user.id == freshfone.current_user) { self.toggleUserStatus(userStatus.BUSY); }
+          self.updateAgentListView();
           var result = {
             user: data.user,
             event: "agent_busy"
@@ -168,7 +166,9 @@ var FreshfoneSocket;
 			});
 
 			this.freshfone_socket_channel.on('get_calls_agents_status', function () {
-				self.getAvailableAgents();
+				if(self.$dashboard.length){
+					self.getAvailableAgents();
+				}
 			});
 
 			this.freshfone_socket_channel.on('message', function (data) {
@@ -195,18 +195,45 @@ var FreshfoneSocket;
 			});  
 
       this.freshfone_socket_channel.on('disconnect', function() {
-        self.freshfonecalls.errorcode = 31003; //For ICE Liveness Checking
-        self.freshfoneNetworkError.endCallDueToNetworkError();
+        $(window).trigger('ffone.networkDown'); //for non-chromium based browsers
       });
 
       this.freshfone_socket_channel.on('reconnect',function(){
-        self.freshfoneNetworkError.hideNetworkErrorWidget();
+        $(window).trigger('ffone.networkUp'); // for non-chromium based browsers
       });
 			
 			this.freshfone_socket_channel.on('CallTreansferSuccess', function (data) {
 				data = JSON.parse(data);
 				self.successTransferCall(data.result);
 			});
+
+
+      //Conference events starts here
+
+      this.freshfone_socket_channel.on('transfer_success', function (data) {
+        if(data.agent == freshfone.current_user){
+          self.successTransferConferenceCall(data.call_sid);
+        }
+      });
+      this.freshfone_socket_channel.on('transfer_reconnected', function(data){        
+        if(data.agent == freshfone.current_user){ self.transferReconnected(); }
+      });
+
+      this.freshfone_socket_channel.on('transfer_unanswered', function(data){        
+        if(data.agent == freshfone.current_user){ freshfonecalls.freshfoneCallTransfer.enableTransferResume(); }
+      });
+      
+      this.freshfone_socket_channel.on('call_holded', function (data) {
+        freshfonecalls.toggleWidgetOnHold(true);
+      });
+
+      this.freshfone_socket_channel.on('call_unholded', function (data) {
+        freshfonecalls.toggleWidgetOnHold(true);
+      });
+
+      //Conference events end here
+
+
 			$('body').on('pjaxDone', function() {
 				self.$dashboard = $('.freshfone_dashboard');
 				self.$availableAgents = self.$dashboard.find('.live-available-agents');
@@ -282,11 +309,7 @@ var FreshfoneSocket;
 					this.agentList = new List('online-agents-list', options);
 				}
         this.agentList.sort('sortname', { asc: true });
-        this.updateAvailableGroups();
-
-        if(!this.$externalNumbersList.is(':visible')){
-			    this.noAvailableAgentsToggle();
-        }
+        this.updateAgentListView();
 			}
       this.$freshfoneAvailableAgentsListSearch.focus();
 			// else {
@@ -327,7 +350,7 @@ var FreshfoneSocket;
       else{
         this.selectedElement = null;
         number = "+"+number;
-        if(number.length == 13){
+        if(self.freshfonecalls.exceptionalNumberValidation(number)){
           if(!jQuery('#external-number').hasClass('transfer-external-selected')){
             jQuery('#external-number').addClass('transfer-external-selected');
           }
@@ -449,13 +472,13 @@ var FreshfoneSocket;
        $(document).on('keypress.freshfonetransfer','.ffone_available_agents #search-external',function(event){
         var keyVal = String.fromCharCode(event.which);
         var typedVal = $(this).val();
-        if(typedVal.length < 12){
+        if(typedVal.length < 15){
           if ((event.which > 47 &&  event.which < 58) || (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)
             || (event.ctrlKey && event.which == 86)){
            return true;
           }
         } 
-        else if(typedVal.length == 12 && (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)){
+        else if(typedVal.length == 15 && (event.which == 8 || event.which == 46 || event.which == 37 || event.which == 39)){
            return true;
         }
         event.preventDefault();
@@ -578,7 +601,6 @@ var FreshfoneSocket;
         self.freshfonecalls.transferCall($(this).find('.id').html(), group_id);
       });
 
-
       $('#freshfone_available_agents').on('click.freshfonetransfer', '.available_numbers_list li', function () {
           var external_number = $(this).find('.external_number').html();
           self.freshfonecalls.transferCall($(this).find('.id').html(), null, external_number);
@@ -586,7 +608,7 @@ var FreshfoneSocket;
 
       $('#freshfone_available_agents').on('click.freshfonetransfer','#new_external_number',function(){
         var external_number = jQuery('#external_number_label').html();
-        if(external_number.length == 13){
+        if(self.freshfonecalls.exceptionalNumberValidation(external_number)){
           self.addToNumberList(external_number);
           self.$noAvailableNumbers.hide();
           self.freshfonecalls.transferCall(external_number, null, external_number);
@@ -622,11 +644,26 @@ var FreshfoneSocket;
 		successTransferCall: function (transfer_success) {
 			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
 		},
+    successTransferConferenceCall: function(call_sid) {
+      if(!freshfonecalls.freshfoneCallTransfer.cancelled){
+        freshfonecalls.freshfoneCallTransfer.disconnectAgent(call_sid);
+        freshfonecalls.freshfoneCallTransfer.successTransferCall('true');
+      }
+    },
     formatNumberItem: function (number) {
       return {"id":number, "external_number" : number}
     },
 		formatListItem: function (user) {
       return {"id":user.id, "available_agents_name" : user.name, "sortname" : "A_"+user.name, "available_agents_avatar": user.avatar }
-		}
+		},
+    transferReconnected: function() {
+      freshfonecalls.freshfoneCallTransfer.resetTransferState();
+    },
+    updateAgentListView: function(){
+      this.updateAvailableGroups();
+      if(!this.$externalNumbersList.is(':visible')){
+        this.noAvailableAgentsToggle();
+      }
+    }
 	};
 }(jQuery));

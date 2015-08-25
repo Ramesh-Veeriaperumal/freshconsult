@@ -397,10 +397,10 @@ window.xhrPool = [];
       $("input[rel=toggle]").livequery(function(){ $(this).itoggle(); });
 
       $("select.select2").livequery(function(){
-        var defaults = {
-          minimumResultsForSearch:    10
-        }
-        $(this).select2($.extend( defaults, $(this).data()));
+          var defaults = {
+            minimumResultsForSearch:    10  
+          }
+          $(this).select2($.extend( defaults, $(this).data()));
       });
       $("input.select2").livequery(function(){
         $(this).select2({tags: [],tokenSeparators: [","],

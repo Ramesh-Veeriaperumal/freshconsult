@@ -12,11 +12,15 @@ RSpec.describe Freshfone::QueueController do
 
   before(:each) do
     create_test_freshfone_account
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.reload
     @request.host = @account.full_domain
   end
 
   it 'should render enqueue twiml for a normal queue call' do
     set_twilio_signature('freshfone/queue/enqueue?hunt_type=&hunt_id=', queue_params)
+    create_freshfone_call('CAae09f7f2de39bd201ac9276c6f1cc66a')
+    create_call_meta
     post :enqueue, queue_params
     xml[:Response][:Gather][:Play].should be_eql("http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3")
   end
@@ -28,6 +32,7 @@ RSpec.describe Freshfone::QueueController do
   end
 
   it 'should render non-availability twiml on wait time expiry' do
+  	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
     set_twilio_signature('freshfone/queue/trigger_non_availability', queue_params)
     post :trigger_non_availability, queue_params
     xml[:Response][:Say].should_not be_blank
@@ -44,11 +49,14 @@ RSpec.describe Freshfone::QueueController do
 
   it 'should success json when queue list is empty' do
     log_in(@agent)
+    stub_twilio_queues
     post :bridge
     json.should be_eql({:status => "success"})
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should dequeue twiml on call dequeue' do
+  	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
     set_twilio_signature("freshfone/queue/dequeue?client=#{@agent.id}", dequeue_params)
     create_online_freshfone_user
     post :dequeue, dequeue_params.merge({"client" => @agent.id})

@@ -23,8 +23,9 @@ module Social::Util
   
   def validate_tweet(tweet, twitter_id, is_reply = true)
     twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
-    tweet_length = twt_text.gsub(URL_REGEX, " "*22).length;
-    twitter_error_message = t('twitter.not_valid') if (tweet_length > Social::Tweet::LENGTH)
+    tweet_length = twt_text.gsub(URL_REGEX, " "*22).length; 
+    length = twitter_id.nil? ? Social::Tweet::DM_LENGTH : Social::Tweet::TWEET_LENGTH
+    twitter_error_message = t('twitter.not_valid') if (tweet_length > length)
     [twitter_error_message, twt_text]
   end
 
@@ -61,6 +62,18 @@ module Social::Util
       :fd_link => link,
       :fd_user => user
     }
+  end
+  
+  def remove_utf8mb4_char(ticket_content)
+    "".tap do |out_str|
+      for i in (0...ticket_content.length)
+        char = ticket_content[i]
+        char = " " if char.ord > 65535
+        out_str << char
+      end
+      out_str.squeeze!(" ")
+      out_str << "Not given" if (!ticket_content.blank? and out_str.blank?)
+    end
   end
 
 end

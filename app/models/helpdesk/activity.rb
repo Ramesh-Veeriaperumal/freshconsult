@@ -16,8 +16,9 @@ class Helpdesk::Activity < ActiveRecord::Base
   validates_presence_of :description, :notable_id, :user_id
   
   before_create :set_short_descr
+  before_create :set_migration_key, :if => :feature_present?
   
-  
+  MIGRATION_KEYS = ["bi_reports"]
   
   scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? ", account], 
@@ -39,8 +40,15 @@ class Helpdesk::Activity < ActiveRecord::Base
 
   scope :limit, lambda { |num| { :limit => num } }
 
-  scope :newest_first, :order => "helpdesk_activities.id DESC"
+  scope :status, lambda { |name| {
+    :conditions => ["helpdesk_activities.activity_data like ?", "%status_name: #{name}%"],
+    :select => "DISTINCT helpdesk_activities.user_id",
+    :order => "helpdesk_activities.id DESC",
+    :limit => 1
+    }
+  }
 
+  scope :newest_first, :order => "helpdesk_activities.id DESC"
   
  scope :permissible , lambda {|user| { 
  :joins => "LEFT JOIN `helpdesk_tickets` ON helpdesk_activities.notable_id = helpdesk_tickets.id AND helpdesk_activities.account_id = helpdesk_tickets.account_id AND notable_type = 'Helpdesk::Ticket'"  ,
@@ -82,10 +90,26 @@ class Helpdesk::Activity < ActiveRecord::Base
     key = activity_data["eval_args"].keys.first
     return activity_data['eval_args'][key][1]['comment_id']
   end
+  
+  def activity_data_blank?
+    activity_data.reject {|k,v| MIGRATION_KEYS.include?(k)}.blank?
+  end
 
   private
     def set_short_descr
       self.short_descr ||= description
+    end
+    
+    def feature_present?
+      # Added feature check as a separate method so that activities can reuse 
+      # this by adding their feature
+      Account.current.features_included?(:bi_reports) 
+    end
+    
+    def set_migration_key
+      MIGRATION_KEYS.each do |key|
+        self.activity_data.merge!(key => true)
+      end if ticket?
     end
 
 end

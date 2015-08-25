@@ -1,10 +1,8 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
 load 'spec/support/usage_triggers_spec_helper.rb'
 load 'spec/support/freshfone_actions_spec_helper.rb'
 
 RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
   c.include UsageTriggersSpecHelper
   c.include FreshfoneActionsSpecHelper
 end
@@ -25,21 +23,22 @@ RSpec.describe 'UsageTrigger' do
   it 'should create a new credit_overdraft trigger with 15% of available credit' do
     Twilio::REST::Trigger.any_instance.stubs(:delete)
     Account.any_instance.stubs(:full_url).returns("http://play.ngrok.com")
-    Freshfone::Jobs::UsageTrigger.perform({:trigger_type => "credit_overdraft", :usage_category => "totalprice"})
     trigger = mock
+    trigger.stubs(:sid).returns('UTSid')
+    trigger.stubs(:current_value).returns("#{@account.freshfone_credit.available_credit}")
+    trigger.stubs(:trigger_value).returns('100')
+    trigger.stubs(:present?).returns(true)
     Twilio::REST::Triggers.any_instance.stubs(:create).returns(trigger)
     Twilio::REST::Triggers.any_instance.stubs(:get).returns(trigger)
-    credit_overdraft = Account.current.freshfone_account.freshfone_usage_triggers.previous("credit_overdraft").first
-    trigger.stubs(:sid).returns(credit_overdraft.sid)
-    trigger.stubs(:trigger_value).returns("#{credit_overdraft.trigger_value}")
-    trigger.stubs(:present?).returns(true)
-    twilio_ut = Freshfone::Jobs::UsageTrigger.get_trigger credit_overdraft.sid
+    Freshfone::Jobs::UsageTrigger.perform({:trigger_type => "credit_overdraft", :usage_category => "totalprice"})
+    twilio_ut = Freshfone::Jobs::UsageTrigger.get_trigger trigger.sid
     twilio_ut.should be_present
-    twilio_ut.trigger_value.to_i.should be_eql(credit_overdraft.trigger_value.to_i)
+    twilio_ut.trigger_value.to_i.should be_eql(trigger.trigger_value.to_i)
     Twilio::REST::Trigger.any_instance.unstub(:delete)
     Account.any_instance.unstub(:full_url)
-    Twilio::REST::Triggers.any_instance.stubs(:create)
-    Twilio::REST::Triggers.any_instance.stubs(:get)
+    Twilio::REST::Triggers.any_instance.unstub(:create)
+    Twilio::REST::Triggers.any_instance.unstub(:get)
+    Twilio::REST::Trigger.any_instance.unstub(:delete)
   end
 
   it 'should create a new credit_overdraft trigger with 15% of purchased credit' do

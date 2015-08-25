@@ -5,6 +5,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 	self.table_name = "solution_folder_meta"
   include Solution::Constants
 	belongs_to_account
+	
+  validates_inclusion_of :visibility, 
+      :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
@@ -21,6 +24,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 		:through => :solution_article_meta,
 		:order => :"solution_article_meta.position"
 
-	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "account_id", "created_at"]
+	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
 
 end

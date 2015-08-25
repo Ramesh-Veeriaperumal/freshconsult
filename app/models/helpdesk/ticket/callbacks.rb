@@ -4,9 +4,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 	before_validation :populate_requester, :set_default_values
 
-	before_validation :set_token, on: :create
+  before_create :set_outbound_default_values, :if => :outbound_email?
 
-  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -27,20 +27,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
 
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
+  after_commit :send_outbound_email, on: :create, :if => :outbound_email?
 
   after_commit :filter_observer_events, on: :update, :if => :user_present?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
   after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
-  after_commit :publish_new_ticket_properties, on: :create, :if => :auto_refresh_allowed?
-  after_commit :publish_updated_ticket_properties, on: :update, :if => :model_changes?
   after_commit :push_create_notification, on: :create
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
   after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  include RabbitMq::Publisher 
 
-  include RabbitMq::Publisher
+
+  def set_outbound_default_values
+    if User.current.try(:id) and User.current.agent?
+      self.responder_id ||= User.current.id
+    end
+    
+    if email_config
+      self.to_emails = [email_config.reply_email]
+      self.to_email = email_config.reply_email
+    end
+  end
 
   def construct_ticket_old_body_hash
     {
@@ -56,26 +69,37 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def set_default_values
-    self.status = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
-    self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
-    self.ticket_type = nil if self.ticket_type.blank?
-    self.subject ||= ''
-    self.group_id ||= email_config.group_id unless email_config.nil?
-    self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
+    self.status       = OPEN if (!Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
+    self.source       = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
+    self.ticket_type  = nil if self.ticket_type.blank?
+
+    self.subject    ||= ''
+    self.group_id   ||= email_config.group_id unless email_config.nil?
+    self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
+    self.created_at ||= Time.zone.now
+    
     build_ticket_body(:description_html => self.description_html,
-      :description => self.description) unless ticket_body
+      :description => self.description) unless ticket_body    
   end
 
   def save_ticket_states
-    self.ticket_states = self.ticket_states || Helpdesk::TicketState.new
-    ticket_states.account_id = account_id
-    ticket_states.assigned_at=Time.zone.now if responder_id
-    ticket_states.first_assigned_at = Time.zone.now if responder_id
-    ticket_states.pending_since=Time.zone.now if (status == PENDING)
-    ticket_states.set_resolved_at_state if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
-    ticket_states.resolved_at ||= ticket_states.set_closed_at_state if (status == CLOSED)
-    ticket_states.status_updated_at = Time.zone.now
+    self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
+    ticket_states.created_at          = ticket_states.created_at || created_at
+    ticket_states.account_id          = account_id
+    ticket_states.assigned_at         = Time.zone.now if responder_id
+    ticket_states.first_assigned_at   = Time.zone.now if responder_id
+    ticket_states.pending_since       = Time.zone.now if (status == PENDING)
+
+    ticket_states.set_resolved_at_state(created_at) if ((status == RESOLVED) and ticket_states.resolved_at.nil?)
+    ticket_states.resolved_at ||= ticket_states.set_closed_at_state(created_at) if (status == CLOSED)
+
+    ticket_states.status_updated_at    = created_at || Time.zone.now
     ticket_states.sla_timer_stopped_at = Time.zone.now if (ticket_status.stop_sla_timer?)
+    #Setting inbound as 0 and outbound as 1 for outbound emails as its agent initiated
+    if outbound_email?
+      ticket_states.inbound_count = 0 
+      ticket_states.outbound_count = 1
+    end
   end
 
   def update_sender_email
@@ -84,32 +108,61 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_ticket_states 
-    ticket_states.assigned_at=Time.zone.now if (@model_changes.key?(:responder_id) && responder)    
-    if (@model_changes.key?(:responder_id) && @model_changes[:responder_id][0].nil? && responder)
-      ticket_states.first_assigned_at = Time.zone.now
-    end
-    if @model_changes.key?(:status)
-      if reopened_now?
-        ticket_states.opened_at=Time.zone.now
-        ticket_states.reset_tkt_states
-      end
-
-      if @model_changes[:status][0] == PENDING  
-        ticket_states.pending_since = nil
-      end
-      
-      ticket_states.pending_since=Time.zone.now if (status == PENDING)
-      ticket_states.set_resolved_at_state if (status == RESOLVED)
-      ticket_states.set_closed_at_state if closed?
-      
-      ticket_states.status_updated_at = Time.zone.now
-      if(ticket_status.stop_sla_timer)
-        ticket_states.sla_timer_stopped_at ||= Time.zone.now 
-      else
-        ticket_states.sla_timer_stopped_at = nil
-      end
-    end    
+    process_agent_and_group_changes
+    process_status_changes
     ticket_states.save
+    schema_less_ticket.save
+  end
+  
+  def process_agent_and_group_changes 
+    
+    # For reports related 
+    # Added this check to handle the case for tickets with agents assigned before the code deploy
+    if ticket_states.first_assigned_at 
+      schema_less_ticket.set_agent_assigned_flag
+    end
+    
+    if (@model_changes.key?(:responder_id) && responder)
+      if @model_changes[:responder_id][0].nil?
+        unless ticket_states.first_assigned_at 
+          ticket_states.first_assigned_at = Time.zone.now 
+          schema_less_ticket.set_first_assign_bhrs(self.created_at, ticket_states.first_assigned_at, self.group)
+        end
+      else
+        schema_less_ticket.update_agent_reassigned_count("create")
+      end
+      schema_less_ticket.set_agent_assigned_flag
+      ticket_states.assigned_at=Time.zone.now
+    end
+    
+    if (@model_changes.key?(:group_id) && group)
+      schema_less_ticket.update_group_reassigned_count("create") if @model_changes[:group_id][0]
+      schema_less_ticket.set_group_assigned_flag
+    end
+    
+  end
+  
+  def process_status_changes
+    return unless @model_changes.key?(:status)
+    
+    ticket_states.status_updated_at = Time.zone.now
+    
+    ticket_states.pending_since = nil if @model_changes[:status][0] == PENDING  
+    ticket_states.pending_since=Time.zone.now if (status == PENDING)
+    ticket_states.set_resolved_at_state if (status == RESOLVED)
+    ticket_states.set_closed_at_state if closed?
+    
+    if(ticket_status.stop_sla_timer)
+      ticket_states.sla_timer_stopped_at ||= Time.zone.now 
+    else
+      ticket_states.sla_timer_stopped_at = nil
+    end 
+    
+    if reopened_now?
+      ticket_states.opened_at=Time.zone.now
+      ticket_states.reset_tkt_states
+      schema_less_ticket.update_reopened_count("create")
+    end
   end
 
   def refresh_display_id #by Shan temp
@@ -142,7 +195,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless import_id
+    send_later(:delayed_rule_check, User.current, freshdesk_webhook?) unless (import_id or outbound_email?)
   end
   
   def delayed_rule_check current_user, freshdesk_webhook
@@ -224,7 +277,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Rails.logger.info "Created at::: #{self.created_at}"
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
+    if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
+      old_time_zone = Time.zone
+      TimeZone.set_time_zone
+      NewRelic::Agent.notice_error(Exception.new("Wrong SLA calculation:: Account::: #{account.id}, Old timezone ==> #{old_time_zone}, Now ===> #{Time.zone}"))
+      BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
+    end
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
@@ -251,47 +312,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       Rails.logger.info  "User timezone is invalid:: userid:: #{User.current.id}, Timezone :: #{User.current.time_zone}"
       set_account_time_zone
     end
-  end
- 
-  def publish_new_ticket_properties
-     publish_ticket_properties("new")
-  end
-
-  #Remove this function once we move all accounts to socket.io based AutoRefresh
-  def publish_updated_ticket_properties
-    return if !auto_refresh_allowed? or autorefresh_node_allowed?
-    publish_ticket_properties("update")
-  end
-
-  def publish_ticket_properties(type)
-    user_id = User.current ? User.current.id : ""
-    ticket_responder_id = responder_id ? responder_id : -1
-    message = {
-                "ticket_id" => display_id, 
-                "user_id" => user_id,
-                "type" => type,
-                "responder_id" => ticket_responder_id,
-                "group_id" => group_id,
-                "status" => status,
-                "priority" => priority,
-                "ticket_type" => ticket_type,
-                "source" => source,
-                "requester_id" => requester_id,
-                "due_by" => (due_by - Time.zone.now).div(3600),
-                "created_at" => "#{created_at}" 
-              }
-    custom_field_hash = custom_field
-    message.merge!(custom_field_hash) unless custom_field_hash.blank?
-
-    # check out which of the params you really need
-    # i think accountname is used for scoping
-    body = {
-        "channel" => Faye::AutoRefresh.channel(self.account),
-        "data" => message,
-        "messageType" => "publishMessage"
-      }.to_json
-    
-    $sqs_autorefresh.send_message(body) unless Rails.env.test?
   end
 
   def set_display_id?
@@ -366,13 +386,10 @@ private
     account.features?(:auto_refresh)
   end
 
-  def autorefresh_node_allowed?
-    account.features?(:autorefresh_node)
-  end
-
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!, 
   #but observer excpects all keys to be symbols and not strings. So doing a workaround now.
   #After Rails3, we will cleanup this part
+  # TODO - Must change in new reports when this method is changed.
   def update_ticket_related_changes
     @model_changes = self.changes.to_hash
     @model_changes.merge!(schema_less_ticket.changes) unless schema_less_ticket.nil?
@@ -417,7 +434,7 @@ private
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
         :phone => phone, :language => language }}, 
-        portal) # check @requester_name and active
+        portal, !outbound_email?) # check @requester_name and active
       
       self.requester = requester
     end
@@ -429,10 +446,10 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index| 
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
@@ -473,11 +490,13 @@ private
   end
 
   def set_token   
-    self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    self.access_token ||= generate_token
   end
 
-  def generate_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+  def generate_token
+    # using Digest::SHA2.hexdigest for a 64 char hash
+    # using ticket id, current account id along with Time.now
+    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
   end
 
   def fire_update_event
@@ -579,6 +598,15 @@ private
       ticket_states.group_escalated = false
       ticket_states.save if ticket_states.changed?
     end
+  end
+  
+  def build_reports_hash
+    current_action_time = created_at || Time.zone.now
+    if responder_id
+      schema_less_ticket.set_first_assign_bhrs(current_action_time, ticket_states.first_assigned_at, self.group)
+      schema_less_ticket.set_agent_assigned_flag
+    end
+    schema_less_ticket.set_group_assigned_flag if group_id
   end
 
   def stop_recording_timestamps

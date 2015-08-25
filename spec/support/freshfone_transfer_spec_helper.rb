@@ -57,4 +57,12 @@ module FreshfoneTransferSpecHelper
               :meta_info => '+919876543210')
   end
 
+  def stub_twilio_call_with_parent(update_return_value = true)
+    create_call_family
+    @parent_call.children.first.update_column(:call_sid, initiate_params[:call_sid])
+    twilio_call = mock
+    twilio_call.stubs(:update).returns(update_return_value)
+    twilio_call.stubs(:parent_call_sid).returns(@parent_call.call_sid)
+    Twilio::REST::Calls.any_instance.stubs(:get).returns(twilio_call)
+  end
 end

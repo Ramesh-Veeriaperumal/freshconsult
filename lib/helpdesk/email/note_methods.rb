@@ -1,11 +1,14 @@
 module Helpdesk::Email::NoteMethods
 
   include Helpdesk::Utils::ManageCcEmails
+  include EmailHelper
 
   def build_note_object
     self.note = ticket.notes.build(note_params)     
     set_note_source
     note.subject = Helpdesk::HTMLSanitizer.clean(email[:subject])
+    check_for_auto_responders(note, email[:headers])
+    check_support_emails_from(note, user, account)
   end
 
   def set_note_source
@@ -96,7 +99,7 @@ module Helpdesk::Email::NoteMethods
   # end
 
   def sanitize_message msg
-    sanitized_msg = Nokogiri::HTML(msg).at_css("body")
+    sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
     remove_identifier_span(sanitized_msg)
     sanitized_msg.inner_html unless sanitized_msg.blank? 
   end

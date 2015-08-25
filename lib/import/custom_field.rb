@@ -20,13 +20,14 @@ module Import::CustomField
   # Whenever you add new fields here, ensure that you add it in search indexing.
 
   FIELD_COLUMN_MAPPING = {
-    "text"      => [["text" , "dropdown"], CHARACTER_FIELDS],
-    "dropdown"  => [["text" , "dropdown"], CHARACTER_FIELDS],
-    "number"    => ["number", NUMBER_FIELDS],
-    "checkbox"  => ["checkbox", CHECKBOX_FIELDS],
-    "date"      => ["date", DATE_FIELDS],
-    "paragraph" => ["paragraph", TEXT_FIELDS],
-    "decimal"   => ["decimal", DECIMAL_FIELDS]
+    "text"         => [["text" , "dropdown"], CHARACTER_FIELDS],
+    "nested_field" => [["text" , "dropdown"], CHARACTER_FIELDS],
+    "dropdown"     => [["text" , "dropdown"], CHARACTER_FIELDS],
+    "number"       => ["number", NUMBER_FIELDS],
+    "checkbox"     => ["checkbox", CHECKBOX_FIELDS],
+    "date"         => ["date", DATE_FIELDS],
+    "paragraph"    => ["paragraph", TEXT_FIELDS],
+    "decimal"      => ["decimal", DECIMAL_FIELDS]
   }
 
   def import_flexifields (base_dir, account = current_account)
@@ -85,10 +86,14 @@ module Import::CustomField
         nested_field.symbolize_keys!
         nested_field.delete(:action)
         is_saved = create_nested_field(ticket_field, nested_field, account)
-        ticket_field.destroy and return unless is_saved
+        unless is_saved
+          ticket_field.destroy
+          @tkt_field_id_alias_hash = nil
+          current_account.reload
+          return
+        end
       end
     end
-
   end
 
   def scoper(account = current_account)

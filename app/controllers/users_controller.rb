@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
-  before_filter :load_multiple_items, :only => :block
+  before_filter :load_items, :only => :block
 
   ##redirect to contacts
   def index

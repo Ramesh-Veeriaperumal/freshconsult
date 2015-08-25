@@ -3,21 +3,21 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 	include ReadsToSlave
 	
 	around_filter :select_shard
-	skip_filter :run_on_slave, :only => [:block_user,:spam_user,:hard_block,:internal_whitelist]
+	around_filter :run_on_slave, :only => [:spam_details]
 	before_filter :load_user,  :only => [:spam_details,:internal_whitelist]
   before_filter :load_recent_tickets, :load_recent_notes, :only => :spam_details
 
 	def spam_details
-    result = { :account_name => @account.name ,
-               :account_id => @account.id,
-               :revenue => @account.subscription.cmrr,
-               :state => @account.subscription.state,
-               :lifetime_revenue => @account.subscription_payments.sum(:amount),
-               :using_acc => @using_account,
+    account = @user.account
+    result = { :account_name => account.name ,
+               :account_id => account.id,
+               :revenue => account.subscription.cmrr,
+               :state => account.subscription.state,
+               :lifetime_revenue => account.subscription_payments.sum(:amount),
                :whitelisted => @user.whitelisted?,
                :spam => @user.spam?,
                :blocked => @user.blocked?,
-               :internal_whitelisted => @internal_whitelisted
+               :internal_whitelisted => !WhitelistUser.find_by_user_id(params[:user_id]).blank?
              }
     result[:user] = {:name => @user.name , :email => @user.email , :helpdesk_agent => @user.helpdesk_agent}
     result[:ticket] = @spam_tickets
@@ -34,6 +34,12 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
       render :json => {:status => "success"} if User.update_all({:blocked => true, :blocked_at => Time.now}, {:id => params[:user_id]})
     end
 	end
+
+  def unblock_user
+    if params[:user_id]
+      render :json => {:status => "success"} if User.update_all({:blocked => false, :blocked_at => nil}, {:id => params[:user_id]})
+    end
+  end
 
 	def hard_block
     if params[:user_id]
@@ -97,10 +103,6 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
 
     def load_user
       @user = User.find(params[:user_id])
-      @account = @user.account
-      note_id = Helpdesk::Note.maximum(:id, :conditions => [ "account_id = ? and incoming = 0", @user.account_id ])
-      @using_account = !(note_id.blank? or (note_id and Helpdesk::Note.find_by_id(note_id).created_at < 2.months.ago))
-      @internal_whitelisted = !WhitelistUser.find_by_user_id(params[:user_id]).blank?
     end
 
     def select_shard(&block)

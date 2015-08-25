@@ -1,0 +1,193 @@
+@import "compass";
+// Base settings for portal styles
+@import "../settings/settings";
+
+// CSS Reset
+@import "lib/reset";
+// Page Layout defaults
+@import "../app/lib/defaults";
+@import "../app/lib/layout";
+@import "../src/portal/rating.scss";
+
+
+
+//--------------------------------------------------------------------------------
+//                                    Common
+//--------------------------------------------------------------------------------
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+}
+
+
+body {
+  min-width:1140px;
+  -webkit-font-smoothing: antialiased;
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#333;
+}
+
+.brand{
+  position: relative;
+  margin: 10px 0;
+}
+.pagearea{
+  background-color: #fff;
+  h1{
+    font-size:30px;
+  }
+  h2{
+    font-size: 26px;
+  }
+}
+.highlighter{
+  background-color:#fff;
+  padding:30px 0;
+  text-align: center;
+  margin:-20px;
+  margin-bottom: 0;
+}
+//--------------------------------------------------------------------------------
+//                                  Survey question list
+//--------------------------------------------------------------------------------
+.question{
+  margin:0 25px;
+  font-weight: 500;
+}
+.survey-question{
+  list-style: inside decimal;
+  .input-survy-ques{
+    width:440px;
+    @include margin-right(15px);
+  }
+  li{
+    vertical-align: middle;
+    width: 100%;
+    border-bottom: 1px solid #e2e2e2;
+    padding: 10px 0;
+    &:last-child{
+      border:0;
+      margin-bottom:10px;
+    }
+  }
+
+}
+
+.ques-desc, .ques-ans{
+  display: inline-block;
+  vertical-align: middle;
+  padding: 10px 5px;
+}
+.ques-desc{
+  width: 70%
+}
+.ques-ans{
+  width:20%;
+  label{padding-bottom: 5px}
+}
+
+//--------------------------------------------------------------------------------
+//                                  Button & Input
+//--------------------------------------------------------------------------------
+button, input[type="button"], input[type="reset"], input[type="submit"] {
+  cursor: pointer;
+  -webkit-appearance: button;
+}
+label{display: block;}
+.btn {
+  display: inline-block;
+  padding: 4px 14px;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #333333;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  background-color: whitesmoke;
+  @include background-image(linear-gradient(to bottom, #ffffff, #e6e6e6));
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #bbbbbb;
+  border-bottom-color: #a2a2a2;
+  border-radius: 4px;
+  @include box-shadow(inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+.btn-primary {
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #373737;
+  @include background-image(linear-gradient(to bottom, #444444, #222222));
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF444444', endColorstr='#FF222222', GradientType=0);
+  border-color: #222222 #222222 black;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  padding-left: 20px;
+  padding-right: 20px;
+}
+input[type='text'].input-comment{
+    width: 100%;
+    padding: 10px 16px;
+    box-sizing: border-box;
+    margin: 10px 0;
+    height: 40px;
+}
+.additional-comment-wrap{ margin-top: 40px;}
+.btn-comment-wrap{ margin-top: 20px;}
+.btn-comment{
+  padding: 10px 25px;
+  text-align: center;
+  margin: 0 auto;
+  display: block
+}
+
+input[type='text']{
+  height:16px;
+  color: #555555;
+  border-radius: 3px;
+  font-weight:400;
+  margin:0 0 3px 0;
+  @include padding-left(5px);
+  @include padding-right(0);
+  display: inline-block;
+  vertical-align: middle;
+  background-color: white;
+  border: 1px solid #cccccc;
+  @include box-shadow(0 4px 5px -4px #cccccc inset);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+//--------------------------------------------------------------------------------
+//                      Fix for survey portal header height
+//--------------------------------------------------------------------------------
+
+.survey-header-child{
+	height: 60px;
+}

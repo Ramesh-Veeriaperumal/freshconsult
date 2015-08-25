@@ -82,3 +82,20 @@ jQuery(document).ready(function ($) {
         $(this).tooltip();
     });
 });
+
+
+// Calling the Default browser implemenation as prototype is overwriting JSON.stringify method
+// TODO: To be removed when we remove prototypeJs
+var Browser = {
+    stringify: function(content){
+        var arrayToJson = Array.prototype.toJSON;
+        delete Array.prototype.toJSON;
+        content = JSON.stringify(content);
+        Object.defineProperty(Array.prototype, "toJSON", {
+            enumerable: false,
+            value: arrayToJson,
+            configurable:true
+        });        
+        return content;
+    }
+}

@@ -10,22 +10,39 @@ RSpec.describe Freshfone::CallTransferController do
 
   before(:each) do
     create_test_freshfone_account
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.reload
+    @account.freshfone_callers.delete_all
     @request.host = @account.full_domain
   end
 
   it 'should fail on invalid call transfer by sending a completed call sid' do
     request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
+    stub_twilio_call_with_parent(false)
     post :initiate, initiate_params
     json.should be_eql({:call => "failure"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
   end
 
   it 'should render valid transfer twiml on correct inputs' do
     request.env["HTTP_ACCEPT"] = "application/json"
     log_in(@agent)
-    Twilio::REST::Call.any_instance.stubs(:update).returns(true)
+    stub_twilio_call_with_parent
     post :initiate, initiate_params
     json.should be_eql({:call => "success"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
+  end
+
+
+  it 'should render valid transfer twiml on correct inputs' do
+    request.env["HTTP_ACCEPT"] = "application/json"
+    log_in(@agent)
+    @account.features.freshfone_conference.create unless @account.features?(:freshfone_conference)
+    stub_twilio_call_with_parent
+    post :initiate, initiate_params
+    json.should be_eql({:call => "success"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
   end
 
   it 'should return all available agents for transfer' do
@@ -48,8 +65,11 @@ RSpec.describe Freshfone::CallTransferController do
     log_in(@agent)
     Twilio::REST::Call.any_instance.stubs(:update).returns(true)
     outgoing = "false"
+    stub_twilio_call_with_parent
     post :initiate, initiate_external_params(outgoing)
     json.should be_eql({:call => "success"})
+    Twilio::REST::Calls.any_instance.unstub(:get)
+    Twilio::REST::Call.any_instance.unstub(:update)
   end
 
   it 'should return empty for available external numbers for transfer' do
@@ -85,6 +105,47 @@ RSpec.describe Freshfone::CallTransferController do
       outgoing_call_transfer_params.merge({ :id => @dummy_users.first.id, 
                                             :source_agent => @agent.id })
     xml[:Response][:Dial][:Client].should be_eql(@dummy_users.first.id.to_s)
+  end
+
+  
+  it "should render transfer incoming to group twiml" do
+    @test_group = create_group(@account, {:name => "Spec Testing Grp Helper"})
+    role_id = @account.roles.find_by_name("Account Administrator").id
+    agent = add_agent(@account,{ :name => Faker::Name.name,
+                        :email => Faker::Internet.email,
+                        :active => 1,
+                        :role => 1,
+                        :agent => 1,
+                        :ticket_permission => 1,
+                        :role_ids => ["#{role_id}"],
+                        :group_id => @test_group.id})
+    create_freshfone_user(1, agent)
+    create_freshfone_call('CA2db76c748cb6f081853f80dace462a04')
+    query_params = "target=#{@test_group.id}&group_id=@test_group.id&source_agent=#{@agent.id}"
+    set_twilio_signature("/freshfone/call_transfer/transfer_incoming_to_group?#{query_params}", 
+      incoming_call_transfer_params)
+    post :transfer_incoming_to_group, incoming_call_transfer_params.merge({ :id=> @test_group.id ,:group_id=> @test_group.id, :source_agent => @agent.id })
+    xml[:Response][:Dial][:Client].should be_eql(agent.id.to_s)
+  end
+
+  it "should render transfer outgoing to group twiml" do
+    @test_group = create_group(@account, {:name => "Spec Testing Grp Helper1"})
+    role_id = @account.roles.find_by_name("Account Administrator").id
+    agent = add_agent(@account,{ :name => Faker::Name.name,
+                        :email => Faker::Internet.email,
+                        :active => 1,
+                        :role => 1,
+                        :agent => 1,
+                        :ticket_permission => 1,
+                        :role_ids => ["#{role_id}"],
+                        :group_id => @test_group.id})
+    create_freshfone_user(1, agent)
+    create_freshfone_call('CA2db76c748cb6f081853f80dace462a04',Freshfone::Call::CALL_TYPE_HASH[:outgoing])
+    query_params = "target=#{@test_group.id}&group_id=@test_group.id&source_agent=#{@agent.id}"
+    set_twilio_signature("/freshfone/call_transfer/transfer_outgoing_to_group?#{query_params}", 
+      outgoing_call_transfer_params)
+    post :transfer_outgoing_to_group, outgoing_call_transfer_params.merge({ :id=> @test_group.id ,"source_agent"=> @agent.id, :group_id=>@test_group.id })
+    xml[:Response][:Dial][:Client].should be_eql(agent.id.to_s)
   end
 
   it 'should render incoming transfer twiml' do

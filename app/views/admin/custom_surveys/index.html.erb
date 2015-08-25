@@ -1,0 +1,98 @@
+<!doctype html>
+<%= javascript_include_tag :'cdn/survey_admin'  %>  
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<%= javascript_tag do %>
+survey_list = <%=@surveys.to_json.html_safe%>;
+ jQuery(document).ready(function(){
+	jQuery('input#account_features_survey_links').click( function(event) {						
+		    var form = jQuery('form#survey_enable');
+		    form.submit();
+	});
+  });
+  window.survey_list = <%=@surveys.to_json.html_safe%>;
+<% end %>
+
+<%= render :partial => 'constants'%>
+
+<%= render :partial => 'i18n'%>
+
+<div class="list-page cust-satisfaction">
+	<div class="survey-overlay center" style="display:none;"><div class="sloading loading-small loading-center"> <div class="survey-overlay-text"><b> <%= t('admin.surveys.new_layout.loading') %> </b></div></div></div>
+	<div class="list-page-header" >
+    <div class="row-fluid">
+      <div class="span6"><h3 class="title"><%=t('admin.surveys.index.custom_title')%></h3></div>
+      	<div class="span6 pull-right pagination-right header_buttons align-right" >		
+        	<%= link_to t('admin.surveys.index.new_survey'),new_admin_survey_path, :class => "btn btn-primary" ,:id => "newSurvey"
+        		%>
+        	<%#= (link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "btn btn-primary") %>
+      </div>
+    </div>
+  </div>
+  <div id="survey_list">
+			<div class="list-page-body" >
+				<table class="table table-striped">											
+				<%
+					@surveys.each do |survey|
+				%>
+		    	<tr id="survey_<%=survey.id%>">
+					<td>	
+						<form action="" method="post">
+							<input type="checkbox" id="survey_active_<%=survey.id%>" rel="toggle" data-checked-label='ON' data-unchecked-label='OFF'
+							<%if(survey.active?)%>
+							checked="checked"
+							<%end%>
+							onchange="javascript:SurveyStatus.change(<%=survey.id%>,this.checked);">
+						</form>
+					</td>
+					<td>
+            <strong>
+						  <%= link_to survey.title_text.blank? ? t('admin.surveys.index.default_survey') : survey.title_text, edit_admin_survey_path(survey.id) %>
+            </strong>
+						<div class="muted"><%=formated_date(survey.updated_at,{:format => :short_day_separated, :include_year => true})%></div>
+					</td>
+					<td>
+						<div class="item_actions align-right">
+							<%=link_to t('admin.surveys.index.edit'),edit_admin_survey_path(survey.id),:class => "btn btn-mini"%>							
+							      <a class="btn btn-mini survey-delete" id="survey_<%=survey.id%>" 
+										  <%if(survey.active?)%>
+												disabled="disabled"
+			  							  <%else%> 
+												onclick=SurveyList.destroy("<%=survey.id%>",false) 
+		  								<%end%> 
+										<%if survey.default? %>
+												style="visibility:hidden;"
+										<%end%>
+								>
+							    <i class="icon-trash"></i></a>							
+						</div>
+					</td>
+		        </tr>
+	    		<%end%>
+				</table>
+			</div> 
+		</div> 
+	</div>
+
+<% content_for :helpcard do %>
+	<div class="helpcard">
+		<p>	<%= t('admin.surveys.custom_helptext_v2').html_safe %> </p>
+	</div>
+<%end%>
+	<!-- <div id="survey_link_con" class="vertical-alignment">				
+						<#%if @account.features?(:survey_links)%>
+							<%#= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>".html_safe, "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-active" %>
+						<#%else%>
+							<%#= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-inactive" %>
+						<#%end%>
+					</div> -->
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	SurveyList.show();
+});
+</script>
+</html>
+

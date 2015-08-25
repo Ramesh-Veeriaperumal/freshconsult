@@ -2,7 +2,9 @@ class Integrations::JiraUtil
   include Integrations::Constants
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
-
+  include Integrations::Jira::Helper
+  include Integrations::Jira::Constant
+  
   def install_jira_biz_rules(installed_app)
     jira_app_biz_rules = VaRule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID, 
                                         :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", 
@@ -65,15 +67,15 @@ class Integrations::JiraUtil
             issue_id = notify_resource.remote_integratable_id
             mapped_data = obj_mapper.map_it(account.id, notify_value, data, :ours_to_theirs, [:map])
             Rails.logger.debug "mapped_data #{mapped_data}"
-            invoke_action = notify_value.match("comment_in_jira") ? "add_comment" : "update_status"
-            if invoke_action == "add_comment"
+            invoke_action = notify_value.match("comment_in_jira") ? ADD_COMMENT : UPDATE_STATUS
+            if invoke_action == ADD_COMMENT
               jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
-            elsif invoke_action == "update_status"
+            elsif invoke_action == UPDATE_STATUS
               jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment => Digest::SHA512.hexdigest("@")}
             end 
             set_integ_redis_key(jira_key, "true", 240) # The key will expire within 4 mins.
             jira_obj.send(invoke_action, issue_id, mapped_data)
-            jira_obj.construct_attachment_params(issue_id, data) if invoke_action == "add_comment" && data.class == Helpdesk::Note 
+            jira_obj.construct_attachment_params(issue_id, data) if invoke_action == ADD_COMMENT && data.class == Helpdesk::Note && !exclude_attachment?(installed_jira_app)
           }
         end  
       rescue Exception => e

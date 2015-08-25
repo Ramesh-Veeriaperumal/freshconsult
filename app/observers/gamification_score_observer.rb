@@ -1,6 +1,6 @@
 class GamificationScoreObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, SurveyResult
+	observe Helpdesk::Ticket, SurveyResult, CustomSurvey::SurveyResult
 
 	include Gamification::GamificationUtil
   
@@ -17,30 +17,29 @@ class GamificationScoreObserver < ActiveRecord::Observer
   
 	def commit_on_create(model)
 		return unless gamification_feature?(model.account)
-		model_name = (:"Helpdesk::Ticket".eql? model.class.name.to_sym) ? "ticket" : model.class.name.downcase
-		send("process_#{model_name}_score",model)
+		send("process_#{model_name(model)}_score",model)
 	end
-
+	
 	def commit_on_update(model)
-		return unless (!(:SurveyResult.eql? model.class.name.to_sym) and gamification_feature?(model.account))
+		return unless (!([:SurveyResult,:"CustomSurvey::SurveyResult"].include? model.class.name.to_sym) and gamification_feature?(model.account))
 		process_ticket_score_on_update(model)
 	end
 
 	def process_ticket_score(ticket)
-		add_support_score(ticket) unless ticket.active?
+		add_support_score(ticket) unless (ticket.active? and !ticket.outbound_email?)
 	end
 
 	def process_surveyresult_score(sr)
 		SupportScore.add_happy_customer(sr.surveyable) if sr.happy?
-    SupportScore.add_unhappy_customer(sr.surveyable) if sr.unhappy?
+		SupportScore.add_unhappy_customer(sr.surveyable) if sr.unhappy?
 	end
 
 	def process_ticket_score_on_update(ticket)
 		if (ticket.reopened_now? or (ticket.ticket_changes.key?(:deleted) && ticket.deleted?))
-        Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => ticket.id, 
+        	Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => ticket.id, 
                 :account_id => ticket.account_id, :remove_score => true })
     elsif ticket.resolved_now?
-      add_support_score(ticket)
+      		add_support_score(ticket)
     end
 	end
 
@@ -50,6 +49,19 @@ class GamificationScoreObserver < ActiveRecord::Observer
                 :fcr =>  ticket.first_call_resolution?,
                 :resolved_at_time => ticket.resolved_at,
                 :remove_score => false }) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
+	end
+
+  private 
+
+	def model_name(name)
+		case name.class.name.to_sym
+		when :"Helpdesk::Ticket"
+			return "ticket"
+		when :"CustomSurvey::SurveyResult"
+			return "surveyresult"
+    else
+      return name.class.name.downcase
+    end
 	end
 
 end

@@ -63,11 +63,11 @@ window.liveChat.archiveRouter = function(){
 			}
 			if(this.filterd_view){
 			  this.filterd_view.remove();
+			  this.filterd_view.destroyAutoRefreshTimer();
 			}
 			window.visitorCollection.removeUsedInParam(null,"archive");
 			window.Backbone.history.stopListening();
 			window.Backbone.history.stop();
-
 		},
 		_showArchivePage : function(){
 			if(this.conversationView.isVisible === true){
@@ -85,6 +85,7 @@ window.liveChat.archiveRouter = function(){
 			}
 			if(this.filterd_view){
 				this.filterd_view.remove();
+				this.filterd_view.destroyAutoRefreshTimer();
 			}
 			this.filterd_visitors = new that.visitorCollection();
 			this.filterd_view = new that.visitorListView({

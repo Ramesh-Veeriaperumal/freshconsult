@@ -38,7 +38,11 @@
 		<% unless ticket.requester.nil? %>
 			<div class="info-data hideForList">				
 				<div class="information ellipsis">
-					<%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
+					<% if ticket.outbound_email? %>
+						<%= t("ticket.ticket_to", :username => requester(ticket)).html_safe %>
+					<% else %>
+						<%= t("ticket.ticket_from", :username => requester(ticket)).html_safe %>
+					<% end %>
 					<%= content_tag(:span, ticket.requester.customer.name.presence, 
 									:class => "company-name") if ticket.requester.customer.present? && !ticket.requester.agent? %>
 				</div>

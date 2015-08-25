@@ -3,34 +3,78 @@
 	<% edit_field_present = false %>
 	<%= form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
 				:html => { :id => 'portal_ticket_form', :rel => "validate" } do |f| %>	
-		<% @visible_ticket_fields.each do |field| %>			
+		<% @visible_ticket_fields.each do |field| 
+			next if field.section_field?
+			%>			
 			<div id="ticket-field-<%= field.name %>">				
-				<% if field.visible_in_view_form? %>					
-					<% if field.editable_in_portal %>
-						<% edit_field_present = true %>
+				<% if field.visible_in_view_form?				
+						@field_value = ticket_field_display_value(field, @ticket)					
+						 if field.editable_in_portal 
+							 edit_field_present = true %>
 						<%= ticket_field_container f,:helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
-					<% elsif field.visible_in_portal %>
-						<% field_value = ticket_field_display_value(field, @ticket) %>						
-						<% if field_value.present? %>
+					<% elsif field.visible_in_portal
+							if @field_value.present? %>
 							<%= ticket_label :helpdesk_ticket, field %>
 							<div class="lead-small">
-								<%= simple_format(field_value.to_s) %>
+								<%= simple_format(@field_value.to_s) %>
 							</div>
 							<% if field.field_type == "nested_field" %>
 								<div class="tabbed">
-									<% field.nested_ticket_fields.each do |ff|%>
-										<% _nest_field_value = ticket_field_display_value(ff, @ticket) %>
-										<% if _nest_field_value.present? %>
+									<% field.nested_ticket_fields.each do |ff|
+										 _nest_field_value = ticket_field_display_value(ff, @ticket)
+											if _nest_field_value.present? %>
 											<%= ticket_label :helpdesk_ticket, ff %>
 											<div class="lead-small"><%= _nest_field_value %></div>
-										<% end %>
-									<% end %>
+										<% end
+										end %>
 								</div>
-							<% end %>
-						<% end %>
-					<% end %>
-	      		<% end %>
+							<% end 
+							end 
+						end
+	      	end %>
 	      	</div>
+	      	<% if field.has_section?
+		      	field.picklist_values.each do |picklist|
+			        next if picklist.section.blank?
+			        if field.editable_in_portal %>
+				      <textarea class="section-ticket-field-<%= picklist.id %> hide">
+				      <% end
+			        	picklist.section_ticket_fields.each do |section_tkt_field| %>
+				      		<div class="ticket_section">
+										<% if section_tkt_field.visible_in_view_form?				
+												 if section_tkt_field.editable_in_portal 
+													 edit_field_present = true
+													 field_html = (ticket_field_container f,:helpdesk_ticket, section_tkt_field, ticket_field_form_value(section_tkt_field, @ticket), picklist.id.to_s) %>
+												<%= field.editable_in_portal ? field_html.gsub("</textarea>", "&lt/textarea&gt") : (@field_value == picklist.value ? field_html : nil) %>
+											<% elsif section_tkt_field.visible_in_portal && @field_value == picklist.value
+													section_field_value = ticket_field_display_value(section_tkt_field, @ticket)					
+													if section_field_value.present? %>
+													<%= ticket_label :helpdesk_ticket, section_tkt_field %>
+													<div class="lead-small">
+														<%= simple_format(section_field_value.to_s) %>
+													</div>
+													<% if section_tkt_field.field_type == "nested_field" %>
+														<div class="tabbed">
+															<% section_tkt_field.nested_ticket_fields.each do |ff|
+																 _nest_field_value = ticket_field_display_value(ff, @ticket)
+																	if _nest_field_value.present? %>
+																	<%= ticket_label :helpdesk_ticket, ff %>
+																	<div class="lead-small"><%= _nest_field_value %></div>
+																<% end
+																end %>
+														</div>
+													<% end 
+													end 
+												end
+							      	end %>
+							      </div>
+		      			<% end
+		      		if field.editable_in_portal %>
+				      </textarea>
+				    	<% end  
+		      	end
+		      end %>
+
 		<% end %>
 
 		<% if edit_field_present %>
@@ -40,3 +84,18 @@
 		<% end %>
 	<% end %>
 </section>
+
+<%= javascript_tag do %>
+  jQuery("#helpdesk_ticket_ticket_type")
+    .on("change", function(e){
+    	var id = jQuery("option:selected", this).data("id");
+      jQuery('div.ticket_section').remove();
+      var element = jQuery('.section-ticket-field-'+id).parent();
+      if(element.length != 0) {
+      	jQuery(jQuery('.section-ticket-field-'+id).val()
+      				.replace(new RegExp('&lt', 'g'), '<')
+      				.replace(new RegExp('&gt', 'g'), '>'))
+      		.insertAfter(jQuery("#ticket-field-ticket_type"));
+      }
+  }).trigger('change');
+<% end %>

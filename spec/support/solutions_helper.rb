@@ -79,6 +79,7 @@ module SolutionsHelper
       meta_obj.send(attrib).should be_eql(object.send(attrib))
     end
     parent_keys = object.assign_keys
+    meta_obj.account_id.should be_eql(object.account_id)
     meta_obj.send(parent_keys.first).should be_eql(object.send(parent_keys.last))
   end
 
@@ -92,7 +93,7 @@ module SolutionsHelper
 
   def check_meta_assoc_equality(obj)
     obj.class::FEATURE_BASED_METHODS.each do |meth|
-      @account.takeback(:meta_read)
+      @account.rollback(:meta_read)
       reload_objects_and_models(obj)
       result1 = obj.send("#{meth}")
       @account.launch(:meta_read)
@@ -104,7 +105,7 @@ module SolutionsHelper
 
   def check_meta_delegates(obj)
     obj.meta_class::COMMON_ATTRIBUTES.each do |attrib|
-      @account.takeback(:meta_read)
+      @account.rollback(:meta_read)
       reload_objects_and_models(obj)
       result1 = obj.send("#{attrib}")
       @account.launch(:meta_read)
@@ -124,8 +125,8 @@ module SolutionsHelper
   end
 
   def check_language_by_assoc sol_assoc, lang_obj
-    @account.send(sol_assoc).each do |obj|
-      obj.language.should be_eql(lang_obj.code)
+    @account.send("#{sol_assoc}_without_association").each do |obj|
+      obj.language.should be_eql(lang_obj)
       obj.language_id.should be_eql(lang_obj.id)
     end
   end

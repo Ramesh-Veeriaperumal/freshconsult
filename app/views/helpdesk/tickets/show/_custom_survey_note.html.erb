@@ -1,0 +1,43 @@
+<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
+  <% unless note.custom_survey_remark.nil? || note.custom_survey_remark.survey_result.nil?%>
+    <div class="satisfaction-text"><%=ticket_info[:label]%></div>
+  <%end%>
+  <div class="request_mail <%= 'survey-note' unless note.custom_survey_remark.nil? %>">
+    <% unless note.custom_survey_remark.nil? || note.custom_survey_remark.survey_result.nil? %>
+      <%= content_tag(:div, "", :class => "survey-rating #{CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[ticket_info[:value]]}")%>&nbsp;&nbsp;
+      <b><%= ticket_info[:text] %></b>
+    <%end %>
+      <% if note.survey_remark.blank? %>
+        <%= note.body_html.html_safe %>
+      <%else%>
+        <div class="note-text muted">
+          "<%= note.body_html.html_safe %>"
+        </div>
+      <%end%>
+  </div>
+  <div class='question'>
+    <ul class="survey-response-question">
+      <%unless question_values.blank? %>
+        <%question_values.each do |data|%>
+            <li>
+              <div class='ques-desc'> <%= h(data[:label]) %> </div>
+              <div class='ques-ans'>
+                <% data[:choices].each_with_index do |option, index| %>
+                  <%if option[:face_value] == data[:key]%>
+                    <span class="survey-rating <%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>"
+                      data-class="<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[option[:face_value]]%>" 
+                      id="rating_<%=index%>"></span>&nbsp;
+                    <%="<span class='ticket-rating-label'>#{data[:value]}</span>".html_safe %>
+                  <%end%>
+                <%end%>
+              </div>
+
+            </li>
+        <%end%>   
+      <%end%>
+    </ul>
+  <% if note.fwd_email? %>
+      <div class="freshdesk_quote" data-remote-quote=true></div>
+  <% end %>
+  </div>
+</div>

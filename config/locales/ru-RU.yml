@@ -210,7 +210,7 @@ ru-RU:
   signup: <b>Зарегистрироваться</b>
   signup_title: "Зарегистрироваться в %{current_portal}"
   signup_up_with_us: "Зарегистрироваться в системе"
-  signup_help_information: "После регистрации вы получите полный доступ к нашим решениям и разделу «Часто задаваемые вопросы», сможете задавать вопросы и получать информацию в нашем сообществе пользователей. Вы также сможете задавать вопросы службе поддержке и следить за ответами на них."
+  signup_help_information: "После регистрации вы получите полный доступ к нашему порталу самообслуживания, сможете создавать новые заявки на поддержку и отслеживать их исполнение."
   trial_expired_on: "Срочно! Срок действия пробной версии истек!"
   trial_will_expire_in: "Срок действия пробной версии истечет <b>%{no_of_days}</b>"
   trial_one_more_day: "Вы сможете пользоваться пробной версией еще 1 день"
@@ -218,6 +218,10 @@ ru-RU:
   trail_expiry_one_more_day: "Чтобы не прерывать работу во Freshdesk, незамедлительно выберите платный или бесплатный тарифный план"
   trail_expiry_after_trial: "Срок действия пробной версии истечет <b>%{no_of_days}</b>. Чтобы продолжить пользоваться Freshdesk, выберите тарифный план"
   hard_pressed_for_time: "Находитесь в затруднении? Получайте советы, подсказки и рекомендации от экспертов Freshdesk."
+  facebook_reauth: "Ваш канал Facebook недоступен. Возможно, это связано с недавним изменением имени пользователя, пароля или настроек доступа."
+  reauthorize_facebook: "Проведите повторную авторизацию Вашего аккаунта Facebook."
+  twitter_reauth: "Ваш канал Twitter недоступен. Возможно, это связано с недавним изменением имени пользователя или пароля. "
+  reauthorize_twitter: "Произведите повторную авторизацию Вашего аккаунта Twitter."
   schedule_a_complimentary_session: "Запланируйте ознакомительный сеанс"
   choose_a_plan: "Выберите тарифный план"
   upgrade_trial: "Приобретите полноценную версию!"
@@ -253,7 +257,7 @@ ru-RU:
   dropbox_attach_label: "Вложить из"
   dropbox_attach_from_text: "Вложить из <b>Dropbox</b>"
   dropbox_choose_file: "Выберите файл"
-  dropbox_choose_file_from: "Choose file from Dropbox"
+  dropbox_choose_file_from: "Выберите файл из Dropbox"
   dropbox_plaintext: "Вложения Dropbox"
   cloudfile_plaintext: "Вложения с использованием облачного хранилища"
   box_attach_label: "Вложить из"
@@ -282,6 +286,7 @@ ru-RU:
   after_onemonth: "Через 1 месяц"
   add_more_lang: "Добавить в службу поддержки дополнительные языки."
   support_multi_languge: "Осуществляете поддержку клиентов на нескольких языках?"
+  many: несколько
   user:
     company: Компания
     photo: Фотография
@@ -489,21 +494,21 @@ ru-RU:
         thanks_info: "Благодарим за то, что нашли время оценить качество поддержки."
         feedback_info: "Ваш отзыв очень важен для нас."
         feedback_optional: "Отзыв оставлять не обязательно"
-        submit: Submit
-        happy: Awesome
-        neutral: "Just Okay"
-        unhappy: "Not Good"
+        submit: Отправить
+        happy: Отлично
+        neutral: Нормально
+        unhappy: Плохо
         additional_info: "Кроме того, вы можете поделиться своим опытом работы с нами."
-        customer_satisfaction: "Customer satisfaction rating"
-        rating: "Your Rating"
+        customer_satisfaction: "Рейтинг удовлетворенности клиентов"
+        rating: "Ваш рейтинг"
       index:
-        thanks_info: "Thanks for taking time to rate our support experience."
-        thanks: "Thank you very much for rating us!"
-        sorry: "But, really sorry for the inconvenience."
-        happy_info: "It has been our pleasure to serve you. We are glad you are happy with our service."
-        neutral_info: "Wish you were a little more happy."
-        neutral_information: "Wish you were a little more happy."
-        unhappy_info: "We will ensure that we will take extra care the next time around."
+        thanks_info: "Спасибо, что уделили время оценке нашей поддержки."
+        thanks: "Большое спасибо за отзыв!"
+        sorry: "Приносим извинения за неудобства."
+        happy_info: "Рады были помочь. Нам приятно, что Вы довольны качеством обслуживания."
+        neutral_info: "Сожалеем, что Вы остались недостаточно удовлетворены."
+        neutral_information: "Сожалеем, что Вы остались недостаточно удовлетворены."
+        unhappy_info: "Постараемся в следующий раз проявить повышенное внимание."
   gamification:
     levels:
       beginner: Новичок
@@ -599,7 +604,7 @@ ru-RU:
       topic_view: "Просмотр тем"
       new_topic: "Новая тема"
       submit_ticket: "Новая заявка"
-      ticket_list: "Заявки пользователей"
+      ticket_list: "Список заявок"
       ticket_view: "Подробные сведения заявки"
       my_topics: "Мои темы"
   portal_meta:
@@ -627,8 +632,8 @@ ru-RU:
       my_topics: "Мои тематические разделы"
   admin:
     help_image_alt:
-      helpdesk_arcarde: "Helpdesk Arcade"
-      import_csv_file_pattern: "Import CSV file pattern"
+      helpdesk_arcarde: "Аркада поддержки"
+      import_csv_file_pattern: "Загрузка шаблона файла CSV"
     social:
       helpcard:
         title1: "Добавление учетных записей социальных сетей"
@@ -765,7 +770,7 @@ ru-RU:
         cc_any_email: "Можно отправить копию на любой адрес электронной почты"
         regexp: "Регулярное выражение"
         validate_regexp: "Проверить с помощью регулярного выражения"
-        regexp_example_html: "Например, для поиска строки, содержащей только буквы и цифры: <b> /^[a-zA-Z0-9]*$/ </b>. Для поиска строки, начинающейся со слова «fresh» <b> /^fresh\\w/ </b>."
+        regexp_example_html: "Например, для поиска строки, содержащей только буквы и цифры: <b> /^[a-zA-Z0-9]*$/ </b>. Для поиска строки, начинающейся со слова «fresh»: <b> %{regex} </b>."
         max_choices: "Достигнуто максимальное число элементов"
     contact_fields:
       fields:
@@ -834,7 +839,7 @@ ru-RU:
         cc_any_email: "Можно отправить копию на любой адрес электронной почты"
         regexp: "Регулярное выражение"
         validate_regexp: "Проверить с помощью регулярного выражения"
-        regexp_example_html: "Например, для поиска строки, содержащей только буквы и цифры: <b> /^[a-zA-Z0-9]*$/ </b>. Для поиска строки, начинающейся со слова «fresh» <b> /^fresh\\w/ </b>."
+        regexp_example_html: "Например, для поиска строки, содержащей только буквы и цифры: <b> /^[a-zA-Z0-9]*$/ </b>. Для поиска строки, начинающейся со слова «fresh»: <b> %{regex} </b>."
         max_choices: "Достигнуто максимальное число элементов"
     portal:
       index:
@@ -850,9 +855,11 @@ ru-RU:
         logged_in: "Вошедшие пользователи"
         everyone: Все
         none: "Ни один из вариантов"
+        simple_none: Отсутствует
         auto_suggest_solutions: "Решения для автоматического заполнения при создании новой заявки"
         auto_suggest_solutions_help: "Также применяется для средства поиска в виджете отзывов."
         captcha: "Включить проверку CAPTCHA для защиты от спама"
+        forum_captcha: "Для создания темы авторизованным пользователям необходимо ввести символы с изображения."
         view_solutions: "Кто может просматривать сведения о решениях"
         view_forums: "Кто может просматривать форумы"
         notify_agents: "Отправить уведомление о модерации и спаме по адресу:"
@@ -903,6 +910,7 @@ ru-RU:
           app_key: "Ключ приложения"
           app_secret: "Секретный ключ приложения"
           integration_details: "Подробные сведения об интеграции"
+          saving: Saving...
         index:
           title: "Приложения Mobihelp"
           new_app: "Новое приложение"
@@ -1052,7 +1060,7 @@ ru-RU:
       satisfaction_settings:
         enable_label: "Опросы удовлетворенности клиентов"
         link_text_label: "Текст ссылки на опрос удовлетворенности клиентов"
-        link_text_input: "Поделитесь своими впечатлениями о качестве нашей поддержки."
+        link_text_input: "Поделитесь с нами своими впечатлениями о качестве нашей поддержки."
         link_text_info: "Этот текст будет отображаться под вашей подписью внизу электронного письма клиенту"
         send_while_option1: "Все ответы отправлены клиенту."
         send_while_option2: "Письма отправляются после того, как заявка получает статус «Решена»."
@@ -1520,7 +1528,7 @@ ru-RU:
         create_topic: "Создавать или редактировать темы на форумах"
         edit_topic: "Редактировать темы на форумах всех пользователей"
         edit_topic_false: "Редактировать только собственные темы на форумах"
-        delete_topic: "Удалять темы на форумах"
+        delete_topic: "Удалять и модерировать темы на форумах"
         customers: Клиенты
         view_contacts: "Просматривать вкладку клиентов"
         manage_contacts: "Создавать или редактировать контактные данные нового пользователя или новой компании"
@@ -1555,7 +1563,7 @@ ru-RU:
         import: "Импортировать данные из Zendesk"
         agent: Агенты
         feedback: "Виджет для отзывов"
-        freshchat: Freshchat
+        freshchat: Онлайн-чат
         integrations: "Интегрируемые сервисы"
         dispatcher: Диспетчер
         supervisor: Супервайзер
@@ -1581,7 +1589,7 @@ ru-RU:
         security: Безопасность
         email_commands_setting: "Команды электронной почты"
         billing: "Тарифные планы и оплата"
-        freshfone: Freshfone
+        phone-channel: Телефон
         tags: Теги
         mobihelp: Mobihelp
         customer-portal: "Портал для клиентов"
@@ -1722,6 +1730,9 @@ ru-RU:
       agents: Агенты
       all: Все
       select_company: "Выбрать компании"
+    follower:
+      title: "Наблюдатели форума"
+      description: "Агенты, добавленные в качестве наблюдателей, будут извещены о появлении новых тем по электронной почте"
   password_reset_email: "Электронное письмо для сброса пароля"
   default_reply_template: "Шаблон ответа агента"
   additional_email_verification: "Дополнительная проверка электронной почты"
@@ -1753,7 +1764,7 @@ ru-RU:
         success: "Интегрируемый сервис успешно включен!"
         error: "Ошибка включения интегрируемого сервиса."
         cti_error: "Не допускается использование нескольких вариантов компьютерно-телефонной интеграции."
-        freshfone_enabled: "Компьютерно-телефонная интеграция несовместима с Freshfone"
+        freshfone_alert: "Интеграция с CTI не может быть включена при наличии включенного телефонного канала."
       update:
         success: "Интегрируемый сервис успешно обновлен!"
         error: "Ошибка настройки интегрируемого сервиса."
@@ -1776,6 +1787,7 @@ ru-RU:
             post: "Благодарим за размещение записи. Ваш ответ отобразится в тематическом разделе после проверки на спам."
           spam_check: "Благодарим за создание нового тематического раздела. Ваш раздел отобразится на форуме после стандартной процедуры модерации."
           success: "Благодарим за размещение записи. Ваш ответ отобразится в тематическом разделе после стандартной процедуры модерации."
+          not_allowed: "У вас отсутствует разрешение на создание тем в данном форуме. Пожалуйста, выберите другой форум."
         posts:
           spam_check: "Благодарим за размещение записей на наших форумах. Ваша запись отобразится после утверждения."
       tickets:
@@ -1789,14 +1801,15 @@ ru-RU:
       page_unavailable: "К сожалению, эта страница временно недоступна для вас. За дополнительной информацией обратитесь к администратору."
     freshfone:
       credits:
-        success: "Кредиты Freshfone приобретены успешно"
-        error: "Ошибка приобретения кредитов Freshfone"
+        successful_purchase: "Телефонные баллы приобретены успешно."
+        unsuccessful_purchase: "Ошибка при приобретении телефонных баллов."
         invalid_recharge_amount: "Введите действительную сумму пополнения"
       number:
-        success: "Номер успешно добавлен в вашу учетную запись Freshfone"
-        error: "Ошибка приобретения номера для вашей учетной записи Freshfone."
+        successful_purchase: "Телефонный номер приобретён успешно."
+        unsuccessful_purchase: "Ошибка при приобретении телефонного номера."
+        invalide_address_error: "Не удалось приобрести номер. Пожалуйста, убедитесь, что указанный адрес является корректным адресом в указанной стране (%{country})."
         blank_message: "%{num_type} не может быть пустым"
-        invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
+        invalid_message_length: "%{num_type} не может превышать 4096 символов"
         add_blacklist_success: "Номер успешно заблокирован"
         add_blacklist_failure: "Не удалось заблокировать номер"
         remove_blacklist_success: "Номер успешно разблокирован"
@@ -1840,24 +1853,24 @@ ru-RU:
       delete:
         not_allowed: "Вы не можете удалить эту роль. С ней связаны другие пользователи."
     customers_import:
-      failure: "Please try again"
-      no_file: "Please upload a file"
-      wrong_format: "The CSV file format is not supported. Please check the CSV file format!"
-      success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
+      failure: "Пожалуйста, повторите попытку"
+      no_file: "Пожалуйста, загрузите файл"
+      wrong_format: "Формат CSV-файла не поддерживается. Пожалуйста, проверьте формат файла."
+      success: "Импортировано %{created_count} новых контактов. Обновлено %{updated_count} существующих контактов."
     import:
       already_running: "В настоящее время выполняется импорт данных из CSV-файла. Повторите попытку позже!"
       failure: "Повторите попытку"
       no_file: "Загрузите файл"
       success: "Импорт данных из CSV-файла начат. После его завершения вы получите уведомление по электронной почте. Процесс импорта может занять несколько минут в зависимости от объема ваших данных"
-      info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. "
-      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:"
-      created: "Created: %{count}"
-      updated: "Updated: %{count}"
-      failed: "Failed : %{count}"
-      info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
-      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
-      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
-      info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
+      info1: "Процедура импорта завершена успешно. Новые %{type} можно найти, войдя в службу поддержки, в разделе Клиент->%{uc_type}. "
+      info2: "Не удалось импортировать все записи %{type} из приложенного CSV-файла. Пожалуйста, ознакомьтесь с отчётом ниже:"
+      created: "Создано: %{count}"
+      updated: "Обновлено: %{count}"
+      failed: "Ошибка: %{count}"
+      info3: "Успешно импортированные записи типа \"%{type}\" могут быть найдены в разделе \"Клиент->%{uc_type}."
+      info4: "Записи типа \"%{type}\", при обработке которых произошли ошибки, находятся во вложении."
+      info5: "Пожалуйста, следуйте инструкциям по этой <a href = '%{solution_link}'>ссылке</a> для уточнения форматирования CSV-файла."
+      info6: "Пожалуйста, отправьте файл на адрес электронной почты support@freshdesk.com, чтобы мы смогли проверить и загрузить его самостоятельно."
       help_desk: "Свяжитесь с нами, если вам необходимо что-то еще."
       regards: "С уважением,"
       freshdesk: "команда Freshdesk"
@@ -1894,6 +1907,7 @@ ru-RU:
         stop: "Вы больше не работаете с этой заявкой"
         start: "Теперь вы работаете с этой заявкой"
       empty_trash:
+        delay_delete: "Please wait while we delete all tickets from your trash. This might take a few minutes."
         success: "Корзина очищена."
       delete_forever:
         success: "Удалено: %{tickets}."
@@ -1968,7 +1982,7 @@ ru-RU:
       verify_credentials: "Не удалось войти. Проверьте учетные данные"
       sso:
         expected_params: "Ожидаемые параметры (имя, адрес электронной почты и хэш) отсутствуют"
-        invalid_time_entry: "Недействительная запись времени"
+        invalid_time_entry: "Некорректный ввод времени"
       success: "Вы успешно вошли!"
       failed: "Не удалось войти!"
       deleted_user: "К сожалению, вам не удалось войти, поскольку ваша учетная запись удалена. Для возобновления доступа обратитесь к администратору."
@@ -2022,8 +2036,8 @@ ru-RU:
   downgrade_plan: "Примечание. Примечание. Выбрав более дешевый тарифный план, можно потерять некоторые из действующих функций"
   f_request: "Запрос по функциональным возможностям"
   save_and_create: "Сохранить и создать еще"
-  save_and_new: "Сохр. и создать новый"
-  save_and_close: "Сохранить и закрыть"
+  save_and_new: "Сохранить и <strong>создать<strong>"
+  save_and_close: "Сохранить и <strong>закрыть</strong>"
   undelete: Восстановить
   import_zendesk_title: "Импорт из zendesk"
   closed: Закрыто
@@ -2035,6 +2049,7 @@ ru-RU:
     add_page: "Добавить страницу Facebook"
     deleted: "Страница Facebook %{facebook_page} удалена."
     error_on_reply_fb: "Ваш ответ не удалось опубликовать на странице Facebook. Повторите попытку позже или обратитесь за помощью к администратору."
+    user_blocked: "Данный пользователь заблокировал Вашу страницу. Вы не можете отправлять ему сообщения."
     not_authorized: "Вы не авторизовались на Facebook"
     realtime: "<b>Приложение поэтапного извлечения остановлено</b> из-за определенных изменений этой учетной записи Facebook <a href='%{realtime_url}' >Выполните повторную авторизацию и включите</a>"
   import_user_notification: "Из вкладки «Клиенты» можно отправить электронное письмо активации для импортированных контактов"
@@ -2064,7 +2079,7 @@ ru-RU:
       assigned_to_nobody: "Назначение агента отменено"
       reassigned: "Агент переназначен"
       assigned: "Агент назначен"
-      priority_change: "{{value}}"
+      priority_change: "%{value}"
       new_ticket: "Новая заявка"
       conversation:
         out_email:
@@ -2080,7 +2095,7 @@ ru-RU:
       execute_scenario: "Сценарий выполнен"
       ticket_merge: "Заявка объединена"
       ticket_split: "Заявка разделена"
-      status_change: "{{value}}"
+      status_change: "%{value}"
       deleted: "Заявка удалена"
       restored: "Заявка восстановлена"
       product_change: "Продукт обновлен"
@@ -2089,6 +2104,7 @@ ru-RU:
       group_change: "Группа агента изменена"
       group_change_none: "Группа агента изменена"
       source_change: "Источник заявки"
+      due_date_updated: "Срок исполнения обновлён"
     solutions:
       new_solution:
         short: "{{user_path}} создал(-а) новое решение"
@@ -2250,6 +2266,10 @@ ru-RU:
         short: "{{user_path}} обновил(-а) источник до {{source_name}}"
         without_user: "обновил(-а) источник до <strong>{{source_name}}</strong>"
         long: "{{user_path}} обновила(-а) источник заявки {{notable_path}} до {{source_name}}"
+      due_date_updated:
+        short: "{{user_path}} изменил(а) срок исполнения на {{due_date_updated}}"
+        without_user: "срок исполнения изменён на <strong>{{due_date_updated}}</strong>"
+        long: "{{user_path}} изменил(а) срок исполнения для \"{{notable_path}}\" на {{due_date_updated}}"
   credit_card_info: "Информация о кредитной карте"
   zendesk_backup_info: "Выберите файл резервной копии Zendesk, скачанный с zendesk"
   backup_error_msg: "Превышен максимально допустимый размер файла в 50 МБ, <a href='#' id='import_request'>обратитесь в службу технической поддержки</a> для выполнения импорта."
@@ -2316,7 +2336,7 @@ ru-RU:
       billing: Оплата
       save_billing_information: "Сохранить платежную информацию"
       save_billing_information_info: "информация о тарифном плане и платежная информация будет сохранена. Мы снимем оплату с карты и активируем подписку сразу по окончании пробного периода."
-      begin_subscription: Подписаться…
+      begin_subscription: Подписаться
     show:
       export_data: "Экспорт данных"
       export_now: "Экспортировать сейчас"
@@ -2347,10 +2367,10 @@ ru-RU:
     last_reply: "Последний ответ %{post_time} назад, автор: %{user_link}"
     posted_at: "Опубликовано %{post_time} назад"
     delete_confirm:
-      one: "При удалении этого тематического раздела будет удален один содержащийся в нем ответ."
+      one: "При удалении этой темы будет удален один содержащийся в ней ответ."
       few: ""
       many: ""
-      other: "При удалении этого тематического раздела будут удалены все содержащиеся в нем ответы (количество — %{count})"
+      other: "При удалении этой темы будут удалены все содержащиеся в ней ответы (количество — %{count})"
   non_covered_feature_error: "В настоящий момент эта функция заблокирована"
   unavailable_feature: "Функция %{feature} в вашем тарифном плане не поддерживается. Для ее использования перейдите на более дорогой тарифный план.  "
   requester_replies: "Ответы автора заявки на заявку"
@@ -2382,7 +2402,7 @@ ru-RU:
   change_my_plan: "Выбрать этот тарифный план..."
   make_payment: "Произвести оплату"
   add_new_email: "Добавить новый адрес эл. почты"
-  chatwidget_title: "Настройки чата"
+  chatwidget_title: Онлайн-чат
   feedbackwidget_title: "Виджет для отзывов"
   errors_in_your_address: "При использовании вашего адреса возникли ошибки:"
   set_priority_as: "Установить приоритет как"
@@ -2397,10 +2417,10 @@ ru-RU:
     title: "Автоматизация сценариев"
     tour: "Помощь в автоматизации стандартных сценариев"
     helptext: "Автоматизация сценариев позволяет осуществлять множество обновлений заявки одним щелчком. Она позволяет быстро выполнять повторяющиеся сценарии. Например, можно создать сценарии для обработки сообщений клиентов об ошибках. Они позволят одним щелчком «Отметить заявку как ошибку», «Поручить команде QA» и отправить электронное письмо менеджеру по продукту."
-    available_placeholders: Заполнители
+    available_placeholders: "Вставить заполняемые поля"
     info2: "Например, перед назначением заявки службе QA можно установить тип заявки «Ошибка», передать ее команде QA и написать электронное письмо о новой ошибке менеджеру QA."
     info3: "Автоматические сценарии позволяют вам выполнять эти действия одним щелчком мыши"
-    info4: "Выберите заполнители из предложенных ниже — они будут вкладываться в электронное письмо и преобразовываться в необходимые данные"
+    info4: "Нажмите для вставки в содержимое заполняемых полей, значения которых будут автоматически подставляться с использованием соответствующих данных"
     info5: "Назначить команде QA"
     reorder: "Изменить порядок"
     info6: "Отметить заявку как ошибку и переназначить его команде QA"
@@ -2409,7 +2429,8 @@ ru-RU:
     edit: "Редактировать сценарий"
     shared: "С общим доступом"
     personal: Личные
-    no_scenario: "Без собственных сценариев <a href=%{link}>Создать новый</a>"
+    no_scenario: "Нет собственных сценариев <a href=%{link}>Создать новый</a>"
+    duplicate_title: "Повторяющийся сценарий. Такое наименование уже существует"
     visibility:
       groups: "Агенты в группе"
       all_agents: "Все агенты"
@@ -2440,7 +2461,7 @@ ru-RU:
   feedbackwidget_btcustomize: "Настройка кнопок"
   chatwidget_agentsonline: "Когда агенты онлайн"
   solution_category:
-    name: "Название категории"
+    name: Наименование
     new: "Новая категория решений"
     edit: "Редактировать категорию решений"
     info1: "Действительно удалить эту категорию?"
@@ -2574,6 +2595,12 @@ ru-RU:
     open: "Снова открыть эту тему"
     close: "Закрыть тему"
     mark_as_spam: "Отметить как спам"
+    vote:
+      one: "1 человек"
+      few: ""
+      many: ""
+      other: "%{count} чел."
+    upvote_appended_text: "проголосовал(и) \"за\""
     post: "Создать тему"
     add_comment: "Оставить комментарий"
     update_comment: "Обновить комментарий"
@@ -2641,6 +2668,9 @@ ru-RU:
     spam_action: "Утвердить и опубликовать"
     replied_time: " отвечено, %{time_in_words} назад"
     visible_in: "Где доступен просмотр"
+    follower:
+      title: "Наблюдатели темы"
+      description: "Агенты, добавленные в качестве наблюдателей, будут извещены о появлении новых ответов по электронной почте"
   activerecord:
     errors:
       models:
@@ -2679,7 +2709,7 @@ ru-RU:
         email_not_unique: "Адрес электронной почты уже зарегистрирован"
         email_invalid: "Недопустимый адрес электронной почты"
         user_emails: "Введите данные как минимум для одного контакта"
-        max_user_emails: "A contact cannot have more than 5 emails"
+        max_user_emails: "Контакту не может быть присвоено более 5 адресов электронной почты"
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -2699,8 +2729,19 @@ ru-RU:
   save_reply: "Сохранить ответ"
   forum_shared:
     follow_topic: "Следить за этой темой"
+    followers:
+      one: "%{count} наблюдатель"
+      few: ""
+      many: ""
+      other: "%{count} наблюдателей"
+    followers_title:
+      one: "1 пользователь наблюдает за данным Форумом"
+      few: ""
+      many: ""
+      other: "%{count} пользователей наблюдают за данным форумом"
     edit_title: Редактировать
     topic_vote:
+      upvote: "Голос \"за\""
       unlike: "Не нравится!"
       ideas:
         vote_button: "Мне нравится эта идея"
@@ -2724,6 +2765,13 @@ ru-RU:
         vote_info_include_2: "Вы и <a id='users-voted' href='#' title=\"Узнать, кто задал этот вопрос\"> еще %{vote} пользователя(-ей)</a> задали этот вопрос"
         voted_users_widget_title: "Пользователи с этим вопросом"
     post:
+      upvote: "Голос \"за\""
+      voted_up_title: "голосов \"за\""
+      voted_up_message:
+        one: "голос \"за\""
+        few: ""
+        many: ""
+        other: "голосов \"за\""
       posted_on: "%{user_name} в %{post_date}"
       edit_comment: "Редактировать комментарий"
       unmark_answer: "Отменить выделение в качестве ответа"
@@ -2827,7 +2875,9 @@ ru-RU:
     type: "Тип агента"
     delete_agent: "Удалить агента"
     delete_agent_confirmation: "Удаленный агент будет доступен в службе поддержки в качестве контакта. Действительно продолжить действие?"
+    convert_agent_confirmation: "Внимание - при преобразовании агента в контакт будет утрачена вся информация об агенте. Вы уверены, что хотите продолжить?"
     agent_restored: "Агент восстановлен"
+    convert_to_contact: "Преобразовать в Контакт"
     status:
       active: Активные
       deleted: Удаленные
@@ -2952,6 +3002,7 @@ ru-RU:
     edit_contact: "Редактировать контакт"
     edit: "Редактировать контакт"
     merged_into: "Контакт объединен с"
+    merged_info: "Контакт объединён с: "
     save_changes: "Сохранить изменения"
     save: Сохранить
     export_start: "Ваши контактные данные будут отправлены вам по электронной почте в ближайшее время."
@@ -2997,10 +3048,10 @@ ru-RU:
       enter_tags: "Ввести теги"
     conversations:
       title: Разговоры
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Создал(-а) тематический раздел <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Ответил(-а) в тематическом разделе <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} назад в <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Создал(-а) тематический раздел <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Ответил(-а) в тематическом разделе <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} назад в <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} назад, состояние: %{status} <span class='middot'> &middot; </span> агент: %{agent_name}"
       company_ticket_timeinfo: "%{user_name}, %{time} назад <span class='middot'> &middot; </span> состояние: %{status} <span class='middot'> &middot; </span> агент: %{agent_name}"
       contact_all: "Последние действия с заявками и форумами"
@@ -3009,10 +3060,11 @@ ru-RU:
       no_conversations: "Разговоры не зарегистрированы"
       all: "Все разговоры"
       tickets: Заявки
+      recent_tickets: "Недавние заявки"
       forums: Форумы
       contact_tickets: "Последние действия с заявками"
       contact_forums: "Последние действия с форумами"
-    info5: "Пользователь пока не создал ни одного талона"
+    info5: "Пользователь %{nick_name} пока не создал ни одной заявки"
     restore: Восстановить
     activation: "Отправить электронное письмо для активации"
     info6: "Добавить примечания, относящиеся к этому контакту"
@@ -3039,12 +3091,18 @@ ru-RU:
     unverified:
       no_contacts: "У вас нет неподтвержденных контактов."
       no_contacts_with_letter: "Нет подходящих контактов, начинающихся с буквы «%{alphabet}»"
+    segment_api:
+      invalid_type: "Некорректная операция. Проверьте выбранный тип."
+      email_blank: "Адрес электронной почты необходимо заполнить"
   between: Между
   profile_settings: "Настройки профиля"
   portal_key: Портал
   add_new_forum: "добавить новый форум"
   no_forum_category: "В этой категории нет форумов"
   sla_policy:
+    assigned_agent:
+      text: "Назначенный агент"
+      description: "Агент заявки"
     sla_rule: "<b>Важно.</b> Время ответа и решения должны находиться в диапазоне от <b>15 минут до 12 месяцев</b>."
     human_name: "Политика SLA"
     sla_targets: "Цели SLA"
@@ -3092,6 +3150,11 @@ ru-RU:
     applicable_info: "Выберите хотя бы одно условие срабатывания."
     disabled_old_policy: "Для активации этой политики SLA установите условие срабатывания."
     default_policy: "Политику SLA по умолчанию отключить нельзя."
+    update_company_sla_api:
+      update_failed: "SLA policy update failed."
+      invalid_arguments_for_update: "Invalid arguments."
+      invalid_data_type: "Company ids should be a comma separated value."
+      default_policy_update: "Cannot update default SLA policy."
   left: Остаток
   subscription:
     error:
@@ -3172,6 +3235,8 @@ ru-RU:
     my_topics: "Мои темы"
     showing_recently_popular_topics: "Отображение последних популярных тем"
     topic_deleted: "Вероятно, этот тематический раздел удален. Размещение записей запрещено."
+    topic_not_found: "Похоже, данная тема удалена"
+    post_not_found: "Похоже, данное сообщение удалено"
     showing_my_topics: "Отображение тем, за которыми вы следите"
     community_forums: "Форумы сообщества"
     knowledge_base: "База знаний"
@@ -3218,22 +3283,36 @@ ru-RU:
         few: ""
         many: ""
         other: "Тематические разделы объединены с этим тематическим разделом:"
-    topic_vote:
+      sort_heading: "Сортировка:"
+      sort_order:
+        date: "По возрастанию даты"
+        recency: "По убыванию даты"
+        popularity: "По популярности"
+      sort_by_most_recent: Недавние
+      sort_by_most_popular: "Наиболее популярные"
+      sort_by_default: "По умолчанию"
+    vote:
       you:
-        one: Вы
+        one: "Вам "
         few: ""
         many: ""
-        other: "Вы и"
+        other: "Вам и "
       more:
-        one: "1 пользов."
-        few: "%{count} пользов."
-        many: "%{count} пользов."
-        other: "%{count} пользов."
+        one: "ещё 1 пользователю "
+        few: ""
+        many: ""
+        other: "ещё %{count} пользователям "
       people:
-        one: "1 пользов."
-        few: "%{count} пользов."
-        many: "%{count} пользов."
-        other: "%{count} пользов."
+        one: "ещё 1 человеку "
+        few: ""
+        many: ""
+        other: "ещё %{count} человек "
+    topic_vote:
+      announce:
+        one: "это нравится"
+        few: ""
+        many: ""
+        other: "это нравится"
       ideas:
         one: "приветствует эту идею"
         few: ""
@@ -3249,15 +3328,30 @@ ru-RU:
         few: ""
         many: ""
         other: "задают этот вопрос"
+      votes: голосов
+      upvote: "проголосовать \"за\""
+      upvoted: "проголосовали \"за\""
+      user_upvote_list_title: "Проголосовали \"за\":"
+      announce_button: "Вам нравится?"
       ideas_button: "Вам нравится эта идея?"
       problem_button: "У вас возникла эта же проблема?"
       howto_button: "У вас возник этот же вопрос?"
+      announce_unlike_button: "не нравится!"
       ideas_unlike_button: "не нравится!"
       problem_unlike_button: "У меня нет такой проблемы!"
       howto_unlike_button: "Меня не интересует этот вопрос!"
+      announce_users_voted_title: "Пользователи, которым это понравилось"
       ideas_users_voted_title: "Пользователи, которым нравится эта идея"
       problem_users_voted_title: "Пользователи с этой проблемой"
       howto_users_voted_title: "Пользователи с этим вопросом"
+    post_vote:
+      upvoted: "Вы проголосовали \"за\""
+      upvote: "Проголосовать \"за\""
+      like:
+        one: "это нравится"
+        few: ""
+        many: ""
+        other: "это нравится"
     tickets:
       merged_topic_note: "Объединенный тематический раздел не может быть преобразован в заявку."
       export: "Экспортировать заявки"
@@ -3291,6 +3385,7 @@ ru-RU:
       folder_form:
         category: Категория
         visible_to: Видно
+      draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
       where: Где
       search_articles: "Поиск статей"
@@ -3348,20 +3443,20 @@ ru-RU:
     feedback_message_4: "Ссылка отсутствует или недействительна"
   import_updated: Обновлено
   feedbackwidget_intro: "Настройте ваш виджет Freshdesk ниже и воспользуйтесь предпросмотром в реальном времени."
-  chatwidget_intro: "Настройте ваш виджет Freshchat ниже и воспользуйтесь предпросмотром в реальном времени."
+  chatwidget_intro: "Настройте ваш виджет чата ниже и воспользуйтесь предпросмотром в реальном времени."
   save: Сохранить
   import_added_newly: "Недавно добавленные"
   quick_create: "Быстрое создание"
   select_a_plan_gain_access: "Выберите один из приведенных ниже тарифных планов для восстановления доступа к учетной записи."
   customer_import:
-    import_step2_info: "Map fields from your CSV with %{type} fields."
-    import_warning_info: "If we encounter an already existing %{type} %{field} during import, then the other details of the %{type} will be updated."
-    import_csv: "Import %{type} from CSV"
-    sample_data: "Sample data"
-    contact_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. name email etc..) You can also import language and timezone information for your contacts by following <a href = '%{solution_link}' target = '_blank' >these specifications.</a>"
-    company_import_data_info: "Please ensure that your CSV file is in UTF-8 format and the first row has the header information (eg. companyname domains etc..) Read more about it <a href = '%{solution_link}' target = '_blank' >here.</a>"
+    import_step2_info: "Сопоставьте поля CSV-файла с полями объектов \"%{type}\"."
+    import_warning_info: "Если при импорте будет обнаружено уже имеющееся значение поля \"%{field}\" объекта \"%{type}\", все остальные поля уже существующей записи \"%{type}\" будут обновлены."
+    import_csv: "Импорт объектов \"%{type}\" из CSV-файла"
+    sample_data: "Образцы данных"
+    contact_import_data_info: "Убедитесь в том, что формат вашего CSV-файла — UTF-8, а в первой строке указана заголовочная информация (например, имя, адрес электронной почты и т. д.). Для своих контактов можно также импортировать данные о языке и часовом поясе. Необходимо соблюдать требования <a href = '%{solution_link}' target = '_blank' >этих спецификаций.</a>"
+    company_import_data_info: "Убедитесь в том, что формат вашего CSV-файла — UTF-8, а в первой строке указана заголовочная информация (например, название компании, домены и т.д.). Дополнительную информацию можно получить по  <a href = '%{solution_link}' target = '_blank' >этой ссылке</a>."
   import_example_title: "Далее указан пример CSV-файла"
-  change_password: "Change Password"
+  change_password: "Изменить пароль"
   answered: Отвеченные
   errors_in_payment_info: "При использовании вашей платежной информации возникли ошибки:"
   attach_files: "Вложить файлы"
@@ -3450,10 +3545,10 @@ ru-RU:
   is_expiring_today: "истекает сегодня"
   feedbackwidget_help_para1: "Виджеты для отзывов позволяют встраивать форму заявок непосредственно в сайт или продукт. Можно настроить внешний вид, а также расположение виджета на вашем веб-сайте. Чтобы начать использовать виджет для отзывов, скопируйте и вставьте созданный для встраивания код в ваш веб-сайт или приложение."
   chatwidget_help_content:
-    title: Freshchat
-    info1: "Freshchat позволяет вам просматривать сведения о пользователях и общаться с ними в чате на вашем веб-сайте, в онлайновом ПО или на портале поддержки непосредственно через Freshdesk. Можно настроить все параметры окна чата (в том числе тексты по умолчанию, цвета и т. д.) и даже заранее начинать сеансы чата, если посетители проводят на вашем сайте больше времени, чем необходимо."
+    title: Онлайн-чат
+    info1: "Встроенный онлайн-чат Freshdesk позволяет вам просматривать сведения о пользователях и общаться с ними в чате на вашем веб-сайте, в онлайновом ПО или на портале поддержки непосредственно через Freshdesk. Можно настроить все параметры окна чата (в том числе тексты по умолчанию, цвета и т. д.) и даже самостоятельно начинать сеансы чата, если посетители задерживаются на сайте достаточно продолжительное время."
     info2: "На всех сеансах чата записывается метаинформация о посетителях, в том числе их месторасположение, используемое устройств, история оказания поддержки и т. д. После завершения сеанса чата можно преобразовать разговор в заявку и продолжить оказывать посетителю поддержку по электронной почте или заархивировать историю общения в чате."
-    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Узнайте больше об использовании Freshchat внутри Freshdesk</a>"
+    info3: "<a href=\"https://support.freshdesk.com/support/solutions/folders/246519\" target=\"_blank\" >Дополнительная информация об использовании онлайн-чата внутри Freshdesk</a>"
   low: Низкий
   agents: Агенты
   header:
@@ -3527,7 +3622,7 @@ ru-RU:
     reset_confirm: "В случае сбросы все изменения будут утеряны. Все равно продолжить?"
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\">Нажмите здесь</a>, чтобы узнать больше"
-      info3: "Также можно менять шаблон E-mail для ответов агенту и даже добавлять в них динамическую информацию с помощью заполнителей."
+      info3: "Freshdesk позволяет настроить автоматическое оповещение по электронной почте как агентов, так и и заявителей при наступлении определённых событий. Содержимое этих оповещений является настраиваемым и позволяет задавать динамические элементы контента с использованием подставляемых полей. Например, когда агенты оставляют комментарии или общедоступные заметки к заявкам, клиентам может направляться персонализированное сообщение со ссылкой на заявку.<br/><br/>Если ваша подписка включает многоязыковую поддержку, вы сможете добавлять языки оповещений и настраивать шаблоны для каждого языка индивидуально. Значок <i class=\"common-icon-outdated\"></i> информирует, что переводы оповещений на другие языки могут нуждаться в обновлении."
       agent_template_10:
         topic: "Электронное письмо для активации пользователя"
         info1: "Электронное сообщение с данными для активации пользователя отправляется при добавлении нового агента к вашей службе технической поддержки. В электронном сообщении с данными для активации должен быть указан URL-адрес для активации агента {{activation_url}}. С его помощью агенты смогут создать свои пароли и завершить процедуру регистрации.<br /><br />Если ваша служба технической поддержки предоставляет информацию на разных языках, электронное сообщение с данными для активации можно создать с учетом каждого языка. Значок <i class=\"common-icon-outdated\"></i> указывает на то, что переведенные уведомления могут быть неактуальными."
@@ -3590,8 +3685,8 @@ ru-RU:
   step1: "Шаг 1"
   next_charge_date: "Следующее обновление"
   last_renewed_on: "Дата последнего обновления"
-  update_and_log_in: "Update & Log in"
-  activate_and_log_in: "Activate & Log in"
+  update_and_log_in: "Обновить и войти"
+  activate_and_log_in: "Активировать и войти"
   password: Пароль
   enter_payment: "Введите платежную информацию..."
   downgrade_confirm: "<span class=\"label label-important\">Важно.</span> Вы переходите с тарифного плана <b>%{from}</b> на более дешевый тарифный план <b>%{to}</b>. Обратите внимание на то, что все данные и настройки, связанные с доступными в тарифном плане %{from} функциями будут удалены безвозвратно.<br /><br /> Просмотреть полный список планов и функций можно в разделе <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Тарифные планы и цены</a>. <br />Все еще не уверены? <a href = \"mailto:support@freshdesk.com\" >Давайте мы поможем вам решить</a>"
@@ -3624,8 +3719,8 @@ ru-RU:
     info3: "Freshdesk выбирает эти электронные письма и преобразовывает их в заявки"
     inactive_info1: "Все ваши электронные письма в службу поддержки до сих пор не подтверждены. Подтвердите хотя бы одно из них."
     info14: "Все электронные письма, отправляемые на этот адрес электронной почты, будут преобразовываться в заявки"
-    info4: "<strong>ПРИМЕЧАНИЕ.</strong> Если у вас есть несколько адресов электронной почты для поддержки нескольких продуктов, <a href='{{products_path}}'>вы можете добавить их здесь</a>."
-    spf_info: "Все ваши письма дойдут до адресата, но для большей безопасности создайте  <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">запись в инфраструктуре политики отправителей (SPF) </a> в файле зоны DNS, если используете почту в рамках собственного домена. Это улучшит качество доставки писем. "
+    info4: "<strong>ПРИМЕЧАНИЕ.</strong> Если у вас есть несколько адресов электронной почты для поддержки нескольких продуктов, <a href='%{products_path}'>вы можете добавить их здесь</a>."
+    spf_info: "Ответы, направляемые из Freshdesk по электронной почте, автоматически отправляются от имени соответствующего идентификатора электронной почты. Для повышения надёжности доставки сообщений рекомендуется создать <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">запись в инфраструктуре политики отправителей (SPF)</a> в файле зоны DNS."
     reply_email: "Ваше электронное письмо в службу поддержки"
     unverified_info1: "Активируйте этот адрес электронной почты, перейдя по ссылке подтверждения в папке «Входящие» вашей почты."
     inactive_info2: "До тех пор в качестве адреса электронной почты для ответов будет по умолчанию использоваться «%{default_email}»."
@@ -3633,8 +3728,8 @@ ru-RU:
     helpcard:
       tour1: "Помощь в настройке электронной почты службы поддержки"
       tour2: "Помощь в настройке нескольких почтовых ящиков"
-      info5: "Ваш E-mail поддержки по умолчанию <a target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Каждое письмо на этот ящик автоматически конвертируется в заявку, которую можно обрабатывать."
-      info19: "Можно настроить учетную запись Freshdesk таким образом, чтобы использовался адрес электронной почты на собственном домене, например поддержка@моякомпания.com. Для этого установите переадресацию на <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>."
+      info5: "Ваш E-mail поддержки по умолчанию <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Каждое письмо, поступающее на этот адрес, автоматически конвертируется в заявку, которую можно принимать в работу."
+      info19: "Можно настроить учетную запись Freshdesk таким образом, чтобы использовался адрес электронной почты на собственном домене, например support@mycompany.com. Для этого установите переадресацию с этого адреса на <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>."
       edit_info: "Чтобы создать новый ящик электронной почты службы поддержки, в общих настройках электронной почты нажмите «Редактировать»."
       info20: "Использование нескольких почтовых ящиков"
       info21: "Можно создавать неограниченное количество ящиков входящей и исходящей почты службы поддержки (например, инфо@вашакомпания.com, продажи@вашакомпания.com и т. д.). Кроме того, во Freshdesk можно настроить автоматическое назначение электронных писем из каждого ящика определенной группе."
@@ -3650,7 +3745,7 @@ ru-RU:
     info18: "Адрес скрытой копии автоматически добавляется в ответы на заявки"
     email_added_succ_msg: "Адрес электронной почты добавлен"
     assign_to_product_msg: "Связать адрес электронной почты службы поддержки с продуктом"
-    assign_to_product_info: "Если необходимо связать адрес электронной почты с новым продуктом, сначала <a href='{{products_path}}'>добавьте продукт</a>"
+    assign_to_product_info: "Если требуется связать адрес электронной почты с новым продуктом, сначала <a href='%{products_path}'>добавьте продукт</a>"
     new_support_email: "Новый адрес электронной почты службы поддержки"
     global_support_emails: "Глобальные адреса электронной почты службы поддержки"
     support_email: "Адрес электронной почты службы поддержки"
@@ -3666,12 +3761,14 @@ ru-RU:
     set_bcc_email_text: "Добавить автоматический адрес скрытой копии"
     name_info_msg: "Название электронного письма, которое будет использоваться в ответах на заявки"
     Personalized_email_replies: "Использовать имена агентов в личных ответах по электронной почте?"
-    Personalized_email_replies_info: "Если ДА, то в ответном письме агенту будет имя агента и отправителя (в поле адрес будет указан адрес вашей поддержки). Например '%{current_user_name} <%{current_account_domain}>'."
+    Personalized_email_replies_info: "Если ДА, то в ответном письме агенту будет имя агента и отправителя (в поле адрес будет указан адрес вашей поддержки). Например '%{current_user_name} &amp;amp;amp;lt;%{current_account_domain}&amp;amp;amp;gt;'."
     Personalized_email_replies_yes: Да
     Personalized_email_replies_no: Нет
     config_saved_message: "Ваши настройки успешно сохранены."
     reply_to_tickets: "Для создания контактов авторов заявок используйте адреса электронной почты для ответов."
     reply_to_tickets_info: "Примечание. Если эта функция отключена, контакты авторов заявок будут создаваться на основе адреса отправителя."
+    disable_agent_forward: "Использовать имя исходного отправителя в качестве создателя запроса для пересылаемых сообщений"
+    disable_agent_forward_info: "Когда агент пересылает сообщение из своего почтового ящика в службу поддержки, создавать заявку от имени исходного отправителя. Если не выбрано, заявка будет создана от имени агента."
     primary_email_delete_alert: "Невозможно удалить основной адрес электронной почты"
     using_custom_mailbox: "Использование собственного почтового сервера"
   step2: "Шаг 2"
@@ -3772,7 +3869,7 @@ ru-RU:
     default_note_text: "Будет добавлено примечание по умолчанию"
     note_saved: "Примечание сохранено"
     edit_note: "<b>Редактировать примечание</b>"
-    thanks: "Благодарим за отправку отзыва"
+    thanks: "Благодарим за ваш отзыв"
     portal_created_on: "Автор: <span class='emphasize'>%{username}</span>, дата создания: <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Дата создания: <span class='emphasize'>%{date}</span>"
     fb_portal_created_on: "Автор: <span class='emphasize'>%{username}</span>, дата создания: <span class='emphasize'>%{date}</span>"
@@ -3807,7 +3904,7 @@ ru-RU:
     support:
       reply: Ответить
       reply_and_open: Ответить
-    from: "Отправитель:"
+    from: "От:"
     suggested_solutions:
       insert_url: "Вставить URL"
       link: Ссылка
@@ -3966,6 +4063,8 @@ ru-RU:
     non_monitor_flash: "Вы перестали следить за %{type}"
     follow_title: Следить
     unfollow_title: "Прекратить слежение"
+    me: Я
+    pick_agents: "Добавить агентов"
   forums:
     search_all:
       placeholder: "Искать по всем темам"
@@ -3979,7 +4078,7 @@ ru-RU:
   company:
     created: "Запись о компании успешно создана."
     updated: "Запись о компании успешно обновлена."
-    created_view: "Запись о компании успешно создана. <a href=\"%{company_url}\"> Просмотреть сведения о компании. </a>"
+    created_view: "Запись о компании успешно создана. <a href=\"%{company_url}\" data-pjax=\"#body-container\"> Просмотреть сведения о компании. </a>"
     info9: "Freshdesk автоматически привяжет контакты этой компании, если в идентификаторах адресов электронной почты содержатся эти домены"
     sla_policy_name: "Политика SLA"
     name: "Название компании"
@@ -4118,8 +4217,8 @@ ru-RU:
   portal_customizer_title: "Настроить общедоступный портал для клиентов"
   your_trial_account: "Ваша пробная учетная запись"
   reply_comment: "Добавить комментарий"
-  create_password: "Create a Password"
-  retype_password: "Retype Password"
+  create_password: "Создать пароль"
+  retype_password: "Повторите пароль"
   feedbackwidget_defaulttitle: "Справка и поддержка"
   two: "2 часа"
   set_status_as: "Установить статус как"
@@ -4128,7 +4227,7 @@ ru-RU:
   connect_ticket: "Ссылка на заявку"
   edit_agent: "Редактировать агента"
   high: Высокий
-  scenario_label: "Метка сценария"
+  scenario_label: "Наименование сценария"
   email: "Электронная почта"
   linkback_overlabel: "URL обратного перехода"
   select_a_plan: "Выберите тарифный план"
@@ -4246,6 +4345,7 @@ ru-RU:
       addcc: "Добавить копию"
       cc: копия
       bcc: "скрытая копия"
+      response_added_alert: "В заявке появились новые ответы. Пожалуйста, просмотрите их перед отправкой."
       reply_form:
         title: "Ответить %{email}"
         cc: Копия
@@ -4268,7 +4368,9 @@ ru-RU:
       history:
         recent_item: "Недавние элементы"
     dashboard:
+      agent_availability: "Просмотреть состояние агента"
       round_robin:
+        ticket_assignment: "Назначение заявок"
         all_agents: "Все агенты"
         showing: Отображается
         available_agents: "Доступные агенты"
@@ -4277,8 +4379,19 @@ ru-RU:
         na: "НЕТ СВЕДЕНИЙ"
         since_now: "Через 1 секунду"
         header: "Автоматическое назначение заявок"
-        view_agent_status: "Просмотреть состояние агента"
-        no_agents_available: "В этой группе нет доступных агентов"
+        view_agent_status: "Состояние доступности агента"
+        no_agents: "- Нет агентов -"
+        back: Назад
+      freshfone:
+        phone: Телефон
+        sort_by: Сортировка
+        last_modified: "Последние события"
+        name: Имя
+        accepting: Принимаю
+        not_accepting: "Не принимаю"
+        call_in_progress: "Выполняется звонок"
+        no_agents: "- Нет агентов -"
+        no_activity: "Нет событий"
       index:
         todo_title: "Список заданий"
       summary:
@@ -4294,7 +4407,7 @@ ru-RU:
         info: "Это будет названием службы поддержки, отображаемым в заголовке сайта и электронных уведомлениях."
     ticket_created_on_n_by: "автор: %{requester}, дата: %{date_time}"
     tickets:
-      to: "Получатель: "
+      to: "Кому: "
       no_email_found: "Пользователь с адресом электронной почты %{email} недоступен в этой системе."
       overlay_reply_time: "отвечено, %{time_in_words} назад"
       overlay_fwd_time: "перенаправлено, %{time_in_words} назад"
@@ -4360,7 +4473,7 @@ ru-RU:
         ticket_saved_and_closed: "Заявка создана и закрыта."
         view_ticket: "Просмотреть заявку"
       show:
-        meta: мета
+        meta: Метаинформация
         custom: "Пользовательские данные"
         linked_ticket: "Эта заявка связана с форумом"
         conversation: Разговор
@@ -4382,6 +4495,16 @@ ru-RU:
           addbcc: "Добавить скрытую копию"
           removebcc: "Удалить скрытую копию"
           not_sent: "Ответ не перенаправлен!"
+        reply_to_forward:
+          title: Reply
+          cc: Cc
+          to: To
+          addcc: "Add Cc"
+          removecc: "Remove Cc"
+          bcc: Bcc
+          addbcc: "Add Bcc"
+          removebcc: "Remove Bcc"
+          not_sent: "Reply was not sent!"
         tweet_form:
           title: "Ответить %{user}"
         facebook_form:
@@ -4389,6 +4512,7 @@ ru-RU:
           title: "Ответить %{user}"
         history:
           recent_item: "Недавние элементы"
+        max_tag_length_msg: "Метка не может быть длиннее 32 символов"
         due_date:
           when_is_it_due: "Когда истекает срок?"
           today: Сегодня
@@ -4460,6 +4584,7 @@ ru-RU:
           reply: "%{user_name} ответил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} перенаправил(-а) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} установил(-а) рейтинг этой заявки <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: "Редактировать примечание"
         split_this_as_new_ticket: "Разделить и создать отдельную заявку"
         delete_note: "Удалить это из обсуждения заявки?"
@@ -4497,7 +4622,7 @@ ru-RU:
         mark_primary: "Отметить как основной"
         primary_ticket: "Это основная заявка"
         remove: "Удалить эту заявку"
-        target_merge_description: "Заявка {{ticket.id}} {{ticket.subject}} объединена с этим запросом"
+        target_merge_description: "Заявка %{ticket.id} %{ticket.subject} объединена с этим запросом"
         target_merge_description1: "Объединено из заявки <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1:
           one: "Заявка с идентификатором"
@@ -4598,7 +4723,7 @@ ru-RU:
     out_of_sla: "Нарушено соглашение об уровне обслуживания (SLA)"
     info: "Экспортировать доступную в текущем представлении информацию заявки в CSV-файл."
     contact_info: "Экспортировать активные контакты в CSV-файл."
-    select_header: "Выбрать поля для экспорта"
+    select_header: "Выбрать все поля"
     select_all: "Выбрать все"
     select_format: "Экспортировать как:"
     csv: CSV-файл
@@ -4621,6 +4746,7 @@ ru-RU:
     closed_at: закрыто
     from: Отправитель
     to: Получатель
+    check_uncheck_title: "Отметить/сбросить все"
     data_backup:
       body: "Данные экспорта готовы для скачивания."
     no_tickets_mail:
@@ -4661,23 +4787,24 @@ ru-RU:
       tags: Теги
       survey_result: "Результат опроса"
       product: Продукт
+      requester_phone: "Requester Phone"
     call_history:
       info:
-        success: "We have started exporting your call records. It will be mailed to you once completed."
-        error: "We were unable to start the export. Please try again or contact Freshdesk support."
-      subject: "Call Records within (%{range})"
+        success: "Начат экспорт вашего журнала звонков. По завершении журнал будет выслан на электронную почту."
+        error: "Не удалось запустить экспорт. Пожалуйста, попробуйте ещё раз или свяжитесь с поддержкой Freshdesk."
+      subject: "Записи о звонках в диапазоне (%{range})"
       body:
-        call_record_export_complete: "<strong>Your call records have been successfully exported.</strong> It is now available for download"
-        call_records_download_link: "<a href=%{url}><strong>Download Call Records</strong></a>"
-        conditions_header: "----- Contains calls matching the following conditions -----"
-        alternate_link: "Alternatively, paste this link in your web browser to download the file:"
-        thanks: "Thank You"
+        call_record_export_complete: "<strong>Журнал звонков экспортирован успешно.</strong> Журнал доступен для загрузки."
+        call_records_download_link: "<a href=%{url}><strong>Скачать журнал звонков</strong></a>"
+        conditions_header: "----- Содержит звонки, соответствующие следующим условиям -----"
+        alternate_link: "Либо откройте данную ссылку в веб-браузере, чтобы скачать файл:"
+        thanks: Спасибо
       no_records_mail:
-        subject: "No records in range %{range}"
-        body: "Seems like there are no call records in the provided date range."
-      range_limit_message: "We only allow exporting call records in a %{range} month range. Please change your filter accordingly. Apologies for the inconvenience."
-      repeated_request: "Your call records are already being exported. Kindly check your mail for the download link."
-      export_limit_breached: "We currently allow only %{limit} concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused."
+        subject: "Нет записей в диапазоне %{range}"
+        body: "Похоже, нет ни одной записи о звонках в указанном диапазоне дат."
+      range_limit_message: "Допускается экспорт записей о звонках только в диапазоне месяцев %{range}. Пожалуйста, проверьте настройки фильтра. Приносим извинения за неудобства."
+      repeated_request: "Экспорт записей о звонках уже выполняется. Пожалуйста, проверьте электронную почту, чтобы получить ссылку для загрузки."
+      export_limit_breached: "На данный момент допускается не более %{limit} одновременно выполняющихся операций экспорта. Пожалуйста, попробуйте снова через некоторое время. Приносим извинения за доставленные неудобства."
   sla:
     minutes: мин
     hours: ч
@@ -4726,6 +4853,7 @@ ru-RU:
         forbidden_error: "Это действие запрещено для вашей учетной записи. Проверьте разрешенные действия для учетной записи Twitter."
         client_error: "Ваш запрос не удалось обработать. Повторите попытку позже."
         wrong_call: "Вы пытаетесь удалить из избранного твит, который не был включен в эту категорию."
+        not_following: "Данный пользователь не может принимать личные сообщения, если он(-а) не является вашим подписчиком. Пожалуйста, направьте ответ в форме твита."
         cannot_reply: "Вам не разрешено отвечать на твит."
         cannot_retweet: "Вам не разрешено повторно размещать твит."
         cannot_favorite: "Вам не разрешено добавлять твит в избранное."
@@ -4782,7 +4910,7 @@ ru-RU:
         message_thread_time: "Время цепочки сообщений"
         message_thread_time_info: "Максимальное время для учета сообщений от одного и того же пользователя как сообщений в цепочке"
         direct_messages: "Импортировать <strong>личные сообщения</strong> как заявки"
-        direct_messages_info: "Freshdesk будет преобразовывать все личные сообщения на этой странице Facebook в заявки. Если вы используете эту функцию, <a href='{{reauth_url}}'>выполните повторную авторизацию на Facebook</a>."
+        direct_messages_info: "Freshdesk будет преобразовывать все личные сообщения на этой странице Facebook в заявки. При первоначальном включении данной функции может понадобиться <a href='%{reauth_url}'>повторная авторизация в Facebook</a>."
     twitter_handles:
       index:
         go_to_ticket: "Перейти к заявке"
@@ -4911,10 +5039,8 @@ ru-RU:
       host_name_info: "Укажите IP-адрес с номером порта без HTTP-адреса (например, IP-адрес: порт)"
     five9:
       label: Five9
-      desc: "Позволяет воспользоваться средством компьютерно-телефонной интеграции Five9 в системе Freshdesk"
-      helptext: "Это текст справки Five9"
-      recording_path_info: "Чтобы сохранить запись вызова, необходимо задать такой же путь в параметрах администрирования Five9"
-      recording_path: "Путь к каталогу для записи звонка"
+      desc: "Позволяет принимать и совершать звонки, записывать содержимое звонков и преобразовывать их в заявки Freshdesk"
+      helptext: "<h4>Cправка по интеграции с Five9</h4><p><br/>После установки инструментария агента Five9 можно использовать для входа данные учётной записи Five9.<br/>После этого при поступлении входящих звонков будет автоматически отображаться информационное окно с контекстными данными о клиентах.</p>"
     drishti:
       label: Ameyo
       desc: "Отвечайте на вызовы или совершайте исходящие звонки с помощью высокоэффективного средства IP-телефонии Ameyo в системе Freshdesk"
@@ -5138,6 +5264,9 @@ ru-RU:
     nimble:
       label: Nimble
       desc: "Во Freshdesk можно просматривать контактную информацию из CRM-системы Nimble."
+    quickbooks:
+      label: "QuickBooks <span class='beta'>Бета-версия</span>"
+      desc: "Просмотр клиентов из БД QuickBooks, создание и редактирование записей о трудозатратах  для клиентов в вашей учётной записи QuickBooks."
     zohocrm:
       label: "CRM-система Zoho"
       desc: "Во Freshdesk можно просматривать контактную информацию из CRM-системы Zoho."
@@ -5169,6 +5298,37 @@ ru-RU:
         widget_title: "Заголовок виджета"
         username: "Имя пользователя"
         password: Пароль
+    dynamicscrm:
+      label: "Dynamics CRM"
+      helptext: "<h4>Справка по интеграции с Dynamics CRM</h4><p><br/> После включения данной интеграции, агенты смогут обращаться к контактной информации Dynamics CRM непосредственно со страниц заявок и контактов FreshDesk.<br /><br /> Обратите внимание, что агенты получат доступ только к полям, указанным на странице настроек, а функция поиска основывается на сопоставлении адресов электронной почты."
+      desc: "Вы можете просматривать контактную информацию Dynamics CRM из Freshdesk."
+      form:
+        instance_type: "Тип установки Dynamics CRM"
+        password: Пароль
+        domain: "Идентификатор пользователя"
+        endpoint: "Конечная точка SOAP службы организаций"
+        loginurl: "Адрес входа"
+        region: Регион
+        organization_name: "Уникальное наименование организации"
+        contact_email: "Контактный адрес электронной почты"
+        account_email: "Адрес электронной почты учётной записи (необязательно)"
+        lead_email: "Адрес электронной почты возможной сделки (необязательно)"
+        instance_info: "Для обеспечения возможности интеграции On-Demand установку необходимо преобразовать в IFD."
+        domain_info: "В случае On-Demand установки используйте идентификатор супервизора Office 365, например, name@company.onmicrosoft.com."
+        organization_name_info: "Для получения этого значения обратитесь в настройках Dynamics CRM к разделу Customizations -> Developer Resources -> Your Organization Information -> Organization Unique Name"
+        end_point_info: "Пример: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. Для получения данного значения обратитесь в настройках Dynamics CRM к разделу Customizations -> Developer Resources -> Organization Service for SOAP protocol в нижней части страницы инструментов разработчика."
+        account_email_info: "Введите корректный адрес электронной почты, привязанный к любой учётной записи Dynamics CRM (на основании которой на следующем шаге будут перечислены ассоциированные поля CRM)"
+        contact_email_info: "Введите корректный адрес электронной почты, привязанный к любому контакту Dynamics CRM (на основании которого на следующем шаге будут перечислены ассоциированные поля CRM)"
+        lead_email_info: "Введите корректный адрес электронной почты, привязанный к любой возможной сделке Dynamics CRM (на основании которой на следующем шаге будут перечислены ассоциированные поля CRM)"
+        login_url: "Может быть получен из WSDL организации клиента. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 и найдите адрес входа: Policy -> Issuer -> Address."
+        region_info: "Может быть получен из WSDL организации клиента. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 и найдите регион: SecureTokenService -> AppliesTo."
+        dynamicscrm_settings: "Настройки Dynamics CRM"
+        contact: "Поля контактов"
+        lead: "Поля возможных сделок"
+        account: "Поля учётных записей"
+        error: "Что-то пошло не так! Пожалуйста, проверьте корректность введённых значений."
+        entity_error: "не является допустимым адресом электронной почты для данного типа объекта."
+        api_error: "Ошибка при сборе данных API."
     google_calendar:
       label: "Google Календарь"
       desc: "С помощью Google Календаря можно управлять событиями для каждой заявки."
@@ -5198,7 +5358,7 @@ ru-RU:
       include_survey: "Добавить опрос"
       include_surveymonkey_link: "Добавить ссылку SurveyMonkey"
       label: SurveyMonkey
-      helptext: "<h4>Интеграция SurveyMonkey</h4><p>Этот интегрируемый сервис позволяет связывать необходимые настраиваемые опросы из вашей учетной записи SurveyMonkey с ответами на заявки во Freshdesk. Этот сервис можно использовать для замены стандартного опроса удовлетворенности клиентов или же использовать параллельно с ним.</p><p>После привязывания учетной записи SurveyMonkey вы можете выбрать опрос и <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>сборщика данных</a> с помощью выпадающих списков. </p><p>Вы также можете выбрать, когда необходимо добавлять ссылки на опросы в ответы. Например, можно настроить автоматическое добавление опроса при закрытии или решении вопроса или же добавление опроса вручную. В таком случае агенты будут сами решать, необходимо ли добавлять опрос при ответе на заявку. </p>"
+      helptext: "<h4>Интеграция с SurveyMonkey</h4><p>Данная интеграция позволяет связывать избранные настраиваемые опросы из вашей учетной записи SurveyMonkey с ответами на заявки во Freshdesk в зависимости от группы, к которой принадлежит заявка. Этот сервис можно использовать для замены стандартного опроса удовлетворенности клиентов SurveyMonkey или же использовать параллельно с ним.</p><p>После привязывания учетной записи SurveyMonkey вы можете выбрать опрос и <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>сборщика данных</a> с помощью выпадающих списков и привязать их к группам заявок Freshdesk </p><p>Вы также можете выбрать, когда необходимо добавлять ссылки на опросы в ответы. Например, можно настроить автоматическое добавление опроса при закрытии или решении вопроса или использовать ручной режим. В таком случае агенты будут сами решать, необходимо ли добавлять опрос при ответе на заявку. </p>"
       desc: "Интегрируйте SurveyMonkey во Freshdesk, предоставив вашим агентам возможность добавлять ссылки на любые настраиваемые опросы при ответах на заявки."
       form:
         survey_settings: ""
@@ -5223,28 +5383,28 @@ ru-RU:
         shop_name_info: "Например, если ваш URL-адрес Shopify представлен в виде <strong>https://адрес_моего_магазина.shopify.com</strong>, введите <strong>адрес_моего_магазина</strong>."
     slack:
       label: Slack
-      desc: "Stay up to date about Freshdesk tickets in Slack"
-      helptext: "<h4>Slack Integration</h4><br><p>To enable the integration select the Slack channels from dropdown and choose notifications that you would like to see in Slack.<br>Get instant updates in Slack whenever a Freshdesk ticket is created or updated and proactively engage with your customers</p>"
+      desc: "Получайте оповещения об обновлении заявок Freshdesk в Slack"
+      helptext: "<h4>Интеграция с Slack</h4><br><p>Чтобы включить интеграцию, выберите каналы Slack из выпадающего списка и виды оповещений, которые вы хотите получать в Slack.<br>Получайте мгновенные оповещения при создании или обновлении заявки в Freshdesk для своевременного установления контакта с клиентами</p>"
       form:
         slack_setting: ""
         slack_info: ""
     slack_settings:
-      channels: "Channels to post"
-      notify: "Notification for"
-      note_create: "Note creation"
-      ticket_create: "Ticket creation"
-      status_update: "Status update"
+      channels: "Каналы для отправки сообщений"
+      notify: "Оповещать о"
+      note_create: "Создание заметки"
+      ticket_create: "Создание заявки"
+      status_update: "Изменение состояния"
     slack_msg:
-      wrong_channel: "ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group"
-      invalid_api_key: "ERROR :Invalid Freshdesk Api key"
-      notify_on_ticket_update: "Status updated for  "
-      notify_on_ticket_create: "Ticket created by "
-      notify_on_private_note_create_by_agent: "Private Note added by "
-      notify_on_public_note_create_by_agent: "Public Note added by "
-      notify_on_response_by_customer: "Response from "
-      status_msg: "Ticket status changed to "
-      chat: "Chat Conversation with"
-      default_chat: "Chat Conversation of"
+      wrong_channel: "Ошибка при преобразовании описания канала в заявку: заявка может быть создана только в группе каналов прямой связи"
+      invalid_api_key: "Ошибка: некорректный ключ Freshdesk API"
+      notify_on_ticket_update: "Изменено состояние: "
+      notify_on_ticket_create: "Заявка создана пользователем: "
+      notify_on_private_note_create_by_agent: "Личное примечание добавлено пользователем: "
+      notify_on_public_note_create_by_agent: "Общедоступное примечание добавлено пользователем: "
+      notify_on_response_by_customer: "Ответ от: "
+      status_msg: "Новое состояние заявки: "
+      chat: "Разговор с"
+      default_chat: "Разговор от"
     highrise:
       label: "CRM-система Highrise"
       helptext: "<h4>Интеграция CRM-системы Highrise</h4><p><br>Для просмотра контактной информации из Highrise во Freshdesk введите ваши домен и API-ключ. После этого на страницах контактов и заявок отобразится соответствующий виджет. <br><br>Freshdesk будет собирать и отображать такие данные Highrise, как имя, должность, название компании, контактный адрес, номера рабочего и мобильного телефонов.<br><br>Для просмотра контактов из Highrise выполняйте поиск по их адресам электронной почты. Если на один адрес электронной почты приходится несколько контактов, они все будут отображаться в виде списка.</p>"
@@ -5341,6 +5501,9 @@ ru-RU:
       desc: "Вложить файлы из хранилища Box и настроить совместный доступ к этим данным"
       helptext: "<h4>Помощь в интеграции Box</h4><br/><p>Интеграция Box позволяет агентам и пользователям просматривать файлы из папки Box, предоставляя к ним совместный доступ при отправке новой заявки или ответов на существующую заявку в системе Freshdesk. Для заявки создается прямая ссылка. Вложения файлов или ограничения размера электронного сообщения не требуются.</p>Вам необходимо воспользоваться инструментом Box Chooser (см. форму новой заявки).</p>"
       login_required: "Приносим извинения. Чтобы вложить файлы из хранилища Box, необходимо выполнить вход на портал технической поддержки %{helpdesk_name}."
+    xero:
+      label: Xero
+      desc: "Вы можете создавать новые счета на основании зарегистрированных трудозатрат по заявке, а также просматривать последние счета с возможностью перехода в Xero для их редактирования"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Создавайте записи в Pivotal Tracker и отслеживайте их с помощью Freshdesk"
@@ -5400,7 +5563,7 @@ ru-RU:
       range_exceed: "Диапазон не может превышать 90 дней"
       filter_by_title: "Отфильтровано по"
       time_period: "Период времени"
-      report_title: "Краткий отчет по Freshfone"
+      ff_report_title: "Сводка по звонкам"
       summary_title: "Краткий отчет по вызовам агентов "
       agent: Агент
       group: Группа
@@ -5421,13 +5584,17 @@ ru-RU:
       agent_calls_count: Вызовы
       total_unanswered_calls: "Пропущенные вызовы"
       num_of_transfered: "Количество переадресаций"
+      num_of_external_transfers: "Переадресации на внешние номера"
       unanswered_transfers: "Пропущенные переадресованные вызовы"
       answered_percentage: "Ответ %"
       generate_summary: Создать
       filter_close: Закрыть
       unanswered_count: "Без ответов"
+      others: Прочее
+      external: "Внешние номера"
       includes_transfer: "Включает переадресованные вызовы"
       no_agent: "— Агент не указан —"
+      no_external: "Переадресации на внешние номера не включены"
     time_sheets:
       billable: "Учетное время"
       non_billable: "Неучетное время"
@@ -5508,7 +5675,7 @@ ru-RU:
         view_report_date: "Посмотреть отчеты за"
         helptext: "<b>Зачем необходим отчет об удовлетворенности клиентов?</b><p>Отчет об удовлетворенности клиентов позволяет оценить качество обслуживания агентами службы поддержки клиентов.<br>Благодаря отчетам можно составить индекс удовлетворенности клиентов в виде процентного значения (довольные, нейтральные или недовольные клиенты) в отношении каждого агента службы поддержки.<br><br><b>Что еще можно делать?</b><br><p><ol class='ml15'><li>Фильтруйте результаты отчетов по агентам, группам или компаниям</li><li>Просматривайте отчеты за определенный промежуток времени</li></ol></p></p>"
     freshchat:
-      report_title: "Краткий отчет Freshchat"
+      report_title: "Краткий отчет онлайн-чата"
       filter_by_title: "Отфильтровано по"
       time_period: "Период времени"
       widget: Виджет
@@ -5639,7 +5806,7 @@ ru-RU:
   status_cust_disp_name_uniqueness_msg: "Отображаемое пользовательское имя статуса уже занято"
   since: "Начиная с"
   for: для
-  since_time: "Начиная с %{time_words}"
+  since_time: "начиная с %{time_words}"
   since_a_second: "1 секунда"
   no_of_days: "%{days} дн. %{hours} ч"
   no_of_hours: "%{hours} ч %{minutes} мин"
@@ -5650,6 +5817,7 @@ ru-RU:
   fwd_to: Переслать
   add_cc: "Добавить копию"
   add_a_cc: "Добавить копию"
+  reply_to_fwd: Reply
   add_new_requester: "Добавить нового автора заявки"
   fwd_success_msg: "Заявка успешно перенаправлена"
   validate_fwd_to_email_msg: "Введите действительный адрес электронной почты"
@@ -5684,6 +5852,7 @@ ru-RU:
   forwarded_to: Перенаправлено
   replied_to: Отвечено
   notified_to: Уведомлено
+  reply_to_forward: "replied to forward"
   to: получатель
   cc_emails_key: ", копия: %{cc_emails}"
   bcc_emails_key: ", скрытая копия: %{bcc_emails}"
@@ -5732,7 +5901,7 @@ ru-RU:
     updated: "Папка шаблонных ответов успешно обновлена!"
     deleted: "Папка шаблонных ответов успешно удалена."
     no_folders: "Нет шаблонных ответов"
-    folder_update: "Выбранные ответы перемещены в папку {{folder_name}}"
+    folder_update: "Выбранные ответы перемещены в папку %{folder_name}"
     update: "Шаблонный ответ успешно обновлен."
     created: "Шаблонный ответ успешно создан."
     delete_multiple: "Выбранные шаблонные ответы удалены!"
@@ -5743,7 +5912,7 @@ ru-RU:
     select_group: "Выбрать группу"
     visibility_change: "Вы собираетесь переместить шаблонные ответы (количество — {{num_responses}}) из <b>личной папки</b>. Перед выполнением этого действия измените параметры доступа к шаблонному ответу."
     pfolder_visibility_alert: "<span class=\"label label-important\">Важное примечание.</span> Чтобы получить доступ к выбранным шаблонным ответам, необходимо переместить их в личную папку"
-    moved_responses_update: "Один или несколько ответов ({{responses}}) невозможно переместить, поскольку заголовок уже используется в папке {{folder_name}}"
+    moved_responses_update: "Один или несколько ответов (%{responses}) невозможно переместить, поскольку заголовок уже используется в папке %{folder_name}"
     folder_validation: "Папка не существует."
     Personal: Личные
     General: Общие
@@ -5777,8 +5946,9 @@ ru-RU:
   ca_response:
     delete_confirm: "Действительно удалить этот шаблонный ответ?"
   merge_contacts:
-    header: "Важное примечание.<br />Контакты в количестве {{number}} будут объединены с данными {{name}}."
-    info: "Примечание: при объединении все электронные сообщения, заявки, заметки и контактные данные будут перемещены из выбранного раздела контактов в {{name}}. Кроме того, для объединенных контактных данных будет сделана отметка об удалении. Их невозможно восстановить.<br /><br />Объединить контактные данные в {{name}}"
+    header: "Важное примечание.<br />Контакты в количестве %{number} будут объединены с данными %{name}."
+    info: "Примечание: при объединении все электронные сообщения, заявки, заметки и контактные данные будут перемещены из выбранных контактов в %{name}. Кроме того, для объединенных контактных данных будет сделана отметка об удалении без возможности восстановления.<br /><br />Объединить контактные данные в %{name}"
+    new_info: "Данное действие невозможно отменить.<br />В результате объединения все заявки, заметки и контактная информация будут перемещены из контактов второй категории в %{name}. Кроме того, контакты второй категории будут удалены без возможности восстановления.<br /><br />Нажмите \"<b>Подтвердить и объединить</b>\" для продолжения"
     invalid: "Указан недопустимый адрес электронной почты"
     loading: "Подготовка к объединению <img src='/images/loading.gif'>"
     email_activated: "идентификатор электронной почты уже активирован"
@@ -5790,16 +5960,17 @@ ru-RU:
     removed: "Идентификатор электронной почты удален"
     confirm_and_merge: "Подтвердить и объединить"
     activation_sent: "Отправлено письмо с данными для активации. Срок подтверждения — одна неделя."
-    client_manager: "Для объединения выбран диспетчер клиентов {{name}}."
+    client_manager: "Для объединения выбран диспетчер клиентов %{name}."
     cannot_restore: "Объединенные данные пользователя не могут быть восстановлены"
     primary: "Адрес электронной почты по умолчанию"
     not_verified: "Не подтверждено"
     merge_contact: "Объединить контакт"
     verify: "Отправить электронное письмо для подтверждения"
     remove: Удалить
+    validation: "Невозможно добавить более, чем "
     success: "Контакты успешно объединены"
     verify_mail: "Электронное письмо для подтверждения отправлено"
-    activate_email: "Activation email sent"
+    activate_email: "Сообщение для активации направлено на электронную почту"
     show_primary: " (По умолчанию)"
     unverified: "Адрес электронной почты не подтвержден"
     make_primary: "Отметить как вариант по умолчанию"
@@ -5809,6 +5980,9 @@ ru-RU:
     email_remove: "Действительно удалить это электронное сообщение?"
     default_email: "Адрес электронной почты по умолчанию"
     additional_email: "Дополнительная проверка электронной почты"
+    primary_contact: "Основное контактное лицо"
+    mark_as_primary: "Сделать основным"
+    merge_progress: "Пожалуйста, дождитесь окончания процедуры объединения контактов. Это может занять несколько минут."
   portalcss:
     reset_all_changes: "Сбросить ВСЕ изменения"
     reset_all_confirm_message: "Все изменению будут сброшены, после чего будут восстановлены настройки Freshdesk по умолчанию. Действительно продолжить?"
@@ -5862,6 +6036,8 @@ ru-RU:
   yesterday: Вчера
   seven_days: "На этой неделе"
   thirty_days: "В этом месяце"
+  last_week: "Прошедшая неделя"
+  last_month: "Прошедший месяц"
   two_months: "За последние 2 месяца"
   six_months: "За последние 6 месяцев"
   set_date: "Выбрать период времени"
@@ -5906,7 +6082,7 @@ ru-RU:
   search_results: "Результаты поиска"
   plans_and_pricing: "Тарифные планы и цены"
   number_of_attachments: вложения
-  activation_link: "Ссылка активации успешно зарегистрирована и отправлена по адресу %{email}"
+  activation_link: "Ссылка для активации отправлена на адрес %{email}"
   activation_link_no_email: "Регистрация выполнена успешно"
   not_given: "Не определен."
   adv_reports:
@@ -6079,17 +6255,19 @@ ru-RU:
     recording_on_process: "Запись обрабатывается. <a href='#' target='_parent' id='checkfreshfoneaudio'>Проверьте</a> снова через несколько минут"
     not_enough_credit: "Недостаточно кредитов!"
     recharge: Пополнить
-    number: "Номер Freshfone"
+    ff_number: "Номер телефона"
+    via_browser: "via Browser / App"
+    via_phone: "via Phone"
     subscription:
       auto_recharge_text: "Мы взимаем плату только после того, как на вашем балансе останется меньше 5 долларов США"
       current_balance: "Ваш текущий баланс"
-      purchase: "Приобрести кредиты Freshfone"
+      purchase_text: "Приобрести телефонные кредиты"
       setup_auto_recharge: "Настроить автоматическое пополнение"
-      no_credit_card: "Введите платежную информацию для приобретения кредитов Freshfone"
+      no_credit_card_text: "Введите платёжную информацию для приобретения телефонных кредитов"
       recharge_now_text: "Пополните баланс одноразовым платежом"
       auto_recharge_amt: "Сумма автоматического пополнения"
       see_detailed_pricing: "Ознакомиться с подробной информацией о ценах"
-      followup_text: "расчетные единицы Freshfone"
+      followup: "телефонных кредитов"
     dialpad:
       not_valid_number: "Введите действительный номер"
       could_be_invalid_number: "Возможно, введен неправильный номер."
@@ -6097,6 +6275,7 @@ ru-RU:
       not_enough_credit: "Недостаточно кредитов"
       restricted_country: "Для страны предусмотрено ограничение"
       already_in_call: "Одновременные исходящие вызовы запрещены"
+      strange_number: "Невозможно совершить звонок на закрытый номер"
     call_status:
       default: ""
       completed: Завершен.
@@ -6111,13 +6290,14 @@ ru-RU:
       restricted: "С ограничениями"
       all_calls: "Все вызовы"
     general:
-      suspended_account: "Действие вашей учетной записи Freshfone в настоящее время приостановлено. Возобновите действие учетной записи Freshfone, чтобы принимать и делать звонки"
-      suspended_on_low_balance: "Действие вашей учетной записи Freshfone в настоящее время приостановлено. Пополните счет, чтобы активировать учетную запись"
+      suspended_account_msg: "Ваш канал телефонной связи временно приостановлен. Возобновите его действие, чтобы совершать и принимать звонки."
+      suspended_on_low_balance_msg: "Ваш канал телефонной связи приостановлен в связи с недостатком средств на счёте. Пожалуйста, пополните счёт для активации."
     dashboard:
+      title: Телефон
       in_conversation: Разговаривает
       available_agents: "Доступные агенты"
-      freshfone_recharge_alert: "Сервис Freshfone в настоящее время недоступен. Чтобы принимать и делать звонки, обратитесь к администратору."
-      admin_freshfone_recharge_alert: "Сервис Freshfone в настоящее время недоступен из-за низкого баланса. Чтобы принимать и делать звонки, незамедлительно <a href='/subscription'>пополните</a> счет."
+      freshfone_recharge_alert_new: "Недостаточно телефонных кредитов для совершения и приёма звонков. Пожалуйста, пополните счёт, чтобы продолжить."
+      admin_freshfone_recharge_alert_new: "Недостаточно телефонных кредитов для совершения и приёма звонков. Пожалуйста, <a href='/subscription'>пополните счёт</a>, чтобы продолжить."
     widget:
       ignore: Игнорировать
       accept: Принять
@@ -6135,9 +6315,11 @@ ru-RU:
       busy: "Текущий вызов"
       recent_calls: "Недавние звонки"
       transferring: "<span>Перевод вызова</span><br />Подождите..."
-      transfer_agents: "Поиск доступных агентов..."
+      transfer_agents: "Введите имя агента или группы..."
+      transfer_numbers: "Введите внешний номер..."
       unavailable_agents: "Агенты для перевода вызова недоступны"
-      agents_count_in_group: "Количество доступных агентов: %{count}"
+      no_transfers: "Нет недавних переадресаций"
+      agents_count_in_group: "Количество агентов: %{count}"
       ticket_info: "Создайте новую заявку или добавьте примечание к существующей заявке с примечанием и записью."
       add_note: "Добавить примечания"
       note_placeholder: "Добавить примечания к вызову..."
@@ -6152,12 +6334,13 @@ ru-RU:
       save: Сохранить
       notes: Примечания
       new_requester: "Новый автор заявки"
-      inactive: "Сервис Freshfone недоступен"
+      low_credit: "Недостаточно телефонных кредитов. Пожалуйста, свяжитесь с администратором вашей учётной записи"
       forward_number_alert: "Для переадресации звонков на ваш номер обновите номер телефона в настройках профиля"
       desktop_notification: "Включить уведомление на рабочем столе"
+      network_error: "Проверьте подключение к Интернету"
     call_history:
       title: "Журнал вызовов"
-      sort_by: "Сортировать по:"
+      sort_by: "Сортировка:"
       singular_active_number: "Активный номер"
       none_active_number: "— отсутствует —"
       active_number: "Активный номер"
@@ -6168,7 +6351,7 @@ ru-RU:
       blacklist_confirmation: "Действительно блокировать?"
       show_deleted: "Показать удаленные номера"
       filtered_by: "Отфильтровано по:"
-      filter_by_number: Number
+      filter_by_number: Номер
       filter_by_time: "Период времени"
       filter_by_agent: Агент
       filter_by_group: "Входящие вызовы для группы"
@@ -6191,6 +6374,7 @@ ru-RU:
       save_ticket: "Преобразовать в заявку"
       convert: Преобразовать
       helpdesk: "Служба поддержки"
+      external: "Внешний номер"
       unblock_number: Разблокировать
       block_number_title: "Заблокировать номер"
       filter_option_all_agents: "Все агенты"
@@ -6200,6 +6384,22 @@ ru-RU:
       filter_option_missed_calls: Пропущенные
       filter_option_voicemail: "Голосовая почта"
       filter_option_blocked_calls: Заблокиров.
+      recording_delete:
+        done_by: "Удалено пользователем:"
+        tooltip: "Удалить запись"
+        confirmation_btn: Удалить
+        confirmation_heading: "Пожалуйста, подтвердите действие."
+        confirmation_warning: "Записанное сообщение будет безвозвратно удалено."
+        confirmation_notification: "Вы уверены, что хотите удалить сообщение?"
+        successful: "Запись успешно удалена."
+        unsuccessful: "Запись не может быть удалена. Пожалуйста, повторите попытку через некоторое время."
+        error: "Ошибка при удалении записи звонка. Пожалуйста, повторите попытку через некоторое время"
+      strange_numbers: ~
+      restricted: "ОГРАНИЧЕННЫЙ ДОСТУП"
+      blocked: ЗАБЛОКИРОВАНО
+      unknown: НЕИЗВЕСТНО
+      anonymous: АНОНИМНО
+      empty: ПУСТО
     ticket:
       recording: "Проиграть сообщение"
       ticket_desc_with_name: "Разговор с <b> %{customer_name} </b> (%{customer_number}, %{location}) и <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6225,10 +6425,10 @@ ru-RU:
       settings: Настройки
       greetings: Поздравления
       messages: Сообщения
-      freshfone_numbers: "Номера Freshfone"
-      disable_alert: "<b>Важно.</b> В случае отключения учетной записи Freshfone ежемесячная плата за номера Freshfone будет продолжать взиматься. Чтобы не допустить этого, удалите приобретенные номера."
-      purchase_credit: "Приобретите кредиты Freshfone, чтобы сделать доступными местные или бесплатные номера и начать пользоваться Freshfone"
-      purchase_numbers: "Купите местные или бесплатные номера, чтобы начать пользоваться Freshfone и оказывать клиентам поддержку по телефону"
+      freshfone_numbers_title: Телефон
+      suspended_alert: "<b>Важная информация:</b> Отключение телефонного канала не означает отмены ежемесячной абонентской платы за номера. Чтобы избежать начисления абонентской платы, удалите приобретённые номера."
+      purchase_credit_text: "Приобрести кредиты для покупки номеров, совершения и приёма звонков с использованием телефонного канала."
+      purchase_numbers_text: "Купите местный или бесплатный номер, чтобы обеспечивать поддержку пользователей со всего мира по телефону."
       search: "Искать по цифрам или фразам"
       local: Местные
       toll_free: Бесплатные
@@ -6236,8 +6436,8 @@ ru-RU:
         simultaneous: "Позвонить всем агентам"
         round_robin: "Позвонить сначала свободному агенту"
       number_settings:
-        title: "Управление центром обработки вызовов с помощью Freshfone"
-        info: "<b>Назначение телефонных звонков агентам и группам</b><br/>С помощью Freshfone можно настроить систему интерактивного речевого ответа (IVR) и направлять звонки различным группам или агентам вашей команды. Например, можно перенаправлять звонок в службу поддержки, если клиент нажимает 1, или в отдел продаж, если клиент нажимает 2.<br/>Кроме того, вы можете настроить интерактивные сообщения, которые будут воспроизводиться для клиентов. Для этого можно записать собственный голос, загрузить соответствующий файл или воспользоваться функцией преобразования текста в речь.<br><br><b>Настройка номера Freshfone</b><br>Во Freshfone можно задать любые настройки для каждого номера по отдельности. Это такие базовые настройки, как максимальное количество человек в очереди и максимальное время ожидания соединения. При достижении предельного значения для одной из таких настроек начнет автоматически воспроизводиться сообщение о недоступности.<br/>Если включить функцию записи вызовов, все вызовы вашей службы поддержки будут записываться и прикрепляться к заявкам. Во Freshfone можно также установить запрет на прием вызовов в нерабочие часы. Например, можно установить две линии поддержки, одна из которых будет доступна только в рабочие часы, а вторая, с более высоким приоритетом, сможет принимать вызовы круглосуточно.<br/><br/>"
+        title_text: "Управление центром обработки вызовов"
+        info_content: "<b>Назначение телефонных звонков агентам и группам</b></br>Вы можете настроить систему интерактивного голосового ответа (IVR) и направлять звонки различным группам или агентам в составе вашей команды. Например, звонок может быть перенаправлен в группу \"Поддержка\", если клиент нажал \"1\" или в группу \"Продажи\", если клиент нажал \"2\".<br/>Кроме того, можно задать сообщения, которые будут воспроизводиться клиентам, путём записи голоса, загрузки файла или задействования функции преобразования текста в голос.<br><br><b>Настройка номера</b><br>Также возможно сконфигурировать каждый номер по отдельности с разделением наборов настроек. Сюда входят базовые настройки, такие, как максимальное количество ожидающих в очереди и максимальное время ожидания для клиентов, при превышении которых будет воспроизведено сообщение о недоступности службы.<br/>При включении функции записи звонков, каждый звонок в службу поддержки записывается и прикрепляется к заявке. Можно как предоставить пользователям доступ к записям звонков, так и скрыть их для внутреннего использования. Также можно ограничить приём звонков по телефонному каналу в нерабочее время. Например, можно создать две линии поддержки, одна из которых будет принимать звонки только в рабочее время, а вторая, высокоприоритетная линия будет доступна круглосуточно.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Дополнительная информация о настройке номеров</a>"
         non_business_hours: "Принимать вызовы во время…"
         business_calendar: "Выбрать рабочие часы"
         transcript_voice: "Расшифровывать голос"
@@ -6248,7 +6448,7 @@ ru-RU:
         voicemail_off: Выкл.
         record_all: "Записывать все вызовы"
         record_none: "Не записывать вызовы"
-        record_alert: "В соответствии с принципами записи вызовов в случае записи вызовов следует уведомлять об этом клиентов. Настройте сообщение с поздравлением соответствующим образом."
+        record_alert: "В большинстве стран при записи звонка существует обязательное требование уведомления клиента о том, что разговор записывается. Настройте сообщение приветствия соответствующим образом."
         max_queue_calls: "Максимальное количество вызовов в очереди"
         call_wait_time: "с максимальным временем ожидания"
         call_wait_time_suffix: "на звонок"
@@ -6283,10 +6483,11 @@ ru-RU:
         recording_privacy: "Просмотр сведений о записи"
         recording_privacy_public: "Просмотр доступен клиентам и агентам"
         recording_privacy_private: "Просмотр доступен только агентам"
-        name_maxlength: "Name cannot have more than 255 Characters"
+        name_maxlength: "Наименование не может содержать более 255 символов"
+        number_accessible: "Доступно для"
       numbers:
-        title: "Оказывайте поддержку клиентам с помощью Freshfone"
-        info: "Freshfone — встроенная во Freshdesk телефонная система. С помощью Freshfone можно получать входящие и делать исходящие вызовы как в браузере, так и по телефону. Freshfone также позволяет записывать вызовы и преобразовывать необходимые телефонные разговоры в заявки. Можно также запретить прием вызовов от определенных номеров, заблокировав их в журнале вызовов. <br/><br/> <b>Настройка Freshfone</b><br/>Чтобы начать использование Freshfone, необходимо сначала включить этот сервис, а затем приобрести номер для входящих звонков. В настоящее время Freshdesk позволяет приобретать номера в 28 странах. Для обслуживания клиентов в США, Канаде и Великобритании можно также приобрести бесплатные номера службы поддержки. <br/><br/><b>Использование интеллектуальных систем IVR</b><br/>Во Freshfone можно создавать интеллектуальные системы интерактивного речевого ответа (IVR), что позволяет лучше разбивать по категориям клиентов, звонящих в службу поддержки, а также перенаправлять их в необходимый отдел, команду или соответствующему агенту. Freshfone позволяет создавать до 2 уровней интеллектуальных систем IVR."
+        sidebar_title: "Встроенный телефонный канал Freshdesk"
+        sidebar_content: "Используя телефонный канал, вы можете совершать и принимать звонки с помощью веб-браузера, мобильного телефона или телефонного канала в мобильных приложениях Freshdesk. Телефонный канал тесно интегрирован с системой заявок Freshdesk. Можно отслеживать звонки, записывая их и преобразуя в заявки при необходимости.<br/><br/><b>Настройка телефона</b></br>Чтобы воспользоваться телефоном, необходимо сначала включить данную опцию и приобрести телефонный номер поддержки. Вы можете приобрести местный номер в любой из перечисленных здесь стран и совершать и принимать звонки по всему миру. Если предполагается поддержка клиентов в США, Соединённом Королевстве или Канаде, существует также возможность приобретения бесплатных номеров.<br/><br/><b>Использование интеллектуальных IVR-систем</b><br/>Можно создать интеллектуальную систему интерактивного голосового ответа (IVR) для оптимизации распределения клиентов, позвонивших по номеру поддержки и передачи их требуемому отделу, команде или агенту.</b><br/><br/><a href='http://freshdesk.com/freshfone'>Дополнительные возможности телефонной поддержки</a>."
         purchase_number: "Приобрести номер"
         purchase_phone_number: "Приобрести номер (%{number})"
         buy: "Купить номер"
@@ -6299,8 +6500,8 @@ ru-RU:
         purchase_confirm: "Вы уверены?"
         delete_alert: "Удаленный номер невозможно приобрести снова. Действительно удалить номер?"
         manage: Управление
-        cannot_purchase: "Не удалось приобрести номер для вашей учетной записи Freshfone."
-        insuffcient_credits: "На вашем балансе Freshfone слишком мало кредитов для приобретения нового номера. Пополните счет и повторите попытку"
+        failure_purchase: "Не удалось приобрести телефонный номер. Пожалуйста, убедитесь, что указанные адрес является корректным адресом в указанной стране: <span class='certification-country'></span>."
+        low_credits: "Недостаточно телефонных кредитов для покупки нового номера. Пожалуйста, пополните счёт и повторите попытку."
         address:
           name: Компания/название
           address: Адрес
@@ -6310,8 +6511,8 @@ ru-RU:
           country: Страна
           required_field: "Все поля обязательные"
         setup:
-          title: "Настройка Freshfone"
-          info: "Чтобы начать работу с Freshfone, необходимо сначала приобрести номер для входящих вызовов от ваших клиентов. Вы можете приобрести местный номер в любой из 28* стран, поддерживаемых Freshfone в настоящее время. Для обслуживания клиентов в США, Канаде и Великобритании можно также приобрести бесплатные номера.<br/><br/>Можно приобрести несколько номеров Freshfone в разных странах и настроить бесплатные телефонные линии поддержки прямо во Freshdesk, не прибегая к услугам третьих сторон. Все входящие, исходящие и перенаправляемые вызовы службы поддержки будут оплачиваться согласно стандартным тарифам.<br/><br/> После приобретения номера Freshfone для вашей телефонной линии поддержки, все входящие вызовы будут распределяться между агентами, вошедшими в систему. Кроме того, агенты могут автоматически выбирать, принимать ли вызовы в браузере или по обычному телефону."
+          title_text: "Настройка центра обработки звонков"
+          info_text: "Чтобы приступить к использованию телефонного канала, необходимо в первую очередь приобрести входящий телефонный номер, который вы сможете сообщить клиентам. Можно приобрести местный номер в любой из перечисленных здесь стран. Если ваши клиенты находятся в США, Соединённом Королевстве или Канаде, им также можно предложить бесплатный номер.<br/><br/>Можно приобрести несколько телефонных номеров в разных странах и настроить бесплатные линии поддержки внутри Freshdesk без использования сторонних служб. Ко входящим, исходящим и перенаправленным звонкам службы поддержки будут применяться стандартные тарифы. Ознакомиться с <a href='http://freshdesk.com/freshfone/pricing'>тарифами можно здесь</a>.<br/><br/>После того, как телефонный номер службы поддержки будет приобретён, все входящие звонки будут направляться агентам, осуществившим вход в портал службы поддержки. Кроме того, агентам доступна возможность приёма звонков из веб-браузера, а также автоматической переадресации их на стационарный телефон."
       invalid_attachment: "Вложение «%{name}» не является действительным аудиофайлом или его размер превышает 5 МБ"
       ivr:
         simple_message_title: "Простое сообщение"
@@ -6352,36 +6553,37 @@ ru-RU:
         seed_menu_name: "Главное/начальное меню"
         invalid_number_format: "Введите правильный номер телефона с префиксом «+» и кодом страны в начале"
       welcome_page:
-        title: "Добро пожаловать в систему Freshfone"
+        title_text: Телефон
       feature_request_content:
-        title: Freshfone
-        heading: "Обеспечьте техническую поддержку клиентов с помощью Freshfone"
-        about_numbers: "Приобретайте номера технической поддержки в различных странах"
-        about_ivr: "Используйте интерактивные голосовые ответы (IVR) и выполняйте переадресацию вызовов для необходимых агентов"
-        about_recording: "Записывайте разговоры с клиентами. Получайте доступ к записям вне зависимости от своего местоположения."
-        read_more: "Узнайте больше"
+        title_text: Телефон
+        heading_text: "Поддержка клиентов с использованием телефонного канала"
+        number_info: "Приобретайте местные и бесплатные номера по всему миру"
+        ivr_info: "Направляйте звонки нужным агентам и группам с использованием IVR"
+        recording_info: "Записывайте звонки и преобразуйте их в заявки так же, как сообщения электронной почты"
+        learn_more: "Узнать больше"
         pricing: "Получайте сведения о стоимости всех звонков и странах, где обеспечивается техническая поддержка"
-        email_subject: "Запрос Freshfone — %{account_name}"
+        request_subject: "Запрос телефона - %{account_name}"
         email_message: "Требуется функция Freshfone"
-        success_message_flash: "Благодарим за проявленный интерес к Freshfone. Мы свяжемся с вами в ближайшее время."
+        success: "Мы свяжемся с вами в течение двух рабочих дней"
         error_message: "Приносим извинения, ваш запрос невозможно выполнить в данный момент. Повторите попытку позже."
-        additional_note: "Запрос Freshfone будет обработан на протяжении двух рабочих дней"
-        button_label: "Запрос Freshfone"
+        additional_info: "Как только телефонный канал для вашей учётной записи будет подключен, вы сможете приобретать номера, совершать и принимать звонки"
+        button_text: "Запрос телефонного номера"
+        video_title: "Просмотрите видеоролик, чтобы узнать о возможностях телефонного канала"
   freshchat:
     feature_request:
-      title: "Добро пожаловать во Freshchat"
-      heading: "Оказывайте поддержку клиентам с помощью Freshchat"
+      title: "Добро пожаловать в онлайн-чат"
+      heading: "Оказывайте поддержку клиентам с помощью онлайн-чата"
       info1: "Настроить виджет чата в режиме реального времени с учетом своего фирменного наименования и коммерческой деятельности"
       info2: "Запустить чат в режиме реального времени  для ваших портала и веб-сайта службы технической поддержки"
       info3: "Отслеживать все записи чата и преобразовывать их в заявки"
       read_more: "Узнайте больше"
-      email_subject: "Запрос функции Freshchat от %{account_name}"
-      email_message: "Требуется функция Freshchat"
-      success_message: "Благодарим за проявленный интерес к Freshchat. Мы свяжемся с вами в ближайшее время."
+      email_subject: "Запрос онлайн-чата от %{account_name}"
+      email_message: "Требуется функция онлайн-чата"
+      success_message: "Благодарим за проявленный интерес к онлайн-чату. Мы свяжемся с вами в ближайшее время."
       error_message: "Приносим извинения, ваш запрос невозможно составить в данный момент. Повторите попытку позже."
-      additional_note: "Запрос Freshchat будет обработан на протяжении двух рабочих дней"
-      button_label: "Запрос Freshchat"
-    title: Freshchat
+      additional_note: "Запрос на включение онлайн-чата будет обработан в течение двух рабочих дней"
+      button_label: "Запрос онлайн-чата"
+    title: Онлайн-чат
     widget: Виджет
     messages: Сообщения
     set_default_msgs: "Задать сообщения по умолчанию"
@@ -6406,9 +6608,9 @@ ru-RU:
     msg_waiting_agent_title: "Сообщение о состоянии во время ожидания агента"
     msg_joining_agent_title: "Сообщение, когда агент присоединяется к чату"
     msg_leaving_agent_title: "Сообщение, когда агент покидает чат"
-    chat_transfer_msg_title: "Chat transfer message"
+    chat_transfer_msg_title: "Сообщение переадресации чата"
     help_text_wait_onhold_msg: "Это сообщение отобразится в том случае, когда посетитель ждет ответа агента дольше минуты"
-    prechat_message: "Мы с нетерпением ждем общения с вами. Но сначала сообщите немного о себе."
+    prechat_message: "Мы с нетерпением ждем общения с вами. Но сначала, пожалуйста, сообщите немного о себе."
     showform: "Показать отображаемую перед чатом форму"
     proactive_note: "Примечание. Перед упреждающими чатами форма отображаться не будет."
     proactive_time: "Поздравлять посетителей, когда они проводят на странице более %{seconds} с."
@@ -6445,7 +6647,7 @@ ru-RU:
     bottom_left: "Внизу слева"
     bottom_right: "Внизу справа"
     integrate_msg: "Скопировать этот код и вставить его перед последним </body> тегом на вашем веб-сайте или в приложении"
-    integrate_freshchat_title: "Интегрировать Freshchat в ваш веб-сайт или приложение"
+    integrate_freshchat_title: "Интегрировать онлайн-чат в ваш веб-сайт или приложение"
     custom_chat_window: "Настроить окно чата"
     text_placeholder: "Ваше сообщение"
     chatbox_bgcolor: "Цвет окна"
@@ -6487,29 +6689,29 @@ ru-RU:
     back: Назад
     select_location: "Выбрать местоположение"
     valid_code: "Введите действительное значение цвета"
-    visitor_left_chat_msg: "Visitor has left the chat."
+    visitor_left_chat_msg: "Посетитель покинул чат"
     visitor_disconnect_msg: "Посетитель покинул чат"
-    agent_transfer_accept_msg: "{{agent_name}} has accepted. You can now close this chat."
-    agent_transfer_reject_msg: "{{agent_name}} has rejected your transfer request."
-    agent_transfer_missed_msg: "{{agent_name}} has not picked up the chat. Please try again."
-    chat_inactive_for_10_min: "This chat has been inactive for the past 10 minutes. If you have completed your conversation, please close the chat."
-    agent_transfer_waiting_msg: "Waiting for {{agent_name}} to accept"
-    agent_chat_accept_msg: "You have accepted the chat."
-    close_chat_tooltip: "End chat"
-    minimise_chat_tooltip: Minimise
-    settings_chat_tooltip: Options
-    visitor_details_tooltip: "Visitor details"
-    agent_chat_placeholder: "Type your message here"
-    visitor_block_notifier_msg: "This visitor has been blocked"
-    visitor_unblock_notifier_msg: "This visitor has been unblocked"
-    transfer_accepted_agent_msg: "Chat was transfered from {{agent_name}}"
+    agent_transfer_accept_msg: "{{agent_name}} принял запрос о переадресации. Можно закрыть окно чата."
+    agent_transfer_reject_msg: "{{agent_name}} отказался принимать запрос о переадресации."
+    agent_transfer_missed_msg: "{{agent_name}} не получил сообщение. Пожалуйста, повторите попытку."
+    chat_inactive_for_10_min: "Данный чат неактивен в течение последних 10 минут. Если разговор закончен, пожалуйста, закройте окно чата."
+    agent_transfer_waiting_msg: "Ожидание подтверждения от агента {{agent_name}}"
+    agent_chat_accept_msg: "Вы приняли чат."
+    close_chat_tooltip: "Завершить чат"
+    minimise_chat_tooltip: Свернуть
+    settings_chat_tooltip: Параметры
+    visitor_details_tooltip: "Данные посетителя"
+    agent_chat_placeholder: "Введите сообщение"
+    visitor_block_notifier_msg: "Посетитель заблокирован"
+    visitor_unblock_notifier_msg: "Посетитель разблокирован"
+    transfer_accepted_agent_msg: "Чат передан от агента: {{agent_name}}"
     last_message: "Последнее сообщение..."
-    chat_recent_empty_tip: "В последнее время вы ни с кем не общались в чате"
+    chat_recent_empty_tip: "Недавние сообщения не найдены"
     add_agent_to_chat: "Нет доступных агентов"
     url_error_msg: "Такой URL не существует"
     accept: Принять
     ignore: Игнорировать
-    transfer_msg: "сделать запрос на передачу чата"
+    transfer_msg: "Передано через "
     unauthorized_attempt_msg: "Попытка неавторизованного входа — выход"
     update_success_msg: "Настройки чата успешно обновлены"
     update_error_msg: "Ошибка при обновлении настроек чата."
@@ -6537,7 +6739,7 @@ ru-RU:
     returning_visitor: "Вернувшийся посетитель"
     new_visitor: "Новый посетитель"
     unknown: Неизвестно
-    no_visitors: "На вашем сайте нет посетителей"
+    no_visitors: "На вашем сайте нет новых посетителей"
     no_conversation: "Нет посетителей, которые бы участвовали в разговоре"
     no_return_visitors: "Нет вернувшихся посетителей"
     tag_placeholder: "Ввести теги"
@@ -6574,22 +6776,22 @@ ru-RU:
     date_invalid: "Недействительная дата"
     joining_chat: "Присоединение к чату"
     agent_joined_msg: "{{agent_name}} присоединился к чату"
-    agent_transfered_msg: "Your chat has been transferred to {{agent_name}}"
-    agent_reopen_chat_msg: "{{agent_name}} reopened the chat"
-    visitor_side_inactive_msg: "This chat has been inactive for the past 20 minutes."
-    agent_disconnect_msg: "{{agent_name}} has been disconnected"
+    agent_transfered_msg: "Чат передан агенту: {{agent_name}}"
+    agent_reopen_chat_msg: "Агент {{agent_name}} повторно открыл чат"
+    visitor_side_inactive_msg: "Чат неактивен в течение последних 20 минут"
+    agent_disconnect_msg: "Агент {{agent_name}} покинул чат"
     agent_left_msg: "{{agent_name}} покинул чат"
-    agent_transfer_msg_to_visitor: "Your chat has been transferred to {{agent_name}}"
+    agent_transfer_msg_to_visitor: "Ваш чат был переадресован агенту {{agent_name}}"
     help_text_agent_msg: "Используйте {{agent_name}} и {{helpdesk_name}} для отображения имени агента и названия службы технической поддержки в своих сообщениях"
     connecting_msg: "Ожидание агента"
-    non_availability_message: "Приносим извинения, все наши агенты заняты. # Оставьте сообщение # (мы сразу же свяжемся с вами)."
-    installation: Установка
-    visitor_form: "Visitor Form"
-    preferences: Preferences
-    intro_title: "Почему Freshchat?"
-    intro: "Обслуживание клиентов не должно ограничиваться ситуациями, когда они сталкиваются с определенными проблемами. Для достижения превосходных результатов требуется постоянный мониторинг. С помощью Freshchat ваши агенты могут общаться друг с другом, не выходя из системы Freshdesk. Кроме того, они могут отвечать на вопросы посетителей в режиме реального времени. Это решение позволяет значительно улучшить взаимодействие со своими клиентами."
-    enable_chat: "Включить Freshchat"
-    learn_freshchat: "Узнать больше о Freshchat"
+    non_availability_message: "Приносим извинения, все наши агенты заняты. Пожалуйста, оставьте сообщение и мы свяжемся с вами как можно скорее."
+    installation: "Код виджета"
+    visitor_form: "Форма посетителя"
+    preferences: Настройки
+    intro_title: "Почему онлайн-чат Freshdesk?"
+    intro: "Встроенный онлайн-чат Freshdesk позволяет просматривать сведения о пользователях и общаться с ними на вашем веб-сайте, в онлайн-приложениях или на портале поддержки непосредственно из Freshdesk. В том числе можно самостоятельно инициировать чат с посетителями сайта. По завершении сеанса чата можно преобразовать диалог в заявку и продолжить общение с посетителем посредством электронной почты, либо архивировать содержимое разговора."
+    enable_chat: "Включить онлайн-чат"
+    learn_freshchat: "Узнать больше об онлайн-чате"
     support_portal: "Чат на портале поддержки"
     logged_in_users: "Только вошедшие пользователи"
     everyone: Все
@@ -6606,7 +6808,7 @@ ru-RU:
     feedback_widget: "Запустить виджет для отзывов"
     new_ticket_page: "Перейти к новой странице заявки на своем портале технической поддержки"
     custom_link: "Открыть пользовательскую ссылку"
-    use_custom_link: "Use Custom Link"
+    use_custom_link: "Использовать ссылку"
     enter_custom_link: "Ввести URL-адрес"
     widget_option_info: "Если виджет для отзывов недоступен, откроется новая страница заявки"
     no_matching_agents: "Необходимые агенты не найдены"
@@ -6633,38 +6835,38 @@ ru-RU:
     visitorId: "Идентификатор посетителя"
     createdAt: "Создано в"
     enable: Включить
-    widgets_list_info: "Отображение сведений о виджетах чата для своих продуктов"
+    widgets_list_info: "Для каждого из продуктов, сконфигурированных в Freshdesk, здесь будут доступны соответствующие виджеты чата"
     text_yes: Да
     text_no: Нет
     enabled: Включено
     disabled: Выключено
-    offline_message: "Offline/Missed Chat Messages"
-    help_offline_title: Title
-    offline_title: "Leave us a message!"
-    offline_thank_msg: "Thank you for writing to us. We will get back to you shortly."
-    offline_thank_header_msg: "Thank you!"
-    help_offline_minimized_msg: "Title when chat is minimized"
-    help_offline_maximized_msg: "Title when chat is maximized"
-    help_offline_thank_msg: "Thank you message"
-    help_offline_thank_header_msg: "Thank you header"
-    missed_chat_title: "Missed Chat form"
-    missed_chat_desc: "This form is used to collect the visitor details when you are not available"
-    offline_chat_window: "Offline chat window"
-    offline_chat_window_desc: "Applicable during non-business hour or when agents offline."
-    hide_offline_chat_window: "Hide chat window"
-    show_offline_chat_window: "Show missed chat form for visitors to leave a message"
-    missed_chat_subject: "Sorry we missed your chat on %{date}"
-    missed_chat_content: "Created via Chat. Conversation with %{visitor_name} was missed."
-    offline_chat_subject: "Offline message from %{visitor_name} on %{date}"
-    offline_chat_content: "Created via Chat. Offline message from %{visitor_name}."
-    missed_chat_info: "Chat has been missed.!"
-    change_livechat_tone: "LiveChat Notification Tone"
-    message: Message
+    offline_message: "Офлайновые и пропущенные сообщения"
+    help_offline_title: Заголовок
+    offline_title: "Оставьте нам сообщение!"
+    offline_thank_msg: "Спасибо за обращение. Мы свяжемся с Вами в ближайшее время."
+    offline_thank_header_msg: Спасибо!
+    help_offline_minimized_msg: "Заголовок свёрнутого чата"
+    help_offline_maximized_msg: "Заголовок развёрнутого чата"
+    help_offline_thank_msg: "Благодарственное сообщение"
+    help_offline_thank_header_msg: "Заголовок благодарственного сообщения"
+    missed_chat_title: "Форма пропущенного чата"
+    missed_chat_desc: "Данная форма предназначена для сбора данных посетителя, когда вы недоступны"
+    offline_chat_window: "Окно офлайнового чата"
+    offline_chat_window_desc: "Используется в нерабочее время или когда агентов нет в сети"
+    hide_offline_chat_window: "Скрыть окно чата"
+    show_offline_chat_window: "Открыть окно пропущенного чата, чтобы посетитель смог оставить сообщение"
+    missed_chat_subject: "Простите, что мы пропустили Ваше сообщение от %{date}"
+    missed_chat_content: "Создано с использованием чата. Пропущенное сообщение от посетителя %{visitor_name}."
+    offline_chat_subject: "Офлайновое сообщение от посетителя %{visitor_name}, %{date}"
+    offline_chat_content: "Создано с использованием чата. Офлайновое сообщение от посетителя %{visitor_name}."
+    missed_chat_info: "Чат пропущен!"
+    change_livechat_tone: "Сигнал оповещения LiveChat"
+    message: Сообщение
   facebook_tab:
     remove_tab: "Удалить вкладку страницы"
     tab_not_removed: "Не удалось удалить вкладку"
     tab_removed: "Вкладка страницы удалена"
-    page_added: "Эта страница уже добавлена к {{source}}. Удалите ее, а затем попробуйте добавить"
+    page_added: "Эта страница уже добавлена к %{source}. Удалите ее, а затем попробуйте добавить снова"
     add_tab: "Добавить вкладку страницы"
     tab_name: "Название вкладки"
     tab_url: "URL изображения для вкладки: "
@@ -6824,6 +7026,11 @@ ru-RU:
       replied: "с ответами"
       spam: Спам
       waiting_for_approval: Неопубликованные
+      comment:
+        one: "1 комментарий"
+        few: ""
+        many: ""
+        other: "%{count} комментариев"
       locked: Заблокированные
       locked_label: "Тематический раздел заблокирован. Комментарии запрещены."
       merged_label: "Тематический раздел объединен с другим тематическим разделом"
@@ -6876,12 +7083,12 @@ ru-RU:
             one: "Эту идею положительно оценивает %{count} пользователь"
             few: ""
             many: ""
-            other: "Количество пользователей, положительно оценивающих эту идею: %{count}"
+            other: "Количество пользователей, положительно оценивших эту идею: %{count}"
           announce:
-            one: "Это извещение положительно оценивает %{count} пользователь"
+            one: "Это объявление положительно оценивает %{count} пользователь"
             few: ""
             many: ""
-            other: "Количество пользователей, положительно оценивающих это извещение: %{count}"
+            other: "Количество пользователей, положительно оценивающих это объявление: %{count}"
           problem:
             one: "%{count} пользователь столкнулся с этой проблемой"
             few: ""
@@ -7050,13 +7257,16 @@ ru-RU:
   edit_plan: "Изменить план"
   account_created: "Учетная запись создана %{total_time} назад. Дата создания: %{date}"
   short_code:
-    title: "Chat Shorthands"
-    helpnote: "Chat Shorthands are customisable abbreviations which you can use in place of preset messages while you're chatting with someone. You can map different shorthand abbreviations to expand into corresponding messages and access them during your chat by using the '/' symbol."
-    shorthand: Shorthand
-    message: Expansion
-    addNew: "Add New"
-    confirm: "Are you sure you want to delete chat shorthand ?"
-    no_code: "No shorthands available."
+    title: "Метки чатов"
+    helpnote: "Метки чатов - настраиваемые сокращения, которые могут использоваться для отправки типовых сообщений при использовании чата. Можно назначить различные сокращения для преобразования в соответствующие сообщения и оперативно получать к ним доступ в ходе диалога путём нажатия \"/\"."
+    shorthand: Метка
+    message: Расширение
+    addNew: Добавить
+    confirm: "Вы уверены, что хотите удалить метку чата?"
+    no_code: "Нет доступных меток."
     alert:
-      code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
-      code_duplicate: "This shorthand is already in use."
+      code_mandatory: "Оба поля обязательны для заполнения. Метки могут состоять не более, чем из 10 знаков и не могут содержать специальных символов, кроме дефиса (\"-\")."
+      code_duplicate: "Метка уже используется"
+  new_label: НОВЫЙ
+  api:
+    record_not_found: "Resource not found."

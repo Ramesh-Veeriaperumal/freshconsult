@@ -8,17 +8,23 @@ class Solution::Folder < ActiveRecord::Base
 
   attr_protected :category_id, :account_id
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :category_id, :case_sensitive => false
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
+
+  validates_uniqueness_of :name, 
+    :scope => :category_id, 
+    :case_sensitive => false
 
   self.table_name =  "solution_folders"
   
   # before_create :populate_account
   before_update :clear_customer_folders, :backup_folder_changes
 
+  before_save :backup_category
+  before_destroy :backup_category
+
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
-
+  
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
@@ -77,7 +83,7 @@ class Solution::Folder < ActiveRecord::Base
   def self.visibility_hash(user)
     {
       :order => "position",
-      :conditions => visiblity_condition(user)
+      :conditions => visibility_condition(user)
     }
   end
 
@@ -86,7 +92,7 @@ class Solution::Folder < ActiveRecord::Base
     {
       :joins => :solution_folder_meta,
       :order => "solution_folder_meta.position",
-      :conditions => visiblity_condition(user).gsub("solution_folders", "solution_folder_meta").gsub("folder_id", "folder_meta_id")
+      :conditions => visibility_condition(user)
     }
   end
 
@@ -100,11 +106,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  class << self
-    alias_method_chain :visibility_hash, :association
-  end
-
-  def self.visiblity_condition(user)
+  def self.visibility_condition(user)
     condition = "solution_folders.visibility IN (#{ self.get_visibility_array(user).join(',') })"
     condition +=   " OR 
             (solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
@@ -117,6 +119,37 @@ class Solution::Folder < ActiveRecord::Base
                 # solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
 
     return condition
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def self.visibility_condition_through_meta(user)
+    condition = "solution_folder_meta.visibility IN (#{ self.get_visibility_array(user).join(',') })"
+    condition +=   " OR 
+            (solution_folder_meta.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
+              solution_folder_meta.id in (SELECT solution_customer_folders.folder_meta_id 
+                                        FROM solution_customer_folders WHERE 
+                                        solution_customer_folders.customer_id =
+                                         #{user.company_id} AND 
+                                         solution_customer_folders.account_id = 
+                                         #{user.account_id}))" if (user && user.has_company?)
+                # solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
+
+    return condition
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def self.visibility_condition_with_association(user)
+    if Account.current.launched?(:meta_read)
+      visibility_condition_through_meta(user)
+    else
+      visibility_condition_without_association(user)
+    end
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  class << self
+    alias_method_chain :visibility_hash, :association
+    alias_method_chain :visibility_condition, :association
   end
 
   def customer_folders_attributes=(cust_attr)
@@ -152,7 +185,12 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
+    #Remove as part of Search-Resque cleanup
+    if Search::Job.sidekiq?
+      SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id })
+    else
+      Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
+    end if ES_ENABLED
   end
 
   private
@@ -165,12 +203,16 @@ class Solution::Folder < ActiveRecord::Base
       @all_changes = self.changes.clone
     end
 
+    def backup_category
+      @category_obj = Account.current.launched?(:meta_read) ? category.solution_category_meta : category
+    end
+
     def visibility_updated?
       @all_changes.has_key?(:visibility)
     end
     
     def set_mobihelp_solution_updated_time
-      category.update_mh_solutions_category_time
+      @category_obj.update_mh_solutions_category_time
     end
 
 end

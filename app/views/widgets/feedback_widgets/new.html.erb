@@ -40,9 +40,25 @@
   	<% field_spacing = widget_view ? "form-portal" : "field-order" %>
   	<div class="<%= field_spacing %>">
 		<% @ticket_fields.each do |field| %>
+			<% next if field.section_field? %>
 			<div class="control-group <%= field.field_type %>">
-    			<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
-    		</div>
+    		<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
+    	</div>
+    	<% if field.has_section?
+        field.picklist_values.each do |picklist|
+          next if picklist.section.blank?
+          %> <textarea class="picklist_section_<%= picklist.id %> hide"> <%
+	          picklist.section_ticket_fields.each do |section_tkt_field|
+	            if section_tkt_field.editable_in_portal
+	              %><div class="control-group ticket_section">
+	              <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field, 
+	              	                  widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt").html_safe %>
+	              </div><%
+	            end
+	          end
+	        %> </textarea> <%
+        end
+      end %>
 		<% end %>
 		<% if widget_type="popup" %>
 			<div class="extra-space"></div>
@@ -311,6 +327,19 @@
 			jQuery(".modal-footer").addClass("embedded-footer");
 			jQuery(".hc-search-input").addClass("embedded-search-input");
 		}
+
+    jQuery('#helpdesk_ticket_ticket_type')
+      .on("change", function(e){
+        var id = jQuery('option:selected', this).data('id');
+        jQuery('div.ticket_section').remove();
+        var element = jQuery('#picklist_section_'+id).parent();
+        if(element.length != 0) {
+      		jQuery(jQuery('.picklist_section_'+id).val()
+      						.replace(new RegExp('&lt', 'g'), '<')
+      						.replace(new RegExp('&gt', 'g'), '>'))
+      					.insertAfter(jQuery(".default_ticket_type"));
+      	}
+    });
 
 	});
 <% end %>

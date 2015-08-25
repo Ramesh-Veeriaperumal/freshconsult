@@ -1,15 +1,17 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of Active Record to incrementally modify your database, and
-# then regenerate this schema definition.
+# encoding: UTF-8
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your database schema. If you need
-# to create the application database on another system, you should be using db:schema:load, not running
-# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150619065247) do
+ActiveRecord::Schema.define(:version => 20150819153658) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -179,7 +181,12 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   create_table "app_business_rules", :force => true do |t|
     t.integer "va_rule_id",     :limit => 8
     t.integer "application_id", :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.integer "account_id", :limit => 8
   end
+
+  add_index "app_business_rules", ["installed_application_id"], :name => 'index_app_business_rules_on_installed_app_id'
+  add_index "app_business_rules", ["va_rule_id"], :name => 'index_app_business_rules_on_varule_id'
 
   create_table "applications", :force => true do |t|
     t.string  "name"
@@ -190,6 +197,9 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.integer "account_id",       :limit => 8
     t.string  "application_type",              :default => "freshplug", :null => false
   end
+
+  add_index "applications", ["name"], :name => "index_applications_on_name"
+  add_index "applications", ["account_id"], :name => "index_applications_on_account_id"
 
   create_table "article_tickets", :force => true do |t|
     t.integer "article_id", :limit => 8
@@ -226,22 +236,22 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
 
   create_table "ca_folders", :force => true do |t|
     t.string   "name"
-    t.boolean  "is_default",              :default => false
-    t.integer  "account_id", :limit => 8
+    t.boolean  "is_default",               :default => false
+    t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "folder_type"
-    t.boolean  "deleted",      :default => false
+    t.boolean  "deleted",                  :default => false
   end
 
-  add_index "ca_folders", ["account_id","folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
+  add_index "ca_folders", ["account_id", "folder_type"], :name => "index_ca_folders_on_account_id_folder_type"
 
   create_table "chat_settings", :force => true do |t|
-    t.integer  "account_id",      :limit => 8
+    t.integer  "account_id", :limit => 8
     t.string   "display_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",                                :default => false
+    t.boolean  "active",                  :default => false
   end
 
   add_index "chat_settings", ["account_id"], :name => "index_chat_settings_on_account_id"
@@ -259,7 +269,6 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.boolean  "main_widget"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name"
   end
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
@@ -276,8 +285,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "company_field_choices", ["account_id", "company_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_company_field_id_and_position"
 
   create_table "company_field_data", :force => true do |t|
-    t.integer  "id",                  :limit => 8,                    :null => false
-    t.integer  "account_id",          :limit => 8, :default => 0,     :null => false
+    t.integer  "account_id",          :limit => 8,                                :default => 0,     :null => false
     t.integer  "company_form_id",     :limit => 8
     t.integer  "company_id",          :limit => 8
     t.integer  "health"
@@ -409,16 +417,16 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.boolean  "cf_boolean08"
     t.boolean  "cf_boolean09"
     t.boolean  "cf_boolean10"
-    t.decimal  "cf_decimal01",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal02",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal03",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal04",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal05",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal06",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal07",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal08",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal09",        :precision => 15, :scale => 4
-    t.decimal  "cf_decimal10",        :precision => 15, :scale => 4
+    t.decimal  "cf_decimal01",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal02",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal03",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal04",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal05",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal06",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal07",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal08",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal09",                     :precision => 15, :scale => 4
+    t.decimal  "cf_decimal10",                     :precision => 15, :scale => 4
     t.integer  "long_cc01",           :limit => 8
     t.integer  "long_cc02",           :limit => 8
     t.integer  "long_cc03",           :limit => 8
@@ -437,11 +445,11 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.string   "string_cc06"
     t.datetime "datetime_cc01"
     t.datetime "datetime_cc02"
-    t.boolean  "boolean_cc01",        :default => false
-    t.boolean  "boolean_cc02",        :default => false
-    t.boolean  "boolean_cc03",        :default => false
-    t.boolean  "boolean_cc04",        :default => false
-    t.boolean  "boolean_cc05",        :default => false
+    t.boolean  "boolean_cc01",                                                    :default => false
+    t.boolean  "boolean_cc02",                                                    :default => false
+    t.boolean  "boolean_cc03",                                                    :default => false
+    t.boolean  "boolean_cc04",                                                    :default => false
+    t.boolean  "boolean_cc05",                                                    :default => false
     t.text     "text_cc01"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -497,7 +505,6 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "contact_field_choices", ["account_id", "contact_field_id", "position"], :name => "idx_cf_choices_on_account_id_and_contact_field_id_and_position"
 
   create_table "contact_field_data", :force => true do |t|
-    t.integer  "id",               :limit => 8,                                                   :null => false
     t.integer  "account_id",       :limit => 8,                                :default => 0,     :null => false
     t.integer  "contact_form_id",  :limit => 8
     t.integer  "user_id",          :limit => 8
@@ -942,13 +949,13 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
 
   create_table "flexifield_defs", :force => true do |t|
-    t.string   "name",                                               :null => false
-    t.integer  "account_id",          :limit => 8
+    t.string   "name",                                      :null => false
+    t.integer  "account_id", :limit => 8
     t.string   "module"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "product_id",          :limit => 8
-    t.boolean  "active",                           :default => true
+    t.integer  "product_id", :limit => 8
+    t.boolean  "active",                  :default => true
   end
 
   add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
@@ -962,7 +969,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   end
 
   create_table "flexifields", :id => false, :force => true do |t|
-    t.integer  "id",                  :limit => 8, :null => false
+    t.integer  "id",                  :limit => 8,                                :null => false
     t.integer  "flexifield_def_id",   :limit => 8
     t.integer  "flexifield_set_id",   :limit => 8
     t.string   "flexifield_set_type"
@@ -1156,8 +1163,8 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.string   "twilio_subaccount_id"
     t.string   "twilio_subaccount_token"
     t.string   "twilio_application_id"
-    t.integer  "state",                   :limit => 1, :default => 1
-    t.boolean  "deleted",                              :default => false
+    t.integer  "state",                   :limit => 1,  :default => 1
+    t.boolean  "deleted",                               :default => false
     t.string   "queue"
     t.datetime "expires_on"
     t.datetime "created_at"
@@ -1194,9 +1201,9 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "freshfone_callers", ["account_id", "number"], :name => "index_ff_callers_on_account_id_and_number"
 
   create_table "freshfone_calls", :id => false, :force => true do |t|
-    t.integer  "id",                  :limit => 8,                 :null => false
-    t.integer  "account_id",          :limit => 8,                 :null => false
-    t.integer  "freshfone_number_id", :limit => 8,                 :null => false
+    t.integer  "id",                  :limit => 8,                     :null => false
+    t.integer  "account_id",          :limit => 8,                     :null => false
+    t.integer  "freshfone_number_id", :limit => 8,                     :null => false
     t.integer  "user_id",             :limit => 8
     t.integer  "customer_id",         :limit => 8
     t.string   "call_sid",            :limit => 50
@@ -1218,10 +1225,16 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.integer  "group_id",            :limit => 8
     t.boolean  "recording_deleted",                     :default => false
     t.text     "recording_deleted_info"
+    t.string   "conference_sid",      :limit => 50
+    t.string   "hold_queue",          :limit => 50
+    t.integer  "hold_duration",       :limit => 11     
+    t.integer  "total_duration",      :limit => 11
+    t.boolean  "business_hour_call",                    :default => false
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}
   add_index "freshfone_calls", ["account_id", "call_sid"], :name => "index_freshfone_calls_on_account_id_and_call_sid"
+  add_index "freshfone_calls", ["account_id", "conference_sid"], :name => "index_freshfone_calls_on_account_id_and_conference_sid"
   add_index "freshfone_calls", ["account_id", "created_at"], :name => "index_freshfone_calls_on_account_id_and_created_at"
   add_index "freshfone_calls", ["account_id", "call_status", "user_id"], :name => "index_freshfone_calls_on_account_id_and_call_status_and_user"
   add_index "freshfone_calls", ["account_id", "customer_id", "created_at"], :name => "index_ff_calls_on_account_id_customer_id_created_at"
@@ -1290,35 +1303,37 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "freshfone_number_groups", ["id", "account_id"], :name => "index_freshfone_number_groups_on_id_and_account_id", :unique => true
 
   create_table "freshfone_numbers", :force => true do |t|
-    t.integer  "account_id",               :limit => 8
-    t.string   "number",                   :limit => 50
-    t.string   "display_number",           :limit => 50
-    t.string   "region",                   :limit => 100,                               :default => ""
-    t.string   "country",                  :limit => 20,                                :default => ""
-    t.decimal  "rate",                                    :precision => 6, :scale => 2
-    t.boolean  "record",                                                                :default => true
-    t.integer  "queue_wait_time",                                                       :default => 2
-    t.integer  "max_queue_length",                                                      :default => 3
-    t.integer  "state",                    :limit => 1,                                 :default => 1
+    t.integer  "account_id",                 :limit => 8
+    t.string   "number",                     :limit => 50
+    t.string   "display_number",             :limit => 50
+    t.string   "region",                     :limit => 100,                               :default => ""
+    t.string   "country",                    :limit => 20,                                :default => ""
+    t.decimal  "rate",                                      :precision => 6, :scale => 2
+    t.boolean  "record",                                                                  :default => true
+    t.integer  "queue_wait_time",                                                         :default => 2
+    t.integer  "max_queue_length",                                                        :default => 3
+    t.integer  "state",                      :limit => 1,                                 :default => 1
     t.string   "number_sid"
     t.integer  "number_type"
-    t.integer  "voice",                                                                 :default => 0
-    t.boolean  "deleted",                                                               :default => false
+    t.integer  "voice",                                                                   :default => 0
+    t.boolean  "deleted",                                                                 :default => false
     t.text     "on_hold_message"
     t.text     "non_availability_message"
     t.text     "voicemail_message"
-    t.integer  "business_calendar_id",     :limit => 8
+    t.integer  "business_calendar_id",       :limit => 8
     t.datetime "next_renewal_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "voicemail_active",                                                      :default => false
+    t.boolean  "voicemail_active",                                                        :default => false
     t.text     "non_business_hours_message"
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
-    t.integer  "rr_timeout",                                                            :default => 10
+    t.integer  "rr_timeout",                                                              :default => 10
     t.integer  "ringing_time",                                                            :default => 30
     t.boolean  "recording_visibility",                                                    :default => true
+    t.text     "wait_message"
+    t.text     "hold_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
@@ -1363,11 +1378,11 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "freshfone_usage_triggers", ["account_id", "sid"], :name => "index_freshfone_usage_triggers_on_account_id_and_sid"
 
   create_table "freshfone_users", :force => true do |t|
-    t.integer  "account_id",          :limit => 8,                    :null => false
-    t.integer  "user_id",             :limit => 8,                    :null => false
-    t.integer  "presence",                         :default => 0
-    t.integer  "incoming_preference",              :default => 0
-    t.boolean  "available_on_phone",               :default => false
+    t.integer  "account_id",                :limit => 8,                    :null => false
+    t.integer  "user_id",                   :limit => 8,                    :null => false
+    t.integer  "presence",                               :default => 0
+    t.integer  "incoming_preference",                    :default => 0
+    t.boolean  "available_on_phone",                     :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "mobile_token_refreshed_at"
@@ -1380,13 +1395,15 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "freshfone_users", ["account_id", "user_id"], :name => "index_freshfone_users_on_account_id_and_user_id", :unique => true
 
   create_table "freshfone_calls_meta", :force => true do |t|
-    t.integer  "account_id", :limit => 8
-    t.integer  "call_id",    :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.integer  "call_id",     :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "meta_info"
     t.integer  "device_type"
     t.integer  "transfer_by_agent", :limit => 8
+    t.text     "pinged_agents"
+    t.integer  "hunt_type",  :limit => 1
   end
 
   add_index "freshfone_calls_meta", ["account_id", "call_id"], :name => "index_ff_calls_meta_on_account_id_call_id"
@@ -1399,7 +1416,6 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
  end
 
  add_index "freshfone_whitelist_countries", ["account_id", "country"], :name => "index_ff_whitelist_countries_on_account_id_and_country"
- 
 
   create_table "global_blacklisted_ips", :force => true do |t|
     t.text     "ip_list"
@@ -1439,7 +1455,6 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   end
 
   add_index "google_domains", ["domain"], :name => "index_google_domains_on_domain", :unique => true
-
 
   create_table "group_accesses", :id => false, :force => true do |t|
     t.integer "group_id",   :limit => 8, :null => false
@@ -1768,6 +1783,30 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>10, "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
+  create_table "helpdesk_section_fields", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.integer  "section_id",             :limit => 8
+    t.integer  "ticket_field_id",        :limit => 8
+    t.integer  "parent_ticket_field_id", :limit => 8
+    t.integer  "position",               :limit => 8
+    t.text     "options"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+  end
+
+  add_index "helpdesk_section_fields", ["account_id", "section_id"], :name => "index_helpdesk_section_fields_on_account_id_and_section_id"
+
+  create_table "helpdesk_sections", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "form_id",    :limit => 8
+    t.string   "label"
+    t.text     "options"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "helpdesk_sections", ["account_id", "label"], :name => "index_helpdesk_section_fields_on_account_id_and_label"
+
   create_table "helpdesk_shared_attachments", :force => true do |t|
     t.string   "shared_attachable_type"
     t.integer  "shared_attachable_id",   :limit => 8
@@ -1999,6 +2038,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   end
 
   add_index "installed_applications", ["account_id"], :name => "index_account_id_on_installed_applications"
+  add_index "installed_applications", ["account_id","application_id"], :name => "index_installed_applications_on_account_id_and_application_id"
 
   create_table "integrated_resources", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
@@ -2010,6 +2050,8 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "updated_at"
   end
 
+  add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
+
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2018,6 +2060,8 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
   end
+
+  add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
@@ -2037,11 +2081,11 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
 
   create_table "mobihelp_apps", :force => true do |t|
-    t.integer  "account_id", :limit => 8, :null => false
-    t.string   "name",                    :null => false
-    t.integer  "platform",                :null => false
-    t.string   "app_key",                 :null => false
-    t.string   "app_secret",              :null => false
+    t.integer  "account_id", :limit => 8,                    :null => false
+    t.string   "name",                                       :null => false
+    t.integer  "platform",                                   :null => false
+    t.string   "app_key",                                    :null => false
+    t.string   "app_secret",                                 :null => false
     t.text     "config"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -2304,11 +2348,21 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "updated_at"
   end
 
+  create_table "section_picklist_value_mappings", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "section_id",        :limit => 8
+    t.integer  "picklist_value_id", :limit => 8
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "section_picklist_value_mappings", ["account_id", "section_id"], :name => "index_sec_picklist_mappings_on_account_id_and_section_id"
+
   create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
-    t.string  "shard_name",                  :null => false
-    t.integer "status",     :default => 200, :null => false
+    t.string  "shard_name",                           :null => false
+    t.integer "status",     :default => 200,          :null => false
     t.string  "pod_info",   :default => 'poduseast1', :null => false
-    t.string  "region",     :default => 'us-east-1', :null => false
+    t.string  "region",     :default => 'us-east-1',  :null => false
   end
 
   create_table "sla_details", :force => true do |t|
@@ -2413,8 +2467,8 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   end
 
   add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_id"=>nil, "postable_type"=>15}
-  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id" => nil, "ancestry" => 30}
-  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id" => nil, "post_id" => 30}
+  add_index "social_fb_posts", ["account_id", "ancestry"], :name => "account_ancestry_index", :length => {"account_id"=>nil, "ancestry"=>30}
+  add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"
@@ -2494,7 +2548,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.datetime "updated_at"
   end
 
-  add_index "solution_article_bodies", ["account_id", "article_id"], :name => 'index_solution_article_bodies_on_account_id_and_article_id', :unique => true
+  add_index "solution_article_bodies", ["account_id", "article_id"], :name => "index_solution_article_bodies_on_account_id_and_article_id", :unique => true
 
   create_table "solution_article_meta", :force => true do |t|
     t.integer  "position"
@@ -2523,7 +2577,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.integer  "thumbs_up",                          :default => 0
     t.integer  "thumbs_down",                        :default => 0
     t.integer  "account_id",   :limit => 8
-    t.boolean  "delta",                              :default => true, :null => false
+    t.boolean  "delta",                              :default => true,  :null => false
     t.text     "desc_un_html", :limit => 2147483647
     t.integer  "import_id",    :limit => 8
     t.integer  "position"
@@ -2565,6 +2619,7 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
   add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
+  add_index "solution_categories", ["account_id", "parent_id", "position"], :name => "index_solution_categories_on_account_id_parent_id_and_position"
 
   create_table "solution_category_meta", :force => true do |t|
     t.integer  "position"
@@ -2802,9 +2857,41 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.integer  "survey_id",        :limit => 8
     t.integer  "survey_result_id", :limit => 8
     t.boolean  "rated",                         :default => false
+    t.boolean  "preview",                       :default => false
+    t.integer  "agent_id",         :limit => 8
+    t.integer  "group_id",         :limit => 8
   end
 
+  add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
   add_index "survey_handles", ["id"], :name => "survey_handles_id"
+
+  create_table "survey_question_choices", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "survey_question_id", :limit => 8
+    t.string   "value"
+    t.integer  "face_value"
+    t.integer  "position"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "survey_question_choices", ["account_id", "survey_question_id", "position"], :name => "idx_cf_choices_on_account_id_and_survey_question_id_and_position"
+
+  create_table "survey_questions", :force => true do |t|
+    t.integer  "account_id",  :limit => 8
+    t.integer  "survey_id",   :limit => 8
+    t.string   "name"
+    t.integer  "field_type"
+    t.integer  "position"
+    t.boolean  "deleted",                  :default => false
+    t.text     "label"
+    t.string   "column_name"
+    t.boolean  "default",                  :default => false
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
+  end
+
+  add_index "survey_questions", ["account_id", "survey_id", "position"], :name => "idx_cf_questions_on_account_id_and_survey_id_and_position"
 
   create_table "survey_remarks", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8, :null => false
@@ -2816,6 +2903,100 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   end
 
   add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
+
+  create_table "survey_result_data", :force => true do |t|
+    t.integer  "id",               :limit => 8,                :null => false
+    t.integer  "account_id",       :limit => 8, :default => 0, :null => false
+    t.integer  "survey_id",        :limit => 8
+    t.integer  "survey_result_id", :limit => 8
+    t.integer  "cf_int01"
+    t.integer  "cf_int02"
+    t.integer  "cf_int03"
+    t.integer  "cf_int04"
+    t.integer  "cf_int05"
+    t.integer  "cf_int06"
+    t.integer  "cf_int07"
+    t.integer  "cf_int08"
+    t.integer  "cf_int09"
+    t.integer  "cf_int10"
+    t.integer  "cf_int11"
+    t.integer  "cf_int12"
+    t.integer  "cf_int13"
+    t.integer  "cf_int14"
+    t.integer  "cf_int15"
+    t.integer  "cf_int16"
+    t.integer  "cf_int17"
+    t.integer  "cf_int18"
+    t.integer  "cf_int19"
+    t.integer  "cf_int20"
+    t.integer  "cf_int21"
+    t.string   "cf_str01"
+    t.string   "cf_str02"
+    t.string   "cf_str03"
+    t.string   "cf_str04"
+    t.string   "cf_str05"
+    t.string   "cf_str06"
+    t.string   "cf_str07"
+    t.string   "cf_str08"
+    t.string   "cf_str09"
+    t.string   "cf_str10"
+    t.string   "cf_str11"
+    t.string   "cf_str12"
+    t.string   "cf_str13"
+    t.string   "cf_str14"
+    t.string   "cf_str15"
+    t.string   "cf_str16"
+    t.string   "cf_str17"
+    t.string   "cf_str18"
+    t.string   "cf_str19"
+    t.string   "cf_str20"
+    t.text     "cf_text01"
+    t.text     "cf_text02"
+    t.text     "cf_text03"
+    t.text     "cf_text04"
+    t.text     "cf_text05"
+    t.text     "cf_text06"
+    t.text     "cf_text07"
+    t.text     "cf_text08"
+    t.text     "cf_text09"
+    t.text     "cf_text10"
+    t.text     "cf_text11"
+    t.text     "cf_text12"
+    t.text     "cf_text13"
+    t.text     "cf_text14"
+    t.text     "cf_text15"
+    t.text     "cf_text16"
+    t.text     "cf_text17"
+    t.text     "cf_text18"
+    t.text     "cf_text19"
+    t.text     "cf_text20"
+    t.boolean  "cf_boolean01"
+    t.boolean  "cf_boolean02"
+    t.boolean  "cf_boolean03"
+    t.boolean  "cf_boolean04"
+    t.boolean  "cf_boolean05"
+    t.boolean  "cf_boolean06"
+    t.boolean  "cf_boolean07"
+    t.boolean  "cf_boolean08"
+    t.boolean  "cf_boolean09"
+    t.boolean  "cf_boolean10"
+    t.boolean  "cf_boolean11"
+    t.boolean  "cf_boolean12"
+    t.boolean  "cf_boolean13"
+    t.boolean  "cf_boolean14"
+    t.boolean  "cf_boolean15"
+    t.boolean  "cf_boolean16"
+    t.boolean  "cf_boolean17"
+    t.boolean  "cf_boolean18"
+    t.boolean  "cf_boolean19"
+    t.boolean  "cf_boolean20"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "survey_result_data", ["account_id", "survey_id"], :name => "index_survey_result_data_on_account_id_and_survey_id"
+  add_index "survey_result_data", ["account_id", "survey_result_id"], :name => "index_survey_result_data_on_account_id_and_survey_result_id"
+  add_index "survey_result_data", ["id"], :name => "index_survey_result_data_id"
 
   create_table "survey_results", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8, :null => false
@@ -2832,18 +3013,26 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
     t.integer  "group_id",         :limit => 8
   end
 
+  add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["id"], :name => "survey_results_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
 
   create_table "surveys", :force => true do |t|
-    t.integer  "account_id",   :limit => 8
-    t.text     "link_text"
+    t.integer  "account_id",             :limit => 8
     t.integer  "send_while"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "happy_text",                :default => "Awesome"
-    t.string   "neutral_text",              :default => "Just Okay"
-    t.string   "unhappy_text",              :default => "Not Good"
+    t.string   "title_text",                          :default => ""
+    t.integer  "active",                 :limit => 1, :default => 0
+    t.text     "thanks_text"
+    t.text     "feedback_response_text"
+    t.integer  "can_comment",            :limit => 1, :default => 0
+    t.text     "comments_text"
+    t.integer  "default",                :limit => 1, :default => 0
+    t.text   "link_text"
+    t.string   "happy_text",                          :default => "Awesome"
+    t.string   "neutral_text",                        :default => "Neutral"
+    t.string   "unhappy_text",                        :default => "Not Good"
   end
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
@@ -3100,24 +3289,24 @@ ActiveRecord::Schema.define(:version => 20150619065247) do
   add_index "ticket_topics", ["account_id", "ticket_id"], :name => "index_account_id_and_ticket_id_on_ticket_topics"
 
   create_table "topics", :force => true do |t|
-    t.integer  "forum_id",     :limit => 8
-    t.integer  "user_id",      :limit => 8
+    t.integer  "forum_id",        :limit => 8
+    t.integer  "user_id",         :limit => 8
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "hits",                      :default => 0
-    t.integer  "sticky",                    :default => 0
-    t.integer  "posts_count",               :default => 0
+    t.integer  "hits",                         :default => 0
+    t.integer  "sticky",                       :default => 0
+    t.integer  "posts_count",                  :default => 0
     t.datetime "replied_at"
-    t.boolean  "locked",                    :default => false
-    t.integer  "replied_by",   :limit => 8
-    t.integer  "last_post_id", :limit => 8
-    t.integer  "account_id",   :limit => 8
+    t.boolean  "locked",                       :default => false
+    t.integer  "replied_by",      :limit => 8
+    t.integer  "last_post_id",    :limit => 8
+    t.integer  "account_id",      :limit => 8
     t.integer  "stamp_type"
-    t.boolean  "delta",                     :default => true,  :null => false
-    t.integer  "import_id",    :limit => 8
-    t.integer  "user_votes",                :default => 0
-    t.boolean  "published",                 :default => false
+    t.boolean  "delta",                        :default => true,  :null => false
+    t.integer  "import_id",       :limit => 8
+    t.integer  "user_votes",                   :default => 0
+    t.boolean  "published",                    :default => false
     t.integer  "merged_topic_id", :limit => 8
     t.integer  "int_tc01"
     t.integer  "int_tc02"

@@ -5,7 +5,7 @@
       "data-checked-label" => "On",
       "data-unchecked-label" => "Off",
       "data-id" => agent.user.id,
-      "data-url" => toggle_availability_agent_path(agent.user.id),
+      "data-url" => toggle_availability_agent_path(agent.user.id,:admin => true),
       "data-availability" => agent.available?,
       :id => "agent_available_#{agent.user.id}" %>
    

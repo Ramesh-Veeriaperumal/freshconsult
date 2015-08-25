@@ -27,7 +27,7 @@
     if($(element).data('tweet-count') >= 0){
       return true;
     }
-  }, "Your Tweet was over 140 characters. You'll have to be more clever." );
+  }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
@@ -397,5 +397,11 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 $.validator.addClassRules("fillone", {
     require_from_group: [1,".fillone"]
 });
+
+$.validator.addMethod("portal_visibility_required", function(value, element) {
+    return value != undefined;
+  }, 'Select atleast one portal.');
+
+$.validator.addClassRules("portal_visibility_required", { portal_visibility_required: true });
 
 })(jQuery);

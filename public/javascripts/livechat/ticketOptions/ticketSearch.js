@@ -8,13 +8,16 @@
 		
 		defaults = {
 			template : new Template(
-				'<li><div class="searchresult">' +
-					'<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>' +
-					'<button class="save_to_ticket hide btn btn-primary tooltip"' +
-					'data-id="#{display_id}" title="Save to this ticket">Save</button>' +
-					'<div class="info-data hideForList">' +
-					'<span class="ticket-info">#{ticket_info}</span><span>#{agent}</span>' +
-					'</div></div></li>'
+					'<li>' + 
+					'<div class="searchresult contactdiv">'+
+						'<div class="fc_merge_element">'+
+		  				'<span class="item_info" title="#{title}"><a href="/helpdesk/tickets/#{display_id}" target="_blank">##{display_id} #{subject}</a></span>'+
+             	'<div class="info-data hideForList">'+
+             	'<div class="fc_convert_tkt_list">'+
+	             '<span class="merge-ticket-info">#{ticket_info}</span>'+
+           		'</div>'+
+              '<button class="selected_tkt_button btn" data-id="#{display_id}">Save</button>'+
+			 '</div></div></div></li>'
 			),
 			className: this.$element.attr('class') || 'search_container',
 			aftershow: function (resultsPane) {
@@ -22,7 +25,6 @@
 				$resultsPane.find('li').removeClass('selected');
 			},
 			lookup : function (searchString, callback) {
-
 				var search_type = self.$element.find('.search-type option:selected').val(),
 					list =  self.$element.find('.' + search_type + '_results').find('ul'),
 					ajax_request;
@@ -30,7 +32,6 @@
 
 				self.$element.find('.' + search_type + '_results')
 					.addClass("loading-small sloading");
-			
 				ajax_request = new Ajax.Request('/search/tickets/filter/'+search_type,
 					{ parameters: { term: searchString },
 						dataType: 'json',
@@ -83,9 +84,8 @@
 					minChars : 2
 				}
 			};
-			
-			$.each(autocompleter_hash, function () {
 
+			$.each(autocompleter_hash, function () {
 				this.backend = new Autocompleter.Cache(self.options.lookup, {choices: 15});
 				this.cache = this.backend.lookup.bind(this.backend);
 				var options = { frequency: 0.1,
@@ -148,8 +148,9 @@
 				.onSearchFieldKeyDown(42);
 		}
 	};
-	
-	$.fn.freshTicketSearch = function (options) {
+	// freshTicketSearch renamed as liveChatTicketSearch to avoid name conflict with freshfone ticket search 
+	//for css conflict issue
+	$.fn.liveChatTicketSearch = function (options) {
 		return this.each(function () {
 			var $this = $(this),
 				data = $this.data('freshTicketSearch');

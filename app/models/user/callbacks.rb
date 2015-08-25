@@ -15,9 +15,11 @@ class User < ActiveRecord::Base
   before_save :set_language, :unless => :created_from_email
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :if => :customer?
+  before_save :restrict_domain, :if => :email_changed?
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
+  after_commit :update_company_id_for_tickets, on: :update, :if => :company_id_updated?
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
@@ -25,7 +27,11 @@ class User < ActiveRecord::Base
   after_commit :update_search_index, on: :update, :if => :company_info_updated?
   after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
-
+  
+  # Callbacks will be executed in the order in which they have been included. 
+  # Included rabbitmq callbacks at the last
+  #include RabbitMq::Publisher 
+  
   def update_agent_caches
     clear_agent_caches if (agent? or helpdesk_agent_updated?)
   end
@@ -59,6 +65,17 @@ class User < ActiveRecord::Base
 
   def discard_contact_field_data
     self.flexifield.destroy
+  end
+  
+  # This is used for updating the ticket's company in reports
+  def update_company_id_for_tickets
+    args = {
+      :user_id    => id,
+      :changes    => { 
+        "company_id" => @all_changes[:customer_id] 
+      }
+    }
+    Reports::UpdateTicketsCompany.perform_async(args)
   end
 
   protected

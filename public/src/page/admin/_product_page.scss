@@ -50,8 +50,26 @@
 				@include border-radius(5px);
 				vertical-align: middle;
 			}
+			.view-portal{
+				@include padding-right(25px);
+			}
+			.portal-logo-center {
+				border: 1px solid #F1F1F1;
+				@include border-radius(4px);
+				overflow: hidden;
+				img{
+					display: block;
+					margin: 0 auto;
+					width: auto;
+				}
+			}
 		}
 		h4 { font-weight: bold; }
+		.portal-name{
+			font-weight: 500;
+			font-size: 14px;
+			line-height: 1.8;
+		}
 	}
 }
 
@@ -175,6 +193,35 @@
 		label.product-radio-label{
 			display: inline-block;
 			width:75%;
+		}
+	}
+}
+#portal-form{
+	.category-section{
+		@include border-left(1px solid #EEE);
+		@include padding-left(15px);
+	}
+	.customize-btn{
+		padding: 7px 15px;
+		min-width: 190px;
+		.customize{
+	    @include text-align(left);
+	    font-size: 14px;
+	    font-weight: 600;
+	    padding: 3px 0;
+		}
+		#customize-arrow{
+			display: inline-block;
+			@include float(right);
+			margin-top: 4px;
+			color: #999;
+		}
+		.published-at{
+			color: #999;
+			@include text-align(left);
+			font-size: 12px;
+			overflow: auto;
+			min-width: 280px;
 		}
 	}
 }

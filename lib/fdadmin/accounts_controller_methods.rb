@@ -14,7 +14,7 @@ module Fdadmin::AccountsControllerMethods
 
 	def fetch_agents_details(account)
 		agent_array = []
-		account.agents.each do |agent|
+		account.agents.includes(:user).each do |agent|
 			agent_hash = {}
 			agent_hash[:email] = agent.user.email
 			agent_hash[:active] = agent.user.active
@@ -48,6 +48,10 @@ module Fdadmin::AccountsControllerMethods
 			mail_hash[:name] = em.name
 			mail_hash[:reply_email] = em.reply_email
 			mail_hash[:active] = em.active
+			mail_hash[:imap_mailbox_configured] = !em.imap_mailbox.nil? 
+			mail_hash[:imap_mailbox_enabled] = em.imap_mailbox.enabled if mail_hash[:imap_mailbox_configured] 
+			mail_hash[:smtp_mailbox_configured] = !em.smtp_mailbox.nil?
+			mail_hash[:smtp_mailbox_enabled] =  em.smtp_mailbox.enabled if mail_hash[:smtp_mailbox_configured] 
 			mail_array << mail_hash
 		end
 		mail_array

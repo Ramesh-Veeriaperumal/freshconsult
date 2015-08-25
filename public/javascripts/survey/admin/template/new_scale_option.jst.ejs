@@ -1,0 +1,8 @@
+<ul class="point-scale">
+<%_.each(choice,function(item){%>
+	<li>
+		<span class="survey-rating <%=item.className%>"></span>
+		<input type="text" maxlength="<%=SurveyConstants.limit.scale%>" name="<%=name%>" <%if(item.position){%>data-position="<%=item.position%>"<%}%> class="input-medium" placeholder="<%=item.text%>" value='<%=(item.value || "")%>' data-face-value="<%=item.id%>"/>
+	</li>
+<%})%>	
+</ul>

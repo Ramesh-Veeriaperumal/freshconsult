@@ -1,0 +1,33 @@
+<label class='caption'> <%= translate.get('forAgent') %> </label>
+<div>
+	<% if(custom_form_type == 'ticket' && field_type == 'default_requester'){ %>
+		<fieldset> 
+			<label class="checkbox disabled"><input type="checkbox" disabled="true" name="cc_field" checked/> <%= translate.get("displayCCField") %> </label>
+		</fieldset> 
+	<% } else { %>
+		<fieldset> 
+			<% isDisabled = ' ' %>
+			<% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
+							 isDisabled = ' disabled' 
+			 } %>
+			<label class="checkbox<%= isDisabled %>">
+				<input type="checkbox" 
+								name="agent-required" 
+								<%= required_for_agent ? 'checked ' : ' ' %>
+								<%= isDisabled %> />
+				<%= translate.get('agentMandatory') %> 
+			</label>
+		</fieldset>
+		<% if(custom_form_type == 'ticket'){ %>
+			<fieldset>
+				<label class="checkbox<%= isDisabled %>">
+					<input type="checkbox" 
+							name="agentclosure" 
+							<%= required_for_closure ? 'checked ' : ' ' %>
+							<%= isDisabled %> >
+					<%= translate.get('agent_mandatory_closure') %>
+				</label>
+			</fieldset>
+		<% } %>
+	<% } %>
+</div>

@@ -1,19 +1,16 @@
 require 'spec_helper'
-load 'spec/support/freshfone_spec_helper.rb'
-RSpec.configure do |c|
-  c.include FreshfoneSpecHelper
-end
 
 RSpec.describe Freshfone::CallInitiator do
   self.use_transactional_fixtures = false
   
   before(:all) do
-    #@account = create_test_account
     @agent = get_admin
   end
 
   before(:each) do
     create_test_freshfone_account
+    @account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    @account.reload
   end
   
   it 'should render twiml that connects caller to specified numbers' do 
@@ -44,9 +41,11 @@ RSpec.describe Freshfone::CallInitiator do
   end
 
   it 'should render twiml that adds a caller to queue' do
+    stub_twilio_queues
     call_initiator = Freshfone::CallInitiator.new({}, @account, @number, nil)
     twiml = call_initiator.add_caller_to_queue({:type => :agent, :performer => @agent.id})
     twiml.should match(/hunt_type=agent&amp;hunt_id=#{@agent.id}/)
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
 
   it 'should render twiml for blocking incoming call' do
@@ -63,9 +62,10 @@ RSpec.describe Freshfone::CallInitiator do
   end
 
   it 'should return false for empty queue' do
+    stub_twilio_queues(true)
     call_initiator = Freshfone::CallInitiator.new({}, @account, @number, nil)
     call_initiator.send(:queue_overloaded?).should be_falsey
+    Twilio::REST::Queues.any_instance.unstub(:get)
   end
-  
 
 end 

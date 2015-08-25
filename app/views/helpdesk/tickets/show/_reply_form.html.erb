@@ -207,7 +207,7 @@
           <% if privilege?(:edit_ticket_properties) %>
           <ul id="conversation_reply" data-menu-hover-in='li' data-menu-trigger="a" class="menuselector dropdown-menu custom_statuses pull-right">
             <%
-            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+            ticket_statuses = current_account.ticket_status_values_from_cache.reject{|status| status.status_id == 2 }
             %>
             <% ticket_statuses.each do |status| %>
             <li>

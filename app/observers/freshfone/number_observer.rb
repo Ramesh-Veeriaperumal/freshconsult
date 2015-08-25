@@ -1,7 +1,7 @@
 class Freshfone::NumberObserver < ActiveRecord::Observer
 	observe Freshfone::Number
 	
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 
 	def before_validation(freshfone_number)
     unless freshfone_number.new_record?
@@ -76,11 +76,11 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 		end
 		
 		def build_message_hash(freshfone_number)
-			Freshfone::Number::MESSAGE_FIELDS.each do |msg_type|
+			message_fields(freshfone_number).each do |msg_type|
 				message = freshfone_number[msg_type] || {}
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => message["attachment_id"].blank? ? nil : message["attachment_id"].to_i,
-					:message => CGI::escapeHTML(message["message"]),
+					:message => CGI::escapeHTML(message["message"] || ""), # Hold and wait message does not have message params
 					:message_type => message["message_type"].to_i,
 					:recording_url => message["recording_url"],
 					:type => msg_type
@@ -93,11 +93,21 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 				freshfone_number[msg_type] = Freshfone::Number::Message.new({
 					:attachment_id => nil,
 					:message => Freshfone::Number::Message::DEFAULT_MESSAGE[msg_type],
-					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[:transcript],
+					:message_type => Freshfone::Number::Message::MESSAGE_TYPES[default_message_type(msg_type)],
 					:recording_url => "",
 					:type => msg_type
 				})
 			end
 		end
 
+		def message_fields(freshfone_number)
+			freshfone_number.account.features?(:freshfone_conference) ? 
+			Freshfone::Number::MESSAGE_FIELDS : Freshfone::Number::MESSAGE_FIELDS.reject{ |msg_type| 
+				[:wait_message, :hold_message].include? msg_type }
+		end
+
+		def default_message_type(msg_type)
+			([:wait_message, :hold_message].include? msg_type) ? 
+			 :uploaded_audio : :transcript
+		end
 end

@@ -1,0 +1,21 @@
+--- 
+autopilot:
+  common: &common
+    contact_url: "https://api2.autopilothq.com/v1/contact"
+    trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact/%{person_id}"
+  production: 
+    <<: *common
+    access_key: "68eee57364d64f5a8cad615fcd20d78a"
+    trigger_code: "0008"
+  staging: 
+    <<: *common
+    access_key: "0d76fae31ded4cd8b1db1f9f408d8394"
+    trigger_code: "0002"
+  development: 
+    <<: *common
+    access_key: "0d76fae31ded4cd8b1db1f9f408d8394"
+    trigger_code: "0002"
+  test: 
+    <<: *common
+    access_key: "0d76fae31ded4cd8b1db1f9f408d8394"
+    trigger_code: "0002"

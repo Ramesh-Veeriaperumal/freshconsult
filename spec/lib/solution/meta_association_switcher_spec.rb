@@ -46,7 +46,7 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 		article_meta.update_attribute(:created_at, Time.now.utc)
 		folder_meta.update_attribute(:visibility, 3)
 		@account.reload
-		@account.takeback(:meta_read)
+		@account.rollback(:meta_read)
 		indexed_json = JSON.parse(article.to_indexed_json)
 		Time.parse(indexed_json["solution/article"]["created_at"]).to_s.should == article.read_attribute(:created_at).to_s
 		indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder.read_attribute(:visibility))	
@@ -65,7 +65,7 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 			@account.reload
 			@account.launch(:meta_read)
 			result1 = @account.solution_articles.articles_for_portal(@account.main_portal)
-			@account.takeback(:meta_read)
+			@account.rollback(:meta_read)
 			result2 = @account.solution_articles.articles_for_portal(@account.main_portal)
 			result1.to_a.should == result2.to_a
 		end	
@@ -75,7 +75,7 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 			user = @account.users.sample
 			@account.launch(:meta_read)
 			result1 = @account.solution_folders.visible(user)
-			@account.takeback(:meta_read)
+			@account.rollback(:meta_read)
 			result2 = @account.solution_folders.visible(user)
 			result1.to_a.should == result2.to_a
 		end

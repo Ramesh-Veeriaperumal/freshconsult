@@ -11,8 +11,8 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
     { :model_changes => model_changes_hash}
   end
 
-  def mq_auto_refresh_valid(action)
-    destroy_action?(action) ? false : autorefresh_node_allowed? && model_changes?
+  def mq_auto_refresh_valid(action, model)
+    destroy_action?(action) ? false : (valid_model?(model) && auto_refresh_allowed? && model_changes?)
   end
 
   private
@@ -34,6 +34,10 @@ module RabbitMq::Subscribers::Tickets::AutoRefresh
       end
     end
     changes
+  end
+
+  def valid_model?(model)
+    ["ticket"].include?(model)
   end
 
   def filter_custom_fields

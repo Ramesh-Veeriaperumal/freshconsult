@@ -50,7 +50,7 @@ class ContactField < ActiveRecord::Base
   # after_commit :clear_contact_fields_cache # Clearing cache in ContactFieldsController#update action
   # Can't clear cache on every ContactField or ContactFieldChoices save
 
-  def default_contact_form
+  def default_contact_form dummy_contact_form_id
     (Account.current || account).contact_form
   end
 

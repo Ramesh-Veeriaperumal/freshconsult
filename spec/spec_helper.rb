@@ -5,6 +5,7 @@ require 'simplecov'
 require 'simplecov-csv'
 require 'pry'
 require 'rspec/collection_matchers'
+require 'sidekiq/testing'
 
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
@@ -141,7 +142,7 @@ Spork.prefork do
       @account = Account.first
       @agent = get_admin
       RSpec.configuration.timings = []
-      
+      Sidekiq::Testing.disable!
       #begin_gc_defragment
     end
 
@@ -180,6 +181,7 @@ Spork.prefork do
                             timing[:name], timing[:duration]))
       end
       file.close
+      Sidekiq::Testing.disable!
     end
 
     config.before(:suite) do

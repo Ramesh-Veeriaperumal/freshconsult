@@ -302,7 +302,12 @@ Helpkit::Application.routes.draw do
   end
 
   match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
-  resources :groups
+  resources :groups do
+    collection do
+      get :index
+      post :toggle_roundrobin
+    end
+  end
 
   resources :user_emails do
     member do
@@ -381,6 +386,69 @@ Helpkit::Application.routes.draw do
       end
     end
 
+  resources :conference do
+      collection do
+        get  :initiate
+        post :wait
+        post :agent_wait
+        post :incoming_agent_wait
+        post :outgoing_accepted
+        post :pinged_agent_response
+        post :connect_incoming_caller
+        post :complete_customer_wait_conference
+        post :client_accept
+        post :connect_agent
+      end
+    end
+
+    resources :conference_transfer do
+      collection do 
+        get  :initiate_transfer
+        post :transfer_agent_wait
+        get  :complete_transfer
+        post :transfer_success
+        post :transfer_source_redirect
+        post :cancel_transfer
+        post :resume_transfer
+        get :disconnect_agent
+      end
+    end
+
+    resources :hold do
+      collection do
+        get  :add
+        get  :remove
+        post :initiate
+        post :wait
+        post :unhold
+        post :transfer_unhold
+        post :transfer_fallback_unhold
+      end
+    end
+
+    resources :forward do
+      collection do
+        post :initiate
+        post :complete
+        post :transfer_initiate
+        post :transfer_complete
+        post :transfer_wait
+        post :direct_dial_wait
+        post :direct_dial_accept
+        post :direct_dial_connect
+        post :direct_dial_success
+        post :direct_dial_complete
+      end
+    end
+
+    resources :conference_call do
+      collection do
+        post :status
+        post :in_call
+        post :update_recording
+      end
+    end
+
     resources :queue do
       collection do
         post :enqueue
@@ -396,12 +464,13 @@ Helpkit::Application.routes.draw do
     resources :voicemail do
       collection do
         post :quit_voicemail
+        post :initiate
       end
     end
 
     resources :call_transfer do
       collection do
-        post :initiate
+        get :initiate
         post :transfer_incoming_call
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
@@ -412,6 +481,7 @@ Helpkit::Application.routes.draw do
         get :available_external_numbers
       end
     end
+    match '/call_transfer/initiate/' => 'call_transfer#initiate', :via => :post
 
     resources :device do
       collection do
@@ -663,7 +733,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/quickbooks/refresh_access_token' => 'quickbooks#refresh_access_token', :as => :oauth_action
+    namespace :quickbooks do
+      get :refresh_access_token
+      get :render_success
+    end
+    
     resources :dynamics_crm do
       collection do
         post :settings_update
@@ -815,16 +889,20 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :portal, :only => [:index, :update]
+    resources :products
 
-    resources :products do
+    resources :portal, :only => [:index, :update, :edit, :create, :destroy] do
+
+      collection do
+        get :settings
+        get :enable
+        put :update_settings
+      end
       member do
         delete :delete_logo
         delete :delete_favicon
       end
-    end
 
-    resources :portal, :only => [:index, :update] do
       resource :template do
         collection do
           get :show
@@ -844,14 +922,18 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :surveys do
-      collection do
-        post :enable
-        post :disable
-        get :index
-        put :update
+    resources :surveys
+    resources :custom_surveys do   
+      member do
+        post :test_survey
       end
     end
+    match '/surveys/update' => 'surveys#update' , :via => :put
+    match '/surveys/enable/' => 'surveys#enable' , :via => :post
+    match '/surveys/disable/' => 'surveys#disable' , :via => :post
+
+    match '/custom_surveys/enable/:id' => 'custom_surveys#enable' , :via => :post
+    match '/custom_surveys/disable/:id' => 'custom_surveys#disable' , :via => :post
 
     resources :gamification do
       collection do
@@ -996,7 +1078,19 @@ Helpkit::Application.routes.draw do
   match '/search/topics.:format' => 'search/forums#index'
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
+  
 
+  namespace :reports do
+    namespace :v2 do
+      resources :ticket_volume, :controller => 'tickets/reports' do
+        collection do
+          post :fetch_metrics
+          post :fetch_ticket_list
+        end
+      end
+    end
+  end
+  
   namespace :reports do
     resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
       collection do
@@ -1007,6 +1101,8 @@ Helpkit::Application.routes.draw do
         post :fetch_metrics
       end
     end
+
+  
 
     resources :analysis_reports, :controller => 'helpdesk_load_analysis' do
       collection do
@@ -1150,6 +1246,11 @@ Helpkit::Application.routes.draw do
   match '/survey/overall_report/:category' => 'reports/survey_reports#report_details', :as => :survey_overall_report
   match '/reports/survey_reports/feedbacks' => 'reports/survey_reports#feedbacks', :as => :survey_feedbacks
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
+  match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
+  match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
+  match '/custom_survey/reports' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
+  match '/custom_survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#reports', :as => :custom_survey_reports
+  match '/custom_survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
 
   namespace :social do
 
@@ -1305,6 +1406,7 @@ Helpkit::Application.routes.draw do
         get :filter_options
         get :full_paginate
         get :summary
+        get :compose_email
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save
@@ -1888,6 +1990,10 @@ Helpkit::Application.routes.draw do
     match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
 
+    match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
+    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new' ,:as => :customer_custom_survey
+    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#create_for_portal', :as => :portal_custom_survey
+
     namespace :mobihelp do
       resources :tickets do
         member do
@@ -2036,8 +2142,18 @@ Helpkit::Application.routes.draw do
           get :deleted_customers
         end
       end
-      
+
+      resources :delayed_jobs, only: [:index,:show] do
+        collection do
+          put 'requeue'
+          put 'requeue_selected'
+          put 'remove_selected'
+          put 'destroy_job'
+        end
+      end
+
       get  "/accounts/show", to: 'accounts#show'
+
       resources :accounts, :only => :none do
         collection do
           get :tickets
@@ -2046,6 +2162,7 @@ Helpkit::Application.routes.draw do
           get :features
           get :email_config
           put :add_day_passes
+          put :change_api_limit
           put :add_feature
           put :change_url
           get :single_sign_on
@@ -2088,6 +2205,9 @@ Helpkit::Application.routes.draw do
           post :country_restriction
           post :new_freshfone_account
           put :undo_security_whitelist
+          get :fetch_conference_state
+          put :enable_conference
+          put :disable_conference
         end
       end
 
@@ -2107,6 +2227,7 @@ Helpkit::Application.routes.draw do
         collection do 
           get :spam_details   
           put :block_user   
+          put :unblock_user
           put :hard_block   
           put :spam_user   
           put :internal_whitelist

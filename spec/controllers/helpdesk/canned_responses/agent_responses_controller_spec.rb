@@ -120,7 +120,7 @@ describe Helpdesk::CannedResponses::ResponsesController do
   it "should delete shared attachment" do
     now = (Time.now.to_f*1000).to_i
     canned_response = create_response( {:title => "Recent Canned_Responses #{now}",:content_html => Faker::Lorem.paragraph,
-                                        :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+                                        :visibility => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],:user_id=>@new_agent.id,:folder_id=>@pfolder_id,
                                         :attachments => { :resource => Rack::Test::UploadedFile.new('spec/fixtures/files/image4kb.png','image/png'),
                                                           :description => Faker::Lorem.characters(10) }
                                         })

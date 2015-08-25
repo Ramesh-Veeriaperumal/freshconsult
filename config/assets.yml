@@ -29,7 +29,7 @@ stylesheets:
   :tkt_details_print  => [ "page/tkt_details/tkt_details_print"],
   :gadget  => [ "common","pages","module","sprites","app/app-common","app/app-bootstrap","plugins","app/ie","page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites","page/gadget"],
   :google_signup  => [ "common","page/google-signup"],
-  :reports  => [ "page/reports"],
+  :reports  => [ "reports"],
   :print  => [ "print/print"],
   :report_print  => [ "print/report-print"],
   :portal_print  => [ "print/support"],
@@ -42,7 +42,7 @@ stylesheets:
   :responsive_widget  => [ "portal/responsive-widget"],
   :facebook  => [ "portal/facebook"],
   :social  => [ "social/social"],
-  :rating  => [ "portal/rating"],
+  :survey  => [ "portal/survey"],
   :freshfone  => [ "freshfone/freshfone","freshfone/jquery.keypad","freshfone/call_history","ui.daterangepicker"],
   :freshfone_ivr  => [ "freshfone/ivr/main"],
   :freshfone_settings  => [ "freshfone/settings/main"],
@@ -101,6 +101,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.gritter.js
+    - public/javascripts/frameworks/plugins/jquery.ba-bbq.js
     - public/javascripts/jquery.keypad.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/moment/*
@@ -352,6 +353,7 @@ javascripts:
     - public/javascripts/freshfone/dialpad.js
     - public/javascripts/freshfone/components/call_transfer.js
     - public/javascripts/freshfone/freshfone_logger.js
+    - public/javascripts/freshfone/components/freshfone_conference_connection.js
 
   freshfone_call_history:
     - public/javascripts/report/daterangepicker.jQuery.js
@@ -397,6 +399,7 @@ javascripts:
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/fresh_suggest.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js
@@ -458,19 +461,58 @@ javascripts:
   ticket_fields:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
-    - public/javascripts/frameworks/tf_customizer.js
+    # - public/javascripts/custom-form/*.js
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/ticket_fields.js
+    - public/javascripts/custom-form/nested-field.js
+    - public/javascripts/custom-form/custom-sections.js
+    - public/javascripts/custom-form/template/*.jst
+    #- public/javascripts/frameworks/tf_customizer.js
 
   contact_fields:
     - public/javascripts/app/admin/contact_fields/cf_customizer.js
     - public/javascripts/app/admin/contact_fields/formfield_props.jst
+    - public/javascripts/app/admin/contact_fields/dom_field.jst
+    # - public/javascripts/custom-form/custom-field.js
+    # - public/javascripts/custom-form/custom-form-builder.js
+    # - public/javascripts/custom-form/custom_field_dialog.js
+    # - public/javascripts/custom-form/dropdown.js
+    # - public/javascripts/custom-form/sortable.js
+    # - public/javascripts/custom-form/contact_fields.js
+    # - public/javascripts/custom-form/template/*.jst
 
   company_fields:
-    - public/javascripts/app/admin/contact_fields/cf_customizer.js
-    - public/javascripts/app/admin/company_fields/formfield_props.jst
+    - public/javascripts/custom-form/custom-field.js
+    - public/javascripts/custom-form/custom-form-builder.js
+    - public/javascripts/custom-form/custom_field_dialog.js
+    - public/javascripts/custom-form/dropdown.js
+    - public/javascripts/custom-form/sortable.js
+    - public/javascripts/custom-form/company_fields.js
+    - public/javascripts/custom-form/template/*.jst
 
   survey:
     - public/javascripts/frameworks/jquery.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/survey/rating.js
+    - public/javascripts/survey/feedback.js
+
+  survey_admin:
+    - app/views/admin/surveys/template/*.jst
+    - public/javascripts/survey/admin/*
+    - public/javascripts/survey/admin.js
+    - public/javascripts/survey/rating.js
+
+  survey_report:
+    - public/javascripts/frameworks/plugins/daterangepicker.js
+    - app/views/reports/survey_reports/template/*.jst 
+    - public/javascripts/survey/reports/*
+    - public/javascripts/survey/report.js
 
   redactor:
     - public/javascripts/redactor/redactor.js

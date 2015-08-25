@@ -367,6 +367,7 @@
 	//	recent calls - starts
 	#recent_calls {
 		background-color: $recent-calls-background;
+		border-radius: 2px;
 		min-height: 54px;
 		max-height: 350px;
 	}

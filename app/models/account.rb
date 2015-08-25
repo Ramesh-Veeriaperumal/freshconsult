@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
+  include Redis::OthersRedis
   include Redis::RoutesRedis
   include ErrorHandle
   include AccountConstants
@@ -20,7 +21,8 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :solution_associations
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations
+
   include CustomerDeprecationMethods
   include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
@@ -78,6 +80,22 @@ class Account < ActiveRecord::Base
     tz
   end
   
+  def survey
+    if custom_survey_enabled
+      custom_survey_from_cache || custom_surveys.first
+    else
+      surveys.first unless surveys.blank?
+    end
+  end
+
+  def survey_enabled
+      features?(:surveys)
+  end
+  
+  def custom_survey_enabled
+      features?(:custom_survey)
+  end
+
   def freshfone_enabled?
     features?(:freshfone) and freshfone_account.present?
   end
@@ -88,6 +106,10 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     freshchat_enabled? and features?(:chat_routing)
+  end
+
+  def compose_email_enabled?
+    ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def freshfone_active?
@@ -277,6 +299,10 @@ class Account < ActiveRecord::Base
   def ticket_status_values
     ticket_statuses.visible
   end
+
+  def ticket_status_values_from_cache
+    Helpdesk::TicketStatus.status_objects_from_cache(self)
+  end
   
   def has_multiple_products?
     !products.empty?
@@ -329,14 +355,6 @@ class Account < ActiveRecord::Base
 
   def reset_sso_options
     self.sso_options = set_sso_options_hash
-  end
-
-  def rabbit_mq_exchange(model_name)
-    $rabbitmq_model_exchange[rabbit_mq_exchange_key(model_name)]
-  end
-
-  def rabbit_mq_exchange_key(model_name)
-    "#{model_name.pluralize}_#{id%($rabbitmq_shards)}"
   end
 
   protected

@@ -46,79 +46,83 @@ module Integrations::GoogleContactsUtil
     return matched_goog_id[1] unless matched_goog_id.blank?
   end
 
-
+  #Called during Freshdesk to Google case.
+  #Converting User object to XML for API consumption.
   def trimmed_contact_xml(user, goog_cnt, sync_group_id=nil)
     google_xml = goog_cnt.google_xml
     return if google_xml.blank?
-    doc = REXML::Document.new("<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:gd='http://schemas.google.com/g/2005'>"+google_xml+"</feed>")
-    contact_ele_xml = nil
-    doc.elements.each('feed/entry') {|entry_element|
-      # remove id/category, this gets appended while constructing the full xml.
-      delete(entry_element, entry_element.get_elements('id'))
-      delete(entry_element, entry_element.get_elements('category'))
+    doc = Nokogiri::XML("<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/' xmlns:gContact='http://schemas.google.com/contact/2008' xmlns:batch='http://schemas.google.com/gdata/batch' xmlns:gd='http://schemas.google.com/g/2005'>"+google_xml+"</feed>")
 
-      # name
-      delete(entry_element, entry_element.get_elements('gd:name')) unless user.name.blank?
+    entry_element = doc.at_css("feed entry")
+  
+    # remove id/category, this gets appended while constructing the full xml.
+    entry_element.xpath('xmlns:id').remove
+    entry_element.xpath('xmlns:category').remove
 
-      #email
-      entry_element.elements.each('gd:email') { |email_element|
-        is_primary = email_element.attribute('primary').value
-        rel = email_element.attribute('rel').value
-        unless is_primary.blank? || is_primary != "true"
-          delete(entry_element, email_element) unless user.email.blank?
-        else
-          delete(entry_element, email_element) if rel.end_with?("home") && !user.second_email.blank?
-        end
-      }
+    # name
+    entry_element.xpath('gd:name').remove if user.name.present?
 
-      #phoneNumber
-      entry_element.elements.each('gd:phoneNumber') { |element|
-        rel = element.attribute('rel').value
-        value = element.text.strip
-        if rel.end_with?("work")
-          delete(entry_element, element) unless user.phone.blank?
-        elsif rel.end_with?("mobile")
-          delete(entry_element, element) unless user.mobile.blank?
-        end
-      }
+    #email
+    entry_element.xpath('gd:email').each do |email_element|
+      is_primary = email_element.attribute('primary').value
+      rel = email_element.attribute('rel').value
 
-      #postalAddress
-      entry_element.elements.each('gd:structuredPostalAddress') { |element|
-        rel = element.attribute('rel').value
-        if rel.end_with?("work")
-          delete(entry_element, element) unless user.address.blank?
-        end
-      }
+      if is_primary.present? && is_primary == "true"
+        email_element.remove if user.email.present?
+      else
+        email_element.remove if rel.end_with?("home") && user.second_email.present?
+      end
+    end
 
-      #content/description
-      delete(entry_element, entry_element.get_elements('content')) unless user.description.blank?
+    #phoneNumber
+    entry_element.xpath('gd:phoneNumber').each do |element|
+      rel = element.attribute("rel").value
+      element.text.strip
+      if rel.end_with?("work")
+        element.remove if user.phone.present?
+      elsif rel.end_with?("mobile")
+        element.remove if user.mobile.present?
+      end
+    end
 
-      #deleted
+    #postalAddress
+    entry_element.xpath('gd:structuredPostalAddress').each do |element| 
+      rel = element.attribute('rel').value
+      if rel.end_with?("work")
+        element.remove if user.address.present?
+      end
+    end
+
+    #content/description
+    entry_element.xpath('xmlns:content').remove if user.description.present?
+
+    #deleted
 #      delete(entry_element, entry_element.get_elements('gd:deleted')) unless user.deleted
 
-      #orgName
-      delete(entry_element, entry_element.get_elements('gd:organization')) unless user.company.blank?
+    #orgName
+    entry_element.xpath('gd:organization').remove if user.company.present?
 
-      # group
-      entry_element.elements.each("gContact:groupMembershipInfo") {|element|
-        group_id = self.sync_group_id
-        delete(entry_element,element) unless group_id.blank? or group_id != sync_group_id
-      }
+    # group
+    entry_element.xpath('gContact:groupMembershipInfo').each do |element|
+      group_id = self.sync_group_id
+      element.remove if group_id.present? && group_id == sync_group_id
+    end
 
-      delete(entry_element,entry_element.get_elements('updated')) #updated
-      contact_ele_xml = entry_element
-    }
-    contact_ele_xml
+    entry_element.xpath('xmlns:updated').remove
+    entry_element
   end
 
+
+  #Called during Google to Freshdesk case.
+  #XML to Google Contact object conversion.
   def parse_user_xml(entry_element)
     goog_contact_detail = {}
     goog_contact_detail[:google_xml] = entry_element.to_s #google_xml
     #email
-    entry_element.elements.each('gd:email') { |email_element|
+    entry_element.xpath('gd:email').each { |email_element|
       is_primary = email_element.attribute('primary').value
       rel = email_element.attribute('rel').value
-      unless is_primary.blank? || is_primary != "true"
+      if is_primary.present? && is_primary == "true"
         goog_contact_detail[:primary_email] = email_element.attribute('address').value
       else
         addr = email_element.attribute('address').value
@@ -128,18 +132,17 @@ module Integrations::GoogleContactsUtil
     }
     goog_contact_detail[:second_email] = nil if goog_contact_detail[:second_email] == goog_contact_detail[:primary_email]
 
-    goog_contact_detail[:google_id] = Integrations::GoogleContactsUtil.parse_id([entry_element.get_text('id').value]) #id
-    goog_contact_detail[:name] = entry_element.get_text('gd:name/gd:fullName').value #name
+    goog_contact_detail[:google_id] = Integrations::GoogleContactsUtil.parse_id([entry_element.xpath("xmlns:id").text]) #id
+
+    name_element = entry_element.xpath("gd:name/gd:fullName").first
+    goog_contact_detail[:name] = name_element.present? ? name_element.text : nil #name
+
     #deleted
-    deleted_val = entry_element.get_elements('gd:deleted')
-    if deleted_val.blank?
-      goog_contact_detail[:deleted] = false
-    else
-      goog_contact_detail[:deleted] = true
-    end
+    goog_contact_detail[:deleted] = entry_element.xpath("gd:deleted").present?
+
     #postalAddress
-    entry_element.elements.each('gd:structuredPostalAddress') { |element|
-      formatted_addr_element = element.get_elements('gd:formattedAddress')[0]
+    entry_element.xpath('gd:structuredPostalAddress').each do |element|
+      formatted_addr_element = element.xpath("gd:formattedAddress").first
       rel = element.attribute('rel').value
       value = formatted_addr_element.text.strip
       if rel.end_with?("work")
@@ -147,9 +150,9 @@ module Integrations::GoogleContactsUtil
       elsif goog_contact_detail[:postalAddress_work].blank?
         goog_contact_detail[:postalAddress_work] = value
       end
-    }
+    end
     #phoneNumber
-    entry_element.elements.each('gd:phoneNumber') { |element|
+    entry_element.xpath('gd:phoneNumber').each { |element|
       rel = element.attribute('rel').value
       value = element.text.strip
       if rel.end_with?("work")
@@ -163,16 +166,18 @@ module Integrations::GoogleContactsUtil
       end
     }
     #orgName
-    goog_contact_detail[:orgName] = entry_element.get_text('gd:organization/gd:orgName').value
-    goog_contact_detail[:content] = entry_element.get_text('content').value #content
-    #google_group_ids
-    google_group_ids = []
-    entry_element.elements.each("gContact:groupMembershipInfo") {|element|
-      group_id = self.sync_group_id
-      google_group_ids.push(group_id) unless group_id.blank?
-    }
+    org_name_element = entry_element.xpath('gd:organization/gd:orgName').first
+    goog_contact_detail[:orgName] = org_name_element.present? ? org_name_element.text : nil
+
+    #content
+    content_element = entry_element.xpath('xmlns:content').first
+    goog_contact_detail[:content] = content_element.present? ? content_element.text : nil
+
     goog_contact_detail[:google_group_ids] = self.sync_group_id
-    goog_contact_detail[:updated_at] = Time.parse(entry_element.get_text('updated').value) #updated
+
+    #updated
+    updated_element = entry_element.xpath('xmlns:updated').first
+    goog_contact_detail[:updated_at] = updated_element.present? ? Time.parse(updated_element.text) : nil
     goog_contact_detail
   end
 
@@ -196,14 +201,17 @@ module Integrations::GoogleContactsUtil
   end
 
   private
-    def delete(entry_element, delete_element)
-      unless delete_element.blank?
-        if delete_element.instance_of?(Array)
-          entry_element.delete_element(delete_element[0])
-        else
-          entry_element.delete_element(delete_element)
-        end
+    def construct_installed_app_config goog_acc
+      installed_app = goog_acc.account.installed_applications.with_name("google_contacts").first
+      current_config = nil # Can do a compact & flatten and can make the initial assignment as {}
+      current_config = installed_app["configs"][:inputs] unless installed_app["configs"].blank?
+      unless current_config.blank? || current_config["OAuth2"].blank?
+        current_config["OAuth2"] << "#{goog_acc.email}"
+      else
+        current_config = {}
+        current_config["OAuth2"] = ["#{goog_acc.email}"]
       end
+      current_config
     end
 
     def construct_installed_app_config goog_acc

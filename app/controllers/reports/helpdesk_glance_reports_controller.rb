@@ -12,7 +12,6 @@ class Reports::HelpdeskGlanceReportsController < ApplicationController
   before_filter :pass_solution_artical_link, :only => [:fetch_activity_ajax,:fetch_metrics]
 
   def index
-    
   end
 
   def saved_reports
