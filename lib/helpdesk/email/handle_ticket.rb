@@ -105,6 +105,7 @@ class Helpdesk::Email::HandleTicket
     attachments = []
     inline_attachments = []
     content_id_hash = {}
+    inline_count = 0
     email[:attached_items].count.times do |i|
       begin
         content_id = cid(i) && verify_inline_attachments(item, cid(i))
@@ -113,7 +114,8 @@ class Helpdesk::Email::HandleTicket
                                                         i, content_id, true)
         if att.is_a? Helpdesk::Attachment
           if content_id
-            content_id_hash[att.content_file_name+"#{i}"] = cid(i)
+            content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
+            inline_count+=1
             inline_attachments.push att
           else
             attachments.push att
