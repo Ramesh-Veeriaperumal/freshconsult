@@ -21,8 +21,7 @@ class SolutionDraftsMigration
           current_account = Account.find(account_id).make_current
           p "*"*50
           p "Migration started for account_id #{Account.current.id}"
-
-          drafts_folder_migrate(current_account)
+          drafts_folder_update(current_account)
           create_draft_for_existing(current_account)
         rescue Exception => e
           puts "-" * 50
@@ -33,22 +32,19 @@ class SolutionDraftsMigration
       end
     end
 
-    def drafts_folder_migrate(account)
+    def drafts_folder_update(account)
       default_folder = account.solution_folders.where(:is_default => true).first
-      default_folder.articles.each do |article|
-        article.build_draft_from_article
-        article.status = Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft]
-        article.save
-      end
+      default_folder.articles.update_all(:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
       p "Drafts Folder migrated for account_id #{Account.current.id}"
     end
 
     def create_draft_for_existing(account)
-      draft_articles = account.solution_articles.where(:status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft])
+      draft_articles = account.solution_articles.where('status = ?', Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
       draft_articles.each do |article|
         article.create_draft_from_article
+        p "Article : #{article.id}"
       end
-      p "Draft Articles migrated for account_id #{Account.current.id}"
+      p "Articles(Draft Status) migrated for account_id #{Account.current.id}"
     end
 
   end

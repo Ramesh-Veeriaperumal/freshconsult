@@ -15,9 +15,6 @@ window.App = window.App || {};
       this.bindForEditBtn();
 
       this.dummyActionButtonTriggers();
-      if (this.data.defaultFolder) {
-        this.defaultFolderValidate();
-      }
       this.modalBindings();
     },
 
@@ -149,19 +146,6 @@ window.App = window.App || {};
             return false;
           }
         }
-      });
-    },
-
-    defaultFolderValidate: function () {
-      $('body').on('submit.articles', '#article-form', function () {
-        if ($("#article-form").data().defaultFolder) {
-          if ($('#solution_article_folder_id').val() === "") {
-            $('.folder-warning-msg').show();
-            $('#solution_article_folder_id').select2('focus');
-            return false;
-          }
-        }
-        return true;
       });
     },
 

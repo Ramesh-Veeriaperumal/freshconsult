@@ -64,7 +64,7 @@ class Solution::ArticlesController < ApplicationController
     @article = @current_folder.articles.new(params[nscname]) 
     set_item_user 
     build_attachments
-    @article.set_status(!save_as_draft?)
+    @article.set_status(save_as_draft? ? false : publish? || params[nscname][:status])
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save

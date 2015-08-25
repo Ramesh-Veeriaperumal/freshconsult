@@ -6,7 +6,7 @@ class Solution::Draft < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :user
-  belongs_to :article, :class_name => "Solution::Article"
+  belongs_to :article, :class_name => "Solution::Article", :readonly => false
   belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
   has_one :folder, :through => :article
@@ -29,6 +29,8 @@ class Solution::Draft < ActiveRecord::Base
   attr_accessor :discarding
 
   alias_attribute :modified_by, :user_id
+
+  default_scope :order => "updated_at DESC"
 
   scope :as_list_view, :include => [:user, :folder, :category_meta]
   scope :for_sidebar, :include => [:user]
@@ -102,7 +104,7 @@ class Solution::Draft < ActiveRecord::Base
     end
 
     move_attachments
-    article.modified_by = User.current.id
+    article.modified_by = user_id
     self.article.publish!
     self.reload
     self.destroy

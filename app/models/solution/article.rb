@@ -238,17 +238,23 @@ class Solution::Article < ActiveRecord::Base
     self.account.features?(:resource_rate_limit)
   end
 
-  def create_draft_from_article(opts={})
+  def create_draft_from_article(opts = {})
     draft = build_draft_from_article(opts)
     draft.save
     draft
   end
 
-  def build_draft_from_article(opts ={})
-    opts = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
-    draft_attrs = self.attributes.slice(*Solution::Draft::COMMON_ATTRIBUTES).merge(opts)
-    draft = self.account.solution_drafts.build(draft_attrs)
+  def build_draft_from_article(opts = {})
+    draft = self.account.solution_drafts.build(draft_attributes(opts))
     draft
+  end
+
+  def draft_attributes(opts = {})
+    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
+    Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
+      draft_attrs[attribute] = self.send(attribute)
+    end
+    draft_attrs
   end
 
   def set_status(publish)
@@ -257,7 +263,6 @@ class Solution::Article < ActiveRecord::Base
 
   def publish!
     set_status(true)
-    self.modified_by = User.current.id
     save
   end
 
