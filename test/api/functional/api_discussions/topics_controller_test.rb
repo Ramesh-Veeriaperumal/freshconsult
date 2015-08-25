@@ -279,8 +279,11 @@ module ApiDiscussions
     def test_update_with_invalid_stamp_type
       forum = first_topic.forum
       forum.update_column(:forum_type, 2)
+      allowed = Topic::FORUM_TO_STAMP_TYPE[forum.forum_type]
+      allowed_string = allowed.join(',')
+      allowed_string += 'nil' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
-      match_json([bad_request_error_pattern('stamp_type', 'is not valid')])
+      match_json([bad_request_error_pattern('stamp_type', 'allowed_stamp_type', list: allowed_string)])
       assert_response :bad_request
     end
 

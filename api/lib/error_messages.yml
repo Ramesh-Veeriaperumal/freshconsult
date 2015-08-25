@@ -57,3 +57,4 @@ api_error_messages:
   cannot_update_default_sla: "Default SLA policy cannot be updated"
   unsupported_environment: "Demo site doesn't have this access!"
   company_id_required: "Company ID is required for a contact to be a Client Manager"
+  email_required: "Email should be associated to the contact before converting it to an agent"

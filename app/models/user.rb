@@ -184,7 +184,7 @@ class User < ActiveRecord::Base
     end
 
     # Used by API V2
-    def api_filter(contact_filter)
+    def contact_filter(contact_filter)
       {
         deleted: {
           conditions: { deleted: true }
@@ -351,7 +351,7 @@ class User < ActiveRecord::Base
   end
 
   # Used by API V2
-  def api_signup!
+  def create_contact!
     return false unless save_without_session_maintenance
     if (!self.deleted and !self.email.blank?)
       portal = nil

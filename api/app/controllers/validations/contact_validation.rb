@@ -39,7 +39,6 @@ class ContactValidation < ApiValidation
     end
 
     def validate_avatar
-      # errors.add(:avatar, 'File size should be < 5 MB') if avatar.size > ContactConstants::ALLOWED_AVATAR_SIZE
       unless  avatar.original_filename =~ ContactConstants::AVATAR_EXT_REGEX
         errors.add(:avatar, 'Invalid file type. Please upload a jpg or png file')
       end

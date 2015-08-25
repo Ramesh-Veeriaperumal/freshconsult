@@ -1,13 +1,15 @@
 class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
 
+  before_filter :validate_empty_params, only: [:restore, :make_agent]
+
   def index
     load_objects contacts_filter(scoper).includes(:flexifield, :company)
   end
 
   def contacts_filter(contacts)
     @contact_filter.conditions.each do |key|
-      clause = contacts.api_filter(@contact_filter)[key.to_sym] || {}
+      clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
       contacts = contacts.where(clause[:conditions])
     end
     contacts
@@ -19,7 +21,7 @@ class ApiContactsController < ApiApplicationController
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
-    elsif @item.api_signup!
+    elsif @item.create_contact!
       render "#{controller_path}/create", location: send("#{nscname}_url", @item.id), status: 201
     else
       render_custom_errors
@@ -35,7 +37,7 @@ class ApiContactsController < ApiApplicationController
     elsif @item.update_attributes(params[cname])
       @item.tags = construct_tags(@tags) if @tags
     else
-      render_custom_errors # not_tested
+      render_custom_errors
     end
   end
 
@@ -56,8 +58,7 @@ class ApiContactsController < ApiApplicationController
 
   def make_agent
     if @item.email.blank?
-      errors = [[:email, ['should be a valid email address']]] # use error_messages.yml instead of message hard coded here.
-      render_errors errors
+      render_request_error :email_required, 400
     elsif !current_account.subscription.agent_limit.nil? && reached_agent_limit?
       render_request_error :max_agents_reached, 400
     else
@@ -89,6 +90,10 @@ class ApiContactsController < ApiApplicationController
 
       contact = ContactValidation.new(params[cname], @item)
       render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
+    end
+
+    def validate_empty_params
+      params[cname].permit(*ContactConstants::EMPTY_FIELDS)
     end
 
     def sanitize_params
