@@ -1,6 +1,6 @@
-class MetalApiController < ActionController::Metal
+class MetalApiConfiguration < ActionController::Metal
   # Modules to be included for metal controller to work for our APP
-
+  
   # Do not change the order of modules included
   include ActionController::Head # needed when calling head
   include ActionController::Helpers # needed for calling methods which are defined as helper methods.
@@ -21,7 +21,7 @@ class MetalApiController < ActionController::Metal
   include ActionController::Instrumentation  # need this for active support instrumentation.
 
   # For configuration(like perform_caching, allow_forgery_protection) to be loaded for action controller metal, there are methods originally in base needs to be declared.
-  extend Compatibility
+  extend MetalCompatibility
 
   # Lazy loading hooks for metal controller.
   ActiveSupport.run_load_hooks(:action_controller, self)
@@ -36,3 +36,8 @@ class MetalApiController < ActionController::Metal
     subclass.view_context_class.include ApiApplicationHelper
   end
 end
+
+cache_config = YAML::load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
+servers = cache_config.delete(:servers)
+MetalApiConfiguration.cache_store = :dalli_store, servers, cache_config
+Object.const_set("RAILS_CACHE", MetalApiConfiguration.cache_store) 
