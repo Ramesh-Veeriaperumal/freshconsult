@@ -9,7 +9,7 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
       show: 1,
       index: 2,
       update: 3,
-      destroy: 10
+      destroy: 9
     }
 
     # create

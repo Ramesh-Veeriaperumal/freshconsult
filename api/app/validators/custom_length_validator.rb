@@ -2,7 +2,7 @@
 
 class CustomLengthValidator < ActiveModel::Validations::LengthValidator
   def validate_each(record, attribute, value)
-    value = value.respond_to?(:strip)? value.strip : value
+    value = value.respond_to?(:strip) ? value.strip : value
     super(record, attribute, value)
   end
 end
