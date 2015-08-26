@@ -120,13 +120,13 @@ module TestCaseMethods
   end
 
   def user_without_monitorships
-    User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
+    User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? && x.deleted == 0 && x.blocked == 0 } || add_new_user(@account) # changed as it should have user without any monitorship
   end
 
   def v2_time_sheet_payload
     {
       start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09', ticket_id: 1,
-      user_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
+      agent_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
     }.to_json
   end
 
@@ -190,7 +190,35 @@ module TestCaseMethods
   end
 
   def v2_group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, user_ids: [1, 3] }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: [1, 3] }
+  end
+
+  def api_company_params
+    { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
+  end
+
+  def sla_policy_params
+    { applicable_to: { company_ids: [1, 2] } }
+  end
+
+  def v1_sla_policy_params
+    { conditions: { company_id: '1,2' } }
+  end
+
+  def v2_sla_policy_payload
+    sla_policy_params.to_json
+  end
+
+  def v1_sla_policy_payload
+    { helpdesk_sla_policy: v1_sla_policy_params }.to_json
+  end
+
+  def company_payload
+    { company: api_company_params }.to_json
+  end
+
+  def v2_company_payload
+    api_company_params.to_json
   end
 
   def group_payload
@@ -269,6 +297,48 @@ module TestCaseMethods
 
   def v2_reply_payload
     { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
+  end
+
+  def v1_contact_params
+    comp  = Company.first || create_company
+    {
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10), phone: '1234567890',
+      mobile: '1234567891', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: 'en', time_zone: 'Chennai', company_id: comp.id
+    }
+  end
+
+  def v2_contact_params
+    comp  = Company.first || create_company
+    {
+      name: Faker::Lorem.characters(10), address: Faker::Lorem.characters(10),  phone: '1234567892',
+      mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
+      language: 'en', time_zone: 'Chennai', company_id: comp.id
+    }
+  end
+
+  def v1_contact_payload
+    { user: v1_contact_params }.to_json
+  end
+
+  def v2_contact_payload
+    v2_contact_params.to_json
+  end
+
+  def v2_multipart_payload
+    {
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      avatar: Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/image33kb.jpg'), 'image/jpg')
+    }
+  end
+
+  def v1_contact_update_payload
+    { user: v1_contact_params.except(:name, :email) }.to_json
+  end
+
+  def v2_contact_update_payload
+    v2_contact_params.except(:name, :email).to_json
   end
 end
 

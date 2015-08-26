@@ -29,8 +29,9 @@ module ApiDiscussions
       end
 
       def sanitize_params
-        customers = params[cname]['company_ids'] || []
-        params[cname][:customer_forums_attributes] = { customer_id: customers }
+        prepare_array_fields ['company_ids']
+        customers = params[cname]['company_ids']
+        params[cname][:customer_forums_attributes] = { customer_id: customers } unless params[cname]['company_ids'].nil?
       end
 
       def assign_protected

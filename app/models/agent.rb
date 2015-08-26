@@ -136,4 +136,25 @@ class Agent < ActiveRecord::Base
     Helpdesk::ResetResponder.perform_async({:user_id => self.user_id })
   end
 
+  # Used by API V2
+  def self.api_filter(agent_filter)
+    {
+      occasional: {
+        conditions: { occasional: true }
+      },
+      fulltime: {
+        conditions: { occasional: false }
+      },
+      email: {
+        conditions: [ "users.email = ? ", agent_filter.email ]
+      },
+      phone: {
+        conditions: [ "users.phone = ? ", agent_filter.phone ]
+      },
+      mobile: {
+        conditions: [ "users.mobile = ? ", agent_filter.mobile ]
+      }
+    }
+  end
+
 end

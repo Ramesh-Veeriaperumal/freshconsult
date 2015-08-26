@@ -268,6 +268,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:index, :show]
+    resource :"api_company", :only => [:index, :show]
+    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact
@@ -285,6 +290,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:create, :update]
+    resource :"api_company", :only => [:create, :update]
   end
 
   delete_contact do
@@ -293,6 +302,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :company, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:destroy, :restore]
+    resource :"api_company", :only => [:destroy]
   end
 
   # ************** REPORTS **************************
@@ -338,6 +351,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:make_agent]
+    resource :"api_agent", :only => [:show, :index]
   end
 
   manage_canned_responses do
@@ -359,6 +376,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/dynamic_notification_template"
     resource :"admin/email_commands_setting"
     resource :"admin/account_additional_setting"
+    resource :"api_email_config", :only => [:index, :show]
   end
 
   # **************** super admin *******************
@@ -373,10 +391,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/survey"
     resource :"admin/custom_survey"
     resource :group
-    resource :"api_email_config"
-    resource :"api_business_calendar"
-    resource :"api_group"
-    resource :"api_product"
     resource :ticket_field
     resource :"admin/contact_field"
     resource :"admin/company_field"
@@ -412,6 +426,12 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
+    resource :"api_contact_field", :only => [:index]
+    resource :"api_company_field", :only => [:index]
+    resource :"api_business_calendar", :only => [:index, :show]
+    resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
+    resource :"api_sla_policy", :only => [:index, :update]
+    resource :"api_product", :only => [:index, :show]
   end
 
   manage_account do

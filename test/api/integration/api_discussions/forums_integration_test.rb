@@ -9,8 +9,8 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       show: 1,
       update: 7,
       destroy: 12,
-      follow: 8,
-      unfollow: 8,
+      follow: 9,
+      unfollow: 7,
       is_following: 1,
       topics: 2
     }

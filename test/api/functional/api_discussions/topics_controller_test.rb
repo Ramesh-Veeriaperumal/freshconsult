@@ -45,26 +45,6 @@ module ApiDiscussions
       assert_equal "http://#{@request.host}/api/v2/discussions/topics/#{result['id']}", response.headers['Location']
     end
 
-    def test_create_with_email
-      user = other_user
-      controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', email: user.email)
-      match_json(topic_pattern(last_topic))
-      match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', posts_count: 1, user_id: user.id }, last_topic))
-      assert_response :created
-      controller.class.any_instance.unstub(:is_allowed_to_assume?)
-    end
-
-    def test_create_with_user_id
-      user = other_user
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', user_id: user.id)
-      match_json(topic_pattern(last_topic))
-      match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', user_id: user.id, posts_count: 1 }, last_topic))
-      assert_response :created
-    end
-
     def test_create_with_stamp_type
       forum = forum_obj
       forum.update_column(:forum_type, 2)
@@ -97,10 +77,10 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
-    def test_create_invalid_user_id
+    def test_create_invalid_user_field
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('user_id', "can't be blank")])
+      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
       assert_response :bad_request
     end
 
@@ -113,9 +93,8 @@ module ApiDiscussions
 
     def test_create_validate_numericality
       post :create, construct_params({}, forum_id: 'junk',
-                                         title: 'test title', message_html: 'test content', stamp_type: 'hj', user_id: 'junk')
+                                         title: 'test title', message_html: 'test content', stamp_type: 'hj')
       match_json([bad_request_error_pattern('forum_id', 'is not a number'),
-                  bad_request_error_pattern('user_id', 'is not a number'),
                   bad_request_error_pattern('stamp_type', 'is not a number')])
       assert_response :bad_request
     end
@@ -241,20 +220,8 @@ module ApiDiscussions
       assert_equal ' ', @response.body
     end
 
-    def test_create_without_manage_users_privilege
-      user = other_user
-      controller.class.any_instance.stubs(:privilege?).with(:manage_users).returns(false).once
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', email: user.email)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
-    end
-
     def test_create_without_edit_topic_privilege
-      user = other_user
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       post :create, construct_params({}, forum_id: forum_obj.id,
                                          title: 'test title', message_html: 'test content', sticky: true)
       assert_response :bad_request
@@ -263,7 +230,6 @@ module ApiDiscussions
 
     def test_update_without_edit_topic_privilege
       topic = first_topic
-      controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
@@ -313,8 +279,11 @@ module ApiDiscussions
     def test_update_with_invalid_stamp_type
       forum = first_topic.forum
       forum.update_column(:forum_type, 2)
+      allowed = Topic::FORUM_TO_STAMP_TYPE[forum.forum_type]
+      allowed_string = allowed.join(',')
+      allowed_string += 'nil' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
-      match_json([bad_request_error_pattern('stamp_type', 'is not valid')])
+      match_json([bad_request_error_pattern('stamp_type', 'allowed_stamp_type', list: allowed_string)])
       assert_response :bad_request
     end
 
@@ -345,36 +314,6 @@ module ApiDiscussions
                   bad_request_error_pattern('message_html', "can't be blank")
                  ])
       assert_response :bad_request
-    end
-
-    def test_create_with_email_without_assume_privilege
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', email: deleted_user.email)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
-      deleted_user.update_column(:deleted, false)
-    end
-
-    def test_create_with_invalid_email
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', email: 'random')
-      assert_response :bad_request
-      match_json [bad_request_error_pattern('email', "can't be blank")]
-    end
-
-    def test_create_with_user_without_assume_privilege
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', user_id: deleted_user.id)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
-      deleted_user.update_column(:deleted, false)
-    end
-
-    def test_create_with_invalid_user_id
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', user_id: '999')
-      assert_response :bad_request
-      match_json [bad_request_error_pattern('user_id', "can't be blank")]
     end
 
     def test_followed_by

@@ -5,4 +5,4 @@ json.cache! [controller_name, action_name, @item] do
   json.partial! 'shared/utc_date_format', item: @item
 end
 # Should not be inside the cache as group's updated_at will not change on adding/removing agent groups
-json.user_ids @item.agent_groups.pluck(:user_id)
+json.agent_ids @item.agent_groups.pluck(:user_id)

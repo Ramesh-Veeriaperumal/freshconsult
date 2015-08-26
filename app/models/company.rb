@@ -111,5 +111,4 @@ class Company < ActiveRecord::Base
   def custom_field_aliases 
     @custom_field_aliases ||= custom_form.custom_company_fields.map(&:name)
   end
-  
 end

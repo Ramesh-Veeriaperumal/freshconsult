@@ -60,6 +60,8 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:update] -= 12
       # 3 queries that will be part of new validations added to ticket validator for api. Hence substracting it.
       v2[:update] -= 3
+      # 6 queries that will be avoided which caching in delegator. Hence subtracting it
+      v2[:update] -= 6
 
       # index
       v2[:index], v2[:api_index] = count_api_queries do

@@ -1,6 +1,6 @@
 module GroupConstants
-  ARRAY_FIELDS = [{ 'user_ids' => [] }]
-  FIELDS = %w(name description escalate_to unassigned_for auto_ticket_assign user_ids) | ARRAY_FIELDS
+  ARRAY_FIELDS = [{ 'agent_ids' => [] }]
+  FIELDS = %w(name description escalate_to unassigned_for auto_ticket_assign agent_ids) | ARRAY_FIELDS
 
   FIELDS_WITHOUT_TICKET_ASSIGN = %w(name description escalate_to unassigned_for agents) | ARRAY_FIELDS
 

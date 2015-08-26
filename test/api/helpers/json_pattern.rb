@@ -1,5 +1,4 @@
 module JsonPattern
-  include ApiApplicationHelper
   def forum_category_response_pattern(name = 'test', desc = 'test desc')
     {
       id: Fixnum,
@@ -163,7 +162,7 @@ module JsonPattern
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.ignore_extra_keys! : ticket.custom_field
+    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
     expected_output[:description_html] ||= format_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {
@@ -221,10 +220,10 @@ module JsonPattern
       note: expected_output[:note] || time_sheet.note,
       ticket_id: expected_output[:ticket_id] || time_sheet.workable.display_id,
       id: Fixnum,
-      user_id: expected_output[:user_id] || time_sheet.user_id,
+      agent_id: expected_output[:agent_id] || time_sheet.user_id,
       billable: (expected_output[:billable] || time_sheet.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_sheet.timer_running).to_s.to_bool,
-      time_spent: expected_output[:time_spent] || api_time_spent(time_sheet.time_spent),
+      time_spent: expected_output[:time_spent] || format_time_spent(time_sheet.time_spent),
       executed_at: expected_output[:executed_at] || time_sheet.executed_at,
       start_time: expected_output[:start_time] || time_sheet.start_time,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -300,13 +299,13 @@ module JsonPattern
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
-    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
   def group_pattern_without_assingn_type(expected_output = {}, group)
     group_json = group_json(expected_output, group)
-    group_json[:user_ids] = group.agent_groups.pluck(:user_id)
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)
     group_json
   end
 
@@ -395,6 +394,183 @@ module JsonPattern
       html_doc.xpath('//p').each { |div|  div.name = 'div'; }
     end
     Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
+  end
+
+  def company_pattern(expected_output = {}, company)
+    domains = company.domains.nil? ? nil : company.domains.split(',')
+    expected_output[:ignore_created_at] ||= true
+    expected_output[:ignore_updated_at] ||= true
+    {
+      id: Fixnum,
+      name: expected_output[:name] || company.name,
+      description: company.description,
+      domains: domains,
+      note: company.note,
+      custom_fields: company.custom_field,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def company_field_pattern(_expected_output = {}, company_field)
+    company_field_json = company_field_response_pattern company_field
+    company_field_json[:choices] = company_field.choices.map { |x| x[:value] } if company_field.field_type.to_s == 'custom_dropdown'
+    company_field_json
+  end
+
+  def company_field_response_pattern(company_field)
+    {
+      id: Fixnum,
+      name: company_field.name,
+      default: company_field.default_field?,
+      label: company_field.label,
+      field_type: company_field.field_type,
+      position: company_field.position,
+      required_for_agent: company_field.required_for_agent,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
+    expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
+    contact_custom_field = (contact.custom_field && ignore_extra_keys) ? contact.custom_field.ignore_extra_keys! : contact.custom_field
+
+    if contact.avatar
+      contact_avatar = {
+
+        content_type: contact.avatar.content_content_type,
+        size: contact.avatar.content_file_size,
+        name: contact.avatar.content_file_name,
+        avatar_url: String,
+        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        id: contact.avatar.id
+      }
+    end
+
+    {
+      active: expected_output[:active] || contact.active,
+      address: expected_output[:address] || contact.address,
+      client_manager: expected_output[:client_manager] || contact.client_manager,
+      company_id: expected_output[:company_id] || contact.company_id,
+      description: expected_output[:description] || contact.description,
+      email: expected_output[:email] || contact.email,
+      id: Fixnum,
+      job_title: expected_output[:job_title] || contact.job_title,
+      language: expected_output[:language] || contact.language,
+      mobile: expected_output[:mobile] || contact.mobile,
+      name: expected_output[:name] || contact.name,
+      phone: expected_output[:phone] || contact.phone,
+      tags: expected_output[:tags] || contact.tags.collect(&:name),
+      time_zone: expected_output[:time_zone] || contact.time_zone,
+      twitter_id: expected_output[:twitter_id] || contact.twitter_id,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      custom_fields:  expected_custom_field || contact_custom_field,
+      avatar: expected_output[:avatar] || contact_avatar
+
+    }
+  end
+
+  def deleted_contact_pattern(expected_output = {}, contact)
+    contact_pattern(expected_output, contact).merge(deleted: (expected_output[:deleted] || contact.deleted).to_s.to_bool)
+  end
+
+  def index_contact_pattern(contact)
+    contact_pattern(contact).except(:avatar, :tags, :deleted)
+  end
+
+  def index_deleted_contact_pattern(contact)
+    index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
+  end
+
+  def contact_field_pattern(expected_output = {}, contact_field)
+    default_contact_field = contact_field.column_name == 'default'
+
+    {
+      deleted: expected_output[:deleted] || contact_field.deleted,
+      default: expected_output[:default] || default_contact_field,
+      customers_can_edit: expected_output[:customers_can_edit] || contact_field.editable_in_portal,
+      editable_in_signup: expected_output[:editable_in_signup] || contact_field.editable_in_signup,
+      field_type: expected_output[:field_type] || contact_field.field_type.to_s,
+      id: Fixnum,
+      label: expected_output[:label] || contact_field.label,
+      label_for_customers: expected_output[:label_for_customers] || contact_field.label_in_portal,
+      name: expected_output[:name] || contact_field.name,
+      position: expected_output[:position] || contact_field.position,
+      required_for_agent: expected_output[:required_for_agent] || contact_field.required_for_agent,
+      required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
+      displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
+      choices: expected_output[:choices] || contact_field_choices(contact_field),
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def sla_policy_pattern(expected_output = {}, sla_policy)
+    conditions_hash = {}
+    sla_policy.conditions.each { |key, value| conditions_hash[key.to_s.pluralize] = value } unless sla_policy.conditions.nil?
+    {
+      id: Fixnum,
+      name: sla_policy.name,
+      description: sla_policy.description,
+      is_default: sla_policy.is_default,
+      applicable_to: expected_output[:applicable_to] || conditions_hash,
+      position: sla_policy.position,
+      active: sla_policy.active,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
+  def agent_pattern(expected_output = {}, agent)
+    user = {
+      active: agent.user.active,
+      created_at: agent.user.created_at,
+      email: agent.user.email,
+      job_title: agent.user.job_title,
+      language: agent.user.language,
+      last_login_at: agent.user.last_login_at,
+      mobile: agent.user.mobile,
+      name: agent.user.name,
+      phone: agent.user.phone,
+      time_zone: agent.user.time_zone,
+      updated_at: agent.user.updated_at
+    }
+
+    {
+      available_since: expected_output[:available_since] || agent.active_since,
+      available: expected_output[:available] || agent.available,
+      created_at: agent.created_at,
+      id: Fixnum,
+      occasional: expected_output[:occasional] || agent.occasional,
+      signature: expected_output[:signature] || agent.signature,
+      signature_html: expected_output[:signature_html] || agent.signature_html,
+      ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
+      updated_at: agent.updated_at,
+      user: expected_output[:user] || user
+    }
+  end
+
+  # Helper methods
+
+  def contact_field_choices(contact_field)
+    case contact_field.field_type.to_s
+    when 'default_language', 'default_time_zone'
+      contact_field.choices.map { |x| x.values.reverse }.to_h
+    when 'custom_dropdown' # not_tested
+      contact_field.choices.map { |x| x[:value] }
+    else
+      []
+    end
+  end
+
+  def format_time_spent(time_spent)
+    if time_spent.is_a? Numeric
+      hours, minutes = time_spent.divmod(60).first.divmod(60)
+      format('%02d:%02d', hours, minutes)
+    end
   end
 end
 

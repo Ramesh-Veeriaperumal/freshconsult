@@ -37,4 +37,12 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     assert_response :missing
     assert_equal ' ', response.body
   end
+
+  def test_index_without_privilege
+    email_config = create_email_config
+    User.any_instance.stubs(:privilege?).returns(false).once
+    get :show, construct_params(id: email_config.id)
+    assert_response :forbidden
+    match_json(request_error_pattern('access_denied'))
+  end
 end

@@ -48,11 +48,28 @@ Helpkit::Application.routes.draw do
     end
     resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
 
+    resources :contacts, as: "api_contacts", :controller => "api_contacts", :except => [:new, :edit] do
+      member do
+        put :restore
+        put :make_agent
+      end
+    end
+
+    resources :agents, :controller => "api_agents", :only => [:index, :show]
+
+    resources :contact_fields, :controller => "api_contact_fields", :only => [:index]
+
     resources :products, :controller => "api_products", :only => [:index, :show]
 
     resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]
 
     resources :business_calendars, :controller => "api_business_calendars", :only => [:index, :show]
+
+    resources :companies, as: "api_companies", :controller => "api_companies", :except => [:new, :edit]
+
+    resources :company_fields, as: "api_company_fields", :controller => "api_company_fields", :only => [:index]
+
+    resources :sla_policies, :controller => "api_sla_policies", :only => [ :index, :update ]  
   end
     
   scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do

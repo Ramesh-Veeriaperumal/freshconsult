@@ -183,6 +183,39 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
+    # Used by API V2
+    def contact_filter(contact_filter)
+      {
+        deleted: {
+          conditions: { deleted: true }
+        },
+        verified: {
+          conditions: { deleted: false, active: true }
+        },
+        unverified: {
+          conditions: { deleted: false, active: false }
+        },
+        blocked: {
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.now+5.days, Time.now+5.days ]
+        },
+        all: {
+          conditions: { deleted: false }
+        },
+        company_id: {
+          conditions: { customer_id: contact_filter.company_id }
+        },
+        email: {
+          conditions: { email: contact_filter.email }
+        },
+        phone: {
+          conditions: { phone: contact_filter.phone }
+        },
+        mobile: {
+          conditions: { mobile: contact_filter.mobile }
+        }
+      }
+    end
+
     # protected :find_by_email_or_name, :find_by_an_unique_id
   end
 
@@ -313,6 +346,18 @@ class User < ActiveRecord::Base
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
+    end
+    true
+  end
+
+  # Used by API V2
+  def create_contact!
+    return false unless save_without_session_maintenance
+    if (!self.deleted and !self.email.blank?)
+      portal = nil
+      force_notification = false
+      args = [ portal, force_notification ]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end

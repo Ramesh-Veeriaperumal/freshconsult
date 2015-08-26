@@ -2,6 +2,28 @@ class ApiGroupsController < ApiApplicationController
   before_filter :prepare_agents, only: [:create, :update]
   before_filter :set_round_robin_enbled
 
+  def create
+    group_delegator = GroupDelegator.new(@item)
+    if !group_delegator.valid?
+      render_errors(group_delegator.errors, group_delegator.error_options)
+    elsif @item.save
+      render_201_with_location(item_id: @item.id)
+    else
+      render_errors(@item.errors)
+    end
+  end
+
+  def update
+    @item.assign_attributes(params[cname])
+    @item.agent_groups = @item.agent_groups
+    group_delegator = GroupDelegator.new(@item)
+    if !group_delegator.valid?
+      render_errors(group_delegator.errors, group_delegator.error_options)
+    elsif !@item.update_attributes(params[cname])
+      render_errors(@item.errors)
+    end
+  end
+
   private
 
     def validate_params
@@ -27,7 +49,8 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def initialize_agents
-      @agents = Array.wrap params[cname][:user_ids] if params[cname].key?(:user_ids)
+      prepare_array_fields [:agent_ids]
+      @agents = params[cname][:agent_ids]
     end
 
     def sanitize_params
@@ -53,12 +76,5 @@ class ApiGroupsController < ApiApplicationController
         @item.agent_groups.where('user_id not in (?)', @agents).destroy_all
       end
       @agents -= @item.agent_groups.map(&:user_id)
-    end
-
-    def set_custom_errors(_item = @item)
-      bad_agent_ids = @item.agent_groups.select { |x| x.errors.present? }.collect(&:user_id)
-      @item.errors.add(:user_ids, 'list is invalid') if bad_agent_ids.present?
-      @error_options = { remove: :'agent_groups.user', user_ids: { list: "#{bad_agent_ids.join(', ')}" } }
-      @error_options
     end
 end

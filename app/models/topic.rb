@@ -11,7 +11,7 @@ class Topic < ActiveRecord::Base
   include Community::HitMethods
   
   acts_as_voteable
-  validates :forum, :user, :title, :presence => true
+  validates_presence_of :forum, :user, :title
   validate :check_stamp_type
 
   concerned_with :merge

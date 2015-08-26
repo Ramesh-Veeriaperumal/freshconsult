@@ -1,5 +1,5 @@
 module ApiApplicationHelper
-  def api_time_spent(time_spent)
+  def format_time_spent(time_spent)
     if time_spent.is_a? Numeric
       # converts seconds to hh:mm format say 120 seconds to 00:02
       hours, minutes = time_spent.divmod(60).first.divmod(60)
@@ -8,7 +8,7 @@ module ApiApplicationHelper
     end
   end
 
-  def api_choices(current_account, ticket_field)
+  def ticket_field_choices(current_account, ticket_field)
     case ticket_field.field_type
     when 'custom_dropdown'
       ticket_field.picklist_values.collect(&:value)
@@ -32,18 +32,45 @@ module ApiApplicationHelper
       Hash[current_account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }]
     when 'default_product'
       Hash[current_account.products_from_cache.collect { |e| [CGI.escapeHTML(e.name), e.id] }]
-    when 'nested_field'
-      ticket_field.picklist_values.collect(&:value)
     else
       []
     end
   end
 
-  def api_nested_choices(picklist_values)
+  def nested_choices(picklist_values)
     picklist_values.collect do |c|
       Hash[c.value, c.sub_picklist_values.collect do |x|
         Hash[x.value, x.sub_picklist_values.collect(&:value)]
       end]
     end
+  end
+
+  def pluralize_keys(input_hash)
+    return_hash = {}
+    input_hash.each { |key, value| return_hash[key.to_s.pluralize] = value } if input_hash
+    return_hash
+  end
+
+  def csv_to_array(string_csv)
+    string_csv.split(',') unless string_csv.nil?
+  end
+
+  def companies_custom_dropdown_choices(choices = [])
+    choices.map { |x| x[:value] }
+  end
+
+  def contact_field_choices(contact_field)
+    case contact_field.field_type.to_s
+    when 'default_language', 'default_time_zone'
+      contact_field.choices.map { |x| x.values.reverse }.to_h
+    when 'custom_dropdown' # not_tested
+      contact_field.choices.map { |x| x[:value] }
+    else
+      []
+    end
+  end
+
+  def default_contact_field?(contact_field)
+    contact_field.column_name == 'default'
   end
 end

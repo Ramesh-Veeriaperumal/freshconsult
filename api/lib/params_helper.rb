@@ -14,15 +14,5 @@ class ParamsHelper
         controller_params.delete(field)
       end
     end
-
-    def uniq_params(params_with_uniq_value, controller_params)
-      params_with_uniq_value.each do |field|
-        controller_params[field].try(:uniq!)
-      end
-    end
-
-    def get_user_param(email)
-      email ? :email : :user_id
-    end
   end
 end

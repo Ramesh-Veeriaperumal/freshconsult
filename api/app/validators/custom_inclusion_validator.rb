@@ -3,7 +3,8 @@
 class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
   def validate_each(record, attribute, value)
     inclusion_list = delimiter.respond_to?(:call) ? delimiter.call(record) : delimiter
-    unless inclusion_list.send(inclusion_method(inclusion_list), value)
+    record.errors.add(attribute, 'should_be_blank', options) if value.present? && inclusion_list.empty?
+    unless inclusion_list.send(inclusion_method(inclusion_list), value) || inclusion_list.empty?
 
       # message should be different if the attribute is required but not defined.
       message = options[:message]

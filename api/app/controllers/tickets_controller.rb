@@ -12,7 +12,7 @@ class TicketsController < ApiApplicationController
     assign_protected
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_custom_errors(ticket_delegator)
+      render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
       render_201_with_location(item_id: @item.display_id)
       notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
@@ -23,11 +23,13 @@ class TicketsController < ApiApplicationController
 
   def update
     assign_protected
+
+    # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     ticket_delegator = TicketDelegator.new(@item)
     if !ticket_delegator.valid?
-      render_custom_errors(ticket_delegator)
+      render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
     else
@@ -121,16 +123,17 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      ParamsHelper.uniq_params([:cc_emails, :tags], params[cname])
+      prepare_array_fields [:cc_emails, :tags]
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
-      cc_emails =  (params[cname][:cc_emails] || [])
+      cc_emails =  params[cname][:cc_emails]
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup }
+      @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
+      assign_checkbox_value if params[cname][:custom_fields]
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
@@ -138,7 +141,7 @@ class TicketsController < ApiApplicationController
       ParamsHelper.clean_params([:cc_emails], params[cname])
 
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-      params[cname][:tags] = construct_ticket_tags(@tags) if @tags
+      params[cname][:tags] = construct_tags(@tags) if @tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
@@ -158,8 +161,10 @@ class TicketsController < ApiApplicationController
     def assign_protected
       @item.product ||= current_portal.product
       @item.account = current_account
-      @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
-      @item.cc_email = @cc_emails
+      unless @cc_emails.nil?
+        @new_cc_emails = @cc_emails[:cc_emails] - (@item.cc_email.try(:[], :cc_emails) || []) if update?
+        @item.cc_email = @cc_emails
+      end
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
     end
@@ -173,6 +178,14 @@ class TicketsController < ApiApplicationController
         end
       end
       true
+    end
+
+    # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
+    def assign_checkbox_value
+      params[cname][:custom_fields].each_pair do |key, value|
+        next unless Helpers::TicketsValidationHelper.check_box_type_custom_field_names.include?(key.to_s)
+        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
+      end
     end
 
     def verify_ticket_permission

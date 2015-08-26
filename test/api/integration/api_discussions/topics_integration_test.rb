@@ -1,6 +1,6 @@
 require_relative '../../test_helper'
 
-class TopicsIntegrationest < ActionDispatch::IntegrationTest
+class TopicsIntegrationTest < ActionDispatch::IntegrationTest
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -8,10 +8,10 @@ class TopicsIntegrationest < ActionDispatch::IntegrationTest
       v2_expected = {
         create: 6,
         show: 1,
-        update: 11,
+        update: 10,
         destroy: 11,
         follow: 3,
-        unfollow: 8,
+        unfollow: 7,
         is_following: 1,
         posts: 2
       }

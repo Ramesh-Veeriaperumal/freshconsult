@@ -37,9 +37,6 @@ class ApiApplicationController < MetalApiConfiguration
   # Used to check if update contains no parameters.
   before_filter :check_params, only: :update
 
-  # Used to stop execution of create before validating the params.
-  before_filter :before_validation, only: [:create]
-
   # Redefine below method in your controllers to check strong parameters and other validations that do not require a DB call.
   before_filter :validate_params, only: [:create, :update]
 
@@ -47,7 +44,7 @@ class ApiApplicationController < MetalApiConfiguration
   before_filter :sanitize_params, only: [:create, :update]
 
   # This is not moved inside create because, controlelrs redefining create needn't call build_object again.
-  before_filter :build_object, only: [:create]
+  before_filter :before_build_object, :build_object, only: [:create]
 
   # Validating the filter params sent in the url for filtering collection of objects.
   before_filter :validate_filter_params, only: [:index]
@@ -153,6 +150,10 @@ class ApiApplicationController < MetalApiConfiguration
       # Template method - Redefine if the controller needs requires_feature before_filter
     end
 
+    def before_build_object
+      # Template method to stop execution just before build_object
+    end
+
     def before_load_object
       # Template method to stop execution just before load_object
     end
@@ -182,6 +183,14 @@ class ApiApplicationController < MetalApiConfiguration
 
     def sanitize_params
       # This will be used to map incoming parameters to parameters that the model would understand
+    end
+
+    def prepare_array_fields(array_fields = [])
+      array_fields.each do |field|
+        value = Array.wrap params[cname][field] if params[cname].key? field
+        params[cname][field] = value.try(:uniq).reject { |f| f.to_s.empty? } unless value.nil?
+        params[cname][field] = [] if value.nil? && create?
+      end
     end
 
     def build_object
@@ -221,9 +230,10 @@ class ApiApplicationController < MetalApiConfiguration
       # This is used to manipulate the model errors to a format that is acceptable.
     end
 
-    def render_custom_errors(item = @item)
+    def render_custom_errors(item = @item, merge_item_error_options = false)
       options = set_custom_errors(item) # this will set @error_options if necessary.
       Array.wrap(options.delete(:remove)).each { |field| item.errors[field].clear } if options
+      (options ||= {}).merge!(item.error_options) if merge_item_error_options && item.error_options
       render_errors(item.errors, options)
     end
 
@@ -304,23 +314,27 @@ class ApiApplicationController < MetalApiConfiguration
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
       fields = constant[:all]
-      constant.keys.each { |key| fields += constant[key] if privilege?(key) }
+      constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
       fields
     end
 
     def update?
-      @update ||= action_name == 'update'
+      @update ||= current_action?('update')
     end
 
     def create?
-      @create ||= action_name == 'create'
+      @create ||= current_action?('create')
     end
 
     def show?
-      @show ||= action_name == 'show'
+      @show ||= current_action?('show')
     end
 
     def destroy?
-      @destroy ||= action_name == 'destroy'
+      @destroy ||= current_action?('destroy')
+    end
+
+    def current_action?(action)
+      action_name.to_s == action
     end
 end

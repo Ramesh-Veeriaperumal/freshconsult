@@ -16,10 +16,14 @@ module DiscussionMonitorConcern
 
   def follow
     fetch_monitorship
-    if skip_update || @monitorship.update_attributes(active: true, portal_id: current_portal.id)
+    if skip_update
+      head 204
+    elsif validate_follow_delegator
+      return
+    elsif @monitorship.update_attributes(active: true, portal_id: current_portal.id)
       head 204
     else
-      render_errors(@monitorship.errors)
+      render_errors(@monitorship.errors) # not_tested
     end
   end
 
@@ -41,6 +45,16 @@ module DiscussionMonitorConcern
   end
 
   private
+
+    # unfollow does not create a new object from user input, hence no validation.
+    def validate_follow_delegator
+      fetch_monitorship
+      delegator = MonitorshipDelegator.new(@monitorship)
+      if delegator.invalid?
+        render_errors delegator.errors
+        return true
+      end
+    end
 
     def before_load_object
       can_send_user? if follow? || unfollow?
@@ -71,7 +85,7 @@ module DiscussionMonitorConcern
     end
 
     def validate_toggle_params
-      toggle_params = [(:user_id if privilege?(:manage_users))]
+      toggle_params = DiscussionConstants::FOLLOWED_BY_FIELDS
       params[cname].permit(*toggle_params)
       validate params[cname]
     end
@@ -95,18 +109,18 @@ module DiscussionMonitorConcern
     end
 
     def is_following?
-      @is_following ||= action_name == 'is_following'
+      @is_following ||= current_action?('is_following')
     end
 
     def follow?
-      @follow ||= action_name == 'follow'
+      @follow ||= current_action?('follow')
     end
 
     def unfollow?
-      @unfollow ||= action_name == 'unfollow'
+      @unfollow ||= current_action?('unfollow')
     end
 
     def followed_by?
-      @followed_by ||= action_name == 'followed_by'
+      @followed_by ||= current_action?('followed_by')
     end
 end

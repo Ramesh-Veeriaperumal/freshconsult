@@ -1,5 +1,5 @@
 class TimeSheetValidation < ApiValidation
-  attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :user_id, :user, :note, :ticket, :item, :request_params, :timer_running, :start_time
+  attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :agent_id, :user, :note, :ticket, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
   # Common validations
@@ -31,13 +31,13 @@ class TimeSheetValidation < ApiValidation
   validate :valid_ticket?, if: -> { errors[:ticket_id].blank? && @ticket_id_set }, on: :create
 
   # User specific validations
-  # user_id can't be changed in update if timer is running for the user.
-  validates :user_id, inclusion: { in: [nil], message: 'cant_update_user' },
-                      if: -> { item.timer_running && @user_id_set && item.user_id != user_id }, on: :update
-  validates :user_id, numericality: true, allow_nil: true, if: -> { errors[:user_id].blank? }
+  # agent_id can't be changed in update if timer is running for the user.
+  validates :agent_id, inclusion: { in: [nil], message: 'cant_update_user' },
+                       if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
+  validates :agent_id, numericality: true, allow_nil: true, if: -> { errors[:agent_id].blank? }
 
-  # if user_id is not a number or not set in update, to avoid query, below if condition is used.
-  validate :valid_user?,  if: -> { errors[:user_id].blank? && @user_id_set }
+  # if agent_id is not a number or not set in update, to avoid query, below if condition is used.
+  validate :valid_user?,  if: -> { errors[:agent_id].blank? && @agent_id_set }
 
   def initialize(request_params, item, timer_running)
     super(request_params, item)
@@ -57,8 +57,8 @@ class TimeSheetValidation < ApiValidation
     end
 
     def valid_user?
-      user = Account.current.agents_from_cache.detect { |x| x.user_id == @user_id } if @user_id_set
-      errors.add(:user_id, :blank) unless user
+      user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set
+      errors.add(:agent_id, :blank) unless user
     end
 
     def disallow_reset_timer_value

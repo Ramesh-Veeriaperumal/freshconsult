@@ -123,8 +123,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         conditions: ['`helpdesk_time_sheets`.`executed_at` <= ?', filter_options[:executed_before].try(:to_time).try(:utc) ]
       },
 
-      user_id: {
-        conditions: {user_id: filter_options[:user_id]}
+      agent_id: {
+        conditions: {user_id: filter_options[:agent_id]}
       },
       
       company_id: {

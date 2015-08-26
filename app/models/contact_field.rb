@@ -71,4 +71,5 @@ class ContactField < ActiveRecord::Base
   def label_in_portal
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label_in_portal)
   end
+
 end

@@ -34,6 +34,14 @@ class TicketValidation < ApiValidation
   validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
+  validates :custom_fields, custom_field: { custom_fields:
+                              {
+                                validatable_custom_fields: proc { Helpers::TicketsValidationHelper.data_type_validatable_custom_fields },
+                                required_based_on_status: proc { |x| x.required_based_on_status? },
+                                required_attribute: :required
+                              }
+                           }, if: -> { errors[:custom_fields].blank? }
+
   def initialize(request_params, item)
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
@@ -64,6 +72,10 @@ class TicketValidation < ApiValidation
       errors.add(:cc_emails, 'max_count_exceeded')
       (self.error_options ||= {}).merge!(cc_emails: { max_count: "#{TicketConstants::MAX_EMAIL_COUNT}" })
     end
+  end
+
+  def required_based_on_status?
+    Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
   end
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
