@@ -805,7 +805,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id
-    product = create_product
+    product = create_product(email: Faker::Internet.email)
     params_hash = { product_id: product.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -815,8 +815,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_diff_email_config_id
-    product = create_product
-    product_1 = create_product
+    product = create_product(email: Faker::Internet.email)
+    product_1 = create_product(email: Faker::Internet.email)
     params_hash = { product_id: product.id, email_config_id: product_1.primary_email_config.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -826,7 +826,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_same_email_config_id
-    product = create_product
+    product = create_product(email: Faker::Internet.email)
     email_config = create_email_config(product_id: product.id)
     params_hash = { product_id: product.id, email_config_id: email_config.id }
     t = ticket
