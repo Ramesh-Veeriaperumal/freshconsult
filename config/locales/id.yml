@@ -1,6 +1,5 @@
 id:
   meta:
-    language_id: 13
     language_name: Indonesian
   errors:
     events_empty: "Acara tidak boleh kosong"

@@ -4,6 +4,7 @@ class Mobihelp::SolutionsController < MobihelpController
   include Cache::Memcache::Mobihelp::Solution
 
   before_filter :check_solution_updated, :only => :articles
+  before_filter :load_mobihelp_solution_category, :only => :articles
 
   # version 1 - Supports single solution category.
   # version 2 - Supports multiple solution categories with the order of position. Mobihelp SDK version 1.3
@@ -11,22 +12,19 @@ class Mobihelp::SolutionsController < MobihelpController
 
   def articles
     solution_data = "[]"
-    category_ids = @mobihelp_app.app_solutions.all(:order => "position").map(&:category_id)
-    unless category_ids.blank?
+    unless @categories.blank?
       if request_version_2?
-        solution_data = @mobihelp_app.solutions_with_category(category_ids)
+        solution_data = @mobihelp_app.solutions_with_category(@categories)
       else
-        solution_data = @mobihelp_app.solutions_without_category(category_ids)
+        solution_data = @mobihelp_app.solutions_without_category(@categories)
       end
     end
     render_json(solution_data)
   end
 
   private
-
     def load_mobihelp_solution_category
-      category_ids = @mobihelp_app.app_solutions.all(:order => "position").map(&:category_id)
-      @categories = current_account.solution_categories.where(id: category_ids).reorder("field(id, #{category_ids.join(',')})") if category_ids.any?
+      @categories = @mobihelp_app.solution_categories
     end
 
     def request_version_2?

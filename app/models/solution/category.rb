@@ -9,40 +9,19 @@ class Solution::Category < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
+  include Solution::MetaMethods
   
   self.table_name =  "solution_categories"
   
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
   
-  belongs_to_account
-
-  belongs_to :solution_category_meta, 
-    :class_name => 'Solution::CategoryMeta', :foreign_key => "parent_id"
-
-  has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
-  has_many :solution_folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
-  has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 
-          :conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-  has_many :published_articles, :through => :public_folders
-  has_many :articles, :through => :folders
-  has_many :portal_solution_categories, 
-    :class_name => 'PortalSolutionCategory', 
-    :foreign_key => :solution_category_id, 
-    :dependent => :delete_all
-
-  has_many :portals, :through => :portal_solution_categories
-  has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
-          :conditions => [" solution_folders.visibility in (?,?) ",
-          VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
-  
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
 
-  before_create :set_default_portal
+  concerned_with :associations, :meta_associations
 
-  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution', :dependent => :destroy
-  has_many :mobihelp_apps, :class_name => 'Mobihelp::App', :through => :mobihelp_app_solutions
+  before_create :set_default_portal
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
   
@@ -50,7 +29,8 @@ class Solution::Category < ActiveRecord::Base
 
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
-  include Solution::MetaMethods
+  include Solution::LanguageMethods
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'
@@ -78,19 +58,32 @@ class Solution::Category < ActiveRecord::Base
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def portal_ids_with_meta
+    account.launched?(:meta_read) ? portals_through_metum_ids : portal_ids_without_meta
+  end
+
+  alias_method_chain :portal_ids, :meta
    
   private 
 
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.id)
+      category_obj.update_mh_solutions_category_time
     end
 
     def set_mobihelp_app_updated_time
-      update_mh_app_time(self.id)
+      category_obj.update_mh_app_time
     end
 
+    def category_obj
+      self.reload
+      Account.current.launched?(:meta_read) ? self.solution_category_meta : self
+    end
+
+    ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!
     def set_default_portal
-      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
+      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids_without_meta.blank?
     end
 
 end

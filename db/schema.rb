@@ -2622,6 +2622,7 @@ ActiveRecord::Schema.define(:version => 20150824192547) do
 
   add_index "solution_categories", ["account_id", "name"], :name => "index_solution_categories_on_account_id_and_name", :unique => true
   add_index "solution_categories", ["account_id", "parent_id", "language_id"], :name => "index_solution_categories_on_account_id_parent_id_and_language"
+  add_index "solution_categories", ["account_id", "parent_id", "position"], :name => "index_solution_categories_on_account_id_parent_id_and_position"
 
   create_table "solution_category_meta", :force => true do |t|
     t.integer  "position"

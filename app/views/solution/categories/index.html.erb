@@ -46,6 +46,6 @@
 	<%end%>
 </div>
 <% if privilege?(:manage_solutions) -%>	
-	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_solution_categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_solution_categories.includes(:solution_category),  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
 <% end %>
    
