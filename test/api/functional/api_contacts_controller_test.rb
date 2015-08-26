@@ -358,14 +358,20 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('company_id', 'Should not be invalid_value/blank')])
   end
 
-  def test_update_the_email_of_a_contact
+  def test_update_the_email_of_a_contact_invalid
     sample_user = get_user_with_email
     email = Faker::Internet.email
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('email', 'Email cannot be updated')])
+  end
+
+  def test_update_the_email_of_a_contact_valid
+    sample_user = add_new_user(@account)
     sample_user.update_attribute(:email, nil)
+    email = Faker::Internet.email
+    params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     sample_user.reload.email == email
