@@ -38,11 +38,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_group_with_invalid_field_values
     post :create, construct_params({}, escalate_to: Faker::Lorem.characters(5),
                                        unassigned_for: Faker::Lorem.characters(5),
-                                       name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                       name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
+    assert_response :bad_request
   end
 
   def test_create_group_with_invalid_agent_list
@@ -125,11 +127,14 @@ class ApiGroupsControllerTest < ActionController::TestCase
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: Faker::Lorem.characters(5),
                                                     unassigned_for: Faker::Lorem.characters(5),
-                                                    name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+                                                    name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
+
+    assert_response :bad_request
   end
 
   def test_update_group_with_invalid_id

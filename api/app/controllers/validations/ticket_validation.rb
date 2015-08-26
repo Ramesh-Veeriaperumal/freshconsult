@@ -8,7 +8,7 @@ class TicketValidation < ApiValidation
   validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, numericality: { allow_nil: true }
 
   validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
-  validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, if: :name_required?
+  validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?
 
   validates :priority, custom_inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
 
@@ -29,10 +29,11 @@ class TicketValidation < ApiValidation
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments && errors[:attachments].blank? }
 
-  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, if: :email_required?
+  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { due_by && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
+  validates :tags, array: { custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
 
   validates :custom_fields, custom_field: { custom_fields:
                               {
@@ -41,6 +42,7 @@ class TicketValidation < ApiValidation
                                 required_attribute: :required
                               }
                            }, if: -> { errors[:custom_fields].blank? }
+  validates :subject, :twitter_id, :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 
   def initialize(request_params, item)
     @request_params = request_params

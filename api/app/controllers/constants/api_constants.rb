@@ -26,4 +26,5 @@ module ApiConstants
                        DiscussionConstants::LOAD_OBJECT_EXCEPT
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
+  MAX_LENGTH_STRING = 255
 end

@@ -78,6 +78,13 @@ module ApiDiscussions
       assert_equal ForumCategory.all, assigns(:items)
     end
 
+    def test_create_length_invalid
+      params_hash = { name: Faker::Lorem.characters(300) }
+      post :create, construct_params({}, params_hash)
+      match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+      assert_response :bad_request
+    end
+
     def test_update_with_extra_params
       put :update, construct_params({ id: fc.id }, test: 'new')
       match_json([bad_request_error_pattern('test', 'invalid_field')])
@@ -101,6 +108,13 @@ module ApiDiscussions
       put :update, construct_params({ id: fc.id }, name: new_fc.name)
       match_json([bad_request_error_pattern('name', 'has already been taken')])
       assert_response :conflict
+    end
+
+    def test_update_length_invalid
+      new_fc = create_test_category
+      put :update, construct_params({ id: fc.id }, name: Faker::Lorem.characters(300))
+      match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+      assert_response :bad_request
     end
 
     def test_update

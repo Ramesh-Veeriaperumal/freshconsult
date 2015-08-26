@@ -107,6 +107,13 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_create_validate_length
+      post :create, construct_params({}, forum_id: forum_obj.id,
+                                         title: Faker::Lorem.characters(300), message_html: 'test content')
+      match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
+      assert_response :bad_request
+    end
+
     def test_before_filters_show
       @controller.expects(:portal_check).once
       get :show, construct_params(id: 1)
@@ -303,6 +310,12 @@ module ApiDiscussions
     def test_update_invalid_forum_id
       put :update, construct_params({ id: first_topic.id }, forum_id: (1000 + Random.rand(11)))
       match_json([bad_request_error_pattern('forum_id', "can't be blank")])
+      assert_response :bad_request
+    end
+
+    def test_update_invalid_title_length
+      put :update, construct_params({ id: first_topic.id }, title: Faker::Lorem.characters(300))
+      match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
     end
 

@@ -75,6 +75,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', 'has already been taken')])
   end
 
+  def test_create_length_invalid
+    params_hash = { name: Faker::Lorem.characters(300) }
+    post :create, construct_params({}, params_hash)
+    match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end
+
   def test_update_company
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
@@ -118,6 +125,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       custom_fields: { 'cf_invalid' => Faker::Lorem.characters(10) })
     assert_response :bad_request
     match_json([bad_request_error_pattern('cf_invalid', 'invalid_field')])
+  end
+
+  def test_update_length_invalid
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    params_hash = { name: Faker::Lorem.characters(300) }
+    put :update, construct_params({ id: company.id }, params_hash)
+    match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
   end
 
   def test_delete_company

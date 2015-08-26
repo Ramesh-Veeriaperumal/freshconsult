@@ -141,6 +141,30 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
   end
 
+  def test_create_length_invalid
+    params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('subject', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('phone', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('tags', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end
+
+  def test_create_length_invalid_twitter_id
+    params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(300))
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('twitter_id', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end    
+
+  def test_create_length_invalid_email
+    params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('email', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end
+
   def test_create_presence_requester_id_invalid
     params = ticket_params_hash.except(:email)
     post :create, construct_params({}, params)
@@ -1142,6 +1166,33 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('status', 'not_included', list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', 'not_included', list: 'Question,Incident,Problem,Feature Request,Lead'),
                 bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
+  end
+
+  def test_update_length_invalid
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('subject', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('phone', 'is too long (maximum is 255 characters)'),
+                bad_request_error_pattern('tags', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end
+
+  def test_update_length_invalid_twitter_id
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(300))
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    match_json([bad_request_error_pattern('twitter_id', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
+  end          
+
+  def test_update_length_invalid_email
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    match_json([bad_request_error_pattern('email', 'is too long (maximum is 255 characters)')])
+    assert_response :bad_request
   end
 
   def test_update_presence_requester_id_invalid

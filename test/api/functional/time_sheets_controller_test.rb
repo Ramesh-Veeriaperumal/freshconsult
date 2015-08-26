@@ -621,6 +621,17 @@ class TimeSheetsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_update_agent_id_and_timer_running_false_when_timer_is_running
+    user = other_agent
+    start_time = (Time.zone.now - 10.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).to_s
+    ts = create_time_sheet(timer_running: true)
+    put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
+                                                 executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
+  end
+
   def test_update_with_nullable_fields
     start_time = (Time.zone.now - 10.minutes).to_s
     executed_at = (Time.zone.now - 20.minutes).to_s

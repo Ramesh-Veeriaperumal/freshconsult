@@ -13,7 +13,6 @@ module ApiDiscussions
 
     def update
       post = @item.first_post
-      post.attributes = @item.attributes.extract!(:created_at, :updated_at)
       post.body_html = params[cname][:body_html] if params[cname].key?(:body_html)
       super
     end
