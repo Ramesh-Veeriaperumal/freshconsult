@@ -94,7 +94,7 @@ class Solution::Draft < ActiveRecord::Base
 
   def populate_defaults
     self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
-    self.user_id ||= User.current.id
+    self.user_id = User.current ? User.current.id : self.user_id || article.user_id
     self.modified_at = Time.now.utc unless self.modified_at_changed?
   end
 

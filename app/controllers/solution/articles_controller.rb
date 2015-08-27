@@ -41,7 +41,7 @@ class Solution::ArticlesController < ApplicationController
     current_folder = Solution::Folder.first
     current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
     @article = current_folder.articles.new  
-    @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+    @article.set_status(false)
     respond_to do |format|
       format.html {
         render "new"
@@ -64,7 +64,7 @@ class Solution::ArticlesController < ApplicationController
     @article = @current_folder.articles.new(params[nscname]) 
     set_item_user 
     build_attachments
-    @article.set_status(save_as_draft? ? false : publish? || params[nscname][:status])
+    @article.set_status(get_status)
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
@@ -257,7 +257,7 @@ class Solution::ArticlesController < ApplicationController
         end
         return
       end
-      @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      @article.set_status(true)
       update_article
     end
 
@@ -373,7 +373,7 @@ class Solution::ArticlesController < ApplicationController
     def set_current_folder
       begin
         folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
-        @current_folder = Solution::Folder.find(folder_id)
+        @current_folder = current_account.solution_folders.find(folder_id)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
         @current_folder = current_account.solution_folders.first
@@ -385,6 +385,12 @@ class Solution::ArticlesController < ApplicationController
       if draft.present? && draft.errors.present?
         flash[:error] = draft.errors.full_messages.join("<br />\n").html_safe
       end
+    end
+
+    def get_status
+      status = params[nscname][:status]
+      return status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
+      save_as_draft? ? false : publish?
     end
 
 end

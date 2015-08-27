@@ -250,7 +250,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def draft_attributes(opts = {})
-    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
+    draft_attrs = opts.merge(:article => self, :category_meta => folder.solution_category_meta)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
       draft_attrs[attribute] = self.send(attribute)
     end
