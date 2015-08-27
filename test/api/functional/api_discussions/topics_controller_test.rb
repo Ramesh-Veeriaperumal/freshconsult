@@ -159,9 +159,10 @@ module ApiDiscussions
     end
 
     def test_permit_toggle_params_valid
-      monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: other_user.id,
-                                      monitorable_id: first_topic.id).first || monitor_topic(first_topic, other_user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: other_user.id)
+      user = other_user
+      monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: user.id,
+                                      monitorable_id: first_topic.id).first || monitor_topic(first_topic, user, 1)
+      delete :unfollow, construct_params({ id: first_topic.id }, user_id: user.id)
       assert_response :no_content
       monitorship.reload
       refute monitorship.active
@@ -181,11 +182,10 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
-    def test_permit_toggle_params_invalid
+    def test_permit_toggle_params_deleted_user
       monitor_topic(first_topic, deleted_user, 1)
       delete :unfollow, construct_params({ id: first_topic.id }, user_id: deleted_user.id)
-      assert_response :forbidden
-      match_json(request_error_pattern('invalid_user', id: deleted_user.id, name: deleted_user.name))
+      assert_response :no_content
       deleted_user.update_column(:deleted, false)
     end
 
@@ -198,13 +198,11 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_valid
       topic = first_topic
       user = user_without_monitorships
-      controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(true)
       post :follow, construct_params({ id: topic.id }, user_id: user.id)
       assert_response :no_content
       monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: user.id,
                                       monitorable_id: topic.id).first
       assert monitorship.active
-      controller.class.any_instance.unstub(:is_allowed_to_assume?)
     end
 
     def test_new_monitor_follow_user_id_invalid

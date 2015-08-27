@@ -14,9 +14,10 @@ json.array! @items do |tf|
     json.partial! 'shared/utc_date_format', item: tf
   end
 
-  if tf.field_type == 'nested_field'
-    json.set! :choices, nested_choices(tf.picklist_values)
+  choices = get_ticket_field_choices(tf)
+  json.set! :choices, choices if choices.present?
 
+  if tf.field_type == 'nested_field'
     json.set! :nested_ticket_fields do
       json.array! tf.nested_ticket_fields do |tf_nested_field|
         json.cache! [controller_name, action_name, tf_nested_field] do
@@ -26,7 +27,5 @@ json.array! @items do |tf|
         end
       end
     end
-  else
-    json.set! :choices, ticket_field_choices(Account.current, tf)
   end
 end

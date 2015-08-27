@@ -73,4 +73,13 @@ module ApiApplicationHelper
   def default_contact_field?(contact_field)
     contact_field.column_name == 'default'
   end
+
+  def get_ticket_field_choices(tf)
+    if tf.field_type == 'nested_field'
+      @choices = nested_choices(tf.picklist_values)
+    else
+      @choices = ticket_field_choices(Account.current, tf)
+    end
+    @choices
+  end
 end

@@ -1,4 +1,4 @@
-module TicketFieldsHelper
+module Helpers::TicketFieldsHelper
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal' }
 
   def create_custom_field(name, type)
@@ -152,5 +152,55 @@ module TicketFieldsHelper
     end
     parent_custom_field
   end
+
+  def ticket_field_pattern(tf, hash = {})
+    pattern = {
+      id: tf.id,
+      default: tf.default.to_s.to_bool,
+      description: tf.description,
+      type: tf.field_type,
+      customers_can_edit: tf.editable_in_portal.to_s.to_bool,
+      label: tf.label,
+      label_for_customers: tf.label_in_portal,
+      name: tf.name,
+      position: tf.position,
+      required_for_agents: tf.required.to_s.to_bool,
+      required_for_closure: tf.required_for_closure.to_s.to_bool,
+      required_for_customers: tf.required_in_portal.to_s.to_bool,
+      displayed_to_customers: tf.visible_in_portal.to_s.to_bool,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+    pattern.merge!(choices: hash[:choices] || Array) if hash[:choices] || tf.choices.present?
+    pattern
+  end
+
+  def requester_ticket_field_pattern(tf)
+    ticket_field_pattern(tf).merge(
+      portal_cc: tf.field_options['portalcc'],
+      portal_cc_to: tf.field_options['portalcc_to']
+    )
+  end
+
+  def ticket_field_nested_pattern(tf, _hash = {})
+    ticket_field_pattern(tf).merge(
+      nested_ticket_fields: Array
+    )
+  end
+
+  def nested_ticket_fields_pattern(ntf)
+    {
+      description: ntf.description,
+      id: ntf.id,
+      label: ntf.label,
+      label_in_portal: ntf.label_in_portal,
+      level: ntf.level,
+      name: ntf.name,
+      ticket_field_id: ntf.ticket_field_id,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
 end
-include TicketFieldsHelper
+include Helpers::TicketFieldsHelper

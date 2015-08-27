@@ -1822,6 +1822,23 @@ class TicketsControllerTest < ActionController::TestCase
     set_wrap_params
   end
 
+  def test_index_with_filter_and_requester_email
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(requester_id: user.id)
+    user = User.first
+    user.update_column(:email, Faker::Internet.email)
+    get :index, controller_params(filter: 'new_and_my_open', email: user.reload.email)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.count
+
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id, status: 2)
+    get :index, controller_params(filter: 'new_and_my_open', email: User.first.email)
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.count
+  end
+
   def test_index_with_company
     company = create_company
     user = User.first

@@ -48,16 +48,11 @@ module DiscussionMonitorConcern
 
     # unfollow does not create a new object from user input, hence no validation.
     def validate_follow_delegator
-      fetch_monitorship
       delegator = MonitorshipDelegator.new(@monitorship)
       if delegator.invalid?
         render_errors delegator.errors
         return true
       end
-    end
-
-    def before_load_object
-      can_send_user? if follow? || unfollow?
     end
 
     def skip_update
