@@ -21,7 +21,9 @@
 	  <% if content_for?(:sticky_left)%>
 		<%= yield :sticky_left %>
 	  <% else %>
-    	<%= solutions_breadcrumb page %>
+      <div id='sol_breadcrumb'>
+    	 <%= solutions_breadcrumb page %>
+      </div>
 	  <% end %>
     </div>
 	<div class="sticky_right">
