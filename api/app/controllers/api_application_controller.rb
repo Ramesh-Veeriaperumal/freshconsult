@@ -186,10 +186,11 @@ class ApiApplicationController < MetalApiController
     end
 
     def prepare_array_fields(array_fields = [])
-      array_fields.each do |field|
-        value = Array.wrap params[cname][field] if params[cname].key? field
-        params[cname][field] = value.try(:uniq).reject { |f| f.to_s.empty? } unless value.nil?
-        params[cname][field] = [] if value.nil? && create?
+      array_fields.each do |array_field|
+        array_field = array_field.to_sym
+        array_value = Array.wrap params[cname][array_field] if params[cname].key? array_field
+        params[cname][array_field] = array_value.try(:uniq).reject(&:blank?) unless array_value.nil?
+        params[cname][array_field] = [] if array_value.nil? && create?
       end
     end
 

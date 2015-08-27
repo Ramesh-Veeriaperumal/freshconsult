@@ -8,6 +8,6 @@ class ApiGroupValidation < ApiValidation
   validates :name, :description, data_type: { rules: String, allow_nil: true }
 
   def attributes_to_be_stripped
-    [:name]
+    GroupConstants::FIELDS_TO_BE_STRIPPED
   end
 end

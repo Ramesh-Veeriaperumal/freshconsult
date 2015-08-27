@@ -68,4 +68,8 @@ class TimeSheetValidation < ApiValidation
     def start_time_value
       errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.now.utc
     end
+
+    def attributes_to_be_stripped
+      TimeSheetConstants::FIELDS_TO_BE_STRIPPED
+    end
 end

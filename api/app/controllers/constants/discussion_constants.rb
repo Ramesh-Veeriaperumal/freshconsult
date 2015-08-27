@@ -14,4 +14,9 @@ module DiscussionConstants
   FORUM_VISIBILITY = Forum::VISIBILITY_KEYS_BY_TOKEN.values | Forum::VISIBILITY_KEYS_BY_TOKEN.values.map(&:to_s)
   FORUM_TYPE = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
   LOAD_OBJECT_EXCEPT = [:followed_by, :is_following, :category_forums, :forum_topics, :topic_posts]
+
+  CATEGORY_FIELDS_TO_BE_STRIPPED = %w(name)
+  FORUM_FIELDS_TO_BE_STRIPPED = %w(name)
+  TOPIC_FIELDS_TO_BE_STRIPPED = %w(title sticky locked)
+  POST_FIELDS_TO_BE_STRIPPED = %w(answer)
 end

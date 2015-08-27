@@ -28,4 +28,8 @@ class NoteValidation < ApiValidation
   def valid_ticket?
     errors.add(:ticket_id, :blank) unless @ticket
   end
+
+  def attributes_to_be_stripped
+    NoteConstants::FIELDS_TO_BE_STRIPPED
+  end
 end

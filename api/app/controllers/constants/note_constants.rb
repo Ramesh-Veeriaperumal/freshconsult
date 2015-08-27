@@ -9,4 +9,9 @@ module NoteConstants
     'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
   }
   LOAD_OBJECT_EXCEPT = [:ticket_notes, :reply]
+
+  FIELDS_TO_BE_STRIPPED = %w(private incoming notify_emails cc_emails bcc_emails)
+
+  CREATE_ARRAY_FIELDS = %w(notify_emails)
+  REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails)
 end

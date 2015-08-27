@@ -46,5 +46,4 @@ class ApiCompaniesController < ApiApplicationController
       params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
-
 end

@@ -50,6 +50,6 @@ class ContactValidation < ApiValidation
     end
 
     def attributes_to_be_stripped
-      [:name, :email, :phone, :mobile, :twitter_id, :tags, :address, :job_title]
+      ContactConstants::FIELDS_TO_BE_STRIPPED
     end
 end
