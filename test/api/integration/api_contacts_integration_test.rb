@@ -13,8 +13,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 4,
-        update: 6,
+        create: 3,
+        update: 10,
         show: 3,
         index: 3,
         destroy: 5,
@@ -37,17 +37,17 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:update], v2[:api_update] = count_api_queries { put("/api/contacts/#{id1}", v2_contact_update_payload, @write_headers) }
       v1[:update] = count_queries { put("/contacts/#{id2}.json", v1_contact_update_payload, @write_headers) }
 
-      # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
-      # These attributes are introduced in V2, hence subtracting it
-      v2[:update] -= 3
+        # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
+        # These attributes are introduced in V2, hence subtracting it
+        v2[:update] -= 3
 
       # show
       v2[:show], v2[:api_show] = count_api_queries { get("/api/v2/contacts/#{id1}", nil, @headers) }
       v1[:show] = count_queries { get("/contacts/#{id2}.json", nil, @headers) }
 
-      # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
-      # These attributes are introduced in V2, hence subtracting it
-      v2[:show] -= 3
+        # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
+        # These attributes are introduced in V2, hence subtracting it
+        v2[:show] -= 3
 
       # index
       v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/contacts', nil, @headers) }

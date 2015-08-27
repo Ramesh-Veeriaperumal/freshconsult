@@ -555,16 +555,16 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :make_agent, construct_params(id: sample_user.id)
-    assert_response :bad_request
+    assert_response :conflict
     sample_user.update_attribute(:email, email)
-    match_json(request_error_pattern('email_required'))
+    match_json(request_error_pattern('inconsistent_state'))
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
     @account.subscription.update_attribute(:agent_limit, 1)
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
-    assert_response :bad_request
+    assert_response :forbidden
     match_json(request_error_pattern('max_agents_reached'))
   end
 
@@ -586,35 +586,32 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     sample_user.update_column(:deleted, false)
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       delete :destroy, construct_params(id: sample_user.id)
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
   def test_demo_site_update
     sample_user = get_user
     sample_user.update_column(:deleted, false)
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       put :update, construct_params({ id: sample_user.id }, time_zone: 'Chennai')
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
   def test_demo_site_create
     params = { name: Faker::Lorem.characters(15), email: Faker::Internet.email }
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       post :create, construct_params({}, params)
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
   def test_update_array_field_with_empty_array

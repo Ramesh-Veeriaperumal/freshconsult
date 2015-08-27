@@ -123,7 +123,7 @@ class ApiApplicationController < MetalApiConfiguration
 
     def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain
+      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain and current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
     end
 
     def ensure_proper_protocol
@@ -195,8 +195,12 @@ class ApiApplicationController < MetalApiConfiguration
 
     def build_object
       # assign already loaded account object so that it will not be queried repeatedly in model
-      build_params = scoper.attribute_names.include?('account_id') ? { account: current_account } : {}
+      account_included = scoper.attribute_names.include?('account_id')
+      build_params = account_included ? { account: current_account } : {}
       @item = scoper.new(build_params.merge(params[cname]))
+
+      # assign account separately if it is protected_attribute.
+      @item.account = current_account if account_included
     end
 
     def validate_filter_params
