@@ -13,18 +13,18 @@ class ContactValidation < ApiValidation
     required_attribute: :required_for_agent
   }
   }, if: -> { custom_fields.is_a?(Hash) }
-  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
-  validates :job_title, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
+  validates :job_title, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
   validates :language, data_type: { rules: String }, custom_inclusion: { in: ContactConstants::LANGUAGES }, allow_nil: true
-  validates :name, data_type: { rules: String }, required: true, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-  validates :tags,  data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+  validates :name, data_type: { rules: String }, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+  validates :tags,  data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
   validates :time_zone, custom_inclusion: { in: ContactConstants::TIMEZONES }, allow_nil: true
 
   validate :contact_detail_missing
   validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
 
   validate :check_update_email, if: -> { email }, on: :update
-  validates :phone, :mobile, :address, :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+  validates :phone, :mobile, :address, :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 
   def initialize(request_params, item)
     super(request_params, item)
@@ -47,5 +47,9 @@ class ContactValidation < ApiValidation
 
     def check_update_email
       errors.add(:email, 'Email cannot be updated') if @email_update
+    end
+
+    def attributes_to_be_stripped
+      [:name, :email, :phone, :mobile, :twitter_id, :tags, :address]
     end
 end
