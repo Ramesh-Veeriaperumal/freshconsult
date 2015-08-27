@@ -138,28 +138,32 @@ Authority::Authorization::PrivilegeList.build do
   # ************** SOLUTIONS **************************
 
   view_solutions do
-    resource :"solution/category", :only => [:index, :show]
+    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar]
     resource :"solution/folder", :only => [:index, :show]
-    resource :"solution/article", :only => [:index, :show]
+    resource :"solution/article", :only => [:index, :show, :voted_users]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
+    resource :"solution/draft", :only => [:index]
   end
 
   publish_solution do
-    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
+    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
+    resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete]
   end
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
+    resource :"solution/draft", :only => [:destroy]
   end
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
-    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
+    resource :"solution/draft", :only => [:autosave, :destroy, :publish, :attachments_delete]
   end
 
   # ************** FORUMS **************************
@@ -360,6 +364,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
+    resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone]
   end

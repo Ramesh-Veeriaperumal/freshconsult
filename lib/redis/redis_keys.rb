@@ -83,6 +83,8 @@ module Redis::RedisKeys
 
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
 
+	SOLUTION_DRAFTS_SCOPE = "SOLUTION:DRAFTS:%{account_id}:%{user_id}"
+	ARTICLE_FEEDBACK_FILTER = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}"
 	GLOBAL_PUBLIC_TICKET_URL_ENABLED = "GLOBAL_PUBLIC_TICKET_URL_ENABLED"
 
 	def newrelic_begin_rescue

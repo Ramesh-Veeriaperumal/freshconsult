@@ -11,6 +11,9 @@ class Solution::Category < ActiveRecord::Base
   include Mobihelp::AppSolutionsUtils
   include Solution::MetaMethods
   
+  CACHEABLE_ATTRS = ["id","name","account_id","position","is_default"]
+  concerned_with :associations, :meta_associations
+  
   self.table_name =  "solution_categories"
   
   validates_presence_of :name,:account
@@ -18,6 +21,10 @@ class Solution::Category < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
 
   
+  after_create :clear_cache
+  after_destroy :clear_cache
+  after_update :clear_cache_with_condition
+
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time
 
@@ -61,6 +68,12 @@ class Solution::Category < ActiveRecord::Base
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
 
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
+  end
+
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def portal_ids_with_meta
     account.launched?(:meta_read) ? portals_through_metum_ids : portal_ids_without_meta
@@ -82,6 +95,15 @@ class Solution::Category < ActiveRecord::Base
       self.reload
       Account.current.launched?(:meta_read) ? self.solution_category_meta : self
     end
+    
+    def clear_cache(obj=nil)
+      account.clear_solution_categories_from_cache
+    end
+    
+    def clear_cache_with_condition
+      account.clear_solution_categories_from_cache if self.name_changed?
+    end
+
 
     ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!
     def set_default_portal

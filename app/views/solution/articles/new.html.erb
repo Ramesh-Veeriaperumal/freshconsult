@@ -1,12 +1,30 @@
-<h3 class="lead itil-hide"><%=t('solution.add_new_solution')%></h3>
-<div id="article-form-container">
-	<%= form_for @article, :url => solution_category_folder_articles_path(@article.folder.category_id  , @article.folder.id) , :html => {:multipart => true, :id => "article-form"} do |f| %>
-	  <%= render :partial => 'article_form', :locals => { :f => f } %>
-		<div class="button-container align-right itil-hide">
-			<%= link_to(t('cancel'), solution_category_folder_url(@article.folder.category_id, @article.folder.id), :class => "btn" ) %>
-	    	<%= submit_tag t('save_and_create'), :name => "save_and_create", :class => "btn" %>
-			<%= submit_tag t('save'), :class => "btn btn-primary" %>
-		</div>
-	<% end %>
-</div>
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sticky_right do %>
+	<%= article_btns('save-btn', 'publish-btn') %>
+<% end %>
+<%= render :partial => '/solution/shared/sticky', 
+           :locals => { :page => :article, :sticky_class => 'article-sticky'} %>
+           
+<%= render :partial => 'article_form' %>
+		
+<% content_for :helpcard do %>
+	<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
+  <p><%=t('solution.info15').html_safe%></p>
+  <p><%=t('solution.info16').html_safe%></p>
+  <p><%=t('solution.info17').html_safe%></p>
+  <p><i><%=t('solution.info18').html_safe%></i></p>
+  <p><%=t('solution.info19').html_safe%></p>
+  <p><%=t('solution.info20').html_safe%></p>
+<% end %>
 
+<script type="text/javascript">
+  jQuery('body').one('assetLoaded.fjax', function() {
+    App.Solutions.Article.STRINGS = {
+      reload: "<%= escape_javascript(t('reload')).html_safe %>",
+      unsavedContent: "<%= escape_javascript(t('solution.general.unsaved_content')).html_safe %>",
+      leaveQuestion: "<%= escape_javascript(t('solution.general.leave_page_que')).html_safe %>",
+      somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
+      maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>"
+    };
+  });
+</script>

@@ -9,6 +9,10 @@ class Solution::Article < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   include Solution::MetaMethods
+
+  belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
+  has_one :draft, :dependent => :destroy
+
   include Solution::LanguageMethods
   include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
@@ -43,6 +47,7 @@ class Solution::Article < ActiveRecord::Base
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
+  validate :status_in_default_folder
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
@@ -58,8 +63,8 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
-  VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
+  VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions(portal)
@@ -234,6 +239,34 @@ class Solution::Article < ActiveRecord::Base
     self.account.features?(:resource_rate_limit)
   end
 
+  def create_draft_from_article(opts = {})
+    draft = build_draft_from_article(opts)
+    draft.save
+    draft
+  end
+
+  def build_draft_from_article(opts = {})
+    draft = self.account.solution_drafts.build(draft_attributes(opts))
+    draft
+  end
+
+  def draft_attributes(opts = {})
+    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
+    Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
+      draft_attrs[attribute] = self.send(attribute)
+    end
+    draft_attrs
+  end
+
+  def set_status(publish)
+    self.status = publish ? STATUS_KEYS_BY_TOKEN[:published] : STATUS_KEYS_BY_TOKEN[:draft]
+  end
+
+  def publish!
+    set_status(true)
+    save
+  end
+
   private
 
     def set_mobihelp_solution_updated_time
@@ -249,6 +282,12 @@ class Solution::Article < ActiveRecord::Base
       all_fields = [:modified_at, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
       (changed_fields & all_fields).any? or tags_changed
+    end
+
+    def status_in_default_folder
+      if status == STATUS_KEYS_BY_TOKEN[:published] and self.folder.is_default
+        errors.add(:status, I18n.t('solution.articles.cant_publish'))
+      end
     end
     
     def hit_key

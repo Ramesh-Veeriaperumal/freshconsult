@@ -16,6 +16,7 @@
   		</script>
   		<%end%>  		
       <%= render(:partial => '/discussions/shared/sidebar') if forums_visibility? %>  		
+      <%= render(:partial => '/solution/shared/navmenu') if solutions_visibility? %>  		
   		<div class="content" id="body-container">
   		  <%= render :partial => "layouts/tour_my_app" %>        
         <%= render :file => "layouts/maincontent" %>

@@ -1,0 +1,35 @@
+<% if (params[:type] == 'all') && Account.current.portals.count > 1 %>
+	
+	<div class="item portal-menu">
+		
+		<% current_portal_name = (@drafts_context == 0 ? t('solution.draft.portal.all') : @drafts_context_portal.name) %>
+		<%= t('Portal') %> :
+		<a class="drop-right nav-trigger" href="#" menuid="#context_menu">
+		  <b class="<%= 'tooltip' if current_portal_name.length > 27 %> all_categories" data-placement="right" title="<%= current_portal_name %>">
+		  	<%= truncate(current_portal_name, :length => 30) %>
+		  </b>
+		</a>
+		
+		<div class="spinner pl20"></div>
+		
+		<div class="fd-menu" id="context_menu">
+			<ul>
+			   <% context_menu = Account.current.portals.map { |p| 
+			   			[
+			   				truncate(p.portal_name, :length => 30), 
+			   				"#{solution_my_drafts_path('all')}?portal=#{p.id}", 
+			   				(@drafts_context == p.id)
+			   			]
+			   		} %>
+			   <% context_menu.unshift([t('solution.draft.portal.all'), "#{solution_my_drafts_path('all')}?portal=0", @drafts_context == 0]) %>
+			   <% context_menu.map do |context| %>
+			      <li>
+			      	<%= pjax_link_to "#{"<span class='icon ticksymbol'></span>" if context[2]} #{context[0]}".html_safe, context[1] %>
+			      </li>
+			   <% end %>
+			</ul>
+		</div>
+
+	</div>
+
+<% end %>

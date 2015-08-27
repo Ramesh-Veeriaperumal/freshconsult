@@ -206,7 +206,8 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.integer "ticket_id",  :limit => 8
     t.integer "account_id", :limit => 8
   end
-
+  
+  add_index "article_tickets", ["account_id", "ticket_id"], :name => "index_article_tickets_on_account_id_and_ticket_id", :unique => true
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
 
@@ -2643,6 +2644,28 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
   add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
   add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
   add_index "solution_customer_folders", ["account_id", "folder_meta_id"], :name => "index_solution_customer_folders_on_account_id_folder_meta_id"
+  
+  
+  create_table "solution_draft_bodies", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "draft_id",    :limit => 8
+    t.text     "description", :limit => 2147483647
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
+
+  create_table "solution_drafts", :force => true do |t|
+    t.integer  "account_id",       :limit => 8, :null => false
+    t.integer  "article_id",       :limit => 8
+    t.integer  "category_meta_id", :limit => 8
+    t.integer  "user_id",          :limit => 8
+    t.string   "title"
+    t.text     "meta"
+    t.integer  "status"
+    t.datetime "modified_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
 
   create_table "solution_folder_meta", :force => true do |t|
     t.integer  "visibility",                :limit => 8

@@ -1,0 +1,34 @@
+  <div class="solutions-widget-header">
+    <span class="ficon-categories-orphan fsize-18 orphan-cat-icon"></span>
+    <span class="lead lead-small"><%=t('solution.sidebar.orphan').html_safe%></span>
+    <span class="muted orphan-desc"><%=t('solution.sidebar.orphan_desc').html_safe%></span>
+  </div>
+
+<div class='sidebar-list'> 
+  <ul>
+    <% @orphan_categories.first(3).each do |cat| %>
+      <li> 
+              <%= pjax_link_to( cat['name'].truncate(27),
+                                solution_category_path(:id => cat['id']), 
+                                {:class => "sidebar-list-item"} ) %>
+      </li>
+    <% end %>
+    <% if @orphan_categories.size > 3 %>
+
+      <span class="more-orphan-cat hide">
+        <% @orphan_categories.drop(3).each do |cat| %>
+          <li> 
+                  <%= pjax_link_to( cat['name'].truncate(27),
+                                    solution_category_path(:id => cat['id']), 
+                                    {:class => "sidebar-list-item"} ) %>
+          </li>
+        <% end %>
+      </span>
+        <%= link_to t('solution.sidebar.view_all'), 
+                           '#', { :class => "orphan-view-all view-all"} %>
+        <%= link_to t('solution.sidebar.view_less'), 
+                            '#', { :class => "orphan-view-less view-all hide"} %>
+    <% end %>
+  </ul>
+</div>
+

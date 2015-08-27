@@ -227,6 +227,7 @@ var Redactor = function(element, options)
 							"h1", "h2", "h3", "h4", "h5", "h6",
 							"canvas", "figure", "figcaption",
 							"output", "section", "summary", "time" ],
+		toolbarExternal: false,					
 		buttonsCustom: {},
 		buttonsAdd: [],
 		buttons: ['formatting', 'fontname', 'fontsize', 
@@ -1450,6 +1451,7 @@ Redactor.prototype = {
 	syncCode: function()
 	{
 		this.$el.val(this.$editor.html());
+		this.$el.trigger('redactor:sync');
 	},
 	
 	// API functions
@@ -1490,6 +1492,10 @@ Redactor.prototype = {
 			this.$box.after(this.$editor);
 			this.$box.remove();
 			this.$editor.removeClass('redactor_editor').removeClass('redactor_editor_wym').attr('contenteditable', false).html(html).show();					
+		}
+
+		if (this.opts.toolbarExternal){
+				$(this.opts.toolbarExternal).empty();
 		}
 		
 		$('.redactor_air').remove();
@@ -2488,7 +2494,15 @@ Redactor.prototype = {
 		}
 		else
 		{
-			this.$box.prepend(this.$toolbar);
+			if (this.opts.toolbarExternal === false)
+				{
+					this.$box.prepend(this.$toolbar);
+				}
+				else
+				{
+					$(this.opts.toolbarExternal).html(this.$toolbar);
+				}
+
 		}
 		$.each(this.opts.buttons, $.proxy(function(i,key)
 		{

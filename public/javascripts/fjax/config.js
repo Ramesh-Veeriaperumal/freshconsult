@@ -40,6 +40,7 @@ window.Fjax = window.Fjax || {};
 			"/companies": 'companies',
 			"/helpdesk/tickets": 'tickets',
 			"/search": 'search',
+			"/solution": 'solutions',
 			"/helpdesk/agent_status": 'freshfoneagents',
 			"/helpdesk/tickets/compose_email": 'tickets'
 		},

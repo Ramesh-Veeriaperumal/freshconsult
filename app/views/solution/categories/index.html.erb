@@ -1,51 +1,47 @@
-<% content_for :helpcard do %>
-		<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
-		<p><%=t('solution.info2').html_safe%>. </p>
-		<p><%=t('solution.info3').html_safe%>.</p>
-		<p><%=t('solution.info4').html_safe%></p>
-		<p><%=t('solution.info5').html_safe%>. </p>
-		<p><%=t('solution.info6').html_safe%>.</p>
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sidebar do %>
+	<%= content_tag :div, "", :rel => "remote", :id=> "solution-home-sidebar",
+			  "data-remote-url" => '/solution/categories/sidebar' %>
 <% end %>
-<% if privilege?(:manage_solutions) -%>
-	<div class="pull-right align-right itil-hide">
-	   <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" unless(@categories.size <= 1)%>
-		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "btn btn-primary" %>
-	</div>
-<%- end %>
-<h3 class="lead itil-hide"><%=t('solution.title').html_safe%></h3> 
-<div class="search-grey-box ignore-margin-20 search-page">
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder').html_safe, :url => "/search/solutions?term=" } %>
-</div>
-<div class="clearfix solution-list" id="categories_list">			
-	<% @categories.each do |category| %>
-		<div class="<%= cycle('odd', 'even') %>">
-			<% if (!category.is_default? && privilege?(:manage_solutions)) -%>
-					<div class="action_buttons">
-						<%= link_to t('folder.add_folder').html_safe, new_solution_category_folder_path(category), :class => "first"  %> 
-						<%= link_to t('edit').html_safe ,edit_solution_category_path(category), :class => "last"   %>
-					</div>
-			<% end %>
-			<h4 class="border_title">
-				<% unless category.folders.empty? %>
-					<%= link_to  "#{h(category.name)} &raquo;".html_safe, category %>
-				<% else %>
-					<%= h(category.name) %>
-				<% end %>
-			</h4>  
-			<ul>			
-	  		<% category.folders.each do |folder| %>
-  				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
-  				  <span>
-  					  (<%= folder.articles.size %>)
-  			    </span> 
-  			  </li>
-			 <% end %> 
-			</ul>
-			<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "no_info_text") if (category.folders.size == 0)  %>
+<% content_for :sticky_left do %>
+	<h3 class="lead itil-hide"><%=t('solution.title').html_safe%></h3>
+<% end %>
+<% content_for :sticky_right do %>
+	<% if privilege?(:manage_solutions) -%>
+		<div class="pull-right itil-hide">
+			<%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" if (@categories.size > 2)%>
+			<%= new_solutions_button(:category) %>
 		</div>
-	<%end%>
-</div>
-<% if privilege?(:manage_solutions) -%>	
-	<%= render :partial => "/shared/reorder_list", :locals => { :items => current_portal.portal_solution_categories.includes(:solution_category),  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
+	<% end %>
 <% end %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :sticky_class => "sol-sticky solution-home-header",
+						:search_url => "/search/solutions?term=" } %>
+
+<%= render :partial => '/solution/shared/search_container' %>
+
+<div class="solution-list sol-list pull-left" id="categories_list">	
+	<%= render :partial => 'categories', :locals => { :categories => current_categories} %>
+	<% unless other_categories.blank? %>
+		<div class="view-more-cat pull-left">
+			<a href="#" class="show-more-cat">
+				<%= t('solution_category.more_catogories').html_safe %>
+			</a>
+		</div>
+		<div class="other-portal-cat hide"> 
+			<%= render :partial => 'categories', :locals => { :categories => other_categories } %>
+		</div>
+	<% end %>
+</div>
+<% if privilege?(:manage_solutions) and @categories.size > 2 %>	
+	<%= render :partial => "/shared/reorder_list", 
+							:locals => { 
+									:items => current_portal.portal_solution_categories.includes(:solution_category).reject { |pc| pc.solution_category.is_default?},
+									:action_url => reorder_solution_categories_path, 
+									:title => :name, 
+									:container_id => "categories_sort", 
+									:reorder_id => "categories_reorder_button", 
+									:list_id => "categories_list"
+							} %>
+<% end %>
+
    

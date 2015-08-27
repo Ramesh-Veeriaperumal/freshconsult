@@ -1,12 +1,17 @@
-<% content_for :sidebar do -%>&nbsp;<%-end %>
-<h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=h(@category.name)%>"</span> </h3>
+<% unless @modal %>
+	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :sidebar do -%>&nbsp;<%-end %>
+	<h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=h(@category.name)%>"</span> </h3>
+<% end %>
 <%= form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form", :rel => :validate} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
-	<div class="button-container align-right itil-hide">
-		<div class="pull-left">
-			<%= confirm_delete(@category, solution_category_path(@category)) %>
-		</div>
-		<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
+	<% unless @modal %>
+		<div class="button-container align-right itil-hide">
+			<div class="pull-left">
+				<%= confirm_delete(@category, solution_category_path(@category)) %>
+			</div>
+			<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
 	    <%= submit_tag t('save'), :class => "btn btn-primary" %>	   
-	</div>
+		</div>
+	<% end %>
 <% end %>

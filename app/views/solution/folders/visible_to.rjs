@@ -1,0 +1,6 @@
+show_ajax_flash(page)
+@folders.each do |folder|
+	page.replace "item_"+folder.id.to_s, render(:partial => "/solution/categories/folder", :locals => {:folder => folder}).html_safe
+end
+page << "App.Solutions.Folder.toggleActionsClass(true)"
+page << "App.Solutions.Folder.hideSelectAll()"

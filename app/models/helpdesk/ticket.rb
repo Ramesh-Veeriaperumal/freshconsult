@@ -109,7 +109,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ?", duration ] } }
  
   scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
+  scope :unresolved, :conditions => ["helpdesk_tickets.status not in (#{RESOLVED}, #{CLOSED})"]
   scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
@@ -168,6 +168,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  #META-READ-HACK!!
+  # Check this while doing Meta Write Phase.
+  # See if the Tickets can be fetched properly from Articles.
+  # As of now Tickets are associated directly with Articles (not thru Meta)
+  # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
+  scope :article_tickets_by_user, lambda { |user| {
+       :include => [:article, :requester, :ticket_status],
+       :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id and solution_articles.user_id = ?", user.id]
+     }
+   }
+
+  scope :all_article_tickets,
+    :include => [:article, :requester, :ticket_status],
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"] 
+
+  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
+    :conditions => ["display_id > (?)",display_id],
+    :limit => limit,
+    :order => order_param
+    }
+  }
+  
   class << self # Class Methods
 
     def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)

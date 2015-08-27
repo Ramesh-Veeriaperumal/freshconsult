@@ -75,6 +75,7 @@ $sidebar-width: 284px;
 		
 	}
 }
+
 .cm-sb-list{
 	overflow:auto;
 	.disabled a {
@@ -220,7 +221,6 @@ body .community-sidebar {
 }
 body.community.cs-show{
 	.community-sidebar {
-		display: block;
 		-webkit-animation-duration: 0.20s;
 	  animation-duration: 0.20s;
 	  -webkit-animation-fill-mode: both;
@@ -228,13 +228,107 @@ body.community.cs-show{
 		-webkit-animation-name: fadeInLeft;
 		animation-name: fadeInLeft;
 	}
+	
+	#community-sidebar {
+		display: block;
+	}
 }
-body.community.cs-always-show .community-sidebar {
+
+body.community.cs-solutions-show {
+	#community-solutions-sidebar {
+		display: block;
+	}
+	
+	#community-sidebar {
+		display: none;
+	}
+}
+body.community.cs-always-show #community-sidebar {
 	display: block;
 	animation: none;
 	-webkit-animation: none;
 }
 
+.inline{
+  display: inline-block;
+}
+
+.solutions-widget {
+  border-top: 2px solid #DDDCDC;
+  padding-top: 6px;
+  margin-top: 8px;
+  margin-bottom: 23px;
+
+  .solutions-widget-header {
+    margin-top: 5px;
+    margin-bottom: 12px;
+
+    .sidebar-dropdown{
+      display: inline-block;
+      @include float(right);
+      margin-top: 4px;
+
+      .dropdown-menu {
+        min-width: 120px;
+      }
+    }
+
+    .lead-small{
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+  }
+
+  .sidebar-list ul {
+    li {
+      list-style-type: disc;
+      list-style-position: inside;
+      color: #ddd;
+      margin-bottom: 16px;
+
+      .sidebar-list-item {
+        @include padding-left(15px);
+        vertical-align: top;
+        display: inline-block;
+
+        .muted {
+          font-size: 11px;
+        }
+        .feedback-article {
+          color: #333;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .view-all {
+    margin-bottom: 16px;
+    @include margin-left(27px);
+    font-weight: 400;
+    font-size: 12px;
+    color: #78B1EA;
+  }
+}
+
+.widget-filter {
+  font-size: 12px;
+}
+
+#solution-home-sidebar{
+  margin: 0;
+}
+
+.orphan-cat-icon {
+  color: red;
+  @include padding-right(5px);
+}
+
+.orphan-desc {
+  font-size: 11px;
+  @include margin-left(27px);
+  display: block;
+}
 
 @-webkit-keyframes fadeInLeft {
   0% {

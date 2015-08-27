@@ -1,0 +1,28 @@
+<%= form_for @article, 
+			:url => solution_article_path(@article.id) , 
+			:html => {:id => "article-form", :class => "form-horizontal"}, 
+			:remote => true do |f| %>
+		<div id="solution-properties-container">
+			<div id="solution-properties">
+				<%= render :partial => "article_properties_form", :locals => { :f => f} %>
+				
+				<% if @article.published? %>
+					<div class="publish-settings">
+						<label class="checkbox">
+							<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
+							<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
+							<p class="muted">
+								<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
+							</p>
+						</label>	
+					</div>
+				<% end %>
+
+				<input type="hidden" name="update_properties" value="1">
+			</div>
+		</div>
+<% end %>
+<script type="text/javascript">
+	jQuery('body').trigger('modal_loaded');
+</script>
+

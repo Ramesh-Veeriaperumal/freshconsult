@@ -10,7 +10,7 @@
 			  	<%= content_tag :li, :item_id => item.id, 
 			  	:class => (disabled && item.respond_to?(disabled) && item.send(disabled) && "disabled") do %>
 			  		<span class="sort_handle"></span>
-			  		<%= h(item.send(title)) %> 
+			  		<%= h(item.send(title)).truncate(100) %> 
 			  	<% end %>
 			  <% end %>
 		  </ul>

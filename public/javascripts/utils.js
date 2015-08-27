@@ -444,17 +444,23 @@ active_dialog = null;
 		} catch(e) {}
 	}
 
- $(document).bind('mousedown', function(e) {
-   if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
-  if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
+  $(document).bind('mousedown', function(e) {
+    var $target = $(e.target),
+        $activeMenu = $($(document).data("active-menu-element"));
+    if ($target.hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+    if ($target.parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
+    if ($target.is($activeMenu) || $target.parents().is($activeMenu) ) { return };
+
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);
     }
- });
+  });
 
  hideActiveMenu = function (){
-    $($(document).data("active-menu-element")).hide().removeClass("active-nav-menu");
+    $($(document).data("active-menu-element"))
+      .hide()
+      .removeClass("active-nav-menu");
     $($(document).data("active-menu-parent")).removeClass("selected");
     $(document).data("active-menu", false);
  }
@@ -1036,4 +1042,12 @@ function getKeyFromValue(object,value){
       }
   }
   return key;
+}
+
+function focusFirstModalElement(namescope) {
+  var namescope = namescope || "default";
+  var target = ['shown', namescope].join('.');
+  jQuery('body').on(target, '.modal', function () {
+    jQuery(this).find('input:text:visible:first').focus();
+  });
 }

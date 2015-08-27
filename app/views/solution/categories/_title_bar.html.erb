@@ -1,0 +1,43 @@
+<div class="list-panel-main">
+	<% if privilege?(:manage_solutions) && !@category.is_default? -%>
+	<div class="sol-details-left">
+		<ul class="list-actions-left category-icon-bg">
+			<li> <%= font_icon(:cube, {:size => 26}) %> </li>
+		</ul>
+	</div>
+	<% end %>
+	<div class="sol-details-right">
+		<% if privilege?(:manage_solutions) && !@category.is_default? -%>
+			<ul class="list-actions-right">
+				<li class="list-default-btns">
+					<%= reorder_btn %>
+					<%= new_solutions_button(:folder) %>
+				</li>
+			  <li class="list-reorder-btns">
+			    <a href="#" class="btn btn-primary" id="submit_btn"><%= t('save') %></a>
+			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
+			  </li>
+			</ul>
+			<div class="action-btns-bar span1">
+				<%= link_to( '', 
+							edit_solution_category_path(@category),
+							:rel => "freshdialog",
+							:class => "ficon-edit fsize-23 tooltip",
+							:title => t('solutions.edit'),
+							:data => {
+								"modal-title" => t('solutions.edit'),
+								"target" => "#category-edit",
+								"close-label" => t('cancel'),
+								"submit-label" => t('save')
+							}) %>
+				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('solutions.delete') }) %>
+			</div>
+		<% end %>
+		<div class="category-details span7">
+			<h2 class="list-title ellipsis tooltip" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
+			<div class="sol-visibility muted">
+				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
+			</div>
+		</div>
+	</div>
+</div>

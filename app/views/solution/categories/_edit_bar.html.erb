@@ -1,0 +1,68 @@
+<div class="list-query-panel">
+	<ul>
+		<li class="lf-item">
+			<div class="item-checkbox"><input type="checkbox" id="fa_item-select-all" /></div>
+		</li>
+		<li class="lf-item lf-btns faded solution-bulk-actions" id="folder-bulk-action">
+			<span>
+				<%= select_tag :id,
+		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
+		              :class => "disabled bulk-action-btns select2",
+		              :id => "move_to",
+		              :'data-dropdown-css-class' => 'bulk-action-menu',
+		              :'data-container-css-class' => 'bulk-action-button',
+		              :include_blank => true,
+		              :placeholder => t('solution.move_to'),
+		              :"data-show-below-only" => true,
+		              :"data-action-on" => "folders",
+		              :"data-action" => "move_to"
+		          } %>
+			</span>
+			<span class="visible-to-btn right-btn">
+				<a class="drop-right nav-trigger disabled bulk-action-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
+				<div class="fd-menu" id="visible_to">
+					<div class="left-list">
+						<ul>
+							<% Solution::Folder::VISIBILITY_OPTIONS.each do |visibility| %>
+								<li>
+									<%= link_to visibility[0], "", 
+															:class => "visibility-selector #{option_selector_name(visibility[0])}", 
+															"data-visibility" => visibility[1],
+															"data-url" => "#{visible_to_solution_folders_path}" %>
+								</li> 
+							<% end %>
+						</ul>
+					</div>
+					<div class="right-select-companies hide">
+						<form action="#" class="form-horizontal">
+							<div class="control-group row-fluid">
+								<div class="row-fluid company_folders">
+				  				<%= render_autocomplete({ 
+				  								:selected_values => nil, 
+				  								:type => :companies,
+				  								:dom_id => "change_folder_customers" }) %>
+				  			</div>
+							</div>
+
+							<div class="control-group row-fluid">
+								<div class="replace-existing">
+									<%= radio_button :company, :add_to_existing, 1, :checked => true, :class => "add-to-existing" %>
+									<%= label_tag :add_to_existing, t('solutions.company.add_existing') %>
+								</div>
+								<div class="replace-existing">
+									<%= radio_button :company, :add_to_existing, 0, :class => "add-to-existing" %>
+									<%= label_tag :add_to_existing, t('solutions.company.replace_existing') %>
+								</div>
+							</div>
+							<div class="control-group row-fluid company-form-submit-btns">
+									<div class="pull-right">
+										<%= submit_tag t('save'), :name => "save", :class => "btn btn-primary", :id => "company-submit" %>
+									</div>
+							</div>
+						</form>	
+					</div>
+				</div>
+			</span>
+		</li>
+	</ul>
+</div>

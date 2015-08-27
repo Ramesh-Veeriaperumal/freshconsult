@@ -1591,6 +1591,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+    
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
@@ -1606,12 +1607,7 @@ Helpkit::Application.routes.draw do
 
 
     match '/sales_manager' => 'dashboard#sales_manager'
-    
-    resources :articles do
-      collection do
-        get :autocomplete
-      end
-    end
+    match '/agent-status' => 'dashboard#agent_status'
 
     resources :attachments do
       member do
@@ -1668,16 +1664,25 @@ Helpkit::Application.routes.draw do
     resources :categories do
       collection do
         put :reorder
+        get :sidebar
+        get :navmenu
+        get :drafts
+        get :feedbacks
       end
 
       resources :folders do
         collection do
           put :reorder
+          put :move_to
+          put :move_back
         end
 
         resources :articles do
           collection do
             put :reorder
+            put :move_to
+            put :move_back
+            put :change_author
           end
 
           member do
@@ -1686,13 +1691,53 @@ Helpkit::Application.routes.draw do
             post :delete_tag
             delete :destroy
             put :reset_ratings
+            get :properties
+            get :voted_users
           end
           resources :tag_uses
         end
       end
     end
+    
+    resources :folders do
+      collection do
+        put :reorder
+        put :move_to
+        put :move_back
+        put :visible_to
+      end
+    end
+    
+    resources :articles do
+      collection do
+        put :reorder
+        put :move_to
+        put :move_back
+        put :change_author
+      end
 
-    resources :articles, :only => [:show, :create, :destroy]
+      member do
+        put :thumbs_up
+        put :thumbs_down
+        post :delete_tag
+        delete :destroy
+        put :reset_ratings
+        get :properties
+        get :voted_users
+      end
+      
+      resources :tag_uses, :drafts
+      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
+    end
+
+    resources :drafts, :only => [:index] do
+      member do
+        post :autosave
+        post :publish
+      end
+    end
+    match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
+
   end
 
   resources :posts, :as => 'all' do
@@ -1968,6 +2013,7 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
     
     match '/articles/:id/' => 'solutions/articles#show'
 

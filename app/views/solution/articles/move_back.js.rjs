@@ -1,0 +1,2 @@
+page << "jQuery('.bulk-actions-bar').removeClass('hide')" if @updated_items
+page.replace_html "articles_list", :partial => "solution/folders/article", :collection => @folder.articles

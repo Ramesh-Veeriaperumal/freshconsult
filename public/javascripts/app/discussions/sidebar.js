@@ -23,11 +23,11 @@ window.App.Discussions = window.App.Discussions || {};
 			var $this = this;
 			$this.setSidebarHeight($("#body-container").height() - 20);
 
-			$(document).on("sticky_kit:stick.discussions.sidebar", "#cm-wrapper", function (ev) {
+			$(document).on("sticky_kit:stick.discussions.sidebar", "#cm-discussion-wrapper", function (ev) {
 				$this.setSidebarHeight($(window).height() - 20);
 			});
 
-			$(document).on("sticky_kit:unstick.discussions.sidebar", "#cm-wrapper", function (ev) {
+			$(document).on("sticky_kit:unstick.discussions.sidebar", "#cm-discussion-wrapper", function (ev) {
 				$this.setSidebarHeight($("#body-container").height() - 20);
 			});
 		},
@@ -58,7 +58,7 @@ window.App.Discussions = window.App.Discussions || {};
 				}
 				break;
 			case 'discussions/unpublished/index':
-				if (window.location.pathname === '/discussions/unpublished/filter/unpublished' || 
+				if (window.location.pathname === '/discussions/unpublished/filter/unpublished' ||
 						window.location.pathname === '/discussions/moderation/filter/waiting') {
 					$('#community-sidebar [data-page-name=waiting]').parent().addClass('active');
 				} else {
@@ -121,7 +121,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		bindToggleButton: function () {
 			var $this = this;
-			$("body").on('click.discussions.sidebar', '.cm-sb-toggle', function () {
+			$("body").on('click.discussions.sidebar', '#cm-sb-toggle', function () {
 				$this.toggle();
 			});
 		},
@@ -130,7 +130,7 @@ window.App.Discussions = window.App.Discussions || {};
 			var $this = this;
 
 			$(document).on('click.discussions.sidebar', function (ev) {
-				var container = $('.community-sidebar'), sidebarToggle = $('.cm-sb-toggle');
+				var container = $('#community-sidebar'), sidebarToggle = $('#cm-sb-toggle');
 				if (!container.is(ev.target) && container.has(ev.target).length === 0 && !sidebarToggle.is(ev.target)) {
 					$this.hide();
 				}
@@ -145,7 +145,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindItemClick: function () {
-			$(document).on('click.discussions.sidebar', '.community-sidebar a', function (ev) {
+			$(document).on('click.discussions.sidebar', '#community-sidebar a', function (ev) {
 				$('#community-sidebar').find(".active").removeClass("active");
 				$(this).parent().addClass('active');
 			});
@@ -172,12 +172,10 @@ window.App.Discussions = window.App.Discussions || {};
 			$('body').removeClass('cs-show');
 			setTimeout(function () {
 				var canShow = $('body').hasClass('cs-always-show');
-				if(!canShow){
+				if (!canShow) {
 					$("#community-sidebar").hide();
 					$this.sidebarActive = false;
-				}
-				else
-				{
+				} else {
 					$("#community-sidebar").show();
 					$this.sidebarActive = true;
 				}

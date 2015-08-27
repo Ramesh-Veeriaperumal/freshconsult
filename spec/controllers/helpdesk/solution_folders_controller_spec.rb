@@ -121,7 +121,7 @@ describe Solution::FoldersController do
         },
       :category_id => @test_category.id
     @account.folders.find_by_name("#{name}").should be_an_instance_of(Solution::Folder)
-    response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder.id))
+    response.should redirect_to(solution_folder_path(@test_folder.id))
   end
 
   it "should not edit a default folder" do 
@@ -135,6 +135,122 @@ describe Solution::FoldersController do
     @account.folders.find_by_name("#{@test_folder.name}").should be_nil
     response.should redirect_to(solution_category_path(@test_category))    
   end
+
+  # Folder Bulk Actions starts from here
+  describe "Folder Bulk Actions"  do
+
+    before(:all) do
+      @test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+      @test_folder3 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @test_folder4 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @folder_ids = [@test_folder3.id, @test_folder4.id]
+    end
+
+    # Start : Visible to
+    describe "Visible to action"  do
+
+      it "should change selected folders visibility to logged in users" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        end
+      end
+
+      it "should change all selected folders visibility to anyone" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+        end
+      end
+
+
+      it "should change all selected folders visibility to agents" do
+        put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:agents]
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:agents])
+        end
+      end
+
+      describe "Adding Company visibility" do
+
+        before(:all) do
+          @company1 = Company.new(:name => Faker::Name.name)
+          @company1.account_id = @test_folder.account_id
+          @company1.save
+          @company2 = Company.new(:name => "#{Faker::Name.name} - 2")
+          @company2.account_id = @test_folder.account_id
+          @company2.save
+        end
+
+        it "should change visibility: replace existing companies" do
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id, @company2.id], :addToExisting => 0
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company2.id, @company1.id)
+          end
+
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company1.id], :addToExisting => 0
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company1.id)
+          end
+        end
+
+        it "should change visibility: add to existing companies" do
+          put :visible_to, :folderIds => @folder_ids, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => [@company2.id], :addToExisting => 1
+          [@test_folder3, @test_folder4].each do |folder|
+            folder.reload
+            folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should include(@company2.id, @company1.id)
+          end
+        end
+
+      end
+
+    end
+    # End : Visible to
+
+    # Start : Move to Action
+    describe "Move to action" do
+
+      it "should move selected folders to another category" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @folder_ids, :parent_id => @test_category2.id
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.category_id.should be_eql(@test_category2.id)
+        end
+      end
+
+      it "should render move_to.rjs" do
+        xhr :put, :move_to, :items => @folder_ids, :parent_id => @test_category2.id
+        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo\(\)/
+      end
+
+      it "should reverse the changes done by move_to" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_back, :items => @folder_ids, :parent_id => @test_category.id
+        [@test_folder3, @test_folder4].each do |folder|
+          folder.reload
+          folder.category_id.should be_eql(@test_category.id)
+        end
+      end
+
+      it "should render move_back" do
+        xhr :put, :move_back, :items => @folder_ids, :parent_id => @test_category.id
+        response.should render_template('solution/folders/move_back')
+      end
+
+    end
+    # End : Move to action
+
+  end
+  # END : Folder Bulk Actions
 
   describe "Solution Folder meta" do
     before(:all) do
@@ -168,7 +284,7 @@ describe Solution::FoldersController do
                               },
         :category_id => @test_category.id
       check_meta_integrity(@test_folder_for_meta)
-      response.should redirect_to(solution_category_folder_path(@test_category.id, @test_folder_for_meta.id))
+      response.should redirect_to(solution_folder_path(@test_folder_for_meta.id))
     end
 
     it "should destroy meta on folder destroy" do
@@ -179,6 +295,13 @@ describe Solution::FoldersController do
       @account.solution_folders.find_by_id(test_destroy_folder.id).should be_nil
       @account.solution_folder_meta.find_by_id(test_destroy_folder.id).should be_nil
     end
+
+    it "should redirect to drafts page for default folder" do
+      @test_folder_for_meta.update_attributes(:is_default => true)
+      get :show, :id => @test_folder_for_meta.id, :category_id => @test_category.id
+      response.should redirect_to(solution_my_drafts_path('all'))
+    end
+    
   end
 
   describe "Reorder folder meta" do
