@@ -55,7 +55,7 @@ class Language
 		end
 		
 		def default
-			find_by_code(:en)
+			find_by_code("en")
 		end
 
 		private
