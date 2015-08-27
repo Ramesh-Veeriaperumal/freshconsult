@@ -82,6 +82,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_create_length_valid_with_trailing_space
+    params_hash = { name: Faker::Lorem.characters(20) + white_space }
+    post :create, construct_params({}, params_hash)
+    assert_response :created
+    match_json(company_pattern(Company.last))
+  end
+
   def test_update_company
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
@@ -133,6 +140,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: company.id }, params_hash)
     match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
     assert_response :bad_request
+  end
+
+  def test_update_length_valid_trailing_spaces
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    params_hash = { name: Faker::Lorem.characters(20) + white_space }
+    put :update, construct_params({ id: company.id }, params_hash)
+    assert_response :success
+    match_json(company_pattern(params_hash.each{|x, y| y.strip! if [:name].include?(x)}, company.reload))
   end
 
   def test_delete_company

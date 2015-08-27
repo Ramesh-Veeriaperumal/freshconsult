@@ -9,6 +9,11 @@ class ApiCompanyValidation < ApiValidation
   }
   }
 
+  def initialize(request_params, item)
+    super(request_params, item)
+    @domains = request_params[:domains] 
+  end
+
   def attributes_to_be_stripped
     [:name]
   end

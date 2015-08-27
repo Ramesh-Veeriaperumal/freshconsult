@@ -273,6 +273,12 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_create_length_valid_with_trailing_spaces
+    post :create, construct_params({}, name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space])
+    assert_response :created
+    match_json(deleted_contact_pattern(User.last))
+  end
+
   # Update user
   def test_update_user_with_blank_name
     params_hash  = { name: '' }
@@ -405,6 +411,15 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('phone', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('tags', 'is too long (maximum is 255 characters)')])
     assert_response :bad_request
+  end
+
+
+  def test_update_length_valid_with_trailing_space
+    sample_user = get_user
+    sample_user.update_attribute(:email, nil)
+    put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space])
+    assert_response :success
+    match_json(deleted_contact_pattern(sample_user.reload))
   end
 
   # Delete user

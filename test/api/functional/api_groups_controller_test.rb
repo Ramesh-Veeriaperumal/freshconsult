@@ -47,6 +47,12 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_create_group_with_valid_with_trailing_spaces
+    post :create, construct_params({}, name: Faker::Lorem.characters(20) + white_space)
+    match_json(group_pattern({}, Group.last))
+    assert_response :created
+  end
+
   def test_create_group_with_invalid_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
@@ -135,6 +141,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
 
     assert_response :bad_request
+  end
+
+  def test_update_group_valid_with_trailing_spaces
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: group.id }, name: Faker::Lorem.characters(20) + white_space)
+    assert_response :success
+    match_json(group_pattern({}, group.reload))
   end
 
   def test_update_group_with_invalid_id

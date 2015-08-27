@@ -85,6 +85,14 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_create_length_valid_with_trailing_spaces
+      params_hash = { name: Faker::Lorem.characters(20) + white_space }
+      post :create, construct_params({}, params_hash)
+      assert_response :success
+      match_json(forum_category_response_pattern(params_hash[:name].strip, nil))
+      match_json(forum_category_pattern(ForumCategory.last))
+    end
+
     def test_update_with_extra_params
       put :update, construct_params({ id: fc.id }, test: 'new')
       match_json([bad_request_error_pattern('test', 'invalid_field')])
@@ -115,6 +123,15 @@ module ApiDiscussions
       put :update, construct_params({ id: fc.id }, name: Faker::Lorem.characters(300))
       match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
+    end
+
+    def test_update_length_valid_with_trailing_space
+      new_fc = create_test_category
+      name =  Faker::Lorem.characters(20) + white_space
+      put :update, construct_params({ id: new_fc.id }, name: name)
+      match_json(forum_category_response_pattern(name.strip, new_fc.reload.description))
+      match_json(forum_category_pattern(new_fc.reload))
+      assert_response :success
     end
 
     def test_update

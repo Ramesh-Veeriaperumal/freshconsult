@@ -74,6 +74,10 @@ module TestCaseMethods
     @headers['CONTENT_TYPE'] = 'application/json'
   end
 
+  def white_space
+    " " * 300
+  end
+
 end
 
 include TestCaseMethods

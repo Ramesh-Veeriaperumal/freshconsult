@@ -94,7 +94,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_product_id
-    product = create_product
+    product = create_product(email: Faker::Internet.email)
     params = { requester_id: requester.id, product_id: product.id }
     post :create, construct_params({}, params)
     assert_response :created
@@ -111,8 +111,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_product_id_and_email_config_id
-    product = create_product
-    product_1 = create_product
+    product = create_product(email: Faker::Internet.email)
+    product_1 = create_product(email: Faker::Internet.email)
     params = { requester_id: requester.id, product_id: product.id, email_config_id: product_1.primary_email_config.id }
     post :create, construct_params({}, params)
     assert_response :created
@@ -151,6 +151,16 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_create_length_valid_with_trailing_spaces
+    params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(20) + white_space, subject: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space])
+    post :create, construct_params({}, params)
+    assert_response :created
+    params[:tags].each(&:strip!)
+    result = params.each{|x, y| y.strip! if [:name, :subject, :phone].include?(x)}
+    match_json(ticket_pattern(result, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   def test_create_length_invalid_twitter_id
     params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(300))
     post :create, construct_params({}, params)
@@ -158,11 +168,27 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_create_length_valid_twitter_id_with_trailing_spaces
+    params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(20) + white_space)
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params.each{|x, y| y.strip! if [:twitter_id].include?(x)}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   def test_create_length_invalid_email
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('email', 'is too long (maximum is 255 characters)')])
     assert_response :bad_request
+  end
+
+  def test_create_length_valid_email_with_trailing_spaces
+    params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params.each{|x, y| y.strip! if [:email].include?(x)}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
   def test_create_presence_requester_id_invalid
@@ -1179,6 +1205,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_update_length_valid_with_trailing_spaces
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(20) + white_space, requester_id: nil, subject: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space])
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    params_hash[:tags].each(&:strip!)
+    result = params_hash.each{|x, y| y.strip! if [:name, :subject, :phone].include?(x)}
+    match_json(ticket_pattern(result, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
+
   def test_update_length_invalid_twitter_id
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(300))
@@ -1187,12 +1225,30 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
+  def test_update_length_valid_twitter_id_with_trailing_space
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(20) + white_space)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.each{|x, y| y.strip! if [:twitter_id].include?(x)}, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
   def test_update_length_invalid_email
     t = ticket
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com")
     put :update, construct_params({ id: t.display_id }, params_hash)
     match_json([bad_request_error_pattern('email', 'is too long (maximum is 255 characters)')])
     assert_response :bad_request
+  end
+
+  def test_update_length_valid_email_with_trailing_space
+    t = ticket
+    params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response :success
+    match_json(ticket_pattern(params_hash.each{|x, y| y.strip! if [:email].include?(x)}, t.reload))
+    match_json(ticket_pattern({}, t.reload))
   end
 
   def test_update_presence_requester_id_invalid

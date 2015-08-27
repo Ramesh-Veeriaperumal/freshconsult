@@ -146,6 +146,16 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_update_validate_length_with_trailing_spaces
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      params = {name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space}
+      put :update, construct_params({ id: forum.id }, params)
+      match_json(forum_pattern(forum.reload))
+      match_json(forum_response_pattern(forum, params.each{|x, y| y.strip! if [:name, :description].include?(x)}))
+      assert_response :success
+    end
+
     def test_create_validate_presence
       post :create, construct_params({}, description: 'test')
       match_json([bad_request_error_pattern('name', 'missing_field'),
@@ -167,6 +177,14 @@ module ApiDiscussions
       match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                   bad_request_error_pattern('description', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
+    end
+
+    def test_create_validate_length_with_trailing_space
+      params = {forum_category_id: 1, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space}
+      post :create, construct_params({}, params)
+      match_json(forum_pattern Forum.last)
+      match_json(forum_response_pattern Forum.last, params.each{|x, y| y.strip! if [:name, :description].include?(x)})
+      assert_response :created
     end
 
     def test_create

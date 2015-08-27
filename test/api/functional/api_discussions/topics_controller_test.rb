@@ -114,6 +114,14 @@ module ApiDiscussions
       assert_response :bad_request
     end
 
+    def test_create_validate_length_with_trailing_space
+      params = {forum_id: forum_obj.id, title: Faker::Lorem.characters(20) + white_space, message_html: 'test content'}
+      post :create, construct_params({}, params)
+      match_json(topic_pattern(last_topic))
+      match_json(topic_pattern(params.each{|x, y| y.strip! if x == :title}, last_topic))
+      assert_response :created
+    end
+
     def test_before_filters_show
       @controller.expects(:portal_check).once
       get :show, construct_params(id: 1)
@@ -315,6 +323,15 @@ module ApiDiscussions
       put :update, construct_params({ id: first_topic.id }, title: Faker::Lorem.characters(300))
       match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
+    end
+
+    def test_update_valid_title_length
+      topic = first_topic
+      params = {title: Faker::Lorem.characters(20) + white_space}
+      put :update, construct_params({ id: first_topic.id }, params)
+      match_json(topic_pattern(topic.reload))
+      match_json(topic_pattern(params.each{|x, y| y.strip! if x == :title}, topic))
+      assert_response :success
     end
 
     def test_update_with_nil_values
