@@ -352,6 +352,7 @@ class User < ActiveRecord::Base
 
   # Used by API V2
   def create_contact!
+    self.avatar = self.avatar
     return false unless save_without_session_maintenance
     if (!self.deleted and !self.email.blank?)
       portal = nil
