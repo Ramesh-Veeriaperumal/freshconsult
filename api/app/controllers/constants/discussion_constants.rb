@@ -16,7 +16,7 @@ module DiscussionConstants
   LOAD_OBJECT_EXCEPT = [:followed_by, :is_following, :category_forums, :forum_topics, :topic_posts]
 
   CATEGORY_FIELDS_TO_BE_STRIPPED = %w(name)
-  FORUM_FIELDS_TO_BE_STRIPPED = %w(name)
+  FORUM_FIELDS_TO_BE_STRIPPED = %w(name description)
   TOPIC_FIELDS_TO_BE_STRIPPED = %w(title sticky locked)
   POST_FIELDS_TO_BE_STRIPPED = %w(answer)
 end
