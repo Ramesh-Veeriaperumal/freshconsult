@@ -58,7 +58,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       if current_call.present?
         return if current_call.direct_dial_number.present?
         return set_outgoing_status if single_leg_outgoing?
-        return handle_agent_hunt_status if current_call.meta.agent_hunt?
+        return handle_agent_hunt_status if current_call.meta.present? && current_call.meta.agent_hunt?
         if current_call.agent.blank?
           params[:DialCallStatus] = "no-answer"
         else
@@ -70,6 +70,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     def terminate_ivr_preview
       if current_call.blank? && ivr_preview?
         remove_ivr_preview
+        add_preview_cost_job
         empty_twiml
       end
     end
@@ -145,6 +146,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def update_total_duration
+      return if current_call.blank?
       if current_call.outgoing?
         call = current_call.root
         call.set_call_duration(params) if params[:call].blank? # update only for outgoing root calls
@@ -168,7 +170,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def reset_outgoing_count
-      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.outgoing?
+      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.present? && current_call.outgoing?
     end
 
     def check_credit_balance
@@ -180,6 +182,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def set_outgoing_status
-      params[:DialCallStatus] = params[:CallStatus] if params[:call].present? && params[:CallStatus].present?
+      if params[:call].present? && params[:CallStatus].present?
+        params[:DialCallStatus] = params[:CallStatus] 
+      else
+        params[:DialCallStatus] = "no-answer" if current_call.default?
+      end
     end
 end

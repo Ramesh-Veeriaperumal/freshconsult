@@ -6625,6 +6625,11 @@ en:
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
       strange_number: "Cannot call a Restricted number"
+      move_to_dialer: "Back to dialer"
+      connect_call: "Call"
+    search:
+      work_phone: "Work"
+      mobile_phone: "Mobile"
     call_status:
       default: ""
       completed: "Completed"
@@ -6660,6 +6665,7 @@ en:
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       call_notes: "Call Notes"
+      phone_icon: "Phone"
       on_phone: "Available on Phone"
       on_browser: "Available on Browser"
       invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
