@@ -76,7 +76,7 @@ window.App.Phone = window.App.Phone || {};
 				}	
 			});
 			
-			$(".call-history-metrics , .reports-metrics").on("click",function(ev){
+			$(document).on("click",".call-history-metrics , .reports-metrics",function(ev){
 				if(ev.hasOwnProperty('originalEvent')){
 					if($(this).hasClass("call-history-metrics")){
 						self.recordSource("CALL_HISTORY_EDIT");
