@@ -59,12 +59,14 @@ function toggleGroup(access_id)
 <%= f.error_messages :object_name => 'canned_response_response' %>
 <ul class="cnt">
 	<li>
-		<%= f.label(:title, t('.response_name')) %>
+		<label for="admin_canned_responses_response_title">
+			<%= t('.response_name') %><span class="required_star">*</span>
+		</label>
 		<%= f.text_field :title, :class => "text required insert-placeholder-target", "minlength" => "3" %>
 	</li>
 	<li>
 		<label for="ca-content">
-			<%= t('message') %>
+			<%= t('message') %><span class="required_star">*</span>
 			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
 		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body required_redactor", :id => 'ca-content' %>		

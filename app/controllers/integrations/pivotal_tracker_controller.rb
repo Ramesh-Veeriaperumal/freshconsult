@@ -106,7 +106,8 @@ class Integrations::PivotalTrackerController < ApplicationController
 
 
     def insert_integrated_resources
-      resource = { "application_id" => params[:application_id], :integrated_resource => { :local_integratable_id => params[:ticket_id],
+      ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+      resource = { "application_id" => params[:application_id], :integrated_resource => { :local_integratable_id => ticket.id,
                  :remote_integratable_id => "#{params[:project_id]}/stories/#{params[:story_id]}",
                  :local_integratable_type => "issue-tracking", :account => current_account }}
       result = Integrations::IntegratedResource.createResource(resource)
@@ -130,7 +131,7 @@ class Integrations::PivotalTrackerController < ApplicationController
         user_id = get_user_id(user, performer_name, performer_id)
       end
       unless integrated_resource.nil?
-        @ticket = current_account.tickets.find_by_display_id(integrated_resource["local_integratable_id"])
+        @ticket = integrated_resource.local_integratable
         note = @ticket.notes.build(
             :note_body_attributes => {:body_html => msg },
             :private => true,

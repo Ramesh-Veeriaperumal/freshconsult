@@ -34,7 +34,9 @@ window.App = window.App || {};
 
     makePrimary: function (entity) {
       jQuery('.merge-cont').removeClass('cont-primary');
+      jQuery('.merge-cont').children('.primary-marker').attr('title','Mark as primary');
       entity.addClass('cont-primary');
+      entity.children('.primary-marker').attr('title', 'Primary ticket');
     },
 
     createdDate: function () {

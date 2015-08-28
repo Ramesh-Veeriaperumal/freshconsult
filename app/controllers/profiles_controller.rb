@@ -2,7 +2,7 @@ class ProfilesController < ApplicationController
   
    before_filter :require_user 
    before_filter :load_user, :only => [:edit, :change_password]
-   before_filter :clean_params, :only => [:update]
+   before_filter :set_user, :clean_params, :only => [:update]
    skip_before_filter :check_privilege
    include ModelControllerMethods  
 
@@ -53,10 +53,8 @@ def update_contact
 end
 
 def update_agent
-  @profile = current_user.agent
     respond_to do |format|      
-      if @profile.update_attributes(params[:agent])            
-          @user = current_account.users.find(@profile.user_id)          
+      if @profile.update_attributes(params[:agent])                     
           @user.update_attributes(params[:user])        
           format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
           format.xml  { head :ok }
@@ -105,6 +103,11 @@ private
     @profile = current_user.customer? ? current_user : current_user.agent    
   end
 
+  def set_user
+    @profile = current_user.agent
+    @user = current_account.users.find(@profile.user_id)  
+  end
+
 protected
 
  def cname
@@ -115,6 +118,10 @@ protected
   if params[:user]
     params[:user].delete(:helpdesk_agent)
     params[:user].delete(:role_ids)
+    params[:user]['phone'].try(:strip!)
+    params[:user]['mobile'].try(:strip!)
+    params[:user].delete('mobile') if @user.mobile.blank? and params[:user]['mobile'].blank?
+    params[:user].delete('phone') if @user.phone.blank? and params[:user]['phone'].blank?
   end
   if params[:agent]
     params[:agent].delete(:user_id)

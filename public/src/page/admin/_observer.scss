@@ -122,9 +122,11 @@
 }
 
 form:not(.supervisor-form) {
-	.controls {
-		.nested_field {
-			@include margin-left(121px);
+    .conditionset:not(#actionDOM) {
+		.controls {
+			.nested_field {
+				@include margin-left(121px);
+			}
 		}
 	}
 }
