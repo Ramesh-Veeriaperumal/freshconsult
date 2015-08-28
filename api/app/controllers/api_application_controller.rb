@@ -123,7 +123,7 @@ class ApiApplicationController < MetalApiConfiguration
 
     def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain and current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
     end
 
     def ensure_proper_protocol

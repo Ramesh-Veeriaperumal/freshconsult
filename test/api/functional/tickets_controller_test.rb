@@ -768,6 +768,14 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('due_by', 'start_time_lt_now')])
   end
 
+  def test_update_without_due_by
+    params = update_ticket_params_hash
+    t = ticket
+    t.update_attribute(:due_by, (t.created_at - 10.days).to_s)
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+  end
+
   def test_update_invalid_model
     user = add_new_user(@account)
     user.update_attribute(:blocked, true)
