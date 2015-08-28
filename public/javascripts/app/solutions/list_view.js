@@ -225,6 +225,7 @@ window.App = window.App || {};
     },
 
     undo_bulk_action: function (obj, list_name) {
+      var $this = this;
       $('#noticeajax').hide();
       $.ajax({
         url: "/solution/" + list_name + "/move_back",
@@ -236,6 +237,7 @@ window.App = window.App || {};
         },
         success: function () {
           App.Solutions.NavMenu.reload();
+          $this.initialData();
           $.proxy(this.onSaveSuccess, this);
         },
         error: $.proxy(this.onSaveError, this)
