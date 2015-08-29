@@ -65,6 +65,7 @@
 		Twilio.Device.disconnect(function (conn) {
 			console.log("Call disconnected");
 			freshfoneNotification.resetJsonFix();
+			freshfoneDialpadEvents.hideContactDetails();
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
 			if (freshfonecalls.tConn) {
 				var callSid = freshfonecalls.tConn.parameters.CallSid;

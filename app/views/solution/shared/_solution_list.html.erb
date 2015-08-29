@@ -21,7 +21,7 @@
 <div class="intro">
 	<%=t('solution.folders.folder_form.visible_to').html_safe%>:
 	<% if folder.has_company_visiblity?%>
-	  <% folder.customer_folders.each do |cust|%>
+	  <% folder.customer_folders.includes(:customer).each do |cust|%>
 		  <span class="label notice"><%=cust.customer.name%></span>
 	  <%end%>
   <%else%>

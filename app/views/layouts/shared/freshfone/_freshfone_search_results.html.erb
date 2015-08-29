@@ -1,0 +1,53 @@
+<% if !freshfone_search_results.blank? %>
+	<% freshfone_search_results.each do |search_record| %>
+	  <% if !search_record[:phone].blank? || !search_record[:mobile].blank? || search_record[:custom_field].any? %>
+	  	<li id="result-info">
+		  	<div class='contact'>
+		  		<div class='ff_profile_img hide' id="<%= search_record[:id] %>">
+		  				<%= user_avatar(search_record[:user], :thumb, "preview_pic circle") %>
+		  		</div>
+		  		<div class="contact-name result-name"><%= search_record[:value] %> </div>
+		  		<% unless search_record[:company].blank? %>
+		  			<div class="company-name result-company"> 
+		  				<%= search_record[:company] %> 
+		  			</div>
+		  		<% end %>
+		  	</div>
+
+		  	<ul class='contact-num'>
+					<% unless search_record[:phone].blank? %>
+		  			<li class='contact-details search-result'>
+							<div class="phone-contact result-phone"><%= search_record[:phone] %> </div>
+					  	<div class="phone-type"><%=t('freshfone.search.work_phone')%></div>
+							<div class="ff_call_button pull-right hide">
+								<%= font_icon "ff-phone", :size => 11 %> Call
+							</div> 
+		  			</li>
+		  		<% end %>
+
+		  		<% unless search_record[:mobile].blank? %>
+		  			<li class='phone-details search-result'>
+					  	<div class="phone-contact result-phone"><%= search_record[:mobile] %> </div>
+					  	<div class="phone-type"><%=t('freshfone.search.mobile_phone')%></div>
+					  	<div class="ff_call_button pull-right hide">
+								<%= font_icon "ff-phone", :size => 11 %> Call
+							</div> 
+		  			</li>
+					<% end %>
+
+					<% if search_record[:custom_field].length > 0 %>
+						<%= render :partial => 'layouts/shared/freshfone/freshfone_custom_fields',:object => search_record %>
+					<% end %>
+				</ul>
+			</li>
+		<% end %>	
+	<% end %>
+<% else %>
+	<li class="no-search-result">
+		<ul class="no-search-result-number">
+			<li class="searched-number active-element">
+				<div class="no_results contact-num phone-contact "></div>
+			</li>
+		</ul>
+	</li>	
+<% end %>

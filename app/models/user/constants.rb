@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
 
   MERGE_VALIDATIONS = [["emails", 5], ["twitter_id", 1], ["fb_profile_id", 1]] #[Attribute, limit] ["phone", 1]
 
+  USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
+
   MAX_USER_EMAILS = 5
   PASSWORD_LENGTH = 4
 end

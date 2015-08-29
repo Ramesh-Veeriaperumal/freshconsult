@@ -383,6 +383,10 @@
 		@include text-align(right);
 		@include padding-right(0);
 		width: 140px;
+
+		.subject_style {
+			cursor: default;
+		}
 	}
 	
 	.td-ticket-details{

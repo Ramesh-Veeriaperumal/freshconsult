@@ -2,56 +2,32 @@
 class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
-
+  belongs_to_account
+  concerned_with :associations, :meta_associations, :body_methods
+  
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
-  include Mobihelp::AppSolutionsUtils
 
   include Solution::MetaMethods
-  include Redis::RedisKeys
-  include Redis::OthersRedis	
-  
-  serialize :seo_data, Hash
-
-  concerned_with :body_methods
-
-  acts_as_voteable
-
-  belongs_to :folder, :class_name => 'Solution::Folder'
-  belongs_to :user, :class_name => 'User'
-  belongs_to :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => "parent_id"
-  belongs_to_account
-  
-  has_many :voters, :through => :votes, :source => :user, :uniq => true, :order => "#{Vote.table_name}.id DESC"
-  
-  has_many_attachments
-  has_many_cloud_files
-  spam_watcher_callbacks 
-  
-  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
-  
-  has_many :activities,
-    :class_name => 'Helpdesk::Activity',
-    :as => 'notable',
-    :dependent => :destroy
-  has_many :tag_uses,
-    :as => :taggable,
-    :class_name => 'Helpdesk::TagUse',
-    :dependent => :destroy
-  has_many :tags, 
-    :class_name => 'Helpdesk::Tag',
-    :through => :tag_uses
-
-  has_many :support_scores, :as => :scorable, :dependent => :destroy
-
-  has_many :article_ticket, :dependent => :destroy
-  has_many :tickets, :through => :article_ticket
+  include Solution::LanguageMethods
+  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
   include Mobile::Actions::Article
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
+  
   include Community::HitMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
+  spam_watcher_callbacks
+  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
+  
+  acts_as_voteable
+  
+  
+  serialize :seo_data, Hash
+  
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
@@ -66,6 +42,11 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  default_scope proc {
+    Account.current.launched?(:meta_read) ? joins(:solution_article_meta).preload(:solution_article_meta) : unscoped
+  }
  
   scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
   scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}
@@ -74,15 +55,41 @@ class Solution::Article < ActiveRecord::Base
       { :conditions => ["user_id = ?", user.id ] }
   }
 
-  scope :articles_for_portal, lambda { |portal|
-    {
-      :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
-          portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-      :joins => :folder
-    }
-  }
+  scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def self.articles_for_portal_conditions(portal)
+    { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',
+        portal.portal_solution_categories.map(&:solution_category_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+      :joins => :folder,
+      :order => ['solution_articles.folder_id', "solution_articles.position"] }
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def self.articles_for_portal_conditions_through_meta(portal)
+    { :conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
+          portal.portal_solution_categories.map(&:solution_category_meta_id), Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
+        :joins => :folder_through_meta,
+        :order => ["solution_article_meta.solution_folder_meta_id", "solution_article_meta.position"]
+      }
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def self.articles_for_portal_conditions_with_association(portal)
+    if Account.current.launched?(:meta_read)
+      self.articles_for_portal_conditions_through_meta(portal)
+    else
+      self.articles_for_portal_conditions_without_association(portal)
+    end
+  end
+
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  class << self
+    alias_method_chain :articles_for_portal_conditions, :association
+  end
 
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
@@ -227,9 +234,14 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
-  
+
     def set_mobihelp_solution_updated_time
-      update_mh_solutions_category_time(self.folder.category_id)
+      category_obj.update_mh_solutions_category_time
+    end
+
+    def category_obj
+      self.reload
+      Account.current.launched?(:meta_read) ? folder.solution_category_meta : folder.category
     end
 
     def content_changed?

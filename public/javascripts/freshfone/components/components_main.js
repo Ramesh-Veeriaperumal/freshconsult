@@ -6,7 +6,9 @@ var freshfonetimer,
 		freshfoneendcall,
 		freshfoneUserInfo,
 		freshfoneNotification,
-		freshfoneNetworkError;
+		freshfoneNetworkError,
+		freshfoneContactSearch,
+		freshfoneDialpadEvents;
 (function ($) {
 	"use strict";
 	$(document).ready(function() {
@@ -19,6 +21,8 @@ var freshfonetimer,
 		freshfoneendcall = new FreshfoneEndCall();
 		freshfoneNotification = new FreshfoneNotification();
 		freshfoneNetworkError = new FreshfoneNetworkError();
+		freshfoneContactSearch = new FreshfoneContactSearch();
+		freshfoneDialpadEvents = new FreshfoneDialpadEvents();
 
 		freshfonesocket.loadDependencies(freshfonecalls,freshfoneNetworkError);
 		freshfoneuser.loadDependencies(freshfonecalls,freshfonesocket,freshfoneNotification);
@@ -33,6 +37,7 @@ var freshfonetimer,
 	$(document).on('click', '.end_call', function (e) {
 		e.preventDefault();
 		freshfonecalls.hangup();
+		freshfoneDialpadEvents.hideContactDetails();
 		if (freshfonecalls.dontShowEndCallForm()) {
 			freshfoneuser.resetStatusAfterCall();
 			freshfoneuser.updatePresence();

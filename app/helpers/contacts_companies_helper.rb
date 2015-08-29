@@ -3,7 +3,7 @@ module ContactsCompaniesHelper
   include Helpdesk::TicketsHelperMethods
   def contact_tabs(type)
     tabs = [['contacts', t('contacts.title')],
-        ['customers', t('company.title')]]
+        ['companies', t('company.title')]]
     ul tabs.map{ |t| 
                   link_to t[1], "/#{t[0]}", :id => "#{t[0]}Tab", :class => "#{t[2]}", :'data-pjax' => "#body-container"
                 }, { :class => "tabs nav-tabs", :id => "contacts-tab" }, type.eql?('company') ? 1 : 0

@@ -28,6 +28,7 @@ defaults: &defaults
     - [es_index_queue]
     - [reset_group]
     - [reset_responder]
+    - [solution_language_change]
     - [default]
 
 development:
