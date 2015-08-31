@@ -26,14 +26,10 @@ class Solution::Category < ActiveRecord::Base
     :foreign_key => :solution_category_id, 
     :dependent => :delete_all
 
-<<<<<<< HEAD
   has_many :portals, 
     :through => :portal_solution_categories,
     :after_add => :clear_cache,
     :after_remove => :clear_cache
-=======
-  has_many :portals, :through => :portal_solution_categories
->>>>>>> origin/rails3-phase2
 
   has_many :user_folders, :class_name =>'Solution::Folder' , :order => "solution_folders.position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
