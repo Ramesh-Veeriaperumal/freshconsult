@@ -3,7 +3,7 @@ module ApiDiscussions
     before_filter :load_topic, only: [:topic_posts]
 
     def topic_posts
-      paginate_items(@item.posts, 'posts')
+      @posts = paginate_items(@item.posts)
       render '/api_discussions/posts/post_list'
     end
 

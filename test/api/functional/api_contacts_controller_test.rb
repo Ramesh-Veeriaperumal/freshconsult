@@ -413,7 +413,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response :bad_request
   end
 
-
   def test_update_length_valid_with_trailing_space
     sample_user = get_user
     sample_user.update_attribute(:email, nil)

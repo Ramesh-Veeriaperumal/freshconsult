@@ -4,11 +4,6 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
     { api_company_field: params }
   end
 
-  def test_index_company_fields
-    get :index, request_params
-    assert_equal CompanyField.all, assigns(:items).sort
-  end
-
   def test_index
     get :index, request_params
     pattern = []

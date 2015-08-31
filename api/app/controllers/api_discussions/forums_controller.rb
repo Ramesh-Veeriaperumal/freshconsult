@@ -10,7 +10,7 @@ module ApiDiscussions
     end
 
     def category_forums
-      paginate_items(@item.forums, 'forums')
+      @forums = paginate_items(@item.forums)
       render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
     end
 

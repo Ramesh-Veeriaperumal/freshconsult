@@ -53,7 +53,6 @@ module Helpers::NotesHelper
   def v2_reply_payload
     { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
-
 end
 
 include Helpers::NotesHelper

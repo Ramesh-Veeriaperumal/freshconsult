@@ -211,37 +211,35 @@ class ApiApplicationController < MetalApiController
     end
 
     # will take scoper as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def load_objects(items = scoper, is_array = false) 
-      paginate_items(items, is_array: is_array)
+    def load_objects(items = scoper, is_array = false)
+      @items = paginate_items(items, is_array)
     end
 
-    def paginate_items(item, variable_name = 'items', is_array: false)
+    def paginate_items(item, is_array = false)
       paginated_items = item.paginate(paginate_options(is_array))
-      assign_instance_variable_and_link_header(paginated_items, variable_name, is_array: is_array)
+      add_link_header(paginated_items, is_array)
+      collection = paginated_items[0..(@per_page-1)] # get paginated_collection of length 'per_page'
+      collection
     end
 
-    # Assign paginated collection to a controller instance variable & add link header if next page exists.
-    def assign_instance_variable_and_link_header(paginated_collection, instance_variable_name, is_array: false)
-      if paginated_collection.length > @per_page # Will be executed if scoper is AR & next page exists
-        add_link_header
-        *collection, last = paginated_collection # assigns all but last elements to collection.
-      elsif paginated_collection.next_page && is_array # will be executed if scoper is array & next page exists
-        add_link_header
-        collection = paginated_collection
-      else # Will be executed if no next page exists
-        collection = paginated_collection
+    # Add link header if next page exists.
+    def add_link_header(paginated_collection, is_array = false)
+      # will be executed if scoper is array & next page exists or
+      # Will be executed if scoper is AR & next page exists
+      if paginated_collection.length > @per_page || paginated_collection.next_page && is_array
+        url = construct_link_header
+        response.headers['Link'] = "<#{url}>; rel=\"next\""
       end
-      instance_variable_set(:"@#{instance_variable_name}", collection) # Set instance variable so that view can a access.
     end
 
-    # Add link header for paginated collection
-    def add_link_header
+    # Construct link header for paginated collection
+    def construct_link_header
       query_string = '?'
 
       # Construct query string with next page number.
       request.query_parameters.merge(page: get_page + 1).each { |x, y| query_string += "#{x}=#{y}&" }
       url = url_for(only_path: false) + query_string.chop # concatenate url & chopped query string
-      response.headers['Link'] = "<#{url}>; rel=\"next\""
+      url
     end
 
     def assign_protected

@@ -149,10 +149,10 @@ module ApiDiscussions
     def test_update_validate_length_with_trailing_spaces
       fc = fc_obj
       forum = create_test_forum(fc)
-      params = {name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space}
+      params = { name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space }
       put :update, construct_params({ id: forum.id }, params)
       match_json(forum_pattern(forum.reload))
-      match_json(forum_response_pattern(forum, params.each{|x, y| y.strip! if [:name, :description].include?(x)}))
+      match_json(forum_response_pattern(forum, params.each { |x, y| y.strip! if [:name, :description].include?(x) }))
       assert_response :success
     end
 
@@ -180,10 +180,10 @@ module ApiDiscussions
     end
 
     def test_create_validate_length_with_trailing_space
-      params = {forum_category_id: 1, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space}
+      params = { forum_category_id: 1, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space }
       post :create, construct_params({}, params)
       match_json(forum_pattern Forum.last)
-      match_json(forum_response_pattern Forum.last, params.each{|x, y| y.strip! if [:name, :description].include?(x)})
+      match_json(forum_response_pattern Forum.last, params.each { |x, y| y.strip! if [:name, :description].include?(x) })
       assert_response :created
     end
 

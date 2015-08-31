@@ -156,7 +156,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response :created
     params[:tags].each(&:strip!)
-    result = params.each{|x, y| y.strip! if [:name, :subject, :phone].include?(x)}
+    result = params.each { |x, y| y.strip! if [:name, :subject, :phone].include?(x) }
     match_json(ticket_pattern(result, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
@@ -172,7 +172,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.except(:email).merge(twitter_id: Faker::Lorem.characters(20) + white_space)
     post :create, construct_params({}, params)
     assert_response :created
-    match_json(ticket_pattern(params.each{|x, y| y.strip! if [:twitter_id].include?(x)}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params.each { |x, y| y.strip! if [:twitter_id].include?(x) }, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
@@ -187,7 +187,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
     post :create, construct_params({}, params)
     assert_response :created
-    match_json(ticket_pattern(params.each{|x, y| y.strip! if [:email].include?(x)}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params.each { |x, y| y.strip! if [:email].include?(x) }, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
@@ -1211,11 +1211,10 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
     params_hash[:tags].each(&:strip!)
-    result = params_hash.each{|x, y| y.strip! if [:name, :subject, :phone].include?(x)}
+    result = params_hash.each { |x, y| y.strip! if [:name, :subject, :phone].include?(x) }
     match_json(ticket_pattern(result, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
-
 
   def test_update_length_invalid_twitter_id
     t = ticket
@@ -1230,7 +1229,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: nil, twitter_id: Faker::Lorem.characters(20) + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
-    match_json(ticket_pattern(params_hash.each{|x, y| y.strip! if [:twitter_id].include?(x)}, t.reload))
+    match_json(ticket_pattern(params_hash.each { |x, y| y.strip! if [:twitter_id].include?(x) }, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
 
@@ -1247,7 +1246,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: nil, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
-    match_json(ticket_pattern(params_hash.each{|x, y| y.strip! if [:email].include?(x)}, t.reload))
+    match_json(ticket_pattern(params_hash.each { |x, y| y.strip! if [:email].include?(x) }, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
 

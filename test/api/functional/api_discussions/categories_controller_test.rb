@@ -73,11 +73,6 @@ module ApiDiscussions
       end
     end
 
-    def test_index_load_objects
-      get :index, request_params
-      assert_equal ForumCategory.all, assigns(:items)
-    end
-
     def test_create_length_invalid
       params_hash = { name: Faker::Lorem.characters(300) }
       post :create, construct_params({}, params_hash)

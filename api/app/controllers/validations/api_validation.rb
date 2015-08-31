@@ -42,14 +42,14 @@ class ApiValidation
     attributes_to_be_stripped.each do |c|
       attribute = instance_variable_get("@#{c}")
       next if attribute.nil?
-      if attribute.respond_to?(:strip!) 
+      if attribute.respond_to?(:strip!)
         attribute.strip!
       elsif attribute.is_a?(Array)
-        attribute.each {|x| strip_attribute(x)}
+        attribute.each { |x| strip_attribute(x) }
       elsif attribute.is_a?(Hash)
-        attribute.each {|x, y| strip_attribute(y)}
+        attribute.each { |x, y| strip_attribute(y) }
       end
-    end 
+    end
   end
 
   def strip_attribute(attribute)
@@ -58,5 +58,4 @@ class ApiValidation
 
   def attributes_to_be_stripped
   end
-
 end

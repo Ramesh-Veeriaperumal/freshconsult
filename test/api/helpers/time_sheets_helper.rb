@@ -1,5 +1,4 @@
 module Helpers::TimeSheetsHelper
-
   # Patterns
   def time_sheet_pattern(expected_output = {}, time_sheet)
     {

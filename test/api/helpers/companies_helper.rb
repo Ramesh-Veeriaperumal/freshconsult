@@ -1,5 +1,4 @@
 module Helpers::CompaniesHelper
-
   # Patterns
   def company_pattern(expected_output = {}, company)
     domains = company.domains.nil? ? nil : company.domains.split(',')
@@ -50,7 +49,6 @@ module Helpers::CompaniesHelper
   def api_company_params
     { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
   end
-
 end
 
 include Helpers::CompaniesHelper

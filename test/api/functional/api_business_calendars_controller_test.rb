@@ -4,11 +4,6 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     { api_business_calendar: params }
   end
 
-  def test_index_load_business_calendars
-    get :index, request_params
-    assert_equal BusinessCalendar.all, assigns(:items)
-  end
-
   def test_index
     get :index, request_params
     pattern = []

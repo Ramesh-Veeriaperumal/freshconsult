@@ -147,7 +147,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     params_hash = { name: Faker::Lorem.characters(20) + white_space }
     put :update, construct_params({ id: company.id }, params_hash)
     assert_response :success
-    match_json(company_pattern(params_hash.each{|x, y| y.strip! if [:name].include?(x)}, company.reload))
+    match_json(company_pattern(params_hash.each { |x, y| y.strip! if [:name].include?(x) }, company.reload))
   end
 
   def test_delete_company
@@ -155,11 +155,6 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: company.id)
     assert_equal ' ', 	@response.body
     assert_nil Company.find_by_id(company.id)
-  end
-
-  def test_index_companies
-    get :index, request_params
-    assert_equal Company.all, assigns(:items).sort
   end
 
   def test_show_company

@@ -1,5 +1,4 @@
 module Helpers::GroupsHelper
-
   # Patterns
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
@@ -34,7 +33,7 @@ module Helpers::GroupsHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-  
+
   # Helpers
   def group_payload
     { group: v1_group_params }.to_json
@@ -43,7 +42,7 @@ module Helpers::GroupsHelper
   def v2_group_payload
     v2_group_params.to_json
   end
-  
+
   # private
   def v1_group_params
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: '1,3' }

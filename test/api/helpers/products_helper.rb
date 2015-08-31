@@ -1,5 +1,4 @@
 module Helpers::ProductsHelper
-
   # Patterns
   def product_pattern(expected_output = {}, product)
     expected_output[:ignore_created_at] ||= true

@@ -115,10 +115,10 @@ module ApiDiscussions
     end
 
     def test_create_validate_length_with_trailing_space
-      params = {forum_id: forum_obj.id, title: Faker::Lorem.characters(20) + white_space, message_html: 'test content'}
+      params = { forum_id: forum_obj.id, title: Faker::Lorem.characters(20) + white_space, message_html: 'test content' }
       post :create, construct_params({}, params)
       match_json(topic_pattern(last_topic))
-      match_json(topic_pattern(params.each{|x, y| y.strip! if x == :title}, last_topic))
+      match_json(topic_pattern(params.each { |x, y| y.strip! if x == :title }, last_topic))
       assert_response :created
     end
 
@@ -327,10 +327,10 @@ module ApiDiscussions
 
     def test_update_valid_title_length
       topic = first_topic
-      params = {title: Faker::Lorem.characters(20) + white_space}
+      params = { title: Faker::Lorem.characters(20) + white_space }
       put :update, construct_params({ id: first_topic.id }, params)
       match_json(topic_pattern(topic.reload))
-      match_json(topic_pattern(params.each{|x, y| y.strip! if x == :title}, topic))
+      match_json(topic_pattern(params.each { |x, y| y.strip! if x == :title }, topic))
       assert_response :success
     end
 

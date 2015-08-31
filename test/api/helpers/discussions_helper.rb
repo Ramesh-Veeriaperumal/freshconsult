@@ -1,5 +1,4 @@
 module Helpers::DiscussionsHelper
-
   # Patterns
   def forum_category_response_pattern(name = 'test', desc = 'test desc')
     {
@@ -147,7 +146,6 @@ module Helpers::DiscussionsHelper
   def post_params(t)
     { body_html: Faker::Lorem.characters, topic_id: t.id }
   end
-
 end
 
 include Helpers::DiscussionsHelper

@@ -1,5 +1,4 @@
 module Helpers::TicketsHelper
-
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
@@ -73,7 +72,7 @@ module Helpers::TicketsHelper
     v2_ticket_params.except(:due_by, :fr_due_by).to_json
   end
 
-  # private   
+  # private
   def v2_ticket_params
     @integrate_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     { email: Faker::Internet.email, cc_emails: [Faker::Internet.email, Faker::Internet.email], description:  Faker::Lorem.paragraph, subject: Faker::Lorem.words(10).join(' '),

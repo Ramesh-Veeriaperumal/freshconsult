@@ -4,11 +4,6 @@ class ApiProductsControllerTest < ActionController::TestCase
     { api_product: params }
   end
 
-  def test_index_load_products
-    get :index, request_params
-    assert_equal Product.all, assigns(:items)
-  end
-
   def test_index
     get :index, request_params
     pattern = []

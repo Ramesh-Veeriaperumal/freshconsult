@@ -11,7 +11,7 @@ module ApiDiscussions
         category = ApiDiscussions::CategoryValidation.new(params[cname], @item)
         render_errors category.errors unless category.valid?
       end
-      
+
       def scoper
         current_account.forum_categories
       end

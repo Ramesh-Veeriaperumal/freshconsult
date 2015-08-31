@@ -6,7 +6,6 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_index_load_sla_policies
     get :index, request_params
-    assert_equal Helpdesk::SlaPolicy.all, assigns(:items)
     pattern = []
     Account.current.sla_policies.all.each do |sp|
       pattern << sla_policy_pattern(Helpdesk::SlaPolicy.find(sp.id))

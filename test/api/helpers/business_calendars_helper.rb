@@ -1,5 +1,4 @@
 module Helpers::BusinessCalendarsHelper
-  
   # Patterns
   def business_calendar_pattern(expected_output = {}, business_calendar)
     bc_json = businesss_calendar_default_pattern(expected_output, business_calendar)

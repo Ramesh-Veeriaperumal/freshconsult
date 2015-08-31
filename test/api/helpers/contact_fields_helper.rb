@@ -1,5 +1,4 @@
-module Helpers::ContactFieldsHelper 
-
+module Helpers::ContactFieldsHelper
   # Patterns
   def contact_field_pattern(expected_output = {}, contact_field)
     default_contact_field = contact_field.column_name == 'default'
@@ -23,7 +22,7 @@ module Helpers::ContactFieldsHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-  
+
   # Helpers
   def contact_field_choices(contact_field)
     case contact_field.field_type.to_s

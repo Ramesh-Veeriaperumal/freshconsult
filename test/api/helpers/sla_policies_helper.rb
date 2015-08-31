@@ -1,5 +1,4 @@
 module Helpers::SlaPoliciesHelper
-
   # Patterns
   def sla_policy_pattern(expected_output = {}, sla_policy)
     conditions_hash = {}
@@ -16,7 +15,7 @@ module Helpers::SlaPoliciesHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-  
+
   # Helpers
   def v2_sla_policy_payload
     sla_policy_params.to_json
@@ -34,7 +33,6 @@ module Helpers::SlaPoliciesHelper
   def v1_sla_policy_params
     { conditions: { company_id: '1,2' } }
   end
-
 end
 
 include Helpers::SlaPoliciesHelper

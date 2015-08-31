@@ -1,5 +1,4 @@
 module JsonPattern
-
   def bad_request_error_pattern(field, value, params_hash = {})
     message = BaseError::ERROR_MESSAGES.key?(value.to_s) ? BaseError::ERROR_MESSAGES[value.to_s].to_s : value.to_s
     {
@@ -63,7 +62,6 @@ module JsonPattern
     end
     Rinku.auto_link(html_doc.at_css('body').inner_html, :urls)
   end
-
 end
 
 include JsonPattern

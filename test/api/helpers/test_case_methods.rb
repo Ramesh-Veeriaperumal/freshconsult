@@ -75,9 +75,8 @@ module TestCaseMethods
   end
 
   def white_space
-    " " * 300
+    ' ' * 300
   end
-
 end
 
 include TestCaseMethods

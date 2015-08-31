@@ -1,5 +1,4 @@
 module Helpers::UsersHelper
-
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
@@ -54,7 +53,7 @@ module Helpers::UsersHelper
     index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
   end
 
-    def agent_pattern(expected_output = {}, agent)
+  def agent_pattern(expected_output = {}, agent)
     user = {
       active: agent.user.active,
       created_at: agent.user.created_at,
@@ -82,13 +81,14 @@ module Helpers::UsersHelper
       user: expected_output[:user] || user
     }
   end
-  
+
   # Helpers
   def other_user
     u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
     u.update_column(:email, Faker::Internet.email)
     u.reload
   end
+
   def deleted_user
     user = User.find { |x| x.id != @agent.id } || create_dummy_customer
     user.update_column(:deleted, true)
@@ -143,8 +143,7 @@ module Helpers::UsersHelper
       mobile: '1234567893', description: Faker::Lorem.characters(20), email: Faker::Internet.email,  job_title: Faker::Lorem.characters(10),
       language: 'en', time_zone: 'Chennai', company_id: comp.id
     }
-  end  
-
+  end
 end
 
 include Helpers::UsersHelper
