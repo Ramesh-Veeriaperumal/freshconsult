@@ -1,0 +1,26 @@
+<div class="list-panel-main">
+	<% if privilege?(:manage_solutions) -%>
+	<div class="sol-details-left">
+		<ul class="list-actions-left category-icon-bg">
+			<li> <%= font_icon(:cube, {:size => 26}) %> </li>
+		</ul>
+	</div>
+	<% end %>
+	<div class="sol-details-right">
+		<% if privilege?(:manage_solutions) -%>
+			<ul class="list-actions-right">
+				<li class="list-default-btns">
+					<%= reorder_btn %>
+					<%= new_solutions_button(:category) %>
+				</li>
+			  <li class="list-reorder-btns">
+			    <a href="#" class="btn btn-primary" id="submit_btn"><%= t('save') %></a>
+			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
+			  </li>
+			</ul>
+		<% end %>
+		<div class="span7 clear-left-margin">
+			<h2 class="list-title ellipsis tooltip p6" title=""><%= "All Categories" %></h2>
+		</div>
+	</div>
+</div>

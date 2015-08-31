@@ -1,0 +1,28 @@
+<% primary_language = category.primary_language || category.solution_categories.first %>
+<%= content_tag :li, :item_id => primary_language.id,
+		  						:class => "comm-item", :id => "item_"+primary_language.id.to_s do %>
+	<div class="reorder-icon vertical-alignment">
+			<%= font_icon "rearrange", :size => 18, :id => "sortable-icon" %>
+	</div>
+	<div class="vertical-alignment reorder-content row-fluid">
+		<div class="row-fluid clear-left-margin">
+			<div class="comm-item-main span6 clear-left-margin">
+				<%= font_icon "cube", :size => 16, :class => "solution-icon" %>
+				<div class="comm-item-title ellipsis tooltip" title="<%= primary_language.name if primary_language.name.length > 90 %>">
+					<%= pjax_link_to(h(primary_language.name), solution_category_path(category.id)) %>
+					<span class="muted">
+						(<%= primary_language.folders.size %>)
+					</span>
+				</div>
+				<div class="comm-item-details muted">
+					<span class="sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(category) %>
+				</div>
+			</div>
+			<div class="span5 pull-right">
+				<span class="pull-right">
+					<%= language_flags(category) %>
+				</span>
+			</div>
+		</div>
+	</div>
+<% end %>

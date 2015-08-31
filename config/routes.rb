@@ -1737,7 +1737,7 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
-
+    match '/all_categories' => "categories#all_categories", :as => :all_categories, :via => :get
   end
 
   resources :posts, :as => 'all' do

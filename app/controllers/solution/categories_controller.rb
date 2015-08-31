@@ -26,6 +26,10 @@ class Solution::CategoriesController < ApplicationController
                                                          :include => folder_scope) }
     end
   end
+
+  def all_categories
+    @categories = current_account.solution_category_meta
+  end
   
   def navmenu
     render :partial=> '/solution/shared/navmenu_content'

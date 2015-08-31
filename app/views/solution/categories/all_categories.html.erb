@@ -1,0 +1,39 @@
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sticky_title do %>
+	<%= render :partial => 'categories_title_bar' %>
+<% end %>
+<% content_for :sticky_right do %>
+	<%= preview_portal(support_solutions_path) %>
+<% end %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :sticky_class => "sol-sticky",
+						:search_url => "/search/solutions?term=" } %>
+
+<% if @categories.blank? %>
+	<div class="no-data">
+		<%= t('solution_category.info2') %>
+		<div class="mt20">
+			<% if privilege?(:manage_solutions) %>
+				<%= link_to(
+							t("solution.add_category"),
+							new_solution_category_path,
+							:class => "btn btn-primary",
+							:rel => "freshdialog",
+							:title => t("solution.add_category"),
+							"data-target" => "#category-new",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save'))  %>
+			<% end %>
+		</div>
+	</div>
+
+<% else %>
+	<%= render :partial => '/solution/shared/search_container' %>
+	<div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
+		<%= form_for @categories, :url => reorder_solution_categories_path, :html => { :method => :put, :class => "form-reorder" } do |f| %>
+		  <input name="reorderlist" type="hidden" value="" />
+		  <ul class="row-fluid" rel="sortlist" id="categories_list">
+				<%= render(:partial => "category", :collection => @categories) %>
+			</ul>
+		<% end %>
+	</div>
+<% end %>

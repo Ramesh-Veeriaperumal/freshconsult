@@ -229,4 +229,32 @@ module SolutionHelper
 	def option_selector_name identifier
 		identifier.delete(' ').underscore 
 	end
+
+	def language_flags(solution_meta)
+		content = ""
+		Account.current.supported_languages.each do |lan|
+			language = Language.find_by_code(lan)
+			version = solution_meta.send("#{lan.gsub('-','_')}_language")
+			content << language_icon(language, version)
+		end
+		content.html_safe
+	end
+
+	def language_icon(language, version)
+		language_icon_category(language, version)
+	end
+
+	def language_icon_category(language, version)
+		link_to( "<span class='language_name'>#{language.code[0..1].capitalize}</span>".html_safe, 
+			version.present? ? edit_solution_category_path(version) : new_solution_category_path,
+			:rel => "freshdialog",
+			:class => "language_icon #{version.present? ? 'active' : 'inactive'} tooltip",
+			:title => language.name,
+			:data => {
+				"modal-title" => t('solutions.edit'),
+				"target" => "#category-edit",
+				"close-label" => t('cancel'),
+				"submit-label" => t('save')
+			})
+	end
 end
