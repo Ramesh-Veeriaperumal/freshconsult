@@ -2,6 +2,8 @@ Hi <%= @user.name%>,
 
 <% if @import_success %>
 	<%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}"%>
+<% elsif @wrong_csv %>
+    <%= t('flash.import.info7') %>
 <% else %>
 	<%= "#{t('flash.import.info2', :type => @type)}"%>
 

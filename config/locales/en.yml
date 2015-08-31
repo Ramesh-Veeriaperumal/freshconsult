@@ -2088,6 +2088,7 @@ en:
       info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
+      info7: "dummy text"
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
