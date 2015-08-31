@@ -6,12 +6,19 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 4,
-        update: 5,
-        index: 2,
-        toggle_timer: 5,
-        destroy: 5,
-        ticket_time_sheets: 2
+        api_create: 4,
+        api_update: 5,
+        api_index: 2,
+        api_toggle_timer: 5,
+        api_destroy: 5,
+        api_ticket_time_sheets: 2,
+
+        create: 22,
+        update: 18,
+        index: 14,
+        toggle_timer: 27,
+        destroy: 17,
+        ticket_time_sheets: 15
       }
 
       ticket = create_ticket
@@ -43,12 +50,16 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
       # destroy
       v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/time_sheets/#{id1}", nil, @headers) }
       v1[:destroy] = count_queries { delete("/helpdesk/tickets/#{ticket_id}/time_sheets/#{id2}.json", nil, @headers) }
-
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
         assert v2[key] <= v1[key]
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end

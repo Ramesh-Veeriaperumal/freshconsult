@@ -6,11 +6,17 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 1,
-        show: 1,
-        update: 5,
-        index: 0,
-        destroy: 8
+        api_create: 1,
+        api_show: 1,
+        api_update: 5,
+        api_index: 0,
+        api_destroy: 8,
+
+        create: 15,
+        show: 14,
+        update: 20,
+        index: 13,
+        destroy: 24
       }
 
       # create
@@ -31,10 +37,15 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
 
       v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/v2/groups/#{id1}", nil, @headers) }
       v1[:destroy] = count_queries { delete("/groups/#{id2}.json", nil, @headers) }
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         assert v2[key] <= (v1[key] + 1) # Plus 1 because of the cache usage in api_groups_controller for features check
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end

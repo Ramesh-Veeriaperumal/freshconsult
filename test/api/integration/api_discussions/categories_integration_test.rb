@@ -5,12 +5,19 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 8,
-      show: 1,
-      update: 6,
-      index: 1,
-      destroy: 8,
-      forums: 2
+      api_create: 8,
+      api_show: 1,
+      api_update: 6,
+      api_index: 1,
+      api_destroy: 8,
+      api_forums: 2,
+
+      create: 23,
+      show: 13,
+      update: 19,
+      index: 13,
+      destroy: 22,
+      forums: 15
     }
 
     # create
@@ -40,12 +47,16 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
     # destroy
     v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/discussions/categories/#{id1}", nil, @headers) }
     v1[:destroy] = count_queries { delete("/discussions/categories/#{id2}.json", nil, @headers) }
-
+    
+    p v1
+    p v2
+    
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
       Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       assert v2[key] <= v1[key]
-      assert_equal v2_expected[key], v2[api_key]
+      assert_equal v2_expected[api_key], v2[api_key]
+      assert_equal v2_expected[key], v2[key]
     end
   end
 

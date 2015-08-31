@@ -6,14 +6,23 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 6,
-        show: 1,
-        update: 10,
-        destroy: 11,
-        follow: 3,
-        unfollow: 7,
-        is_following: 1,
-        posts: 2
+        api_create: 6,
+        api_show: 1,
+        api_update: 10,
+        api_destroy: 11,
+        api_follow: 3,
+        api_unfollow: 7,
+        api_is_following: 1,
+        api_posts: 2,
+
+        create: 48,
+        show: 13,
+        update: 29,
+        destroy: 29,
+        follow: 15,
+        unfollow: 22,
+        is_following: 14,
+        posts: 15
       }
 
       path = '/discussions/topics.json'
@@ -57,11 +66,15 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
       # destroy
       v1[:destroy] = count_queries { delete(id_path, nil, @headers) }
       v2[:destroy], v2[:api_destroy] = count_api_queries { delete(api_id_path, nil, @headers) }
-
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         assert v2[key] <= v1[key]
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end

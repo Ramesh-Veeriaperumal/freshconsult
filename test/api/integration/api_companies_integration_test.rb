@@ -5,11 +5,17 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 2,
-      show: 1,
-      index: 2,
-      update: 3,
-      destroy: 10
+      api_create: 2,
+      api_show: 1,
+      api_index: 2,
+      api_update: 3,
+      api_destroy: 10,
+
+      create: 15,
+      show: 16,
+      index: 16,
+      update: 16,
+      destroy: 21
     }
 
     # create
@@ -35,12 +41,16 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
 
     v1[:create] += 2 # 2 extra queries caused due to companies_validation_helper which is needed to get the list of custom_fields for restricting invalid custom_fields on create or update
     v1[:update] += 1 # Extra query due to the same companies_validation_helper
-
+    
+    p v1
+    p v2
+    
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
       Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       assert v2[key] <= v1[key]
-      assert_equal v2_expected[key], v2[api_key]
+      assert_equal v2_expected[api_key], v2[api_key]
+      assert_equal v2_expected[key], v2[key]
     end
   end
 end

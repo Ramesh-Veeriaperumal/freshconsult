@@ -6,12 +6,19 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 4,
-        show: 3,
-        update: 8,
-        index: 6,
-        destroy: 5,
-        restore: 5
+        api_create: 4,
+        api_show: 3,
+        api_update: 8,
+        api_index: 6,
+        api_destroy: 5,
+        api_restore: 5,
+        
+        create: 114,
+        show: 19,
+        update: 61,
+        index: 17,
+        destroy: 33,
+        restore: 33
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -97,12 +104,16 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       end
-
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
         assert v2[key] <= v1[key]
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end

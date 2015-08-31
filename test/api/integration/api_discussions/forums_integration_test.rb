@@ -5,14 +5,23 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      create: 7,
-      show: 1,
-      update: 7,
-      destroy: 12,
-      follow: 8,
-      unfollow: 7,
-      is_following: 1,
-      topics: 2
+      api_create: 7,
+      api_show: 1,
+      api_update: 7,
+      api_destroy: 12,
+      api_follow: 7,
+      api_unfollow: 7,
+      api_is_following: 1,
+      api_topics: 2,
+
+      create: 22,
+      show: 13,
+      update: 21,
+      destroy: 28,
+      follow: 21,
+      unfollow: 21,
+      is_following: 14,
+      topics: 15
     }
 
     # create
@@ -35,6 +44,8 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
     v2[:update], v2[:api_update] = count_api_queries { put("/api/discussions/forums/#{id1}", v2_forum_payload, @write_headers) }
     v1[:update] = count_queries { put("/discussions/forums/#{id2}.json", v1_forum_payload, @write_headers) }
 
+    Monitorship.update_all({:active => false}, {:monitorable_type => "Forum", :monitorable_id => [id1, id2]})
+
     # follow
     v2[:follow], v2[:api_follow] = count_api_queries { post("/api/discussions/forums/#{id1}/follow", nil, @write_headers) }
     v1[:follow] = count_queries { post("/discussions/forum/#{id2}/subscriptions/follow.json", nil, @write_headers) }
@@ -50,11 +61,15 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
     # destroy
     v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/discussions/forums/#{id1}", nil, @headers) }
     v1[:destroy] = count_queries { delete("/discussions/forums/#{id2}.json", nil, @headers) }
-
+    
+    p v1
+    p v2
+    
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
       assert v2[key] <= v1[key]
-      assert_equal v2_expected[key], v2[api_key]
+      assert_equal v2_expected[api_key], v2[api_key]
+      assert_equal v2_expected[key], v2[key]
     end
   end
 end

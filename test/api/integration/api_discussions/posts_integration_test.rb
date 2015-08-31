@@ -6,10 +6,15 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 5,
-        update: 2,
-        destroy: 9
+        api_create: 5,
+        api_update: 2,
+        api_destroy: 9,
+
+        create: 34,
+        update: 14,
+        destroy: 31
       }
+
       t = Topic.first
 
       # create
@@ -26,11 +31,15 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
       # destroy
       v1[:destroy] = count_queries { delete("/discussions/topics/#{t.id}/posts/#{id2}.json", nil, @headers) }
       v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/discussions/posts/#{id1}", nil, @headers) }
-
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         assert v2[key] <= v1[key]
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end

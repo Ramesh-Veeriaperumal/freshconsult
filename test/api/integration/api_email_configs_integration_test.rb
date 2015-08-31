@@ -4,8 +4,11 @@ class ApiEmailConfigsIntegrationTest < ActionDispatch::IntegrationTest
   def test_query_count
     v2 = {}
     v2_expected = {
-      show: 1,
-      index: 1
+      api_show: 1,
+      api_index: 1,
+
+      show: 12,
+      index: 12
     }
 
     email_config = create_email_config
@@ -15,10 +18,13 @@ class ApiEmailConfigsIntegrationTest < ActionDispatch::IntegrationTest
 
     # index
     v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/email_configs', nil, @headers) }
-
+    
+    p v2
+    
     v2.keys.each do |key|
       api_key = "api_#{key}".to_sym
-      assert_equal v2_expected[key], v2[api_key]
+      assert_equal v2_expected[api_key], v2[api_key]
+      assert_equal v2_expected[key], v2[key]
     end
   end
 end

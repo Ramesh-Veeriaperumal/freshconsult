@@ -13,13 +13,21 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        create: 4,
-        update: 6,
-        show: 3,
-        index: 3,
-        destroy: 5,
-        restore: 5,
-        make_agent: 4
+        api_create: 4,
+        api_update: 6,
+        api_show: 3,
+        api_index: 3,
+        api_destroy: 5,
+        api_restore: 5,
+        api_make_agent: 4,
+
+        create: 39,
+        update: 31,
+        show: 17,
+        index: 18,
+        destroy: 22,
+        restore: 20,
+        make_agent: 49
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -69,12 +77,16 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       end
-
+      
+      p v1
+      p v2
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
         assert v2[key] <= v1[key]
-        assert_equal v2_expected[key], v2[api_key]
+        assert_equal v2_expected[api_key], v2[api_key]
+        assert_equal v2_expected[key], v2[key]
       end
     end
   end
