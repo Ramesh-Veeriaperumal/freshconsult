@@ -83,4 +83,20 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response :missing
     assert_equal ' ', response.body
   end
+
+  def test_index_with_link_header
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    per_page = @account.all_agents.count - 1
+    get :index, controller_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/agents?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

@@ -867,4 +867,37 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
+
+  def test_time_sheets_with_link_header
+    t = ticket
+    3.times do
+      create_time_sheet(ticket_id: t.id)
+    end
+    per_page = Helpdesk::TimeSheet.where(workable_id: t.id).count - 1
+    get :ticket_time_sheets, construct_params(id: t.display_id, per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/tickets/#{t.display_id}/time_sheets?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :ticket_time_sheets, construct_params(id: t.display_id, per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
+
+  def test_index_with_link_header
+    3.times do
+      create_time_sheet
+    end
+    per_page = Helpdesk::TimeSheet.count - 1
+    get :index, controller_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/time_sheets?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

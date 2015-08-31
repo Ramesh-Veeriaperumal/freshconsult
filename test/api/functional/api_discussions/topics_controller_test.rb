@@ -495,5 +495,21 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
+
+    def test_topics_with_link_header
+      f = create_test_forum(ForumCategory.first)
+      3.times do
+        create_test_topic(f, User.first)
+      end
+      get :forum_topics, construct_params(id: f.id, per_page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 2
+      assert_equal "<http://#{@request.host}/api/v2/discussions/forums/#{f.id}/topics?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
+
+      get :forum_topics, construct_params(id: f.id, per_page: 2, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      assert_nil response.headers['Link']
+    end
   end
 end

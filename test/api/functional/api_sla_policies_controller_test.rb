@@ -94,6 +94,22 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('applicable_to', 'data_type_mismatch', data_type: 'key/value pair')])
   end
 
+  def test_index_with_link_header
+    3.times do
+      create_sla_policy
+    end
+    per_page = Account.current.sla_policies.all.count - 1
+    get :index, construct_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/sla_policies?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, construct_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
+
   def create_sla_policy
     company = create_company
     sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,

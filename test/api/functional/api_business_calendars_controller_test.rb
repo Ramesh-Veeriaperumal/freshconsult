@@ -53,4 +53,20 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end
+
+  def test_index_with_link_header
+    3.times do
+      create_business_calendar
+    end
+    per_page = Account.current.business_calendar.all.count - 1
+    get :index, construct_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/business_calendars?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, construct_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

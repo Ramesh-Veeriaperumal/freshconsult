@@ -210,8 +210,38 @@ class ApiApplicationController < MetalApiController
       # the imput sent using strong params and custom validations.
     end
 
-    def load_objects(items = scoper)
-      @items = items.paginate(paginate_options)
+    # will take scoper as one argument and is_array (whether scoper is a AR or array as another argument.)
+    def load_objects(items = scoper, is_array = false) 
+      paginate_items(items, is_array: is_array)
+    end
+
+    def paginate_items(item, variable_name = 'items', is_array: false)
+      paginated_items = item.paginate(paginate_options(is_array))
+      assign_instance_variable_and_link_header(paginated_items, variable_name, is_array: is_array)
+    end
+
+    # Assign paginated collection to a controller instance variable & add link header if next page exists.
+    def assign_instance_variable_and_link_header(paginated_collection, instance_variable_name, is_array: false)
+      if paginated_collection.length > @per_page # Will be executed if scoper is AR & next page exists
+        add_link_header
+        *collection, last = paginated_collection # assigns all but last elements to collection.
+      elsif paginated_collection.next_page && is_array # will be executed if scoper is array & next page exists
+        add_link_header
+        collection = paginated_collection
+      else # Will be executed if no next page exists
+        collection = paginated_collection
+      end
+      instance_variable_set(:"@#{instance_variable_name}", collection) # Set instance variable so that view can a access.
+    end
+
+    # Add link header for paginated collection
+    def add_link_header
+      query_string = '?'
+
+      # Construct query string with next page number.
+      request.query_parameters.merge(page: get_page + 1).each { |x, y| query_string += "#{x}=#{y}&" }
+      url = url_for(only_path: false) + query_string.chop # concatenate url & chopped query string
+      response.headers['Link'] = "<#{url}>; rel=\"next\""
     end
 
     def assign_protected
@@ -292,23 +322,25 @@ class ApiApplicationController < MetalApiController
       true
     end
 
-    def paginate_items(item)
-      item.paginate(paginate_options)
+    def paginate_options(is_array = false)
+      options = {}
+      @per_page = get_per_page # user given/defualt page number
+      options[:per_page] =  is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
+      options[:offset] = @per_page * (get_page - 1) unless is_array # assign offset unless scoper is array
+      options[:page] = get_page
+      options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
+      options
     end
 
-    def paginate_options
-      options = {}
-      options[:per_page] = get_per_page
-      options[:page] = params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]
-      options[:total_entries] = options[:page] * options[:per_page] # To prevent paginate from firing count query
-      options
+    def get_page
+      (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
     end
 
     def get_per_page
       if params[:per_page].blank?
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
-        [params[:per_page], ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
+        [params[:per_page].to_i, ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
       end
     end
 

@@ -75,8 +75,8 @@ class TicketsController < ApiApplicationController
       @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
     end
 
-    def paginate_options
-      options = super
+    def paginate_options(is_array = false)
+      options = super(is_array)
 
       # this being used by notes/time_sheets action also. Hence order options based on action.
       options[:order] = order_clause if ApiTicketConstants::ORDER_BY_SCOPE["#{action_name}"]

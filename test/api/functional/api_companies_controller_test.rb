@@ -325,6 +325,22 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern({ domains: [domain] }, company.reload))
   end
 
+  def test_index_with_link_header
+    3.times do
+      create_company
+    end
+    per_page =  Account.current.companies.all.count - 1
+    get :index, construct_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/companies?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, construct_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key

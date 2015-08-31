@@ -634,4 +634,21 @@ class NotesControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
+
+  def test_notes_with_link_header
+    t = ticket
+    3.times do
+      create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+    end
+    per_page = t.notes.visible.exclude_source('meta').count - 1
+    get :ticket_notes, construct_params(id: t.display_id, per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/tickets/#{t.display_id}/notes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :ticket_notes, construct_params(id: t.display_id, per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

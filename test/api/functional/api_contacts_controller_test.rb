@@ -680,4 +680,20 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response :success
     match_json(deleted_contact_pattern({ tags: [tag] }, sample_user.reload))
   end
+
+  def test_index_with_link_header
+    3.times do
+      add_new_user(@account)
+    end
+    per_page =  @account.all_contacts.where(deleted: false).count - 1
+    get :index, controller_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/contacts?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

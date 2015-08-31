@@ -261,5 +261,46 @@ module ApiDiscussions
       assert_equal true, response.headers.include?('Location')
       assert_equal "http://#{@request.host}/api/v2/discussions/categories/#{result['id']}", response.headers['Location']
     end
+
+    def test_index_with_pagination
+      3.times do
+        create_test_category
+      end
+      get :index, construct_params(per_page: 1)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :index, construct_params(per_page: 1, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      get :index, construct_params(per_page: 1, page: 3)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_index_with_pagination_exceeds_limit
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
+      get :index, construct_params(per_page: 4)
+      assert_response :success
+      assert JSON.parse(response.body).count == 3
+      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+    end
+
+    def test_index_with_link_header
+      3.times do
+        create_test_category
+      end
+      per_page = ForumCategory.count - 1
+      get :index, construct_params(per_page: per_page)
+      assert_response :success
+      assert JSON.parse(response.body).count == per_page
+      assert_equal "<http://#{@request.host}/api/v2/discussions/categories?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+      get :index, construct_params(per_page: per_page, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      assert_nil response.headers['Link']
+    end
   end
 end

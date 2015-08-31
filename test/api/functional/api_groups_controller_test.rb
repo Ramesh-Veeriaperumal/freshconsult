@@ -230,4 +230,20 @@ class ApiGroupsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: group2.id }, name: group1.name)
     match_json([bad_request_error_pattern('name', 'has already been taken')])
   end
+
+  def test_index_with_link_header
+    3.times do
+      create_group(@account)
+    end
+    per_page = @account.groups.all.count - 1
+    get :index, construct_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/groups?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, construct_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

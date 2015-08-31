@@ -31,7 +31,7 @@ class TimeSheetsController < ApiApplicationController
   end
 
   def ticket_time_sheets
-    @items = paginate_items(scoper.where(workable_id: @id))
+    paginate_items(scoper.where(workable_id: @id))
     render '/time_sheets/index'
   end
 

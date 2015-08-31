@@ -18,12 +18,12 @@ module ApiDiscussions
     end
 
     def forum_topics
-      @topics = paginate_items(@item.topics)
+      paginate_items(@item.topics, 'topics')
       render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
-      @topics = paginate_items(current_account.topics.followed_by(params[:user_id]))
+      paginate_items(current_account.topics.followed_by(params[:user_id]), 'topics')
       render '/api_discussions/topics/topic_list'
     end
 

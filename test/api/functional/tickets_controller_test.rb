@@ -2084,4 +2084,20 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response :success
     match_json(ticket_pattern({ tags: [tag] }, t.reload))
   end
+
+  def test_index_with_link_header
+    3.times do
+      create_ticket(requester_id: @agent.id)
+    end
+    per_page = Helpdesk::Ticket.where(deleted: 0, spam: 0).count - 1
+    get :index, controller_params(per_page: per_page)
+    assert_response :success
+    assert JSON.parse(response.body).count == per_page
+    assert_equal "<http://#{@request.host}/api/v2/tickets?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+
+    get :index, controller_params(per_page: per_page, page: 2)
+    assert_response :success
+    assert JSON.parse(response.body).count == 1
+    assert_nil response.headers['Link']
+  end
 end

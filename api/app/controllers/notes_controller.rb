@@ -40,7 +40,7 @@ class NotesController < ApiApplicationController
 
   def ticket_notes
     notes = scoper.visible.exclude_source('meta').where(notable_id: @id).includes(:schema_less_note, :note_old_body, :attachments)
-    @notes = paginate_items(notes)
+    paginate_items(notes, 'notes')
   end
 
   private

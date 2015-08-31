@@ -559,6 +559,22 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
+    def test_category_forums_with_link_header
+      fc  = create_test_category
+      3.times do
+        create_test_forum(fc)
+      end
+      get :category_forums, construct_params(id: fc.id,  per_page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 2
+      assert_equal "<http://#{@request.host}/api/v2/discussions/categories/#{fc.id}/forums?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
+
+      get :category_forums, construct_params(id: fc.id,  per_page: 2, page: 2)
+      assert_response :success
+      assert JSON.parse(response.body).count == 1
+      assert_nil response.headers['Link']
+    end
+
     # def test_update_array_field_with_empty_array
     #   fc = fc_obj
     #   forum = create_test_forum(fc)

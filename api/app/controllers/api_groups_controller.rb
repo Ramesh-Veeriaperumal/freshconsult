@@ -53,6 +53,10 @@ class ApiGroupsController < ApiApplicationController
       @agents = params[cname][:agent_ids]
     end
 
+    def load_objects(_items = scoper, _is_array = false)
+      super(scoper, true)
+    end
+
     def sanitize_params
       params[cname][:unassigned_for] = GroupConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       ParamsHelper.assign_and_clean_params({ unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
