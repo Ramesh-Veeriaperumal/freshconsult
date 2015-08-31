@@ -327,7 +327,7 @@ module ApplicationHelper
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      solutions_tab,
+      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
@@ -1087,25 +1087,6 @@ module ApplicationHelper
   end
 
   private
-    def solutions_tab
-      if current_portal.solution_categories.exists?
-        ['/solution/categories', :solutions, solutions_visibility?]
-      else
-        ['#', :solutions, false]
-      end
-    end
-
-    def forums_tab
-      if current_portal.forum_categories.exists?
-        ['/discussions', :forums,  forums_visibility?]
-      else
-        ['#', :forums, false]
-      end
-    end
-
-    def solutions_visibility?
-      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
-    end
 
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
