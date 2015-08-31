@@ -10,7 +10,7 @@ module MailboxConstants
   MAILBOX_SERVER_PROFILES = [
     [:gmail,      "Gmail",    I18n.t('mailbox.smtp_alert_gmail'),    25, "gmail.com", 993, 587],
     [:aol,        "AOL",      I18n.t('mailbox.smtp_alert_aol'),      3,  "aol.com",   993, 587],
-    [:other,      "Other",    I18n.t('mailbox.smtp_alert_other'),    25]
+    [:other,      "Other",    I18n.t('mailbox.smtp_alert_other'),    4]
   ]
 
   SERVER_PROFILES = MAILBOX_SERVER_PROFILES.map { |i| [i[1], i[0]] } 
