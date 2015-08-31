@@ -5,8 +5,9 @@
 <% end %>
 
 <div class="index-page-content">
+<% unless current_account.dashboard_disabled? %>
   <%= render :partial => "summary" %>
-
+<% end %>
   <%= content_tag :div, "", :rel => "remote", :id => "Activity",
                  "data-remote-url" => '/helpdesk/dashboard/activity_list' %>
 </div>

@@ -112,6 +112,10 @@ class Account < ActiveRecord::Base
     ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
+  def dashboard_disabled?
+    ismember?(DASHBOARD_DISABLED, self.id)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end

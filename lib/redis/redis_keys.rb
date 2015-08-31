@@ -87,6 +87,8 @@ module Redis::RedisKeys
 	PREMIUM_TICKET_EXPORT = "PREMIUM_TICKET_EXPORT"
 	LONG_RUNNING_TICKET_EXPORT = "LONG_RUNNING_TICKET_EXPORT"
 
+	DASHBOARD_DISABLED = "DASHBOARD_DISABLED"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield
