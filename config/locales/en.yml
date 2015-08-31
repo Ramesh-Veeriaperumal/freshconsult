@@ -2702,7 +2702,7 @@ en:
     select_product: Select a product portal...
     forum_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     delete: "Important: Deleting a category will delete all the forums and topics in it."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
     delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
@@ -3702,7 +3702,7 @@ en:
         dialog_submit: "Reset"
         resetting: "Resetting"
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
-        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+        count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
     draft:
       name: Drafts
