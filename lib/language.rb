@@ -22,6 +22,10 @@ class Language
 	def to_sym
 		code.to_sym
 	end
+	
+	def to_key
+		code.gsub('-','_').downcase
+	end
 
 	class << self
 

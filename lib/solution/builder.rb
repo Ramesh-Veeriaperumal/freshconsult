@@ -6,7 +6,7 @@ class Solution::Builder
 
 		OBJECTS.each do |obj|
 			define_method obj.to_s.split("_")[1] do |args = {}|
-				Solution::Object.new(HashWithIndifferentAccess.new(args), obj).return_back
+				Solution::Object.new(HashWithIndifferentAccess.new(args), obj).object
 			end
 		end
 
