@@ -50,7 +50,8 @@ class Freshfone::ConferenceController < FreshfoneBaseController
       render :xml => telephony.play_agent_wait_music
     rescue Exception => e
       Rails.logger.error "Error in conference incoming caller wait for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      empty_twiml
+      current_call.cleanup_outgoing_call
+      render :xml => telephony.empty_twiml(e.message)
     end
   end
 

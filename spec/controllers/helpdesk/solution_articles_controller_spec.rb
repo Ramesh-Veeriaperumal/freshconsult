@@ -508,16 +508,4 @@ describe Solution::ArticlesController do
     end
   end
 
-  it "should update solution categories/folders/articles' language_id if main portal's language is changed" do
-    old_language = @account.language
-    Resque.inline = true 
-    @account.main_portal.update_attribute(:language, "hu")
-    @account.reload
-    @account.main_portal.language.should match("hu")
-    check_language_equality
-    @account.reload
-    @account.make_current
-    @account.main_portal.update_attribute(:language, old_language)
-    Resque.inline = false
-  end
 end

@@ -169,13 +169,19 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             this.searchBar = $("<div>" , {
                 "class" : "countrySearch v-hide"
             }).appendTo(flagsContainer);
-            $("<div>", {
-                "class": "symbols-search",
+            this.backArrow = $("<div>", {
+              "class": "backArrow",
             }).appendTo(this.searchBar);
+            $("<div>", {
+              "class": "arrow-left move-back",
+            }).appendTo(this.backArrow);
             $("<input>", {
               "class": "searchlist",
-              "placeholder": "Enter a country name",
+              "placeholder": "Select country name",
               "id" : "countrySearchBar"
+            }).appendTo(this.searchBar);
+            $("<div>", {
+                "class": "symbols-search",
             }).appendTo(this.searchBar);
              
             // country list contains: preferred countries, then divider, then all countries
@@ -450,14 +456,16 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             var activeListItem = this.countryList.children(".active");
             var preferredListItem = this.countryList.children(".preferredCountry").children("li").first();
              
+             $('.selected-flag').addClass("hide");
             // show it
             this.searchBar.removeClass("hide");
             this.countryList.removeClass("hide");
             // bind all the dropdown-related listeners: mouseover, click, click-off, keydown
             this._bindDropdownListeners();
             $("#countrySearchBar").focus();
+            $("#search_bar").hide();
+            $('.selected-flag').trigger("ffCountryFlagList:on");
             // update the arrow
-            this.selectedFlagInner.children(".arrow").addClass("up");
            // $('.selected-flag').css('border','1px solid #fff');
         },
         // decide where to position dropdown (depends on position within viewport, and scroll)
@@ -663,6 +671,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
         },
         // close the dropdown and unbind any listeners
         _closeDropdown: function() {
+            $('.selected-flag').removeClass("hide");
             $("#countrySearchBar").val('');
             this.searchBar.addClass("hide");
             this.countryList.addClass("hide");
@@ -675,6 +684,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             // unbind hover and click listeners
             this.countryList.off(this.ns);
             $('.selected-flag').css('border','none');
+            $('.selected-flag').trigger("ffCountryFlagList:off");
         },
         // check if an element is visible within it's container, else scroll until it is
         _scrollTo: function(element, middle) {

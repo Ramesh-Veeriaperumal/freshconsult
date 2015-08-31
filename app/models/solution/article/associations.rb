@@ -32,8 +32,14 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :article_ticket, :dependent => :destroy
 
+<<<<<<< HEAD
   has_many :tickets, :through => :article_ticket
 
   has_one :article_body, :autosave => true
   
+=======
+  has_many :tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::Ticket'
+
+  has_many :archive_tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::ArchiveTicket'
+>>>>>>> origin/rails3-phase2
 end

@@ -103,7 +103,7 @@ class Freshfone::Providers::Twilio
   
   def play_default_music(xml_builder)
     xml_builder.Play Freshfone::Number::DEFAULT_WAIT_MUSIC, 
-      :loop => Freshfone::Number::DEFAULT_WAIT_LOOP
+      :loop => 5
   end
 
   def play_hold_message(number)

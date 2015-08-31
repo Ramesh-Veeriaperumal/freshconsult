@@ -189,7 +189,7 @@ class Portal < ActiveRecord::Base
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
-      Resque.enqueue(Workers::Community::HandleLanguageChange, { :account_id => account.id })
+      Community::HandleLanguageChange.perform_async
     end
 
     def main_portal_language_changes?

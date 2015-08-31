@@ -418,6 +418,11 @@ class Freshfone::Call < ActiveRecord::Base
     disconnect_customer # Spreadheet L 6
   end
 
+  def cleanup_outgoing_call
+    disconnect_agent
+    disconnect_customer
+  end
+
   def add_to_hold_duration(duration)
     return if duration.blank? || duration == "0"
     hold_duration = 0 if hold_duration.blank?
@@ -438,7 +443,7 @@ class Freshfone::Call < ActiveRecord::Base
 
   def pulse_rate
     pulse_rate = Freshfone::PulseRate.new(self)
-    return pulse_rate.missed_call_cost if missed_or_busy?
+    return pulse_rate.missed_call_cost if (missed_or_busy? or failed?)
     return pulse_rate.voicemail_cost if voicemail?
     pulse_rate.pulse_charge
   end

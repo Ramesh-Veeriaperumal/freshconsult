@@ -62,8 +62,8 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
-
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions(portal)

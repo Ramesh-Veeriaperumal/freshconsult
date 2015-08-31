@@ -76,7 +76,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.subject    ||= ''
     self.group_id   ||= email_config.group_id unless email_config.nil?
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
-    self.created_at ||= Time.zone.now
+    self.created_at ||= Time.now.in_time_zone(account.time_zone)
     
     build_ticket_body(:description_html => self.description_html,
       :description => self.description) unless ticket_body    

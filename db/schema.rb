@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150819153658) do
+ActiveRecord::Schema.define(:version => 20150824192547) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -205,11 +205,14 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
     t.integer "article_id", :limit => 8
     t.integer "ticket_id",  :limit => 8
     t.integer "account_id", :limit => 8
+    t.integer  "ticketable_id",   :limit => 8
+    t.string   "ticketable_type"
   end
   
   add_index "article_tickets", ["account_id", "ticket_id"], :name => "index_article_tickets_on_account_id_and_ticket_id", :unique => true
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
+  add_index "article_tickets", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_article_tickets_on_account_id_and_ticketetable"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -3302,14 +3305,18 @@ ActiveRecord::Schema.define(:version => 20150819153658) do
   add_index "ticket_stats_2013_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
 
   create_table "ticket_topics", :force => true do |t|
-    t.integer  "ticket_id",  :limit => 8
-    t.integer  "topic_id",   :limit => 8
+    t.integer  "ticket_id",       :limit => 8
+    t.integer  "topic_id",        :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "account_id", :limit => 8
+    t.integer  "account_id",      :limit => 8
+    t.integer  "ticketable_id",   :limit => 8
+    t.string   "ticketable_type"
   end
 
   add_index "ticket_topics", ["account_id", "ticket_id"], :name => "index_account_id_and_ticket_id_on_ticket_topics"
+  add_index "ticket_topics", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_ticket_topics_on_account_id_and_ticketetable"
+
 
   create_table "topics", :force => true do |t|
     t.integer  "forum_id",        :limit => 8

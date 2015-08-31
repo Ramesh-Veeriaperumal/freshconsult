@@ -174,7 +174,7 @@ var FreshfoneCallTransfer
         obj = {
           name: target.available_agents_name || target.available_group_agents_name,
           agentsCount: target.agents_count,
-          avatar: avatar.replace("small","")
+          avatar: avatar.replace("small","thumb")
         }
       }
       return obj;

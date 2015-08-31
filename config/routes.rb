@@ -512,6 +512,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :requester_search
         get :customer_phone_number
+        get :customer_contact
       end
     end
     resources :usage_triggers do

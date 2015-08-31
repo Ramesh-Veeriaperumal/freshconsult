@@ -59,9 +59,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   delegate :trashed, :to_emails, :product, :to => :schema_less_ticket, :allow_nil => true
 
-  has_one :ticket_topic,:dependent => :destroy
+  has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-  
+
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :as => :surveyable, :dependent => :destroy
@@ -80,7 +80,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   accepts_nested_attributes_for :tweet, :fb_post , :mobihelp_ticket_info
 
-  has_one :article_ticket, :dependent => :destroy
+  has_one :article_ticket, :as => :ticketable, :dependent => :destroy
   has_one :article, :through => :article_ticket
 
 end

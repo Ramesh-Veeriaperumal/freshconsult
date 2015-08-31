@@ -26,8 +26,8 @@ class Freshfone::CallCostCalculator
 	end
 	
 	def calculate_cost
-		return if current_call.missed_conf_transfer?
-		return missed_call_cost if current_call.present? && current_call.missed_or_busy?
+		return if current_call.present? && current_call.missed_conf_transfer?
+		return missed_call_cost if current_call.present? && (current_call.missed_or_busy? || current_call.failed?)
 		get_first_leg_cost
 		dial_call_cost unless one_leg_calls?
 
@@ -110,11 +110,11 @@ class Freshfone::CallCostCalculator
 		end
 
 		def call_sid
-			args[:call_sid] || current_call.call_sid
+			args[:call_sid] || (current_call.present? && current_call.call_sid)
 		end
 		
 		def dial_call_sid
-			args[:dial_call_sid] || current_call.dial_call_sid #voicemail will not pass this arg
+			args[:dial_call_sid] || (current_call.present? && current_call.dial_call_sid) #voicemail will not pass this arg
 		end
 		
 		def get_twilio_call
@@ -176,6 +176,7 @@ class Freshfone::CallCostCalculator
     end
 
     def twilio_call_and_total_duration
+    	return if current_call.blank?
       current_call.call_duration = self.first_leg_call.duration if current_call.call_duration.blank?
       current_call.total_duration = self.first_leg_call.duration if conference? && current_call.total_duration.blank?
     end

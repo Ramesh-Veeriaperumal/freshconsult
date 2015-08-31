@@ -536,13 +536,10 @@ h3.heading{
     margin-top: 5px;
     border:0;
     padding:0;
-
-    img { @include border-radius(0); }
 }
 
 .topic-list .user-pic-thumb img{
-    width:30px;
-    height:30px;
+    @include border-radius(50%);
 }
 
 .user-comment {
@@ -556,8 +553,9 @@ h3.heading{
     	.user-pic-thumb{
     		margin:10px;
     		img{
-    			height: 45px;
-				width: 45px;
+    			height: 40px;
+			width: 40px;
+                                       border-radius: 50%;
     		}
     	}
         .user-details {
@@ -573,8 +571,8 @@ h3.heading{
         }
     }
     .p-content {
-    	padding-top: 5px;
-		@include margin-left(60px);
+    	padding-top: 10px;
+	@include margin-left(55px);
         #new-post-form {
             margin-top: 13px;
         }

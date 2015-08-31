@@ -67,9 +67,9 @@ describe AccountsController do
         "tab_color"=>"#006063", "bg_color"=>"#efefef", "contact_info"=>""}, "id"=>"1"}, 
         "account_additional_settings_attributes"=>{"date_format"=>"1", "id"=>"1"}, 
         "time_zone"=>"Chennai", "ticket_display_id"=>"100"}, "redirect_url"=>""}
-    Resque.inline = true 
-    put :update, update_params
-    Resque.inline = false
+    Sidekiq::Testing.inline! do
+      put :update, update_params
+    end
     @account.reload
     @account.main_portal.language.should match("hu")
     check_language_equality

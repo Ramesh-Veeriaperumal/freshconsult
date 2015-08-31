@@ -12,7 +12,6 @@ class Solution::Category < ActiveRecord::Base
   include Solution::MetaMethods
   
   CACHEABLE_ATTRS = ["id","name","account_id","position","is_default"]
-  concerned_with :associations, :meta_associations
   
   self.table_name =  "solution_categories"
   

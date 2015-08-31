@@ -34,7 +34,7 @@ class Helpdesk::CloudFile < ActiveRecord::Base
   private
 
   def set_account_id
-    self.account_id = droppable.account_id
+    self.account_id ||= droppable.account_id
   end
 
   CLOUD_FILE_PROVIDERS = ['dropbox']

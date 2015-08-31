@@ -224,6 +224,8 @@ def import_condition(id, item)
       condition = ".where(['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"
     when "Admin::CannedResponses::Response" then
       condition = ".where(['account_id=?', #{id}])"
+    when "Solution::Article" then
+      condition = ".where(['`solution_articles`.account_id=? and `solution_articles`.updated_at<?', #{id}, Time.now.utc])"
   end
   condition
 end
