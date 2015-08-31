@@ -116,6 +116,10 @@ class Account < ActiveRecord::Base
     ismember?(DASHBOARD_DISABLED, self.id)
   end
 
+  def slave_queries?
+    ismember?(SLAVE_QUERIES, self.id)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end

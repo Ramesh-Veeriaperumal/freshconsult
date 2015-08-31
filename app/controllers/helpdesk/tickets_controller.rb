@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :normalize_params, :only => :index
@@ -1184,6 +1185,13 @@ class Helpdesk::TicketsController < ApplicationController
   def run_on_slave(&block)
     Sharding.run_on_slave(&block)
   end 
+
+  def run_on_db(&block)
+    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    Sharding.send(db_type) do
+      yield
+    end
+  end
 
   def load_sort_order
     params[:wf_order] = view_context.current_wf_order.to_s
