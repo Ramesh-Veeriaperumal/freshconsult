@@ -39,7 +39,7 @@ class MergeContacts < BaseWorker
       unless @children.blank?
         Rails.logger.debug "#{"*"*20}Merging contacts #{@children.map(&:id).join(", ")} with #{@parent_user.id}#{"*"*20}"
         move_child_resources_to_parent
-        move_if_exists(User::USER_SECONDARY_ATTRIBUTES)
+        move_if_exists(user_attributes)
         @children.each(&:save)
         @parent_user.save
       end
@@ -111,6 +111,10 @@ class MergeContacts < BaseWorker
         end
       end
     end
+  end
+
+  def user_attributes
+    User::USER_SECONDARY_ATTRIBUTES + @account.contact_form.custom_contact_fields.map(&:name)
   end
 
   # We are doing this as a user should not have multiple monitorships/votes for the same topic/forum etc.

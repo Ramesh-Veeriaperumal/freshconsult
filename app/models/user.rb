@@ -188,7 +188,7 @@ class User < ActiveRecord::Base
 
   def client_manager=(checked)
     if customer?
-      self.privileges = (checked == "true" && company ) ? Role.privileges_mask([:client_manager]) : "0"
+      self.privileges = ((checked == "true" || checked == true) && company ) ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
@@ -221,10 +221,6 @@ class User < ActiveRecord::Base
 
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
-  end
-
-  def emails
-    self.user_emails.map(&:email)
   end
 
   def tag_names= updated_tag_names
