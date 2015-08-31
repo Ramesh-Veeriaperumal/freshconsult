@@ -4,7 +4,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	self.table_name = 'solution_category_meta'
 
 	include Mobihelp::AppSolutionsUtils
-	include Solution::MetaModelMethods
+	include Solution::LanguageAssociations
 
 	belongs_to_account
 

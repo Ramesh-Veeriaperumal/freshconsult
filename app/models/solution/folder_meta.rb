@@ -4,6 +4,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   
 	self.table_name = "solution_folder_meta"
   include Solution::Constants
+	include Solution::LanguageAssociations
 	belongs_to_account
 	
   validates_inclusion_of :visibility, 

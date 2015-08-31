@@ -7,6 +7,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	include Redis::RedisKeys
 	include Redis::OthersRedis
 	include Community::HitMethods
+	
+	include Solution::LanguageAssociations
 
 	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true
 

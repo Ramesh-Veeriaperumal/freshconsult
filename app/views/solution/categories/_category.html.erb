@@ -1,4 +1,4 @@
-<% primary_language = category.primary_language || category.solution_categories.first %>
+<% primary_language = category.primary_category || category.solution_categories.first %>
 <%= content_tag :li, :item_id => primary_language.id,
 		  						:class => "comm-item", :id => "item_"+primary_language.id.to_s do %>
 	<div class="reorder-icon vertical-alignment">

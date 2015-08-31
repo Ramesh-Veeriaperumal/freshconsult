@@ -232,16 +232,19 @@ module SolutionHelper
 
 	def language_flags(solution_meta)
 		content = ""
+		category = solution_meta.class.name.chomp('Meta').gsub("Solution::", '').downcase
 		Account.current.supported_languages.each do |lan|
 			language = Language.find_by_code(lan)
-			version = solution_meta.send("#{lan.gsub('-','_')}_language")
-			content << language_icon(language, version)
+			version = solution_meta.send("#{lan.gsub('-','_').downcase}_#{category}")
+			case category.to_sym
+				when :category
+					content << language_icon_category(language, version)
+				when :folder
+				when :article
+				else
+			end
 		end
 		content.html_safe
-	end
-
-	def language_icon(language, version)
-		language_icon_category(language, version)
 	end
 
 	def language_icon_category(language, version)
