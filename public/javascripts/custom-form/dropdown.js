@@ -154,7 +154,6 @@
 				.sortable({
 					items: 	'fieldset',
 					handle: this.settings.dropdown_rearrange,
-					containment: this.settings.dropdownChoiceDiv,
 					sort: function(e,el){
 						var scrollParent = $('.custom-choices').parents('.modal-body');
 						var currentOffset = scrollParent.scrollTop();
