@@ -9,7 +9,7 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       api_show: 1,
       api_update: 7,
       api_destroy: 12,
-      api_follow: 7,
+      api_follow: 8,
       api_unfollow: 7,
       api_is_following: 1,
       api_topics: 2,

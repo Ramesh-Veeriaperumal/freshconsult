@@ -18,8 +18,8 @@ module ApiTicketConstants
   }
 
   # all_tickets is not included because it is the default filter applied.
-  # monitored_by is not inlcuded because it needs to be thought through to support different user_id as value
-  FILTER = TicketsFilter::DEFAULT_VISIBLE_FILTERS.values_at(0, 3, 4)
+  # monitored_by is renamed as 'watching'
+  FILTER = %w( new_and_my_open watching spam deleted )
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type created_since updated_since)

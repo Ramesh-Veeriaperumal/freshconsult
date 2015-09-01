@@ -292,10 +292,12 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_user_without_any_contact_detail
     params_hash = { phone: '', mobile: '', twitter_id: '' }
     sample_user = get_user
+    email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('email', 'Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
+    sample_user.update_attribute(:email, email)
   end
 
   def test_update_user_with_valid_params
@@ -375,12 +377,14 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_the_email_of_a_contact_valid
     sample_user = add_new_user(@account)
+    email = sample_user.email
     sample_user.update_attribute(:email, nil)
     email = Faker::Internet.email
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     sample_user.reload.email == email
+    sample_user.update_attribute(:email, email)
   end
 
   def test_update_the_email_of_a_contact_without_email
@@ -400,6 +404,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_length_invalid
     sample_user = get_user
+    email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
     match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
@@ -411,14 +416,17 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('phone', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('tags', 'is too long (maximum is 255 characters)')])
     assert_response :bad_request
+    sample_user.update_attribute(:email, email)
   end
 
   def test_update_length_valid_with_trailing_space
     sample_user = get_user
+    email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space])
     assert_response :success
     match_json(deleted_contact_pattern(sample_user.reload))
+    sample_user.update_attribute(:email, email)
   end
 
   # Delete user
@@ -606,6 +614,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response :bad_request
     sample_user.update_attribute(:email, email)
     match_json(request_error_pattern('email_required'))
+    sample_user.update_attribute(:email, email)
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit

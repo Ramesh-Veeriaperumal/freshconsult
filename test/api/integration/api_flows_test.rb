@@ -148,7 +148,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_post_request_with_password
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
-    @write_headers = set_custom_auth_headers(@write_headers, @agent.email, 'test')
+    @write_headers = set_custom_auth_headers(@write_headers, @agent.reload.email, 'test')
+    p @write_headers
+    p @agent.attributes
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response :created
   end
@@ -157,7 +159,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     flc = @agent.failed_login_count || 0
     pt = @agent.perishable_token
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
-    @write_headers = set_custom_auth_headers(@write_headers, @agent.email, 'tester')
+    @write_headers = set_custom_auth_headers(@write_headers, @agent.reload.email, 'tester')
+    p @write_headers
+    p @agent.attributes
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response :unauthorized
     assert_equal flc + 1, @agent.reload.failed_login_count
@@ -177,9 +181,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     flc = @agent.failed_login_count || 0
     pt = @agent.perishable_token
 
-    @headers = set_custom_auth_headers(@headers, @agent.email, 'tes')
+    @headers = set_custom_auth_headers(@headers, @agent.reload.email, 'tes')
+    p @headers
     get '/api/discussions/categories', nil, @headers
     assert_response :unauthorized
+    p @agent.attributes
     assert_equal flc + 1, @agent.reload.failed_login_count
     assert pt != @agent.perishable_token
 

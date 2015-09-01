@@ -15,7 +15,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         create: 15,
         show: 14,
         update: 20,
-        index: 13,
+        index: 14,
         destroy: 24
       }
 
