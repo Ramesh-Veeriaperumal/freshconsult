@@ -1,0 +1,52 @@
+/* Going to Developer Portal Via Oauth CSS */
+@import "settings/settings";
+
+//used in dev agreement page that takes users to developer portal
+.dev-oauth{
+  .dev-agreement{
+    line-height: 26px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
+  .sticky-bar{
+    border-bottom: solid 1px #DADADA;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 10px 20px;
+    background: #FFF;
+  }
+  .agreement-title{
+    width: 70%;
+    display: inline-block;
+  }
+  .agreement-txt{
+    padding-top: 20px;
+  }
+  .agreement-btns{
+    float: right;
+    display: inline-block;
+  }
+  .loader-wrapper{
+    display: block;
+    position: absolute;
+    text-align: center;
+    left: 42%;
+  }
+  .logging-in{
+    float: left;
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    width: 290px;
+  }  
+  .bottom-btns{
+    margin-top:100px;
+    text-align:center; 
+    font-size:22px;
+    font-weight:300; 
+    height:75vh;
+  }
+}

@@ -629,13 +629,9 @@ Helpkit::Application.routes.draw do
       get :open_id, on: :collection
     end
     
-    resources :applications do
-      member do
-        post :custom_widget_preview
-      end
+    resources :applications, :only => [:index, :show] do
       collection do
         post :oauth_install
-        get :custom_widget_preview
       end
     end
 
@@ -1043,6 +1039,36 @@ Helpkit::Application.routes.draw do
       collection do
         get :index
         put :update
+      end
+    end
+
+    # Marketplace
+    resources :extensions, :only => [:index, :show] do
+      collection do
+        get :search
+      end
+    end
+
+    namespace :installed_extensions do
+      get 'new_configs/:version_id', action: 'new_configs', :as => :new_configs
+      get 'edit_configs/:version_id', action: 'edit_configs', :as => :edit_configs
+      post 'install/:version_id', action: 'install', :as => :install
+      put 'reinstall/:version_id', action: 'reinstall', :as => :reinstall
+      delete 'uninstall/:version_id', action: 'uninstall', :as => :uninstall
+      put 'enable/:version_id', action: 'enable', :as => :enable
+      put 'disable/:version_id', action: 'disable', :as => :disable
+      post 'feedback/:version_id', action: 'feedback', :as => :feedback
+    end
+
+    namespace :integrations do
+      resources :freshplugs, :except => [:index, :show] do
+        member do
+          put :enable
+          put :disable
+        end
+        collection do
+          post :custom_widget_preview
+        end
       end
     end
 
@@ -2337,4 +2363,16 @@ Helpkit::Application.routes.draw do
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+
+  use_doorkeeper do
+    skip_controllers :oauth_applications, :authorized_applications
+  end
+
+  namespace :doorkeeper, :path => '' do
+    namespace :api do
+      namespace :marketplace do
+        get :data
+      end
+    end
+  end
 end

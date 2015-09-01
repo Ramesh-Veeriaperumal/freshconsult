@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.eot");
-  src: font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.woff") format("woff"),
-       font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.ttf") format("truetype"),
-       font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.svg#glyphs") format("svg");
+  src: font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.eot");
+  src: font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.woff") format("woff"),
+       font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.ttf") format("truetype"),
+       font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_ed7eeb68c38dfe248254da5122f892f2.svg#glyphs") format("svg");
+    src: font-url("glyphs_c1a157832b14d1b20e6a471d2253615d.svg#glyphs") format("svg");
   }
 }
 
@@ -69,6 +69,7 @@
 .ficon-chrome:before,
 .ficon-comment-multi:before,
 .ficon-comments:before,
+.ficon-comments1:before,
 .ficon-company:before,
 .ficon-compose-email:before,
 .ficon-conversation:before,
@@ -143,6 +144,7 @@
 .ficon-infinity-5:before,
 .ficon-integrations:before,
 .ficon-ios:before,
+.ficon-left-arrow-thick:before,
 .ficon-like:before,
 .ficon-link:before,
 .ficon-linkedin:before,
@@ -185,6 +187,7 @@
 .ficon-portals:before,
 .ficon-post-edit:before,
 .ficon-pushpin:before,
+.ficon-puzzle:before,
 .ficon-rearrange:before,
 .ficon-rebranding:before,
 .ficon-refresh:before,
@@ -199,6 +202,7 @@
 .ficon-scenario:before,
 .ficon-search:before,
 .ficon-security:before,
+.ficon-settings1:before,
 .ficon-shared:before,
 .ficon-sidebar-list:before,
 .ficon-sla:before,
@@ -290,6 +294,7 @@
 .ficon-chrome:before { content: "\f124"; }
 .ficon-comment-multi:before { content: "\f125"; }
 .ficon-comments:before { content: "\f126"; }
+.ficon-comments1:before { content: "\f1d1"; }
 .ficon-company:before { content: "\f127"; }
 .ficon-compose-email:before { content: "\f1cc"; }
 .ficon-conversation:before { content: "\f128"; }
@@ -364,6 +369,7 @@
 .ficon-infinity-5:before { content: "\f15b"; }
 .ficon-integrations:before { content: "\f15c"; }
 .ficon-ios:before { content: "\f15d"; }
+.ficon-left-arrow-thick:before { content: "\f1d2"; }
 .ficon-like:before { content: "\f15e"; }
 .ficon-link:before { content: "\f15f"; }
 .ficon-linkedin:before { content: "\f160"; }
@@ -406,6 +412,7 @@
 .ficon-portals:before { content: "\f1d0"; }
 .ficon-post-edit:before { content: "\f17f"; }
 .ficon-pushpin:before { content: "\f180"; }
+.ficon-puzzle:before { content: "\f1d3"; }
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
 .ficon-refresh:before { content: "\f183"; }
@@ -420,6 +427,7 @@
 .ficon-scenario:before { content: "\f18c"; }
 .ficon-search:before { content: "\f18d"; }
 .ficon-security:before { content: "\f18e"; }
+.ficon-settings1:before { content: "\f1d4"; }
 .ficon-shared:before { content: "\f18f"; }
 .ficon-sidebar-list:before { content: "\f190"; }
 .ficon-sla:before { content: "\f191"; }

@@ -261,3 +261,6 @@ end
   gem "fontcustom",           	"1.3.3"  
 
 # end
+
+# Marketplace
+gem 'doorkeeper', '2.2.1'

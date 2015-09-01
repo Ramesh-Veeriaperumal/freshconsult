@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150824192547) do
+ActiveRecord::Schema.define(:version => 20150905094044) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2171,6 +2171,50 @@ ActiveRecord::Schema.define(:version => 20150824192547) do
   add_index "monitorships", ["account_id", "monitorable_id", "monitorable_type"], :name => "index_on_monitorships_acc_mon_id_and_type", :length => {"account_id"=>nil, "monitorable_id"=>nil, "monitorable_type"=>5}
   add_index "monitorships", ["account_id", "user_id", "monitorable_id", "monitorable_type"], :name => "complete_monitor_index"
   add_index "monitorships", ["user_id", "account_id"], :name => "index_for_monitorships_on_user_id_account_id"
+
+  create_table "oauth_access_grants", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "resource_owner_id",              :null => false
+    t.integer  "application_id",                 :null => false
+    t.string   "token",                          :null => false
+    t.integer  "expires_in",                     :null => false
+    t.text     "redirect_uri",                   :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "revoked_at"
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_grants", ["account_id", "token"], :name => "index_oauth_access_grants_on_account_id_and_token", :unique => true
+
+  create_table "oauth_access_tokens", :force => true do |t|
+    t.integer  "account_id",        :limit => 8
+    t.integer  "resource_owner_id"
+    t.integer  "application_id"
+    t.string   "token",                          :null => false
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at",                     :null => false
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_tokens", ["account_id", "application_id", "resource_owner_id"], :name => "index_on_acc_id_usr_id_app_id"
+  add_index "oauth_access_tokens", ["account_id", "refresh_token"], :name => "index_oauth_access_tokens_on_account_id_and_refresh_token", :unique => true
+  add_index "oauth_access_tokens", ["account_id", "token"], :name => "index_oauth_access_tokens_on_account_id_and_token", :unique => true
+
+  create_table "oauth_applications", :force => true do |t|
+    t.string   "name",                                      :null => false
+    t.string   "uid",                                       :null => false
+    t.string   "secret",                                    :null => false
+    t.text     "redirect_uri",                              :null => false
+    t.string   "scopes",                    :default => "", :null => false
+    t.integer  "user_id",      :limit => 8
+    t.integer  "account_id",   :limit => 8
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+  end
+
+  add_index "oauth_applications", ["uid"], :name => "index_oauth_applications_on_uid", :unique => true
 
   create_table "password_resets", :force => true do |t|
     t.string   "email"

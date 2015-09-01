@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
+  has_many :access_tokens, :class_name => 'Doorkeeper::AccessToken', :foreign_key => :resource_owner_id, :dependent => :destroy
 
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
@@ -403,6 +404,13 @@ class User < ActiveRecord::Base
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)
+  end
+
+  # Marketplace
+  def developer?
+    marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
+    developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
+    Account.current.features?(:fa_developer) && !developer_privilege.blank?
   end
 
   def can_assume?(user)

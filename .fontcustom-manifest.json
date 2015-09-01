@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ed7eeb68c38dfe248254da5122f892f22af7fcd3b565d9f3bbb9d217e1c8eca2",
-    "current": "ed7eeb68c38dfe248254da5122f892f22af7fcd3b565d9f3bbb9d217e1c8eca2"
+    "previous": "c1a157832b14d1b20e6a471d2253615da8cfd08a8b51aab1dc5a4a7f6d771ee5",
+    "current": "c1a157832b14d1b20e6a471d2253615da8cfd08a8b51aab1dc5a4a7f6d771ee5"
   },
   "fonts": [
-    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.ttf",
-    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.svg",
-    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.woff",
-    "public/assets/glyphs_ed7eeb68c38dfe248254da5122f892f2.eot"
+    "public/assets/glyphs_c1a157832b14d1b20e6a471d2253615d.ttf",
+    "public/assets/glyphs_c1a157832b14d1b20e6a471d2253615d.svg",
+    "public/assets/glyphs_c1a157832b14d1b20e6a471d2253615d.woff",
+    "public/assets/glyphs_c1a157832b14d1b20e6a471d2253615d.eot"
   ],
   "glyphs": {
     "account": {
@@ -193,6 +193,10 @@
     "comments": {
       "codepoint": 61734,
       "source": "public/glyphs/vectors/comments.svg"
+    },
+    "comments1": {
+      "codepoint": 61905,
+      "source": "public/glyphs/vectors/comments1.svg"
     },
     "company": {
       "codepoint": 61735,
@@ -490,6 +494,10 @@
       "codepoint": 61789,
       "source": "public/glyphs/vectors/ios.svg"
     },
+    "left-arrow-thick": {
+      "codepoint": 61906,
+      "source": "public/glyphs/vectors/left-arrow-thick.svg"
+    },
     "like": {
       "codepoint": 61790,
       "source": "public/glyphs/vectors/like.svg"
@@ -658,6 +666,10 @@
       "codepoint": 61824,
       "source": "public/glyphs/vectors/pushpin.svg"
     },
+    "puzzle": {
+      "codepoint": 61907,
+      "source": "public/glyphs/vectors/puzzle.svg"
+    },
     "rearrange": {
       "codepoint": 61825,
       "source": "public/glyphs/vectors/rearrange.svg"
@@ -713,6 +725,10 @@
     "security": {
       "codepoint": 61838,
       "source": "public/glyphs/vectors/security.svg"
+    },
+    "settings1": {
+      "codepoint": 61908,
+      "source": "public/glyphs/vectors/settings1.svg"
     },
     "shared": {
       "codepoint": 61839,
@@ -858,6 +874,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

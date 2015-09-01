@@ -362,6 +362,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone]
+    resource :"admin/integrations/freshplug"
+    resource :"admin/extension"
+    resource :"admin/installed_extension"
+    resource :"doorkeeper/authorization"
   end
 
   manage_account do

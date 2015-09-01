@@ -489,6 +489,8 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
+    doorkeeper (2.2.1)
+      railties (>= 3.2)
     dynamic_form (1.1.4)
     dynamics_crm (0.4.1)
       builder (>= 3.0.0, < 4.0.0)
@@ -946,6 +948,7 @@ DEPENDENCIES
   deadlock_retry!
   delayed_job!
   dev_notification!
+  doorkeeper (= 2.2.1)
   dynamic_form
   dynamics_crm (~> 0.4.1)
   ejs (= 1.1.1)
