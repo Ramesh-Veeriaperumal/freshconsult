@@ -89,7 +89,7 @@ class TimeSheetsController < ApiApplicationController
     def sanitize_params
       params[cname][:timer_running] = @timer_running
       params[cname][:time_spent] = time_spent
-      params[cname][:agent_id] ||= current_user.id if create?
+      params[cname][:agent_id] ||= api_current_user.id if create?
       current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
       params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool

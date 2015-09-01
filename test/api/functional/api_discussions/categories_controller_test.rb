@@ -22,11 +22,11 @@ module ApiDiscussions
       end
 
       define_method("test_#{action}_without_login") do
-        controller.class.any_instance.stubs(:current_user).returns(nil)
+        controller.class.any_instance.stubs(:api_current_user).returns(nil)
         send(methods[action], action, construct_params(id: fc.id))
         assert_response :unauthorized
         match_json(request_error_pattern('invalid_credentials'))
-        controller.class.any_instance.unstub(:current_user)
+        controller.class.any_instance.unstub(:api_current_user)
       end
 
       define_method("test_#{action}_check_day_pass_usage") do

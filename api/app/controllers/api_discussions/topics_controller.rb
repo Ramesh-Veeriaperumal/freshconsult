@@ -4,9 +4,9 @@ module ApiDiscussions
     before_filter :load_forum, only: [:forum_topics]
 
     def create
-      @item.user = current_user
+      @item.user = api_current_user
       post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_POST_FIELDS.include?(x) })
-      post.user = current_user
+      post.user = api_current_user
       assign_parent post, :topic, @item
       super
     end
@@ -65,7 +65,7 @@ module ApiDiscussions
       end
 
       def portal_check
-        access_denied if current_user.nil? || current_user.customer? || !privilege?(:view_forums)
+        access_denied if api_current_user.nil? || api_current_user.customer? || !privilege?(:view_forums)
       end
 
       def assign_protected

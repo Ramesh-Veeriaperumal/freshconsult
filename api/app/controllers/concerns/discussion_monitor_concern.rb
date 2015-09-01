@@ -69,7 +69,7 @@ module DiscussionMonitorConcern
     end
 
     def get_monitorship(params)
-      user_id = params[cname][:user_id] || current_user.id
+      user_id = params[cname][:user_id] || api_current_user.id
       monitorship = Monitorship.where(user_id: user_id,
                                       monitorable_id: @item.id, monitorable_type: @item.class.to_s)
     end
@@ -89,7 +89,7 @@ module DiscussionMonitorConcern
       fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
       params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
       validate params
-      params[:user_id] ||= current_user.id
+      params[:user_id] ||= api_current_user.id
     end
 
     def validate(params_hash)
@@ -98,7 +98,7 @@ module DiscussionMonitorConcern
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && params[:user_id] != current_user.id && !privilege?(:manage_forums)
+      if params[:user_id].present? && params[:user_id] != api_current_user.id && !privilege?(:manage_forums)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end

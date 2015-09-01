@@ -162,6 +162,15 @@ class ApplicationController < ActionController::Base
     end
 
   private
+
+    def set_current_account
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      handle_unverified_request
+    end
+
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
     end

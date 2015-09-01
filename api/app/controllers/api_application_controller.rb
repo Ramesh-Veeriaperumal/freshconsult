@@ -276,14 +276,14 @@ class ApiApplicationController < MetalApiController
     end
 
     def access_denied
-      if current_user
+      if api_current_user
         render_request_error :access_denied, 403
       else
         render_request_error :invalid_credentials, 401
       end
     end
 
-    def current_user
+    def api_current_user
       return @current_user if defined?(@current_user)
       if get_request?
         if current_user_session # fall back to old session based auth
@@ -302,17 +302,47 @@ class ApiApplicationController < MetalApiController
       @current_user
     end
 
+    def qualify_for_day_pass?
+      api_current_user && api_current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
+    end
+
+    def check_privilege
+      access_denied and return if(api_current_user.nil? || api_current_user.customer? || !allowed_to_access?)
+    end
+
+    def allowed_to_access?
+      return false unless ABILITIES.key?(resource)
+
+      ABILITIES[resource].each do |privilege|
+        if [:all, action].include? privilege.action
+          return true if api_current_user.privilege?(privilege.name) or 
+            api_current_user.owns_object?(privilege.load_object(current_account, params))            
+        end
+      end
+
+      false
+    end
+
+    def set_current_account
+      current_account.make_current
+      User.current = api_current_user
+    rescue ActiveRecord::RecordNotFound
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      handle_unverified_request
+    end
+
+
     def get_request?
       @get_request ||= request.get?
     end
 
-    def can_send_user? # if user_id or email of a user, is included in params, the current_user should have ability to assume that user.
+    def can_send_user? # if user_id or email of a user, is included in params, the api_current_user should have ability to assume that user.
       user_id = params[cname][:user_id]
       email = params[cname][:email]
       if user_id || email
         @user = current_account.user_emails.user_for_email(email) if email # should use user_for_email instead of find_by_email
         @user ||= current_account.all_users.find_by_id(user_id)
-        if @user && @user != current_user && !is_allowed_to_assume?(@user)
+        if @user && @user != api_current_user && !is_allowed_to_assume?(@user)
           render_request_error(:invalid_user, 403, id: @user.id, name: @user.name)
           return false
         end

@@ -62,7 +62,7 @@ class NotesController < ApiApplicationController
       if @item.user_id
         @item.user = @user if @user
       else
-        @item.user = current_user
+        @item.user = api_current_user
       end # assign user instead of id as the object is already loaded.
       @item.notable = @ticket # assign notable instead of id as the object is already loaded.
       @item.notable.account = current_account

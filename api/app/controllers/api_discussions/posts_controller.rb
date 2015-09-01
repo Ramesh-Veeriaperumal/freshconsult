@@ -11,7 +11,7 @@ module ApiDiscussions
 
       def build_object
         super
-        @item.user = current_user
+        @item.user = api_current_user
         @item.portal = current_portal
         @item.topic_id ||= params[cname]['topic_id']
       end
