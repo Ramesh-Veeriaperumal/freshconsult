@@ -7,7 +7,7 @@
 			<span>
 				<%= select_tag :id,
 		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
-		              :class => "disabled bulk-action-btns select2",
+		              :class => "disabled bulk-action-btns input-small select2 m0",
 		              :id => "move_to",
 		              :'data-dropdown-css-class' => 'bulk-action-menu',
 		              :'data-container-css-class' => 'bulk-action-button',
