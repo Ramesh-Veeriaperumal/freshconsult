@@ -12,6 +12,7 @@ class ContactsController < ApplicationController
    before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
    before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
 
+   around_filter :run_on_slave, :only => [:index]
 
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
@@ -368,16 +369,13 @@ protected
     def fetch_contacts
        # connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"
        # temp need to change...
-       connection_to_be_used = "run_on_slave"
        per_page =  (params[:per_page].blank? || params[:per_page].to_i > 50) ? 50 :  params[:per_page]
        order_by =  (!params[:order_by].blank? && params[:order_by].casecmp("id") == 0) ? "Id" : "name"
        order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
        @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
        begin
-         @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by).preload(:avatar, :company)
-        end
-      cookies[:contacts_sort] = @sort_state
+         @contacts = scoper.filter(params[:letter], params[:page],params.fetch(:state , @sort_state),per_page,order_by).preload(:avatar, :company)
+         cookies[:contacts_sort] = @sort_state
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
       end
@@ -386,5 +384,9 @@ protected
     def init_user_email
       @item ||= @user
       @item.user_emails.build({:primary_role => true, :verified => @item.active? }) if current_account.features_included?(:contact_merge_ui) and @item.user_emails.empty?
+    end
+
+    def run_on_slave(&block) 
+      Sharding.run_on_slave(&block)
     end
 end
