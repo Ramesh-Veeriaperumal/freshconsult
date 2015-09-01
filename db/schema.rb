@@ -2174,8 +2174,8 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
 
   create_table "oauth_access_grants", :force => true do |t|
     t.integer  "account_id",        :limit => 8
-    t.integer  "resource_owner_id",              :null => false
-    t.integer  "application_id",                 :null => false
+    t.integer  "resource_owner_id", :limit => 8, :null => false
+    t.integer  "application_id",    :limit => 8, :null => false
     t.string   "token",                          :null => false
     t.integer  "expires_in",                     :null => false
     t.text     "redirect_uri",                   :null => false
@@ -2188,8 +2188,8 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
 
   create_table "oauth_access_tokens", :force => true do |t|
     t.integer  "account_id",        :limit => 8
-    t.integer  "resource_owner_id"
-    t.integer  "application_id"
+    t.integer  "resource_owner_id", :limit => 8
+    t.integer  "application_id",    :limit => 8
     t.string   "token",                          :null => false
     t.string   "refresh_token"
     t.integer  "expires_in"
@@ -2214,7 +2214,7 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
     t.datetime "updated_at",                                :null => false
   end
 
-  add_index "oauth_applications", ["uid"], :name => "index_oauth_applications_on_uid", :unique => true
+  add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
 
   create_table "password_resets", :force => true do |t|
     t.string   "email"
