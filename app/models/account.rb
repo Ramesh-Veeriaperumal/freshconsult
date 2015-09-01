@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations
+  concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
   include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
