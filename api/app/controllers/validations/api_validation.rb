@@ -3,7 +3,7 @@ class ApiValidation
   include ActiveModel::Validations::Callbacks
   attr_accessor :error_options
 
-  before_validation :remove_whitespaces
+  before_validation :trim_attributes
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
@@ -38,9 +38,9 @@ class ApiValidation
     (FORMATTED_TYPES.include?(value.class) ? value.to_s : value)
   end
 
-  def remove_whitespaces
-    attributes_to_be_stripped.each do |c|
-      attribute = instance_variable_get("@#{c}")
+  def trim_attributes
+    attributes_to_be_stripped.each do |x|
+      attribute = send(x)
       next if attribute.nil?
       if attribute.respond_to?(:strip!)
         attribute.strip!

@@ -54,7 +54,6 @@ module ApiDiscussions
 
       def sanitize_params
         params[cname][:body_html] = params[cname].delete(:message_html) if params[cname].key?(:message_html)
-        @email = params[cname].delete(:email) if params[cname].key?(:email)
       end
 
       def assign_parent(item, parent, value)
