@@ -18,6 +18,9 @@ window.xhrPool = [];
       $.browser = { msie: true, version: "11" };
       $('html').addClass('ie ie11');
     }
+// Note - Browser detection code for edge.
+ $.browser.edge = ( window.navigator.userAgent.indexOf("Edge") > 0 ) ? true : false;
+ 
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;
 

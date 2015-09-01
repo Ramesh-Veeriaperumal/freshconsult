@@ -257,7 +257,7 @@ window.Fjax = {
 
 //Not using pjax for IE10- Temporary fix for IE pjax load issue
 //in dashboard and tickets filter. Remove the condition once we get permanent fix
-if (!$.browser.msie) {
+if (!$.browser.msie && !$.browser.edge) {
   $(document).pjax('a[data-pjax]',{
       timeout: -1,
       push : true,
@@ -284,7 +284,7 @@ var PJAX_DEFAULTS = {timeout: -1,
                   container: '#body-container'}
 
 window.pjaxify = function(url) {
-	if ($.browser.msie) {
+	if ($.browser.msie || $.browser.edge ) {
 		return window.location = url;
 	}
   $.pjax($.extend({}, PJAX_DEFAULTS, {url : url} ));
