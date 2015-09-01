@@ -24,6 +24,7 @@ module Solution::ArticlesHelper
   end
   
   def draft_info_text
+    @current_item ||= @article.draft || @article
     if @article.draft and @article.draft.locked?
       t('solution.articles.restrict_edit', :name => h(@current_item.user.name)).html_safe
     else
@@ -127,6 +128,15 @@ module Solution::ArticlesHelper
               "submit-label" => t('save'), 
               "submit-loading" => t('saving')
             }).html_safe
+  end
+
+
+  def draft_saved_notif_bar
+    %(<span> #{t('solution.draft.autosave.save_success')} </span>
+      <span title="#{formated_date(@article.draft.updated_at)}" class="tooltip" data-livestamp="#{@article.draft.updation_timestamp}"></span>
+      <span class="pull-right">
+        #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"),:target => "draft-"+@article.id.to_s}
+      </span>).html_safe
   end
   
 end

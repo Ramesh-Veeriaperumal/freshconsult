@@ -2,6 +2,7 @@ class Solution::DraftsController < ApplicationController
 
 	include Solution::DraftContext
 	helper SolutionHelper
+	helper Solution::ArticlesHelper
 
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
 	before_filter :set_selected_tab, :only => [:index]
@@ -49,8 +50,9 @@ class Solution::DraftsController < ApplicationController
 	end
 
 	def attachments_delete
-		@draft = (@article.draft.present? ? @article.draft : @article.create_draft_from_article)
+		initialize_draft
 		pseudo_delete_article_attachment
+		@article.reload
 		respond_to do |format|
 			format.js { flash[:notice] = t('solution.articles.att_deleted') }
 		end
@@ -91,6 +93,14 @@ class Solution::DraftsController < ApplicationController
 
 		def editable?
 			@draft.user_id == current_user.id || @draft.user_id == nil || !@draft.locked?
+		end
+
+		def initialize_draft
+			@draft = @article.draft
+			unless @article.draft.present? 
+				@new_draft_record = true
+				@draft = @article.create_draft_from_article
+			end
 		end
 
 		def autosave_content_validate

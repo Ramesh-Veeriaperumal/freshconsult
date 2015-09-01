@@ -8,7 +8,9 @@
 
 	<% content_for :layoutType do %>community solutions<% end %>
 	<% content_for :sticky_title do %>
-		<%= render :partial => 'notification_bar' %>
+		<div class="solution-header draft-notif" id="solution-notification-bar">
+			<%= render :partial => 'notification_bar' %>
+		</div>
 	<% end %>
 	<% content_for :sticky_right do %>
 	  <%= preview_portal(support_solutions_article_path(@article.id), @article.folder.category) if @article.published? %>

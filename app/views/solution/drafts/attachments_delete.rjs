@@ -3,3 +3,4 @@ page << "trigger_event('attachment_deleted', {attachment_id: #{@attachment.id}, 
 page << "App.Solutions.Article.autoSave.opts.extraParams.timestamp = #{@draft.updation_timestamp}"
 page << "jQuery('#article-form').data().timestamp = #{@draft.updation_timestamp};"
 page << "jQuery('#last-updated-at').val(#{@draft.updation_timestamp});"
+page.replace_html "solution-notification-bar", :partial => "solution/articles/notification_bar"
