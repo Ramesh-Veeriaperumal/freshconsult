@@ -352,7 +352,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
  
  def article_tickets_join
   " INNER JOIN `article_tickets` ON `article_tickets`.`ticket_id` = `helpdesk_tickets`.`id` 
-    AND `article_tickets`.`account_id` = `helpdesk_tickets`.`account_id` "
+    AND `article_tickets`.`account_id` = `helpdesk_tickets`.`account_id` AND `article_tickets`.`ticketable_type` = 'Helpdesk::Ticket' "
  end
 
  def articles_join
