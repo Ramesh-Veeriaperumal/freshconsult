@@ -136,17 +136,20 @@ class User < ActiveRecord::Base
     end
 
     def filter_condition(state, letter)
-      case state
+      conditions = case state
         when "verified", "unverified"
-          [ ' name like ? and deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
-            "#{letter}%", false , state.eql?("verified") ]
+           [ ' deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
+            false , state.eql?("verified") ]
         when "deleted", "all"
-          [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
-            "#{letter}%", state.eql?("deleted")]
+          [ ' deleted = ? and deleted_at IS NULL and blocked = false', 
+            state.eql?("deleted")]
         when "blocked"
-          [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-            "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
-      end                                      
+          [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+            true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db) ]
+      end
+      
+      conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
+      conditions
     end
 
     def find_by_email_or_name(value)
