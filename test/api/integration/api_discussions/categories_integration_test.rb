@@ -12,12 +12,12 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
       api_destroy: 8,
       api_forums: 2,
 
-      create: 23,
-      show: 13,
-      update: 19,
-      index: 13,
-      destroy: 22,
-      forums: 15
+      create: 22,
+      show: 12,
+      update: 18,
+      index: 12,
+      destroy: 21,
+      forums: 14
     }
 
     # create

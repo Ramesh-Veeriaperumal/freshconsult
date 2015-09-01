@@ -7,8 +7,8 @@ class ApiProductsIntegrationTest < ActionDispatch::IntegrationTest
       api_show: 1,
       api_index: 1,
 
-      show: 12,
-      index: 12
+      show: 11,
+      index: 11
     }
 
     product = create_product

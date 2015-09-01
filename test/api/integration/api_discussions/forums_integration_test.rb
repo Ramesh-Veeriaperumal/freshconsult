@@ -14,14 +14,14 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       api_is_following: 1,
       api_topics: 2,
 
-      create: 22,
-      show: 13,
-      update: 21,
-      destroy: 28,
-      follow: 21,
-      unfollow: 21,
-      is_following: 14,
-      topics: 15
+      create: 21,
+      show: 12,
+      update: 20,
+      destroy: 27,
+      follow: 20,
+      unfollow: 20,
+      is_following: 13,
+      topics: 14
     }
 
     # create

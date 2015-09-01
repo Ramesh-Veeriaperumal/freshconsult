@@ -219,4 +219,83 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
     @agent.update_column(:active, true)
   end
+
+  def test_not_throttled_api_request_invalid_json
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    post '/api/discussions/categories', '{"category": {"name": "true"', @write_headers
+    assert_response :bad_request
+    response.body.must_match_json_expression(invalid_json_error_pattern)
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    assert_equal old_api_consumed_limit, new_api_consumed_limit
+    response.headers.exclude?("X-RateLimit-Limit")
+    response.headers.exclude?("X-RateLimit-Remaining")
+  end
+
+  def test_not_throttled_api_request_invalid_content_type
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    post '/api/discussions/categories', '{"category": {"name": "true"}}', @headers.merge('CONTENT_TYPE' => 'text/plain')
+    assert_response :unsupported_media_type
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    assert_equal old_api_consumed_limit, new_api_consumed_limit
+    response.headers.exclude?("X-RateLimit-Limit")
+    response.headers.exclude?("X-RateLimit-Remaining")
+  end
+
+  def test_not_throttled_web_request
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    get '/discussions/categories', nil, @headers
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    assert_equal old_api_consumed_limit, new_api_consumed_limit
+    response.headers.exclude?("X-RateLimit-Limit")
+    response.headers.exclude?("X-RateLimit-Remaining")
+  end
+
+  def test_throttled_valid_request_with_api_limit_not_present_in_redis
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    remove_others_redis_key(api_limit_key)
+    get '/api/discussions/categories', nil, @headers
+    assert_response :success
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    assert_equal old_api_consumed_limit + 1, new_api_consumed_limit
+    assert_equal "100", response.headers["X-RateLimit-Limit"]
+    remaining_limit = 100 - new_api_consumed_limit.to_i
+    assert_equal remaining_limit.to_s, response.headers["X-RateLimit-Remaining"]
+  end
+
+  def test_throttled_valid_request_with_api_limit_present_in_redis
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    get '/api/discussions/categories', nil, @headers
+    assert_response :success
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    assert_equal old_api_consumed_limit + 1, new_api_consumed_limit
+    assert_equal @account.api_limit.to_s, response.headers["X-RateLimit-Limit"]
+    remaining_limit = @account.api_limit - new_api_consumed_limit.to_i
+    assert_equal remaining_limit.to_s, response.headers["X-RateLimit-Remaining"]
+  end
+
+  def test_last_api_request
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    set_others_redis_key(key, @account.api_limit - 1)
+    get '/api/discussions/categories', nil, @headers
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    set_others_redis_key(key, old_api_consumed_limit)
+    assert_response :success
+    assert_equal @account.api_limit, new_api_consumed_limit
+    assert_equal @account.api_limit.to_s, response.headers["X-RateLimit-Limit"]
+    assert_equal "0", response.headers["X-RateLimit-Remaining"]
+  end
+
+  def test_limit_exceeded_api_request
+    old_api_consumed_limit = get_others_redis_key(key).to_i
+    set_others_redis_key(key, @account.api_limit, nil)
+    get '/api/discussions/categories', nil, @headers
+    new_api_consumed_limit = get_others_redis_key(key).to_i
+    set_others_redis_key(key, old_api_consumed_limit)
+    assert_equal 429, response.status
+    assert_equal @account.api_limit, new_api_consumed_limit
+    assert_equal @account.api_limit.to_s, response.headers["X-RateLimit-Limit"]
+    assert_equal "0", response.headers["X-RateLimit-Remaining"]
+  end
+
 end

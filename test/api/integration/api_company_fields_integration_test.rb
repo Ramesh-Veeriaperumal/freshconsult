@@ -4,7 +4,7 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
   def test_query_count
     v2 = {}
     v2_api_index_query_count = 1
-    v2_index_query_count = 14
+    v2_index_query_count = 13
     # index
     v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/company_fields.json', nil, @headers) }
     

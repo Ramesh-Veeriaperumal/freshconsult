@@ -7,8 +7,8 @@ class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
       api_show: 1,
       api_index: 1,
 
-      show: 13,
-      index: 13
+      show: 12,
+      index: 12
     }
 
     business_calendar = create_business_calendar

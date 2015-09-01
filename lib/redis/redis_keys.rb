@@ -22,6 +22,8 @@ module Redis::RedisKeys
 	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
 	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
 	API_THROTTLER  = "API_THROTTLER:%{host}"
+    FD_API_LIMIT = "FD_API_LIMIT:%{host}"
+    FD_DEFAULT_API_LIMIT = "FD_DEFAULT_API_LIMIT"
 	WEBHOOK_THROTTLER = "WEBHOOK_THROTTLER:%{account_id}"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"

@@ -15,14 +15,14 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         api_is_following: 1,
         api_posts: 2,
 
-        create: 48,
-        show: 13,
-        update: 29,
-        destroy: 29,
-        follow: 15,
-        unfollow: 22,
-        is_following: 14,
-        posts: 15
+        create: 47,
+        show: 12,
+        update: 28,
+        destroy: 28,
+        follow: 14,
+        unfollow: 21,
+        is_following: 13,
+        posts: 14
       }
 
       path = '/discussions/topics.json'

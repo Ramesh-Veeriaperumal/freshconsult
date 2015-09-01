@@ -77,6 +77,33 @@ module TestCaseMethods
   def white_space
     ' ' * 300
   end
+
+  def get_others_redis_key(key)
+    newrelic_begin_rescue { $redis_others.get(key) }
+  end
+
+  def remove_others_redis_key key
+    newrelic_begin_rescue { $redis_others.del(key) }
+  end
+
+  def set_others_redis_key key, value, expires = 86400
+    newrelic_begin_rescue do
+      $redis_others.set(key, value)
+      $redis_others.expire(key,expires) if expires
+    end
+  end
+
+  def key
+    API_THROTTLER % {:host => 'localhost.freshpo.com'}
+  end
+
+  def api_limit_key
+    FD_API_LIMIT % {:host => 'localhost.freshpo.com'}
+  end
+
+  def default_api_limit_key
+    "FD_DEFAULT_API_LIMIT"
+  end
 end
 
 include TestCaseMethods

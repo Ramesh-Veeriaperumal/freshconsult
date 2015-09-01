@@ -13,12 +13,12 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 5,
         api_ticket_time_sheets: 2,
 
-        create: 22,
-        update: 18,
-        index: 14,
-        toggle_timer: 27,
-        destroy: 17,
-        ticket_time_sheets: 15
+        create: 21,
+        update: 17,
+        index: 13,
+        toggle_timer: 19,
+        destroy: 16,
+        ticket_time_sheets: 14
       }
 
       ticket = create_ticket

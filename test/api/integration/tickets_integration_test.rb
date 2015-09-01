@@ -13,12 +13,12 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 5,
         api_restore: 5,
         
-        create: 114,
-        show: 19,
-        update: 61,
-        index: 17,
-        destroy: 33,
-        restore: 33
+        create: 113,
+        show: 18,
+        update: 60,
+        index: 16,
+        destroy: 32,
+        restore: 32
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
