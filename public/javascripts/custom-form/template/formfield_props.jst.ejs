@@ -18,10 +18,6 @@
 			<input type="hidden" 
 					name="custom-type" 
 					value="<%= obj.field_type %>" />
-			<% if (obj.field_type == 'nested_field') { %>
-			<%=JST['custom-form/template/nested_field_edit'](obj)%>
-			<% } %>
-
 			<div class='sections-wrapper'>
 				<div class="section">
 					<h3 class="title"><%= translate.get('behavior') %></h3>
@@ -58,6 +54,7 @@
 					<%=JST['custom-form/template/custom_dropdown']({obj:obj, picklistIds:picklistIds})%>
 				<% } %>
 				<% if (obj.field_type == 'nested_field') { %>
+					<%=JST['custom-form/template/nested_field_edit'](obj)%>
 					<%=JST['custom-form/template/nested_field'](obj)%>
 				<% } %>
 			</div>
