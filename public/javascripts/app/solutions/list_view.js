@@ -12,7 +12,6 @@ window.App = window.App || {};
     COMPANY_VISIBILITY: 4,
 
     onVisit: function (data) {
-      this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
     },
@@ -21,21 +20,22 @@ window.App = window.App || {};
       $('body').off('.folders_articles');
     },
 
-    initialData: function () {
-      this.data.totalElements = $(".item_ids_checkbox").length;
+    totalElements: function () {
+      return $(".item_ids_checkbox").length;
     },
 
     selectedElementsCount: function () {
       var count = $(".item_ids_checkbox:checked").length;
-      this.toggleSelectAll(this.data.totalElements === count);
+      this.toggleSelectAll(this.totalElements() === count);
       this.toggleActionsClass(count <= 0);
-      this.getSelectedElementIds();
+      return count;
     },
 
     getSelectedElementIds: function () {
-      this.data.selectedElementIds = $('.item_ids_checkbox:checked').map(function (i, el) {
+      var selectedElementIds = $('.item_ids_checkbox:checked').map(function (i, el) {
         return $(el).val();
       }).get();
+      return selectedElementIds;
     },
 
     toggleActionsClass: function (checked) {
@@ -86,7 +86,9 @@ window.App = window.App || {};
 
       $('body').on('change.folders_articles', '#move_to, #change_author', function () {
         var el = $(this);
-        $this.bulk_action($this, el.data('action-on'), el.data('action'), this.value);
+        if($this.selectedElementsCount() > 0) {
+          $this.bulk_action(el.data('action-on'), el.data('action'), this.value);
+        }
       });
       
       $('body').on('click.folders_articles', '#folders_undo_bulk, #articles_undo_bulk', function () {
@@ -94,9 +96,12 @@ window.App = window.App || {};
         $this.undo_bulk_action(el,el.data('action-on'));
       });
 
-      $('#move_to').on('select2-open', function () {
+      $('#move_to, #change_author').on('select2-open', function () {
         if ($('#visible_to').is(':visible')) {
           $this.toggleVisibleTo(false);
+        }
+        if($this.selectedElementsCount() === 0) {
+          $('#move_to, #change_author').select2('close');
         }
         hideActiveMenu();
       });
@@ -175,14 +180,13 @@ window.App = window.App || {};
         this.submitData.companies = $("#change_folder_customers_filter").val();
         this.submitData.addToExisting = $(".right-select-companies .add-to-existing:checked").val();
       }
-      this.submitData.folderIds = this.data.selectedElementIds;
+      this.submitData.folderIds = this.getSelectedElementIds();
       return this.submitData;
     },
 
     visibleToSubmit: function () {
       var $this = this;
       this.hideFdMenu();
-      this.loadingAnimation();
 
       $.ajax({
         url: $this.data.visibleToUrl,
@@ -192,20 +196,7 @@ window.App = window.App || {};
       });
     },
 
-    onSaveSuccess: function () {
-      this.initialData();
-      console.log("success");
-    },
-
-    onSaveError: function () {
-      console.log("error");
-    },
-
-    loadingAnimation: function () {
-
-    },
-
-    bulk_action: function (obj, list_name, action_name, parentId) {
+    bulk_action: function (list_name, action_name, parentId) {
       var $this = this;
       $.ajax({
         url: "/solution/" + list_name + "/" + action_name,
@@ -213,12 +204,10 @@ window.App = window.App || {};
         dataType: 'script',
         data: {
           parent_id: parentId,
-          items: obj.data.selectedElementIds
+          items: $this.getSelectedElementIds()
         },
         success: function () {
           App.Solutions.NavMenu.reload();
-          $this.initialData();
-          console.log('success');
         }
       });
       $("#" + action_name).select2('val', '');
@@ -237,10 +226,7 @@ window.App = window.App || {};
         },
         success: function () {
           App.Solutions.NavMenu.reload();
-          $this.initialData();
-          $.proxy(this.onSaveSuccess, this);
         },
-        error: $.proxy(this.onSaveError, this)
       });
     },
 
@@ -255,7 +241,6 @@ window.App = window.App || {};
     },
 
     setCompanyVisibility: function () {
-      console.log('setting company visiblity');
       var visiblity = $('#solution_folder_visibility').val();
       if (parseInt(visiblity, 10) === 4) {
         $('.company_folders').show();
