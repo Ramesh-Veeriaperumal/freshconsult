@@ -7,7 +7,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many_attachments
 
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
-                                :conditions => { :attachable_type => "Inline" },
+                                :conditions => { :attachable_type => "Ticket::Inline" },
                                 :foreign_key => "attachable_id",
                                 :dependent => :destroy
 
