@@ -73,7 +73,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     end
     
     # Setting API Limit headers for API
-    if @api_resource
+    if @api_resource && @api_limit
       @headers.merge!("X-RateLimit-Limit" => @api_limit.to_s,
                       "X-RateLimit-Remaining" => (@api_limit - get_others_redis_key(key).to_i).to_s)
     end
