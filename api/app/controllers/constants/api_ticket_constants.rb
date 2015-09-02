@@ -22,7 +22,7 @@ module ApiTicketConstants
   FILTER = %w( new_and_my_open watching spam deleted )
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
-  INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type created_since updated_since)
+  INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since)
 
   ORDER_BY_SCOPE = {
     'index' => true,
