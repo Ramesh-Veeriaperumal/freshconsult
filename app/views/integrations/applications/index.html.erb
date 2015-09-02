@@ -38,7 +38,7 @@
                       <% else
                         if application[:options][:oauth_url].blank? %>
                           <!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
-                          <%if application.name.eql? "xero" %>
+                          <%if application[:options][:auth_url].present? %>
                             <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, application.options[:auth_url] , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>  
                           <% elsif application.name.eql? Integrations::Constants::APP_NAMES[:quickbooks] %>
                             <%= render :partial => "quickbooks_c2qb" %>    
@@ -63,7 +63,8 @@
 
                               <% auth_url="/integrations/applications/oauth_install/#{application.name}" %>
                            <%= link_to "Edit", auth_url , :class => "btn tooltip", :title => t("application.configure_addon") %>
-
+                        <%elsif application[:options][:edit_url].present?%>
+                          <%=link_to "Edit", application[:options][:edit_url], :class => "btn tooltip", :title => t("application.configure_addon") %>
                         <% end %>
                         <%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>
                     <%end%>

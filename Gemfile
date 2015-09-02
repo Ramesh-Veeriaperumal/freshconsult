@@ -87,8 +87,7 @@ gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branc
 
 gem "ruby-saml", "0.8.1"
 
-
-gem 'xero_gateway', '~> 2.1.0'
+gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"
 

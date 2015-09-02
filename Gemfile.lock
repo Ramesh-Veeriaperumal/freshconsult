@@ -194,6 +194,18 @@ GIT
       rake
       rest-client (~> 1.6)
 
+GIT
+  remote: git@github.com:freshdesk/xeroizer.git
+  revision: 9cd6b1091ab9230373a36b027746064fafcaa5a5
+  specs:
+    xeroizer (2.15.9)
+      activesupport
+      builder (>= 2.1.2)
+      i18n
+      nokogiri
+      oauth (>= 0.4.5)
+      tzinfo
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:
@@ -910,10 +922,6 @@ GEM
     wicked_pdf (0.9.10)
       rails
     will_paginate (3.0.6)
-    xero_gateway (2.1.0)
-      activesupport
-      builder (>= 2.1.2)
-      oauth (>= 0.3.6)
     xml-simple (1.1.4)
 
 PLATFORMS
@@ -1097,7 +1105,7 @@ DEPENDENCIES
   will_paginate (~> 3.0)
   will_paginate-liquidized!
   wkhtmltopdf-binary!
-  xero_gateway (~> 2.1.0)
+  xeroizer!
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!

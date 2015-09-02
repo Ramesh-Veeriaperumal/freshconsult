@@ -2161,6 +2161,7 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id",               :limit => 8
+    t.string   "remote_user_id"
   end
 
   add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true

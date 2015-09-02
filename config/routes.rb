@@ -749,12 +749,14 @@ Helpkit::Application.routes.draw do
 
     namespace :xero do 
       get :authorize 
+      post :update_params
+      get :edit
       get :fetch 
       get :render_accounts
+      get :check_item_exists 
       get :render_currency
       get :fetch_create_contacts
-      get :get_invoice
-      delete :delete_invoice
+      get :get_invoice      
       get :authdone
       get :install
       post :create_invoices

@@ -5877,7 +5877,15 @@ en:
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
     xero:
       label: "Xero"
-      desc: "You can create new invoice for the recorded time against the ticket and view the most recent invoices with links to modify them in Xero"
+      desc: "Create Xero invoices for Freshdesk ticket time-sheet entries."
+      helptext: "<h4>Xero Integration Options</h4><br><P>Select the Xero account names under the ‘Revenue’ account head that agents can access while creating invoices. Sales is available by default. If Sales does not exist, the first available account name is set as default.</p><p>You can also select the Xero inventory items that agents can associate timesheet entries to while creating invoice line items.</p><p>A maximum of 20 account names and 50 inventory items can be selected.</p>"
+      application:
+        error_no_acc_items: "The Organisation should have atleast One Revenue account in Xero."
+      form:
+        xero_settings: "Organisation Name:"
+        accounts: "Chart of Accounts Selection(Revenue)"
+        inventory_items: "Inventory Items Selection"
+        default_desc: "Default Invoice Item Description"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
