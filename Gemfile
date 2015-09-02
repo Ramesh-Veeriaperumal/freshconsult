@@ -41,9 +41,9 @@ group :development, :test do
   gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
-  gem "bullet"
 end
 
+gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"
