@@ -45,9 +45,9 @@ class ApiValidation
       if attribute.respond_to?(:strip!)
         attribute.strip!
       elsif attribute.is_a?(Array)
-        attribute.each { |x| strip_attribute(x) }
+        attribute.each { |element| strip_attribute(element) }
       elsif attribute.is_a?(Hash)
-        attribute.each { |x, y| strip_attribute(y) }
+        attribute.each { |key, value| strip_attribute(value) }
       end
     end
   end

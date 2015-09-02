@@ -29,5 +29,5 @@ module ApiTicketConstants
     'notes' => false
   }
 
-  FIELDS_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id)
+  FIELDS_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields)
 end

@@ -46,10 +46,10 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
       v2[:reply], v2[:api_reply] = count_api_queries { post("/api/tickets/#{ticket_id}/reply", v2_reply_payload, @write_headers) }
       # No public API to reply to a ticket in v1. Hence using a private one.
       v1[:reply] = count_queries { post("/helpdesk/tickets/#{ticket_id}/conversations/reply.json", v1_reply_payload, @write_headers) }
-      
+
       p v1
       p v2
-      
+
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"

@@ -18,9 +18,9 @@ class ApiProductsIntegrationTest < ActionDispatch::IntegrationTest
 
     # index
     v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/products', nil, @headers) }
-    
+
     p v2
-    
+
     v2.keys.each do |key|
       api_key = "api_#{key}".to_sym
       assert_equal v2_expected[api_key], v2[api_key]

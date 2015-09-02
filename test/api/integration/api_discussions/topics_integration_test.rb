@@ -66,10 +66,10 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
       # destroy
       v1[:destroy] = count_queries { delete(id_path, nil, @headers) }
       v2[:destroy], v2[:api_destroy] = count_api_queries { delete(api_id_path, nil, @headers) }
-      
+
       p v1
       p v2
-      
+
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         assert v2[key] <= v1[key]

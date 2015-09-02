@@ -41,6 +41,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # Required validator for string field based on condition
   def validate_custom_text(record, field_name)
     RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Required validator for string field based on condition

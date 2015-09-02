@@ -122,11 +122,6 @@ module ApiDiscussions
       assert_response :created
     end
 
-    def test_before_filters_show
-      @controller.expects(:portal_check).once
-      get :show, construct_params(id: 1)
-    end
-
     def test_before_filters_follow_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never

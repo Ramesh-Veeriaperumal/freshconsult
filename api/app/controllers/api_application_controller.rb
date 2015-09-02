@@ -217,29 +217,27 @@ class ApiApplicationController < MetalApiController
 
     def paginate_items(item, is_array = false)
       paginated_items = item.paginate(paginate_options(is_array))
-      add_link_header(paginated_items, is_array)
-      collection = paginated_items[0..(@per_page-1)] # get paginated_collection of length 'per_page'
-      collection
+
+      # next page exists if scoper is array & next_page is not nil or
+      # next page exists if scoper is AR & collection length > per_page
+      next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
+      add_link_header(page: (get_page + 1)) if next_page_exists
+      paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
     # Add link header if next page exists.
-    def add_link_header(paginated_collection, is_array = false)
-      # will be executed if scoper is array & next page exists or
-      # Will be executed if scoper is AR & next page exists
-      if paginated_collection.length > @per_page || paginated_collection.next_page && is_array
-        url = construct_link_header
-        response.headers['Link'] = "<#{url}>; rel=\"next\""
-      end
+    def add_link_header(query_parameters)
+      response.headers['Link'] = construct_link_header(query_parameters)
     end
 
     # Construct link header for paginated collection
-    def construct_link_header
+    def construct_link_header(updated_query_parameters)
       query_string = '?'
 
-      # Construct query string with next page number.
-      request.query_parameters.merge(page: get_page + 1).each { |x, y| query_string += "#{x}=#{y}&" }
+      # Construct query string with updated_query_parameters.
+      request.query_parameters.merge(updated_query_parameters).each { |x, y| query_string += "#{x}=#{y}&" }
       url = url_for(only_path: false) + query_string.chop # concatenate url & chopped query string
-      url
+      "<#{url}>; rel=\"next\""
     end
 
     def assign_protected

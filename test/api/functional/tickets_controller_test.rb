@@ -673,6 +673,23 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
   end
 
+  def test_create_with_single_line_text_length_invalid
+    ticket_field = create_custom_field('test_custom_text', 'text')
+    params = ticket_params_hash.merge(custom_fields: { "test_custom_text_#{@account.id}" => Faker::Lorem.characters(300) })
+    post :create, construct_params({}, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("test_custom_text_#{@account.id}", 'is too long (maximum is 255 characters)')])
+  end
+
+  def test_create_with_single_line_text_trailing_spaces
+    ticket_field = create_custom_field('test_custom_text', 'text')
+    params = ticket_params_hash.merge(custom_fields: { "test_custom_text_#{@account.id}" => Faker::Lorem.characters(20) + white_space })
+    post :create, construct_params({}, params)
+    assert_response :created
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+  end
+
   CUSTOM_FIELDS.each do |custom_field|
     define_method("test_create_with_custom_#{custom_field}") do
       ticket_field = create_custom_field("test_custom_#{custom_field}", custom_field)
@@ -1606,6 +1623,25 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t.reload))
   end
 
+  def test_update_with_single_line_text_length_invalid
+    t = ticket
+    ticket_field = create_custom_field('test_custom_text', 'text')
+    params = update_ticket_params_hash.merge(custom_fields: { "test_custom_text_#{@account.id}" => Faker::Lorem.characters(300) })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :bad_request
+    match_json([bad_request_error_pattern("test_custom_text_#{@account.id}", 'is too long (maximum is 255 characters)')])
+  end
+
+  def test_update_with_single_line_text_trailing_spaces
+    t = ticket
+    ticket_field = create_custom_field('test_custom_text', 'text')
+    params = update_ticket_params_hash.merge(custom_fields: { "test_custom_text_#{@account.id}" => Faker::Lorem.characters(20) + white_space })
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+    match_json(ticket_pattern(params, t.reload))
+    match_json(ticket_pattern({}, t.reload))
+  end
+
   def test_destroy
     ticket.update_column(:deleted, false)
     delete :destroy, construct_params(id: ticket.display_id)
@@ -1835,20 +1871,20 @@ class TicketsControllerTest < ActionController::TestCase
     match_json pattern
   end
 
-  def test_index_with_monitored_by    
-    get :index, controller_params(filter: 'watching')    
-    assert_response :success    
-    response = parse_response @response.body    
-    assert_equal 0, response.count    
-    
-    subscription = FactoryGirl.build(:subscription, account_id: @account.id,    
-                                                    ticket_id: Helpdesk::Ticket.first.id,    
-                                                    user_id: @agent.id)    
-    subscription.save    
-    get :index, controller_params(filter: 'watching')    
-    assert_response :success    
-    response = parse_response @response.body    
-    assert_equal 1, response.count    
+  def test_index_with_monitored_by
+    get :index, controller_params(filter: 'watching')
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 0, response.count
+
+    subscription = FactoryGirl.build(:subscription, account_id: @account.id,
+                                                    ticket_id: Helpdesk::Ticket.first.id,
+                                                    user_id: @agent.id)
+    subscription.save
+    get :index, controller_params(filter: 'watching')
+    assert_response :success
+    response = parse_response @response.body
+    assert_equal 1, response.count
   end
 
   def test_index_with_new_and_my_open
@@ -1895,7 +1931,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_filter_and_requester_email
     user = add_new_user(@account)
-    
+
     get :index, controller_params(filter: 'new_and_my_open', email: user.email)
     assert_response :success
     response = parse_response @response.body

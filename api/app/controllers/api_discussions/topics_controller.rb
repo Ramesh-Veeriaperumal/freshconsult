@@ -33,10 +33,6 @@ module ApiDiscussions
         load_object current_account.forums
       end
 
-      def check_privilege
-        show? ? portal_check : super
-      end
-
       def feature_name
         FeatureConstants::DISCUSSION
       end
@@ -62,10 +58,6 @@ module ApiDiscussions
         else
           item.association(parent.to_sym).writer(value) # here topic is not yet saved hence, topic_id cannot be retrieved.
         end
-      end
-
-      def portal_check
-        access_denied if api_current_user.nil? || api_current_user.customer? || !privilege?(:view_forums)
       end
 
       def assign_protected

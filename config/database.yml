@@ -47,17 +47,17 @@ test:
   # timeout: 5000
   adapter: mysql2
   encoding: utf8
-  database: helpkit_test_rails3
+  database: helpkit_test_local
   username: root
   password:
   shards:
     shard_2:
       host: 127.0.0.1
-      database: helpkit_test_rails3
+      database: helpkit_test_local
       not_a_shard: false
     shard_1:
       host: 127.0.0.1
-      database: helpkit_test_rails3
+      database: helpkit_test_local
       not_a_shard: false
 
 production:

@@ -19,10 +19,10 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       end
-      
+
       p v1
       p v2
-      
+
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
