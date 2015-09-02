@@ -14,17 +14,18 @@ module RabbitMq::Subscribers::Tickets::Reports
   end
   
   def mq_reports_subscriber_properties(action)
-    return {} if destroy_action?(action)
-    BusinessCalendar.execute(self) do
-      { 
-        :model_changes => @model_changes ? valid_changes : {},
-        :action_in_bhrs => action_occured_in_bhrs?(Time.zone.now, group)
-      }
-    end
+    return {} if destroy_action?(action) 
+    # Calling the method separately because if exception occures in BusinessCalendar.execute
+    # then subscriber properties is returning null without the model changes
+    action_in_bhrs_flag = action_in_bhrs?
+    { 
+      :model_changes => @model_changes ? valid_changes : {} ,
+      :action_in_bhrs => action_in_bhrs_flag
+    }
   end
 
   def mq_reports_valid(action, model) 
-    account.features_included?(:bi_reports) and valid_model?(model) and (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?)
+    account.reports_enabled? and valid_model?(model) and (create_action?(action) || non_archive_destroy?(action) || valid_changes.any?)
   end
 
   private
@@ -45,5 +46,11 @@ module RabbitMq::Subscribers::Tickets::Reports
   
   def valid_model?(model)
     ["ticket"].include?(model)
+  end
+  
+  def action_in_bhrs?
+    BusinessCalendar.execute(self) do
+      action_occured_in_bhrs?(Time.zone.now, group)
+    end
   end
 end

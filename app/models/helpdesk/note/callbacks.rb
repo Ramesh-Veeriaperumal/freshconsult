@@ -8,7 +8,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   # Doing update note count before pushing to ticket_states queue 
   # So that note count will be reflected if the rmq publish happens via ticket states queue
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :human_note_for_ticket? 
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
@@ -17,7 +17,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
   
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :human_note_for_ticket? 
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :report_note_metrics?
 
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
@@ -265,6 +265,10 @@ class Helpdesk::Note < ActiveRecord::Base
       else
         Rails.logger.debug "Undefined note category #{schema_less_note.category}"
       end
+    end
+    
+    def report_note_metrics?
+      human_note_for_ticket? && !feedback?
     end
     ######## ****** Methods related to reports ends here ******** #####
     

@@ -66,6 +66,23 @@ class DataExportMailer < ActionMailer::Base
       part.html { render "customer_export", :formats => [:html] }
     end.deliver
   end
+  
+  def reports_export options={}
+    headers = {
+      :subject => "Reports Export for #{options[:range]}",
+      :to      => options[:user].email,
+      :from    => "support@freshdesk.com",
+      :bcc      => "reports@freshdesk.com",
+      "Reply-to" => "",
+      :sent_on   => Time.now
+    }
+    @user      = options[:user]
+    @export_url = options[:export_url]
+    mail(headers) do |part|
+      part.html { render "reports_export", :formats => [:html] }
+    end.deliver
+  end
+
 
   def agent_export options={}
     headers = {

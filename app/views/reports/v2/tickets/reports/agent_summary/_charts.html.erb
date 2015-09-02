@@ -1,0 +1,67 @@
+<div class="summary-table" id="data_table">
+          <div class="header">
+                <table >
+                <thead>
+                <tr class="title">
+                <th><%=t('helpdesk_reports.agent_summary.agent') %></th>
+                </tr>
+                </thead>
+                <tbody class="dynamic-agent-name" data-table="agent-name">
+                </tbody>
+                </table>
+          </div>
+          <div class="content-wrapper">
+                  <div class="data-wrapper" data-table="wrapper">
+                          <table>
+                          <thead>
+                                  <tr class="title">
+                                  <td><%=t('helpdesk_reports.agent_summary.ticket_resolved') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.tickets_reopened') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.ticket_reasigned') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.reports_sla') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.res_sla') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.fcr') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.fcr') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.private_note') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.responses') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.avg_first_res_time') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.avg_res_time') %></td>
+                                  <td><%=t('helpdesk_reports.agent_summary.avg_resolution_time') %></td>
+                                  </tr>
+                          </thead>
+                          <tbody class="dynamic-ticket-datas" data-table="ticket-data">
+                          </tbody>
+                          </table>
+                  </div>
+          </div>
+          <div class="footer shadow">
+                  <table >
+                          <thead>
+                          <tr class="title">
+                                  <th>
+                                  <span id="agent-details-prev" data-action='data-tab-nav' class="agent-details-prev show-metrics disabled"><%= font_icon "arrow-left", :size => 14 %></span>
+                                  <span id="agent-details-next" data-action='data-tab-nav' class="agent-details-next show-metrics"><%= font_icon "arrow-right", :size => 14  %></span>
+                                  </th>
+                          </tr>
+                          </thead>
+                          <tbody class="dynamic-agent-name" data-table="agent-name">
+                          </tbody>
+                  </table>
+          </div>
+</div>
+  <script type="text/javascript">
+      jQuery(document).ready(function () {
+                var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+                var locals = HelpdeskReports.locals;
+                locals.chart_hash = <%= @data.to_json.html_safe %> ;
+               if(!err && locals.chart_hash.length !== 0){
+                      HelpdeskReports.ChartsInitializer.AgentSummary.init(locals.chart_hash);
+                }else if(!err && locals.chart_hash.length === 0){
+                      var div = ['data_table'];
+                      HelpdeskReports.CoreUtil.populateEmptyChart(div, "No data to display");
+                }else{
+                      var div = ["data_table"];
+                      HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+                }
+      });
+  </script>

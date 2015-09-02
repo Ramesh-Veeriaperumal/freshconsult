@@ -19,7 +19,7 @@ module RabbitMq::Subscribers::Notes::Reports
   end
 
   def mq_reports_valid(action, model)
-    account.features_included?(:bi_reports) && valid_model?(model) && send("#{model}_valid?", action)
+    account.reports_enabled? && valid_model?(model) && send("#{model}_valid?", action)
   end
 
   private
@@ -29,13 +29,14 @@ module RabbitMq::Subscribers::Notes::Reports
     end
   
     def reports_subscriber_properties(note)
-      BusinessCalendar.execute(note.notable) do
-        {
-          :action_in_bhrs => action_occured_in_bhrs?(note.created_at, note.notable.group),
-          :action_time_in_bhrs => schema_less_note_model? ? note.response_time_by_bhrs : nil,
-          :action_time_in_chrs => schema_less_note_model? ? note.response_time_in_seconds : nil
-        }
-      end
+      # Calling the method separately because if exception occures in BusinessCalendar.execute
+      # then subscriber properties is returning null without the model changes
+      action_in_bhrs_flag = action_in_bhrs?(note) 
+      {
+        :action_in_bhrs => action_in_bhrs_flag,
+        :action_time_in_bhrs => note.response_time_by_bhrs,
+        :action_time_in_chrs => note.response_time_in_seconds
+      }
     end
     
     def reports_model_properties(action, note)
@@ -92,6 +93,12 @@ module RabbitMq::Subscribers::Notes::Reports
       # For the consecutive response, the response time will be populated.
       # This might have an issue in case where the resque is slower. There is no way to handle the case currently
       notable.ticket_states.first_resp_time_by_bhrs.nil?
+    end
+    
+    def action_in_bhrs?(note) 
+      BusinessCalendar.execute(note.notable) do
+        action_occured_in_bhrs?(note.created_at, note.notable.group)
+      end
     end
   
 end

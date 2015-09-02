@@ -26,14 +26,13 @@ module ReportsHelper
       link_content = %(<div class="img-outer">
                         <img width="70px" height="70px" src="#{spacer_image_url}" class = "reports-icon-#{ item_info[:class] }" />
                       </div>
-                      <div class="beta-tag"> BETA </div>
-                      <div class="report-icon-text">#{item_info[:label]}</div>)
+                      <div class="report-icon-text"><div class="beta-tag"></div>#{item_info[:label]}</div>)
 
-      content_tag( :li, link_to( link_content.html_safe, item_info[:url].html_safe ) )
+      content_tag( :li, pjax_link_to( link_content.html_safe, item_info[:url].html_safe ) )
   end
   
   def bi_reports_ui_enabled?
-    feature?(:bi_reports) && ismember?(BI_REPORTS_UI_ENABLED, current_account.id)
+    current_account.reports_enabled? && ismember?(BI_REPORTS_UI_ENABLED, current_account.id)
   end
 
   def freshfone_reports?

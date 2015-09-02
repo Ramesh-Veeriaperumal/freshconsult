@@ -127,6 +127,10 @@ class Account < ActiveRecord::Base
   def active_groups
     active_groups_in_account(id)
   end
+  
+  def reports_enabled?
+    features_included?(:bi_reports) || launched?(:bi_reports)
+  end
 
   class << self # class methods
 

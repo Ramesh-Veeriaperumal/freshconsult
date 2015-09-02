@@ -9,7 +9,7 @@ module RabbitMq::Subscribers::Accounts::Reports
   end
 
   def mq_reports_valid(action, model)
-    valid_model?(model) && destroy_action?(action)
+    reports_enabled? && valid_model?(model) && destroy_action?(action)
   end
   
   private

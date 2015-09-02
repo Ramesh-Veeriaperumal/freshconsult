@@ -5051,6 +5051,7 @@ en:
         agent_type: "Agent Type"
     fields:
       ticket_id: "Ticket Id"
+      display_id: "Display Id"
       subject: "Subject"
       description: "Description"
       status: "Status"
@@ -6502,10 +6503,15 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    loading_text: Generating Report...
+    filter_limit_exceeded: You can select maximum of %{count} filters
     time_period: Select Time Period
     filter_by: Filter by
     edit_filter: Filter
-    ticket_volume:
+    tickets: List of Tickets
+    generate: Generate
+    more: More...
+    ticket_volume: 
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6519,14 +6525,39 @@ en:
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
-    performance:
+    performance_distribution:
       title: Performance Distribution
+      first_response_bar: First Response Time
+      response_bar: Avg Response Time
+      resolution_bar: Resolution Time
+      first_response_and_response_trend: Avg First Response And Response Time Trend
+      resolution_trend: Avg Resolution Time Trend
     group_summary:
       title: Group Summary
+      group: Group
     agent_summary:
       title: Agent Summary
+      ticket_assigned: Tickets Assigned
+      ticket_resolved: Tickets Resolved
+      tickets_reopened: Tickets Reopened
+      ticket_reasigned: Tickets Reassigned
+      reports_sla: Response SLA %
+      res_sla: Resolution SLA %
+      fcr: FCR %
+      private_note: Private Note
+      responses: Responses
+      avg_first_res_time: Average 1st Response Time
+      avg_res_time: Average Response Time
+      avg_resolution_time: Average Resolution Time
+      agent: Agent
     customer_report:
       title:  Customer Report
+      received_tickets: Customers with the most received
+      resolved_tickets: Customers with the most resolved
+      response_sla: Most SLA Violations for Response
+      resolution_sla: Most SLA Violations for resolution
+      customer_interactions: Customer Interactions
+      agent_interactions: Agent Interactions
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"

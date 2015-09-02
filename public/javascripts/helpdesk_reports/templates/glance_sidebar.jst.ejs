@@ -1,0 +1,72 @@
+<% var constants = HelpdeskReports.Constants.Glance; %>
+<% var metrics = _.keys(constants.metrics); %>
+<% var css_class = constants.metrics %>
+<% if (data) { %>
+	<ul>
+		<% for (i = 0; i < metrics.length; i++) { %>
+			<% if(!jQuery.isEmptyObject(data[metrics[i]]) && data[metrics[i]]['error'] === undefined) { %>
+				
+				<li data-metric= <%= metrics[i] %> >
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<span class="ticket-count"> <%= data[metrics[i]].general.metric_result %> </span>
+							<% 	
+								var template; 
+								var percent = data[metrics[i]].general.diff_percentage;
+								if (parseFloat(percent) !== NaN && parseFloat(percent) > 0) {
+									template = "<span class='status-symbol " + css_class[metrics[i]].css[0] +"'></span><span class='volume-percent'> " + percent + "% </span>";
+								} else if (parseFloat(percent) !== NaN && parseFloat(percent) < 0) {
+									template = "<span class='status-symbol " + css_class[metrics[i]].css[1] +"'></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+								} else if (parseFloat(percent) !== NaN && parseFloat(percent) == 0) {
+									template = "<span class='status-symbol report-arrow no-change left-arrow'></span><span class='report-arrow no-change right-arrow'></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+								} else {
+									template = "";
+								}
+							%>
+							<%= template %>
+						</div>
+						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+					</div>
+				</li>
+
+			<% } else if (jQuery.isEmptyObject(data[metrics[i]])) { %>
+
+				<li data-metric= <%= metrics[i] %> >
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<% 
+								var value = "";
+								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
+									value = "0h:0m";
+								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
+									value = "0%";
+								} else {
+									value = "0";
+								} 
+							%>
+							<span class="ticket-count"><%= value %> </span>
+						</div>
+						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+					</div>
+				</li>
+
+			<% } else if (!jQuery.isEmptyObject(data[metrics[i]])['error']) {%>
+
+				<li data-metric= <%= metrics[i] %> class="disabled">
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<span class="ticket-count"> NA </span>
+						</div>
+						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+					</div>
+				</li>
+
+			<% } %>
+		<% } %>
+	</ul>
+<% } else{ %>
+	
+<% } %>

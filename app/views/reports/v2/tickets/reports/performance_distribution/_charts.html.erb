@@ -1,0 +1,94 @@
+<!-- Bucket chart starts here -->
+<div class="distribution-chart" id="distribution_container">
+
+	<div class="row-fluid">	
+		<div class="chart-container">
+			<div class="clearfix">
+				<div id="first_response" class="title pull-left pointer">
+					<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
+				</div>
+				<span class="pull-left sep">/</span>
+				<div id="response" class="title pull-left pointer">
+					<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
+				</div>
+			</div>
+				<div id="first_response_time_bar_chart" class="chart-wrapper"></div>
+				<div id="response_time_bar_chart" class="chart-wrapper"></div>
+		</div>
+
+		<div class="chart-container">
+			<div class='title'>
+				<%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>
+			</div>
+				<div id="resolution_time_bar_chart" class="chart-wrapper"></div>
+		</div>
+	</div>
+<!-- Ends here -->
+
+<!-- Trend Graph for First/Response & Resolution -->
+	<div class="row-fluid">
+
+		<div class="chart-container">
+			<div class="title">
+				<%=t('helpdesk_reports.performance_distribution.first_response_and_response_trend').html_safe %>
+			</div>
+			<div class="response_time_trend trend-type">
+				<div class="btn-group">
+					<span class="btn" data-format="doy" data-chart="response">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.day') %>
+					</span>
+					<span class="btn" data-format="w" data-chart="response">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.week') %>
+					</span>
+					<span class="btn" data-format="mon" data-chart="response">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.month') %>
+					</span>
+					<span class="btn" data-format="y" data-chart="response">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.year') %>
+					</span>
+				</div>
+			</div>
+			<div id="response_time_trend_chart" class="chart-wrapper"></div>	
+		</div>
+
+		<div class="chart-container">
+			<div class="title">
+				<%=t('helpdesk_reports.performance_distribution.resolution_trend').html_safe %>
+			</div>
+			<div class="resolution_time_trend trend-type">
+				<div class="btn-group">
+					<span class="btn" data-format="doy" data-chart="resolution">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.day') %>
+					</span>
+					<span class="btn" data-format="w" data-chart="resolution">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.week') %>
+					</span>
+					<span class="btn" data-format="mon" data-chart="resolution">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.month') %>
+					</span>
+					<span class="btn" data-format="y" data-chart="resolution">
+						<%=t('helpdesk_reports.ticket_volume.time_trends.year') %>
+					</span>
+				</div>
+			</div>
+			<div id="resolution_time_trend_chart" class="chart-wrapper"></div>
+		</div>
+	</div>
+</div>
+<!-- End here -->
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		var locals = HelpdeskReports.locals;
+	    locals.chart_hash = <%= @data.to_json.html_safe %>;
+		
+		var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+
+        if(err) {
+        	var div = ['distribution_container'];
+            HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+        } else {
+	    	HelpdeskReports.ChartsInitializer.PerformanceDistribution.init(locals.chart_hash);
+	    }
+	});
+</script>

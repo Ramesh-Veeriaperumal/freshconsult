@@ -1108,17 +1108,13 @@ Helpkit::Application.routes.draw do
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
   
-
-  namespace :reports do
-    namespace :v2 do
-      resources :ticket_volume, :controller => 'tickets/reports' do
-        collection do
-          post :fetch_metrics
-          post :fetch_ticket_list
-        end
-      end
-    end
-  end
+  # BEGIN Routes for new reports **/report/v2**
+  match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post
+  match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
+  match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
+  match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
+  # END
+  
   
   namespace :reports do
     resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
