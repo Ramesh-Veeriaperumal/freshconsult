@@ -12,7 +12,6 @@ window.App = window.App || {};
     COMPANY_VISIBILITY: 4,
 
     onVisit: function (data) {
-      this.initialData();
       this.bindHandlers();
       this.removeCurrentFolder();
     },
@@ -21,13 +20,13 @@ window.App = window.App || {};
       $('body').off('.folders_articles');
     },
 
-    initialData: function () {
-      this.data.totalElements = $(".item_ids_checkbox").length;
+    totalElements: function () {
+      return $(".item_ids_checkbox").length;
     },
 
     selectedElementsCount: function () {
       var count = $(".item_ids_checkbox:checked").length;
-      this.toggleSelectAll(this.data.totalElements === count);
+      this.toggleSelectAll(this.totalElements() === count);
       this.toggleActionsClass(count <= 0);
       return count;
     },
@@ -188,7 +187,6 @@ window.App = window.App || {};
     visibleToSubmit: function () {
       var $this = this;
       this.hideFdMenu();
-      this.loadingAnimation();
 
       $.ajax({
         url: $this.data.visibleToUrl,
@@ -196,19 +194,6 @@ window.App = window.App || {};
         data: $this.getCompanyData(),
         dataType: "script"
       });
-    },
-
-    onSaveSuccess: function () {
-      this.initialData();
-      console.log("success");
-    },
-
-    onSaveError: function () {
-      console.log("error");
-    },
-
-    loadingAnimation: function () {
-
     },
 
     bulk_action: function (list_name, action_name, parentId) {
@@ -223,8 +208,6 @@ window.App = window.App || {};
         },
         success: function () {
           App.Solutions.NavMenu.reload();
-          $this.initialData();
-          console.log('success');
         }
       });
       $("#" + action_name).select2('val', '');
@@ -243,10 +226,7 @@ window.App = window.App || {};
         },
         success: function () {
           App.Solutions.NavMenu.reload();
-          $this.initialData();
-          $.proxy(this.onSaveSuccess, this);
         },
-        error: $.proxy(this.onSaveError, this)
       });
     },
 
@@ -261,7 +241,6 @@ window.App = window.App || {};
     },
 
     setCompanyVisibility: function () {
-      console.log('setting company visiblity');
       var visiblity = $('#solution_folder_visibility').val();
       if (parseInt(visiblity, 10) === 4) {
         $('.company_folders').show();
