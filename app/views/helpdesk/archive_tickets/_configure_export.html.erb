@@ -1,0 +1,136 @@
+<%= form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter', :class => "form-horizontal" }) do %>
+  <input type="hidden" name="data_hash" value="" />
+  <input type="hidden" name="archived_tickets" value="1" />
+	<ul class="configure_export">
+		<li class="control-group">
+				<label class="control-label"><strong><%= t("export_data.select_format") %></strong></label>
+				<div class="controls">
+					<label class="radio inline">
+						<%= radio_button_tag(:format, "csv", true) %>
+						<%= t('export_data.csv') %>
+					</label>
+					<label class="radio inline">
+						<%= radio_button_tag(:format, "xls", false) %>
+						<%= t('export_data.xls') %>
+					</label>
+				</div>
+		</li>
+		<li class="control-group">
+			<label class="control-label"><%=t('export_data.filter_label_agent').html_safe%> </label>
+			<div class="controls">
+				<%= select_tag "ticket_state_filter", options_for_select([[t('export_data.created_at').html_safe, :created_at]]), {:class => "select2 span","data-minimum-results-for-search" => "1000"} %>&nbsp; 
+				<%= select_tag "date_filter", options_for_select(TicketConstants::ARCHIVE_EXPORT_OPTIONS), :class => "select2 span2","data-minimum-results-for-search" => "1000" %>
+			</div>
+		</li>
+		<div class="controls hide" id="datepicker">
+			<input type="text" id="start_date" date="" name="start_date" class="text auto" size="15" />&nbsp;-
+			<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />
+		</div>
+		<hr/>
+		<li class="control-group">
+			<label class="control-label">
+				<%= check_box_tag :toggle_checks, '', false,	:class => 'tooltip', 
+																											:"data-placement" => 'below', 
+																											:title => 'Check/Uncheck all' %>
+				<strong><%= t('export_data.select_header') %></strong>
+			</label><br/><br/><br/>
+				<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+				<div class="threecol-form" id="ticket_fields">
+		 			<% @csv_headers.each do |head| %>
+		 			  	<div class="item <%= head[:type] %>">
+			  				<label class="checkbox prime"> 
+			    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
+								<%= head[:label].html_safe %>														
+			  				</label>
+			  				<%if head[:levels]%>
+				  				<div class="tree_line">
+					  				<% head[:levels].each do |level| %>
+						  				<label class="checkbox level"> 
+						    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
+											<%= level[:label].html_safe %>
+						  				</label>
+						  			<% end %>
+					  		   </div>
+					  		<%end%>
+		  			    </div>	
+		 			<% end %>
+				</div>
+		<li>
+	</ul>	
+<%end%>
+<%= javascript_tag do %>
+// For Select all/none functionality 
+	jQuery('#toggle_checks').on('change', function () {
+		jQuery('[id^=export_fields]').prop('checked', jQuery(this).is(":checked"));
+	});
+
+	//For toggling select all/none checkbox when toggling fields -->
+	jQuery('[id^=export_fields]').on('change', function () {
+		var count = 0;
+		jQuery('[id^=export_fields]').each(function(i,ele){ if(ele.checked) count++; });
+		jQuery('#toggle_checks').prop('checked', (jQuery('[id^=export_fields]').length == count));
+	});
+
+  jQuery("#exportFilter").submit(function () {  
+
+	if (jQuery('#ticket_fields :checked').length == 0) {
+		jQuery('#err_no_fields_selected').removeClass('hide');
+		return false;
+	} else {
+		jQuery('#err_no_fields_selected').addClass('hide');
+		
+	 	getFilterData();
+		jQuery("#exportFilter input[name=data_hash]").val(query_hash.toJSON());
+		jQuery("#ExportToCSV").prop('disabled', 'disabled').switchClass("uiButton", "sloading loading-small", 0);
+		setTimeout(function(){
+			active_dialog.dialog("close");
+			jQuery("#ExportToCSV").removeAttr('disabled', 'disabled').switchClass("sloading-small", "uiButton", 0);
+		}, 1000);
+	}
+  });
+
+  jQuery('#export_cancel').click(function(ev){
+  	active_dialog.dialog("close");
+  	ev.preventDefault();
+	});
+  jQuery("#date_filter").change(function(){
+  	jQuery("#datepicker").toggle(jQuery("#date_filter").val() == "<%=TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter]%>");
+  });
+
+  jQuery("div.nested_field label.prime").change(function(ev){  	
+  	_condition = !jQuery(this).children("input").prop("checked");
+  	jQuery(this).siblings(".level").children("input").prop({ "checked": !_condition });
+  });
+
+  var date_today = new Date();
+  jQuery(document).ready(function() {
+		var dates = jQuery( "#start_date, #end_date" ).datepicker({
+			changeMonth: true, 
+			changeYear: true,
+			numberOfMonths: 3,
+			showButtonPanel: true,
+			maxDate: "today",
+			showOn: "both", 
+			dateFormat: getDateFormat('datepicker'),
+			disabled: false,
+			onSelect: function( selectedDate ) {
+				var option = this.id == "start_date" ? "minDate" : "maxDate",
+					instance = jQuery( this ).data( "datepicker" ),
+					date = jQuery.datepicker.parseDate(
+						instance.settings.dateFormat ||
+						jQuery.datepicker._defaults.dateFormat,
+						selectedDate, instance.settings );
+				dates.not( this ).datepicker( "option", option, date );
+				jQuery(this).prop("date", date);
+			}
+		}); 
+		
+		jQuery("#start_date").val("<%= formated_date(1.month.ago,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
+		jQuery("#end_date").val("<%= formated_date(Time.now,{:format => :short_day_separated, :include_year => true, :translate => false})%>");
+		
+	});
+	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
+   	ev.preventDefault();
+   	return false;
+  });
+<% end %>

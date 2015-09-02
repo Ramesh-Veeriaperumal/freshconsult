@@ -1401,6 +1401,34 @@ Helpkit::Application.routes.draw do
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
+    match '/tickets/archived/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter, via: :get
+    match '/tickets/archived/filter/requester/:requester_id' => 'archive_tickets#index', :as => :archive_requester_filter, via: :get
+    match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
+    match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
+    
+    resources :archive_tickets, :only => [:index, :show] do
+      collection do 
+        post :custom_search
+        post :export_csv
+        get :configure_export
+        get :full_paginate
+      end
+
+      member do 
+        get :latest_note
+        get :activities
+        get :prevnext
+        get :component
+      end
+      
+      resources :archive_notes, :only => [:index] do
+        member do
+          get :full_text
+        end
+      end
+    end
+    
     resources :tags do
       collection do
         get :autocomplete
@@ -1528,6 +1556,7 @@ Helpkit::Application.routes.draw do
       resources :reminders
       resources :time_sheets
       resources :mobihelp_ticket_extras, :only => :index
+
     end
     
     match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
@@ -1630,7 +1659,6 @@ Helpkit::Application.routes.draw do
     match '/subscriptions' => 'subscriptions#index'
     match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
     # Mobile apps routes end.
-
 
     match '/sales_manager' => 'dashboard#sales_manager'
     
@@ -1997,6 +2025,17 @@ Helpkit::Application.routes.draw do
     end
     
     match '/articles/:id/' => 'solutions/articles#show'
+
+    match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
+    resources :archive_tickets, :only => [:index, :show] do
+      collection do
+        get :filter
+        get :configure_export
+        post :export_csv
+      end
+      resources :notes
+    end
 
     resources :tickets do
       collection do

@@ -53,6 +53,30 @@ module Reports::TimesheetReport
 
   end
 
+  #************************** Archive methods start here *****************************#
+
+  def archive_scoper(start_date,end_date)
+    Account.current.archive_time_sheets.archive_for_companies(@customer_id).by_agent(@user_id).archive_by_group(@group_id).created_at_inside(start_date,end_date).hour_billable(@billable).archive_for_products(@products_id)
+  end
+
+  def archive_filter_with_groupby(start_date,end_date)
+    archive_filter(start_date,end_date).group_by(&group_by_caluse)
+  end 
+
+  def archive_filter(start_date,end_date)
+       archive_scoper(start_date,end_date).find(:all,:conditions => (archive_select_conditions || {}), 
+         :include => [:user, :workable => [:product, :group, :ticket_status, :requester => [:company]]]) # need to ensure - Hari
+  end
+
+  def archive_select_conditions
+    conditions = {}
+    conditions[:ticket_type] = @ticket_type unless @ticket_type.empty? 
+    conditions[:priority] = @priority unless @priority.empty?
+    {:archive_tickets => conditions} unless conditions.blank?
+  end
+
+  #************************** Archive methods stop here *****************************#
+
   private
 
   def select_conditions

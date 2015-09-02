@@ -1,0 +1,18 @@
+<section class="content min-height-on-desktop rounded-6 ticket-page">
+  <div class="ticket-toolbar pull-right"> 
+    <div id="ticket-filter-container">
+      <a href="{{ portal.archive_ticket_export_url }}" data-target="#archive-export-modal"
+          id="ticket-export-button" rel="freshdialog" class="hide"
+          data-submit-label="{% translate portal.tickets.submit_export %}"
+          title="{% translate portal.tickets.export_ticket_data %}">
+        {% translate portal.tickets.export %}
+      </a>
+    </div>
+  </div>
+  
+  <div id="ticket-filter-container">
+    {% snippet archive_ticket_filters %}
+  </div>
+
+  {% snippet archive_ticket_list %}
+</section>

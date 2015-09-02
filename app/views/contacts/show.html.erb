@@ -133,18 +133,24 @@
 			</div>
 			<% end %>
 			<div class='contact-edit-padding'>
-			<% if current_account.features?(:forums) %>
+			<% if current_account.features?(:forums) or current_account.features?(:archive_tickets) %>
 					<% list = [
 						[
 							t('contacts.conversations.all'), '#conv_all', false, {:id => 'conv_all-tab', :'data-hash-url' => false}
 						],
 						[
-							t('contacts.conversations.tickets'), '#conv_tickets', false, {:id => 'conv_tickets-tab', :'data-hash-url' => false}
+							t('contacts.conversations.tickets'), '#conv_tickets', false, {:id => 'conv_tickets-tab', :'data-hash-url' => false }
 						],
 						[
-							t('contacts.conversations.forums'), '#conv_forums', false, {:id => 'conv_forums-tab', :'data-hash-url' => false}
+							t('contacts.conversations.forums'), '#conv_forums', false, {:id => 'conv_forums-tab', :'data-hash-url' => false }
 						],
 					]
+					
+					if current_account.features?(:archive_tickets) 
+						list << [ :divider ]
+						list << [ t('contacts.conversations.archive_tickets'), '#conv_archive_tickets', false, {:id => 'conv_archive_tickets-tab', :'data-hash-url' => false } ]
+					end
+
 					options = {'data-toggle' => 'tab', 'class' => 'item', 'ul_class' => 'tick'} %>
 					<div data-tabs='tabs'>
 						<ul role='tablist'>
@@ -164,6 +170,7 @@
        <% end %>
 
 				<div class="tab-content">
+					
 					<div class='tab-pane active' id='conv_all'> 
 						<% if current_account.features?(:forums) %>
 							<p class='muted'> <%= t("contacts.conversations.contact_all") %> </p>
@@ -196,6 +203,7 @@
 							<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
 						<% end %>
 					</div>
+					
 					<div class='tab-pane' id='conv_tickets'> 
 						<p class='muted'> <%= t("contacts.conversations.contact_tickets") %> </p>
 						<div class='timeline' id='timeline'>
@@ -218,6 +226,7 @@
 							<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
 						<% end %>
 					</div>
+					
 					<div class='tab-pane' id='conv_forums'> 
 						<p class='muted'> <%= t("contacts.conversations.contact_forums") %> </p>
 						<div class='timeline' id='timeline'>
@@ -233,6 +242,32 @@
 							<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
 						<% end %>
 					</div>
+
+					<% if current_account.features?(:archive_tickets) %>
+						<div class='tab-pane' id='conv_archive_tickets'> 
+							
+							<div class='timeline' id='timeline'>
+								<ul class='timeline-list'>
+									<% @user_archive_tickets.each do |item| %>
+										<li class='timeline-item'>
+											<%= ticket_activity(item, true) %>
+										</li>
+									<% end %>
+								</ul>
+							</div>
+							<% if (@total_archive_user_tickets_size > 10 and !@user.deleted) %>
+								<div class='contact_tickets'>
+									<div class="more_results">
+										<%= link_to t('contacts.view_all_archived',:nick_name => h(@user.display_name)).html_safe, helpdesk_archive_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+									</div>
+								</div>
+							<% end %>
+							<% if @user_archive_tickets.empty? %>
+								<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+							<% end %>
+						</div>
+					<% end %>
+
 				</div>
 			</div>
 		</div>

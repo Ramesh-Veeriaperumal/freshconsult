@@ -1,4 +1,5 @@
 <% return unless customer_survey_required? %>
+<% return unless helpdesk_ticket?(@ticket) %>
 <section class="widget" id="survey-sidebar-details">
     <h3 class="lead"><%= t('support.tickets.ticket_survey.title') %></h3>
     <div class="survey-form">

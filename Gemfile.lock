@@ -1,17 +1,4 @@
 GIT
-  remote: git://github.com/PratheepV/retire.git
-  revision: ea6e2c318f00cbae37b42b87efdf5b40c39671f3
-  specs:
-    tire (0.6.2)
-      activemodel (>= 3.0)
-      activesupport
-      ansi
-      hashr (~> 0.0.19)
-      multi_json (~> 1.3)
-      rake
-      rest-client (~> 1.6)
-
-GIT
   remote: git://github.com/Shopify/active_merchant
   revision: f441a69337ec9779dc383b3156d61006c1024526
   tag: v1.43.1
@@ -194,6 +181,19 @@ GIT
       redis (>= 3)
       redis-namespace (>= 1)
 
+GIT
+  remote: git@github.com:freshdesk/retire.git
+  revision: d91fc41ab5e8e97e195fd0c69eec82ee85eeaf8f
+  specs:
+    tire (0.6.2)
+      activemodel (>= 3.0)
+      activesupport
+      ansi
+      hashr (~> 0.0.19)
+      multi_json (~> 1.3)
+      rake
+      rest-client (~> 1.6)
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:
@@ -356,6 +356,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
+  remote: https://690a8c5e:5d9334f0@gems.contribsys.com/
   specs:
     POpen4 (0.1.4)
       Platform (>= 0.4.0)
@@ -404,7 +405,7 @@ GEM
     amq-protocol (1.9.2)
     ancestry (1.3.0)
       activerecord (>= 2.3.14)
-    ansi (1.4.3)
+    ansi (1.5.0)
     arel (3.0.3)
     asset_sync (1.1.0)
       activemodel
@@ -452,6 +453,8 @@ GEM
       uniform_notifier (>= 1.6.0)
     bunny (1.7.0)
       amq-protocol (>= 1.9.2)
+    byebug (5.0.0)
+      columnize (= 0.9.0)
     callsite (0.0.11)
     celluloid (0.16.0)
       timers (~> 4.0.0)
@@ -463,6 +466,7 @@ GEM
       tzinfo
     cocaine (0.4.2)
     coderay (1.1.0)
+    columnize (0.9.0)
     compass (1.0.1)
       chunky_png (~> 1.2)
       compass-core (~> 1.0.1)
@@ -689,6 +693,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-byebug (3.2.0)
+      byebug (~> 5.0)
+      pry (~> 0.10)
     pry-nav (0.2.4)
       pry (>= 0.9.10, < 0.11.0)
     rack-cache (1.2)
@@ -815,12 +822,14 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    sidekiq (3.3.4)
-      celluloid (>= 0.16.0)
+    sidekiq (3.4.1)
+      celluloid (~> 0.16.0)
       connection_pool (>= 2.1.1)
       json
       redis (>= 3.0.6)
       redis-namespace (>= 1.3.1)
+    sidekiq-pro (2.0.5)
+      sidekiq (>= 3.3.2)
     signet (0.5.1)
       addressable (>= 2.2.3)
       faraday (>= 0.9.0.rc5)
@@ -1021,6 +1030,7 @@ DEPENDENCIES
   prototype-rails (~> 3.2.0)
   prototype_legacy_helper (= 0.0.0)!
   pry
+  pry-byebug
   pry-nav
   rack!
   rack-cors (~> 0.3.1)
@@ -1058,7 +1068,7 @@ DEPENDENCIES
   seed-fu!
   sentient_user!
   sharding!
-  sidekiq
+  sidekiq-pro!
   simplecov (~> 0.7.1)
   simplecov-csv
   sneaky-save!

@@ -208,10 +208,108 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
     t.integer  "ticketable_id",   :limit => 8
     t.string   "ticketable_type"
   end
-
+  
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
   add_index "article_tickets", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_article_tickets_on_account_id_and_ticketetable"
+
+  create_table "archive_childs", :id => false, :force => true do |t|
+    t.integer "id",                :limit => 8, :null => false
+    t.integer "account_id",        :limit => 8, :null => false
+    t.integer "archive_ticket_id", :limit => 8
+    t.integer "ticket_id",         :limit => 8
+  end
+
+  add_index "archive_childs", ["account_id", "archive_ticket_id"], :name => "index_on_account_id_and_archive_ticket_id"
+  add_index "archive_childs", ["account_id", "ticket_id"], :name => "index_on_account_id_and_ticket_id"
+  add_index "archive_childs", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_childs ADD PRIMARY KEY (account_id,id)"
+  
+  create_table "archive_note_associations", :id => false, :force => true do |t|
+    t.integer "id",                :limit => 8,                         :null => false
+    t.integer "account_id",        :limit => 8,                         :null => false
+    t.integer "archive_note_id",   :limit => 8
+    t.text    "body",              :limit => 2147483647
+    t.text    "body_html",         :limit => 2147483647
+    t.text    "associations_data", :limit => 2147483647
+  end
+
+  add_index "archive_note_associations", ["account_id", "archive_note_id"], :name => "index_on_account_id_and_archive_note_id"
+  add_index "archive_note_associations", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_note_associations ADD PRIMARY KEY (account_id,id)"
+
+  create_table "archive_notes", :id => false, :force => true do |t|
+    t.integer  "id",                :limit => 8,                    :null => false
+    t.integer  "user_id",           :limit => 8
+    t.integer  "account_id",        :limit => 8,                    :null => false
+    t.integer  "note_id",           :limit => 8
+    t.integer  "notable_id",        :limit => 8
+    t.integer  "archive_ticket_id", :limit => 8
+    t.integer  "source",                         :default => 0
+    t.boolean  "incoming",                       :default => false
+    t.boolean  "private",                        :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "archive_notes", ["account_id", "archive_ticket_id"], :name => "index_archive_notes_on_account_id_and_archive_ticket_id"
+  add_index "archive_notes", ["account_id", "user_id"], :name => "index_archive_notes_on_account_id_and_user_id"
+  add_index "archive_notes", ["account_id", "note_id"], :name => "index_archive_notes_on_account_id_and_note_id"
+  add_index "archive_notes", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_notes ADD PRIMARY KEY (account_id,id)"
+
+  create_table "archive_ticket_associations", :id => false, :force => true do |t|
+    t.integer "id",                :limit => 8,                         :null => false
+    t.integer "account_id",        :limit => 8,                         :null => false
+    t.integer "archive_ticket_id", :limit => 8
+    t.text    "description",       :limit => 2147483647
+    t.text    "description_html",  :limit => 2147483647
+    t.text    "association_data",  :limit => 2147483647
+  end
+
+  add_index "archive_ticket_associations", ["account_id", "archive_ticket_id"], :name => "index_on_account_id_and_archive_ticket_id"
+  add_index "archive_ticket_associations", ["id"], :name => "index_on_id"
+  execute "ALTER TABLE archive_ticket_associations ADD PRIMARY KEY (account_id,id)"
+
+  create_table "archive_tickets", :id => false, :force => true do |t|
+    t.integer  "id",                 :limit => 8,                    :null => false
+    t.integer  "account_id",         :limit => 8,                    :null => false
+    t.integer  "requester_id",       :limit => 8
+    t.integer  "responder_id",       :limit => 8
+    t.integer  "source",                          :default => 0
+    t.integer  "status",             :limit => 8, :default => 1
+    t.integer  "group_id",           :limit => 8
+    t.integer  "product_id",         :limit => 8
+    t.integer  "priority",           :limit => 8, :default => 1
+    t.string   "ticket_type"
+    t.integer  "display_id",         :limit => 8
+    t.integer  "ticket_id",          :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "archive_created_at"
+    t.datetime "archive_updated_at"
+    t.string   "subject"
+    t.boolean  "deleted",                         :default => false
+    t.string   "access_token"
+    t.boolean  "progress",                        :default => false
+  end
+
+  add_index "archive_tickets", ["account_id", "access_token"], :name => "index_archive_tickets_on_account_id_and_access_token", :length => {"account_id"=>nil, "access_token"=>10}
+  add_index "archive_tickets", ["account_id", "archive_created_at"], :name => "index_archive_tickets_on_account_id_and_archive_created_at"
+  add_index "archive_tickets", ["account_id", "archive_updated_at"], :name => "index_archive_tickets_on_account_id_and_archive_updated_at"
+  add_index "archive_tickets", ["account_id", "created_at"], :name => "index_archive_tickets_on_account_id_and_created_at"
+  add_index "archive_tickets", ["account_id", "group_id"], :name => "index_archive_tickets_on_account_id_and_group_id"
+  add_index "archive_tickets", ["account_id", "priority"], :name => "index_archive_tickets_on_account_id_and_priority"
+  add_index "archive_tickets", ["account_id", "product_id"], :name => "index_archive_tickets_on_account_id_and_product_id"
+  add_index "archive_tickets", ["account_id", "progress"], :name => "index_archive_tickets_on_account_id_and_progress"
+  add_index "archive_tickets", ["account_id", "requester_id"], :name => "index_archive_tickets_on_account_id_and_requester_id"
+  add_index "archive_tickets", ["account_id", "responder_id"], :name => "index_archive_tickets_on_account_id_and_responder_id"
+  add_index "archive_tickets", ["account_id", "source"], :name => "index_archive_tickets_on_account_id_and_source"
+  add_index "archive_tickets", ["account_id", "ticket_type"], :name => "index_archive_tickets_on_account_id_and_ticket_type", :length => {"account_id"=>nil, "ticket_type"=>10}
+  add_index "archive_tickets", ["account_id", "updated_at"], :name => "index_archive_tickets_on_account_id_and_updated_at"
+  add_index "archive_tickets", ["id"], :name => "index_on_id"
+  add_index "archive_tickets", ["account_id", "display_id"], :name => "index_archive_tickets_on_account_id_and_display_id", :unique => true
+  execute "ALTER TABLE archive_tickets ADD PRIMARY KEY (account_id,id)"
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
@@ -932,6 +1030,7 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
   end
 
   add_index "features", ["account_id"], :name => "index_features_on_account_id"
+  add_index "features", ["type"], :name => "index_features_on_type"
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false

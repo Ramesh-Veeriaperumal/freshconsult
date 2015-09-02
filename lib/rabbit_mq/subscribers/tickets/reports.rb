@@ -31,9 +31,8 @@ module RabbitMq::Subscribers::Tickets::Reports
   
   # For archive tickets, we do ticket destroy. But before destroying, it will send a
   # manual push to rabbitmq. So ignoring it, when destroy callback is triggered with archive set to true
-  # Add the archive check once "archive tickets" feature is rolled out @ARCHIVE
   def non_archive_destroy?(action)
-    destroy_action?(action) #&& !self.archive
+    destroy_action?(action) && !archive
   end
 
   def report_keys

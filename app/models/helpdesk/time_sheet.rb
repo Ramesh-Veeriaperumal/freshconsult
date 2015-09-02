@@ -69,7 +69,34 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id"],
       :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
      } unless products.blank?
+  }
+
+  #************************** Archive scope start here *****************************#
+  scope :archive_by_group , lambda  { |group|
+      { :conditions => { :archive_tickets => { :group_id => group } } } unless group.blank?
+  }
+
+  scope :archive_for_companies, lambda{ |company_ids|
+    {
+      :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+      :conditions => {:users => {:customer_id => company_ids}}
+    } unless company_ids.blank?
+  }
+      
+  scope :archive_for_contacts, lambda{|contact_email|
+      {
+        :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?
+  }
+
+  scope :archive_for_products, lambda { |products|
+    { 
+      :conditions => { :archive_tickets => { :product_id => products } }
+    } unless products.blank?
   } 
+
+  #************************** Archive scope ends here *****************************#
 
   PAGINATE_OPTIONS = {:per_page => 30, :page => 1}
 

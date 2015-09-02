@@ -81,29 +81,7 @@
 				<% end %>	
 			</div>
 			<div class='contact-edit-padding'>
-				<h1 class='conv-title'> <%= t('contacts.conversations.tickets') %> </h1>
-				<p class='muted'> <%= t('contacts.conversations.company_all') %> </p>
-				<div class='timeline'>
-					<ul class='timeline-list'>
-						
-						<% company_activities.each do |item| %>
-							<li class='timeline-item'>
-								<%= ticket_activity(item) %>
-							</li>
-
-						<% end %>
-					</ul>
-				</div>
-				<% if @total_company_tickets.size > 10 %>
-					<div class='contact_tickets'>
-						<div class="more_results">
-							<%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
-						</div>
-					</div>
-				<% end %>
-				<% if company_activities.empty? %>
-					<p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
-				<% end %>
+				<%= render :partial => "ticket_list" %>
 			</div>
 		</div>
 		<div class='contact-sidebar'>

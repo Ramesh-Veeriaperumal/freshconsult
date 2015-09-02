@@ -38,6 +38,7 @@ window.Fjax = window.Fjax || {};
 			"/contacts": 'contacts',
 			"/users": 'contacts',
 			"/companies": 'companies',
+			"/helpdesk/tickets/archived/": "archiveticketdetails",			
 			"/helpdesk/tickets": 'tickets',
 			"/search": 'search',
 			"/helpdesk/agent_status": 'freshfoneagents',

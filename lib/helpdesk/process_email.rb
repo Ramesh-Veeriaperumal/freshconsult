@@ -16,7 +16,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
   MESSAGE_LIMIT = 10.megabytes
 
-  attr_accessor :reply_to_email, :additional_emails, :start_time
+  attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
   def perform
     # from_email = parse_from_email
@@ -87,9 +87,32 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     ticket = fetch_ticket(account, from_email, user)
     if ticket
       return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-      ticket = ticket.parent if can_be_added_to_ticket?(ticket.parent, user, from_email)
+      primary_ticket = check_primary(ticket,account)
+      if primary_ticket 
+        return create_ticket(account, from_email, to_email, user, email_config) if primary_ticket.is_a?(Helpdesk::ArchiveTicket)
+        ticket = primary_ticket
+      end
       add_email_to_ticket(ticket, from_email, user)
     else
+      if account.features?(:archive_tickets)
+        archive_ticket = fetch_archived_ticket(account, from_email, user)
+        if archive_ticket
+          self.archived_ticket = archive_ticket
+          parent_ticket = self.archived_ticket.parent_ticket 
+          # If merge ticket change the archive_ticket
+          if parent_ticket && parent_ticket.is_a?(Helpdesk::ArchiveTicket)
+            self.archived_ticket = parent_ticket
+          elsif parent_ticket && parent_ticket.is_a?(Helpdesk::Ticket)
+            return add_email_to_ticket(ticket, from_email, user) if can_be_added_to_ticket?(parent_ticket, user, from_email)
+          end
+          # If not merge check if archive child present
+          linked_ticket = self.archived_ticket.ticket
+          if linked_ticket
+            linked_ticket = linked_ticket.parent if can_be_added_to_ticket?(linked_ticket.parent, user, from_email)
+            return add_email_to_ticket(linked_ticket, from_email, user)
+          end
+        end
+      end
       create_ticket(account, from_email, to_email, user, email_config)
     end
   end
@@ -254,6 +277,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = ticket_from_id_span(account)
       return ticket if can_be_added_to_ticket?(ticket, user, from_email)
     end
+
+    def fetch_archived_ticket(account, from_email, user)
+      display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
+      archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      archive_ticket = archive_ticket_from_headers(from_email, account)
+      return archive_ticket if can_be_added_to_ticket?(archive_ticket, user)
+      return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user)
+    end
     
     def create_ticket(account, from_email, to_email, user, email_config)
       e_email = {}
@@ -307,6 +339,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                                     to_email[:email], 
                                                     params[:subject], 
                                                     message_id)
+          if account.features?(:archive_tickets) && archived_ticket
+            ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) 
+            # tags = archived_ticket.tags
+            # add_ticket_tags(tags,ticket) unless tags.blank?
+          end
           ticket.save_ticket!
           cleanup_attachments ticket
           mark_email(process_email_key, from_email[:email], 
@@ -369,7 +406,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                       }
       unless display_span.blank?
         display_id = display_span.last.inner_html
-        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+        unless display_id.blank?
+          ticket = account.tickets.find_by_display_id(display_id.to_i)
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          return ticket 
+        end 
       end
     end
 
@@ -380,9 +421,33 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         display_id = display_span.last.inner_html
         display_span.last.remove
         params[:html] = parsed_html.inner_html
-        return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+        unless display_id.blank?
+          ticket = account.tickets.find_by_display_id(display_id.to_i)
+          self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features?(:archive_tickets) && !ticket
+          return ticket 
+        end 
       end
     end
+
+    def archive_ticket_from_email_body(account)
+      display_span = Nokogiri::HTML(params[:html]).css("span[title='fd_tkt_identifier']")
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        return account.archive_tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
+    end
+
+    def archive_ticket_from_id_span(account)
+      parsed_html = Nokogiri::HTML(params[:html])
+      display_span = parsed_html.css("span[style]").select{|x| x.to_s.include?('fdtktid')}
+      unless display_span.blank?
+        display_id = display_span.last.inner_html
+        display_span.last.remove
+        params[:html] = parsed_html.inner_html
+        return account.archive_tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
+      end
+    end
+
 
     def add_email_to_ticket(ticket, from_email, user)
       msg_hash = {}
@@ -700,4 +765,31 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
       white_list(body_html)
     end    
+
+    
+  def add_ticket_tags(tags_to_be_added, ticket)
+    tags_to_be_added.each do |tag|
+      ticket.tags << tag
+    end
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e) 
+  end 
+
+  def check_primary(ticket,account)
+    parent_ticket_id = ticket.schema_less_ticket.parent_ticket
+    if !parent_ticket_id
+      return nil
+    elsif account.features?(:archive_tickets) && parent_ticket_id
+      parent_ticket = ticket.parent
+      unless parent_ticket
+        archive_ticket = Helpdesk::ArchiveTicket.find_by_ticket_id(parent_ticket_id)
+        archive_child_ticket = archive_ticket.ticket if archive_ticket
+        return archive_child_ticket if archive_child_ticket
+        self.archived_ticket = archive_ticket
+        return archived_ticket
+      end
+    else
+      return ticket.parent
+    end
+  end   
 end

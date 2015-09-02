@@ -1,0 +1,70 @@
+<script type="text/javascript">
+  TICKET_DETAILS_DATA = {
+    display_id     : "<%= @ticket.display_id %>",
+    displayId     : "<%= @ticket.display_id %>",
+    ticket_path     : "<%= helpdesk_archive_ticket_path(@ticket) %>",
+    total_notes     : "<%= @ticket_notes_total %>",
+    notes_per_page    : 50,
+    notes_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/archive_notes?v=2&", 
+    last_note_id    : <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
+    activities_pagination_url: "/helpdesk/archive_tickets/<%= @ticket.display_id %>/activities/?",
+    last_activity   : -1,
+    loaded_activities : 0,
+    scroll_to_last    : <%= (@ticket.responder_id == current_user.id).to_s %>,
+    fetch_notes_url   : "/helpdesk/archive_tickets/<%= escape_javascript(h(@ticket.display_id)) %>/archive_notes", 
+    created_on      : new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>"),
+  };
+</script>
+
+<%= stylesheet_link_tag :'cdn/player360' %>  
+<%= stylesheet_link_tag :'freshfone_recording_playback' %>
+
+<%= javascript_include_tag :'cdn/plugins/360player'  %>
+<%= javascript_include_tag :'cdn/soundmanager'  %>
+
+<div class="archived_ticket_details">
+  <%= load_sticky %>
+</div>
+
+ <div class="tkt-wrapper ticket_show archived_ticket_show" data-showing='notes'>
+  <div class="tkt-wrapper-inner clearfix">
+
+    <div id="forFixed" class="conversation_thread"></div>
+    <div id="tkt-inner" class="scollable_content clearfix" >
+
+      <% unless params[:format] == 'widget' %>
+        <%= render :partial => "helpdesk/archive_tickets/show/sidebar" %>
+      <% end %>
+      <!--content Left-->
+      <div class="leftcontent">
+        <div class="conversation_thread" id="original_request">
+          <div class="conversation">
+            <%= render :partial => "helpdesk/archive_tickets/show/original_request" %> 
+          </div>
+        </div>
+        <div class="conversation_thread hide" id="show_more">
+          <div class="conversation">
+            <a href="" class="avatar-wrap avatar-wrap-collapse"><p>
+              <span class='count_number not_on_loading' rel='count-total-remaining'></span>
+              <span class='count_number loading_only'>...</span>
+              <span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
+            </p></a>
+            <a href="" class="commentbox commentbox-blue">
+              <div><%= t('ticket.expand') %></div>
+            </a>
+          </div>
+        </div>
+        <%= render :partial => "helpdesk/archive_tickets/show/conversations" %> 
+        <div class="redactor conversation_thread">
+        <div class="archived_conversation">
+          <div class="no_reply"></div>
+          <div class="commentbox-archived muted">
+            <div><i><%= t('ticket.archived_no_reply_msg') %></i></div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% content_for :layoutType do -%>ticket_details<%- end %>

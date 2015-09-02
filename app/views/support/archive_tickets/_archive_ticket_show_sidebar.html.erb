@@ -1,0 +1,60 @@
+<% content_for :pagefixed do %>
+  <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
+  <%= javascript_tag do -%>
+    document.observe("dom:loaded", function(){
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options']
+      });
+    }); 
+  <%- end %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <% if @ticket.responder && !@ticket.deleted %>
+    <div class="sidepanel clearfix">
+      <h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+      <%= user_avatar(@ticket.responder, :thumb)  %>
+      <%= content_tag(:b, h(@ticket.responder.name)) %>     
+    </div>
+  <% end %>
+  <%
+    has_visible_field = false
+    current_portal.ticket_fields.each do |field|
+      field_value = @ticket.respond_to?(field.field_name) ? 
+            @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+      has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
+    end
+  %>
+  
+  
+  <% if has_visible_field %>
+    <div id="ticket_" class="sidepanel clearfix">
+      <h4 class="border_title"><%=t('ticket.properties')%></h4>
+      <div id="ticket_props">
+        <ul class="cnt">
+          <% current_portal.ticket_fields.each do |field| %>
+            <% if (field.visible_in_view_form? && field.visible_in_portal) %>
+            <% p field.field_name * 100
+              field_value = @ticket.respond_to?(field.field_name) ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+              dom_type = (field.field_type == "default_source") ? "dropdown" : field.dom_type
+              if(field.field_type == "nested_field")
+                field_value = {}
+                field.nested_levels.each do |ff|
+                  t_val = @ticket.respond_to?(ff[:name]) ? @ticket.send(ff[:name]) : @ticket.custom_field_value(ff[:name])
+                  field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = t_val
+                end
+              
+                f_value = @ticket.respond_to?(field.field_name) ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+                field_value.merge!({ :category_val => f_value })
+              end
+            %>
+            <% end %>
+            <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+      
+<% end %>

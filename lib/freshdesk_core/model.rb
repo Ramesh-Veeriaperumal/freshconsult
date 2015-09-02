@@ -142,10 +142,14 @@ module FreshdeskCore::Model
                         "mobihelp_apps", 
                         "mobihelp_devices",
                         "mobihelp_ticket_infos",
-
                         "oauth_applications",
                         "oauth_access_grants",
-                        "oauth_access_tokens"
+                        "oauth_access_tokens",
+                        "archive_tickets",
+                        "archive_ticket_associations",
+                        "archive_notes",
+                        "archive_note_associations",
+                        "archive_childs"
                     ]
 
   STATUS = {

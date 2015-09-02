@@ -20,8 +20,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :human_note_for_ticket? 
 
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
-  after_commit :remove_es_document, on: :destroy
-  
+  after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -232,9 +232,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_note_count_for_reports
       return unless notable
       action = model_transaction_action
-      return if action == "update" # We dont reduce the count when the note is deleted from UI (Soft delete)
-      # @ARCHIVE - Add this check when archive tickets feature is rolled out. Commenting it now.
-      # return if action == "destroy" && self.notable.archive
+      return if action == "update" # Dont reduce the count when the note is deleted from UI (Soft delete)
+      return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive
       note_category = reports_note_category
       if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
         notable.schema_less_ticket.send("update_#{note_category}_count", action)
@@ -270,4 +269,11 @@ class Helpdesk::Note < ActiveRecord::Base
     ######## ****** Methods related to reports ends here ******** #####
     
 
+    # preventing deletion from elastic search
+    def deleted_archive_note
+      if Account.current.features?(:archive_tickets) && self.notable && self.notable.archive
+        return false
+      end
+      return true
+    end
 end

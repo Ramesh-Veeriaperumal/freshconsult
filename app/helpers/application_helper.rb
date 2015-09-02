@@ -16,6 +16,7 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include ReportsHelper
   include Freshfone::CallerLookup
   require "twitter"
 

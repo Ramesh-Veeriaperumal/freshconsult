@@ -62,10 +62,10 @@ module RabbitMq::Subscribers::Notes::Reports
       non_archive_destroy?(action) || (create_action?(action) && selected_note_kinds)
     end
     
-    # Dont send the update to rabbitmq, when destroy happens with ticket's archive set to true
-    # Add the archive check once "archive tickets" feature is rolled out @ARCHIVE
+    # When a ticket is moved to archive as a part of the callback, note destroy happens.
+    # But this should not trigger an update to RMQ. 
     def non_archive_destroy?(action)
-      destroy_action?(action) # && notable.archive.is_a?(FalseClass)
+      destroy_action?(action) && !notable.archive
     end
 
     def selected_note_kinds

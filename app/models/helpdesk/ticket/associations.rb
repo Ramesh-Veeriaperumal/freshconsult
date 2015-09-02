@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester, :class_name => 'User'
 
-  has_many :notes,  :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy# TODO-RAILS3 Need to cross check, :foreign_key => :id
+  has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
 
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',
@@ -50,6 +50,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :parent, :through => :schema_less_ticket
 
+  has_one :archive_child, :class_name => 'Helpdesk::ArchiveChild', :dependent => :destroy
+
+  has_one :archive_ticket, :through => :archive_child
+
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
 
@@ -67,6 +71,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :as => :surveyable, :dependent => :destroy
   has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+  has_many :integrated_resources, :as => :local_integratable, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   
   has_many :time_sheets, 
     :class_name => 'Helpdesk::TimeSheet',

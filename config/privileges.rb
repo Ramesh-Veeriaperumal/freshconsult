@@ -83,6 +83,11 @@ Authority::Authorization::PrivilegeList.build do
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
+
+    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
+                                                    :full_paginate, :configure_export, :export_csv, 
+                                                    :activities, :component, :prevnext]
+    resource :"helpdesk/archive_note", :only => [:index, :full_text]
 	end
 
   reply_ticket do

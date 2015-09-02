@@ -17,6 +17,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+    "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
+
   self.table_name =  "helpdesk_attachments"
   belongs_to_account
 
@@ -124,7 +127,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def has_thumbnail?
-    !["Helpdesk::Ticket", "Helpdesk::Note", "Account"].include?(attachable_type)
+    !(NON_THUMBNAIL_RESOURCES.include?(attachable_type))
   end
 
   def attachment_sizes

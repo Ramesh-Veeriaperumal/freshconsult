@@ -39,5 +39,13 @@ module ReportsHelper
   def freshfone_reports?
     feature?(:freshfone) && !current_account.freshfone_numbers.empty?
   end
+
+  def reports_ticket_link(content)
+    if content.is_a?(Helpdesk::ArchiveTicket)
+      content_tag(:a,h(content),:href => helpdesk_archive_ticket_path(content.display_id),:target => "_blank")
+    else
+      content_tag(:a,h(content),:href => helpdesk_ticket_path(content.display_id),:target => "_blank")
+    end
+  end
   
 end

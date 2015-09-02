@@ -38,6 +38,7 @@ group :development, :test do
   # Commenting out for ruby ~> 2.1.0 upgrade
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
+  gem 'pry-byebug'
   gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
@@ -71,7 +72,10 @@ gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 gem 'omniauth-shopify-oauth2', "1.0.0"
 
-gem "sidekiq"
+# This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
+source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
+  gem 'sidekiq-pro'
+end
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
@@ -172,7 +176,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
 group :development,:production,:test,:staging do
-  gem "tire", :git => "git://github.com/PratheepV/retire.git"
+  gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
 
