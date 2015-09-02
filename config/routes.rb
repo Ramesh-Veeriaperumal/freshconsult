@@ -339,6 +339,8 @@ Helpkit::Application.routes.draw do
     collection do
       put :create_multiple_items
       get :info_for_node
+      get :configure_export
+      post :export_csv
     end
     member do
       put :toggle_shortcuts

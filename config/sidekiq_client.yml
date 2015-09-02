@@ -30,6 +30,7 @@ defaults: &defaults
     - [reset_group]
     - [reset_responder]
     - [solution_language_change]
+    - [export_agents]
     - [default]
     - [archive_ticket_splitter]
     - [archive_build_create_ticket]

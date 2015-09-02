@@ -66,6 +66,20 @@ class DataExportMailer < ActionMailer::Base
       part.html { render "customer_export", :formats => [:html] }
     end.deliver
   end
+
+  def agent_export options={}
+    headers = {
+      :subject => "Agents List Export",
+      :to      => options[:user].email,
+      :from    => AppConfig['from_email'],
+      :sent_on   => Time.now
+    }
+    @user = options[:user]
+    @url = options[:url]
+    mail(headers) do |part|
+      part.html { render "agent_export", :formats => [:html] }
+    end.deliver
+  end
  
   private
     def formatted_export_subject(options)

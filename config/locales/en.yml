@@ -3081,6 +3081,9 @@ en:
   agent:
     full_time_agent: Full-Time Agent
     occasional_agent: Occasional Agent
+    export: "Export"
+    export_successfull: "Your Agents data will be sent to your email shortly!"
+    invalid_export_params: "An error occurred while exporting agent data. Please try again."
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
@@ -3105,6 +3108,7 @@ en:
     available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
     no_seats: No agent seats available
+    export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
@@ -5037,6 +5041,14 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    agents:
+      fields:
+        name: "Name"
+        email: "Email"
+        groups: "Groups"
+        roles: "Roles"
+        ticket_scope: "Ticket scope"
+        agent_type: "Agent Type"
     fields:
       ticket_id: "Ticket Id"
       subject: "Subject"
