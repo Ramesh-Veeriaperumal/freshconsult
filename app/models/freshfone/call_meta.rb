@@ -54,6 +54,12 @@ class Freshfone::CallMeta < ActiveRecord::Base
       save
     end
   end
+
+  USER_AGENT_TYPE_HASH.each_pair do |k,v|
+    define_method("#{k.to_s}?") do
+      device_type == v
+    end
+  end
   
   def update_pinged_agents_with_response(user_id, response)
     pinged_agents.each do |agent|
@@ -66,7 +72,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
     pinged_agents.each do |agent|
       agent.merge!({:call_sid => call_sid}) if agent[:id] == user_id.to_i
     end
-    save
+    save!
   end
 
   def all_agents_missed?
@@ -105,6 +111,12 @@ class Freshfone::CallMeta < ActiveRecord::Base
     self.device_type = device_type
     self.meta_info = meta_info
     save
+  end
+
+  def any_agent_accepted?
+    pinged_agents.find do |agent| 
+      agent[:response] == PINGED_AGENT_RESPONSE_HASH[:accepted]
+    end.present?
   end
 
   private

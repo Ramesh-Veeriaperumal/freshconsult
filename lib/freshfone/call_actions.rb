@@ -104,7 +104,7 @@ class Freshfone::CallActions
 			:transfer_by_agent => transfer_by_agent,
 			:pinged_agents => pinged_agents(performer,type) || load_target_agents(target_group) )
 		current_call.save
-		# trigger_notification_validator(current_call.id)
+		trigger_notification_validator(current_call.id)
 	end
 
 	def external_call_meta(performer, transfer_by_agent)
@@ -115,7 +115,7 @@ class Freshfone::CallActions
 		:transfer_by_agent => transfer_by_agent,
 		:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
 		:pinged_agents => [ { :number => performer, :device_type => :external} ])
-		# trigger_notification_validator(current_call.id)
+		trigger_notification_validator(current_call.id)
 	end
 
 	def set_status_restricted
@@ -253,7 +253,7 @@ class Freshfone::CallActions
       @telephony ||= Freshfone::Telephony.new params, current_account, current_number
     end
 
-    def trigger_notification_validator(call_id) #Enqueue 5 mins
+    def trigger_notification_validator(call_id)
     	Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::NotificationMonitor, 
     			{:account_id => current_account.id, :freshfone_call => call_id}) if current_call.present?
     end

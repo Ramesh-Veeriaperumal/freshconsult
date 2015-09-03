@@ -58,9 +58,8 @@ module Freshfone
       }
 
       agent_call = telephony.make_call(call_params)
-      
       if agent_call.present?
-        current_call.meta.update_agent_call_sids(agent, agent_call.sid)
+        update_and_validate_pinged_agents(current_call, agent_call)
         set_browser_sid(agent_call.sid, current_call.call_sid)
       end
     end
@@ -77,13 +76,18 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
+
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_mobile_incoming_call current_call, agent
         raise e
       end
-      current_call.meta.update_mobile_agent_call(agent, agent_call.sid) if agent_call.present? # SpreadsheetL 27  
+
+      if agent_call.present?
+        current_call.meta.reload.update_mobile_agent_call(agent, agent_call.sid) # SpreadsheetL 27  
+        update_and_validate_pinged_agents(current_call, agent_call)
+      end
     end
 
     def notify_browser_transfer
@@ -102,7 +106,7 @@ module Freshfone
       agent_call = telephony.make_call(call_params)
       
       if agent_call.present?
-        current_call.children.last.meta.update_agent_call_sids(agent, agent_call.sid)
+        update_and_validate_pinged_agents(current_call.children.last, agent_call)
         set_browser_sid(agent_call.sid, current_call.call_sid)
       end
     end
@@ -121,13 +125,15 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
+      
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_mobile_transfer_call current_call, agent
         raise e
       end
-      current_call.children.last.meta.update_mobile_agent_call(agent, agent_call.sid) if agent_call.present?
+      
+      update_and_validate_pinged_agents(current_call.children.last, agent_call) if agent_call.present?
     end
 
     def notify_external_transfer
@@ -150,7 +156,7 @@ module Freshfone
         raise e
       end
       current_call.children.last.update_call({:DialCallSid  => agent_call.sid})
-      current_call.children.last.meta.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
+      current_call.children.last.meta.reload.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
     end
 
     def notify_round_robin_agent
@@ -221,5 +227,17 @@ module Freshfone
           Error Code(if any) :: #{exception.respond_to?(:code) ? exception.code : ''} <br><br>
           Exception Stacktrace :: #{exception.backtrace.join("\n\t")}<br>" })
     end
+
+    def disconnect_api_call(agent_api_call)
+      Rails.logger.info "disconnect_api_call :: #{agent_api_call.sid}"
+      agent_api_call.update(:status => "completed")
+    end
+
+    def update_and_validate_pinged_agents(call, agent_api_call)
+      Rails.logger.info "agent call sid update :: Call => #{call.id} :: agent => #{agent} :: call_sid => #{agent_api_call.sid}"
+      call.meta.reload.update_agent_call_sids(agent, agent_api_call.sid) 
+      disconnect_api_call(agent_api_call) if call.meta.reload.any_agent_accepted?      
+    end
+
   end
 end
