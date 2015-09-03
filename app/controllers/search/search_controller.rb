@@ -192,6 +192,7 @@ class Search::SearchController < ApplicationController
       format.nmobile do
         array = []
         @result_set.each do |item|
+          next if item.is_a?(Helpdesk::ArchiveTicket)
           array << item.to_mob_json_search
         end
         render :json => array
