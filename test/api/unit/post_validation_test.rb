@@ -6,16 +6,7 @@ class PostValidationTest < ActionView::TestCase
     item = nil
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
-    assert_equal ['Body html missing', 'Topic required_and_numericality'], post.errors.full_messages
-  end
-
-  def test_numericality_params_invalid
-    controller_params = { 'topic_id' => 'x' }
-    item = nil
-    post = ApiDiscussions::PostValidation.new(controller_params, item)
-    refute post.valid?
-    error = post.errors.full_messages
-    assert error.include?('Topic is not a number')
+    assert_equal ['Body html missing'], post.errors.full_messages
   end
 
   def test_inclusion_params_invalid
@@ -28,19 +19,19 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_presence_item_valid
-    item = Post.new(body_html: 'test', topic_id: Topic.first)
+    item = Post.new(body_html: 'test')
     controller_params = {}
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     error = post.errors.full_messages
-    refute error.include?("Topic can't be blank")
     refute error.include?("Message html can't be blank")
   end
 
   def test_numericality_item_valid
     controller_params = {}
     item = Post.new('user_id' => 2)
-    item.topic_id = 2
+    item.topic_id = "ewrer"
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
+    refute item.valid?(:update)
     error = topic.errors.full_messages
     refute error.include?('Topic is not a number')
     refute error.include?('User is not a number')

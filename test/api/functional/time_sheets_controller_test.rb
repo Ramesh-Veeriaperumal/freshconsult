@@ -11,11 +11,16 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def ticket
-    Helpdesk::Ticket.first
+    t = Helpdesk::Ticket.where(deleted: false, spam: false).first
+    return t if t
+    t = create_ticket
+    t.update_column(:spam, false)
+    t.update_column(:deleted, false)
+    t
   end
 
   def params_hash
-    { ticket_id: ticket.display_id, agent_id: @agent.id }
+    { agent_id: @agent.id }
   end
 
   def freeze_time(&_block)
@@ -344,28 +349,27 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_create_arbitrary_params
-    post :create, construct_params({}, test: 'junk')
+    post :create, construct_params({id: ticket.display_id}, test: 'junk')
     assert_response :bad_request
     match_json [bad_request_error_pattern('test', 'invalid_field')]
   end
 
   def test_create_presence_invalid
-    post :create, construct_params({})
-    assert_response :bad_request
-    match_json [bad_request_error_pattern('ticket_id', 'required_and_numericality')]
+    post :create, construct_params({id: 90909090})
+    assert_response :not_found
   end
 
   def test_create_unpermitted_params
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
-    post :create, construct_params({}, params_hash.merge(agent_id: 99))
+    post :create, construct_params({id: ticket.display_id}, params_hash.merge(agent_id: 99))
     assert_response :bad_request
     match_json([bad_request_error_pattern('agent_id', 'invalid_field')])
     @controller.unstub(:privilege?)
   end
 
   def test_create_start_time_and_timer_not_running
-    post :create, construct_params({}, { start_time: (Time.zone.now - 10.minutes).as_json,
+    post :create, construct_params({id: ticket.display_id}, { start_time: (Time.zone.now - 10.minutes).as_json,
                                          timer_running: false }.merge(params_hash))
     assert_response :bad_request
     match_json [bad_request_error_pattern('start_time',
@@ -374,7 +378,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_create_with_no_params
     freeze_time do
-      post :create, construct_params({}, params_hash)
+      post :create, construct_params({id: ticket.display_id}, params_hash)
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern({ timer_running: true, start_time: utc_time,
@@ -387,7 +391,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_create_with_start_time_only
     freeze_time do
       start_time = (Time.zone.now - 10.minutes).as_json
-      post :create, construct_params({}, { start_time: start_time }.merge(params_hash))
+      post :create, construct_params({id: ticket.display_id}, { start_time: start_time }.merge(params_hash))
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern(ts)
@@ -400,7 +404,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_create_with_start_time_and_time_spent
     start_time = (Time.zone.now - 10.minutes).as_json
     freeze_time do
-      post :create, construct_params({}, { start_time: start_time,
+      post :create, construct_params({id: ticket.display_id}, { start_time: start_time,
                                            time_spent: '03:00' }.merge(params_hash))
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
@@ -412,7 +416,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_create_time_spent_only
     freeze_time do
-      post :create, construct_params({}, { time_spent: '03:00' }.merge(params_hash))
+      post :create, construct_params({id: ticket.display_id}, { time_spent: '03:00' }.merge(params_hash))
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
       match_json time_sheet_pattern({}, ts)
@@ -423,7 +427,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_create_with_timer_running_and_time_spent
     freeze_time do
-      post :create, construct_params({}, { time_spent: '03:00',
+      post :create, construct_params({id: ticket.display_id}, { time_spent: '03:00',
                                            timer_running: false }.merge(params_hash))
       assert_response :created
       ts = time_sheet(parse_response(response.body)['id'])
@@ -435,7 +439,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_create_with_other_timer_running
     other_ts = Helpdesk::TimeSheet.find_by_user_id_and_timer_running(@agent.id, true)
-    post :create, construct_params({}, params_hash)
+    post :create, construct_params({id: ticket.display_id}, params_hash)
     assert_response :created
     ts = time_sheet(parse_response(response.body)['id'])
     match_json time_sheet_pattern(ts)
@@ -446,7 +450,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
     start_time = (Time.zone.now - 10.minutes).as_json
     executed_at = (Time.zone.now + 20.minutes).as_json
     freeze_time do
-      post :create, construct_params({}, { time_spent: '03:00', start_time: start_time,
+      post :create, construct_params({id: ticket.display_id}, { time_spent: '03:00', start_time: start_time,
                                            timer_running: true, executed_at: executed_at,
                                            note: 'test note', billable: true, agent_id: @agent.id }.merge(params_hash))
       assert_response :created
@@ -461,14 +465,14 @@ class TimeSheetsControllerTest < ActionController::TestCase
   def test_create_without_permission_but_ownership
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
-    post :create, construct_params({}, params_hash.except(:agent_id))
+    post :create, construct_params({id: ticket.display_id}, params_hash.except(:agent_id))
     assert_response :created
     @controller.unstub(:privilege?)
   end
 
   def test_create_with_other_user
     agent = other_agent
-    post :create, construct_params({}, params_hash.merge(agent_id: agent.id))
+    post :create, construct_params({id: ticket.display_id}, params_hash.merge(agent_id: agent.id))
     assert_response :created
     match_json time_sheet_pattern(Helpdesk::TimeSheet.where(user_id: agent.id).first)
   end
@@ -821,8 +825,9 @@ class TimeSheetsControllerTest < ActionController::TestCase
   end
 
   def test_time_sheets_with_ticket_deleted
-    ticket.update_column(:deleted, true)
-    get :ticket_time_sheets, construct_params(id: ticket.display_id)
+    t = ticket
+    t.update_column(:deleted, true)
+    get :ticket_time_sheets, construct_params(id: t.display_id)
     assert_response :not_found
     ticket.update_column(:deleted, false)
   end

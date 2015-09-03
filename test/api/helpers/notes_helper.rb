@@ -39,7 +39,7 @@ module Helpers::NotesHelper
   end
 
   def v2_note_payload
-    { body: Faker::Lorem.paragraph, notify_emails: [Faker::Internet.email, Faker::Internet.email], ticket_id: Helpdesk::Ticket.first.display_id, private: true }.to_json
+    { body: Faker::Lorem.paragraph, notify_emails: [Faker::Internet.email, Faker::Internet.email], private: true }.to_json
   end
 
   def v2_note_update_payload

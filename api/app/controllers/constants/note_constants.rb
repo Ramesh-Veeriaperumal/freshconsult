@@ -1,7 +1,7 @@
 module NoteConstants
   # ControllerConstants
-  REPLY_FIELDS = ['body', 'body_html', 'user_id', { 'cc_emails' => [String] }, { 'bcc_emails' => [String] }, 'ticket_id', { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
-  CREATE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, 'ticket_id', { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
+  REPLY_FIELDS = ['body', 'body_html', 'user_id', { 'cc_emails' => [String] }, { 'bcc_emails' => [String] }, { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
+  CREATE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
   UPDATE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {

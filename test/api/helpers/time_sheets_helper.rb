@@ -33,7 +33,7 @@ module Helpers::TimeSheetsHelper
 
   def v2_time_sheet_payload
     {
-      start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09', ticket_id: 1,
+      start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09', 
       agent_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
     }.to_json
   end

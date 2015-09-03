@@ -7,13 +7,15 @@ Helpkit::Application.routes.draw do
         get :time_sheets, to: 'time_sheets#ticket_time_sheets'
         get :notes, to: 'notes#ticket_notes'
         post :reply, to: 'notes#reply'
+        post :notes, to: 'notes#create'
+        post :time_sheets, to: 'time_sheets#create'
       end
     end
-    resources :notes, :except => [:new, :edit, :show, :index]
+    resources :notes, :except => [:new, :edit, :show, :index, :create]
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
-    resources :time_sheets, :except => [:new, :edit, :show] do 
+    resources :time_sheets, :except => [:new, :edit, :show, :create] do 
       member do 
         put :toggle_timer
       end
@@ -23,28 +25,31 @@ Helpkit::Application.routes.draw do
       resources :categories, :except => [:new, :edit] do
         member do
           get :forums, to: 'forums#category_forums'
+          post :forums, to: 'forums#create'
         end
       end
-      resources :forums, :except => [:new, :edit, :index] do
+      resources :forums, :except => [:new, :edit, :index, :create] do
         member do
           get :topics, to: 'topics#forum_topics'
           post :follow, to: :follow
           delete :follow, to: :unfollow
           get :follow, to: :is_following
+          post :topics, to: 'topics#create'
         end
       end
-      resources :topics, :except => [:new, :edit, :index]do
+      resources :topics, :except => [:new, :edit, :index, :create]do
         member do
           get :posts, to: 'posts#topic_posts'
           post :follow, to: :follow
           delete :follow, to: :unfollow
           get :follow, to: :is_following
+          post :posts, to: 'posts#create'
         end
         collection do 
           get :followed_by
         end
       end
-      resources :posts, :except => [:new, :edit, :index, :show]
+      resources :posts, :except => [:new, :edit, :index, :show, :create]
     end
     resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
 

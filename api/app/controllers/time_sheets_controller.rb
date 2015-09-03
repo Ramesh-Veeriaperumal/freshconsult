@@ -1,7 +1,7 @@
 class TimeSheetsController < ApiApplicationController
   include Concerns::TimeSheetConcern
 
-  before_filter :load_ticket, only: [:ticket_time_sheets]
+  before_filter :ticket_exists?, only: [:ticket_time_sheets]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def index
@@ -12,7 +12,7 @@ class TimeSheetsController < ApiApplicationController
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @time_sheet.save should be wrapped in a transaction.
     update_running_timer params[cname][:agent_id] if @timer_running
-    @item.workable = @time_sheet_val.ticket
+    @item.workable = @ticket
     super
   end
 
@@ -52,11 +52,18 @@ class TimeSheetsController < ApiApplicationController
       FeatureConstants::TIMESHEET
     end
 
-    def load_ticket
+    def ticket_exists?
       # Load only non deleted ticket.
       @display_id = params[:id].to_i
       @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false).limit(1).first
       head 404 unless @id
+    end
+
+    def load_ticket
+      # Load only non deleted ticket.
+      @ticket = current_account.tickets.where(display_id: params[:id].to_i, deleted: false, spam: false).first
+      head 404 unless @ticket
+      @ticket
     end
 
     def scoper
@@ -75,6 +82,7 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def validate_params
+      return false if create? && !load_ticket
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
       fields = get_fields("TimeSheetConstants::#{action_name.upcase}_FIELDS")
       params[cname].permit(*fields)
@@ -93,7 +101,6 @@ class TimeSheetsController < ApiApplicationController
       current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
       params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
-      params[cname].delete(:ticket_id)
       ParamsHelper.assign_and_clean_params({ agent_id: :user_id },
                                            params[cname])
     end

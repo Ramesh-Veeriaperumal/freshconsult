@@ -1,6 +1,6 @@
 module ApiDiscussions
   class PostsController < ApiApplicationController
-    before_filter :load_topic, only: [:topic_posts]
+    before_filter :topic_exists?, only: [:topic_posts]
 
     def topic_posts
       @posts = paginate_items(@item.posts)
@@ -14,10 +14,17 @@ module ApiDiscussions
         @item.user = api_current_user
         @item.portal = current_portal
         @item.topic_id ||= params[cname]['topic_id']
+        @item.topic = @topic
+      end
+
+      def topic_exists?
+        load_object current_account.topics
       end
 
       def load_topic
-        load_object current_account.topics
+        @topic = current_account.topics.find_by_id(params[:id].to_i)
+        head 404 unless @topic
+        @topic
       end
 
       def feature_name
@@ -28,13 +35,9 @@ module ApiDiscussions
         ErrorHelper.rename_error_fields({ topic: :topic_id }, @item)
       end
 
-      def sanitize_params
-        @email = params[cname].delete(:email) if params[cname][:email]
-      end
-
       def validate_params
-        fields = "DiscussionConstants::#{action_name.upcase}_POST_FIELDS".constantize
-        params[cname].permit(*(fields))
+        return false if create? && !load_topic
+        params[cname].permit(*(DiscussionConstants::POST_FIELDS))
         post = ApiDiscussions::PostValidation.new(params[cname], @item)
         render_errors post.errors, post.error_options unless post.valid?
       end

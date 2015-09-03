@@ -24,19 +24,19 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
         assert_response :created
       end
       assert_difference 'Forum.count', 1 do
-        post '/api/discussions/forums', v2_forum_payload(fc), @write_headers
+        post "/api/discussions/categories/#{fc.id}/forums", v2_forum_payload(fc), @write_headers
         assert_response :created
       end
 
       assert_equal fc.id, f.forum_category_id
       assert_difference 'Topic.count', 1 do
-        post '/api/discussions/topics', v2_topics_payload(f), @write_headers
+        post "/api/discussions/forums/#{f.id}/topics", v2_topics_payload(f), @write_headers
         assert_response :created
       end
 
       assert_equal f.id, t.forum_id
       assert_difference 'Post.count', 1 do
-        post '/api/discussions/posts', v2_post_payload(t), @write_headers
+        post "/api/discussions/topics/#{t.id}/posts", v2_post_payload(t), @write_headers
         assert_response :created
       end
       assert_equal t.id, p.topic_id

@@ -1,11 +1,11 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
-    before_filter :load_forum, only: [:forum_topics]
+    before_filter :forum_exists?, only: [:forum_topics]
 
     def create
       @item.user = api_current_user
-      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_POST_FIELDS.include?(x) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::POST_FIELDS.include?(x) })
       post.user = api_current_user
       assign_parent post, :topic, @item
       super
@@ -29,8 +29,14 @@ module ApiDiscussions
 
     private
 
-      def load_forum
+      def forum_exists?
         load_object current_account.forums
+      end
+
+      def load_forum
+        @forum = current_account.forums.find_by_id(params[:id].to_i)
+        head 404 unless @forum
+        @forum
       end
 
       def feature_name
@@ -61,14 +67,16 @@ module ApiDiscussions
       end
 
       def assign_protected
+        assign_parent @item, :forum, @forum if create?
         assign_parent @item, :forum_id, params[cname]
       end
 
       def validate_params
+        return false if create? && !load_forum
         fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
-        render_errors topic.errors, topic.error_options unless topic.valid?
+        render_errors topic.errors, topic.error_options unless topic.valid?(action_name.to_sym)
       end
 
       def scoper

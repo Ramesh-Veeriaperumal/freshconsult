@@ -6,7 +6,7 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 4,
+        api_create: 5,
         api_update: 5,
         api_index: 2,
         api_toggle_timer: 5,
@@ -23,12 +23,14 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       ticket = create_ticket
       ticket_id = ticket.display_id
+      api_v2_ticket = create_ticket
+      api_v2_ticket_id = api_v2_ticket.display_id
 
       # create
-      v2[:create], v2[:api_create] = count_api_queries { post('/api/time_sheets', v2_time_sheet_payload, @write_headers) }
+      v2[:create], v2[:api_create] = count_api_queries { post("/api/tickets/#{api_v2_ticket_id}/time_sheets", v2_time_sheet_payload, @write_headers) }
       v1[:create] = count_queries { post("/helpdesk/tickets/#{ticket_id}/time_sheets.json", v1_time_sheet_payload, @write_headers) }
 
-      id1 = Helpdesk::TimeSheet.where(workable_id: 1).first.id
+      id1 = Helpdesk::TimeSheet.where(workable_id: api_v2_ticket_id).first.id
       id2 = Helpdesk::TimeSheet.where(workable_id: ticket.display_id).first.id
 
       # ticket_time_sheets
@@ -53,6 +55,11 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       p v1
       p v2
+
+      v1.keys.each do |key|
+        api_key = "api_#{key}".to_sym
+        Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
+      end
 
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym

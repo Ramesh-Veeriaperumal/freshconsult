@@ -27,7 +27,7 @@ module ApiDiscussions
     end
 
     def test_create
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title', message_html: 'test content')
       match_json(topic_pattern(last_topic))
       match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', posts_count: 1 }, last_topic))
@@ -35,7 +35,7 @@ module ApiDiscussions
     end
 
     def test_create_returns_location_header
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title', message_html: 'test content')
       match_json(topic_pattern(last_topic))
       match_json(topic_pattern({ forum_id: forum_obj.id, title: 'test title', posts_count: 1 }, last_topic))
@@ -48,7 +48,7 @@ module ApiDiscussions
     def test_create_with_stamp_type
       forum = forum_obj
       forum.update_column(:forum_type, 2)
-      post :create, construct_params({}, forum_id: forum.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title', message_html: 'test content', stamp_type: 3)
       match_json(topic_pattern({}, last_topic))
       match_json(topic_pattern({ forum_id: forum.id, title: 'test title', posts_count: 1,
@@ -57,50 +57,40 @@ module ApiDiscussions
     end
 
     def test_create_without_title
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          message_html: 'test content')
       match_json([bad_request_error_pattern('title', 'missing_field')])
       assert_response :bad_request
     end
 
     def test_create_without_message
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title')
       match_json([bad_request_error_pattern('message_html', 'missing_field')])
       assert_response :bad_request
     end
 
-    def test_create_without_forum_id
-      post :create, construct_params({}, title: 'test title',
+    def test_create_invalid_forum_id
+      post :create, construct_params({id: 33333}, title: 'test title',
                                          message_html: 'test content')
-      match_json([bad_request_error_pattern('forum_id', 'required_and_numericality')])
-      assert_response :bad_request
+      assert_response :not_found
     end
 
     def test_create_invalid_user_field
-      post :create, construct_params({}, forum_id: forum_obj.id,
-                                         title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
+      post :create, construct_params({id: forum_obj.id}, title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
       match_json([bad_request_error_pattern('user_id', 'invalid_field')])
       assert_response :bad_request
     end
 
-    def test_create_invalid_forum_id
-      post :create, construct_params({}, title: 'test title',
-                                         message_html: 'test content', forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum_id', "can't be blank")])
-      assert_response :bad_request
-    end
-
     def test_create_validate_numericality
-      post :create, construct_params({}, forum_id: 'junk',
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title', message_html: 'test content', stamp_type: 'hj')
-      match_json([bad_request_error_pattern('forum_id', 'is not a number'),
-                  bad_request_error_pattern('stamp_type', 'is not a number')])
+      match_json([bad_request_error_pattern('stamp_type', 'is not a number')])
       assert_response :bad_request
     end
 
     def test_create_validate_inclusion
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
       match_json([bad_request_error_pattern('locked', 'not_included', list: 'true,false'),
                   bad_request_error_pattern('sticky', 'not_included', list: 'true,false')])
@@ -108,15 +98,15 @@ module ApiDiscussions
     end
 
     def test_create_validate_length
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id},
                                          title: Faker::Lorem.characters(300), message_html: 'test content')
       match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
     end
 
     def test_create_validate_length_with_trailing_space
-      params = { forum_id: forum_obj.id, title: Faker::Lorem.characters(20) + white_space, message_html: 'test content' }
-      post :create, construct_params({}, params)
+      params = { title: Faker::Lorem.characters(20) + white_space, message_html: 'test content' }
+      post :create, construct_params({id: forum_obj.id}, params)
       match_json(topic_pattern(last_topic))
       match_json(topic_pattern(params.each { |x, y| y.strip! if x == :title }, last_topic))
       assert_response :created
@@ -232,7 +222,7 @@ module ApiDiscussions
 
     def test_create_without_edit_topic_privilege
       controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      post :create, construct_params({}, forum_id: forum_obj.id,
+      post :create, construct_params({id: forum_obj.id}, 
                                          title: 'test title', message_html: 'test content', sticky: true)
       assert_response :bad_request
       match_json([bad_request_error_pattern('sticky', 'invalid_field')])

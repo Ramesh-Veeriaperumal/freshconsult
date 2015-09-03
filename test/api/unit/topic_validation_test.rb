@@ -5,7 +5,7 @@ class TopicValidationsTest < ActionView::TestCase
     controller_params = {}
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
-    refute topic.valid?
+    refute topic.valid?(:update)
     assert_equal ['Title missing', 'Message html missing', 'Forum required_and_numericality'], topic.errors.full_messages
   end
 
@@ -13,7 +13,7 @@ class TopicValidationsTest < ActionView::TestCase
     controller_params = { 'forum_id' => 'x', 'stamp_type' => 'x' }
     item = nil
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
-    refute topic.valid?
+    refute topic.valid?(:update)
     error = topic.errors.full_messages
     assert error.include?('Forum is not a number')
     assert error.include?('Stamp type is not a number')
@@ -44,8 +44,9 @@ class TopicValidationsTest < ActionView::TestCase
   def test_numericality_item_valid
     controller_params = {}
     item = Topic.new('user_id' => 2, 'stamp_type' => 2)
-    item.forum_id = 2
+    item.forum_id = "dfdsf"
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
+    refute topic.valid?(:update)
     error = topic.errors.full_messages
     refute error.include?('Forum is not a number')
     refute error.include?('User is not a number')

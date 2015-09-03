@@ -1,5 +1,5 @@
 class TimeSheetValidation < ApiValidation
-  attr_accessor :billable, :executed_at, :time_spent, :ticket_id, :agent_id, :user, :note, :ticket, :item, :request_params, :timer_running, :start_time
+  attr_accessor :billable, :executed_at, :time_spent, :agent_id, :user, :note, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
   # Common validations
@@ -23,13 +23,6 @@ class TimeSheetValidation < ApiValidation
   # Should not set the timer running to the same value as before in update as it may introduce ambiguity regarding start_time
   validate :disallow_reset_timer_value, if: -> { @timer_running_set && errors[:timer_running].blank? }, on: :update
 
-  # Ticket specific validations
-  validates :ticket_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :create
-  validates :ticket_id, numericality: true, allow_nil: true,  on: :create
-
-  # if ticket_id is not a number, to avoid query, below if condition is used.
-  validate :valid_ticket?, if: -> { errors[:ticket_id].blank? && @ticket_id_set }, on: :create
-
   # User specific validations
   # agent_id can't be changed in update if timer is running for the user.
   validates :agent_id, inclusion: { in: [nil], message: 'cant_update_user' },
@@ -50,11 +43,6 @@ class TimeSheetValidation < ApiValidation
   end
 
   private
-
-    def valid_ticket?
-      @ticket = Account.current.tickets.find_by_param(request_params['ticket_id'], Account.current)
-      errors.add(:ticket_id, :blank) unless @ticket
-    end
 
     def valid_user?
       user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set

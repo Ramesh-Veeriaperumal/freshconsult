@@ -157,57 +157,60 @@ module ApiDiscussions
     end
 
     def test_create_validate_presence
-      post :create, construct_params({}, description: 'test')
+      post :create, construct_params({id: ForumCategory.first.id}, description: 'test')
       match_json([bad_request_error_pattern('name', 'missing_field'),
-                  bad_request_error_pattern('forum_category_id', 'required_and_numericality'),
                   bad_request_error_pattern('forum_visibility', 'required_and_inclusion', list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', 'required_and_inclusion', list: '1,2,3,4')])
       assert_response :bad_request
     end
 
     def test_create_validate_inclusion
-      post :create, construct_params({}, name: 'test', forum_category_id: 1, forum_visibility: '9', forum_type: '89')
+      post :create, construct_params({id: ForumCategory.first.id}, name: 'test', forum_visibility: '9', forum_type: '89')
       match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')])
       assert_response :bad_request
     end
 
     def test_create_validate_length
-      post :create, construct_params({}, forum_category_id: 1, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
+      post :create, construct_params({id: ForumCategory.first.id}, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(300), description: Faker::Lorem.characters(300))
       match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                   bad_request_error_pattern('description', 'is too long (maximum is 255 characters)')])
       assert_response :bad_request
     end
 
     def test_create_validate_length_with_trailing_space
-      params = { forum_category_id: 1, forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space }
-      post :create, construct_params({}, params)
+      params = {forum_visibility: 1, forum_type: 1, name: Faker::Lorem.characters(20) + white_space, description: Faker::Lorem.characters(20) + white_space }
+      post :create, construct_params({id: ForumCategory.first.id}, params)
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, params.each { |x, y| y.strip! if [:name, :description].include?(x) })
       assert_response :created
     end
 
     def test_create
-      post :create, construct_params({}, description: 'desc', forum_visibility: '1',
-                                         forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
+      post :create, construct_params({id: ForumCategory.first.id}, description: 'desc', forum_visibility: '1',
+                                         forum_type: 1, name: 'test')
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
       assert_response :created
     end
 
     def test_create_no_params
-      post :create, construct_params({})
+      post :create, construct_params({id: ForumCategory.first.id})
       match_json([bad_request_error_pattern('name', 'missing_field'),
-                  bad_request_error_pattern('forum_category_id', 'required_and_numericality'),
                   bad_request_error_pattern('forum_visibility', 'required_and_inclusion', list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', 'required_and_inclusion', list: '1,2,3,4')])
       assert_response :bad_request
     end
 
+    def test_create_invalid_forum_category_id
+      post :create, construct_params({id: 5646456})
+      assert_response :not_found
+    end
+
     def test_create_with_visibility_company_users
       name = Faker::Name.name
-      post :create, construct_params({}, description: 'desc', forum_visibility: '4',
-                                         forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      post :create, construct_params({id: ForumCategory.first.id}, description: 'desc', forum_visibility: '4',
+                                         forum_type: 1, name: name)
       pattern = forum_pattern(Forum.last).merge(company_ids: [])
       match_json(pattern)
       pattern = forum_response_pattern(Forum.last, description: 'desc', forum_visibility: 4,
@@ -218,8 +221,8 @@ module ApiDiscussions
 
     def test_create_returns_location_header
       name = Faker::Name.name
-      post :create, construct_params({}, description: 'desc', forum_visibility: '1',
-                                         forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      post :create, construct_params({id: ForumCategory.first.id}, description: 'desc', forum_visibility: '1',
+                                         forum_type: 1, name: name)
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
       assert_response :created
@@ -231,8 +234,8 @@ module ApiDiscussions
     def test_create_invalid_customer_id
       fc = fc_obj
       customer = company
-      post :create, construct_params({}, description: 'desc', forum_visibility: '4', forum_type: 1,
-                                         name: 'customer test', forum_category_id: fc.id, company_ids: [customer.id, 67, 78])
+      post :create, construct_params({id: fc.id}, description: 'desc', forum_visibility: '4', forum_type: 1,
+                                         name: 'customer test', company_ids: [customer.id, 67, 78])
       assert_response :bad_request
       match_json([bad_request_error_pattern('company_ids', 'list is invalid', list: '67, 78')])
     end
@@ -240,8 +243,8 @@ module ApiDiscussions
     def test_create_with_customer_id
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
-      post :create, construct_params({}, params)
+      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: 'customer test 2', company_ids: [customer.id] }
+      post :create, construct_params({id: ForumCategory.first.id}, params)
       assert_response :success
       pattern = forum_pattern(Forum.last.reload)
       pattern[:company_ids] = [customer.id]
@@ -255,8 +258,8 @@ module ApiDiscussions
     def test_create_with_customer_id_and_visibility_not_company_users
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
-      post :create, construct_params({}, params)
+      params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', company_ids: [customer.id] }
+      post :create, construct_params({id: ForumCategory.first.id}, params)
       match_json([bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
     end
@@ -273,8 +276,8 @@ module ApiDiscussions
     def test_create_with_customer_id_and_visibility_invalid
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, company_ids: [customer.id] }
-      post :create, construct_params({}, params)
+      params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, company_ids: [customer.id] }
+      post :create, construct_params({id: ForumCategory.first.id}, params)
       match_json([bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                   bad_request_error_pattern('company_ids', 'invalid_field')])
       assert_response :bad_request
@@ -293,8 +296,8 @@ module ApiDiscussions
     def test_create_with_customer_id_invalid_data_type
       fc = fc_obj
       customer = company
-      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, forum_category_id: ForumCategory.first.id, company_ids: "#{customer.id}" }
-      post :create, construct_params({}, params)
+      params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, company_ids: "#{customer.id}" }
+      post :create, construct_params({id: ForumCategory.first.id}, params)
       match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
       assert_response :bad_request
     end
@@ -349,13 +352,13 @@ module ApiDiscussions
     end
 
     def test_create_extra_params
-      post :create, construct_params({}, account_id: 1, test: 2)
+      post :create, construct_params({id: ForumCategory.first.id}, account_id: 1, test: 2)
       match_json([bad_request_error_pattern('account_id', 'invalid_field'), bad_request_error_pattern('test', 'invalid_field')])
       assert_response :bad_request
     end
 
     def test_create_invalid_model
-      post :create, construct_params({}, forum_visibility: '1', forum_type: 1, name: Forum.first.name, forum_category_id: ForumCategory.first.id)
+      post :create, construct_params({id: ForumCategory.first.id}, forum_visibility: '1', forum_type: 1, name: Forum.first.name)
       match_json([bad_request_error_pattern('name', 'already exists in the selected category')])
       assert_response :conflict
     end
@@ -390,8 +393,8 @@ module ApiDiscussions
     end
 
     def test_create_with_customers
-      post :create, construct_params({}, description: 'desc', forum_visibility: '4',
-                                         forum_type: 1, name: 'test new name', forum_category_id: ForumCategory.first.id)
+      post :create, construct_params({id: ForumCategory.first.id}, description: 'desc', forum_visibility: '4',
+                                         forum_type: 1, name: 'test new name')
       forum = Forum.last
       result_pattern = forum_pattern(forum)
       result_pattern[:company_ids] = []

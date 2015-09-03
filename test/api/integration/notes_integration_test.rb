@@ -12,7 +12,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 7,
         api_ticket_notes: 5,
 
-        create: 61,
+        create: 60,
         reply: 63,
         update: 22,
         destroy: 20,
@@ -21,7 +21,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       ticket_id = Helpdesk::Ticket.first.display_id
       # create
-      v2[:create], v2[:api_create] = count_api_queries { post('/api/notes', v2_note_payload, @write_headers) }
+      v2[:create], v2[:api_create] = count_api_queries { post("/api/tickets/#{ticket_id}/notes", v2_note_payload, @write_headers) }
       v1[:create] = count_queries { post("/helpdesk/tickets/#{ticket_id}/conversations/note.json", v1_note_payload, @write_headers) }
 
       id1 = Helpdesk::Note.last(2).first.id
@@ -49,6 +49,11 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       p v1
       p v2
+
+      v1.keys.each do |key|
+        api_key = "api_#{key}".to_sym
+        Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
+      end
 
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym

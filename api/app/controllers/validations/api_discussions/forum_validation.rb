@@ -3,8 +3,8 @@ module ApiDiscussions
     attr_accessor :name, :forum_type, :forum_category_id, :forum_visibility, :company_ids,
                   :description, :topics_count
     validates :name, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-    validates :forum_category_id, required: { allow_nil: false, message: 'required_and_numericality' }
-    validates :forum_category_id, numericality: true, allow_nil: true
+    validates :forum_category_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :update
+    validates :forum_category_id, numericality: true, allow_nil: true, on: :update
     validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY, required: true }
 
     # Forum type can't be updated if the forum has any topics. Can be updated only if no topics found for forum.

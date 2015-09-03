@@ -94,6 +94,7 @@ class NotesController < ApiApplicationController
     def load_ticket # Needed here in controller to find the item by display_id
       @ticket = current_account.tickets.find_by_param(params[:id], current_account)
       head 404 unless @ticket
+      @ticket
     end
 
     def ticket_exists?
@@ -111,9 +112,10 @@ class NotesController < ApiApplicationController
     end
 
     def validate_params
+      return false if create? && !load_ticket
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item, can_validate_ticket)
+      @note_validation = NoteValidation.new(params[cname], @item)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid
@@ -130,19 +132,14 @@ class NotesController < ApiApplicationController
       params[cname][:private] = false unless params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
 
       # Set ticket id from already assigned ticket only for create/reply action not for update action.
-      @ticket ||= @note_validation.ticket
-      params[cname][:ticket_id] = @ticket.id if @ticket
+      params[cname][:notable_id] = @ticket.id if @ticket
 
-      ParamsHelper.assign_and_clean_params({ notify_emails: :to_emails, ticket_id: :notable_id }, params[cname])
+      ParamsHelper.assign_and_clean_params({ notify_emails: :to_emails }, params[cname])
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
 
     def check_agent_note
       render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
-    end
-
-    def can_validate_ticket
-      create?
     end
 end

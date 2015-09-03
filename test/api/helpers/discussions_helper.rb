@@ -104,19 +104,27 @@ module Helpers::DiscussionsHelper
   end
 
   def v2_forum_payload(fc = nil)
-    forum_params(fc).to_json
+    forum_params.to_json
+  end
+
+  def v2_update_forum_payload
+    forum_params.merge(forum_category_id: ForumCategory.first.id).to_json
   end
 
   def v1_forum_payload
-    { forum: forum_params }.to_json
+    { forum: forum_params.merge(forum_category_id: ForumCategory.first.id) }.to_json
   end
 
-  def v1_topics_payload
-    { topic: topic_params.merge(sticky: 0, locked: 0, body_html: Faker::Lorem.characters) }.to_json
+  def v1_topics_payload(forum_id)
+    { topic: topic_params.merge(sticky: 0, locked: 0, body_html: Faker::Lorem.characters, forum_id: forum_id) }.to_json
   end
 
   def v2_topics_payload(f = nil)
-    topic_params(f).merge(message_html: Faker::Lorem.characters).to_json
+    topic_params.merge(message_html: Faker::Lorem.characters).to_json
+  end
+
+  def v2_update_topics_payload(f = nil)
+    topic_params.merge(message_html: Faker::Lorem.characters, forum_id: Forum.first.id).to_json
   end
 
   def v1_post_payload(t)
@@ -132,19 +140,17 @@ module Helpers::DiscussionsHelper
     { name: Faker::Name.name,  description: Faker::Lorem.characters }
   end
 
-  def forum_params(fc = nil)
-    fc = fc || ForumCategory.first || create_test_category
-    { description: Faker::Lorem.characters, forum_category_id: fc.id,
+  def forum_params
+    { description: Faker::Lorem.characters, 
       forum_type: 2, forum_visibility: 1, name: Faker::Name.name }
   end
 
-  def topic_params(f = nil)
-    f ||= Forum.first
-    { forum_id: f.id, title: Faker::Name.name }
+  def topic_params
+    { title: Faker::Name.name }
   end
 
   def post_params(t)
-    { body_html: Faker::Lorem.characters, topic_id: t.id }
+    { body_html: Faker::Lorem.characters }
   end
 end
 
