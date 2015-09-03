@@ -28,7 +28,6 @@ var globalconn;
 			$.ajax({
 				url : freshfone.recent_calls_path,
 				success : function () {
-					$('.recent_calls_container').find('div :first').addClass('active-element');
 				},
 				error: function () {
 					$recentCalls.removeClass('loading-small sloading');

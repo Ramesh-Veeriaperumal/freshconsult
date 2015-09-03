@@ -201,9 +201,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			}
 		},
 		makeOutgoing: function (item) {
-			if(typeof item != "undefined") { 	
-				freshfoneDialpadEvents.prefillConnectedCallTemplate(item);
-			}
+			this.prefillDialerTemplate(item);
 			this.clearMessage();
 
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
@@ -225,6 +223,13 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
 			this.disableCallButton();
+		},
+		prefillDialerTemplate: function(item) {
+			if(typeof item != "undefined") { 	
+				freshfoneDialpadEvents.prefillConnectedCallTemplate(item);
+			} else {
+				freshfoneDialpadEvents.prefillConnectedCallNumber(this.number);
+			}
 		},
 		clearMessage: function(){
 			this.toggleBackToDialer(true);
