@@ -3,16 +3,16 @@
     <div class="<%= cycle('odd', 'even') %> <%= 'orphaned-category' if category['portal_solution_categories'].empty? %>">
       <h4 class="cat-title-border">
         <div class="<%= category['portal_solution_categories'].empty? ? 'ficon-categories-orphan tooltip' : 'ficon-cube'%> cat-title-icon" data-original-title="<%= t('solution.orphan') if  category['portal_solution_categories'].empty? %>"></div>
-        <%= pjax_link_to  "#{h(category[:name]).truncate(50)}".html_safe, 
+        <%= pjax_link_to  "#{h(category[:name]).truncate(45)}".html_safe, 
                           solution_category_path(:id =>category[:id]), 
                           :class => 'tooltip', 
-                          :title => (h(category[:name]) if category[:name].length > 50) %>        
+                          :title => (h(category[:name]) if category[:name].length > 45) %>        
       </h4>  
       <ul>      
         <% category[:folders].first(5).each do |folder| %>
           <li>
-            <%= pjax_link_to h(folder[:name].truncate(55)), solution_folder_path(folder[:id]),
-                :class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 55) %>
+            <%= pjax_link_to h(folder[:name].truncate(50)), solution_folder_path(folder[:id]),
+                :class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 50) %>
             <span class="muted">
               (<%= folder[:article_count] %>)
             </span> 

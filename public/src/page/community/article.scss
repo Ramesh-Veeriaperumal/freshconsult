@@ -26,6 +26,23 @@
     }
   }
 
+  .article-sticky {
+    .breadcrumb.breadcrumb-edit {
+      li::after {
+        display: block;
+        @include float(right);
+      }
+
+      a {
+        max-width: 200px;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
   .draft-notif {
     .autosave-notif, .article-view-edit {
       box-shadow: none;

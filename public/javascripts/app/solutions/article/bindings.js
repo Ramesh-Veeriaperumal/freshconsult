@@ -32,6 +32,7 @@ window.App = window.App || {};
       var $this = this;
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
+        $('.breadcrumb').addClass('breadcrumb-edit');
         $('.info-data').remove();
       });
     },
@@ -83,6 +84,7 @@ window.App = window.App || {};
         $this.editUrlChange(false);
         $this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
+        $('.breadcrumb').removeClass('breadcrumb-edit');
 
         if($this.autoSave.totalCount > 0) {
           $this.setFormValues();
