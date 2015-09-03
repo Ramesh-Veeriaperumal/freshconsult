@@ -478,10 +478,6 @@
 			text-transform: uppercase;
 			display: inline-block;
 		}
-		.tooltip-inner{
-			min-width: 200px !important;
-			white-space: pre-wrap;
-		}
 		.active-indicator{
 			width: 4px;
 			height: 100%;
@@ -495,6 +491,7 @@
 		vertical-align: top;
 		position: relative;
 		display: table-cell;
+		width: auto;
 		.loading-bar{
 			height: 100%;
 			position: absolute;

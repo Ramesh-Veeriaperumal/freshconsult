@@ -279,10 +279,6 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         calculateChartheight: function (dataPoints) {
             var height = 50 * dataPoints;
             return height;
-        },
-        setWidth: function () {
-            a = jQuery('#Pagearea').width() - jQuery('#glance_sidebar').width();
-            jQuery('#glance_main').css('width', a-40);
         }
     };
    return {
@@ -294,7 +290,6 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             }
 
             _FD.contructCharts(hash);
-            _FD.setWidth();
 
             HelpdeskReports.locals.active_metric_data_hash = hash[HelpdeskReports.locals.active_metric];
         },

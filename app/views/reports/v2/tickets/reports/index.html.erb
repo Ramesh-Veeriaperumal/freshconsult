@@ -17,16 +17,18 @@
 	<!-- code for ticket list template -->
 </div>
 
-<% content_for :dialogs do %>
-<div class="view-more-metrics" id="view_more_wrapper">
-		<div class="title">
-			<span id="view_title" class="view_title"></span>
-			<span class="close" data-action="close-view-all"> 
-				<i class="ficon-cross fsize-20 " size="20"></i> 
-			</span>	
+<% if @report_type == 'glance'%>
+	<% content_for :dialogs do %>
+	<div class="view-more-metrics hide" id="view_more_wrapper">
+			<div class="title">
+				<span id="view_title" class="view_title"></span>
+				<span class="close" data-action="close-view-all"> 
+					<i class="ficon-cross fsize-20 " size="20"></i> 
+				</span>	
+			</div>
+			<div id="view_all_container" class="view_all_container"></div> 
 		</div>
-		<div id="view_all_container" class="view_all_container"></div> 
-	</div>
+	<% end %>
 <% end %>
 
 <script type="text/javascript">

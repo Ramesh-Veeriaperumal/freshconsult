@@ -529,14 +529,18 @@ HelpdeskReports.CoreUtil = {
             data: Browser.stringify(params),
             timeout: 45000,
             success: function (data) {
+                jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
                 jQuery("#reports_container").html(data);
+                jQuery(window).resize();
                 jQuery('#loading-box').hide();
             },
             error: function (data) {
+                jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
                 var text = "Something went wrong, please try again";
                 _this.populateEmptyChart(["reports_container"], text);
+                jQuery(window).resize();
                 jQuery('#loading-box').hide();
             }
         }
@@ -572,6 +576,7 @@ HelpdeskReports.CoreUtil = {
     },
     flushEvents: function () {
         jQuery('#reports_wrapper').off('.helpdesk_reports');
+        jQuery(document).off('.helpdesk_reports');
     },
     flushCharts: function () {
         if (Highcharts && Highcharts.charts && Highcharts.charts.length) {

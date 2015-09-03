@@ -6,6 +6,14 @@
 		var days = h + 'h ' + min + 'm';
 		return days;
 	};
+
+	function addsuffix (m) {
+		if(typeof m !== 'number')  {
+			return m;
+		} else {
+			return m + '%';
+		}
+	}
 %>
 
 <%if (data && data.length>0) { %>
@@ -18,10 +26,10 @@
 			 <% } else { %>  
 				 <td><%= data[i]['group_reassigned_tickets'] %></td>
 			<% } %>
-			<td><%= data[i]['response_sla'] %></td>
-			<td><%= data[i]['resolution_sla'] %></td>
-			<td><%= data[i]['fcr_tickets'] %></td>
-			<td><%= data[i]['fcr_tickets'] %></td>
+			<td><%= addsuffix(data[i]['response_sla']) %></td>
+			<td><%= addsuffix(data[i]['resolution_sla']) %></td>
+			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
+			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
 			<td><%= data[i]['private_notes'] %></td>
 			<td><%= data[i]['responses'] %></td>
 			<td><%= minutesToDays( data[i]['avg_first_response_time'] ) %></td>

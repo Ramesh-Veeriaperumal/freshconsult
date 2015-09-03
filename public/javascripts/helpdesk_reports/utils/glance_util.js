@@ -8,12 +8,17 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             });
 
             jQuery('#reports_wrapper').on('click.helpdesk_reports', '#glance_sidebar ul li:not(".active"):not(".disabled")', function() {
-                _FD.actions.submitActiveMetric(this);
+                var flag = HelpdeskReports.locals.ajaxContainer;
+                if (flag == false) {
+                    HelpdeskReports.locals.ajaxContainer = true;
+                    _FD.actions.submitActiveMetric(this);
+                }
             });
 
             jQuery('#reports_wrapper').on('change.helpdesk_reports', '#custom_field_group_by select', function() {
                 _FD.actions.submitCustomField(this);
             });
+            _FD.actions.setAjaxContainer();
         },
         actions: {
             submitReports: function () {
@@ -43,6 +48,9 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 var val  = jQuery(active).select2('val');
                 HelpdeskReports.locals.active_custom_field = val;
                 _FD.constructCustomFieldParams(val);
+            },
+            setAjaxContainer: function () {
+                HelpdeskReports.locals.ajaxContainer = false;
             }
         },
         setGroupByInParams: function () {
@@ -83,9 +91,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 success: function (data) {
                     HelpdeskReports.ChartsInitializer.Glance.init(data);
                     jQuery('#glance_chart_wrapper .loading-bar').addClass('hide');
+                    HelpdeskReports.locals.ajaxContainer = false;
                 },
                 error: function (data) {
                     console.log(data);
+                    HelpdeskReports.locals.ajaxContainer = false;
                 }
             }
             _FD.core.makeAjaxRequest(opts);

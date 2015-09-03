@@ -6550,9 +6550,9 @@ en:
       title: Group Summary
       group: Group
       description:
-        ticket_resolved: Number of tickets resolved by the group in the selected time period
-        tickets_reopened: Number of tickets reopened by the group in the selected time period
-        ticket_reasigned: Number of tickets reassigned from this group to other groups in the selected time period
+        ticket_resolved: Tickets resolved by the group in the selected time period
+        tickets_reopened: Tickets reopened by the group in the selected time period
+        ticket_reasigned: Tickets reassigned from this group to other groups in the selected time period
         reports_sla: Response SLA% of the tickets responded to by the group in the selected time period
         res_sla: Resolution SLA% of the tickets resolved by the group in the selected time period
         fcr: First contact resolution % of tickets resolved by the group in the selected time period
@@ -6577,9 +6577,9 @@ en:
       avg_resolution_time: Average Resolution Time
       agent: Agent
       description:
-        ticket_resolved: Number of tickets resolved by the agent in the selected time period
-        tickets_reopened: Number of tickets reopened by the agent in the selected time period
-        ticket_reasigned: Number of tickets reassigned from this agent to other agents in the selected time period
+        ticket_resolved: Tickets resolved by the agent in the selected time period
+        tickets_reopened: Tickets reopened by the agent in the selected time period
+        ticket_reasigned: Tickets reassigned from this agent to other agents in the selected time period
         reports_sla: Response SLA% of the tickets that were 1st responded to by the agent in the selected time period
         res_sla: Resolution SLA% of the tickets resolved by the agent in the selected time period
         fcr: First contact resolution % of tickets resolved by the agent in the selected time period
