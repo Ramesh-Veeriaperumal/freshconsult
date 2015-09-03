@@ -181,7 +181,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   scope :all_article_tickets,
     :include => [:article, :requester, :ticket_status],
-    :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"] 
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id"],
+    :order => "`helpdesk_tickets`.`created_at` DESC"
 
   scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
     :conditions => ["display_id > (?)",display_id],
