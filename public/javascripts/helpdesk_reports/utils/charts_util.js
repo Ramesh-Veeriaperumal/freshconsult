@@ -564,7 +564,8 @@ function barChart(opts) {
                     fontWeight: 600
                 },
                 useHTML : true,
-                formatter: opts['timeFormat'] == true ? this.daysLabelFormatter : null
+                formatter: opts['timeFormat'] == true ? this.daysLabelFormatter : null,
+                format: opts['suffix'] === undefined ? null : opts['suffix']
             },
             minorTickLength: 0,
             tickLength: 0,

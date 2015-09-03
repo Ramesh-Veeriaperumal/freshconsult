@@ -15,7 +15,9 @@
 <% } else { %>
 	<div id="custom_field_group_by" class="chart-container">
 		<div class="title">
-			<%= title_name %> by 
+			<span class="rep-title-sub">
+				<%= title_name %> by
+			</span>
 			<select class="select2 dropdown" >
 				<% for (j=0; j<	custom_fields.length; j++) { %>
 			    	<option value="<%=custom_fields[j]%>"> <%= fields_hash[custom_fields[j]] %> </option>

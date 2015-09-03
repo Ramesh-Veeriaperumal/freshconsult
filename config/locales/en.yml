@@ -6540,9 +6540,27 @@ en:
       resolution_bar: Resolution Time
       first_response_and_response_trend: Avg First Response And Response Time Trend
       resolution_trend: Avg Resolution Time Trend
+      description:
+        avg_res_time: Split based on the average response time of all the responses made in the selected time period
+        first_response: Split based on the first response time of all the first responses made in the selected time period
+        resolution_time: Split based on the resolution time of tickets resolved in the selected time period
+        avg_res_time_trend: All tickets responded to in the selected time period are plotted in this graph based on the first response time and average response time
+        resolution_time_trend: All tickets resolved in the selected time period are plotted in this graph based on the resolution time
     group_summary:
       title: Group Summary
       group: Group
+      description:
+        ticket_resolved: Number of tickets resolved by the group in the selected time period
+        tickets_reopened: Number of tickets reopened by the group in the selected time period
+        ticket_reasigned: Number of tickets reassigned from this group to other groups in the selected time period
+        reports_sla: Response SLA% of the tickets responded to by the group in the selected time period
+        res_sla: Resolution SLA% of the tickets resolved by the group in the selected time period
+        fcr: First contact resolution % of tickets resolved by the group in the selected time period
+        private_note: Number of private notes added by the group on any ticket in the selected time period
+        responses: Number of responses sent by the group on any ticket in the selected time period
+        avg_first_res_time: Average first response time of all the first responses made by the group in the selected time period
+        avg_res_time: Average response time of all tickets responded to by the group in the selected time period
+        avg_resolution_time: Average resolution time of all tickets resolved by the group in the selected time period
     agent_summary:
       title: Agent Summary
       ticket_assigned: Tickets Assigned
@@ -6558,6 +6576,18 @@ en:
       avg_res_time: Average Response Time
       avg_resolution_time: Average Resolution Time
       agent: Agent
+      description:
+        ticket_resolved: Number of tickets resolved by the agent in the selected time period
+        tickets_reopened: Number of tickets reopened by the agent in the selected time period
+        ticket_reasigned: Number of tickets reassigned from this agent to other agents in the selected time period
+        reports_sla: Response SLA% of the tickets that were 1st responded to by the agent in the selected time period
+        res_sla: Resolution SLA% of the tickets resolved by the agent in the selected time period
+        fcr: First contact resolution % of tickets resolved by the agent in the selected time period
+        private_note: Number of private notes added by the agent on any ticket in the selected time period
+        responses: Number of responses sent by the agent on any ticket in the selected time period
+        avg_first_res_time: Average first response time of all the first responses made by the agent in the selected time period
+        avg_res_time: Average response time of all tickets responded to by the agent in the selected time period
+        avg_resolution_time: Average resolution time of all tickets resolved by the agent in the selected time period
     customer_report:
       title:  Customer Report
       received_tickets: Customers with the most received

@@ -17,8 +17,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         actions: {
             viewMoreInit: function (el) {
-                var attr = jQuery(el).data('group-container');
-                _FD.renderViewMore(attr);
+                _FD.renderViewMore(el);
             },
             closeViewMore: function () {
                 jQuery('#view_more_wrapper').removeClass('show-all-metrics');
@@ -84,7 +83,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     lrRadius : 5,
                     value : 100,
                     sharedTooltip: false,
-                    timeFormat: false
+                    timeFormat: false,
+                    suffix: '{value}%'
                 }
 
             } else {
@@ -168,7 +168,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 chartData: data_array,
                 dataLabels: dataLab,
                 sharedTooltip: options.sharedTooltip,
-                timeFormat: options.timeFormat
+                timeFormat: options.timeFormat,
+                suffix: options.suffix
             }
             var groupByCharts = new barChart(settings);
             groupByCharts.barChartGraph();
@@ -242,7 +243,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             }
             _FD.constructChartSettings(active_hash, id, false);
         },
-        renderViewMore: function (attr) {
+        renderViewMore: function (el) {
+            var attr = jQuery(el).data('group-container');
             var active_metric_hash = HelpdeskReports.locals.active_metric_data_hash;
             var active_cf_hash = HelpdeskReports.locals.custom_field_data_hash;
             if (!jQuery.isEmptyObject(active_metric_hash[attr])) {
@@ -256,9 +258,16 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             if (!jQuery('#view_more_wrapper').hasClass('show-all-metrics')) {
                 jQuery('#view_more_wrapper').addClass('show-all-metrics');
             }
-            var title = 'Tickets by ' + HelpdeskReports.locals.field_name_mapping[attr];
-            jQuery('#view_title').text(title);
 
+            if (jQuery(el).closest('.chart-container').attr('id') !== 'custom_field_group_by') {
+                var title = jQuery(el).siblings('.title').text().trim();
+            } else {
+                var title_el = jQuery(el).siblings('.title');
+                var title = title_el.find('.rep-title-sub').text().trim();
+                title = title + ' ' + title_el.children('select').find('option:selected').text().trim();
+            }
+
+            jQuery('#view_title').text(title);
         },
         fillArray: function(value, length) {
             var arr = [];
@@ -270,6 +279,10 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         calculateChartheight: function (dataPoints) {
             var height = 50 * dataPoints;
             return height;
+        },
+        setWidth: function () {
+            a = jQuery('#Pagearea').width() - jQuery('#glance_sidebar').width();
+            jQuery('#glance_main').css('width', a-40);
         }
     };
    return {
@@ -281,6 +294,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             }
 
             _FD.contructCharts(hash);
+            _FD.setWidth();
 
             HelpdeskReports.locals.active_metric_data_hash = hash[HelpdeskReports.locals.active_metric];
         },

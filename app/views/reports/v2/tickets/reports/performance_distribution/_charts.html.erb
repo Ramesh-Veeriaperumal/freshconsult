@@ -4,23 +4,32 @@
 	<div class="row-fluid">	
 		<div class="chart-container">
 			<div class="clearfix">
-				<div id="first_response" class="title pull-left pointer">
+				<span id="first_response" class="title pointer">
 					<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
-				</div>
-				<span class="pull-left sep">/</span>
-				<div id="response" class="title pull-left pointer">
+				</span>
+				<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
+                    <i class="ficon-help-icon fsize-14" size="14"></i>
+                </span>
+				<span class="sep">/</span>
+				<span id="response" class="title pointer">
 					<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
-				</div>
+				</span>
+				<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
+                    <i class="ficon-help-icon fsize-14" size="14"></i>
+                </span>
 			</div>
 				<div id="first_response_time_bar_chart" class="chart-wrapper"></div>
 				<div id="response_time_bar_chart" class="chart-wrapper"></div>
 		</div>
 
 		<div class="chart-container">
-			<div class='title'>
+			<span class='title'>
 				<%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>
-			</div>
-				<div id="resolution_time_bar_chart" class="chart-wrapper"></div>
+			</span>
+			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.resolution_time')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+			<div id="resolution_time_bar_chart" class="chart-wrapper"></div>
 		</div>
 	</div>
 <!-- Ends here -->
@@ -29,9 +38,12 @@
 	<div class="row-fluid">
 
 		<div class="chart-container">
-			<div class="title">
+			<span class="title">
 				<%=t('helpdesk_reports.performance_distribution.first_response_and_response_trend').html_safe %>
-			</div>
+			</span>
+			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time_trend')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
 			<div class="response_time_trend trend-type">
 				<div class="btn-group">
 					<span class="btn" data-format="doy" data-chart="response">
@@ -52,9 +64,12 @@
 		</div>
 
 		<div class="chart-container">
-			<div class="title">
+			<span class="title">
 				<%=t('helpdesk_reports.performance_distribution.resolution_trend').html_safe %>
-			</div>
+			</span>
+			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.resolution_time_trend')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
 			<div class="resolution_time_trend trend-type">
 				<div class="btn-group">
 					<span class="btn" data-format="doy" data-chart="resolution">

@@ -476,6 +476,11 @@
 			color: #6B6B6B;
 			font-size: 11px;
 			text-transform: uppercase;
+			display: inline-block;
+		}
+		.tooltip-inner{
+			min-width: 200px !important;
+			white-space: pre-wrap;
 		}
 		.active-indicator{
 			width: 4px;
@@ -551,13 +556,18 @@
 		.title{
 			font-size: 15px;
 			color: #333333;
-			padding:1px 10px 7px;
+			padding:1px 0 7px;
 			font-weight: 500;
 		}
 		.sep{
 			font-size: 26px;
-			padding: 3px 0 7px;
+			padding: 3px 5px 7px;
 			color: #B7B7B7;
+			position: relative;
+    		top: 5px;
+		}
+		.reports-help-icon{
+			margin-left: 3px;
 		}
 		.chart-wrapper{
 			margin: 20px;
@@ -917,5 +927,16 @@
 		position: absolute;
 		right: 20px;
 		top: 7px;
+	}
+}
+.twipsy {
+	width: 200px;
+}
+.reports-help-icon{
+	display: inline-block;
+	margin-left: 1px;
+	color: #6B6B6B;
+	&:hover{
+		cursor: help;
 	}
 }
