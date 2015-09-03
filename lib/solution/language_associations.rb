@@ -20,8 +20,13 @@ module Solution::LanguageAssociations
       
     delegate :name, :description, :title, :to => :"primary_#{base_name}"
     
+    def self.translation_associations
+      base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
+      (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{base_name}"}
+    end
+    
     scope :include_translations, lambda {
-      includes((['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{base_name}"})
+      includes(translation_associations)
     }
   end
   
