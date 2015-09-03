@@ -765,7 +765,7 @@ $animation_timing: .1s;
 				@include float(left);
 				padding: 0 18px;
 				position:relative;
-				@include min-height(130px);
+				@include min-height(140px);
 				.report-classic{
 					@include border-radius(3px);
 					background: #FFF;
