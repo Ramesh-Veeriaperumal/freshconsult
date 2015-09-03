@@ -55,7 +55,7 @@ class TimeSheetsController < ApiApplicationController
     def ticket_exists?
       # Load only non deleted ticket.
       @display_id = params[:id].to_i
-      @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false).limit(1).first
+      @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false, spam: false).limit(1).first
       head 404 unless @id
     end
 

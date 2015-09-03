@@ -359,6 +359,22 @@ class TimeSheetsControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
+  def test_create_with_deleted_ticket
+    t = ticket
+    t.update_column(:deleted, true)
+    post :create, construct_params(id: t.id)
+    assert_response :not_found
+    t.update_column(:deleted, false)
+  end
+
+  def test_create_with_spam_ticket
+    t = ticket
+    t.update_column(:spam, true)
+    post :create, construct_params(id: t.id)
+    assert_response :not_found
+    t.update_column(:spam, false)
+  end
+
   def test_create_unpermitted_params
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
@@ -830,6 +846,14 @@ class TimeSheetsControllerTest < ActionController::TestCase
     get :ticket_time_sheets, construct_params(id: t.display_id)
     assert_response :not_found
     ticket.update_column(:deleted, false)
+  end
+
+  def test_time_sheets_with_ticket_spam
+    t = ticket
+    t.update_column(:spam, true)
+    get :ticket_time_sheets, construct_params(id: t.display_id)
+    assert_response :not_found
+    ticket.update_column(:spam, false)
   end
 
   def test_time_sheets_without_privilege
