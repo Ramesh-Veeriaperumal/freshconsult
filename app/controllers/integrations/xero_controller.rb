@@ -133,8 +133,12 @@
     item_description =[]
     invoice.line_items.each do |items|
       if items.item_code.present?
-        item = @xero_client.Item.find(items.item_code)
-        item_description << item.description
+        begin
+          item = @xero_client.Item.find(items.item_code)
+          item_description << item.description
+        rescue Xeroizer::ObjectNotFound => e
+          item_description << ""
+        end
       else
         item_description << ""
       end
