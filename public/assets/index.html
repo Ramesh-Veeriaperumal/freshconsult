@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.eot");
-  src: url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.woff") format("woff"),
-       url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.ttf") format("truetype"),
-       url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.eot");
+  src: url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.woff") format("woff"),
+       url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.ttf") format("truetype"),
+       url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_a00fc833c6fb442d57121829757c9b92.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.svg#glyphs") format("svg");
   }
 }
 
@@ -252,6 +252,7 @@
 .ficon-grouping-disable:before,
 .ficon-grouping-enable:before,
 .ficon-help:before,
+.ficon-help-icon:before,
 .ficon-helpdesk:before,
 .ficon-helpdesk-settings:before,
 .ficon-ie:before,
@@ -480,6 +481,7 @@
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
 .ficon-help:before { content: "\f158"; }
+.ficon-help-icon:before { content: "\f1d9"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
 .ficon-helpdesk-settings:before { content: "\f1cb"; }
 .ficon-ie:before { content: "\f159"; }
@@ -593,7 +595,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (214)</h1>
+      <h1>Font Icons (215)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1631,6 +1633,15 @@
         </div>
         <div class="usage">
           <span>help</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-help-icon" class="ficon-help-icon"></i></span>
+        </div>
+        <div class="usage">
+          <span>help-icon</span>
         </div>
       </div>
       

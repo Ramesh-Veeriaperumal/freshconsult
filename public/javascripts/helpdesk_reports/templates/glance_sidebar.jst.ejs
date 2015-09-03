@@ -26,7 +26,12 @@
 							%>
 							<%= template %>
 						</div>
-						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %>
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
 					</div>
 				</li>
 
@@ -48,7 +53,12 @@
 							%>
 							<span class="ticket-count"><%= value %> </span>
 						</div>
-						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %> 
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
 					</div>
 				</li>
 
@@ -60,7 +70,12 @@
 						<div>
 							<span class="ticket-count"> NA </span>
 						</div>
-						<div class="ticket-status"> <%= constants.metrics[metrics[i]].name %> </div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %> 
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
 					</div>
 				</li>
 

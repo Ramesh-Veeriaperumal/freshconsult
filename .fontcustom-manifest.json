@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "a00fc833c6fb442d57121829757c9b920ee15dc9eb8b4ed049ede69ece027fef",
-    "current": "a00fc833c6fb442d57121829757c9b920ee15dc9eb8b4ed049ede69ece027fef"
+    "previous": "2e1f3837c43c6a9bab3848955c04e02d63e744b9762281879c3fa46ac24edab4",
+    "current": "2e1f3837c43c6a9bab3848955c04e02d63e744b9762281879c3fa46ac24edab4"
   },
   "fonts": [
-    "public/assets/glyphs_a00fc833c6fb442d57121829757c9b92.ttf",
-    "public/assets/glyphs_a00fc833c6fb442d57121829757c9b92.svg",
-    "public/assets/glyphs_a00fc833c6fb442d57121829757c9b92.woff",
-    "public/assets/glyphs_a00fc833c6fb442d57121829757c9b92.eot"
+    "public/assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.ttf",
+    "public/assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.svg",
+    "public/assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.woff",
+    "public/assets/glyphs_2e1f3837c43c6a9bab3848955c04e02d.eot"
   ],
   "glyphs": {
     "account": {
@@ -469,6 +469,10 @@
     "help": {
       "codepoint": 61784,
       "source": "public/glyphs/vectors/help.svg"
+    },
+    "help-icon": {
+      "codepoint": 61913,
+      "source": "public/glyphs/vectors/help-icon.svg"
     },
     "helpdesk": {
       "codepoint": 61898,

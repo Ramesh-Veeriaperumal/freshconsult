@@ -6,51 +6,61 @@ HelpdeskReports.Constants = {
             "RECEIVED_TICKETS" : { 
                 name : "CREATED TICKETS",
                 title: "Created Tickets",
+                description: "The tickets that were created in the helpdesk in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "RESOLVED_TICKETS" : { 
                 name : "RESOLVED TICKETS",
                 title: "Resolved Tickets",
+                description: "The tickets that were created anytime and resolved in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "REOPENED_TICKETS" : { 
                 name : "REOPENED TICKETS",
                 title: "Reopened Tickets",
+                description: "The tickets that were created anytime and reopened in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "AVG_FIRST_RESPONSE_TIME" : { 
                 name : "AVERAGE 1ST RESPONSE TIME",
                 title: "Avg 1st Response Time",
+                description: "Average first response time of all the first responses made in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "AVG_RESPONSE_TIME" : { 
                 name : "AVERAGE RESPONSE TIME",
                 title: "Avg Response Time",
+                description: "Average response time of all the responses made in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "AVG_RESOLUTION_TIME" : { 
                 name : "AVERAGE RESOLUTION TIME",
                 title: "Avg Resolution Time",
+                description: "Average resolution time of tickets resolved in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "AVG_FIRST_ASSIGN_TIME" : { 
                 name : "AVERAGE 1ST ASSIGN TIME",
                 title: "Avg 1st Assign Time",
+                description: "Average first assign time of tickets assigned to agents in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "FCR_TICKETS" : { 
                 name : "FIRST CONTACT RESOLUTION",
                 title: "FCR %",
+                description: "The percentage of tickets that are resolved in the selected time period after the first contact made by the customer",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "RESPONSE_SLA" : { 
                 name : "RESPONSE SLA",
                 title: "Response SLA %",
+                description: "The percentage of tickets that are responded to within SLA in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "RESOLUTION_SLA" : { 
                 name : "RESOLUTION SLA",
                 title: "Resolution SLA %",
+                description: "The percentage of tickets that are resolved within SLA in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             }
         },
