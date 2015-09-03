@@ -3,7 +3,7 @@ require_relative '../test_helper'
 class TimeSheetValidationsTest < ActionView::TestCase
   def test_user_numericality
     Account.stubs(:current).returns(Account.first)
-    controller_params = {'agent_id' => 'x' }
+    controller_params = { 'agent_id' => 'x' }
     item = nil
     time_sheet = TimeSheetValidation.new(controller_params, item, true)
     time_sheet.valid?(:create)

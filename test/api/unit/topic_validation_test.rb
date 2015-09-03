@@ -44,7 +44,7 @@ class TopicValidationsTest < ActionView::TestCase
   def test_numericality_item_valid
     controller_params = {}
     item = Topic.new('user_id' => 2, 'stamp_type' => 2)
-    item.forum_id = "dfdsf"
+    item.forum_id = 'dfdsf'
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
     error = topic.errors.full_messages

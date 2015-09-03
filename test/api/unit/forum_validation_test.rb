@@ -38,7 +38,7 @@ class ForumValidationsTest < ActionView::TestCase
   def test_numericality_item_valid
     controller_params = {}
     item = Forum.new
-    item.forum_category_id = "dfdf"
+    item.forum_category_id = 'dfdf'
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
     refute forum.errors.full_messages.include?('Forum category is not a number')

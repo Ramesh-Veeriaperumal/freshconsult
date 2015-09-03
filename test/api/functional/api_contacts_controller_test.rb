@@ -383,7 +383,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { email: email }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
-    sample_user.reload.email == email
+    assert sample_user.reload.email == email
     sample_user.update_attribute(:email, email)
   end
 

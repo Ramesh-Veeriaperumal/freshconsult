@@ -42,7 +42,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create
     params_hash = create_note_params_hash
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(note_pattern(params_hash, Helpdesk::Note.last))
     match_json(note_pattern({}, Helpdesk::Note.last))
@@ -50,7 +50,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_public_note
     params_hash = create_note_params_hash.merge(private: false)
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(note_pattern(params_hash, Helpdesk::Note.last))
     match_json(note_pattern({}, Helpdesk::Note.last))
@@ -58,7 +58,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_with_user_id_valid
     params_hash = create_note_params_hash.merge(user_id: user.id)
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(note_pattern(params_hash, Helpdesk::Note.last))
     match_json(note_pattern({}, Helpdesk::Note.last))
@@ -67,22 +67,22 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_with_user_id_invalid_privilege
     params_hash = create_note_params_hash.merge(user_id: other_user.id)
     controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     controller.class.any_instance.unstub(:is_allowed_to_assume?)
   end
 
   def test_create_numericality_invalid
-    params_hash = { user_id: 'x'}
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    params_hash = { user_id: 'x' }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', 'is not a number')])
   end
 
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x' }
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('incoming', 'not_included', list: 'true,false'),
                 bad_request_error_pattern('private', 'not_included', list: 'true,false')])
@@ -90,7 +90,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x' }
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('notify_emails', 'data_type_mismatch', data_type: 'Array'),
                 bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
@@ -98,40 +98,40 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_email_format_invalid
     params_hash = { notify_emails: ['tyt@'] }
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('notify_emails', 'is not a valid email')])
   end
 
   def test_create_invalid_ticket_id
     params_hash = { body_html: 'test' }
-    post :create, construct_params({id: 789_789_789}, params_hash)
+    post :create, construct_params({ id: 789_789_789 }, params_hash)
     assert_response :not_found
   end
 
   def test_create_invalid_model
     params_hash = { body_html: 'test', user_id: 789_789_789 }
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('user_id', "can't be blank")])
   end
 
   def test_create_extra_params
     params_hash = { body_html: 'test', junk: 'test' }
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
     match_json([bad_request_error_pattern('junk', 'invalid_field')])
   end
 
   def test_create_missing_params
-    post :create, construct_params({id: ticket.display_id}, {})
+    post :create, construct_params({ id: ticket.display_id }, {})
     assert_response :created
     match_json(note_pattern({}, Helpdesk::Note.last))
   end
 
   def test_create_returns_location_header
     params_hash = create_note_params_hash
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :created
     match_json(note_pattern(params_hash, Helpdesk::Note.last))
     match_json(note_pattern({}, Helpdesk::Note.last))
@@ -145,7 +145,7 @@ class NotesControllerTest < ActionController::TestCase
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = create_note_params_hash.merge('attachments' => [file, file2])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    post :create, construct_params({id: ticket.display_id}, params)
+    post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :created
     response_params = params.except(:attachments)
@@ -156,7 +156,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_attachment_params_format
     params = create_note_params_hash.merge('attachments' => [1, 2])
-    post :create, construct_params({id: ticket.display_id}, params)
+    post :create, construct_params({ id: ticket.display_id }, params)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
   end
@@ -166,7 +166,7 @@ class NotesControllerTest < ActionController::TestCase
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     params = create_note_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    post :create, construct_params({id: ticket.display_id}, params)
+    post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response :bad_request
     match_json([bad_request_error_pattern('attachments', 'invalid_size', max_size: '15 MB')])
@@ -175,7 +175,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_without_privilege
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
     params_hash = create_note_params_hash
-    post :create, construct_params({id: ticket.display_id}, params_hash)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :forbidden
     match_json(request_error_pattern('access_denied'))
   end

@@ -29,7 +29,7 @@ class PostValidationTest < ActionView::TestCase
   def test_numericality_item_valid
     controller_params = {}
     item = Post.new('user_id' => 2)
-    item.topic_id = "ewrer"
+    item.topic_id = 'ewrer'
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
     refute item.valid?(:update)
     error = topic.errors.full_messages

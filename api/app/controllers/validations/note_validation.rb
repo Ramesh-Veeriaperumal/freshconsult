@@ -13,7 +13,7 @@ class NoteValidation < ApiValidation
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments && errors[:attachments].blank? }
 
-  def initialize(request_params, item, can_validate_ticket = false)
+  def initialize(request_params, item, _can_validate_ticket = false)
     super(request_params, item)
     @item = item
   end

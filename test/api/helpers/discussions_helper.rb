@@ -103,7 +103,7 @@ module Helpers::DiscussionsHelper
     { forum_category: category_params }.to_json
   end
 
-  def v2_forum_payload(fc = nil)
+  def v2_forum_payload(_fc = nil)
     forum_params.to_json
   end
 
@@ -119,11 +119,11 @@ module Helpers::DiscussionsHelper
     { topic: topic_params.merge(sticky: 0, locked: 0, body_html: Faker::Lorem.characters, forum_id: forum_id) }.to_json
   end
 
-  def v2_topics_payload(f = nil)
+  def v2_topics_payload(_f = nil)
     topic_params.merge(message_html: Faker::Lorem.characters).to_json
   end
 
-  def v2_update_topics_payload(f = nil)
+  def v2_update_topics_payload(_f = nil)
     topic_params.merge(message_html: Faker::Lorem.characters, forum_id: Forum.first.id).to_json
   end
 
@@ -141,7 +141,7 @@ module Helpers::DiscussionsHelper
   end
 
   def forum_params
-    { description: Faker::Lorem.characters, 
+    { description: Faker::Lorem.characters,
       forum_type: 2, forum_visibility: 1, name: Faker::Name.name }
   end
 
@@ -149,7 +149,7 @@ module Helpers::DiscussionsHelper
     { title: Faker::Name.name }
   end
 
-  def post_params(t)
+  def post_params(_t)
     { body_html: Faker::Lorem.characters }
   end
 end

@@ -20,8 +20,8 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
 
       # create
       v1[:create] = count_queries { post("/discussions/topics/#{t.id}/posts.json", v1_post_payload(t), @write_headers) }
-      v2[:create], v2[:api_create] = count_api_queries do 
-        post("/api/discussions/topics/#{topic_id}/posts", v2_post_payload(t), @write_headers) 
+      v2[:create], v2[:api_create] = count_api_queries do
+        post("/api/discussions/topics/#{topic_id}/posts", v2_post_payload(t), @write_headers)
         assert_response :created
       end
 
@@ -30,16 +30,15 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
 
       # update
       v1[:update] = count_queries { put("/discussions/topics/#{t.id}/posts/#{id2}.json", v1_post_payload(t), @write_headers) }
-      v2[:update], v2[:api_update] = count_api_queries do 
-        put("/api/discussions/posts/#{id1}", v2_post_payload(t), @write_headers) 
+      v2[:update], v2[:api_update] = count_api_queries do
+        put("/api/discussions/posts/#{id1}", v2_post_payload(t), @write_headers)
         assert_response :success
       end
 
-
       # destroy
       v1[:destroy] = count_queries { delete("/discussions/topics/#{t.id}/posts/#{id2}.json", nil, @headers) }
-      v2[:destroy], v2[:api_destroy] = count_api_queries do 
-        delete("/api/discussions/posts/#{id1}", nil, @headers) 
+      v2[:destroy], v2[:api_destroy] = count_api_queries do
+        delete("/api/discussions/posts/#{id1}", nil, @headers)
         assert_response :no_content
       end
 

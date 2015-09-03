@@ -305,7 +305,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_privilege
-      access_denied and return if(api_current_user.nil? || api_current_user.customer? || !allowed_to_access?)
+      access_denied && return if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
     end
 
     def allowed_to_access?
@@ -313,8 +313,8 @@ class ApiApplicationController < MetalApiController
 
       ABILITIES[resource].each do |privilege|
         if [:all, action].include? privilege.action
-          return true if api_current_user.privilege?(privilege.name) or 
-            api_current_user.owns_object?(privilege.load_object(current_account, params))            
+          return true if api_current_user.privilege?(privilege.name) ||
+                         api_current_user.owns_object?(privilege.load_object(current_account, params))
         end
       end
 
@@ -328,7 +328,6 @@ class ApiApplicationController < MetalApiController
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       handle_unverified_request
     end
-
 
     def get_request?
       @get_request ||= request.get?
