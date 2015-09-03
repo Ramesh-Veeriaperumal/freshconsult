@@ -40,7 +40,7 @@
   )
 
   folder_metas = Solution::FolderMeta.all
-
+  
   Solution::Folder.seed_many(:parent_id, :name, [
       ["FAQ", folder_metas[0]],
       ["Getting Started", folder_metas[1]],
@@ -51,7 +51,7 @@
         :parent_id => f[1].id,
         :name => f[0],
         :language_id => Language.for_current_account.id,
-        :description => f[1].is_default? ? '' : 'Default solution folder, feel free to edit or delete it.'
       }
     end
   )
+  
