@@ -1,4 +1,4 @@
-class ApiApplicationController < MetalApiController
+class ApiApplicationController < MetalApiConfiguration
   prepend_before_filter :response_headers
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception|
