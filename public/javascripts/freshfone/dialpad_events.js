@@ -127,7 +127,9 @@ var FreshfoneDialpadEvents
 		      });
 		      $(".caller_id_icon").on('click', function(){
 				 		var select2 = $('#s2id_outgoing_number_selector').data('select2');
-				 		select2.open();
+				 		if(typeof select2 != "undefined") {
+				 			select2.open();
+				 		}
 					});
 		    } else { 
 		      freshfonewidget.outgoingCallWidget.toggle(false);
