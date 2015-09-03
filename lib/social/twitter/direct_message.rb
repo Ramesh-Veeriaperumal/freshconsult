@@ -33,7 +33,7 @@ class Social::Twitter::DirectMessage
     account = twt_handle.account
     user   = get_twitter_user(@sender.screen_name.dup, @sender.profile_image_url.to_s)
     user.make_current
-    previous_ticket = user.tickets.twitter_dm_tickets(twt_handle.id).newest(1).first
+    previous_ticket = user.tickets.twitter_dm_tickets(twt_handle.id).newest(1).readonly(false).first
     unless previous_ticket.blank?
       if (!previous_ticket.notes.blank? && !previous_ticket.notes.latest_twitter_comment.blank?)
         last_reply =  previous_ticket.notes.latest_twitter_comment.first
