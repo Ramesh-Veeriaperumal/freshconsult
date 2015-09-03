@@ -41,7 +41,7 @@
               <% item_code = @installed_items.collect{|a|  a.second}%>           
             <% end %>
             <%= select_tag :items, 
-                options_for_select(@items_code_names, item_code), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "xero-accounts-select", "data-max-select" => 50} %>     
+                options_for_select(@items_code_names, item_code), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "xero-accounts-select", "data-max-select" => 30} %>     
           </div>           
         </div>  
         <div class="contact-fields">

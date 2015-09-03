@@ -91,15 +91,16 @@
         'items_code' => items,
         'default_desc' => RailsSanitizer.full_sanitizer.sanitize(params["description"])                
       }
-      raise ArgumentError if config_params['refresh_token'].blank? or config_params['oauth_token'].blank? or config_params['oauth_secret'].blank?      
+      raise ArgumentError if config_params['refresh_token'].blank? or config_params['oauth_token'].blank? or config_params['oauth_secret'].blank?
+      flash[:notice] = t(:'flash.application.install.success')
     else
       config_params = {}        
       config_params['accounts_code'] = accounts
       config_params['items_code'] = items
       config_params['default_desc'] = RailsSanitizer.full_sanitizer.sanitize(params["description"])  
+      flash[:notice] = t(:'flash.application.update.success')
     end                  
     installed_app = Integrations::Application.install_or_update(Integrations::Constants::APP_NAMES[:xero], current_account.id, config_params)
-    flash[:notice] = t(:'flash.application.install.success') if installed_app
     redirect_to integrations_applications_path
     rescue Exception => e 
       flash[:notice] = t(:'flash.application.install.error') 
