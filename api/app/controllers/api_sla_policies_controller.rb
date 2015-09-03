@@ -4,12 +4,22 @@ class ApiSlaPoliciesController < ApiApplicationController
     sla_policy_delegator = SlaPolicyDelegator.new(@item)
     if !sla_policy_delegator.valid?
       render_errors(sla_policy_delegator.errors, sla_policy_delegator.error_options)
-    elsif !@item.save
+    elsif @item.save
+      decorate_object
+    else
       render_errors(@item.errors) # not_tested
     end
   end
 
   private
+
+    def decorate_objects
+      @items.map! { |item| ApiSlaPoliciesDecorator.new(item) }
+    end
+
+    def decorate_object
+      @item = ApiSlaPoliciesDecorator.new(@item)
+    end
 
     def after_load_object
       render_request_error(:cannot_update_default_sla, 400) if @item.is_default

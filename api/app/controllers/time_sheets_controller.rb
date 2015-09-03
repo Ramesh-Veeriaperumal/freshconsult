@@ -4,10 +4,6 @@ class TimeSheetsController < ApiApplicationController
   before_filter :ticket_exists?, only: [:ticket_time_sheets]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
-  def index
-    load_objects(time_sheet_filter.includes(:workable))
-  end
-
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @time_sheet.save should be wrapped in a transaction.
@@ -27,15 +23,32 @@ class TimeSheetsController < ApiApplicationController
     timer_running = @item.timer_running
     changed = fetch_changed_attributes(timer_running)
     changed.merge!(timer_running: !timer_running)
-    render_errors @item.errors unless @item.update_attributes(changed)
+    if @item.update_attributes(changed)
+      decorate_object
+    else
+      render_errors @item.errors
+    end
   end
 
   def ticket_time_sheets
     @items = paginate_items(scoper.where(workable_id: @id))
+    decorate_objects
     render '/time_sheets/index'
   end
 
   private
+
+    def decorate_object
+      @item = TimeSheetsDecorator.new(@item)
+    end
+
+    def decorate_objects
+      @items.map! { |item| TimeSheetsDecorator.new(item) }
+    end
+
+    def load_objects
+      super time_sheet_filter.includes(:workable)
+    end
 
     def fetch_changed_attributes(timer_running)
       if timer_running

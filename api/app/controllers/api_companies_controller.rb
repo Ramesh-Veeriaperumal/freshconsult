@@ -4,6 +4,7 @@ class ApiCompaniesController < ApiApplicationController
     if !company_delegator.valid?
       render_errors(company_delegator.errors, company_delegator.error_options)
     elsif @item.save
+      decorate_object
       render_201_with_location(item_id: @item.id)
     else
       render_errors(@item.errors)
@@ -16,7 +17,9 @@ class ApiCompaniesController < ApiApplicationController
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
       render_errors(company_delegator.errors, company_delegator.error_options)
-    elsif !@item.update_attributes(params[cname])
+    elsif @item.update_attributes(params[cname])
+      decorate_object
+    else
       render_errors(@item.errors)
     end
   end
@@ -25,6 +28,15 @@ class ApiCompaniesController < ApiApplicationController
 
     def load_objects
       super scoper.includes(:flexifield)
+    end
+
+    def decorate_object
+      # only methods in BaseDecorator are used in views. Hence a custom decorator class is not defined.
+      @item = ApiCompaniesDecorator.new(@item)
+    end
+
+    def decorate_objects
+      @items.map! { |item| ApiCompaniesDecorator.new(item) }
     end
 
     def scoper

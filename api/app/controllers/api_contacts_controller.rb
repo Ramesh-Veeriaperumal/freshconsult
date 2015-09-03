@@ -3,10 +3,6 @@ class ApiContactsController < ApiApplicationController
 
   before_filter :validate_empty_params, only: [:restore, :make_agent]
 
-  def index
-    load_objects contacts_filter(scoper).includes(:flexifield, :company)
-  end
-
   def contacts_filter(contacts)
     @contact_filter.conditions.each do |key|
       clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
@@ -71,6 +67,10 @@ class ApiContactsController < ApiApplicationController
   end
 
   private
+
+    def load_objects
+      super contacts_filter(scoper).includes(:flexifield, :company)
+    end
 
     def scoper
       current_account.all_contacts

@@ -53,11 +53,13 @@ class ApiApplicationController < MetalApiConfiguration
 
   def index
     load_objects
+    decorate_objects
   end
 
   def create
     assign_protected
     if @item.save
+      decorate_object
       render_201_with_location
     else
       render_custom_errors
@@ -65,12 +67,16 @@ class ApiApplicationController < MetalApiConfiguration
   end
 
   def show
-    # load_object will load the object and show.json.jbuilder will render the result.
+    decorate_object
   end
 
   def update
     assign_protected
-    render_custom_errors unless @item.update_attributes(params[cname])
+    if @item.update_attributes(params[cname])
+      decorate_object
+    else
+      render_custom_errors
+    end
   end
 
   def destroy
@@ -215,6 +221,9 @@ class ApiApplicationController < MetalApiConfiguration
       @items = paginate_items(items, is_array)
     end
 
+    def decorate_objects
+    end
+
     def paginate_items(item, is_array = false)
       paginated_items = item.paginate(paginate_options(is_array))
 
@@ -267,6 +276,9 @@ class ApiApplicationController < MetalApiConfiguration
     def render_errors(errors, meta = nil)
       @errors = ErrorHelper.format_error(errors, meta)
       render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+    end
+
+    def decorate_object
     end
 
     def cname
