@@ -77,9 +77,12 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
-
-      agent_call = telephony.make_call(call_params)
-
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_mobile_incoming_call current_call, agent
+        raise e
+      end
       current_call.meta.update_mobile_agent_call(agent, agent_call.sid) if agent_call.present? # SpreadsheetL 27  
     end
 
@@ -118,8 +121,12 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
-      
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_mobile_transfer_call current_call, agent
+        raise e
+      end
       current_call.children.last.meta.update_mobile_agent_call(agent, agent_call.sid) if agent_call.present?
     end
 
@@ -136,8 +143,12 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
-
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_external_transfer_call current_call
+        raise e
+      end
       current_call.children.last.update_call({:DialCallSid  => agent_call.sid})
       current_call.children.last.meta.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
     end
@@ -158,15 +169,19 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
       }
-      
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_mobile_incoming_call(current_call, agent['id']) unless browser_agent?
+        raise e
+      end
       set_browser_sid(agent_call.sid, current_call.call_sid) if (browser_agent? && agent_call.present?)
     end
 
     def notify_direct_dial
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected?
-      current_number = current_call.freshfone_number
+      self.current_number = current_call.freshfone_number
       call_params    = {
         :url             => direct_dial_accept(current_call.id),
         :status_callback => direct_dial_complete(current_call.id),
@@ -176,13 +191,21 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit,
         :if_machine      => "hangup"
       }
-      
-      direct_dial = telephony.make_call(call_params)
+      begin
+        direct_dial = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_direct_dial_call current_call
+        raise e
+      end
       current_call.update_attributes(:dial_call_sid => direct_dial.sid)
     end
 
     def browser_agent?
       agent["device_type"] == "browser"
+    end
+
+    def call_actions
+      @call_actions ||= Freshfone::CallActions.new(params, current_account, current_number)
     end
 
     def notify_error(exception, params)
@@ -194,7 +217,9 @@ module Freshfone
           Number Id :: #{(current_number || {})[:id]}<br>
           Number :: #{(current_number || {})[:number]}<br>
           Params :: #{params}<br><br>
-          Exception :: #{exception.backtrace.join("\n\t")}<br>" })
+          Exception Message :: #{exception.message} <br><br>
+          Error Code(if any) :: #{exception.respond_to?(:code) ? exception.code : ''} <br><br>
+          Exception Stacktrace :: #{exception.backtrace.join("\n\t")}<br>" })
     end
   end
 end
