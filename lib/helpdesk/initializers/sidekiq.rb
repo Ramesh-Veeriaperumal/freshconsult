@@ -14,7 +14,8 @@ Sidekiq.configure_client do |config|
       "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
-      "Sidekiq::Batch::Callback"
+      "Sidekiq::Batch::Callback",
+      "Freshfone::CallQueueWorker"
     ]
   end
 end
@@ -33,7 +34,8 @@ Sidekiq.configure_server do |config|
       "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
-      "Sidekiq::Batch::Callback"
+      "Sidekiq::Batch::Callback",
+      "Freshfone::CallQueueWorker"
     ]
   end
   config.client_middleware do |chain|
@@ -41,7 +43,8 @@ Sidekiq.configure_server do |config|
       "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
-      "Sidekiq::Batch::Callback"
+      "Sidekiq::Batch::Callback",
+      "Freshfone::CallQueueWorker"
     ]
   end
 end

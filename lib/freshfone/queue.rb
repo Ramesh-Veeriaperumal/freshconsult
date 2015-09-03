@@ -179,4 +179,8 @@ module Freshfone::Queue
       xml_builder.Play Freshfone::Number::DEFAULT_QUEUE_MUSIC, :loop => 50
     end
 
+    def add_to_call_queue_worker
+      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), current_user.id)
+    end
+
 end

@@ -89,10 +89,14 @@ module Freshfone::Jobs
 			end
 
 			def self.download_data
-				@data = RemoteFile.new(@file_url,'','',@file_name)
+				begin
+					@data = RemoteFile.new(@file_url,'','',@file_name)
+				rescue OpenURI::HTTPError => e
+					Rails.logger.error "Error in in Call Recording attachment Job\n Account Id: #{@account.id}\n Call id: #{@call.id}\n Exception: #{e.message}\n Stacktrace: #{e.backtrace.join('\n\t')}"
+				end
 				NewRelic::Agent.notice_error( 
 						StandardError.new("Freshfone Call Recording Attachment size => #{ @data.size} exceeds 40MB 
-								: account => #{@account.id} : call sid => #{@call.call_sid} ")) if @data.size > 40.megabyte
+								: account => #{@account.id} : call sid => #{@call.call_sid} ")) if @data.present? && @data.size > 40.megabyte
 			end
 
 			def self.build_recording_audio
