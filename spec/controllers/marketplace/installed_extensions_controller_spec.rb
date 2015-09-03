@@ -77,8 +77,9 @@ describe Admin::InstalledExtensionsController do
   describe "POST feedback" do
     it "post the feedback" do
       controller.stubs(:post_feedback).returns(OpenStruct.new({code: 200}))
-      post :feedback, { version_id: 1 }
-      expect(controller.instance_variable_get(:@feedback).code).to eq(200)
+      xhr :post, :feedback, { version_id: 1 }
+      expect(response.code).to eq("200")
+      response.should render_template("/admin/marketplace/templates/installed_freshplugs/_app_feedback")
     end
   end
 
