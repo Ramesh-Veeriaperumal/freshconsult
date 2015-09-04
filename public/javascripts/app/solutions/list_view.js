@@ -163,8 +163,8 @@ window.App = window.App || {};
       var $this = this;
       $('body').off('.select_company');
 
-      $('body').on('click.folders_articles.select_company', '#company-submit', function () {
-        event.preventDefault();
+      $('body').on('click.folders_articles.select_company', '#company-submit', function (e) {
+        e.preventDefault();
         $this.visibleToSubmit();
       });
     },
