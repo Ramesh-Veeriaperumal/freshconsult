@@ -14,8 +14,9 @@ module Archive
       ASSOCIATIONS_TO_MODIFY = {
         :helpdesk_tickets => [:attachments => "attachable", :cloud_files => "droppable", :activities  => "notable", :survey_handles => "surveyable", :survey_results => "surveyable",
                               :support_scores => "scorable", :custom_survey_handles => "surveyable", :custom_survey_results => "surveyable", :time_sheets => "workable", :tweet => "tweetable",
-                              :ticket_topic => "ticketable",:fb_post => "postable", :freshfone_call => "notable", :tag_uses => "taggable", :article_ticket => "ticketable",:integrated_resources => "local_integratable"],
-        :helpdesk_notes => [:tweet => "tweetable", :fb_post => "postable", :freshfone_call => "notable", :attachments => "attachable", :cloud_files => "droppable", :shared_attachments => "shared_attachable" ]
+                              :ticket_topic => "ticketable",:fb_post => "postable", :freshfone_call => "notable", :tag_uses => "taggable", :article_ticket => "ticketable",:integrated_resources => "local_integratable",
+                              :inline_attachments => "attachable"],
+        :helpdesk_notes => [:tweet => "tweetable", :fb_post => "postable", :freshfone_call => "notable", :attachments => "attachable", :cloud_files => "droppable", :shared_attachments => "shared_attachable" ,:inline_attachments => "attachable"]
       }
 
       def create_archive_ticket(ticket)
@@ -131,6 +132,7 @@ module Archive
         ASSOCIATIONS_TO_MODIFY[symbol].each do |association|
           association.each do |key,value|
             model_association = responder.send(key)
+            polymorphic_type = modify_inline_attachments(symbol) if (key.to_sym == :inline_attachments)
             unless model_association.blank?
               if model_association.is_a?(Array)
                 model_association.each do |element|
@@ -146,6 +148,10 @@ module Archive
             end
           end
         end
+      end
+
+      def modify_inline_attachments(symbol)
+        polymorphic_type =  (symbol == :helpdesk_tickets) ? "ArchiveTicket::Inline" : "ArchiveNote::Inline"
       end
     end
   end

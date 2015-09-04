@@ -20,6 +20,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
            :class_name => "Helpdesk::ArchiveNote",
            :dependent => :destroy
 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "ArchiveTicket::Inline" },
+                                :foreign_key => "attachable_id",
+                                :dependent => :destroy
+                                
   has_many :activities, :class_name => 'Helpdesk::Activity',:as => :notable, :dependent => :destroy
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy

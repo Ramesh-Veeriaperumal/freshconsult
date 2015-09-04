@@ -8,7 +8,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   belongs_to_account
   belongs_to :user, :class_name => 'User'
   belongs_to :archive_ticket, :class_name => 'Helpdesk::ArchiveTicket'
-  
+
   has_one :archive_note_association, 
   		    :class_name => 'Helpdesk::ArchiveNoteAssociation',
   		    :dependent => :destroy
@@ -26,6 +26,12 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
            :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
   has_many_attachments
   has_many_cloud_files
+
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "ArchiveNote::Inline" },
+                                :foreign_key => "attachable_id",
+                                :dependent => :destroy
+  
  
   attr_protected :account_id
   accepts_nested_attributes_for :archive_note_association, :allow_destroy => true
