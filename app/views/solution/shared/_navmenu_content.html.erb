@@ -8,6 +8,9 @@
 <li>
   <%= pjax_link_to(t('solution.draft.all_drafts'), solution_my_drafts_path(:type => :all), {:"data-page-name" => :all_drafts})%>
 </li>
+<li>
+  <%= pjax_link_to(t('solution.all_categories'), solution_all_categories_path, {:"data-page-name" => :all_category})%>
+</li>
 <% end %>
 <ul id="cm-sb-solution-categories">
   <%= navmenu_categories %>

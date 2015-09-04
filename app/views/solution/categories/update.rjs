@@ -1,0 +1,6 @@
+if @category.errors.empty?
+	page << "jQuery('#version-#{@category.parent_id}-#{@category.language_id}').addClass('active');"
+	page << "jQuery('#version-#{@category.parent_id}').modal('hide');"
+else
+	page.replace_html :error_messages, "#{error_messages_for :category}"
+end

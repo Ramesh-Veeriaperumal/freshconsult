@@ -5,7 +5,7 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		if default_category?
+		if page != :all_category && default_category?
 			if @article.present? && @article.new_record?
 				_output << h(t('solution.add_article'))
 			else
@@ -238,7 +238,7 @@ module SolutionHelper
 			version = solution_meta.send("#{lan.gsub('-','_').downcase}_#{category}")
 			case category.to_sym
 				when :category
-					content << language_icon_category(language, version)
+					content << language_icon_category(solution_meta, version, language)
 				when :folder
 				when :article
 				else
@@ -247,15 +247,17 @@ module SolutionHelper
 		content.html_safe
 	end
 
-	def language_icon_category(language, version)
-		link_to( "<span class='language_name'>#{language.code[0..1].capitalize}</span>".html_safe, 
-			version.present? ? edit_solution_category_path(version) : new_solution_category_path,
+	def language_icon_category(solution_meta, version, language)
+		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>".html_safe, 
+			edit_solution_category_path(solution_meta, :language_id => language.id),
 			:rel => "freshdialog",
-			:class => "language_icon #{version.present? ? 'active' : 'inactive'} tooltip",
+			:class => "language_icon #{'active' if version.present?} tooltip",
 			:title => language.name,
+			:id => "version-#{solution_meta.id}-#{language.id}",
 			:data => {
-				"modal-title" => t('solutions.edit'),
-				"target" => "#category-edit",
+				"destroy-on-close" => true,
+				"modal-title" => "#{t('solutions.edit')}<span class='label pull-right'>#{language.name}</span>",
+				"target" => "#version-#{solution_meta.id}",
 				"close-label" => t('cancel'),
 				"submit-label" => t('save')
 			})

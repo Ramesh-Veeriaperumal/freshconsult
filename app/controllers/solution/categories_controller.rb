@@ -5,11 +5,13 @@ class Solution::CategoriesController < ApplicationController
   helper AutocompleteHelper
   helper Solution::NavmenuHelper
   helper Solution::ArticlesHelper
+  include Solution::LanguageControllerMethods
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:index, :show]
   before_filter :portal_check, :only => [:index, :show]
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:edit, :update, :destroy]
+  before_filter :load_category, :only => [:destroy]
+  before_filter :load_meta, :only => [:edit, :update]
   before_filter :load_category_with_folders, :only => [:show]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
@@ -28,7 +30,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def all_categories
-    @categories = current_account.solution_category_meta
+    @categories = current_account.solution_category_meta.include_translations.reject(&:is_default)
   end
   
   def navmenu
@@ -58,13 +60,17 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def edit
-    @page_title = @category.name
+    @category = @category_meta.send(language_scoper)
+    @category = current_account.solution_categories.new unless @category
     respond_to do |format|
-      if @category.is_default?
+      if @category_meta.is_default?
         flash[:notice] = I18n.t('category_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-        format.html { render :layout => false if @modal }
+        format.html { render  :layout => false, 
+                              :locals => {
+                                :language_id => params[:language_id]
+                              } if @modal }
       end
       format.xml  { render :xml => @category }
     end
@@ -86,9 +92,11 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
+    @category = Solution::Builder.category(params)
     respond_to do |format| 
-      if @category.update_attributes(params[nscname])       
-        format.html { redirect_to :action =>"show" }
+      if @category
+        format.html { render solution_all_categories_path }
+        format.js { render 'update', :formats => [:rjs] }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else
@@ -163,8 +171,16 @@ class Solution::CategoriesController < ApplicationController
       current_account.solution_categories
     end
 
+    def meta_scoper
+      current_account.solution_category_meta
+    end
+
     def load_category
       @category = account_scoper.find_by_id!(params[:id])
+    end
+
+    def load_meta
+      @category_meta = meta_scoper.find_by_id(params[:id])
     end
 
     def load_category_with_folders

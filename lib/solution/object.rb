@@ -44,7 +44,8 @@ class Solution::Object
 			langs = @params.keys & PREFIXES.collect{|s| "#{s}_#{short_name}"}
 			langs.collect! { |k| k.gsub("_#{short_name}", '') }.compact!
 			# Make sure, we check if multiple languages are supported for this account
-			langs.concat(['primary']).uniq
+			langs.concat(['primary']).uniq if langs.blank?
+			langs
 		end
 	end
 	

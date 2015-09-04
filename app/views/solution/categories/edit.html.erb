@@ -3,8 +3,17 @@
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=h(@category.name)%>"</span> </h3>
 <% end %>
-<%= form_for (@category), :html => {:multipart => true, :id => "folder-form", :class => "validate_form", :rel => :validate} do |f| %>
-	<%= render :partial => "category_form" , :locals => { :f => f }%>
+<%= form_for :solution_category_meta, :url => solution_category_path(@category_meta), 
+						:html => {
+							:remote => true,
+							:method => :put,
+							:"data-type" => "script", 
+							:id => "version-form-#{@category_meta.id}", 
+							:class => "validate_form version_form", 
+							:rel => :validate
+						} do |f| %>
+	<%= render :partial => "category_form" , :locals => { :f => f, :name => "solution_category_meta[#{@language_scoper}]" }%>
+	<%= f.hidden_field :language_id, :value => language_id %>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<div class="pull-left">

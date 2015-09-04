@@ -3602,6 +3602,7 @@ en:
         status: 'Status : %{status}'
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
+    all_categories: All Categories
     add_category: New Category
     orphan: Orphan
     add_folder: New Folder

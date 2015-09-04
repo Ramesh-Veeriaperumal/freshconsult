@@ -1,18 +1,20 @@
 <div class="form-horizontal">
-	<%= f.error_messages %>
+	<div id="error_messages"><%= f.error_messages %></div>
 	<div class="control-group">
 		<%= f.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
 		<div class="controls">
 			<%= f.text_field :name, 
 											:class => "text required",
 											:autocomplete => "off",
-											:autofocus => true %>
+											:autofocus => true,
+											:value => @category.name,
+											:name => "#{name}[name]" %>
 		</div>
 	</div>
 	<div class="control-group">
 		<%= f.label(:description, t('description'), {:class =>'control-label'}) %>
 		<div class="controls">
-			<%= f.text_area :description, :rows => 7 %>
+			<%= f.text_area :description, :rows => 7, :value => @category.description, :name => "#{name}[description]" %>
 		</div>
 	</div>
 	<% if current_account.portals.count > 1 %>
@@ -26,8 +28,10 @@
 																	:selected => @category.new_record? ? current_portal.id : @category.portals.map(&:id)
 																}, 
 																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
-																:placeholder => t("solution_category.select_solution_category").html_safe %>
+																:placeholder => t("solution_category.select_solution_category").html_safe,
+																:name => "solution_category_meta[portal_ids]" %>
 		</div>
 	</div>
 	<% end %>
+	<%= f.hidden_field :id, :name => "solution_category_meta[id]", :value => @category_meta.id %>
 </div>
