@@ -16,12 +16,6 @@
   };
 </script>
 
-<%= stylesheet_link_tag :'cdn/player360' %>  
-<%= stylesheet_link_tag :'freshfone_recording_playback' %>
-
-<%= javascript_include_tag :'cdn/plugins/360player'  %>
-<%= javascript_include_tag :'cdn/soundmanager'  %>
-
 <div class="archived_ticket_details">
   <%= load_sticky %>
 </div>
@@ -67,4 +61,12 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  Fjax.Assets.plugin('360player');
+  try {
+    freshfonePlayerSettings();
+  } catch(e) { console.log("freshfonePlayerSettings not loaded"); }
+</script>
+
 <% content_for :layoutType do -%>ticket_details<%- end %>
