@@ -8,7 +8,7 @@ module Helpers::TimeSheetsHelper
       agent_id: expected_output[:agent_id] || time_sheet.user_id,
       billable: (expected_output[:billable] || time_sheet.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_sheet.timer_running).to_s.to_bool,
-      time_spent: expected_output[:time_spent] || TimeSheetsDecorator.new(time_sheet).format_time_spent,
+      time_spent: expected_output[:time_spent] || TimeSheetDecorator.format_time_spent(time_sheet.time_spent),
       executed_at: expected_output[:executed_at] || time_sheet.executed_at,
       start_time: expected_output[:start_time] || time_sheet.start_time,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

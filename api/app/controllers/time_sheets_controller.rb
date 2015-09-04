@@ -23,28 +23,15 @@ class TimeSheetsController < ApiApplicationController
     timer_running = @item.timer_running
     changed = fetch_changed_attributes(timer_running)
     changed.merge!(timer_running: !timer_running)
-    if @item.update_attributes(changed)
-      decorate_object
-    else
-      render_errors @item.errors
-    end
+    render_errors @item.errors unless @item.update_attributes(changed)
   end
 
   def ticket_time_sheets
     @items = paginate_items(scoper.where(workable_id: @id))
-    decorate_objects
     render '/time_sheets/index'
   end
 
   private
-
-    def decorate_object
-      @item = TimeSheetsDecorator.new(@item)
-    end
-
-    def decorate_objects
-      @items.map! { |item| TimeSheetsDecorator.new(item) }
-    end
 
     def load_objects
       super time_sheet_filter.includes(:workable)

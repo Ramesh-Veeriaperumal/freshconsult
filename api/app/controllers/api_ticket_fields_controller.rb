@@ -1,10 +1,5 @@
 class ApiTicketFieldsController < ApiApplicationController
-
   private
-
-    def decorate_objects
-      @items.map! { |item| ApiTicketFieldsDecorator.new(item) }
-    end
 
     def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
