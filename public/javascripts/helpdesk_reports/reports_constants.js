@@ -12,13 +12,13 @@ HelpdeskReports.Constants = {
             "RESOLVED_TICKETS" : { 
                 name : "RESOLVED TICKETS",
                 title: "Resolved Tickets",
-                description: "The tickets that were created anytime and resolved in the selected time period",
+                description: "The tickets resolved in the selected time period (that were created any time)",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "REOPENED_TICKETS" : { 
                 name : "REOPENED TICKETS",
                 title: "Reopened Tickets",
-                description: "The tickets that were created anytime and reopened in the selected time period",
+                description: "The tickets reopened in the selected time period (that were created any time)",
                 css  : ["report-arrow up negative", "report-arrow down positive"]
             },
             "AVG_FIRST_RESPONSE_TIME" : { 
@@ -48,19 +48,19 @@ HelpdeskReports.Constants = {
             "FCR_TICKETS" : { 
                 name : "FIRST CONTACT RESOLUTION",
                 title: "FCR %",
-                description: "The percentage of tickets that are resolved in the selected time period after the first contact made by the customer",
+                description: "The percentage of tickets that were resolved after a single contact made by the customer in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "RESPONSE_SLA" : { 
-                name : "RESPONSE SLA",
-                title: "Response SLA %",
-                description: "The percentage of tickets that are responded to within SLA in the selected time period",
+                name : "FIRST RESPONSE SLA",
+                title: "First Response SLA %",
+                description: "The percentage of tickets whose first responses were sent within SLA in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             },
             "RESOLUTION_SLA" : { 
                 name : "RESOLUTION SLA",
                 title: "Resolution SLA %",
-                description: "The percentage of tickets that are resolved within SLA in the selected time period",
+                description: "The percentage of tickets that were resolved within SLA in the selected time period",
                 css  : ["report-arrow up positive", "report-arrow down negative"]
             }
         },

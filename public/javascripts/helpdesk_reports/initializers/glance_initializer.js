@@ -151,7 +151,11 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             }, {
                 data: data2,
                 color: REPORT_COLORS['barChartReal'],
-                borderRadius: 5
+                borderRadius: 5,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
                 //borderRadius: options.radius,
                 // borderRadiusBottomRight: options.lrRadius,
                 // borderRadiusBottomLeft: options.lrRadius
