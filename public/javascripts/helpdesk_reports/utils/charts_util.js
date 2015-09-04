@@ -258,7 +258,8 @@ function columnChart(opts) {
                 //     }
                 // },
                 animation: {
-                    duration: 1000
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 }
             }
         },
@@ -388,7 +389,8 @@ function lineChart(opts) {
                 shadow: false,
                 lineWidth: 3,
                 animation: {
-                    duration: 1000
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 },
                 marker: {
                     enabled: true,
@@ -488,7 +490,8 @@ function miniLineChart(opts) {
                 shadow: false,
                 enableMouseTracking: false,
                 animation: {
-                    duration: 1000
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 }
             },
             line: {
@@ -687,7 +690,8 @@ function barChartMultipleSeries(opts) {
                 shadow: false,
                 groupPadding: 0.3,
                 animation: {
-                    duration: 1000
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 }
             }
         },

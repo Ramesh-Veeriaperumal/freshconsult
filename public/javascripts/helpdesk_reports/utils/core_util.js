@@ -531,16 +531,20 @@ HelpdeskReports.CoreUtil = {
             success: function (data) {
                 jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
+                if (HelpdeskReports.locals.report_type == 'glance') {
+                    jQuery(window).resize();
+                }
                 jQuery("#reports_container").html(data);
-                jQuery(window).resize();
                 jQuery('#loading-box').hide();
             },
             error: function (data) {
                 jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
+                if (HelpdeskReports.locals.report_type == 'glance') {
+                    jQuery(window).resize();
+                }
                 var text = "Something went wrong, please try again";
                 _this.populateEmptyChart(["reports_container"], text);
-                jQuery(window).resize();
                 jQuery('#loading-box').hide();
             }
         }

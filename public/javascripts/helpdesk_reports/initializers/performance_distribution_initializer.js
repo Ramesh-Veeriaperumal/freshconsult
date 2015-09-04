@@ -50,7 +50,11 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 },{
                     data: current_data,
                     color: this.COLORS[chart_name],
-                    borderRadius: 5
+                    borderRadius: 5,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
                 });
                 var labels = _.keys(hash[chart_name]);
                 var settings = {
@@ -98,7 +102,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 var common_key   = _.keys(chart_data[current_trend]);
             
                 time_trend_data.push({
-                    name: 'First Response Time',
+                    name: 'Avg First Response Time',
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['first_response_time'],
