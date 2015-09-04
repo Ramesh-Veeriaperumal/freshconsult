@@ -1,10 +1,10 @@
-json.(@agent.user, :active, :email, :job_title, :language, :last_login_at, :mobile, :name, :phone, :time_zone)
+json.extract! @agent.user, :active, :email, :job_title, :language, :last_login_at, :mobile, :name, :phone, :time_zone
 json.partial! 'shared/utc_date_format', item: @agent.user
 
 json.set! :agent do
   json.set! :available_since, @agent.active_since
 
-  json.(@agent, :available, :occasional, :signature, :signature_html)
+  json.extract! @agent, :available, :occasional, :signature, :signature_html
 
   json.set! :id, @agent.user_id
 

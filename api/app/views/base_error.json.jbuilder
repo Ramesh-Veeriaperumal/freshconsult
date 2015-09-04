@@ -1,1 +1,1 @@
-json.(@error, :message)
+json.extract! @error, :message

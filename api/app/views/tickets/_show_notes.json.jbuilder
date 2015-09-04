@@ -1,6 +1,6 @@
 json.set! :notes, @notes do |note|
   json.cache! [controller_name, action_name, note] do
-    json.(note, :body, :body_html, :id, :user_id, :support_email)
+    json.extract! note, :body, :body_html, :id, :user_id, :support_email
 
     json.set! :ticket_id, @item.display_id
 

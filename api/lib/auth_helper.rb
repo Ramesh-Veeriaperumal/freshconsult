@@ -10,7 +10,7 @@ class AuthHelper
 
     # Authlogic does not change the column values if logged in by a session, cookie, or basic http auth
     def get_token_user(username)
-      user = User.find_by_single_access_token(username)
+      user = User.where(single_access_token: username).first
       return user if user && !user.deleted && !user.blocked && user.active?
     end
   end

@@ -1,4 +1,4 @@
-json.(@item, :body, :body_html, :id, :user_id, :from_email, :cc_emails, :bcc_emails)
+json.extract! @item, :body, :body_html, :id, :user_id, :from_email, :cc_emails, :bcc_emails
 
 json.set! :ticket_id, @ticket.display_id
 json.set! :replied_to, @item.to_emails

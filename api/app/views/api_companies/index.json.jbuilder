@@ -1,6 +1,6 @@
 json.array! @items do |api_company|
   json.cache! [controller_name, action_name, api_company] do
-    json.(api_company, :id, :name, :description, :note)
+    json.extract! api_company, :id, :name, :description, :note
     json.domains CompanyDecorator.csv_to_array(api_company.domains)
     json.partial! 'shared/utc_date_format', item: api_company
   end

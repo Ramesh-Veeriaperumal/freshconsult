@@ -191,7 +191,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def find_by_param(token, account)
-      find_by_display_id_and_account_id(token, account.id)
+      where(display_id: token, account_id: account.id).first
     end
 
     def find_all_by_param(token)

@@ -1,4 +1,4 @@
-json.(@item, :id, :billable, :note, :timer_running)
+json.extract! @item, :id, :billable, :note, :timer_running
 json.set! :agent_id, @item.user_id
 json.set! :ticket_id, @item.workable.display_id
 json.set! :time_spent, TimeSheetDecorator.format_time_spent(@item.time_spent)

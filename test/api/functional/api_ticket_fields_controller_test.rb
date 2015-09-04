@@ -21,7 +21,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
         new_pattern = ticket_field_nested_pattern(field, choices: field.api_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
-        klass = TicketFieldDecorator.ticket_field_choices(field).class
+        klass = TicketFieldDecorator.send(:ticket_field_choices, field).class
         new_pattern.merge!(choices: Hash) if klass == Hash
       end
       pattern << new_pattern
