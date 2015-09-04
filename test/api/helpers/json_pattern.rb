@@ -485,7 +485,7 @@ module JsonPattern
     index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
   end
 
-  def contact_field_pattern(expected_output = {}, contact_field)
+  def contact_field_pattern_without_choices(expected_output = {}, contact_field)
     default_contact_field = contact_field.column_name == 'default'
 
     {
@@ -502,10 +502,17 @@ module JsonPattern
       required_for_agent: expected_output[:required_for_agent] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,
       displayed_for_customers: expected_output[:displayed_for_customers] || contact_field.visible_in_portal,
-      choices: expected_output[:choices] || contact_field_choices(contact_field),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+  end
+
+  def contact_field_pattern(expected_output = {}, contact_field)
+    result = contact_field_pattern_without_choices(expected_output, contact_field)
+    unless contact_field.choices.blank?
+      result.merge!(choices: contact_field_choices(contact_field))
+    end
+    result
   end
 
   def sla_policy_pattern(expected_output = {}, sla_policy)
