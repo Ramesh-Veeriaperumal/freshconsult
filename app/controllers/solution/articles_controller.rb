@@ -38,9 +38,8 @@ class Solution::ArticlesController < ApplicationController
 
   def new
     @page_title = t("header.tabs.new_solution")
-    current_folder = Solution::Folder.first
-    current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
-    @article = current_folder.articles.new  
+    @article = current_account.solution_articles.new
+    set_article_folder
     @article.set_status(false)
     respond_to do |format|
       format.html {
@@ -391,6 +390,12 @@ class Solution::ArticlesController < ApplicationController
       status = params[nscname][:status]
       return status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
       save_as_draft? ? false : publish?
+    end
+
+    def set_article_folder
+      return if params[:folder_id].nil?
+      current_folder = current_account.solution_folders.find(params[:folder_id])
+      @article.folder_id = current_folder.id if current_folder.present?
     end
 
 end

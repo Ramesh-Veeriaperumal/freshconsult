@@ -37,8 +37,7 @@ class Solution::Draft < ActiveRecord::Base
   
   scope :by_user, lambda { |user|
      { 
-       :conditions => ["user_id = ?", user.id ],
-       :order => :updated_at
+       :conditions => ["user_id = ?", user.id ]
      }
   }
 
@@ -46,8 +45,7 @@ class Solution::Draft < ActiveRecord::Base
     {
       :conditions => {
         :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
-      },
-      :order => :updated_at
+      }
     }
   }
 

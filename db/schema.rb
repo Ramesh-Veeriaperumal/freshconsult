@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150824192547) do
+ActiveRecord::Schema.define(:version => 20150904074455) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2669,6 +2669,9 @@ ActiveRecord::Schema.define(:version => 20150824192547) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
   end
+
+  add_index "solution_drafts", ["account_id", "category_meta_id", "updated_at"], :name => "index_solution_drafts_on_acc_and_cat_meta_and_updated"
+  add_index "solution_drafts", ["account_id", "user_id", "updated_at"], :name => "index_solution_drafts_on_acc_and_user_and_updated"
 
   create_table "solution_folder_meta", :force => true do |t|
     t.integer  "visibility",                :limit => 8

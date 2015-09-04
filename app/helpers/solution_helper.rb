@@ -5,8 +5,8 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		if default_category?
-			if @article.present? && @article.new_record?
+		if default_category? || new_article_check?
+			if new_article_check?
 				_output << h(t('solution.add_article'))
 			else
 				_output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
@@ -27,6 +27,10 @@ module SolutionHelper
 		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
 	end
 
+	def new_article_check?
+		@article.present? ? @article.new_record? : false
+	end
+
 	def search_placeholder(page)
 		case page
 			when :category
@@ -39,7 +43,7 @@ module SolutionHelper
 	end
 
 	def default_category?
-		((@category || (@folder.respond_to?(:category) ? @folder.category : @article.folder.category)) || {})[:is_default]
+		((@category || (@folder.respond_to?(:category) ? @folder.category : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
 	end
 
 	def folder_link folder

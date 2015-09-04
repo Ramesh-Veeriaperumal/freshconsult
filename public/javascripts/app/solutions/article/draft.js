@@ -39,15 +39,7 @@ window.App = window.App || {};
           url: $('.article-edit-form').data().draftDiscardUrl,
           dataType: "script"
         },
-        handlers = {
-          success: function () {
-            console.log('Success');
-            //TODO What all to do in cancel request
-          },
-          error: function () {
-            console.log('Error');
-          }
-        },
+        handlers = {},
         request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
 
       //Only if a single autosave is success should we reverse the changes done

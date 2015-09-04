@@ -34,7 +34,7 @@
 			</div>
 		<% end %>
 		<div class="category-details span7">
-			<h2 class="list-title ellipsis tooltip" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
+			<h2 class="list-title ellipsis <%= 'tooltip' if @category.name.length > 55 %>" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
 			<div class="sol-visibility muted">
 				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
 			</div>
