@@ -25,13 +25,13 @@ window.App.Solutions = window.App.Solutions || {};
         this.currentString = searchString;
         resultList.hide().empty();
         setTimeout(function () {
-          $(".community-search").parent().first().addClass("sloading loading-small loading-right");
+          $(".community-search").parent().first().addClass("sloading loading-small loading-center");
           $this.fetchSearchResults(searchString);
         }, 450);
       } else if (this.currentString !== searchString) {
         resultList.hide();
         $('.solution-list').show();
-        $(".community-search").parent().first().removeClass("sloading loading-small loading-right");
+        $(".community-search").parent().first().removeClass("sloading loading-small loading-center");
       }
     },
 
