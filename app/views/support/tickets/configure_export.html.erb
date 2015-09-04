@@ -20,7 +20,7 @@
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
 			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), 
-				{ :class => "custom-select" } %>
+				{ :class => "export-custom-select" } %>
 		</div>
 		<div id="datepicker" class="hide">
  			<div class="span4">	
@@ -37,7 +37,7 @@
 	</fieldset>
 	<fieldset>
 		<div class="control-group">
-			<label class="lead-small"><%= t("export_data.select_header") %></label>
+			<label class="lead-small"><%= t("export_data.field_select_title") %></label>
 			<div class="alert alert-error hide" id="err_no_fields_selected"> <%= t('export_data.no_fields_selected') %> </div>
 			<div class="row-fluid" id="ticket_fields">
 	 			<% @csv_headers.each do |head| %>

@@ -27,6 +27,8 @@ class ContactMergeController < ApplicationController
   def merge
     if @error.blank?
       @target_users.each do |target|
+        @source_user.company ||= target.company
+        @source_user.client_manager ||= target.client_manager #deleting target_user will reset privileges, hence capturing client_manager here
         target.deleted = true
         target.user_emails.update_all({:user_id => @source_user.id, :primary_role => false, :verified => @source_user.active?})
         target.email = nil

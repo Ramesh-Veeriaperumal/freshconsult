@@ -17,12 +17,15 @@ class Import::Customers::Base
     read_file @customer_params[:file_location]
     mapped_fields
     build_csv_file unless @failed_items.blank?
-    UserNotifier.notify_customers_import(mailer_params)
-    (item_import = current_account.send("#{@params[:type]}_import")) && item_import.destroy
+    notify_and_cleanup
+  rescue CSVBridge::MalformedCSVError => e
+    NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
+    @wrong_csv = e.to_s
+    notify_and_cleanup
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
-    UserNotifier.notify_customers_import(mailer_params(true))
+    notify_mailer(true)
   ensure
     enable_user_activation(current_account)
     cleanup_file
@@ -132,7 +135,16 @@ class Import::Customers::Base
     File.size(failed_file_path)
   end
 
-  def mailer_params corrupted = false
+  def notify_and_cleanup
+    (item_import = current_account.send("#{@params[:type]}_import")) && item_import.destroy
+    notify_mailer
+  end
+
+  def notify_mailer param = false
+    UserNotifier.notify_customers_import(mailer_params(param))
+  end
+
+  def mailer_params corrupted
     hash = { 
       :user => @current_user, 
       :type => @params[:type].pluralize, 
@@ -143,6 +155,8 @@ class Import::Customers::Base
 
     if corrupted
       hash.merge!(:corrupted => true)
+    elsif @wrong_csv
+      hash.merge!(:wrong_csv => @wrong_csv)
     else
       # Attachment(csv file) will not be send, if the file is more than 1MB
       hash.merge!(:file_path => failed_file_path, :file_name => failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE 

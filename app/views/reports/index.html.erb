@@ -17,6 +17,9 @@
 				<%= report_item({:label => t('adv_reports.agent_at_a_glance'), :class => 'agent-at-a-glance', :url => reports_agent_glance_reports_url}) %>
 				<%= report_item({:label => t('adv_reports.group_at_a_glance'), :class => 'group-at-a-glance', :url => reports_group_glance_reports_url}) %>
 				<%end%>
+				<% if bi_reports_ui_enabled? %>
+					<%= helpdesk_report_item({:label => t('helpdesk_reports.glance.title'), :class => 'glance', :url => "/reports/v2/glance"}) %>
+				<% end %>
 			</ul>
 	</div>
 	<%end%>
@@ -44,6 +47,10 @@
 			<% if chat_activated? %>
 				<%= report_item({:label => t('reports.freshchat.report_title'), :class => 'chat-summary', :url => reports_freshchat_summary_reports_url}) %>
 			<%end%>
+			<% if bi_reports_ui_enabled? %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.agent_summary.title'), :class => 'summary-1', :url => "/reports/v2/agent_summary"}) %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.group_summary.title'), :class => 'summary-2', :url => "/reports/v2/group_summary"}) %>
+			<% end %>
 		</ul>
 	</div>
 	<% if feature?(:enterprise_reporting) %>
@@ -59,7 +66,8 @@
 			<%= report_item({:label => t('adv_reports.helpdesk_load_analysis'), :class => 'helpdesk-load-analysis', :url => reports_analysis_reports_url}) %>
 			<%= report_item({:label => t('adv_reports.helpdesk_performance_analysis'), :class => 'helpdesk-performance-analysis', :url => reports_performance_analysis_reports_url}) %>
 			<% if bi_reports_ui_enabled? %>
-				<%= helpdesk_report_item({:label => t('helpdesk_reports.ticket_volume.title'), :class => 'ticket-volume', :url => reports_v2_ticket_volume_index_url}) %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.ticket_volume.title'), :class => 'ticket-volume', :url => '/reports/v2/ticket_volume'}) %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.performance_distribution.title'), :class => 'performance', :url => '/reports/v2/performance_distribution'}) %>
 			<% end %>
 		</ul>
 		</div>

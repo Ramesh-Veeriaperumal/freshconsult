@@ -3,13 +3,15 @@ class Integrations::ApplicationsController < Admin::AdminController
   include Integrations::AppsUtil
   include Integrations::SalesforceUtil
   include Integrations::OauthHelper
+  include Marketplace::ApiHelper
   
   before_filter :load_object, :only => [:show]
-  before_filter :load_installed_application, :only => [:edit, :update, :destroy]
   before_filter :handle_google_contacts, :only => [:oauth_install]
   def index
     @applications = Integrations::Application.available_apps(current_account)
     @installed_applications = get_installed_apps
+    @custom_applications = Integrations::Application.freshplugs(current_account)
+    installed_plugs(:integrations_list)
   end
 
   def oauth_install
@@ -68,49 +70,10 @@ class Integrations::ApplicationsController < Admin::AdminController
     redirect_to :controller=> 'applications', :action => 'index'
   end
 
-  def new
-    @application = Integrations::Application.example_app
-  end
-
   def show
     if @installing_application.dynamics_crm?
       redirect_to :controller=> 'dynamics_crm', :action => 'settings'
     end
-  end
-
-  def destroy
-    @installing_application.destroy
-    redirect_to :controller=> 'applications', :action => 'index'
-  end
-
-  def update
-    application_params = params[:application]
-    unless application_params.blank?
-      widget_script = application_params.delete(:script)
-      view_pages = application_params.delete(:view_pages)
-      @installing_application.update_attributes(application_params)
-      wid = @installing_application.custom_widget
-      wid.script = widget_script
-      wid.display_in_pages_option = view_pages
-      wid.save!
-      flash[:notice] = t(:'flash.application.update.success')
-    end
-    redirect_to :controller=> 'applications', :action => 'index'
-  end
-
-  def create
-    application_params = params[:application]
-    unless application_params.blank?
-      widget_script = application_params.delete(:script)
-      view_pages = application_params.delete(:view_pages)
-      Integrations::Application.create_and_install(application_params, widget_script, view_pages, current_account)
-      flash[:notice] = t(:'flash.application.install.success')   
-    end
-    redirect_to :controller=> 'applications', :action => 'index'
-  end
-
-  def custom_widget_preview
-    render :partial => "/integrations/widgets/custom_widget_preview", :locals => {:params=>params}
   end
 
   private
@@ -155,9 +118,5 @@ class Integrations::ApplicationsController < Admin::AdminController
           end
         end
       end
-    end
-
-    def load_installed_application
-     @installing_application = Integrations::Application.freshplugs_apps(current_account).find(params[:id])
     end
 end

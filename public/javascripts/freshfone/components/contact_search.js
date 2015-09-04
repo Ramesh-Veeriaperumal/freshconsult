@@ -2,6 +2,7 @@ var FreshfoneContactSearch;
 (function ($) {
     "use strict";
   var regex = /^.*[a-zA-Z].*|.*\d.*$/,
+  numberRegex = /\W|(^[0-9.]|\+)[0-9]*$/,
   	 specCharRegex = /^[a-zA-Z0-9]*$/;
   FreshfoneContactSearch = function () {
 	   this.$container = $('#search_bar');
@@ -47,6 +48,9 @@ var FreshfoneContactSearch;
 			return (searchString.length >= 2 && regex.test(searchString))
 		},
 
+		isVaildeNumberString: function(dialedNumber) {
+			return numberRegex.test(dialedNumber);
+		},
 		replaceSpecChar: function(result_string){
 			if(!specCharRegex.test(result_string)){
 				result_string = result_string.replace(result_string.charAt(0),'');
@@ -65,9 +69,6 @@ var FreshfoneContactSearch;
 				success: function(data){
 					self.$searchList.html(data);
 					self.appendNoResults(string);
-					if(self.$searchList.is(':visible')){
-						self.$searchList.find('li :first').find('.contact-num li :first').addClass('active-element');
-					}
 				}
 			});	
 		},

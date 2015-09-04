@@ -12,6 +12,12 @@ module Helpdesk
         begin
           records_nullified = Helpdesk::Ticket.update_all( "group_id = NULL", ["account_id = ? and group_id = ?", account.id,group_id], {:limit => BATCH_LIMIT} )
         end while records_nullified == BATCH_LIMIT
+
+        return unless account.features?(:archive_tickets)
+        begin
+          records_nullified = Helpdesk::ArchiveTicket.update_all("group_id = NULL", 
+            ["account_id = ? and group_id = ?", account.id, group_id], { :limit => BATCH_LIMIT })
+        end while records_nullified == BATCH_LIMIT
       rescue Exception => e
         puts e.inspect, args.inspect
         NewRelic::Agent.notice_error(e, {:args => args})

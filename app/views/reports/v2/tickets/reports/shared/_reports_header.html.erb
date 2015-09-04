@@ -1,20 +1,24 @@
 <div class="reports-title span12">
-	<div class="selected-menu-logo span1">
-		<%= font_icon "ticket-volume", :size => 32 %>
-	</div>
-	<div class="span11">
-		<div class="report-title-block">
-			<span id="report-title"></span>
-			<span class="grey-arrow-down title-dropdown"></span>
-		</div>
-	</div>
+	<span class="report-icon">
+		<%= graph_icon(@report_type) %>
+	</span>
+	<span class="report-title-block" data-action="pop-report-type-menu">
+		<span id="report-title">
+			<%=t("helpdesk_reports.#{@report_type}.title").html_safe %>
+		</span>
+		<span class="grey-arrow-down title-dropdown"></span>
+	</span>
 </div>
 <div class="reports-filter span12">
 	<div class="edit-filter span1">
-		<button class="btn btn-primary" id="metric-edit"><%=t('helpdesk_reports.edit_filter') %></button>
+		<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter') %></button>
 	</div>
 	<div class="filter-type span11">
-		<ul></ul>
+		<ul id="filter_text"></ul>
 	</div>
-	<!-- Reports menu temporarily removed. -->
+	<div class="reports-menu hide" id="reports_type_menu">
+		<ul>
+			<%= reports_sub_menu %>
+		</ul>
+	</div>
 </div>

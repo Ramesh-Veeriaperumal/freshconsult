@@ -2,11 +2,6 @@ module Solution::LanguageMethods
 	
 	extend ActiveSupport::Concern
 
-	included do
-		scope :find_by_language, lambda { |lang| {:conditions => {:language_id => 
-			Language.find_by_code(lang).id }}}
-	end
-
 	def language
 		Language.find(language_id)
 	end

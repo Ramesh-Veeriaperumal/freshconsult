@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
+  has_many :access_tokens, :class_name => 'Doorkeeper::AccessToken', :foreign_key => :resource_owner_id, :dependent => :destroy
 
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
@@ -191,7 +192,7 @@ class User < ActiveRecord::Base
 
   def client_manager=(checked)
     if customer?
-      self.privileges = (checked == "true" && company ) ? Role.privileges_mask([:client_manager]) : "0"
+      self.privileges = ((checked == "true" || checked == true) && company ) ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
@@ -224,10 +225,6 @@ class User < ActiveRecord::Base
 
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
-  end
-
-  def emails
-    self.user_emails.map(&:email)
   end
 
   def tag_names= updated_tag_names
@@ -407,6 +404,13 @@ class User < ActiveRecord::Base
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)
+  end
+
+  # Marketplace
+  def developer?
+    marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
+    developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
+    Account.current.features?(:fa_developer) && !developer_privilege.blank?
   end
 
   def can_assume?(user)

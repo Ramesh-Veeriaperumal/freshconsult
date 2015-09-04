@@ -1,16 +1,17 @@
 <div id="dial-pad" class="ff-dial-pad"> 
 <div class="caller_id">
-	<%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon" %>
 	<% if current_account_freshfone_number_hash.length == 1 %>
 	 <% number = current_account_freshfone_number_hash.first %>
 	 <% if current_account_freshfone_names.present? %>
 	 	<% name = current_account_freshfone_names.first %>
 	 <% end %> 
+	 <%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon single_number" %>
 	 <div class="outgoing_number_info">
 	  <span data-number_id='<%= number[1] %>' class="outgoing_number"
 			id="outgoing_number_selector"><b class='ff_number_name'><%= name[1] %></b><%= number[0] %> </span>
 		</div>
 	<% else %>
+		<%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon" %>
 		<%= select_tag "outgoing_number_selector", 
 									options_for_select(current_account_freshfone_details),  
 									 :class => "span2 outgoing_numbers_list",

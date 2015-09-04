@@ -355,11 +355,22 @@ protected
                                 :error_label => :label }
     end
 
+    # TODO: FOR ARCHIVE NEED TO AJAXIFY
     def define_contact_properties 
       @merged_user = @user.parent unless @user.parent.nil?
-      @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible #wont hit a query here
-      @total_user_tickets_size = current_account.tickets.permissible(current_user).requester_active(@user).visible.count
-      @user_tickets = @total_user_tickets.newest(10).find(:all, :include => [:ticket_states,:ticket_status,:responder,:requester])
+
+      @total_user_tickets = current_account.tickets.permissible(current_user).
+        requester_active(@user).visible.newest(11).find(:all, 
+          :include => [:ticket_states,:ticket_status,:responder,:requester])
+      @total_user_tickets_size = @total_user_tickets.length
+      @user_tickets = @total_user_tickets.take(10)
+
+      if current_account.features?(:archive_tickets)
+        @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
+          requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
+        @total_archive_user_tickets_size = @total_archive_user_tickets.length
+        @user_archive_tickets = @total_archive_user_tickets.take(10)
+      end
     end
 
     def get_formatted_message(exception)

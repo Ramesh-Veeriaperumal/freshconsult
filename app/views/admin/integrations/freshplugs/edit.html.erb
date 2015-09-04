@@ -1,0 +1,9 @@
+<%= content_tag(:h3, t('integrations.custom_application.edit_freshplug'), :class => "title") %>
+<%= form_for @application, :url => admin_integrations_freshplug_path, :html => {:method => :put, :multipart => true, :id => "ConfigureApplication" } do |f| %> 
+  <%= render :partial => "custom_application_form", :locals => { :is_edit => true , :f => f } %>
+  <div class="button-container itil-hide">
+    <%= link_to t('back'), integrations_applications_path(:anchor => 'fresh-plugs'),
+    		:class => "btn btn-default pull-left" %>
+    <%= f.submit t('save'), :class => "btn btn-primary" %>
+  </div>
+<% end %>

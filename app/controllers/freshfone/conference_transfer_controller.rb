@@ -11,6 +11,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   before_filter :update_conference_sid, :only => [:transfer_agent_wait]
   before_filter :select_current_call, :only => [:initiate_transfer]
   before_filter :set_child_call_status, :only => [:transfer_success]
+  before_filter :handle_simultaneous_answer, :only => [:transfer_success]
   after_filter :remove_conf_transfer_job, :only => [:transfer_success]
   before_filter :check_current_call, :only => [:cancel_transfer, :resume_transfer]
   
@@ -131,5 +132,24 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
       return unless current_call.inprogress? #checking for parent call is in progress, if so then child is canceled.
       current_call.children.last.canceled!
       empty_twiml and return
+    end
+
+    def handle_simultaneous_answer
+        incoming_answered and return unless intended_agent?
+    end
+
+    def incoming_answered
+      @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, "canceled") if @transfer_leg_call.meta.present?
+      render :xml => telephony.incoming_answered(@transfer_leg_call.agent) 
+    end
+
+    def intended_agent?
+      @transfer_leg_call = current_call.children.last
+      return true if @transfer_leg_call.user_id.blank?
+      @transfer_leg_call.user_id.to_s == get_agent_id
+    end
+
+    def get_agent_id
+      split_client_id(params[:To])      
     end
 end

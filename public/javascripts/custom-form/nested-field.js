@@ -65,12 +65,11 @@
 		getAllLevels: function () {
 			this.settings.currentData    = $H(this.settings.currentData);
 			levels = this.settings.currentData.get("levels");
-			action = (this.settings.currentData.get("level_three_present")) ? ((nestedTree.third_level) ? "edit" : "delete") : "create";
-
+			action = (this.settings.currentData.get("level_three_present")) ? ((this.nestedTree.third_level) ? "edit" : "delete") : "create";
 			if (levels.size() < 2) levels.push({level: 3});
-
-			if (!this.settings.currentData.get("level_three_present") && !nestedTree.third_level)
+			if (!this.settings.currentData.get("level_three_present") && !this.nestedTree.third_level){
                 levels.pop();
+			}
 
 			this.settings.currentData.set("levels", levels.map(function (item) {
 			  return {
@@ -91,8 +90,8 @@
             var effect      = 'slide',
                 options     = { direction: 'top' },
                 duration    = 500;
-            $('.sections-wrapper').slideToggle("slow");
-            $('#nestedEdit').slideToggle("slow");
+            $('#nestedFieldPreview').slideToggle();
+            $('#nestedEdit').slideToggle().focus();
 		},
 		nestedFieldValidation: function () {
 			$.validator.addMethod("nestedTree", $.proxy(function (value, element, param) {
@@ -199,13 +198,15 @@
 			this.initializeNestedField();
 			$(document).on('click.dialog-events', '#nested-edit-button', $.proxy(function (e) {
 				e.stopPropagation();
-				this.showNestedTextarea(); 
+				this.showNestedTextarea();
+				$('.modal-body').animate({scrollTop : $("#nestedEdit").position().top},200);
 				return false;
 			}, this));
 
 			$(document).on('click.dialog-events', '#nestedDoneEdit', $.proxy(function (e) {
 				e.stopPropagation();
-				this.backToPreview();
+				if($('#nestedTextarea').valid())
+					this.backToPreview();
 				return false;
 			}, this));
 

@@ -13,7 +13,7 @@ class Search::TicketsController < Search::SearchController
 		if @search_by_field
 			search([Helpdesk::Ticket], { :size => 1000, 
 					:load => { Helpdesk::Ticket => { :include => [:requester, :ticket_states, {:flexifield => :flexifield_def}] }},
-					:preference => :_primary_first, :page => 1}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
+					:preference => :_primary_first, :page => 1, :without_archive => true}) if TICKET_SEARCH_FIELDS.include?(params[:search_field])
 			respond_to do |format|
 				format.json { render :json => @result_json }
 				format.nmobile {

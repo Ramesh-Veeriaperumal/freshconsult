@@ -1,0 +1,238 @@
+<div id="all-views-tmpl" class="hide">
+    <%= render :partial => "helpdesk/tickets/filters", :locals =>{ :selected => "archived", :custom_filters => @filters_options } %>
+</div>
+<script type="text/javascript">
+  function getFilterData(){
+    query_hash = $A(); 
+    jQuery("div.ff_item").map(function () {
+      var condition = this.getAttribute("condition"),
+          container = this.getAttribute("container"),
+          operator  = this.getAttribute("operator");
+      _selector = 'input:checkbox:checked'; 
+      var value;
+          
+      if(container == "multi_select") _selector = 'option:selected';
+       
+      if(container == "nested_field") {         
+        value = jQuery(this).children('select').val();
+      }
+      else if(container == "requester"){
+        value = jQuery('#requester_filter').val().toString() || '';
+      }
+      else if(container == "customers"){
+        value = jQuery('#customers_filter').val().toString() || '';
+      }
+      else if(container == "single_select"){
+        if(jQuery('#created_at option:selected').val() != "any_time")
+          value =  jQuery('#created_at option:selected').val();
+      }
+      else {
+        value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
+      }
+                        
+      if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1))) ) {
+        if(condition == "created_at" && value == "set_date"){
+          value = jQuery("#created_date_range").val();
+        }
+        query_hash.push(query_params(this,value,container));
+      }
+    });
+    jQuery("#FilterOptions input[name=page]").val(1);
+
+    function query_params(element,value,container){
+      return {
+        condition   : element.getAttribute("condition"),
+        operator    : element.getAttribute("operator"),
+        ff_name     : element.getAttribute("ff_name"),
+        value       : value.toString()
+      }
+    }
+  }
+
+  function refresh_tickets() {
+    getFilterData();
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
+  }
+
+  function toggle_save_and_refresh() {    
+    refresh_tickets();
+  }
+
+</script>
+  <% special_case_views = ['deleted','spam','monitored_by'] %>
+    <h5 class="lead"><%= t("tickets_filter.title") %></h5>
+    <%= itil_ticket_filters.html_safe %>
+    <form id="FilterOptions" action="#">
+      <input type="hidden" name="data_hash" value="" />
+      <input type="hidden" name="filter_name" value="<%= @current_view %>" />
+      <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
+      <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
+  		<input type="hidden" name="page" value="1" />
+      <input type="hidden" name="total_entries" value="0">
+      <input type="hidden" name="total_entries" value="0">
+
+      <input type="hidden" name="unsaved_view" id="flag_unsaved_view" <%= "disabled" unless params[:unsaved_view] %> value="true" />
+    </form>
+      <% @show_options.each_with_index do |c_hash, i| %> 
+        <% if allowed_filter_options.include?(c_hash[:name].to_sym) %>
+        <%
+          if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
+            container = "nested_field"
+          elsif c_hash[:name] == 'created_at'
+            container = "single_select"            
+          elsif ['requester', 'customers'].include?(c_hash[:name])
+            container = c_hash[:name]
+          else
+            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+          end
+          set_created_at_options(c_hash)
+        %> 
+    	  <%=
+        unless c_hash[:options].blank?
+          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+                                :class       => "ff_item", 
+                                :condition   => c_hash[:condition],
+                                :operator    => c_hash[:operator],
+                                :ff_name     => c_hash[:ff_name],
+                                :container   => container } do %>
+            <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe.capitalize : c_hash[:name].html_safe.capitalize %></h4>
+            <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => [], :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => [], :c_hash => c_hash} %>
+          <% end
+          end 
+        end 
+        end %>
+<%= javascript_tag do%>
+	var query_hash  = $A();
+  
+	jQuery(document).ready(function(){
+
+  jQuery("#div_ff_created_date_range").hide();
+  if(jQuery("#created_date_range").val() == ""){
+    jQuery("#created_date_range").val('<%= TicketConstants.created_date_range_default %>');
+  }
+
+  if(jQuery("#created_at").data("selectedValue").toString().split("-").length == 2){
+    jQuery("#created_date_range").val(jQuery("#created_at").data("selectedValue"));
+    jQuery("#created_at").val("set_date").change();
+    jQuery("#div_ff_created_date_range").show();
+  }
+
+    // #TODO : change the format of the date based on the account config
+    jQuery('#created_date_range').bootstrapDaterangepicker(
+    {
+      ranges: {
+      },
+      startDate: new Date(jQuery("#created_date_range").val().split("-")[0]),
+      endDate: new Date(jQuery("#created_date_range").val().split("-")[1]),
+      minDate: Date.parse('1/1/2010'),
+      maxDate: new Date(),
+      format: "DD MMM YYYY"
+    });
+
+    jQuery("#created_date_range").on("clickdate",function(){
+      refresh_tickets();
+    });
+
+    jQuery(".range_inputs").hide();
+    jQuery(".ranges").hide();
+
+    jQuery("#created_date_range").bind('keypress keyup keydown', function(ev) {
+      ev.preventDefault();
+      return false;
+    });
+
+    jQuery("#created_date_range").on("show",function(){
+      jQuery(".ranges .active").click();
+    });
+
+    getFilterData();
+    <%= 'jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON());'.html_safe unless special_case_views.include?(@current_view) %>
+
+    jQuery(".filter_item").bind("change", function(){
+      jQuery("#active_filter").addClass('unsaved');
+      if(this.id == "created_at"){
+        if(jQuery(this).val() == "set_date"){
+          jQuery("#div_ff_created_date_range").show();
+          jQuery("#created_date_range").focus();
+        }
+        else{
+          jQuery("#div_ff_created_date_range").hide();
+        }
+      }
+      refresh_tickets();
+    });
+
+    if (jQuery("#active_filter").hasClass('unsaved')) {
+      showSave();
+    }
+
+    jQuery('#save_filter').live("click",function(e){
+      preventDefault(e);
+      jQuery(this).addClass('tkt-filter-loading');
+      // switchClass if used here is not working in IE8!
+      jQuery('.ticket-view-save').removeClass('ticket-view-save').addClass('sloading loading-tiny');
+      jQuery.ajax({
+        url: "/wf/filter/update_filter",
+        type: "POST",
+        data: {
+          data_hash: query_hash.toJSON(),
+          filter_name: jQuery('#active_filter').text(),
+          wf_model: "Helpdesk::Ticket",
+          wf_order: jQuery('#FilterOptions input[name=wf_order]').val(),
+          wf_order_type: jQuery('#FilterOptions input[name=wf_order_type]').val(),
+          custom_ticket_filter: {
+            visibility: ""
+          }
+        },
+        success: function(msg){}
+      });
+    });
+
+    jQuery(".wf_order_type, .wf_order").die();
+    jQuery(".wf_order_type, .wf_order").live("click", function(ev){
+      ev.preventDefault();
+      jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
+    });	
+    jQuery(".toolbar_pagination a, .toolbar_pagination_full a").die();
+		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
+			ev.preventDefault();
+			jQuery(document).scrollTop(0);
+      count = +jQuery('#ticket_list_count').html();
+      jQuery("#FilterOptions input[name=total_entries]").val(count);
+			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
+		});	
+
+    if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+      jQuery('#export_tickets').hide();
+      jQuery('#empty_trash').hide();
+    }	
+
+    jQuery('#all-views').html($J('#all-views-tmpl').html());
+    jQuery('#all-views-tmpl').html('');
+    });
+  
+  jQuery("#FilterOptions").change(function(){
+    jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
+    jQuery.ajax({
+      url: "/helpdesk/archive_tickets/custom_search",
+      type: "POST",
+      dataType: "script",
+      data: jQuery(this).serializeArray(),
+      success: function(script){ 
+        count = +jQuery('#ticket_list_count').html();
+        jQuery("#FilterOptions input[name=total_entries]").val(count);
+
+        if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
+          jQuery('#export_tickets').hide();
+        } else {
+          jQuery('#export_tickets').show();
+        } 
+        // For highlighting updated and new tickets
+        if(!updated_tickets) var updated_tickets = [];
+
+        
+        window.FreshdeskNode.addSubscriptions();
+      }
+    }); 
+  });
+<% end %>

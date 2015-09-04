@@ -42,10 +42,14 @@
     z-index: 999;
     cursor:pointer;
     &:hover{ color: #333;} 
+    &.single_number { 
+      color: #333;
+      cursor: text; 
+    }
   }
 	#freshfone_dialpad{
 	 width: 298px;
-	 max-height: 426px;
+	 max-height: 432px;
     display: inline-block;
 	}
   #recent_calls_cont{
@@ -65,7 +69,7 @@
   }
 	.keypad-popup {
 		border:none;
-    margin-top: 165px;
+    margin-top: 170px;
 	}
 	#ongoing_dialpad{
     width: 298px;
@@ -275,7 +279,7 @@
 		box-shadow:1px 1px 4px rgba(0,0,0,0.2); 
 		background-color:#FAFAFA; 
 		width:297px; 
-		max-height:369px; 
+		max-height:390px; 
 		overflow-y:scroll; 
     border-radius: 3px;
 	}
@@ -451,7 +455,7 @@
   }
   .contact-details-msg {
   	background-color: #FAFAFA;
-  	height: 418px;
+  	height: 430px;
   	width:100%;
   	bottom: 0;
   	position: absolute;
@@ -484,7 +488,7 @@
     padding-left: 130px;
   }
   .message-type {
-  	height: 182px;
+  	height: 194px;
   	width:100%;
   	position: relative;
   	text-align: left;
@@ -516,7 +520,8 @@
   .phone-contact{
   	display: inline-block;
     vertical-align: middle;
-  	margin-left: 3px;
+  	margin-left: 8px;
+    max-width: 65%;
   }
   .phone-type{
   	display: inline-block;
@@ -545,6 +550,7 @@
 	.outgoing_number {
 	 width: 240px;
    line-height: 31px;
+   left: 35px;
    .ff_number_name {
       @include padding-right(3px);
    }
@@ -700,16 +706,17 @@
 	//	recent calls - starts
 	#recent_calls {
 		background-color: white;
-		height: 300px;
+		height: 312px;
 	}
-  .recent_calls_title {
-    margin-left: 12px;
-    margin-bottom: 5px;
-    padding-top: 5px;
-    color: #A5A5A5;
-  }
 
   .recent_calls_container {
+    .recent_calls_title {
+      display: block;
+      margin-left: 12px;
+      margin-bottom: 5px;
+      padding-top: 5px;
+      color: #A5A5A5;
+    }
     .recent_call_entry {
       @include padding(5px 0 5px 5px);
       min-height: 43px;
@@ -786,7 +793,7 @@
 	.no_call_history {
 		@include text-align(center);
 		padding: 18px;
-		font-size: 16px;
+		font-size: 14px;
 		color: $ch-no-call-log-text;
 		font-weight: 18;
 	}

@@ -107,53 +107,6 @@ RSpec.describe Integrations::ApplicationsController do
     request.flash[:error].should eql error_flash[:error]
   end
 
-  it "renders the new application template" do
-    get 'new'
-    response.should render_template "integrations/applications/new"
-  end
-
-  it "should create a new application" do
-    now = (Time.now.to_f*1000).to_i
-    post :create, :application => {:name => "New application #{now}",
-                                   :display_name => "New application #{now}",
-                                   :description => "New application subject #{now}",
-                                   :listing_order => 1,
-                                   :options => {:display_in_pages => ["helpdesk_tickets_show_page_side_bar"]},
-                                   :account_id => @account.id,
-                                   :application_type => "freshplug"
-                                  }
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "renders the edit application template" do
-    get 'edit', :id => @new_application.id
-    response.should render_template "integrations/applications/edit"
-  end
-
-  it "should update a new application" do
-    now = (Time.now.to_f*1000).to_i
-    put :update, {:id => @new_application.id , :application => {:display_name => "New application #{now}",
-                                               :description => "New application subject #{now}",
-                                               :view_pages => ["helpdesk_tickets_show_page_side_bar"],
-                                               :script => "<script></script>" }
-                }
-    app = Integrations::Application.find_by_display_name("New application #{now}")
-    app.should_not be_nil
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "should delete an installed aplication" do
-    delete :destroy, :id => @new_application.id
-    app = Integrations::Application.find_by_id(@new_application.id)
-    app.should be_nil
-    response.should redirect_to "/integrations/applications"
-  end
-
-  it "renders custom widget preview partial" do
-    get 'custom_widget_preview'
-    response.should render_template("integrations/widgets/_custom_widget_preview")
-  end
-
   it "should install salesforce application using oauth" do
     provider = "salesforce"
     set_redis_key(provider, salesforce_params(provider))

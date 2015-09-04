@@ -14,7 +14,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
+  before_save :assign_outbound_agent, :if => :outbound_email?
+
+  before_save  :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
   before_update :update_sender_email
 
@@ -45,13 +47,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 
   def set_outbound_default_values
-    if User.current.try(:id) and User.current.agent?
-      self.responder_id ||= User.current.id
-    end
-    
     if email_config
       self.to_emails = [email_config.reply_email]
       self.to_email = email_config.reply_email
+    end
+  end
+
+  def assign_outbound_agent
+    return if responder_id
+     if User.current.try(:id) and User.current.agent?
+      self.responder_id = User.current.id
     end
   end
 

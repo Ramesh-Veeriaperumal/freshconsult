@@ -1,9 +1,0 @@
-<%= content_tag(:h3, t('integrations.custom_application.edit'), :class => "title") %>
-<% @application = @installing_application %>
-<%= form_for @installing_application, :url => { :controller=> "applications", :action => "update", :id => @installing_application.id }, :html => {:multipart => true, :id => "ConfigureApplication" } do |f| %> 
-  <%= render :partial => "custom_application_form", :locals => { :is_edit => true , :f => f } %>
-  <div class="button-container itil-hide">
-    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "floatl uiButton" %>
-    <%= f.submit t('update'), :class => "uiButton" %>
-  </div>
-<% end %>

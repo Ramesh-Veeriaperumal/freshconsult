@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
     :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false, :es_multilang_solutions => false,
     :disable_rr_toggle => false, :dynamic_sections => false, :domain_restricted_access => false, :freshfone_conference => false,
-    :public_ticket_url => false }
+    :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features
