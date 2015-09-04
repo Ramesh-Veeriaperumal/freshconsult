@@ -22,14 +22,14 @@
 							edit_solution_folder_path(@folder),
 							:rel => "freshdialog",
 							:class => "ficon-edit fsize-23 tooltip",
-							:title => t('solutions.edit'),
+							:title => t('folder.edit'),
 							:data => {
 								"modal-title" => t('solutions.edit'),
 								"target" => "#folder-edit",
 								"close-label" => t('cancel'),
 								"submit-label" => t('save')	
 							}) %>
-				<%= confirm_delete(@folder, solution_folder_path(@folder), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '',  :title => t('solutions.delete') }) %>
+				<%= confirm_delete(@folder, solution_folder_path(@folder), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '',  :title => t('folder.delete') }) %>
 			</div>
 		<% end %>
 		<div class="category-details span7">

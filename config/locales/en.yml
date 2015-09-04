@@ -393,6 +393,7 @@ en:
 
   folder:
     edit: Edit Folder
+    delete: Delete Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
     delete_confirm:
@@ -2664,6 +2665,7 @@ en:
     new: New Category
     new_forum_category: New Forum Category
     edit: Edit Category
+    delete: Delete Category
   delete: Delete
   delete_confirm:
     confirm: Please Confirm...
@@ -3588,6 +3590,7 @@ en:
     orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
+      unassociated: "Unassociated Categories"
       orphan_desc: "These categories are not associated in any portal"
       view_all: "View all"
       view_less: "View less"
@@ -3602,10 +3605,13 @@ en:
         all: "All Feedback"
         details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
         status: 'Status : %{status}'
+        my_articles: "On My Articles"
+        all_articles: "On All Articles"
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     add_category: New Category
     orphan: Orphan
+    unassociated: Unassociated
     add_folder: New Folder
     add_article: New Article
     view_feedback: View all feedback

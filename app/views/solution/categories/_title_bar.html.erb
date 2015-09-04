@@ -23,14 +23,14 @@
 							edit_solution_category_path(@category),
 							:rel => "freshdialog",
 							:class => "ficon-edit fsize-23 tooltip",
-							:title => t('solutions.edit'),
+							:title => t('category.edit'),
 							:data => {
 								"modal-title" => t('solutions.edit'),
 								"target" => "#category-edit",
 								"close-label" => t('cancel'),
 								"submit-label" => t('save')
 							}) %>
-				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('solutions.delete') }) %>
+				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('category.delete') }) %>
 			</div>
 		<% end %>
 		<div class="category-details span7">
