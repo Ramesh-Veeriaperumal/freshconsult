@@ -1,12 +1,35 @@
 @import "../../settings/settings";
 @import "../../shared/mixins";
 .solutions {
-  #article-form {
-    #editortool {
-      .redactor_toolbar {
-        background: none;
-      }
+
+  #sticky_redactor_toolbar {
+    .redactor_toolbar {
+      background: none;
+      position: absolute;
+      padding: 0 20px !important;
+      box-sizing: border-box;
+      border-bottom: none;
+      top: 110px;
+      z-index: 2;
     }
+    
+    &.has-notification .redactor_toolbar {
+      top: 146px;
+    }
+  }
+  
+  .is_stuck #sticky_redactor_toolbar{
+    .redactor_toolbar {
+      top: 51px;
+      background: #fff;
+      box-shadow: 0 5px 5px -6px #333;
+    }
+    &.has-notification .redactor_toolbar {
+      top: 87px;
+    }
+  } 
+  
+  #article-form {
     .attachment_list {
       .new_attachment {
         .attach_content {
@@ -54,7 +77,6 @@
       height: 35px;
       line-height: 35px;
       padding: 0 20px;
-      box-shadow: 0 5px 5px -5px #333;
       border-top: 1px solid #ccc;
       p{
         margin: 0;
@@ -80,7 +102,6 @@
 
   .solution-content {
     overflow: hidden;
-    padding-top: 16px;
     .article-content{
       margin-top: 15px;
       margin-bottom: 15px;
@@ -99,6 +120,7 @@
       box-sizing: border-box;
       @include float(left);
       min-height: 220px;
+      margin-top: 20px !important;
       .redactor_box{
         border: 0;
         .redactor_editor {

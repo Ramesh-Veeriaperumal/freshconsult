@@ -17,8 +17,10 @@ window.App = window.App || {};
 
     onVisit: function (data) {
       if (App.namespace === "solution/articles/new") {
+        $('#sticky_redactor_toolbar').removeClass('hide');
         this.eventsForNewPage();
       } else {
+        
         this.eventsForShowPage();
       }
     },

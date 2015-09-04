@@ -117,6 +117,7 @@ window.App = window.App || {};
             this.themeChange(!success);
             this.lastUpdatedAt(response);
             this.toggleButtons(success);
+            $('#sticky_redactor_toolbar').addClass('has-notification');
           }
         }
 

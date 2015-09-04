@@ -25,7 +25,8 @@
               :class => "required_redactor", 
               :value => (@article.new_record? ? @article.description : ''),
               :data => {
-                :"remove-cursor" => true
+                :"remove-cursor" => true,
+                :"toolbar-external" => '#sticky_redactor_toolbar'
               }
         %>
       </div>

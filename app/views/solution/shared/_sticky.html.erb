@@ -1,5 +1,8 @@
-<% page ||= :home %>
-<% sticky_class ||= "" %>
+<% 
+page ||= :home
+sticky_class ||= "" 
+toolbar ||= false
+%>
 <div id="sticky_header" class="<%= sticky_class %>"
       rel="sticky" data-collapsed="true"
       data-scroll-top="true"
@@ -41,5 +44,9 @@
   	</div>
   </div>
   <div class="sticky_title"><%= yield :sticky_title %></div>
+  <% if toolbar %>
+    <div class="clearfix"></div>
+    <div id="sticky_redactor_toolbar" class="hide"></div>
+  <% end %>
 </div>
 <div class="clearfix"></div>

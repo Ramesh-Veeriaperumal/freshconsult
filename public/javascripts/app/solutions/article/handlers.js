@@ -33,6 +33,10 @@ window.App = window.App || {};
 		},
     
     startEditing: function () {
+      $('#sticky_redactor_toolbar').removeClass('hide');
+      if ($('#solution-notification-bar').is(':visible')) {
+        $('#sticky_redactor_toolbar').addClass('has-notification');
+      }
       $('#solution_article_title').focus();
       
       this.setFormValues();
@@ -48,6 +52,7 @@ window.App = window.App || {};
       this.editUrlChange(true);
       this.attachmentsDelEvents();
       this.disableDraftResetAttr();
+      
     },
 
     disableDraftResetAttr:  function () {
@@ -62,6 +67,7 @@ window.App = window.App || {};
 
     cancel_UI_toggle: function () {
       this.toggleViews();
+      $('#sticky_redactor_toolbar').addClass('hide');
       $('.article-view-edit:hidden').show();
       $(".autosave-notif:visible").hide();
     },
