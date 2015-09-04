@@ -3,6 +3,7 @@ class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
   include APIHelperMethods
+  include ExportCsvUtil
   
   include Gamification::GamificationUtil
   include MemcacheKeys
@@ -261,6 +262,24 @@ class AgentsController < ApplicationController
       end
   end 
 
+  def configure_export
+    @csv_headers = Agent::EXPORT_FIELDS
+    render :layout => false
+  end
+
+  def export_csv
+    portal_url = main_portal? ? current_account.host : current_portal.portal_url
+    if valid_export_params?
+      ExportAgents.perform_async({:csv_hash => params[:export_fields], 
+                                            :user => current_user.id, 
+                                            :portal_url => portal_url})
+      flash[:notice] = t('agent.export_successfull')
+    else
+      flash[:notice] = t('agent.invalid_export_params')
+    end
+    redirect_to :back
+  end
+
  protected
  
   def scoper
@@ -400,6 +419,10 @@ private
                               redirect_to :back }
         format.any(:xml, :json) {render request.format.to_sym => error, :status => status.to_sym}
     end
+  end
+
+  def valid_export_params?
+    params[:export_fields].values.all? { |param| Agent::EXPORT_FIELD_VALUES.include? param }
   end
 
 end

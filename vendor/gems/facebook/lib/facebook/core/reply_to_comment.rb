@@ -17,16 +17,21 @@ class Facebook::Core::ReplyToComment < Facebook::Core::Comment
     @koala_comment = koala_comment.nil? ? @koala_comment : koala_comment
     return if feed_converted?(@koala_post.feed_id)
     
-    comment_ticket = @account.facebook_posts.find_by_post_id(@koala_comment.parent[:id])   
-    post_ticket    = @account.facebook_posts.find_by_post_id(@koala_comment.parent_post)
+    comment_converted = @account.facebook_posts.find_by_post_id(@koala_comment.parent[:id])   
+    post_converted    = @account.facebook_posts.find_by_post_id(@koala_comment.parent_post)
     
-    if comment_ticket && comment_ticket.is_ticket?
-      note = add_as_note(comment_ticket.postable, @koala_comment)
-    elsif post_ticket && post_ticket.is_ticket?
-      add_comment_as_note(post_ticket)
+    if comment_converted || post_converted
+      if comment_converted && comment_converted.is_ticket?
+        note = add_as_note(comment_converted.postable, @koala_comment)
+      elsif post_converted && post_converted.is_ticket?
+        add_comment_as_note(post_converted)
+      else
+        add_as_new_ticket(post_converted, comment_converted)
+      end
     else
       add_as_post_and_note
     end
+   
   end
 
   def in_reply_to
@@ -62,5 +67,10 @@ class Facebook::Core::ReplyToComment < Facebook::Core::Comment
       koala_parent_comment.fetch(in_reply_to)
       core_comment = Facebook::Core::Comment.new(@fan_page, koala_parent_comment)
       core_comment.process
+    end
+    
+    def add_as_new_ticket(post, comment)
+      archived_post = (comment ? comment.postable : false) || (post ? post.postable : false)
+      add_as_ticket(@fan_page, @koala_comment, convert_args, archived_post)
     end
 end

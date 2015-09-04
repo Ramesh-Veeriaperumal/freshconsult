@@ -482,6 +482,7 @@ en:
       thanks_for_feedback: "We have received your feedback. Thank you very much."
       feedback_already_done: "You have already given feedback for this response."
       handle_expired: "Your survey request link has been expired."
+      survey_closed: "This survey is closed."
       preview_feedback_error: The url entered is invalid.
       no_survey_result_error: Invalid parameters to create feedback.
       no_survey_active_error: Survey is not enabled to create feedback.
@@ -600,6 +601,8 @@ en:
       submit_ticket: "New ticket"
       ticket_list: "Ticket list"
       ticket_view: "Ticket details"
+      archive_ticket_list: "Archived ticket list"
+      archive_ticket_view: "Archived ticket details"
       my_topics: "My Topics"
   portal_meta:
     titles:
@@ -2088,6 +2091,7 @@ en:
       info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
+      info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -3077,6 +3081,9 @@ en:
   agent:
     full_time_agent: Full-Time Agent
     occasional_agent: Occasional Agent
+    export: "Export"
+    export_successfull: "Your Agents data will be sent to your email shortly!"
+    invalid_export_params: "An error occurred while exporting agent data. Please try again."
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
@@ -3101,6 +3108,7 @@ en:
     available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
     no_seats: No agent seats available
+    export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
@@ -3245,7 +3253,8 @@ en:
     info7: Recent Activity by %{nick_name}
     info8: "No forum activity by %{nick_name}"
     show_more: Show more tickets from %{nick_name} »
-    view_all: View all tickets
+    view_all: View all recent tickets
+    view_all_archived: View all archived tickets
     post_created: "<span class='muted'>%{time} ago in </span><a href='%{forum_url}'>%{forum_name}</a>"
     new_topic: New Topic
     reply: Reply
@@ -3266,13 +3275,15 @@ en:
       company: 'Contains tickets raised by company contacts'
       company_all: 'Recent tickets raised by company contacts'
       no_conversations: 'No Conversations'
-      all: 'All conversations'
-      tickets: Tickets
+      all: 'Recent conversations'
+      tickets: 'Tickets'
+      archive_tickets: Archived tickets
       recent_tickets: Recent Tickets
       forums: Forums
       contact_tickets: 'Recent ticket activities'
       contact_forums: 'Recent forum activities'
-    info5: "No tickets by %{nick_name}"
+      contact_archive_tickets: 'Older tickets'
+    info5: "No recent tickets from %{nick_name}"
     restore: Restore
     activation : Send Activation
     info6: Add specific notes regarding this contact
@@ -4036,6 +4047,8 @@ en:
   ticket:
     spam: "SPAM"
     deleted: "TRASH"
+    archived: "Archived"
+    archived_no_reply_msg: "Replies are not allowed on an archived ticket."
     next: "Next Ticket"
     previous: "Previous Ticket"
     expand: "Expand"
@@ -4268,6 +4281,9 @@ en:
         tooltip: "View the associated JIRA Issue"
         add_new: "Link an issue"
         existing: "View issue"
+  archive_ticket:
+    title: Archived tickets
+    no_reply_msg: This ticket has been archived.
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
@@ -4742,6 +4758,7 @@ en:
         meta: Meta
         custom: Custom Data
         linked_ticket: This ticket is linked to the forum
+        archived_ticket: This ticket is linked to this archived ticket -
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
@@ -4812,6 +4829,7 @@ en:
         new: New Tickets
         my_resolved: My Resolved Tickets
         this_view: this view
+        archive_view: Archive view
         all_tickets: All Tickets
         all: All Tickets
         new_and_my_open: New & My Open Tickets
@@ -4836,6 +4854,7 @@ en:
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
         no_tickets: You don't have any tickets in current view
+        archived: Archive
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -5008,6 +5027,7 @@ en:
     created_at: created
     resolved_at: resolved
     closed_at: closed
+    archived_at: "Archived"
     from: From
     to: To
     check_uncheck_title: 'Check/Uncheck all'
@@ -5021,8 +5041,17 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    agents:
+      fields:
+        name: "Name"
+        email: "Email"
+        groups: "Groups"
+        roles: "Roles"
+        ticket_scope: "Ticket scope"
+        agent_type: "Agent Type"
     fields:
       ticket_id: "Ticket Id"
+      display_id: "Display Id"
       subject: "Subject"
       description: "Description"
       status: "Status"
@@ -5255,6 +5284,12 @@ en:
     confirm_disable: "Are you sure you want to disable this integration?"
     configure_addon: "Configure this integration"
     configure_custom_addon: "Configure this widget"
+    tooltip:
+      edit: Edit
+      settings: Settings
+      update: Update
+      delete: Delete
+      write_feedback: Write Feedback
   home:
       mobile_index:
         email: Email
@@ -5273,13 +5308,64 @@ en:
       login: "Sign In"
       sign_in_using: "...or Sign in using"
       sign_in_error: "Incorrect email or password."
+  marketplace:
+    installing: "Installing:"
+    almost_done: "Almost Done!"
+    app_installation_agreement: "By installing this app, you agree to abide by our "
+    terms_of_use: "Terms of Use"
+    terms_of_use_link: "http://freshdesk.com/terms#marketplace"
+    get_more_apps: Get more Apps
+    your_plugs: Your Plugs
+    freshplug_intro: " And you can customize and personalize your Freshdesk using Freshplugs."
+    app_feedback: "App Feedback for "
+    app_feedback_desc: "Reach out to the developer for any questions or comments about this App."
+    app_delete_warning: "Are you sure you want to delete this App?"
+    plug_delete_warning: "Are you sure you want to delete this Plug?"
+    app_gallery: App Gallery
+    apps: Apps
+    in_dev_apps: In-Development Apps
+    all: All
+    settings: Settings
+    install: Install
+    update: Update
+    installing_text: "Please wait..."
+    in_development: In Development
+    no_mktp_apps: "You have no Apps installed. Browse and Install Apps from the App Gallery by clicking "
+    go_to_dev_portal: Go to Developer Portal
+    developer_shortcuts: Developer Shortcuts
+    plug_info: "Did you know, now there is a better way to write and manage and even share your freshplugs to all of freshdesk community."
+    needs_developer_text: Needs Developer Account
+    write_a_plug: Write a Plug
+    description: Description
+    instructions: Instructions
+    screenshots: Screenshots
+    version: VERSION
+    ver: "Version: "
+    installs: Installs
+    no_apps: No Apps available
+    no_apps_in_category: No Apps available in this category
+    related_categories: "Apps from Related Categories:"
+    similar_apps: "Similar Apps:"
+    no_connection: "Sorry, Service unavailable. Please try after sometime. Please contact us, if the problem persists."
+    install_error: "Error while installing the App. Please try again."
+    results: results
+    field_blank: Please fill all the fields.
+    installed: Installed
+    delete_action:
+      success: " was deleted successfully"
+      error: "Error while deleting "
+    feedback_action:
+      success: "Thank you for your feedback. The developer will get back to you soon."
+      error: "Error while submitting Feedback. Please try after sometime."
+      submit: Submit
+      submitting: Submitting...
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
     cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
-    no_freshplugs: You do not have any FreshPlugs.
-    add_new_freshplug: Add new FreshPlug
+    no_freshplugs: "You have no FreshPlugs installed. Create and Install a new FreshPlug by clicking "
+    add_new_freshplug: New FreshPlug
     freshplugs:
       refresh: Refresh
       custom_widget_preview: Custom Widget Preview
@@ -5287,6 +5373,11 @@ en:
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
+      freshplug_preview: Freshplug Preview
+      preview_helptext: This integration will appear in the sidebar
+      ticket_detail_page: Ticket detail page
+      contact_detail_page: Contact detail page
+      freshplug_used_in: Freshplug displayed on
     whmcs:
       label: "WHMCS"
       products: "Products"
@@ -5715,8 +5806,8 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new: "New FreshPlug"
-      edit: "Edit Custom Widget"
+      new_freshplug: "New Freshplug"
+      edit_freshplug: "Edit Freshplug"
       desc: "You can add a custom widget to display any detail using your own custom script."
       helptext: "<h4>FreshPlugs</h4><p><br/> You can develop your own FreshPlug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a FreshPlug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about FreshPlugs."
       small_help_text: "You can develop your own FreshPlug using HTML,CSS and JavaScript."
@@ -5786,7 +5877,15 @@ en:
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
     xero:
       label: "Xero"
-      desc: "You can create new invoice for the recorded time against the ticket and view the most recent invoices with links to modify them in Xero"
+      desc: "Create Xero invoices for Freshdesk ticket time-sheet entries."
+      helptext: "<h4>Xero Integration Options</h4><br><P>Select the Xero account names under the ‘Revenue’ account head that agents can access while creating invoices. Sales is available by default. If Sales does not exist, the first available account name is set as default.</p><p>You can also select the Xero inventory items that agents can associate timesheet entries to while creating invoice line items.</p><p>A maximum of 20 account names and 30 inventory items can be selected.</p>"
+      application:
+        error_no_acc_items: "The Organisation should have atleast One Revenue account in Xero."
+      form:
+        xero_settings: "Organisation Name:"
+        accounts: "Chart of Accounts Selection(Revenue)"
+        inventory_items: "Inventory Items Selection"
+        default_desc: "Default Invoice Item Description"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -6119,6 +6218,7 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
+  archived_on: "Archived on"
   for: "for"
   since_time: "since %{time_words}"
   since_a_second: "1 second"
@@ -6330,6 +6430,9 @@ en:
         topic_view: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
         topic_list: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
         ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
+        archive_ticket_list: "Note: To access and display archived tickets, use 'archive' placeholders like {% snippet archive_ticket_filters %}."
+        archive_ticket_view: "Note: Ticket requesters cannot reply to or change ticket properties of archived tickets. Placeholders related to updating the ticket properties like {% snippet ticket_reply %} will not work."
+        
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
@@ -6354,8 +6457,8 @@ en:
   thirty_days: This Month
   last_week: Last week
   last_month: Last month
-  two_months: Last 2 months
-  six_months: Last 6 months
+  two_months: Last 60 days
+  six_months: Last 180 days
   last_seven_days: Last 7 days
   last_thirty_days: Last 30 days
   last_sixty_days: Last 60 days
@@ -6408,10 +6511,15 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    loading_text: Generating Report...
+    filter_limit_exceeded: You can select maximum of %{count} filters
     time_period: Select Time Period
     filter_by: Filter by
     edit_filter: Filter
-    ticket_volume:
+    tickets: List of Tickets
+    generate: Generate
+    more: More...
+    ticket_volume: 
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6425,14 +6533,69 @@ en:
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
-    performance:
+    performance_distribution:
       title: Performance Distribution
+      first_response_bar: First Response Time
+      response_bar: Avg Response Time
+      resolution_bar: Resolution Time
+      first_response_and_response_trend: Avg First Response And Response Time Trend
+      resolution_trend: Avg Resolution Time Trend
+      description:
+        avg_res_time: Split based on the average response time of all the responses made in the selected time period
+        first_response: Split based on the first response time of all the first responses made in the selected time period
+        resolution_time: Split based on the resolution time of tickets resolved in the selected time period
+        avg_res_time_trend: All tickets responded to in the selected time period are plotted in this graph based on the first response time and average response time
+        resolution_time_trend: All tickets resolved in the selected time period are plotted in this graph based on the resolution time
     group_summary:
       title: Group Summary
+      group: Group
+      description:
+        ticket_resolved: Tickets resolved by the group in the selected time period
+        tickets_reopened: Tickets reopened by the group in the selected time period
+        ticket_reasigned: Tickets reassigned from this group to other groups in the selected time period
+        reports_sla: Response SLA% of the tickets responded to by the group in the selected time period
+        res_sla: Resolution SLA% of the tickets resolved by the group in the selected time period
+        fcr: First contact resolution % of tickets resolved by the group in the selected time period
+        private_note: Number of private notes added by the group on any ticket in the selected time period
+        responses: Number of responses sent by the group on any ticket in the selected time period
+        avg_first_res_time: Average first response time of all the first responses made by the group in the selected time period
+        avg_res_time: Average response time of all tickets responded to by the group in the selected time period
+        avg_resolution_time: Average resolution time of all tickets resolved by the group in the selected time period
     agent_summary:
       title: Agent Summary
+      ticket_assigned: Tickets Assigned
+      ticket_resolved: Tickets Resolved
+      tickets_reopened: Tickets Reopened
+      ticket_reasigned: Tickets Reassigned
+      reports_sla: Response SLA %
+      res_sla: Resolution SLA %
+      fcr: FCR %
+      private_note: Private Note
+      responses: Responses
+      avg_first_res_time: Average 1st Response Time
+      avg_res_time: Average Response Time
+      avg_resolution_time: Average Resolution Time
+      agent: Agent
+      description:
+        ticket_resolved: Tickets resolved by the agent in the selected time period
+        tickets_reopened: Tickets reopened by the agent in the selected time period
+        ticket_reasigned: Tickets reassigned from this agent to other agents in the selected time period
+        reports_sla: Response SLA% of the tickets that were 1st responded to by the agent in the selected time period
+        res_sla: Resolution SLA% of the tickets resolved by the agent in the selected time period
+        fcr: First contact resolution % of tickets resolved by the agent in the selected time period
+        private_note: Number of private notes added by the agent on any ticket in the selected time period
+        responses: Number of responses sent by the agent on any ticket in the selected time period
+        avg_first_res_time: Average first response time of all the first responses made by the agent in the selected time period
+        avg_res_time: Average response time of all tickets responded to by the agent in the selected time period
+        avg_resolution_time: Average resolution time of all tickets resolved by the agent in the selected time period
     customer_report:
       title:  Customer Report
+      received_tickets: Customers with the most received
+      resolved_tickets: Customers with the most resolved
+      response_sla: Most SLA Violations for Response
+      resolution_sla: Most SLA Violations for resolution
+      customer_interactions: Customer Interactions
+      agent_interactions: Agent Interactions
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -7649,3 +7812,17 @@ en:
   new_label: "NEW"
   api:
     record_not_found: Resource not found.
+  doorkeeper:
+    authorizations:
+      new:
+        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
+        later: Later
+        authorize_text1: Authorize
+        authorize_text2: to use your account?
+        authorize_success: You have allowed this request
+        authorize_failure: You are not allowed to access this page
+        spinner_text: "Logging into %{portal_name} Portal"
+        dev_portal: Developer
+        admin_portal: Admin
+      error:
+        authorize_failure: You are not allowed to access this page

@@ -1,0 +1,9 @@
+<%= content_tag(:h3, t('integrations.custom_application.new_freshplug'), :class => "title") %>
+<%= form_for @application, :url => admin_integrations_freshplugs_path, :html => {:method => :post, :multipart => true, :id => "custom_application_install" } do |f| %>
+  <%= render :partial => "custom_application_form", :locals => { :is_edit => false , :f => f } %>
+  <div class="button-container itil-hide">
+    <%= link_to t('back'), integrations_applications_path(:anchor => 'fresh-plugs'),
+        :class => "btn btn-default pull-left" %>
+    <%= f.submit t('integrations.custom_application.form.create_n_enable'), :class => "btn btn-primary" %>
+  </div>
+<% end %>

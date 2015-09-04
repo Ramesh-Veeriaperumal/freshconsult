@@ -1,0 +1,73 @@
+<section class="main content rounded-6 min-height-on-desktop">
+	<div class="breadcrumb">
+		<a href="{{ portal.home_url }}">{% translate header.tabs.home %}</a>
+		<a href="/support/tickets/archived">{% translate portal.tickets.ticket_list %}</a>
+	</div>
+	
+	<section class="ticket-main">
+		{{ ticket | archive_status_alert }}
+		
+		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject | h}}</h2>
+
+		<section class="user-comment" id="ticket-description">			
+			<div class="user-info">
+				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
+				<div class="user-details">
+					<h4 class="user-name">{{ ticket.requester.name | h}}</h4>
+					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
+				</div>
+			</div>
+			<div class="p-content">
+				<div class="p-desc">
+					{{ ticket.description_html }}
+					{{ ticket | freshfone_audio_dom }}
+				</div>
+
+				{{ ticket | ticket_attachemnts }}
+			</div>
+		</section>
+
+		<section id="ticket-comments">
+			{% for comment in ticket.public_comments %}
+				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
+						 id="ticket-note-{{ comment.id }}">
+
+					<div class="user-info">
+						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
+						<div class="user-details">
+							<h4 class="user-name">{{ comment.user.name | h }}</h4> 
+							<div class="p-info" title="{{ comment.created_on | short_day_with_time }}">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
+						</div>
+					</div>
+					
+					<div class="p-content">						
+						<div class="p-desc">
+							{{ comment.description }}
+							{{ comment | freshfone_audio_dom }}
+						</div>
+
+						{{ comment | comment_attachments }}
+
+					</div>
+				</section>
+			{% endfor %}
+			
+		</section>
+	</section>
+</section>
+
+<section class="sidebar content rounded-6" id="ticket-sidebar">
+	{% assign agent = ticket.agent %}
+	{% if agent_visible == true and agent %}
+		<div class="widget agent-details">
+			<h3 class="lead">{% translate agent_working_on_this_ticket %}</h3>
+			{{ agent | profile_image:'', '40px', '40px' }}
+			<div><b>{{ agent.name }}</b></div>
+			<div>{{ agent.job_title }}</div>
+		</div>
+	{% endif %}
+
+	{% snippet archive_ticket_survey %}
+	
+	{% snippet archive_ticket_details %}	
+</section>

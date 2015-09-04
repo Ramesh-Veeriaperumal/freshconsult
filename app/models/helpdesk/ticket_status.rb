@@ -19,6 +19,9 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key => "status", :primary_key => "status_id",
         :conditions => proc  { "helpdesk_tickets.account_id = #{send(:account_id)}" }
 
+  has_many :archived_tickets, :class_name => 'Helpdesk::ArchiveTicket', :foreign_key => "status", :primary_key => "status_id",
+      :conditions => proc  { "archive_tickets.account_id = #{send(:account_id)}" }
+
   after_update :update_tickets_sla_on_status_change
 
   after_commit :clear_statuses_cache

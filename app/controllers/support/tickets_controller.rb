@@ -116,7 +116,14 @@ class Support::TicketsController < SupportController
       @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       # Using .dup as otherwise it references the same address quoting same values.
       @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
-      @item || raise(ActiveRecord::RecordNotFound)      
+      
+      load_archive_ticket unless @ticket 
+    end
+
+    def load_archive_ticket
+      archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
+      raise ActiveRecord::RecordNotFound unless archive_ticket
+      redirect_to support_archive_ticket_path(params[:id])
     end
 
     def redirect_url

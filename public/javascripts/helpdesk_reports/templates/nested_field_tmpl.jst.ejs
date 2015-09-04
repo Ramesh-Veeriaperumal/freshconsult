@@ -1,4 +1,4 @@
-<div id="div_ff_<%=condition%>" class="ff_item filter-field" condition="<%=condition%>" operator="<%=operator%>" container="<%=container%>" type="<%=field_type%>" data-label="<%=name%>">
+<div id="div_ff_<%=condition%>" class="ff_item filter-field" data-type="filter-field" condition="<%=condition%>" operator="<%=operator%>" container="<%=container%>" type="<%=field_type%>" data-label="<%=name%>">
 	<label class="control-label"><%=name%></label>
 	<select class="select2 dropdown nested_field" id="<%=field_id%>_category" name="<%=condition%>">
 		<option value="">...</option>
@@ -6,7 +6,7 @@
 	    	<option value="<%=options[i][0]%>"><%=options[i][1]%></option>
 	 	<% } %>
 	</select>
-	<i class="ficon-cross fsize-14 " size="14"></i>
+	<i class="ficon-cross fsize-14 " size="14" data-action="remove-field"></i>
 
 	<%if (nested_fields.length > 0) { %>
 		<div id="div_ff_<%=nested_fields[0]['condition']%>" class="level_2 nested-input ff_item" condition="<%=nested_fields[0]['condition']%>" operator="<%=nested_fields[0]['operator']%>" container="nested_field" data-label="<%=nested_fields[0]['name']%>">

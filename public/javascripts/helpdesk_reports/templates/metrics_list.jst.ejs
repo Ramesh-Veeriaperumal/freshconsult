@@ -1,0 +1,40 @@
+<%
+	var minutesToDays = function( m ){
+		if(typeof m !== 'number')  return m;
+		var h = Math.floor(m / 60);
+		var min = Math.floor(m) % 60;
+		var days = h + 'h ' + min + 'm';
+		return days;
+	};
+
+	function addsuffix (m) {
+		if(typeof m !== 'number')  {
+			return m;
+		} else {
+			return m + '%';
+		}
+	}
+%>
+
+<%if (data && data.length>0) { %>
+	<% for (i=0; i<data.length; i++) { %>
+		<tr class="<%if (i%2 == 0) { %>even<% } else{ %>odd<% } %>">
+			<td><%= data[i]['resolved_tickets'] %></td>
+			<td><%= data[i]['reopened_tickets'] %></td>
+			<% if (report == 'agent') { %>
+				<td><%= data[i]['agent_reassigned_tickets'] %></td>
+			 <% } else { %>  
+				 <td><%= data[i]['group_reassigned_tickets'] %></td>
+			<% } %>
+			<td><%= addsuffix(data[i]['response_sla']) %></td>
+			<td><%= addsuffix(data[i]['resolution_sla']) %></td>
+			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
+			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
+			<td><%= data[i]['private_notes'] %></td>
+			<td><%= data[i]['responses'] %></td>
+			<td><%= minutesToDays( data[i]['avg_first_response_time'] ) %></td>
+			<td><%= minutesToDays( data[i]['avg_response_time'] ) %></td>
+			<td><%= minutesToDays( data[i]['avg_resolution_time'] ) %></td>
+		</tr>
+	<% } %>
+<% } %>

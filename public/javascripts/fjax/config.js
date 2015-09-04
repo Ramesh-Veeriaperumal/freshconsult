@@ -38,9 +38,11 @@ window.Fjax = window.Fjax || {};
 			"/contacts": 'contacts',
 			"/users": 'contacts',
 			"/companies": 'companies',
+			"/helpdesk/tickets/archived/": "archiveticketdetails",			
 			"/helpdesk/tickets": 'tickets',
 			"/search": 'search',
 			"/helpdesk/agent_status": 'freshfoneagents',
+			"/reports/v2": 'helpdeskreports',
 			"/helpdesk/tickets/compose_email": 'tickets'
 		},
 		LOADING_WAIT: 60

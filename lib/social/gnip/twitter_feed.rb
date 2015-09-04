@@ -72,8 +72,13 @@ class Social::Gnip::TwitterFeed
         tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
         unless tweet.blank?
           ticket  = tweet.get_ticket
-          user = set_user unless user
-          notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+          if ticket
+            user = set_user unless user
+            notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
+          else 
+            archive_ticket  = tweet.get_archive_ticket
+            notable = add_as_ticket(@tweet_obj, @twitter_handle, :mention, convert_args,archive_ticket) if convert_args[:convert] && archive_ticket
+          end
         else
           if convert_args[:convert]
             tweet_requeued = requeue(@tweet_obj)

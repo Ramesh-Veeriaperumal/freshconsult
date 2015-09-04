@@ -355,7 +355,7 @@
           <script type="text/javascript">
             jQuery("#xero").prepend('<h3 id="xero-title" class="title">Xero</h3>');
             jQuery("#xero").addClass('inactive');
-            xeroBundle={invoice_name:"",integrated_resource_id:"",remote_integratable_id:"",reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqCompanyName:"{{requester.company_name | escape_html}}",application_id:"{{application.id}}", ticket_id:"{{ticket.id}}", ticket_timesheet: {{timesheet}} } ;
+            xeroBundle={invoice_name:"",items_code:"",integrated_resource_id:"",remote_integratable_id:"",reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqCompanyName:"{{requester.company_name | escape_html}}",application_id:"{{application.id}}", ticket_id:"{{ticket.id}}", ticket_description:"",ticket_timesheet: {{timesheet}} } ;
             jQuery("#xero-title").click(function() { 
                      if(jQuery("[src^='/javascripts/integrations/xero.js']")) {
                        jQuery("[src^='/javascripts/integrations/xero.js']").remove();

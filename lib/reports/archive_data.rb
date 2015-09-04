@@ -86,7 +86,7 @@ module Reports
         # adding notification for special accounts..
         if(REPORT_NOTIFICATION_ACCOUNTS.include?(account.id))
           #if file exists
-          file = AwsWrapper::S3.fetch(S3_CONFIG[:reports_bucket], file_name)
+          file = AwsWrapper::S3.fetch_obj(S3_CONFIG[:reports_bucket], file_name)
           file_exists, file_size = file.exists?, 0 
           file_size = file.content_length if file_exists
           subject = "Done daily archive data upload to s3 for account #{account.id}"

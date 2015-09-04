@@ -1,4 +1,4 @@
-<% unless @ticket.nil? %>
+<% if helpdesk_ticket?(@ticket) %>
 	<%= form_for Helpdesk::Note.new, :url => support_ticket_notes_path(@ticket), 
 			:html => { :rel => "validate", :multipart => true }  do |f| %>
 		<%= f.error_messages %>  	

@@ -1,0 +1,43 @@
+<section class="fa-area clear">
+  <!-- FRESH PLUGS -->
+	<div class="no-plugs">
+	<p>
+		<%= t('integrations.no_freshplugs') %>
+		<%= link_to t('integrations.add_new_freshplug').html_safe, new_admin_integrations_freshplug_path, :class =>"" %>
+	</p>
+	</div>
+	<% custom_applications.each do |application|
+	       installed_app = application.installed_applications %>
+	  <div class="apps-wrapper row-fluid list-box  <%= installed_app.blank? ? 'disabled-app' : '' %>" id="ext-<%=application.id%>">
+	  	<div class="switch-box pull-left">
+	  			<% unless installed_app.blank? %>
+			    	<% enabled_or_disabled_path = disable_admin_integrations_freshplug_path(application) %>
+		  			<% toggle_path = enable_admin_integrations_freshplug_path(application) %>
+		  		<% else %>
+		  			<% enabled_or_disabled_path = enable_admin_integrations_freshplug_path(application) %>
+		  			<% toggle_path = disable_admin_integrations_freshplug_path(application) %>
+		  		<% end %>
+		  			<%= check_box_tag '', !installed_app.blank?, !installed_app.blank?, "data-url" => enabled_or_disabled_path, "data-toggle" => toggle_path, :rel => "toggle",:class=>"switch", :name => "onoffswitch", :id => "pvtplug_#{ application.id }" %>
+	  	</div>
+	  	<div class="logo-box pull-left">
+	  		<span class="ficon-puzzle fsize-48 assets-missing"></span>
+	  	</div>
+	  	<div class="desc-box pull-left">
+	  		<div class="plug-data">
+	  			<%= link_to application.display_name, edit_admin_integrations_freshplug_path(application.id), :class => "plug-name" %>
+	  			<div class="plug-actions">
+	  				<a class='btn btn-mini btn-edit tooltip' href='<%= edit_admin_integrations_freshplug_path(application.id) %>' data-placement="below" data-original-title='<%= t('application.tooltip.edit') %>' >
+	  					<span class="ficon-edit fsize-16"></span>
+	  				</a>
+
+            <%= button_tag :type => 'button', :class => "btn btn-mini btn-delete tooltip delete-btn", "data-url" => "#{admin_integrations_freshplug_path(application.id)}", "data-placement" => "below", "data-original-title" => t('application.tooltip.delete'), :data => { :confirm => t('marketplace.plug_delete_warning').html_safe } do %>
+              <span class='ficon-trash-o fsize-16'></span>
+            <% end %>
+
+	  			</div>
+	  		</div>
+	  		<p class="desc"><%= truncate(application.description, :length => 180) %></p>
+	  	</div>
+	  </div>
+	<% end %>
+</section>

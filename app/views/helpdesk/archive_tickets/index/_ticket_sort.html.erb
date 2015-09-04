@@ -1,0 +1,54 @@
+<div class="sort-bar toolbar">
+  <div class="page_info">
+    <div class="toolbar_pagination" id="ticket_pagination">
+      <span class="disabled prev_page"><span></span></span>
+      <span class="disabled next_page"><span></span></span>
+    </div>
+    <% unless @items.total_entries == 0 %>
+    <div class="offset ticketlist-total-count">
+      <%= t('showing') %> 
+      <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
+        <%= t('of') %>
+        <b id="ticket_list_count" class="fetching"></b>
+    </div>   
+    <% end %>
+  </div>
+
+  <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
+    <ul>             
+       <% current_sort_name = "" %>
+       <% Helpdesk::ArchiveTicket.sort_fields_options.each do |sort_item| %> 
+          <% wf_order = sort_item[1]
+            current_sort_name = sort_item[0] if wf_order == current_wf_order 
+          %>
+          <li>
+            <a class="wf_order" href="#" wf_order="<%=wf_order%>" >
+              <%if(sort_item[1] == current_wf_order) %>
+               <span class="icon ticksymbol"></span>
+               <%end%>
+              <%=sort_item[0]%>
+             </a>
+          </li>
+       <% end %>
+    </ul>
+    <span class="seperator"></span>
+    <ul>
+      <% TicketsFilter.sort_order_fields_options.each do |sort_order_item| %>
+        <% wf_order_type = sort_order_item[1]
+            current_sort_name = sort_order_item[0] if wf_order_type == current_wf_order 
+          %>
+          <li>
+            <a class="wf_order_type" href="#" wf_order_type="<%=wf_order_type%>" >
+              <%if(sort_order_item[1] == current_wf_order_type) %>
+               <span class="icon ticksymbol"></span>
+               <%end%>
+              <%=sort_order_item[0]%>
+             </a>
+          </li>
+      <% end %>
+    </ul>   
+  </div>
+  <a class="drop-right nav-trigger" href="#" menuid="#SortMenu">
+    <%= t('ticket.sort_by') %> <b><%= current_sort_name %></b>
+  </a>
+</div>

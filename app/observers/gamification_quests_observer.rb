@@ -4,7 +4,7 @@ class GamificationQuestsObserver < ActiveRecord::Observer
 
 	include Gamification::GamificationUtil
 
-	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status", "thumbs_up"]
+	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status"]
 	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
   
   def after_commit(model)

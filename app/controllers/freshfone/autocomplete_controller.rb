@@ -9,9 +9,9 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	def customer_phone_number
-		regex_for_numbers = '^[0-9.]*$'
+		
 		search_string = params[:q].gsub(/^\+/, '')
-		result = search_string.match(regex_for_numbers) ? 
+		result = numeric_search?(search_string) ? 
 			search_in_caller(search_string) : search_in_user(search_string)
 		respond_to do |format|
 			format.json { render :json => result.to_json }
@@ -19,7 +19,8 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	def customer_contact
-		search_string = params[:q].gsub(/[-()+]/, '')
+		search_string = SearchUtil.es_filter_key(params[:q], false)
+		search_string = numeric_search?(search_string) ? search_string.gsub(/\s/, '') : search_string
 		result = search_contact_in_user(search_string)
 		respond_to do |format|
 			format.html { render :partial => 'layouts/shared/freshfone/freshfone_search_results' , :object => result[:results] }
@@ -27,6 +28,11 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	private
+
+	def numeric_search?(search_string)
+		regex_for_numbers = '^[0-9.]*$'
+		search_string.gsub(/[^0-9a-z]/i, '').match(regex_for_numbers)
+	end
 
 	def format_requester_results (requesters)
 		return {:results => [] } if requesters.blank?
@@ -80,17 +86,17 @@ class Freshfone::AutocompleteController < ApplicationController
 	end
 
 	def search_in_caller(search_string)
-		customer_numbers = search_customer_number("*#{search_string}*")
+		customer_numbers = search_customer_number("#{search_string}")
 		format_customer_numbers(customer_numbers)
 	end
 
 	def search_contact_in_user(search_string)
-		contacts = search_contact("*#{search_string}*")
+		contacts = search_contact("#{search_string}", 50)
 		format_contact_results(contacts)
 	end
 
 	def search_in_user(search_string)
-		requesters = search_requester("*#{search_string}*")
+		requesters = search_requester("#{search_string}")
 		format_requester_results(requesters)
 	end
 end

@@ -118,6 +118,10 @@ class PortalDrop < BaseDrop
     @ticket_export_url ||= configure_export_support_tickets_path
   end
 
+  def archive_ticket_export_url
+    @archive_ticket_export_url ||= configure_export_support_archive_tickets_path
+  end
+
   def current_tab
     @current_tab ||= @current_tab
   end

@@ -1,21 +1,39 @@
+# This model is for only monthly tables
 class Helpdesk::Mysql::DynamicTable < ActiveRecord::Base
+
   self.abstract_class = true
-  def self.create(table_name, options={})
-    self.table_name = table_name
-    id = options.delete(:id)
-    conditions = options.delete(:conditions)
+  TABLE_NAME = {
+    "Helpdesk::SpamTicket" => "spam_tickets",
+    "Helpdesk::SpamNote" => "spam_notes"
+  }
+  
+  def self.create(options={})
+    determine_table_name
     super(options)
   end
 
-  def self.create_or_update(table_name,options = {})
-    self.table_name = table_name
-    id = options.delete(:id)
-    conditions = options.delete(:conditions)
+  def self.find_by_id(id)
+    determine_table_name
+    super(id)
+  end
 
-    record = id ? find_by_id(id) : find(:first, :conditions => conditions) || new
+  def self.find_by_id_and_account_id(id, account_id)
+    # self.table_name = Helpdesk::Mysql::Util.table_name_extension_monthly(table_name)
+    determine_table_name
+    super(id,account_id)
+  end
 
-    options.each_pair { |key, value| record[key] = value }
-    record.save!
-    record
+  def self.find_all(options)
+    determine_table_name
+    find(:all, :conditions => options[:conditions], :order => options[:order], :limit => options[:limit])
+  end
+
+  def self.destroy_all(options)
+    determine_table_name
+    super(options)
+  end
+
+  def self.determine_table_name
+    self.table_name = Helpdesk::Mysql::Util.table_name_extension_monthly(TABLE_NAME[self.to_s])
   end
 end

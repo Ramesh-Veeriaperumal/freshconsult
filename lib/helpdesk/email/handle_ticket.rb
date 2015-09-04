@@ -13,7 +13,7 @@ class Helpdesk::Email::HandleTicket
   include ActionView::Helpers
   include Helpdesk::DetectDuplicateEmail
 
-  attr_accessor :note, :email, :user, :account, :ticket, :original_sender
+  attr_accessor :note, :email, :user, :account, :ticket, :archive_ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
 

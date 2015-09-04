@@ -131,7 +131,15 @@ class Integrations::PivotalTrackerController < ApplicationController
         user_id = get_user_id(user, performer_name, performer_id)
       end
       unless integrated_resource.nil?
-        @ticket = integrated_resource.local_integratable
+        if integrated_resource.local_integratable_type == "Helpdesk::ArchiveTicket"
+          archive_ticket = integrated_resource.local_integratable
+          if archive_ticket
+            @ticket = archive_ticket.ticket || create_ticket(archive_ticket)
+            modify_integrated_resource(@ticket, integrated_resource)
+          end      
+        else
+          @ticket = integrated_resource.local_integratable
+        end
         note = @ticket.notes.build(
             :note_body_attributes => {:body_html => msg },
             :private => true,
@@ -174,5 +182,23 @@ class Integrations::PivotalTrackerController < ApplicationController
     def check_app_installed?
       @installed_app = current_account.installed_applications.with_name("pivotal_tracker").first
       return render :json => { :pivotal_message => "Application not installed"} if @installed_app.nil?
+    end
+
+    def modify_integrated_resource(ticket, integrated_resource)
+      integrated_resource = Integrations::IntegratedResource.find(integrated_resource.id)
+      integrated_resource.update_attributes({
+          :local_integratable_type => "Helpdesk::Ticket", 
+          :local_integratable_id => ticket.id 
+        }) if integrated_resource
+    end
+
+    def create_ticket(archive_ticket)
+      ticket = Helpdesk::Ticket.new(
+                :requester_id => archive_ticket.requester_id,
+                :subject => archive_ticket.subject,
+                :ticket_body_attributes => { :description => archive_ticket.description })
+      ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
+      ticket.save_ticket
+      ticket
     end
 end

@@ -42,7 +42,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set, :archive
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -256,6 +256,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
   alias :is_facebook :is_facebook?
+ 
+  def fb_replies_allowed?
+    is_facebook? and !fb_post.reply_to_comment?
+  end
  
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)

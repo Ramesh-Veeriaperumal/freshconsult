@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :normalize_params, :only => :index
@@ -1185,9 +1186,29 @@ class Helpdesk::TicketsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def run_on_db(&block)
+    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    Sharding.send(db_type) do
+      yield
+    end
+  end
+
   def load_sort_order
     params[:wf_order] = view_context.current_wf_order.to_s
     params[:wf_order_type] = view_context.current_wf_order_type.to_s
+  end
+
+  def load_ticket
+    @ticket = @item = load_by_param(params[:id])
+    load_archive_ticket unless @ticket
+  end
+
+  def load_archive_ticket
+    raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
+    
+    archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
+    raise ActiveRecord::RecordNotFound unless archive_ticket
+    redirect_to helpdesk_archive_ticket_path(params[:id])
   end
  
 end

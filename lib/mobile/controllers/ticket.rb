@@ -45,6 +45,10 @@ module Mobile::Controllers::Ticket
   def top_view
       dynamic_views = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
       default_views = TicketsFilter.default_views
+      
+      # Removing 'Archive' filter from the list. Will be handled in Phase 2
+      default_views.delete_if{ |view| view[:id] == "archived" }
+      
       [].concat(default_views).concat(dynamic_views)
   end
     

@@ -51,6 +51,7 @@ module Helpdesk::Email::TicketMethods
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
       )
+    self.ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
     ticket.sender_email = self.original_sender
   end
 

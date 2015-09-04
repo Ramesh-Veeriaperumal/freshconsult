@@ -115,7 +115,9 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def check_for_bridged_calls
-			bridge_queued_call
+			#bridge_queued_call
+			return if @freshfone_user.blank? || !@freshfone_user.online?
+			add_to_call_queue_worker
 		end
 
 		def requested_from_node?

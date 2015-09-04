@@ -1,0 +1,63 @@
+<% note = archive_note
+ note_view_id = "note_view_"+note.id.to_s() 
+ notedetails  = "note_details_#{note.id.to_s()}" 
+ forward_note_id = "cnt-fwd-#{note.id.to_s()}"
+ edit_id = "edit-#{note.id.to_s()}" 
+ notable_object = @ticket || @parent
+ %>
+<div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
+ 	<a name="<%= "note#{note.id}" %>"></a>
+ 	<div class="conversation-sprite">
+		<% if note.private_note? %>	 
+			<span class="image note-private tooltip" title='<%= t(".private_note") %>'></span>
+		<% elsif note.public_note? %>
+			<span class="image note-public tooltip" title='<%= t(".public_note") %>'></span>
+		<% elsif note.inbound_email? %>
+			<span class="image email-receive tooltip" title='<%= t(".inbound_email") %>'></span>
+		<% elsif note.fwd_email? %>
+			<span class="image email-forward tooltip" title='<%= t("forwarded_email") %>'></span>
+		<% elsif note.outbound_email? %>
+			<span class="image email-reply tooltip" title='<%= t(".outbound_email") %>'></span>
+		<% elsif note.tweet? %>
+			<span class="image tweet-note tooltip" title='Tweet'></span>			
+		<% end %>
+	</div> 
+    
+	<div class="user_details">    
+		<%= user_avatar(note.user, :thumb, "preview_pic" , { :width => "36px", :height => "36px" }) if note.user %>
+    	<%= t(".posted_on", :user_name => link_to_user(note.user), :note_date => formated_date(note.created_at) ).html_safe %>
+		<br>
+		<%  if privilege?(:manage_tickets)
+			conv_info = conversation_info(note) %>
+			<%= content_tag :span, truncate(conv_info, :length => 100), 
+					:rel => "hover-popover", 
+					"data-placement" => "below",
+					"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
+		<% end %>
+  </div> 
+
+	<div id='<%= notedetails %>'>
+  	<div class="details">
+  		<div class="request_mail">
+  			<% 
+  		       	notes = note.body_html		       
+  		       	notes = "<span class='"+note.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
+  			%>			
+  			<%= notes.html_safe %>
+  		</div>
+  	</div>
+
+    <% if note.all_attachments.present? || note.cloud_files.present? %>
+      <span class="seperator"></span>
+      <h4 class="lowercase"><%= pluralize(note.all_attachments.size, t('attachment'), t('attachments'))%></h4>
+      <% unless note.all_attachments.empty? %>
+        <%= attachment_container(note.all_attachments,true,"ticket",nil) %>
+      <% end %>
+      <% unless note.cloud_files.empty? %>
+        <%= attachment_container(note.cloud_files, true, "cloud_file", nil) %>
+      <% end %>
+    <% end %>
+	</div>
+
+</div> 
+

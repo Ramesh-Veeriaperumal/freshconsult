@@ -28,6 +28,16 @@
          </div>
     	</div>
     </div>
+    <%= link_to t('export'), {:action => "configure_export"}, 
+              :rel => "freshdialog", 
+              "data-submit-label" => t('export'),
+              "data-close-label" => t('close'),
+              "data-width" => "550",
+              "data-title" => t('agent.export_title'),
+              :title => t('agent.export_title'),
+              "data-submit-loading" => t('please_wait'),
+              "data-target"=>"#agent_export",
+              :class => "pull-right pt10" %>
     <div id="agent-filters">
     	<%= render :partial => "filter" %>
     </div>

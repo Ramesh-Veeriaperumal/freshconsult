@@ -10,6 +10,7 @@ development:
   reports_bucket: reports_archive_data_dev
   ticket_body: ticketbody-dev
   note_body: notebody-dev
+  bi_reports_list_bucket: bi-reports-ticket-list-dev
 
 staging:
   <<: *common
@@ -17,6 +18,7 @@ staging:
   reports_bucket: reports_archive_data_staging
   ticket_body: ticketbody-staging
   note_body: notebody-staging
+  bi_reports_list_bucket: bi-reports-ticket-list-staging
 
 
 test:
@@ -25,6 +27,7 @@ test:
   reports_bucket: reports_archive_data_test
   ticket_body: ticketbody-test
   note_body: notebody-test
+  bi_reports_list_bucket: bi-reports-ticket-list-test
 
 
 production:
@@ -36,3 +39,4 @@ production:
   reports_bucket: reports_archive_data_production
   ticket_body: ticketbody-production
   note_body: notebody-production
+  bi_reports_list_bucket: bi-reports-ticket-list-production
