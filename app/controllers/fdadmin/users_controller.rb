@@ -29,7 +29,7 @@ class Fdadmin::UsersController < Fdadmin::DevopsMainController
 		if params[:user_id] && params[:account_id]
 			@user = User.find_by_id_and_account_id(params[:user_id],params[:account_id])
 		end
-		render :josn => nil, :status => 404 and return if @user.nil?
+		render :json => nil, :status => 404 and return if @user.nil?
 	end
 
 	def set_current_account
@@ -37,7 +37,7 @@ class Fdadmin::UsersController < Fdadmin::DevopsMainController
 			account= Account.find(params[:account_id])
 			account.make_current if account
 		end
-		render :josn => nil, :status => 404 and return if Account.current.nil?
+		render :json => nil, :status => 404 and return if Account.current.nil?
 	end
 
 end
