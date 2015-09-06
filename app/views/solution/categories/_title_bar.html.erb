@@ -1,11 +1,9 @@
 <div class="list-panel-main">
-	<% if privilege?(:manage_solutions) && !@category.is_default? -%>
 	<div class="sol-details-left">
 		<ul class="list-actions-left category-icon-bg">
 			<li> <%= font_icon(:cube, {:size => 26}) %> </li>
 		</ul>
 	</div>
-	<% end %>
 	<div class="sol-details-right">
 		<% if privilege?(:manage_solutions) && !@category.is_default? -%>
 			<ul class="list-actions-right">

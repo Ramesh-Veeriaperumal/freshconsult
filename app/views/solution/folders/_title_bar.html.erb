@@ -17,6 +17,8 @@
 			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
 			  </li>
 			</ul>
+		<% end %>
+		<% if privilege?(:manage_solutions) %>
 			<div class="action-btns-bar span1">
 				<%= link_to( '', 
 							edit_solution_folder_path(@folder),

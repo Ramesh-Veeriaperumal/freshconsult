@@ -5,7 +5,7 @@
 	</div>
 	<div class="vertical-alignment reorder-content row-fluid">
 		<div class="row-fluid clear-left-margin">
-			<% if privilege?(:manage_solutions) %>
+			<% if privilege?(:publish_solution) %>
 				<div class="solution-list-checkbox">
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
