@@ -495,8 +495,9 @@
   .feedback{
     ul{
       li{
-        list-style-type: circle;
+        list-style-type: disc;
         padding-bottom: 10px;
+        color: #ddd;
       }
       .short-note{
         color: #333333;
