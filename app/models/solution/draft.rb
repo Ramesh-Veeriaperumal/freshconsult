@@ -23,6 +23,7 @@ class Solution::Draft < ActiveRecord::Base
   validates_numericality_of :user_id
 
   before_validation :populate_defaults
+  before_save :change_modified_at
   before_destroy :discard_notification
 
   attr_protected :account_id, :status, :user_id
@@ -93,7 +94,12 @@ class Solution::Draft < ActiveRecord::Base
   def populate_defaults
     self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
     self.user_id = User.current ? User.current.id : self.user_id || article.user_id
-    self.modified_at = Time.now.utc unless self.modified_at_changed?
+  end
+
+  def change_modified_at
+    return if self.modified_at_changed?
+    self.modified_at ||= Time.now.utc
+    self.modified_at = Time.now.utc  if (self.draft_body.changed? || self.title_changed?)
   end
 
   def publish!

@@ -3737,6 +3737,7 @@ en:
         content_changed_you: "You have updated the content elsewhere. "
         content_changed: "The content has changed. "
         other_problem: "The content could not be saved. "
+      last_saved_by: Last saved by
     no_articles_info: No articles in this folder
     you: You
     info9: Public (Will be published in self service)
