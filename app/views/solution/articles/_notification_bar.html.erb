@@ -1,9 +1,7 @@
 <% if @article.draft || !@article.published? %>
   <div class="sub-content article-view-edit <%= 'error' if @article.draft.present? && @article.draft.locked? %> <%= 'hide' if @new_draft_record %>">
     <p class="pull-left"><%= draft_info_text %> 
-      <% if privilege?(:publish_solution) || privilege?(:manage_solutions) %>
         &nbsp;&nbsp; <%= discard_link %> &nbsp;&nbsp; <%= publish_link %>
-      <% end %>
     </p>
     <p class="pull-right">
       <%= link_to( 

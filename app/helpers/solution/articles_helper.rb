@@ -37,6 +37,7 @@ module Solution::ArticlesHelper
   end
   
   def discard_link
+    return unless privilege?(:delete_solution)
     link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article.id, @article.draft), 
               :method => 'delete',
               :confirm => t('solution.articles.draft.discard_confirm'),
@@ -45,7 +46,7 @@ module Solution::ArticlesHelper
   end
 
   def publish_link
-    return if @article.folder.is_default?
+    return if @article.folder.is_default? or !privilege?(:publish_solution)
     link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])

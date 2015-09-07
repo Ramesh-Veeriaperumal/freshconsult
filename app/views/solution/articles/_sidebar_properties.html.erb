@@ -20,9 +20,11 @@
 	<div class="sidebar-section">
 		<div class="title-wrapper">
 			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
-			<p class="edit span1 pull-right">
-				<%= article_properties_edit_link(t('edit')) %>
-			</p>
+			<% if privilege?(:publish_solution) %>
+				<p class="edit span1 pull-right">
+					<%= article_properties_edit_link(t('edit')) %>
+				</p>
+			<% end %>
 		</div>
 
 		<div class="section">
