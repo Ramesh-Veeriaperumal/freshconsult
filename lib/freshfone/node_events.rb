@@ -51,7 +51,7 @@ module Freshfone::NodeEvents
 
   def publish_freshfone_widget_state(account, status)
     @account = account
-    notify_socket(credits_channel(status), "")
+    notify_socket(credits_channel(status), {})
   end
 
   def add_active_call_params_to_redis(params, message=nil)

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ce7230476c50a68431accb2946e467b46720926e7608a171018b1119640351bb",
-    "current": "ce7230476c50a68431accb2946e467b46720926e7608a171018b1119640351bb"
+    "previous": "c6b22f92474b73185158126d44691d8f7133bf64ae3346aa67d893cf1668a127",
+    "current": "c6b22f92474b73185158126d44691d8f7133bf64ae3346aa67d893cf1668a127"
   },
   "fonts": [
-    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.ttf",
-    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.svg",
-    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.woff",
-    "public/assets/glyphs_ce7230476c50a68431accb2946e467b4.eot"
+    "public/assets/glyphs_c6b22f92474b73185158126d44691d8f.ttf",
+    "public/assets/glyphs_c6b22f92474b73185158126d44691d8f.svg",
+    "public/assets/glyphs_c6b22f92474b73185158126d44691d8f.woff",
+    "public/assets/glyphs_c6b22f92474b73185158126d44691d8f.eot"
   ],
   "glyphs": {
     "account": {
@@ -205,6 +205,10 @@
     "comments": {
       "codepoint": 61734,
       "source": "public/glyphs/vectors/comments.svg"
+    },
+    "comments1": {
+      "codepoint": 61912,
+      "source": "public/glyphs/vectors/comments1.svg"
     },
     "company": {
       "codepoint": 61735,
@@ -486,6 +490,10 @@
       "codepoint": 61784,
       "source": "public/glyphs/vectors/help.svg"
     },
+    "help-icon": {
+      "codepoint": 61913,
+      "source": "public/glyphs/vectors/help-icon.svg"
+    },
     "helpdesk": {
       "codepoint": 61890,
       "source": "public/glyphs/vectors/helpdesk.svg"
@@ -513,6 +521,10 @@
     "ios": {
       "codepoint": 61789,
       "source": "public/glyphs/vectors/ios.svg"
+    },
+    "left-arrow-thick": {
+      "codepoint": 61914,
+      "source": "public/glyphs/vectors/left-arrow-thick.svg"
     },
     "like": {
       "codepoint": 61790,
@@ -606,6 +618,10 @@
       "codepoint": 61809,
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
+    "no-data-graph": {
+      "codepoint": 61915,
+      "source": "public/glyphs/vectors/no-data-graph.svg"
+    },
     "no-network": {
       "codepoint": 61876,
       "source": "public/glyphs/vectors/no-network.svg"
@@ -674,6 +690,10 @@
       "codepoint": 61822,
       "source": "public/glyphs/vectors/plus.svg"
     },
+    "plus-circle": {
+      "codepoint": 61916,
+      "source": "public/glyphs/vectors/plus-circle.svg"
+    },
     "portals": {
       "codepoint": 61898,
       "source": "public/glyphs/vectors/portals.svg"
@@ -685,6 +705,10 @@
     "pushpin": {
       "codepoint": 61824,
       "source": "public/glyphs/vectors/pushpin.svg"
+    },
+    "puzzle": {
+      "codepoint": 61917,
+      "source": "public/glyphs/vectors/puzzle.svg"
     },
     "rearrange": {
       "codepoint": 61825,
@@ -741,6 +765,10 @@
     "security": {
       "codepoint": 61838,
       "source": "public/glyphs/vectors/security.svg"
+    },
+    "settings1": {
+      "codepoint": 61918,
+      "source": "public/glyphs/vectors/settings1.svg"
     },
     "shared": {
       "codepoint": 61839,
@@ -872,6 +900,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {

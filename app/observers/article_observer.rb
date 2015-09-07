@@ -8,7 +8,6 @@ class ArticleObserver < ActiveRecord::Observer
 		remove_script_tags(article)
 		set_un_html_content(article)
 		modified_date(article) if (article.article_body.changed? or article.title_changed?)
-		handle_meta_likes(article) if (article.solution_article_meta && (article.thumbs_up_changed? or article.thumbs_down_changed?))
 		article.article_changes
 		create_draft_for_article(article)
 		article.seo_data ||= {}

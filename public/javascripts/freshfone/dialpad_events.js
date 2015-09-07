@@ -127,7 +127,9 @@ var FreshfoneDialpadEvents
 		      });
 		      $(".caller_id_icon").on('click', function(){
 				 		var select2 = $('#s2id_outgoing_number_selector').data('select2');
-				 		select2.open();
+				 		if(typeof select2 != "undefined") {
+				 			select2.open();
+				 		}
 					});
 		    } else { 
 		      freshfonewidget.outgoingCallWidget.toggle(false);
@@ -230,6 +232,13 @@ var FreshfoneDialpadEvents
 			this.$contactDetails.show('fade', {direction: 'right'}, 50);
 		},
 
+		prefillConnectedCallNumber:function(number) {
+			var template = this.$connectedCallTemplate.clone(),
+			params = { contact_number: number };
+			$(".call-details-msg").html(template.tmpl(params));
+			this.$contactDetails.show('fade', {direction: 'right'}, 50);
+		},
+
 		hideContactDetails: function(){
 			this.$contactDetails.hide();
 			this.$number.focus();
@@ -250,17 +259,31 @@ var FreshfoneDialpadEvents
 			var	container = this.currentContainer(),
 					current_element = container.find('.active-element'),
 					next;
+
+					if (typeof(current_element[0]) == "undefined") { 
+						this.makeFirstElementActive();
+					}
 			next = (key == 40) ? this.getNextElement(current_element) : this.getPrevElement(current_element);
 			this.makeActive(current_element,next);
 			this.scrollTo(container,next);	
 		},
 
 		bindEnterEvent: function(){
-			var	container = this.currentContainer(),
+			var	container = this.currentContainer(), self = this,
 					current_element = container.find('.active-element');
+			if (typeof(current_element[0]) == "undefined") { this.directDial(); return; }
 			isSearchBar ? this.searchEnter(current_element) : this.recentCallsEnter(current_element);
 		},
-
+		directDial: function() {
+			var dialedNumber = this.$number.val();
+			if (freshfoneContactSearch.isVaildeNumberString(dialedNumber)) {
+				this.updateNumber(dialedNumber);
+			}
+		},
+		makeFirstElementActive: function () {
+			var firstElementClass = isSearchBar ? ".search-result:first" : ".recent_call_entry:first";
+			$(this.currentContainer()[0]).find(firstElementClass).addClass("active-element");
+		},
 		currentContainer: function() {
 			return isSearchBar ? $('.contact_results_info') : $('.recent_calls_container');
 		},

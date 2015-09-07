@@ -130,6 +130,10 @@ ol, ul, li{
 			background: #D00;
 		}
 
+		&.archived {
+			background: #999;
+		}
+
 		a {
 			@include float(right);
 			width: 7px;
@@ -3209,7 +3213,7 @@ $collision_delay: 1s;
 	padding-bottom:0 !important;
 }
 
-.q-marker{
+.q-marker, .archive-q-marker{
 	display: inline-block;
 	background-color: #efefef;
 	border: 1px solid #dfdfdf;
@@ -3337,5 +3341,24 @@ $collision_delay: 1s;
 	margin-bottom: 5px;
 	& [class*="span"]{
 		min-height: 0;
+	}
+}
+
+// Archive tickets CSS
+.archived_ticket_show{
+	.no_reply{
+    background: #BBB;
+    width: 13px;
+    height: 13px;
+    z-index: 100;
+    border-radius: 50%;
+    position: absolute;
+    @include left(-4px);
+  }
+	.commentbox-archived{
+	  border: none;
+	  margin-left: 30px;
+	  margin-top: 20px;
+	  padding-top: 0px;
 	}
 }

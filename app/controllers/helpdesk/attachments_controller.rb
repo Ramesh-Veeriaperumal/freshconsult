@@ -100,7 +100,7 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
-      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo'].include? @attachment.attachable_type
+      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo', 'Helpdesk::ArchiveTicket','Helpdesk::ArchiveNote'].include? @attachment.attachable_type
 
         # If the user has high enough permissions, let them download it
         return true if(current_user && current_user.agent?)

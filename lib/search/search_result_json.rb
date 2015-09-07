@@ -48,6 +48,68 @@ module Search::SearchResultJson
 		}
 	end
 
+	# *********Archive Ticket Methods starts here**********
+	def helpdesk_archive_ticket_json ticket
+		return archive_ticket_search_json(ticket) if @search_by_field
+		return suggest_json(%{#{ticket.es_highlight('subject')} (##{ticket.display_id})},
+				helpdesk_archive_ticket_path(ticket.display_id), ticket) if @suggest
+		to_ret = {
+			:id => ticket.id,
+			:result_type => 'helpdesk_ticket',
+			:subject => ticket.es_highlight('subject'),
+			:description => ticket.es_highlight('description'),
+			:created_at => ticket.created_at
+		}.merge!(archive_ticket_fields_for_note(ticket))
+	end
+
+	def archive_ticket_search_json(ticket)
+		to_ret = {
+			:id => ticket.id,
+			:display_id => ticket.display_id,
+			:subject => h(ticket.subject),
+			:created_at => ticket.created_at,
+			:created_at_int => ticket.created_at.to_i,
+			:ticket_path => helpdesk_archive_ticket_path(ticket.display_id),
+			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]),
+			:ticket_info => t("ticket.merge_ticket_list_status_created_at", 
+							:username => "<span class='muted'>#{ticket.requester}</span>", 
+							:time_ago => time_ago_in_words(ticket.created_at))
+		}
+	end
+
+	def archive_ticket_fields_for_note ticket
+		{
+			:ticket_priority => h(ticket.priority_name),
+			:ticket_group => h(ticket.group_name),
+			:ticket_display_id => h(ticket.display_id),
+			:ticket_path => helpdesk_archive_ticket_path(ticket.display_id),
+			:avatar_url => user_avatar_url(ticket.requester),
+			:ticket_info =>  t("ticket.ticket_list_status_" + ticket.ticket_states.current_state, 
+							:username => requester(ticket),
+							:time_ago => 
+						time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))),
+			:ticket_status => h(ticket.status_name),
+			:responder_id => (ticket.responder.id unless ticket.responder.blank?),
+			:responder_name => (ticket.responder.blank? ? '-' : ticket.responder.name)
+		}
+	end
+
+	def helpdesk_archive_note_json note
+		ticket = note.archive_ticket
+		return suggest_json(%{#{ticket.es_highlight('subject')} (##{ticket.display_id})},
+					helpdesk_archive_ticket_path(ticket.display_id), ticket) if @suggest
+		to_ret = {
+			:id => note.id,
+			:result_type => 'helpdesk_note',
+			:notable_id => note.archive_ticket_id,
+			:notable_subject => h(note.archive_ticket.subject),
+			:body => h(truncate(note.body, :length => 250))
+		}.merge!(archive_ticket_fields_for_note(note.archive_ticket))
+	end
+
+
+	# *********Archive Ticket Methods ends here**********
+	
 	def helpdesk_note_json note
 		ticket = note.notable
 		return suggest_json(%{#{ticket.es_highlight('subject')} (##{ticket.display_id})},
@@ -131,7 +193,11 @@ module Search::SearchResultJson
 	end
 
 	def suggest_json content, path, result
-		class_name = result.is_a?(Company) ? 'customer' : result.class.name.gsub('::', '_').downcase
+		if Account.current.features?(:archive_tickets) && result.class.name == "Helpdesk::ArchiveTicket" 
+		  class_name = "helpdesk_ticket"
+		else
+          class_name = result.is_a?(Company) ? 'customer' : result.class.name.gsub('::', '_').downcase
+		end
 		{
 			:result_type => class_name,
 			:content => content,

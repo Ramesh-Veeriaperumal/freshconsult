@@ -219,10 +219,24 @@ class Solution::Article < ActiveRecord::Base
 
   VOTE_TYPES.each do |method|
     define_method "toggle_#{method}!" do
-      increment(method)
-      decrement((VOTE_TYPES - [method]).first)
-      save!
+      self.class.update_counters(self.id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      meta_class.update_counters(self.parent_id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      queue_quest_job if self.published?
+      return true
     end
+
+    define_method "#{method}!" do
+      self.class.increment_counter(method, self.id)
+      meta_class.increment_counter(method, self.parent_id)
+      queue_quest_job if (method == :thumbs_up && self.published?)
+      return true
+    end
+  end
+
+  def reset_ratings
+    self.class.update_all({:thumbs_up => 0, :thumbs_down => 0} ,{ :id => self.id})
+    meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
+    self.votes.destroy_all
   end
 
   def self.article_type_option
@@ -267,6 +281,11 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
+
+    def queue_quest_job
+      Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => self.id, 
+        :account_id => self.account_id })
+    end
 
     def set_mobihelp_solution_updated_time
       category_obj.update_mh_solutions_category_time

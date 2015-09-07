@@ -212,6 +212,14 @@ class Account < ActiveRecord::Base
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
+  
+  # Archive Association Starts Here
+  has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
+  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
+  has_many :archive_ticket_associations, :class_name => "Helpdesk::ArchiveTicketAssociation"
+  has_many :archive_note_associations, :class_name => "Helpdesk::ArchiveNoteAssociation"
+  has_many :archive_time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:archive_tickets , :conditions =>['archive_tickets.deleted =?', false]
+  # Archive Association Ends Here
 
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
 

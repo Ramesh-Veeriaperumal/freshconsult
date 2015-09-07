@@ -304,6 +304,12 @@ module SupportHelper
 		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
 	end
 
+	def archive_status_alert ticket
+		_text = []
+		_text << I18n.t('archive_ticket.no_reply_msg')
+		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
+	end
+
 	def widget_prefilled_value field
 		format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
 	end
@@ -471,7 +477,7 @@ module SupportHelper
 
 	def ticket_field_display_value(field, ticket)
 		_field_type = field.field_type
-		_field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+		_field_value = (field.is_default_field?) ? ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
 		_dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
 
 		case _dom_type
@@ -479,7 +485,7 @@ module SupportHelper
 			    if(_field_type == "default_agent")
 					ticket.responder.name if ticket.responder
 			    elsif(_field_type == "nested_field" || _field_type == "nested_child")
-					ticket.get_ff_value(field.name)
+					fetch_custom_field(ticket, field.name)
 			    else
 					field.dropdown_selected(((_field_type == "default_status") ?
 						field.all_status_choices : field.html_unescaped_choices), _field_value)
@@ -493,14 +499,14 @@ module SupportHelper
 
 	def ticket_field_form_value(field, ticket)
 		form_value = (field.is_default_field?) ?
-		              ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+		              ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
 
 		if(field.field_type == "nested_field")
 			form_value = {}
 			field.nested_levels.each do |ff|
-			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = ticket.get_ff_value(ff[:name])
+			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = fetch_custom_field(ticket, ff[:name])
 			end
-			form_value.merge!({:category_val => ticket.get_ff_value(field.name)})
+			form_value.merge!({:category_val => fetch_custom_field(ticket, field.name)})
 		end
 
 		return form_value
@@ -643,7 +649,8 @@ module SupportHelper
 			output << %(<div class="cs-g-c attachments" id="ticket-#{ ticket.id }-attachments">)
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
-
+			can_delete = false if ticket.is_a?(Helpdesk::ArchiveTicketDrop)
+			
 			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
@@ -663,7 +670,8 @@ module SupportHelper
 			output << %(<div class="cs-g-c attachments" id="comment-#{ comment.id }-attachments">)
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
-
+			can_delete = false if comment.is_a?(Helpdesk::ArchiveNoteDrop)
+			
 			(comment.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
@@ -753,6 +761,14 @@ module SupportHelper
 		"#{asset_host_url}/assets/misc/spacer.gif"
 	end
 
+	def helpdesk_ticket? ticket
+    ticket and ticket.is_a?(Helpdesk::Ticket)
+  end
+
+  def archived_ticket? ticket
+    ticket and ticket.is_a?(Helpdesk::ArchiveTicket)
+  end
+
 	private
 
 		def portal_preferences
@@ -774,4 +790,9 @@ module SupportHelper
 	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| link_opts[key] = h(value) unless value.blank?}
 	      link_opts
 	    end
+
+	  def fetch_custom_field(ticket, field_name)
+	  	ticket.class.eql?(Helpdesk::ArchiveTicket) ? ticket.custom_field_value(field_name) :
+	  		ticket.get_ff_value(field_name)
+	  end
 end

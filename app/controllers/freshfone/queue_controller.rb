@@ -35,7 +35,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def bridge
-    bridge_queued_call
+    bridge_queued_call #if this is faster, replace with add_to_call_queue_worker.
     render :json => {:status => :success}
   end
 

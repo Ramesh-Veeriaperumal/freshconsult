@@ -190,6 +190,10 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
     telephony.call_status(call_sid, current_account)
   end
 
+  def redirect_call_to_voicemail(call)
+    redirect_call call.call_sid, redirect_caller_to_voicemail(call.freshfone_number.id)
+  end
+
   private
     def conference_params(options, actor)
       options.merge!(default_moderation_params(actor)).merge!(options[:moderation_params] || {})

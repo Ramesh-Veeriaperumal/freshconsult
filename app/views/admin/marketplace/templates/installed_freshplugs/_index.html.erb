@@ -1,0 +1,79 @@
+<div class="no-plugs">
+  <p>
+    <%= t('marketplace.no_mktp_apps') %>
+    <a href="" class="browse-btn" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::EXTENSION_TYPE[:plug]%>"><%= t('marketplace.get_more_apps') %></a>
+  </p>
+</div>
+
+<% installed_extensions.each do |installed| %>
+  <li class="app-custom apps-wrapper installed-listing" id="ext-<%=installed['version_id']%>" >
+    <div class="row-fluid list-box <%if !installed['enabled']%> disabled-app <%end%>">
+      <div class="switch-box pull-left">
+        <% enabled_or_disabled_path = installed['enabled'] ? admin_installed_extensions_disable_path(installed['version_id']) : admin_installed_extensions_enable_path(installed['version_id']) %>
+        <% toggle_path = !installed['enabled'] ? admin_installed_extensions_disable_path(installed['version_id']) : admin_installed_extensions_enable_path(installed['version_id']) %>
+        <%= check_box_tag '', installed['enabled'], installed['enabled'], "data-url" => enabled_or_disabled_path, 
+        "data-toggle" => toggle_path, :rel => "toggle", :class=>"switch", :name => "onoffswitch", :id => "indplug_#{installed['version_id']}" %>
+      </div>
+      <div class="logo-box pull-left">
+        <% unless installed['cover_art'].blank? %>
+          <img src="<%= installed['cover_art'] %>" alt="<%= installed['name'] %>"/>
+        <% else %>
+          <span class="ficon-puzzle fsize-48"></span>
+        <% end %>
+      </div>
+      <div class="desc-box pull-left">
+        <div class="plug-data">
+          <% if installed['in_dev'] %>
+            <span class="plug-type"><%= t('marketplace.in_development') %></span>
+            <% plug_type = "&in_dev=true" %>
+          <% end %>
+          <a href="" data-url="/admin/extensions/<%=  installed['latest_version'].blank? ? installed['version_id'] : installed['latest_version'] %>?type=<%=Marketplace::Constants::EXTENSION_TYPE[:plug]%><%=plug_type%>" class="moreinfo-lnk plug-name show_btn">
+            <%= installed['name'] %>
+          </a>
+          <div class="plug-actions">
+            <% if !installed['in_dev'] && !installed['latest_version'].blank? && 
+               installed['version_id'] != installed['latest_version'] %>
+                <%= link_to t('update'), "", 
+                  "data-url"=> "#{admin_installed_extensions_new_configs_path(installed['latest_version'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&update=true", 
+                  :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.update') %>
+            <% end %>
+            <% if installed['configs'] %>
+              <%= link_to "<span class='ficon-settings1 fsize-16'></span>".html_safe, "", 
+                "data-url"=> "#{admin_installed_extensions_edit_configs_path(installed['version_id'])}?type=#{Marketplace::Constants::EXTENSION_TYPE[:plug]}&update=true&name=#{installed['name']}",
+                :class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('application.tooltip.settings') %>
+            <% end %>
+
+            <%= button_tag :type => 'button', :class => "btn btn-mini btn-delete delete-btn tooltip", "data-url" => "#{admin_installed_extensions_uninstall_path(installed['version_id'])}", "data-placement" => "below", "data-original-title" => t('application.tooltip.delete'), :data => { :confirm => t('marketplace.app_delete_warning').html_safe } do %>
+              <span class='ficon-trash-o fsize-16'></span>
+            <% end %>
+
+            <% unless installed['in_dev'] %>
+              <div class="tooltip inline-block" title="<%= t('application.tooltip.write_feedback') %>" data-placement="below" >
+                <a class="btn btn-mini btn-comments feedback-lnk" 
+                rel="freshdialog" 
+                data-title="<%= t('marketplace.app_feedback').html_safe + installed['name'] %>" 
+                title="<%= t('marketplace.app_feedback').html_safe + installed['name'] %>" 
+                data-target="#feedbackModal-<%= installed['version_id'] %>" 
+                data-submit-loading="<%= t('marketplace.feedback_action.submitting') %>"><span class="ficon-comments1 fsize-16"></span></a>
+              </div>
+            <% end %> 
+          </div>
+        </div>
+        <p class="desc"><%= truncate(installed['description'], :length => 160, :separator => ' ') %></p>
+      </div>
+    </div>
+  </li>
+
+<% unless installed['in_dev'] %>
+  <% content_for :pagefixed do %>
+  <div id="feedbackModal-<%=installed['version_id']%>" style="display:none;">
+    <form accept-charset="UTF-8" action="<%=admin_installed_extensions_feedback_path(installed['version_id'])%>" class="feedback-form" method="post" style='overflow: auto;' data-remote="true" rel="validate">
+      <p><%= t('marketplace.app_feedback_desc') %></p>
+      <textarea class="fb-textarea required" rows="7" name="description"></textarea>
+    </form>
+    <div class="status hide"></div>
+  </div>
+  <% end %>
+<% end %>
+
+<% end %>

@@ -33,9 +33,7 @@ class Helpdesk::Note < ActiveRecord::Base
       "incoming"    =>   incoming,
       "deleted"     =>   deleted,
       "created_at"  =>   created_at.to_i,
-      # @ARCHIVE TODO Currently setting archive as false. 
-      # Will change it once "archiving tickets" feature is rolled out.
-      "archive"     =>   false 
+      "archive"     =>   notable.archive || false
     }
   end
   

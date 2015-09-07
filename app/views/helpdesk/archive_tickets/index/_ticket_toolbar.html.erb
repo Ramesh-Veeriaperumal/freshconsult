@@ -1,0 +1,22 @@
+  <table class="tickets" width="100%">
+	  <thead>
+	  	<tr>
+
+      	<th class="toolbar_right">
+          <% if @current_view == "deleted" %>
+            <%= link_to t('ticket.empty_trash'),empty_trash_helpdesk_tickets_path, 
+                :method => 'delete', :class => 'padding6 tooltip', :title => t('ticket.empty_trash'), 
+                :id => 'empty_trash' if privilege?(:delete_ticket) %>
+          <% elsif @current_view != "spam" %>
+            <a href="/helpdesk/archive_tickets/configure_export" data-target="#export"  rel="freshdialog"  
+                class="padding6" title='<%= t("ticket.export_tickets") %>' data-submit-label="<%= t('export') %>" 
+                data-submit-loading="<%= t('ticket.exporting')%>..." data-width="650px" id='export_tickets' 
+                data-close-label="<%= t('cancel') %>"><%= t('ticket.export')%></a>
+          <% end %>
+
+          
+        </th>
+      </tr>
+    </thead>
+  </table>
+  

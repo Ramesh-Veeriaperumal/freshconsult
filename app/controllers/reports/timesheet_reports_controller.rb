@@ -38,17 +38,22 @@ class Reports::TimesheetReportsController < ApplicationController
   
   def time_sheet_list
     @report_date = params[:date_range]
-    @time_sheets = filter_with_groupby(@start_date,@end_date)    
-    @time_sheet_data = billable_vs_non_billable(@time_sheets)
+    current_range_time_sheet
     stacked_chart_data
     previous_range_time_sheet #Fetching the previous time range data.
+    if Account.current.features?(:archive_tickets)
+      archive_current_range_time_sheet
+      archive_previous_range_time_sheet
+      sum_new_and_archived
+      sum_data
+    end
   end
-
+  
   def previous_range_time_sheet
     #set the time (start/end) to previous range for comparison summary.
     set_time_range(true)
     old_time_sheets = filter_with_groupby(@start_time,@end_time)
-    @old_time_sheet_data= billable_vs_non_billable(old_time_sheets)
+    @old_time_sheet_data = billable_vs_non_billable(old_time_sheets)
   end
 
   def generate_pdf
@@ -62,26 +67,80 @@ class Reports::TimesheetReportsController < ApplicationController
   
   def time_sheet_for_export
     @time_sheets = filter(@start_date,@end_date)
+    if Account.current.features?(:archive_tickets)
+      @archive_time_sheets = archive_filter(@start_date,@end_date)
+      @time_sheets = shift_merge_sorted_arrays(@time_sheets,@archive_time_sheets)
+    end
   end
+
+  private
 
   def set_time_range(prev_time = false)
     @start_time = prev_time ? previous_start : start_date
     @end_time = prev_time ? previous_end : end_date  
   end
-
-  private
   
-    def check_permission
-      access_denied unless privilege?(:view_time_entries)
-    end
+  
+  def current_range_time_sheet
+    @time_sheets = filter_with_groupby(@start_date,@end_date)    
+    @time_sheet_data = billable_vs_non_billable(@time_sheets)
+  end
 
-    def stacked_chart_data
-      barchart_data = [{:name=>"non_billable",:data=>[@time_sheet_data[:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@time_sheet_data[:billable]],:color=>'#679d46'}]
-      @activity_data_hash={'barchart_data'=>barchart_data}
-    end
+  def check_permission
+    access_denied unless privilege?(:view_time_entries)
+  end
 
-    def parse_date(date_time)
-      date_time.strftime("%Y-%m-%d %H:%M:%S")
+  def stacked_chart_data
+    barchart_data = [{:name=>"non_billable",:data=>[@time_sheet_data[:non_billable]],:color=>'#bbbbbb'},{:name=>"billable",:data=>[@time_sheet_data[:billable]],:color=>'#679d46'}]
+    @activity_data_hash={'barchart_data'=>barchart_data}
+  end
+
+  def parse_date(date_time)
+    date_time.strftime("%Y-%m-%d %H:%M:%S")
+  end
+
+  #******** Archive method starts here ********#
+  
+  def archive_previous_range_time_sheet
+    #set the time (start/end) to previous range for comparison summary.
+    set_time_range(true)
+    old_time_sheets = archive_filter_with_groupby(@start_time,@end_time)
+    @archive_old_time_sheet_data= billable_vs_non_billable(old_time_sheets)
+  end
+
+  def archive_current_range_time_sheet
+    @archive_time_sheets = archive_filter_with_groupby(@start_date,@end_date)    
+    @archive_time_sheet_data = billable_vs_non_billable(@archive_time_sheets)
+  end
+
+  def sum_new_and_archived
+    @time_sheet_data.each do |key,value|
+      @time_sheet_data[key] = value + @archive_time_sheet_data[key]
     end
+    @old_time_sheet_data.each do |key,value|
+      @old_time_sheet_data[key] = value + @archive_old_time_sheet_data[key]
+    end
+  end
+
+  def sum_data
+    @archive_time_sheets.each do |key,value|
+      if @time_sheets[key]
+        @time_sheets[key] = shift_merge_sorted_arrays(@time_sheets[key],value)
+      else
+        @time_sheets[key] = value
+      end
+    end
+  end
+
+  def shift_merge_sorted_arrays(array1,array2)
+    output = []
+    loop do
+      break if array1.empty? || array2.empty?
+      output << (array1.first.executed_at > array2.first.executed_at ? array1.shift : array2.shift)
+    end
+    return output + array1 + array2
+  end
+
+  #******** Archive method ends here ********#
 
 end

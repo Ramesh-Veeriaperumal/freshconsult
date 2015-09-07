@@ -4,7 +4,7 @@ class MergeContacts < BaseWorker
 
   BATCH_LIMIT = 500
   
-  REPORTS_TRACKING_CLASS = ["Helpdesk::Ticket"]
+  REPORTS_TRACKING_CLASS = ["Helpdesk::Ticket", "Helpdesk::ArchiveTicket"]
  
   VOTE_OPTIONS = {
     :object     => "votes",
@@ -39,7 +39,7 @@ class MergeContacts < BaseWorker
       unless @children.blank?
         Rails.logger.debug "#{"*"*20}Merging contacts #{@children.map(&:id).join(", ")} with #{@parent_user.id}#{"*"*20}"
         move_child_resources_to_parent
-        move_if_exists(User::USER_SECONDARY_ATTRIBUTES)
+        move_if_exists(user_attributes)
         @children.each(&:save)
         @parent_user.save
       end
@@ -57,6 +57,7 @@ class MergeContacts < BaseWorker
     move_helpdesk_activities children_ids
     move_forum_activities children_ids
     move_polymorphic_objects children_ids
+    move_archived_tickets children_ids if @account.features?(:archive_tickets)
   end
 
   def move_accessory_attributes children_ids
@@ -76,6 +77,11 @@ class MergeContacts < BaseWorker
     [MONITOR_OPTIONS, VOTE_OPTIONS, TAG_OPTIONS].each do |options|
       update_polymorphic(children_ids, options)
     end
+  end
+
+  def move_archived_tickets(children_ids)
+    update_by_batches(@account.archive_tickets, "requester_id", ["requester_id in (?)", children_ids])
+    move_each_of(["archive_notes"], children_ids)
   end
 
   #Moving relations by batches of 500
@@ -113,6 +119,10 @@ class MergeContacts < BaseWorker
     end
   end
 
+  def user_attributes
+    User::USER_SECONDARY_ATTRIBUTES + @account.contact_form.custom_contact_fields.map(&:name)
+  end
+
   # We are doing this as a user should not have multiple monitorships/votes for the same topic/forum etc.
   # We are moving the ones not present in the parent and deleting the ones that are repeated in the target.
   # We are not moving them in batches due to this
@@ -145,7 +155,7 @@ class MergeContacts < BaseWorker
   def send_updates_to_rmq(items, klass_name)
     items.each do |item|
       item.reload ## Here reloading to get the current state of the object. TODO check if it will trigger any performace impact. Must reorg
-      key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{klass_name.demodulize.upcase}_KEY")
+      key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{klass_name.demodulize.tableize.singularize.upcase}_KEY")
       item.manual_publish_to_rmq("update", key, {:manual_publish => true})
     end
   end

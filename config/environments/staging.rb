@@ -20,6 +20,9 @@ Helpkit::Application.configure do
 
   config.after_initialize do
     ActiveMerchant::Billing::Base.gateway_mode = :test
+    Bullet.enable         = true
+    Bullet.bullet_logger  = true
+    Bullet.console        = true
   end
 
   # Don't auto compile css in production

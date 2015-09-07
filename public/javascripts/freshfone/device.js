@@ -33,6 +33,7 @@
 
 		Twilio.Device.offline(function (device) {
 			console.log("Device offline");
+			console.log("offline-token");
 			freshfoneuser.getCapabilityToken(undefined, true);
 		})
 

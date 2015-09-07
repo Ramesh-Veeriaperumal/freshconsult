@@ -1,0 +1,119 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.xero.helptext").html_safe%>
+  </div>
+<%- end %>
+  <h3 class="lead"><%="#{t("integrations.xero.form.xero_settings")} #{@organisation_name}"%></h3>
+  <%= form_tag("/integrations/xero/update_params", :method=> "post")  do %>    
+    <ul class="ui-form">
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-xero"></div>
+        <div class="logo info-data">
+          <%=t('integrations.xero.desc')%>
+        </div>
+      </label>
+      <div class="salesforce-wrapper">
+        <div class="contact-fields">
+          <h3 class="leftselect2"><%=t("integrations.xero.form.accounts")%></h3> 
+          <div id = "xeroaccounts">
+           <% code, rev_acc, rev_code = @revenue_accounts.first.second, @revenue_accounts.collect{|a| a.first}, @revenue_accounts.collect{|a| a.second} %>
+           <%code_index = rev_acc.index('Sales') || rev_acc.index('sales') %>
+           <% if code_index.present? %>
+             <% code = rev_code[code_index]%>
+           <% end %>
+           <% code_index = 0 if code_index.nil? %>
+           <% if @installed_app.present? %>
+            <% ins_acc = @installed_accounts.collect{|a|  a.second} %> 
+            <% if ins_acc.present? %>              
+              <% code = ins_acc%>
+            <% end %>  
+           <%end%>
+            <%= select_tag :accounts, 
+                options_for_select(@revenue_accounts,  code), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "xero-accounts-select", :required => true, "data-disable-field" => rev_acc[code_index], "data-max-select" => 20}%>               
+          </div>
+        </div>
+        <div class="lead-fields">  
+          <h3 class="leftselect2"><%=t("integrations.xero.form.inventory_items")%></h3> 
+          <div id = "xeroitems">
+            <% item_code = [] %>   
+            <% if @installed_app.present? %>                        
+              <% item_code = @installed_items.collect{|a|  a.second}%>           
+            <% end %>
+            <%= select_tag :items, 
+                options_for_select(@items_code_names, item_code), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "xero-accounts-select", "data-max-select" => 30} %>     
+          </div>           
+        </div>  
+        <div class="contact-fields">
+          <h3 class="leftselect2"><%=t("integrations.xero.form.default_desc")%></h3> 
+          <div id = "xero_default_desc">
+          <% selected_default_desc = "Freshdesk Ticket {{ticket.id}}" %> 
+          <% if @installed_app.present? %>             
+            <% selected_default_desc = @selected_desc%>  
+          <% end %>
+          <%= text_field_tag 'description', selected_default_desc, size: 100 , :required => true%>        
+          <%= label_tag "xero-description-error", flash[:error] => ""%>      
+          </div>
+        </div>
+      </div>
+    </li>
+    </ul>
+
+    <% if @installed_app%>   
+    <div class="button-container">
+      <%= link_to t('back'), { :controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary", :onClick => "return check_description()" %>
+    </div>
+    <% else %>
+      <div class="button-container">
+      <%= link_to t('cancel'), { :controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('create'), :class => "btn btn-primary", :onClick => "return check_description()" %>
+    </div>
+    <% end%>
+  <%end%>
+
+  <script type="text/javascript">
+    jQuery('[rel="xero-accounts-select"]').livequery(function(ev) {
+      var maxSelectionSize = parseInt(jQuery(this).data('maxSelect'));
+      jQuery(this).select2({maximumSelectionSize: maxSelectionSize,removeOptionOnBackspace:false});
+      var select_content = jQuery(this).siblings('.select2-container');      
+      var disField = jQuery(this).data('disableField');
+      var disableField = [];
+      if(disField){
+      disableField = jQuery(this).data('disableField').split();
+      }
+      select_content.find(".select2-search-choice div").each(function(index,element){
+        value = jQuery(element).text();
+        if(jQuery.inArray(value, disableField ) != -1) {
+          jQuery(element).next("a").remove();
+        }
+      });
+    }); 
+    function check_description(){
+      var desc = jQuery('#description').val();
+      var valid_desc_array = ['{{ticket.id}}', '{{ticket.subject}}', '{{ticket.status}}', '{{ticket.ticket_type}}', 
+      '{{ticket.tags}}', '{{ticket.due_by_time}}', '{{ticket.requester.name}}', '{{ticket.requester.firstname}}', 
+      '{{ticket.requester.lastname}}', '{{ticket.from_email}}', '{{ticket.requester.phone}}', 
+      '{{ticket.requester.address}}', '{{ticket.group.name}}', '{{ticket.agent.name}}', '{{ticket.agent.email}}', 
+      '{{helpdesk_name}}', '{{ticket.portal_name}}', '{{ticket.requester.email}}']
+      var regexp = /{{[A-z|\.]*}}/g;
+      var desc_array = [];
+      if(desc!=""){
+      desc_array = desc.match(regexp);
+      }
+      var invalid_array = [];
+      for(var i=0; i< desc_array.length; i++){
+        if(!_.contains(valid_desc_array, desc_array[i])){
+          invalid_array.push(desc_array[i]);
+        }          
+      }  
+      if(invalid_array.length > 0){
+        jQuery('label[for="xero-description-error"]').addClass('error')
+                                                      .text( "value(s) " +invalid_array.toString()  + " is/are not allowed in Description");
+        return false;
+      }    
+      else{
+        return true;
+      }
+    }    
+  </script>

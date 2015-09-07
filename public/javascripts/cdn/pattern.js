@@ -5,6 +5,7 @@
 //= require pattern/bootstrap-dialog.js
 //= require pattern/bootstrap-transition.js
 //= require pattern/bootstrap-tab.js
+//= require pattern/bootstrap-carousel.js
 //= require jquery.pageslide.js
 //= require pattern/sticky.js
 //= require pattern/stickyinit.js

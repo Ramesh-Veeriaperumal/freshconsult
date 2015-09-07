@@ -1,4 +1,4 @@
-<% if @editable_ticket_fields.present? %>
+<% if helpdesk_ticket?(@ticket) and @editable_ticket_fields.present? %>
 <section class="widget" id="ticket-sidebar-edit">
 	<h3 class="light">Modify ticket details</h4>
 	<%= form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 

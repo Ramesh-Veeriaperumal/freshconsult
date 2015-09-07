@@ -449,7 +449,7 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def missed_conf_transfer?
-    missed_or_busy? && account.features?(:freshfone_conference) && parent.present?
+    (missed_or_busy? || failed?) && account.features?(:freshfone_conference) && parent.present?
   end
 
   def incoming_root_call?

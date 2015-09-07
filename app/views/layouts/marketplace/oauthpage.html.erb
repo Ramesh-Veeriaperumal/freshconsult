@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]>         <html class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>            <html class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>            <html class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>            <html class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+  <%= render :partial => "layouts/shared/head" %>
+    <body class="single">
+      <div id="wrap">
+
+        <div class="header">
+          <div class="wrapper">
+            <div class="wrapper-shadow">
+            <div class="fd-branding">
+              <%= link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+                <span class="vertical-align logo-image">
+                  <i></i>
+                  <%= image_tag logo_url, :alt => t('logo'),
+                            :onerror => "default_image_error(this)",
+                            :"data-type" => "logo" %>
+                </span>
+                <% end %>
+                <%= link_to(h(current_portal.name), "/home", :class => "logo_text") %>
+                <%= link_to_function("Switch to mobile version",
+                          "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';",
+                          :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
+              </div>
+              <div class="header-wrapper">
+                <div style="height:35px;">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content" id="body-container">
+          <div class="wrapper">
+            <div class="wrapper-shadow">
+              <div id="inner" class="dev-oauth">
+                <div class="leftcontent" >
+                  <div class="pagearea" id="Pagearea">
+                    <%= show_flash %>
+                    <%= yield %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+</html>

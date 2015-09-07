@@ -4,7 +4,8 @@ Hi <%= @user.name%>,
 <div>
 <% if @import_success %>
 	<p><%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}".html_safe%></p>
-	<p></p>
+<% elsif @wrong_csv %>
+    <p><%= "#{t('flash.import.info7', :type => @type.singularize.capitalize, :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}".html_safe %></p>
 <% else %>
 
 	<p><%= "#{t('flash.import.info2', :type => @type)}".html_safe %></p>
@@ -21,12 +22,11 @@ Hi <%= @user.name%>,
 			<%= @corrupted ? t('flash.import.info6').html_safe :  "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}".html_safe  %>
 		</span>
 	</p>
-<p></p>
 <%end%>
+<p></p>
 <p><%= t(:'flash.import.help_desk').html_safe%></p>
 <p></p>
 <div>
 <p><%= t(:'flash.import.regards').html_safe%></p>
-<p> <%= t(:'flash.import.freshdesk').html_safe%>
-</p>
+<p> <%= t(:'flash.import.freshdesk').html_safe%></p>
 </div>
