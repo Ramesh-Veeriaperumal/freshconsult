@@ -3759,7 +3759,7 @@ en:
     status: Solution Status
     info8: Are you sure you want to delete this solution?
     info9: "If you use multiple products, <b>Categories</b> can be made visible in their respective product portals."
-    info10: Folder visibility is of four types.
+    info10: "Folder visibility is of four types:"
     info11: "<b>All</b> - This makes it publicly visible to anyone who accesses your self-service portal."
     info12: "<b>Logged In Users</b> - This makes it visible only to those who have signed up and logged in with their credentials."
     info13: "<b>Agents</b> - This makes it private, so only agents on your helpdesk can view them. This is useful for internal knowledge sharing."
@@ -3771,7 +3771,10 @@ en:
     info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
     info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
     info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
-    kbase_email_info: "Agents can mail solution articles to <b>kbase@%{domain_name}</b> which will be shown here under drafts section."
+    info22: "Draft articles will be visible only to agents and can be searched only at the agent side."
+    info23: "<b>My Drafts</b> will list all articles which you last edited and saved as draft."
+    info24: "<b>All Drafts</b> will list all the articles in draft status. In the case of multiple portal setup, you can filter draft articles from any specific portal by selecting the dropdown. "
+    kbase_email_info: "All emails sent by agents to <b>%{email}</b> will be stored here as drafts."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag

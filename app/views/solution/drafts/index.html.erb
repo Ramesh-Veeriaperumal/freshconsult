@@ -41,6 +41,6 @@
 
 <% content_for :helpcard do %>
 	<h3 class="lead"><%= t('solution.draft.name').html_safe %></h3>
-	<%= t('solution.kbase_email_info', :domain_name => current_account.full_domain).html_safe %>
-	<%= helpcard_content([2, 3, 4, 5, 6], 'solution.info' ) %>
+	<%= helpcard_content([22, 23, 24], 'solution.info' ) %>
+	<%= t('solution.kbase_email_info', :email => current_account.kbase_email).html_safe %>
 <% end %>
