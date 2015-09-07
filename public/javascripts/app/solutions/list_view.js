@@ -249,14 +249,6 @@ window.App = window.App || {};
         $("#customers_filter").trigger("liszt:updated");
         $('.company_folders').hide();
       }
-    },
-
-    reorderBtnToggle: function () {
-      if (this.totalElements() > 1) {
-        $('.list-default-btns #reorder_btn').removeClass('hide');
-      } else {
-        $('.list-default-btns #reorder_btn').addClass('hide');
-      }
     }
   };
 }(window.jQuery));

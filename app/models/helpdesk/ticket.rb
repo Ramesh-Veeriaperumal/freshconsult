@@ -175,13 +175,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
   scope :article_tickets_by_user, lambda { |user| {
        :include => [:article, :requester, :ticket_status],
-       :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id and solution_articles.user_id = ?", user.id]
+       :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and solution_articles.user_id = ? and article_tickets.ticketable_type = ?", user.id, 'Helpdesk::Ticket']
      }
    }
 
   scope :all_article_tickets,
     :include => [:article, :requester, :ticket_status],
-    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id"],
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and article_tickets.ticketable_type = ?", 'Helpdesk::Ticket'],
     :order => "`helpdesk_tickets`.`created_at` DESC"
 
   scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {

@@ -16,9 +16,8 @@ window.App.Solutions = window.App.Solutions || {};
 		},
 
 		toggleReorderButton: function () {
-			if ($('.comm-items ul li').length < 2) {
-				$('#reorder_btn').hide();
-			}
+			var flag = $('.comm-items ul li').length > 1;
+			$('.list-default-btns #reorder_btn').toggle(flag);
 		},
 
 		bindReorderButton: function () {

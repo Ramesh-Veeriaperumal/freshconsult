@@ -30,7 +30,7 @@ class Solution::Draft < ActiveRecord::Base
 
   alias_attribute :modified_by, :user_id
 
-  default_scope :order => "updated_at DESC"
+  default_scope :order => "modified_at DESC"
 
   scope :as_list_view, :include => [:user, :folder, :category_meta]
   scope :for_sidebar, :include => [:user]
