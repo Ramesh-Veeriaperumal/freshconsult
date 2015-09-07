@@ -1,6 +1,8 @@
 require_relative '../../test_helper'
 
 class TopicsIntegrationTest < ActionDispatch::IntegrationTest
+  include Helpers::DiscussionsHelper
+
   def test_query_count
     skip_bullet do
       v2 = {}

@@ -1,6 +1,8 @@
 require_relative '../../test_helper'
 
 class ForumsIntegrationest < ActionDispatch::IntegrationTest
+  include Helpers::DiscussionsHelper
+
   def test_query_count
     v2 = {}
     v1 = {}

@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../unit_test_helper'
 require "#{Rails.root}/test/api/helpers/custom_field_validator_helper.rb"
 
 class CustomFieldValidatorTest < ActionView::TestCase

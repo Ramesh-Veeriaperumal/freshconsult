@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../unit_test_helper'
 
 class ErrorHelperTest < ActionView::TestCase
   def test_format_error

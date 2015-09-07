@@ -1,5 +1,6 @@
 require_relative '../test_helper'
 class ApiProductsControllerTest < ActionController::TestCase
+  include Helpers::ProductsHelper
   def wrap_cname(params)
     { api_product: params }
   end

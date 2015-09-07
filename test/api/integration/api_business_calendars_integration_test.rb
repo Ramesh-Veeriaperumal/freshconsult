@@ -1,6 +1,8 @@
 require_relative '../test_helper'
 
 class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
+  include BusinessCalendarsHelper
+
   def test_query_count
     v2 = {}
     v2_expected = {

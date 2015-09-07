@@ -1,5 +1,7 @@
 require_relative '../test_helper'
 class ApiEmailConfigsControllerTest < ActionController::TestCase
+  include Helpers::EmailConfigsHelper
+
   def wrap_cname(params)
     { api_email_config: params }
   end

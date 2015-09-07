@@ -1,6 +1,5 @@
 module TestCaseMethods
-  include TicketFieldsHelper
-
+  include Redis::RedisKeys
   def parse_response(response)
     JSON.parse(response)
     rescue

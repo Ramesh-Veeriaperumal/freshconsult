@@ -1,5 +1,6 @@
 require_relative '../test_helper'
 class ApiSlaPoliciesControllerTest < ActionController::TestCase
+  include Helpers::SlaPoliciesHelper
   def wrap_cname(params)
     { api_sla_policy: params }
   end
@@ -16,7 +17,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_company_sla_policies
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [company.id] })
     assert_response :success
     match_json(sla_policy_pattern(sla_policy.reload))
@@ -24,7 +25,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_remove_company_sla_policy
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response :success
     match_json(sla_policy_pattern(sla_policy.reload))
@@ -32,7 +33,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_fields_in_conditions_hash
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { group_ids: [1, 2], product_id: [1] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('group_ids', 'invalid_field'),
@@ -41,7 +42,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_with_invalid_company_ids
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [10_000, 1_000_001] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('company_ids', 'list is invalid', list: '10000, 1000001')])
@@ -49,7 +50,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_with_invalid_company_ids_data_type
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: '1,2' })
     assert_response :bad_request
     match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
@@ -57,7 +58,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_with_empty_conditions
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response :bad_request
     match_json([bad_request_error_pattern('applicable_to', "can't be blank")])
@@ -80,14 +81,14 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_with_invalid_fields
     company = create_company
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, conditions: { company_id: [company.id] })
     assert_response :bad_request
     match_json([bad_request_error_pattern('conditions', 'invalid_field')])
   end
 
   def test_update_with_invalid_data_type
-    sla_policy = create_sla_policy
+    sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: [1, 2])
     assert_response :bad_request
     match_json([bad_request_error_pattern('applicable_to', 'data_type_mismatch', data_type: 'key/value pair')])
@@ -95,7 +96,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_index_with_link_header
     3.times do
-      create_sla_policy
+      quick_create_sla_policy
     end
     per_page = Account.current.sla_policies.all.count - 1
     get :index, construct_params(per_page: per_page)
@@ -107,21 +108,5 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response :success
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
-  end
-
-  def create_sla_policy
-    company = create_company
-    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
-                                                  conditions: { group_id: ['1'], company_id: ["#{company.id}"] })
-    sla_policy.save(validate: false)
-    sla_policy
-  end
-
-  def create_sla_policy_with_only_company_ids
-    company = create_company
-    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
-                                                  conditions: { company_id: ["#{company.id}"] })
-    sla_policy.save(validate: false)
-    sla_policy
   end
 end

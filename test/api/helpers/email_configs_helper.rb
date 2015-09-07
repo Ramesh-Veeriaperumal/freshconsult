@@ -1,4 +1,6 @@
 module Helpers::EmailConfigsHelper
+  include EmailConfigsHelper
+
   def email_config_pattern(expected_output = {}, email_config)
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
@@ -16,5 +18,3 @@ module Helpers::EmailConfigsHelper
     }
   end
 end
-
-include Helpers::EmailConfigsHelper

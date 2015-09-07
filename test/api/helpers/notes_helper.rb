@@ -1,4 +1,7 @@
 module Helpers::NotesHelper
+  include NoteHelper
+  include TicketHelper
+
   def note_pattern(expected_output = {}, note)
     expected_output[:body_html] ||= format_html(note, expected_output[:body]) if expected_output[:body]
     {
@@ -54,5 +57,3 @@ module Helpers::NotesHelper
     { body:  Faker::Lorem.paragraph, cc_emails: [Faker::Internet.email, Faker::Internet.email], bcc_emails: [Faker::Internet.email, Faker::Internet.email] }.to_json
   end
 end
-
-include Helpers::NotesHelper

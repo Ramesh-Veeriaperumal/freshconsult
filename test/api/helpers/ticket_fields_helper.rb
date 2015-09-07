@@ -202,4 +202,3 @@ module Helpers::TicketFieldsHelper
     }
   end
 end
-include Helpers::TicketFieldsHelper

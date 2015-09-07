@@ -135,7 +135,20 @@ module UsersHelper
     new_user.save
     new_user.reload
   end
+  
+  # Helpers
+  def other_user
+    u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
+    u.update_column(:email, Faker::Internet.email)
+    u.reload
+  end
 
+  def deleted_user
+    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
+    user.update_column(:deleted, true)
+    user.update_column(:email, Faker::Internet.email)
+    user.reload
+  end
 
   def get_default_user
     User.first_or_create do |user|

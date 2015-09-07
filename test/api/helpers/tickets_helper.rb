@@ -1,4 +1,11 @@
 module Helpers::TicketsHelper
+  include GroupHelper
+  include Helpers::TicketFieldsHelper
+  include EmailConfigsHelper
+  include ProductsHelper
+  include CompanyHelper
+  include TicketHelper
+  include NoteHelper
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
@@ -88,5 +95,3 @@ module Helpers::TicketsHelper
     }
   end
 end
-
-include Helpers::TicketsHelper

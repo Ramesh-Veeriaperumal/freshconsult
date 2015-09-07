@@ -1,7 +1,4 @@
-ENV['RAILS_ENV'] = 'test'
-
 require_relative 'helpers/test_files.rb'
-
 class ActionController::TestCase
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if  Rails.env.test?

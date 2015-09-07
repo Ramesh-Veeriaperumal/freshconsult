@@ -1,4 +1,5 @@
 module Helpers::GroupsHelper
+  include GroupHelper
   # Patterns
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
@@ -52,5 +53,3 @@ module Helpers::GroupsHelper
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: [1, 3] }
   end
 end
-
-include Helpers::GroupsHelper

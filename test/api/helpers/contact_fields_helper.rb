@@ -1,4 +1,5 @@
 module Helpers::ContactFieldsHelper
+  include ContactFieldsHelper
   # Patterns
   def contact_field_pattern(expected_output = {}, contact_field)
     default_contact_field = contact_field.column_name == 'default'
@@ -35,5 +36,3 @@ module Helpers::ContactFieldsHelper
     end
   end
 end
-
-include Helpers::ContactFieldsHelper

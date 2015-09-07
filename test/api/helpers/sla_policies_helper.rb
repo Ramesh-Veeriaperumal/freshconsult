@@ -1,4 +1,7 @@
 module Helpers::SlaPoliciesHelper
+  include CompanyHelper
+  include SlaPoliciesHelper
+
   # Patterns
   def sla_policy_pattern(expected_output = {}, sla_policy)
     conditions_hash = {}
@@ -16,6 +19,22 @@ module Helpers::SlaPoliciesHelper
     }
   end
 
+  def quick_create_sla_policy
+    company = create_company
+    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
+                                                  conditions: { group_id: ['1'], company_id: ["#{company.id}"] })
+    sla_policy.save(validate: false)
+    sla_policy
+  end
+
+  def create_sla_policy_with_only_company_ids
+    company = create_company
+    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
+                                                  conditions: { company_id: ["#{company.id}"] })
+    sla_policy.save(validate: false)
+    sla_policy
+  end
+
   # Helpers
   def v2_sla_policy_payload
     sla_policy_params.to_json
@@ -27,12 +46,22 @@ module Helpers::SlaPoliciesHelper
 
   # private
   def sla_policy_params
-    { applicable_to: { company_ids: [1, 2] } }
+    company_ids = Company.first(2).map(&:id)
+    company_ids = if company_ids.empty?
+                    2.times { create_company }
+                    Company.first(2).map(&:id)
+                  end
+    { applicable_to: { company_ids: company_ids } }
   end
 
   def v1_sla_policy_params
-    { conditions: { company_id: '1,2' } }
+    company_ids = Company.first(2).map(&:id).join(',')
+    if company_ids.blank?
+      2.times do
+        create_company
+      end
+      company_ids = Company.first(2).map(&:id).join(',')
+    end
+    { conditions: { company_id: company_ids } }
   end
 end
-
-include Helpers::SlaPoliciesHelper

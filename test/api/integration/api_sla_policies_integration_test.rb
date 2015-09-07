@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 
 class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
+  include Helpers::SlaPoliciesHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -9,20 +10,22 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 7,
         api_index: 1,
 
-        update: 18,
+        update: 17,
         index: 11
       }
       agent = add_test_agent(@account)
       sp1 = create_sla_policy(agent)
       sp2 = create_sla_policy(agent)
+      v2_payload = v2_sla_policy_payload
+      v1_payload = v1_sla_policy_payload
 
       # update
       v1[:update] = count_queries do
-        put("/helpdesk/sla_policies/#{sp2.id}/company_sla.json", v1_sla_policy_payload, @write_headers)
+        put("/helpdesk/sla_policies/#{sp2.id}/company_sla.json", v1_payload, @write_headers)
         assert_response :success
       end
       v2[:update], v2[:api_update] = count_api_queries do
-        put("/api/v2/sla_policies/#{sp1.id}", v2_sla_policy_payload, @write_headers)
+        put("/api/v2/sla_policies/#{sp1.id}", v2_payload, @write_headers)
         assert_response :success
       end
       # index

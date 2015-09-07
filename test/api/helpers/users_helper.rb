@@ -1,4 +1,5 @@
 module Helpers::UsersHelper
+  include CompanyHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
@@ -53,55 +54,6 @@ module Helpers::UsersHelper
     index_contact_pattern(contact).merge(deleted: contact.deleted.to_s.to_bool)
   end
 
-  def agent_pattern(expected_output = {}, agent)
-    user = {
-      active: agent.user.active,
-      created_at: agent.user.created_at,
-      email: agent.user.email,
-      job_title: agent.user.job_title,
-      language: agent.user.language,
-      last_login_at: agent.user.last_login_at,
-      mobile: agent.user.mobile,
-      name: agent.user.name,
-      phone: agent.user.phone,
-      time_zone: agent.user.time_zone,
-      updated_at: agent.user.updated_at
-    }
-
-    {
-      available_since: expected_output[:available_since] || agent.active_since,
-      available: expected_output[:available] || agent.available,
-      created_at: agent.created_at,
-      id: Fixnum,
-      occasional: expected_output[:occasional] || agent.occasional,
-      signature: expected_output[:signature] || agent.signature,
-      signature_html: expected_output[:signature_html] || agent.signature_html,
-      ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
-      updated_at: agent.updated_at,
-      user: expected_output[:user] || user
-    }
-  end
-
-  # Helpers
-  def other_user
-    u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
-    u.update_column(:email, Faker::Internet.email)
-    u.reload
-  end
-
-  def deleted_user
-    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
-    user.update_column(:deleted, true)
-    user.update_column(:email, Faker::Internet.email)
-    user.reload
-  end
-
-  def user_without_monitorships
-    u = User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
-    u.update_column(:email, Faker::Internet.email)
-    u.reload
-  end
-
   def v1_contact_payload
     { user: v1_contact_params }.to_json
   end
@@ -145,5 +97,3 @@ module Helpers::UsersHelper
     }
   end
 end
-
-include Helpers::UsersHelper

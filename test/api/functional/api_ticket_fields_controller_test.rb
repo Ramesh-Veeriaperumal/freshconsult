@@ -1,6 +1,8 @@
 require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
+  include ApiApplicationHelper
+  include Helpers::TicketFieldsHelper
   def wrap_cname(_params)
     remove_wrap_params
     {}

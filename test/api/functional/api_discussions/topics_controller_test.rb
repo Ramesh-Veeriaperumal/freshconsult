@@ -2,6 +2,8 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class TopicsControllerTest < ActionController::TestCase
+    include Helpers::DiscussionsHelper
+
     def controller_params(params = {})
       remove_wrap_params
       request_params.merge(params)

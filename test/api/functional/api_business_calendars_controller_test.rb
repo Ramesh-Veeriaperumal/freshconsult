@@ -1,5 +1,6 @@
 require_relative '../test_helper'
 class ApiBusinessCalendarsControllerTest < ActionController::TestCase
+  include Helpers::BusinessCalendarsHelper
   def wrap_cname(params)
     { api_business_calendar: params }
   end

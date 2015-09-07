@@ -1,6 +1,8 @@
 require_relative '../test_helper'
 
 class TimeSheetsControllerTest < ActionController::TestCase
+  include Helpers::TimeSheetsHelper
+
   def controller_params(params = {})
     remove_wrap_params
     request_params.merge(params)

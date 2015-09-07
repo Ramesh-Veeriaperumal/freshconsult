@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 
 class NotesIntegrationTest < ActionDispatch::IntegrationTest
+  include Helpers::NotesHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -21,29 +22,44 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
       ticket_id = Helpdesk::Ticket.first.display_id
       # create
-      v2[:create], v2[:api_create] = count_api_queries { post("/api/tickets/#{ticket_id}/notes", v2_note_payload, @write_headers) }
+      v2[:create], v2[:api_create] = count_api_queries do
+        post("/api/tickets/#{ticket_id}/notes", v2_note_payload, @write_headers)
+        assert_response :created
+      end
       v1[:create] = count_queries { post("/helpdesk/tickets/#{ticket_id}/conversations/note.json", v1_note_payload, @write_headers) }
 
       id1 = Helpdesk::Note.last(2).first.id
       id2 = Helpdesk::Note.last.id
 
       # notes
-      v2[:ticket_notes], v2[:api_ticket_notes] = count_api_queries { get("/api/tickets/#{ticket_id}/notes", nil, @headers) }
+      v2[:ticket_notes], v2[:api_ticket_notes] = count_api_queries do
+        get("/api/tickets/#{ticket_id}/notes", nil, @headers)
+        assert_response :success
+      end
       v1[:ticket_notes] = count_queries { get("/helpdesk/tickets/#{ticket_id}.json", nil, @headers) }
       # there is no notes method in v1
 
       # update
-      v2[:update], v2[:api_update] = count_api_queries { put("/api/notes/#{id1}", v2_note_update_payload, @write_headers) }
+      v2[:update], v2[:api_update] = count_api_queries do
+        put("/api/notes/#{id1}", v2_note_update_payload, @write_headers)
+        assert_response :success
+      end
       # No public API to update a note in v1. Hence using a private one.
       v1[:update] = count_queries { put("/helpdesk/tickets/#{ticket_id}/notes/#{id2}.json", v1_note_payload, @write_headers) }
 
       # delete
-      v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/notes/#{id1}", nil, @headers) }
+      v2[:destroy], v2[:api_destroy] = count_api_queries do
+        delete("/api/notes/#{id1}", nil, @headers)
+        assert_response :no_content
+      end
       # No public API to update a note in v1. Hence using a private one.
       v1[:destroy] = count_queries { delete("/helpdesk/tickets/#{ticket_id}/notes/#{id2}.json", nil, @headers) }
 
       # reply
-      v2[:reply], v2[:api_reply] = count_api_queries { post("/api/tickets/#{ticket_id}/reply", v2_reply_payload, @write_headers) }
+      v2[:reply], v2[:api_reply] = count_api_queries do
+        post("/api/tickets/#{ticket_id}/reply", v2_reply_payload, @write_headers)
+        assert_response :created
+      end
       # No public API to reply to a ticket in v1. Hence using a private one.
       v1[:reply] = count_queries { post("/helpdesk/tickets/#{ticket_id}/conversations/reply.json", v1_reply_payload, @write_headers) }
 

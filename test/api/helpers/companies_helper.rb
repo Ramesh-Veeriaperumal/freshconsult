@@ -1,4 +1,6 @@
 module Helpers::CompaniesHelper
+  include ContactFieldsHelper
+  include CompanyHelper
   # Patterns
   def company_pattern(expected_output = {}, company)
     domains = company.domains.nil? ? nil : company.domains.split(',')
@@ -42,7 +44,7 @@ module Helpers::CompaniesHelper
   end
 
   def v2_company_payload
-    api_company_params.to_json
+    api_company_params.merge(domains: [Faker::Lorem.characters(5)]).to_json
   end
 
   # private
@@ -50,5 +52,3 @@ module Helpers::CompaniesHelper
     { name: Faker::Lorem.characters(10),  description: Faker::Lorem.paragraph, domains: Faker::Lorem.characters(5) }
   end
 end
-
-include Helpers::CompaniesHelper

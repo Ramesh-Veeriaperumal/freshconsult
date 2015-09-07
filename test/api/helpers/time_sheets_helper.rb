@@ -1,4 +1,6 @@
 module Helpers::TimeSheetsHelper
+  include TicketHelper
+  include CompanyHelper
   # Patterns
   def time_sheet_pattern(expected_output = {}, time_sheet)
     {
@@ -59,4 +61,3 @@ module Helpers::TimeSheetsHelper
     }.to_json
   end
 end
-include Helpers::TimeSheetsHelper

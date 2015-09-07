@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 
 class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
+  include Helpers::UsersHelper
   def test_multipart_form_data
     skip_bullet do
       post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))

@@ -1,4 +1,6 @@
 module Helpers::DiscussionsHelper
+  include CompanyHelper
+  include ForumHelper
   # Patterns
   def forum_category_response_pattern(name = 'test', desc = 'test desc')
     {
@@ -152,6 +154,10 @@ module Helpers::DiscussionsHelper
   def post_params(_t)
     { body_html: Faker::Lorem.characters }
   end
-end
 
-include Helpers::DiscussionsHelper
+  def user_without_monitorships
+    u = User.includes(:monitorships).find { |x| x.id != @agent.id && x.monitorships.blank? } || add_new_user(@account) # changed as it should have user without any monitorship
+    u.update_column(:email, Faker::Internet.email)
+    u.reload
+  end
+end
