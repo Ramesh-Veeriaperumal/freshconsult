@@ -1,0 +1,134 @@
+<script id="freshplug_details_template" type="text/x-jquery-tmpl">
+<% category = "{{if category_id}}&category_id=${category_id}{{/if}}"%>
+<% plug_type = "{{if in_dev}}&in_dev=true{{/if}}" %>
+<div id="app-window" class="fa-container fa-bg">
+  <div id="fa-nav" class="fa-sidehead">
+    <div class="fa-breadcumb">
+      <a class="pull-left index_btn" href="#" data-url="/admin/extensions?type=${type}<%=category%><%=plug_type%>">
+        <span class="fsize-12 ficon-left-arrow-thick"></span> <%= t('back') %>
+      </a>
+    </div>
+  </div>
+
+  <div class="dtl-box">
+    <div class="fa-hmeta">
+      <div class="logo-box">
+        {{if cover_art}}
+        <div class="img-helper"> 
+          <img src="${cover_art}" class="img-thumbnail" alt="${name}"/>
+        </div>
+        {{else}}
+          <span class="ficon-puzzle fsize-48"></span>
+        {{/if}}
+      </div>
+      <div class="info-box">
+        <div id="app-intro" class="no-margin fa-desc">
+          <div class="info-txt">
+            <h1>${name}</h1>
+            <p>
+              <span class="maker">${account}</span>,
+              <span class="info-data">${published_date} ago </span>
+            </p>
+          </div>
+          <p class="clear">
+            {{each categories}}
+              <a href="#" class='tag index_btn category' data-url="/admin/extensions?type=${type}&category_id=${id}<%=plug_type%>">${name}</a>
+            {{/each}}
+          </p>
+        </div>
+      </div>
+      <div class="install-box">      
+        {{if installed}}
+          {{if installed_version==version_id}}
+            <button class="btn btn-large btn-primary disabled"> <%= t('marketplace.installed') %> </button>
+          {{else}} 
+            <button class="btn btn-large btn-primary install-form-btn" data-url="/admin/installed_extensions/new_configs/${version_id}?type=${type}&name=${name}&update=true<%=category%><%=plug_type%>"> <%= t('marketplace.update') %> </button>
+          {{/if}}
+        {{else}}
+            <button class="btn btn-large btn-primary install-form-btn" data-url="/admin/installed_extensions/new_configs/${version_id}?type=${type}&name=${name}<%=category%><%=plug_type%>"> <%= t('marketplace.install') %> </button>
+        {{/if}} 
+        <p class="info-data">
+          <span><%= t('marketplace.ver') %> ${version_number}</span>
+          <span> ${install_count} <%= t('marketplace.installs') %> </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="app-desc">
+      <div class="tabbable">
+        <ul class="nav nav-tabs fa-tabd">
+          <li class="tab-pane active"><a href="#screenshots" data-toggle="tab"><%= t('marketplace.screenshots') %></a></li>
+          <li><a href="#desc" data-toggle="tab"><%= t('marketplace.description') %></a></li>
+          {{if instructions}}
+            <li><a href="#instr" data-toggle="tab"><%= t('marketplace.instructions') %></a></li>
+          {{/if}}
+        </ul>
+
+        <div class="tab-content fa-appdesc">
+
+          <div class="tab-pane" id="desc">
+            <pre class="pre-wrap">${description}</pre>
+            <table class="table">
+              {{each change_logs}}
+                <tr>
+                  <td><p><%= t('marketplace.version') %> ${version_number}</p></td>
+                  <td><p>${about}</p></td>
+                </tr>
+              {{/each}}
+            </table>
+          </div>
+
+          {{if instructions}}
+            <div class="tab-pane" id="instr">
+              <pre class="pre-wrap">${instructions}</pre>
+            </div>
+          {{/if}}
+
+          <div class="tab-pane active" id="screenshots">
+            <!-- Slider -->
+            <div class="row-fluid">
+              <div class="span10" id="carousel-bounding-box">
+                <div class="carousel slide" id="screenshotsCarousel">
+                  <!-- Carousel items -->
+                  <div class="carousel-inner">
+                    {{each screenshots}}
+                      {{if screenshots_no ==0 }}
+                      <div class="item active" data-slide-number="${screenshots_no}">
+                        <img src="${large}">
+                      </div>
+                      {{else}}
+                      <div class="item" data-slide-number="${screenshots_no}">
+                        <img src="${large}">
+                      </div>
+                      {{/if}}
+                    {{/each}}
+                  </div><!-- Carousel nav -->
+                  <a class="carousel-control left" data-slide="prev" href="#screenshotsCarousel"><span>‹</span></a> 
+                  <a class="carousel-control right" data-slide="next" href="#screenshotsCarousel"><span>›</span></a>
+                </div>
+              </div>
+              <div class="span2 slider-thumbs" id="slider-thumbs">
+                <ul class="thumbnails">
+                  {{each screenshots}}
+                    {{if screenshots_no ==0 }}
+                    <li class="active">
+                        <a class="thumbnail" id="carousel-selector-${screenshots_no}"><img src="${thumb}" width="100"></a>
+                    </li>
+                    {{else}}
+                    <li>
+                        <a class="thumbnail" id="carousel-selector-${screenshots_no}"><img src="${thumb}" width="100"></a>
+                    </li>
+                    {{/if}}
+                  {{/each}}
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</script>

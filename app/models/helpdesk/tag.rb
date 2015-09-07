@@ -23,6 +23,12 @@ class Helpdesk::Tag < ActiveRecord::Base
     :source_type => "Helpdesk::Ticket",
     :through => :tag_uses
 
+  has_many :archive_tickets,
+    :class_name => 'Helpdesk::ArchiveTicket',
+    :source => :taggable,
+    :source_type => "Helpdesk::ArchiveTicket",
+    :through => :tag_uses
+
   has_many :users,
     :class_name => 'User',
     :source => :taggable,

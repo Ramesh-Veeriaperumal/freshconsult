@@ -44,9 +44,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "is_escalated"     =>   isescalated,
       "fr_escalated"     =>   fr_escalated,      
       "created_at"       =>   created_at.to_i,
-      # @ARCHIVE TODO Currently setting archive as false. 
-      # Will change it once "archiving tickets" feature is rolled out.
-      "archive"          =>   false 
+      "archive"          =>   archive || false
     }
   end
   

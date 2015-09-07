@@ -11,6 +11,10 @@ module Redis::RedisKeys
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
 
+	HELPDESK_ARCHIVE_TICKET_FILTERS = "HELPDESK_ARCHIVE_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_ARCHIVE_TICKET_ADJACENTS 			= "HELPDESK_ARCHIVE_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
+	HELPDESK_ARCHIVE_TICKET_ADJACENTS_META	 	= "HELPDESK_ARCHIVE_TICKET_ADJACENTS_META:%{account_id}:%{user_id}:%{session_id}"
+
 	EMAIL_TICKET_ID = "EMAIL_TICKET_ID:%{account_id}:%{message_id}"
 	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
 	IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
@@ -84,6 +88,11 @@ module Redis::RedisKeys
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
 
 	GLOBAL_PUBLIC_TICKET_URL_ENABLED = "GLOBAL_PUBLIC_TICKET_URL_ENABLED"
+	PREMIUM_TICKET_EXPORT = "PREMIUM_TICKET_EXPORT"
+	LONG_RUNNING_TICKET_EXPORT = "LONG_RUNNING_TICKET_EXPORT"
+
+	DASHBOARD_DISABLED = "DASHBOARD_DISABLED"
+	SLAVE_QUERIES = "SLAVE_QUERIES"
 
 	def newrelic_begin_rescue
 	    begin

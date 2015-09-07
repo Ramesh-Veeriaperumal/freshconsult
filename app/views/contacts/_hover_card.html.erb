@@ -41,25 +41,34 @@
       <% end %>
       <% unless user.agent? %>
         <div class="recent-tickets">
-            <% case show_recent_tickets %>                
-              <% when :dialog then %>
+          <% case show_recent_tickets %>                
+            <% when :dialog then %>
+              <% if ticket.is_a?(Helpdesk::ArchiveTicket) %>
+                <%= link_to t('ticket.recent_tickets'), 
+                      "/helpdesk/archive_tickets/#{ticket.id}/component?component=requester_tickets", 
+                      :rel => 'freshdialog', 
+                      "data-target" => "#requester_tickets",
+                      "data-template-footer" => "",
+                      :title => t('contacts.info4', :nick_name => h(user.display_name)) if ticket.present? %>
+              <% else %>
                 <%= link_to t('ticket.recent_tickets'), 
                       "/helpdesk/tickets/#{ticket.id}/component?component=requester_tickets", 
                       :rel => 'freshdialog', 
                       "data-target" => "#requester_tickets",
                       "data-template-footer" => "",
                       :title => t('contacts.info4', :nick_name => h(user.display_name)) unless ticket.nil? %>
-              <% when :filter then %>
-                <% if local_assigns.has_key? :new_tab %>
-                  <%= link_to t('ticket.recent_tickets'), 
-                      helpdesk_requester_filter_path(:requester_id => user.id),
-                      :title => t('contacts.info4', :nick_name => h(user.display_name)), :target => "_blank" %>
-                <% else %>
-                  <%= link_to t('ticket.recent_tickets'), 
-                      helpdesk_requester_filter_path(:requester_id => user.id),
-                      :title => t('contacts.info4', :nick_name => h(user.display_name)) %>
-                <% end %>
-            <% end %>
+              <% end %>  
+            <% when :filter then %>
+              <% if local_assigns.has_key? :new_tab %>
+                <%= link_to t('ticket.recent_tickets'), 
+                    helpdesk_requester_filter_path(:requester_id => user.id),
+                    :title => t('contacts.info4', :nick_name => h(user.display_name)), :target => "_blank" %>
+              <% else %>
+                <%= link_to t('ticket.recent_tickets'), 
+                    helpdesk_requester_filter_path(:requester_id => user.id),
+                    :title => t('contacts.info4', :nick_name => h(user.display_name)) %>
+              <% end %>
+          <% end %>
         </div>
       <% end %>
     <% end %>

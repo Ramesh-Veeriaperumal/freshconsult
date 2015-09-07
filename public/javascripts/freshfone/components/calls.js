@@ -83,6 +83,14 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 																			this.$container.find('#outgoing_number_selector');
 		},
 		
+		$backToDialer: function() {
+			return this.cached.$backToDialer = this.cached.$backToDialer ||
+																			this.$container.find('#cancel_call');
+		},
+		$connectCall: function() {
+			return this.cached.$connectCall = this.cached.$connectCall ||
+																			this.$container.find('.connect_call');
+		},
 		outgoingNumberId: function () {
 			return (this.$outgoingNumberSelector().val() || 
 							this.$outgoingNumberSelector().data('number_id'));
@@ -186,13 +194,16 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			if (!country_enabled) { this.$restrictedCountryText().show(); }  
 			return (balance_available && country_enabled);
 		},
-		makeCall: function () {
+		makeCall: function (item) {
 			if (Twilio.Device.status() !== 'busy') {
 				this.number = this.$number.val();
-				this.makeOutgoing();
+				this.makeOutgoing(item);
 			}
 		},
-		makeOutgoing: function () {
+		makeOutgoing: function (item) {
+			this.prefillDialerTemplate(item);
+			this.clearMessage();
+
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
 			this.number = formatE164(this.callerLocation(), this.number);
@@ -206,22 +217,40 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.actionsCall(function () { Twilio.Device.connect(params); } );
 			
 
-			this.$strangeNumberText().toggle(false);
-			this.$infoText().hide();
-			this.$restrictedCountryText().hide();
-			this.toggleInvalidNumberText(false);
-			this.toggleAlreadyInCallText(false);
+			this.toggleBackToDialer(false);
+			$('.call_loader').show();		
 			this.status = callStatus.OUTGOINGINIT;
 			this.setDirectionOutgoing();
 			this.freshfoneUserInfo.userInfo(this.number, true, this);
 			this.disableCallButton();
 		},
-
+		prefillDialerTemplate: function(item) {
+			if(typeof item != "undefined") { 	
+				freshfoneDialpadEvents.prefillConnectedCallTemplate(item);
+			} else {
+				freshfoneDialpadEvents.prefillConnectedCallNumber(this.number);
+			}
+		},
+		clearMessage: function(){
+			this.toggleBackToDialer(true);
+			this.toggleConnectCall(false);
+			this.$strangeNumberText().toggle(false);
+			this.$infoText().hide();
+			this.$restrictedCountryText().hide();
+			this.$invalidNumberText().toggle(false);
+			this.$invalidPhoneNumber().toggle(false);
+			this.toggleAlreadyInCallText(false);
+			$('.call_loader').hide();
+		},
 		toggleInvalidNumberText: function (show) {
 			if (this.$alreadyInCallText().is(":visible")) { this.toggleAlreadyInCallText(false);}
 			if(show && !(this.exceptionalNumberValidation(phoneNumber)) && !(freshfonewidget.checkForStrangeNumbers(phoneNumber)) ) {
 			 this.$invalidNumberText().toggle(show || false);
 			 this.$invalidPhoneNumber().toggle(!show || false);
+			 if($('.invalid_phone_num').is(':visible')){
+			 		this.toggleBackToDialer(false);
+					this.toggleConnectCall(true);
+				}	
 			}
 		},
 		exceptionalNumberValidation: function(number){
@@ -229,6 +258,12 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		toggleAlreadyInCallText: function(show) {
 			this.$alreadyInCallText().toggle(show || false);
+		},
+		toggleBackToDialer: function(show){
+			this.$backToDialer().toggle(show || false);
+		},
+		toggleConnectCall: function(show){
+			this.$connectCall().toggle(show || false);
 		},
 		canDialNumber: function () {	 
 			if(this.number.indexOf('+') == -1){
@@ -249,6 +284,10 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 				this.exceptionalNumber = true;
 				this.$invalidNumberText().toggle(false);
 				this.$invalidPhoneNumber().toggle(true);				
+			if($('.invalid_phone_num').is(':visible')){
+				this.toggleBackToDialer(false);
+				this.toggleConnectCall(true);
+			}			
 		}
 			return false;
 		},

@@ -28,15 +28,15 @@ module Solution::ArticlesVotingMethods
     end
   end
 
-  def update_votes(incr, vote)
+  def update_votes(incr_attr, vote)
     return false if @portal && current_user && current_user.agent?
-    return @article.increment!(incr) unless current_user
+    return @article.send("#{incr_attr}!") unless current_user
 
     @vote.vote = vote
     if @vote.new_record?
-      @article.increment!(incr)
+      @article.send("#{incr_attr}!")
     elsif @vote.vote_changed?
-      @article.send("toggle_#{incr}!")
+      @article.send("toggle_#{incr_attr}!")
     end
     @vote.save
   end

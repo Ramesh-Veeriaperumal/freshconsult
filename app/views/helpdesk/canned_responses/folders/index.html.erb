@@ -84,8 +84,7 @@
 						<% if privilege?(:manage_canned_responses) %>
 							<div class="pull-right pagination-right ">
 						  	<%= link_to( content_tag(:span, "<span></span> #{t('canned_folders.create')}".html_safe,
-												:class => "create_new_folder tooltip pull-right btn btn-flat",
-												:title => t('canned_folders.create'),
+												:class => "create_new_folder pull-right btn btn-flat",
 												:"data-placement" => 'below'
 										), "#create_folder",
 			                	    	:"data-width" => "400",

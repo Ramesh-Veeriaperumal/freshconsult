@@ -1037,3 +1037,9 @@ function getKeyFromValue(object,value){
   }
   return key;
 }
+
+// Return a boolean value
+// Return container has scrollbar or not
+jQuery.fn.hasScrollBar = function() {
+      return this.get(0).scrollHeight > this.get(0).clientHeight;
+}

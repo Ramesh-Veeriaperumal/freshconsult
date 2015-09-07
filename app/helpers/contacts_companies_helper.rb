@@ -3,7 +3,7 @@ module ContactsCompaniesHelper
   include Helpdesk::TicketsHelperMethods
   def contact_tabs(type)
     tabs = [['contacts', t('contacts.title')],
-        ['customers', t('company.title')]]
+        ['companies', t('company.title')]]
     ul tabs.map{ |t| 
                   link_to t[1], "/#{t[0]}", :id => "#{t[0]}Tab", :class => "#{t[2]}", :'data-pjax' => "#body-container"
                 }, { :class => "tabs nav-tabs", :id => "contacts-tab" }, type.eql?('company') ? 1 : 0
@@ -15,7 +15,7 @@ module ContactsCompaniesHelper
 
     grey_class = ticket.active? ? 'bold-title' : 'muted';
     text = t('contacts.conversations.ticket_subject',
-                :ticket_url => helpdesk_ticket_path(ticket.display_id),
+                :ticket_url => ticket_url(ticket),
                 :ticket_subject => h("#{ticket.subject} ##{ticket.display_id}"),
                 :'data-pjax' => "#body-container").html_safe
     text_wrapper = content_tag(:p, text, :class => "break-word timeline-head #{grey_class}")
@@ -30,6 +30,11 @@ module ContactsCompaniesHelper
     time_div = content_tag(:p, time_info, :class => 'muted')
 
     (icon_wrapper + text_wrapper + time_div)
+  end
+
+  def ticket_url(ticket)
+    ticket.class.eql?(Helpdesk::ArchiveTicket) ? helpdesk_archive_ticket_path(ticket.display_id) :
+        helpdesk_ticket_path(ticket.display_id)
   end
 
   def show_field field, field_value

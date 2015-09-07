@@ -3,7 +3,7 @@ module Facebook::Util
   include Gnip::Constants
   include Facebook::Constants
   
-  def add_as_ticket(fan_page, koala_feed, convert_args)
+  def add_as_ticket(fan_page, koala_feed, convert_args, archived_ticket = nil)
     ticket = nil
     can_comment = koala_feed.can_comment
     
@@ -28,7 +28,7 @@ module Facebook::Util
         }
       )
       
-      
+      ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
       if ticket.save_ticket
         if !koala_feed.created_at.blank?
           @fan_page.update_attribute(:fetch_since, koala_feed.created_at.to_i)

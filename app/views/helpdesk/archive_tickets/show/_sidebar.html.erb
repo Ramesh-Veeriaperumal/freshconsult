@@ -1,0 +1,31 @@
+
+<div class="tkt-sidebar" id="ticket_details_sidebar">
+  <%= render :partial => 'helpdesk/archive_tickets/show/status', :locals => {:ticket => @ticket} %>
+  <%= render :partial => "helpdesk/archive_tickets/show/requester" %>
+   
+  <div class="widget" id='TicketProperties'>
+    <h3 class="title"><%=t('ticket.properties')%></h3>
+      <%= render :partial => "helpdesk/archive_tickets/show/ticket_fields", :locals => { :ticket => @ticket } %>
+  </div>
+
+  <% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+    <div class="widget time-tracked inactive" id="TimesheetTab">
+      <h3 class="title">
+        <%= t('helpdesk.time_sheets.sidebar_title') %>
+        <div class="tracked_time">
+          <span class="time" id="timeentry_timer_total" data-static-total="true"><%= get_time_in_hours(@ticket.time_tracked) %></span>
+          <span class="time_unit">Hrs </span>
+        </div>
+      </h3>
+      <div class="content">
+        <% if @ticket.time_sheets.present? %>
+          <% @ticket.time_sheets.each do |time_entry| %>
+            <%= render :partial => "helpdesk/archive_tickets/show/time_entry", :locals => { :time_entry => time_entry } %>
+          <% end %>
+        <% else %>
+          <div class="list-noinfo"><%= t("helpdesk.time_sheets.index.no_timeentry") %></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

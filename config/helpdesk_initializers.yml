@@ -67,5 +67,7 @@ helpdesk:
     - autopilot_config
     - launch_profiler
     - clean_api_middlewares
+    - marketplace_config
+    - doorkeeper
 
 

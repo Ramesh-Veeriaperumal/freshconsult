@@ -20,7 +20,8 @@ module RabbitMq::Constants
   
   
   MODELS = [
-    [  "ticket",             CRUD_KEYS_BY_TOKEN[:all] ,                     "ticket"    ],
+    [  "ticket",             CRUD_KEYS_BY_TOKEN[:all] ,                     "ticket"        ],
+    [  "archive_ticket",     CRUD_KEYS_BY_TOKEN[:update],                   "archive_ticket"],
     [  "note",               CRUD_KEYS_BY_TOKEN[:create_and_destroy] ,      "note"      ],
     [  "schema_less_note",   CRUD_KEYS_BY_TOKEN[:update],                   "note"      ],
     [  "account",            CRUD_KEYS_BY_TOKEN[:destroy],                  "account"   ]
@@ -42,8 +43,9 @@ module RabbitMq::Constants
     :customer_reply  =>  "customer_reply"
   }
   
-  RMQ_REPORTS_TICKET_KEY = "*.1.#"
-  RMQ_REPORTS_NOTE_KEY   = "*.1.#"
+  RMQ_REPORTS_TICKET_KEY         = "*.1.#"
+  RMQ_REPORTS_NOTE_KEY           = "*.1.#"
+  RMQ_REPORTS_ARCHIVE_TICKET_KEY = "1"
 
   AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"
@@ -59,6 +61,8 @@ module RabbitMq::Constants
     "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
     "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag"
   ]
+  
+  REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
 
   REPORTS_NOTE_KEYS = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
   

@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   self.primary_key= :id
 
   belongs_to_account
+  has_many :access_tokens, :class_name => 'Doorkeeper::AccessToken', :foreign_key => :resource_owner_id, :dependent => :destroy
 
   include SentientUser
   include Helpdesk::Ticketfields::TicketStatus
@@ -136,17 +137,20 @@ class User < ActiveRecord::Base
     end
 
     def filter_condition(state, letter)
-      case state
+      conditions = case state
         when "verified", "unverified"
-          [ ' name like ? and deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
-            "#{letter}%", false , state.eql?("verified") ]
+           [ ' deleted = ? and active = ? and deleted_at IS NULL and blocked = false ', 
+            false , state.eql?("verified") ]
         when "deleted", "all"
-          [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
-            "#{letter}%", state.eql?("deleted")]
+          [ ' deleted = ? and deleted_at IS NULL and blocked = false', 
+            state.eql?("deleted")]
         when "blocked"
-          [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-            "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
-      end                                      
+          [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+            true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db) ]
+      end
+      
+      conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
+      conditions
     end
 
     def find_by_email_or_name(value)
@@ -221,7 +225,7 @@ class User < ActiveRecord::Base
 
   def client_manager=(checked)
     if customer?
-      self.privileges = (checked == "true" && company ) ? Role.privileges_mask([:client_manager]) : "0"
+      self.privileges = ((checked == "true" || checked == true) && company ) ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
@@ -254,10 +258,6 @@ class User < ActiveRecord::Base
 
   def parent_id=(p_id)
     self.string_uc04 = p_id.to_s
-  end
-
-  def emails
-    self.user_emails.map(&:email)
   end
 
   def tag_names= updated_tag_names
@@ -450,6 +450,13 @@ class User < ActiveRecord::Base
   # Used in mobile
   def is_client_manager?
     self.privilege?(:client_manager)
+  end
+
+  # Marketplace
+  def developer?
+    marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
+    developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
+    Account.current.features?(:fa_developer) && !developer_privilege.blank?
   end
 
   def can_assume?(user)

@@ -21,19 +21,31 @@ class Helpdesk::Activity < ActiveRecord::Base
   MIGRATION_KEYS = ["bi_reports"]
   
   scope :freshest, lambda { |account|
-    { :conditions => ["helpdesk_activities.account_id = ? ", account], 
+    { :conditions => ["helpdesk_activities.account_id = ? and notable_type != ?", account, "Helpdesk::ArchiveTicket"], 
       :order => "helpdesk_activities.id DESC"
     }
   }
 
   scope :activity_since, lambda { |id|
-    { :conditions => ["helpdesk_activities.id > ? ", id],
+    { :conditions => ["helpdesk_activities.id > ? and notable_type != ?", id,"Helpdesk::ArchiveTicket"],
+      :order => "helpdesk_activities.id DESC"
+    }
+  }
+
+  scope :archive_tickets_activity_before, lambda { | activity_id|
+    { :conditions => ["helpdesk_activities.id < ? and notable_type = ?", activity_id,"Helpdesk::ArchiveTicket"], 
+      :order => "helpdesk_activities.id DESC"
+    }
+  }
+
+  scope :archive_tickets_activity_since, lambda { |id|
+    { :conditions => ["helpdesk_activities.id > ? and notable_type = ?", id , "Helpdesk::ArchiveTicket"],
       :order => "helpdesk_activities.id DESC"
     }
   }
 
   scope :activity_before, lambda { | activity_id|
-    { :conditions => ["helpdesk_activities.id < ?", activity_id], 
+    { :conditions => ["helpdesk_activities.id < ? and notable_type != ?", activity_id,"Helpdesk::ArchiveTicket"], 
       :order => "helpdesk_activities.id DESC"
     }
   }
@@ -103,7 +115,7 @@ class Helpdesk::Activity < ActiveRecord::Base
     def feature_present?
       # Added feature check as a separate method so that activities can reuse 
       # this by adding their feature
-      Account.current.features_included?(:bi_reports) 
+      Account.current.reports_enabled? 
     end
     
     def set_migration_key

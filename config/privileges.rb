@@ -48,7 +48,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
-    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :delete_invoice]
+    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :edit, :check_item_exists,]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -83,6 +83,11 @@ Authority::Authorization::PrivilegeList.build do
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
+
+    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
+                                                    :full_paginate, :configure_export, :export_csv, 
+                                                    :activities, :component, :prevnext]
+    resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     # Used for API V2
     resource :"ticket", :only => [:show, :create, :index]
@@ -346,7 +351,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
-                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact, 
+                               :configure_export, :export_csv]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -422,7 +428,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
-    resource :"integrations/xero", :only => [:authorize, :authdone]
+    resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
+    resource :"admin/integrations/freshplug"
+    resource :"admin/extension"
+    resource :"admin/installed_extension"
+    resource :"doorkeeper/authorization"
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

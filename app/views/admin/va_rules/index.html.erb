@@ -25,7 +25,14 @@
       <% end %>
       <span id="cascade_loader" class="vertical-alignment loading-tiny loading-left"></span>
   </div>
-  <% end %>
+ <% else %>
+  <div class="row-fluid list-page-subheader">
+    <span class="vertical-alignment">
+      <i class="ficon-arrow-down-2 fsize-18"<></i>
+    </span>
+    <span class="vertical-alignment"><%= t('dispatch.info_help').html_safe %></span>
+  </div>
+ <% end %>
 
   <div>
   <%= render :partial => "/shared/reorder_list", :locals => { 

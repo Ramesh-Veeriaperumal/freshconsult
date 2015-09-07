@@ -4,14 +4,23 @@ module AwsWrapper
   class S3
     
     def self.upload(bucket_name, key, file_path, options = {})
-      obj = Aws::S3::Resource.new(client: $s3_client).bucket(bucket_name).object(key)
-      obj.upload_file(file_path, options)
+      fetch_obj(bucket_name, key).upload_file(file_path, options)
     end
     
     def self.put(bucket_name, key, content, options = {})
-      s3  = Aws::S3::Resource.new(client: $s3_client)
-      obj = s3.bucket(bucket_name).object(key)
-      obj.put(body: content)
+      fetch_obj(bucket_name, key).put(body: content)
+    end
+    
+    def self.copy(copy_source, target_bucket, target_key)
+      fetch_obj(target_bucket, target_key).copy_from(copy_source: copy_source)
+    end
+    
+    def self.read(bucket_name, key)
+      $s3_client.get_object(bucket: bucket_name, key: key).body
+    end
+    
+    def self.fetch_obj(bucket_name, key)
+      Aws::S3::Resource.new(client: $s3_client).bucket(bucket_name).object(key)
     end
     
     # `fetch_all` - Boolean - Specifies whether to get all the objects in the bucket or
@@ -31,9 +40,7 @@ module AwsWrapper
       response_arr.flatten.compact
     end
     
-    def self.fetch(bucket_name, key)
-      obj = Aws::S3::Resource.new(client: $s3_client).bucket(bucket_name).object(key)
-    end
+
     
     # `keys` - Array of object keys ["sample/object1.csv", "sample/object2.csv"]
     def self.batch_delete(bucket_name, keys)
@@ -56,10 +63,5 @@ module AwsWrapper
       )
     end
     
-    def self.copy(copy_source, target_bucket, target_key)
-      s3  = Aws::S3::Resource.new(client: $s3_client)
-      obj = s3.bucket(target_bucket).object(target_key)
-      obj.copy_from(copy_source: copy_source)
-    end
   end
 end

@@ -120,7 +120,7 @@ class Search::SearchController < ApplicationController
 
 		def process_results search_in, options
 			@result_set.each_with_hit do |result,hit|
-				next if([Helpdesk::Ticket, Helpdesk::Note].include?(result.class) and result_discarded?(result))
+				next if([Helpdesk::Ticket, Helpdesk::Note,Helpdesk::ArchiveTicket,Helpdesk::ArchiveNote].include?(result.class) and result_discarded?(result))
 				@results[result.class.name] ||= []
 				result = SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
 				@results[result.class.name] << result
@@ -149,7 +149,15 @@ class Search::SearchController < ApplicationController
 		end
 
 		def result_discarded? result
-			parent_ticket_id = (result.class == Helpdesk::Ticket) ? result.id : result.notable_id
+			if(result.class == Helpdesk::Ticket) 
+			  parent_ticket_id = result.id
+			elsif(result.class == Helpdesk::ArchiveTicket)
+			  parent_ticket_id = result.ticket_id	
+			elsif(result.class == Helpdesk::ArchiveNote)
+			  parent_ticket_id =  result.notable_id
+			else
+			  parent_ticket_id = result.notable_id	
+			end
 			if @searched_ticket_ids.include?(parent_ticket_id)
 				@result_set.results.delete(result) and return true
 			end
@@ -184,6 +192,7 @@ class Search::SearchController < ApplicationController
       format.nmobile do
         array = []
         @result_set.each do |item|
+          next if item.is_a?(Helpdesk::ArchiveTicket)
           array << item.to_mob_json_search
         end
         render :json => array

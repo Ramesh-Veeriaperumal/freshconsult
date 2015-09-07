@@ -23,7 +23,7 @@
 		<a href="#freshfone_available_agents" class="transfer_call tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.transfer_call') %>"><%= font_icon "arrow-right-2", :size => 16 %></a>
 	</li><li>
-		<a href="#freshfone_dialpad" class="ongoingDialpad tooltip" data-toggle="popupbox"
+		<a href="#ongoing_dialpad" class="ongoingDialpad tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.dialpad') %>"><%= font_icon "ff-dialpad", :size => 16 %></a>
 	</li><li>
 		<a href="#freshfone_add_notes" class="add_notes tooltip" data-toggle="popupbox"
@@ -38,13 +38,8 @@
 </ul>
 
 <ul class="popupbox-tabs outgoing hide">
-	<li>
-		<div class="dialpad_popup tooltip">
+		<li class="dialpad_popup tooltip">
 			<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
-				 data-offset=12 title="<%= t('freshfone.widget.dialpad') %>"><%= font_icon "ff-dialpad", :size => 16 %></a>
-		</div>
-	</li><li>
-		<a href="#recent_calls" class="recentCalls tooltip" data-toggle="popupbox"
-			 data-offset=12 title="<%= t('freshfone.widget.recent_calls') %>"><%= font_icon "ff-phone", :size => 16 %></a>
-	</li>
+				 data-offset=12 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
+		</li>
 </ul>

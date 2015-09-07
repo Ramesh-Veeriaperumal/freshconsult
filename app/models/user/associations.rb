@@ -68,6 +68,7 @@ class User < ActiveRecord::Base
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
+  has_many :archive_tickets , :class_name => 'Helpdesk::ArchiveTicket' ,:foreign_key => "requester_id" 
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :activities, :class_name => 'Helpdesk::Activity'
   

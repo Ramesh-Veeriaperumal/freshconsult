@@ -1,0 +1,126 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/marketplace' %>
+<% content_for :helpcard do -%>
+  <% if feature?(:fa_developer) %>
+    <div class="dev-shortcuts">
+      <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
+      <ul>
+        <li class="shortcuts">
+          <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+  <div class="helpcard">
+    <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain).html_safe %>
+  </div>
+  <div id="sample_preview" class="custom_app_preview_modal hide">
+    <div class="titlebar">
+      <a class="preview_link" href="#"><%= t('integrations.freshplugs.refresh') %></a>
+      <%= t('integrations.freshplugs.freshplug_preview').html_safe %>
+    </div>
+    <div id="preview" class="preview-content"></div>
+  </div>
+
+<%- end %>
+  <%widget = @application.custom_widget
+  disp_in_pages = widget.display_in_pages_option || {}%>
+    <% if feature?(:fa_developer) && !current_user.developer? %>
+      <div class="fa-note row-fluid clear">
+        <div class="span8 fapps-actions fapps-bdr">
+          <p><%= t('marketplace.plug_info').html_safe %></p>
+        </div>
+         <div class="span4 goto-dev">
+          <% shortcut_url = "#{MarketplaceConfig::DEV_URL}/dashboard/#{current_account.full_domain}/login" %>
+          <a class="browse-pending-btn" href="<%= shortcut_url %>" target="_blank"> <%= t('marketplace.write_a_plug') %></a>
+          <p><%= t('marketplace.needs_developer_text').html_safe %></p>
+        </div>
+      </div>
+    <% end %>
+
+  <ul class="">
+    <li class="inline-field">
+      <div class="fields">
+        <ul class="app-form">
+          <li class="field">
+            <label class="caption"><%=t('integrations.custom_application.name').html_safe%></label>
+            <%= text_field_tag "application[display_name]", @application.display_name%>
+          </li>
+          <li class="field">
+            <label class="caption"><%=t('integrations.custom_application.description').html_safe%></label>
+            <%= text_field_tag "application[description]", @application.description%>
+          </li>
+          <li class="field">
+            <a class='l_placeholder btn btn-mini pull-right' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder').html_safe %> &raquo;</a>
+            <label><%=t('integrations.custom_application.script').html_safe%><span class="required_star">*</span></label>
+            <%= f.code_editor_tag nil , nil , :id => "application_script" , :name => "application[script]" , :value => widget.script, :class => "insert-placeholder-target" %>
+          </li>
+          <li class="field custom_app_preview">
+            <div class="custom_app_preview_link">
+              <%=link_to t('integrations.freshplugs.show_preview'), "#", :class => "toggle_preview", 
+                    "data-toggled-text" => t('integrations.freshplugs.hide_preview'), "data-toggled-class" => "active", 
+                    "data-default-text" => t('integrations.freshplugs.show_preview'), 'data-default-class' => "" %>
+              <span class="hide"> <br /><%= t('integrations.freshplugs.preview_helptext') %></span>
+            </div>
+            <label class="caption"><%=t('integrations.freshplugs.freshplug_used_in').html_safe%></label>
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", 
+                      disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>
+                  <%= t('integrations.freshplugs.ticket_detail_page') %>
+            </label>
+            <label class="checkwrapper">
+              <%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", 
+              disp_in_pages.include?('contacts_show_page_side_bar')%>
+              <%= t('integrations.freshplugs.contact_detail_page') %>
+            </label>
+            
+          </li>
+        </ul>
+      </div>
+
+    </li>
+  </ul>
+<%#<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="Custom CRM App"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"b43cff831b56cec58fa8cd95c21b47f5", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>%>
+<% content_for :pagefixed do %>
+  <%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders }  %>
+<% end %>
+<%= javascript_tag do %>
+  jQuery('.preview_link').bind("click", function(ev){
+    script = jQuery('.CodeMirror')[0].CodeMirror.getValue();
+    ev.preventDefault();
+    preview_box = jQuery("#preview")
+    preview_box.html("<div class='sloading loading-small loading-block'>Generating Preview</div>");
+    params = {"application_script": script};
+    jQuery.ajax({
+      url: "/admin/integrations/freshplugs/custom_widget_preview/",
+      type: "POST",
+      data: params,
+      dataType: "script",
+      success: function(msg){
+      }
+    });
+  });
+
+  jQuery('.toggle_preview').click(function(ev) {
+    ev.preventDefault();
+    var sample_preview = jQuery('#sample_preview');
+    sample_preview.toggleClass('hide');
+    jQuery('.custom_app_preview_link span').toggleClass('hide');
+    var elem = jQuery(this);
+    if (sample_preview.hasClass('hide')) {
+      elem.text(elem.data('default-text')).removeClass(elem.data('toggled-class')).addClass(elem.data('default-class'));
+    } else {
+      elem.text(elem.data('toggled-text')).removeClass(elem.data('default-class')).addClass(elem.data('toggled-class'));
+
+      jQuery('.preview_link').trigger('click');
+    }
+  }); 
+
+  jQuery('.l_placeholder').bind("click", function(ev){
+      ev.preventDefault();
+      jQuery('#place-dialog').slideDown('slow', function(){
+        jQuery(this).groupPlaceholders({'truncateItems': false});
+      });
+      jQuery('#application_script').focus();
+  });
+
+<%end%>

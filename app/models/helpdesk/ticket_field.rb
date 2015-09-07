@@ -27,7 +27,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :nested_field           => { :type => :custom, :dom_type => :nested_field}
   }
   
-  belongs_to :account
+  belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',

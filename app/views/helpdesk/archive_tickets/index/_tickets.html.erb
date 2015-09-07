@@ -1,0 +1,16 @@
+<% if @items.length == 0 %>
+  <div class="list-noinfo">
+    <% view_name = t("helpdesk.tickets.views.archive_view") %>
+    <%= t('wf.messages.no_tickets_in_view', :view_name => view_name) %> <br />
+  </div>
+<% else %>
+  <table class="tickets" width="100%">  
+    <tbody>
+      <% for ticket in @items %>
+        <%= render :partial => "/helpdesk/archive_tickets/index/archived_ticket", :locals => { :ticket => ticket }, :formats => [:html], :inline => true %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<div class="toolbar" id="ticket-toolbar-bottom">
+</div>

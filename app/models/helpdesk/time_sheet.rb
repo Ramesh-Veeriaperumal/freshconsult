@@ -71,6 +71,33 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
      } unless products.blank?
   }
 
+  #************************** Archive scope start here *****************************#
+  scope :archive_by_group , lambda  { |group|
+      { :conditions => { :archive_tickets => { :group_id => group } } } unless group.blank?
+  }
+
+  scope :archive_for_companies, lambda{ |company_ids|
+    {
+      :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+      :conditions => {:users => {:customer_id => company_ids}}
+    } unless company_ids.blank?
+  }
+      
+  scope :archive_for_contacts, lambda{|contact_email|
+      {
+        :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?
+  }
+
+  scope :archive_for_products, lambda { |products|
+    { 
+      :conditions => { :archive_tickets => { :product_id => products } }
+    } unless products.blank?
+  } 
+
+  #************************** Archive scope ends here *****************************#
+
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
   def self.billable_options

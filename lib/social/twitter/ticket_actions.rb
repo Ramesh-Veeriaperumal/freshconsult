@@ -10,7 +10,7 @@ module Social::Twitter::TicketActions
     fd_items = process_feeds(feeds, current_feed_hash)
   end
 
-  def add_as_ticket(twt, twt_handle, twt_type, options={})
+  def add_as_ticket(twt, twt_handle, twt_type, options={},archived_ticket = nil)
     tkt_hash = construct_params(twt, options)
     account  = Account.current
     
@@ -31,7 +31,7 @@ module Social::Twitter::TicketActions
         :description_html => tkt_hash[:body]
       }
     )
-
+    ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
       Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}"
     else
