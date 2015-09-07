@@ -40,6 +40,7 @@ class Helpdesk::KbaseArticles
       
       unless content_ids.blank?
         article.draft.update_attributes!(:description => temp_body_html)
+        article.update_attributes!(:description => temp_body_html)
       end
     end
 
