@@ -1,7 +1,7 @@
 module CommunityHelper
 
   def preview_portal(relative_path, category = nil)
-    return if category.portal_ids.empty?
+    return if category.present? && category.portal_ids.empty?
 
     path = relative_path
     unless (category.nil? || category.portal_ids.empty?)
