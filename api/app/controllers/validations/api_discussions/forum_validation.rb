@@ -4,7 +4,7 @@ module ApiDiscussions
                   :description, :topics_count
     validates :name, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
     validates :forum_category_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :update
-    validates :forum_category_id, numericality: true, allow_nil: true, on: :update
+    validates :forum_category_id, custom_numericality: { allow_nil: true }, on: :update
     validates :forum_visibility, custom_inclusion: { in: DiscussionConstants::FORUM_VISIBILITY, required: true }
 
     # Forum type can't be updated if the forum has any topics. Can be updated only if no topics found for forum.
@@ -14,7 +14,7 @@ module ApiDiscussions
 
     # company_ids should be nil if forum has visibility other than 4.
     validates :company_ids, data_type: { rules: Array, allow_nil: true }, if: proc { |x| x.forum_visibility.to_i == DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN[:company_users] }
-    validates :company_ids,  array: { numericality: { allow_nil: true } }
+    validates :company_ids,  array: { custom_numericality: { allow_nil: true } }
     validates :description, data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 
     def initialize(request_params, item)

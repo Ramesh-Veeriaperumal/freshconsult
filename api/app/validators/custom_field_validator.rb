@@ -51,13 +51,13 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@is_required }, 'required_integer')
-    ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
+    numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@is_required }, 'data_type_mismatch')
+    CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
   # Inclusion validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    CustomInclusionValidator.new(options.merge(attributes: field_name, in: ApiConstants::BOOLEAN_VALUES, required: @is_required)).validate(record)
+    DataTypeValidator.new(options.merge(attributes: field_name, rules: 'Boolean', allow_nil: !@is_required)).validate(record)
   end
 
   # Numericality validator for decimal field

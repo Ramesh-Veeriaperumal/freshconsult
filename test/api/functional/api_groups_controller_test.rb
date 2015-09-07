@@ -40,10 +40,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        unassigned_for: Faker::Lorem.characters(5),
                                        name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                        auto_ticket_assign: Faker::Lorem.characters(5))
-    match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
+    match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
-                bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
+                bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
     assert_response :bad_request
   end
 
@@ -56,7 +56,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_group_with_invalid_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
-    match_json([bad_request_error_pattern('agent_ids', 'is not a number')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -130,10 +130,10 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     unassigned_for: Faker::Lorem.characters(5),
                                                     name: Faker::Lorem.characters(300), description: Faker::Lorem.paragraph,
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
-    match_json([bad_request_error_pattern('escalate_to', 'is not a number'),
+    match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
-                bad_request_error_pattern('auto_ticket_assign', 'not_included', list: 'true,false')])
+                bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
 
     assert_response :bad_request
   end
@@ -160,7 +160,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])
-    match_json([bad_request_error_pattern('agent_ids', 'is not a number')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
   end
 
   def test_delete_existing_agents_while_update

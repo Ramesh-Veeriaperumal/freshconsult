@@ -77,15 +77,15 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user_id', 'is not a number')])
+    match_json([bad_request_error_pattern('user_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('incoming', 'not_included', list: 'true,false'),
-                bad_request_error_pattern('private', 'not_included', list: 'true,false')])
+    match_json([bad_request_error_pattern('incoming', 'data_type_mismatch', data_type: 'Boolean'),
+                bad_request_error_pattern('private', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
   def test_create_datatype_invalid
@@ -284,7 +284,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('user_id', 'is not a number')])
+    match_json([bad_request_error_pattern('user_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_reply_datatype_invalid

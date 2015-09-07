@@ -329,7 +329,7 @@ module ApiDiscussions
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
       pattern = [bad_request_error_pattern('name', "can't be blank"),
-                 bad_request_error_pattern('forum_category_id', 'is not a number'),
+                 bad_request_error_pattern('forum_category_id', 'required_and_numericality'),
                  bad_request_error_pattern('forum_visibility', 'not_included', list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', 'not_included', list: '1,2,3,4')]
       match_json(pattern)

@@ -104,14 +104,16 @@ class CustomFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     assert_equal(
       {
-        check1_1: 'not_included', check2_1: 'not_included', decimal1_1: 'is not a number',
-        decimal2_1: 'is not a number', number1_1: 'must be an integer',
-        number2_1: 'is not a number'
+        check1_1: 'data_type_mismatch', check2_1: 'data_type_mismatch', decimal1_1: 'is not a number',
+        decimal2_1: 'is not a number', number1_1: 'data_type_mismatch',
+        number2_1: 'data_type_mismatch'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
-      check1_1: { list: 'true,false' },
-      check2_1: { list: 'true,false' }
+      check1_1: { data_type: 'Boolean' },
+      check2_1: { data_type: 'Boolean' },
+      number2_1: { data_type: 'Positive Integer' },
+      number1_1: { data_type: 'Positive Integer' }
     }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -171,22 +173,24 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_and_inclusion', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_and_inclusion', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'data_type_mismatch', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'data_type_mismatch', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'data_type_mismatch', number2_1: 'data_type_mismatch', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
-                   dropdown1_1: { list: '1st,2nd' }, check1_1: { list: 'true,false' },
-                   check2_1: { list: 'true,false' } }.sort.to_h, test.error_options.sort.to_h)
+                   dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
+                   number1_1: { data_type: 'Positive Integer' }, number2_1: { data_type: 'Positive Integer' },
+                   check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_nested_fields_without_required_closure_fields
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_and_inclusion', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_and_inclusion', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'data_type_mismatch', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'data_type_mismatch', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'data_type_mismatch', number2_1: 'data_type_mismatch', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
-                   dropdown1_1: { list: '1st,2nd' }, check1_1: { list: 'true,false' },
-                   check2_1: { list: 'true,false' } }.sort.to_h, test.error_options.sort.to_h)
+                   dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
+                   number1_1: { data_type: 'Positive Integer' }, number2_1: { data_type: 'Positive Integer' },
+                   check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_non_existent_validation_method

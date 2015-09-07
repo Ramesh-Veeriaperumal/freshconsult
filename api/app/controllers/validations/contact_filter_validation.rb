@@ -3,7 +3,7 @@ class ContactFilterValidation < ApiValidation
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }, allow_nil: true
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, allow_nil: true
-  validates :company_id, numericality: true, allow_nil: true
+  validates :company_id, custom_numericality: { allow_nil: true }
   validate :check_company, if: -> { company_id }
 
   def initialize(request_params)

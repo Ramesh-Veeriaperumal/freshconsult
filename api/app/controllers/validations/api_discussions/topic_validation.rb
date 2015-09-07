@@ -5,9 +5,9 @@ module ApiDiscussions
     validates :title, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
     validates :message_html, required: true
     validates :forum_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :update
-    validates :sticky, :locked, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_blank: true
-    validates :forum_id, numericality: true, allow_nil: true
-    validates :stamp_type, numericality: { allow_nil: true }
+    validates :sticky, :locked, data_type: { rules: 'Boolean', allow_blank: true }
+    validates :forum_id, custom_numericality: { allow_nil: true }, on: :update
+    validates :stamp_type, custom_numericality: { allow_nil: true }
 
     def initialize(request_params, item)
       @message_html = item.try(:first_post).try(:body_html) if item

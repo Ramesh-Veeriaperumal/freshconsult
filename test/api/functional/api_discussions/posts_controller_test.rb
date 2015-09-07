@@ -40,7 +40,7 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response :bad_request
-      match_json([bad_request_error_pattern('answer', 'not_included', list: 'true,false')])
+      match_json([bad_request_error_pattern('answer', 'data_type_mismatch', data_type: 'Boolean')])
     end
 
     def test_update_with_user_id
