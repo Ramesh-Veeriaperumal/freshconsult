@@ -8,7 +8,7 @@ class TimeSheetValidationsTest < ActionView::TestCase
     time_sheet = TimeSheetValidation.new(controller_params, item, true)
     time_sheet.valid?(:create)
     error = time_sheet.errors.full_messages
-    assert error.include?('Agent is not a number')
+    assert error.include?('Agent data_type_mismatch')
     Account.unstub(:current)
   end
 

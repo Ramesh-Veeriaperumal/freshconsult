@@ -85,15 +85,15 @@ module ApiDiscussions
     def test_create_validate_numericality
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content', stamp_type: 'hj')
-      match_json([bad_request_error_pattern('stamp_type', 'is not a number')])
+      match_json([bad_request_error_pattern('stamp_type', 'data_type_mismatch', data_type: 'Positive Integer')])
       assert_response :bad_request
     end
 
     def test_create_validate_inclusion
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
-      match_json([bad_request_error_pattern('locked', 'not_included', list: 'true,false'),
-                  bad_request_error_pattern('sticky', 'not_included', list: 'true,false')])
+      match_json([bad_request_error_pattern('locked', 'data_type_mismatch', data_type: 'Boolean'),
+                  bad_request_error_pattern('sticky', 'data_type_mismatch', data_type: 'Boolean')])
       assert_response :bad_request
     end
 
@@ -324,7 +324,7 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', 'is not a number'),
+      match_json([bad_request_error_pattern('forum_id', 'required_and_numericality'),
                   bad_request_error_pattern('title', "can't be blank"),
                   bad_request_error_pattern('message_html', "can't be blank")
                  ])

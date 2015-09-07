@@ -158,9 +158,9 @@ class TimeSheetsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', 'not_included', list: 'true,false')]
-    pattern << bad_request_error_pattern('agent_id', 'is not a number')
-    pattern << bad_request_error_pattern('company_id', 'is not a number')
+    pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
+    pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
     pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
     assert_response :bad_request
@@ -517,7 +517,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: 'yu')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('agent_id', 'is not a number')])
+    match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_update_presence_invalid
@@ -528,7 +528,7 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: '7878')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('agent_id', "can't be blank")])
+    match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_update_date_time_invalid
@@ -549,8 +549,8 @@ class TimeSheetsControllerTest < ActionController::TestCase
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
     assert_response :bad_request
-    match_json([bad_request_error_pattern('timer_running', 'not_included', list: 'true,false'),
-                bad_request_error_pattern('billable', 'not_included', list: 'true,false')])
+    match_json([bad_request_error_pattern('timer_running', 'data_type_mismatch', data_type: 'Boolean'),
+                bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
   def test_update_format_invalid

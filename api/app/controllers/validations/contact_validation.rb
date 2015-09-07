@@ -5,7 +5,7 @@ class ContactValidation < ApiValidation
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }
   validates :avatar, file_size: {
     min: nil, max: ContactConstants::ALLOWED_AVATAR_SIZE, base_size: 0 }, if: -> { avatar && errors[:avatar].blank? }
-  validates :client_manager, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_nil: true
+  validates :client_manager, data_type: { rules: 'Boolean', allow_nil: true }
   validates :company_id,  required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' }
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :custom_fields, custom_field: { custom_fields: {

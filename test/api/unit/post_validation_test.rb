@@ -15,7 +15,7 @@ class PostValidationTest < ActionView::TestCase
     post = ApiDiscussions::PostValidation.new(controller_params, item)
     refute post.valid?
     error = post.errors.full_messages
-    assert error.include?('Answer not_included')
+    assert error.include?('Answer data_type_mismatch')
   end
 
   def test_presence_item_valid
@@ -33,7 +33,7 @@ class PostValidationTest < ActionView::TestCase
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
     refute item.valid?(:update)
     error = topic.errors.full_messages
-    refute error.include?('Topic is not a number')
+    refute error.include?('Topic data_type_mismatch')
     refute error.include?('User is not a number')
   end
 
@@ -42,7 +42,7 @@ class PostValidationTest < ActionView::TestCase
     item = Post.new('answer' => '1')
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
     error = topic.errors.full_messages
-    refute error.include?('Answer not_included')
+    refute error.include?('Answer data_type_mismatch')
   end
 
   def test_post_validation_valid_params

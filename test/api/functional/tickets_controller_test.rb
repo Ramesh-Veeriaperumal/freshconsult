@@ -16,15 +16,15 @@ class TicketsControllerTest < ActionController::TestCase
   update_custom_fields_values_invalid = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph }
 
   ERROR_PARAMS =  {
-    'number' => ['must be an integer'],
+    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
     'decimal' => ['data_type_mismatch', data_type: 'number'],
-    'checkbox' => ['not_included', list: 'true,false']
+    'checkbox' => ['data_type_mismatch', data_type: 'Boolean']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => ['required_integer'],
+    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
     'decimal' => ['required_number'],
-    'checkbox' => ['required_and_inclusion', list: 'true,false'],
+    'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
     'text' => ['missing'],
     'paragraph' => ['missing']
   }
@@ -124,11 +124,11 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', 'is not a number'),
-                bad_request_error_pattern('responder_id', 'is not a number'),
-                bad_request_error_pattern('product_id', 'is not a number'),
-                bad_request_error_pattern('email_config_id', 'is not a number'),
-                bad_request_error_pattern('group_id', 'is not a number')])
+    match_json([bad_request_error_pattern('requester_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('email_config_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('group_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_create_inclusion_invalid
@@ -1201,11 +1201,11 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :bad_request
-    match_json([bad_request_error_pattern('requester_id', 'is not a number'),
-                bad_request_error_pattern('responder_id', 'is not a number'),
-                bad_request_error_pattern('product_id', 'is not a number'),
-                bad_request_error_pattern('email_config_id', 'is not a number'),
-                bad_request_error_pattern('group_id', 'is not a number')])
+    match_json([bad_request_error_pattern('requester_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('email_config_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('group_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
   def test_update_inclusion_invalid

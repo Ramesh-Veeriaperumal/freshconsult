@@ -71,7 +71,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         client_manager: 'String',
                                         company_id: comp.id)
-    match_json([bad_request_error_pattern('client_manager', 'not_included', list: 'true,false')])
+    match_json([bad_request_error_pattern('client_manager', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
   def test_create_contact_with_client_manager_without_company
@@ -236,7 +236,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cf_check_me', 'not_included', list: 'true,false'),
+    match_json([bad_request_error_pattern('cf_check_me', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_doj', 'is not a date')])
   end
 

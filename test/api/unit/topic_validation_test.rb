@@ -15,8 +15,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?(:update)
     error = topic.errors.full_messages
-    assert error.include?('Forum is not a number')
-    assert error.include?('Stamp type is not a number')
+    assert error.include?('Forum data_type_mismatch')
+    assert error.include?('Stamp type data_type_mismatch')
   end
 
   def test_inclusion_params_invalid
@@ -25,8 +25,8 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     refute topic.valid?
     error = topic.errors.full_messages
-    assert error.include?('Locked not_included')
-    refute error.include?('Sticky not_included')
+    assert error.include?('Locked data_type_mismatch')
+    refute error.include?('Sticky data_type_mismatch')
   end
 
   def test_presence_item_valid
@@ -41,16 +41,16 @@ class TopicValidationsTest < ActionView::TestCase
     refute error.include?("Message html can't be blank")
   end
 
-  def test_numericality_item_valid
+  def test_numericality_item_valid_only_update
     controller_params = {}
     item = Topic.new('user_id' => 2, 'stamp_type' => 2)
-    item.forum_id = 'dfdsf'
+    item.forum_id = 0
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
-    refute topic.valid?(:update)
+    refute topic.valid?
     error = topic.errors.full_messages
-    refute error.include?('Forum is not a number')
+    refute error.include?('Forum data_type_mismatch')
     refute error.include?('User is not a number')
-    refute error.include?('Stamp Type is not a number')
+    refute error.include?('Stamp Type data_type_mismatch')
   end
 
   def test_inclusion_item_valid
@@ -58,8 +58,8 @@ class TopicValidationsTest < ActionView::TestCase
     item = Topic.new('sticky' => 'true', 'locked' => false)
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     error = topic.errors.full_messages
-    refute error.include?('Locked not_included')
-    refute error.include?('Sticky not_included')
+    refute error.include?('Locked data_type_mismatch')
+    refute error.include?('Sticky data_type_mismatch')
   end
 
   def test_topic_validation_valid_params

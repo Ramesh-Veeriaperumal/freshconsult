@@ -5,7 +5,7 @@ class TicketValidation < ApiValidation
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
-  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, numericality: { allow_nil: true }
+  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, custom_numericality: { allow_nil: true }
 
   validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
   validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?

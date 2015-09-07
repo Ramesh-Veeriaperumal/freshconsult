@@ -239,9 +239,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                         'cf_show_all_ticket' => Faker::Number.number(5) })
 
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'number'),
+    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
-                bad_request_error_pattern('cf_show_all_ticket', 'not_included', list: 'true,false')])
+                bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
   def test_create_company_with_invalid_custom_dropdown_field_values
@@ -271,9 +271,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => 'test_date',
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response :bad_request
-    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'number'),
+    match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
-                bad_request_error_pattern('cf_show_all_ticket', 'not_included', list: 'true,false'),
+                bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
 
