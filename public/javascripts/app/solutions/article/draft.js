@@ -27,6 +27,7 @@ window.App = window.App || {};
 
     resetDraftRequest: function () {
       $('#cancel_draft_changes_input').prop('disabled', false);
+      var new_draft_record = ($("#last-updated-at").length === 0);
       //request for submitting serialized form if a draft already existed
       var form_submit = {
           type: 'POST',
@@ -40,12 +41,17 @@ window.App = window.App || {};
           dataType: "script"
         },
         handlers = {},
-        request = $.extend({}, handlers, ($("#last-updated-at").length === 0 ? draft_discard : form_submit));
+        request = $.extend({}, handlers, (new_draft_record ? draft_discard : form_submit));
 
       //Only if a single autosave is success should we reverse the changes done
       if (this.autoSave.successCount > 0) {
         $.ajax(request);
       }
+
+      if (new_draft_record) {
+        $('#sticky_redactor_toolbar').removeClass('has-notification');
+      }
+      
     },
 
     autosaveDomManipulate: function (response) {

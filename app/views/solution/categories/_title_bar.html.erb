@@ -8,7 +8,7 @@
 		<% if privilege?(:manage_solutions) && !@category.is_default? -%>
 			<ul class="list-actions-right">
 				<li class="list-default-btns">
-					<%= reorder_btn %>
+					<%= reorder_btn if @category.folders.size > 1 %>
 					<%= new_solutions_button(:folder) %>
 				</li>
 			  <li class="list-reorder-btns">

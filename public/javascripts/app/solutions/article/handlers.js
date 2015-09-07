@@ -34,7 +34,7 @@ window.App = window.App || {};
     
     startEditing: function () {
       $('#sticky_redactor_toolbar').removeClass('hide');
-      if ($('#solution-notification-bar').is(':visible')) {
+      if ($('#solution-notification-bar .article-view-edit').is(':visible')) {
         $('#sticky_redactor_toolbar').addClass('has-notification');
       }
       $('#solution_article_title').focus();

@@ -1,9 +1,12 @@
 module CommunityHelper
 
   def preview_portal(relative_path, category = nil)
+    return if category.portal_ids.empty?
+
     path = relative_path
-    unless (category.nil? || category.portal_ids.empty? || category.portal_ids.include?(current_portal.id))
-      path = ["#{category.portals.last.url_protocol}://", category.portals.last.host, relative_path].join
+    unless (category.nil? || category.portal_ids.empty?)
+      category_portal = category.portal_ids.include?(current_portal.id) ? current_portal : category.portals.last
+      path = ["#{category_portal.url_protocol}://", category_portal.host, relative_path].join
     end
 
     %(<span class="tooltip pull-right portal-preview-icon" title="#{t('solution.view_on_portal')}">
