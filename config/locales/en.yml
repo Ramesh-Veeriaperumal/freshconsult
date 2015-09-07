@@ -3681,7 +3681,7 @@ en:
         portal_preview_msg: You are previewing draft version of this article.
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
-        revert_msg: "Succesfully reverted changes done in draft."
+        revert_msg: "The current session of auto-save has been discarded."
       tag_max_len: Maximum key length
       locked: Locked
       cant_publish: can't be changed to published of an article in default folder/category

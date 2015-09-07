@@ -31,6 +31,8 @@ window.App = window.App || {};
       case "solution/articles/edit":
       case "solution/articles/show":
       case "solution/articles/new":
+      case "solution/articles/create":
+      case "solution/articles/update":
         this.current_module = 'Article';
         break;
       case "solution/categories/show":
