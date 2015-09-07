@@ -26,7 +26,15 @@ class Social::Tweet < ActiveRecord::Base
     tweetable_type.eql?('Helpdesk::Note')
   end
 
-   def is_mention?
+  def is_archive_ticket?
+    tweetable_type.eql?('Helpdesk::ArchiveTicket')
+  end
+
+  def is_archive_note?
+    tweetable_type.eql?('Helpdesk::ArchiveNote') 
+  end
+
+  def is_mention?
     tweet_type.eql?('mention')
   end
 
@@ -36,7 +44,12 @@ class Social::Tweet < ActiveRecord::Base
 
   def get_ticket
     return tweetable if is_ticket?
-    return tweetable.notable if is_note?
+    return tweetable.notable if is_note? 
+  end
+
+  def get_archive_ticket
+    return tweetable if is_archive_ticket?
+    return tweetable.archive_ticket if is_archive_note?
   end
 
 end

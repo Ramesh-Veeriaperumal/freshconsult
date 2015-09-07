@@ -1,6 +1,7 @@
 class Fdadmin::UsersController < Fdadmin::DevopsMainController
 
 	around_filter :select_slave_shard , :only => :get_user
+	before_filter :set_current_account, :only => :get_user
 	before_filter :load_user_record , :only => :get_user
 
 	def get_user
@@ -28,7 +29,15 @@ class Fdadmin::UsersController < Fdadmin::DevopsMainController
 		if params[:user_id] && params[:account_id]
 			@user = User.find_by_id_and_account_id(params[:user_id],params[:account_id])
 		end
-		render :nothing => true, :status => 404 and return if @user.nil?
+		render :json => nil, :status => 404 and return if @user.nil?
+	end
+
+	def set_current_account
+ 		if params[:account_id]
+			account= Account.find(params[:account_id])
+			account.make_current if account
+		end
+		render :json => nil, :status => 404 and return if Account.current.nil?
 	end
 
 end

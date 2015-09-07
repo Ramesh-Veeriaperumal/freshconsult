@@ -301,18 +301,10 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_user_with_valid_params
-    cf_dept = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name, 'tag_sample_test_3']
     cf = { 'cf_city' => 'Chennai' }
-    comp = get_company
 
-    post :create, construct_params({},  name: Faker::Lorem.characters(15),
-                                        email: Faker::Internet.email,
-                                        client_manager: true,
-                                        company_id: comp.id,
-                                        language: 'en',
-                                        tags: %w(tag_sample_test_1 tag_sample_test_2 tag_sample_test_3))
-    assert_response :created
     sample_user = User.where(helpdesk_agent: false).last
     params_hash = { language: 'cs',
                     time_zone: 'Tokyo',
@@ -345,13 +337,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     comp = get_company
     params_hash = { company_id: comp.id, client_manager: true, phone: '1234567890' }
-    put :update, construct_params({ id: sample_user.id }, params_hash)
-    assert_response :success
+    sample_user.update_attributes(params_hash)
     sample_user.reload
     params_hash = { company_id: nil }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :success
     assert sample_user.reload.company_id.nil?
+    assert sample_user.reload.client_manager == false
   end
 
   def test_update_client_manager_with_unavailable_company_id
@@ -366,7 +358,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('company_id', 'Should not be invalid_value/blank')])
   end
 
-  def test_update_the_email_of_a_contact_invalid
+  def test_update_email_when_email_is_not_nil
     sample_user = get_user_with_email
     email = Faker::Internet.email
     params_hash = { email: email }
@@ -375,8 +367,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('email', 'Email cannot be updated')])
   end
 
-  def test_update_the_email_of_a_contact_valid
-    sample_user = add_new_user(@account)
+  def test_update_email_when_email_is_nil
+    sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     email = Faker::Internet.email
@@ -388,16 +380,10 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_the_email_of_a_contact_without_email
-    post :create, construct_params({},  name: Faker::Name.name,
-                                        email: Faker::Internet.email)
-    assert_response :created
-    post :create, construct_params({},  name: Faker::Name.name,
-                                        phone: '5435278198')
-    assert_response :created
-
-    user1 = @account.all_contacts.last(2).first
+    user1 = @account.all_contacts.first
     user2 = @account.all_contacts.last
     email = user1.email
+    user2.update_attribute(:email, nil)
     put :update, construct_params({ id: user2.id }, email: email)
     match_json([bad_request_error_pattern('email', 'Email has already been taken')])
   end
@@ -430,7 +416,6 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   # Delete user
-
   def test_delete_contact
     sample_user = get_user
     sample_user.update_column(:deleted, false)
@@ -441,18 +426,14 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_delete_a_deleted_contact
     sample_user = get_user
-    sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :no_content
+    sample_user.update_column(:deleted, true)
     delete :destroy, construct_params(id: sample_user.id)
     assert_response :not_found
   end
 
   def test_update_a_deleted_contact
     sample_user = get_user
-    sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :no_content
+    sample_user.update_column(:deleted, true)
     params_hash = { language: 'cs' }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response :not_found
@@ -460,29 +441,21 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_show_a_deleted_contact
     sample_user = get_user
-    sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :no_content
+    sample_user.update_column(:deleted, true)
     get :show, construct_params(id: sample_user.id)
     match_json(deleted_contact_pattern(sample_user.reload))
   end
 
   def test_restore_a_deleted_contact
     sample_user = get_user
-    sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :no_content
+    sample_user.update_column(:deleted, true)
     put :restore, construct_params(id: sample_user.id)
     assert_response :no_content
-    get :show, construct_params(id: sample_user.id)
-    match_json(contact_pattern(sample_user.reload))
   end
 
   def test_restore_a_deleted_contact_with_params
     sample_user = get_user
-    sample_user.update_column(:deleted, false)
-    delete :destroy, construct_params(id: sample_user.id)
-    assert_response :no_content
+    sample_user.update_column(:deleted, true)
     put :restore, construct_params({ id: sample_user.id }, job_title: 'Employee')
     assert_response :bad_request
     match_json([bad_request_error_pattern('job_title', 'invalid_field')])
@@ -611,9 +584,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
     put :make_agent, construct_params(id: sample_user.id)
-    assert_response :bad_request
+    assert_response :conflict
     sample_user.update_attribute(:email, email)
-    match_json(request_error_pattern('email_required'))
+    match_json(request_error_pattern('inconsistent_state'))
     sample_user.update_attribute(:email, email)
   end
 
@@ -621,7 +594,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.subscription.update_attribute(:agent_limit, 1)
     sample_user = get_user_with_email
     put :make_agent, construct_params(id: sample_user.id)
-    assert_response :bad_request
+    assert_response :forbidden
     match_json(request_error_pattern('max_agents_reached'))
   end
 
@@ -639,39 +612,36 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   # Misc
-  def test_demo_site_delete
+  def test_demosite_delete
     sample_user = get_user
     sample_user.update_column(:deleted, false)
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       delete :destroy, construct_params(id: sample_user.id)
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
-  def test_demo_site_update
+  def test_demosite_update
     sample_user = get_user
     sample_user.update_column(:deleted, false)
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       put :update, construct_params({ id: sample_user.id }, time_zone: 'Chennai')
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
-  def test_demo_site_create
+  def test_demosite_create
     params = { name: Faker::Lorem.characters(15), email: Faker::Internet.email }
 
-    stub_const(ContactConstants, 'DEMOSITE_URL', @account.full_domain) do
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
       post :create, construct_params({}, params)
     end
 
-    assert_response :forbidden
-    match_json(request_error_pattern('unsupported_environment'))
+    assert_response :not_found
   end
 
   def test_update_array_field_with_empty_array

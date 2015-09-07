@@ -14,6 +14,8 @@ module ApiConstants
 
   TIME_UNITS = %w(hours minutes seconds) # do not change the order.
 
+  DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
+
   # ValidationConstants
   BOOLEAN_VALUES = [true, false, 'true', 'false'] # for boolean fields all these values are accepted.
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX

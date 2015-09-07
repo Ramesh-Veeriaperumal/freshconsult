@@ -835,6 +835,14 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('due_by', 'start_time_lt_now')])
   end
 
+  def test_update_without_due_by
+    params = update_ticket_params_hash
+    t = ticket
+    t.update_attribute(:due_by, (t.created_at - 10.days).to_s)
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response :success
+  end
+
   def test_update_invalid_model
     user = add_new_user(@account)
     user.update_attribute(:blocked, true)
@@ -872,7 +880,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id
-    product = create_product
+    product = create_product(email: Faker::Internet.email)
     params_hash = { product_id: product.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -882,8 +890,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_diff_email_config_id
-    product = create_product
-    product_1 = create_product
+    product = create_product(email: Faker::Internet.email)
+    product_1 = create_product(email: Faker::Internet.email)
     params_hash = { product_id: product.id, email_config_id: product_1.primary_email_config.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -893,7 +901,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_same_email_config_id
-    product = create_product
+    product = create_product(email: Faker::Internet.email)
     email_config = create_email_config(product_id: product.id)
     params_hash = { product_id: product.id, email_config_id: email_config.id }
     t = ticket

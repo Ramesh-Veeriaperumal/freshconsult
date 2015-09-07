@@ -383,6 +383,10 @@
 		@include text-align(right);
 		@include padding-right(0);
 		width: 140px;
+
+		.subject_style {
+			cursor: default;
+		}
 	}
 	
 	.td-ticket-details{
@@ -785,7 +789,17 @@
 		@include margin-left(11px);
 	}
 }
-
+// Archived Ticket List CSS
+#archived-ticket-list{
+	#ticket-toolbar{
+		padding: 2px 8px 6px 0;
+	}
+	
+	.userpic{
+		padding: 15px;
+		padding-left: 20px;
+	}
+}
 //new ticket sub info
 .ticket_sub_text{
 	padding-bottom: 10px;

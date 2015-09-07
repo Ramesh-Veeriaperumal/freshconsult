@@ -32,9 +32,11 @@ class User < ActiveRecord::Base
                           "helpdesk_agent", "role_ids", "customer_attributes", "company_name"]
 
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
-                                "external_id", "job_title", "language", "description", "customer_id"]
+                                "external_id", "job_title", "language", "description"] #client_manager will be moved directly
 
   MERGE_VALIDATIONS = [["emails", 5], ["twitter_id", 1], ["fb_profile_id", 1]] #[Attribute, limit] ["phone", 1]
+
+  USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 
   MAX_USER_EMAILS = 5
   PASSWORD_LENGTH = 4

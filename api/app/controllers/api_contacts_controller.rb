@@ -30,7 +30,7 @@ class ApiContactsController < ApiApplicationController
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
-    elsif @item.update_attributes(params[cname])
+    elsif @item.save
       @item.tags = construct_tags(@tags) if @tags
     else
       render_custom_errors
@@ -54,9 +54,9 @@ class ApiContactsController < ApiApplicationController
 
   def make_agent
     if @item.email.blank?
-      render_request_error :email_required, 400
+      render_request_error :inconsistent_state, 409
     elsif !current_account.subscription.agent_limit.nil? && reached_agent_limit?
-      render_request_error :max_agents_reached, 400
+      render_request_error :max_agents_reached, 403
     else
       if @item.make_agent
         @agent = Agent.find_by_user_id(@item.id)
@@ -122,22 +122,13 @@ class ApiContactsController < ApiApplicationController
     end
 
     def after_load_object
+      @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
       unless scope.nil?
         if @item.deleted != scope
           head 404
           return false
         end
-      end
-
-      if (destroy? || update?) && demo_site?
-        render_request_error :unsupported_environment, 403
-      end
-    end
-
-    def before_build_object
-      if create? && demo_site? # create? check needed here???
-        render_request_error :unsupported_environment, 403
       end
     end
 
@@ -147,10 +138,5 @@ class ApiContactsController < ApiApplicationController
 
     def reached_agent_limit?
       current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
-    end
-
-    def demo_site?
-      return true if ContactConstants::DEMOSITE_URL == current_account.full_domain
-      false
     end
 end

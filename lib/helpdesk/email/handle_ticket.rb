@@ -13,7 +13,7 @@ class Helpdesk::Email::HandleTicket
   include ActionView::Helpers
   include Helpdesk::DetectDuplicateEmail
 
-  attr_accessor :note, :email, :user, :account, :ticket, :original_sender
+  attr_accessor :note, :email, :user, :account, :ticket, :archive_ticket, :original_sender
 
   BODY_ATTR = ["body", "body_html", "full_text", "full_text_html", "description", "description_html"]
 
@@ -105,14 +105,17 @@ class Helpdesk::Email::HandleTicket
     attachments = []
     inline_attachments = []
     content_id_hash = {}
+    inline_count = 0
     email[:attached_items].count.times do |i|
       begin
+        content_id = cid(i) && verify_inline_attachments(item, cid(i))
         att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
                                                         email[:attached_items]["attachment-#{i+1}"], 
-                                                        i, cid(i), true)
+                                                        i, content_id, true)
         if att.is_a? Helpdesk::Attachment
-          if cid(i)
-            content_id_hash[att.content_file_name+"#{i}"] = cid(i)
+          if content_id
+            content_id_hash[att.content_file_name+"#{inline_count}"] = cid(i)
+            inline_count+=1
             inline_attachments.push att
           else
             attachments.push att

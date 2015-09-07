@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :normalize_params, :only => :index
@@ -1065,8 +1066,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def portal_check
       if !current_user.nil? and current_user.customer?
-        load_item
-        return redirect_to support_ticket_url(@ticket)
+        load_ticket
       elsif !privilege?(:manage_tickets)
         access_denied
       end
@@ -1185,9 +1185,37 @@ class Helpdesk::TicketsController < ApplicationController
     Sharding.run_on_slave(&block)
   end 
 
+  def run_on_db(&block)
+    db_type = current_account.slave_queries? ? :run_on_slave : :run_on_master
+    Sharding.send(db_type) do
+      yield
+    end
+  end
+
   def load_sort_order
     params[:wf_order] = view_context.current_wf_order.to_s
     params[:wf_order_type] = view_context.current_wf_order_type.to_s
+  end
+
+  def load_ticket
+    @ticket = @item = load_by_param(params[:id])
+    return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
+    
+    load_archive_ticket unless @ticket
+  end
+
+  def load_archive_ticket
+    raise ActiveRecord::RecordNotFound unless current_account.features?(:archive_tickets)
+    
+    archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
+    raise ActiveRecord::RecordNotFound unless archive_ticket
+
+    # Temporary fix to redirect /helpdesk URLs to /support for archived tickets
+    if current_user.customer?
+      redirect_to support_archive_ticket_path(params[:id])
+    else
+      redirect_to helpdesk_archive_ticket_path(params[:id])
+    end
   end
  
 end

@@ -264,7 +264,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def results
-    db_type = order.to_sym.eql?(:requester_responded_at) ? :run_on_slave : :run_on_master
+    db_type = (order.to_sym.eql?(:requester_responded_at) || Account.current.slave_queries?) ? :run_on_slave : :run_on_master
     Sharding.send(db_type) do
       @results ||= begin
         handle_empty_filter! 

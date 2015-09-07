@@ -1,3 +1,10 @@
+<script type='text/javascript'>
+  var page_type = 'ticket',
+  dom_helper_data = <%= raw @item.to_json %>;
+</script>
+
+<%= javascript_include_tag :'cdn/marketplace/freshapps_ticket_dom_helper' %>
+
 <%= render :partial => "/integrations/applications/pivotal_tracker_form" %>
 <% if is_application_installed?("jira")  %>
 <% installedApp = get_app_details("jira") %>
@@ -72,4 +79,15 @@ end %>
 		%>
 		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
 	</div>
+<% end %>
+
+<!-- Marketplace Plugs -->
+<% if feature?(:marketplace) %>
+  <% installed_plugs(:ticket_details_page).try(:each) do |installed_plug| %>
+    <div id="<%= installed_plug['name'] %>" class="widget">
+      <div class="content">
+        <%= freshplug_script(installed_plug.symbolize_keys) %>
+      </div>
+    </div>
+  <% end %>
 <% end %>

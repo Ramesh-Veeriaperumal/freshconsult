@@ -82,4 +82,10 @@ HTML
     li = content_tag(:li, (head+output.join("").html_safe), :class => 'show-field')
   end
 
+  def api_permitted_data
+    [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
+    :fb_profile_id,:external_id,:language,:address,:customer_id]
+  end
+
 end

@@ -18,6 +18,7 @@ module Helpdesk::TicketsHelper
   def scn_accessible_elements
     visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, "raw_name")
     visible_scn = accessible_elements(current_account.scn_automations, query_hash('VARule', 'va_rules', '')) if visible_scn.nil?
+    visible_scn.compact! unless visible_scn.blank?
     visible_scn
   end
   
@@ -456,10 +457,10 @@ module Helpdesk::TicketsHelper
   def facebook_link
     ids = @ticket.fb_post.original_post_id.split('_')
     page_id = @ticket.fb_post.facebook_page.page_id
-    if @ticket.fb_post.comment?
-      "http://www.facebook.com/permalink.php?story_fbid=#{ids[0]}&id=#{page_id}&comment_id=#{ids[1]}"
-    else
+    if @ticket.fb_post.fb_post?
       "http://www.facebook.com/#{page_id}/posts/#{ids[1]}"
+    else
+      "http://www.facebook.com/permalink.php?story_fbid=#{ids[0]}&id=#{page_id}&comment_id=#{ids[1]}"
     end
   end
 

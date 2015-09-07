@@ -1,6 +1,6 @@
-<%if (data && data.length>0) { %>
+<% if (data && data.length>0) { %>
 	<ul class="ticket-list">
-		<% for (i=0; i<data.length; i++) { %>
+		<% for (i = 0; i < data.length; i++) { %>
 			<li>
 				<%= data[i]['avatar']%>
 				<a href="/helpdesk/tickets/<%= data[i]['id']%>" target="_blank" class="ticket-link visited"><%= data[i]['subject']%></a>
@@ -13,6 +13,6 @@
 	<!--<div class="tickets-footer">
 		<a href="#">Export as CSV to view all tickets</a>
 	</div>-->
-<% } else{ %>
+<% } else { %>
 	<h4>No Tickets to display</h4>
 <% } %>

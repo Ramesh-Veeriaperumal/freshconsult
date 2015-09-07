@@ -79,6 +79,13 @@
 	.lead-fields{
 		@include float(right);
 	}
+	#xeroitems, #xeroaccounts{
+		.select2-search-choice{
+			div{
+				width:92%;
+			}
+		}
+	}
 
 }
 // ------------------------------------------------------------------------------------------------------------

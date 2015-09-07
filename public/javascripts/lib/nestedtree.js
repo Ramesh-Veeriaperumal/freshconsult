@@ -102,18 +102,18 @@ var NestedField = Class.create({
   setSecondPresent: function(){ this.second_level = true; },  
   getCategory: function(){
       _categories = [];
-      this.tree.each(function(o){  _categories.push("<option value="+o.value.id+">"+o.key+"</option>") });         
+      this.tree.each(function(o){  _categories.push("<option value='"+o.value.id+"'>"+o.key+"</option>") });         
       return _categories.join();
   },
   getCategoryEscaped: function(){
       _categories = [];
-      this.tree.each(function(o){ _categories.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });         
+      this.tree.each(function(o){ _categories.push("<option value='"+escapeHtml(o.value.id)+"'>"+escapeHtml(o.key)+"</option>") });         
       return _categories.join();
   }, 
   getSubcategory: function(category_key){
       _subcategories = [];
       if(this.tree.get(category_key) && this.tree.get(category_key).children)
-        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value='"+o.value.id+"'>"+o.key+"</option>") });          
       if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
       //console.log("subcategory: "+_subcategories);
@@ -122,7 +122,7 @@ var NestedField = Class.create({
   getSubcategoryEscaped: function(category_key){
       _subcategories = [];
       if(this.tree.get(category_key) && this.tree.get(category_key).children)
-        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value='"+o.value.id+"'>"+o.key+"</option>") });          
       if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
       //console.log("subcategory: "+_subcategories);
@@ -134,7 +134,7 @@ var NestedField = Class.create({
       // console.log("subcategory_key: "+subcategory_key);
       if(this.tree.get(category_key))
         if(this.tree.get(category_key).get(subcategory_key).children)
-            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+o.value.id+">"+o.key+"</option>") });
+            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value='"+o.value.id+"'>"+o.key+"</option>") });
 
       // console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
@@ -145,7 +145,7 @@ var NestedField = Class.create({
       // console.log("subcategory_key: "+subcategory_key);
       if(this.tree.get(category_key))
         if(this.tree.get(category_key).get(subcategory_key).children)
-            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });
+            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value='"+escapeHtml(o.value.id)+"'>"+escapeHtml(o.key)+"</option>") });
 
       // console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;

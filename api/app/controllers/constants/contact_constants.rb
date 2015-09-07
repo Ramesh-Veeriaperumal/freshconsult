@@ -23,8 +23,6 @@ module ContactConstants
   # Based on the Web's behaviour, only jpg and png are allowed to upload
   AVATAR_EXT_REGEX = /.*\.(jpg|png|jpeg)$/i
 
-  DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
-
   TIMEZONES = ActiveSupport::TimeZone.all.map(&:name)
 
   LANGUAGES = I18n.available_locales.map(&:to_s)

@@ -62,7 +62,7 @@
 									}) %>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply">
-				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp?) %>
+				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.fb_replies_allowed? or @item.from_email.present? or @ticket.mobihelp?) %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-replyto-handle="<%= @ticket.is_twitter? ? @ticket.latest_twitter_comment_user : "" %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
         <% if privilege?(:forward_ticket) %>

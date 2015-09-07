@@ -107,9 +107,15 @@ module TicketsFilter
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open all_tickets monitored_by archived spam deleted )
 
   def self.default_views
-    DEFAULT_VISIBLE_FILTERS.map { |i| {
+    filters = if Account.current && Account.current.features?(:archive_tickets)
+      DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
+    else
+      DEFAULT_VISIBLE_FILTERS
+    end
+    filters.map { |i| {
         :id       =>  i, 
         :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
         :default  =>  true 

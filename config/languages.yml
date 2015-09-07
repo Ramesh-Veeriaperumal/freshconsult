@@ -1,0 +1,91 @@
+--- 
+ar: 
+  - 1
+  - Arabic
+ca: 
+  - 2
+  - Catalan
+cs: 
+  - 3
+  - Czech
+da: 
+  - 4
+  - Danish
+de: 
+  - 5
+  - German
+en: 
+  - 6
+  - English
+es-LA: 
+  - 7
+  - Spanish (Latin America)
+es: 
+  - 8
+  - Spanish
+et: 
+  - 9
+  - Estonian
+fi: 
+  - 10
+  - Finnish
+fr: 
+  - 11
+  - French
+hu: 
+  - 12
+  - Hungarian
+id: 
+  - 13
+  - Indonesian
+it: 
+  - 14
+  - Italian
+ja-JP: 
+  - 15
+  - Japanese
+ko: 
+  - 16
+  - Korean
+nb-NO: 
+  - 17
+  - Norwegian
+nl: 
+  - 18
+  - Dutch
+pl: 
+  - 19
+  - Polish
+pt-BR: 
+  - 20
+  - Portuguese (BR)
+pt-PT: 
+  - 21
+  - Portuguese/Portugal
+ru-RU: 
+  - 22
+  - Russian
+sk: 
+  - 23
+  - Slovak
+sl: 
+  - 24
+  - Slovenian
+sv-SE: 
+  - 25
+  - Swedish
+tr: 
+  - 26
+  - Turkish
+vi: 
+  - 27
+  - Vietnamese
+zh-CN: 
+  - 28
+  - Chinese
+uk: 
+  - 29
+  - Ukrainian
+he: 
+  - 30
+  - Hebrew

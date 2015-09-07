@@ -17,6 +17,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   MAX_DIMENSIONS = 16000000
 
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+    "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
+
   self.table_name =  "helpdesk_attachments"
   belongs_to_account
 
@@ -66,8 +69,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        :content_file_size => attached.tempfile.size.to_i
                       }
         write_options = { :content_type => attached.content_type }
-        if content_id
-          attributes.merge!({:description => "content_id", :attachable_type => "Inline"})
+        if attached.content_type.include?("image") && content_id
+          model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
+          attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
           write_options.merge!({:acl => "public-read"})
         end
 
@@ -124,7 +128,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def has_thumbnail?
-    !["Helpdesk::Ticket", "Helpdesk::Note", "Account"].include?(attachable_type)
+    !(NON_THUMBNAIL_RESOURCES.include?(attachable_type))
   end
 
   def attachment_sizes

@@ -12,6 +12,8 @@ module HelpdeskReports::Constants::Ticket
     [:GROUP_REASSIGNED_TICKETS,    "Count"],
     [:RESPONSES,                   "Count"],
     [:PRIVATE_NOTES,               "Count"],
+    [:CUSTOMER_INTERACTIONS,       "Count"],
+    [:AGENT_INTERACTIONS,          "Count"],
     [:AVG_FIRST_RESPONSE_TIME,     "Avg"],
     [:AVG_RESPONSE_TIME,           "Avg"],
     [:AVG_RESOLUTION_TIME,         "Avg"],
@@ -83,6 +85,10 @@ module HelpdeskReports::Constants::Ticket
 
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :time_spent, :list]
   
+  REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution]
+  
+  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary]
+  
   PARAM_INCLUSION_VALUES = {
     :model       =>  ["TICKET"],
     :metric      =>  METRICS,
@@ -136,8 +142,6 @@ module HelpdeskReports::Constants::Ticket
   NOT_APPICABLE = "NA"
   
   TICKET_FILTER_LIMIT = 5
-  
-  FILTER_ERROR_TEXT = "You can select maximum of #{TICKET_FILTER_LIMIT} filters"
   
   MULTI_SELECT_LIMIT = 10
   

@@ -11,17 +11,15 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings] 
-  
-  
-
+  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings]
+    
   def index
     redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
   end
 
   def show
     @enable_pattern = true
-    @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
+    @article = current_account.solution_articles.find_by_id!(params[:id])
     respond_to do |format|
       format.html
       format.xml  { render :xml => @article }
@@ -32,7 +30,7 @@ class Solution::ArticlesController < ApplicationController
   def new
     current_folder = Solution::Folder.first
     current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
-    @article = current_folder.articles.new    
+    @article = current_folder.articles.new  
     @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     respond_to do |format|
       format.html # new.html.erb
@@ -48,8 +46,8 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    current_folder = Solution::Folder.find(params[:solution_article][:folder_id]) 
-    @article = current_folder.articles.new(params[nscname]) 
+    current_folder = Solution::Folder.find(params[:solution_article][:folder_id])
+    @article = current_folder.articles.new(params[nscname])
     set_item_user 
 
     redirect_to_url = @article
@@ -58,6 +56,7 @@ class Solution::ArticlesController < ApplicationController
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
+        @article.reload
         format.html { redirect_to redirect_to_url }        
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -76,7 +75,8 @@ class Solution::ArticlesController < ApplicationController
     build_attachments
     @article.tags_changed = set_solution_tags    
     respond_to do |format|    
-      if @article.update_attributes(params[nscname])  
+      if @article.update_attributes(params[nscname]) 
+        @article.reload 
         format.html { redirect_to @article }
         format.xml  { render :xml => @article, :status => :created, :location => @article }     
         format.json  { render :json => @article, :status => :ok, :location => @article }    
@@ -109,9 +109,8 @@ class Solution::ArticlesController < ApplicationController
    end
 
   def reset_ratings
-    @article.update_attributes(:thumbs_up => 0, :thumbs_down => 0 )
-    @article.votes.destroy_all
-  
+    @article.reset_ratings
+    @article.reload
     respond_to do |format|
       format.js
       format.xml  { head :ok }
@@ -149,7 +148,6 @@ class Solution::ArticlesController < ApplicationController
       @nscname ||= controller_path.gsub('/', '_').singularize
     end
     
-
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account

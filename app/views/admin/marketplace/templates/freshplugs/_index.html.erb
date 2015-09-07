@@ -1,0 +1,116 @@
+<script id="freshplug_listing_template" type="text/x-jquery-tmpl">  
+  <div class="fa-sidehead">
+
+    <div class="apptype-head span6">
+      <h2 class="pull-left">
+        <%= t('marketplace.app_gallery') %>
+      </h2>
+      <% category = "{{if category_id}}&category_id=${category_id}{{/if}}"%>
+      <% plug_type = "{{if in_dev}}&in_dev=true{{/if}}" %>
+      <div class="fa-dd dropdown fa-headd">
+        <span class="pull-left fa-cat"></span>
+        <a id="dd-categories" class="dropdown-toggle" data-toggle="dropdown"><span id="categoryname" class="selected"> / <%= t('marketplace.all') %> </span> <span class="results">(${extensions.length})</span> <span class="caret"></span></a>
+        <ul class="dropdown-menu dd-left dd-categories {{if in_dev}}in-dev{{/if}}" role="menu" aria-labelledby="dd-categories" style="z-index:9999;">
+            <li role="presentation"><a role="menuitem" class="category" href="#" data-url="<%= admin_extensions_path %>?type=${type}<%=plug_type%>">All</a></li>
+            {{each categories}}
+              <li role="presentation"><a role="menuitem" class="category" href="#"  data-url="<%= admin_extensions_path %>?type=${type}&category_id=${id}<%=plug_type%>" style="{{if $data.category_id == id}} font-weight: bold {{/if}}">${name}</a></li>
+            {{/each}}
+        </ul>
+      </div>
+
+      <form action="/admin/extensions/search?type=${type}<%=category%><%=plug_type%>" id="search-extension-form" class="span4">
+          <div class="appsearch-box hide">
+            <input id="query" name="query" class="search-query" required type="text" placeholder="Search">
+            <button class="remove-query" type="reset"><span class="ficon-cross fsize-16"></span></button>
+            <input style="display:none" type="submit" id="search-btn">
+          </div>
+      </form>
+    </div>
+    <div class="span6">
+      <div class="dev-apps pull-right">
+        {{if in_dev}}
+          <%= t('marketplace.in_dev_apps') %>
+        {{/if}}
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="dtl-box">
+    <div class="fa-content content-box">
+      {{if extensions!=""}}
+        <div id="freshappslist" class="applist clear">
+          {{each extensions}}
+            <a href="#" class="fplugs-box" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>">
+              <div class="app-ttl">
+                <h3 title="${name}">${name}</h3>
+              </div>
+              <figure class="figure-box">
+                {{if cover_art}}
+                  <img src="${cover_art}" alt="${name}" height="100">
+                {{else}}
+                  <span class="ficon-puzzle fsize-48 assets-missing"></span>
+                {{/if}}
+                <figcaption class="caption slide-caption">
+                  ${description.substr(0, 140)}{{if description.length > 140}}...{{/if}}
+                </figcaption>
+              </figure>
+            </a>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="zero-apps">
+          <h5 class="msg"> <%= t('marketplace.no_apps') %> </h5>
+        </div>
+      {{/if}}
+
+      {{if similar_extensions}}
+        <div id="freshappslist" class="clear">
+          <h2 class="section-head"> <%= t('marketplace.similar_apps') %> </h2>
+          {{each similar_extensions}}
+            <a href="#" class="fplugs-box" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>">
+              <div class="app-ttl">
+                <h3 title="${name}">${name}</h3>
+              </div>
+              <figure class="figure-box">
+                {{if cover_art}}
+                  <img src="${cover_art}" alt="${name}" height="100">
+                {{else}}
+                  <span class="ficon-puzzle fsize-48 assets-missing plug-logo"></span>
+                {{/if}}
+                <figcaption class="caption slide-caption">
+                  ${description.substr(0, 140)}{{if description.length > 140}}...{{/if}}
+                </figcaption>
+              </figure>
+            </a>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{if related_category_extensions}}
+        <div id="freshappslist" class="clear">
+          <h2 class="section-head"> <%= t('marketplace.related_categories') %> </h2>
+          {{each related_category_extensions}}
+            <a href="#" class="fplugs-box" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>">
+              <div class="app-ttl">
+                <h3 title="${name}">${name}</h3>
+              </div>
+              <figure class="figure-box">
+                {{if cover_art}}
+                  <img src="${cover_art}" alt="${name}" height="100">
+                {{else}}
+                  <span class="ficon-puzzle fsize-48 assets-missing plug-logo"></span>
+                {{/if}}
+                <figcaption class="caption slide-caption">
+                  ${description.substr(0, 140)}{{if description.length > 140}}...{{/if}}
+                </figcaption>
+              </figure>
+            </a>
+          {{/each}}
+        </div>
+      {{/if}}
+      
+    </div>
+  </div>
+</script>

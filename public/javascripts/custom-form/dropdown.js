@@ -153,7 +153,18 @@
 			$(this.settings.dropdownChoiceDiv)
 				.sortable({
 					items: 	'fieldset',
-					handle: this.settings.dropdown_rearrange
+					handle: this.settings.dropdown_rearrange,
+					sort: function(e,el){
+						var scrollParent = $('.custom-choices').parents('.modal-body');
+						var currentOffset = scrollParent.scrollTop();
+						var diff = el.position.top-currentOffset;
+						if(diff<50){
+							scrollParent.scrollTop(currentOffset-5);	
+						}						
+						else if(diff>350) {
+							scrollParent.scrollTop(currentOffset+5);	
+						}
+					}
 				});
 		},
 		getValidationRules: function() {

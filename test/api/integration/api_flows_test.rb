@@ -121,6 +121,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_not_valid_environment
+    stub_const(ApiConstants, 'DEMOSITE_URL', @account.full_domain) do
+      get '/api/discussions/categories', nil, headers
+      assert_response :not_found
+    end
+  end
+
   def test_account_suspended_json
     subscription = @account.subscription
     subscription.update_column(:state, 'suspended')

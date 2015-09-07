@@ -12,6 +12,11 @@ describe ContactMergeController do
     @account.features.multiple_user_emails.create
     @account.features.contact_merge_ui.create
     @account.reload
+    @account.make_current
+    custom_field_params.each do |field|
+      params = cf_params(field)
+      create_contact_field params 
+    end
     @user1 = add_user_with_multiple_emails(@account, 1)
     @user2 = add_user_with_multiple_emails(@account, 1)
     @account.reload
@@ -22,6 +27,7 @@ describe ContactMergeController do
   end
 
   after(:all) do
+    destroy_custom_fields
     @account.features.contact_merge_ui.destroy
     @account.features.multiple_user_emails.destroy
     disable_mue_key(@account) unless @key_state
@@ -341,6 +347,27 @@ describe ContactMergeController do
   it "should not pass new contact merge for agent" do
     post :new, :id => @agent.id
     response.status.should eql 422
+  end
+
+  it "should move all user attributes and custom fields from primary to secondary" do
+    user1, user2 = add_new_user(@account), add_new_user(@account)
+    user1.phone, user1.mobile = nil, nil
+    user1.save
+    default_attributes = contact_default_attribute_values
+    default_attributes.each do |attr, value|
+      user2.send("#{attr}=", value)
+    end
+    user2.custom_field = contact_fields_values_with_faker
+    user2.save
+    custom_field = user2.custom_field
+    Sidekiq::Testing.inline!
+    post :merge, :parent_user => user1.id, :target => [user2.id]
+    Sidekiq::Testing.disable!
+    user1.reload
+    default_attributes.each do |attr, value|
+      user1.send("#{attr}").should eql value
+    end
+    user1.custom_field.should eql custom_field
   end
 
 end

@@ -25,10 +25,10 @@
               :id => "HelpdeskFwd_#{cntid}", 
               :rel => 'forward_form', 
               "data-panel" => conv_id.nil? ? "cnt-fwd" : "cnt-fwd-#{@note.id}",
-              "data-form" => "inline_form",
+              "data-form" => conv_id.nil? ? "" : "inline_form",
               "data-show-pseudo-reply" => conv_id.nil?.to_s,
               "data-fetch-latest" => 'true',
-              "data-destroy-editor" => conv_id.nil?.to_s,
+              "data-destroy-editor" => true,
               "data-cnt-id" => cntid,
               "data-fulltext" => true
             } do |f| %>

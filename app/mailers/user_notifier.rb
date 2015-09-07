@@ -79,6 +79,7 @@ class UserNotifier < ActionMailer::Base
     @attachment = options[:file_name]
     @import_success = options[:import_success]
     @corrupted = options[:corrupted]
+    @wrong_csv = options[:wrong_csv]
 
     unless options[:file_path].nil?
       attachments[options[:file_name]] = {

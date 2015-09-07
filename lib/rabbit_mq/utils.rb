@@ -90,7 +90,7 @@ module RabbitMq::Utils
     # Decide we gonna publish message to exchange via sidekiq or diretly
     # Currently we directly push to exchange
     # If there is any performance, then we can push via sidekiq
-    return unless Account.current.features_included?(:bi_reports)
+    return unless Account.current.reports_enabled?
     if sidekiq
       RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
     else

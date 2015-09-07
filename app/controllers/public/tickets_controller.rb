@@ -29,14 +29,24 @@ class Public::TicketsController < ApplicationController
    def load_ticket
     schema_less_ticket = current_account.schema_less_tickets.find_by_access_token(params[:id])
     unless schema_less_ticket
-      access_denied
+      load_archived_ticket
     else
       @ticket = schema_less_ticket.ticket
     end
    end
 
+   def load_archived_ticket
+     @ticket = current_account.archive_tickets.find_by_access_token(params[:id])
+     access_denied unless @ticket
+   end
+
    def check_scope
-     redirect_to helpdesk_ticket_url(@ticket, :format => params[:format]) if current_user && current_user.agent?
+    # To avoid 2 redirects.
+    if @ticket.is_a?(Helpdesk::Ticket)
+      redirect_to helpdesk_ticket_url(@ticket, :format => params[:format]) if current_user && current_user.agent?
+    else
+      redirect_to helpdesk_archive_ticket_url(@ticket.display_id, :format => params[:format]) if current_user && current_user.agent?
+    end
    end
 
   def set_selected_tab

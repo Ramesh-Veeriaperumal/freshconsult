@@ -1,5 +1,7 @@
 class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket::Base
 
+  include HelpdeskReports::Util::Ticket
+  
   private
 
   def process_metric
@@ -10,6 +12,9 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
       next if row[COLUMN_MAP[:benchmark]] == "f"
       row.each do |column,value|
         next if (AVOIDABLE_COLUMNS.include? column)
+          
+        value = label_for_x_axis(row["y"].to_i, value.to_i, column, date_range) if trend_column? column
+        
         processed_result[column] ||= {}
         helper_hash[column] ||= {}
 
@@ -21,7 +26,8 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
         helper_hash[column][value][:count] += row[COLUMN_MAP[:count]].to_i
       end
     end
-    convert_time_to_hrs
+    convert_time_to_mins
+    pad_result_with_complete_time_range
     processed_result.symbolize_keys!
   end
 
@@ -40,7 +46,7 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
       end
       diff_percentage = calculate_difference_percentage(previous_avg[:avg], current_avg[:avg])
       processed_result[:general] = {
-        :metric_result    => current_avg[:avg],
+        :metric_result    => formatted_duration(current_avg[:avg]),
         :diff_percentage  => diff_percentage
       }
     else
@@ -50,7 +56,7 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
         final_avg[:count]+= row[COLUMN_MAP[:count]].to_i
       end      
       processed_result[:general] = {
-        :metric_result => final_avg[:avg]
+        :metric_result => formatted_duration(final_avg[:avg])
       }
     end
   end
@@ -66,23 +72,24 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
     resulting_avg ? resulting_avg.round(2) : 0.0
   end
 
-  #Time.at(v).gmtime.strftime('%R:%S') -> 00:00:00
-  def convert_time_to_hrs # TO DO MAKE IT GENERIC
+  # Sending averages as integers (in minutes) since JS lib used to render charts needs integer 
+  # values to plot graph. Graphs are plotted only for group_by fields or trends (days, weeks etc)
+  # hence only corresponding values are integer. Average for Metrics is sent in dd:hh:mm format
+  def convert_time_to_mins # TO DO MAKE IT GENERIC
     processed_result.each do |column_name, values|
-      values.each do |k,v|
-        values[k] = formatted_duration(v) if k != :diff_percentage
+      next if column_name == :general
+      values.each do |label,v| 
+        values[label] = (values[label] / 60).to_i
+        # values.delete(label) if values[label] == 0
       end
     end
   end
   
-  def formatted_duration total_seconds
-    hours = (total_seconds / (60 * 60)).to_i
-    minutes = ((total_seconds / 60) % 60).to_i
-    "#{formatted_time(hours)}:#{formatted_time(minutes)}"
-  end
-
-  def formatted_time(n) 
-     n > 9 ? n : "0#{n}";
+  def pad_result_with_complete_time_range
+    ["doy", "w","mon","qtr", "y"].each do |trend|
+      original_hash, padding_hash     = processed_result[trend], range(trend)
+      processed_result[trend] = padding_hash.merge(original_hash){|k, old_val, new_val| old_val + new_val} if original_hash.present?
+    end
   end
 
 end

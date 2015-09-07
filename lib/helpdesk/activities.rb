@@ -1,6 +1,6 @@
 module Helpdesk::Activities
 
-	def stacked_activities(activities)
+def stacked_activities(activities, archived = false)
 		activity_stack = []
 		notes_to_fetch = []
 		activity = {}
@@ -43,7 +43,7 @@ module Helpdesk::Activities
 		end
 
 		activity_stack << combine(activity, previous_activity_meta) unless activity.blank?
-		prefetch_notes(notes_to_fetch)
+		archived ? prefetch_archive_notes(notes_to_fetch) : prefetch_notes(notes_to_fetch)
 		activity_stack
 	end
 
@@ -165,7 +165,11 @@ private
 	def prefetch_notes(note_ids)
 		notes = Helpdesk::Note.find(note_ids, :include => :user)
 		@prefetched_notes = Hash[*notes.map { |note| [note.id, note] }.flatten]
+	end
 
+	def prefetch_archive_notes(note_ids)
+		notes = Helpdesk::ArchiveNote.includes(:user).where("note_id in (?)", note_ids)
+		@prefetched_notes = Hash[*notes.map { |note| [note.note_id, note] }.flatten]
 	end
 
 end

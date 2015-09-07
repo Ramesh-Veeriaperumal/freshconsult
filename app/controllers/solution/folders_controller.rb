@@ -15,7 +15,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def show    
-    @item = @category.folders.find(params[:id], :include => :articles)
+    @item = @category.folders.find(params[:id])
+    #META-READ-CHECK
     
     respond_to do |format|
       format.html { @page_canonical = solution_category_folder_url(@category, @item) }
@@ -48,7 +49,7 @@ class Solution::FoldersController < ApplicationController
     end
   end
 
-  def create 
+  def create
     current_category = current_account.solution_categories.find(params[:category_id])    
     @folder = current_category.folders.new(params[nscname]) 
     @folder.category_id = @new_category.id
