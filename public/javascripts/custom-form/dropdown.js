@@ -205,7 +205,7 @@
 							 .find("fieldset:visible")
 							 .find('input[name=customer_display_name]')
 							 ,function(){
-								if($('input[data-companion=#'+$(this).attr('id')+']').attr('value')!="" && $(this).val()==""){
+								if($.trim($('input[data-companion=#'+$(this).attr('id')+']').attr('value'))!="" && $.trim($(this).val())==""){
 									_condition = false;
 								}
 							 }
