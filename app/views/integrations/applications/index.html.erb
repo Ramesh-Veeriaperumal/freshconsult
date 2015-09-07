@@ -47,7 +47,7 @@
                             "/integrations/installed_applications/#{application.id}/install", :method => :put,:class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
                           <% end %>
                         <% else
-                           auth_url = application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id}) %>
+                           auth_url = application.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id, :user_id => current_user.id},application[:name]) %>
                            <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>
                         <% end %>
                       <% end %>

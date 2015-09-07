@@ -25,7 +25,7 @@ Sidekiq.configure_server do |config|
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
   config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeoout => $sidekiq_redis_timeout, &$sidekiq_datastore)
-  config.reliable_fetch!
+  # config.reliable_fetch!
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!

@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.eot");
-  src: url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.eot?#iefix") format("embedded-opentype"),
-       url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.woff") format("woff"),
-       url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.ttf") format("truetype"),
-       url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.svg#glyphs") format("svg");
+  src: font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.eot");
+  src: font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.woff") format("woff"),
+       font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.ttf") format("truetype"),
+       font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("glyphs_2e1f3837c43c6a9bab3848955c04e02d.svg#glyphs") format("svg");
+    src: font-url("glyphs_ae54fc5f25bdcf60c8c5e77948404386.svg#glyphs") format("svg");
   }
 }
 
@@ -131,7 +131,6 @@
 .ficon-freshfone:before,
 .ficon-gamification-settings:before,
 .ficon-gear:before,
-.ficon-glance:before,
 .ficon-googleplus:before,
 .ficon-group:before,
 .ficon-group-summary:before,
@@ -256,7 +255,7 @@
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
-.ficon-agent-summary:before { content: "\f1bb"; }
+.ficon-agent-summary:before { content: "\f1da"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
@@ -360,14 +359,13 @@
 .ficon-freshfone:before { content: "\f1c0"; }
 .ficon-gamification-settings:before { content: "\f152"; }
 .ficon-gear:before { content: "\f153"; }
-.ficon-glance:before { content: "\f1c7"; }
 .ficon-googleplus:before { content: "\f154"; }
 .ficon-group:before { content: "\f155"; }
-.ficon-group-summary:before { content: "\f1c1"; }
+.ficon-group-summary:before { content: "\f1db"; }
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
 .ficon-help:before { content: "\f158"; }
-.ficon-help-icon:before { content: "\f1d9"; }
+.ficon-help-icon:before { content: "\f1dd"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
 .ficon-helpdesk-settings:before { content: "\f1cb"; }
 .ficon-ie:before { content: "\f159"; }
@@ -399,7 +397,7 @@
 .ficon-new-ticket:before { content: "\f1ce"; }
 .ficon-no-arrow-left:before { content: "\f170"; }
 .ficon-no-arrow-right:before { content: "\f171"; }
-.ficon-no-data-graph:before { content: "\f1c6"; }
+.ficon-no-data-graph:before { content: "\f1dc"; }
 .ficon-no-network:before { content: "\f1b4"; }
 .ficon-notice:before { content: "\f172"; }
 .ficon-notice-o:before { content: "\f173"; }
@@ -410,17 +408,17 @@
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
 .ficon-pencil:before { content: "\f17a"; }
-.ficon-performance-distribution:before { content: "\f1c3"; }
+.ficon-performance-distribution:before { content: "\f1df"; }
 .ficon-phone:before { content: "\f17b"; }
 .ficon-phone-block:before { content: "\f17c"; }
 .ficon-phone-disable:before { content: "\f17d"; }
 .ficon-phone-disable-thin:before { content: "\f1b5"; }
 .ficon-plus:before { content: "\f17e"; }
-.ficon-plus-circle:before { content: "\f1c5"; }
+.ficon-plus-circle:before { content: "\f1d7"; }
 .ficon-portals:before { content: "\f1cf"; }
 .ficon-post-edit:before { content: "\f17f"; }
 .ficon-pushpin:before { content: "\f180"; }
-.ficon-puzzle:before { content: "\f1d7"; }
+.ficon-puzzle:before { content: "\f1d8"; }
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
 .ficon-refresh:before { content: "\f183"; }
@@ -435,7 +433,7 @@
 .ficon-scenario:before { content: "\f18c"; }
 .ficon-search:before { content: "\f18d"; }
 .ficon-security:before { content: "\f18e"; }
-.ficon-settings1:before { content: "\f1d8"; }
+.ficon-settings1:before { content: "\f1d9"; }
 .ficon-shared:before { content: "\f18f"; }
 .ficon-sidebar-list:before { content: "\f190"; }
 .ficon-sla:before { content: "\f191"; }
@@ -451,7 +449,7 @@
 .ficon-text:before { content: "\f198"; }
 .ficon-ticket:before { content: "\f199"; }
 .ficon-ticket-fields:before { content: "\f19a"; }
-.ficon-ticket-volume:before { content: "\f1c4"; }
+.ficon-ticket-volume:before { content: "\f1de"; }
 .ficon-timeline-forum:before { content: "\f19b"; }
 .ficon-timeline-ticket:before { content: "\f19c"; }
 .ficon-trash:before { content: "\f19d"; }
@@ -467,219 +465,3 @@
 .ficon-warning:before { content: "\f1a7"; }
 .ficon-web-page:before { content: "\f1a8"; }
 .ficon-windows:before { content: "\f1a9"; }
-
-$font-glyphs-account: "\f100";
-$font-glyphs-agent: "\f101";
-$font-glyphs-agent-fchat-off: "\f1b0";
-$font-glyphs-agent-fchat-on: "\f1b1";
-$font-glyphs-agent-summary: "\f1bb";
-$font-glyphs-all-streams: "\f102";
-$font-glyphs-android: "\f103";
-$font-glyphs-answer-checked: "\f104";
-$font-glyphs-answer-unchecked: "\f105";
-$font-glyphs-apple: "\f106";
-$font-glyphs-arrow-click: "\f1b7";
-$font-glyphs-arrow-down: "\f107";
-$font-glyphs-arrow-down-2: "\f108";
-$font-glyphs-arrow-left: "\f109";
-$font-glyphs-arrow-left-2: "\f10a";
-$font-glyphs-arrow-right: "\f10b";
-$font-glyphs-arrow-right-2: "\f10c";
-$font-glyphs-arrow-up: "\f10d";
-$font-glyphs-arrow-up-2: "\f10e";
-$font-glyphs-available-on-mobile: "\f1b6";
-$font-glyphs-bell: "\f10f";
-$font-glyphs-billing: "\f110";
-$font-glyphs-blank-file: "\f111";
-$font-glyphs-book: "\f112";
-$font-glyphs-bulb: "\f113";
-$font-glyphs-bullhorn: "\f114";
-$font-glyphs-business-hours: "\f115";
-$font-glyphs-calendar: "\f1bc";
-$font-glyphs-calling: "\f116";
-$font-glyphs-canned-response: "\f117";
-$font-glyphs-caret-down: "\f118";
-$font-glyphs-caret-left: "\f119";
-$font-glyphs-caret-right: "\f11a";
-$font-glyphs-caret-up: "\f11b";
-$font-glyphs-chat: "\f1bd";
-$font-glyphs-chat-bubble: "\f11c";
-$font-glyphs-chat-disable: "\f11d";
-$font-glyphs-chat-enable: "\f11e";
-$font-glyphs-checkbox: "\f11f";
-$font-glyphs-checkmark: "\f120";
-$font-glyphs-checkmark-round: "\f121";
-$font-glyphs-checkmark-round-o: "\f122";
-$font-glyphs-checkmark-thick: "\f123";
-$font-glyphs-chrome: "\f124";
-$font-glyphs-comment-multi: "\f125";
-$font-glyphs-comments: "\f126";
-$font-glyphs-comments1: "\f1d5";
-$font-glyphs-company: "\f127";
-$font-glyphs-compose-email: "\f1c8";
-$font-glyphs-conversation: "\f128";
-$font-glyphs-cross: "\f129";
-$font-glyphs-crown: "\f12a";
-$font-glyphs-customer-fields: "\f12b";
-$font-glyphs-customer-portal: "\f12c";
-$font-glyphs-customer-report: "\f1be";
-$font-glyphs-customer-satisfaction: "\f1bf";
-$font-glyphs-date: "\f12d";
-$font-glyphs-day_pass: "\f12e";
-$font-glyphs-decimal: "\f1c9";
-$font-glyphs-deleted: "\f1b3";
-$font-glyphs-disconnected: "\f12f";
-$font-glyphs-dislike: "\f130";
-$font-glyphs-dispatcher: "\f131";
-$font-glyphs-dots: "\f132";
-$font-glyphs-dropbox: "\f133";
-$font-glyphs-dropdown_blank: "\f134";
-$font-glyphs-earth: "\f135";
-$font-glyphs-edit: "\f136";
-$font-glyphs-edit-strike-thru: "\f137";
-$font-glyphs-ellipsis: "\f138";
-$font-glyphs-email: "\f139";
-$font-glyphs-email-notifications: "\f13a";
-$font-glyphs-email_commands_setting: "\f13b";
-$font-glyphs-eye: "\f13c";
-$font-glyphs-facebook: "\f13d";
-$font-glyphs-facebook-lock: "\f13e";
-$font-glyphs-facebook-setting: "\f13f";
-$font-glyphs-feedback: "\f140";
-$font-glyphs-ff-add-note: "\f141";
-$font-glyphs-ff-clock: "\f142";
-$font-glyphs-ff-dialpad: "\f143";
-$font-glyphs-ff-group: "\f1b2";
-$font-glyphs-ff-group-thin: "\f1d0";
-$font-glyphs-ff-hold: "\f1d1";
-$font-glyphs-ff-line-phone: "\f1d2";
-$font-glyphs-ff-mic: "\f144";
-$font-glyphs-ff-mute: "\f145";
-$font-glyphs-ff-on-browser: "\f146";
-$font-glyphs-ff-on-call: "\f147";
-$font-glyphs-ff-on-mobile: "\f1af";
-$font-glyphs-ff-phone: "\f148";
-$font-glyphs-ff-phone-accept: "\f1d3";
-$font-glyphs-ff-phone-reject: "\f1d4";
-$font-glyphs-ff-via-browser: "\f1ad";
-$font-glyphs-ff-via-phone: "\f1ae";
-$font-glyphs-file: "\f149";
-$font-glyphs-file-edit: "\f14a";
-$font-glyphs-file-visible: "\f14b";
-$font-glyphs-firefox: "\f14c";
-$font-glyphs-folder-o: "\f14d";
-$font-glyphs-folder-open-o: "\f14e";
-$font-glyphs-forward: "\f14f";
-$font-glyphs-forward-tkt: "\f1ac";
-$font-glyphs-freshchat: "\f150";
-$font-glyphs-freshdesk: "\f151";
-$font-glyphs-freshfone: "\f1c0";
-$font-glyphs-gamification-settings: "\f152";
-$font-glyphs-gear: "\f153";
-$font-glyphs-glance: "\f1c7";
-$font-glyphs-googleplus: "\f154";
-$font-glyphs-group: "\f155";
-$font-glyphs-group-summary: "\f1c1";
-$font-glyphs-grouping-disable: "\f156";
-$font-glyphs-grouping-enable: "\f157";
-$font-glyphs-help: "\f158";
-$font-glyphs-help-icon: "\f1d9";
-$font-glyphs-helpdesk: "\f1ca";
-$font-glyphs-helpdesk-settings: "\f1cb";
-$font-glyphs-ie: "\f159";
-$font-glyphs-import: "\f15a";
-$font-glyphs-infinity-5: "\f15b";
-$font-glyphs-integrations: "\f15c";
-$font-glyphs-ios: "\f15d";
-$font-glyphs-left-arrow-thick: "\f1d6";
-$font-glyphs-like: "\f15e";
-$font-glyphs-link: "\f15f";
-$font-glyphs-linkedin: "\f160";
-$font-glyphs-linux: "\f161";
-$font-glyphs-lock: "\f162";
-$font-glyphs-lock-2: "\f163";
-$font-glyphs-lock-open: "\f164";
-$font-glyphs-mac: "\f165";
-$font-glyphs-mail: "\f166";
-$font-glyphs-mail-filled: "\f1aa";
-$font-glyphs-mail-thin: "\f168";
-$font-glyphs-map-marker: "\f169";
-$font-glyphs-merge: "\f16a";
-$font-glyphs-message: "\f16b";
-$font-glyphs-minus: "\f16c";
-$font-glyphs-mobihelp: "\f16d";
-$font-glyphs-mobile: "\f16e";
-$font-glyphs-multi-product: "\f16f";
-$font-glyphs-nested_field: "\f1cc";
-$font-glyphs-new-phone-ticket: "\f1cd";
-$font-glyphs-new-ticket: "\f1ce";
-$font-glyphs-no-arrow-left: "\f170";
-$font-glyphs-no-arrow-right: "\f171";
-$font-glyphs-no-data-graph: "\f1c6";
-$font-glyphs-no-network: "\f1b4";
-$font-glyphs-notice: "\f172";
-$font-glyphs-notice-o: "\f173";
-$font-glyphs-number: "\f174";
-$font-glyphs-observer: "\f175";
-$font-glyphs-open-in-new-window: "\f176";
-$font-glyphs-opera: "\f177";
-$font-glyphs-paperplane: "\f178";
-$font-glyphs-paragraph: "\f179";
-$font-glyphs-pencil: "\f17a";
-$font-glyphs-performance-distribution: "\f1c3";
-$font-glyphs-phone: "\f17b";
-$font-glyphs-phone-block: "\f17c";
-$font-glyphs-phone-disable: "\f17d";
-$font-glyphs-phone-disable-thin: "\f1b5";
-$font-glyphs-plus: "\f17e";
-$font-glyphs-plus-circle: "\f1c5";
-$font-glyphs-portals: "\f1cf";
-$font-glyphs-post-edit: "\f17f";
-$font-glyphs-pushpin: "\f180";
-$font-glyphs-puzzle: "\f1d7";
-$font-glyphs-rearrange: "\f181";
-$font-glyphs-rebranding: "\f182";
-$font-glyphs-refresh: "\f183";
-$font-glyphs-reorder: "\f184";
-$font-glyphs-reorder-2: "\f185";
-$font-glyphs-reply: "\f186";
-$font-glyphs-retweet: "\f187";
-$font-glyphs-role: "\f188";
-$font-glyphs-safari: "\f189";
-$font-glyphs-save: "\f18a";
-$font-glyphs-save-as: "\f18b";
-$font-glyphs-scenario: "\f18c";
-$font-glyphs-search: "\f18d";
-$font-glyphs-security: "\f18e";
-$font-glyphs-settings1: "\f1d8";
-$font-glyphs-shared: "\f18f";
-$font-glyphs-sidebar-list: "\f190";
-$font-glyphs-sla: "\f191";
-$font-glyphs-split: "\f192";
-$font-glyphs-star: "\f193";
-$font-glyphs-star-o: "\f194";
-$font-glyphs-supervisor: "\f195";
-$font-glyphs-survey-happy: "\f1b8";
-$font-glyphs-survey-neutral: "\f1b9";
-$font-glyphs-survey-sad: "\f1ba";
-$font-glyphs-survey-settings: "\f196";
-$font-glyphs-tags: "\f197";
-$font-glyphs-text: "\f198";
-$font-glyphs-ticket: "\f199";
-$font-glyphs-ticket-fields: "\f19a";
-$font-glyphs-ticket-volume: "\f1c4";
-$font-glyphs-timeline-forum: "\f19b";
-$font-glyphs-timeline-ticket: "\f19c";
-$font-glyphs-trash: "\f19d";
-$font-glyphs-trash-o: "\f19e";
-$font-glyphs-trash-strike-thru: "\f19f";
-$font-glyphs-twitter: "\f1a0";
-$font-glyphs-twitter-lock: "\f1a1";
-$font-glyphs-twitter-o: "\f1a2";
-$font-glyphs-unlock: "\f1a3";
-$font-glyphs-unverified: "\f1a4";
-$font-glyphs-user: "\f1a5";
-$font-glyphs-view-retweets: "\f1a6";
-$font-glyphs-warning: "\f1a7";
-$font-glyphs-web-page: "\f1a8";
-$font-glyphs-windows: "\f1a9";

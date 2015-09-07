@@ -1066,8 +1066,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def portal_check
       if !current_user.nil? and current_user.customer?
-        load_item
-        return redirect_to support_ticket_url(@ticket)
+        load_ticket
       elsif !privilege?(:manage_tickets)
         access_denied
       end
@@ -1200,6 +1199,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_ticket
     @ticket = @item = load_by_param(params[:id])
+    return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
+    
     load_archive_ticket unless @ticket
   end
 
@@ -1208,7 +1209,13 @@ class Helpdesk::TicketsController < ApplicationController
     
     archive_ticket = Helpdesk::ArchiveTicket.load_by_param(params[:id], current_account)
     raise ActiveRecord::RecordNotFound unless archive_ticket
-    redirect_to helpdesk_archive_ticket_path(params[:id])
+
+    # Temporary fix to redirect /helpdesk URLs to /support for archived tickets
+    if current_user.customer?
+      redirect_to support_archive_ticket_path(params[:id])
+    else
+      redirect_to helpdesk_archive_ticket_path(params[:id])
+    end
   end
  
 end
