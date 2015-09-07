@@ -34,8 +34,8 @@
 				<%= confirm_delete(@folder, solution_folder_path(@folder), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '',  :title => t('folder.delete') }) %>
 			</div>
 		<% end %>
-		<div class="category-details span7">
-			<h2 class="list-title ellipsis <%= 'tooltip' if @folder.name.length > 55 %>" folder-id="<%= @folder.id %>" title="<%= @folder.name if @folder.name.length > 55 %>"><%= h(@folder.name) %></h2>
+		<div class="category-details span7 <%= 'ml0' unless privilege?(:manage_solutions) %>">
+			<h2 class="list-title ellipsis tooltip" folder-id="<%= @folder.id %>" title="<%= @folder.name if @folder.name.length > 55 %>"><%= h(@folder.name) %></h2>
 			<div class="sol-visibility muted">
 				<span class="sol-visibility-label"><%= t('solution.folders.folder_form.visible_to') %>:</span><%= company_visibility_tooltip(@folder) %>
 			</div>

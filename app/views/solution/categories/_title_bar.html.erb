@@ -16,23 +16,25 @@
 			    <a href="#" class="btn btn-link" id="cancel_btn"><%= t('cancel') %></a>
 			  </li>
 			</ul>
-			<div class="action-btns-bar span1">
-				<%= link_to( '', 
-							edit_solution_category_path(@category),
-							:rel => "freshdialog",
-							:class => "ficon-edit fsize-23 tooltip",
-							:title => t('category.edit'),
-							:data => {
-								"modal-title" => t('solutions.edit'),
-								"target" => "#category-edit",
-								"close-label" => t('cancel'),
-								"submit-label" => t('save')
-							}) %>
-				<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('category.delete') }) %>
-			</div>
+			<% if privilege?(:manage_solutions) %>
+				<div class="action-btns-bar span1">
+					<%= link_to( '', 
+								edit_solution_category_path(@category),
+								:rel => "freshdialog",
+								:class => "ficon-edit fsize-23 tooltip",
+								:title => t('category.edit'),
+								:data => {
+									"modal-title" => t('solutions.edit'),
+									"target" => "#category-edit",
+									"close-label" => t('cancel'),
+									"submit-label" => t('save')
+								}) %>
+					<%= confirm_delete(@category, solution_category_path(@category), {:class => 'ficon-trash-o tooltip fsize-23 delete-icon', :text => '', :title => t('category.delete') }) %>
+				</div>
+			<% end %>
 		<% end %>
-		<div class="category-details span7">
-			<h2 class="list-title ellipsis <%= 'tooltip' if @category.name.length > 55 %>" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
+		<div class="category-details span7 <%= 'ml0' unless privilege?(:manage_solutions) %>">
+			<h2 class="list-title ellipsis tooltip" title="<%= h(@category.name)  if @category.name.length > 55 %>"><%= h(@category.name) %></h2>
 			<div class="sol-visibility muted">
 				<span class="muted sol-visibility-label"><%= t('solution_category.product_portal_visibility') %>:</span><%= portals_for_category(@category) %>
 			</div>
