@@ -6,7 +6,8 @@
 				firstChoice :     'One',
 				secondChoice :    'Two', 
 				noChoiceMessage : 'No Choice',
-				confirmDelete :   'Are you sure you want to delete this?'
+				confirmDelete :   'Are you sure you want to delete this?',
+				customerLabelEmpty : 'Customer Label Missing'
 			},
 			addChoice :         '#addchoice',
 			deleteChoice:       '.delete_choice_btn', 
@@ -188,14 +189,29 @@
 										return false;
 									}
 							 	}, this)
-							}
+							},
+							"checkCustomerLabel": true
 						}
 					},
 					messages: {
-						 choicelist: this.settings.customMessages.noChoiceMessage
+						choicelist: {
+							required: this.settings.customMessages.noChoiceMessage
+						}
 					}
 				}
-
+			$.validator.addMethod("checkCustomerLabel", $.proxy(function (value, element, param) {
+				_condition = true;
+				$.each($(this.settings.dropdownChoiceDiv)
+							 .find("fieldset:visible")
+							 .find('input[name=customer_display_name]')
+							 ,function(){
+								if($('input[data-companion=#'+$(this).attr('id')+']').attr('value')!="" && $(this).val()==""){
+									_condition = false;
+								}
+							 }
+				);
+				return _condition;
+			}, this),this.settings.customMessages.customerLabelEmpty);
 			return $.extend(true, {}, rules, choiceValidationRules);
 		}
 	};
