@@ -358,9 +358,8 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_the_email_of_a_contact_without_email
     user1 = @account.all_contacts.first
-    user2 = @account.all_contacts.last
+    user2 = add_new_user_without_email(@account)
     email = user1.email
-    user2.update_attribute(:email, nil)
     put :update, construct_params({ id: user2.id }, email: email)
     match_json([bad_request_error_pattern('email', 'Email has already been taken')])
   end

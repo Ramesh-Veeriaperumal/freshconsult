@@ -2,15 +2,7 @@ require_relative '../test_helper'
 
 class ApiContactsDependencyTest < ActionDispatch::IntegrationTest
   def test_before_filters_application_controller
-    expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_current_account,
-                        :unset_current_portal, :set_current_account, :set_default_locale, :set_locale, :ensure_proper_protocol,
-                        :check_privilege, :freshdesk_form_builder, :remove_rails_2_flash_before, :check_account_state, :set_time_zone,
-                        :check_day_pass_usage, :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details,
-                        :remove_pjax_param, :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token,
-                        :build_item, :load_multiple_items, :add_to_history, :redirect_to_mobile_url, :clean_params,
-                        :check_demo_site, :set_selected_tab, :load_item, :check_agent_limit, :can_make_agent, :set_mobile,
-                        :init_user_email, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
-                        :set_validatable_custom_fields]
+    expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_current_account, :unset_current_portal, :set_current_account, :set_default_locale, :set_locale, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder, :remove_rails_2_flash_before, :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details, :remove_pjax_param, :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items, :add_to_history, :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile, :init_user_email, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields, :set_validatable_custom_fields]
     actual_filters = ContactsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
