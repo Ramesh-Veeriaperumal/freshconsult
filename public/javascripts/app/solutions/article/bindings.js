@@ -33,7 +33,6 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
         $('.breadcrumb').addClass('breadcrumb-edit');
-        $('.info-data').remove();
       });
     },
 
