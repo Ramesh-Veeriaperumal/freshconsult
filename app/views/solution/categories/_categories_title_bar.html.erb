@@ -20,7 +20,7 @@
 			</ul>
 		<% end %>
 		<% if current_account.portals.count > 1 %>
-		<div class="span7 clear-left-margin p12">
+		<div class="span7 clear-left-margin title-dropdown">
 			<span class="dropdown">
 				<span class='dropdown-toggle' data-toggle="dropdown">
 					<h1>
@@ -28,15 +28,15 @@
 						<span class='caret'></span>
 					</h1>
 				</span>
-				<span class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></span>
+				<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
 				<% options = {:'data-pjax' => "#body-container"} %>
 				<%= dropdown_menu(current_account.portals.map{|p| [p.portal_name, solution_all_categories_path(:portal_id => p.id)] if p != @portal}.compact, options)%>
 			</span>
 		</div>
 		<% else %>
-			<div class="span7 clear-left-margin p12">
+			<div class="span7 clear-left-margin title-dropdown">
 				<h1><%= @portal.portal_name %></h1>
-				<span class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></span>
+				<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
 			</div>
 		<% end %>
 	</div>

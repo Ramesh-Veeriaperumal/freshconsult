@@ -49,6 +49,19 @@
       }
     }
 
+    .title-dropdown{
+      padding: 10px 14px
+      h1{
+        font-size: 20px;
+        padding-bottom: 3px;
+        cursor: pointer;
+        display: inline;
+        .caret{
+          margin-top: 10px;
+        }
+      }
+    }
+
     .category-details {
       margin-top: 5px;
       @include border-left(1px solid #ddd);

@@ -248,7 +248,8 @@ module SolutionHelper
 	end
 
 	def language_icon_category(solution_meta, version, language)
-		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>".html_safe, 
+		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
+							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 			edit_solution_category_path(solution_meta, :language_id => language.id),
 			:rel => "freshdialog",
 			:class => "language_icon #{'active' if version.present?} tooltip",
