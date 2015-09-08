@@ -31,6 +31,7 @@ window.App = window.App || {};
       //request for submitting serialized form if a draft already existed
       var form_submit = {
           type: 'POST',
+          url: $('.article-edit-form').get(0).action,
           data: $('.article-edit-form').serialize(),
           dataType: "script"
         },

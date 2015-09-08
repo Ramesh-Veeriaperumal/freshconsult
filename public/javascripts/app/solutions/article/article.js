@@ -16,11 +16,10 @@ window.App = window.App || {};
     autoSave: null,
 
     onVisit: function (data) {
-      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create" || App.namespace === "solution/articles/update") {
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
         $('#sticky_redactor_toolbar').removeClass('hide');
         this.eventsForNewPage();
       } else {
-        
         this.eventsForShowPage();
       }
     },
