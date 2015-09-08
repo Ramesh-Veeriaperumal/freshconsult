@@ -42,11 +42,13 @@ window.App = window.App || {};
       $("#folder-bulk-action, #article-bulk-action").toggleClass('faded', checked);
       if (checked === false) {
         $(".bulk-action-btns").removeClass('disabled');
+        $('.visible-to-btn .bulk-action-btns').attr('disabled', false)
       } else {
         $(".bulk-action-btns").addClass('disabled');
         $("#move_to").addClass('hide');
         $("#visible_to").addClass('hide');
         $("#change_author").addClass('hide');
+        $('.visible-to-btn .bulk-action-btns').attr('disabled', true)
       }
     },
 
