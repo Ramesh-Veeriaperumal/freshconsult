@@ -156,6 +156,7 @@
       width: 100%;
 
       &:focus{
+        outline: 0;
         box-shadow: none;
         border-bottom: 1px solid #5897FB;
       }
