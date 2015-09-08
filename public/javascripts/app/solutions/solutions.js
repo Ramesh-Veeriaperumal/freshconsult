@@ -21,6 +21,7 @@ window.App = window.App || {};
 			App.Solutions.NavMenu.start();
       App.Solutions.SearchConfig.onVisit();
       this.bindHandlers();
+      this.configurePlaceholder();
     },
 
     setSubModule: function () {
@@ -53,6 +54,12 @@ window.App = window.App || {};
 
     unBindHandlers: function () {
       $('body').off('.solutionHome');
+    },
+
+    configurePlaceholder: function() {
+      if(!nativePlaceholderSupport()){
+        $('.solutions input.solution-placeholder').placeholder();
+      }
     },
 
     onLeave: function (data) {

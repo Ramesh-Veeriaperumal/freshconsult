@@ -1057,3 +1057,8 @@ function focusFirstModalElement(namescope) {
 jQuery.fn.hasScrollBar = function() {
       return this.get(0).scrollHeight > this.get(0).clientHeight;
 }
+
+function nativePlaceholderSupport() {
+  var i = document.createElement('input');
+  return i.placeholder !== undefined;
+}
