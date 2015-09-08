@@ -13,6 +13,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category, :only => [:destroy]
   before_filter :load_meta, :only => [:edit, :update]
   before_filter :load_category_with_folders, :only => [:show]
+  before_filter :find_portal, :only => [:all_categories, :new]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
 
@@ -30,7 +31,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def all_categories
-    @categories = current_account.solution_category_meta.include_translations.reject(&:is_default)
+    @categories = @portal.solution_category_meta.include_translations.reject(&:is_default)
   end
   
   def navmenu
@@ -181,6 +182,10 @@ class Solution::CategoriesController < ApplicationController
 
     def load_meta
       @category_meta = meta_scoper.find_by_id(params[:id])
+    end
+
+    def find_portal
+      @portal = current_account.portals.find_by_id(params[:portal_id]) || current_portal
     end
 
     def load_category_with_folders

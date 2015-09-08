@@ -25,7 +25,7 @@
 			<%= f.collection_select :portal_ids, current_account.portals, 
 																:id, :portal_name, 
 																{
-																	:selected => @category.new_record? ? current_portal.id : @category.portals.map(&:id)
+																	:selected => @category.new_record? ? @portal.id : @category.portals.map(&:id)
 																}, 
 																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
 																:placeholder => t("solution_category.select_solution_category").html_safe,
@@ -33,5 +33,5 @@
 		</div>
 	</div>
 	<% end %>
-	<%= f.hidden_field :id, :name => "solution_category_meta[id]", :value => @category_meta.id %>
+	<%= f.hidden_field :id, :name => "solution_category_meta[id]", :value => @category_meta.id if @category_meta %>
 </div>

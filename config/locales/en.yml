@@ -2691,6 +2691,7 @@ en:
     edit: Edit Solution Category
     info1: Are you sure you want to delete this category?
     info2: No folders in this category
+    info3: No categories in this Portal
     save_and_create: Save and Create Another
     delete_confirm: "Deleting this category will delete all %{folders} folders and %{articles} articles in it."
     product_portal_visibility: Visible in
@@ -3603,6 +3604,7 @@ en:
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     all_categories: All Categories
+    currently_viewing: "Currently viewing %{portal_name} categories"
     add_category: New Category
     orphan: Orphan
     add_folder: New Folder

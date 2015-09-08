@@ -19,8 +19,25 @@
 			  </li>
 			</ul>
 		<% end %>
-		<div class="span7 clear-left-margin">
-			<h2 class="list-title ellipsis p6" title=""><%= t('solution.all_categories') %></h2>
+		<% if current_account.portals.count > 1 %>
+		<div class="span7 clear-left-margin p12">
+			<span class="dropdown">
+				<span class='dropdown-toggle' data-toggle="dropdown">
+					<h1>
+						<%= @portal.portal_name %>
+						<span class='caret'></span>
+					</h1>
+				</span>
+				<span class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></span>
+				<% options = {:'data-pjax' => "#body-container"} %>
+				<%= dropdown_menu(current_account.portals.map{|p| [p.portal_name, solution_all_categories_path(:portal_id => p.id)] if p != @portal}.compact, options)%>
+			</span>
 		</div>
+		<% else %>
+			<div class="span7 clear-left-margin p12">
+				<h1><%= @portal.portal_name %></h1>
+				<span class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></span>
+			</div>
+		<% end %>
 	</div>
 </div>

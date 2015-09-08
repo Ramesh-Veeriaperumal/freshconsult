@@ -10,12 +10,12 @@
 
 <% if @categories.blank? %>
 	<div class="no-data">
-		<%= t('solution_category.info2') %>
+		<%= t('solution_category.info3') %>
 		<div class="mt20">
 			<% if privilege?(:manage_solutions) %>
 				<%= link_to(
 							t("solution.add_category"),
-							new_solution_category_path,
+							new_solution_category_path(:portal_id => @portal.id),
 							:class => "btn btn-primary",
 							:rel => "freshdialog",
 							:title => t("solution.add_category"),

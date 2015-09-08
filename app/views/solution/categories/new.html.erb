@@ -4,7 +4,7 @@
 	<%= content_tag :h3, t('solution_category.new'), :class => "lead itil-hide" %>
 <% end %>
 <%= form_for (@category), :html => {:multipart => true, :id => "folder-form", :rel => :validate} do |f| %>
-	<%= render :partial => "category_form" , :locals => { :f => f }%>
+	<%= render :partial => "category_form" , :locals => { :f => f, :name => "solution_category_meta[primary_category]" }%>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
