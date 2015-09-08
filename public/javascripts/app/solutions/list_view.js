@@ -86,21 +86,21 @@ window.App = window.App || {};
 
       $('body').on('change.folders_articles', '#move_to, #change_author', function () {
         var el = $(this);
-        if($this.selectedElementsCount() > 0) {
+        if ($this.selectedElementsCount() > 0) {
           $this.bulk_action(el.data('action-on'), el.data('action'), this.value);
         }
       });
       
       $('body').on('click.folders_articles', '#folders_undo_bulk, #articles_undo_bulk', function () {
         var el = $(this);
-        $this.undo_bulk_action(el,el.data('action-on'));
+        $this.undo_bulk_action(el, el.data('action-on'));
       });
 
       $('#move_to, #change_author').on('select2-open', function () {
         if ($('#visible_to').is(':visible')) {
           $this.toggleVisibleTo(false);
         }
-        if($this.selectedElementsCount() === 0) {
+        if ($this.selectedElementsCount() === 0) {
           $('#move_to, #change_author').select2('close');
         }
         hideActiveMenu();
@@ -109,12 +109,14 @@ window.App = window.App || {};
       $("body").on('click.folders_articles', function (e) {
         var container =  $('.visible-to-btn');
         if (!container.is(e.target) && container.has(e.target).length === 0) {
-            $this.toggleVisibleTo(false);
+					$this.toggleVisibleTo(false);
         } else {
-          if ($('#visible_to').is(':visible')) {
-            $this.toggleVisibleTo(true);
-          } else {
+          if ($('.bulk-action-btns').hasClass('visible-to-selected') && $('.visible-to-btn .bulk-action-btns').is(e.target)) {
             $this.toggleVisibleTo(false);
+            $('.visible-to-btn .fd-menu').hide();
+          } else {
+            $this.toggleVisibleTo(true);
+            $('.visible-to-btn .fd-menu').show();
           }
         }
       });
@@ -124,7 +126,7 @@ window.App = window.App || {};
 
     toggleVisibleTo: function (flag) {
       $('.visible-to-btn').toggleClass('highlight-border', flag);
-      $('.visible-to-btn .bulk-action-btns').toggleClass('drop-right', !flag).toggleClass('visible-to-selected',flag);
+      $('.visible-to-btn .bulk-action-btns').toggleClass('drop-right', !flag).toggleClass('visible-to-selected', flag);
     },
 
     removeCurrentFolder: function () {
@@ -226,7 +228,7 @@ window.App = window.App || {};
         },
         success: function () {
           App.Solutions.NavMenu.reload();
-        },
+        }
       });
     },
 
