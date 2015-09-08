@@ -40,6 +40,14 @@
         }
       }
     }
+    
+    #solution_article_title-error {
+      position: relative;
+      top: -40px;
+      padding-bottom: 0;
+      float: right;
+      height: 0;
+    }
   }
   .article-view {
     #current-article-title {
@@ -257,7 +265,6 @@
     }
   }
 }
-
 #article_voting a{
   font-size: small;
 }
