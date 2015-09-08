@@ -113,12 +113,10 @@ window.App = window.App || {};
         if (!container.is(e.target) && container.has(e.target).length === 0) {
 					$this.toggleVisibleTo(false);
         } else {
-          if ($('.bulk-action-btns').hasClass('visible-to-selected') && $('.visible-to-btn .bulk-action-btns').is(e.target)) {
-            $this.toggleVisibleTo(false);
-            $('.visible-to-btn .fd-menu').hide();
-          } else {
+          if ($('#visible_to').is(':visible')) {
             $this.toggleVisibleTo(true);
-            $('.visible-to-btn .fd-menu').show();
+          } else {
+            $this.toggleVisibleTo(false);
           }
         }
       });
