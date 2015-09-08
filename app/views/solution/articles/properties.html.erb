@@ -9,11 +9,15 @@
 				<% if @article.published? %>
 					<div class="publish-settings">
 						<label class="checkbox">
-							<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
-							<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
-							<p class="muted">
-								<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
-							</p>
+							<div class="span">
+								<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
+							</div>
+							<div class="span notification-msg">
+								<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
+								<p class="muted">
+									<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
+								</p>
+							</div>
 						</label>	
 					</div>
 				<% end %>
