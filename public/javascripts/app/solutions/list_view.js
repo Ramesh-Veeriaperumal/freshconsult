@@ -192,12 +192,14 @@ window.App = window.App || {};
       var $this = this;
       this.hideFdMenu();
 
-      $.ajax({
-        url: $this.data.visibleToUrl,
-        type: 'PUT',
-        data: $this.getCompanyData(),
-        dataType: "script"
-      });
+      if($this.selectedElementsCount() > 0) {
+        $.ajax({
+          url: $this.data.visibleToUrl,
+          type: 'PUT',
+          data: $this.getCompanyData(),
+          dataType: "script"
+        });
+      }
     },
 
     bulk_action: function (list_name, action_name, parentId) {
