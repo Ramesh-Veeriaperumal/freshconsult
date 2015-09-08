@@ -230,6 +230,15 @@
     }
     .publish-settings{
       padding-top: 15px;
+      .span {
+        margin: 0px;
+      }
+      input[type="checkbox"] {
+        margin-top: 2px;
+      }
+      .notification-msg {
+        padding-left: 10px;
+      }
     }
   }
 
