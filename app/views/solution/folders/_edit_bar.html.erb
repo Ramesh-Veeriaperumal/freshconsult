@@ -18,9 +18,9 @@
 	              :"data-action" => "move_to"
 	          } %>
 			</span>
-			<% if privilege?(:admin_tasks) %>
-				<span class="right-btn">
-					<%= select_tag :id,
+			<%# if privilege?(:admin_tasks) %>
+				<!-- <span class="right-btn"> -->
+					<%# select_tag :id,
 		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}), {
 		          		:class => "disabled bulk-action-btns input-medium select2 m0",
 		              :id => "change_author",
@@ -32,8 +32,8 @@
 		              :"data-action-on" => "articles",
 		              :"data-action" => "change_author"
 		          } %>
-				</span>
-			<% end %>
+				<!-- </span> -->
+			<%# end %>
 		</li>
 	</ul>
 </div>
