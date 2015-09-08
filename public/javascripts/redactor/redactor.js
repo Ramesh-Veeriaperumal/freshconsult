@@ -3089,8 +3089,7 @@ Redactor.prototype = {
 		var min_h = 10;			
 		$(resize).off('.redactor');
 		$(resize).on({
-			'mouseenter.redactor': function() {$(resize).css('cursor', 'nw-resize'); } ,
-			'mouseleave.redactor': function() {$(resize).css('cursor','default'); clicked = false; },
+			'mouseleave.redactor': function() {clicked = false; },
 			'mousedown.redactor': function(e) {
 				e.preventDefault();
 
@@ -4268,7 +4267,7 @@ Redactor.prototype = {
 		this.restoreSelection();
 		this.uniqueKey = new Date().getTime();
 		this.focusOnCursor();
-		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'" style="cursor:default;">');
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 		if (typeof this.opts.imageLoadingCallback === 'function'){
 			this.opts.imageLoadingCallback(this);
