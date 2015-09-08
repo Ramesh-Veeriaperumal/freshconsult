@@ -37,7 +37,11 @@ class PopulatingDraftsFromArticle < ActiveRecord::Migration
 
   def create_draft_for_existing(account)
     draft_articles = account.solution_articles.where('status = ?', Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
-    draft_articles.map(&:create_draft_from_article)
+    draft_articles.each do |article|
+      unless article.draft.present?
+        article.create_draft_from_article
+      end
+    end
   end
     
 end

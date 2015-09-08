@@ -2814,8 +2814,8 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
     t.datetime "updated_at",                    :null => false
   end
 
-  add_index "solution_drafts", ["account_id", "category_meta_id", "updated_at"], :name => "index_solution_drafts_on_acc_and_cat_meta_and_updated"
-  add_index "solution_drafts", ["account_id", "user_id", "updated_at"], :name => "index_solution_drafts_on_acc_and_user_and_updated"
+  add_index "solution_drafts", ["account_id", "category_meta_id", "modified_at"], :name => "index_solution_drafts_on_acc_and_cat_meta_and_modified"
+  add_index "solution_drafts", ["account_id", "user_id", "modified_at"], :name => "index_solution_drafts_on_acc_and_user_and_modified"
 
   create_table "solution_folder_meta", :force => true do |t|
     t.integer  "visibility",                :limit => 8
