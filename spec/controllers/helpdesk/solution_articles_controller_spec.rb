@@ -372,4 +372,23 @@ describe Solution::ArticlesController do
     test_language_article.language.should be_eql(lang)
     test_language_article.update_attribute(:language_id, old_language_id)
   end
+
+  it "should return attributes from folder_meta table in to_indexed_json of article" do
+    folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+        :category_id => @test_category.id } )
+    create_customer_folders(folder)
+    folder.reload
+    test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    test_language_article.reload
+    folder_meta = test_language_article.solution_folder_meta
+    indexed_json = JSON.parse(test_language_article.to_indexed_json)
+    indexed_json["solution/article"]["language_id"].should be_eql(test_language_article.language_id)
+    indexed_json["folder_id"].should be_eql(folder_meta.id)
+    indexed_json["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
+    indexed_json["folder"]["visibility"].should be_eql(folder_meta.visibility)
+    indexed_json["folder"]["customer_folders"].each_with_index do |cf,i|
+      cf["customer_id"].should be_eql(folder_meta.customer_folders[i].customer_id)
+    end
+  end
 end

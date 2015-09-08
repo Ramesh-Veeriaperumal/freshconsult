@@ -169,6 +169,7 @@ class Search::EsIndexDefinition
                 :user_id => { :type => :long, :include_in_all => false },
                 :folder_id => { :type => :long, :include_in_all => false },
                 :status => { :type => :integer, :include_in_all => false },
+                :language_id => { :type => :integer, :include_in_all => false },
                 :account_id => { :type => :long, :include_in_all => false },
                 :folder => { :type => "object", 
                              :properties => { 
