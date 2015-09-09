@@ -357,7 +357,7 @@ class Solution::ArticlesController < ApplicationController
     def moved_flash_msg
       render_to_string(
       :inline => t("solution.flash.articles_move_to",
-                      :folder_name => current_account.folders.find(params[:parent_id]).name,
+                      :folder_name => h(current_account.folders.find(params[:parent_id]).name),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
                                     :data => { 

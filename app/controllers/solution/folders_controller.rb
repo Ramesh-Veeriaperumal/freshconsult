@@ -233,7 +233,7 @@ class Solution::FoldersController < ApplicationController
     def moved_flash_msg
       render_to_string(
       :inline => t("solution.flash.folders_move_to",
-                      :category_name => current_account.solution_categories.find(params[:parent_id]).name,
+                      :category_name => h(current_account.solution_categories.find(params[:parent_id]).name),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 
