@@ -282,9 +282,16 @@ describe Solution::ArticlesController do
         end
       end
 
+      it "should reload the page if folder id is not valid" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @article_ids, :parent_id => "test"
+        response.body.should =~ /location.reload()/
+        expect(flash[:notice]).to be_present
+      end
+
       it "should render move_to.rjs" do
         xhr :put, :move_to, :items => @article_ids, :parent_id => @test_folder2.id
-        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo\(\)/
+        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo/
       end
 
       it "should reverse the changes done by move_to" do
@@ -308,7 +315,7 @@ describe Solution::ArticlesController do
         @agent2 = add_test_agent
       end
 
-      it "should chnage the authors of the articles" do
+      it "should change the authors of the articles" do
         #initially the author should be different
         [@test_article3, @test_article4].each do |article|
           article.user_id.should_not be_eql(@agent2.id)
@@ -321,6 +328,13 @@ describe Solution::ArticlesController do
           article.reload
           article.user_id.should be_eql(@agent2.id)
         end
+      end
+
+      it "should reload the page if technician id is not valid" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @article_ids, :parent_id => "test"
+        response.body.should =~ /location.reload()/
+        expect(flash[:notice]).to be_present
       end
 
       it "should not change author of articles unless admin" do

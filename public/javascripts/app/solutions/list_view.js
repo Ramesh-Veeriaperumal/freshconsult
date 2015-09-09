@@ -235,8 +235,12 @@ window.App = window.App || {};
       });
     },
 
-    removeElementsAfterMoveTo: function () {
-      $('li:has(input[type=checkbox]:checked)').not('.lf-item').remove();
+    removeElementsAfterMoveTo: function (updated_items) {
+      var ids = updated_items.split(','), i;
+      for(i = 0; i < ids.length; i++) {
+        $('.solution-list li[item_id="' + ids[i] + '"]').remove();
+      }
+      $(".item_ids_checkbox:checked").attr('checked', false);
     },
     
     hideSelectAll: function () {

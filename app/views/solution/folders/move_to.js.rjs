@@ -1,5 +1,5 @@
 page << "jQuery('.bulk-actions-bar').addClass('hide')" if @updated_items.size == @number_of_folders
-page << "App.Solutions.Folder.removeElementsAfterMoveTo()"
+page << "App.Solutions.Folder.removeElementsAfterMoveTo('#{@updated_items.join(',')}')" if @updated_items
 page << "App.Solutions.Folder.toggleActionsClass(true)"
 show_ajax_flash(page) if @updated_items
 page << "App.Solutions.Folder.hideSelectAll()"
