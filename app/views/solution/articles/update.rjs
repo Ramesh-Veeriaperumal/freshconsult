@@ -1,6 +1,6 @@
 draft_status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
 if params[:solution_article][:status] == draft_status.to_s && @article.status == draft_status
-	page << "pjaxify('');"
+	page << "window.location.reload();"
 else
 	show_ajax_flash(page)
 	page << "jQuery('#article-prop').modal('hide');jQuery('#article-prop').modal('destroy');"
