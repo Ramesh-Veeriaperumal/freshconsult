@@ -14,8 +14,9 @@ class Solution::ArticlesController < ApplicationController
   before_filter :page_title 
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
-  before_filter :bulk_update_folder, :only => [:move_to, :move_back]
+  before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
+  before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
@@ -138,7 +139,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def move_back
-    @folder = current_account.folders.find(params[:parent_id])
   end
 
   def change_author
@@ -346,12 +346,32 @@ class Solution::ArticlesController < ApplicationController
     def bulk_update_folder
       @articles = current_account.solution_articles.where(:id => params[:items])
       @articles.map { |a| a.update_attributes(:folder_id => params[:parent_id]) }
-      @updated_items = @articles.map(&:id)
+      @updated_items = params[:items].map(&:to_i) & @new_folder.article_ids
     end
 
     def old_folder
       @folder_id = current_account.solution_articles.find(params[:items].first).folder_id
       @number_of_articles = current_account.folders.find(@folder_id).articles.size
+    end
+
+    def check_new_folder
+      @new_folder = current_account.solution_folders.find_by_id params[:parent_id]
+      unless @new_folder
+        flash[:notice] = t("solution.flash.articles_move_to_fail")
+        respond_to do |format|
+          format.js { render inline: "location.reload();" }
+        end
+      end
+    end
+
+    def check_new_author
+      @new_author = current_account.technicians.find_by_id params[:parent_id]
+      unless @new_author
+        flash[:notice] = t("solution.flash.articles_change_author_fail")
+        respond_to do |format|
+          format.js { render inline: "location.reload();" }
+        end
+      end
     end
 
     def moved_flash_msg

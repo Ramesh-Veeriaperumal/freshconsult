@@ -3633,8 +3633,11 @@ en:
     details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
     flash:
       folders_move_to: 'Folders have been moved to the selected category "<b>%{category_name}</b>" %{undo}'
+      folders_move_to_fail: "The selected category does not exist"
       articles_move_to: 'Articles have been moved to the selected folder "<b>%{folder_name}</b>" %{undo}'
+      articles_move_to_fail: "The selected folder does not exist"
       articles_changed_author: Author has been succesfully changed
+      articles_change_author_fail: "The selected agent does not exist"
     general:
       created_by: Created by
       last_published: Last Published by
