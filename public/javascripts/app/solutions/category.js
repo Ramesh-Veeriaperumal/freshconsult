@@ -20,10 +20,10 @@ window.App.Solutions = window.App.Solutions || {};
       })
 
       $("body").on('click.solutionCategory', '.drafts-filter-me, .drafts-filter-all', function (e) {
-        $('.drafts-filter-title').text(e.target.text);
+        $('.drafts-filter-title').text($(e.target).text());
       });
       $("body").on('click.solutionCategory', '.feedbacks-filter-me, .feedbacks-filter-all', function (e) {
-        $('.feedbacks-filter-title').text(e.target.text);
+        $('.feedbacks-filter-title').text($(e.target).text());
       });
     },
 
