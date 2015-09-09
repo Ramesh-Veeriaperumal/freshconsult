@@ -175,7 +175,7 @@ module SolutionHelper
                         :time_string => time_ago_in_words(f.created_at)).html_safe, helpdesk_ticket_path(f))}
 	        <span class="feedback-article">
 	          #{t('solution.on')}
-	          <span title="#{ f.article.title if f.article.title.length > 22 }">#{ f.article.title.truncate(25) }</span>
+	          <span title="#{ h(f.article.title) if f.article.title.length > 22 }">#{ h(f.article.title).truncate(25) }</span>
 	        </span>
 	        <div class="muted">#{ t('solution.sidebar.feedbacks.status', :status => f.status_name) }</div>
 	      </div>
@@ -186,7 +186,7 @@ module SolutionHelper
 		%{
 			<li>
         <div class="sidebar-list-item">
-          #{pjax_link_to(a.title.truncate(27),
+          #{pjax_link_to(h(a.title.truncate(27)),
                           solution_article_path(a.article_id)
                          )}
 	        <div class="muted"> 
