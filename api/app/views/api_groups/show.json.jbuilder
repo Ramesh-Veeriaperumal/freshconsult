@@ -6,4 +6,3 @@ json.cache! CacheLib.key(@item, params) do
 end
 
 json.agent_ids @item.agent_groups.pluck(:user_id)
-

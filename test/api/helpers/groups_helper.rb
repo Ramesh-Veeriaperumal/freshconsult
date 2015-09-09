@@ -48,12 +48,12 @@ module Helpers::GroupsHelper
 
   def agents_ids_array
     agent1 = Agent.first || add_agent_to_account(@account).agent
-    agent2 = Agent.where("id != ?", agent1.id).first || add_agent_to_account(@account).agent
+    agent2 = Agent.where('id != ?', agent1.id).first || add_agent_to_account(@account).agent
     [agent1.id, agent2.id]
   end
 
   def agent_ids_csv
-    agents_ids_array.join(",")
+    agents_ids_array.join(',')
   end
 
   def v1_group_params

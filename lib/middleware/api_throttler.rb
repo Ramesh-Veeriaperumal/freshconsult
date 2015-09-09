@@ -67,6 +67,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       error_output = "You have exceeded the limit of requests per hour"
       @status, @headers,@response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/json'}, 
                                       [{:message => error_output}.to_json]]
+      Rails.logger.error("API 429 Error. Time: #{Time.now}, Host: #{env["HTTP_HOST"]}")
     else
       @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]

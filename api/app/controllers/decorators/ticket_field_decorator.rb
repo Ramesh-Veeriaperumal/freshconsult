@@ -1,11 +1,11 @@
 class TicketFieldDecorator < SimpleDelegator
-  class << self 
+  class << self
     def get_ticket_field_choices(tf)
       @choices = tf.field_type == 'nested_field' ? nested_choices(tf) : ticket_field_choices(tf)
     end
 
     def default_requester_field(tf)
-      tf.field_type == "default_requester"
+      tf.field_type == 'default_requester'
     end
 
     def portal_cc(tf)
@@ -17,6 +17,7 @@ class TicketFieldDecorator < SimpleDelegator
     end
 
     private
+
       def ticket_field_choices(tf)
         case tf.field_type
         when 'custom_dropdown'

@@ -31,7 +31,6 @@ module Helpers::ContactFieldsHelper
     result
   end
 
-
   # Helpers
   def contact_field_choices(contact_field)
     case contact_field.field_type.to_s
