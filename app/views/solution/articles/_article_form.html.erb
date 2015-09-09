@@ -71,8 +71,9 @@
                       :folders, :name, :id, :name, 
                       (@article.folder.is_default? ? nil : @article.folder_id )
                   ), 
-                  {:include_blank => t('solution.folders.choose_folder')}, 
-                  :class => "select2 span4 required"
+                  { :include_blank => true },
+                  :class => "select2 span4 required",
+                  :placeholder => t('solution.folders.choose_folder')
             %>
           </div>
         </div>
@@ -86,7 +87,7 @@
           </div>
       </div>
     <% end %>
-       
+    
     <div class="row-fluid action-btns-container">
       <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
         <div class="pull-left itil-hide">

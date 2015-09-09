@@ -17,8 +17,9 @@
 								:folders, :name, :id, :name, 
 								@article.folder_id
 						), 
-						{:include_blank => t('solution.folders.choose_folder')},
-						:class => "select2 span12 required"
+						{ :include_blank => true },
+						:class => "select2 span12 required",
+						:placeholder => t('solution.folders.choose_folder')
 			%>
 		</div>
 		<div class="span4">
