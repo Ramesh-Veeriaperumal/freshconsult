@@ -193,6 +193,11 @@
             top: 6px;
             @include left(-15px);
           }
+
+          &.info-cloud-data {
+            top: 0px;
+            @include left(2px);
+          }
         }
       }
     }
