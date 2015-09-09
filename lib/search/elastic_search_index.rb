@@ -13,7 +13,7 @@ module Search::ElasticSearchIndex
           Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name,
                                                       :id => self.id,
                                                       :account_id => self.account_id })
-        end if ES_ENABLED and !queued?
+        end if ES_ENABLED #and !queued?
       end
 
       def remove_es_document

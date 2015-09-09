@@ -176,14 +176,23 @@ class Solution::Article < ActiveRecord::Base
     as_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
+            :only => [ :title, :desc_un_html, :user_id, :status, 
+                  :language_id, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
-                          :folder => { :only => [:category_id, :visibility], 
-                                       :include => { :customer_folders => { :only => [:customer_id] } }
-                                     },
                           :attachments => { :only => [:content_file_name] }
                         }
-           ).to_json
+           ).merge(meta_attributes).to_json
+  end
+
+  def meta_attributes
+    { 
+      :folder_id => solution_folder_meta.id,
+      :folder => { 
+        "category_id" => solution_folder_meta.solution_category_meta_id,
+        "visibility" => solution_folder_meta.visibility,
+        :customer_folders => solution_folder_meta.customer_folders.map {|cf| {"customer_id" => cf.customer_id} }
+      }
+    }
   end
  
   def as_json(options={})

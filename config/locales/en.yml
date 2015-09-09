@@ -303,6 +303,7 @@ en:
     confirm_delete: Are you sure you want to delete this field?
     confirm_deletion: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
     no_choice_message: "At least one valid choice has to be present"
+    customer_label_missing: Customer label cannot not be empty
     index:
       number: Number
       decimal: Decimal
@@ -864,9 +865,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
-        portal_security: "Portal Security"
-        enable_public_urls: "Enable public ticket URL"
-        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
+        public_ticket_urls_label: "Who can view tickets on portal"
+        public_ticket_urls_option: "Anyone with public ticket URL"
+        public_ticket_urls_help: "Users can view tickets without logging in using the public ticket URLs. They can be inserted in email notifications and ticket replies sent to customers via placeholders."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -6593,7 +6594,7 @@ en:
         ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
         archive_ticket_list: "Note: To access and display archived tickets, use 'archive' placeholders like {% snippet archive_ticket_filters %}."
         archive_ticket_view: "Note: Ticket requesters cannot reply to or change ticket properties of archived tickets. Placeholders related to updating the ticket properties like {% snippet ticket_reply %} will not work."
-        
+
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
@@ -6680,7 +6681,7 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume
       time_trends:
         day: Day

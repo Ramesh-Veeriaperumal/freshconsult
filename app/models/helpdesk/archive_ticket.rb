@@ -348,6 +348,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     parent[SCHEMA_LESS_FIELDS[:sender_email]]
   end
 
+  def from_email
+    (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email
+  end
+
   [:due_by, :frDueBy, :fr_escalated, :isescalated].each do |attribute|
     define_method "#{attribute}" do
       archive_ticket_association.association_data["helpdesk_tickets"][attribute]

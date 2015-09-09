@@ -194,6 +194,31 @@ GIT
       redis (>= 3)
       redis-namespace (>= 1)
 
+GIT
+  remote: git@github.com:freshdesk/retire.git
+  revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
+  specs:
+    tire (0.6.2)
+      activemodel (>= 3.0)
+      activesupport
+      ansi
+      hashr (~> 0.0.19)
+      multi_json (~> 1.3)
+      rake
+      rest-client (~> 1.6)
+
+GIT
+  remote: git@github.com:freshdesk/xeroizer.git
+  revision: 9cd6b1091ab9230373a36b027746064fafcaa5a5
+  specs:
+    xeroizer (2.15.9)
+      activesupport
+      builder (>= 2.1.2)
+      i18n
+      nokogiri
+      oauth (>= 0.4.5)
+      tzinfo
+
 PATH
   remote: vendor/gems/acts_as_voteable
   specs:

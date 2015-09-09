@@ -74,9 +74,13 @@ module Helpdesk::TicketsHelper
   def nested_ticket_field_value(item, field)
     field_value = {}
     field.nested_levels.each do |ff|
-      field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+      field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = fetch_custom_field_value(item, ff[:name])
     end
-    field_value.merge!({:category_val => item.send(field.field_name)})
+    field_value.merge!({:category_val => fetch_custom_field_value(item, field.field_name)})
+  end
+
+  def fetch_custom_field_value(item, field_name)
+    item.is_a?(Helpdesk::Ticket) ? item.send(field_name) : item.custom_field_value(field_name)
   end
 
   def ticket_field_element(field, dom_type, attributes, pl_value_id=nil)

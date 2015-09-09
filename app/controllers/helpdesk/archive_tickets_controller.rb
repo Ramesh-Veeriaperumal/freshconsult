@@ -55,7 +55,8 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
   def show
     @to_emails = @ticket.to_emails
-    
+    @page_title = %([##{@ticket.display_id}] #{@ticket.subject})
+
     respond_to do |format|
       format.html  {
         @ticket_notes = @ticket_notes.reverse
