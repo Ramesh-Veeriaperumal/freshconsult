@@ -3794,8 +3794,8 @@ en:
     solution_title: Title
     via: via
     article_properties:
-      title_counter_message: Best SEO pages recommend 50-60 characters for title.
-      description_counter_message: Best SEO pages recommend 150-160 characters for description.
+      title_counter_message: 'Recommended: 50-60 characters'
+      description_counter_message: 'Recommended: 150-160 characters'
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
