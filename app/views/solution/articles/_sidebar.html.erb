@@ -11,7 +11,7 @@
 			</div>
 			<div class="section feedback-list">
 				<ul>
-					<% @article.tickets.unresolved.limit(3).each do |ticket| %>
+					<% @article.tickets.unresolved.order('created_at DESC').limit(3).each do |ticket| %>
 						<li>
 			        <div>
 			          <%= pjax_link_to(t('solution.sidebar.feedbacks.details', 
