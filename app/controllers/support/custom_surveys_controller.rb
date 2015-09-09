@@ -59,7 +59,8 @@ class Support::CustomSurveysController < ApplicationController
 
     def load_handle
       @survey_handle = current_account.custom_survey_handles.find_by_id_token(params[:survey_code])
-      send_handle_error if (@survey_handle.blank? || archived_ticket_link? || @survey_handle.rated?)
+      send_handle_error if (@survey_handle.blank? || @survey_handle.surveyable.blank? || 
+        archived_ticket_link? || @survey_handle.rated?)
     end
 
 
@@ -72,7 +73,7 @@ class Support::CustomSurveysController < ApplicationController
     def send_handle_error
       if @survey_handle.blank?
         send_error I18n.t('support.surveys.handle_expired') 
-      elsif archived_ticket_link?
+      elsif @survey_handle.surveyable.blank? or archived_ticket_link?
         send_error I18n.t('support.surveys.survey_closed') 
       elsif @survey_handle.rated?
         send_error I18n.t('support.surveys.feedback_already_done') 
@@ -99,7 +100,7 @@ class Support::CustomSurveysController < ApplicationController
     end
 
     def archived_ticket_link?
-      current_account.features?(:archive_tickets) and 
+      @survey_handle.surveyable and current_account.features?(:archive_tickets) and 
           @survey_handle.surveyable.is_a?(Helpdesk::ArchiveTicket)
     end
 end

@@ -183,7 +183,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/retire.git
-  revision: d91fc41ab5e8e97e195fd0c69eec82ee85eeaf8f
+  revision: e8e30b1fa67ae0e3146f9809d3a8158f9c35980e
   specs:
     tire (0.6.2)
       activemodel (>= 3.0)
