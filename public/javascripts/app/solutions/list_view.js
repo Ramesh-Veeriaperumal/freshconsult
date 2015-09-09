@@ -215,6 +215,7 @@ window.App = window.App || {};
         }
       });
       $("#" + action_name).select2('val', '');
+      $('.bulk-action-btns :focus').blur();
     },
 
     undo_bulk_action: function (obj, list_name) {
