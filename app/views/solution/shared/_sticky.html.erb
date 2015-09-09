@@ -1,0 +1,52 @@
+<% 
+page ||= :home
+sticky_class ||= "" 
+toolbar ||= false
+%>
+<div id="sticky_header" class="<%= sticky_class %>"
+      rel="sticky" data-collapsed="true"
+      data-scroll-top="true"
+      data-sticky-bottom="true">
+
+  <% unless defined?(search_url).nil?  %>
+    <div class="sticky_search_wrap" id="sticky_search_wrap">
+      <i class="ficon-search"></i>
+      <div class="sticky_search">
+        <input class="community-search solution-placeholder" data-search-url="<%=search_url%>" placeholder="<%= search_placeholder(page) %>" type='text'>
+      </div>
+      <span id="search-hide" class="search-hide ficon-cross"></span>
+    </div>
+  <% end %>
+
+  <div class="sticky_panel" data-collapsible="true">
+    <%= sidebar_toggle %>
+    <div class="sticky_left">
+	  <% if content_for?(:sticky_left)%>
+		<%= yield :sticky_left %>
+	  <% else %>
+      <div id='sol_breadcrumb'>
+    	 <%= solutions_breadcrumb page %>
+      </div>
+	  <% end %>
+    </div>
+	<div class="sticky_right">
+      <% if content_for?(:sticky_right)%>
+      	<%= yield :sticky_right %>
+      <% else %>
+        &nbsp;
+      <% end %>
+      <% unless defined?(search_url).nil?  %>
+        <% extra_padding = page == :home ? 'pt5' : '' %>
+        <div class="pull-right <%= extra_padding %>">
+          <i class="ficon-search tooltip" id="search-show" title="Search Articles"></i>
+        </div>
+      <% end %>
+  	</div>
+  </div>
+  <div class="sticky_title"><%= yield :sticky_title %></div>
+  <% if toolbar %>
+    <div class="clearfix"></div>
+    <div id="sticky_redactor_toolbar" class="hide"></div>
+  <% end %>
+</div>
+<div class="clearfix"></div>

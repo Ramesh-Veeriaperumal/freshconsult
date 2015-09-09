@@ -53,7 +53,7 @@ describe Solution::CategoriesController do
     put :reorder, :reorderlist => reorder_hash.to_json
     categories.reload
     categories.each do |c|
-      c.position.should be_eql(reorder_hash[c.id])
+      c.position.should be_eql(reorder_hash[c.id]) unless c.solution_category.is_default?
     end          
   end
 
@@ -132,9 +132,9 @@ describe Solution::CategoriesController do
     post :create, :solution_category => {:name => "#{name}",
                                        :description => "#{Faker::Lorem.sentence(3)}"
                                       }
-
-    @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)
-    response.should redirect_to(solution_categories_url)
+    category =  @account.solution_categories.find_by_name("#{name}")
+    category.should be_an_instance_of(Solution::Category)
+    response.should redirect_to(solution_category_path(category))
   end
 
   it "should edit a solution category" do
@@ -146,7 +146,7 @@ describe Solution::CategoriesController do
                               :description => "#{Faker::Lorem.sentence(3)}"
                             }
     @account.solution_categories.find_by_name("#{name}").should be_an_instance_of(Solution::Category)    
-    response.should redirect_to(solution_categories_url)
+    response.should redirect_to(solution_category_path(@test_category.id))
   end
 
   it "should delete a solution category" do
@@ -160,6 +160,11 @@ describe Solution::CategoriesController do
     response.should redirect_to(solution_categories_url)
   end
 
+  it "should render sidebar" do
+    xhr :get, :sidebar
+    response.should render_template "/solution/categories/_sidebar"
+  end
+  
   describe "Category meta objects" do
     before(:all) do
       time = Time.now.to_i
@@ -179,7 +184,7 @@ describe Solution::CategoriesController do
       portal_solution_category = @account.main_portal.portal_solution_categories.find_by_solution_category_id(category.id)
       portal_solution_category.should be_an_instance_of(PortalSolutionCategory)
       portal_solution_category.solution_category_meta_id.should be_eql(portal_solution_category.solution_category_id)
-      response.should redirect_to(solution_categories_url)
+      response.should redirect_to(solution_category_path(category))
     end
 
     it "should create a mobihelp_app_solution with the correct value set for solution_category_meta_id" do
@@ -198,7 +203,7 @@ describe Solution::CategoriesController do
                                 :is_default => true
                               }
       check_meta_integrity(@test_category_for_meta)
-      response.should redirect_to(solution_categories_url)
+      response.should redirect_to(solution_category_path( @test_category_for_meta))
     end
 
     it "should destroy meta on category destroy" do
@@ -209,6 +214,7 @@ describe Solution::CategoriesController do
       @account.solution_category_meta.find_by_id(test_destroy_category.id).should be_nil
       @account.main_portal.portal_solution_categories.find_by_solution_category_id(test_destroy_category.id).should be_nil
     end
+    
   end
 
   it "should change the position in meta table when category is destroyed" do
@@ -217,6 +223,12 @@ describe Solution::CategoriesController do
     test_category3 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     test_category.reload.destroy
     check_position(@account, "solution_categories")
+  end
+
+  it "should redirect to drafts index page when default catgeory is accessed" do
+    category = @account.solution_categories.where(:is_default => true).first
+    get :show, :id => category.id
+    response.should redirect_to(solution_my_drafts_path('all'))
   end
 
 end

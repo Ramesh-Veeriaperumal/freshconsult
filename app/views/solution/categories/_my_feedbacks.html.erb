@@ -1,0 +1,37 @@
+<div class="solutions-widget-header">
+  <span class="ficon-feedback-new fsize-18 pr9"></span>
+  <div class="sidebar-dropdown">
+      <div data-tabs='tabs'>
+          <ul role="tablist">
+            <li class="dropdown">
+              <h5 class="dropdown-toggle" data-toggle="dropdown">
+                <span class="widget-filter feedbacks-filter-title">
+                  <%=  t('solution.sidebar.feedbacks.my_articles') %>
+                </span>
+                <span class="caret"></span>
+              </h5>
+                <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+                  <li class="widget-filter">
+                    <a class="item feedbacks-filter-me" href="#feedbacks-me" 
+                       data-hash-url="false" data-toggle="tab" ul_class="tick">
+                      <%=t('solution.sidebar.feedbacks.my_articles')%>
+                    </a>
+                  </li>
+                  <li class="widget-filter feedbacks-filter-all">
+                    <a class="item" href="#feedbacks-all" data-hash-url="false" 
+                       data-toggle="tab" ul_class="tick">
+                      <%=t('solution.sidebar.feedbacks.all_articles')%>
+                    </a>
+                  </li>
+                </ul>
+            </li>
+          </ul>
+      </div>
+   </div>
+   <span class="lead lead-small"><%=t('solution.sidebar.feedbacks.title')%></span>
+</div>
+
+<div class="tab-content">
+  <%= sidebar_feedbacks_list(@my_feedbacks,'feedbacks-me','active') %>
+  <%= sidebar_feedbacks_list(@feedbacks,'feedbacks-all') %>
+</div> 

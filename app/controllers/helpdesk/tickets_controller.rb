@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
@@ -33,6 +34,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
@@ -73,7 +75,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  
  
   def user_ticket
     if params[:email].present?
@@ -101,7 +102,7 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)  
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?  
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?
     respond_to do |format|  
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
@@ -1022,6 +1023,23 @@ class Helpdesk::TicketsController < ApplicationController
       else 
         remove_tickets_redis_key(redis_key)
       end
+    end
+
+    def load_article_filter
+      return if view_context.current_filter.to_s != 'article_feedback' || params[:article_id].present?
+      params[:article_id] = get_tickets_redis_key(article_filter_key)
+    end
+
+    def save_article_filter
+      set_tickets_redis_key(article_filter_key, params[:article_id]) if params[:filter_name] == 'article_feedback' && params[:article_id].present?
+    end
+
+    def article_filter_key
+      (ARTICLE_FEEDBACK_FILTER % { 
+        :account_id => current_account.id,
+        :user_id => current_user.id,
+        :session_id => request.session_options[:id]
+      })
     end
 
     def handle_unsaved_view

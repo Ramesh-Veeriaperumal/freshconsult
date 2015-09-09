@@ -1,0 +1,11 @@
+<div class="search-page">
+  <ul id="page_search_results" style="display:none;" class="community-search result-wrapper"></ul>
+</div>
+<script type="text/javascript">
+  window.ARTICLE_SEARCH_FROM_FOLDER = <%= request.path =~ /folders/ ? true : false %>;
+  window.SEARCH_RESULT_LANG = {
+    by : "<%= t('search.created_by') %>",
+    in : "<%= t('search.in') %>",
+    no_result :  '<li><%= t("search.no_results_msg") %></li>'
+  }
+</script>

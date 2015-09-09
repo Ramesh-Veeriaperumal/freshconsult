@@ -1,0 +1,44 @@
+<% categories.each do |category| %>
+  <% if !category[:is_default] %>
+    <div class="<%= cycle('odd', 'even') %> <%= 'orphaned-category' if category['portal_solution_categories'].empty? %>">
+      <h4 class="cat-title-border">
+        <div class="<%= category['portal_solution_categories'].empty? ? 'ficon-categories-orphan tooltip' : 'ficon-cube'%> cat-title-icon" data-original-title="<%= t('solution.unassociated') if  category['portal_solution_categories'].empty? %>"></div>
+        <%= pjax_link_to  "#{h(category[:name]).truncate(45)}".html_safe, 
+                          solution_category_path(:id =>category[:id]), 
+                          :class => 'tooltip', 
+                          :title => (h(category[:name]) if category[:name].length > 45) %>        
+      </h4>  
+      <ul>      
+        <% category[:folders].first(5).each do |folder| %>
+          <li>
+            <%= pjax_link_to h(folder[:name].truncate(50)), solution_folder_path(folder[:id]),
+                :class => 'tooltip', :title => (h(folder[:name]) if folder[:name].length > 50) %>
+            <span class="muted">
+              (<%= folder[:article_count] %>)
+            </span> 
+          </li>
+        <% end %> 
+        <% if category[:folders].size > 5 %>
+          <li class="no-bullet"><%= pjax_link_to t('solution.folders.view_all').html_safe,  solution_category_path(:id =>category[:id]), 
+                  :class => "more-cat"  %>
+          </li>
+        <% end %>
+        <% if (category[:folders].size == 0) %>
+          <%= content_tag(:span, t('solution_category.info2').html_safe, :class => "empty-category no_info_text") %>
+          <% if privilege?(:manage_solutions) %>
+            <span class="no_info_text">-</span>
+            <%= link_to(
+                  t("solution.add_folder"),
+                  new_solution_folder_path(:category_id => category[:id]),
+                  :class => "add-folder-link",
+                  :rel => "freshdialog",
+                  :title => t("solution.add_folder"),
+                  "data-target" => "#folder-new-#{category[:id]}",
+                  "data-close-label" => t('cancel'),
+                  "data-submit-label" => t('save')) unless category[:portal_solution_categories].empty? %>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<%end%>

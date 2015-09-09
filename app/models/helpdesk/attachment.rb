@@ -3,6 +3,7 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  self.table_name =  "helpdesk_attachments"
   self.primary_key = :id
 
   include Helpdesk::Utils::Attachment
@@ -50,6 +51,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     before_save :set_account_id
+
+  alias_attribute :parent_type, :attachable_type
 
   class << self
 
@@ -125,6 +128,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def mp3?
     audio? /^audio\/(mp3|mpeg)/
+  end
+
+  def object_type
+    :attachable
   end
 
   def has_thumbnail?

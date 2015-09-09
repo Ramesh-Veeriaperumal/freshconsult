@@ -31,9 +31,6 @@ class Solution::TagUsesController < ApplicationController
     # decrement the counter cache. This is a workaround. need to re-work..now this will work only for ticket module
     
     Helpdesk::TagUse.find_by_taggable_id_and_tag_id_and_taggable_type(article.id, tag.id,taggable_type ).destroy
-    #TODO-Rails3 - We may have to remove the below 2 lines for the functionality to work.
-    count = tag.tag_uses_count - 1
-    tag.update_attribute(:tag_uses_count,count )
 
     flash[:notice] = t(:'flash.solutions.remove_tag.success')
     redirect_to :back

@@ -104,7 +104,7 @@ describe Mobihelp::SolutionsController do
 
   describe "It should update the updated_at column of mobihelp_app_solutions on solution CRED operations" do
     before(:all) do
-      @mobihelp_category = create_category( {:name => "new category #{Time.now}", :description => "new category", :is_default => false} )
+      @mobihelp_category = create_category( {:name => "Mobihelp test new category #{Time.now} #{Faker::Name.name}", :description => "new category", :is_default => false} )
       mobihelp_apps = ((0..2).map do |j|
         mobihelp_app = create_mobihelp_app
         create_mobihelp_app_solutions({:app_id => mobihelp_app.id, :category_id => @mobihelp_category.id, 
