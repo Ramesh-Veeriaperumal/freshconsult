@@ -43,6 +43,7 @@ window.App.Solutions = window.App.Solutions || {};
       $('.community-search').focus();
       $('#cm-sb-solutions-toggle').hide()
       $('#fa_item-select-all').prop('disabled', true);
+      $('#search-show').data().twipsy.hide();
     },
 
     hideSearch: function () {
