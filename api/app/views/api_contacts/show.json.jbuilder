@@ -1,4 +1,4 @@
-json.cache! [controller_name, action_name, @item] do
+json.cache! CacheLib.compound_key(@item, @item.avatar, params) do
   json.extract! @item, :active, :address, :client_manager, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
   json.partial! 'shared/utc_date_format', item: @item
 
@@ -10,7 +10,6 @@ json.cache! [controller_name, action_name, @item] do
 
   if @item.avatar
     json.set! :avatar do
-      json.set! :avatar_url, @item.avatar.attachment_url_for_api
       json.set! :content_type, @item.avatar.content_content_type
       json.set! :id, @item.avatar.id
       json.set! :name, @item.avatar.content_file_name
@@ -21,3 +20,4 @@ json.cache! [controller_name, action_name, @item] do
     json.set! :avatar, nil
   end
 end
+json.set! :avatar_url, @item.avatar.attachment_url_for_api if @item.avatar

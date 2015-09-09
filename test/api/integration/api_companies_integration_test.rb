@@ -6,22 +6,25 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
     v2 = {}
     v1 = {}
     v2_expected = {
-      api_create: 8,
+      api_create: 7,
       api_show: 1,
       api_index: 2,
       api_update: 8,
       api_destroy: 10,
 
-      create: 22,
+      create: 21,
       show: 15,
       index: 15,
       update: 22,
-      destroy: 20
+      destroy: 22
     }
 
     # create
-    v1[:create] = count_queries { post('/companies.json', company_payload, @write_headers) }
-    v2[:create], v2[:api_create] = count_api_queries do
+    v1[:create] = count_queries do
+      post('/companies.json', company_payload, @write_headers)
+      assert_response :created
+    end
+    v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
       post('/api/v2/companies', v2_company_payload, @write_headers)
       assert_response :created
     end
@@ -29,28 +32,37 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
     id1 = Company.order('id desc').first.id
     id2 = Company.order('id desc').offset(1).first.id
     # show
-    v1[:show] = count_queries { get("/companies/#{id2}.json", nil, @headers) }
-    v2[:show], v2[:api_show] = count_api_queries do
+    v1[:show] = count_queries do
+      get("/companies/#{id2}.json", nil, @headers)
+      assert_response :success
+    end
+    v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
       get("/api/v2/companies/#{id1}", nil, @headers)
       assert_response :success
     end
 
     # V2 index
-    v2[:index], v2[:api_index] = count_api_queries do
+    v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
       get('/api/v2/companies.json', nil, @headers)
       assert_response :success
     end
 
     # update
-    v1[:update] = count_queries { put("/companies/#{id2}.json", company_payload, @write_headers) }
-    v2[:update], v2[:api_update] = count_api_queries do
+    v1[:update] = count_queries do
+      put("/companies/#{id2}.json", company_payload, @write_headers)
+      assert_response :success
+    end
+    v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
       put("/api/v2/companies/#{id1}", v2_company_payload, @write_headers)
       assert_response :success
     end
 
     # destroy
-    v1[:destroy] = count_queries { delete("/companies/#{id2}.json", nil, @headers) }
-    v2[:destroy], v2[:api_destroy] = count_api_queries do
+    v1[:destroy] = count_queries do
+      delete("/companies/#{id2}.json", nil, @headers)
+      assert_response :success
+    end
+    v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
       delete("/api/v2/companies/#{id1}", nil, @headers)
       assert_response :no_content
     end
@@ -63,7 +75,6 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
 
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
-      Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       assert v2[key] <= v1[key]
       assert_equal v2_expected[api_key], v2[api_key]
       assert_equal v2_expected[key], v2[key]

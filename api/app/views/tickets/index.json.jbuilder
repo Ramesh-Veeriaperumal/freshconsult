@@ -1,5 +1,5 @@
 json.array! @items do |tkt|
-  json.cache! [controller_name, action_name, tkt] do
+  json.cache! CacheLib.compound_key(tkt, tkt.schema_less_ticket, tkt.ticket_body, tkt.custom_field, params) do
     json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
     json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)
     json.set! :reply_cc_emails, tkt.cc_email.try(:[], :reply_cc)
@@ -16,12 +16,10 @@ json.array! @items do |tkt|
     json.partial! 'shared/utc_date_format', item: tkt, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
     json.set! :is_escalated, tkt.isescalated
-  end
 
-  json.cache! tkt.ticket_body do |tbody| # changing desc does not modify ticket's updated_at
     json.set! :description, tkt.description
     json.set! :description_html, tkt.description_html
-  end
 
-  json.set! :custom_fields, tkt.custom_field
+    json.set! :custom_fields, tkt.custom_field
+  end
 end

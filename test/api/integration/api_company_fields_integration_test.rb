@@ -6,7 +6,10 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
     v2_api_index_query_count = 1
     v2_index_query_count = 13
     # index
-    v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/company_fields.json', nil, @headers) }
+    v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
+      get('/api/v2/company_fields.json', nil, @headers)
+      assert_response :success
+    end
 
     p v2
 

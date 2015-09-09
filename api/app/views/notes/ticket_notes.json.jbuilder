@@ -1,5 +1,5 @@
 json.array! @notes do |note|
-  json.cache! [controller_name, action_name, note] do
+  json.cache! CacheLib.key(note, params) do
     json.extract! note, :body, :body_html, :id, :incoming, :private, :user_id, :support_email
 
     json.set! :ticket_id, @display_id
@@ -10,14 +10,14 @@ json.array! @notes do |note|
   end
   json.set! :attachments do
     json.array! note.attachments do |att|
-      json.cache! [controller_name, action_name, att] do
+      json.cache! CacheLib.key(att, params) do
         json.set! :id, att.id
         json.set! :content_type, att.content_content_type
         json.set! :size, att.content_file_size
         json.set! :name, att.content_file_name
-        json.set! :attachment_url, att.attachment_url_for_api
         json.partial! 'shared/utc_date_format', item: att
       end
+      json.set! :attachment_url, att.attachment_url_for_api
     end
   end
 end

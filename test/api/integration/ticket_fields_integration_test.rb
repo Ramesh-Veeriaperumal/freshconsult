@@ -12,8 +12,14 @@ class TicketFieldsIntegrationTest < ActionDispatch::IntegrationTest
       }
 
       # index
-      v2[:index], v2[:api_index] = count_api_queries { get('/api/ticket_fields', nil, @headers) }
-      v1[:index] = count_queries { get('/ticket_fields.json', nil, @headers) }
+      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
+        get('/api/ticket_fields', nil, @headers)
+        assert_response :success
+      end
+      v1[:index] = count_queries do
+        get('/ticket_fields.json', nil, @headers)
+        assert_response :success
+      end
 
       p v1
       p v2

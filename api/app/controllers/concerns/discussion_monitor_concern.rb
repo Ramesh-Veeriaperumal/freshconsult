@@ -102,20 +102,4 @@ module DiscussionMonitorConcern
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end
-
-    def is_following?
-      @is_following ||= current_action?('is_following')
-    end
-
-    def follow?
-      @follow ||= current_action?('follow')
-    end
-
-    def unfollow?
-      @unfollow ||= current_action?('unfollow')
-    end
-
-    def followed_by?
-      @followed_by ||= current_action?('followed_by')
-    end
 end

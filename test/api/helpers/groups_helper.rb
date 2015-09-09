@@ -45,11 +45,22 @@ module Helpers::GroupsHelper
   end
 
   # private
+
+  def agents_ids_array
+    agent1 = Agent.first || add_agent_to_account(@account).agent
+    agent2 = Agent.where("id != ?", agent1.id).first || add_agent_to_account(@account).agent
+    [agent1.id, agent2.id]
+  end
+
+  def agent_ids_csv
+    agents_ids_array.join(",")
+  end
+
   def v1_group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: '1,3' }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_list: agent_ids_csv }
   end
 
   def v2_group_params
-    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: [1, 3] }
+    { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: agents_ids_array }
   end
 end

@@ -38,8 +38,9 @@ module TestClassMethods
   def count_api_queries
     QueryCounter.total_query_count = 0
     QueryCounter.api_query_count = 0
+    QueryCounter.queries = []
     yield
-    [QueryCounter.total_query_count, QueryCounter.api_query_count]
+    [QueryCounter.total_query_count, QueryCounter.api_query_count, QueryCounter.queries]
   end
 
   def count_queries

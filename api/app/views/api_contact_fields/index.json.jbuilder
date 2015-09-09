@@ -1,5 +1,5 @@
 json.array! @items do |contact_field|
-  json.cache! [controller_name, action_name, contact_field] do
+  json.cache! CacheLib.key(contact_field, params) do
     json.extract! contact_field, :deleted, :editable_in_signup, :field_type, :id, :label, :name, :position, :required_for_agent
 
     json.set! :choices, ContactFieldDecorator.contact_field_choices(contact_field) unless contact_field.choices.blank?

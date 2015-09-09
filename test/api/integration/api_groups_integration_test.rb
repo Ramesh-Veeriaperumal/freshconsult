@@ -21,23 +21,53 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
       }
 
       # create
-      v2[:create], v2[:api_create] = count_api_queries { post('/api/v2/groups', v2_group_payload, @write_headers) }
-      v1[:create] = count_queries { post('/groups.json', group_payload, @write_headers) }
+      v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
+        post('/api/v2/groups', v2_group_payload, @write_headers)
+        assert_response :created
+      end
+      v1[:create] = count_queries do
+        post('/groups.json', group_payload, @write_headers)
+        assert_response :created
+      end
       id1 = Group.last(2).first.id
       id2 = Group.last.id
       # show
-      v2[:show], v2[:api_show] = count_api_queries { get("/api/v2/groups/#{id1}", nil, @headers) }
-      v1[:show] = count_queries { get("/groups/#{id2}.json", nil, @headers) }
+      v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
+        get("/api/v2/groups/#{id1}", nil, @headers)
+        assert_response :success
+      end
+      v1[:show] = count_queries do
+        get("/groups/#{id2}.json", nil, @headers)
+        assert_response :success
+      end
       # update
-      v2[:update], v2[:api_update] = count_api_queries { put("/api/v2/groups/#{id1}", v2_group_payload, @write_headers) }
-      v1[:update] = count_queries { put("/groups/#{id2}.json", group_payload, @write_headers) }
+      v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
+        put("/api/v2/groups/#{id1}", v2_group_payload, @write_headers)
+        assert_response :success
+      end
+      v1[:update] = count_queries do
+        put("/groups/#{id2}.json", group_payload, @write_headers)
+        assert_response :success
+      end
       # index
-      v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/groups', nil, @headers) }
-      v1[:index] = count_queries { get('/groups.json', nil, @headers) }
+      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
+        get('/api/v2/groups', nil, @headers)
+        assert_response :success
+      end
+      v1[:index] = count_queries do
+        get('/groups.json', nil, @headers)
+        assert_response :success
+      end
       # destroy
 
-      v2[:destroy], v2[:api_destroy] = count_api_queries { delete("/api/v2/groups/#{id1}", nil, @headers) }
-      v1[:destroy] = count_queries { delete("/groups/#{id2}.json", nil, @headers) }
+      v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
+        delete("/api/v2/groups/#{id1}", nil, @headers)
+        assert_response :no_content
+      end
+      v1[:destroy] = count_queries do
+        delete("/groups/#{id2}.json", nil, @headers)
+        assert_response :success
+      end
 
       p v1
       p v2

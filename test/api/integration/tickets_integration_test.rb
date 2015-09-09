@@ -27,7 +27,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       create_v1_payload = v1_ticket_payload
 
       # create
-      v2[:create], v2[:api_create] = count_api_queries do
+      v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
         post('/api/tickets', create_v2_payload, @write_headers)
         assert_response :created
       end
@@ -43,7 +43,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       id2 = Helpdesk::Ticket.last.display_id
 
       # show
-      v2[:show], v2[:api_show] = count_api_queries do
+      v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
         get("/api/tickets/#{id1}", nil, @headers)
         assert_response :success
       end
@@ -56,7 +56,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       stub_current_account { create_note(user_id: @agent.id, ticket_id: id2, source: 2) }
 
       # update
-      v2[:update], v2[:api_update] = count_api_queries do
+      v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
         put("/api/tickets/#{id1}", v2_ticket_update_payload, @write_headers)
         assert_response :success
       end
@@ -72,7 +72,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:update] -= 6
 
       # index
-      v2[:index], v2[:api_index] = count_api_queries do
+      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/tickets', nil, @headers)
         assert_response :success
       end
@@ -82,7 +82,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       end
 
       # destroy
-      v2[:destroy], v2[:api_destroy] = count_api_queries do
+      v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
         delete("/api/tickets/#{id1}", nil, @headers)
         assert_response :success
       end
@@ -92,7 +92,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       end
 
       # restore
-      v2[:restore], v2[:api_restore] = count_api_queries do
+      v2[:restore], v2[:api_restore], v2[:restore_queries] = count_api_queries do
         put("/api/tickets/#{id1}/restore", {}.to_json, @write_headers)
         assert_response :success
       end

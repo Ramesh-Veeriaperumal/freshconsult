@@ -1,5 +1,5 @@
 json.array! @items do |agent|
-  json.cache! [controller_name, action_name, agent] do
+  json.cache! CacheLib.compound_key(agent, agent.user, params) do
     json.extract! agent, :available, :occasional, :signature, :signature_html
     json.set! :id, agent.user_id
     json.set! :ticket_scope, agent.ticket_permission

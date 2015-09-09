@@ -1,4 +1,4 @@
-json.cache! [controller_name, action_name, @item] do
+json.cache! CacheLib.compound_key(@item, params) do
   json.extract! @item, :available, :occasional, :signature, :signature_html
   json.set! :id, @item.user_id
   json.set! :ticket_scope, @item.ticket_permission

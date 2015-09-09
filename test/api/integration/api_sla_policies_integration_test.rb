@@ -24,7 +24,7 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         put("/helpdesk/sla_policies/#{sp2.id}/company_sla.json", v1_payload, @write_headers)
         assert_response :success
       end
-      v2[:update], v2[:api_update] = count_api_queries do
+      v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
         put("/api/v2/sla_policies/#{sp1.id}", v2_payload, @write_headers)
         assert_response :success
       end
@@ -33,7 +33,7 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         get('/helpdesk/sla_policies.json', nil, @headers)
         assert_response :success
       end
-      v2[:index], v2[:api_index] = count_api_queries do
+      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/sla_policies', nil, @headers)
         assert_response :success
       end

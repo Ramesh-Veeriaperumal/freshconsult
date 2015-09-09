@@ -15,16 +15,23 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
     id = Agent.first.user.id
 
     # show
-    v2[:show], v2[:api_show] = count_api_queries { get("/api/v2/agents/#{id}", nil, @headers) }
-    v1[:show] = count_queries { get("/agents/#{id}.json", nil, @headers) }
+    v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
+      get("/api/v2/agents/#{id}", nil, @headers)
+      assert_response :success
+    end
+    v1[:show] = count_queries do
+      get("/agents/#{id}.json", nil, @headers)
+      assert_response :success
+    end
 
     # index
-    v2[:index], v2[:api_index] = count_api_queries { get('/api/v2/agents', nil, @headers) }
-    v1[:index] = count_queries { get('/agents.json', nil, @headers) }
-
-    v1.keys.each do |key|
-      api_key = "api_#{key}".to_sym
-      Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
+    v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
+      get('/api/v2/agents', nil, @headers)
+      assert_response :success
+    end
+    v1[:index] = count_queries do
+      get('/agents.json', nil, @headers)
+      assert_response :success
     end
 
     p v1
@@ -32,7 +39,6 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
 
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym
-      Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       assert v2[key] <= v1[key]
       assert_equal v2_expected[api_key], v2[api_key]
       assert_equal v2_expected[key], v2[key]
