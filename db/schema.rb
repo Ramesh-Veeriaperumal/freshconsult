@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150905094044) do
+ActiveRecord::Schema.define(:version => 20150909161854) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2800,6 +2800,8 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
   end
+
+  add_index "solution_draft_bodies", ["account_id", "draft_id"], :name => "index_solution_draft_bodies_on_account_id_and_draft_id"
 
   create_table "solution_drafts", :force => true do |t|
     t.integer  "account_id",       :limit => 8, :null => false
