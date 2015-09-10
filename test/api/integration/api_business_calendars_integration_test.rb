@@ -27,7 +27,7 @@ class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
-    p v2
+    write_to_file(nil, v2)
 
     v2_expected.keys.each do |key|
       assert_equal v2_expected[key], v2[key]

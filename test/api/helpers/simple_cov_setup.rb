@@ -4,7 +4,7 @@ module SimpleCovSetup
   require 'simplecov-rcov'
 
   SimpleCov.start do
-    add_filter SimpleCov::StringFilter.new('^((?!api\/).)*$')
+    add_filter SimpleCov::StringFilter.new("^((?!#{root}/api\/).)*$")
 
     add_group 'api', 'api/'
     add_group 'apiconcerns', 'api/app/controllers/concerns'

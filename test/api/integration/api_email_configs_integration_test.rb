@@ -26,7 +26,7 @@ class ApiEmailConfigsIntegrationTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
-    p v2
+    write_to_file(nil, v2)
 
     v2_expected.keys.in_groups(2).last.each do |key|
       api_key = "api_#{key}".to_sym

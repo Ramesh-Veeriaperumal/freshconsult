@@ -6,8 +6,6 @@ class ContactFieldDecorator
         contact_field.choices.map { |x| x.values.reverse }.to_h
       when 'custom_dropdown' # not_tested
         contact_field.choices.map { |x| x[:value] }
-      else
-        []
       end
     end
 

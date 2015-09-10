@@ -14,9 +14,9 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 5,
         api_restore: 5,
 
-        create: 113,
+        create: 110,
         show: 18,
-        update: 60,
+        update: 53,
         index: 16,
         destroy: 32,
         restore: 32
@@ -106,9 +106,8 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"
       end
 
-      p v1
-      p v2
-
+      write_to_file(v1, v2)
+      
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym
         Rails.logger.debug "key : #{api_key}, v1: #{v1[key]}, v2 : #{v2[key]}, v2_api: #{v2[api_key]}, v2_expected: #{v2_expected[key]}"

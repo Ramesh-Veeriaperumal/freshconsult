@@ -13,8 +13,8 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 7,
         api_ticket_notes: 5,
 
-        create: 60,
-        reply: 63,
+        create: 58,
+        reply: 59,
         update: 22,
         destroy: 20,
         ticket_notes: 16
@@ -78,8 +78,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         assert_response :success
       end
 
-      p v1
-      p v2
+      write_to_file(v1, v2)
 
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym

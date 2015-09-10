@@ -70,8 +70,7 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
     v1[:create] += 2 # 2 extra queries caused due to companies_validation_helper which is needed to get the list of custom_fields for restricting invalid custom_fields on create or update
     v1[:update] += 1 # Extra query due to the same companies_validation_helper
 
-    p v1
-    p v2
+    write_to_file(v1, v2)
 
     v1.keys.each do |key|
       api_key = "api_#{key}".to_sym

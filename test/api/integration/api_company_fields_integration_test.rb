@@ -11,7 +11,7 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
-    p v2
+    write_to_file(nil, v2)
 
     assert_equal v2_api_index_query_count, v2[:api_index]
     assert_equal v2_index_query_count, v2[:index]

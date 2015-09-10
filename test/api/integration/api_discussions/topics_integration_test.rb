@@ -119,8 +119,7 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response :no_content
       end
 
-      p v1
-      p v2
+      write_to_file(v1, v2)
 
       v1.keys.each do |key|
         api_key = "api_#{key}".to_sym

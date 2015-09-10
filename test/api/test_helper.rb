@@ -29,6 +29,9 @@ class ActionDispatch::IntegrationTest
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if  Rails.env.test?
   end
 
+  # For logging query details in a separate folder
+  FileUtils.mkdir_p "#{Rails.root}/test/api/query_reports"
+
   def setup
     get_agent
     set_request_headers

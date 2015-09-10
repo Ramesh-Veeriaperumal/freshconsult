@@ -56,3 +56,4 @@ public/generated
 
 #Ignore test reports
 test/api/reports
+test/api/query_reports
