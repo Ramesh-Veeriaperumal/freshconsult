@@ -108,17 +108,23 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
-    ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def dashboard_disabled?
     ismember?(DASHBOARD_DISABLED, self.id)
   end
 
+  def restricted_compose_enabled?
+    ismember?(RESTRICTED_COMPOSE, self.id)
+  end
+  
   def slave_queries?
     ismember?(SLAVE_QUERIES, self.id)
   end
+  #Temporary feature check methods - using redis keys - ends here
 
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?

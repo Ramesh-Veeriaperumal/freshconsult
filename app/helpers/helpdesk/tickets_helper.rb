@@ -488,7 +488,7 @@ module Helpdesk::TicketsHelper
 
   def ticket_body_form form_builder, to=false
     contents = []
-    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('helpdesk.enter_subject')).html_safe)
+    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
       signature_value = current_user.agent.signature_value ? ("<p><br /></p>"*2)+current_user.agent.signature_value.to_s : ""
       contents << content_tag(:li, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
@@ -510,6 +510,38 @@ module Helpdesk::TicketsHelper
     end
     content.join(" ").html_safe
   end
+
+  #Helper methods for compose from email drop down starts here
+  def options_for_compose
+    default_option = [I18n.t("ticket.compose.choose_email"), ""]
+    all_options = if current_account.restricted_compose_enabled?
+      restricted_options_for_compose
+    else
+      compose_options(current_account.email_configs.order(:name))
+    end
+    
+    all_options.unshift(default_option) if all_options.count > 1
+    options_for_select(all_options)
+  end
+    
+  def restricted_options_for_compose
+    if current_user.can_view_all_tickets?
+      compose_options(current_account.email_configs.order(:name))
+    elsif (current_user.group_ticket_permission || current_user.assigned_ticket_permission)
+      group_ids = current_user.agent_groups.map(&:group_id)
+      user_email_configs = current_account.email_configs.where("group_id is NULL or group_id in (?)",group_ids).order(:name)
+      compose_options(user_email_configs)
+    end
+  end
+
+  def compose_options(email_configs)
+    if current_account.features_included?(:personalized_email_replies)
+      email_configs.collect{|x| [x.friendly_email_personalize(current_user.name), x.id]}
+    else
+      email_configs.collect{|x| [x.friendly_email, x.id]}
+    end
+  end
+  #Helper methods for compose from email drop down ends here
 
   # ITIL Related Methods starts here
 

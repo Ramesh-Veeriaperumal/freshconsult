@@ -401,14 +401,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def notify_outbound_email(ticket)
     ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
+
+    from_email = if ticket.account.features?(:personalized_email_replies)
+      ticket.friendly_reply_email_personalize(ticket.responder_name)
+    else
+      ticket.friendly_reply_email
+    end
     
     headers = {
       :subject                   => ticket.subject,
       :to                        => ticket.from_email,
-      :from                      => ticket.friendly_reply_email_personalize(ticket.responder_name),
+      :from                      => from_email,
       :cc                        => ticket.cc_email[:cc_emails],
       :bcc                       => account_bcc_email(ticket),
-      "Reply-to"                 => ticket.friendly_reply_email_personalize(ticket.responder_name), 
+      "Reply-to"                 => from_email, 
       "References"               => generate_email_references(ticket),
       :sent_on                   => Time.now
     }
