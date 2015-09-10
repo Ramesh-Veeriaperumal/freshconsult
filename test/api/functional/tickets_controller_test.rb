@@ -1803,14 +1803,15 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_filter_and_requester
     user = add_new_user(@account)
+    requester = User.first
     Helpdesk::Ticket.update_all(requester_id: user.id)
-    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: requester.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 0, response.count
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: User.first.id, status: 2)
-    get :index, controller_params(filter: 'new_and_my_open', requester_id: User.first.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: requester.id, status: 2)
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: requester.id)
     assert_response :success
     response = parse_response @response.body
     assert_equal 1, response.count
