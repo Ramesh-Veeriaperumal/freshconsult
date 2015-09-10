@@ -126,6 +126,10 @@ class Account < ActiveRecord::Base
   end
   #Temporary feature check methods - using redis keys - ends here
 
+  def validate_required_ticket_fields?
+    ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end

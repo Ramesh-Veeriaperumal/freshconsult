@@ -4205,6 +4205,8 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    errors:
+      required_field: cannot be blank.
     spam: "SPAM"
     deleted: "TRASH"
     archived: "Archived"
