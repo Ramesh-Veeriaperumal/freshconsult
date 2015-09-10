@@ -68,10 +68,10 @@ module SolutionHelper
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					opts = { :title => t("solution.add_category"), "data-target" => "#new-cat" }
+					opts = { "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" }
 					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					opts = { :title => t("solution.add_folder"), "data-target" => "#new-fold" }
+					opts = { "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" }
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					opts = { :"data-pjax" => "#body-container" }
@@ -100,11 +100,11 @@ module SolutionHelper
 	def new_btn_opts(type)
 		case type
 		when :category
-			default_new_btn_opts.merge({ :title => t("solution.add_category"), "data-target" => "#new-cat" })
+			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" })
 		when :folder
-			default_new_btn_opts.merge({ :title => t("solution.add_folder"), "data-target" => "#new-fold" })
+			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" })
 		when :article
-			{ :"data-pjax" => "#body-container", :title => nil, :rel => nil }
+			{ :"data-pjax" => "#body-container", :rel => nil }
 		end
 	end
 
@@ -191,7 +191,7 @@ module SolutionHelper
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',
-	                            :name => a.user.name, 
+	                            :name => truncate(a.user.name, :length => 15), 
 	                            :time => a.updated_at.to_i,
 	                            :time_string => time_ago_in_words(a.updated_at)).html_safe}
 					</div>

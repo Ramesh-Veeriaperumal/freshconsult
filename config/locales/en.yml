@@ -2705,7 +2705,7 @@ en:
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     more_catogories: "See all Categories"
     other_categories: "See other Categories"
-    other_categories_info: "These categories are not associated in this portal"
+    other_categories_info: "Categories that are not associated with this portal"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...
@@ -3605,7 +3605,7 @@ en:
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"
-      orphan_desc: "These categories are not associated in any portal"
+      orphan_desc: "These categories are not associated with any portal"
       view_all: "View all"
       view_less: "View less"
       drafts:
