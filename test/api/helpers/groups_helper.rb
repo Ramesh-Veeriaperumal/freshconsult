@@ -1,5 +1,6 @@
 module Helpers::GroupsHelper
   include GroupHelper
+  include AgentHelper
   # Patterns
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
@@ -47,9 +48,9 @@ module Helpers::GroupsHelper
   # private
 
   def agents_ids_array
-    agent1 = Agent.first || add_agent_to_account(@account).agent
-    agent2 = Agent.where('id != ?', agent1.id).first || add_agent_to_account(@account).agent
-    [agent1.id, agent2.id]
+    agent1 = Agent.first || add_test_agent(@account, role: Role.find_by_name('Agent').id).agent
+    agent2 = Agent.where('id != ?', agent1.user_id).first || add_test_agent(@account, role: Role.find_by_name('Agent').id).agent
+    [agent1.user_id, agent2.user_id]
   end
 
   def agent_ids_csv

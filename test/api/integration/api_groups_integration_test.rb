@@ -7,22 +7,24 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 1,
+        api_create: 9,
         api_show: 1,
-        api_update: 5,
+        api_update: 8,
         api_index: 0,
-        api_destroy: 8,
+        api_destroy: 10,
 
-        create: 14,
+        create: 30,
         show: 13,
-        update: 19,
+        update: 22,
         index: 13,
-        destroy: 23
-      }
+        destroy: 35
+      } 
+
+      v2_payload = v2_group_payload
 
       # create
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
-        post('/api/v2/groups', v2_group_payload, @write_headers)
+        post('/api/v2/groups', v2_payload, @write_headers)
         assert_response :created
       end
       v1[:create] = count_queries do
@@ -42,7 +44,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
       end
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
-        put("/api/v2/groups/#{id1}", v2_group_payload, @write_headers)
+        put("/api/v2/groups/#{id1}", v2_payload, @write_headers)
         assert_response :success
       end
       v1[:update] = count_queries do

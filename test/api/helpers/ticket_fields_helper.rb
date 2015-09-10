@@ -99,7 +99,7 @@ module Helpers::TicketFieldsHelper
       nested_field_vals[nf - 1].save
     end
 
-    field_choices = { 'Country' => [['Australia', '0',
+    field_choices = { 'test_custom_country' => [['Australia', '0',
                                      [['New South Wales', '0', [['Sydney', '0']]],
                                       ['Queensland', '0', [['Brisbane', '0']]]
                                      ]

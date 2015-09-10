@@ -31,7 +31,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_custom_dropdown
-    labels = ['Freshmovies']
+    labels = ['test_custom_dropdown']
     # ffs_04 is created here
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
@@ -79,7 +79,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
 
   def test_index_nested_choices_three_level
     flexifield_def_entry = []
-    labels = %w(Country State City)
+    labels = %w(test_custom_country test_custom_state test_custom_city)
     # ffs_07, ffs_08 and ffs_09 are created here
     (0..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
