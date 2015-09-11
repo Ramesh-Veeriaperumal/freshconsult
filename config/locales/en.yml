@@ -6742,7 +6742,7 @@ en:
       reports_sla: First Response SLA %
       res_sla: Resolution SLA %
       fcr: FCR %
-      private_note: Private Note
+      private_note: Private Notes
       responses: Responses
       avg_first_res_time: Average 1st Response Time
       avg_res_time: Average Response Time
