@@ -16,6 +16,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def create
+    @item.tags = construct_tags(@tags) if @tags
     assign_protected
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
@@ -28,13 +29,13 @@ class ApiContactsController < ApiApplicationController
   end
 
   def update
-    params[cname][:deleted] = true if @item.email.present? && @item.email =~ ContactConstants::MAILER_DAEMON_REGEX
-    @item.assign_attributes(params[cname].except('tag_names'))
+    assign_protected
+    @item.assign_attributes(params[cname])
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
-    elsif @item.update_attributes(params[cname])
-      render "#{controller_path}/update", location: send("#{nscname}_url", @item.id), status: 200
+    elsif @item.save
+      @item.tags = construct_tags(@tags) if @tags
     else
       render_custom_errors
     end
@@ -97,7 +98,8 @@ class ApiContactsController < ApiApplicationController
 
     def sanitize_params
       prepare_array_fields [:tags]
-      params[cname][:tag_names] = params[cname].delete(:tags).collect(&:strip).join(',') if params[cname].key?(:tags)
+      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
+      params[cname].delete(:tags) if @tags
 
       # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for
       # making a contact as a client_manager
