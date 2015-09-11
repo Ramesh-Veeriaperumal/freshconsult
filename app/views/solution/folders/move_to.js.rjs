@@ -1,0 +1,6 @@
+page << "jQuery('.bulk-actions-bar').addClass('hide')" if @updated_items.size == @number_of_folders
+page << "App.Solutions.Folder.removeElementsAfterMoveTo('#{@updated_items.join(',')}')"
+show_ajax_flash(page) if @updated_items.present?
+page << "App.Solutions.Folder.hideSelectAll()"
+page << "App.Solutions.Reorder.toggleReorderButton()"
+page << "jQuery('.bulk-action-menu').hide();"

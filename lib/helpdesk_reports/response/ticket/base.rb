@@ -90,7 +90,7 @@ class HelpdeskReports::Response::Ticket::Base
   end
   
   def trend_column? column
-    ["doy","w","mon","qtr"].include? column
+    ["doy","w","mon","qtr","y"].include? column
   end
   
   def range trend
@@ -99,8 +99,11 @@ class HelpdeskReports::Response::Ticket::Base
     end_day = dates.length > 1 ?  Date.parse(dates.second) : start_day
     padding_hash = {}
 
-    if trend == "y"
-      (start_day.year..end_day.year).each { |i| padding_hash[i.to_s] = 0 }
+    if trend == "y" 
+      (start_day.year..end_day.year).each do |i| 
+          i = label_for_x_axis(i, i, trend, date_range)
+          padding_hash[i] = 0 
+      end
     else
       (start_day.year..end_day.year).each do |y|
         start_point  = (start_day.year == y) ? date_part(start_day, trend) : 1
@@ -134,6 +137,8 @@ class HelpdeskReports::Response::Ticket::Base
         "#{Date::ABBR_MONTHNAMES[point]}, #{year}"
       when "qtr"
         "#{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 1]} - #{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 3]}, #{year}"
+      when "y"
+        "#{point}"
     end
   end
 

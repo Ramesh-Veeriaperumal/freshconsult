@@ -227,6 +227,7 @@ var Redactor = function(element, options)
 							"h1", "h2", "h3", "h4", "h5", "h6",
 							"canvas", "figure", "figcaption",
 							"output", "section", "summary", "time" ],
+		toolbarExternal: false,					
 		buttonsCustom: {},
 		buttonsAdd: [],
 		buttons: ['formatting', 'fontname', 'fontsize', 
@@ -1450,6 +1451,7 @@ Redactor.prototype = {
 	syncCode: function()
 	{
 		this.$el.val(this.$editor.html());
+		this.$el.trigger('redactor:sync');
 	},
 	
 	// API functions
@@ -1490,6 +1492,10 @@ Redactor.prototype = {
 			this.$box.after(this.$editor);
 			this.$box.remove();
 			this.$editor.removeClass('redactor_editor').removeClass('redactor_editor_wym').attr('contenteditable', false).html(html).show();					
+		}
+
+		if (this.opts.toolbarExternal){
+				$(this.opts.toolbarExternal).empty();
 		}
 		
 		$('.redactor_air').remove();
@@ -2488,7 +2494,15 @@ Redactor.prototype = {
 		}
 		else
 		{
-			this.$box.prepend(this.$toolbar);
+			if (this.opts.toolbarExternal === false)
+				{
+					this.$box.prepend(this.$toolbar);
+				}
+				else
+				{
+					$(this.opts.toolbarExternal).html(this.$toolbar);
+				}
+
 		}
 		$.each(this.opts.buttons, $.proxy(function(i,key)
 		{
@@ -3089,8 +3103,7 @@ Redactor.prototype = {
 		var min_h = 10;			
 		$(resize).off('.redactor');
 		$(resize).on({
-			'mouseenter.redactor': function() {$(resize).css('cursor', 'nw-resize'); } ,
-			'mouseleave.redactor': function() {$(resize).css('cursor','default'); clicked = false; },
+			'mouseleave.redactor': function() {clicked = false; },
 			'mousedown.redactor': function(e) {
 				e.preventDefault();
 
@@ -4268,7 +4281,7 @@ Redactor.prototype = {
 		this.restoreSelection();
 		this.uniqueKey = new Date().getTime();
 		this.focusOnCursor();
-		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'" style="cursor:default;">');
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 		if (typeof this.opts.imageLoadingCallback === 'function'){
 			this.opts.imageLoadingCallback(this);

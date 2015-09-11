@@ -23,6 +23,21 @@ COLUMN_SERIES = {
 }
 // TODO: Namespace it to helpdesk reports
 function helpdeskReports(opts) {
+    Highcharts.dateFormats = {
+        W: function (timestamp) {
+            var start_date    = new Date(parseInt(HelpdeskReports.locals.startTimestamp));
+            var selected_date = new Date(timestamp);
+            var current_date  = selected_date > start_date ? selected_date : start_date;
+            return Highcharts.dateFormat('%e %b',current_date);
+        },
+        qtr: function (timestamp) {
+            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var current_date = new Date(timestamp),
+                point = current_date.getMonth();
+            return MONTHS[point] + '-' + MONTHS[point+2];
+        }
+    };
+
     this.options = {
         credits: {
             enabled: false
@@ -58,18 +73,36 @@ helpdeskReports.prototype = {
             return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + 'Total Tickets ' + this.series.name + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
         }
     },
+    perfXAisTrendLabel: function(timestamp){
+        var trend = HelpdeskReports.locals.trend;
+         switch (trend) {
+            case 'doy':
+                return Highcharts.dateFormat('%e %b , %Y', timestamp);
+            case 'w':
+                return Highcharts.dateFormat('%W , %Y', timestamp);
+            case 'mon':
+                return Highcharts.dateFormat('%b , %Y', timestamp);
+            case 'qtr':
+                return Highcharts.dateFormat('%qtr , %Y', timestamp);
+            case 'y':
+                return Highcharts.dateFormat('%Y', timestamp);
+        }  
+    },
     xAxisTrendLabel: function() {    
         var trend = HelpdeskReports.locals.trend;
         var value = this.value;
+
         //TODO: 
         if (typeof value == 'string') {
             switch (trend) {
 
             case 'doy':
+
                 var regex = /^(.*?)\,/;
                 return regex.exec(value)[1];
 
             case 'w':
+
                 var regex = /^(.*?)\,/;
                 return regex.exec(value)[1];
 
@@ -84,16 +117,18 @@ helpdeskReports.prototype = {
                 }   
 
             case 'qtr':
+
                 var regex = /^(.*?)\,/;
                 var exp = regex.exec(value)[1];
-                exp = exp.split('-')[0];
-                var d = Date.parse(exp);
+                var split_val = exp.split('-')[0];
+                var d = Date.parse(split_val);
                 if  (d.getMonth() == 0 || this.isFirst) {
+
                     return value;
                 } else {
+
                     return exp;
                 }
-
             case 'y':
                return value;
 
@@ -116,11 +151,21 @@ helpdeskReports.prototype = {
         x += "</div>";
         return x;
     },
-    performancelineTooltip: function () {
+    hrPerformancelineTooltip: function () {
+        return helpdeskReports.prototype.performancelineTooltip(this,"Hours");
+    },
+    minPerformancelineTooltip: function () {
+        return helpdeskReports.prototype.performancelineTooltip(this,"Mins");
+    },
+    performancelineTooltip: function(obj, plot_type){
+        var _this = obj;
         var x = "<div class='tooltip'>";
-        jQuery.each(this.points, function (i, point) {
-            var y = (point.y) % 1 === 0 ? (this.y) : (this.point.y).toFixed(2);
-            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' + helpdeskReports.prototype.daysLabelFormatter(y) + '</p><br/>';
+        x += '<p style="margin:0;display:inline-block;color:ffffff">' + this.perfXAisTrendLabel(_this.x) + '</p></br>'; 
+        
+        jQuery.each(_this.points, function (i, point) {
+            var y     = (point.y) % 1 === 0 ? (_this.y) : (point.y).toFixed(2);
+            var value = plot_type === "Hours" ? (y * 3600): (y * 60); //Converting it into seconds
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' + helpdeskReports.prototype.daysLabelFormatter(value) + '</p><br/>';
         });
         x += "</div>";
         return x;
@@ -145,13 +190,15 @@ helpdeskReports.prototype = {
             return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
         }
     },
-    daysLabelFormatter: function (min) {
-        var m = this.value || min;
-        if (m == 0 || typeof m === 'undefined' ) 
-            return '0h 0m';
-        var h = Math.floor(m / 60);
-        var min = Math.floor(m) % 60;
-        return h + 'h ' + min + 'm';
+
+    daysLabelFormatter: function (secs) {
+        var total_seconds = this.value || secs;
+        if (total_seconds == 0 || typeof total_seconds === 'undefined' ) 
+            return '0m 0s';
+        var h   = Math.floor(total_seconds / 3600);
+        var min = Math.floor((total_seconds / 60) % 60);
+        var sec = Math.floor(total_seconds % 60);
+        return total_seconds > 3600 ? h + 'h ' + min + 'm' : min + 'm ' + sec + 's';
     },
     barLabelFormatter: function () {
         var s = this.value;
@@ -322,7 +369,7 @@ function lineChart(opts) {
                     color: REPORT_COLORS['label']
                 },
                 formatter: opts['xAxisType'] == 'trend' ? this.xAxisTrendLabel : null,
-                useHTML : true
+                useHTML : true,
             },
             title: {
                 text: (typeof opts['xAxis_label'] === 'undefined') ? null : opts['xAxis_label'],
@@ -336,8 +383,8 @@ function lineChart(opts) {
             tickLength: 0,
             minorTickLength: 0,
             lineColor: REPORT_COLORS['lineColor'],
-            min: opts['report_type'] === 'perf' ? null : 0.5,
-            startOnTick: false
+            min: 0.5,
+            startOnTick: false,
         }, {
             title: {
                 text: null
@@ -405,7 +452,7 @@ function lineChart(opts) {
             }
         },
         tooltip: {
-            formatter: opts['report_type'] === 'perf' ? this.performancelineTooltip : this.lineChartTooltip,
+            formatter: this.lineChartTooltip,
             crosshairs: {
                 color: 'gray',
                 dashStyle: 'solid',
@@ -541,7 +588,6 @@ function barChart(opts) {
                     width: '65px',
                     'min-width': '65px',
                     fontSize: '12px',
-                    //wordWrap:'break-word',
                 },
                 formatter: this.barLabelFormatter,
                 useHTML: true
@@ -724,6 +770,162 @@ barChartMultipleSeries.prototype.updateDefaultCharts();
 barChartMultipleSeries.constructor = barChartMultipleSeries;
 
 barChartMultipleSeries.prototype.barChartSeriesGraph = function () {
+    var chart = new Highcharts.Chart(this.options);
+}
+
+
+function perfLineChart(opts) {
+    helpdeskReports.call(this, {
+        chart: {
+            renderTo: opts['renderTo'],
+            type: 'line',
+            borderColor: REPORT_COLORS['borderColor'],
+            plotBackgroundColor: REPORT_COLORS['plotBG'],
+            backgroundColor: REPORT_COLORS['plotBG'],
+            height: 300,
+            borderWidth: 1,
+            paddingTop: 100,
+            marginRight: 40
+        },
+        title: {
+            text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
+            style: {
+                fontSize: '13px'
+            }
+        },
+        xAxis: [{
+            type: 'datetime',
+            labels: {
+                style: {
+                    fontSize: '12px',
+                    color: REPORT_COLORS['label']
+                },
+                format: (typeof opts['xAxisFormat'] === 'undefined') ? null : opts['xAxisFormat'],
+                step: (typeof opts['xAxisStepValue'] === 'undefined') ? null : opts['xAxisStepValue'],
+                useHTML: true,
+                showLastLabel: true
+            },
+            tickInterval: (typeof opts['xAxisTickInterval'] === 'undefined') ? null :  opts['xAxisTickInterval'],
+            min: (typeof opts['start_date'] === 'undefined') ? null : opts['start_date'],
+            max: (typeof opts['end_date'] === 'undefined') ? null : opts['end_date'],
+                
+            title: {
+                text: (typeof opts['xAxis_label'] === 'undefined') ? null : opts['xAxis_label'],
+                align: 'middle',
+                style: {
+                    fontSize: '13px',
+                    color: REPORT_COLORS['title']
+                },
+                margin: 25
+            },
+            showLastLabel: true,
+            tickLength: 0,
+            minorTickLength: 0,
+            lineColor: REPORT_COLORS['lineColor'],
+            minPadding: 0,
+            maxPadding: 0,
+            startOnTick: true,
+            endOnTick: true,
+        }, {
+            title: {
+                text: null
+            },
+            lineColor: REPORT_COLORS['lineColor'],
+            lineWidth: 1,
+            opposite: true
+        }],
+        yAxis: [{
+            min: 0,
+            allowDecimals: false,
+            max: (typeof opts['yMax'] !== 'undefined') ? opts['yMax'] : null,
+            title: {
+                text: (typeof opts['yAxis_label'] === 'undefined') ? null : opts['yAxis_label'],
+                align: 'middle',
+                style: {
+                    fontSize: '13px',
+                    color: REPORT_COLORS['title']
+                },
+                margin: 25
+            },
+            labels: {
+                overflow: 'justify',
+                style: {
+                    fontSize: '12px',
+                    color: REPORT_COLORS['label']
+                }
+            },
+            gridLineWidth: 1,
+            gridLineColor: REPORT_COLORS['gridLineColor'],
+            gridLineDashStyle: 'dot',
+            minorGridLineWidth: 0,
+            lineColor: REPORT_COLORS['lineColor'],
+            lineWidth: 1,
+            startOnTick: true,
+            endOnTick: false,
+        }, {
+            min: 0,
+            title: {
+                text: null
+            },
+            lineColor: REPORT_COLORS['lineColor'],
+            lineWidth: 1,
+            opposite: true
+        }],
+        colors: REPORT_COLORS["series_colors"],
+        legend: {
+            borderWidth: 0,
+            itemStyle: {
+                bottom: 0,
+                top: 'auto',
+                fontWeight: 'normal'
+            },
+            verticalAlign: 'bottom',
+            floating: false,
+            itemDistance: 50
+        },
+        plotOptions: {
+            series: {
+                shadow: false,
+                lineWidth: 3,
+                animation: {
+                    duration: 1000
+                },
+                marker: {
+                    enabled: true,
+                    radius: 1
+                }
+            },
+            line: {
+                marker: {
+                    enabled: true,
+                    radius: 1
+                }
+            }
+        },
+        tooltip: {
+            formatter: opts['yAxis_label'] === 'Hours' ? this.hrPerformancelineTooltip : this.minPerformancelineTooltip,
+            crosshairs: {
+                color: 'gray',
+                dashStyle: 'solid',
+                width: 1
+            },
+            shared: true,
+            useHTML: true,
+            backgroundColor: REPORT_COLORS['tooltip_bg'],
+            borderColor: 'none',
+            shadow: false,
+            style: {
+                padding: 0
+            }
+        },
+        series: opts['chartData']
+    });
+}
+perfLineChart.prototype = new helpdeskReports;
+perfLineChart.prototype.updateDefaultCharts();
+perfLineChart.constructor = perfLineChart;
+
+perfLineChart.prototype.perfLineChartGraph = function () {
     var chart = new Highcharts.Chart(this.options);
 }
 

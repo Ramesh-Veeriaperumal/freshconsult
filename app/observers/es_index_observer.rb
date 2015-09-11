@@ -31,8 +31,8 @@ class EsIndexObserver < ActiveRecord::Observer
 		else
 	  	if [:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller", :"Admin::CannedResponses::Response", :"ScenarioAutomation"].include? model.class.name.to_sym
 	  		model.remove_es_document
-	  	elsif [:"Helpdesk::Ticket"].include? model.class.name.to_sym && !model.archive
-	  		model.remove_es_document
+	  	elsif [:"Helpdesk::Ticket"].include? model.class.name.to_sym
+	  		model.archive ? model.remove_from_es_count : model.remove_es_document
 	  	end
 		end
 	end

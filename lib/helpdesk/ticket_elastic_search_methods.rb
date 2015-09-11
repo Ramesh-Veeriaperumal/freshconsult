@@ -25,6 +25,32 @@ module Helpdesk::TicketElasticSearchMethods
         cc_email_hash[:fwd_emails] if cc_email_hash
       end
 
+      #=> Methods for the count cluster
+      def tag_names
+        tags.map(&:name)
+      end
+
+      def tag_ids
+        tags.map(&:id)
+      end
+
+      def watchers
+        subscriptions.map(&:user_id)
+      end
+
+      def status_stop_sla_timer
+        ticket_status.stop_sla_timer
+      end
+
+      def status_deleted
+        ticket_status.deleted
+      end
+
+      def custom_attributes
+        flexifield.as_json(root: false, only: Flexifield.column_names.select {|v| v =~ /^ffs_/})
+      end
+      #=> Till here
+
       def update_notes_es_index
         if !@model_changes[:deleted].nil? or !@model_changes[:spam].nil?
           delete_from_es_notes if (deleted? or spam?) 

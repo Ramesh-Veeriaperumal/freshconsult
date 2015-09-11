@@ -1,11 +1,11 @@
 <% @enable_pattern = true %>
 <% content_for :sidebar do -%><%- end %>
 <%= render :partial => 'header', :locals => { :active => :settings } %>
-<%= form_for(@account, 
-			:url => update_settings_admin_portal_index_path, 
-			:html => { 
-					:method => :put, 
-					:class => "form-horizontal customer-portal" 
+<%= form_for(@account,
+			:url => update_settings_admin_portal_index_path,
+			:html => {
+					:method => :put,
+					:class => "form-horizontal customer-portal"
 			}) do |f| %>
 
 <%= generate_breadcrumbs(params, f, :redirect_to_admin => true, :force_admin => true, :submit_text => 'save') %>
@@ -40,7 +40,7 @@
 		<div class="control-label"><%= t('.submit_ticket')%></div>
 		<div class="controls">
 			<%= feature_radio_button({
-					:default => t('.logged_in'), 
+					:default => t('.logged_in'),
 					:anonymous_tickets => t('.everyone') }) %>
 			<div class="checkbox captcha">
 				<%= f.feature_check_box :captcha, { :id => 'captcha' } %>
@@ -56,11 +56,21 @@
 	</div>
 
 	<div class="control-group sub-section">
+		<div class="control-label"><%= t('.public_ticket_urls_label') %></div>
+		<div class="controls">
+			<%= feature_radio_button({
+					:default => t('.logged_in'),
+					:public_ticket_url => "#{t('.public_ticket_urls_option')}<a href=\"#puburl-popover-content\" rel=\"hover-popover\" id=\"puburl-popover\" data-content=\"<div class='input-xlarge'>#{t('.public_ticket_urls_help')}</div>\"><span class=\"ficon-help fsize-22 vertical-alignment ml10\"></span></a>".html_safe,
+					}) %>
+		</div>
+	</div>
+
+	<div class="control-group sub-section">
 		<div class="control-label"><%= t('.view_solutions') %></div>
 		<div class="controls">
 			<%= feature_radio_button({
-						:default => t('.logged_in'), 
-						:open_solutions => t('.everyone')}) %> 
+						:default => t('.logged_in'),
+						:open_solutions => t('.everyone')}) %>
 		</div>
 	</div>
 	<% if current_account.features_included?(:forums) %>
@@ -88,40 +98,25 @@
 		<%= content_tag( :div,  t('.moderation'),	:class => "heading" ) %>
 		<div class="span6 right-border ml0">
 			<%= multiple_feature_radio_btn(
-							"moderation", 
-							{ :moderate_posts_with_links => 
+							"moderation",
+							{ :moderate_posts_with_links =>
 									[t('.moderate_links'),  t('.moderate_links_help')],
-								:moderate_all_posts => 
-									[t('.moderate_all'),t('.moderate_all_help')], 
-								:default => 
+								:moderate_all_posts =>
+									[t('.moderate_all'),t('.moderate_all_help')],
+								:default =>
 									[t('.moderate_none'), t('.moderate_none_help')]
 							}) %>
 		</div>
 		<div class="span4">
 			<%= content_tag( :div, t('.notify_agents'), :class => "control-label pb10")%>
-			<%= select_tag :forum_moderators, 
-					options_for_select( current_account.technicians.collect { |a| [a.name, a.id]}, 
-											:selected => current_account.forum_moderators.map(&:moderator_id)), 
+			<%= select_tag :forum_moderators,
+					options_for_select( current_account.technicians.collect { |a| [a.name, a.id]},
+											:selected => current_account.forum_moderators.map(&:moderator_id)),
 					{ :multiple => true, "data-placeholder"=>"Select Moderators", :class => "select2 span4 ml0" } %>
 		</div>
 	</div>
 <% end %>
 <div class="clear"></div>
-<div class="portal-section">
-	<%= content_tag( :div,  t('.portal_security'), :class => "heading" ) %>
-	<div class="control-group">
-		<div class="control-label">
-			<%= t('.enable_public_urls') %>
-			<%= content_tag( :div, t('.enable_public_urls_help'), :class => "muted" ) %>
-		</div>
-		<div class="controls">
-			<%= feature_radio_button({
-					:public_ticket_url => t('plain_yes'),
-					:default => t('plain_no'), 
-					}) %>
-		</div>
-	</div>
-</div>
 <div class="form-button itil-hide">
 	<%= pjax_link_to "#{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn" } %>
 	<%= f.submit t('save'), { :class => "btn btn-primary" } %>

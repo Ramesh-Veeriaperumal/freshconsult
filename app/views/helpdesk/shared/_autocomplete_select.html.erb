@@ -2,6 +2,7 @@
 
 max_limit ||= 3
 container ||= 'customers'
+dom_id ||= container
 
 hash_val = []
 if selected_values
@@ -14,7 +15,7 @@ end
 %>
 
 <div class = "autocomplete_filter">
-  <input type="hidden" id="<%= container %>_filter" name="<%=container%>" />
+  <input type="hidden" id="<%= dom_id %>_filter" name="<%= container %>" />
 </div>
 <script>
 jQuery(document).ready(function() {
@@ -38,7 +39,7 @@ jQuery(document).ready(function() {
     return display_result;
   }
   
-  jQuery("#<%=container%>_filter").select2({
+  jQuery("#<%= dom_id %>_filter").select2({
     placeholder: '<%= t("tickets_filter.#{container}_placeholder") %>',
     minimumInputLength: 2,
     multiple: true,
@@ -73,9 +74,9 @@ jQuery(document).ready(function() {
       return "You can only select " + limit + (limit == 1 ? " <%=container.capitalize.singularize %>" : "   <%=container.capitalize.pluralize %>"); },
   });
 
-  jQuery("#<%=container%>_filter").select2("val",[]);
+  jQuery("#<%= dom_id %>_filter").select2("val",[]);
 
-  jQuery(".ticket_list #<%=container%>_filter").on("change", function(){
+  jQuery(".ticket_list #<%= dom_id %>_filter").on("change", function(){
     toggle_save_and_refresh();
   });  
 

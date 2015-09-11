@@ -1,37 +1,54 @@
 <%
-	var minutesToDays = function( m ){
-		if(typeof m !== 'number')  return m;
-		var h = Math.floor(m / 60);
-		var min = Math.floor(m) % 60;
-		var days = h + 'h ' + min + 'm';
-		return days;
+	var formattingNumber = function(num, digits) {
+	    var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
+	        decimal;
+
+	    for(var i=units.length-1; i>=0; i--) {
+	        decimal = Math.pow(1000, i+1);
+
+	        if(num <= -decimal || num >= decimal) {
+	            return +(num / decimal).toFixed(digits) + units[i];
+	        }
+	    }
+    	return num;
 	};
 
-	function addsuffix (m) {
+	var minutesToDays = function( total_seconds ){
+		if(typeof total_seconds !== 'number')  return total_seconds;
+		var hrs = '<span class="time-char-format">h</span>';
+		var mins= '<span class="time-char-format">m</span>';
+		var secs= '<span class="time-char-format">s</span>';
+		var h   = Math.floor(total_seconds / 3600);
+        var min = Math.floor((total_seconds / 60) % 60);
+        var sec = Math.floor(total_seconds % 60);
+        return total_seconds > 3600 ? (h + hrs +' '+min + mins) : (min + mins +' '+sec + secs );
+	};
+
+	var addsuffix = function (m) {
 		if(typeof m !== 'number')  {
 			return m;
 		} else {
-			return m + '%';
+			return m + '<span class="time-char-format">%</span>';
 		}
-	}
+	};
 %>
 
 <%if (data && data.length>0) { %>
 	<% for (i=0; i<data.length; i++) { %>
 		<tr class="<%if (i%2 == 0) { %>even<% } else{ %>odd<% } %>">
-			<td><%= data[i]['resolved_tickets'] %></td>
-			<td><%= data[i]['reopened_tickets'] %></td>
+			<td><%= formattingNumber(data[i]['resolved_tickets'],2) %></td>
+			<td><%= formattingNumber(data[i]['reopened_tickets'],2) %></td>
 			<% if (report == 'agent') { %>
-				<td><%= data[i]['agent_reassigned_tickets'] %></td>
+				<td><%= formattingNumber(data[i]['agent_reassigned_tickets'],2) %></td>
 			 <% } else { %>  
-				 <td><%= data[i]['group_reassigned_tickets'] %></td>
+				 <td><%= formattingNumber(data[i]['group_reassigned_tickets'],2) %></td>
 			<% } %>
 			<td><%= addsuffix(data[i]['response_sla']) %></td>
 			<td><%= addsuffix(data[i]['resolution_sla']) %></td>
 			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
 			<td><%= addsuffix(data[i]['fcr_tickets']) %></td>
-			<td><%= data[i]['private_notes'] %></td>
-			<td><%= data[i]['responses'] %></td>
+			<td><%= formattingNumber(data[i]['private_notes'],2) %></td>
+			<td><%= formattingNumber(data[i]['responses'],2) %></td>
 			<td><%= minutesToDays( data[i]['avg_first_response_time'] ) %></td>
 			<td><%= minutesToDays( data[i]['avg_response_time'] ) %></td>
 			<td><%= minutesToDays( data[i]['avg_resolution_time'] ) %></td>

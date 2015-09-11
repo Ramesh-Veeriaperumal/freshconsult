@@ -16,7 +16,7 @@ module FormBuilders::Redactor
       }
 
       REDACTOR_SOLUTION_EDITOR = {
-        :autoresize => false,
+        :autoresize => true,
         :tabindex => 2,
         :convertDivs => false,
         :allowTagsInCodeSnippet => true,
@@ -66,7 +66,7 @@ module FormBuilders::Redactor
 
       def rich_editor_tag(name, content = nil, options = {})
         id = options[:id] = options[:id] || field_id( name )
-        content = options[:value] if options[:value].present?
+        content = options[:value] unless options[:value].nil?
 
         redactor_opts = redactor_type options['editor-type']
 

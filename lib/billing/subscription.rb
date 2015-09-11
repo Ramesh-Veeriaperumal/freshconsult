@@ -208,7 +208,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
 
     def extend_trial(subscription)
-      return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial? and subscription.next_renewal_at > Time.now
+      return retrieve_subscription(subscription.account_id).subscription.trial_end if subscription.trial?
         
       1.hour.from_now.to_i if subscription.suspended? and subscription.card_number.blank?
     end

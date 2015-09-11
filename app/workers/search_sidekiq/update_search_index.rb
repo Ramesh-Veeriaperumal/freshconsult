@@ -4,10 +4,7 @@ class SearchSidekiq::UpdateSearchIndex < SearchSidekiq::BaseWorker
     args.symbolize_keys!
     @update_item = args[:klass_name].constantize.find_by_id(args[:id])
     unless @update_item.blank?
-      Search::EsIndexDefinition.es_cluster(@update_item.account_id)
-      @update_item.class.index_name @update_item.search_alias_name
-      @update_item.tire.update_index_es if Tire.index(@update_item.search_alias_name).exists?
-
+      send_to_es(@update_item)
       handle_multiplexing if @update_item.is_a?(Solution::Article) and @update_item.account.features_included?(:es_multilang_solutions)
     end
     ensure
@@ -22,10 +19,7 @@ class SearchSidekiq::UpdateSearchIndex < SearchSidekiq::BaseWorker
     locale_alias = Search::EsIndexDefinition.searchable_aliases([Solution::Article], 
                                                                   @update_item.account_id, 
                                                                   { :language => lang })
-    if(locale_alias != @update_item.search_alias_name)
-      @update_item.class.index_name locale_alias
-      @update_item.tire.update_index_es if Tire.index(locale_alias).exists?
-    end
+    send_to_es(@update_item, locale_alias) if (locale_alias != @update_item.search_alias_name)
   end
 
 end
