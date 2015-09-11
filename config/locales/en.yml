@@ -3606,6 +3606,8 @@ en:
     all_categories: All Categories
     currently_viewing: "Currently viewing %{portal_name} categories"
     add_category: New Category
+    edit_category: Edit Category
+    edit_folder: Edit Folder
     orphan: Orphan
     add_folder: New Folder
     add_article: New Article

@@ -4,13 +4,15 @@ class Solution::FoldersController < ApplicationController
   helper AutocompleteHelper
   helper SolutionHelper
   helper Solution::ArticlesHelper
+  include Solution::LanguageControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:new, :show, :edit, :update, :destroy, :create]
-  before_filter :fetch_new_category, :only => [:update, :create]
-  before_filter :set_customer_folder_params, :validate_customers, :only => [:create, :update]
+  before_filter :load_category, :only => [:new, :show, :edit, :destroy, :create]
+  before_filter :fetch_new_category, :only => [:create]
+  before_filter :load_meta, :only => [:edit, :update]
+  before_filter :set_customer_folder_params, :validate_customers, :only => [:create]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
   before_filter :bulk_update_category, :only => [:move_to, :move_back]
@@ -45,15 +47,19 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    @folder = current_account.folders.find(params[:id])
-    @page_title = @folder.name      
-    @customer_id = @folder.customer_folders.collect { |cf| cf.customer_id.to_s }
+    @folder = @folder_meta.send(language_scoper)
+    @primary = @folder_meta.primary_folder
+    @folder = current_account.solution_folders_without_association.new unless @folder
+    @customer_id = @folder_meta.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
-      if @folder.is_default?
+      if @folder_meta.is_default?
         flash[:notice] = I18n.t('folder_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-         format.html { render :layout => false if @modal }
+         format.html { render :layout => false,
+                              :locals => {
+                                :language_id => params[:language_id]
+                              }  if @modal }
       end
       format.xml  { render :xml => @folder }
     end
@@ -79,15 +85,14 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
-    @folder = @category.folders.find(params[:id])
-
-    @folder.category_id = @new_category.id
+    @folder = Solution::Builder.folder(params)
     
     respond_to do |format|     
-      if @folder.update_attributes(params[nscname])       
+      if @folder
         format.html do 
           redirect_to solution_folder_path(@folder.id)
         end
+        format.js { render 'update', :formats => [:rjs] }
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else
@@ -136,7 +141,16 @@ class Solution::FoldersController < ApplicationController
   
   def reorder_redirect_url
     solution_category_url(params[:category_id])
-  end  
+  end
+
+  def meta_scoper
+    current_account.solution_folder_meta
+  end
+
+  def load_meta
+    @folder_meta = meta_scoper.find_by_id(params[:id])
+    @category_meta = @folder_meta.solution_category_meta
+  end 
   
   def cname #possible dead code
     @cname ||= controller_name.singularize

@@ -244,9 +244,12 @@
       @include margin-right(10px);
       display: inline-block;
       @include float(left);
+      &.ficon-cube{
+        background-color: #B5C8EB;
+      }
     }
 
-    .ficon-folder, .ficon-cube {
+    .ficon-folder{
       background-color: #B5C8EB;
     }
 

@@ -1,7 +1,7 @@
 module ConfirmDeleteHelper
 
 	SUPPORTED_DIALOGS = [
-		"Solution::Category", "Solution::Folder", "Solution::Article", 
+		"Solution::CategoryMeta", "Solution::FolderMeta", "Solution::ArticleMeta",
 		"Forum", "ForumCategory", "Topic", "Portal"
 	]
 
@@ -51,17 +51,17 @@ module ConfirmDeleteHelper
 		t('delete_confirm.confirm_title', :item_type => t("deletion_titles.#{item.class.name.parameterize.underscore}"))
 	end
 
-	def solution_article_delete_message(article)
+	def solution_articlemeta_delete_message(article)
 		t('solution.info8')
 	end
 
-	def solution_folder_delete_message(folder)
+	def solution_foldermeta_delete_message(folder)
 		t('folder.delete_confirm', :count => folder.articles.size)
 	end
 
-	def solution_category_delete_message(category)
-		return t('solution_category.info1') if (category.folders.size == 0) && (category.articles.size == 0)
-		t('solution_category.delete_confirm', :folders => category.folders.size, :articles => category.articles.size)
+	def solution_categorymeta_delete_message(category)
+		return t('solution_category.info1') if (category.solution_folder_meta.size == 0) && (category.solution_article_meta.size == 0)
+		t('solution_category.delete_confirm', :folders => category.solution_folder_meta.size, :articles => category.solution_article_meta.size)
 	end
 
 	def topic_delete_message(topic)

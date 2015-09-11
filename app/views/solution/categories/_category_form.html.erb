@@ -9,12 +9,14 @@
 											:autofocus => true,
 											:value => @category.name,
 											:name => "#{name}[name]" %>
+			<%= primary_preview(@primary, :name) if @primary != @category %>
 		</div>
 	</div>
 	<div class="control-group">
 		<%= f.label(:description, t('description'), {:class =>'control-label'}) %>
 		<div class="controls">
 			<%= f.text_area :description, :rows => 7, :value => @category.description, :name => "#{name}[description]" %>
+			<%= primary_preview(@primary, :description) if @primary != @category %>
 		</div>
 	</div>
 	<% if current_account.portals.count > 1 %>

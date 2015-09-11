@@ -232,35 +232,34 @@ module SolutionHelper
 
 	def language_flags(solution_meta)
 		content = ""
-		category = solution_meta.class.name.chomp('Meta').gsub("Solution::", '').downcase
 		Account.current.supported_languages.each do |lan|
 			language = Language.find_by_code(lan)
-			version = solution_meta.send("#{lan.gsub('-','_').downcase}_#{category}")
-			case category.to_sym
-				when :category
-					content << language_icon_category(solution_meta, version, language)
-				when :folder
-				when :article
-				else
-			end
+			version = solution_meta.send("#{language.to_key}_#{solution_meta.class.short_name}")
+			content << language_icon(solution_meta, version, language)
 		end
 		content.html_safe
 	end
 
-	def language_icon_category(solution_meta, version, language)
+	def language_icon(solution_meta, version, language)
+		category = solution_meta.class.short_name
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
-			edit_solution_category_path(solution_meta, :language_id => language.id),
+			send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 			:rel => "freshdialog",
 			:class => "language_icon #{'active' if version.present?} tooltip",
 			:title => language.name,
 			:id => "version-#{solution_meta.id}-#{language.id}",
 			:data => {
 				"destroy-on-close" => true,
-				"modal-title" => "#{t('solutions.edit')}<span class='label pull-right'>#{language.name}</span>",
+				"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
 				"target" => "#version-#{solution_meta.id}",
 				"close-label" => t('cancel'),
 				"submit-label" => t('save')
 			})
+	end
+
+	def primary_preview(primary, identifier)
+		"<b>#{Language.for_current_account.name}:</b>
+		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
 	end
 end

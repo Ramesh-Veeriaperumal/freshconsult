@@ -1,31 +1,46 @@
 <ul id="folder-form-container" class="form-horizontal">  
-    <%= f.error_messages %>
+  <div id="error_messages"><%= f.error_messages %></div>
 	<li class="control-group">
     	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
     	<div class="controls">
     		<%= f.text_field :name,
                          :class => "required",
                          :autocomplete => "off",
-                         :autofocus => true %>
+                         :autofocus => true,
+                         :name => "#{name}[name]" %>
+				<%= primary_preview(@primary, :name) if @primary != @folder %>
     	</div>
 	</li>
 	<li class="control-group">
 		<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
 		<div class="controls">
-	 		<%= f.text_area :description, :class => "smallpara" %>
+	 		<%= f.text_area :description, 
+	 										:class => "smallpara",
+	 										:name => "#{name}[description]" %>
+	 		<%= primary_preview(@primary, :description) if @primary != @folder %>
 	 	</div>
 	</li>  
 	<li class="control-group">
 		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
-	 		<%= f.select :category_id, current_account.solution_categories.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-large" } %>
+			<% if @category_meta.send("#{@language.to_key}_category").present? %>
+				<%= @category_meta.send("#{@language.to_key}_category").name %>
+			<% else %>
+				<%= f.text_field :category_name,
+                         :class => "required",
+                         :autocomplete => "off",
+                         :autofocus => true,
+                         :name => "#{name}[category_name]" %>
+				<%= primary_preview(@category_meta.primary_category, :name) %>
+			<% end %>
 	 	</div>
 	</li>
 	<li class="companies_select control-group">
   	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
   	<div class="controls">
+  		<% if @primary == @folder %>
   		<div class="row-fluid">
-	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large" } %>
+	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]", :selected => @folder_meta.visibility } %>
     	</div>
     	<br>
     	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
@@ -35,6 +50,10 @@
 								:dom_id => "folder_customers"
 				}) %>
 			</div>
+			<% else %>
+				<%= company_visibility_tooltip(@folder_meta) %>
+			<% end %>
   	</div>
   </li>
+  <%= f.hidden_field :id, :name => "solution_folder_meta[id]", :value => @folder_meta.id if @folder_meta %>
 </ul>

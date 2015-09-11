@@ -14,6 +14,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true
 
+	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :through => :solution_folder_meta
+
 	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory', 
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :delete_all

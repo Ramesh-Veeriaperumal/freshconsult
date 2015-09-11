@@ -32,7 +32,7 @@ class Solution::Object
 	private
 	
 	def meta_params	
-		@meta_params_found ||= @params.slice(META_ATTRIBUTES[obj])
+		@meta_params_found ||= @params.slice(*META_ATTRIBUTES[obj])
 	end
 	
 	def primary_params
@@ -73,7 +73,7 @@ class Solution::Object
 
 	def assign_meta_attributes
 		META_ATTRIBUTES[@obj].each do |attribute|
-			@meta_obj[attribute] = meta_params[attribute]
+			@meta_obj[attribute] = meta_params[attribute] if meta_params[attribute].present?
 		end
 		@meta_obj.account_id = Account.current.id
 		@meta_obj.is_default = false if @meta_obj.respond_to?(:is_default)

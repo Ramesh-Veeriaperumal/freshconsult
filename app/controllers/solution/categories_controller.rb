@@ -62,6 +62,7 @@ class Solution::CategoriesController < ApplicationController
 
   def edit
     @category = @category_meta.send(language_scoper)
+    @primary = @category_meta.primary_category
     @category = current_account.solution_categories.new unless @category
     respond_to do |format|
       if @category_meta.is_default?
@@ -190,7 +191,7 @@ class Solution::CategoriesController < ApplicationController
 
     def load_category_with_folders
       #META-READ-HACK!!
-      @category = account_scoper.find_by_id!(params[:id], :include => { meta_folder_scope => [:customers]})
+      @category = meta_scoper.find_by_id!(params[:id], :include => { :solution_folder_meta => [:solution_folders]})
     end
 
     def set_modal

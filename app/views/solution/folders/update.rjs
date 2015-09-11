@@ -1,0 +1,6 @@
+if @folder.errors.empty?
+	page << "jQuery('#version-#{@folder.parent_id}-#{@folder.language_id}').addClass('active');"
+	page << "jQuery('#version-#{@folder.parent_id}').modal('hide');"
+else
+	page.replace_html :error_messages, "#{error_messages_for :folder}"
+end

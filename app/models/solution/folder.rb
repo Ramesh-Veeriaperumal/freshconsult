@@ -228,7 +228,7 @@ class Solution::Folder < ActiveRecord::Base
     end
 
     def backup_category
-      @category_obj = Account.current.launched?(:meta_read) ? category.solution_category_meta : category
+      @category_obj = solution_category_meta
     end
 
     def visibility_updated?

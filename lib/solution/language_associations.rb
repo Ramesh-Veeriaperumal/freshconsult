@@ -9,6 +9,7 @@ module Solution::LanguageAssociations
         :conditions => { language_id: lang.id },
         :class_name => base_class, 
         :foreign_key => :parent_id, 
+        :readonly => false, 
         :autosave => true
     end
     
@@ -16,6 +17,7 @@ module Solution::LanguageAssociations
       :conditions => proc { { language_id: Language.for_current_account.id } },
       :class_name => base_class, 
       :foreign_key => :parent_id, 
+      :readonly => false,
       :autosave => true
       
     delegate :name, :description, :title, :to => :"primary_#{base_name}"
@@ -23,6 +25,10 @@ module Solution::LanguageAssociations
     def self.translation_associations
       base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
       (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| :"#{s}_#{base_name}"}
+    end
+
+    def self.short_name
+      self.name.chomp('Meta').gsub("Solution::", '').downcase
     end
     
     scope :include_translations, lambda {

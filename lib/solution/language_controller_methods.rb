@@ -9,7 +9,7 @@ module Solution::LanguageControllerMethods
 	end
 
 	def language_scoper
-		@language_scoper ||= "#{language.to_key}_#{short_name}"
+		@language_scoper ||= (language == Language.for_current_account ? "primary_#{short_name}" : "#{language.to_key}_#{short_name}")
 	end
 
 end

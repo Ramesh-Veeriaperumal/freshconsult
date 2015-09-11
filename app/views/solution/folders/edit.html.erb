@@ -2,8 +2,17 @@
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<h3 class="lead itil-hide"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
 <% end %>
-<%= form_for (@folder), :url => solution_category_folder_path(@folder.category_id, @folder) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
-	<%= render :partial => "folder_form" , :locals => { :f => f }%>
+<%= form_for @folder, :url => solution_folder_path(@folder_meta), 
+						:html => {
+							:remote => true,
+							:method => :put,
+							:"data-type" => "script", 
+							:id => "version-form-#{@folder_meta.id}", 
+							:class => "validate_form version_form", 
+							:rel => :validate
+						} do |f| %>
+	<%= render :partial => "folder_form" , :locals => { :f => f, :name => "solution_folder_meta[#{@language_scoper}]" }%>
+	<%= hidden_field_tag :language_id, language_id %>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<div class="pull-left">
