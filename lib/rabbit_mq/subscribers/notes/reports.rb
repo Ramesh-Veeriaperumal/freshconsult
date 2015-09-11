@@ -59,7 +59,7 @@ module RabbitMq::Subscribers::Notes::Reports
     end
     
     def note_valid?(action)
-      return false if !human_note_for_ticket? || feedback? || (user.customer? && replied_by_third_party?)
+      return false if notable.archive || !human_note_for_ticket? || feedback? || (user.customer? && replied_by_third_party?)
       non_archive_destroy?(action) || (create_action?(action) && selected_note_kinds)
     end
     

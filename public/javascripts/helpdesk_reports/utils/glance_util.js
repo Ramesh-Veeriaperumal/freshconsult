@@ -22,15 +22,20 @@ HelpdeskReports.ReportUtil.Glance = (function () {
         },
         actions: {
             submitReports: function () {
+                var prev_metric = HelpdeskReports.locals.active_metric;
                 _FD.setActiveMetric(_FD.constants.default_metric);
+                
                 var flag = _FD.core.refreshReports();
                 
                 if(flag) {
                     _FD.setGroupByInParams();
                     _FD.core.resetAndGenerate();
+                } else {
+                    _FD.actions.setDefaultOnFail(prev_metric);
                 }
             },
             submitActiveMetric: function (active) {
+                var prev_metric = HelpdeskReports.locals.active_metric;
                 var active_metric = jQuery(active).data('metric');
                 _FD.setActiveMetric(active_metric);
 
@@ -42,7 +47,13 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     jQuery('li[data-metric="'+ active_metric +'"]').addClass('active');
                     jQuery('#glance_chart_wrapper .loading-bar').removeClass('hide');
                     _FD.constructRightPaneParams(active_metric);
+                } else {
+                    _FD.actions.setDefaultOnFail(prev_metric);
                 }
+            },
+            setDefaultOnFail: function (metric) {
+                _FD.setActiveMetric(metric);
+                HelpdeskReports.locals.ajaxContainer = false;
             },
             submitCustomField: function (active) {
                 var val  = jQuery(active).select2('val');
@@ -94,7 +105,6 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     HelpdeskReports.locals.ajaxContainer = false;
                 },
                 error: function (data) {
-                    console.log(data);
                     HelpdeskReports.locals.ajaxContainer = false;
                 }
             }

@@ -417,16 +417,16 @@
 	top: 12em;
 }
 .helpkit-glance{
-	display: table;
 	width: 100%;
 	margin-top: 20px;
 	border-radius: 5px;
 	border: 1px solid #F0F0F0;
 	position: relative;
 	overflow: hidden;
+	background-color: #f8f8f8;
 	.ticket-metrics{
-		display: table-cell;
-		width: 190px;
+		width: 220px;
+		@include float(left);
 		vertical-align: top;
 		background: #f8f8f8;
 		height: 100%;
@@ -439,13 +439,16 @@
 				background: #f8f8f8;
 				@include box-sizing(border-box);
     				.metrics-content{
-    					width: 186px;
     					@include padding(15px);
+    					@include border-right(1px solid #eee);
     				}
 				&.active{
 					background: #fff;
 					.active-indicator{
 						background-color: #171717;	
+					}
+					.metrics-content{
+						@include border-right(0);	
 					}
 				}
 				&.disabled{
@@ -462,6 +465,9 @@
 			font-size: 20px;
 			color: #6B6B6B;
 			font-weight: 500;
+		}
+		.time-char-format {
+			font-size: 12px;
 		}
 		.status-symbol{
 			  margin-left: 4px;
@@ -485,13 +491,68 @@
 			position: absolute;
 			top: 0;
 		}
+		.active-indicator{
+			width: 4px;
+			height: 100%;
+			background: #f8f8f8;
+			position: absolute;
+			top: 0;
+		}
 	}
 	.glance-chart-wrapper{
-		margin: 10px 0 0;
-		vertical-align: top;
 		position: relative;
-		display: table-cell;
-		width: auto;
+		@include margin-left (200px);
+		background-color: #fff;
+		.loading-bar{
+			height: 100%;
+			position: absolute;
+			top: 0;
+			width: 100%;
+    		.spinner{
+			@include left(15px !important);
+			top: 8px !important;
+    		}
+		}
+		.glance-chart{
+			padding: 20px;
+			.chart-container{
+				width: 48%;
+				margin-right: 1%;
+				display: inline-block;
+				border-top: solid 2px #B7B7B7;
+				padding: 10px 0 20px;
+				vertical-align: top;
+				.half-container{
+					padding: 10px 10px;
+				}
+				.title{
+					font-size: 15px;
+					color: #333333;
+					padding:3px 10px 7px;
+					font-weight: 500;
+				}
+				.select2-container{
+					width: 175px;
+				}
+				.view-more{
+					float: right;
+				    margin-right: 20px;
+				    color: #0066CC;
+				    font-size: 13px;
+				    display: none;
+				    &.active{
+				   		display: inline;
+				   		cursor: pointer;
+				   	}
+				}
+			}
+		}
+	}
+	.glance-chart-wrapper{
+		position: relative;
+		@include margin-left(220px);
+		background-color: #fff;
+		min-height: 800px;
 		.loading-bar{
 			height: 100%;
 			position: absolute;
@@ -571,6 +632,22 @@
 		}
 		.trend-type{
 			margin: 20px 0 0;
+		}
+	}
+	.full-chart-container{
+		margin: 30px 0;
+		border-top: solid 2px #B7B7B7;
+		.title{
+			font-size: 15px;
+			color: #333333;
+			padding:1px 0 7px;
+			font-weight: 500;
+		}
+		.chart-wrapper {
+			padding: 25px 0;
+		}
+		.header-perf{
+			margin: 15px 0 0;
 		}
 	}
 	.pointer{
@@ -667,6 +744,9 @@
 						border-bottom: 1px solid #E5E4E4;
 						p{
 							margin: 0;
+						}
+						.time-char-format {
+							font-size: 11px;
 						}
 					}
 			 	 }
