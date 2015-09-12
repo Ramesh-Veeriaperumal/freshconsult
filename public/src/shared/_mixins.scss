@@ -1,0 +1,41 @@
+
+// Formatting used for solutions in Portals as well - Copied from there directly.
+@mixin portal-text-formatting(){
+    font-size: 13px;
+    p, li, div{ 
+      font-size: 13px;
+      line-height: 18px;
+      margin:0;
+    }
+    code, pre, p, li, div{ 
+      word-break: normal;
+      word-wrap: break-word;
+    }              
+    pre {
+      white-space: pre-wrap;       /* css-3 */
+      white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    }
+    h1 {font-size: 2em}
+    h2 {font-size: 1.5em}
+    h3 {font-size: 1.17em}
+    h4 {font-size: 1em}
+    h5 {font-size: .83em}
+    h6 {font-size: .75em}
+    
+    h1,h2,h3,h4,h5,h6 { font-weight: bold; line-height: 165%;} /* For compat with User Agent's stylesheet */
+    
+    img, iframe { border:0; max-width: 100%; }
+    table { cursor:default; border:1px solid #afafaf; } 
+    table td, table th {cursor:text; font-size: inherit; font-size: 13px; border:1px solid #afafaf; padding: 4px; }
+    table th { font-weight: bold;}
+    table { width: auto; }
+    em{ font-style:italic; }
+    ins {border-bottom:1px solid green; text-decoration: none; color:green}
+    cite {border-bottom:1px dashed blue}
+    acronym {border-bottom:1px dotted #CCC; cursor:help}
+    abbr {border-bottom:1px dashed #CCC; cursor:help}
+    ol, ul{ @include margin(8px 0 4px 0); @include padding(0 0 0 40px); line-height: 17px;}
+    ul{ list-style:disc outside;  }
+    blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; @include border-left(1px dotted #999); @include padding(6px 6px 1px 1em); }
+    del{ text-decoration:none; }
+}

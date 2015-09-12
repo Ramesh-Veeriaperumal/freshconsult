@@ -7,26 +7,34 @@ module HelpdeskReports
       # def execute_non_archive_query(ticket_ids)
       ["non_archive", "archive"].each do |type|
         define_method("execute_#{type}_query") do |ticket_ids|
-           send("#{type}_tickets",ticket_ids)
+          Sharding.run_on_slave { send("#{type}_tickets",ticket_ids) }
         end
       end
       
       def non_archive_tickets(ticket_ids)
         tickets = []
-        Account.current.tickets.includes(associations_include).where(id: ticket_ids).find_in_batches do |tkts|
+        Account.current.tickets.includes(ticket_associations_include).where(id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
           tickets << tkts
         end
         tickets.flatten
       end
       
       def archive_tickets(ticket_ids)
-        # Handle for archive case when it comes @ARCHIVE
-        []
+        tickets = []
+        Account.current.archive_tickets.includes(archive_associations_include).where(id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
+          tickets << tkts
+        end
+        tickets.flatten
       end
       
-      def associations_include
-        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :schema_less_ticket, :group, :responder, :tags ]
+      def ticket_associations_include
+        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
       end
+      
+      def archive_associations_include
+        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
+      end
+      
     end
   end
 end

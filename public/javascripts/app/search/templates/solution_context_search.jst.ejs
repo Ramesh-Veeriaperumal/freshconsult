@@ -1,0 +1,37 @@
+<li class="comm-item">
+  <div class="vertical-alignment reorder-content row-fluid">
+    <div class="row-fluid clear-left-margin">
+      <div class="span3 pull-right text-right article-search-meta">
+        <span class="span3 align-left meta-component  <%= views == 0 ? 'faded' : '' %> ">
+          <i class="ficon-file-visible fsize-18 " size="18"></i>
+          <%= views %>
+        </span>
+        <span class="span3 align-left meta-component <%= up_votes == 0 ? 'faded' : '' %> ">
+          <i class="ficon-like fsize-18 " size="18"></i>
+          <%= up_votes %>
+        </span>
+        <span class="span3 align-left meta-component <%= down_votes == 0 ? 'faded' : '' %>">
+          <i class="ficon-dislike fsize-18 " size="18"></i>
+          <%= down_votes %>
+        </span>
+      </div>
+  
+      <div class="span6 comm-item-main clear-left-margin">
+      	<i class="ficon-book-hollow fsize-16 article-icon" size="16"></i>
+        <div class="comm-item-title ellipsis tooltip">
+        	<a href="<%= path %>" data-pjax="#body-container"><%= title %></a>
+        </div>
+        <div class="comm-item-details muted">
+        	<%if (ARTICLE_SEARCH_FROM_FOLDER) { %>
+          	<%= SEARCH_RESULT_LANG["by"] %> 
+          	<%= user_name %> , 
+          <% } else { %>
+          	<%= SEARCH_RESULT_LANG["in"] %> 
+          	<%= folder_name %> , 
+          <% }%>
+          <%= info %>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>

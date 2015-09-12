@@ -1,36 +1,43 @@
-<div class="folder-2col">
-	<div class="folder_section" id="folder-section">
-		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item } %>
-		<% if privilege?(:manage_solutions) %>
-			<%= render :partial => "/shared/reorder_list", :locals => { :items => @item.folders.visible(current_user), :action_url => reorder_solution_category_folders_path(@item), :title => :name, :container_id => "folder_sort", :reorder_id => "folder_reorder_button", :list_id => "folder_list"} %>
-			<span class="seperator"></span>
-			<div class="alignright">
-				<%= link_to t('reorder'), '#', :id => "folder_reorder_button", :class => "button" unless(@item.folders.visible(current_user).size <= 1)%>
-			</div>
-		<% end %>	
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sticky_title do %>
+	<%= render :partial => 'title_bar' %>
+	<div class="bulk-actions-bar">
+		<%= render :partial => 'edit_bar' if privilege?(:manage_solutions) && @category.folders.present? %>
 	</div>
-	<div class="artical_section" id="article-section"> 
-		<div class="crumbs">
-			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-			<%= content_tag(:span, h(@item.name) ) %>
-			<%= preview_portal(support_solution_path(@item), @item) %>	
-		</div>
-		<div class="search-grey-box search-page">
-			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.name)), :url => "/search/solutions?category_id=#{@item.id}&term=" } %>
-		</div>
-		<% unless (@item.folders.size == 0) %>	
-  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
-		<% else %>
-			<span class="info_data"><%= t("solution_category.info2") %></span> 
-      <% if privilege?(:publish_solution) %> -  
-        <%= link_to t('add_a_new_folder'), new_solution_category_folder_path(@item) %> 
-      <%end%>
-		<% end %>	
-	</div> 
-</div>
+<% end %>
+<% content_for :sticky_right do %>
+	<%= preview_portal(support_solution_path(@category), @category) %>
+<% end %>
+<%= render :partial => '/solution/shared/sticky', :locals => { :page => :category, :sticky_class => "sol-sticky category-sticky",
+												:search_url => "/search/solutions?category_id=#{@category.id}&term=" } %>
 
-<%= javascript_tag do -%>
-  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
-    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
-<%- end %>
-<% content_for :layoutType do -%>antipattern<%- end %>
+<% if @category.folders.blank? %>
+	<div class="no-data">
+		<%= t('solution_category.info2') %>
+		<div class="mt20">
+			<% if privilege?(:manage_solutions) %>
+				<%= link_to(
+							t("solution.add_folder"),
+							new_solution_folder_path(:category_id => @category.id),
+							:class => "btn btn-primary",
+							:rel => "freshdialog",
+							:title => t("solution.add_folder"),
+							"data-target" => "#folder-new",
+							"data-close-label" => t('cancel'),
+							"data-submit-label" => t('save'))  %>
+			<% end %>
+		</div>
+	</div>
+
+<% else %>
+	<%= render :partial => '/solution/shared/search_container' %>
+	<div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
+		<%= form_for @category.folders, :url => reorder_solution_folders_path(:category_id => @category.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+		  <input name="reorderlist" type="hidden" value="" />
+		  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
+		  <ul class="row-fluid" rel="sortlist" id="folders_list">
+				<%= render(:partial => "folder", :collection => @category.folders) %>
+			</ul>
+		<% end %>
+	</div>
+<% end %>

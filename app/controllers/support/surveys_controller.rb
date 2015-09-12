@@ -51,13 +51,13 @@ class Support::SurveysController < ApplicationController
   protected
     def load_handle
       @survey_handle = current_account.survey_handles.find_by_id_token(params[:survey_code])
-      send_error if @survey_handle.blank? || archived_ticket_link
+      send_error if @survey_handle.blank? || @survey_handle.surveyable.blank? || archived_ticket_link
     end
     
     def send_error
       if @survey_handle.blank?
         flash[:notice] = I18n.t('support.surveys.feedback_already_done')
-      elsif archived_ticket_link
+      elsif @survey_handle.surveyable.blank? || archived_ticket_link
         flash[:notice] = I18n.t('support.surveys.survey_closed')
       end
       redirect_to root_path
@@ -74,7 +74,7 @@ class Support::SurveysController < ApplicationController
     end
 
     def archived_ticket_link
-      current_account.features?(:archive_tickets) and 
+      @survey_handle.surveyable and current_account.features?(:archive_tickets) and 
           @survey_handle.surveyable.is_a?(Helpdesk::ArchiveTicket)
     end
     

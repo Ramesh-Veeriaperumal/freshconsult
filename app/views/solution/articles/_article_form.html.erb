@@ -1,132 +1,102 @@
-<%= f.error_messages %>
-<div class="form-horizontal">
-	<div class="control-group">
-		<%= f.label(:title, t('title'),:class =>"control-label") %>
-		<div class="controls">
-			<%= f.text_field :title, :class => "text required input-xxlarge", :autofocus => true %>
-		</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", :class => "required"  %>
-		</div>
-	</div>
-	<div class="control-group overflow-visible">
-		<div class="controls">
-			<%= render	:partial => "/solution/shared/attachment_form",
- 				:locals => { :attach_id => 'article', :nsc_param => 'solution_article',
- 					:original_attachments => { :cloud_files => @article.cloud_files, 
- 																		 :regular => @article.attachments }
- 				} %>
-		</div>
-	</div>
-	<% if is_application_installed?("screenr") %>
-		<div class="control-group">
-			<div class="controls">
-				  <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
-			</div>
+<div class="article-edit <%= 'hide' unless @article.new_record? %>">
+  <%= form_for @article, 
+              :url => @article.new_record? ? solution_articles_path : solution_article_path(@article.id), 
+              :html => {
+                :multipart => true, 
+                :id => "article-form", 
+                :class => "article-edit-form form-horizontal",
+                :data => form_data_attrs
+              } do |f| %>
+    <%= f.error_messages %>
+    <div class="row-fluid">
+      <div class="span12">
+        <%= f.text_field :title, 
+                :class => "text required article-title solution-placeholder", 
+                :autocomplete => "off",
+                :placeholder => t('solution.solution_title'),
+                :autofocus => true,
+                :minlength => 3,
+                :maxlength => 240,
+                :value => (@article.new_record? ? @article.title : '') %>
+    
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="editor-body">
+        <%= f.text_area  :description, 'editor-type' => :solution, :height => "400px", 
+              :class => "required_redactor", 
+              :value => (@article.new_record? ? @article.description : ''),
+              :data => {
+                :"remove-cursor" => true,
+                :"toolbar-external" => '#sticky_redactor_toolbar'
+              }
+        %>
+      </div>
+    </div>
+    
+    <% if @article.draft.present? %>
+      <input type="hidden" 
+          name="previous_author" value="<%= @article.draft.user.id %>">
+      <input type="hidden" 
+          name="original_updated_at" value="<%= @article.draft.modified_at %>">
+      <input type="hidden" name="last_updated_at" 
+          value="<%= @article.draft.updation_timestamp %>" id="last-updated-at">
+    <% end %>
+    <input type="hidden" name="cancel_draft_changes" 
+          value="1" id="cancel_draft_changes_input" disabled="disabled">
+    <hr />
+    <%= render	:partial => "/solution/shared/attachment_form",
+        :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+          :original_attachments => { 
+            :cloud_files => active_attachments(:cloud_files, @article), 
+            :regular => active_attachments(:attachments, @article) }
+        } %>
+    <% if is_application_installed?("screenr") %>
+      <div class="control-group">
+        <div class="controls">
+            <%= render :partial => "shared/screenr_recorder", :locals => { :location => "solution" } %>
+        </div>
+  
+      </div>
+    <% end %>
 
-		</div>
-	<% end %>
-	<%= fields_for :tags  do |tag| %>
-		<div class="control-group row-fluid">
-			<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
-			<div class="controls">
-				<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 span8"%>
-			</div>
-		</div>
-	<%end%>
-	<div class="control-group">
-		<div class="controls">
-				<div class="pull-left">
-					<%= f.label :folder_id, t('solution.folder') %>
-					<%= f.select :folder_id , option_groups_from_collection_for_select(current_account.solution_categories, :folders ,:name, :id,:name,@article.folder_id) , :class => "select2" %>
-				</div>
-				<div class="pull-left span">
-					<%= f.label :art_type, t('solution.type') %>
-					<%= f.select :art_type, Solution::Article.article_type_option, :class => "select2" %>
-				</div>
-				<div class="pull-left span">
-					<%= f.label :status, t('solution.status') %>
-					<%= f.select :status, Solution::Article.article_status_option, :class => "select2" %>
-				</div>
-		</div>
-	</div>
-	<div id="solution-seo-container">
-		<div id="solution-seo-show" class="solution-seo-title sub-lead">
-			<div class="arrow-right  solution-seo-show" id="show-hide-button">
-			</div>
-			<a href="javascript:void(null);"><%= t('solution.solution_meta') %></a>
-		</div>
-		<br/>
-		<div id="solution-seo" class="hide">
-			<%= f.fields_for :seo_data  do |s| %>
-				<div class="control-group">
-					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
-					<div class="controls">
-						<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
-							'data-counter' => "TitleCounter", 'data-limit' => 72, 
-							:value => (@article.seo_data || {})[:meta_title] %>
+    <% if !@article.new_record? && @article.folder.is_default? %>
+      <div class="row-fluid select-folder">
+        <div class="control-group">
+          <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+          <div class="controls">
+            <%= f.select :folder_id , 
+                  option_groups_from_collection_for_select( 
+                      current_account.solution_categories.reject(&:is_default), 
+                      :folders, :name, :id, :name, 
+                      (@article.folder.is_default? ? nil : @article.folder_id )
+                  ), 
+                  { :include_blank => true },
+                  :class => "select2 span4 required",
+                  :placeholder => t('solution.folders.choose_folder')
+            %>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
-						<div class="muted">
-							<b><span id="TitleCounter"></span> <%= t('solution.char_count') %>.</b>
-							<%= t('solution.title_counter_message') %>
-						</div>
-					</div>
-				</div>
-				<div class="control-group">
-					<%= s.label(:meta_description, t('solution.solution_meta_description'), :class => 'control-label') %>
-					<div class="controls">
-			    		<%= s.text_area  :meta_description, :rel => "charcounter", 
-							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
-							:value => (@article.seo_data || {})[:meta_description], 
-							:class => "solution-seo-description" %>
-						<div class="muted">
-				    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
-				    		<%= t('solution.description_counter_message') %>
-		    			</div>
-		    		</div>
-		    	</div>
-				<div class="control-group">
-					<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
-					<div class="controls">
-						<%= s.text_field :meta_keywords, :class => "text", 
-							:value => (@article.seo_data || {})[:meta_keywords] %>
-						<div class="muted">
-							<%= t('solution.meta_keywords_message') %>
-						</div>
-					</div>
-				</div>
-			<% end %>
-		</div>
-	</div>
+    <% if @article.new_record? %>
+      <div id="solution-properties-container" class="article-properties-edit">
+          <div id="solution-properties">
+  	        <%= render :partial => "article_properties", :locals => { :f => f} %>
+          </div>
+      </div>
+    <% end %>
+    
+    <div class="row-fluid action-btns-container">
+      <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
+        <div class="pull-left itil-hide">
+          <%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+        </div>
+      <% end %>
+      <div class="span6 pull-right pagination-right header_buttons align-right">
+        <%= article_btns %>
+      </div>
+    </div>
+  <% end %>
 </div>
-	<%= javascript_tag do %>
-		(function($) {
-			$(document).ready(function() {
-				$('#solution-seo-show').bind("click", function(){
-					if($('#solution-seo').is(":visible")) {
-						$('#show-hide-button').addClass("arrow-right");
-						$('#show-hide-button').removeClass("arrow-down");
-					}
-					else {
-						$('#show-hide-button').removeClass("arrow-right");
-						$('#show-hide-button').addClass("arrow-down");
-					}
-					
-					$('#solution-seo').toggle('fast',function(){
-						$(window).scrollTop($('#solution-seo').offset().top);
-						$('#solution_article_seo_data_meta_title').focus();
-					});
-				});
-				$('#article-form').bind("submit", function() {
-					$('#solution_article_seo_data_meta_description').val(
-					$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
-				});
-				$("#tags_name").select2({  
-				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
-				  tokenSeparators: [',']
-				}); 
-			});
-		})(jQuery)
-	<% end %>

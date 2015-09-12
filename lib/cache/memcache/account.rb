@@ -154,6 +154,24 @@ module Cache::Memcache::Account
     key = FORUM_CATEGORIES % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
+  
+  def solution_categories_from_cache
+    MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
+      #META-READ-HACK!!
+      self.solution_categories.all(:conditions => {:is_default => false},:include => folder_scope_with_psc).collect do |cat|
+        {
+          :folders => cat.folders.map(&:as_cache),
+          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
+        }.merge(cat.as_cache).with_indifferent_access
+      end
+    end
+  end
+
+  def clear_solution_categories_from_cache
+    key = ALL_SOLUTION_CATEGORIES % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+  
 
   def sales_manager_from_cache
     if self.created_at > Time.now.utc - 3.days # Logic to handle sales manager change
@@ -203,5 +221,12 @@ module Cache::Memcache::Account
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
     end
 
-
+    #META-READ-HACK!!
+    def folder_scope_with_psc
+       unless Account.current.present? && Account.current.launched?(:meta_read)
+         return [:portal_solution_categories, :folders]
+       end
+       [ :portal_solution_categories_through_meta, :folders_through_meta ]
+    end
+    
 end

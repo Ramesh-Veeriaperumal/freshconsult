@@ -75,7 +75,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   	self.reports_hash.merge!("first_assign_by_bhrs" => first_assign_by_bhrs)
 	end
 	
-	def first_response_id=(note_id)
+	def set_first_response_id(note_id)
 		unless reports_hash.has_key?("first_response_id")
 			self.reports_hash.merge!("first_response_id" => note_id)
 			self.save

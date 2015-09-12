@@ -1,0 +1,38 @@
+<div class="solutions-widget-header">
+  <span class="ficon-file fsize-18 pr9"></span>
+  <div class="sidebar-dropdown">
+    <div data-tabs='tabs'>
+      <ul role="tablist">
+        <li class="dropdown">
+          <h5 class="dropdown-toggle" data-toggle="dropdown">
+            <span class="widget-filter drafts-filter-title">
+              <%= t('solution.sidebar.drafts.me') %>
+            </span>
+              <span class="caret"></span>
+          </h5>
+            <ul class="dropdown-menu tick" role="menu" aria-labelledby="dropdownMenu">
+              <li class="widget-filter">
+                <a class="item drafts-filter-me" href="#drafts-me" 
+                   data-hash-url="false" data-toggle="tab" ul_class="tick">
+                <%= t('solution.sidebar.drafts.me').html_safe %>
+                </a>
+              </li>
+              <li class="widget-filter drafts-filter-all">
+                <a class="item" href="#drafts-all" 
+                   data-hash-url="false" data-toggle="tab"  ul_class="tick" >
+                  <%= t('solution.sidebar.drafts.all').html_safe %>
+                </a>
+              </li>
+            </ul>
+        </li>
+      </ul>
+  </div>
+  </div>
+  <span class="lead lead-small">
+    <%= t('solution.sidebar.drafts.title').html_safe %>
+  </span>
+</div>
+<div class="tab-content">
+  <%= sidebar_drafts_list(@my_drafts,'drafts-me','active') %>
+  <%= sidebar_drafts_list(@drafts,'drafts-all') %>
+</div>

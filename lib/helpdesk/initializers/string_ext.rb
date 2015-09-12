@@ -4,6 +4,10 @@ class String
     return false  if self == false  || self.blank? || self =~ (/(false|f|no|n|0)$/i)
     raise ArgumentError.new("invalid value for Boolean: \"#{self}\"")
   end
+
+  def is_number?
+    true if Float(self) rescue false
+  end
 end
 
 # module StringExt

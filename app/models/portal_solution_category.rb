@@ -9,4 +9,24 @@ class PortalSolutionCategory < ActiveRecord::Base
 	acts_as_list :scope => :portal
 
 	delegate :name, :to => :solution_category
+
+  after_update :clear_cache, :if => :position_changed?
+
+  CACHEABLE_ATTRS = ["portal_id","position"]
+  
+  def position_changed?
+    self.changes.key?("position")
+  end
+
+
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
+  end
+
+  def clear_cache
+    account.clear_solution_categories_from_cache
+  end
+
 end

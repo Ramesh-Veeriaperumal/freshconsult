@@ -65,6 +65,7 @@ class Freshfone::Initiator::AgentCallLeg
 
   def disconnect
     current_call ||= current_account.freshfone_calls.find(params[:caller_sid] || params[:call]) # Needs refactoring
+    params[:CallStatus] = 'no-answer' if params[:AnsweredBy] == 'machine'
     @call_actions.update_agent_leg_response(params[:agent_id] || params[:agent], params[:CallStatus], current_call)
     @call_actions.update_external_transfer_leg_response(params[:external_number], params[:CallStatus], current_call) if params[:external_transfer].present? && params[:external_number].present?
     update_agent_last_call_at

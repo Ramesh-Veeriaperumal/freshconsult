@@ -1,15 +1,16 @@
-<% content_for :sidebar do -%>&nbsp;<%-end %>
-<h3 class="lead itil-hide"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
+<% unless @modal %>
+	<% content_for :sidebar do -%>&nbsp;<%-end %>
+	<h3 class="lead itil-hide"><%=t('folder.edit')%> <span class="info_data">"<%=@folder.name%>"</span> </h3>
+<% end %>
 <%= form_for (@folder), :url => solution_category_folder_path(@folder.category_id, @folder) , :html => {:multipart => true, :id => "folder-form"} do |f| %>
 	<%= render :partial => "folder_form" , :locals => { :f => f }%>
-	<div class="button-container align-right itil-hide">
-		<div class="pull-left">
-			
-			<%= confirm_delete(@folder, solution_category_folder_path(@folder.category, @folder)) %>
-
+	<% unless @modal %>
+		<div class="button-container align-right itil-hide">
+			<div class="pull-left">
+				<%= confirm_delete(@folder, solution_category_folder_path(@folder.category, @folder)) %>
+			</div>
+			<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "btn", :"data-dismiss" => "modal" ) %> 
+		  <%= submit_tag t('save'), :class => "btn btn-primary" %>	  
 		</div>
-		<%= link_to(t('cancel'), solution_category_url(@folder.category_id), :class => "btn" ) %> 
-	  <%= submit_tag t('save'), :class => "btn btn-primary" %>	  
-	</div>
-
+	<% end %>
 <% end %>

@@ -1,18 +1,14 @@
-<% content_for :sidebar do -%>&nbsp;<%-end %>
-<%= content_tag :h3, t('solution_category.new'), :class => "lead itil-hide" %>
+<% unless @modal %>
+	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :sidebar do -%>&nbsp;<%-end %>
+	<%= content_tag :h3, t('solution_category.new'), :class => "lead itil-hide" %>
+<% end %>
 <%= form_for (@category), :html => {:multipart => true, :id => "folder-form", :rel => :validate} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
-	<div class="button-container align-right itil-hide">
-		<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
-  	<%= submit_tag t('solution_category.save_and_create'), :id => "save_and_create", :class => "btn" %>
-  	<%= submit_tag t('save'), :class => "btn  btn-primary" %>
-	</div>
-	
-<% end %>
-<% content_for :onload_script do %>
-	jQuery('#save_and_create').on('click', function (ev) {
-		ev.preventDefault();
-		setPostParam(this.form, "save_and_create", true);
-		this.form.submit();
-	});
+	<% unless @modal %>
+		<div class="button-container align-right itil-hide">
+			<%= link_to(t('cancel'), solution_categories_url, :class => "btn" ) %>
+		  	<%= submit_tag t('save'), :class => "btn  btn-primary" %>
+		</div>
+	<% end %>
 <% end %>

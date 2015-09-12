@@ -242,10 +242,10 @@ HelpdeskReports.CoreUtil = {
     },
     showErrorMsg: function () {
         var msg = this.FILTER_LIMIT_MSG;
-        jQuery('#filter_validation_errors span').text(msg);
+        jQuery('#filter_validation_errors .error-msg').text(msg);
     },
     flushErrorMsg: function () {
-        jQuery('#filter_validation_errors span').text('');
+        jQuery('#filter_validation_errors .error-msg').text('');
     },
     makeAjaxRequest: function (args) {
         args.url = args.url;
@@ -322,6 +322,9 @@ HelpdeskReports.CoreUtil = {
         },
         hideTicketList: function () {
             jQuery('#ticket_list_wrapper').removeClass('active');
+        },
+        hideViewMore: function(){
+            jQuery('#view_more_wrapper').removeClass('show-all-metrics');
         },
         toggleReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
@@ -531,18 +534,12 @@ HelpdeskReports.CoreUtil = {
             success: function (data) {
                 jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
-                if (HelpdeskReports.locals.report_type == 'glance') {
-                    jQuery(window).resize();
-                }
                 jQuery("#reports_container").html(data);
                 jQuery('#loading-box').hide();
             },
             error: function (data) {
                 jQuery('#view_more_wrapper').removeClass('hide');
                 jQuery('#reports_wrapper').removeClass('hide');
-                if (HelpdeskReports.locals.report_type == 'glance') {
-                    jQuery(window).resize();
-                }
                 var text = "Something went wrong, please try again";
                 _this.populateEmptyChart(["reports_container"], text);
                 jQuery('#loading-box').hide();
@@ -605,6 +602,7 @@ HelpdeskReports.CoreUtil = {
         jQuery('#loading-box').show();
         this.flushCharts();
         this.actions.hideTicketList();
+        this.actions.hideViewMore();
         this.actions.closeFilterMenu();
         this.generateCharts(HelpdeskReports.locals.params);
     },

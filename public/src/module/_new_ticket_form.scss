@@ -1,3 +1,18 @@
+.compose-from-select2{
+  .select2-drop{
+    border-color: #eee;
+    @include box-shadow( none );
+  }
+  input{
+    margin-top: 0px;
+        &:focus{
+          border-color: #eee;
+          @include box-shadow( none );
+        }
+  }
+}
+
+
 .compose_email{
   &.tkt-wrapper-inner{
     margin: 0;
@@ -24,6 +39,27 @@
     }
   }
 
+.from_address_wrapper {
+  min-width: 400px;
+  border: none;
+    a.select2-choice{
+      height: 34px;
+      line-height: 30px;
+      width: 400px;
+      border: none;
+      background-color: #fff !important;
+      box-shadow: none;
+       background-image: none;
+    }
+    .select2-arrow b{
+        &::after{
+          top: 15px;
+        }
+    }
+    &.select2-dropdown-open .select2-choice .select2-arrow b::after{
+        top: 9px;
+    }
+} 
 .page-header-sticky .sticky-header-wrapper {
     padding-top: 15px;
   }

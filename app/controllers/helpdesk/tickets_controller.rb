@@ -25,6 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :find_topic, :redirect_merged_topics, :only => :new
   around_filter :run_on_slave, :only => :user_ticket
+  before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
@@ -33,6 +34,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
@@ -57,6 +59,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :build_ticket :build_item
   before_filter :build_ticket_body_attributes, :only => [:create]
   before_filter :build_ticket, :only => [:create, :compose_email]
+  before_filter :set_required_fields, :only => :create 
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -73,7 +76,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  
  
   def user_ticket
     if params[:email].present?
@@ -101,7 +103,7 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)  
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?  
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?
     respond_to do |format|  
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
@@ -1024,6 +1026,23 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def load_article_filter
+      return if view_context.current_filter.to_s != 'article_feedback' || params[:article_id].present?
+      params[:article_id] = get_tickets_redis_key(article_filter_key)
+    end
+
+    def save_article_filter
+      set_tickets_redis_key(article_filter_key, params[:article_id]) if params[:filter_name] == 'article_feedback' && params[:article_id].present?
+    end
+
+    def article_filter_key
+      (ARTICLE_FEEDBACK_FILTER % { 
+        :account_id => current_account.id,
+        :user_id => current_user.id,
+        :session_id => request.session_options[:id]
+      })
+    end
+
     def handle_unsaved_view
       unless @cached_filter_data[:unsaved_view].blank?
         params[:unsaved_view] = true
@@ -1086,6 +1105,14 @@ class Helpdesk::TicketsController < ApplicationController
             t.delete(:description_html) if t[:description_html]
           end 
         end 
+      end
+    end
+
+    def set_required_fields # validation
+      if current_account.validate_required_ticket_fields?
+        @item.required_fields = { :fields => current_account.ticket_fields.agent_required_fields.
+                                    preload([:nested_ticket_fields, :picklist_values]),
+                                  :error_label => :label }
       end
     end
 

@@ -16,9 +16,7 @@
 
 .icons-edit-forum{ @include icons-sprite(edit-forum); }
 
-.solution-list li:before{
-	@include icons-sprite(article-list);
-}
+
 
 .meta-os { @include icons-sprite('os-generic'); }
 @each $os in mac, windows, android, linux {

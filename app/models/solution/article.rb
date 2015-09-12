@@ -9,6 +9,10 @@ class Solution::Article < ActiveRecord::Base
   include Search::ElasticSearchIndex
 
   include Solution::MetaMethods
+
+  belongs_to :recent_author, :class_name => 'User', :foreign_key => "modified_by"
+  has_one :draft, :dependent => :destroy
+
   include Solution::LanguageMethods
   include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
@@ -42,6 +46,7 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
+  validate :status_in_default_folder
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
@@ -168,17 +173,28 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def to_indexed_json
-    as_json(
+    article_json = as_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
+            :only => [ :title, :desc_un_html, :user_id, :status, 
+                  :language_id, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
-                          :folder => { :only => [:category_id, :visibility], 
-                                       :include => { :customer_folders => { :only => [:customer_id] } }
-                                     },
                           :attachments => { :only => [:content_file_name] }
                         }
-           ).to_json
+          )
+    article_json["solution/article"].merge!(meta_attributes)
+    article_json.to_json
+  end
+
+  def meta_attributes
+    { 
+      :folder_id => solution_folder_meta.id,
+      :folder => { 
+        "category_id" => solution_folder_meta.solution_category_meta_id,
+        "visibility" => solution_folder_meta.visibility,
+        :customer_folders => solution_folder_meta.customer_folders.map {|cf| {"customer_id" => cf.customer_id} }
+      }
+    }
   end
  
   def as_json(options={})
@@ -247,6 +263,34 @@ class Solution::Article < ActiveRecord::Base
     self.account.features?(:resource_rate_limit)
   end
 
+  def create_draft_from_article(opts = {})
+    draft = build_draft_from_article(opts)
+    draft.save
+    draft
+  end
+
+  def build_draft_from_article(opts = {})
+    draft = self.account.solution_drafts.build(draft_attributes(opts))
+    draft
+  end
+
+  def draft_attributes(opts = {})
+    draft_attrs = opts.merge(:article => self, :category_meta => folder.solution_category_meta)
+    Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
+      draft_attrs[attribute] = self.send(attribute)
+    end
+    draft_attrs
+  end
+
+  def set_status(publish)
+    self.status = publish ? STATUS_KEYS_BY_TOKEN[:published] : STATUS_KEYS_BY_TOKEN[:draft]
+  end
+
+  def publish!
+    set_status(true)
+    save
+  end
+
   private
 
     def queue_quest_job
@@ -267,6 +311,12 @@ class Solution::Article < ActiveRecord::Base
       all_fields = [:modified_at, :status, :position]
       changed_fields = self.changes.symbolize_keys.keys
       (changed_fields & all_fields).any? or tags_changed
+    end
+
+    def status_in_default_folder
+      if status == STATUS_KEYS_BY_TOKEN[:published] and self.folder.is_default
+        errors.add(:status, I18n.t('solution.articles.cant_publish'))
+      end
     end
     
     def hit_key

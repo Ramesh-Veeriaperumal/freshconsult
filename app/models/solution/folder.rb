@@ -6,6 +6,7 @@ class Solution::Folder < ActiveRecord::Base
 
   concerned_with :associations, :meta_associations
 
+  CACHEABLE_ATTRS = ["is_default","name","id","article_count"]
   attr_protected :category_id, :account_id
   validates_presence_of :name
 
@@ -15,7 +16,6 @@ class Solution::Folder < ActiveRecord::Base
 
   self.table_name =  "solution_folders"
   
-  # before_create :populate_account
   before_update :clear_customer_folders, :backup_folder_changes
 
   before_save :backup_category
@@ -24,6 +24,12 @@ class Solution::Folder < ActiveRecord::Base
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
   
+  after_create :clear_cache
+  after_destroy :clear_cache
+  after_update :clear_cache_with_condition
+  
+  has_many :customers, :through => :customer_folders
+
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
@@ -32,6 +38,7 @@ class Solution::Folder < ActiveRecord::Base
   scope :alphabetical, :order => 'name ASC'
 
   attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default, :customer_folders_attributes
+  attr_accessor :count_articles
   
   acts_as_list :scope => :category
   
@@ -44,6 +51,14 @@ class Solution::Folder < ActiveRecord::Base
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
+  end
+  
+  def article_count
+    self.count_articles ||= articles.size
+  end
+
+  def visibility_type
+    VISIBILITY_NAMES_BY_KEY[self.visibility]
   end
 
   def self.find_all_folders(account)   
@@ -192,6 +207,18 @@ class Solution::Folder < ActiveRecord::Base
     end if ES_ENABLED
   end
 
+  def add_visibility(visibility, customer_ids, add_to_existing)
+    add_companies(customer_ids, add_to_existing) if visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+    self.visibility = visibility
+    save
+  end
+
+  def as_cache
+    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
+      res.merge({ attribute => self.send(attribute) })
+    end).with_indifferent_access
+  end
+
   private
 
     def populate_account
@@ -212,6 +239,21 @@ class Solution::Folder < ActiveRecord::Base
     
     def set_mobihelp_solution_updated_time
       @category_obj.update_mh_solutions_category_time
+    end
+    
+    def clear_cache
+      account.clear_solution_categories_from_cache
+    end
+    
+    def clear_cache_with_condition
+      account.clear_solution_categories_from_cache unless (self.changes.keys & ['name', 'category_id', 'position']).empty?
+    end
+
+    def add_companies(customer_ids, add_to_existing)
+      customer_folders.destroy_all unless add_to_existing
+      customer_ids.each do |cust_id|
+        customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
+      end
     end
 
 end

@@ -22,12 +22,12 @@ module HelpdeskReports
       end
             
       def build_export_file(&block)
-        s3_objects.each do |object|
+        s3_objects.each_with_index do |object, index|
           ticket_ids          = ticket_ids_from_s3(object.key)
           next if ticket_ids.blank?
           non_archive_tickets = ticket_ids[:non_archive].empty? ? [] : execute_non_archive_query(ticket_ids[:non_archive])
           archive_tickets     = ticket_ids[:archive].empty? ?     [] : execute_archive_query(ticket_ids[:archive])
-          yield(non_archive_tickets + archive_tickets) if block_given?    
+          yield(non_archive_tickets + archive_tickets, index) if block_given?    
         end
       end
       

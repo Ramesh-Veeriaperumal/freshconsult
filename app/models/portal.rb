@@ -287,4 +287,8 @@ class Portal < ActiveRecord::Base
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
     end
+
+    def clear_solution_cache(obj=nil)
+      account.clear_solution_categories_from_cache
+    end
 end

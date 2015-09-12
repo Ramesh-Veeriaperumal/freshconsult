@@ -31,7 +31,7 @@ class PortalDrop < BaseDrop
   end
 
   def linkback_url
-    @linkback_url ||= source.preferences.fetch(:logo_link, support_home_path)
+    @linkback_url ||= (source.preferences[:logo_link].presence || support_home_path)
   end
 
   def contact_info

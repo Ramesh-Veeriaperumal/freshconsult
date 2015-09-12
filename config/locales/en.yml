@@ -75,6 +75,7 @@ en:
     creditcard: "Please enter a valid credit card number."
     equalTo: "Please enter the same value again."
   confirm_delete_message: Are you sure you want to delete the %{human_name}?
+  reload: Reload
   any: Any
   or: or
   reorder_rules: Reorder Active Rules
@@ -302,6 +303,7 @@ en:
     confirm_delete: Are you sure you want to delete this field?
     confirm_deletion: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
     no_choice_message: "At least one valid choice has to be present"
+    customer_label_missing: Customer label cannot not be empty
     index:
       number: Number
       decimal: Decimal
@@ -392,6 +394,7 @@ en:
 
   folder:
     edit: Edit Folder
+    delete: Delete Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
     delete_confirm:
@@ -862,9 +865,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
-        portal_security: "Portal Security"
-        enable_public_urls: "Enable public ticket URL"
-        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
+        public_ticket_urls_label: "Who can view tickets on portal"
+        public_ticket_urls_option: "Anyone with public ticket URL"
+        public_ticket_urls_help: "Users can view tickets without logging in using the public ticket URLs. They can be inserted in email notifications and ticket replies sent to customers via placeholders."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -2667,6 +2670,7 @@ en:
     new: New Category
     new_forum_category: New Forum Category
     edit: Edit Category
+    delete: Delete Category
   delete: Delete
   delete_confirm:
     confirm: Please Confirm...
@@ -2688,6 +2692,7 @@ en:
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
   solution_category:
+    all: All Categories
     name: Name
     new: New Solution Category
     edit: Edit Solution Category
@@ -2698,12 +2703,15 @@ en:
     product_portal_visibility: Visible in
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
+    more_catogories: "See all Categories"
+    other_categories: "See other Categories"
+    other_categories_info: "Categories that are not associated with this portal"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...
     forum_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     delete: "Important: Deleting a category will delete all the forums and topics in it."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
     delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
@@ -2782,6 +2790,15 @@ en:
       placeholder: Search All Solutions
     search:
       placeholder: Search %{name}
+    drafts:
+      empty: There are no drafts here.
+      discard: Discard
+      publish: Publish
+    delete: "Delete"
+    edit: "Edit"
+    company:
+      add_existing: "Add to Existing"
+      replace_existing: "Replace Existing"
   auto_suggest_solutions:
     info: <b>You know what? We may already have an answer to your question.</b><br/>Check if any of these match.
   requester_reopens: Requester reopens the Ticket
@@ -3583,14 +3600,109 @@ en:
   urgent: Urgent
   import_groups: Groups
   solution:
+    on: 'on'
+    orphan_category_info: "This category is not associated with any portal"
+    sidebar:
+      orphan: "Orphan Categories"
+      unassociated: "Unassociated Categories"
+      orphan_desc: "These categories are not associated with any portal"
+      view_all: "View all"
+      view_less: "View less"
+      drafts:
+        title: "Drafts"
+        me: "My Drafts" 
+        all: "All Drafts"
+        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>" 
+      feedbacks:
+        title: "Article Feedback"
+        me: "Your Feedback"
+        all: "All Feedback"
+        details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        status: 'Status : %{status}'
+        my_articles: "On My Articles"
+        all_articles: "On All Articles"
+    anonymous_votes: "Anonymous (%{count})"
+    home: Solutions Home
+    add_category: New Category
+    orphan: Orphan
+    unassociated: Unassociated
+    add_folder: New Folder
+    add_article: New Article
+    view_feedback: View all feedback
+    change_author: Change Author
+    move_to: Move to
+    details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    flash:
+      folders_move_to: 'Folders have been moved to the selected category "<b>%{category_name}</b>" %{undo}'
+      folders_move_to_fail: "The selected category does not exist"
+      articles_move_to: 'Articles have been moved to the selected folder "<b>%{folder_name}</b>" %{undo}'
+      articles_move_to_fail: "The selected folder does not exist"
+      articles_changed_author: Author has been succesfully changed
+      articles_change_author_fail: "The selected agent does not exist"
+    general:
+      created_by: Created by
+      last_published: Last Published by
+      article_prop: Article Properties
+      feedback: Feedback
+      analytics: Analytics
+      unsaved_content: You have unsaved content in this page.
+      leave_page_que: Do you want to leave this page?
+      something_wrong: Something went wrong!
     folders:
+      view_all: "View all folders..."
+      choose_folder: Choose folder
+      choose_folder_warning: Please select a folder for saving the article
       new:
         new_folder: Add Folder
       folder_form:
         category: Category
         visible_to: Visible to
+      visibility:
+        no_companies: You haven't selected any valid companies.
+        success: Successfully changed the visibility.
+        failure: Could not change the visibility of the selected folders.
+        extra_companies:  
+          one: " and one more company."
+          other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
+      search_all: Search Articles
+      search_in: "Search in %{search_scope}"
+      type: Article Type
+      prop_tabs:
+        tag_fol: "Tags & folders"
+        meta: Meta
+      draft:
+        show:
+          edit: "Edit"
+        show_page_msg: Viewing draft edited by
+        you: you
+        unpublish:
+          msg: Unpublish the article from portal
+          with_draft: This will delete the published article permanently and retain the draft content under Drafts
+          without_draft: This will remove the published article from the portal and save the content under Draft
+        save_error: This article could not be saved.
+        portal_preview_msg: You are previewing draft version of this article.
+        discard_msg: The draft has been discarded.
+        discard_confirm: Do you want to discard this draft?
+        revert_msg: "The current session of auto-save has been discarded."
+      tag_max_len: Maximum key length
+      locked: Locked
+      cant_publish: can't be changed to published of an article in default folder/category
+      draft_published_label: There is also a published version.
+      unpublished_version: You are viewing an unpublished version of the article.
+      att_deleted: One attachment was deleted.
+      published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
+      published_failure: This article could not be published.
+      view_draft: Preview Draft
+      restrict_edit: "%{name} is currently editing this article."
+      edit: Edit Article
+      properties: Properties
+      edit_properties: Edit Properties
+      prop_updated_msg: The article properties were updated succesfully.
+      save_and_publish: Save and Publish
+      save_as_draft: Save as Draft
+      publish: Publish
       where: Where
       search_articles: Search Articles
       guides: Guides
@@ -3605,13 +3717,33 @@ en:
       article_useful: Glad we could be helpful. Thanks for the feedback.
       article_not_useful: "Thanks for the feedback. We will improve this article."
       error_message: "There is an error %{error_msg}"
+      votes: Votes
+      views: Views
       reset_rating:
         link: "Reset"
         dialog_title: "Reset likes and dislikes"
         dialog_submit: "Reset"
         resetting: "Resetting"
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
-        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+        count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
+        confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
+    draft:
+      name: Drafts
+      all_drafts: All Drafts
+      my_drafts: My Drafts
+      kbase: KBase Email
+      portal:
+        all: All
+      autosave:
+        save_success: "Draft saved "
+        somebody_editing: "%{name} is currently editing this article. "
+        content_changed_other: "%{name} has updated the content while you were away. "
+        content_changed_you: "You have updated the content elsewhere. "
+        content_changed: "The content has changed. "
+        other_problem: "The content could not be saved. "
+      last_saved_by: Last saved by
+    no_articles_info: No articles in this folder
+    you: You
     info9: Public (Will be published in self service)
     edit: Edit Solution
     view_on_portal: "View on Portal"
@@ -3631,6 +3763,23 @@ en:
     info7: No solutions in this folder
     status: Solution Status
     info8: Are you sure you want to delete this solution?
+    info9: "If you use multiple products, <b>Categories</b> can be made visible in their respective product portals."
+    info10: "Folder visibility is of four types:"
+    info11: "<b>All</b> - This makes it publicly visible to anyone who accesses your self-service portal."
+    info12: "<b>Logged In Users</b> - This makes it visible only to those who have signed up and logged in with their credentials."
+    info13: "<b>Agents</b> - This makes it private, so only agents on your helpdesk can view them. This is useful for internal knowledge sharing."
+    info14: "<b>Select Companies</b> - This makes it viewable only to certain companies that you select from your contacts"
+    info15: "Articles can either be saved as a <b>draft</b> or directly <b>published</b>."
+    info16: "<b>Published</b> articles will be visible in the Self-Service Portal and also appear in search results. "
+    info17: "<b>Draft</b> articles are visible only to agents, and will appear only in search results for agents."
+    info18: "A published article can be edited and saved as draft which retains the published version on the portal while having an additional draft version for agents to edit. This is useful when you need to update articles, without taking them down from your portal."
+    info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
+    info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
+    info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
+    info22: "Draft articles will be visible only to agents and can be searched only at the agent side."
+    info23: "<b>My Drafts</b> will list all articles which you last edited and saved as draft."
+    info24: "<b>All Drafts</b> will list all the articles in draft status. In the case of multiple portal setup, you can filter draft articles from any specific portal by selecting the dropdown. "
+    kbase_email_info: "All emails sent by agents to <b>%{email}</b> will be stored here as drafts."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag
@@ -3645,6 +3794,12 @@ en:
     feedback_message_2: "Difficult to understand"
     feedback_message_3: "Inaccurate/irrelevant content"
     feedback_message_4: "Missing/broken link"
+    properties: Properties
+    solution_title: Title
+    via: via
+    article_properties:
+      title_counter_message: 'Recommended: 50-60 characters'
+      description_counter_message: 'Recommended: 150-160 characters'
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -3782,6 +3937,9 @@ en:
       admin: Admin
       checkstatus: Check your ticket status
       solutions: Solutions
+      new_solution: New Solution
+      new_folder: New Folder
+      new_solution_category: New Category
       forums: Forums
       tickets: Tickets
       home: Home
@@ -3977,10 +4135,10 @@ en:
     add_bcc_text: Add Bcc
     set_bcc_email_text: Set automatic Bcc email
     name_info_msg: Name of the email that will be used in the ticket replies
-    Personalized_email_replies: Use Agent names for Personalized Email Replies ?
-    Personalized_email_replies_info: If YES then agent replies will have agent's name as the sender name (Email address will still be your Support Email address). For example '%{current_user_name} &lt;%{current_account_domain}&gt;'.
     Personalized_email_replies_yes: "Yes"
     Personalized_email_replies_no: "No"
+    personalized_email_replies_title: Use agent names in ticket replies and outbound emails?
+    personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
@@ -3988,6 +4146,8 @@ en:
     disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
+    enable_compose: "Allow agents to initiate conversation with customers?"
+    enable_compose_info: "If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -4045,6 +4205,8 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    errors:
+      required_field: cannot be blank.
     spam: "SPAM"
     deleted: "TRASH"
     archived: "Archived"
@@ -4054,6 +4216,21 @@ en:
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    compose:
+      choose_email: Pick a from address
+      properties: Properties
+      learn_more: Learn more.
+      send_email: Send an email
+      enter_subject: Enter Subject...
+      to_address_placeholder: "Enter Customer's address"
+      send: Send
+      send_and_new: Send and <strong> New </strong>
+      cancel: Cancel
+      from: "From:"
+      cc: CC
+      to: "To:"
+      compose_choose_email: Pick a from address
+      compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
       whats_new: "What's new"
@@ -4186,7 +4363,6 @@ en:
     learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
-    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
@@ -4481,14 +4657,6 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
-    send_email: Send an email
-    send: Send
-    send_and_new: Send and <strong> New </strong>
-    enter_subject: Enter Subject...
-    from: "From:"
-    to: "To:"
-    cc: "Cc:"
-    bcc: "Bcc:"
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -4854,6 +5022,8 @@ en:
         open_or_pending: Open or Pending
         resolved_or_closed: Resolved or Closed
         no_tickets: You don't have any tickets in current view
+        article_feedback: Article Feedback
+        my_article_feedback: My Articles Feedback
         archived: Archive
       note:
         posted_on: "%{user_name} on %{note_date}"
@@ -6191,6 +6361,8 @@ en:
     sorted_by: "Sorted by:"
     by: "by:"
     in: "in"
+    created_by: "Created by"
+    edited_by: "Edited by"
     requested_by: "Requested by,"
     agent: "Agent:"
     status: "Status:"
@@ -6432,7 +6604,7 @@ en:
         ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
         archive_ticket_list: "Note: To access and display archived tickets, use 'archive' placeholders like {% snippet archive_ticket_filters %}."
         archive_ticket_view: "Note: Ticket requesters cannot reply to or change ticket properties of archived tickets. Placeholders related to updating the ticket properties like {% snippet ticket_reply %} will not work."
-        
+
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
@@ -6519,7 +6691,7 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6570,7 +6742,7 @@ en:
       reports_sla: First Response SLA %
       res_sla: Resolution SLA %
       fcr: FCR %
-      private_note: Private Note
+      private_note: Private Notes
       responses: Responses
       avg_first_res_time: Average 1st Response Time
       avg_res_time: Average Response Time
@@ -7624,7 +7796,8 @@ en:
         hits:
           one: "1 view"
           other: "%{count} views"
-          zero: "None"
+          zero: "No Views"
+        no_votes: "No Votes"
         vote_info:
           ideas:
             one: "%{count} Person likes this Idea"

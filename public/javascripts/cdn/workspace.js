@@ -28,3 +28,5 @@
 //= require app/dashboard.js
 //= require app/admin_font_settings.js
 //= require app/merge.js
+//= require app/autosave.js
+//= require plugins/jquery.placeholder.js

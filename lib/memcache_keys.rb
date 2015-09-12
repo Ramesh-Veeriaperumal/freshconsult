@@ -46,6 +46,8 @@ module MemcacheKeys
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
+  
+  ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 

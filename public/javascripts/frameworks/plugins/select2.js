@@ -1260,14 +1260,14 @@ the specific language governing permissions and limitations under the Apache Lic
                 }
             } else {
                 above = false;
-                if (!enoughRoomBelow && enoughRoomAbove) {
+                if (!this.opts.element.data("show-below-only") && (!enoughRoomBelow && enoughRoomAbove)) {
                     changeDirection = true;
                     above = true;
                 }
             }
 
             //if we are changing direction we need to get positions when dropdown is hidden;
-            if (changeDirection) {
+            if (!this.opts.element.data("show-below-only") && changeDirection) {
                 $dropdown.hide();
                 offset = this.container.offset();
                 height = this.container.outerHeight(false);

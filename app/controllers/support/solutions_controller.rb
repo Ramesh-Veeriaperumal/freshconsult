@@ -18,6 +18,7 @@ class Support::SolutionsController < SupportController
   def show
     respond_to do |format|
       format.html {
+        (render_404 and return) if @category.is_default?        
         load_agent_actions(solution_category_path(@category), :view_solutions)
         load_page_meta
         set_portal_page :solution_category 

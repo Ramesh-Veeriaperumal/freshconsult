@@ -1,0 +1,29 @@
+<%= content_tag :li, :item_id => folder.id,
+		  						:class => "comm-item", :id => "item_"+folder.id.to_s do %>
+	<div class="reorder-icon vertical-alignment">
+			<%= font_icon "rearrange", :size => 18, :id => "sortable-icon" %>
+	</div>
+	<div class="vertical-alignment reorder-content row-fluid">
+		<div class="row-fluid clear-left-margin">
+			<% if privilege?(:manage_solutions) %>
+				<div class="solution-list-checkbox">
+					<input type="checkbox" name="ids[]" value="<%= folder.id %>" 
+							id="folder-<%= folder.id %>" class="item_ids_checkbox"/>
+				</div>
+			<% end %>
+			<div class="comm-item-main span8 clear-left-margin">
+				<%= font_icon "folder", :size => 16, :class => "solution-icon" %>
+				<div class="comm-item-title ellipsis tooltip" title="<%= folder.name if folder.name.length > 90 %>">
+					<%= pjax_link_to(h(folder.name), solution_folder_path(folder.id)) %>
+					<span class="muted">
+						(<%= folder.articles.size %>)
+					</span>
+				</div>
+				<div class="comm-item-details muted">
+					<span class="visibilty-label"><%= t('solution.folders.folder_form.visible_to').html_safe %>:</span>
+					<%= company_visibility_tooltip(folder) %>
+				</div>
+			</div>
+		</div>
+	</div>
+<% end %>

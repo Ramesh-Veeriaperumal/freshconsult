@@ -1,0 +1,260 @@
+@import "../../settings/settings";
+
+.solutions {
+
+  /* Title bar styles */
+
+  .sol-visibility-label {
+    font-weight: 500;
+  }
+
+  .sol-details-left {
+    @include float(left);
+    .list-actions-left {
+      @include margin-left(0px);
+      @include padding(6px 5px 10px 0px);
+      color: white;
+
+      &.folder-icon-bg {
+        background-color: #B5C8EB;
+      }
+
+      &.category-icon-bg {
+        background-color: #3E74CF;
+      }
+    }
+  }
+
+  .sol-details-right {
+    @include border-left(1px solid white);
+
+    .action-btns-bar {
+      padding: 20px 0px;
+
+      .delete-icon {
+        @include margin-left(20px);
+        color: #444;
+
+        &:hover {
+          color: #000;
+        }
+      }
+
+      a [class*="ficon-"] {
+        color: #444;
+
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+
+    .category-details {
+      margin-top: 5px;
+      @include border-left(1px solid #ddd);
+
+      .list-title {
+        line-height: 1.4;
+      }
+
+      .sol-visibility {
+        @include margin(3px 0px 0px 15px);
+      }
+
+      .orphan-cat-info {
+        color: #DF013A;
+      }
+    }
+
+    .dropdown-menu {
+      min-width: 140px;  
+    }
+
+    .list-default-btns, .list-reorder-btns {
+      margin-top : 10px;
+    }
+  }
+
+  /* Bulk actions bar styles */
+
+  .bulk-action-menu {
+    width: 200px !important;
+    border: 1px solid rgba(0,0,0,0.3);
+    margin-top: 3px;
+    border-radius: 3px;
+    padding-top: 3px;
+  }
+
+  .bulk-action-button {
+    .select2-chosen {
+      color: #666666;
+    }
+
+    &.disabled .select2-choice {
+      cursor: default;
+    }
+
+    &.select2-dropdown-open {
+      .select2-choice {
+        border: 1px solid rgba(0,0,0,0.3);
+        border-radius: 3px;
+      }
+    }
+
+    &:not(.disabled):not(.select2-dropdown-open) a{
+      border: 1px solid #666666;
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .solution-bulk-actions {
+
+    .visible-to-btn {
+      display: inline-block;
+      background-color: white;
+      border: 1px solid lightgrey;
+      @include padding(4px 4px 6px 10px);
+      border-radius: 5px;
+
+      .fd-menu {
+        a:hover, a.selected {
+        color: #fff;
+        }
+      }
+    }
+
+    .visible-to-selected {
+      @include padding(2px 18px 2px 6px);
+      @include margin-left(-6px);
+      border-radius: 4px;
+      color: #888;
+
+      &:hover {
+        color: #888;
+      }
+
+      &:after {
+        content: "";
+        width: 0;
+        height: 0;
+        @include margin(5px 0 0 5px);
+        @include border-left(4px solid transparent);
+        @include border-right(4px solid transparent);
+        border-bottom: 4px solid #888;
+        position: absolute;
+        @include margin-left(8px);
+      }
+    }
+
+    .right-btn {
+      @include margin-left(10px);
+    }
+
+    .drop-right:after {
+      @include margin-left(8px);
+    }
+
+    .fd-menu {
+      margin-top: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 4px 4px 4px 4px;
+
+      a:hover, a.selected {
+        background: #3875d7;
+      }
+
+      @include margin-left(-11px);
+      min-width: 200px;
+
+      .left-list, .right-select-companies {
+        @include float(left);
+        min-width: 200px;
+      }
+
+      .left-list {
+        li a {
+          @include padding(6px 10px 6px 25px);
+        }
+      }
+
+      .right-select-companies {
+        width: 300px;
+        height: 100%;
+        @include border-left(1px solid #ccc);
+        padding: 5px 10px;
+        @include margin-left(10px);
+        
+        .autocomplete_filter .select2-container {
+          width: 100%;
+        }
+
+        .company-form-submit-btns {
+          margin-top: 20px;
+          margin-bottom: 0px;
+        }
+
+        a.select2-search-choice-close {
+          position: absolute;
+          &:hover { 
+            background: none;
+          }
+        }
+      }
+
+      .control-group {
+
+        a {
+          padding: 4px 14px;
+          display: inline-block;
+        }
+
+        .replace-existing {
+          display: inline-block;
+          @include margin-right(10px);
+          @include padding-left(2px);
+
+          label {
+            @include padding-left(4px);
+            display: inline-block;
+          }
+
+          input {
+            margin-top: -2px;
+          }
+        }
+      }
+    }
+  }
+
+  /* List styles */
+
+  .solution-list {
+    
+    .solution-icon {
+      padding: 7px;
+      border-radius: 5px;
+      color: #FFFFFF;
+      margin-top: 2px;
+      @include margin-right(10px);
+      display: inline-block;
+      @include float(left);
+    }
+
+    .ficon-folder {
+      background-color: #B5C8EB;
+    }
+
+    .ficon-book-hollow {
+      background-color: #D8DBDF;
+    }
+
+    .comm-item-main {
+      @include margin-left(15px);
+    }
+
+    .solution-list-checkbox {
+      @include float(left);
+      padding: 10px 17px 7px 17px;
+    }
+  }
+}
