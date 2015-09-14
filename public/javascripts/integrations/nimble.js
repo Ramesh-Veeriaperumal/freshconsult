@@ -2,11 +2,12 @@ var NimbleWidget = Class.create();
 NimbleWidget.prototype= {
 
   initialize:function(nimbleBundle){
-    jQuery("#nimble_widget").addClass('loading-fb');
+    jQuery("#nimble_contacts_widget").addClass('loading-fb');
     nimbleWidget = this;
     nimbleBundle.app_name = "Nimble";
     nimbleBundle.integratable_type = "crm";
     nimbleBundle.auth_type = "OAuth";
+    nimbleBundle.widget_name = "nimble_contacts_widget";
     nimbleBundle.url_auth = true;
     nimbleBundle.url_token_key = "access_token"
     nimbleBundle.domain = "https://api.nimble.com"

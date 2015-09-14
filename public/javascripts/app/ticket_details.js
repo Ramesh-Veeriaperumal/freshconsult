@@ -805,10 +805,6 @@ var scrollToError = function(){
 		$('#response_added_alert').remove();
 	});
 
-	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
-		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
-	});
-
 	function seperateQuoteText(_form){
 		if(_form.data('fulltext')) {
 			var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 

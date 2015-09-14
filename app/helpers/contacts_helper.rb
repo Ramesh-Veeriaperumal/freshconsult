@@ -87,5 +87,15 @@ HTML
     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted, :helpdesk_agent,
     :fb_profile_id,:external_id,:language,:address,:customer_id]
   end
+  
+  def is_campaign_app?(app_name)
+    Integrations::Constants::CAMPAIGN_APPS.include?(app_name.to_sym)
+  end
+
+  def installed_campaign_apps
+    Integrations::Constants::CAMPAIGN_APPS.select do |app|
+      get_app_details(app.to_s)
+    end
+  end
 
 end

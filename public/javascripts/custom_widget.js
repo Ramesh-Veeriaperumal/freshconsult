@@ -230,6 +230,7 @@ Freshdesk.Widget.prototype={
 			this.error_element.innerHTML = errorMsg;
 		}
 		jQuery("#" + this.options.widget_name).removeClass('sloading loading-small');
+		jQuery('#' + this.options.app_name.toLowerCase() + '_loading').remove();
 	},
 
 	refresh_access_token:function(callback, reqHeader){
@@ -355,6 +356,8 @@ Freshdesk.Widget.prototype={
         day_diff < 31 && Math.ceil( day_diff / 7 ) + " weeks ago";
 	}
 };
+
+Freshdesk.NativeIntegration = {};
 
 Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	initialize: function($super, widgetOptions, integratable_impl){
@@ -1182,9 +1185,35 @@ var UIUtil = {
 }
 
 var CustomWidget =  {
+
+	util_loaded: {},
+
 	include_js: function(jslocation) {
 		widget_script = document.createElement('script');
 		widget_script.type = 'text/javascript';
+		widget_script.src = jslocation+"?"+timeStamp;
+		document.getElementsByTagName('head')[0].appendChild(widget_script);
+	},
+
+	include_util_js: function(jslocation,call_back) {
+		if (this.util_loaded[jslocation]) {
+			call_back();
+			return;
+		}
+		this.util_loaded[jslocation] = true;
+		widget_script = document.createElement('script');
+		widget_script.type = 'text/javascript';
+		if(widget_script.readyState){ //For IE
+			widget_script.onreadystatechange=function(){
+				if(widget_script.readyState == "loaded" || widget_script.readyState == "complete"){
+					widget_script.onreadystatechange=null;
+					call_back();
+				}
+			};
+		}
+		else{ //For other browsers
+			widget_script.onload=call_back;
+		}
 		widget_script.src = jslocation+"?"+timeStamp;
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}

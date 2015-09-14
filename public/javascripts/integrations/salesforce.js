@@ -2,11 +2,12 @@ var SalesforceWidget = Class.create();
 SalesforceWidget.prototype= {
 
 	initialize:function(salesforceBundle){
-		jQuery("#salesforce_widget").addClass('loading-fb');
+		jQuery("#salesforce_contacts_widget").addClass('loading-fb');
 		salesforceWidget = this;
 		salesforceBundle.app_name = "Salesforce";
 		salesforceBundle.integratable_type = "crm";
 		salesforceBundle.auth_type = "OAuth";
+		salesforceBundle.widget_name = "salesforce_contacts_widget";
 		salesforceBundle.handleRender = true;
 		salesforceBundle.oauth_token = salesforceBundle.token;
 		this.salesforceBundle = salesforceBundle;

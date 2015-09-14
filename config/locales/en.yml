@@ -5603,8 +5603,9 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
-      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
+      desc: "View client details, invoices, and add time sheet entries to your FreshBooks account"
+      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the FreshBooks API & Authentication token. <br/><br/>Log on to your FreshBooks account, click on your
+        <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.You can find your API URL and Authentication Token.<br/><br/>Select whether you would like agents to log time sheet entries to FreshBooks. You can also alter the default description, that is added for each timesheet entry.<br/><br/>Select whether you would like agents to see FreshBooks invoices.If required, you can restrict agents from viewing commercial details of an invoice such as “Invoiced Amount”, “Amount Due”,and  “Cost per unit”.<br/><br/>After the integration is enabled, contact details from the FreshBooks will be displayed on tickets and contacts page if a match is established based on Company name or Requester email."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -5613,6 +5614,9 @@ en:
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like cost, amount and total"
+        timeactivity: "Allow agents to log time entry in FreshBooks"
     seoshop:
       label: "SEOshop"
       desc: "Pull up order details instantly when your customers submit tickets in Freshdesk and help them to receive their answers as quickly as possible."
@@ -5816,13 +5820,22 @@ en:
       desc: "You can view contact information from Nimble crm in Freshdesk."
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
-      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
       connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
       remote_configurations:
         signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
         connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
         disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
         launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
+      helptext: '<h4>QuickBooks Integration</h4><p><br/>Select whether you would like agents to log time sheet entries to QuickBooks. You can also alter the default description, that is added for each timesheet entry.</p><p>Select whether you would like agents to see QuickBooks invoices. If required, you can restrict agents from viewing commercial details of an invoice such as "Invoiced Amount", "Amount Due" and "Cost per unit".</p><p>After the integration is enabled, customer details from the QuickBooks will be displayed on tickets and contacts page if a match is established based on 1. Company name or 2. Requester email</p><p>Based on the above match, agents can also view the most recent five invoices on the tickets page.</p>'
+      form:
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like rate, amount and total"
+        timeactivity: "Allow agents to log time entry in QuickBooks"
+        quickbooks_note: "Notes text"
+        quickbooks_note_info: "This text will be appended at the start of the note, with the time spent log."
+        account_settings: ""
+        account_settings_info: ""
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."

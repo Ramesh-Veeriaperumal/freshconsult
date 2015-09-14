@@ -5,7 +5,7 @@
 
 <%= javascript_include_tag :'cdn/marketplace/freshapps_contact_dom_helper' %>
 
-<% current_account.installed_applications.each{ |installed_app|
+<% installed_apps.each{ |key,installed_app|
   app = installed_app.application
   unless app.blank?
     widget  = app.widget
@@ -13,11 +13,24 @@
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('contacts_show_page_side_bar')
         liquid_objects = {"requester" => user, "widget_type" => "_contacts"}
-        widget_code = widget_script(installed_app, widget, liquid_objects) %>
-        <div id="<%=app.name%>" class="sidepanel <%=widget.clazz_option%>">
-          <%=widget_code%>
-        </div>
-  <%  end
+        widget_code = widget_script(installed_app, widget, liquid_objects)
+        if is_campaign_app?(app.name) %>
+          <div id="<%=app.name%>" class="<%=widget.clazz_option%>">
+            <div id="<%=app.name%>_widget"><div class="content"></div><div class="error modal_error hide "></div></div>
+            <%=widget_code%>
+          </div>
+        <% else %>
+          <div id="<%=app.name%>" class="widget inactive load_on_click <%=widget.clazz_option%>">
+            <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
+            <div class="content">
+            <textarea style="display:none" rel="lazyload">
+              <div id="<%=app.name%>_contacts_widget" class="integration_widget crm_contact_widget "><div class="content"></div><div class="error hide "></div></div>
+              <%=widget_code%>
+            </textarea>
+            </div>
+          </div>
+        <% end
+      end
     end
   end
 } %>
@@ -32,3 +45,15 @@
     </div>
   <% end %>
 <% end %>
+<script type="text/javascript">
+  jQuery("body").on('click.contact-sidebar', '.widget.load_on_click.inactive', function(ev){
+    var widget_code = jQuery(this).find('textarea');
+    jQuery(this).find('.content').append(widget_code.val());
+    widget_code.remove();
+    jQuery(this).removeClass('inactive load_on_click');
+  });
+
+  jQuery("body").on('click.contact-sidebar', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
+    jQuery(this).parent().toggleClass('inactive');
+  });
+</script>
