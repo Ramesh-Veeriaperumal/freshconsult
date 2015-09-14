@@ -431,7 +431,11 @@ module ApplicationHelper
 
   #Liquid template parsing methods used in Dashboard and Tickets view page
   def eval_activity_data(data)
-    unless data['eval_args'].nil?
+    if data['eval_args'].nil?
+      data.each_pair do |k,v|
+        data[k] = h v
+      end
+    else
       data['eval_args'].each_pair do |k, v|
         data[k] = send(v[0].to_sym, v[1])
       end
