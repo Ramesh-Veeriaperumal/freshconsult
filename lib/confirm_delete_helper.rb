@@ -7,12 +7,12 @@ module ConfirmDeleteHelper
 
 	def confirm_delete(item, url, options = {})
 		return "" unless SUPPORTED_DIALOGS.include? item.class.name
-		link_to t('delete').html_safe, url, confirm_delete_defaults(item, url).merge(options)
+		link_to (options[:text] || t('delete').html_safe), url, confirm_delete_defaults(item, url).merge(options)
 	end
 
 	def confirm_delete_defaults(item, url)
 		{
-			:class => 'btn',
+			:class => 'btn confirm-delete',
 			:rel => 'confirmdelete',
 			
 			"data-warning-message" => "<b>#{t('delete_confirm.hard_delete')}</b>".html_safe,

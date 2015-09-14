@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "ae54fc5f25bdcf60c8c5e779484043860e6b886d7904de5d9b3be6626ba4c28b",
-    "current": "ae54fc5f25bdcf60c8c5e779484043860e6b886d7904de5d9b3be6626ba4c28b"
+    "previous": "987c925c061d642de9e62cbe0576539df6e0b2b4c41c1d03396d460fced5a94b",
+    "current": "987c925c061d642de9e62cbe0576539df6e0b2b4c41c1d03396d460fced5a94b"
   },
   "fonts": [
-    "public/assets/glyphs_ae54fc5f25bdcf60c8c5e77948404386.ttf",
-    "public/assets/glyphs_ae54fc5f25bdcf60c8c5e77948404386.svg",
-    "public/assets/glyphs_ae54fc5f25bdcf60c8c5e77948404386.woff",
-    "public/assets/glyphs_ae54fc5f25bdcf60c8c5e77948404386.eot"
+    "public/assets/glyphs_987c925c061d642de9e62cbe0576539d.ttf",
+    "public/assets/glyphs_987c925c061d642de9e62cbe0576539d.svg",
+    "public/assets/glyphs_987c925c061d642de9e62cbe0576539d.woff",
+    "public/assets/glyphs_987c925c061d642de9e62cbe0576539d.eot"
   ],
   "glyphs": {
     "account": {
@@ -27,7 +27,7 @@
       "source": "public/glyphs/vectors/agent-fchat-on.svg"
     },
     "agent-summary": {
-      "codepoint": 61914,
+      "codepoint": 61883,
       "source": "public/glyphs/vectors/agent-summary.svg"
     },
     "all-streams": {
@@ -106,6 +106,10 @@
       "codepoint": 61714,
       "source": "public/glyphs/vectors/book.svg"
     },
+    "book-hollow": {
+      "codepoint": 61914,
+      "source": "public/glyphs/vectors/book-hollow.svg"
+    },
     "bulb": {
       "codepoint": 61715,
       "source": "public/glyphs/vectors/bulb.svg"
@@ -145,6 +149,14 @@
     "caret-up": {
       "codepoint": 61723,
       "source": "public/glyphs/vectors/caret-up.svg"
+    },
+    "categories": {
+      "codepoint": 61915,
+      "source": "public/glyphs/vectors/categories.svg"
+    },
+    "categories-orphan": {
+      "codepoint": 61916,
+      "source": "public/glyphs/vectors/categories-orphan.svg"
     },
     "chat": {
       "codepoint": 61885,
@@ -217,6 +229,10 @@
     "crown": {
       "codepoint": 61738,
       "source": "public/glyphs/vectors/crown.svg"
+    },
+    "cube": {
+      "codepoint": 61917,
+      "source": "public/glyphs/vectors/cube.svg"
     },
     "customer-fields": {
       "codepoint": 61739,
@@ -322,6 +338,10 @@
       "codepoint": 61760,
       "source": "public/glyphs/vectors/feedback.svg"
     },
+    "feedback-new": {
+      "codepoint": 61918,
+      "source": "public/glyphs/vectors/feedback-new.svg"
+    },
     "ff-add-note": {
       "codepoint": 61761,
       "source": "public/glyphs/vectors/ff-add-note.svg"
@@ -406,6 +426,10 @@
       "codepoint": 61772,
       "source": "public/glyphs/vectors/firefox.svg"
     },
+    "folder": {
+      "codepoint": 61919,
+      "source": "public/glyphs/vectors/folder.svg"
+    },
     "folder-o": {
       "codepoint": 61773,
       "source": "public/glyphs/vectors/folder-o.svg"
@@ -451,7 +475,7 @@
       "source": "public/glyphs/vectors/group.svg"
     },
     "group-summary": {
-      "codepoint": 61915,
+      "codepoint": 61889,
       "source": "public/glyphs/vectors/group-summary.svg"
     },
     "grouping-disable": {
@@ -467,7 +491,7 @@
       "source": "public/glyphs/vectors/help.svg"
     },
     "help-icon": {
-      "codepoint": 61917,
+      "codepoint": 61913,
       "source": "public/glyphs/vectors/help-icon.svg"
     },
     "helpdesk": {
@@ -595,7 +619,7 @@
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
     "no-data-graph": {
-      "codepoint": 61916,
+      "codepoint": 61894,
       "source": "public/glyphs/vectors/no-data-graph.svg"
     },
     "no-network": {
@@ -622,6 +646,10 @@
       "codepoint": 61814,
       "source": "public/glyphs/vectors/open-in-new-window.svg"
     },
+    "open-in-portal": {
+      "codepoint": 61920,
+      "source": "public/glyphs/vectors/open-in-portal.svg"
+    },
     "opera": {
       "codepoint": 61815,
       "source": "public/glyphs/vectors/opera.svg"
@@ -639,7 +667,7 @@
       "source": "public/glyphs/vectors/pencil.svg"
     },
     "performance-distribution": {
-      "codepoint": 61919,
+      "codepoint": 61891,
       "source": "public/glyphs/vectors/performance-distribution.svg"
     },
     "phone": {
@@ -663,7 +691,7 @@
       "source": "public/glyphs/vectors/plus.svg"
     },
     "plus-circle": {
-      "codepoint": 61911,
+      "codepoint": 61893,
       "source": "public/glyphs/vectors/plus-circle.svg"
     },
     "portals": {
@@ -679,7 +707,7 @@
       "source": "public/glyphs/vectors/pushpin.svg"
     },
     "puzzle": {
-      "codepoint": 61912,
+      "codepoint": 61911,
       "source": "public/glyphs/vectors/puzzle.svg"
     },
     "rearrange": {
@@ -739,7 +767,7 @@
       "source": "public/glyphs/vectors/security.svg"
     },
     "settings1": {
-      "codepoint": 61913,
+      "codepoint": 61912,
       "source": "public/glyphs/vectors/settings1.svg"
     },
     "shared": {
@@ -803,7 +831,7 @@
       "source": "public/glyphs/vectors/ticket-fields.svg"
     },
     "ticket-volume": {
-      "codepoint": 61918,
+      "codepoint": 61892,
       "source": "public/glyphs/vectors/ticket-volume.svg"
     },
     "timeline-forum": {
@@ -872,6 +900,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -886,7 +918,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "index.html"

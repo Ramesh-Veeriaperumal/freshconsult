@@ -12,8 +12,8 @@ module Archive
 
       # :tag_uses => "taggable", :tags, :parent
       ASSOCIATIONS_TO_MODIFY = {
-        :helpdesk_tickets => [:attachments => "attachable", :cloud_files => "droppable", :activities  => "notable", :survey_handles => "surveyable", :survey_results => "surveyable",
-                              :support_scores => "scorable", :custom_survey_handles => "surveyable", :custom_survey_results => "surveyable", :time_sheets => "workable", :tweet => "tweetable",
+        :helpdesk_tickets => [:attachments => "attachable", :cloud_files => "droppable", :activities  => "notable", :survey_results => "surveyable",
+                              :support_scores => "scorable", :custom_survey_results => "surveyable", :time_sheets => "workable", :tweet => "tweetable",
                               :ticket_topic => "ticketable",:fb_post => "postable", :freshfone_call => "notable", :tag_uses => "taggable", :article_ticket => "ticketable",:integrated_resources => "local_integratable",
                               :inline_attachments => "attachable"],
         :helpdesk_notes => [:tweet => "tweetable", :fb_post => "postable", :freshfone_call => "notable", :attachments => "attachable", :cloud_files => "droppable", :shared_attachments => "shared_attachable" ,:inline_attachments => "attachable"]

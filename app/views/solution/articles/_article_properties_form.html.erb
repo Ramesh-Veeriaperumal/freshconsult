@@ -1,0 +1,105 @@
+<div id="tab-wrapper" class="tab-wrapper">
+	<%= tabs_for do |tab| %>
+		
+		<% tab.create('tags', t('solution.articles.prop_tabs.tag_fol')) do %>
+			
+			<%= fields_for :tags  do |tag| %>
+				<div class="control-group row-fluid">
+					<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
+					<div class="controls">
+						<%= tag.text_field :name , 
+															 :value => @article.tags.collect{|tag| tag.name}.join(','), 
+															 :class => "span12 article-tags " %>
+					</div>
+				</div>
+			<%end%>
+
+			<div class="control-group">
+				<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+				<div class="controls">
+					<%= f.select :folder_id , 
+								option_groups_from_collection_for_select(
+										current_account.solution_categories.reject(&:is_default), 
+										:folders, :name, :id, :name, 
+										(@article.folder.is_default? ? nil : @article.folder_id )
+								), 
+								{ :include_blank => true },
+								:class => "select2 span4 required",
+								:placeholder => t('solution.folders.choose_folder')
+					%>
+				</div>
+			</div>
+
+			<div class="control-group row-fluid">
+				<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
+				<div class="controls mt7">
+					<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
+						<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+						<%= f.label :art_type, t(type), :value => val %>
+					<% end %>
+				</div>
+			</div>
+
+			<% if privilege?(:admin_tasks) %>
+				<div class="control-group row-fluid">
+					<%= f.label :name, t('solution.change_author'),:class =>"control-label" %>
+					<div class="controls">
+						<%= f.select_tag "solution_article[user_id]",
+		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}, @article.user_id), 
+		          { :id => "change_author",
+		            :include_blank => true,
+		          	:class => "select2",
+		          	:'data-container-css-class' => 'author-dropdown',
+		          	:'data-dropdown-css-class' => 'author-dropdown' }%>
+					</div>
+				</div>
+			<% end %>
+
+		<% end %>
+
+
+		<% tab.create('meta', t('solution.articles.prop_tabs.meta')) do %>
+			
+			<%= f.fields_for :seo_data  do |s| %>
+								
+				<div class="control-group">
+					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
+					<div class="controls">
+						<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
+							'data-counter' => "TitleCounter", 'data-limit' => 72, 
+							:value => (@article.seo_data || {})[:meta_title] %>
+
+						<div class="muted">
+							<%= t('solution.article_properties.title_counter_message') %>
+						</div>
+					</div>
+				</div>
+				
+				<div class="control-group">
+					<%= s.label(:meta_description, t('solution.solution_meta_description'), :class => 'control-label') %>
+					<div class="controls">
+			    	<%= s.text_area  :meta_description, :rel => "charcounter", 
+							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
+							:value => (@article.seo_data || {})[:meta_description], 
+							:class => "solution-properties-description" %>
+						<div class="muted">
+				    		<%= t('solution.article_properties.description_counter_message') %>
+			  		</div>
+			  	</div>
+			  </div>
+				
+				<div class="control-group">
+					<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
+					<div class="controls">
+						<%= s.text_field :meta_keywords, :class => "text", 
+							:value => (@article.seo_data || {})[:meta_keywords] %>
+						<div class="muted">
+							<%= t('solution.meta_keywords_message') %>
+						</div>
+					</div>
+				</div>
+			<% end %>
+		<% end %>	
+
+	<% end %>
+</div>

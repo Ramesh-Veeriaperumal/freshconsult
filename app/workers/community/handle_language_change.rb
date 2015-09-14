@@ -11,6 +11,8 @@ class Community::HandleLanguageChange < BaseWorker
 			klass.constantize.find_in_batches(:batch_size => 100, :conditions => {:account_id => Account.current.id}) do |objects|
 				klass.constantize.where(
 					:id => objects.map(&:id), :account_id => Account.current.id).update_all(:language_id => language_id)
+
+				objects.map(&:update_es_index) if klass == "Solution::Article"
 			end
 		end
 	end

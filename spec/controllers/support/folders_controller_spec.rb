@@ -43,4 +43,14 @@ describe Support::Solutions::FoldersController do
     response.body.should_not =~ /folder2 visible to agents/
   end
 
+  it "should render 404 for default folder" do
+    log_in(@user)
+    default_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", 
+                             :description => "#{Faker::Lorem.sentence(3)}",  
+                             :visibility => 1,
+                             :category_id => @test_category.id,
+                             :is_default => true } )
+    get 'show', id: default_folder
+    response.status.should eql(404)
+  end
 end

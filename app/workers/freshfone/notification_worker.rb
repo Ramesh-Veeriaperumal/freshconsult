@@ -172,9 +172,9 @@ module Freshfone
         :to              => browser_agent? ? "client:#{agent['id']}" : 
                             current_account.users.find(agent["id"]).available_number,
         :timeout         => current_number.ringing_duration,
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
-        :if_machine      => "hangup"
+        :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
+      call_params.merge!(:if_machine => 'hangup') unless browser_agent?
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e

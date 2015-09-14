@@ -2,24 +2,33 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
 
   def self.update_call_status (call, account)
     Account.reset_current_account
+    Rails.logger.debug "Call status update for account #{account.id} :: Call id #{call.id}"
     @call = call
     @account = account
     sid = @call.dial_call_sid
     @account.make_current
-    return if (sid.blank? && !Freshfone::Call::INTERMEDIATE_CALL_STATUS.include?(@call.call_status))
+    if (!Freshfone::Call::INTERMEDIATE_CALL_STATUS.include?(@call.call_status))
+      Rails.logger.debug "IntermediateCallStatusUpdate : Not an intermediate call for account #{@account.id} :: Call id #{call.id}"
+      return
+    end
+    sid.present?  ?  update_from_api(sid) : update_as_missed_call
+    calculate_call_cost if @call.call_cost.blank?
+  ensure
+    Account.reset_current_account
+  end
+
+  
+  def self.update_from_api(sid)
     get_twilio_call(sid)
     update_call_params
     recording_upload_job if can_initiate_uploding_job?
-    calculate_call_cost
-  ensure
-    Account.reset_current_account
   end
 
   def self.get_twilio_call(sid)
     begin
       @twilio_call = @account.freshfone_subaccount.calls.get(sid)
     rescue => e
-      Rails.logger.error "Twilio api request error in IntermediateCallStatusUpdate for account #{account.id} => #{e}"
+      Rails.logger.error "IntermediateCallStatusUpdate : Twilio api request error in IntermediateCallStatusUpdate for account #{@account.id} => #{e}"
       return nil
     end
   end
@@ -43,9 +52,12 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
         @call.total_duration = @twilio_call.duration if @account.features?(:freshfone_conference)
         get_recording_url
       end
+      Rails.logger.debug "IntermediateCallStatusUpdate : Call param update for account #{@account.id} :: 
+        Call id => #{@call.id} :: status => #{@call.call_status} :: duration => #{@call.call_duration} ::
+         recording_url => #{@call.recording_url} :: total_duration => #{@call.total_duration}"
       @call.save
     rescue => e
-      Rails.logger.error "Twilio api request error in IntermediateCallStatusUpdate for account #{@account.id} :: #{@call.id} => #{e}"
+      Rails.logger.error "IntermediateCallStatusUpdate : Twilio api request error in IntermediateCallStatusUpdate for account #{@account.id} :: #{@call.id} => #{e}"
       return nil
     end
   end
@@ -73,7 +85,8 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
 
   def self.calculate_call_cost
     Resque::enqueue(Freshfone::Jobs::CallBilling, cost_params)
-    Rails.logger.info "FreshfoneJob for sid : #{@call.call_sid} :: dsid : #{@call.dial_call_sid}"
+    Rails.logger.info "IntermediateCallStatusUpdate : Call cost calculation for account #{@account.id} :: 
+      Call ID :: #{@call.id} FreshfoneJob for sid : #{@call.call_sid} :: dsid : #{@call.dial_call_sid}"
   end
 
   def self.cost_params
@@ -104,9 +117,13 @@ class Freshfone::Cron::IntermediateCallStatusUpdate
     begin
       (@twilio_call.present? && @twilio_call.forwarded_from.present?)   
     rescue Exception => e
-      Rails.logger.error "Twilio api request error in IntermediateCallStatusUpdate for has_forwarded_from_param account #{@account.id} :: #{@call.id} => #{e}"
+      Rails.logger.error "IntermediateCallStatusUpdate : Twilio api request error has_forwarded_from_param account #{@account.id} :: #{@call.id} => #{e}"
       return false
     end
-    
+  end
+
+  def self.update_as_missed_call
+    Rails.logger.debug "IntermediateCallStatusUpdate : Missed call update for account #{@account.id} :: Call id => #{@call.id} :: status => no-answer"
+    @call.noanswer!
   end
 end

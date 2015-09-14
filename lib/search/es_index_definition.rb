@@ -169,6 +169,7 @@ class Search::EsIndexDefinition
                 :user_id => { :type => :long, :include_in_all => false },
                 :folder_id => { :type => :long, :include_in_all => false },
                 :status => { :type => :integer, :include_in_all => false },
+                :language_id => { :type => :integer, :include_in_all => false },
                 :account_id => { :type => :long, :include_in_all => false },
                 :folder => { :type => "object", 
                              :properties => { 
@@ -392,13 +393,7 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster(account_id)
-    index = case account_id
-            when 110962           then 3 #Pinnacle sports is in Cluster-4
-            when 1..55000         then 0
-            when 55001..180000    then 1
-            when 180000..238931   then 2
-            else                       3
-            end
+    index = es_cluster_pos(account_id)
     # index = (account_id <= 55000) ? 0 : 1
     Tire.configure { url Es_aws_urls[index] }
     CLUSTER_ARR[index]
@@ -409,6 +404,39 @@ class Search::EsIndexDefinition
       return Tire.configure { url Es_aws_urls[i] } if index_prefix.include? prefix
     end
   end
+
+  def es_cluster_pos(account_id)
+    case account_id.to_i
+    when 110962           then 3 #Pinnacle sports is in Cluster-4
+    when 1..55000         then 0
+    when 55001..180000    then 1
+    when 180000..238931   then 2
+    else                       3
+    end
+  end
+
+
+  ### Methods to bypass thread-safety issues for ES ###
+
+  # Checking if alias is present in cluster
+  def index_exists?(index_name, account_id)
+    Tire::Configuration.client.head(index_url(index_name, account_id)).success?
+  end
+
+  def document_url(account_id, index_name, doc_klass, doc_id)
+    doc_klass = "Customer" if (doc_klass == "Company") #Hack for company alone as type in es is customer
+    [index_url(index_name, account_id), u(doc_klass.underscore), doc_id].join('/')
+  end
+
+  # For getting the index path
+  def index_url(index_name, account_id)
+    [cluster_url(account_id), index_name].join('/')
+  end
+
+  # For getting the cluster path
+  def cluster_url(account_id)
+    Es_aws_urls[es_cluster_pos(account_id)]
+  end  
 
 end
 end

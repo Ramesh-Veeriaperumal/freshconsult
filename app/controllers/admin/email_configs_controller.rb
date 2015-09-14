@@ -111,6 +111,15 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
     post_process
   end
+
+   def toggle_compose_email_feature
+    if current_account.features_included?(:compose_email)
+      current_account.features.compose_email.destroy
+    else
+      current_account.features.compose_email.create
+    end
+    post_process
+  end
   
   def personalized_email_enable    
     current_account.features.personalized_email_replies.create

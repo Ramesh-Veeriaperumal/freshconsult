@@ -51,13 +51,13 @@
 					color: #fff;
 					font-size: 12px;
 					font-weight: bold;
-					margin-right: 5px;
+					@include margin-right(5px);
 				} 
 			}
 
 			#merge-topics-list{
 				list-style-type: disc;
-				padding-left: 16px;
+				@include padding-left(16px);
 			}
 
 			&.user-list {
@@ -173,6 +173,6 @@
 	}
 
 	.modal-header .empty-trash{
-		float: right;
+		@include float(right);
 		margin-top: -25px;
 	}

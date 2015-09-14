@@ -158,7 +158,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def can_split?
-    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (!self.mobihelp?)
+    (self.incoming and self.notable) and (self.fb_post ? self.fb_post.can_comment? : true) and (!self.mobihelp?) and !user.blocked?
   end
 
   def as_json(options = {})
@@ -261,7 +261,7 @@ class Helpdesk::Note < ActiveRecord::Base
       if notable.outbound_email?
         resp_time_bhrs,resp_time = outbound_note_level_response
       else
-        notable.schema_less_ticket.first_response_id = id
+        notable.schema_less_ticket.set_first_response_id(id)
         resp_time,resp_time_bhrs = calculate_response_time(notable)
       end
     else
@@ -417,7 +417,7 @@ class Helpdesk::Note < ActiveRecord::Base
       customer_resp = first_customer_note(notable,notable.created_at, self.created_at)
       unless customer_resp.blank?
         resp_time,resp_time_bhrs = calculate_response_time(customer_resp)
-        notable.schema_less_ticket.first_response_id = id
+        notable.schema_less_ticket.set_first_response_id(id)
       end
       [resp_time, resp_time_bhrs]
     end

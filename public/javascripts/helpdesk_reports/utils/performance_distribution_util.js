@@ -22,7 +22,7 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
             var date = _FD.core.setReportFilters();
             var trend_hash = {
                 time_trend: true,
-                time_trend_conditions: ["doy", "w", "mon", "y"], 
+                time_trend_conditions: ["doy", "w", "mon", "y", "qtr"],
             };
             jQuery.each(_FD.constants.metrics, function (index, value) {
                 var merge_hash = {

@@ -58,6 +58,12 @@
 	input[type="radio"], input[type="checkbox"]{
 			margin-top: -2px;
 	}
+	.ficon-help{
+   	font-size: 16px;
+    margin-top: -6px;
+    color: #06c;
+    &:hover{ color: #004080;}
+	}
 	&.moderation{
 		span{
 			display: block;

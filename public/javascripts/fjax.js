@@ -26,7 +26,6 @@ window.Fjax = {
       this._SocketCleanUp();
       this._FayeCleanUp();
       $.xhrPool_Abort();
-      this._beforeSendExtras(evnt,xhr,settings,options);
 
     	if(this._triggerUnload() === false) return false;
     	this._beforeSendCleanup();
@@ -46,7 +45,10 @@ window.Fjax = {
     	return true;
     },
 
-    callBeforeReplace: function(settings) {
+    callBeforeReplace: function(evnt,xhr,settings) {
+      
+      this._beforeSendExtras(evnt, settings);
+
       $(settings.target).data('twipsy','');
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
@@ -111,6 +113,10 @@ window.Fjax = {
       }
     },
 
+    resetLoading: function() {
+      NProgress.remove();
+    },
+
     _triggerUnload: function() {
     	if(typeof(this.unload) == 'function') {
 	    	var unload = this.unload();
@@ -127,7 +133,7 @@ window.Fjax = {
       setTimeout(NProgress.remove, 500);
     },
 
-    _beforeSendExtras: function(evnt,xhr,settings,options) {
+    _beforeSendExtras: function(evnt, options) {
       var start_time = new Date();
       var bHeight = $('#body-container').height(),
           clkdLI = $(evnt.relatedTarget).parent();
@@ -267,7 +273,7 @@ if (!$.browser.msie && !$.browser.edge) {
       // BeforeSend
       return Fjax.callBeforeSend(evnt,xhr,settings,options);
   }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
-    Fjax.callBeforeReplace(settings);
+    Fjax.callBeforeReplace(evnt,xhr,settings);
   }).bind('pjax:end',function(evnt,xhr,settings){
     //AfterReceive
     Fjax.callAfterRecieve(evnt,xhr,settings);

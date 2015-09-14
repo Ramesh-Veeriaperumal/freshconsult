@@ -79,7 +79,8 @@ module HelpdeskReports::Util::Ticket
   def formatted_duration total_seconds
     hours = (total_seconds / (60 * 60)).to_i
     minutes = ((total_seconds / 60) % 60).to_i
-    "#{hours}h #{minutes}m"
+    seconds = (total_seconds % 60).to_i
+    return total_seconds > 3600 ? "#{hours}h #{minutes}m" : "#{minutes}m #{seconds}s"
   end
   
 end

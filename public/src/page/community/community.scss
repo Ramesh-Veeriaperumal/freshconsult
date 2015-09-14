@@ -6,6 +6,9 @@ $avatar_size: 40px;
 $widget_avatar_size: 25px;
 
 body.community {
+
+	.solution-placeholder.placeholder { color: #aaa; }
+
 	h1 {
 		font-size: 19px;
 		font-weight: 200;
@@ -121,7 +124,7 @@ div.forum-follower {
 }
 
 .topic-follower-right {
-	right: 75px;
+	@include right(75px);
 }
 
 div.follower_label {
@@ -146,9 +149,8 @@ div.follower_label {
 
 .list-actions-right{
 	@include float(right);
-	@include margin-right(12px);
+	margin: 13px;
 	margin-top: 10px;
-	@include margin-left(15px);
 }
 
 .list-inline {
@@ -330,14 +332,14 @@ body.community.moderation.cs-always-show {
 		background-color: #535353;
 		color: white;
 		overflow: hidden;
-		border-radius: 4px 4px 0px 0px;
+		@include border-radius(4px 4px 0px 0px);
 		padding: 15px;
 
 		.delete-confirm-warning-icon{
-			float: left;
+			@include float(left);
 			font-size: 40px;
 			display: inline-block;
-			margin-right: 30px;
+			@include margin-right(30px);
 			border-radius: 50%;
 			background: white;
 		}
@@ -364,15 +366,34 @@ body.community.moderation.cs-always-show {
 
 	.delete-confirm-form {
 		background-color: #EFEFEF;
-		padding: 15px;
+		padding: 13px;
 		padding-top: 20px;
-		border-radius: 0px 0px 4px 4px;
+		@include border-radius(0px 0px 4px 4px);
 		margin-bottom: -10px;
 	}
 }
 
+.pagearea {
+	.disabled {
+		color: grey;
+	}
+	.prop-edit {
+		margin-top: 10px;
+		.article-properties {
+			cursor: pointer;
+		}
+	}
+}
+
 .portal-preview-icon {
-	margin-left: 10px;
+	@include margin-left(10px);
+}
+
+.article-sticky {
+	@include margin-left(-20px);
+	@include margin-right(-20px);
+	@include padding-left(20px);
+	@include padding-right(20px);
 }
 
 /* Animations used in Confirm Delete */
@@ -410,4 +431,23 @@ body.community.moderation.cs-always-show {
   	@include opacity(0);
     @include margin-right(-170px);
   }
+}
+
+#article-properties {
+	.modal-body {
+		max-height: 450px;
+	}	
+}
+.artical-list {
+	.article-title {
+		.unpublished-title{
+			color: #999;
+		}
+	}
+}
+
+#article-form {
+	.preview_link{
+		@include margin-right(10px);
+	}
 }
