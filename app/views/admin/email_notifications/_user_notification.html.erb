@@ -1,0 +1,30 @@
+<% unless !current_account.features_included?(:contact_merge_ui) and user_notification.notification_type == 17 %>
+	<tr>
+		<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(user_notification.can_turn_off_for_requester?) %>>
+			<% if !(user_notification.can_turn_off_for_requester?) %>
+				<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (user_notification.requester_notification) ? "checked" : "" %> disabled >
+			<%else%> 	
+				<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (user_notification.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(user_notification.id) %>  >
+			<%end%>	
+		</td>
+		<td>
+			<span class="vertical-alignment event-name">
+				<strong>
+				<a href="<%= admin_edit_notification_path(:id => user_notification.id, :type =>"requester_template")%>"> <%= t("#{user_notification.token}") %></a>
+				</strong> 
+			</span>	
+		</td>
+
+			<td class="text-right">
+				<% if current_account.features?(:dynamic_content) && 
+					user_notification.outdated_requester_content? %>
+					<i class="common-icon-outdated"></i>
+					<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+				<%end%>	
+			</td>
+		
+		<td class="text-right">
+			<%= link_to(t('edit'), admin_edit_notification_path(:id => user_notification.id, :type =>"requester_template"), :class => 'btn btn-mini' ) %>
+		</td>
+	</tr>
+<% end %>
