@@ -236,23 +236,6 @@ TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 $('#ticket_original_request *').css({position: ''}); //Resetting the Position
-$('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	var group_id = $('#helpdesk_ticket_group_id').val();
-	$.ajax({type: 'GET',
-		url: '/helpdesk/commons/group_agents/' + group_id,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
