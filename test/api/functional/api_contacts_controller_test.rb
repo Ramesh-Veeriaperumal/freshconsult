@@ -66,6 +66,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('email', 'Email has already been taken')])
   end
 
+  def test_create_contact_with_prohibited_email
+    post :create, construct_params({},  name: Faker::Name.name,
+                                        email: 'mailer-daemon@gmail.com')
+    assert_response :created
+    match_json(deleted_contact_pattern(User.last))
+    assert User.last.deleted == true
+  end
+
   def test_create_contact_with_invalid_client_manager
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
