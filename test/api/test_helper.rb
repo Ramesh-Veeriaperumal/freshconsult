@@ -19,6 +19,13 @@ class ActionController::TestCase
     path
   end
 
+  def teardown
+    @controller.instance_variables.each do |ivar|
+      @controller.instance_variable_set(ivar,nil)
+    end
+    super
+  end
+  ActiveRecord::Base.logger.level = 1
   self.use_transactional_fixtures = false
   fixtures :all
 end
