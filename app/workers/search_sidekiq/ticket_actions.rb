@@ -5,6 +5,7 @@ class SearchSidekiq::TicketActions < SearchSidekiq::BaseWorker
 
   class DocumentAdd < SearchSidekiq::TicketActions
     def perform(args)
+      return unless Account.current.launched?(:es_count_writes)
       args.symbolize_keys!
       response = Search::Filters::Docs.new.index_document(args[:klass_name], args[:id], args[:version_value])
       (custom_logger.info(formatted_log(:es_upsert, "es_filters_#{Account.current.id}", args[:id], response.code, response.body))) rescue true
@@ -13,6 +14,7 @@ class SearchSidekiq::TicketActions < SearchSidekiq::BaseWorker
 
   class DocumentRemove < SearchSidekiq::TicketActions
     def perform(args)
+      return unless Account.current.launched?(:es_count_writes)
       args.symbolize_keys!
       response = Search::Filters::Docs.new.remove_document(args[:klass_name], args[:id])
       (custom_logger.info(formatted_log(:es_delete, "es_filters_#{Account.current.id}", args[:id], response.code, response.body))) rescue true
