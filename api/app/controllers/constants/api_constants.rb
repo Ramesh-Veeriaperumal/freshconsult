@@ -23,7 +23,7 @@ module ApiConstants
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
 
   LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index] +
-                       TimeSheetConstants::LOAD_OBJECT_EXCEPT +
+                       TimeEntryConstants::LOAD_OBJECT_EXCEPT +
                        NoteConstants::LOAD_OBJECT_EXCEPT +
                        DiscussionConstants::LOAD_OBJECT_EXCEPT
 

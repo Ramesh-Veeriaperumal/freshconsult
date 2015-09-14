@@ -1,12 +1,12 @@
-class TimeSheetsController < ApiApplicationController
+class TimeEntriesController < ApiApplicationController
   include Concerns::TimeSheetConcern
 
-  before_filter :ticket_exists?, only: [:ticket_time_sheets]
+  before_filter :ticket_exists?, only: [:ticket_time_entries]
   before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def create
     # If any validation is introduced in the TimeSheet model,
-    # update_running_timer and @time_sheet.save should be wrapped in a transaction.
+    # update_running_timer and @item.save should be wrapped in a transaction.
     update_running_timer params[cname][:agent_id] if @timer_running
     @item.workable = @ticket
     super
@@ -26,15 +26,15 @@ class TimeSheetsController < ApiApplicationController
     render_errors @item.errors unless @item.update_attributes(changed)
   end
 
-  def ticket_time_sheets
+  def ticket_time_entries
     @items = paginate_items(scoper.where(workable_id: @id))
-    render '/time_sheets/index'
+    render '/time_entries/index'
   end
 
   private
 
     def load_objects
-      super time_sheet_filter.includes(:workable)
+      super time_entry_filter.includes(:workable)
     end
 
     def fetch_changed_attributes(timer_running)
@@ -49,7 +49,7 @@ class TimeSheetsController < ApiApplicationController
     end
 
     def feature_name
-      FeatureConstants::TIMESHEET
+      FeatureConstants::TIME_ENTRIES
     end
 
     def ticket_exists?
@@ -70,24 +70,24 @@ class TimeSheetsController < ApiApplicationController
       current_account.time_sheets
     end
 
-    def time_sheet_filter
-      time_sheet_filter_params = params.slice(*TimeSheetConstants::INDEX_FIELDS)
-      scoper.filter(time_sheet_filter_params)
+    def time_entry_filter
+      time_entry_filter_params = params.slice(*TimeEntryConstants::INDEX_FIELDS)
+      scoper.filter(time_entry_filter_params)
     end
 
     def validate_filter_params
-      params.permit(*TimeSheetConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      timesheet_filter = TimeSheetFilterValidation.new(params, nil)
-      render_errors timesheet_filter.errors, timesheet_filter.error_options unless timesheet_filter.valid?
+      params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      timeentry_filter = TimeEntryFilterValidation.new(params, nil)
+      render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
     def validate_params
       return false if create? && !load_ticket
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
-      fields = get_fields("TimeSheetConstants::#{action_name.upcase}_FIELDS")
+      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS")
       params[cname].permit(*fields)
-      @time_sheet_val = TimeSheetValidation.new(params[cname], @item, @timer_running)
-      render_errors @time_sheet_val.errors, @time_sheet_val.error_options unless @time_sheet_val.valid?(action_name.to_sym)
+      @time_entry_val = TimeEntryValidation.new(params[cname], @item, @timer_running)
+      render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)
     end
 
     def validate_toggle_params

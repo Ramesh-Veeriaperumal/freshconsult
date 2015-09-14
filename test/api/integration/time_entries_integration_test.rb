@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
-class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::TimeSheetsHelper
+class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
+  include Helpers::TimeEntriesHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -12,14 +12,14 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
         api_index: 2,
         api_toggle_timer: 5,
         api_destroy: 5,
-        api_ticket_time_sheets: 2,
+        api_ticket_time_entries: 2,
 
         create: 21,
         update: 17,
         index: 13,
         toggle_timer: 19,
         destroy: 16,
-        ticket_time_sheets: 14
+        ticket_time_entries: 14
       }
 
       ticket = create_ticket
@@ -29,40 +29,40 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       # create
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
-        post("/api/tickets/#{api_v2_ticket_id}/time_sheets", v2_time_sheet_payload, @write_headers)
+        post("/api/tickets/#{api_v2_ticket_id}/time_entries", v2_time_entry_payload, @write_headers)
         assert_response :created
       end
       v1[:create] = count_queries do
-        post("/helpdesk/tickets/#{ticket_id}/time_sheets.json", v1_time_sheet_payload, @write_headers)
+        post("/helpdesk/tickets/#{ticket_id}/time_sheets.json", v1_time_entry_payload, @write_headers)
         assert_response :success
       end
 
       id1 = Helpdesk::TimeSheet.where(workable_id: api_v2_ticket_id).first.id
       id2 = Helpdesk::TimeSheet.where(workable_id: ticket.display_id).first.id
 
-      # ticket_time_sheets
-      v2[:ticket_time_sheets], v2[:api_ticket_time_sheets], v2[:ticket_time_sheets_queries] = count_api_queries do
-        get("/api/tickets/#{ticket_id}/time_sheets", nil, @headers)
+      # ticket_time_entries
+      v2[:ticket_time_entries], v2[:api_ticket_time_entries], v2[:ticket_time_entries_queries] = count_api_queries do
+        get("/api/tickets/#{ticket_id}/time_entries", nil, @headers)
         assert_response :success
       end
-      v1[:ticket_time_sheets] = count_queries do
+      v1[:ticket_time_entries] = count_queries do
         get("/helpdesk/tickets/#{ticket_id}/time_sheets.json", nil, @headers)
         assert_response :success
       end
 
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
-        put("/api/time_sheets/#{id1}", v2_time_sheet_update_payload, @write_headers)
+        put("/api/time_entries/#{id1}", v2_time_entry_update_payload, @write_headers)
         assert_response :success
       end
       v1[:update] = count_queries do
-        put("/helpdesk/tickets/#{ticket_id}/time_sheets/#{id2}.json", v1_time_sheet_payload, @write_headers)
+        put("/helpdesk/tickets/#{ticket_id}/time_sheets/#{id2}.json", v1_time_entry_payload, @write_headers)
         assert_response :success
       end
 
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
-        get('/api/time_sheets', nil, @headers)
+        get('/api/time_entries', nil, @headers)
         assert_response :success
       end
       v1[:index] = count_queries do
@@ -72,7 +72,7 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       # toggle_timer
       v2[:toggle_timer], v2[:api_toggle_timer], v2[:toggle_timer_queries] = count_api_queries do
-        put("/api/time_sheets/#{id1}/toggle_timer",  {}.to_json, @write_headers)
+        put("/api/time_entries/#{id1}/toggle_timer",  {}.to_json, @write_headers)
         assert_response :success
       end
       v1[:toggle_timer] = count_queries do
@@ -82,7 +82,7 @@ class TimeSheetsIntegrationTest < ActionDispatch::IntegrationTest
 
       # destroy
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
-        delete("/api/time_sheets/#{id1}", nil, @headers)
+        delete("/api/time_entries/#{id1}", nil, @headers)
         assert_response :no_content
       end
       v1[:destroy] = count_queries do

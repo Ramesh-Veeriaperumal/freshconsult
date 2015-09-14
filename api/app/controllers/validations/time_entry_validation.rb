@@ -1,4 +1,4 @@
-class TimeSheetValidation < ApiValidation
+class TimeEntryValidation < ApiValidation
   attr_accessor :billable, :executed_at, :time_spent, :agent_id, :user, :note, :item, :request_params, :timer_running, :start_time
 
   # do not change validation order
@@ -58,6 +58,6 @@ class TimeSheetValidation < ApiValidation
     end
 
     def attributes_to_be_stripped
-      TimeSheetConstants::FIELDS_TO_BE_STRIPPED
+      TimeEntryConstants::FIELDS_TO_BE_STRIPPED
     end
 end

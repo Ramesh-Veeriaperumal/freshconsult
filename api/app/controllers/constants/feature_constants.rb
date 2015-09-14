@@ -1,5 +1,5 @@
 module FeatureConstants
   DISCUSSION = :forums
-  TIMESHEET = :timesheets
+  TIME_ENTRIES = :timesheets
   BUSINESS_CALENDAR = :multiple_business_hours
 end

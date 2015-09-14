@@ -24,10 +24,5 @@ module ApiTicketConstants
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s)
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since)
 
-  ORDER_BY_SCOPE = {
-    'index' => true,
-    'notes' => false
-  }
-
   FIELDS_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields)
 end

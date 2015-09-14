@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 
-class TimeSheetsDependencyTest < ActionDispatch::IntegrationTest
+class TimeEntriesDependencyTest < ActionDispatch::IntegrationTest
   def test_before_filters_web_time_sheets_controller
     expected_filters =  [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_current_account,
                          :unset_current_portal, :set_current_account, :set_default_locale, :set_locale,

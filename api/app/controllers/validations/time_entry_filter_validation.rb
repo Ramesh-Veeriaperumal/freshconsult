@@ -1,4 +1,4 @@
-class TimeSheetFilterValidation < ApiValidation
+class TimeEntryFilterValidation < ApiValidation
   attr_accessor :company_id, :agent_id, :billable, :executed_after, :executed_before
 
   validates :billable, data_type: { rules: 'Boolean', allow_blank: true }
