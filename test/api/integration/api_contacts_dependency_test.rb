@@ -8,7 +8,7 @@ class ApiContactsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_contact
-    actual = User.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = User.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveRecord::Validations::UniquenessValidator, [:twitter_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }], [ActiveRecord::Validations::UniquenessValidator, [:external_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }], [ActiveModel::Validations::NumericalityValidator, [:login_count], { only_integer: :true, greater_than_or_equal_to: 0, allow_nil: true }], [ActiveModel::Validations::NumericalityValidator, [:failed_login_count], { only_integer: :true, greater_than_or_equal_to: 0, allow_nil: true }], [ActiveModel::Validations::LengthValidator, [:password], { on: :update, minimum: 4, if: :has_no_credentials? }], [ActiveModel::Validations::ConfirmationValidator, [:password], { if: :require_password? }], [ActiveModel::Validations::LengthValidator, [:password_confirmation], { on: :update, minimum: 4, if: :has_no_credentials? }], [ActiveRecord::Validations::UniquenessValidator, [:perishable_token], { case_sensitive: true, if: :perishable_token_changed? }], [ActiveModel::Validations::PresenceValidator, [:persistence_token], {}], [ActiveRecord::Validations::UniquenessValidator, [:persistence_token], { case_sensitive: true, if: :persistence_token_changed? }], [ActiveRecord::Validations::UniquenessValidator, [:single_access_token], { case_sensitive: true, if: :single_access_token_changed? }]]
     assert_equal expected, actual
   end

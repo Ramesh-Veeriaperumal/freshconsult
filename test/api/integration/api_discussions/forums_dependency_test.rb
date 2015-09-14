@@ -14,7 +14,7 @@ class ForumsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_forum
-    actual = Forum.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Forum.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:name, :forum_category, :forum_type], {}],
                 [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :forum_category_id }],
                 [ActiveModel::Validations::InclusionValidator, [:forum_type], { in: 1..4 }],

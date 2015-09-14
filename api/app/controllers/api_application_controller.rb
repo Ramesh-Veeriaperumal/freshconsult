@@ -117,7 +117,7 @@ class ApiApplicationController < MetalApiConfiguration
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
       Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      invalid_fields = Hash[exception.params.collect { |v| [v, ['invalid_field']] }]
+      invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
     end
 

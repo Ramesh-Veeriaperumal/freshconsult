@@ -5,7 +5,7 @@ class Helpers::ContactsValidationHelper
     end
 
     def custom_contact_dropdown_fields
-      Account.current.contact_form.custom_contact_fields.select { |c| c.field_type == :custom_dropdown }.collect { |x| [x.name.to_sym, x.choices.collect { |t| t[:value] }] }.to_h
+      Account.current.contact_form.custom_contact_fields.select { |c| c.field_type == :custom_dropdown }.map { |x| [x.name.to_sym, x.choices.map { |t| t[:value] }] }.to_h
     end
 
     def custom_contact_fields_for_delegator

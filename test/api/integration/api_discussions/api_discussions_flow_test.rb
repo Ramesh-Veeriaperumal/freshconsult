@@ -74,7 +74,7 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     assert_equal 0, forum.posts_count + forum.topics_count
     assert_equal posts_count, other_forum.posts_count
     assert_equal topics_count, other_forum.topics_count
-    assert_equal [], other_forum.topics.collect(&:stamp_type).compact
+    assert_equal [], other_forum.topics.map(&:stamp_type).compact
   end
 
   def test_monitorships

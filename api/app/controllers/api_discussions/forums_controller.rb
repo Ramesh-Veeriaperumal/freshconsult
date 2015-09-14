@@ -55,7 +55,7 @@ module ApiDiscussions
       end
 
       def set_custom_errors(_item = @item)
-        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.collect(&:customer_id)
+        bad_customer_ids = @item.customer_forums.select { |x| x.errors.present? }.map(&:customer_id)
         @item.errors.add('company_ids', 'list is invalid') if bad_customer_ids.present?
         @error_options = { remove: :customer_forums, company_ids: { list: "#{bad_customer_ids.join(', ')}" } }
         ErrorHelper.rename_error_fields({ forum_category: :forum_category_id }, @item)

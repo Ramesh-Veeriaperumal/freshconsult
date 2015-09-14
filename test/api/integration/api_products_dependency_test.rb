@@ -14,7 +14,7 @@ class ApiProductsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_product
-    actual = Product.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Product.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id }]]
     assert_equal expected, actual
   end

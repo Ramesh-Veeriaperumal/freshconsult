@@ -33,7 +33,7 @@ class ApiCompaniesController < ApiApplicationController
 
     def validate_params
       @company_fields = current_account.company_form.custom_company_fields
-      allowed_custom_fields = @company_fields.collect(&:name)
+      allowed_custom_fields = @company_fields.map(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))

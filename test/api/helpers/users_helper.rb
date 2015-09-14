@@ -31,7 +31,7 @@ module Helpers::UsersHelper
       mobile: expected_output[:mobile] || contact.mobile,
       name: expected_output[:name] || contact.name,
       phone: expected_output[:phone] || contact.phone,
-      tags: expected_output[:tags] || contact.tags.collect(&:name),
+      tags: expected_output[:tags] || contact.tags.map(&:name),
       time_zone: expected_output[:time_zone] || contact.time_zone,
       twitter_id: expected_output[:twitter_id] || contact.twitter_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

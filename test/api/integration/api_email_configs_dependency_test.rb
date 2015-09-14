@@ -14,7 +14,7 @@ class ApiEmailConfigsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_email_config
-    actual = EmailConfig.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = EmailConfig.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:to_email, :reply_email], {}], [ActiveModel::Validations::FormatValidator, [:to_email], { with: /\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/, message: 'is invalid' }], [ActiveRecord::Validations::UniquenessValidator, [:reply_email], { case_sensitive: true, scope: :account_id }], [ActiveModel::Validations::FormatValidator, [:reply_email], { with: /\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/, message: 'is invalid' }], [ActiveRecord::Validations::UniquenessValidator, [:activator_token], { case_sensitive: true, allow_nil: true }]]
     assert_equal expected, actual
   end

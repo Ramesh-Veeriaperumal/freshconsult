@@ -15,7 +15,7 @@ class ApiAgentsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_agent
-    actual = Agent.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Agent.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:user_id], {}]]
     assert_equal expected, actual
   end

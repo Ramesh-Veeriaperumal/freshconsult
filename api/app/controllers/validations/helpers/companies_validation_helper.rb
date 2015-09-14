@@ -5,7 +5,7 @@ class Helpers::CompaniesValidationHelper
   end
 
   def custom_field_drop_down_choices
-    custom_drop_down_fields.collect { |x| [x.name.to_sym, x.choices.collect { |t| t[:value] }] }.to_h
+    custom_drop_down_fields.map { |x| [x.name.to_sym, x.choices.map { |t| t[:value] }] }.to_h
   end
 
   def custom_drop_down_fields

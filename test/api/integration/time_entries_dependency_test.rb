@@ -14,7 +14,7 @@ class TimeEntriesDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_time_sheet
-    actual = Helpdesk::TimeSheet.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Helpdesk::TimeSheet.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = []
     assert_equal expected, actual
   end

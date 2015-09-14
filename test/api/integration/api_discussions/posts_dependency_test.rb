@@ -13,7 +13,7 @@ class PostsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_post
-    actual = Post.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Post.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:user_id, :body_html, :topic], {}]]
     assert_equal expected, actual
   end

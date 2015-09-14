@@ -254,7 +254,7 @@ module ApiDiscussions
       pattern = forum_response_pattern(Forum.last, params)
       pattern[:company_ids] = [customer.id]
       match_json(pattern)
-      assert_equal Forum.last.customer_forums.collect(&:customer_id), [customer.id]
+      assert_equal Forum.last.customer_forums.map(&:customer_id), [customer.id]
     end
 
     def test_create_with_customer_id_and_visibility_not_company_users
@@ -322,7 +322,7 @@ module ApiDiscussions
       match_json(pattern)
       pattern = forum_response_pattern(forum, forum_visibility: 4).merge(company_ids: [customer.id])
       match_json(pattern)
-      assert_equal forum.customer_forums.collect(&:customer_id), [customer.id]
+      assert_equal forum.customer_forums.map(&:customer_id), [customer.id]
     end
 
     def test_update_with_nil_values

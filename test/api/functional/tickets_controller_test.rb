@@ -49,7 +49,7 @@ class TicketsControllerTest < ActionController::TestCase
     @@ticket_fields, @@custom_field_names = [], []
     @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
     @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
-    @@choices_custom_field_names = @@ticket_fields.collect(&:name)
+    @@choices_custom_field_names = @@ticket_fields.map(&:name)
     CUSTOM_FIELDS.each do |custom_field|
       next if ['dropdown', 'country', 'state', 'city'].include?(custom_field)
       @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
@@ -861,6 +861,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('responder_id', "can't be blank"),
                 bad_request_error_pattern('email_config_id', "can't be blank"),
                 bad_request_error_pattern('requester_id', 'user_blocked'),
+                bad_request_error_pattern('product_id', "can't be blank"),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", "not_included", list: 'Australia,USA'),
                 bad_request_error_pattern("test_custom_dropdown_#{@account.id}", "not_included", list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
   end
@@ -1110,8 +1111,10 @@ class TicketsControllerTest < ActionController::TestCase
     previous_fr_due_by = t.frDueBy
     previous_due_by = t.due_by
     params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
-    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
+    p response.body
+    p t.attributes
     assert_response :success
     assert t.reload.due_by != previous_due_by
     assert t.reload.frDueBy != previous_fr_due_by
@@ -1121,7 +1124,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
     previous_due_by = t.due_by
     params_hash = { due_by: 100.days.since.to_s }
-    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
     assert t.reload.due_by != previous_due_by
@@ -1131,7 +1134,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
     previous_fr_due_by = t.frDueBy
     params_hash = { fr_due_by: 2.hours.since.to_s }
-    Helpdesk::Ticket.any_instance.expects(:update_dueby).at_most_once
+    Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response :success
     assert t.reload.frDueBy != previous_fr_due_by

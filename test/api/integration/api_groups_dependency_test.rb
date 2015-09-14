@@ -13,7 +13,7 @@ class ApiGroupsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   # def test_validations_group
-  #   actual = Group.validators.collect { |x| [x.class, x.attributes, x.options] }
+  #   actual = Group.validators.map { |x| [x.class, x.attributes, x.options] }
   #   expected = [[ActiveModel::Validations::PresenceValidator, [:name], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: true, scope: :account_id }]]
   #   assert_equal expected, actual
   # end

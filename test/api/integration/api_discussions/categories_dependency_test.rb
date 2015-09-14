@@ -14,7 +14,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_forum_category
-    actual = ForumCategory.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = ForumCategory.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:name, :account_id], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id }]]
     assert_equal expected, actual
   end

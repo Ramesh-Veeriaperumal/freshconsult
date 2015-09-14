@@ -13,7 +13,7 @@ class ApiCompanyFieldsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_company_field
-    actual = CompanyField.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = CompanyField.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: true, scope: [:account_id, :company_form_id] }], [ActiveModel::Validations::PresenceValidator, [:name, :column_name, :position], {}]]
     assert_equal expected, actual
   end

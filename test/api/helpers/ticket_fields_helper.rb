@@ -47,8 +47,8 @@ module Helpers::TicketFieldsHelper
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
 
-    field_choices = choices.collect { |x| [x, '0'] }
-    pv_attr = choices.collect { |x| { 'value' => x } }
+    field_choices = choices.map { |x| [x, '0'] }
+    pv_attr = choices.map { |x| { 'value' => x } }
 
     picklist_vals_l1 = []
     field_choices.map(&:first).each_with_index do |l1_val, index1|

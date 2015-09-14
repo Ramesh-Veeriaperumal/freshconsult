@@ -8,7 +8,7 @@ class TicketsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   # def test_validations_ticket
-  #   actual = Helpdesk::Ticket.validators.collect { |x| [x.class, x.attributes, x.options] }
+  #   actual = Helpdesk::Ticket.validators.map { |x| [x.class, x.attributes, x.options] }
   #   expected = [[ActiveModel::Validations::PresenceValidator, [:requester_id], {:message=>"should be a valid email address"}], [ActiveModel::Validations::NumericalityValidator, [:requester_id, :responder_id], {:only_integer=>true, :allow_nil=>true}], [ActiveModel::Validations::NumericalityValidator, [:source, :status], {:only_integer=>true}], [ActiveModel::Validations::InclusionValidator, [:source], {:in=>1..9}], [ActiveModel::Validations::InclusionValidator, [:priority], {:in=>[1, 2, 3, 4], :message=>"should be a valid priority"}], [ActiveRecord::Validations::UniquenessValidator, [:display_id], {:case_sensitive=>true, :scope=>:account_id}], [ActiveModel::Validations::PresenceValidator, [:group], {:if=>#<Proc:0x007fc63e295de0@/Users/user/Github/Rails3-helpkit/app/models/helpdesk/ticket/validations.rb:11 (lambda)>}], [ActiveModel::Validations::PresenceValidator, [:responder], {:if=>#<Proc:0x007fc63e29f778@/Users/user/Github/Rails3-helpkit/app/models/helpdesk/ticket/validations.rb:12 (lambda)>}], [ActiveModel::Validations::PresenceValidator, [:email_config], {:if=>#<Proc:0x007fc63e29cdc0@/Users/user/Github/Rails3-helpkit/app/models/helpdesk/ticket/validations.rb:13 (lambda)>}], [ActiveModel::Validations::PresenceValidator, [:product], {:if=>#<Proc:0x007fc63e2a62d0@/Users/user/Github/Rails3-helpkit/app/models/helpdesk/ticket/validations.rb:14 (lambda)>}]]
   #   assert_equal expected, actual
   # end

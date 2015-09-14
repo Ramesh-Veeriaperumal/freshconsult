@@ -192,7 +192,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     get :index, construct_params({ type: 'nested_field' }, {})
     assert_response :success
     response = parse_response @response.body
-    assert_equal ['nested_field'], response.collect { |x| x['type'] }.uniq
+    assert_equal ['nested_field'], response.map { |x| x['type'] }.uniq
     assert_equal 1, response.count
   end
 end

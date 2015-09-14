@@ -14,7 +14,7 @@ class ApiBusinessCalendarsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_business_calendar
-    actual = BusinessCalendar.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = BusinessCalendar.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:time_zone, :name], {}]]
     assert_equal expected, actual
   end

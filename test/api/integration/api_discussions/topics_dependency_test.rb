@@ -14,7 +14,7 @@ class TopicsDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_topic
-    actual = Topic.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Topic.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:forum, :user, :title], {}]]
     assert_equal expected, actual
   end

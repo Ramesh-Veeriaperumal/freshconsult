@@ -15,7 +15,7 @@ class ApiCompaniesDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_company
-    actual = Company.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Company.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:name, :account], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id }]]
     assert_equal expected, actual
   end

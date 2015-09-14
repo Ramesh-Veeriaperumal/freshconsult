@@ -15,7 +15,7 @@ class ApiSlaPoliciesDependencyTest < ActionDispatch::IntegrationTest
   end
 
   def test_validations_sla_policy
-    actual = Helpdesk::SlaPolicy.validators.collect { |x| [x.class, x.attributes, x.options] }
+    actual = Helpdesk::SlaPolicy.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:name, :account], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: true, scope: :account_id }]]
     assert_equal expected, actual
   end

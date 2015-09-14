@@ -12,7 +12,7 @@ class MetalApiConfigurationTest < ActionView::TestCase
   end
 
   def test_included_view_paths
-    assert MetalApiConfiguration.view_paths.paths.collect { |x| x.instance_variable_get('@path') }.include?("#{Rails.root}/api/app/views")
+    assert MetalApiConfiguration.view_paths.paths.map { |x| x.instance_variable_get('@path') }.include?("#{Rails.root}/api/app/views")
   end
 
   def test_extended_modules

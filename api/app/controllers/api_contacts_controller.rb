@@ -81,7 +81,7 @@ class ApiContactsController < ApiApplicationController
 
     def validate_params
       contact_fields = current_account.contact_form.custom_contact_fields
-      allowed_custom_fields = contact_fields.collect(&:name)
+      allowed_custom_fields = contact_fields.map(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
 
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]

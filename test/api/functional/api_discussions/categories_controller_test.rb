@@ -3,7 +3,7 @@ require_relative '../../test_helper'
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
     include Helpers::DiscussionsHelper
-    actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.collect { |x| x.defaults[:action] }.uniq
+    actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.map { |x| x.defaults[:action] }.uniq
     methods = { 'index' => :get, 'create' => :post, 'update' => :put, 'destroy' => :delete, 'show' => :get, 'forums' => :get }
 
     def fc
