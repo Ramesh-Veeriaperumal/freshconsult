@@ -4,18 +4,18 @@ Helpkit::Application.routes.draw do
       member do
         put :assign
         put :restore
-        get :time_sheets, to: 'time_sheets#ticket_time_sheets'
+        get :time_entries, to: 'time_entries#ticket_time_entries'
         get :notes, to: 'notes#ticket_notes'
         post :reply, to: 'notes#reply'
         post :notes, to: 'notes#create'
-        post :time_sheets, to: 'time_sheets#create'
+        post :time_entries, to: 'time_entries#create'
       end
     end
     resources :notes, :except => [:new, :edit, :show, :index, :create]
 
     resources :ticket_fields, :controller => :api_ticket_fields, :only => [:index]
 
-    resources :time_sheets, :except => [:new, :edit, :show, :create] do 
+    resources :time_entries, :except => [:new, :edit, :show, :create] do 
       member do 
         put :toggle_timer
       end
