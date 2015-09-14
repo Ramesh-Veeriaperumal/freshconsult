@@ -2056,6 +2056,13 @@ ol, ul, li{
 
 		}
 
+		li.default_source.dynamic_sections, li.default_ticket_type.dynamic_sections{
+			width: 100%;
+			.customSelect, select, .select2-container{
+				width: 310px;
+			}
+		}
+
 		.chzn-container-single .chzn-single {
 		  background-color: #fafafa;
 		  border: 1px solid #ccc;
