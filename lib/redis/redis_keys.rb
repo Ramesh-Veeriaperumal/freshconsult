@@ -96,6 +96,8 @@ module Redis::RedisKeys
 	SLAVE_QUERIES = "SLAVE_QUERIES"
 	VALIDATE_REQUIRED_TICKET_FIELDS = "VALIDATE_REQUIRED_TICKET_FIELDS"
 
+	PASSWORD_RESTRICTION_ENABLED = "PASSWORD_RESTRICTION_ENABLED" #Password restriction for certain customers
+
 	def newrelic_begin_rescue
 	    begin
 	      yield

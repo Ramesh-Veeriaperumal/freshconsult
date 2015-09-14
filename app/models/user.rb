@@ -55,8 +55,28 @@ class User < ActiveRecord::Base
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
+    c.validate :password_format?, :if => :require_password_check? #Password restriction hardcode
   end
-  
+
+  #Password restriction hardcode - TBD Remove after password_policy completed
+  def require_password_check?
+    !new_record? && password_changed? && Account.current.password_restriction_enabled?
+  end
+
+  def password_format?
+    short =  self.password.blank? || self.password.length < 8
+    alphanumeric = self.password =~ ALPHA_NUMERIC_REGEX #should have atleast one uppercase alphabet, one lowercase alphabet and one number
+    special = self.password =~ SPECIAL_CHARACTERS_REGEX # special character
+    username = self.password.downcase.include?(self.email[/.+(?=@)/].downcase) # should not contain username
+
+    #No I18n, since only for Walby Parker and won't be used for password policy feature
+    error_message = "Your password must have at least 8 characters,
+                     an uppercase and lowercase alphabet, a number and a
+                    special character, and must not be the same as your email id."
+    self.errors.add(:base, error_message) if !alphanumeric or !special or username or short
+  end
+  #End Password restriction hardcode
+
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
