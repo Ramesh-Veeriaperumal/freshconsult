@@ -31,13 +31,12 @@ class UserDrop < BaseDrop
 	end
 
 	def firstname
-		name_part("given")
-	end
-
+   		source.first_name
+   	end	
+   	
 	def lastname
-		name_part("family")
-	end
-
+		source.last_name
+	end	
 	def all_emails
 		source.user_emails.collect(&:email)
 	end
@@ -64,14 +63,4 @@ class UserDrop < BaseDrop
 		@company_name ||= @source.company.name if @source.company
 	end
 
-
-	private
-		def name_part(part)
-			part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
-			parsed_name[part].blank? ? @source.name : parsed_name[part]
-		end
-
-		def parsed_name
-			@parsed_name ||= Namae::Name.parse(@source.name)
-		end
 end

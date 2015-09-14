@@ -396,7 +396,7 @@ class User < ActiveRecord::Base
   end
 
   def first_name
-    name_part("given")
+    name_part("given").split.first
   end
 
   def last_name
