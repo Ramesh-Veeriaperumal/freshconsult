@@ -254,14 +254,18 @@ module Helpdesk::TicketActions
         db_type = get_db_type(params)
         Sharding.send(db_type) do
           @ticket_filter.deserialize_from_params(params)
-          joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-          joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-          options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-          if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-            options[:distinct] = true 
-            options[:select] = :id
+          if Account.current.launched?(:es_count_reads)
+            total_entries = Search::Filters::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+          else
+            joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+            joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+            options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+            if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+              options[:distinct] = true 
+              options[:select] = :id
+            end
+            total_entries = current_account.tickets.permissible(current_user).count(options)
           end
-          total_entries = current_account.tickets.permissible(current_user).count(options)
         end
       end
       @ticket_count = total_entries.to_i

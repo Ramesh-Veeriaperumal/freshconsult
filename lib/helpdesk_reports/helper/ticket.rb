@@ -87,8 +87,8 @@ module HelpdeskReports::Helper::Ticket
 
   def validate_time_trend param
     report_duration = date_range(param[:date_range])
-    if report_duration.present?
-      TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
+    if report_duration.present? && report_type != "performance_distribution"
+       TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
     end
     
     (param[:time_trend_conditions] || []).inject([]) do |errors, tt|

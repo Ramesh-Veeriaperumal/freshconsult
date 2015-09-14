@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150905094044) do
+ActiveRecord::Schema.define(:version => 20150909161854) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2790,6 +2790,33 @@ ActiveRecord::Schema.define(:version => 20150905094044) do
   add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
   add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
   add_index "solution_customer_folders", ["account_id", "folder_meta_id"], :name => "index_solution_customer_folders_on_account_id_folder_meta_id"
+  
+  
+  create_table "solution_draft_bodies", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "draft_id",    :limit => 8
+    t.text     "description", :limit => 2147483647
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
+
+  add_index "solution_draft_bodies", ["account_id", "draft_id"], :name => "index_solution_draft_bodies_on_account_id_and_draft_id"
+
+  create_table "solution_drafts", :force => true do |t|
+    t.integer  "account_id",       :limit => 8, :null => false
+    t.integer  "article_id",       :limit => 8
+    t.integer  "category_meta_id", :limit => 8
+    t.integer  "user_id",          :limit => 8
+    t.string   "title"
+    t.text     "meta"
+    t.integer  "status"
+    t.datetime "modified_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "solution_drafts", ["account_id", "category_meta_id", "modified_at"], :name => "index_solution_drafts_on_acc_and_cat_meta_and_modified"
+  add_index "solution_drafts", ["account_id", "user_id", "modified_at"], :name => "index_solution_drafts_on_acc_and_user_and_modified"
 
   create_table "solution_folder_meta", :force => true do |t|
     t.integer  "visibility",                :limit => 8

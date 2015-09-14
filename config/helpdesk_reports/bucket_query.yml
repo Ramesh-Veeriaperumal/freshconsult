@@ -158,7 +158,7 @@
 :resolution_time: 
   - operator: less_than_eql
     value: 18000
-    label: <5 hrs
+    label: < 5 hrs
   - operator: range
     value: "18000,36000"
     label: 5-10 hrs

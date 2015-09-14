@@ -11,6 +11,9 @@
     		case 'forum':
     			jQuery(element_id).redactor({autoresize:false,convertDivs: false, allowTagsInCodeSnippet:true, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
     			break;
+    		case 'solution':
+    			jQuery(element_id).redactor({autoresize:true,convertDivs: false, allowTagsInCodeSnippet:true, tabindex: 2, imageUpload: "/solutions_uploaded_images", clipboardImageUpload: "/solutions_uploaded_images/create_file", imageGetJson: "/solutions_uploaded_images"});
+    			break;
 	    	case 'cnt-reply':
 	         	jQuery(element_id).redactor({
 					focus: true, convertDivs: false, autoresize:false, observeImages:true, imageUpload:"/tickets_uploaded_images", clipboardImageUpload:"/tickets_uploaded_images/create_file", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,

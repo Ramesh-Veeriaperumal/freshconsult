@@ -32,9 +32,14 @@
 		});
 
 		Twilio.Device.offline(function (device) {
-			console.log("Device offline");
 			console.log("offline-token");
-			freshfoneuser.getCapabilityToken(undefined, true);
+			if(freshfoneuser.tokenRegenerationOn == null)
+				regenerateToken();
+			else{
+				if((freshfoneuser.tokenRegenerationOn - new Date()) > 3600000)
+					regenerateToken();	
+			}
+				
 		})
 
 		Twilio.Device.connect(function (conn) {
@@ -143,6 +148,10 @@
 
 		Twilio.Device.presence(function (pres) {
 		});
+	}
+	function regenerateToken () {
+		freshfoneuser.getCapabilityToken();
+		freshfoneuser.tokenRegenerationOn = new Date();
 	}
 	});
 }(jQuery));

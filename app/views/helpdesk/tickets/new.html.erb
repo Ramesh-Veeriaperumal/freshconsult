@@ -3,7 +3,7 @@
 <div class="muted ticket_sub_text"><%= t("ticket.submit_a_ticket_info") %></div>
 <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
   <ul class="ui-form">  
-    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false, :f => f } %>
+    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
     <li>
       <%= render( :partial => "/helpdesk/shared/attachment_form" ) %>
     </li>

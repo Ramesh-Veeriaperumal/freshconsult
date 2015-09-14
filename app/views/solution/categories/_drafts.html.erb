@@ -1,0 +1,9 @@
+<%  
+  @my_drafts = @drafts.by_user(current_user)
+  @my_drafts_count = @my_drafts.size 
+%>
+<% if @my_drafts_count < 1 %>
+  <%= render :partial => "all_drafts" %>
+<% else %>
+  <%= render :partial => "my_drafts" %>
+<% end %>

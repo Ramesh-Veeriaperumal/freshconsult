@@ -18,6 +18,9 @@
 
 		this.options = $.extend({}, $.fn.freshdialog.defaults, options, data);
 
+		// Title Fallback for the ones with Tooltip class applied
+		this.options.title = this.options.title || this.options.modalTitle;
+
 		// Removing the hash in-front of the target
 		this.$dialogid = this.options.targetId.substring(1)
 
