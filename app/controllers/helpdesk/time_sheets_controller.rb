@@ -7,6 +7,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
   before_filter :create_permission, :only => :create 
+  before_filter :validate_params, :only => [:create, :update]
   before_filter :timer_permission, :only => :toggle_timer
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
@@ -305,6 +306,10 @@ private
         format.js
       end
     end
+  end
+
+  def validate_params
+    params[:time_entry].delete('executed_at') unless validate_time(params[:time_entry][:executed_at])
   end
 
 end
