@@ -90,8 +90,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    update_article and return unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
-    send("article_#{(UPDATE_FLAGS & params.keys.map(&:to_sym)).first}")
+    unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
+      update_article
+      return 
+    end
+    send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
   end
 
   def destroy
