@@ -34,6 +34,7 @@
 				// To save the properties on pressing enter
 				if(keyCode == 13) {
 					$(this.options.customPropertiesDiv).submit();
+					$('.twipsy :visible').hide(); //tooltip fix
 				}
 			}, this) );
 
