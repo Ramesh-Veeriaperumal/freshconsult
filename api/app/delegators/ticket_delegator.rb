@@ -2,29 +2,70 @@
 class TicketDelegator < SimpleDelegator
   include ActiveModel::Validations
 
-  attr_accessor :error_options
-  validates :group, presence: true, if: -> { group_id  }
-  validates :responder, presence: true, if: -> { responder_id }
+  attr_accessor :error_options, :ff
+  validate :group_presence, if: -> { group_id  }
+  validate :responder_presence, if: -> { responder_id }
   validates :email_config, presence: true, if: -> { email_config_id }
-  validates :product, presence: true, if: -> { product_id && email_config_id.blank?  }, on: :create
-  validates :product, presence: true, if: -> { product_id }, on: :update
+  validate :product_presence, if: -> { product_conditions }
   validate :responder_belongs_to_group?, if: -> { group_id && responder_id && errors[:responder].blank? && errors[:group].blank? }
   validate :user_blocked?, if: -> { errors[:requester].blank? && requester_id }
   validates :custom_field,  custom_field: { custom_field:
                               {
-                                validatable_custom_fields: proc { Helpers::TicketsValidationHelper.choices_validatable_custom_fields },
-                                drop_down_choices: proc { Helpers::TicketsValidationHelper.dropdown_choices_by_field_name },
-                                nested_field_choices: proc { Helpers::TicketsValidationHelper.nested_fields_choices_by_name },
+                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.choices_validatable_custom_fields(x) },
+                                drop_down_choices: proc { |x| Helpers::TicketsValidationHelper.dropdown_choices_by_field_name(x) },
+                                nested_field_choices: proc { |x| Helpers::TicketsValidationHelper.nested_fields_choices_by_name(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }
                             }
+
+  def initialize(record, options)
+    @ff = options[:ff]
+    super record
+  end
+
+  def product_conditions
+    if validation_context == :create # validation_context is a ActiveModel::Validations method
+      product_id && email_config_id.blank?
+    else # update
+      product_id
+    end
+  end
+
+  def product_presence
+    ticket_product_id = schema_less_ticket.product_id
+    product = Account.current.products_from_cache.detect {|x| ticket_product_id == x.id}
+    if product.nil?
+      errors.add(:product, "can't be blank")
+    else
+      self.schema_less_ticket.product = product
+    end
+  end
+
+  def group_presence # this is a custom validate method so that group cache can be used.
+    group = Account.current.groups_from_cache.detect {|x| group_id == x.id}
+    if group.nil?
+      errors.add(:group, "can't be blank")
+    else
+      self.group = group
+    end
+  end
+
+  def responder_presence # 
+    responder = Account.current.agents_from_cache.detect{|x| x.user_id == responder_id}.try(:user)
+    if responder.nil?
+      errors.add(:responder, "can't be blank")
+    else
+      self.responder = responder
+    end
+  end
+
   def user_blocked?
     errors.add(:requester_id, 'user_blocked') if requester && requester.blocked?
   end
 
   def required_based_on_status?
-    Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+    [CLOSED, RESOLVED].include?(status.to_i)
   end
 
   def responder_belongs_to_group?

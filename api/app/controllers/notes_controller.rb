@@ -68,6 +68,7 @@ class NotesController < ApiApplicationController
       @item.notable.account = current_account
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
+      @item.inline_attachments = @item.inline_attachments
       @item.save_note
     end
 

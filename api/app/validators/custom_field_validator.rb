@@ -13,7 +13,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @closure_status = proc_to_object(@required_based_on_status, record)
 
       # get all validatable custom fields
-      @custom_fields = proc_to_object(@validatable_custom_fields)
+      @custom_fields = proc_to_object(@validatable_custom_fields, record)
       @custom_fields.each do |custom_field|
         @current_field = custom_field
         field_name = custom_field.name # assign field name
@@ -68,7 +68,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Inclusion validator for nested field level 0
   def validate_nested_field_level_0(record, field_name)
-    choices = get_choices(field_name, nil, 0)
+    choices = get_choices(record, field_name, nil, 0)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
   end
 
@@ -76,7 +76,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # will not be validated if parent value (i.e., level 0 value) is nil
   def validate_nested_field_level_2(record, field_name)
     return unless @parent[:value]
-    choices = get_choices(@parent[:name], @parent[:value], 2)
+    choices = get_choices(record, @parent[:name], @parent[:value], 2)
     unless choices.nil?
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
     end
@@ -86,7 +86,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # will not be validated if parent value (i.e., level 1 value) or ancestor value (i.e., level 0 value) is nil
   def validate_nested_field_level_3(record, field_name)
     return unless @parent[:value] && @parent[:ancestor_value]
-    choices = get_choices(@parent[:name], @parent[:value], 3)
+    choices = get_choices(record, @parent[:name], @parent[:value], 3)
     unless choices.nil?
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
     end
@@ -94,7 +94,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Inclusion validator for dropdown field
   def validate_custom_dropdown(record, field_name)
-    choices = proc_to_object(@drop_down_choices)
+    choices = proc_to_object(@drop_down_choices, record)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: !@is_required, required: @is_required)).validate(record)
   end
 
@@ -189,8 +189,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # Get choices based on level, field name & parent value for nested fields
-    def get_choices(field_name, parent_value, level = 0)
-      @nested_fields ||= proc_to_object(@nested_field_choices) if @nested_field_choices.present?
+    def get_choices(record, field_name, parent_value, level = 0)
+      @nested_fields ||= proc_to_object(@nested_field_choices, record) if @nested_field_choices.present?
       case level
       when 0
         return @nested_fields[:first_level_choices][field_name.to_s]

@@ -10,14 +10,17 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item)
-    if !ticket_delegator.valid?
+    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
-    elsif @item.save_ticket
-      render_201_with_location(item_id: @item.display_id)
-      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
     else
-      render_errors(@item.errors)
+      assign_ticket_status
+      if @item.save_ticket
+        render_201_with_location(item_id: @item.display_id)
+        notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank?
+      else
+        render_errors(@item.errors)
+      end
     end
   end
 
@@ -27,8 +30,8 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item)
-    if !ticket_delegator.valid?
+    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
       notify_cc_people @new_cc_emails unless @new_cc_emails.blank?
@@ -147,12 +150,14 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys
+      @ff = Account.current.flexifields_with_ticket_fields_from_cache
+      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(@ff)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ticket = TicketValidation.new(params[cname], @item)
+      load_ticket_status
+      ticket = TicketValidation.new(params[cname].merge(status_ids: @statuses.map(&:status_id), ff: @ff), @item)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
@@ -164,7 +169,10 @@ class TicketsController < ApiApplicationController
         @item.cc_email = @cc_emails
       end
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
-      @item.attachments = @item.attachments if create? # assign attachments so that it will not be queried again in model callbacks
+      if create? # assign attachments so that it will not be queried again in model callbacks
+        @item.attachments = @item.attachments 
+        @item.inline_attachments = @item.inline_attachments
+      end
     end
 
     def verify_object_state
@@ -180,8 +188,9 @@ class TicketsController < ApiApplicationController
 
     # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
     def assign_checkbox_value
+      check_box_names = Helpers::TicketsValidationHelper.check_box_type_custom_field_names(@ff)
       params[cname][:custom_fields].each_pair do |key, value|
-        next unless Helpers::TicketsValidationHelper.check_box_type_custom_field_names.include?(key.to_s)
+        next unless check_box_names.include?(key.to_s)
         params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
       end
     end
@@ -222,5 +231,14 @@ class TicketsController < ApiApplicationController
     def load_object
       @item = scoper.find_by_display_id(params[:id])
       head(:not_found) unless @item
+    end
+
+    def load_ticket_status
+      @statuses = Helpdesk::TicketStatus.status_objects_from_cache(current_account)
+    end
+
+    def assign_ticket_status
+      @item.status = OPEN unless @item.status_changed?
+      @item.ticket_status = @statuses.find {|x| x.status_id == @item.status }
     end
 end

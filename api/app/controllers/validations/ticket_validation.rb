@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :type,
-                :product_id, :tags, :custom_fields, :attachments, :request_params, :item
+                :product_id, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ff
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
@@ -13,7 +13,7 @@ class TicketValidation < ApiValidation
   validates :priority, custom_inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
 
   # proc is used as inclusion array is not constant
-  validates :status, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_status_values } }, allow_nil: true
+  validates :status, custom_inclusion: { in: proc { |x| x.status_ids } }, allow_nil: true
   validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook, :outbound_email).values }, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
@@ -37,7 +37,7 @@ class TicketValidation < ApiValidation
 
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { Helpers::TicketsValidationHelper.data_type_validatable_custom_fields },
+                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }
@@ -78,13 +78,13 @@ class TicketValidation < ApiValidation
   end
 
   def required_based_on_status?
-    Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+    [CLOSED, RESOLVED].include?(status.to_i)
   end
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
     if [:due_by, :fr_due_by].any? { |c| request_params.key?(c) }
-      Helpdesk::TicketStatus.status_keys_by_name(Account.current).select { |x| ['Closed', 'Resolved'].include?(x) }.values.include?(status.to_i)
+      [CLOSED, RESOLVED].include?(status.to_i)
     end
   end
 
