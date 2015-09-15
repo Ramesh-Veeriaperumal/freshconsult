@@ -46,7 +46,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       emails_string = comment.to_emails.join(", ")
       emails = get_email_array emails_string
       agents_list = ticket.account.technicians.where(:email => emails)
-      language_group_agent_notification(agents_list, EmailNotification::NOTIFY_COMMENT, ticket, comment)
+      email_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT) 
+      language_group_agent_notification(agents_list, email_notification, ticket, comment)
   end
 
   def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil)
@@ -70,10 +71,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.language_group_agent_notification(agents_list, e_notification, ticket, comment)
-    email_notification = ticket.account.email_notifications.find_by_notification_type(e_notification) 
     agents_list.group_by(&:language).each do |language, agents|
       i_receips = agents.map(&:email)
-      deliver_agent_notification(agents.first, i_receips, email_notification, ticket, comment)          
+      deliver_agent_notification(agents.first, i_receips, e_notification, ticket, comment)          
     end 
   end
 
