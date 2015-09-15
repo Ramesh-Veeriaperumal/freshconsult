@@ -3634,8 +3634,24 @@ en:
     details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
     flash:
       folders_move_to: 'Folders have been moved to the selected category "<b>%{category_name}</b>" %{undo}'
+      folders_move_to_success:
+        zero: '<b>%{folder_name}</b> was moved to <b>%{category_name}</b> %{undo}'
+        one: '<b>%{folder_name}</b> and %{count} other were moved to <b>%{category_name}</b> %{undo}'
+        other: '<b>%{folder_name}</b> and %{count} others were moved to <b>%{category_name}</b> %{undo}'
+      folders_move_to_error:
+        zero: '<b>%{folder_name}</b> was not moved to <b>%{category_name}</b>'
+        one: '<b>%{folder_name}</b> and %{count} other were not moved to <b>%{category_name}</b>'
+        other: '<b>%{folder_name}</b> and %{count} others were not moved to <b>%{category_name}</b>'
       folders_move_to_fail: "The selected category does not exist"
       articles_move_to: 'Articles have been moved to the selected folder "<b>%{folder_name}</b>" %{undo}'
+      articles_move_to_success:
+        zero: '<b>%{article_name}</b> was moved to <b>%{folder_name}</b> %{undo}'
+        one: '<b>%{article_name}</b> and %{count} other were moved to <b>%{folder_name}</b> %{undo}'
+        other: '<b>%{article_name}</b> and %{count} others were moved to <b>%{folder_name}</b> %{undo}'
+      articles_move_to_error:
+        zero: '<b>%{article_name}</b> was not moved to <b>%{folder_name}</b>'
+        one: '<b>%{article_name}</b> and %{count} other were not moved to <b>%{folder_name}</b>'
+        other: '<b>%{article_name}</b> and %{count} others were not moved to <b>%{folder_name}</b>'
       articles_move_to_fail: "The selected folder does not exist"
       articles_changed_author: Author has been succesfully changed
       articles_change_author_fail: "The selected agent does not exist"
