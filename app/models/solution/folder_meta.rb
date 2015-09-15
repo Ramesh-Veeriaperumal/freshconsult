@@ -16,7 +16,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
 
-	has_many :customers, :through => :customer_folders, :class_name => 'Solution::CustomerFolder'
+	has_many :customers, :through => :customer_folders
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :foreign_key => :solution_folder_meta_id, :order => :position
 
