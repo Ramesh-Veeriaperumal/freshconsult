@@ -304,7 +304,7 @@ class Solution::ArticlesController < ApplicationController
     def update_draft_attributes
       attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
       @draft.unlock
-      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id]
+      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id].present?
       @draft.update_attributes(params[:solution_article].slice(:title, :description))
     end
 
