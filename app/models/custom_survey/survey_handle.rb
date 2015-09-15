@@ -81,8 +81,7 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
       s_handle.preview = preview
       s_handle.agent_id = note ? note.user_id : ticket.responder_id
       s_handle.group_id = ticket.group_id
-      s_handle = find_duplicate_handle(s_handle)
-      s_handle.save if s_handle.id.blank?
+      s_handle.save
       s_handle
     end
     

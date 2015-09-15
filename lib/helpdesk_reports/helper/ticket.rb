@@ -11,6 +11,18 @@ module HelpdeskReports::Helper::Ticket
 
   def filter_data
     @show_options = show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
+    @label_hash = column_id_label_hash
+  end
+  
+  def column_id_label_hash
+    labels = {}
+    @show_options.each do|id, field|
+      labels[id] = field[:name]
+      if field[:nested_fields]
+        field[:nested_fields].each{|n_field| labels[n_field[:condition]] = n_field[:name]}
+      end
+    end
+    labels
   end
 
   def set_selected_tab
@@ -65,7 +77,8 @@ module HelpdeskReports::Helper::Ticket
   def validate_dates param
     begin
       range = param[:date_range].split("-")
-      range.length > 1 ? (Date.parse(range.second) - Date.parse(range.first)).to_i : 1
+      Date.parse(range.first)
+      Date.parse(range.second) if range.length > 1
       []
     rescue ArgumentError
       ["Invalid Date"]
@@ -74,8 +87,8 @@ module HelpdeskReports::Helper::Ticket
 
   def validate_time_trend param
     report_duration = date_range(param[:date_range])
-    if report_duration.present?
-      TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
+    if report_duration.present? && report_type != "performance_distribution"
+       TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
     end
     
     (param[:time_trend_conditions] || []).inject([]) do |errors, tt|
@@ -102,7 +115,7 @@ module HelpdeskReports::Helper::Ticket
     # hack begins
     # Temporary code to display proper error message in case of filter limit exceeded
     # TODO -> write errors in classes
-    @filter_err = param[:filter].length > TICKET_FILTER_LIMIT ? FILTER_ERROR_TEXT : false
+    @filter_err = param[:filter].length > TICKET_FILTER_LIMIT ? t('helpdesk_reports.filter_limit_exceeded', count: TICKET_FILTER_LIMIT) : false
     # hack ends
     param[:filter].length > TICKET_FILTER_LIMIT ? ["Filter limit exceeded"] : []
   end
@@ -181,7 +194,7 @@ module HelpdeskReports::Helper::Ticket
   end
 
   def explain
-    puts JSON.pretty_generate @processed_result
+    puts JSON.pretty_generate @data
   end
 
 =begin

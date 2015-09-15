@@ -109,9 +109,15 @@ module TicketsFilter
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open all_tickets monitored_by archived spam deleted )
 
   def self.default_views
-    DEFAULT_VISIBLE_FILTERS.map { |i| {
+    filters = if Account.current && Account.current.features?(:archive_tickets)
+      DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE
+    else
+      DEFAULT_VISIBLE_FILTERS
+    end
+    filters.map { |i| {
         :id       =>  i, 
         :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
         :default  =>  true 
@@ -135,6 +141,22 @@ module TicketsFilter
     to_ret = to_ret.joins(join) if join
     to_ret
   end
+
+  ### ES Count query related hacks : START ###
+
+  ### Hack for dashboard/API summary count fetching from ES
+  def self.es_filter_count(selector, unresolved=false, agent_filter=false)
+    custom_filter = Helpdesk::Filters::CustomTicketFilter.new
+    action_hash = custom_filter.default_filter(selector.to_s) || []
+
+    action_hash.push({ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',') }) if unresolved
+    action_hash.push({ "condition" => "responder_id", "operator" => "is_in", "value" => "0" }) if agent_filter
+
+
+    Search::Filters::Docs.new(action_hash).count(Helpdesk::Ticket)
+  end
+
+  ### ES Count query related hacks : END ###
 
   def self.default_scope
     eval "Helpdesk::Ticket"

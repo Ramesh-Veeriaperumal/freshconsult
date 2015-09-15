@@ -1012,7 +1012,16 @@ var scrollToError = function(){
 					}
 				}else if($.trim(response).length){
 					if (_form.data('panel')) {
-						$('#' + _form.data('panel')).unblock();
+
+						if(_form.data("form")){
+							var $form = $('#' + _form.data('panel')),
+								form_container = $form.find(".commentbox");
+
+							form_container.unblock();
+						} else {
+							$('#' + _form.data('panel')).unblock();
+						}
+
 						$('#' + _form.data('panel')).hide();
 						$('#' + _form.data('panel')).trigger('visibility');
 					}

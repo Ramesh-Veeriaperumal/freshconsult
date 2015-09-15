@@ -227,9 +227,16 @@ describe Solution::FoldersController do
         end
       end
 
+      it "should reload the page if category id is not valid" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @folder_ids, :parent_id => "test"
+        response.body.should =~ /location.reload()/
+        expect(flash[:notice]).to be_present
+      end
+
       it "should render move_to.rjs" do
         xhr :put, :move_to, :items => @folder_ids, :parent_id => @test_category2.id
-        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo\(\)/
+        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo/
       end
 
       it "should reverse the changes done by move_to" do

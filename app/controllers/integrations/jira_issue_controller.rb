@@ -67,7 +67,6 @@ class Integrations::JiraIssueController < ApplicationController
   end
 
   def notify
-    Rails.logger.info "#{params.inspect}"
     if params[:webhookEvent] == "remote_app_started"
       # TODO: Logic to fetch the jira public key and preserve it for later the oauth 2-legged signature verification.
     else
@@ -89,18 +88,26 @@ class Integrations::JiraIssueController < ApplicationController
        auth_key = params["auth_key"]
        data = params["comment"]? params["comment"]["body"]: "@"
        # TODO:  Costly query.  Needs to revisit and index the integrated_resources table and/or split the quries.
-       @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*,integrated_resources.local_integratable_id,integrated_resources.remote_integratable_id"],
+       @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*,integrated_resources.local_integratable_id,integrated_resources.local_integratable_type,integrated_resources.remote_integratable_id"],
                                                                                              :joins=>"INNER JOIN integrated_resources ON integrated_resources.installed_application_id=installed_applications.id",
                                                                                              :conditions=>["integrated_resources.remote_integratable_id=? and configs like ?", remote_integratable_id, "%#{auth_key}%"])
-       unless @installed_app.blank?
+       if @installed_app && @installed_app.local_integratable_type == "Helpdesk::Ticket"
             local_integratable_id = @installed_app.local_integratable_id
             account_id = @installed_app.account_id
             recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment => Digest::SHA512.hexdigest(data)})
             if recently_updated_by_fd # If JIRA has been update recently with same params then ignore that event.
               remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment => Digest::SHA512.hexdigest(data)})
               @installed_app = nil
-              Rails.logger.info("Recently freshdesk updated JIRA with same params. So ignoring the event.")
             end
+       elsif @installed_app && @installed_app.local_integratable_type == "Helpdesk::ArchiveTicket"
+        integrated_resource = Integrations::IntegratedResource.find_by_local_integratable_id_and_local_integratable_type(@installed_app.local_integratable_id,"Helpdesk::ArchiveTicket")
+        if integrated_resource
+          archive_ticket = integrated_resource.local_integratable
+          if archive_ticket
+            ticket = archive_ticket.ticket || create_ticket(archive_ticket) 
+            modify_integrated_resource(ticket,integrated_resource)
+          end
+        end
        end
        return
      end
@@ -114,5 +121,22 @@ class Integrations::JiraIssueController < ApplicationController
   def jira_object
     @installed_app = Integrations::InstalledApplication.find(:first, :include=>:application,:conditions => {:applications => {:name => "jira"}, :account_id => current_account})
     @jira_obj = Integrations::JiraIssue.new(@installed_app)
+  end
+
+  def modify_integrated_resource(ticket,integrated_resource)
+    integrated_resource = Integrations::IntegratedResource.find(integrated_resource.id)
+    integrated_resource.update_attributes({:local_integratable_type => "Helpdesk::Ticket", :local_integratable_id => ticket.id }) if integrated_resource
+  end
+
+  def create_ticket(archive_ticket)
+    ticket = Helpdesk::Ticket.new(
+          :requester_id => archive_ticket.requester_id,
+          :subject => archive_ticket.subject,
+          :ticket_body_attributes => {
+            :description => archive_ticket.description
+    })
+    ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
+    ticket.save_ticket
+    ticket
   end
 end

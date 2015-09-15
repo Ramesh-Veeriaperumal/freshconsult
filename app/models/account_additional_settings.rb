@@ -40,6 +40,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     end
   end
 
+  def archive_days
+    additional_settings[:archive_days] unless additional_settings.blank?
+  end
+
   private
 
   def clear_cache

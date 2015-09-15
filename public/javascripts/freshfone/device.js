@@ -32,8 +32,14 @@
 		});
 
 		Twilio.Device.offline(function (device) {
-			console.log("Device offline");
-			freshfoneuser.getCapabilityToken(undefined, true);
+			console.log("offline-token");
+			if(freshfoneuser.tokenRegenerationOn == null)
+				regenerateToken();
+			else{
+				if((freshfoneuser.tokenRegenerationOn - new Date()) > 3600000)
+					regenerateToken();	
+			}
+				
 		})
 
 		Twilio.Device.connect(function (conn) {
@@ -65,6 +71,7 @@
 		Twilio.Device.disconnect(function (conn) {
 			console.log("Call disconnected");
 			freshfoneNotification.resetJsonFix();
+			freshfoneDialpadEvents.hideContactDetails();
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
 			if (freshfonecalls.tConn) {
 				var callSid = freshfonecalls.tConn.parameters.CallSid;
@@ -141,6 +148,10 @@
 
 		Twilio.Device.presence(function (pres) {
 		});
+	}
+	function regenerateToken () {
+		freshfoneuser.getCapabilityToken();
+		freshfoneuser.tokenRegenerationOn = new Date();
 	}
 	});
 }(jQuery));

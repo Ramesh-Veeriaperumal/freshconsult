@@ -3,7 +3,7 @@
 	<%= article_btns('save-btn', 'publish-btn') %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', 
-           :locals => { :page => :article, :sticky_class => 'article-sticky'} %>
+           :locals => { :page => :article, :sticky_class => 'article-sticky', :toolbar => true} %>
            
 <%= render :partial => 'article_form' %>
 		

@@ -1,11 +1,13 @@
 class Freshfone::CallActions
-	
+  include Freshfone::NodeNotifier
+  include Freshfone::NodeEvents
+
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
 	def initialize(params={}, current_account=nil, current_number=nil)
-		self.params = params
+		self.params          = params
 		self.current_account = current_account
-		self.current_number = current_number
+		self.current_number  = current_number
 	end
 
 	def register_incoming_call
@@ -102,7 +104,7 @@ class Freshfone::CallActions
 			:transfer_by_agent => transfer_by_agent,
 			:pinged_agents => pinged_agents(performer,type) || load_target_agents(target_group) )
 		current_call.save
-		trigger_notification_validator(current_call.id)
+		# trigger_notification_validator(current_call.id)
 	end
 
 	def external_call_meta(performer, transfer_by_agent)
@@ -113,7 +115,7 @@ class Freshfone::CallActions
 		:transfer_by_agent => transfer_by_agent,
 		:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer],
 		:pinged_agents => [ { :number => performer, :device_type => :external} ])
-		trigger_notification_validator(current_call.id)
+		# trigger_notification_validator(current_call.id)
 	end
 
 	def set_status_restricted
@@ -129,6 +131,38 @@ class Freshfone::CallActions
   	call.meta.update_external_transfer_call_response(number, response) 
   end
 
+  def handle_failed_mobile_incoming_call(call, agent_id)
+    call_meta = call.meta
+    return if call_meta.blank?
+    call_meta.update_pinged_agents_with_response(agent_id, :failed)
+    telephony.redirect_call_to_voicemail call if call_meta.all_agents_missed?
+  end
+
+  def handle_failed_direct_dial_call(call)
+    call.meta ||= current_account.freshfone_calls.find(call.id).create_meta(
+      :meta_info => call.direct_dial_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:direct_dial])
+    call.failed!
+    telephony.redirect_call_to_voicemail call
+  end
+
+  def handle_failed_mobile_transfer_call(call, agent_id)
+    child_call = call.children.last
+    child_call_meta = child_call.meta
+    return if child_call_meta.blank?
+    child_call_meta.update_pinged_agents_with_response(agent_id, :failed)
+    if child_call_meta.all_agents_missed?
+      child_call.failed!
+      notify_transfer_unanswered call
+    end
+  end
+
+  def handle_failed_external_transfer_call(call)
+    child_call = call.children.last
+    child_call_meta = child_call.meta
+    child_call_meta.update_external_transfer_call_response(params[:external_number], :failed) if child_call_meta.present?
+    child_call.update_call({:direct_dial_number => "+#{params[:external_number]}", :DialCallStatus => 'failed'})
+    notify_transfer_unanswered call
+  end
 
 	private
 
@@ -215,7 +249,11 @@ class Freshfone::CallActions
 		    TimeZone.set_time_zone
     end
 
-    def trigger_notification_validator(call_id) #Enqueue 5 mins
+    def telephony
+      @telephony ||= Freshfone::Telephony.new params, current_account, current_number
+    end
+
+    def trigger_notification_validator(call_id)
     	Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::NotificationMonitor, 
     			{:account_id => current_account.id, :freshfone_call => call_id}) if current_call.present?
     end

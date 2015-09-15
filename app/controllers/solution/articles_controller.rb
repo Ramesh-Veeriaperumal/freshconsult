@@ -14,8 +14,9 @@ class Solution::ArticlesController < ApplicationController
   before_filter :page_title 
   before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
-  before_filter :bulk_update_folder, :only => [:move_to, :move_back]
+  before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
+  before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
@@ -38,10 +39,9 @@ class Solution::ArticlesController < ApplicationController
 
   def new
     @page_title = t("header.tabs.new_solution")
-    current_folder = Solution::Folder.first
-    current_folder = Solution::Folder.find(params[:folder_id]) unless params[:folder_id].nil?
-    @article = current_folder.articles.new  
-    @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+    @article = current_account.solution_articles.new
+    set_article_folder
+    @article.set_status(false)
     respond_to do |format|
       format.html {
         render "new"
@@ -64,7 +64,7 @@ class Solution::ArticlesController < ApplicationController
     @article = @current_folder.articles.new(params[nscname]) 
     set_item_user 
     build_attachments
-    @article.set_status(save_as_draft? ? false : publish? || params[nscname][:status])
+    @article.set_status(get_status)
     @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
@@ -90,8 +90,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
-    update_article and return unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
-    send("article_#{(UPDATE_FLAGS & params.keys.map(&:to_sym)).first}")
+    unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
+      update_article
+      return 
+    end
+    send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
   end
 
   def destroy
@@ -116,9 +119,8 @@ class Solution::ArticlesController < ApplicationController
    end
 
   def reset_ratings
-    @article.update_attributes(:thumbs_up => 0, :thumbs_down => 0 )
-    @article.votes.destroy_all
-  
+    @article.reset_ratings
+    @article.reload
     respond_to do |format|
       format.js
       format.xml  { head :ok }
@@ -136,11 +138,10 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def move_to
-    flash[:notice] = moved_flash_msg if @updated_items
+    flash[:notice] = moved_flash_msg if @updated_items.present?
   end
 
   def move_back
-    @folder = current_account.folders.find(params[:parent_id])
   end
 
   def change_author
@@ -257,7 +258,7 @@ class Solution::ArticlesController < ApplicationController
         end
         return
       end
-      @article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      @article.set_status(true)
       update_article
     end
 
@@ -303,7 +304,7 @@ class Solution::ArticlesController < ApplicationController
     def update_draft_attributes
       attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
       @draft.unlock
-      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id]
+      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id].present?
       @draft.update_attributes(params[:solution_article].slice(:title, :description))
     end
 
@@ -348,7 +349,7 @@ class Solution::ArticlesController < ApplicationController
     def bulk_update_folder
       @articles = current_account.solution_articles.where(:id => params[:items])
       @articles.map { |a| a.update_attributes(:folder_id => params[:parent_id]) }
-      @updated_items = @articles.map(&:id)
+      @updated_items = params[:items].map(&:to_i) & @new_folder.article_ids
     end
 
     def old_folder
@@ -356,10 +357,30 @@ class Solution::ArticlesController < ApplicationController
       @number_of_articles = current_account.folders.find(@folder_id).articles.size
     end
 
+    def check_new_folder
+      @new_folder = current_account.solution_folders.find_by_id params[:parent_id]
+      unless @new_folder
+        flash[:notice] = t("solution.flash.articles_move_to_fail")
+        respond_to do |format|
+          format.js { render inline: "location.reload();" }
+        end
+      end
+    end
+
+    def check_new_author
+      @new_author = current_account.technicians.find_by_id params[:parent_id]
+      unless @new_author
+        flash[:notice] = t("solution.flash.articles_change_author_fail")
+        respond_to do |format|
+          format.js { render inline: "location.reload();" }
+        end
+      end
+    end
+
     def moved_flash_msg
       render_to_string(
       :inline => t("solution.flash.articles_move_to",
-                      :folder_name => current_account.folders.find(params[:parent_id]).name,
+                      :folder_name => h(current_account.folders.find(params[:parent_id]).name),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
                                     :data => { 
@@ -373,7 +394,7 @@ class Solution::ArticlesController < ApplicationController
     def set_current_folder
       begin
         folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
-        @current_folder = Solution::Folder.find(folder_id)
+        @current_folder = current_account.solution_folders.find(folder_id)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
         @current_folder = current_account.solution_folders.first
@@ -385,6 +406,18 @@ class Solution::ArticlesController < ApplicationController
       if draft.present? && draft.errors.present?
         flash[:error] = draft.errors.full_messages.join("<br />\n").html_safe
       end
+    end
+
+    def get_status
+      status = params[nscname][:status]
+      return status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
+      save_as_draft? ? false : publish?
+    end
+
+    def set_article_folder
+      return if params[:folder_id].nil?
+      current_folder = current_account.solution_folders.find(params[:folder_id])
+      @article.folder_id = current_folder.id if current_folder.present?
     end
 
 end

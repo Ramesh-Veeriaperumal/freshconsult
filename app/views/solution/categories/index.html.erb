@@ -23,9 +23,14 @@
 	<%= render :partial => 'categories', :locals => { :categories => current_categories} %>
 	<% unless other_categories.blank? %>
 		<div class="view-more-cat pull-left">
-			<a href="#" class="show-more-cat">
-				<%= t('solution_category.more_catogories').html_safe %>
-			</a>
+			<span class="show-more-cat">
+				<a href="#">
+					<%= t('solution_category.other_categories').html_safe %>
+				</a>
+				<div class="muted other_categories_info">
+					<%= t('solution_category.other_categories_info').html_safe %>
+				</div>
+			</span>
 		</div>
 		<div class="other-portal-cat hide"> 
 			<%= render :partial => 'categories', :locals => { :categories => other_categories } %>
@@ -43,5 +48,3 @@
 									:list_id => "categories_list"
 							} %>
 <% end %>
-
-   

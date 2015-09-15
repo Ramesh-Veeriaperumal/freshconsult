@@ -27,7 +27,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :nested_field           => { :type => :custom, :dom_type => :nested_field}
   }
   
-  belongs_to :account
+  belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',
@@ -96,6 +96,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
+  scope :agent_required_fields, :conditions => { :required => true }
   scope :type_field, :conditions => { :name => "ticket_type" }
   scope :status_field, :conditions => { :name => "status" }
   scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]

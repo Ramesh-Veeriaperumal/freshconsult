@@ -1,0 +1,29 @@
+defaults: &defaults
+  shard_1: 1
+  shard_2: 1000000000
+  shard_3: 2000000000
+  shard_4: 3000000000
+  shard_5: 4000000000
+  shard_6: 5000000000
+  shard_7: 6000000000
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  shard_1: 1
+  shard_2: 1000000000
+  shard_3: 2000000000
+  shard_4: 3000000000
+  shard_5: 4000000000
+  shard_6: 5000000000
+  shard_7: 6000000000

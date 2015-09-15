@@ -15,7 +15,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :set_customer_folder_params, :validate_customers, :only => [:create]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
-  before_filter :bulk_update_category, :only => [:move_to, :move_back]
+  before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
   after_filter  :clear_cache, :only => [:move_to, :move_back]
   
   def index
@@ -118,11 +118,10 @@ class Solution::FoldersController < ApplicationController
   end
 
   def move_to
-    flash[:notice] = moved_flash_msg if @updated_items
+    flash[:notice] = moved_flash_msg if @updated_items.present?
   end
 
   def move_back
-    @category = current_account.solution_categories.find(params[:parent_id])
   end
 
  protected
@@ -236,7 +235,8 @@ class Solution::FoldersController < ApplicationController
     def bulk_update_category
       @folders = current_account.folders.where(:id => params[:items]).readonly(false)
       @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
-      @updated_items = @folders.map(&:id)
+      @new_category.reload
+      @updated_items = params[:items].map(&:to_i) & @new_category.folder_ids
     end
 
     def old_category
@@ -244,10 +244,20 @@ class Solution::FoldersController < ApplicationController
       @number_of_folders = current_account.solution_categories.find(@category_id).folders.size
     end
 
+    def check_new_category
+      @new_category = current_account.solution_categories.find_by_id params[:parent_id]
+      unless @new_category
+        flash[:notice] = t("solution.flash.folders_move_to_fail")
+        respond_to do |format|
+          format.js { render inline: "location.reload();" }
+        end
+      end
+    end
+
     def moved_flash_msg
       render_to_string(
       :inline => t("solution.flash.folders_move_to",
-                      :category_name => current_account.solution_categories.find(params[:parent_id]).name,
+                      :category_name => h(current_account.solution_categories.find(params[:parent_id]).name),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 

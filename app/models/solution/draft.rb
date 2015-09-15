@@ -23,6 +23,7 @@ class Solution::Draft < ActiveRecord::Base
   validates_numericality_of :user_id
 
   before_validation :populate_defaults
+  before_save :change_modified_at
   before_destroy :discard_notification
 
   attr_protected :account_id, :status, :user_id
@@ -30,15 +31,14 @@ class Solution::Draft < ActiveRecord::Base
 
   alias_attribute :modified_by, :user_id
 
-  default_scope :order => "updated_at DESC"
+  default_scope :order => "modified_at DESC"
 
   scope :as_list_view, :include => [:user, :folder, :category_meta]
   scope :for_sidebar, :include => [:user]
   
   scope :by_user, lambda { |user|
      { 
-       :conditions => ["user_id = ?", user.id ],
-       :order => :updated_at
+       :conditions => ["user_id = ?", user.id ]
      }
   }
 
@@ -46,8 +46,7 @@ class Solution::Draft < ActiveRecord::Base
     {
       :conditions => {
         :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
-      },
-      :order => :updated_at
+      }
     }
   }
 
@@ -94,8 +93,13 @@ class Solution::Draft < ActiveRecord::Base
 
   def populate_defaults
     self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
-    self.user_id ||= User.current.id
-    self.modified_at = Time.now.utc unless self.modified_at_changed?
+    self.user_id = User.current ? User.current.id : self.user_id || article.user_id
+  end
+
+  def change_modified_at
+    return if self.modified_at_changed?
+    self.modified_at ||= Time.now.utc
+    self.modified_at = Time.now.utc  if (self.draft_body.changed? || self.title_changed?)
   end
 
   def publish!

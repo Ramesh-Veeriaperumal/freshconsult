@@ -54,6 +54,10 @@
   width:100%;
 }
 
+.other_categories_info {
+  font-size: 11px;
+}
+
 .sol-list {
   width: 100%;
 }
@@ -233,3 +237,12 @@ body.community #sticky_header.category-sticky.is_stuck {
 .category-sticky .sticky_title {
   margin-top: 3px;
 }
+.solutions {
+  .header{
+    z-index: 2;
+  }
+  .alert-assume-agent{
+    position:relative;
+    z-index: 13;
+  } 
+} 

@@ -104,6 +104,14 @@ module MemcacheKeys
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v1/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
+  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
+
+  FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
+
+  EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
+
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

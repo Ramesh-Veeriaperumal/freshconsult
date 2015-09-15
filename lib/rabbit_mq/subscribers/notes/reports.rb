@@ -19,7 +19,7 @@ module RabbitMq::Subscribers::Notes::Reports
   end
 
   def mq_reports_valid(action, model)
-    account.features_included?(:bi_reports) && valid_model?(model) && send("#{model}_valid?", action)
+    account.reports_enabled? && valid_model?(model) && send("#{model}_valid?", action)
   end
 
   private
@@ -29,13 +29,14 @@ module RabbitMq::Subscribers::Notes::Reports
     end
   
     def reports_subscriber_properties(note)
-      BusinessCalendar.execute(note.notable) do
-        {
-          :action_in_bhrs => action_occured_in_bhrs?(note.created_at, note.notable.group),
-          :action_time_in_bhrs => schema_less_note_model? ? note.response_time_by_bhrs : nil,
-          :action_time_in_chrs => schema_less_note_model? ? note.response_time_in_seconds : nil
-        }
-      end
+      # Calling the method separately because if exception occures in BusinessCalendar.execute
+      # then subscriber properties is returning null without the model changes
+      action_in_bhrs_flag = action_in_bhrs?(note) 
+      {
+        :action_in_bhrs => action_in_bhrs_flag,
+        :action_time_in_bhrs => note.response_time_by_bhrs,
+        :action_time_in_chrs => note.response_time_in_seconds
+      }
     end
     
     def reports_model_properties(action, note)
@@ -58,14 +59,14 @@ module RabbitMq::Subscribers::Notes::Reports
     end
     
     def note_valid?(action)
-      return false if !human_note_for_ticket? || feedback? || (user.customer? && replied_by_third_party?)
+      return false if notable.archive || !human_note_for_ticket? || feedback? || (user.customer? && replied_by_third_party?)
       non_archive_destroy?(action) || (create_action?(action) && selected_note_kinds)
     end
     
-    # Dont send the update to rabbitmq, when destroy happens with ticket's archive set to true
-    # Add the archive check once "archive tickets" feature is rolled out @ARCHIVE
+    # When a ticket is moved to archive as a part of the callback, note destroy happens.
+    # But this should not trigger an update to RMQ. 
     def non_archive_destroy?(action)
-      destroy_action?(action) # && notable.archive.is_a?(FalseClass)
+      destroy_action?(action) && !notable.archive
     end
 
     def selected_note_kinds
@@ -92,6 +93,12 @@ module RabbitMq::Subscribers::Notes::Reports
       # For the consecutive response, the response time will be populated.
       # This might have an issue in case where the resque is slower. There is no way to handle the case currently
       notable.ticket_states.first_resp_time_by_bhrs.nil?
+    end
+    
+    def action_in_bhrs?(note) 
+      BusinessCalendar.execute(note.notable) do
+        action_occured_in_bhrs?(note.created_at, note.notable.group)
+      end
     end
   
 end

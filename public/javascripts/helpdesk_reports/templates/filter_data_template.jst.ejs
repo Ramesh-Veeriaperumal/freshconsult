@@ -1,0 +1,7 @@
+<li class='muted'>Filtered by:</li>
+<% if (data && data.length) { %>
+	<% for (i = 0; i < data.length; i++) { %>
+        <li> <%= escapeHtml(data[i].name) %> : <strong> <%= escapeHtml(data[i].value) %> </strong></li>
+    <% } %>
+<%  } %>
+<li>Time Period : <strong> <%= jQuery("#date_range").val() %> </strong></li>

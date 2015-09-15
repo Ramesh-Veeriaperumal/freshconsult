@@ -2,11 +2,9 @@
 
 <% content_for :sticky_left do %>
 		<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, 
-					{:class => "heading item #{'active' unless (params[:type] == 'all')}",
-					 :title => t('solution.draft.my_drafts') } %>
+					{ :class => "heading item #{'active' unless (params[:type] == 'all')}" } %>
 		<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), 
-					{ :class => "heading item #{'active' if (params[:type] == 'all')}",
-						:title => t('solution.draft.all_drafts') } %>
+					{ :class => "heading item #{'active' if (params[:type] == 'all')}" } %>
 	<%= render :partial => 'drafts_context' %>
 <% end %>
 
@@ -41,6 +39,6 @@
 
 <% content_for :helpcard do %>
 	<h3 class="lead"><%= t('solution.draft.name').html_safe %></h3>
-	<%= t('solution.kbase_email_info', :domain_name => current_account.full_domain).html_safe %>
-	<%= helpcard_content([2, 3, 4, 5, 6], 'solution.info' ) %>
+	<%= helpcard_content([22, 23, 24], 'solution.info' ) %>
+	<%= t('solution.kbase_email_info', :email => current_account.kbase_email).html_safe %>
 <% end %>

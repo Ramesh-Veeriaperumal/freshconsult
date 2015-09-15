@@ -7,6 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
+  include Marketplace::ApiHelper
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -16,6 +17,7 @@ module ApplicationHelper
   include Integrations::IntegrationHelper
   include CommunityHelper
   include TabHelper
+  include ReportsHelper
   include Freshfone::CallerLookup
   
   require "twitter"
@@ -327,7 +329,7 @@ module ApplicationHelper
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      solutions_tab,
+      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
@@ -916,7 +918,8 @@ module ApplicationHelper
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
         if is_edit || required
-          section_field_value = item.send(section_tkt_field.field_name)
+          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+            item.custom_field_value(section_tkt_field.field_name)
           section_field_value = nested_ticket_field_value(item, 
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
         elsif !params[:topic_id].blank?
@@ -1087,25 +1090,6 @@ module ApplicationHelper
   end
 
   private
-    def solutions_tab
-      if current_portal.solution_categories.exists?
-        ['/solution/categories', :solutions, solutions_visibility?]
-      else
-        ['#', :solutions, false]
-      end
-    end
-
-    def forums_tab
-      if current_portal.forum_categories.exists?
-        ['/discussions', :forums,  forums_visibility?]
-      else
-        ['#', :forums, false]
-      end
-    end
-
-    def solutions_visibility?
-      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
-    end
 
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)

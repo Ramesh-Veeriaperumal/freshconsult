@@ -5,8 +5,8 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		if page != :all_category && default_category?
-			if @article.present? && @article.new_record?
+		if default_category? || new_article_check?
+			if new_article_check?
 				_output << h(t('solution.add_article'))
 			else
 				_output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
@@ -27,6 +27,10 @@ module SolutionHelper
 		"<div class='breadcrumb'>#{_output.map{ |bc| "<li>#{bc}</li>" }.join("")}</div>".html_safe
 	end
 
+	def new_article_check?
+		@article.present? ? @article.new_record? : false
+	end
+
 	def search_placeholder(page)
 		case page
 			when :category
@@ -39,7 +43,7 @@ module SolutionHelper
 	end
 
 	def default_category?
-		((@category || (@folder.respond_to?(:category) ? @folder.category : @article.folder.category)) || {})[:is_default]
+		((@category || (@folder.respond_to?(:category) ? @folder.category : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
 	end
 
 	def folder_link folder
@@ -64,10 +68,10 @@ module SolutionHelper
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					opts = { :title => t("solution.add_category"), "data-target" => "#new-cat" }
+					opts = { "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" }
 					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					opts = { :title => t("solution.add_folder"), "data-target" => "#new-fold" }
+					opts = { "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" }
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					opts = { :"data-pjax" => "#body-container" }
@@ -96,11 +100,11 @@ module SolutionHelper
 	def new_btn_opts(type)
 		case type
 		when :category
-			default_new_btn_opts.merge({ :title => t("solution.add_category"), "data-target" => "#new-cat" })
+			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" })
 		when :folder
-			default_new_btn_opts.merge({ :title => t("solution.add_folder"), "data-target" => "#new-fold" })
+			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" })
 		when :article
-			{ :"data-pjax" => "#body-container", :title => nil, :rel => nil }
+			{ :"data-pjax" => "#body-container", :rel => nil }
 		end
 	end
 
@@ -167,11 +171,11 @@ module SolutionHelper
         <div class="sidebar-list-item">
           #{pjax_link_to(t('solution.sidebar.feedbacks.details', 
                         :name => f.requester.name.size > 9 ? f.requester.name.truncate(9) : f.requester.name,
-                        :time => f.created_at,
+                        :time => f.created_at.to_i,
                         :time_string => time_ago_in_words(f.created_at)).html_safe, helpdesk_ticket_path(f))}
 	        <span class="feedback-article">
 	          #{t('solution.on')}
-	          <span title="#{ f.article.title if f.article.title.length > 22 }">#{ f.article.title.truncate(25) }</span>
+	          <span title="#{ h(f.article.title) if f.article.title.length > 22 }">#{ h(f.article.title).truncate(25) }</span>
 	        </span>
 	        <div class="muted">#{ t('solution.sidebar.feedbacks.status', :status => f.status_name) }</div>
 	      </div>
@@ -182,12 +186,12 @@ module SolutionHelper
 		%{
 			<li>
         <div class="sidebar-list-item">
-          #{pjax_link_to(a.title.truncate(27),
+          #{pjax_link_to(h(a.title.truncate(27)),
                           solution_article_path(a.article_id)
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',
-	                            :name => a.user.name, 
+	                            :name => truncate(a.user.name, :length => 15), 
 	                            :time => a.updated_at.to_i,
 	                            :time_string => time_ago_in_words(a.updated_at)).html_safe}
 					</div>
@@ -214,14 +218,20 @@ module SolutionHelper
 
 
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')
+		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
 		content = %{<div class='tab-pane sidebar-list #{active}' id="#{container_id}"><ul>}
-    feedbacks.first(3).each do |feedback|
+    feedbacks.to_a.first(3).each do |feedback|
       content << article_feedback(feedback)
     end
     content << %{</ul>}
     content << pjax_link_to( t('solution.sidebar.view_all'),
-    												 "/helpdesk/tickets/filter/article_feedback",
-    												  { :class => "view-all"}) if feedbacks.size > 3
+    												 "/helpdesk/tickets/filter/#{filter}",
+    												  { 
+    												  	:class => "view-all",
+    												  	:"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
+    												  	:"data-parallel-placeholder" => "#ticket-leftFilter"
+    												  }) if feedbacks.size > 3
+
 		content << %{</div>}
 		content.html_safe
 	end

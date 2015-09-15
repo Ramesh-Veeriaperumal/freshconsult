@@ -27,17 +27,23 @@
         color: rgb(51, 51, 51);
       }
 
-      .draft-title {
-        font-weight: 400; 
-        font-size: 14px;
+      .solution-icon {
+          padding: 7px 9px;
+          border-radius: 5px;
+          color: #FFF;
+          background-color: #D8DBDF;
+          margin-top: 5px;
+          display: inline-block;
+          margin-right: 20px;
+          float: right;
       }
 
-      .draft-icon-file {
-        color: #bbb;
-      }
-
-      .draft-icon-mail {
-        color: #bbb;
+      .main-details {
+        @include margin-left(-4px);
+        .draft-title {
+          font-weight: 400; 
+          font-size: 14px;
+        }
       }
     }
   } 

@@ -4,19 +4,19 @@
 		<%= render :partial => 'sidebar_properties' %>
 	</div>
 		
-	<% if @article.tickets.present? %>
+	<% if @article.tickets.unresolved.present? %>
 		<div class="sidebar-section feedback">
 			<div class="title-wrapper">
 				<p class="leads span2"><%= t('solution.general.feedback') %></p>
 			</div>
 			<div class="section feedback-list">
 				<ul>
-					<% @article.tickets.limit(3).each do |ticket| %>
+					<% @article.tickets.unresolved.limit(3).each do |ticket| %>
 						<li>
 			        <div>
 			          <%= pjax_link_to(t('solution.sidebar.feedbacks.details', 
 			                        :name => ticket.requester.name,
-			                        :time => ticket.created_at,
+			                        :time => ticket.created_at.to_i,
 			                        :time_string => time_ago_in_words(ticket.created_at)).html_safe, helpdesk_ticket_path(ticket)) %>
 			        </div>
 			        <div class="muted"><%= t('solution.sidebar.feedbacks.status', :status => ticket.status_name) %></div>
@@ -25,7 +25,7 @@
 				</ul>
 			</div>
 			<div class="section view-all-feed">
-				<%= link_to t('solution.view_feedback'), "#{helpdesk_filter_view_default_path('article_feedback')}?article_id=#{@article.id}", :target => "_blank" %>
+				<%= link_to t('solution.view_feedback'), "#{helpdesk_filter_view_default_path('article_feedback')}?article_id=#{@article.id}", :target => "_blank" if @article.tickets.unresolved.size > 3 %>
 			</div>
 		</div>
 	<% end %>

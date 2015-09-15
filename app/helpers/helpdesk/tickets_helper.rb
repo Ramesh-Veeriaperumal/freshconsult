@@ -18,6 +18,7 @@ module Helpdesk::TicketsHelper
   def scn_accessible_elements
     visible_scn = accessible_from_es(ScenarioAutomation,{:load => true, :size => 200},Helpdesk::Accessible::ElasticSearchMethods::GLOBAL_VISIBILITY, "raw_name")
     visible_scn = accessible_elements(current_account.scn_automations, query_hash('VARule', 'va_rules', '')) if visible_scn.nil?
+    visible_scn.compact! unless visible_scn.blank?
     visible_scn
   end
   
@@ -73,9 +74,13 @@ module Helpdesk::TicketsHelper
   def nested_ticket_field_value(item, field)
     field_value = {}
     field.nested_levels.each do |ff|
-      field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+      field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = fetch_custom_field_value(item, ff[:name])
     end
-    field_value.merge!({:category_val => item.send(field.field_name)})
+    field_value.merge!({:category_val => fetch_custom_field_value(item, field.field_name)})
+  end
+
+  def fetch_custom_field_value(item, field_name)
+    item.is_a?(Helpdesk::Ticket) ? item.send(field_name) : item.custom_field_value(field_name)
   end
 
   def ticket_field_element(field, dom_type, attributes, pl_value_id=nil)
@@ -456,10 +461,10 @@ module Helpdesk::TicketsHelper
   def facebook_link
     ids = @ticket.fb_post.original_post_id.split('_')
     page_id = @ticket.fb_post.facebook_page.page_id
-    if @ticket.fb_post.comment?
-      "http://www.facebook.com/permalink.php?story_fbid=#{ids[0]}&id=#{page_id}&comment_id=#{ids[1]}"
-    else
+    if @ticket.fb_post.fb_post?
       "http://www.facebook.com/#{page_id}/posts/#{ids[1]}"
+    else
+      "http://www.facebook.com/permalink.php?story_fbid=#{ids[0]}&id=#{page_id}&comment_id=#{ids[1]}"
     end
   end
 
@@ -483,7 +488,7 @@ module Helpdesk::TicketsHelper
 
   def ticket_body_form form_builder, to=false
     contents = []
-    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('helpdesk.enter_subject')).html_safe)
+    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
       signature_value = current_user.agent.signature_value ? ("<p><br /></p>"*2)+current_user.agent.signature_value.to_s : ""
       contents << content_tag(:li, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
@@ -505,6 +510,38 @@ module Helpdesk::TicketsHelper
     end
     content.join(" ").html_safe
   end
+
+  #Helper methods for compose from email drop down starts here
+  def options_for_compose
+    default_option = [I18n.t("ticket.compose.choose_email"), ""]
+    all_options = if current_account.restricted_compose_enabled?
+      restricted_options_for_compose
+    else
+      compose_options(current_account.email_configs.order(:name))
+    end
+    
+    all_options.unshift(default_option) if all_options.count > 1
+    options_for_select(all_options)
+  end
+    
+  def restricted_options_for_compose
+    if current_user.can_view_all_tickets?
+      compose_options(current_account.email_configs.order(:name))
+    elsif (current_user.group_ticket_permission || current_user.assigned_ticket_permission)
+      group_ids = current_user.agent_groups.map(&:group_id)
+      user_email_configs = current_account.email_configs.where("group_id is NULL or group_id in (?)",group_ids).order(:name)
+      compose_options(user_email_configs)
+    end
+  end
+
+  def compose_options(email_configs)
+    if current_account.features_included?(:personalized_email_replies)
+      email_configs.collect{|x| [x.friendly_email_personalize(current_user.name), x.id]}
+    else
+      email_configs.collect{|x| [x.friendly_email, x.id]}
+    end
+  end
+  #Helper methods for compose from email drop down ends here
 
   # ITIL Related Methods starts here
 

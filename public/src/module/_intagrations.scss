@@ -824,6 +824,17 @@ span.beta {
 		div{
 			width: 100%;
 		}
+		.required_star{
+			@include margin-left(180px);
+		}
+
+	}
+	.xero-hash-mandatory{
+		color: #a2a19f;	
+	}
+	.xero-hash-mandatory-footer{
+		color: #a2a19f;				
+		margin-left: 180px;						
 	}
 	.xero_due_date {
 		width: 35%;
@@ -835,6 +846,7 @@ span.beta {
 		margin-top: 25px;
 		padding: 10px;
 	}
+
 
 	.rules_wrapper{ 
 		.tabel-thead {
@@ -861,18 +873,22 @@ span.beta {
 		}
 		input {
 		  width: 90% !important;
-		}
-
-	}
-
+		}		
+	}		
 	.rules_list_wrapper{
-	 .list{
-		&:last-child{
-			.list-data{
-				border-bottom: 1px solid #ddd;
+	 	.list{
+			&:last-child{
+				.list-data{
+					border-bottom: 1px solid #ddd;
+				}
 			}
 		}
-	}
+		.items_dropdown{
+			width: 220px;
+		}
+		.input_text_items{
+			width: 220px;
+		}
 	}
 	.add_menu_wrapper{
 		.list-data{
@@ -906,6 +922,11 @@ span.beta {
 		li{
 			padding: 10px 5px;
 			border-bottom: 1px solid #ddd;
+		}
+		#xero_no_contact{
+			color: #6F6767;
+			padding-top: 10px; 
+			text-align: justify;
 		}		
 	}
 	
@@ -930,11 +951,12 @@ span.beta {
 		cursor: pointer;
 	}
 	.xero_li_hover_delete{
-		float: left;
+		color: #801414;
+		float: right;
 		position: absolute;
 		cursor: pointer;
 		display: none;
-		left: 155px;
+		left: 175px;
 	}
 	.xero_scroll {    
     	.each_invoice{
@@ -948,6 +970,14 @@ span.beta {
     		&.cur_ticket{
     			i{
     				color: #06c;
+    				padding-right: 5px;
+    				font-size: 15px;
+    				vertical-align: middle; 
+    			}
+    		}
+    		&.cur_ticket_deleted{
+    			i{
+    				color: #801414;
     				padding-right: 5px;
     				font-size: 15px;
     				vertical-align: middle; 

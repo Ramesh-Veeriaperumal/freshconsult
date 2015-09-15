@@ -1051,3 +1051,14 @@ function focusFirstModalElement(namescope) {
     jQuery(this).find('input:text:visible:first').focus();
   });
 }
+
+// Return a boolean value
+// Return container has scrollbar or not
+jQuery.fn.hasScrollBar = function() {
+      return this.get(0).scrollHeight > this.get(0).clientHeight;
+}
+
+function nativePlaceholderSupport() {
+  var i = document.createElement('input');
+  return i.placeholder !== undefined;
+}

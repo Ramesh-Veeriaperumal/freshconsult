@@ -1,0 +1,36 @@
+defaults: &defaults
+  dev_portal_url: "http://localhost:3001"
+  api_url: "http://localhost:3002"
+  api_auth_key: 18a9cc87b8aaab31a31262e93841174765439bdef0f9857b
+  s3_assets: "freshapps-staging-pvt/app-code/test_data"
+  s3_static_assets: "freshapps-staging-pub.s3.amazonaws.com/app-assets/test_data"
+  cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets/test_data"
+  dev_oauth_key: dd2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
+  dev_oauth_secret: 65000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
+  admin_oauth_key: ed2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
+  admin_oauth_secret: 75000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
+  cache_invalidation_time: 300 ### In Seconds
+  api_timeout: 5 ### In Seconds
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+  dev_portal_url: "http://freshapps-devportal-1799075120.us-east-1.elb.amazonaws.com"
+  api_url: "http://freshapps-admin-62698598.us-east-1.elb.amazonaws.com"
+  s3_assets: "freshapps-staging-pvt/app-code"
+  s3_static_assets: "freshapps-staging-pub.s3.amazonaws.com/app-assets"
+  cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets"
+
+production:
+  <<: *defaults
+  dev_portal_url: "http://dev.freshdesk.com"
+  api_url: "http://marketplace.freshdesk.com"
+  s3_assets: "freshapps-pvt/app-code"
+  s3_static_assets: "freshapps-pub.s3.amazonaws.com/app-assets"
+  cdn_static_assets: ""
+  cache_invalidation_time: 7200 ### In Seconds

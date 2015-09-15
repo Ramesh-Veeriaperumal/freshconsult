@@ -33,9 +33,16 @@ window.App = window.App || {};
 		},
     
     startEditing: function () {
+      $('#sticky_redactor_toolbar').removeClass('hide');
+      if ($('#solution-notification-bar .article-view-edit').is(':visible')) {
+        $('#sticky_redactor_toolbar').addClass('has-notification');
+      }
       $('#solution_article_title').focus();
       
       this.setFormValues();
+
+      invokeRedactor('solution_article_description', 'solution');
+
       this.toggleViews();
 
       //initilaizing autosave
@@ -48,6 +55,7 @@ window.App = window.App || {};
       this.editUrlChange(true);
       this.attachmentsDelEvents();
       this.disableDraftResetAttr();
+      
     },
 
     disableDraftResetAttr:  function () {
@@ -57,11 +65,13 @@ window.App = window.App || {};
     
     setFormValues: function () {
       $('#solution_article_title').val(this.data.title);
-      $('#solution_article_description').setCode(this.data.description);
+      $('#solution_article_description').text(this.data.description);
     },
 
     cancel_UI_toggle: function () {
       this.toggleViews();
+      $('#solution_article_description').destroyEditor();
+      $('#sticky_redactor_toolbar').addClass('hide');
       $('.article-view-edit:hidden').show();
       $(".autosave-notif:visible").hide();
     },
@@ -70,6 +80,12 @@ window.App = window.App || {};
       // Check if there is an error, in that case return false.
       if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
+      }
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
+        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0 ;
+        if (flag) {
+          return true;
+        }
       }
       return this.checkAttachments();
     },

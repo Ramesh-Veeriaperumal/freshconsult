@@ -38,6 +38,10 @@
 	<% end %>
 
 	<script type='text/javascript'>
+		jQuery("#ticket-export-button").remove();
+	  var exportLink = '<a href="<%= configure_export_support_tickets_path %>" data-target="#export-modal" id="ticket-export-button" rel="freshdialog" data-submit-label="<%= t("portal.tickets.submit_export") %>" title="<%= t("portal.tickets.export_ticket_data") %>"><%= t("portal.tickets.export_ticket_data") %></a>'
+	  jQuery(".ticket-toolbar").append(exportLink);
+
 		jQuery("#ticket-export-button").toggle(<%= @tickets.present? %>)
 	</script>
 </div>

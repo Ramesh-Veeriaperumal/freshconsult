@@ -103,6 +103,10 @@
       color: #666666;
     }
 
+    &.disabled .select2-choice {
+      cursor: default;
+    }
+
     &.select2-dropdown-open {
       .select2-choice {
         border: 1px solid rgba(0,0,0,0.3);
@@ -204,6 +208,9 @@
 
         a.select2-search-choice-close {
           position: absolute;
+          &:hover { 
+            background: none;
+          }
         }
       }
 

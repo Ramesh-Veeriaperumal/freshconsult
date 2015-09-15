@@ -61,7 +61,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
       sla_percentage_previous = calculate_sla_percentage(previous_data[:not_violated], previous_data[:violated])
       diff_percentage = calculate_difference_percentage(sla_percentage_previous, sla_percentage_current)
       processed_result[:general] = {
-        :metric_result    =>  sla_percentage_current,
+        :metric_result    =>  "#{sla_percentage_current}%",
         :diff_percentage  =>  diff_percentage
       }
     else
@@ -77,7 +77,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
       end
       sla_percentage_final = calculate_sla_percentage final_data[:not_violated], final_data[:violated]
       processed_result[:general] = {
-        :metric_result => sla_percentage_final
+        :metric_result => "#{sla_percentage_final}%"
       }
     end
   end
@@ -86,7 +86,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
     total = inside_sla + outside_sla
     return NOT_APPICABLE if total == 0
     percentage = (inside_sla*100) / total.to_f if total != 0
-    percentage.round(2)
+    percentage.round
   end
 
   def sla_column row

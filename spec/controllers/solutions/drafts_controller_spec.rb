@@ -32,20 +32,27 @@ describe Solution::DraftsController do
 	  	end
 
 		  it "should render current author drafts listing if index is hit" do
+		  	@agent1.make_current
+		  	draft = @draft_article1.draft
+		  	draft.title = "New sample title :  #{Faker::Name.name}"
+		  	draft.save
 		    get :index
-		    response.body.should =~ /#{@draft_article1.title.truncate(35)}/
+		    response.body.should =~ /#{draft.title.truncate(35)}/
+		    response.body.should_not =~ /#{@draft_article2.draft.title.truncate(35)}/
 		  end
 
 		  it "should render only the current author's drafts only" do
 		    get :index
-		    articles = assigns(:articles)
-		    articles.count.should be_eql(1)
+		    drafts = assigns(:drafts)
+		    user_drafts_from_db = Account.current.solution_drafts.where(:user_id => @agent1.id).limit(10)
+		    drafts.count.should be_eql(user_drafts_from_db.count)
 		  end
 
 		  it "should render all drafts when visited all drafts path" do
 		    get :index, :type => :all
-		    articles = assigns(:articles)
-		    articles.count.should be_eql(2)
+		    drafts = assigns(:drafts)
+		    all_drafts = Account.current.solution_drafts.limit(10)
+		    drafts.size.should be_eql(all_drafts.size)
 		  end
 		end
 		#end : specs for index action
@@ -58,7 +65,7 @@ describe Solution::DraftsController do
 
 				@draft_article3 = create_article( {:title => "article3 agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft_article3.create_draft_from_article({:title => "Draft 1 for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
+	  		# @draft_article3.create_draft_from_article({:title => "Draft 1 for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
 
 	  		request.env["HTTP_REFERER"] = "where_i_came_from"
 	  	end
@@ -79,11 +86,13 @@ describe Solution::DraftsController do
 	  	end
 
 	  	it "should not publish an unpublished article with draft record if it's locked" do
+	  		log_in(@agent2)
+	  		@agent2.make_current
 	  		draft = @draft_article3.draft
-	  		draft.user_id = @agent2.id
-	  		draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:editing]
-	  		draft.save
+	  		draft.lock_for_editing!
 
+	  		log_in(@agent1)
+	  		@agent1.make_current
 	  		#draft should be locked
 	  		draft.locked?.should be_eql(true)
 	  		#article should not be published
@@ -110,7 +119,6 @@ describe Solution::DraftsController do
 
 	    	@draft_article3 = create_article( {:title => "article 3 destroy agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft_article3.create_draft_from_article({:title => "Draft 1 for destroy #{Faker::Name.name}", :description => "Desc 4 : #{Faker::Lorem.sentence(4)}"})
 
 	  		request.env["HTTP_REFERER"] = "where_i_came_from"
 	  	end
@@ -134,10 +142,13 @@ describe Solution::DraftsController do
 	  	end
 
 	  	it "should not delete a draft record if it's locked" do
+	  		log_in(@agent2)
+	  		@agent2.make_current
 	  		draft = @draft_article3.draft
-	  		draft.user_id = @agent2.id
-	  		draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:editing]
-	  		draft.save
+	  		draft.lock_for_editing!
+
+	  		log_in(@agent1)
+	  		@agent1.make_current
 	  		#draft should be locked
 	  		draft.locked?.should be_eql(true)
 
@@ -154,10 +165,14 @@ describe Solution::DraftsController do
 
 
 	  	it "should send a notification mail if draft is discard by somebody other than the author" do
+	  		log_in(@agent2)
+	  		@agent2.make_current
 	  		draft = @draft_article3.draft
-	  		draft.user_id = @agent2.id
-	  		draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:work_in_progress]
+	  		draft.unlock
 	  		draft.save
+
+	  		log_in(@agent1)
+	  		@agent1.make_current
 
 	  		#draft should not be of the agent who discards draft
 	  		draft.user_id.should_not be_eql(@agent1.id)
@@ -217,7 +232,6 @@ describe Solution::DraftsController do
 				log_in(@agent1)
 				@draft_article3 = create_article( {:title => "Article 3 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft_article3.create_draft_from_article({:title => "Draft 3 for attachment delete #{Faker::Name.name}", :description => "Desc 4 : #{Faker::Lorem.sentence(4)}"})
 	  		@draft = @draft_article3.draft
 	  	end
 
@@ -238,9 +252,12 @@ describe Solution::DraftsController do
 
 	  	#Failure case 3. Somebody else is editing the article
 	  	it "should fail: Reason - Somebody else is editing the article" do
-	  		@draft.user_id = @agent2.id
-	  		@draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:editing]
-	  		@draft.save
+	  		log_in(@agent2)
+	  		@agent2.make_current
+	  		@draft.lock_for_editing!
+
+	  		log_in(@agent1)
+	  		@agent1.make_current
 
 	  		xhr :post, :autosave, :id => @draft_article3.id, :title => "New", :description => "New Desc", :timestamp => @draft.updation_timestamp
 
@@ -250,8 +267,13 @@ describe Solution::DraftsController do
 
 	  	#Failure case 4. Content has been updated by someone
 	  	it "should fail: Reason - Content has been updated by someone" do
-	  		@draft.user_id = @agent2.id
+	  		log_in(@agent2)
+	  		@agent2.make_current
 	  		@draft.save
+
+	  		log_in(@agent1)
+	  		@agent1.make_current
+
 				xhr :post, :autosave, :id => @draft_article3.id, :title => "New", :description => "New Desc", :timestamp => @draft.updation_timestamp + 1
 	  		response.code.should be_eql("200")
 	  		response.body.should =~ /#{@agent2.name} has updated the content while you were away/
@@ -267,7 +289,6 @@ describe Solution::DraftsController do
 				log_in(@agent1)
 				@draft_article3 = create_article( {:title => "Article 3 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft_article3.create_draft_from_article({:title => "Draft 3 for view testing #{Faker::Name.name}", :description => "Desc 4 : #{Faker::Lorem.sentence(4)}"})
 	  		@draft = @draft_article3.draft
 	  		@draft_article4 = create_article( {:title => "article4 agent2 #{@agent2.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
 	      :status => "1", :art_type => "1", :user_id => "#{@agent2.id}" } )
@@ -296,7 +317,7 @@ describe Solution::DraftsController do
 
 		  	it "should display other users drafts also" do
 		  		get :index, :type => :all
-		  		response.body.should =~ /#{@draft_article4.user.name}/
+		  		response.body.should =~ /#{@draft_article2.user.name}/
 		  	end
 		  end
 		  #end: All drafts page

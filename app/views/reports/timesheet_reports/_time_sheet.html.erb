@@ -16,7 +16,7 @@
 			 	content ||= time_entry.send( item.eql?(:hours) ? :time_spent : item ) %>
 			<%if item.eql?(:workable)%>
 				<% if !generate_pdf_action? %>
-	 				<%= content_tag(:td, content_tag(:a,h(content),:href => helpdesk_ticket_path(content.display_id),:target => "_blank"), :class => item) %>	
+	 				<%= content_tag(:td, reports_ticket_link(content), :class => item) %>	
 	 			<% else %>
 	 				<td class="<%= item %>"><div><%= h(content) %></div></td>
 	 			<% end %>

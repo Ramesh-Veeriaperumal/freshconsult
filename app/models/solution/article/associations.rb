@@ -32,8 +32,10 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :article_ticket, :dependent => :destroy
 
-  has_many :tickets, :through => :article_ticket
-
   has_one :article_body, :autosave => true
   
+  has_many :tickets, :through => :article_ticket, :source => :ticketable,
+           :source_type => 'Helpdesk::Ticket', :order => 'created_at DESC'
+
+  has_many :archive_tickets, :through => :article_ticket, :source => :ticketable, :source_type => 'Helpdesk::ArchiveTicket'
 end

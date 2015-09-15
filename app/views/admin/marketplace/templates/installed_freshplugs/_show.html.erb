@@ -1,0 +1,92 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/marketplace_installer' %>
+<script id="install_new_template" type="text/x-jquery-tmpl">
+  <form accept-charset="UTF-8" action="/admin/installed_extensions?version_id=${version_id}" id="install-form" method="post"> 
+
+    <div id="app-window" class="container fa-installer fa-bg">
+
+      <div id="fa-nav" class="fa-sidehead">
+        <div class="fa-breadcumb">
+          <% plug_type = "{{if in_dev}}&in_dev=true{{/if}}" %>
+          <% category = "{{if category_id}}&category_id=${category_id}{{/if}}"%>
+          <a class="backbtn" href="#" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>"><span class="ficon-left-arrow-thick fsize-12"></span> <%= t('back') %> </a>
+        </div>
+      </div>
+
+      <div class="fa-hmeta">
+        <h3 class="app-name">
+          <span class="status">
+            {{if update}}
+              <%= t('marketplace.settings') %>:
+            {{else}}
+              <%= t('marketplace.install') %>:
+            {{/if}}
+          </span>
+          <span> ${name}</span>
+        </h3>
+        <div class="progress progress-striped active" style="display:none;">
+          <div class="bar bar-success" style="width:20%;"></div>
+        </div>
+      </div>
+
+      <div id="install-error" style="display:none;" class="alert alert-danger">
+      </div>
+      <div id="install-success" style="display:none;" class="alert alert-notice">
+      </div>
+
+      <div class="row-fluid fa-settings installing-text" style="display:none;">
+        <div class="span12">
+          <h4 class="status text-center"><%= t('marketplace.installing_text') %></h4>
+        </div>
+      </div>
+
+      <div class="row-fluid fa-settings install-form">
+        {{if configs}}
+          <div class="span10 fa-info">
+            {{if update}}
+            {{else}}
+              <h4 class="install-status"><%= t('marketplace.almost_done') %></h4>
+            {{/if}}
+
+            <ul class="installer-form">
+            {{each configs}}
+              <li class="field">
+                  <label class="form-lbl"> ${label} </label>           
+                  {{if field_type==1}}
+                    <%= text_field_tag "[configs][${name}]", "", :class => "fa-textip required", :value => "${default_value}" %>
+                  {{else}}
+                    <select name="[configs][${name}]" class="select2" style="width:200px;">
+                      {{each default_value}}
+                          <option value="${$value}">${$value}</option>
+                      {{/each}}
+                    </select>
+                  {{/if}}
+                  {{if description}}
+                    <p class="help-text"> ${description} </p>
+                  {{/if}}
+              </li>
+              {{/each}} 
+            </ul>
+        {{else}}
+          <p>This app does not require any configs.</p>
+        {{/if}}
+
+          <div class="button-container text-left">
+              {{if update}}
+                <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/reinstall/${version_id}" data-method="PUT">
+                <%= t('marketplace.update') %></button>
+              {{else}}
+                <p class="install-note"><%= t('marketplace.app_installation_agreement') %>
+                  <a href="<%= t('marketplace.terms_of_use_link') %>" target="_blank" class="read-more"><%= t('marketplace.terms_of_use') %></a>.
+                </p>
+                <button class="col-md-6 btn btn-primary install-btn" data-url="/admin/installed_extensions/install/${version_id}" data-method="POST">
+                <%= t('marketplace.install') %></button>
+              {{/if}}
+              <button class="show_btn btn btn-default" style="margin-left: 10px;" data-url="/admin/extensions/${version_id}?type=${type}<%=category%><%=plug_type%>"><%= t('cancel') %></button>
+          </div> 
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+</script>

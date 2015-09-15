@@ -4,5 +4,6 @@ module RabbitMq::Keys
   TICKET_SUBSCRIBERS            = ["auto_refresh", "reports"]
   NOTE_SUBSCRIBERS              = ["auto_refresh", "reports"]
   ACCOUNT_SUBSCRIBERS           = ["reports"]
+  ARCHIVE_TICKET_SUBSCRIBERS    = ["reports"]
 
 end

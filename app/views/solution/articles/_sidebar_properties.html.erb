@@ -20,9 +20,11 @@
 	<div class="sidebar-section">
 		<div class="title-wrapper">
 			<p class="leads span2"><%= t('solution.general.article_prop') %></p>
-			<p class="edit span1 pull-right">
-				<%= article_properties_edit_link(t('edit')) %>
-			</p>
+			<% if privilege?(:publish_solution) %>
+				<p class="edit span1 pull-right">
+					<%= article_properties_edit_link(t('edit')) %>
+				</p>
+			<% end %>
 		</div>
 
 		<div class="section">
@@ -35,7 +37,7 @@
 				<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id) %>
 				<p class="muted">
 					<% if @article.folder.category.portals.present? %>
-						<%= t('solution_category.product_portal_visibility') %> <%= @article.folder.category.portals.map(&:name).join(", ") %>
+						<%= t('solution_category.product_portal_visibility') %>: <%= @article.folder.category.portals.map(&:name).join(", ") %>
 					<% else %>
 						<span class="red"><%= t('solution.orphan_category_info') %></span>
 					<% end %>
@@ -46,7 +48,7 @@
 				<h5 class="leads"><%= t('solution.folder') %>:</h5>
 				<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id) %>
 				<p class="muted">
-					<%= t('forum.visible_to') %> <%= company_visibility_tooltip(@article.folder) %>
+					<%= t('forum.visible_to') %>: <%= company_visibility_tooltip(@article.folder) %>
 				</p>
 			</div>
 		<% else %>

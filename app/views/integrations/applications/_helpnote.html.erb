@@ -1,3 +1,17 @@
+  <% if feature?(:fa_developer) %>
+    <div class="dev-shortcuts">
+      <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
+      <ul>
+        <li class="shortcuts">
+          <a class="in-dev-apps" href="#" data-url="<%= admin_extensions_path %>?type=<%= Marketplace::Constants::EXTENSION_TYPE[:plug]%>&in_dev=true"> <%= t('marketplace.in_dev_apps').html_safe %></a>
+        </li>
+        <li class="shortcuts">
+          <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
   <h3 class="title"><%=t('integration.helpcard.title1')%></h3>
   <p><%= t('integration.helpcard.info1')%></p>
   <h3 class="title"><%=t('integration.helpcard.title2')%></h3>

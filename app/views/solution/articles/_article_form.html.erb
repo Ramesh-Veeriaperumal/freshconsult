@@ -11,21 +11,24 @@
     <div class="row-fluid">
       <div class="span12">
         <%= f.text_field :title, 
-                :class => "text required article-title", 
+                :class => "text required article-title solution-placeholder", 
                 :autocomplete => "off",
                 :placeholder => t('solution.solution_title'),
                 :autofocus => true,
+                :minlength => 3,
+                :maxlength => 240,
                 :value => (@article.new_record? ? @article.title : '') %>
     
       </div>
     </div>
     <div class="row-fluid">
       <div class="editor-body">
-        <%= f.rich_editor  :description, 'editor-type' => :solution, :height => "400px", 
+        <%= f.text_area  :description, 'editor-type' => :solution, :height => "400px", 
               :class => "required_redactor", 
               :value => (@article.new_record? ? @article.description : ''),
               :data => {
-                :"remove-cursor" => true
+                :"remove-cursor" => true,
+                :"toolbar-external" => '#sticky_redactor_toolbar'
               }
         %>
       </div>
@@ -68,8 +71,9 @@
                       :folders, :name, :id, :name, 
                       (@article.folder.is_default? ? nil : @article.folder_id )
                   ), 
-                  {:include_blank => t('solution.folders.choose_folder')}, 
-                  :class => "select2 span4 required"
+                  { :include_blank => true },
+                  :class => "select2 span4 required",
+                  :placeholder => t('solution.folders.choose_folder')
             %>
           </div>
         </div>
@@ -83,7 +87,7 @@
           </div>
       </div>
     <% end %>
-       
+    
     <div class="row-fluid action-btns-container">
       <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
         <div class="pull-left itil-hide">

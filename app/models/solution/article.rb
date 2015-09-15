@@ -63,8 +63,8 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
-
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.articles_for_portal_conditions(portal)
@@ -174,17 +174,28 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def to_indexed_json
-    as_json(
+    article_json = as_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :folder_id, :status, :account_id, :created_at, :updated_at ],
+            :only => [ :title, :desc_un_html, :user_id, :status, 
+                  :language_id, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
-                          :folder => { :only => [:category_id, :visibility], 
-                                       :include => { :customer_folders => { :only => [:customer_id] } }
-                                     },
                           :attachments => { :only => [:content_file_name] }
                         }
-           ).to_json
+          )
+    article_json["solution/article"].merge!(meta_attributes)
+    article_json.to_json
+  end
+
+  def meta_attributes
+    { 
+      :folder_id => solution_folder_meta.id,
+      :folder => { 
+        "category_id" => solution_folder_meta.solution_category_meta_id,
+        "visibility" => solution_folder_meta.visibility,
+        :customer_folders => solution_folder_meta.customer_folders.map {|cf| {"customer_id" => cf.customer_id} }
+      }
+    }
   end
  
   def as_json(options={})
@@ -220,10 +231,24 @@ class Solution::Article < ActiveRecord::Base
 
   VOTE_TYPES.each do |method|
     define_method "toggle_#{method}!" do
-      increment(method)
-      decrement((VOTE_TYPES - [method]).first)
-      save!
+      self.class.update_counters(self.id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      meta_class.update_counters(self.parent_id, method => 1, (VOTE_TYPES - [method]).first => -1 )
+      queue_quest_job if self.published?
+      return true
     end
+
+    define_method "#{method}!" do
+      self.class.increment_counter(method, self.id)
+      meta_class.increment_counter(method, self.parent_id)
+      queue_quest_job if (method == :thumbs_up && self.published?)
+      return true
+    end
+  end
+
+  def reset_ratings
+    self.class.update_all({:thumbs_up => 0, :thumbs_down => 0} ,{ :id => self.id})
+    meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
+    self.votes.destroy_all
   end
 
   def self.article_type_option
@@ -251,7 +276,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def draft_attributes(opts = {})
-    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
+    draft_attrs = opts.merge(:article => self, :category_meta => folder.solution_category_meta)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
       draft_attrs[attribute] = self.send(attribute)
     end
@@ -268,6 +293,11 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
+
+    def queue_quest_job
+      Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => self.id, 
+        :account_id => self.account_id })
+    end
 
     def set_mobihelp_solution_updated_time
       category_obj.update_mh_solutions_category_time

@@ -838,7 +838,8 @@ if Integrations::Application.count == 0
     s.description = "integrations.xero.desc"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 33
-    s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize"}
+    s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize", 
+      :edit_url => "/integrations/xero/edit"}
     s.application_type = "xero"
   end
 end

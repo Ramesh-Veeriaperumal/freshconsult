@@ -1,0 +1,129 @@
+<% var constants = HelpdeskReports.Constants.Glance; %>
+<% var metrics = _.keys(constants.metrics); %>
+<% var css_class = constants.metrics %>
+
+<%
+	var formattingNumber = function(num, digits) {
+	    var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
+	        decimal;
+
+	    for(var i=units.length-1; i>=0; i--) {
+	        decimal = Math.pow(1000, i+1);
+
+	        if(num <= -decimal || num >= decimal) {
+	            return +(num / decimal).toFixed(digits) + units[i];
+	        }
+	    }
+    	return num;
+	};
+
+	var formattingTime = function (value ) {
+		var v = '' + value;
+		
+    	return v.replace(/[hms]/g,  function(matched) { 
+			return '<span class="time-char-format">'+matched+'</span>'
+		});
+	};
+	var formattingPercent = function (value ) {
+		var v = '' + value;
+		
+    	return v.replace(/%/g,  function(matched) { 
+			return '<span class="time-char-format">'+matched+'</span>'
+		});
+	};
+%>
+
+<% if (data) { %>
+	<ul>
+		<% for (i = 0; i < metrics.length; i++) { %>
+			<% if(!jQuery.isEmptyObject(data[metrics[i]]) && data[metrics[i]]['error'] === undefined) { %>
+				
+				<li data-metric= <%= metrics[i] %> >
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<%  var result = "";
+								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
+									result = formattingTime(data[metrics[i]].general.metric_result)
+								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
+									result = formattingPercent(data[metrics[i]].general.metric_result)
+								} else {
+									result = formattingNumber(data[metrics[i]].general.metric_result,2)
+								} 
+								 
+							%> 
+							<span class="ticket-count"><%= result %></span>
+							<% 	
+								var template; 
+								var percent = data[metrics[i]].general.diff_percentage;
+								if (parseFloat(percent) !== NaN && parseFloat(percent) > 0) {
+									template = "<span class='status-symbol " + css_class[metrics[i]].css[0] +"'></span><span class='volume-percent'> " + percent + "% </span>";
+								} else if (parseFloat(percent) !== NaN && parseFloat(percent) < 0) {
+									template = "<span class='status-symbol " + css_class[metrics[i]].css[1] +"'></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+								} else if (parseFloat(percent) !== NaN && parseFloat(percent) == 0) {
+									template = "<span class='status-symbol report-arrow no-change left-arrow'></span><span class='report-arrow no-change right-arrow'></span><span class='volume-percent'> " + Math.abs(percent) + "% </span>";
+								} else {
+									template = "";
+								}
+							%>
+							<%= template %>
+						</div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %>
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
+					</div>
+				</li>
+
+			<% } else if (jQuery.isEmptyObject(data[metrics[i]])) { %>
+
+				<li data-metric= <%= metrics[i] %> >
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<% 
+								var value = "";
+								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
+									value = "0m 0s";
+								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
+									value = "0%";
+								} else {
+									value = "0";
+								} 
+							%>
+							<span class="ticket-count"><%= value %> </span>
+						</div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %> 
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
+					</div>
+				</li>
+
+			<% } else if (!jQuery.isEmptyObject(data[metrics[i]])['error']) {%>
+
+				<li data-metric= <%= metrics[i] %> class="disabled">
+					<div class="active-indicator"></div>
+					<div class="metrics-content">
+						<div>
+							<span class="ticket-count"> NA </span>
+						</div>
+						<div class="ticket-status"> 
+							<%= constants.metrics[metrics[i]].name %> 
+						</div>
+						<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= constants.metrics[metrics[i]].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+						</div>
+					</div>
+				</li>
+
+			<% } %>
+		<% } %>
+	</ul>
+<% } else{ %>
+	
+<% } %>

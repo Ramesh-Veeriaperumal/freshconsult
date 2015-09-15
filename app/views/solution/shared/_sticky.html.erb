@@ -1,5 +1,8 @@
-<% page ||= :home %>
-<% sticky_class ||= "" %>
+<% 
+page ||= :home
+sticky_class ||= "" 
+toolbar ||= false
+%>
 <div id="sticky_header" class="<%= sticky_class %>"
       rel="sticky" data-collapsed="true"
       data-scroll-top="true"
@@ -9,7 +12,7 @@
     <div class="sticky_search_wrap" id="sticky_search_wrap">
       <i class="ficon-search"></i>
       <div class="sticky_search">
-        <input class="community-search" data-search-url="<%=search_url%>" placeholder="<%= search_placeholder(page) %>" type='text'>
+        <input class="community-search solution-placeholder" data-search-url="<%=search_url%>" placeholder="<%= search_placeholder(page) %>" type='text'>
       </div>
       <span id="search-hide" class="search-hide ficon-cross"></span>
     </div>
@@ -21,7 +24,9 @@
 	  <% if content_for?(:sticky_left)%>
 		<%= yield :sticky_left %>
 	  <% else %>
-    	<%= solutions_breadcrumb page %>
+      <div id='sol_breadcrumb'>
+    	 <%= solutions_breadcrumb page %>
+      </div>
 	  <% end %>
     </div>
 	<div class="sticky_right">
@@ -39,5 +44,9 @@
   	</div>
   </div>
   <div class="sticky_title"><%= yield :sticky_title %></div>
+  <% if toolbar %>
+    <div class="clearfix"></div>
+    <div id="sticky_redactor_toolbar" class="hide"></div>
+  <% end %>
 </div>
 <div class="clearfix"></div>

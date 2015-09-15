@@ -282,9 +282,16 @@ describe Solution::ArticlesController do
         end
       end
 
+      it "should reload the page if folder id is not valid" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @article_ids, :parent_id => "test"
+        response.body.should =~ /location.reload()/
+        expect(flash[:notice]).to be_present
+      end
+
       it "should render move_to.rjs" do
         xhr :put, :move_to, :items => @article_ids, :parent_id => @test_folder2.id
-        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo\(\)/
+        response.body.should =~ /App.Solutions.Folder.removeElementsAfterMoveTo/
       end
 
       it "should reverse the changes done by move_to" do
@@ -308,7 +315,7 @@ describe Solution::ArticlesController do
         @agent2 = add_test_agent
       end
 
-      it "should chnage the authors of the articles" do
+      it "should change the authors of the articles" do
         #initially the author should be different
         [@test_article3, @test_article4].each do |article|
           article.user_id.should_not be_eql(@agent2.id)
@@ -321,6 +328,13 @@ describe Solution::ArticlesController do
           article.reload
           article.user_id.should be_eql(@agent2.id)
         end
+      end
+
+      it "should reload the page if technician id is not valid" do
+        request.env["HTTP_ACCEPT"] = "application/javascript"
+        put :move_to, :items => @article_ids, :parent_id => "test"
+        response.body.should =~ /location.reload()/
+        expect(flash[:notice]).to be_present
       end
 
       it "should not change author of articles unless admin" do
@@ -508,16 +522,22 @@ describe Solution::ArticlesController do
     end
   end
 
-  it "should update solution categories/folders/articles' language_id if main portal's language is changed" do
-    old_language = @account.language
-    Resque.inline = true 
-    @account.main_portal.update_attribute(:language, "hu")
-    @account.reload
-    @account.main_portal.language.should match("hu")
-    check_language_equality
-    @account.reload
-    @account.make_current
-    @account.main_portal.update_attribute(:language, old_language)
-    Resque.inline = false
+  it "should return attributes from folder_meta table in to_indexed_json of article" do
+    folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
+        :category_id => @test_category.id } )
+    create_customer_folders(folder)
+    folder.reload
+    test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id,
+      :user_id => @agent.id, :status => "2", :art_type => "1" } )
+    test_language_article.reload
+    folder_meta = test_language_article.solution_folder_meta
+    indexed_json = JSON.parse(test_language_article.to_indexed_json)
+    indexed_json["solution/article"]["language_id"].should be_eql(test_language_article.language_id)
+    indexed_json["folder_id"].should be_eql(folder_meta.id)
+    indexed_json["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
+    indexed_json["folder"]["visibility"].should be_eql(folder_meta.visibility)
+    indexed_json["folder"]["customer_folders"].each_with_index do |cf,i|
+      cf["customer_id"].should be_eql(folder_meta.customer_folders[i].customer_id)
+    end
   end
 end

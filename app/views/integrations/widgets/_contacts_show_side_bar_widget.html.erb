@@ -1,3 +1,10 @@
+<script type='text/javascript'>
+  var page_type = 'contact',
+  dom_helper_data = <%= raw @user.to_json({:only=>api_permitted_data}) %>;
+</script>
+
+<%= javascript_include_tag :'cdn/marketplace/freshapps_contact_dom_helper' %>
+
 <% current_account.installed_applications.each{ |installed_app|
   app = installed_app.application
   unless app.blank?
@@ -14,3 +21,14 @@
     end
   end
 } %>
+
+<!-- Marketplace Plugs -->
+<% if feature?(:marketplace) %>
+  <% installed_plugs(:contact_details_page).try(:each) do |installed_plug| %>
+    <div id="<%= installed_plug['name'] %>" class="widget">
+      <div class="content">
+        <%= freshplug_script(installed_plug.symbolize_keys) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,6 +1,6 @@
 en:
   meta:
-    language_name: 'English'
+   language_name: 'English'
   date:
     ago: ago
     from: from now
@@ -303,6 +303,7 @@ en:
     confirm_delete: Are you sure you want to delete this field?
     confirm_deletion: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
     no_choice_message: "At least one valid choice has to be present"
+    customer_label_missing: Customer label cannot not be empty
     index:
       number: Number
       decimal: Decimal
@@ -362,7 +363,7 @@ en:
       cc_any_email: Can CC any email address
       field_delete_disabled: You cant delete default fields
       default_field_delete_disabled: Default fields cannot be deleted
-      dropdown_choice_disabled: Default choice cant be deleted 
+      dropdown_choice_disabled: Default choice cant be deleted
       nested_tree_validation: You need atleast one category & sub-category
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
@@ -393,6 +394,7 @@ en:
 
   folder:
     edit: Edit Folder
+    delete: Delete Folder
     info1: Are you sure you want to delete this folder?
     add_folder: Add folder
     delete_confirm:
@@ -438,7 +440,7 @@ en:
   support:
     tickets:
       ticket_survey:
-        subject: Test mail for survey - %{title} 
+        subject: Test mail for survey - %{title}
         survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Customer survey"
         rating_sub_title: "You have rated us"
@@ -483,6 +485,7 @@ en:
       thanks_for_feedback: "We have received your feedback. Thank you very much."
       feedback_already_done: "You have already given feedback for this response."
       handle_expired: "Your survey request link has been expired."
+      survey_closed: "This survey is closed."
       preview_feedback_error: The url entered is invalid.
       no_survey_result_error: Invalid parameters to create feedback.
       no_survey_active_error: Survey is not enabled to create feedback.
@@ -601,6 +604,8 @@ en:
       submit_ticket: "New ticket"
       ticket_list: "Ticket list"
       ticket_view: "Ticket details"
+      archive_ticket_list: "Archived ticket list"
+      archive_ticket_view: "Archived ticket details"
       my_topics: "My Topics"
   portal_meta:
     titles:
@@ -860,9 +865,9 @@ en:
         facebook: "Facebook"
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
-        portal_security: "Portal Security"
-        enable_public_urls: "Enable public ticket URL"
-        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
+        public_ticket_urls_label: "Who can view tickets on portal"
+        public_ticket_urls_option: "Anyone with public ticket URL"
+        public_ticket_urls_help: "Users can view tickets without logging in using the public ticket URLs. They can be inserted in email notifications and ticket replies sent to customers via placeholders."
         logged_in: "Logged in users"
         everyone: "Everyone"
         none: "No one"
@@ -1084,13 +1089,13 @@ en:
      error_updated: Error while updating survey settings.
      custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
      Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
      <br><br>
      <b>Agent survey and follow-up surveys</b><br>
-     You can ask one agent survey question and multiple follow-up survey questions. 
-     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey. 
+     You can ask one agent survey question and multiple follow-up survey questions.
+     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
      The observer rules and gamification points will be based only on the agent survey rating.<br>
      <br><br>
      <b>Points scale</b><br>
@@ -1120,13 +1125,13 @@ en:
      limit_exceed_error: You can only add upto %{count} surveys.
      custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. 
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. 
+     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
      Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
      <br><br>
      <b>Satisfaction Survey</b><br>
-     You can ask one customer satisfaction survey question and additional survey questions. 
-     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions. 
+     You can ask one customer satisfaction survey question and additional survey questions.
+     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
      The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
      <br><br>
      <b>Point scales</b><br>
@@ -1153,13 +1158,13 @@ en:
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
         content_text_v2: This question helps assess the overall satisfaction for the response provided by the agent.
-                      It appears below your signature at the bottom of the email sent to the customer.            
+                      It appears below your signature at the bottom of the email sent to the customer.
         survey_question: Survey question
         survey_question_v2: Survey Question
         error_text: This field is required
         points_scale: points scale
         point_scale_v2: Point scale
-        scale_text: You have chosen 
+        scale_text: You have chosen
         scale: point scale
 
      new_thanks:
@@ -1420,7 +1425,7 @@ en:
       clone_rule:
         title: Supervisor - Clone Rule
     observer_rules:
-      info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
+      info_help_1: "For any event performed in a ticket, the Observer rules let you trigger specific actions."
       survey_disabled_rule: Surveys are disabled. Rules associated with survey might not work as expected.
       index:
         human_name: Observer Rule
@@ -2089,6 +2094,7 @@ en:
       info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
+      info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
       help_desk: Please feel free to get in touch with us if you need anything else.
       regards: Regards
       freshdesk: Freshdesk Team
@@ -2664,6 +2670,7 @@ en:
     new: New Category
     new_forum_category: New Forum Category
     edit: Edit Category
+    delete: Delete Category
   delete: Delete
   delete_confirm:
     confirm: Please Confirm...
@@ -2698,12 +2705,14 @@ en:
     select_solution_category: Select a product portal...
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     more_catogories: "See all Categories"
+    other_categories: "See other Categories"
+    other_categories_info: "Categories that are not associated with this portal"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...
     forum_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     delete: "Important: Deleting a category will delete all the forums and topics in it."
-    size: %{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted.
+    size: "%{no_of_forums} forum(s) and %{no_of_topics} topic(s) will also be deleted."
     delete_confirm: "Deleting this category will delete all %{forums} forums and %{topics} topics in it."
   billed_monthly: Billed monthly
   users:
@@ -2724,6 +2733,7 @@ en:
     clone: Dispatch’r - Clone Rule
     new: Dispatch'r - New Rule
     cascade_text: For each incoming ticket, Execute
+    info_help: For each incoming ticket, execute first matching rule
     cascade: all matching rules
     no_cascade: first matching rule
     add_new_choice: Add New choice
@@ -2964,7 +2974,7 @@ en:
       other: "%{count} people follow this Forum"
     edit_title: Edit
     topic_vote:
-      upvote: Upvote      
+      upvote: Upvote
       unlike: Unlike
       ideas:
         vote_button: I like this Idea
@@ -3089,6 +3099,9 @@ en:
   agent:
     full_time_agent: Full-Time Agent
     occasional_agent: Occasional Agent
+    export: "Export"
+    export_successfull: "Your Agents data will be sent to your email shortly!"
+    invalid_export_params: "An error occurred while exporting agent data. Please try again."
     deleted_agent_info: "Note: All communication from the deleted agents will be marked as SPAM."
     new: New Agent
     edit: Edit Agent
@@ -3113,6 +3126,7 @@ en:
     available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
     no_seats: No agent seats available
+    export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
@@ -3257,7 +3271,8 @@ en:
     info7: Recent Activity by %{nick_name}
     info8: "No forum activity by %{nick_name}"
     show_more: Show more tickets from %{nick_name} »
-    view_all: View all tickets
+    view_all: View all recent tickets
+    view_all_archived: View all archived tickets
     post_created: "<span class='muted'>%{time} ago in </span><a href='%{forum_url}'>%{forum_name}</a>"
     new_topic: New Topic
     reply: Reply
@@ -3278,13 +3293,15 @@ en:
       company: 'Contains tickets raised by company contacts'
       company_all: 'Recent tickets raised by company contacts'
       no_conversations: 'No Conversations'
-      all: 'All conversations'
-      tickets: Tickets
+      all: 'Recent conversations'
+      tickets: 'Tickets'
+      archive_tickets: Archived tickets
       recent_tickets: Recent Tickets
       forums: Forums
       contact_tickets: 'Recent ticket activities'
       contact_forums: 'Recent forum activities'
-    info5: "No tickets by %{nick_name}"
+      contact_archive_tickets: 'Older tickets'
+    info5: "No recent tickets from %{nick_name}"
     restore: Restore
     activation : Send Activation
     info6: Add specific notes regarding this contact
@@ -3301,6 +3318,7 @@ en:
       verified : Active contacts
       unverified : Contacts with unverified emails
       deleted : Deleted contacts
+      blocked : Blocked contacts
       all: All contacts
     verified:
       no_contacts: You don't have any contacts.
@@ -3546,7 +3564,7 @@ en:
       ideas_unlike_button: "unlike!"
       problem_unlike_button: "I don't have this problem!"
       howto_unlike_button: "I don't have this question!"
-      announce_users_voted_title: People who like this 
+      announce_users_voted_title: People who like this
       ideas_users_voted_title: People who like this idea
       problem_users_voted_title: People who have this problem
       howto_users_voted_title: People who have this question
@@ -3587,7 +3605,8 @@ en:
     orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
-      orphan_desc: "These categories are not associated in any portal"
+      unassociated: "Unassociated Categories"
+      orphan_desc: "These categories are not associated with any portal"
       view_all: "View all"
       view_less: "View less"
       drafts:
@@ -3601,6 +3620,8 @@ en:
         all: "All Feedback"
         details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
         status: 'Status : %{status}'
+        my_articles: "On My Articles"
+        all_articles: "On All Articles"
     anonymous_votes: "Anonymous (%{count})"
     home: Solutions Home
     all_categories: All Categories
@@ -3609,6 +3630,7 @@ en:
     edit_category: Edit Category
     edit_folder: Edit Folder
     orphan: Orphan
+    unassociated: Unassociated
     add_folder: New Folder
     add_article: New Article
     view_feedback: View all feedback
@@ -3617,8 +3639,11 @@ en:
     details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
     flash:
       folders_move_to: 'Folders have been moved to the selected category "<b>%{category_name}</b>" %{undo}'
+      folders_move_to_fail: "The selected category does not exist"
       articles_move_to: 'Articles have been moved to the selected folder "<b>%{folder_name}</b>" %{undo}'
+      articles_move_to_fail: "The selected folder does not exist"
       articles_changed_author: Author has been succesfully changed
+      articles_change_author_fail: "The selected agent does not exist"
     general:
       created_by: Created by
       last_published: Last Published by
@@ -3665,7 +3690,7 @@ en:
         portal_preview_msg: You are previewing draft version of this article.
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
-        revert_msg: "Succesfully reverted changes done in draft."
+        revert_msg: "The current session of auto-save has been discarded."
       tag_max_len: Maximum key length
       locked: Locked
       cant_publish: can't be changed to published of an article in default folder/category
@@ -3679,7 +3704,7 @@ en:
       edit: Edit Article
       properties: Properties
       edit_properties: Edit Properties
-      prop_updated_msg: The Article properties was updated succesfully.
+      prop_updated_msg: The article properties were updated succesfully.
       save_and_publish: Save and Publish
       save_as_draft: Save as Draft
       publish: Publish
@@ -3705,7 +3730,7 @@ en:
         dialog_submit: "Reset"
         resetting: "Resetting"
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
-        count: %{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero.
+        count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
     draft:
       name: Drafts
@@ -3721,6 +3746,7 @@ en:
         content_changed_you: "You have updated the content elsewhere. "
         content_changed: "The content has changed. "
         other_problem: "The content could not be saved. "
+      last_saved_by: Last saved by
     no_articles_info: No articles in this folder
     you: You
     info9: Public (Will be published in self service)
@@ -3743,7 +3769,7 @@ en:
     status: Solution Status
     info8: Are you sure you want to delete this solution?
     info9: "If you use multiple products, <b>Categories</b> can be made visible in their respective product portals."
-    info10: Folder visibility is of four types.
+    info10: "Folder visibility is of four types:"
     info11: "<b>All</b> - This makes it publicly visible to anyone who accesses your self-service portal."
     info12: "<b>Logged In Users</b> - This makes it visible only to those who have signed up and logged in with their credentials."
     info13: "<b>Agents</b> - This makes it private, so only agents on your helpdesk can view them. This is useful for internal knowledge sharing."
@@ -3755,7 +3781,10 @@ en:
     info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
     info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
     info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
-    kbase_email_info: "Agents can mail solution articles to <b>kbase@%{domain_name}</b> which will be shown here under drafts section."
+    info22: "Draft articles will be visible only to agents and can be searched only at the agent side."
+    info23: "<b>My Drafts</b> will list all articles which you last edited and saved as draft."
+    info24: "<b>All Drafts</b> will list all the articles in draft status. In the case of multiple portal setup, you can filter draft articles from any specific portal by selecting the dropdown. "
+    kbase_email_info: "All emails sent by agents to <b>%{email}</b> will be stored here as drafts."
     folder: Folder
     solution_meta: Meta tags for search engines
     solution_meta_title: Title Tag
@@ -3774,8 +3803,8 @@ en:
     solution_title: Title
     via: via
     article_properties:
-      title_counter_message: Best SEO pages recommend 50-60 characters for title.
-      description_counter_message: Best SEO pages recommend 150-160 characters for description.
+      title_counter_message: 'Recommended: 50-60 characters'
+      description_counter_message: 'Recommended: 150-160 characters'
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -4111,10 +4140,10 @@ en:
     add_bcc_text: Add Bcc
     set_bcc_email_text: Set automatic Bcc email
     name_info_msg: Name of the email that will be used in the ticket replies
-    Personalized_email_replies: Use Agent names for Personalized Email Replies ?
-    Personalized_email_replies_info: If YES then agent replies will have agent's name as the sender name (Email address will still be your Support Email address). For example '%{current_user_name} &lt;%{current_account_domain}&gt;'.
     Personalized_email_replies_yes: "Yes"
     Personalized_email_replies_no: "No"
+    personalized_email_replies_title: Use agent names in ticket replies and outbound emails?
+    personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
@@ -4122,6 +4151,8 @@ en:
     disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
+    enable_compose: "Allow agents to initiate conversation with customers?"
+    enable_compose_info: "If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -4179,13 +4210,32 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    errors:
+      required_field: cannot be blank.
     spam: "SPAM"
     deleted: "TRASH"
+    archived: "Archived"
+    archived_no_reply_msg: "Replies are not allowed on an archived ticket."
     next: "Next Ticket"
     previous: "Previous Ticket"
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    compose:
+      choose_email: Pick a from address
+      properties: Properties
+      learn_more: Learn more.
+      send_email: Send an email
+      enter_subject: Enter Subject...
+      to_address_placeholder: "Enter Customer's address"
+      send: Send
+      send_and_new: Send and <strong> New </strong>
+      cancel: Cancel
+      from: "From:"
+      cc: CC
+      to: "To:"
+      compose_choose_email: Pick a from address
+      compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
       whats_new: "What's new"
@@ -4255,6 +4305,7 @@ en:
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
+    action: Action
     edit: Edit ticket
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
@@ -4314,10 +4365,9 @@ en:
     pick_up: Pick Up
     unwatch: Unwatch
     submit_ticket_title: Submit a ticket
-    learn_more: Learn more
+    learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
-    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications"
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
@@ -4412,6 +4462,9 @@ en:
         tooltip: "View the associated JIRA Issue"
         add_new: "Link an issue"
         existing: "View issue"
+  archive_ticket:
+    title: Archived tickets
+    no_reply_msg: This ticket has been archived.
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
@@ -4564,7 +4617,7 @@ en:
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
-    import_holiday: Import Holidays
+    holiday_calendar: Holiday Calendar
     title: Business Hours
     info1: Business Hours give you more control over SLAs in your helpdesk, and when a ticket is due. For example, if your helpdesk works between 9am to 6pm Mon-Fri and a customer logs a ticket at 7pm on Tuesday, the "Due by" timers do not start ticking till Wednesday morning at 9
     info2: Holidays work exactly like business hours. If your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
@@ -4609,14 +4662,6 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
-    send_email: Send an email
-    send: Send
-    send_and_new: Send and <strong> New </strong>
-    enter_subject: Enter Subject...
-    from: "From:"
-    to: "To:"
-    cc: "Cc:"
-    bcc: "Bcc:"
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -4711,6 +4756,7 @@ en:
         tags_merge: Tag with the same name exists. Do you want to merge these tags?
         remove_tags: Remove Tag association
         remove_confirmation: Are you sure you want to remove the tag association?
+        delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Ticket
         tickets: Tickets
@@ -4789,7 +4835,7 @@ en:
         since_now: Since 1 second
         header: Automatic ticket assignment
         view_agent_status: Agent Availability Status
-        no_agents: "- No Agents -" 
+        no_agents: "- No Agents -"
         back: Back
       freshfone:
         phone: Phone
@@ -4885,6 +4931,7 @@ en:
         meta: Meta
         custom: Custom Data
         linked_ticket: This ticket is linked to the forum
+        archived_ticket: This ticket is linked to this archived ticket -
         conversation: Conversation
         timesheet: Time Sheet
         reply_form:
@@ -4955,6 +5002,7 @@ en:
         new: New Tickets
         my_resolved: My Resolved Tickets
         this_view: this view
+        archive_view: Archive view
         all_tickets: All Tickets
         all: All Tickets
         new_and_my_open: New & My Open Tickets
@@ -4981,6 +5029,7 @@ en:
         no_tickets: You don't have any tickets in current view
         article_feedback: Article Feedback
         my_article_feedback: My Articles Feedback
+        archived: Archive
       note:
         posted_on: "%{user_name} on %{note_date}"
         created_on:
@@ -5153,6 +5202,7 @@ en:
     created_at: created
     resolved_at: resolved
     closed_at: closed
+    archived_at: "Archived"
     from: From
     to: To
     check_uncheck_title: 'Check/Uncheck all'
@@ -5166,8 +5216,17 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    agents:
+      fields:
+        name: "Name"
+        email: "Email"
+        groups: "Groups"
+        roles: "Roles"
+        ticket_scope: "Ticket scope"
+        agent_type: "Agent Type"
     fields:
       ticket_id: "Ticket Id"
+      display_id: "Display Id"
       subject: "Subject"
       description: "Description"
       status: "Status"
@@ -5400,6 +5459,12 @@ en:
     confirm_disable: "Are you sure you want to disable this integration?"
     configure_addon: "Configure this integration"
     configure_custom_addon: "Configure this widget"
+    tooltip:
+      edit: Edit
+      settings: Settings
+      update: Update
+      delete: Delete
+      write_feedback: Write Feedback
   home:
       mobile_index:
         email: Email
@@ -5418,13 +5483,64 @@ en:
       login: "Sign In"
       sign_in_using: "...or Sign in using"
       sign_in_error: "Incorrect email or password."
+  marketplace:
+    installing: "Installing:"
+    almost_done: "Almost Done!"
+    app_installation_agreement: "By installing this app, you agree to abide by our "
+    terms_of_use: "Terms of Use"
+    terms_of_use_link: "http://freshdesk.com/terms#marketplace"
+    get_more_apps: Get more Apps
+    your_plugs: Your Plugs
+    freshplug_intro: " And you can customize and personalize your Freshdesk using Freshplugs."
+    app_feedback: "App Feedback for "
+    app_feedback_desc: "Reach out to the developer for any questions or comments about this App."
+    app_delete_warning: "Are you sure you want to delete this App?"
+    plug_delete_warning: "Are you sure you want to delete this Plug?"
+    app_gallery: App Gallery
+    apps: Apps
+    in_dev_apps: In-Development Apps
+    all: All
+    settings: Settings
+    install: Install
+    update: Update
+    installing_text: "Please wait..."
+    in_development: In Development
+    no_mktp_apps: "You have no Apps installed. Browse and Install Apps from the App Gallery by clicking "
+    go_to_dev_portal: Go to Developer Portal
+    developer_shortcuts: Developer Shortcuts
+    plug_info: "Did you know, now there is a better way to write and manage and even share your freshplugs to all of freshdesk community."
+    needs_developer_text: Needs Developer Account
+    write_a_plug: Write a Plug
+    description: Description
+    instructions: Instructions
+    screenshots: Screenshots
+    version: VERSION
+    ver: "Version: "
+    installs: Installs
+    no_apps: No Apps available
+    no_apps_in_category: No Apps available in this category
+    related_categories: "Apps from Related Categories:"
+    similar_apps: "Similar Apps:"
+    no_connection: "Sorry, Service unavailable. Please try after sometime. Please contact us, if the problem persists."
+    install_error: "Error while installing the App. Please try again."
+    results: results
+    field_blank: Please fill all the fields.
+    installed: Installed
+    delete_action:
+      success: " was deleted successfully"
+      error: "Error while deleting "
+    feedback_action:
+      success: "Thank you for your feedback. The developer will get back to you soon."
+      error: "Error while submitting Feedback. Please try after sometime."
+      submit: Submit
+      submitting: Submitting...
   integrations:
     native_integrations: Native Integrations
     freshplugs_title: FreshPlugs
     cti_app_title: CTI Integrations
     new_freshplug: New FreshPlug
-    no_freshplugs: You do not have any FreshPlugs.
-    add_new_freshplug: Add new FreshPlug
+    no_freshplugs: "You have no FreshPlugs installed. Create and Install a new FreshPlug by clicking "
+    add_new_freshplug: New FreshPlug
     freshplugs:
       refresh: Refresh
       custom_widget_preview: Custom Widget Preview
@@ -5432,6 +5548,11 @@ en:
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page.
       show_the_widget_in_contact_view_page: Show the widget in contact view page.
+      freshplug_preview: Freshplug Preview
+      preview_helptext: This integration will appear in the sidebar
+      ticket_detail_page: Ticket detail page
+      contact_detail_page: Contact detail page
+      freshplug_used_in: Freshplug displayed on
     whmcs:
       label: "WHMCS"
       products: "Products"
@@ -5666,7 +5787,7 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
@@ -5860,8 +5981,8 @@ en:
       description: "Description"
       script: "Script"
       label: "Custom Widget"
-      new: "New FreshPlug"
-      edit: "Edit Custom Widget"
+      new_freshplug: "New Freshplug"
+      edit_freshplug: "Edit Freshplug"
       desc: "You can add a custom widget to display any detail using your own custom script."
       helptext: "<h4>FreshPlugs</h4><p><br/> You can develop your own FreshPlug using HTML, CSS and JavaScript, and bring data from any 3rd party app or database right into your tickets and contacts. <br/><br/> To create a FreshPlug, first give it a name and description. Then enter your code in the  ‘Script’ area. You can pass any ticket or requestor field, including the custom fields you have created, as JSONP objects.<br/><br/>You can click <b>‘Show Preview’</b> to view how your widget will look like both in the ticket and contact pages.<br/><br/>Refer to our <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'> solutions page </a> to learn more about FreshPlugs."
       small_help_text: "You can develop your own FreshPlug using HTML,CSS and JavaScript."
@@ -5931,7 +6052,15 @@ en:
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
     xero:
       label: "Xero"
-      desc: "You can create new invoice for the recorded time against the ticket and view the most recent invoices with links to modify them in Xero"
+      desc: "Create Xero invoices for Freshdesk ticket time-sheet entries."
+      helptext: "<h4>Xero Integration Options</h4><br><P>Select the Xero account names under the ‘Revenue’ account head that agents can access while creating invoices. Sales is available by default. If Sales does not exist, the first available account name is set as default.</p><p>You can also select the Xero inventory items that agents can associate timesheet entries to while creating invoice line items.</p><p>A maximum of 20 account names and 30 inventory items can be selected.</p>"
+      application:
+        error_no_acc_items: "The Organisation should have atleast One Revenue account in Xero."
+      form:
+        xero_settings: "Organisation Name:"
+        accounts: "Chart of Accounts Selection(Revenue)"
+        inventory_items: "Inventory Items Selection"
+        default_desc: "Default Invoice Item Description"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -6179,6 +6308,7 @@ en:
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
       ticket_type_example: "Question"
+      note: "Note"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
@@ -6265,6 +6395,7 @@ en:
   status_name_validate_uniqueness_msg: " Status name has already been taken"
   status_cust_disp_name_uniqueness_msg: " Status customer display name has already been taken"
   since: "Since"
+  archived_on: "Archived on"
   for: "for"
   since_time: "since %{time_words}"
   since_a_second: "1 second"
@@ -6476,6 +6607,9 @@ en:
         topic_view: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
         topic_list: "Note: For preview to be shown, please ensure that you have atleast one forum topic."
         ticket_view: "Note: For preview to be shown, please ensure that you have atleast one ticket."
+        archive_ticket_list: "Note: To access and display archived tickets, use 'archive' placeholders like {% snippet archive_ticket_filters %}."
+        archive_ticket_view: "Note: Ticket requesters cannot reply to or change ticket properties of archived tickets. Placeholders related to updating the ticket properties like {% snippet ticket_reply %} will not work."
+
     cosmetic:
       subheader_background_color: Background color
       subheader_tab_color: Tab colors
@@ -6500,8 +6634,12 @@ en:
   thirty_days: This Month
   last_week: Last week
   last_month: Last month
-  two_months: Last 2 months
-  six_months: Last 6 months
+  two_months: Last 60 days
+  six_months: Last 180 days
+  last_seven_days: Last 7 days
+  last_thirty_days: Last 30 days
+  last_sixty_days: Last 60 days
+  last_one_eighty_days: Last 180 days
   set_date: Select Time Period
   any_time: Any time
   any: Any
@@ -6550,10 +6688,15 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    loading_text: Generating Report...
+    filter_limit_exceeded: You can select maximum of %{count} filters
     time_period: Select Time Period
     filter_by: Filter by
     edit_filter: Filter
-    ticket_volume: 
+    tickets: List of Tickets
+    generate: Generate
+    more: More...
+    ticket_volume:
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6567,14 +6710,69 @@ en:
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
-    performance:
+    performance_distribution:
       title: Performance Distribution
+      first_response_bar: First Response Time
+      response_bar: Avg Response Time
+      resolution_bar: Resolution Time
+      first_response_and_response_trend: Avg First Response And Response Time Trend
+      resolution_trend: Avg Resolution Time Trend
+      description:
+        avg_res_time: Tickets responded to in the selected time period split based on the average response time range
+        first_response: Tickets whose first responses were sent in the selected time period split based on the first response time range
+        resolution_time: Tickets resolved in the selected time period split based on the resolution time range
+        avg_res_time_trend: All tickets responded to in the selected time period are plotted in this graph based on the avg first response time and avg response time
+        resolution_time_trend: All tickets resolved in the selected time period are plotted in this graph based on the avg resolution time
     group_summary:
       title: Group Summary
+      group: Group
+      description:
+        ticket_resolved: Tickets resolved in the selected time period and assigned to the group
+        tickets_reopened: Tickets reopened in the selected time period when assigned to the group
+        ticket_reasigned: Tickets reassigned from this group to other groups in the selected time period
+        reports_sla: % of tickets whose first responses were sent within SLA in the selected time period when assigned to the group
+        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the group
+        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the group
+        private_note: Number of private notes added in the selected time period when the tickets were assigned to the group
+        responses: Number of agent responses sent in the selected time period when the tickets were assigned to the group
+        avg_first_res_time: Avg first response time for first responses made in the selected time period when the tickets were assigned to the group
+        avg_res_time: Avg time for all the responses made in the selected time period when the tickets were assigned to the group
+        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the group
     agent_summary:
       title: Agent Summary
+      ticket_assigned: Tickets Assigned
+      ticket_resolved: Tickets Resolved
+      tickets_reopened: Tickets Reopened
+      ticket_reasigned: Tickets Reassigned
+      reports_sla: First Response SLA %
+      res_sla: Resolution SLA %
+      fcr: FCR %
+      private_note: Private Notes
+      responses: Responses
+      avg_first_res_time: Average 1st Response Time
+      avg_res_time: Average Response Time
+      avg_resolution_time: Average Resolution Time
+      agent: Agent
+      description:
+        ticket_resolved: Tickets resolved in the selected time period and assigned to the agent
+        tickets_reopened: Tickets reopened in the selected time period when assigned to the agent
+        ticket_reasigned: Tickets reassigned from this agent to other agents in the selected time period
+        reports_sla: % of tickets whose first responses were sent by the agent within SLA in the selected time period
+        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the agent
+        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the agent
+        private_note: Number of private notes added by the agent in the selected time period
+        responses: Number of responses sent by the agent in the selected time period 
+        avg_first_res_time: Avg first response time for first responses sent by the agent in the selected time period 
+        avg_res_time: Avg time for all the responses sent by the agent in the selected time period 
+        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the agent
     customer_report:
       title:  Customer Report
+      received_tickets: Customers with the most received
+      resolved_tickets: Customers with the most resolved
+      response_sla: Most SLA Violations for Response
+      resolution_sla: Most SLA Violations for resolution
+      customer_interactions: Customer Interactions
+      agent_interactions: Agent Interactions
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -6767,6 +6965,11 @@ en:
       restricted_country: "Restricted country"
       already_in_call: "Simultaneous outgoing call restricted"
       strange_number: "Cannot call a Restricted number"
+      move_to_dialer: "Back to dialer"
+      connect_call: "Call"
+    search:
+      work_phone: "Work"
+      mobile_phone: "Mobile"
     call_status:
       default: ""
       completed: "Completed"
@@ -6802,6 +7005,7 @@ en:
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
       call_notes: "Call Notes"
+      phone_icon: "Phone"
       on_phone: "Available on Phone"
       on_browser: "Available on Browser"
       invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
@@ -7786,3 +7990,17 @@ en:
   new_label: "NEW"
   api:
     record_not_found: Resource not found.
+  doorkeeper:
+    authorizations:
+      new:
+        go_to_portal: "Authorize &amp; Goto %{portal_name} Portal"
+        later: Later
+        authorize_text1: Authorize
+        authorize_text2: to use your account?
+        authorize_success: You have allowed this request
+        authorize_failure: You are not allowed to access this page
+        spinner_text: "Logging into %{portal_name} Portal"
+        dev_portal: Developer
+        admin_portal: Admin
+      error:
+        authorize_failure: You are not allowed to access this page

@@ -229,8 +229,8 @@ RSpec.describe Support::Solutions::ArticlesController do
     ticket = @acc.tickets.find_by_subject("Article Feedback - #{@test_article1.title}")
     ticket.description.include? description
     ticket.description.include? I18n.t("solution.feedback_message_#{random_message}")
-    ArticleTicket.find(:all, :conditions => { :article_id => @test_article1.id }).map(&:ticket_id).should include ticket.id
-    ArticleTicket.find_by_ticket_id(ticket).article_id.should eql @test_article1.id
+    ArticleTicket.find(:all, :conditions => { :article_id => @test_article1.id }).map(&:ticketable_id).should include ticket.id
+    ArticleTicket.find_by_ticketable_id_and_ticketable_type(ticket.id, ticket.class.name).article_id.should eql @test_article1.id
     ticket.subscriptions.find_by_user_id(@test_article1.user_id).should_not be_nil
   end
     
@@ -251,8 +251,8 @@ RSpec.describe Support::Solutions::ArticlesController do
     ticket = @acc.tickets.find_by_subject("Article Feedback - #{test_article.title}")
     ticket.description.include? description
     ticket.description.include? I18n.t("solution.feedback_message_#{random_message}")
-    ArticleTicket.find(:all, :conditions => { :article_id => test_article.id }).map(&:ticket_id).should include ticket.id
-    ArticleTicket.find_by_ticket_id(ticket).article_id.should eql test_article.id
+    ArticleTicket.find(:all, :conditions => { :article_id => test_article.id }).map(&:ticketable_id).should include ticket.id
+    ArticleTicket.find_by_ticketable_id_and_ticketable_type(ticket.id, ticket.class.name).article_id.should eql test_article.id
     ticket.subscriptions.find_by_user_id(test_article.user_id).should be_nil
   end
 

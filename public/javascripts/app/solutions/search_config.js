@@ -26,12 +26,14 @@ window.App.Solutions = window.App.Solutions || {};
         resultList.hide().empty();
         setTimeout(function () {
           $(".community-search").parent().first().addClass("sloading loading-small loading-right");
+          $('#search-hide').hide();
           $this.fetchSearchResults(searchString);
         }, 450);
       } else if (this.currentString !== searchString) {
         resultList.hide();
         $('.solution-list').show();
         $(".community-search").parent().first().removeClass("sloading loading-small loading-right");
+        $('#search-hide').show();
       }
     },
 
@@ -41,6 +43,7 @@ window.App.Solutions = window.App.Solutions || {};
       $('.community-search').focus();
       $('#cm-sb-solutions-toggle').hide()
       $('#fa_item-select-all').prop('disabled', true);
+      $('#search-show').data().twipsy.hide();
     },
 
     hideSearch: function () {
@@ -69,6 +72,7 @@ window.App.Solutions = window.App.Solutions || {};
       resultList.html(resultHtml).show();
       $('.solution-list').hide();
       $(".community-search").parent().removeClass("sloading loading-small");
+      $('#search-hide').show();
     },
 
     fetchSearchResults: function (searchString) {

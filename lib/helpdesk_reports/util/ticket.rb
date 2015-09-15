@@ -2,7 +2,8 @@ module HelpdeskReports::Util::Ticket
   include HelpdeskReports::Constants::Ticket
 
   def reverse_mapping_required? field
-    field.to_s.starts_with?("ffs") ? true : TICEKT_FIELD_NAMES.include?(field.to_sym)
+    return true if (field.to_s.starts_with?("ffs") || TICEKT_FIELD_NAMES.include?(field.to_sym)) and !["agent_summary", "group_summary"].include? report_type
+    false
   end
 
   def field_id_to_name_mapping(field_type)
@@ -15,7 +16,7 @@ module HelpdeskReports::Util::Ticket
       TicketConstants.source_list
     when :priority
       TicketConstants.priority_list
-    when :responder_id
+    when :agent_id
       Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] }.to_h
     when :group_id
       Account.current.groups_from_cache.collect { |g| [g.id, g.name]}.to_h
@@ -73,6 +74,13 @@ module HelpdeskReports::Util::Ticket
       when "y"
         date.year
     end
+  end
+  
+  def formatted_duration total_seconds
+    hours = (total_seconds / (60 * 60)).to_i
+    minutes = ((total_seconds / 60) % 60).to_i
+    seconds = (total_seconds % 60).to_i
+    return total_seconds > 3600 ? "#{hours}h #{minutes}m" : "#{minutes}m #{seconds}s"
   end
   
 end

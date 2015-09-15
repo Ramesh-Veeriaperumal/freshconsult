@@ -18,5 +18,6 @@ class Company < ActiveRecord::Base
            
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
+  has_many :archive_tickets , :through => :all_users , :class_name => 'Helpdesk::ArchiveTicket'
 
 end

@@ -108,8 +108,26 @@ class Account < ActiveRecord::Base
     freshchat_enabled? and features?(:chat_routing)
   end
 
+  #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
-    ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+  end
+
+  def dashboard_disabled?
+    ismember?(DASHBOARD_DISABLED, self.id)
+  end
+
+  def restricted_compose_enabled?
+    ismember?(RESTRICTED_COMPOSE, self.id)
+  end
+  
+  def slave_queries?
+    ismember?(SLAVE_QUERIES, self.id)
+  end
+  #Temporary feature check methods - using redis keys - ends here
+
+  def validate_required_ticket_fields?
+    ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
   def freshfone_active?
@@ -118,6 +136,10 @@ class Account < ActiveRecord::Base
 
   def active_groups
     active_groups_in_account(id)
+  end
+  
+  def reports_enabled?
+    features_included?(:bi_reports) || launched?(:bi_reports)
   end
 
   class << self # class methods
@@ -163,6 +185,13 @@ class Account < ActiveRecord::Base
       return  ticket_dis_id > max_dis_id ? ticket_dis_id : max_dis_id+1
     end
     return 0
+  end
+
+  def max_display_id
+    return get_max_display_id unless self.features?(:redis_display_id)
+    
+    key = TICKET_DISPLAY_ID % { :account_id => self.id }
+    get_display_id_redis_key(key).to_i
   end
   
   def account_managers
@@ -355,6 +384,17 @@ class Account < ActiveRecord::Base
 
   def reset_sso_options
     self.sso_options = set_sso_options_hash
+  end
+
+  def enable_ticket_archiving(archive_days = 120)
+    add_features(:archive_tickets)
+    if account_additional_settings.additional_settings.present?
+      account_additional_settings.additional_settings[:archive_days] = archive_days
+      account_additional_settings.save
+    else
+      additional_settings = { :archive_days => archive_days }
+      account_additional_settings.update_attributes(:additional_settings => additional_settings)
+    end
   end
 
   protected

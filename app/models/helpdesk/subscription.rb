@@ -15,8 +15,23 @@ class Helpdesk::Subscription < ActiveRecord::Base
   validates_numericality_of :ticket_id, :user_id
   before_create :set_account_id
 
+  # Added to handle sending data to count cluster
+  after_commit :es_update_parent, :if => :es_count_enabled?
+
   private
     def set_account_id
       self.account_id = ticket.account_id
+    end
+
+    def es_update_parent
+      SearchSidekiq::TicketActions::DocumentAdd.perform_async({ 
+                                                  :klass_name => 'Helpdesk::Ticket', 
+                                                  :id => self.ticket_id,
+                                                  :version_value => Time.now.to_i
+                                                })
+    end
+
+    def es_count_enabled?
+      Account.current.launched?(:es_count_writes)
     end
 end

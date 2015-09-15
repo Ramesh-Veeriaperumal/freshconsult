@@ -7,6 +7,7 @@ class Helpdesk::CloudFile < ActiveRecord::Base
   belongs_to :application, :class_name => "Integrations::Application"
   belongs_to_account
 
+  # You don't need this callback 
   before_save :set_account_id
 
   alias_attribute :parent_type, :droppable_type
@@ -33,8 +34,9 @@ class Helpdesk::CloudFile < ActiveRecord::Base
 
   private
 
+  # Bad code need to remove 
   def set_account_id
-    self.account_id = droppable.account_id
+    self.account_id ||= droppable.account_id
   end
 
   CLOUD_FILE_PROVIDERS = ['dropbox']

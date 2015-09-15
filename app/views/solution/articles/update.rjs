@@ -1,9 +1,12 @@
 draft_status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-show_ajax_flash(page)
 if params[:solution_article][:status] == draft_status.to_s && @article.status == draft_status
-	page << "pjaxify('');"
+	page << "window.location.reload();"
 else
+	show_ajax_flash(page)
 	page << "jQuery('#article-prop').modal('hide');jQuery('#article-prop').modal('destroy');"
 	page << "jQuery('#solution_article_folder_id').select2(\"val\", \"#{@article.folder.id}\");"
 	page.replace_html "sidebar-prop", render(:partial => "sidebar_properties", :locals => {:@article => @article}).html_safe
+	page.replace_html "sol_breadcrumb", render(:inline => "#{solutions_breadcrumb(:article)}").html_safe
 end
+page << "App.Solutions.NavMenu.setActiveFolderAs(#{@article.folder_id});"
+page << "App.Solutions.NavMenu.reload();"

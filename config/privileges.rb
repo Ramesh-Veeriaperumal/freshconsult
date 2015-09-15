@@ -48,7 +48,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
-    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :delete_invoice]
+    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :edit, :check_item_exists,]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
@@ -83,6 +83,11 @@ Authority::Authorization::PrivilegeList.build do
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
+
+    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
+                                                    :full_paginate, :configure_export, :export_csv, 
+                                                    :activities, :component, :prevnext]
+    resource :"helpdesk/archive_note", :only => [:index, :full_text]
 	end
 
   reply_ticket do
@@ -151,7 +156,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
-    resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete]
+    resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
   end
 
   delete_solution do
@@ -163,7 +168,6 @@ Authority::Authorization::PrivilegeList.build do
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
-    resource :"solution/draft", :only => [:autosave, :destroy, :publish, :attachments_delete]
   end
 
   # ************** FORUMS **************************
@@ -294,7 +298,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
-                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact, 
+                               :configure_export, :export_csv]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -366,7 +371,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/mobihelp/app"
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
-    resource :"integrations/xero", :only => [:authorize, :authdone]
+    resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
+    resource :"admin/integrations/freshplug"
+    resource :"admin/extension"
+    resource :"admin/installed_extension"
+    resource :"doorkeeper/authorization"
   end
 
   manage_account do

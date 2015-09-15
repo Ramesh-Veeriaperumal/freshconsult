@@ -7,7 +7,7 @@
 			<span>
 				<%= select_tag :id,
 		          options_for_select(current_account.solution_categories.reject { |sc| sc.is_default? || sc.id == @category.id }.collect{|c|[c.name, c.id]}), {
-		              :class => "disabled bulk-action-btns select2",
+		              :class => "disabled bulk-action-btns input-small select2 m0",
 		              :id => "move_to",
 		              :'data-dropdown-css-class' => 'bulk-action-menu',
 		              :'data-container-css-class' => 'bulk-action-button',
@@ -19,7 +19,7 @@
 		          } %>
 			</span>
 			<span class="visible-to-btn right-btn">
-				<a class="drop-right nav-trigger disabled bulk-action-btns" href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
+				<a class="drop-right nav-trigger disabled bulk-action-btns" disabled href="#" menuid="#visible_to"><%= t('solution.folders.folder_form.visible_to') %></a>
 				<div class="fd-menu" id="visible_to">
 					<div class="left-list">
 						<ul>
@@ -45,11 +45,11 @@
 							</div>
 
 							<div class="control-group row-fluid">
-								<div class="replace-existing">
+								<div class="replace-existing span5">
 									<%= radio_button :company, :add_to_existing, 1, :checked => true, :class => "add-to-existing" %>
 									<%= label_tag :add_to_existing, t('solutions.company.add_existing') %>
 								</div>
-								<div class="replace-existing">
+								<div class="replace-existing span5">
 									<%= radio_button :company, :add_to_existing, 0, :class => "add-to-existing" %>
 									<%= label_tag :add_to_existing, t('solutions.company.replace_existing') %>
 								</div>

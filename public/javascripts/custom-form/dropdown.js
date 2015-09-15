@@ -6,7 +6,8 @@
 				firstChoice :     'One',
 				secondChoice :    'Two', 
 				noChoiceMessage : 'No Choice',
-				confirmDelete :   'Are you sure you want to delete this?'
+				confirmDelete :   'Are you sure you want to delete this?',
+				customerLabelEmpty : 'Customer Label Missing'
 			},
 			addChoice :         '#addchoice',
 			deleteChoice:       '.delete_choice_btn', 
@@ -153,7 +154,18 @@
 			$(this.settings.dropdownChoiceDiv)
 				.sortable({
 					items: 	'fieldset',
-					handle: this.settings.dropdown_rearrange
+					handle: this.settings.dropdown_rearrange,
+					sort: function(e,el){
+						var scrollParent = $('.custom-choices').parents('.modal-body');
+						var currentOffset = scrollParent.scrollTop();
+						var diff = el.position.top-currentOffset;
+						if(diff<50){
+							scrollParent.scrollTop(currentOffset-5);	
+						}						
+						else if(diff>350) {
+							scrollParent.scrollTop(currentOffset+5);	
+						}
+					}
 				});
 		},
 		getValidationRules: function() {
@@ -177,14 +189,29 @@
 										return false;
 									}
 							 	}, this)
-							}
+							},
+							"checkCustomerLabel": true
 						}
 					},
 					messages: {
-						 choicelist: this.settings.customMessages.noChoiceMessage
+						choicelist: {
+							required: this.settings.customMessages.noChoiceMessage
+						}
 					}
 				}
-
+			$.validator.addMethod("checkCustomerLabel", $.proxy(function (value, element, param) {
+				_condition = true;
+				$.each($(this.settings.dropdownChoiceDiv)
+							 .find("fieldset:visible")
+							 .find('input[name=customer_display_name]')
+							 ,function(){
+								if($.trim($('input[data-companion=#'+$(this).attr('id')+']').attr('value'))!="" && $.trim($(this).val())==""){
+									_condition = false;
+								}
+							 }
+				);
+				return _condition;
+			}, this),this.settings.customMessages.customerLabelEmpty);
 			return $.extend(true, {}, rules, choiceValidationRules);
 		}
 	};

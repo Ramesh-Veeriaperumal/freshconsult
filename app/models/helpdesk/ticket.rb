@@ -42,7 +42,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone,
+    :facebook_id, :send_and_set, :archive, :required_fields
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -175,13 +176,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
   scope :article_tickets_by_user, lambda { |user| {
        :include => [:article, :requester, :ticket_status],
-       :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id and solution_articles.user_id = ?", user.id]
+       :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and solution_articles.user_id = ? and article_tickets.ticketable_type = ?", user.id, 'Helpdesk::Ticket']
      }
    }
 
   scope :all_article_tickets,
     :include => [:article, :requester, :ticket_status],
-    :conditions => ["helpdesk_tickets.id = article_tickets.ticket_id"] 
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and article_tickets.ticketable_type = ?", 'Helpdesk::Ticket'],
+    :order => "`helpdesk_tickets`.`created_at` DESC"
 
   scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
     :conditions => ["display_id > (?)",display_id],
@@ -278,6 +280,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (fb_post) and (fb_post.facebook_page) 
   end
   alias :is_facebook :is_facebook?
+ 
+  def fb_replies_allowed?
+    is_facebook? and !fb_post.reply_to_comment?
+  end
  
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
@@ -788,6 +794,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
                         }
             },
             false).to_json
+  end
+
+  #To-do: Need to verify with mappings
+  def to_es_json
+    as_json({
+      :root => false,
+      :tailored_json => true,
+      :methods => [
+                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
+                    :status_deleted, :product_id, :trashed
+                  ],
+      :only => [
+                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
+                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
+                  :frDueBy, :priority, :ticket_type
+                ]
+    }, false).merge(custom_attributes).to_json
   end
 
   def unsubscribed_agents

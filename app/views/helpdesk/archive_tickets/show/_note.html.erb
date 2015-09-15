@@ -1,0 +1,120 @@
+<% 
+note_view_id = dom_id(note)
+notedetails  = "note_details_#{note.id.to_s()}"
+forward_note_id = "cnt-fwd-#{note.id.to_s()}" 
+edit_id = "edit-#{note.id.to_s()}"
+notable_object = @ticket || @parent
+minimizable ||= false
+kind = note.survey_remark.nil? ? note.kind : 'survey'
+
+if current_account.custom_survey_enabled
+  kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
+  
+  unless note.custom_survey_remark.blank?
+      # Removing this as Survey Remarks are archived and associations won't work.
+      # Replacing it with instance methods in the model.      
+      # ticket_info = note.custom_survey_remark.survey_result.ticket_info
+      ticket_info = note.survey_result.ticket_info
+      details = note.survey_result.note_details 
+
+      unless details.blank?
+        agent_name = details[:agent]
+        survey_name = details[:survey]
+        question_values = details[:question_values]
+        rating = details[:rating]
+      end
+    end
+end
+%>
+
+<div id="<%= note_view_id %>" 
+      data-timestamp="<%= note.created_at.to_i%>" 
+      class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
+  <% if note.user %>
+  <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
+  <% end %>
+  <div class="commentbox 
+          <%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
+          <%= 'private-note' if note.private_note? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+    <% if note.private_note? %>
+      <%= content_tag(:span, "", :class => "comment-lock") %>
+    <% elsif is_twitter_dm?(note) %>
+      <%= content_tag(:span, "", :class => "ficon-twitter-lock fsize-21 muted") %>
+    <% elsif is_facebook_message?(note) %>
+      <%= content_tag(:span, "", :class => "ficon-facebook-lock fsize-21 muted") %>
+    <% end %>
+    
+    
+    <% if note.fb_post and note.fb_post.post_type_present? %>
+      <% if note.fb_post.comment? %>
+        <span class="tooltip" data-original-title="Comment"> 
+          <%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
+        </span>
+      <% elsif note.fb_post.reply_to_comment? %>
+        <span class="tooltip" data-original-title="Reply to comment"> 
+          <%= content_tag(:span, "", :class => "ficon-reply fsize-21")%>
+        </span>
+      <% end %>
+      <% clazz = "fb-reply"%> 
+    <% else %>
+      <% clazz = "helpdesk_note"%> 
+    <% end %>
+    
+
+    <div class="<%= clazz %>">
+      
+
+      <div class="author-mail-detail cc_bcc_info">
+        <% kind %>
+        <%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
+            :user_name => link_to_user(note.user), 
+            :note_date => formated_date(note.created_at), 
+            :timestamp => note.created_at.to_i 
+          ).html_safe %><br>
+        <%unless survey_name.blank? %>
+          <b><%= t("helpdesk.tickets.note.survey_response",{:survey_name => survey_name})%>
+            <%unless agent_name.blank? %><%= t("helpdesk.tickets.note.survey_response_to",{:agent => agent_name})%><%end%></b>
+        <%end%>
+      </div>
+      
+      <% if current_account.features?(:custom_survey) %>
+        <%= render :partial => '/helpdesk/archive_tickets/show/custom_survey_note' , :locals => {:note => note , 
+              :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
+        <% else %>
+          <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
+              :notedetails => notedetails} %>
+      <%end%>
+
+      <%= freshfone_audio_dom(note) %>
+
+      <div id="note_attachments_container_<%= note.id%>">
+        <% unless note.all_attachments.empty? and note.cloud_files.empty? %>        
+            <span class="seperator"></span> 
+            <div class="attachments-wrap clearfix">
+              <h5><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+              <ul class="attachment_list">
+                  <% note.all_attachments.each do |attached| %> 
+                    <%= attachment_list(attached, false, "ticket", note.id) %>
+                  <%end%>
+
+                  <% note.cloud_files.each do |cloud_file| %> 
+                  <%= attachment_list(cloud_file, false, "cloud_file",nil) %>
+                <%end%>
+              </ul>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+    
+
+    
+  <script type="text/javascript">
+    if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' || TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
+      TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;
+    if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id']  == null || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
+      TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;  
+    
+  </script>
+  
+</div>

@@ -11,6 +11,7 @@ var FreshfoneUser,
 		this.availableOnPhone = freshfone.available_on_phone;
 		this.cached = {};
 		this.newTokenGenerated = false;
+		this.tokenRegenerationOn = null;
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
 		this.bindUserPresenceHover();
@@ -119,6 +120,7 @@ var FreshfoneUser,
 			$("#log").text("Registering Freshfone Client...");
 
 			// this.handleFreshfoneSocket();
+			console.log('setPresence-token');
 			this.getCapabilityToken($loading_element);
 		},
 		
@@ -254,7 +256,12 @@ var FreshfoneUser,
 		},
 
 		initializeDevice: function () {
-			getCookie('freshfone') === undefined ? this.getCapabilityToken() : this.setupDevice();
+			if (getCookie('freshfone') === undefined){
+				console.log('InitializeDevice-token');
+				this.getCapabilityToken();
+			}
+			else 
+				this.setupDevice();
 		},
 
 		setStatus: function (status, init_value) {

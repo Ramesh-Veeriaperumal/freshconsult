@@ -251,17 +251,21 @@ module Helpdesk::TicketActions
       if(total_entries.blank? || total_entries.to_i == 0)
         load_cached_ticket_filters
         load_ticket_filter
-        db_type = (params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) ? :run_on_slave : :run_on_master
+        db_type = get_db_type(params)
         Sharding.send(db_type) do
           @ticket_filter.deserialize_from_params(params)
-          joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-          joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
-          options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-          if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
-            options[:distinct] = true 
-            options[:select] = :id
+          if Account.current.launched?(:es_count_reads)
+            total_entries = Search::Filters::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)
+          else
+            joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
+            joins[0].concat(@ticket_filter.states_join) if @ticket_filter.sql_conditions[0].include?("helpdesk_ticket_states")
+            options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+            if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+              options[:distinct] = true 
+              options[:select] = :id
+            end
+            total_entries = current_account.tickets.permissible(current_user).count(options)
           end
-          total_entries = current_account.tickets.permissible(current_user).count(options)
         end
       end
       @ticket_count = total_entries.to_i
@@ -269,6 +273,10 @@ module Helpdesk::TicketActions
       load_cached_ticket_filters
       render 'no_paginate' 
     end
+  end
+
+  def get_db_type(params)
+    ((params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) || current_account.slave_queries?) ? :run_on_slave : :run_on_master
   end
 
   def get_tag_name

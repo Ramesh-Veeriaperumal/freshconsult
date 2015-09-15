@@ -64,5 +64,7 @@ helpdesk:
     - big_brother
     - integrations
     - autopilot_config
+    - marketplace_config
+    - doorkeeper
 
 

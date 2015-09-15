@@ -351,6 +351,9 @@ javascripts:
     - public/javascripts/freshfone/client.js
     - public/javascripts/freshfone/phoneformatutil.js
     - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/ongoing_call_dialpad.js
+    - public/javascripts/freshfone/dialpad_events.js
+    - public/javascripts/freshfone/components/contact_search.js
     - public/javascripts/freshfone/components/call_transfer.js
     - public/javascripts/freshfone/freshfone_logger.js
     - public/javascripts/freshfone/components/freshfone_conference_connection.js

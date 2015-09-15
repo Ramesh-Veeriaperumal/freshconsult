@@ -3,9 +3,18 @@
   <% if privilege? (:admin_tasks) %>
         <input type="checkbox" id="tag-select-all" class="tags-header" />
         <span class="bulk-action">
-            <input class="btn" type="button"
-               value="<%=t('delete')%>" disabled="disabled" id="tag-delete">
-       </span>
+
+          <input class="btn" type="button"
+            value="<%=t('delete')%>" disabled="disabled" id="tag-delete"
+            rel="freshdialog"
+            data-target="#tag-delete-confirm"
+            data-title="<%= t('delete') %>"
+            data-width="300"
+            data-backdrop="static"
+            data-submit-label="<%= t('delete') %>"
+            data-close-label="<%= t('cancel') %>"
+          >                             
+        </span>
   <% end %>
 
 </div>

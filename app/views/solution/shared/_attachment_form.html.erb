@@ -28,7 +28,8 @@
           </li>
           <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} %>
           <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
-        </ul>      
+        </ul>
+        <span class="info-data info-cloud-data"> ( <%= t('total') %> <%=t('attachment_help_info')%> ) </span>      
       </div>
     <% else %>
       <div class="hidden_upload">

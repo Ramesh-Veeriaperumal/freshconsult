@@ -1,12 +1,35 @@
 @import "../../settings/settings";
 @import "../../shared/mixins";
 .solutions {
-  #article-form {
-    #editortool {
-      .redactor_toolbar {
-        background: none;
-      }
+
+  #sticky_redactor_toolbar {
+    .redactor_toolbar {
+      background: none;
+      position: absolute;
+      padding: 0 20px !important;
+      box-sizing: border-box;
+      border-bottom: none;
+      top: 110px;
+      z-index: 2;
     }
+    
+    &.has-notification .redactor_toolbar {
+      top: 146px;
+    }
+  }
+  
+  .is_stuck #sticky_redactor_toolbar{
+    .redactor_toolbar {
+      top: 51px;
+      background: #fff;
+      box-shadow: 0 5px 5px -6px #333;
+    }
+    &.has-notification .redactor_toolbar {
+      top: 87px;
+    }
+  } 
+  
+  #article-form {
     .attachment_list {
       .new_attachment {
         .attach_content {
@@ -17,12 +40,37 @@
         }
       }
     }
+    
+    #solution_article_title-error {
+      position: relative;
+      top: -40px;
+      padding-bottom: 0;
+      float: right;
+      height: 0;
+    }
   }
   .article-view {
     #current-article-title {
       font-size: 20px;
       margin-bottom: 10px;
-      padding-top: 5px;
+      padding-top: 10px;
+    }
+  }
+
+  .article-sticky {
+    .breadcrumb.breadcrumb-edit {
+      li::after {
+        display: block;
+        @include float(right);
+      }
+
+      a {
+        max-width: 200px;
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
   }
 
@@ -37,7 +85,6 @@
       height: 35px;
       line-height: 35px;
       padding: 0 20px;
-      box-shadow: 0 5px 5px -5px #333;
       border-top: 1px solid #ccc;
       p{
         margin: 0;
@@ -63,7 +110,6 @@
 
   .solution-content {
     overflow: hidden;
-    padding-top: 16px;
     .article-content{
       margin-top: 15px;
       margin-bottom: 15px;
@@ -82,6 +128,7 @@
       box-sizing: border-box;
       @include float(left);
       min-height: 220px;
+      margin-top: 20px !important;
       .redactor_box{
         border: 0;
         .redactor_editor {
@@ -109,6 +156,7 @@
       width: 100%;
 
       &:focus{
+        outline: 0;
         box-shadow: none;
         border-bottom: 1px solid #5897FB;
       }
@@ -144,6 +192,11 @@
             position: relative;
             top: 6px;
             @include left(-15px);
+          }
+
+          &.info-cloud-data {
+            top: 0px;
+            @include left(2px);
           }
         }
       }
@@ -183,6 +236,15 @@
     }
     .publish-settings{
       padding-top: 15px;
+      .span {
+        margin: 0px;
+      }
+      input[type="checkbox"] {
+        margin-top: 2px;
+      }
+      .notification-msg {
+        padding-left: 10px;
+      }
     }
   }
 
@@ -217,6 +279,10 @@
       @include margin-left(-8px);
     }
   }
+}
+
+#article_voting {
+  font-size: small;
 }
 
 .community-search .article-icon {
@@ -408,7 +474,7 @@
     .title-wrapper{
       margin-bottom: 30px;
       .leads{
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 300;
       }
       .edit{
@@ -456,8 +522,9 @@
   .feedback{
     ul{
       li{
-        list-style-type: circle;
+        list-style-type: disc;
         padding-bottom: 10px;
+        color: #ddd;
       }
       .short-note{
         color: #333333;
