@@ -119,6 +119,7 @@ class Solution::FoldersController < ApplicationController
 
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items.present?
+    flash[:error] = error_flash_msg if @other_items.present?
   end
 
   def move_back
@@ -237,6 +238,7 @@ class Solution::FoldersController < ApplicationController
       @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
       @new_category.reload
       @updated_items = params[:items].map(&:to_i) & @new_category.folder_ids
+      @other_items = params[:items].map(&:to_i) - @updated_items
     end
 
     def old_category
@@ -256,8 +258,10 @@ class Solution::FoldersController < ApplicationController
 
     def moved_flash_msg
       render_to_string(
-      :inline => t("solution.flash.folders_move_to",
-                      :category_name => h(current_account.solution_categories.find(params[:parent_id]).name),
+      :inline => t("solution.flash.folders_move_to_success",
+                      :count => @updated_items.count - 1,
+                      :category_name => h(@new_category.name.truncate(15)),
+                      :folder_name => h(current_account.solution_folders.find(@updated_items.first).name.truncate(15)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 
@@ -266,6 +270,14 @@ class Solution::FoldersController < ApplicationController
                                       :action_on => 'folders'
                                     })
                   )).html_safe
+    end
+
+    def error_flash_msg
+      t("solution.flash.folders_move_to_error",
+                      :count => @other_items.count - 1,
+                      :category_name => h(@new_category.name.truncate(15)),
+                      :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(15))
+        ).html_safe
     end
 
     #META-READ-HACK!!    
