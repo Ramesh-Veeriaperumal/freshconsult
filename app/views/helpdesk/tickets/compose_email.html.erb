@@ -4,7 +4,7 @@
 		<div id="tkt-inner" class="scollable_content clearfix" >
       <ul>
       <div class="tkt-sidebar" id="ticket_details_sidebar">
-        <h3 class="lead"><%= t('ticket_fields.properties') %></h3>
+        <h3 class="lead"><%= t('ticket.compose.properties') %></h3>
         <div class="widget" id="TicketProperties">
         <%= render :partial => '/helpdesk/tickets/show/ticket_field_elements', 
                   :locals => {:form_builder => f, :ticket =>  @item} %>
@@ -14,26 +14,32 @@
         <div class='page-header-sticky' rel='sticky'>
           <div class='sticky-header-wrapper'>
             <h3 class='lead pull-left'> 
-              <%= t('helpdesk.send_email') %>
+              <%= t('ticket.compose.send_email') %>
             </h3>
             <div class="pull-right">
                 <%= render(:partial => "/helpdesk/tickets/compose_buttons") %>
             </div>
             <span class="pull-left muted sub-text">
-              <%= t("ticket.compose_email_info") %>
-              <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.learn_more") %></a>
+              <%= t("ticket.compose.compose_email_info") %>
+              <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.compose.learn_more") %></a>
             </span>
           </div>
         </div>
         <br/>
         <div class="new_ticket_address new_ticket_body">
         <li>
-          <div class="caption"><%= t('helpdesk.from') %></div>
-          <%= select_tag "helpdesk_ticket[email_config_id]", options_for_select(current_account.email_configs.collect{|x| [x.friendly_email_personalize(current_user.name), x.id]}), {:class => "select2"} %>
+          <div class="caption"><%= t('ticket.compose.from') %></div>
+          <%= select_tag "helpdesk_ticket[email_config_id]", options_for_compose, 
+                    {
+                      :class => "required from_address_wrapper", 
+                      :data => {
+                        :placeholder => t("ticket.compose.compose_choose_email")
+                      }
+                    }  %>
         </li>
         <li>
-          <div class="caption"><%= t('helpdesk.to') %></div>
-          <%= render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => :helpdesk_ticket, :url => requesters_search_autocomplete_index_path }) %>
+          <div class="caption"><%= t('ticket.compose.to') %></div>
+          <%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:object_name => :helpdesk_ticket, :placeholder => true, :url => requesters_search_autocomplete_index_path }) %>
         </li>
         <%= render(:partial => "/helpdesk/tickets/components/cc_bcc_email", :locals => { :show_bcc => false}) %>
         </div>
@@ -51,6 +57,18 @@
 
 <% content_for :onload_script do -%> 
    
+     jQuery(".from_address_wrapper").select2({minimumResultsForSearch: 10});
+
+      jQuery(".from_address_wrapper").on("select2-open", function() { 
+           jQuery('body').addClass('compose-from-select2');
+      });
+      jQuery(".from_address_wrapper").on("select2-close", function() { 
+           jQuery('body').removeClass('compose-from-select2');
+      });
+
+
+
+
    jQuery("#helpdesk_tags").select2({  
     tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
     tokenSeparators: [',']

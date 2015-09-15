@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="span3">
-		<span class="muted"> <%= t('solution.draft.last_saved_by') %> </span> <%= draft.user.name %>
+		<span class="muted"> <%= t('solution.draft.last_saved_by') %> </span> <%= truncate(draft.user.name, :length => 16) %>
 		<br/>
 		<div class="muted">
 			<span data-livestamp="<%= draft.modified_at.to_i %>" class="tooltip" title="<%= formated_date(draft.modified_at) %>"></span>

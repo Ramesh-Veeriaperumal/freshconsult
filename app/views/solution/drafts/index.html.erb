@@ -2,11 +2,9 @@
 
 <% content_for :sticky_left do %>
 		<%= pjax_link_to t('solution.draft.my_drafts'), solution_drafts_path, 
-					{:class => "heading item #{'active' unless (params[:type] == 'all')}",
-					 :title => t('solution.draft.my_drafts') } %>
+					{ :class => "heading item #{'active' unless (params[:type] == 'all')}" } %>
 		<%= pjax_link_to t('solution.draft.all_drafts'), solution_my_drafts_path('all'), 
-					{ :class => "heading item #{'active' if (params[:type] == 'all')}",
-						:title => t('solution.draft.all_drafts') } %>
+					{ :class => "heading item #{'active' if (params[:type] == 'all')}" } %>
 	<%= render :partial => 'drafts_context' %>
 <% end %>
 

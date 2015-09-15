@@ -42,7 +42,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set, :archive
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone,
+    :facebook_id, :send_and_set, :archive, :required_fields
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -793,6 +794,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
                         }
             },
             false).to_json
+  end
+
+  #To-do: Need to verify with mappings
+  def to_es_json
+    as_json({
+      :root => false,
+      :tailored_json => true,
+      :methods => [
+                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
+                    :status_deleted, :product_id, :trashed
+                  ],
+      :only => [
+                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
+                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
+                  :frDueBy, :priority, :ticket_type
+                ]
+    }, false).merge(custom_attributes).to_json
   end
 
   def unsubscribed_agents

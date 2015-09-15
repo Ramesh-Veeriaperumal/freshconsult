@@ -1,6 +1,6 @@
 en:
   meta:
-    language_name: 'English'
+   language_name: 'English'
   date:
     ago: ago
     from: from now
@@ -2705,7 +2705,7 @@ en:
     solution_categories_portal_info: This category will be visible in the main product portal along with the above selected product portals.
     more_catogories: "See all Categories"
     other_categories: "See other Categories"
-    other_categories_info: "These categories are not associated in this portal"
+    other_categories_info: "Categories that are not associated with this portal"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: Select a product portal...
@@ -3605,7 +3605,7 @@ en:
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"
-      orphan_desc: "These categories are not associated in any portal"
+      orphan_desc: "These categories are not associated with any portal"
       view_all: "View all"
       view_less: "View less"
       drafts:
@@ -4135,10 +4135,10 @@ en:
     add_bcc_text: Add Bcc
     set_bcc_email_text: Set automatic Bcc email
     name_info_msg: Name of the email that will be used in the ticket replies
-    Personalized_email_replies: Use Agent names for Personalized Email Replies ?
-    Personalized_email_replies_info: If YES then agent replies will have agent's name as the sender name (Email address will still be your Support Email address). For example '%{current_user_name} &lt;%{current_account_domain}&gt;'.
     Personalized_email_replies_yes: "Yes"
     Personalized_email_replies_no: "No"
+    personalized_email_replies_title: Use agent names in ticket replies and outbound emails?
+    personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
@@ -4146,6 +4146,8 @@ en:
     disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
+    enable_compose: "Allow agents to initiate conversation with customers?"
+    enable_compose_info: "If yes, agents will be able to send outbound emails to new or existing customers that will be converted into outbound tickets."
   step2: Step 2
   import_users_contacts: Users &rarr; Contacts
   linkback_info: You can choose to Linkback to your own website when the customer clicks on the header logo
@@ -4203,6 +4205,8 @@ en:
   observer_actions:
     skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
+    errors:
+      required_field: cannot be blank.
     spam: "SPAM"
     deleted: "TRASH"
     archived: "Archived"
@@ -4212,6 +4216,21 @@ en:
     expand: "Expand"
     view_ticket: "View Ticket"
     insert: "Insert"
+    compose:
+      choose_email: Pick a from address
+      properties: Properties
+      learn_more: Learn more.
+      send_email: Send an email
+      enter_subject: Enter Subject...
+      to_address_placeholder: "Enter Customer's address"
+      send: Send
+      send_and_new: Send and <strong> New </strong>
+      cancel: Cancel
+      from: "From:"
+      cc: CC
+      to: "To:"
+      compose_choose_email: Pick a from address
+      compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
       whats_new: "What's new"
@@ -4344,7 +4363,6 @@ en:
     learn_more: Learn more.
     submit_ticket_new_title: Create a new ticket
     create_ticket_title: Create a ticket
-    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: Convert as a ticket
     reply_form:
@@ -4639,14 +4657,6 @@ en:
   export_to_CSV: Export to CSV
   back_to_reports: "&larr; Back to reports"
   helpdesk:
-    send_email: Send an email
-    send: Send
-    send_and_new: Send and <strong> New </strong>
-    enter_subject: Enter Subject...
-    from: "From:"
-    to: "To:"
-    cc: "Cc:"
-    bcc: "Bcc:"
     add_requester: Add Requester
     surveys:
       invalid_rating: Rating value "%{rating}" is invalid. Please rate with the correct rating value.
@@ -6732,7 +6742,7 @@ en:
       reports_sla: First Response SLA %
       res_sla: Resolution SLA %
       fcr: FCR %
-      private_note: Private Note
+      private_note: Private Notes
       responses: Responses
       avg_first_res_time: Average 1st Response Time
       avg_res_time: Average Response Time

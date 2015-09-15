@@ -115,7 +115,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         :priority   => priority_hash[t.priority],
         :requester  => user_data[:users][t.requester_id],
         :avatar     => user_data[:avatars][t.requester_id],
-        :agent      => t.responder_id ? user_data[:users][t.responder_id] : "No Agent"
+        :agent      => t.responder_name
       }
     end
     res

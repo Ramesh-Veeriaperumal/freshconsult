@@ -59,6 +59,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :build_ticket :build_item
   before_filter :build_ticket_body_attributes, :only => [:create]
   before_filter :build_ticket, :only => [:create, :compose_email]
+  before_filter :set_required_fields, :only => :create 
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -1104,6 +1105,14 @@ class Helpdesk::TicketsController < ApplicationController
             t.delete(:description_html) if t[:description_html]
           end 
         end 
+      end
+    end
+
+    def set_required_fields # validation
+      if current_account.validate_required_ticket_fields?
+        @item.required_fields = { :fields => current_account.ticket_fields.agent_required_fields.
+                                    preload([:nested_ticket_fields, :picklist_values]),
+                                  :error_label => :label }
       end
     end
 

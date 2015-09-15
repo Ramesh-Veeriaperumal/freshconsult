@@ -11,6 +11,7 @@ var FreshfoneUser,
 		this.availableOnPhone = freshfone.available_on_phone;
 		this.cached = {};
 		this.newTokenGenerated = false;
+		this.tokenRegenerationOn = null;
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
 		this.bindUserPresenceHover();

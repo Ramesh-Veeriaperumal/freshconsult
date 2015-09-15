@@ -40,6 +40,9 @@ window.App = window.App || {};
       $('#solution_article_title').focus();
       
       this.setFormValues();
+
+      invokeRedactor('solution_article_description', 'solution');
+
       this.toggleViews();
 
       //initilaizing autosave
@@ -62,11 +65,12 @@ window.App = window.App || {};
     
     setFormValues: function () {
       $('#solution_article_title').val(this.data.title);
-      $('#solution_article_description').setCode(this.data.description);
+      $('#solution_article_description').text(this.data.description);
     },
 
     cancel_UI_toggle: function () {
       this.toggleViews();
+      $('#solution_article_description').destroyEditor();
       $('#sticky_redactor_toolbar').addClass('hide');
       $('.article-view-edit:hidden').show();
       $(".autosave-notif:visible").hide();

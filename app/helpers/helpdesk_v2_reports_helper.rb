@@ -1,7 +1,7 @@
 module HelpdeskV2ReportsHelper
 
 	REPORT_MAPPING = [
-			["/reports/v2/glance", 					         "glance", 					         "helpdesk" ],
+			["/reports/v2/glance", 					         "glance", 				"helpdesk" ],
 			["/reports/v2/ticket_volume", 			     "ticket_volume", 	         "ticket-volume" ],
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ],
 			["/reports/v2/group_summary", 			     "group_summary",            "group-summary" ],

@@ -173,7 +173,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def to_indexed_json
-    as_json(
+    article_json = as_json(
             :root => "solution/article",
             :tailored_json => true,
             :only => [ :title, :desc_un_html, :user_id, :status, 
@@ -181,7 +181,9 @@ class Solution::Article < ActiveRecord::Base
             :include => { :tags => { :only => [:name] },
                           :attachments => { :only => [:content_file_name] }
                         }
-           ).merge(meta_attributes).to_json
+          )
+    article_json["solution/article"].merge!(meta_attributes)
+    article_json.to_json
   end
 
   def meta_attributes

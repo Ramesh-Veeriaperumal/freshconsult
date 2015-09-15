@@ -15,7 +15,7 @@ var globalconn;
 		$('#mute').click(function () { freshfonecalls.mute(); });
 		$("#hold").click(function(){freshfonecalls.handleHold();});
 		$('#hangup_call').click(function () { freshfonecalls.hangup(); });
-		$("#freshfone-presence-toggle").click(function () { freshfoneuser.toggleUserPresence(); });
+		$("#freshfone-presence-toggle").click(function () { console.log('togglePresence-token'); freshfoneuser.toggleUserPresence(); });
 		$widget.find('.availabilityOnPhone').click(function () {
 			freshfoneuser.toggleAvailabilityOnPhone(false);
 		});

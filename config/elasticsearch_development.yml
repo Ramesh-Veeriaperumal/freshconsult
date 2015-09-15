@@ -3,6 +3,8 @@ defaults: &defaults
     - localhost:9200
     - localhost:9200
     - localhost:9200
+  :count_host:
+    - localhost:9201
 
 development:
   <<: *defaults

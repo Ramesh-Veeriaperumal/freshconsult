@@ -15,7 +15,6 @@ window.App.Tickets = window.App.Tickets || {};
       this.bindSave();
       this.bindTypeChange();
       jQuery.validator.messages.requester = "Please add a valid requester";
-      jQuery("#helpdesk_ticket_email_config_id").trigger('change');
       jQuery('#helpdesk_ticket_status').trigger("change");
     },
 
@@ -23,7 +22,6 @@ window.App.Tickets = window.App.Tickets || {};
       jQuery('.default_agent, .default_source, .default_product').hide();
       jQuery('#helpdesk_ticket_source').val(10);
       jQuery('#helpdesk_ticket_status').val(5);
-      jQuery('input.requester').focus();
       jQuery("#helpdesk_ticket_product_id").removeClass("required");
       jQuery("#helpdesk_ticket_responder_id").removeClass("required");
       jQuery("#helpdesk_ticket_product_id").removeClass("required_closure");

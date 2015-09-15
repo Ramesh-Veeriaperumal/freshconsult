@@ -113,7 +113,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def move_to
-    flash[:notice] = moved_flash_msg if @updated_items
+    flash[:notice] = moved_flash_msg if @updated_items.present?
   end
 
   def move_back

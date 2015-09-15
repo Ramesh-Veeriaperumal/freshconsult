@@ -1,14 +1,14 @@
-<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn compose-cancel" %>
+<%= link_to t('ticket.compose.cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn compose-cancel" %>
 <div class="btn-group dropdown compose-send">
   <button class="btn btn-primary">
-    <%= t('helpdesk.send') %>
+    <%= t('ticket.compose.send') %>
     <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
       <span class="caret"></span>
     </button>
   </button>
   <ul class="dropdown-menu pull-right">
     <li>
-      <%= link_to t('helpdesk.send_and_new').html_safe, compose_email_helpdesk_tickets_path, :name => "action_save", :id => "compose_and_new" %>
+      <%= link_to t('ticket.compose.send_and_new').html_safe, compose_email_helpdesk_tickets_path, :name => "action_save", :id => "compose_and_new" %>
     </li>
   </ul>
 </div>
