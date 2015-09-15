@@ -81,6 +81,12 @@ window.App = window.App || {};
       if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
       }
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
+        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0 ;
+        if (flag) {
+          return true;
+        }
+      }
       return this.checkAttachments();
     },
 
