@@ -12,8 +12,8 @@ class TicketDelegator < SimpleDelegator
   validates :custom_field,  custom_field: { custom_field:
                               {
                                 validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.choices_validatable_custom_fields(x) },
-                                drop_down_choices: proc { |x| Helpers::TicketsValidationHelper.dropdown_choices_by_field_name(x) },
-                                nested_field_choices: proc { |x| Helpers::TicketsValidationHelper.nested_fields_choices_by_name(x) },
+                                drop_down_choices: proc { Helpers::TicketsValidationHelper.dropdown_choices_by_field_name },
+                                nested_field_choices: proc { Helpers::TicketsValidationHelper.nested_fields_choices_by_name },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }
@@ -65,7 +65,7 @@ class TicketDelegator < SimpleDelegator
   end
 
   def required_based_on_status?
-    [CLOSED, RESOLVED].include?(status.to_i)
+    [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
   def responder_belongs_to_group?

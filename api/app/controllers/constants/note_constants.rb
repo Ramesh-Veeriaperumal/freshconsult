@@ -10,7 +10,7 @@ module NoteConstants
   }
   LOAD_OBJECT_EXCEPT = [:ticket_notes, :reply]
 
-  FIELDS_TO_BE_STRIPPED = %w(private incoming notify_emails cc_emails bcc_emails)
+  FIELDS_TO_BE_STRIPPED = %w(notify_emails cc_emails bcc_emails)
 
   CREATE_ARRAY_FIELDS = %w(notify_emails)
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails)

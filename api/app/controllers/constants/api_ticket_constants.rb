@@ -25,4 +25,7 @@ module ApiTicketConstants
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since)
 
   FIELDS_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields)
+
+  CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
+  RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED
 end

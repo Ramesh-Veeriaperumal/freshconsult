@@ -162,7 +162,7 @@ class ApplicationController < ActionController::Base
     end
 
   private
-
+    # Check set_current_account method in api_applciation_controller if this method is modified.
     def set_current_account
       current_account.make_current
       User.current = current_user

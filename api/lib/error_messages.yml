@@ -58,3 +58,4 @@ api_error_messages:
   unsupported_environment: "Demo site doesn't have this access!"
   company_id_required: "Company ID is required for a contact to be a Client Manager"
   inconsistent_state: "Email should be associated to the contact before converting it to an agent"
+  invalid_integer: "Should have valid Positive Integers"

@@ -27,5 +27,5 @@ module ContactConstants
 
   LANGUAGES = I18n.available_locales.map(&:to_s)
 
-  FIELDS_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id client_manager custom_fields)
+  FIELDS_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields)
 end

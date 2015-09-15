@@ -17,6 +17,5 @@ module DiscussionConstants
 
   CATEGORY_FIELDS_TO_BE_STRIPPED = %w(name)
   FORUM_FIELDS_TO_BE_STRIPPED = %w(name description)
-  TOPIC_FIELDS_TO_BE_STRIPPED = %w(title sticky locked)
-  POST_FIELDS_TO_BE_STRIPPED = %w(answer)
+  TOPIC_FIELDS_TO_BE_STRIPPED = %w(title)
 end

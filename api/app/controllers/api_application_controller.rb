@@ -188,9 +188,10 @@ class ApiApplicationController < MetalApiConfiguration
     def prepare_array_fields(array_fields = [])
       array_fields.each do |array_field|
         array_field = array_field.to_sym
-        array_value = Array.wrap params[cname][array_field] if params[cname].key? array_field
-        params[cname][array_field] = array_value.try(:uniq).reject(&:blank?) unless array_value.nil?
-        params[cname][array_field] = [] if array_value.nil? && create?
+        if create? || params[cname].key?(array_field)
+          array_value = Array.wrap params[cname][array_field]
+          params[cname][array_field] = array_value.uniq.reject(&:blank?)
+        end
       end
     end
 
@@ -304,15 +305,15 @@ class ApiApplicationController < MetalApiConfiguration
       @current_user
     end
 
-    def qualify_for_day_pass?
+    def qualify_for_day_pass? # this method is redefined because of api_current_user
       api_current_user && api_current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end
 
-    def check_privilege
+    def check_privilege # this method is redefined because of api_current_user
       access_denied && return if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
     end
 
-    def allowed_to_access?
+    def allowed_to_access? # this method is redefined because of api_current_user
       return false unless ABILITIES.key?(resource)
 
       ABILITIES[resource].each do |privilege|
@@ -325,7 +326,7 @@ class ApiApplicationController < MetalApiConfiguration
       false
     end
 
-    def set_current_account
+    def set_current_account # this method is redefined because of api_current_user
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound

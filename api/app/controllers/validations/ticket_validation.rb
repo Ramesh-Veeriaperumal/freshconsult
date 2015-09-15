@@ -78,13 +78,13 @@ class TicketValidation < ApiValidation
   end
 
   def required_based_on_status?
-    [CLOSED, RESOLVED].include?(status.to_i)
+    [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
     if [:due_by, :fr_due_by].any? { |c| request_params.key?(c) }
-      [CLOSED, RESOLVED].include?(status.to_i)
+      [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
     end
   end
 

@@ -197,6 +197,7 @@ module AuthenticationSystem
       true
     end
     
+    # Check qualify_for_day_pass? method in api_applciation_controller if this method is modified.
     def qualify_for_day_pass?
       current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end

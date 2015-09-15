@@ -3,7 +3,7 @@ class ParamsHelper
     def assign_and_clean_params(params_hash, controller_params)
       # Assign original fields with api params
       params_hash.each_pair do |api_field, attr_field|
-        controller_params[attr_field] = controller_params[api_field] if controller_params[api_field]
+        controller_params[attr_field] = controller_params[api_field] if controller_params.key? api_field
       end
       clean_params(params_hash.keys, controller_params)
     end
