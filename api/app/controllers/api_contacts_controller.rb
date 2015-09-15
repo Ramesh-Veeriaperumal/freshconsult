@@ -29,11 +29,9 @@ class ApiContactsController < ApiApplicationController
     contact_delegator = ContactDelegator.new(@item)
     if !contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
-    elsif @item.update_attributes(params[cname])
-      render "#{controller_path}/update", location: send("#{nscname}_url", @item.id), status: 200
-    else
-      render_custom_errors
+      return
     end
+    render_custom_errors unless @item.update_attributes(params[cname])
   end
 
   def destroy
