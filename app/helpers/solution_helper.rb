@@ -5,7 +5,7 @@ module SolutionHelper
 		return if page == :home
 		_output = []
 		_output << pjax_link_to(t('solution.title'), solution_categories_path)
-		if default_category? || new_article_check?
+		if page != :all_category && (default_category? || new_article_check?)
 			if new_article_check?
 				_output << h(t('solution.add_article'))
 			else
