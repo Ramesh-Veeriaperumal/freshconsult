@@ -58,6 +58,14 @@
   }
 
   .article-sticky {
+    .breadcrumb-btns {
+      width: 300px;
+    }
+
+    .edit-container{
+      width: 140px;
+    }
+
     .breadcrumb.breadcrumb-edit {
       li::after {
         display: block;
