@@ -23,6 +23,7 @@ class Solution::Object
 	end
 
 	def object
+		create_parent_translation
 		build_meta
 		build_translations
 		@meta_obj.save
@@ -30,6 +31,11 @@ class Solution::Object
 	end
 	
 	private
+
+	def create_parent_translation
+		return if args["#{META_ASSOCIATIONS[obj]}_meta"].blank?
+		Solution::Object.new(args, META_ASSOCIATIONS[obj]).object
+	end
 	
 	def meta_params	
 		@meta_params_found ||= @params.slice(*META_ATTRIBUTES[obj])

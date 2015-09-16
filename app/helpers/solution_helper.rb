@@ -272,4 +272,21 @@ module SolutionHelper
 		"<b>#{Language.for_current_account.name}:</b>
 		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
 	end
+
+	def dynamic_text_box(f, language)
+		op = ""
+		parent_meta = instance_variable_get("@#{f}_meta")
+		if parent_meta.send("#{language.to_key}_#{f}").present?
+			op << parent_meta.send("#{language.to_key}_#{f}").name
+		else
+			op << text_field_tag("solution_#{f}_meta[#{language.to_key}_#{f}][name]",	nil,
+	                         :class => "required",
+	                         :autocomplete => "off",
+	                         :autofocus => true)
+	    op << hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id)
+	    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
+	  end
+    op.html_safe
+	end
+
 end
