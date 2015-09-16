@@ -4857,6 +4857,20 @@ en:
         call_in_progress: Call in progress
         no_agents: "- No Agents -"
         no_activity: "No Activity"
+      livechat:
+        chat: Live Chat
+        accepting: Accepting
+        not_accepting: Not Accepting
+        offline: Offline
+        no_agents: "- No Agents -"
+        in_all_agents_and_groups: in All Agents and Groups
+        select_by_group: Select by Group
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        chats_in_progress: Chats in progress
+        last_active: Last active
+        no_activity: No activity
       index:
         todo_title: To-Do
       summary:

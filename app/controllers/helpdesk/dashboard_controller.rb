@@ -51,6 +51,7 @@ class Helpdesk::DashboardController < ApplicationController
   def agent_status
     load_ticket_assignment if current_account.features?(:round_robin)
     load_freshfone if view_context.freshfone_active?
+    load_livechat_groups if current_account.features?(:chat)
     respond_to do |format|
       format.html # index.html.erb
       format.js do 
@@ -108,6 +109,13 @@ class Helpdesk::DashboardController < ApplicationController
 
     def load_freshfone
        @freshfone_agents = current_account.freshfone_users.agents_with_avatar
+    end
+
+    def load_livechat_groups
+       groups = current_account.groups.includes(:agent_groups)
+       @groupOptions = groups.collect{|c| [c.name, c.id]}
+       @groupOptions.insert(0,[ t("helpdesk.dashboard.livechat.select_by_group"), "disabled"])
+       @agents_in_groups = Hash[*groups.collect{|g| [g.id, {:name => g.name, :users => g.agent_groups.map(&:user_id)}]}.flatten].to_json.html_safe
     end
 
     def load_items
