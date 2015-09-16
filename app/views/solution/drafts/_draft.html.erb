@@ -5,7 +5,7 @@
 	</div>
 
 	<div class="span8 main-details">
-		<%= pjax_link_to h(draft.title).truncate(85), "#{solution_article_path(draft.article_id)}#edit", { :class => "draft-title ellipsis", :title => (h(draft.title) if draft.title.length > 85) } %>
+		<%= pjax_link_to h(draft.title).truncate(80), "#{solution_article_path(draft.article_id)}#edit", { :class => "draft-title ellipsis", :title => (h(draft.title) if draft.title.length > 80) } %>
 		<br/>
 		<div class="muted">
 			<% if draft.category_meta.is_default %>
