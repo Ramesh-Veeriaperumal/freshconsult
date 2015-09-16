@@ -1,6 +1,5 @@
-class MetalApiConfiguration < ActionController::Metal
+class MetalApiController < ActionController::Metal
   # Modules to be included for metal controller to work for our APP
-  
   # Do not change the order of modules included
   include ActionController::Head # needed when calling head
   include ActionController::Helpers # needed for calling methods which are defined as helper methods.
@@ -37,5 +36,5 @@ end
 
 cache_config = YAML::load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
 servers = cache_config.delete(:servers)
-MetalApiConfiguration.cache_store = :dalli_store, servers, cache_config
-Object.const_set("RAILS_CACHE", MetalApiConfiguration.cache_store) 
+MetalApiController.cache_store = :dalli_store, servers, cache_config
+Object.const_set("RAILS_CACHE", MetalApiController.cache_store) 
