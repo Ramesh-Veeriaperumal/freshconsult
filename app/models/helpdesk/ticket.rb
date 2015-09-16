@@ -42,7 +42,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone , :facebook_id, :send_and_set
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone,
+    :facebook_id, :send_and_set, :archive, :required_fields
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -109,7 +110,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ?", duration ] } }
  
   scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
-  scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
+  scope :unresolved, :conditions => ["helpdesk_tickets.status not in (#{RESOLVED}, #{CLOSED})"]
   scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
@@ -168,6 +169,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     } 
   }
 
+  #META-READ-HACK!!
+  # Check this while doing Meta Write Phase.
+  # See if the Tickets can be fetched properly from Articles.
+  # As of now Tickets are associated directly with Articles (not thru Meta)
+  # It is better this way, but we'll have to make sure there are no new problems when we complete Multilingual feature.
+  scope :article_tickets_by_user, lambda { |user| {
+       :include => [:article, :requester, :ticket_status],
+       :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and solution_articles.user_id = ? and article_tickets.ticketable_type = ?", user.id, 'Helpdesk::Ticket']
+     }
+   }
+
+  scope :all_article_tickets,
+    :include => [:article, :requester, :ticket_status],
+    :conditions => ["helpdesk_tickets.id = article_tickets.ticketable_id and article_tickets.ticketable_type = ?", 'Helpdesk::Ticket'],
+    :order => "`helpdesk_tickets`.`created_at` DESC"
+
+  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
+    :conditions => ["display_id > (?)",display_id],
+    :limit => limit,
+    :order => order_param
+    }
+  }
+  
   class << self # Class Methods
 
     def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
@@ -260,6 +284,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   alias :is_facebook :is_facebook?
  
+  def fb_replies_allowed?
+    is_facebook? and !fb_post.reply_to_comment?
+  end
+ 
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
   end
@@ -313,7 +341,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_TOKEN_BY_KEY[priority]
   end
 
-  def populate_access_token #for generating access_token for old tickets
+  def get_access_token #for generating access_token for old tickets
     set_token
     schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
   end
@@ -773,6 +801,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
                         }
             },
             false).to_json
+  end
+
+  #To-do: Need to verify with mappings
+  def to_es_json
+    as_json({
+      :root => false,
+      :tailored_json => true,
+      :methods => [
+                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
+                    :status_deleted, :product_id, :trashed
+                  ],
+      :only => [
+                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
+                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
+                  :frDueBy, :priority, :ticket_type
+                ]
+    }, false).merge(custom_attributes).to_json
   end
 
   def unsubscribed_agents

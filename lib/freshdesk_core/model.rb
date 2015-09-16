@@ -105,6 +105,8 @@ module FreshdeskCore::Model
                           "solution_folders",
                           "portal_solution_categories",
                           "solution_articles",
+                          "solution_draft",
+                          "solution_draft_bodies",
                           "solution_article_bodies",
                           "solution_category_meta",
                           "solution_folder_meta",
@@ -141,7 +143,15 @@ module FreshdeskCore::Model
 
                         "mobihelp_apps", 
                         "mobihelp_devices",
-                        "mobihelp_ticket_infos"
+                        "mobihelp_ticket_infos",
+                        "oauth_applications",
+                        "oauth_access_grants",
+                        "oauth_access_tokens",
+                        "archive_tickets",
+                        "archive_ticket_associations",
+                        "archive_notes",
+                        "archive_note_associations",
+                        "archive_childs"
                     ]
 
   STATUS = {

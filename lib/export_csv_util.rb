@@ -17,7 +17,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     duration_in_days = (params[:end_date].to_date - params[:start_date].to_date).to_i
   end
 
-  def export_fields(is_portal=false)
+  def export_fields(is_portal = false)
     flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
@@ -71,7 +71,8 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     items.each do |item|
       record = []
       headers.each do |val|
-        data = item.send(val)
+        data = item.is_a?(Helpdesk::ArchiveTicket) ? 
+                  fetch_archive_ticket_value(item, val) : item.send(val)
         data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
         record << unescape_html(data)
       end
@@ -100,4 +101,7 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
     headers
   end
 
+  def fetch_archive_ticket_value(item, val)
+    item.respond_to?(val) ? item.send(val) : item.custom_field_value(val)
+  end
 end

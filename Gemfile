@@ -38,12 +38,13 @@ group :development, :test do
   # Commenting out for ruby ~> 2.1.0 upgrade
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
+  gem 'pry-byebug'
   gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
-  gem "bullet"
 end
 
+gem "bullet", :group => [:development, :test, :staging]
 gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"
@@ -71,7 +72,10 @@ gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 gem 'omniauth-shopify-oauth2', "1.0.0"
 
-gem "sidekiq"
+# This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
+source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
+  gem 'sidekiq-pro'
+end
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
@@ -83,8 +87,7 @@ gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branc
 
 gem "ruby-saml", "0.8.1"
 
-
-gem 'xero_gateway', '~> 2.1.0'
+gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "riak-client", "1.4.2"
 
@@ -161,6 +164,8 @@ gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
+gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
+
 
 gem "bunny", "1.7.0"
 
@@ -170,7 +175,7 @@ gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/cust
 gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby gem is using 1.0.0
 
 group :development,:production,:test,:staging do
-  gem "tire", :git => "git://github.com/PratheepV/retire.git"
+  gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
 
@@ -259,3 +264,6 @@ end
   gem "fontcustom",           	"1.3.3"  
 
 # end
+
+# Marketplace
+gem 'doorkeeper', '2.2.1'

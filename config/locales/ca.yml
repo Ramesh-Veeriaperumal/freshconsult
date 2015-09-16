@@ -1,7 +1,6 @@
 
 ca: 
   meta: 
-    language_id: 2
     language_name: Catalan
   date:
     ago: fa

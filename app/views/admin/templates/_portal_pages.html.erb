@@ -20,7 +20,29 @@
 							:"data-update" => "Customizepage", 
 							:remote => true %>
 					</li>
-				<% end %>			
+				<% end %>	
+				
+				<% if key == :tickets and current_account.features?(:archive_tickets) %>
+					<% Portal::Page::ARCHIVE_TICKETS.each do |page| %>
+						<% page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[page] %>
+						<li>
+							<%= link_to '<i class="symbols-article-list"></i>'.html_safe + t("portal_pages.pages.#{page}").html_safe,
+								edit_admin_portal_template_page_path(
+											:id => page_id, 
+											:portal_id => @portal.id,
+											:page_type => page_id,
+											:page_group => key), 
+								:method => :get, 
+								:id => "page_id_#{page_id}", 
+								:class => "page-btn",
+								:"data-loading" => 'Customizepage',
+								:"data-loading-classes" => "sloading loading-block loading-small",
+								:"data-update" => "Customizepage", 
+								:remote => true %>
+						</li>
+					<% end %>
+				<% end %>	
+
 			<% end %>
 		</ul>
 	<% end %>

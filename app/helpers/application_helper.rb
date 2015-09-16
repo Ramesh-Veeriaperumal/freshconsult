@@ -7,6 +7,7 @@ module ApplicationHelper
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
   include ChatHelper
+  include Marketplace::ApiHelper
 
   include AttachmentHelper
   include ConfirmDeleteHelper
@@ -15,7 +16,10 @@ module ApplicationHelper
   include Integrations::Util
   include Integrations::IntegrationHelper
   include CommunityHelper
+  include TabHelper
+  include ReportsHelper
   include Freshfone::CallerLookup
+  
   require "twitter"
 
   ASSETIMAGE = { :help => "/assets/helpimages" }
@@ -325,7 +329,7 @@ module ApplicationHelper
       ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
       ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       social_tab,
-      solutions_tab,
+      ['/solution/categories', :solutions,   privilege?(:view_solutions)],
       ['/discussions',        :forums,       forums_visibility?],
       ['/contacts',           :customers,    privilege?(:view_contacts)],
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
@@ -492,7 +496,6 @@ module ApplicationHelper
                       ['{{ticket.subject}}',          'Subject',          '',        'ticket_subject'],
                       ['{{ticket.description}}',      'Description',        '',         'ticket_description'],
                       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
-                      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
                       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
                       ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
@@ -543,6 +546,13 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?
+    
+
+    # Ticket Public URL placeholder
+    place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' , 
+                      'URL for accessing the tickets without login', 'ticket_public_url'
+                      ] if current_account.features?(:public_ticket_url)
+
     place_holders
   end
 
@@ -908,7 +918,8 @@ module ApplicationHelper
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
         if is_edit || required
-          section_field_value = item.send(section_tkt_field.field_name)
+          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+            item.custom_field_value(section_tkt_field.field_name)
           section_field_value = nested_ticket_field_value(item, 
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
         elsif !params[:topic_id].blank?
@@ -1079,25 +1090,6 @@ module ApplicationHelper
   end
 
   private
-    def solutions_tab
-      if current_portal.solution_categories.exists?
-        ['/solution/categories', :solutions, solutions_visibility?]
-      else
-        ['#', :solutions, false]
-      end
-    end
-
-    def forums_tab
-      if current_portal.forum_categories.exists?
-        ['/discussions', :forums,  forums_visibility?]
-      else
-        ['#', :forums, false]
-      end
-    end
-
-    def solutions_visibility?
-      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
-    end
 
     def forums_visibility?
       feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
@@ -1349,4 +1341,8 @@ module ApplicationHelper
     end
   end
 
+  def tabs_for( *options, &block )
+    raise ArgumentError, "Missing block" unless block_given?
+    raw TabHelper::TabsRenderer.new( *options, &block ).render
+  end
 end

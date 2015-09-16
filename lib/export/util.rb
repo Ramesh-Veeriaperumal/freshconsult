@@ -19,6 +19,10 @@ module Export::Util
   def build_file file_string, type, format = "csv"
     file_path = generate_file_path(type, format)
     write_file(file_string, file_path)
+    upload_file(file_path)
+  end
+  
+  def upload_file(file_path)
     @data_export.file_created!
     build_attachment(file_path)
     remove_export_file(file_path)
@@ -26,6 +30,12 @@ module Export::Util
 
   def write_file file_string, file_path
     File.open(file_path , "wb") do |f|
+      f.write(file_string)
+    end
+  end
+  
+  def append_file(file_string, file_path)
+    File.open(file_path, "a") do |f|
       f.write(file_string)
     end
   end

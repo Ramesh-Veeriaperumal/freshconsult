@@ -22,6 +22,7 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
+  delegate :supported_languages, :to => :account_additional_settings
   has_one  :whitelisted_ip
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
@@ -82,13 +83,12 @@ class Account < ActiveRecord::Base
 
   has_one :subscription
   has_many :subscription_payments
-  has_many :portal_solution_categories, :class_name => "PortalSolutionCategory"
-  has_many :solution_categories, :class_name =>'Solution::Category', :include =>:folders, :order => "solution_categories.position"
-  has_many :solution_category_meta, :class_name =>'Solution::CategoryMeta', :include =>:solution_folder_meta, :order => "solution_category_meta.position"
-  has_many :solution_articles, :class_name =>'Solution::Article'
-  has_many :solution_article_meta, :class_name =>'Solution::ArticleMeta'
-  has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
 
+
+  has_many :solution_drafts, :class_name =>'Solution::Draft'
+  has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
+  has_many :article_tickets, :class_name => 'ArticleTicket'
+  
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
@@ -149,14 +149,6 @@ class Account < ActiveRecord::Base
   has_many :posts
   has_many :monitorships
   has_many :votes
-
-  has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories
-  #The following is a duplicate association. Added this for metaprogramming
-  has_many :solution_folders, :class_name =>'Solution::Folder', :through => :solution_categories
-  has_many :solution_folder_meta, :class_name =>'Solution::FolderMeta', :through => :solution_category_meta
-  has_many :public_folders, :through => :solution_categories
-  has_many :published_articles, :through => :public_folders,
-    :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
@@ -220,6 +212,14 @@ class Account < ActiveRecord::Base
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
+  
+  # Archive Association Starts Here
+  has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
+  has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
+  has_many :archive_ticket_associations, :class_name => "Helpdesk::ArchiveTicketAssociation"
+  has_many :archive_note_associations, :class_name => "Helpdesk::ArchiveNoteAssociation"
+  has_many :archive_time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:archive_tickets , :conditions =>['archive_tickets.deleted =?', false]
+  # Archive Association Ends Here
 
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
 

@@ -48,13 +48,16 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamics_crm", :only => [:widget_data]
-    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :delete_invoice]
+    resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :edit, :check_item_exists,]
 
     #Freshfone
     resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
     resource :"freshfone/ivr"
     resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call]
+    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify]
+    resource :"freshfone/conference", :only => [:initiate, :notify ]
+    resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
+    resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
     resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
@@ -80,6 +83,11 @@ Authority::Authorization::PrivilegeList.build do
     #canned_response
     resource :"helpdesk/canned_responses/folder", :only => [:index, :show]
     resource :"helpdesk/canned_responses/response"
+
+    resource :"helpdesk/archive_ticket", :only => [:show, :index, :custom_search, :latest_note, 
+                                                    :full_paginate, :configure_export, :export_csv, 
+                                                    :activities, :component, :prevnext]
+    resource :"helpdesk/archive_note", :only => [:index, :full_text]
 	end
 
   reply_ticket do
@@ -135,28 +143,31 @@ Authority::Authorization::PrivilegeList.build do
   # ************** SOLUTIONS **************************
 
   view_solutions do
-    resource :"solution/category", :only => [:index, :show]
+    resource :"solution/category", :only => [:index, :show, :navmenu, :sidebar]
     resource :"solution/folder", :only => [:index, :show]
-    resource :"solution/article", :only => [:index, :show]
+    resource :"solution/article", :only => [:index, :show, :voted_users]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
+    resource :"solution/draft", :only => [:index]
   end
 
   publish_solution do
-    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
+    resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder, :properties, :move_to, :move_back]
     resource :"solution/tag_use"
     resource :solutions_uploaded_image, :only => [:create, :create_file]
+    resource :"solution/draft", :only => [:autosave, :publish, :attachments_delete, :destroy]
   end
 
   delete_solution do
     resource :"solution/article", :only => [:destroy, :reset_ratings], :owned_by =>
                                   { :scoper => :solution_articles }
+    resource :"solution/draft", :only => [:destroy]
   end
 
   manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
-    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder]
+    resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder, :move_to, :move_back, :visible_to]
   end
 
   # ************** FORUMS **************************
@@ -287,7 +298,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
-                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
+                               :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact, 
+                               :configure_export, :export_csv]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -357,8 +369,13 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_stream"
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
+    resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
-    resource :"integrations/xero", :only => [:authorize, :authdone]
+    resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
+    resource :"admin/integrations/freshplug"
+    resource :"admin/extension"
+    resource :"admin/installed_extension"
+    resource :"doorkeeper/authorization"
   end
 
   manage_account do

@@ -1,3 +1,4 @@
+<% return unless helpdesk_ticket?(@ticket) %>
 <section class="widget" id="ticket-sidebar-details">
 	<h3 class="lead"><%= t('portal.tickets.details') %></h4>
 	<% edit_field_present = false %>

@@ -106,6 +106,20 @@ module TicketConstants
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
+  ARCHIVE_EXPORT_VALUES = [
+    [ :two_months,       I18n.t('two_months'),   60 ], 
+    [ :six_months,       I18n.t('six_months'),   180],
+    [ :set_date,         I18n.t('set_date'),     4  ]
+  ]
+  ARCHIVE_EXPORT_OPTIONS = ARCHIVE_EXPORT_VALUES.map { |i| [i[1], i[2]] }
+
+  ARCHIVE_CREATED_WITHIN_VALUES = [
+    [ :any_time,         I18n.t('any_time'),      "any_time"   ],
+    [ :two_months,       I18n.t('two_months'),    "two_months" ], 
+    [ :six_months,       I18n.t('six_months'),    "six_months" ],
+    [ :set_date,         I18n.t('set_date'),      "set_date"   ]
+  ]
+  ARCHIVE_CREATED_WITHIN_OPTIONS = ARCHIVE_CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
 
   CREATED_WITHIN_VALUES = [
     [ :any_time,         'any_time',        "any_time"], # If modified, _auto_refresh.html.erb has to be modified.
@@ -119,11 +133,11 @@ module TicketConstants
     [ :today,            'today',             "today" ],
     [ :yesterday,        'yesterday',     "yesterday" ],
     [ :this_week,        'seven_days',         "week" ],
-    [ :last_week,        'last_week',     "last_week" ],
+    [ :last_week,        'last_seven_days',     "last_week" ],
     [ :this_month,       'thirty_days',       "month" ],
-    [ :last_month,       'last_month',    "last_month"],
-    [ :two_months,       'two_months',   "two_months" ], 
-    [ :six_months,       'six_months',   "six_months" ],
+    [ :last_month,       'last_thirty_days',    "last_month"],
+    [ :two_months,       'last_sixty_days',   "two_months" ], 
+    [ :six_months,       'last_one_eighty_days',   "six_months" ],
     [ :set_date,         'set_date',       "set_date" ]
   ]
 

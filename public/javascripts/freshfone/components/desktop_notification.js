@@ -3,13 +3,12 @@ var FreshfoneDesktopNotification;
   "use strict";
   FreshfoneDesktopNotification = function (freshfoneConnection) {
     this.callConnection = freshfoneConnection
-    this.init();
   };
   FreshfoneDesktopNotification.prototype = {
     init: function () {
-      this.createWebNotification();
+      // this.createWebNotification();
     },
-    createWebNotification: function () {
+    createCallWebNotification: function () {
       var title,notificationProperties, bodyText, callMeta;
       var self = this;
       callMeta = this.callConnection.ffNumberName;
@@ -45,6 +44,20 @@ var FreshfoneDesktopNotification;
       callerDetails = callerName ? (callerName + " (" + callerNumber +")") : callerNumber;
       bodyText = callerDetails + " from "+ freshfoneUserInfo.callerLocation(callerNumber);
       return bodyText;
+    },
+    createTransferNotification: function(call) {
+      var title,notificationProperties, bodyText;
+      var self = this;
+      title = "Agent missed the transfered call";
+      bodyText = "You can reconnect with your caller"
+      notificationProperties = {
+        body: bodyText,
+        icon: "/images/misc/ff-notification-icon-2x.png",
+        tag: 'freshfone_'+ call.getCallSid()
+      };
+      this.notification = new Notification(title,notificationProperties);
+      this.notification.onclick = function(args) { window.focus(); this.close ();};
     }
+
   };
 }(jQuery));

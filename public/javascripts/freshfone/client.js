@@ -13,18 +13,22 @@ var globalconn;
 
 		// Freshfone button bindings with actions
 		$('#mute').click(function () { freshfonecalls.mute(); });
+		$("#hold").click(function(){freshfonecalls.handleHold();});
 		$('#hangup_call').click(function () { freshfonecalls.hangup(); });
-		$("#freshfone-presence-toggle").click(function () { freshfoneuser.toggleUserPresence(); });
+		$("#freshfone-presence-toggle").click(function () { console.log('togglePresence-token'); freshfoneuser.toggleUserPresence(); });
 		$widget.find('.availabilityOnPhone').click(function () {
 			freshfoneuser.toggleAvailabilityOnPhone(false);
 		});
 		
 		// Recent Calls show
-		$widget.find('[href="#recent_calls"]').on('shown', function (e) {
+		$widget.find('[href="#freshfone_dialpad"]').on('shown', function (e) {
+			freshfoneDialpadEvents.showDialpadElem();
 			$recentCalls.addClass('loading-small sloading');
 			$recentCallsContainer.hide();
 			$.ajax({
 				url : freshfone.recent_calls_path,
+				success : function () {
+				},
 				error: function () {
 					$recentCalls.removeClass('loading-small sloading');
 					$recentCallsContainer.show();
@@ -48,13 +52,17 @@ var globalconn;
 
 		$('body').on('click', '.can-make-calls', function (ev) {
 			ev.preventDefault();
-			if(!$(this).hasClass('phone-icons')){
+			if(!$(this).find('div').hasClass('phone-icons')){
 			if ($(this).data('phoneNumber') !== undefined) {
 				freshfonecalls.recentCaller = 1;
 				freshfonecalls.number = $(this).data('phoneNumber');
+				freshfoneContactSearch.getSearchResults(freshfonecalls.number);
 				$('#number').intlTelInput("setNumber", freshfonecalls.number);
 				freshfonecalls.selectFreshfoneNumber($(this).data('freshfoneNumberId'));
-				setTimeout(function () { freshfonewidget.showDialPad(); }, 1); 
+				setTimeout(function () { 
+					freshfonewidget.showDialPad(); 
+					$("#search_bar").show();	
+					}, 1); 
 			}
 		}	
 				recordSource($(this).parent().prop('className'));

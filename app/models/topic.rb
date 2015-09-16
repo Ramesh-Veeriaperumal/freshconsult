@@ -48,8 +48,6 @@ class Topic < ActiveRecord::Base
   has_one  :first_post, :order => "#{Post.table_name}.id ASC", :class_name => 'Post', :autosave => true
 
   has_one :ticket_topic, :dependent => :destroy
-  has_one :ticket,:through => :ticket_topic
-
   has_many :voices, :through => :posts, :source => :user, :uniq => true, :order => "#{Post.table_name}.id DESC"
 
   belongs_to :replied_by_user, :foreign_key => "replied_by", :class_name => "User"
@@ -443,5 +441,9 @@ class Topic < ActiveRecord::Base
     if forum && !stamp_type_changed?
       self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
     end
+  end
+
+  def ticket
+    ticket_topic.ticketable if ticket_topic
   end
 end

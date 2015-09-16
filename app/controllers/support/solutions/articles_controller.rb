@@ -4,9 +4,9 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
 
-  before_filter :load_and_check_permission, :except => :index
+  before_filter :load_and_check_permission, :except => [:index]
 
-  before_filter :render_404, :unless => :article_visible?, :only => :show
+  before_filter :render_404, :unless => :article_visible?, :only => [:show]
 
   before_filter :load_agent_actions, :only => :show
 
@@ -22,6 +22,9 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
+  before_filter :adapt_attachments, :only => [:show]
+
+
   def handle_unknown
      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
@@ -36,7 +39,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     respond_to do |format|
       format.html { 
-        load_page_meta
+        draft_preview? ? adapt_article : load_page_meta
         set_portal_page :article_view 
       }
       format.json { render :json => @article.to_json  }
@@ -59,9 +62,9 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
-    def load_and_check_permission      
-      @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
-      unless @article && @article.folder.visible?(current_user)    
+    def load_and_check_permission
+      @article = current_account.solution_articles.find(params[:id])
+      unless @article.folder.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
           redirect_to login_url
@@ -73,7 +76,8 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def article_visible?
-      (current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?
+      return false unless ((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?)
+      draft_preview_agent_filter?
     end
     
     def load_agent_actions
@@ -96,6 +100,43 @@ class Support::Solutions::ArticlesController < SupportController
       }
     end
 
+    def draft_preview?
+      params[:status] == "preview"
+    end
+
+    def draft_preview_agent_filter?
+      return (current_user && current_user.agent? && (@article.draft.present? || !@article.published?) && privilege?(:view_solutions)) if draft_preview?
+      true
+    end
+
+    def adapt_article
+      draft = @article.draft
+      if @article.draft.present?
+        @article.attributes.each do |key, value|
+          @article.send("#{key}=", draft.send(key)) if draft.respond_to?(key) and key != 'id'
+        end
+        @article.freeze
+      end
+      @page_meta = { :title => @article.title }
+    end
+
+    def adapt_attachments
+      return true unless draft_preview?
+      flash[:notice] = t('solution.articles.draft.portal_preview_msg')
+      @article[:current_attachments] = active_attachments(:attachments)
+      @article[:current_cloud_files] = active_attachments(:cloud_files)
+    end
+
+    def active_attachments(att_type)
+      return @article.send(att_type) unless @article.draft.present?
+      att = @article.send(att_type) + @article.draft.send(att_type)
+      deleted_att_ids = []
+      if @article.draft.meta.present? && @article.draft.meta[:deleted_attachments].present? && @article.draft.meta[:deleted_attachments][att_type].present?
+        deleted_att_ids = @article.draft.meta[:deleted_attachments][att_type]
+      end
+      return att.select {|a| !deleted_att_ids.include?(a.id)}
+    end
+    
     def no_error
       !@ticket.errors.any?
     end

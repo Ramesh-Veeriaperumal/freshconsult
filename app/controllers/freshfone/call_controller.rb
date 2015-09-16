@@ -1,5 +1,5 @@
 class Freshfone::CallController < FreshfoneBaseController
-	include Freshfone::FreshfoneHelper
+	include Freshfone::FreshfoneUtil
 	include Freshfone::CallHistory
 	include Freshfone::Presence
 	include Freshfone::NumberMethods
@@ -7,6 +7,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	include Freshfone::TicketActions
 	include Freshfone::Call::EndCallActions
 	
+	include Freshfone::Search
 	include Freshfone::CallerLookup
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
@@ -57,7 +58,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 	private
 		def load_user_by_phone
-			@user = Freshfone::Search.search_user_with_number(params[:PhoneNumber])
+			@user = search_user_with_number(params[:PhoneNumber])
 		end
 
 		def call_meta
@@ -70,7 +71,10 @@ class Freshfone::CallController < FreshfoneBaseController
  
 	    if call.present?
 		    { :number => call.freshfone_number.number_name,
-		    	:group 	=> (call.group.present?) ? call.group.name : ""
+		    	:ringing_time => call.freshfone_number.ringing_time,
+		    	:transfer_agent => get_transfer_agent(call),
+		    	:group 	=> (call.group.present?) ? call.group.name : "",
+		    	:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : ""
 		    }
 		  end
 	  end
@@ -133,7 +137,20 @@ class Freshfone::CallController < FreshfoneBaseController
 		def validate_twilio_request
 			@callback_params = params.except(*[:agent, :direct_dial_number, :preview,
 							:batch_call, :force_termination, :number_id, :below_safe_threshold, 
-							:forward, :transfer_call, :call_back, :source_agent, :target_agent, :outgoing, :group_transfer])
+							:forward, :transfer_call, :call_back, :source_agent, :target_agent, 
+							:outgoing, :group_transfer])
 			super
+		end
+
+		def get_transfer_agent(call)
+			return false unless (call.meta.present? && call.meta.transfer_by_agent.present?)
+			user = current_account.users.find_by_id(call.meta.transfer_by_agent) 
+			return false unless user.present?
+			avatar = view_context.user_avatar(user, :thumb, "preview_pic small circle")
+			 {
+				:user_id => user.id,
+				:user_hover => avatar,
+				:user_name => user.name
+			}
 		end
 end

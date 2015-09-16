@@ -28,7 +28,7 @@
   <div class="button-container">
     <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
     <% if privilege?(:delete_ticket) %>
-      <%= link_to t('delete'), @item, :method => :delete, :class => "btn" %>
+      <%= link_to t('delete'), @item, :method => :delete, :class => "btn pull-left" %>
     <% end %>
     <%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" %>    
   </div>

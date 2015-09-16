@@ -1,6 +1,23 @@
+@include keyframes(glow){
+	0% { 
+		opacity: 0.5;
+		box-shadow: inset 0 0 5px rgba(255,140,0,1); 
+	}
+	80% { 
+		opacity: 1;
+		box-shadow: inset 0 3px 10px 2px rgba(204,114,0,1); 
+	}
+
+	100% { 
+		opacity: 0.4;
+		box-shadow: inset 0 0 5px rgba(255,140,0,1); 
+	}
+}
+
 .ongoing {
 	border: 1px solid $ongoing-border;
 	margin: 6px 0;
+	height: 26px;
 	@include border-radius(6px);
 	background-color: $ongoing-background;
 	direction: ltr;
@@ -50,13 +67,13 @@
 				background-color: $call-details-background;
 			}
 		}
-		.preview_pic{
-			width: 26px;
-		 	height: 26px;
-		 	line-height: 26px;
-		 	margin-top: 0px;
-		 	margin-left: 5px;
-		}
+	}
+	.preview_pic{
+		width: 26px;
+	 	height: 26px;
+	 	line-height: 26px;
+	 	margin-top: 0px;
+	 	margin-left: 5px;
 	}
 	.preview_pic img {
 		width: 22px;
@@ -68,11 +85,10 @@
 	.call_duration {
 		background-color: $call-duration-background;
 	}
-	.mute.active {
-		background-color:$popuptab-toggle-active;
-		i.#{$font-class}ff-mute{
-			color: #fff;
-		}
+
+	.transfer_call.transferring_state, .mute.active, .hold.active{
+		background-color: #ff9105;
+		@include animation(glow 1s infinite);
 	}
 	.no_action a{ 
 		cursor: default;
@@ -104,12 +120,13 @@
 		background-color: $endcall-background;
 	}
 //	transfer call starts
+
 	.ffone_available_agents { 
 		max-height: 380px;
 		min-height: 75px;
 		width: 260px;
 		width: 290px;
-		border-radius: 3px;
+		border-radius: 4px;
 		background-color: $transfer-call-background;
 		.list-component{
 			height: 260px;
@@ -132,8 +149,8 @@
 		height: 100%;
 		border: 0;
 		img {
-			width: 24px;
-			height: 24px;
+			width: 25px;
+			height: 25px;
 			@include border-radius(20px);
 			opacity: 1;
 		}
@@ -145,9 +162,9 @@
 			font-size: 14px;
 			line-height: 25px;
 			img{
-			width: 25px;
-			height: 25px;
-			@include border-radius(50%);
+				width: 25px;
+				height: 25px;
+				@include border-radius(50%);
 			}
 		}
 	}
@@ -209,13 +226,202 @@
 			margin-right: -35px;
 		}
 	}
-	.transfering_call {
+
+	@include keyframes(glow-inner-circle) {
+	0% { 
+		border-color: rgba(255,145,5,1); 
+	}
+	80% { 
+		border-color: rgba(255,145,5,0.1); 
+	}
+	100% { 
+		border-color: rgba(255,145,5,1);
+	}
+}
+
+@include keyframes(glow-outer-circle) {
+	0% { 
+		border-color: rgba(255,145,5,0.1); 
+	}
+	40% { 
+		border-color: rgba(255,145,5,0.8); 
+	}
+	90% { 
+		border-color: rgba(255,145,5,0.1);
+	}
+
+}
+
+	.transferring_call {
 		@include box-sizing(border-box);
-		position: absolute;
 		width: 100%;
-		height: 90%;
-		padding-top: 5px;		
-		margin-top: 5px;
+		height: 100%;
+		background-color: #fff;
+		color: $transfering-call-text;
+		font-weight: 500;
+		@include text-align(center);
+		border-radius: 3px;
+		z-index: 2;
+		opacity: 1;
+		.transfer-info-details {
+			background-color: $transfer-info-details-background;
+			border-radius: 3px;
+  		width: 100%;
+  		min-height: 80px;
+  		padding-top: 15px;
+  		.agent_img{
+  				position: relative;
+  				border-radius: 50%;
+  				display: inline-block;
+				  opacity: 1;
+				  width: 62px;
+				  height: 62px;
+				  line-height: 62px;
+				  border: 1px solid #fff;
+				  margin: 0 8px;
+				  float: left;
+				  @include animation(glow-outer-circle 1s infinite);
+					img {
+						width: 40px;
+						height: 40px;
+						@include border-radius(40px);
+						opacity: 1;
+					}
+					.preview_pic {
+						margin:0;
+						border-radius: 50%;
+					}
+					.ff-icon {
+						color: #fff;
+					}
+			}
+			.ringer{
+				border: 1px solid #fff;
+			  width: 50px;
+			  height: 50px;
+			  position: absolute;
+			  top: 50%;
+			  margin-top: -26px;
+			  left: 50%;
+			  margin-left: -26px;
+			  border-radius: 50%;
+			  @include animation(glow-inner-circle 1s infinite);
+			  .preview_pic,img {
+			  	float: none;
+				  display: block;
+				  position: absolute;
+				  top: 50%;
+				  left: 50%;
+				  margin-left: -20px;
+				  margin-top: -20px;
+			  }
+			  .external_no {
+					width: 40px;
+				  height: 40px;
+				  border-radius: 40px;
+				  opacity: 1;
+				  background-color: #F0F0F0;
+				  .ficon-ff-group{
+				  	color: #C5C5C5;
+				  	position: relative;
+  					bottom: 11px;
+				  }
+			  }
+			}
+			.transfer-info-details-right {
+			  float: right;
+  			text-align: left;
+  			width: 72%;
+  			margin-top: 12px;
+  			.target-name{
+				  padding-bottom: 5px;
+					font-size: 16px;
+					font-weight: 600;
+					float: left;
+					width: 100%;
+				}
+				.transfer-status {
+					float: left;
+					width: 100%;
+					.in_progress{ 
+						color: #aaa;
+					}
+					.no_answer, .ignored, .group_tranfer_no_answer {
+					 color: #b11;
+					}
+					.connected, .group_tranfer_connected { 
+						color: #046c11;
+					}
+				}
+  		}
+			a {
+				padding: 10px 0 10px 0;
+				float: left;
+  			width: 100%;
+  			margin-top: 10px;
+  			color: #000;
+  			background-color: #eee;
+  			border-top: 1px solid #ccc;
+			  font-size: 14px;
+			  cursor: pointer;
+			  .ff-icon {
+			  	padding: 5px;
+			  	color: inherit;	
+			  }
+  			&:hover {
+  				color: #fff;
+  				background-color: #555;
+  			}
+			}
+		}
+		.transfer-progress-bar {
+			display: inline-block;
+  		float: left;
+  		border: 2px solid #D5C28C;
+  		width: 0px;
+  		border-top-right-radius: 2px;
+  		border-top-left-radius: 2px;
+		}
+	}
+
+	.transfer_failed {
+		text-align: center;
+		line-height: 3em;
+  	padding: 10px;
+		.phone {
+			display: inline-block;
+		  border-radius: 20px;
+		  opacity: 1;
+		  width: 30px;
+		  height: 30px;
+		  background-color: #aaa;
+		  .ff-icon{
+				  font-size: 18px;
+				  @include padding(6px);
+				  line-height: 1em;
+				  color: #fff;
+		  }
+		}
+		.transfer_failed_msg {
+			display: block;
+		}
+		.call-reconnect {
+			font-weight: 600;
+		}
+		.transfer-progress-bar {
+			width: 0;
+			border-bottom: 1px solid #d5c28c;
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
+	}
+	.ffone_call_hold {
+		@include box-sizing(border-box);
+		position: relative;
+		width: 100%;
+		height: 100%;
+		padding: 4px;		
+		
 		background-color: $transfering-call-background;
 
 		color: $transfering-call-text;
@@ -508,5 +714,35 @@
 		top: 8px;
 	}
 }
-// Transfer call end
 
+
+// Transfer call end
+.hold{
+	.ff-hold-button {
+			display: block;
+		}
+		.ff-loader {
+			display: none;
+			}
+	&.loading {
+		.ff-hold-button {
+			display: none;
+		}
+		.ff-loader {
+			display: inline;
+			top: 13px;
+	  	position: relative;
+	  	left: 20px;
+		}
+	}
+}
+.failed_hold {
+  position: absolute;
+  color: #000;
+  right: 400px;
+  	.ffone_hold_message{
+  		padding: 10px;
+  		display: inline-block;
+  		background-color: #fff;
+  	}
+	}

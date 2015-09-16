@@ -123,3 +123,15 @@
 	<div rel='filter'>
 	</div>
 </form>
+
+<script id="freshfone-cost-splitup" type="text/x-jquery-tmpl" >
+  <div class='freshfone-cost-splitup center'>
+    <div>
+      <span class='total_duration_text'> <%=t('freshfone.call_history.total_duration')  %> ${total_duration} (${no_of_unit} <%=t('freshfone.call_history.minutes')  %>) </span>
+    </div>
+    <div>
+      <span class='split_up'>
+      <span class='no_of_unit'> ${no_of_unit} </span>x<span class='pulse_rate'>$${pulse_rate}</span></span>
+    </div>
+  </div>
+</script>

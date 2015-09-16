@@ -3,7 +3,10 @@ defaults: &defaults
   :require: ./config/environment.rb
   :concurrency: 5
   :logfile: ./log/sidekiq.log
+  :timeout: 30
   :queues:
+    - [freshfone_notifications]
+    - [freshfone_node]
     - [merge_contacts]
     - [sla]
     - [premium_supervisor]
@@ -26,7 +29,14 @@ defaults: &defaults
     - [es_index_queue]
     - [reset_group]
     - [reset_responder]
+    - [new_es_index]
+    - [solution_language_change]
+    - [export_agents]
     - [default]
+    - [archive_ticket_splitter]
+    - [archive_build_create_ticket]
+    - [archive_modify_ticket_association]
+    - [archive_delete_ticket]
 
 development:
   <<: *defaults

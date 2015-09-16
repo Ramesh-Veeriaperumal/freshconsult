@@ -46,6 +46,8 @@ module MemcacheKeys
   ACCOUNT_TWITTER_HANDLES = "v2/ACCOUNT_TWITTER_HANDLES:%{account_id}"
 
   FORUM_CATEGORIES = "v1/FORUM_CATEGORIES:%{account_id}"
+  
+  ALL_SOLUTION_CATEGORIES = "v1/ALL_SOLUTION_CATEGORIES:%{account_id}"
 
   CONTACT_FORM_FIELDS = "v1/CONTACT_FORM_FIELDS:%{account_id}:%{contact_form_id}"
 
@@ -101,6 +103,14 @@ module MemcacheKeys
   POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v1/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+
+  INSTALLED_FRESHPLUGS = "v1/FA:%{page}:PLUGS:%{account_id}"
+
+  FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
+
+  EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
+
+  MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
 
   class << self
 

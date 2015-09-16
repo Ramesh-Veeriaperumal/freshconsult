@@ -339,6 +339,8 @@ Helpkit::Application.routes.draw do
     collection do
       put :create_multiple_items
       get :info_for_node
+      get :configure_export
+      post :export_csv
     end
     member do
       put :toggle_shortcuts
@@ -386,6 +388,69 @@ Helpkit::Application.routes.draw do
       end
     end
 
+  resources :conference do
+      collection do
+        get  :initiate
+        post :wait
+        post :agent_wait
+        post :incoming_agent_wait
+        post :outgoing_accepted
+        post :pinged_agent_response
+        post :connect_incoming_caller
+        post :complete_customer_wait_conference
+        post :client_accept
+        post :connect_agent
+      end
+    end
+
+    resources :conference_transfer do
+      collection do 
+        get  :initiate_transfer
+        post :transfer_agent_wait
+        get  :complete_transfer
+        post :transfer_success
+        post :transfer_source_redirect
+        post :cancel_transfer
+        post :resume_transfer
+        get :disconnect_agent
+      end
+    end
+
+    resources :hold do
+      collection do
+        get  :add
+        get  :remove
+        post :initiate
+        post :wait
+        post :unhold
+        post :transfer_unhold
+        post :transfer_fallback_unhold
+      end
+    end
+
+    resources :forward do
+      collection do
+        post :initiate
+        post :complete
+        post :transfer_initiate
+        post :transfer_complete
+        post :transfer_wait
+        post :direct_dial_wait
+        post :direct_dial_accept
+        post :direct_dial_connect
+        post :direct_dial_success
+        post :direct_dial_complete
+      end
+    end
+
+    resources :conference_call do
+      collection do
+        post :status
+        post :in_call
+        post :update_recording
+      end
+    end
+
     resources :queue do
       collection do
         post :enqueue
@@ -401,12 +466,13 @@ Helpkit::Application.routes.draw do
     resources :voicemail do
       collection do
         post :quit_voicemail
+        post :initiate
       end
     end
 
     resources :call_transfer do
       collection do
-        post :initiate
+        get :initiate
         post :transfer_incoming_call
         post :transfer_outgoing_call
         post :transfer_incoming_to_group
@@ -417,6 +483,7 @@ Helpkit::Application.routes.draw do
         get :available_external_numbers
       end
     end
+    match '/call_transfer/initiate/' => 'call_transfer#initiate', :via => :post
 
     resources :device do
       collection do
@@ -447,6 +514,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :requester_search
         get :customer_phone_number
+        get :customer_contact
       end
     end
     resources :usage_triggers do
@@ -563,13 +631,9 @@ Helpkit::Application.routes.draw do
       get :open_id, on: :collection
     end
     
-    resources :applications do
-      member do
-        post :custom_widget_preview
-      end
+    resources :applications, :only => [:index, :show] do
       collection do
         post :oauth_install
-        get :custom_widget_preview
       end
     end
 
@@ -685,12 +749,14 @@ Helpkit::Application.routes.draw do
 
     namespace :xero do 
       get :authorize 
+      post :update_params
+      get :edit
       get :fetch 
       get :render_accounts
+      get :check_item_exists 
       get :render_currency
       get :fetch_create_contacts
-      get :get_invoice
-      delete :delete_invoice
+      get :get_invoice      
       get :authdone
       get :install
       post :create_invoices
@@ -775,6 +841,7 @@ Helpkit::Application.routes.draw do
         post :personalized_email_enable
         post :personalized_email_disable
         post :toggle_agent_forward_feature
+        post :toggle_compose_email_feature
         post :reply_to_email_enable
         post :reply_to_email_disable
         post :id_less_tickets_enable
@@ -980,6 +1047,36 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    # Marketplace
+    resources :extensions, :only => [:index, :show] do
+      collection do
+        get :search
+      end
+    end
+
+    namespace :installed_extensions do
+      get 'new_configs/:version_id', action: 'new_configs', :as => :new_configs
+      get 'edit_configs/:version_id', action: 'edit_configs', :as => :edit_configs
+      post 'install/:version_id', action: 'install', :as => :install
+      put 'reinstall/:version_id', action: 'reinstall', :as => :reinstall
+      delete 'uninstall/:version_id', action: 'uninstall', :as => :uninstall
+      put 'enable/:version_id', action: 'enable', :as => :enable
+      put 'disable/:version_id', action: 'disable', :as => :disable
+      post 'feedback/:version_id', action: 'feedback', :as => :feedback
+    end
+
+    namespace :integrations do
+      resources :freshplugs, :except => [:index, :show] do
+        member do
+          put :enable
+          put :disable
+        end
+        collection do
+          post :custom_widget_preview
+        end
+      end
+    end
+
   end
 
   namespace :search do
@@ -1014,17 +1111,13 @@ Helpkit::Application.routes.draw do
   match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
   match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
   
-
-  namespace :reports do
-    namespace :v2 do
-      resources :ticket_volume, :controller => 'tickets/reports' do
-        collection do
-          post :fetch_metrics
-          post :fetch_ticket_list
-        end
-      end
-    end
-  end
+  # BEGIN Routes for new reports **/report/v2**
+  match "/reports/v2/:report_type/fetch_metrics",      :controller => 'reports/v2/tickets/reports', :action => 'fetch_metrics', :method => :post
+  match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
+  match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
+  match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
+  # END
+  
   
   namespace :reports do
     resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports' do
@@ -1309,6 +1402,34 @@ Helpkit::Application.routes.draw do
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
+    match '/tickets/archived/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter, via: :get
+    match '/tickets/archived/filter/requester/:requester_id' => 'archive_tickets#index', :as => :archive_requester_filter, via: :get
+    match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
+    match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
+    
+    resources :archive_tickets, :only => [:index, :show] do
+      collection do 
+        post :custom_search
+        post :export_csv
+        get :configure_export
+        get :full_paginate
+      end
+
+      member do 
+        get :latest_note
+        get :activities
+        get :prevnext
+        get :component
+      end
+      
+      resources :archive_notes, :only => [:index] do
+        member do
+          get :full_text
+        end
+      end
+    end
+    
     resources :tags do
       collection do
         get :autocomplete
@@ -1436,6 +1557,7 @@ Helpkit::Application.routes.draw do
       resources :reminders
       resources :time_sheets
       resources :mobihelp_ticket_extras, :only => :index
+
     end
     
     match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
@@ -1526,6 +1648,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+    
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
@@ -1539,14 +1662,8 @@ Helpkit::Application.routes.draw do
     match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
     # Mobile apps routes end.
 
-
     match '/sales_manager' => 'dashboard#sales_manager'
-    
-    resources :articles do
-      collection do
-        get :autocomplete
-      end
-    end
+    match '/agent-status' => 'dashboard#agent_status'
 
     resources :attachments do
       member do
@@ -1603,16 +1720,25 @@ Helpkit::Application.routes.draw do
     resources :categories do
       collection do
         put :reorder
+        get :sidebar
+        get :navmenu
+        get :drafts
+        get :feedbacks
       end
 
       resources :folders do
         collection do
           put :reorder
+          put :move_to
+          put :move_back
         end
 
         resources :articles do
           collection do
             put :reorder
+            put :move_to
+            put :move_back
+            put :change_author
           end
 
           member do
@@ -1621,13 +1747,53 @@ Helpkit::Application.routes.draw do
             post :delete_tag
             delete :destroy
             put :reset_ratings
+            get :properties
+            get :voted_users
           end
           resources :tag_uses
         end
       end
     end
+    
+    resources :folders do
+      collection do
+        put :reorder
+        put :move_to
+        put :move_back
+        put :visible_to
+      end
+    end
+    
+    resources :articles do
+      collection do
+        put :reorder
+        put :move_to
+        put :move_back
+        put :change_author
+      end
 
-    resources :articles, :only => [:show, :create, :destroy]
+      member do
+        put :thumbs_up
+        put :thumbs_down
+        post :delete_tag
+        delete :destroy
+        put :reset_ratings
+        get :properties
+        get :voted_users
+      end
+      
+      resources :tag_uses, :drafts
+      match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
+    end
+
+    resources :drafts, :only => [:index] do
+      member do
+        post :autosave
+        post :publish
+      end
+    end
+    match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
+
   end
 
   resources :posts, :as => 'all' do
@@ -1903,8 +2069,20 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
     
     match '/articles/:id/' => 'solutions/articles#show'
+
+    match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
+    match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
+    resources :archive_tickets, :only => [:index, :show] do
+      collection do
+        get :filter
+        get :configure_export
+        post :export_csv
+      end
+      resources :notes
+    end
 
     resources :tickets do
       collection do
@@ -2077,8 +2255,18 @@ Helpkit::Application.routes.draw do
           get :deleted_customers
         end
       end
-      
+
+      resources :delayed_jobs, only: [:index,:show] do
+        collection do
+          put 'requeue'
+          put 'requeue_selected'
+          put 'remove_selected'
+          put 'destroy_job'
+        end
+      end
+
       get  "/accounts/show", to: 'accounts#show'
+
       resources :accounts, :only => :none do
         collection do
           get :tickets
@@ -2130,6 +2318,9 @@ Helpkit::Application.routes.draw do
           post :country_restriction
           post :new_freshfone_account
           put :undo_security_whitelist
+          get :fetch_conference_state
+          put :enable_conference
+          put :disable_conference
         end
       end
 
@@ -2258,4 +2449,16 @@ Helpkit::Application.routes.draw do
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+
+  use_doorkeeper do
+    skip_controllers :oauth_applications, :authorized_applications
+  end
+
+  namespace :doorkeeper, :path => '' do
+    namespace :api do
+      namespace :marketplace do
+        get :data
+      end
+    end
+  end
 end

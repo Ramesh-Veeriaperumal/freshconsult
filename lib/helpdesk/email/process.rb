@@ -46,6 +46,10 @@ class Helpdesk::Email::Process
     self.common_email_data = email_metadata #In parse_email_data
     return if mail_from_email_config?
     # encode_stuffs
+    if account.features?(:domain_restricted_access)
+      wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
+      return unless Array.wrap(wl_domain).include?(common_email_data[:from][:domain])
+    end
     construct_html_param
     self.user = get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"]) #In parse_email_data
     return if (user.nil? or user.blocked?)
@@ -87,8 +91,21 @@ class Helpdesk::Email::Process
 		ticket_identifier = Helpdesk::Email::IdentifyTicket.new(ticket_data, user, account)
     ticket = ticket_identifier.belongs_to_ticket
     email_handler = Helpdesk::Email::HandleTicket.new(ticket_data, user, account, ticket)
-		ticket ? email_handler.create_note(start_time) : email_handler.create_ticket(start_time)
+		ticket ? email_handler.create_note(start_time) : create_archive_link(ticket_identifier,email_handler,start_time)
 	end
+
+  def create_archive_link(ticket_identifier,email_handler,start_time)
+    if account.features?(:archive_tickets)
+      archive_ticket = ticket_identifier.belongs_to_archive
+      if archive_ticket && archive_ticket.is_a?(Helpdesk::ArchiveTicket)
+        email_handler.archive_ticket = archive_ticket 
+      elsif archive_ticket && archive_ticket.is_a?(Helpdesk::Ticket)
+        email_handler.ticket = archive_ticket
+        return email_handler.create_note(start_time)
+      end
+    end
+    email_handler.create_ticket(start_time)
+  end
 
   # def encode_stuffs
  #    charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])

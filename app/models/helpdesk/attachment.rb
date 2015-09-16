@@ -3,6 +3,7 @@ require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
 
+  self.table_name =  "helpdesk_attachments"
   self.primary_key = :id
 
   include Helpdesk::Utils::Attachment
@@ -16,6 +17,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        "pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
 
   MAX_DIMENSIONS = 16000000
+
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+    "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
   self.table_name =  "helpdesk_attachments"
   belongs_to_account
@@ -48,6 +52,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     before_save :set_account_id
 
+  alias_attribute :parent_type, :attachable_type
+
   class << self
 
     def s3_path(att_id, content_file_name)
@@ -66,8 +72,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        :content_file_size => attached.tempfile.size.to_i
                       }
         write_options = { :content_type => attached.content_type }
-        if content_id
-          attributes.merge!({:description => "content_id"})
+        if attached.content_type.include?("image") && content_id
+          model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
+          attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
           write_options.merge!({:acl => "public-read"})
         end
 
@@ -123,8 +130,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
     audio? /^audio\/(mp3|mpeg)/
   end
 
+  def object_type
+    :attachable
+  end
+
   def has_thumbnail?
-    !["Helpdesk::Ticket", "Helpdesk::Note", "Account"].include?(attachable_type)
+    !(NON_THUMBNAIL_RESOURCES.include?(attachable_type))
   end
 
   def attachment_sizes
@@ -200,10 +211,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    if attachable and self.attachable.class.name=="Account"
-      self.account_id = self.attachable_id
-    elsif attachable
-      self.account_id = attachable.account_id
+    unless self.account_id
+      if attachable and self.attachable.class.name=="Account"
+        self.account_id = self.attachable_id
+      elsif attachable
+        self.account_id = attachable.account_id
+      end
     end
   end
 

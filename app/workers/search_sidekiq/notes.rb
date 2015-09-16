@@ -4,9 +4,7 @@ class SearchSidekiq::Notes < SearchSidekiq::BaseWorker
     def perform(args)
       tickets = Account.current.tickets.find(args["ticket_id"])
       tickets.notes.exclude_source('meta').each do |note|
-        Search::EsIndexDefinition.es_cluster(note.account_id)
-        note.class.index_name note.search_alias_name
-        note.tire.update_index_es
+        send_to_es(note)
       end
     end
   end
@@ -23,9 +21,7 @@ class SearchSidekiq::Notes < SearchSidekiq::BaseWorker
         end
       end
       index_alias = Search::EsIndexDefinition.searchable_aliases([Helpdesk::Note], account.id).to_s
-      Search::EsIndexDefinition.es_cluster(account.id)
-      index = Tire.index(index_alias)
-      Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
+      remove_by_query(index_alias, query)
     end
   end
 

@@ -469,3 +469,16 @@
 .select2-results .select2-result-label{
 	margin: 5px;
 }
+.ff_call_cost {
+	cursor: pointer;
+}
+.freshfone-cost-splitup {
+	line-height: 20px;
+	max-width: 180px;
+	.pulse_rate { padding-left: 6px; }
+	.no_of_unit { padding-right: 6px; }
+	.total_duration_text {
+		color: #aaa;
+		font-size: 12px;
+	}
+}

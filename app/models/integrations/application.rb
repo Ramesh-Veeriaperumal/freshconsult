@@ -12,10 +12,9 @@ class Integrations::Application < ActiveRecord::Base
     :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
     :order => :listing_order }}
 
-  # hack to only get the apps which belongs to the same account
-  scope :freshplugs_apps, lambda {|account_id| { 
-    :conditions => ["account_id  in (?)", [account_id]], 
-    :order => :listing_order }}
+  scope :freshplugs, lambda {|account_id| 
+    where(:account_id => account_id , 
+          :application_type => 'freshplug') }
 
   has_many :app_business_rules, 
     :class_name => 'Integrations::AppBusinessRule',

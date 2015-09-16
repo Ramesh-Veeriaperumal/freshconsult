@@ -5,14 +5,25 @@
 	</li><li class="call_details no_action">
 		<div id="incall_user_info"></div>
 		<a href="#" id="call_timings" class="call_duration">00:00</a>
-	</li><li>
+	</li>
+	<li>
 		<a href="#no_popup" id="mute" class="mute tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.mute') %>"><%= font_icon "ff-mic", :size => 16 %><%= font_icon "ff-mute", :size => 16 %></a>
-	</li><li>
+	</li>
+	<% if current_account.features?(:freshfone_conference) %>
+	<li>
+		<a href="#no_popup" id="hold" class="hold tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.hold') %>">
+			 <%= font_icon "ff-hold", :size => 15, :class => "ff-hold-button" %>
+			 <div class='sloading loading-tiny ff-loader loading-align-center'></div>
+			</a>
+	</li>
+	<% end %>
+	<li>
 		<a href="#freshfone_available_agents" class="transfer_call tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.transfer_call') %>"><%= font_icon "arrow-right-2", :size => 16 %></a>
 	</li><li>
-		<a href="#freshfone_dialpad" class="ongoingDialpad tooltip" data-toggle="popupbox"
+		<a href="#ongoing_dialpad" class="ongoingDialpad tooltip" data-toggle="popupbox"
 			 title="<%= t('freshfone.widget.dialpad') %>"><%= font_icon "ff-dialpad", :size => 16 %></a>
 	</li><li>
 		<a href="#freshfone_add_notes" class="add_notes tooltip" data-toggle="popupbox"
@@ -27,13 +38,8 @@
 </ul>
 
 <ul class="popupbox-tabs outgoing hide">
-	<li>
-		<div class="dialpad_popup tooltip">
+		<li class="dialpad_popup tooltip">
 			<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
-				 data-offset=12 title="<%= t('freshfone.widget.dialpad') %>"><%= font_icon "ff-dialpad", :size => 16 %></a>
-		</div>
-	</li><li>
-		<a href="#recent_calls" class="recentCalls tooltip" data-toggle="popupbox"
-			 data-offset=12 title="<%= t('freshfone.widget.recent_calls') %>"><%= font_icon "ff-phone", :size => 16 %></a>
-	</li>
+				 data-offset=12 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
+		</li>
 </ul>

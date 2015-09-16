@@ -1,8 +1,10 @@
 <div class="tab-pane hide" id="freshfone_dialpad">
 	<input type="hidden" id="lastDial">
 	<%= render :partial => 'layouts/shared/freshfone/freshfone_dialpad' %>
-</div>
-<div id="recent_calls" class="hide">
+	<div id="recent_calls"></div>
+	<div class="dialpad_icon">
+		<span class="dialpad ficon-ff-dialpad" id="freshfone-dialpad-icon"></span>
+	</div>	
 </div>
 <div id="freshfone_add_notes" class="hide ffone-add-notes">
 	<%= render :partial => 'layouts/shared/freshfone/freshfone_add_notes' %>
@@ -12,5 +14,8 @@
 </div>
 <div id="end_call" class="hide ffone-end-call">
 	<%= render :partial => 'layouts/shared/freshfone/freshfone_end_call' %>
+</div>
+<div id="ongoing_dialpad">
+  <%= render :partial => 'layouts/shared/freshfone/ongoing_dialpad' %>
 </div>
 <span class="triangle"></span>

@@ -1,0 +1,3 @@
+<% for (var i in data) { %>
+    <li data-position='<%= data[i].position %>' data-action='pop-field' data-menu='<%= data[i].condition %>'> <%= escapeHtml(data[i].name) %> </li>
+<% } %>

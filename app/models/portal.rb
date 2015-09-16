@@ -15,7 +15,7 @@ class Portal < ActiveRecord::Base
   :allow_nil => true, :allow_blank => true
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit :update_users_language, on: :update, :if => :main_portal_language_changes?
+  after_commit :update_users_language, :update_solutions_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
@@ -43,22 +43,6 @@ class Portal < ActiveRecord::Base
 
   has_one :template, :class_name => 'Portal::Template'
 
-  has_many :portal_solution_categories,
-    :class_name => 'PortalSolutionCategory',
-    :foreign_key => :portal_id,
-    :order => "position",
-    :dependent => :delete_all
-
-  has_many :solution_category_meta,
-    :class_name => 'Solution::CategoryMeta',
-    :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
-
-  has_many :solution_categories,
-    :class_name => 'Solution::Category',
-    :through => :portal_solution_categories,
-    :order => "portal_solution_categories.position"
-
   has_many :portal_forum_categories,
     :class_name => 'PortalForumCategory',
     :foreign_key => :portal_id,
@@ -76,6 +60,8 @@ class Portal < ActiveRecord::Base
 
   belongs_to_account
   belongs_to :product
+
+  concerned_with :solution_associations
 
   APP_CACHE_VERSION = "FD72"
 
@@ -182,6 +168,11 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
+  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  def solution_category_ids
+    account.launched?(:meta_read) ? solution_categories_through_metum_ids : super
+  end
+
   def full_url
     main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
   end
@@ -194,6 +185,11 @@ class Portal < ActiveRecord::Base
 
     def update_users_language
       account.all_users.update_all(:language => account.language) unless account.features.multi_language?
+    end
+
+    ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
+    def update_solutions_language
+      Community::HandleLanguageChange.perform_async
     end
 
     def main_portal_language_changes?
@@ -286,7 +282,13 @@ class Portal < ActiveRecord::Base
     end
     
     def add_default_solution_category
+      # Remove this method when new solution UI goes out
+      return if account.solution_categories_without_association.empty?
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
+    end
+
+    def clear_solution_cache(obj=nil)
+      account.clear_solution_categories_from_cache
     end
 end

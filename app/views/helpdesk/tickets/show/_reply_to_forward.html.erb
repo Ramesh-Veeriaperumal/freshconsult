@@ -107,7 +107,7 @@
         <%= f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", 
                               :value => bind_last_conv(conv_item, @signature, true),
-                              :"data-quoted-textarea" => "##{cntid}-quoted" %>
+                              :"data-quoted-textarea" => "##{cntid}-quoted", :"data-wrap-font-family" => true %>
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
             <%= text_area_tag "quoted_text_html", quoted_text(conv_item), { :id => "#{cntid}-quoted", :class => "hide" } %>
         <% end %>        
@@ -137,8 +137,8 @@
 
       <div class="button-container">   
 
-        <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();", :class => "uiButton cancel" ) %>
-        <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
+        <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide()", :class => "btn cancel_btn cancel", :"data-cnt-id" => cntid  ) %>
+        <%= submit_tag(t('ticket.reply_form.send'), :class => "btn btn-primary special" ) %>
 
       </div>
 

@@ -10,7 +10,7 @@ module Helpdesk::TicketFilterMethods
   
   def top_views(selected = "new_and_my_open", dynamic_view = [], show_max = 1)
 
-    default_views = TicketsFilter.default_views
+    default_views = fetch_default_views
     top_views_array = [].concat(split_and_arrange_views(dynamic_view)).concat(default_views)
     selected_item =  top_views_array.select { |v| v[:id].to_s == selected.to_s }.first
 
@@ -26,6 +26,13 @@ module Helpdesk::TicketFilterMethods
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s + 
       controls_on_privilege(selected_item, (selected_item[:default]))
+  end
+
+  # Adding a divider to separate Archive, Spam and Trash from other views
+  def fetch_default_views
+    default_views = TicketsFilter.default_views
+    insert_separator_at = default_views.index(default_views.find{ |f| /monitored_by/ =~ f[:id] }) + 1
+    default_views.insert(insert_separator_at, { :id => :freshdesk_view_seperator })
   end
 
   # Get User created views and default views from dynamic views
@@ -82,7 +89,11 @@ module Helpdesk::TicketFilterMethods
   end
 
   def filter_path view
-    view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])
+    if view[:id] == "archived"
+      helpdesk_archive_tickets_path
+    else
+      view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])
+    end
   end
 
   def filter_parallel_path view
@@ -185,14 +196,21 @@ module Helpdesk::TicketFilterMethods
   end
   
   def filter_count(selector=nil, unresolved=false)
-    filter = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
-    Sharding.run_on_slave do
-      unresolved ? filter.unresolved.count : filter.count
+    if Account.current.launched?(:es_count_reads)
+      TicketsFilter.es_filter_count(selector, unresolved)
+    else
+      filter = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
+      Sharding.run_on_slave do
+        unresolved ? filter.unresolved.count : filter.count
+      end
     end
   end
 
   def current_filter
     stored_key = params[:filter_key] || params[:filter_name]
+    #To avoid setting the filter name to "Archived" as we don't store archived filter in cookies
+    stored_key = "new_and_my_open" if stored_key == "archived" 
+
     cookies[:filter_name] = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_and_my_open" )
   end
   

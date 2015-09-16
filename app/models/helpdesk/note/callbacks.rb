@@ -8,7 +8,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   # Doing update note count before pushing to ticket_states queue 
   # So that note count will be reflected if the rmq publish happens via ticket states queue
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :human_note_for_ticket? 
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
 
   after_commit :send_notifications, on: :create, :if => :human_note_for_ticket?
@@ -17,11 +17,11 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
   
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :human_note_for_ticket? 
+  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :report_note_metrics?
 
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
-  after_commit :remove_es_document, on: :destroy
-  
+  after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
@@ -72,9 +72,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_content_ids
       header = self.header_info
-      return if attachments.empty? or header.nil? or header[:content_ids].blank?
+      return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
       
-      attachments.each_with_index do |attach, index| 
+      inline_attachments.each_with_index do |attach, index| 
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]
         self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
         self.note_body.full_text_html = self.note_body.full_text_html.sub("cid:#{content_id}", attach.content.url) if content_id
@@ -96,6 +96,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_notifications
+      return if skip_notification
       if user.customer?
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
@@ -231,9 +232,8 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_note_count_for_reports
       return unless notable
       action = model_transaction_action
-      return if action == "update" # We dont reduce the count when the note is deleted from UI (Soft delete)
-      # @ARCHIVE - Add this check when archive tickets feature is rolled out. Commenting it now.
-      # return if action == "destroy" && self.notable.archive
+      return if action == "update" # Dont reduce the count when the note is deleted from UI (Soft delete)
+      return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive
       note_category = reports_note_category
       if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
         notable.schema_less_ticket.send("update_#{note_category}_count", action)
@@ -266,7 +266,18 @@ class Helpdesk::Note < ActiveRecord::Base
         Rails.logger.debug "Undefined note category #{schema_less_note.category}"
       end
     end
+    
+    def report_note_metrics?
+      human_note_for_ticket? && !feedback?
+    end
     ######## ****** Methods related to reports ends here ******** #####
     
 
+    # preventing deletion from elastic search
+    def deleted_archive_note
+      if Account.current.features?(:archive_tickets) && self.notable && self.notable.archive
+        return false
+      end
+      return true
+    end
 end

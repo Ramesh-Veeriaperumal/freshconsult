@@ -50,9 +50,9 @@
 @import "lib/labels-badges";
 @import "lib/hero-unit";
 //@import "lib/thumbnails";
-//@import "lib/progress-bars";
+@import "lib/progress-bars";
 //@import "lib/accordion";
-//@import "lib/carousel";
+@import "lib/carousel";
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary
 

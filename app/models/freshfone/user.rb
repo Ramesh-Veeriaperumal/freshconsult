@@ -100,8 +100,32 @@ class Freshfone::User < ActiveRecord::Base
 		end
 	end
 
+	def self.load_agents(current_number, group=nil)
+		@freshfone_number = current_number
+		return available_agents_in_group(group) if group.present?
+		return available_agents_in_group(@freshfone_number.group_id) if @freshfone_number.group.present?
+  	all_available_and_busy_agents
+  end
+
+  def self.all_available_and_busy_agents
+  	{ :available_agents => available_agents,
+    	:busy_agents      => busy_agents }
+  end
+  
+  def self.available_agents_in_group(group)
+  	{
+  		:available_agents => online_agents_in_group(group),
+  		:busy_agents      => busy_agents_in_group(group)
+  	}
+  end
+
+  def self.available_agents
+    sort_order = @freshfone_number.round_robin? ?  "ASC" : "DESC"
+    agents_by_last_call_at(sort_order)
+  end
+
 	def self.online_agents_in_group(group_id)
-		online_agents.agents_in_group(group_id)
+		available_agents.agents_in_group(group_id)
 	end
 	
 	def self.busy_agents_in_group(group_id)
@@ -163,8 +187,7 @@ class Freshfone::User < ActiveRecord::Base
 		def vaild_phone_number?(current_number)
 			@current_number = current_number.number
 			@agent_number = GlobalPhone.parse(number)
-			@agent_number  && authorized_country?(@agent_number,account) && 
-				@agent_number.valid? && can_dial_agent_number?
+			@agent_number && authorized_country?(@agent_number,account) && @agent_number.valid? && can_dial_agent_number?
 		end
 
 		def can_dial_agent_number?

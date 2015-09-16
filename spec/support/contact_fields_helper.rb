@@ -74,6 +74,39 @@ module ContactFieldsHelper
     }
   end
 
+  def contact_fields_values_with_faker options = {}
+      {
+      "cf_linetext"=> options[:linetext] || "#{Faker::Lorem.sentence(10)}", 
+      "cf_testimony" => options[:testimony] || "#{Faker::Lorem.paragraph(3)}", 
+      "cf_show_all_ticket" => options[:all_ticket] || true, 
+      "cf_agt_count" => options[:agt_count] || "#{Faker::Number.number(6)}", 
+      "cf_fax" => options[:fax] || "#{Faker::PhoneNumber.cell_phone}", 
+      "cf_file_url" => options[:url] || "#{Faker::Internet.url}", 
+      "cf_date" => options[:date] || "#{Date.today.to_s}", 
+      "cf_linetext_with_regex_validation" => options[:text_regex_vdt] || "#{Faker::Lorem.sentence(10)}",
+      "cf_category" => options[:category] || "#{["First", "Second", "Third"].sample}"
+    }
+  end
+
+
+  def contact_default_attribute_values options ={}
+    attributes = ActiveSupport::OrderedHash.new # Order of transfer of company and client_manager is important
+    attributes[:company_id] = get_default_company.id
+    attributes[:client_manager] = true
+    attributes[:twitter_id] = options[:twitter_id] || "@#{Faker::Lorem.words(1)}"
+    attributes[:phone] = options[:phone] || "#{Faker::PhoneNumber.phone_number}"
+    attributes[:mobile] = options[:mobile] || "#{Faker::PhoneNumber.cell_phone}"
+    attributes[:fb_profile_id] = options[:fb_profile_id] || "#{Faker::Lorem.words(1)}"
+    attributes[:address] = options[:address] || "#{Faker::Address.street_address}"
+    attributes[:external_id] = options[:external_id] || "#{Faker::Lorem.words(1)}"
+    attributes[:job_title] = options[:job_title] || "#{Faker::Name.title}"
+    attributes[:description] = options[:description] || "#{Faker::Lorem.paragraph(3)}"
+    # TimeZone and Language won't be nil, hence won't be transferred to parent in testcases
+    # attributes[:time_zone] = options[:time_zone] || "#{ ActiveSupport::TimeZone.all.map(&:name).sample}"
+    # attributes[:language] = options[:language] || "#{I18n.available_locales.sample}"
+    attributes
+  end
+
   def destroy_custom_fields
     Resque.inline = true
     contact_custom_field = @account.contact_form.all_fields.find(:all,:conditions=> ["column_name != ?", "default"])

@@ -1,0 +1,30 @@
+<div class="row-fluid">
+  <div id="appBrowser" class="marketplace-listing">
+    <div class="fa-container">
+      <div class="fa-tabs" id="extensions">
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render :partial => '/admin/marketplace/templates/freshplugs/index' %>
+<%= render :partial => '/admin/marketplace/templates/freshplugs/show' %>
+<%= render :partial => '/admin/marketplace/templates/installed_freshplugs/show' %>
+
+<%= javascript_include_tag :'cdn/marketplace/fa_template_dock_manager' %>
+<script type="text/javascript">
+  var extensionsWrapper = "#extensions";
+  var tabName = "#apps";
+  var customMessages =  {
+                          no_connection: "<%= I18n.t('marketplace.no_connection') %>",
+                          installing: "<%= I18n.t('marketplace.installing') %>",
+                          install_error : "<%= I18n.t('marketplace.install_error') %>",
+                          field_blank: "<%= I18n.t('marketplace.field_blank') %>"
+                        }
+  var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName);
+
+  Fjax.afterNextPage = function() {
+    templateDockManager.destroy();
+  }
+</script>

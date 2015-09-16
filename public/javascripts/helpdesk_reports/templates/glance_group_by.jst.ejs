@@ -1,0 +1,33 @@
+<% 
+	var fields_hash = HelpdeskReports.locals.field_name_mapping; 
+	var custom_fields = HelpdeskReports.locals.custom_fields_group_by;
+	var title_name = HelpdeskReports.Constants.Glance.metrics[metric].title;
+%>
+
+<% if (custom_fields.indexOf(data) < 0) { %>
+	<div class="chart-container">
+		<div class="title">
+			<%= title_name %> by <%= fields_hash[data] %>
+		</div>
+		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>"></div>
+		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
+	</div>
+<% } else { %>
+	<div id="custom_field_group_by" class="chart-container">
+		<div class="title">
+			<span class="rep-title-sub">
+				<%= title_name %> by
+			</span>
+			<select class="select2 dropdown" >
+				<% for (j=0; j<	custom_fields.length; j++) { %>
+			    	<option value="<%=custom_fields[j]%>"> <%= fields_hash[custom_fields[j]] %> </option>
+			 	<% } %>
+			</select>
+
+			<% jQuery('#custom_field_group_by select').select2('val', fields_hash[data]) %>
+
+		</div>
+		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>"></div>
+		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
+	</div>
+<% } %>

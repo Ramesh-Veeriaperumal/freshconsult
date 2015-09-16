@@ -11,6 +11,9 @@ var FreshfoneNetworkError;
       this.foneConnectionErrorClass = 'freshfone_connection_error';
       this.foneConnectionSuccessClass = 'freshfone_connection_success';
       this.logs = {};
+      this.isPageUnloading = false;
+      this.isChromiumBrowser = this.isChromium();
+      this.bindNetworkErrorEvents();
     },
     loadDependencies: function(freshfonewidget,freshfonecalls,freshfoneuser){
       this.freshfonewidget = freshfonewidget;
@@ -36,7 +39,8 @@ var FreshfoneNetworkError;
     },
     endCallDueToNetworkError:function(){
       if(this.freshfonecalls.isCallActive()){
-      	this.addToLogBuffer(this.freshfonecalls.error.info);
+        if(freshfonecalls.error)
+          this.addToLogBuffer(this.freshfonecalls.error.info);
         this.freshfonecalls.hangup();
         this.freshfoneuser.resetStatusAfterCall();
         this.freshfonewidget.handleWidgets();
@@ -65,6 +69,7 @@ var FreshfoneNetworkError;
         },2000);
         if(this.freshfoneuser.isOnline()){
           this.freshfoneuser.makeOffline();
+          console.log("hideNetworkErrorWidget-token");
           setTimeout(freshfoneuser.toggleUserPresence(),10000);
         }
         setTimeout(freshfonesocket.getAvailableAgents(),10000); //Calling this after 10 seconds for Resque Job to do the work
@@ -74,11 +79,54 @@ var FreshfoneNetworkError;
       this.logs[Date().toString()] = loghash;
     },
     pushsavedLogsAsIssue:function(){
-      if(!jQuery.isEmptyObject(this.logs)) 
+      if(!$.isEmptyObject(this.logs)) 
       {
         ffLogger.logIssue("Freshfone Network Error",this.logs,'error');
         this.logs = {};
       }
-    }  
+    },
+    isOperaBrowser: function(){
+      return (!!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0);
+    },
+    isChromeBrowser: function(){
+      return (!!window.chrome && !this.isOperaBrowser());
+    },
+    isSafariBrowser: function(){
+      return (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0);
+    },
+    isChromium: function(){
+      return (this.isOperaBrowser() || this.isChromeBrowser() || this.isSafariBrowser());
+    },
+    bindChromiumEvents: function() {
+      $(window).on('online', function(){ freshfoneNetworkError.hideNetworkErrorWidget() });
+      $(window).on('offline', function(){ freshfonecalls.errorcode = 31003; freshfoneNetworkError.endCallDueToNetworkError() });
+    },
+    bindNonChromiumEvents: function(){
+      $(window).on('ffone.networkUp',function(){ freshfoneNetworkError.networkUp() });
+      $(window).on('ffone.networkDown',function(){ freshfoneNetworkError.networkDown() });
+    },
+    bindCommonEvents: function(){
+      $(window).on('beforeunload unload', function(){ 
+        freshfoneNetworkError.isPageUnloading = true; //for detecting refresh & normal navigation
+      });
+    },
+    bindNetworkErrorEvents: function(){
+      // if(this.isChromiumBrowser){
+      //   this.bindChromiumEvents();
+      // }
+      // else{ 
+        this.bindNonChromiumEvents(); 
+      // }
+      this.bindCommonEvents();
+    },
+    networkDown: function(){
+      if (!freshfoneNetworkError.isPageUnloading) {
+        freshfonecalls.errorcode = 31003; //For ICE Liveness Checking
+        freshfoneNetworkError.endCallDueToNetworkError();
+      }
+    },
+    networkUp: function(){
+      freshfoneNetworkError.hideNetworkErrorWidget();
+    }
   };
 })(jQuery);

@@ -6,6 +6,7 @@ class Support::Solutions::FoldersController < SupportController
 		@page_title = @folder.name
 		respond_to do |format|
 			format.html {
+        (render_404 and return) if @folder.is_default?        
 				load_agent_actions(solution_category_folder_path(@category, @folder), :view_solutions)
 				load_page_meta
 				set_portal_page :article_list

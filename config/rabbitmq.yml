@@ -9,7 +9,7 @@ defaults: &defaults
     heartbeat: 30
     threaded: false
   shards: 1
-  resources: ['ticket', 'note', 'account']
+  resources: ['ticket', 'note', 'account', 'archive_ticket']
   secret_key: UIQX9K3VE716I1CB1X1DMB4EGL9963FP
 
 development:

@@ -8,13 +8,22 @@ class ArticleObserver < ActiveRecord::Observer
 		remove_script_tags(article)
 		set_un_html_content(article)
 		modified_date(article) if (article.article_body.changed? or article.title_changed?)
-		handle_meta_likes(article) if (article.solution_article_meta && (article.thumbs_up_changed? or article.thumbs_down_changed?))
 		article.article_changes
+		create_draft_for_article(article)
 		article.seo_data ||= {}
 	end
 
 	def after_create(article) 
 		create_activity(article)
+		article.account.clear_solution_categories_from_cache
+	end
+	
+	def after_destroy(article)
+		article.account.clear_solution_categories_from_cache
+	end
+
+	def after_update(article)
+		article.account.clear_solution_categories_from_cache if article.folder_id_changed?
 	end
 
 private
@@ -41,8 +50,8 @@ private
   		article.description = description
   	end
 
-	def set_un_html_content(article)
-		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+		def set_un_html_content(article)
+			article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
     end
 
     def modified_date(article)
@@ -55,5 +64,12 @@ private
 		changed_attribs.each do |attrib, changes|
 			article_meta.increment(attrib, changes[1] - changes[0])
 		end
+    end
+
+    def create_draft_for_article(article)
+    	return unless article.status_changed? && article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article.draft
+			article.build_draft(article.draft_attributes)
+			article.draft.user_id = article.user_id
+			article.draft.populate_defaults
     end
 end

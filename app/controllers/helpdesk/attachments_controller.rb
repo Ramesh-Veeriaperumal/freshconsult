@@ -64,7 +64,7 @@ class Helpdesk::AttachmentsController < ApplicationController
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
           can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
-        elsif ['Solution::Article'].include? attachment.attachable_type
+        elsif ['Solution::Article', 'Solution::Draft'].include? attachment.attachable_type
           can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['Account'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_account)
@@ -100,7 +100,7 @@ class Helpdesk::AttachmentsController < ApplicationController
 
       # Is the attachment on a note?
       #if @attachment.attachable.respond_to?(:notable)
-      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo'].include? @attachment.attachable_type
+      if ['Helpdesk::Ticket', 'Helpdesk::Note', 'Mobihelp::TicketInfo', 'Helpdesk::ArchiveTicket','Helpdesk::ArchiveNote'].include? @attachment.attachable_type
 
         # If the user has high enough permissions, let them download it
         return true if(current_user && current_user.agent?)

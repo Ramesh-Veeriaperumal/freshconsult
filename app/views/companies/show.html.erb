@@ -1,122 +1,122 @@
 <% content_for :layoutType %>
 <% content_for :sidebar do %> 
-	<% unless @company.domains.blank? %>
-		<div class="sidepanel">
-			<div class="element first" style="display:none;">
-				<h4 class="title"><%=t('company.info2')%></h4>
-				<p>
-					<%= h(@company.domains) %>	
-				</p>	
-			</div>
-		</div> 
-	<% end %>
+  <% unless @company.domains.blank? %>
+    <div class="sidepanel">
+      <div class="element first" style="display:none;">
+        <h4 class="title"><%=t('company.info2')%></h4>
+        <p>
+          <%= h(@company.domains) %>  
+        </p>  
+      </div>
+    </div> 
+  <% end %>
   <% if privilege?(:manage_contacts) %> 
-  	<div class="sidepanel">
-  	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=h(@company.name)%></span></h4> 	
-  		<%= form_tag :action=> :quick_contact_with_company,:controller => "contacts", :method =>:post do %>
-    		<ul class="ui-form">
-    		<li> 
-    			<label for="user_name"><%=t('user.full_name')%></label> 
-    			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
-    		</li> 
-    		<li>
-    			<label for="email_primary"><%=t('user.email')%></label> 
-    			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
-    		</li>
-    		<li>
-    			<label for="user_phone"><%=t('user.phone_no')%></label> 
-    			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
-    		</li>
+    <div class="sidepanel">
+    <h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=h(@company.name)%></span></h4>   
+      <% form_tag :action=> :quick_contact_with_company,:controller => "contacts", :method =>:post do %>
+        <ul class="ui-form">
+        <li> 
+          <label for="user_name"><%=t('user.full_name')%></label> 
+          <input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+        </li> 
+        <li>
+          <label for="email_primary"><%=t('user.email')%></label> 
+          <input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+        </li>
+        <li>
+          <label for="user_phone"><%=t('user.phone_no')%></label> 
+          <input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+        </li>
         <%= hidden_field_tag 'user[company_name]', @company.name %>   
-    		</ul>
-    		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
-  		<% end %>
-  	</div>
+        </ul>
+        <div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
+      <% end %>
+    </div>
   <% end %>
 <% end %>
 <div class="company_box">
   <% if privilege?(:manage_contacts) %>
-	<div class="action_buttons">
-		  <%= link_to t('edit'), edit_company_path(@company), :class => "last" %>
-	</div>
+  <div class="action_buttons">
+      <%= link_to t('edit'), edit_company_path(@company), :class => "last" %>
+  </div>
   <% end %>
-	<h3 class="title"><%= h(@company.name) %></h3>
+  <h3 class="title"><%= h(@company.name) %></h3>
 </div> 
 <div class="control-group">
-	<h4 class="title"><%= t('company.sla_policy_name') %></h4> 
-	<div id="sla_policy" class="sloading loading-small sla-policy-loading"
-		 rel="remote-load" 
-		 data-unique="true" 
-		 data-extra-loading-classes = "sla-policy-loading"
-		 data-url="/companies/<%=@company.id%>/sla_policies"></div>
+  <h4 class="title"><%= t('company.sla_policy_name') %></h4> 
+  <div id="sla_policy" class="sloading loading-small sla-policy-loading"
+     rel="remote-load" 
+     data-unique="true" 
+     data-extra-loading-classes = "sla-policy-loading"
+     data-url="/companies/<%=@company.id%>/sla_policies"></div>
 </div>
 <% unless @company.description.blank? %>
-	<div class="control-group">
-		<h4 class="title"><%= t('company.description') %></h4> 
-		<%= h(@company.description).gsub(/\n/, '<br />') %>
-	</div>
+  <div class="control-group">
+    <h4 class="title"><%= t('company.description') %></h4> 
+    <%= h(@company.description).gsub(/\n/, '<br />') %>
+  </div>
 <% end %>
 <div class="control-group">
-	<label class="title">
-			<b><%=t('company.notes')%> <span class="muted">&nbsp;|&nbsp;</span></b>
-			<%= @company.note.blank? ? (link_to t('company.add_notes'), '#', :class=>"edit_text_area") : (link_to t('company.edit_notes'), '#', :class=>"edit_text_area") %>
-	</label>
-	<div id="notes">	
-		<%= h(@company.note).gsub(/\n/, '<br />') %>
-		<br/>
-	</div>
+  <label class="title">
+      <b><%=t('company.notes')%> <span class="muted">&nbsp;|&nbsp;</span></b>
+      <%= @company.note.blank? ? (link_to t('company.add_notes'), '#', :class=>"edit_text_area") : (link_to t('company.edit_notes'), '#', :class=>"edit_text_area") %>
+  </label>
+  <div id="notes">  
+    <%= h(@company.note).gsub(/\n/, '<br />') %>
+    <br/>
+  </div>
 </div>
 <div class="text_area_notes hide control-group">
-<%= form_for(@company) do |f| %>
-	<label class="overlabel" for="comp_notes">
-		<%=t('company.info5')%>
-	</label>
-	<%= f.text_area :note, :id => "comp_notes", :cols => 20,:rows => 5  %>
+<% form_for(@company) do |f| %>
+  <label class="overlabel" for="comp_notes">
+    <%=t('company.info5')%>
+  </label>
+  <%= f.text_area :note, :id => "comp_notes", :cols => 20,:rows => 5  %>
   <% if privilege?(:manage_contacts) %>
-  	<div class="align-right"> 
-  		<%= link_to(t('cancel'), '#' , :class => "btn btn-small", :id => "edit_notes_cancel") %>
-  		<%= f.submit t('save'), :class=>"btn btn-primary btn-small"  %> &nbsp;
-  	</div>
+    <div class="align-right"> 
+      <%= link_to(t('cancel'), '#' , :class => "btn btn-small", :id => "edit_notes_cancel") %>
+      <%= f.submit t('save'), :class=>"btn btn-primary btn-small"  %> &nbsp;
+    </div>
   <% end %>
 <% end %>
-</div>	  
+</div>    
 <% unless @company.users.empty? %>
 <br/>
 <span class="seperator"></span>
 <h4 class="title margin-set"><%=t('company.info6',:name => (@company.name))%> (<%= @company.users.size %>) </h4>
-	<ul class="user_list">	  
-	  <% @company.users.each do |user| %>
-	  <li>
+  <ul class="user_list">    
+    <% @company.users.each do |user| %>
+    <li>
       <%= link_to(user_avatar(user, :thumb), user, :title => h(user.name) ) %><br />
-	  	<%= link_to(h(truncate(user.name, :length => 20)), user, :class => 'username') %>
-	  </li>  
-	  <%end%>
-	</ul>
+      <%= link_to(h(truncate(user.name, :length => 20)), user, :class => 'username') %>
+    </li>  
+    <%end%>
+  </ul>
 <% end %>
 <br/>
 <span class="seperator"></span>
 <div id="tickets-expanded" class="contact_tickets row-fluid">
-	<div class="detailed_view">
-		<h4 class="title"><%=t('contacts.info4',:nick_name => h(@company.name)).html_safe%></h4>
-		<% if (@company_tickets.blank?) %>
-		<%= "#{t('company.info7')}" %>
-		<% else %>
-		<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
-		<table class="tickets" id="tickets_view" width="100%">	
-			<tbody id="view_tickets">
-				<%= render :partial => "/helpdesk/shared/expanded/ticket", :formats => [:html], :collection => @company_tickets, :inline => true, 
-				    :locals => { :user_page => false } %>
-			</tbody>
-		</table>
-		<% if @total_company_tickets.size > 5 %>
-		<div class="more_results">
-			<%= link_to t('contacts.show_more',:nick_name => h(@company.name)).html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
-		</div>
-	    <% end %>
-	    <%end%>
-	</div>
+  <div class="detailed_view">
+    <h4 class="title"><%=t('contacts.info4',:nick_name => h(@company.name)).html_safe%></h4>
+    <% if (@company_tickets.blank?) %>
+    <%= "#{t('company.info7')}" %>
+    <% else %>
+    <% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+    <table class="tickets" id="tickets_view" width="100%">  
+      <tbody id="view_tickets">
+        <%= render :partial => "/helpdesk/shared/expanded/ticket.html", :collection => @company_tickets, :inline => true, 
+            :locals => { :user_page => false } %>
+      </tbody>
+    </table>
+    <% if @total_company_tickets.size > 5 %>
+    <div class="more_results">
+      <%= link_to t('contacts.show_more',:nick_name => h(@company.name)).html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
+    </div>
+      <% end %>
+      <%end%>
+  </div>
 </div>
-	
+  
 </div>
 <script type="text/javascript">
   // need to convert this to a util
@@ -127,10 +127,9 @@
       jQuery('.text_area_notes').show();
     });
     jQuery('#edit_notes_cancel').click(function (ev) {
-    	ev.preventDefault();
-			jQuery('#notes').show();
-			jQuery('.text_area_notes').hide();
+      ev.preventDefault();
+      jQuery('#notes').show();
+      jQuery('.text_area_notes').hide();
     });
-
 });
 </script>

@@ -10,6 +10,10 @@ RSpec.describe Freshfone::IvrsController do
     log_in(@agent)
   end
 
+  after(:each) do
+    @account.freshfone_numbers.delete_all
+  end
+
   it 'should render the number for ivr on show' do
     ivr = @number.ivr
     get :show, {:id => ivr.id}

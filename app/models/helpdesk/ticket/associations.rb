@@ -6,6 +6,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_attachments
 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+                                :conditions => { :attachable_type => "Ticket::Inline" },
+                                :foreign_key => "attachable_id",
+                                :dependent => :destroy
+
   has_many_cloud_files
 
   has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
@@ -19,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester, :class_name => 'User'
 
-  has_many :notes,  :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy# TODO-RAILS3 Need to cross check, :foreign_key => :id
+  has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
 
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',
@@ -45,6 +50,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :parent, :through => :schema_less_ticket
 
+  has_one :archive_child, :class_name => 'Helpdesk::ArchiveChild', :dependent => :destroy
+
+  has_one :archive_ticket, :through => :archive_child
+
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
 
@@ -54,14 +63,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   delegate :trashed, :to_emails, :product, :to => :schema_less_ticket, :allow_nil => true
 
-  has_one :ticket_topic,:dependent => :destroy
+  has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-  
+
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :as => :surveyable, :dependent => :destroy
   has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
+  has_many :integrated_resources, :as => :local_integratable, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   
   has_many :time_sheets, 
     :class_name => 'Helpdesk::TimeSheet',
@@ -75,7 +85,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   accepts_nested_attributes_for :tweet, :fb_post , :mobihelp_ticket_info
 
-  has_one :article_ticket, :dependent => :destroy
+  has_one :article_ticket, :as => :ticketable, :dependent => :destroy
   has_one :article, :through => :article_ticket
 
 end

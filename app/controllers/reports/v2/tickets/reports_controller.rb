@@ -2,12 +2,13 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   include HelpdeskReports::Helper::Ticket
   include ApplicationHelper
+  helper HelpdeskV2ReportsHelper
   
-  before_filter { |c| c.requires_feature :bi_reports }
+  before_filter :check_feature
   
+  before_filter :ensure_report_type_or_redirect
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
   before_filter :normalize_params, :validate_params, :validate_scope,   :except => [:index]
-  before_filter :set_report_type,                                       :only   => [:fetch_metrics]
   skip_before_filter :verify_authenticity_token,                        :except => [:index]
   
   attr_accessor :report_type
@@ -18,45 +19,41 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def fetch_metrics
     build_and_execute
     parse_result
+    format_result
     render_charts
   end
 
   def fetch_ticket_list
     build_and_execute
     parse_list_result
-    render_tickets
+    send_json_result
+  end
+  
+  # Action to fetch active metric with all group by in glance report. Separate action to send 
+  # result as json and avoid rendering view on each new request (user changing active metric).
+  def fetch_active_metric
+    build_and_execute
+    parse_result
+    format_result
+    send_json_result
   end
 
   private
 
   def render_charts
-    # Temporary Hack to enable QA to see json result for other reports
-    # and render charts for report_type = ticket_volume
-    # currently there is single controller for all reports
-    # Below piece of code will be deprecated once controllers are split
-    ensure_report_type
-    if ["ticket_volume"].include? report_type
-      @data = @processed_result
+    # Temporary Hack to enable QA to see json result of reports
+    # for which UI is not been done yet.
+    # Constant ~REPORTS_COMPLETED~ is the list of reports which are complete with UI
+    if REPORTS_COMPLETED.include? report_type.to_sym
       render :partial => "/reports/v2/tickets/reports/#{report_type}/charts"
     else
       send_json_result
     end
   end
-    
-  # Temporary, will remove after splitting report controllers
-  def ensure_report_type
-    @report_type = set_report_type
-    if !REPORT_TYPE_BY_NAME.include? report_type
-      @report_type = "ticket_volume"
-    end
-  end
   
-  def render_tickets
-    send_json_result
-  end
-  
-  def set_report_type
-    @report_type = @query_params.first[:report_type]
+  def ensure_report_type_or_redirect
+    @report_type = params[:report_type]
+    redirect_to reports_path unless REPORT_TYPE_BY_NAME.include?(report_type)
   end
 
   def build_and_execute
@@ -65,12 +62,11 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object = HelpdeskReports::Request::Ticket.new(param)
       request_object.build_request
       response = request_object.request
-      result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type)
+      result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type, report_type)
       @results << result_object
     end
   end
 
-  # TODO: Need to check if the below method is necessary
   def normalize_params
     @query_params = params[:_json]
   end
@@ -80,6 +76,14 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     @results.each do |res_obj|
       key = res_obj.query_type == :bucket ? "#{res_obj.metric}_BUCKET" : res_obj.metric
       @processed_result[key] = res_obj.parse_result
+    end
+  end
+  
+  def format_result
+    if FORMATTING_REQUIRED.include? report_type.to_sym
+      @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_type).format
+    else
+      @data = @processed_result
     end
   end
 
@@ -96,7 +100,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     rescue
       tickets = []
     end
-    @processed_result = tickets_data(tickets)
+    @data = tickets_data(tickets)
   end
   
   def tickets_data(tickets)
@@ -111,7 +115,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         :priority   => priority_hash[t.priority],
         :requester  => user_data[:users][t.requester_id],
         :avatar     => user_data[:avatars][t.requester_id],
-        :agent      => t.responder_id ? user_data[:users][t.responder_id] : "No Agent"
+        :agent      => t.responder_name
       }
     end
     res
@@ -125,12 +129,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def send_json_result
-    # temporay hack to see json result, will remove later
     respond_to do |format|
       format.json do
-        render :json => @processed_result
+        render :json => @data
       end
     end
+  end
+  
+  def check_feature
+    return if current_account.reports_enabled?
+    render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/non_covered_feature.html", :locals => {:feature => :bi_reports} }
   end
   
   # def generate_pdf

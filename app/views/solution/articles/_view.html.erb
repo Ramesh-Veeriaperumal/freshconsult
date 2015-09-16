@@ -1,0 +1,19 @@
+<div class="article-view">
+  <div class="row-fluid article-title">
+    <div class="span10">
+      <h3 class="lead" id="current-article-title"><%= @current_item.title %></h3>
+    </div>
+  </div>
+  <div class="article-content" id="current-article-description"><%= @current_item.description.html_safe %></div>
+
+  <div class="attachment_wrapper">
+    <ul class="attachment_list">
+      <% (active_attachments(:attachments, @article) || []).each do |attached| %>
+        <%= attachment_list(attached, false, "article", nil) %>
+      <% end %>
+      <% (active_attachments(:cloud_files, @article) || []).each do |attached| %>
+        <%= attachment_list(attached, false, "cloud_file", nil) %>
+      <% end %>
+      </ul>
+  </div>
+</div>

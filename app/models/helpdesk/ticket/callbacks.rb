@@ -3,12 +3,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
 	before_validation :populate_requester, :set_default_values
-
-	before_validation :set_token, on: :create
+  before_validation :assign_flexifield, :on => :create
 
   before_create :set_outbound_default_values, :if => :outbound_email?
 
-  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
+  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states, :add_created_by_meta, :build_reports_hash
 
   before_create :assign_display_id, :if => :set_display_id?
 
@@ -16,7 +15,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
+  before_save :assign_outbound_agent, :if => :outbound_email?
+
+  before_save  :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
   before_update :update_sender_email
 
@@ -47,13 +48,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
 
   def set_outbound_default_values
-    if User.current.try(:id) and User.current.agent?
-      self.responder_id ||= User.current.id
-    end
-    
     if email_config
       self.to_emails = [email_config.reply_email]
       self.to_email = email_config.reply_email
+    end
+  end
+
+  def assign_outbound_agent
+    return if responder_id
+     if User.current.try(:id) and User.current.agent?
+      self.responder_id = User.current.id
     end
   end
 
@@ -78,7 +82,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.subject    ||= ''
     self.group_id   ||= email_config.group_id unless email_config.nil?
     self.priority   ||= PRIORITY_KEYS_BY_TOKEN[:low]
-    self.created_at ||= Time.zone.now
+    self.created_at ||= Time.now.in_time_zone(account.time_zone)
     
     build_ticket_body(:description_html => self.description_html,
       :description => self.description) unless ticket_body    
@@ -285,6 +289,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
+    Rails.logger.info "Created at::: #{self.created_at}"
     BusinessCalendar.execute(self) { set_sla_time(ticket_status_changed) }
     #Hack - trying to recalculte again if it gives a wrong value on ticket creation.
     if self.new_record? and ((due_by < created_at) || (frDueBy < created_at))
@@ -455,10 +460,10 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
     
     description_updated = false
-    attachments.each_with_index do |attach, index| 
+    inline_attachments.each_with_index do |attach, index| 
       content_id = header[:content_ids][attach.content_file_name+"#{index}"]
       self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
     end
@@ -499,11 +504,13 @@ private
   end
 
   def set_token   
-    self.access_token ||= generate_token(Helpdesk::SECRET_2)     
+    self.access_token ||= generate_token
   end
 
-  def generate_token(secret)
-    Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
+  def generate_token
+    # using Digest::SHA2.hexdigest for a 64 char hash
+    # using ticket id, current account id along with Time.now
+    Digest::SHA2.hexdigest("#{Account.current.id}:#{self.id}:#{Time.now.to_f}")
   end
 
   def fire_update_event

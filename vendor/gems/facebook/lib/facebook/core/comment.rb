@@ -32,8 +32,8 @@ class Facebook::Core::Comment
       #post flow will convert all comments and reply to comments 
       add_as_post_and_note(@feed, @koala_comment.parent_post, convert)
     else
-      note = add_as_note(post.postable, @koala_comment)
-      process_reply_to_comments if note
+      fd_item = convert_to_fd_item(post)
+      process_reply_to_comments if fd_item
     end    
   end
 
@@ -82,10 +82,6 @@ class Facebook::Core::Comment
       ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, @koala_post).process(@koala_post, convert)
     end
     
-    def process_comment_as_ticket(convert_args)
-      add_as_ticket(@fan_page, @koala_comment, convert_args)
-    end
-    
     def process_reply_to_comments
       @koala_comment.comments.each do |c|
         comment = koala_reply_to_comment(c)
@@ -98,6 +94,24 @@ class Facebook::Core::Comment
       koala_comment.comment = comment
       koala_comment.parse
       koala_comment
+    end
+    
+    def convert_args
+     {
+        :group_id   => @fan_page.group_id,
+        :product_id => @fan_page.product_id
+      }
+    end
+    
+    
+    def convert_to_fd_item(post)
+      ticket = post.postable
+      if ticket.is_a?(Helpdesk::Ticket)
+        fd_item = add_as_note(ticket, @koala_comment)
+      elsif ticket.is_a?(Helpdesk::ArchiveTicket)
+        fd_item = add_as_ticket(@fan_page, @koala_comment, convert_args, ticket)
+      end
+      fd_item
     end
     
 end

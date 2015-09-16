@@ -8,7 +8,8 @@ module Freshfone::Queue
     twiml = Twilio::TwiML::Response.new do |r|
       current_number.read_queue_message(r)
       r.Gather :action => "#{host}/freshfone/queue/quit_queue_on_voicemail", :numDigits => '1' do |g|
-        g.Play "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_A_Thought.mp3"
+        (current_number.wait_message.present? && current_number.wait_message.message_url.present?) ? 
+        current_number.play_wait_message(g) : play_default_music(g)
       end
     end
     render :xml => twiml.text
@@ -150,6 +151,14 @@ module Freshfone::Queue
       @queued_members ||= current_account.freshfone_subaccount.queues.get(queue_sid).members
     end
 
+    def load_hunt_options_for_conf
+      call_meta = current_call.meta
+      if current_account.features?(:freshfone_conference) && current_call.priority_queued_call?
+        params[:hunt_type] = Freshfone::CallMeta::HUNT_TYPE_REVERSE_HASH[call_meta.hunt_type].to_s if 
+        params[:hunt_id]   = call_meta.agent_hunt? ? current_call.user_id : current_call.group_id
+      end
+    end
+
     def default_queue_key
       FRESHFONE_QUEUED_CALLS % { :account_id => current_account.id }
     end
@@ -166,5 +175,12 @@ module Freshfone::Queue
       FRESHFONE_QUEUE_WAIT % {:account_id => current_account.id, :call_sid => params[:CallSid]}
     end
 
+    def play_default_music(xml_builder)
+      xml_builder.Play Freshfone::Number::DEFAULT_QUEUE_MUSIC, :loop => 50
+    end
+
+    def add_to_call_queue_worker
+      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), current_user.id)
+    end
 
 end

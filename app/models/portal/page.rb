@@ -55,7 +55,11 @@ class Portal::Page < ActiveRecord::Base
 		[:activation_form,      17,  "activations/new.portal"],
 
 
-		[:facebook_home,      101,  "support/facebook/index.portal", "support_home_path"]
+		[:facebook_home,      101,  "support/facebook/index.portal", "support_home_path"],
+
+		[:archive_ticket_list,        	102,  "support/archive_tickets/index.portal", "support_archive_tickets_path"],
+		[:archive_ticket_view,        	103,  "support/archive_tickets/show.portal", 
+			"support_archive_ticket_path", "archive_tickets"],
 		
 	]
 
@@ -81,6 +85,7 @@ class Portal::Page < ActiveRecord::Base
 
 	PAGE_REDIRECT_ACTION_BY_TOKEN 		= Hash[*PAGE_TYPES.map { |i| [i[0], i[3]] }.flatten]
 	PAGE_MODEL_ACTION_BY_TOKEN 		= Hash[*PAGE_TYPES.map { |i| [i[0], i[4]] }.flatten]
+	ARCHIVE_TICKETS = [:archive_ticket_list, :archive_ticket_view]
   
 	def token
 		PAGE_TYPE_TOKEN_BY_KEY[self.page_type]

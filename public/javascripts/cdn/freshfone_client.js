@@ -19,5 +19,9 @@
 //= require freshfone/client.js
 //= require freshfone/phoneformatutil.js
 //= require freshfone/dialpad.js
+//= require freshfone/ongoing_call_dialpad.js
+//= require freshfone/dialpad_events.js
+//= require freshfone/components/contact_search.js
 //= require freshfone/components/call_transfer.js
 //= require freshfone/freshfone_logger.js
+

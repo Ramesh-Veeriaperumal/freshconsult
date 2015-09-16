@@ -1,6 +1,5 @@
 fi:
   meta:
-    language_id: 10
     language_name: 'Finnish' 
   date:
     ago: sitten

@@ -52,7 +52,13 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     unless reply_tweet.blank?
       ticket  = reply_tweet.get_ticket
       user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
-      notable = add_as_note(feed_obj, handle, :mention, ticket, user, options)
+      if ticket
+        notable  = add_as_note(feed_obj, handle, :mention, ticket, user, options)
+      else 
+        archive_ticket  = reply_tweet.get_archive_ticket
+        notable = add_as_ticket(feed_obj, handle, :mention, options, archive_ticket) 
+      end
+      
     else
       if options[:convert]
         user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])

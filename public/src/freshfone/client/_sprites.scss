@@ -58,7 +58,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 .transfer_agent_pointer { @include freshfone-sprite(callhistory-transferred); }
 .callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
 .callhistory-payment-loader { background-image: image-url('/assets/animated/payment-loader.gif') }
-
+.dialpad_background_pattern {@include freshfone-sprite(ff-watermark-pattern-1x);}
 
 .recording_deleted{
 	background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAH0lEQVQIW2NkQAWSjEh8SQYGhucwATAHJAkSgHNAAgBJLgMeVQZnUgAAAABJRU5ErkJggg==');
@@ -73,6 +73,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 		}
 		li{
 			text-align: center;
+			float: left;
 		}
 		[class*="#{$font-class}"]{
 			line-height: 27px;

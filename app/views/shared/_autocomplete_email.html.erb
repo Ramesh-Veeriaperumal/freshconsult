@@ -28,7 +28,7 @@
   <%= text_field object_name, :twitter_id, :value => (@item.requester_info), :disabled => true %>
   <%= hidden_field object_name, :requester_id, :value => (@item.requester_id) %>
 <% else %>
-  <%= text_field object_name, :email, :value => (@item.requester_info), :class => "required requester", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => @item.requester_info, "data-initial-requesterid" => @item.requester_id %>
+  <%= text_field object_name, :email, :value => (@item.requester_info), :class => "required requester", "data-requester-check" => false, "data-current-user" => "", "data-initial-requester" => @item.requester_info, "data-initial-requesterid" => @item.requester_id, :placeholder => defined?(placeholder) ? t('ticket.compose.to_address_placeholder') : "" %>
 <% end %>
 <div id="<%=object_name%>_email_choices" class="autocomplete"></div>
 <script type="text/javascript" charset="utf-8">

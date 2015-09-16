@@ -7,7 +7,7 @@
 	* ============================== */
 
 	var Confirmdelete = function (element) {
-		if (element === null) {
+		if (element === null || element.attr('disabled')) {
 			return false;
 		}
 
