@@ -190,7 +190,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :account_id => self.account.id,
           :user_id => self.requester.id
         ) 
-        meta_note.attachments = []
+        meta_note.attachments = meta_note.inline_attachments = []
         meta_note.save_note
       end
   end

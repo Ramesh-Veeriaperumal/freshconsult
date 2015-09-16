@@ -82,6 +82,14 @@ class Topic < ActiveRecord::Base
     }
   }
 
+  scope :followed_by, lambda { |user_id|
+    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
+                  and monitorships.monitorable_type = 'Topic' 
+                  and topics.account_id = monitorships.account_id),
+      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
+    }
+  } # Used by monitorship APIs
+
   scope :following, lambda { |ids|
     {
       :conditions => following_conditions(ids),
@@ -250,7 +258,7 @@ class Topic < ActiveRecord::Base
     
   FORUM_TO_STAMP_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
-    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil], # nil should always be last, if not, revisit check_stamp_type
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }

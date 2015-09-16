@@ -842,6 +842,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # To keep flexifield & @custom_field in sync
 
   def custom_field
+    # throws error in retrieve_ff_values if flexifield is nil and custom_field is not set. Hence the check
+    return nil unless @custom_field || flexifield
     @custom_field ||= retrieve_ff_values
   end
 
@@ -890,7 +892,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
-  def self.api_filter(ticket_filter = nil, current_user = nil)
+  # Used by API v2
+  def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
       spam: {
         conditions: { spam: true }
@@ -902,6 +905,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       new_and_my_open: {
         conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
       },
+      watching: {
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
+          :joins => :subscriptions
+      },
       requester_id: {
         conditions: { requester_id: ticket_filter.try(:requester_id) }
       },
@@ -909,11 +916,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
         conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
         joins: :requester
       },
-      created_since: {
-        conditions: ['helpdesk_tickets.created_at > ?', ticket_filter.try(:created_since)]
-      },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at > ?', ticket_filter.try(:updated_since)]
+        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end

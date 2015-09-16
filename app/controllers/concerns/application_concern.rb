@@ -63,14 +63,6 @@ module Concerns::ApplicationConcern
     response.headers['X-Accel-Buffering'] = 'off'
 
     redirect_to redirect_url
- end
-
-  def set_current_account
-    current_account.make_current
-    User.current = current_user
-  rescue ActiveRecord::RecordNotFound
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
-    handle_unverified_request
   end
 
   def select_shard(&_block)
