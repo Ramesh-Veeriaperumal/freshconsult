@@ -70,9 +70,9 @@
         this.setTabCount();
       },
       setTabCount: function(){
-        jQuery("#accepting_count").html(this.availableAgents.length).show();
-        jQuery("#not_accepting_count").html(this.unavailableAgents.length + this.offlineAgents.length).show();
-        jQuery("#offline_count").html(this.offlineAgents.length).show();
+        jQuery("#lc-availability #accepting_count").html(this.availableAgents.length).show();
+        jQuery("#lc-availability #not_accepting_count").html(this.unavailableAgents.length + this.offlineAgents.length).show();
+        jQuery("#lc-availability #offline_count").html(this.offlineAgents.length).show();
       },
       getGroups: function(group_id){
         var that = this;
