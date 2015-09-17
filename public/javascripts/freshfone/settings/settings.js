@@ -40,6 +40,8 @@ var FreshfoneMessage;
 				$('.queue_setting_div').toggle(!($('#admin_freshfone_number_max_queue_length').val()==="0"));
 				$('.voicmail_message_div').toggle(!($('#admin_freshfone_number_voicemail_active_false').is(":checked")===true));
 				$('.recording_visibility_div').toggle(!($('#admin_freshfone_number_record_false').is(":checked")===true));
+				$('.queue_setting_div #admin_freshfone_number_queue_position_preference').itoggle();
+				$('.queue_position_message_div').toggle($("#admin_freshfone_number_queue_position_preference").is(":checked"));
 				this.removeOptions();
 				// $('.non_business_hours_message_container').toggle(!($('#admin_freshfone_number_non_business_hour_calls_false').is(":checked")===true));
 		},
@@ -93,6 +95,10 @@ var FreshfoneMessage;
 	$('#admin_freshfone_number_max_queue_length').change(function(){
 			($('#admin_freshfone_number_max_queue_length').val()==="0") ? $('.queue_setting_div').slideUp() : $('.queue_setting_div').slideDown();
 			
+	});
+
+	$('#admin_freshfone_number_queue_position_preference').change(function(){
+		($("#admin_freshfone_number_queue_position_preference").is(":checked")) ?  $('.queue_position_message_div').slideDown() : $('.queue_position_message_div').slideUp();
 	});
 	$("input[name='admin_freshfone_number[voicemail_active]']:radio").change(function(){
 		($(this).val() === 'true') ? $('.voicmail_message_div').slideDown() : $('.voicmail_message_div').slideUp();

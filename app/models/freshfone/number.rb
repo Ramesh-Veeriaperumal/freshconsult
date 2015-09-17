@@ -77,6 +77,7 @@ class Freshfone::Number < ActiveRecord::Base
 		:message => "%{value} is not a valid number_type"
 	validate :validate_purchase, on: :create
 	validate :validate_settings, :validate_attachments, :validate_name, :unless => :deleted_changed?, on: :update
+	validate :validate_queue_position_message, :if => :queue_position_preference, on: :update
 	validates_uniqueness_of :number, :scope => :account_id
 
 	scope :filter_by_number, lambda {|from, to| {
@@ -313,5 +314,9 @@ class Freshfone::Number < ActiveRecord::Base
 
 		def validate_name
 			errors.add(:base, I18n.t('freshfone.admin.number_settings.name_maxlength')) if (name.present? && name.length > 255 )
+		end
+
+		def validate_queue_position_message
+			errors.add(:base, "invalid queue position message") if queue_position_message.match(/\{\{queue.position\}\}/).blank?
 		end
 end

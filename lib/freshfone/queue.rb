@@ -8,6 +8,7 @@ module Freshfone::Queue
     twiml = Twilio::TwiML::Response.new do |r|
       current_number.read_queue_message(r)
       r.Gather :action => "#{host}/freshfone/queue/quit_queue_on_voicemail", :numDigits => '1' do |g|
+        read_queue_position_message(g) if current_number.queue_position_preference
         (current_number.wait_message.present? && current_number.wait_message.message_url.present?) ? 
         current_number.play_wait_message(g) : play_default_music(g)
       end
@@ -181,6 +182,13 @@ module Freshfone::Queue
 
     def add_to_call_queue_worker
       Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), current_user.id)
+    end
+
+    def read_queue_position_message(xml_builder)
+      return if current_number.queue_position_message.blank?
+      queue_values = { "position" => params['QueuePosition']}
+      text = Liquid::Template.parse(current_number.queue_position_message).render("queue" => queue_values)
+      xml_builder.Say "#{text}", { :voice => current_number.voice_type }
     end
 
 end

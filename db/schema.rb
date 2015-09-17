@@ -1436,6 +1436,8 @@ ActiveRecord::Schema.define(:version => 20150909161854) do
     t.boolean  "recording_visibility",                                                    :default => true
     t.text     "wait_message"
     t.text     "hold_message"
+    t.boolean  "queue_position_preference",                                               :default => false
+    t.string   "queue_position_message"
   end
 
   add_index "freshfone_numbers", ["account_id", "number"], :name => "index_freshfone_numbers_on_account_id_and_number"
