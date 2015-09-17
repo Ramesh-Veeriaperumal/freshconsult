@@ -23,7 +23,11 @@ var modelJson = models[i].attributes;
     <%=modelJson.onGoingChatCount%><span>&nbsp<%= CHAT_I18n.chats_in_progress %></span>
   <% } %>
 <% }else{ %>
-  <%= window.moment(modelJson.last_activity_at).fromNow()%>
+  <% if(modelJson.last_activity_at) { %>
+      <%= window.moment(modelJson.last_activity_at).fromNow()%>
+    <% }else{ %>
+      <%= CHAT_I18n.no_activity %>
+  <% } %>
 <% } %>
     </span>
   </td>
