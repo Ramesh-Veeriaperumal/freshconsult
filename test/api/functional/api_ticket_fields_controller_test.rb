@@ -19,7 +19,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       when 'default_requester'
         new_pattern = requester_ticket_field_pattern(field)
       when 'nested_field'
-        new_pattern = ticket_field_nested_pattern(field, choices: field.nested_choices)
+        new_pattern = ticket_field_nested_pattern(field, choices: field.formatted_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
         klass = TicketFieldDecorator.send(:ticket_field_choices, field).class

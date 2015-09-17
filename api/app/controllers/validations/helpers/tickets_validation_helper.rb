@@ -27,7 +27,7 @@ class Helpers::TicketsValidationHelper
     end
 
     def nested_fields_choices_by_name
-      nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.name, x.nested_choices] }.to_h
+      nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
       {
         first_level_choices: nested_fields.map { |x| [x.first, x.last.keys] }.to_h,
         second_level_choices: nested_fields.map { |x| [x.first, x.last.map { |t| [t.first, t.last.keys] }.to_h] }.to_h,
