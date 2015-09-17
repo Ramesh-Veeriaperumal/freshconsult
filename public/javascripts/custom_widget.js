@@ -205,7 +205,7 @@ Freshdesk.Widget.prototype={
 				}			
 		} else {
 				errorStr = evt.responseText;
-				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + ".\n\nTry fixing the error or Contact Support.");
+				this.alert_failure("Problem in connecting to " + this.app_name + ". Response code: " + evt.status);
 		}
 		if(!req_sent_again){
 			loading_elem = jQuery('div[class^="loading-"]').attr('class');
