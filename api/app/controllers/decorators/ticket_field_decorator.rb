@@ -1,7 +1,7 @@
 class TicketFieldDecorator < SimpleDelegator
   class << self
     def get_ticket_field_choices(tf)
-      @choices = tf.field_type == 'nested_field' ? nested_choices(tf) : ticket_field_choices(tf)
+      @choices = tf.field_type == 'nested_field' ? tf.api_nested_choices : ticket_field_choices(tf)
     end
 
     def default_requester_field(tf)
@@ -44,14 +44,6 @@ class TicketFieldDecorator < SimpleDelegator
           Hash[Account.current.products_from_cache.map { |e| [CGI.escapeHTML(e.name), e.id] }]
         else
           []
-        end
-      end
-
-      def nested_choices(tf)
-        tf.picklist_values.map do |c|
-          Hash[c.value, c.sub_picklist_values.map do |x|
-            Hash[x.value, x.sub_picklist_values.map(&:value)]
-          end]
         end
       end
   end
