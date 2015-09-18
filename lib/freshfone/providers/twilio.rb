@@ -97,7 +97,7 @@ class Freshfone::Providers::Twilio
   def play_wait_music(number)
     twiml_response do |r|
       (number.wait_message.present? && number.wait_message.message_url.present?) ? 
-        number.play_wait_message(r) : play_default_music(r)
+        number.play_wait_message(r) : play_default_ringing_music(r)
     end
   end
   
@@ -115,8 +115,13 @@ class Freshfone::Providers::Twilio
 
   def play_agent_wait_music
     twiml_response do |r|
-      r.Play "http://com.twilio.music.guitars.s3.amazonaws.com/Pitx_-_Long_Winter.mp3"
+      play_default_ringing_music(r)
     end
+  end
+
+  def play_default_ringing_music(xml_builder)
+    xml_builder.Play Freshfone::Number::DEFAULT_RINGING_MUSIC,
+      :loop => 50
   end
 
   def play_unhold_message
