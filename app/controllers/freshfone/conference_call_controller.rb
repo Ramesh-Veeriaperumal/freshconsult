@@ -170,7 +170,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def reset_outgoing_count
-      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.present? && current_call.outgoing?
+      remove_device_from_outgoing(get_device_id) if current_call.present? && current_call.outgoing?
+    end
+
+    def get_device_id
+      current_call.sip? ? sip_user : split_client_id(params[:From])
     end
 
     def check_credit_balance

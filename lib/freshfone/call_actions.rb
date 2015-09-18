@@ -1,6 +1,7 @@
 class Freshfone::CallActions
   include Freshfone::NodeNotifier
   include Freshfone::NodeEvents
+  include Freshfone::FreshfoneUtil
 
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
@@ -34,7 +35,7 @@ class Freshfone::CallActions
 	def register_outgoing_call
 		current_account.freshfone_calls.create(
 			:freshfone_number => current_number,
-			:agent => calling_agent,
+			:agent => sip_call? ? calling_agent(sip_user_id(params[:From])) : calling_agent,
 			:customer => search_customer_with_number(called_number),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing],
 			:business_hour_call => working_hours?,
