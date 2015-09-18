@@ -79,11 +79,12 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def create
-    @category = current_account.solution_categories.build(params[nscname])
+    @category = Solution::Builder.category(params)
     
     respond_to do |format|
-      if @category.save
+      if @category
         format.html { redirect_to solution_category_path(@category) }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category, :status => :created, :location => @category }
         format.json { render :json => @category, :status => :created, :location => @category }
       else
@@ -98,7 +99,7 @@ class Solution::CategoriesController < ApplicationController
     respond_to do |format| 
       if @category
         format.html { render solution_all_categories_path }
-        format.js { render 'update', :formats => [:rjs] }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else

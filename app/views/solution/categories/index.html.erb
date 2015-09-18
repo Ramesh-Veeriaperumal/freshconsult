@@ -9,7 +9,6 @@
 <% content_for :sticky_right do %>
 	<% if privilege?(:manage_solutions) -%>
 		<div class="pull-right itil-hide">
-			<%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "btn" if (@categories.size > 2)%>
 			<%= new_solutions_button(:category) %>
 		</div>
 	<% end %>
@@ -37,14 +36,4 @@
 		</div>
 	<% end %>
 </div>
-<% if privilege?(:manage_solutions) and @categories.size > 2 %>	
-	<%= render :partial => "/shared/reorder_list", 
-							:locals => { 
-									:items => current_portal.portal_solution_categories.includes(:solution_category).reject { |pc| pc.solution_category.is_default?},
-									:action_url => reorder_solution_categories_path, 
-									:title => :name, 
-									:container_id => "categories_sort", 
-									:reorder_id => "categories_reorder_button", 
-									:list_id => "categories_list"
-							} %>
-<% end %>
+

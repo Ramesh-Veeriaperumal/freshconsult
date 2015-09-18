@@ -1,0 +1,7 @@
+if @category.errors.empty?
+	page.replace "item_#{@category.parent_id}", render(:partial => "category", :locals => {:category => @category.solution_category_meta})
+	page << "jQuery('#version-#{@category.parent_id}').modal('hide');"
+	page << "jQuery('#new-cat').modal('hide');"
+else
+	page.replace_html :error_messages, "#{error_messages_for :category}"
+end

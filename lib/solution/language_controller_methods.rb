@@ -5,7 +5,7 @@ module Solution::LanguageControllerMethods
 	end
 
 	def language
-		@language ||= Language.find(params[:language_id])
+		@language ||= (Language.find(params[:language_id]) || Language.for_current_account)
 	end
 
 	def language_scoper

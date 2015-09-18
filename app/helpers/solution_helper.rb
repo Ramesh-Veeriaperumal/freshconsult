@@ -60,7 +60,7 @@ module SolutionHelper
 	end
 	
 	def new_solutions_button(default_btn = :article)
-		category = [t('solution.add_category'), new_solution_category_path, false, new_btn_opts(:category)]
+		category = [t('solution.add_category'), new_solution_category_path(:portal_id => params[:portal_id]), false, new_btn_opts(:category)]
 		folder    = [t('solution.add_folder'),    new_solution_folder_path(btn_default_params(:folder)), false, new_btn_opts(:folder)]
 		article    = [t("solution.add_article"),    new_solution_article_path(btn_default_params(:article)), false, new_btn_opts(:article)]
 
