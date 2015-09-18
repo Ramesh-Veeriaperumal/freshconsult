@@ -90,6 +90,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       post '/api/tickets', params, @headers.merge("CONTENT_TYPE" => "multipart/form-data")
     end
     assert_response :bad_request
+    response.body.must_match_json_expression(request_error_pattern("invalid_multipart"))
   end
 
   def test_multipart_invalid_data_unparsable

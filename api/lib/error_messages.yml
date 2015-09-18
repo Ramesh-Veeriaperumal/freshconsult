@@ -17,7 +17,7 @@ api_error_messages:
   invalid_credentials: "You have to be logged in to perform this action."
   unverified_request: "You have initiated a unverifiable request." 
   account_suspended: "Your account has been suspended."
-  invalid_multipart: "Multipart data is not properly formatted"
+  invalid_multipart: "Multipart data is not properly formatted."
   method_not_allowed: "Allowed methods are %{methods}"
   internal_error: "We're sorry, but something went wrong."
   ssl_required: "SSL certificate verification failed."

@@ -123,7 +123,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def handle_invalid_multipart_form_data(exception_params)
-      return false unless request.raw_post == exception_params.join && request["CONTENT_TYPE"] =~ /multipart\/form-data/
+      return false unless request.raw_post == exception_params.join && request.headers["CONTENT_TYPE"] =~ /multipart\/form-data/
       render_request_error :invalid_multipart, 400
       true
     end
