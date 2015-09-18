@@ -10,7 +10,7 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    ticket_delegator = TicketDelegator.new(@item, ff: @ff)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -30,7 +30,7 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    ticket_delegator = TicketDelegator.new(@item, ff: @ff)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
@@ -170,7 +170,7 @@ class TicketsController < ApiApplicationController
       end
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       if create? # assign attachments so that it will not be queried again in model callbacks
-        @item.attachments = @item.attachments 
+        @item.attachments = @item.attachments
         @item.inline_attachments = @item.inline_attachments
       end
     end
@@ -239,6 +239,6 @@ class TicketsController < ApiApplicationController
 
     def assign_ticket_status
       @item.status = OPEN unless @item.status_changed?
-      @item.ticket_status = @statuses.find {|x| x.status_id == @item.status }
+      @item.ticket_status = @statuses.find { |x| x.status_id == @item.status }
     end
 end

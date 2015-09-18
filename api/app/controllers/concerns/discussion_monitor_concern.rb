@@ -70,7 +70,7 @@ module DiscussionMonitorConcern
 
     def get_monitorship(params)
       user_id = params[cname][:user_id] || api_current_user.id
-      monitorship = Monitorship.where(user_id: user_id,
+      Monitorship.where(user_id: user_id,
                                       monitorable_id: @item.id, monitorable_type: @item.class.to_s)
     end
 

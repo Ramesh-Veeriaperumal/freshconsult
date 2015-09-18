@@ -10,11 +10,11 @@ class RequiredValidator < ActiveModel::Validations::PresenceValidator
   end
 
   def validate_each(record, attribute, value)
-    unless record.instance_variable_defined?("@#{attribute}".to_sym)
+    if record.instance_variable_defined?("@#{attribute}".to_sym)
+      record.errors.add(attribute, :blank, options) if value.blank?
+    else
       message = options[:message] || 'missing'
       record.errors.add(attribute, message, options)
-    else
-      record.errors.add(attribute, :blank, options) if value.blank?
     end
   end
 end

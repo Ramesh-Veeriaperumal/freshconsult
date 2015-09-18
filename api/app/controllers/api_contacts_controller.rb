@@ -27,7 +27,7 @@ class ApiContactsController < ApiApplicationController
     assign_protected
     @item.assign_attributes(params[cname].except('tag_names'))
     contact_delegator = ContactDelegator.new(@item)
-    if !contact_delegator.valid?
+    unless contact_delegator.valid?
       render_custom_errors(contact_delegator, true)
       return
     end

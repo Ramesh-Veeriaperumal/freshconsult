@@ -18,7 +18,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         update: 22,
         index: 13,
         destroy: 35
-      } 
+      }
 
       v2_payload = v2_group_payload
 

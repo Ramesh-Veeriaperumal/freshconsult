@@ -51,11 +51,11 @@ module TestClassMethods
 
   def write_to_file(v1, v2, class_name = self.class.name)
     path = "#{Rails.root}/test/api/query_reports"
-    if File.exists?("#{path}/#{class_name}_details.rb")
+    if File.exist?("#{path}/#{class_name}_details.rb")
       File.rename("#{path}/#{class_name}_details.rb", "#{path}/#{class_name}_old_details.rb")
     end
 
-    File.open("#{path}/#{class_name}_details.rb", "w+") do |f|
+    File.open("#{path}/#{class_name}_details.rb", 'w+') do |f|
       f.write(JSON.pretty_generate v1 || {})
       f.write("\n")
       f.write(JSON.pretty_generate v2 || {})

@@ -100,16 +100,16 @@ module Helpers::TicketFieldsHelper
     end
 
     field_choices = { 'test_custom_country' => [['Australia', '0',
-                                     [['New South Wales', '0', [['Sydney', '0']]],
-                                      ['Queensland', '0', [['Brisbane', '0']]]
-                                     ]
-                                    ],
-                                    ['USA', '0',
-                                     [['California', '0', [['Burlingame', '0'], ['Los Angeles', '0']]],
-                                      ['Texas', '0', [['Houston', '0'], ['Dallas', '0']]]
-                                     ]
-                                    ]
-                                   ],
+                                                 [['New South Wales', '0', [['Sydney', '0']]],
+                                                  ['Queensland', '0', [['Brisbane', '0']]]
+                                                 ]
+                                                ],
+                                                ['USA', '0',
+                                                 [['California', '0', [['Burlingame', '0'], ['Los Angeles', '0']]],
+                                                  ['Texas', '0', [['Houston', '0'], ['Dallas', '0']]]
+                                                 ]
+                                                ]
+                                               ],
                       'First' =>  [['001', '0',
                                     [['011', '0', [['111', '0']]],
                                      ['012', '0', [['121', '0']]]
