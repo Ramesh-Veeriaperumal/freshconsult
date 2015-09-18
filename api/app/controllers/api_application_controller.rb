@@ -116,9 +116,16 @@ class ApiApplicationController < MetalApiController
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
+      return if handle_invalid_multipart_form_data(exception.params)
       Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
+    end
+
+    def handle_invalid_multipart_form_data(exception_params)
+      return false unless request.raw_post == exception_params.join && request["CONTENT_TYPE"] =~ /multipart\/form-data/
+      render_request_error :invalid_multipart, 400
+      true
     end
 
     def ensure_proper_fd_domain # 404

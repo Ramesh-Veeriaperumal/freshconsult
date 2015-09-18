@@ -26,6 +26,10 @@ class Middleware::ApiRequestInterceptor
         Rails.logger.error("API MultiJson::ParseError: #{error.data.string} \n#{error.message}\n#{error.backtrace.join("\n")}")
         message =  { code: 'invalid_json', message: "Request body has invalid json format" }
         set_response(400, RESPONSE_HEADERS, message)
+      rescue StandardError => error
+        Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
+        message =  { code: 'internal_error', message: "We're sorry, but something went wrong." }
+        set_response(500, RESPONSE_HEADERS, message)
       end
     end
     [@status, @headers, @response]

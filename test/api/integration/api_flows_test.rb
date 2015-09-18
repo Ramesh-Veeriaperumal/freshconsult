@@ -77,10 +77,27 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_multipart_valid_content_type
     skip_bullet do
-      post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'subject' => 'Test Subject' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
+      headers, params = encode_multipart({ 'email' => 'test@abc.com', 'subject' => 'Test Subject' }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+      post '/api/tickets', params, @headers.merge(headers)
     end
     assert_response :created
     assert_equal Hash, parse_response(@response.body).class
+  end
+
+  def test_multipart_invalid_data_parsable
+    skip_bullet do
+      params = { 'email' => Faker::Internet.email, 'subject' => 'Test Subject' }.to_json
+      post '/api/tickets', params, @headers.merge("CONTENT_TYPE" => "multipart/form-data")
+    end
+    assert_response :bad_request
+  end
+
+  def test_multipart_invalid_data_unparsable
+    skip_bullet do
+      headers, params = encode_multipart({ 'ticket' => {'email' => 'test@abc.com', 'subject' => 'Test Subject' }}, 'attachments', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', false)
+      post '/api/tickets', params, @headers.merge(headers)
+    end
+    assert_response :internal_server_error
   end
 
   def test_unsupported_media_type_without_content_type
@@ -299,5 +316,29 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal @account.api_limit, new_api_consumed_limit
     assert_equal @account.api_limit.to_s, response.headers['X-RateLimit-Limit']
     assert_equal '0', response.headers['X-RateLimit-Remaining']
+  end
+
+  EOL = "\015\012"  # "\r\n"
+  # Encode params and image in multipart/form-data.
+  def encode_multipart(params,image_param,image_file_path,content_type, encoding)
+    headers={}
+    parts=[]
+    boundary="234092834029834092830498"
+    params.each_pair do |key,val|
+      parts.push %{Content-Disposition: form-data; }+
+                 %{name="#{key}"#{EOL}#{EOL}#{val}#{EOL}}
+    end
+    image_part = \
+      %{Content-Disposition: form-data; name="#{image_param}"; }+
+      %{filename="#{File.basename(image_file_path)}"#{EOL}}+
+      %{Content-Type: #{content_type}#{EOL}#{EOL}}
+    file_read_params = encoding ? [image_file_path, encoding: "UTF-8"] : [image_file_path]
+    image_part << File.read(*file_read_params) << EOL
+    image_part = image_part.force_encoding("BINARY") if image_part.respond_to?(:force_encoding) if encoding
+    parts.push(image_part)
+    body = parts.join("--#{boundary}#{EOL}")
+    body = "--#{boundary}#{EOL}" + body + "--#{boundary}--"+EOL
+    headers['CONTENT_TYPE']="multipart/form-data; boundary=#{boundary}"
+    [ headers , body.scrub! ]
   end
 end
