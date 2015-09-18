@@ -66,7 +66,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_plain => plain_version,
              :email_body_html => html_version,
              :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
-             :survey_id => survey_id
+             :survey_id => survey_id,
+             :disable_bcc_notification => e_notification.bcc_disabled?
           }) unless receips.nil?
   end
 
@@ -97,7 +98,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                :receips => receips,
                :email_body_plain => plain_version,
                :email_body_html => html_version,
-               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
+               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+               :disable_bcc_notification => e_notification.bcc_disabled?}
       deliver_email_notification(params) unless receips.nil?
     end
   end
@@ -135,12 +137,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
    
   def email_notification(params)
     ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
-    
+      
+    bcc_email = params[:disable_bcc_notification] ? "" : account_bcc_email(params[:ticket])
+
     headers = {
       :subject                   => params[:subject],
       :to                        => params[:receips],
       :from                      => params[:ticket].friendly_reply_email,
-      :bcc                       => account_bcc_email(params[:ticket]),
+      :bcc                       => bcc_email,
       "Reply-to"                 => "#{params[:ticket].friendly_reply_email}", 
       "Auto-Submitted"           => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", 

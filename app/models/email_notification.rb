@@ -115,6 +115,8 @@ class EmailNotification < ActiveRecord::Base
   TOKEN_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[0]] }.flatten]
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
 
+  BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
+
   def token
     TOKEN_BY_KEY[self.notification_type]
   end
@@ -227,6 +229,10 @@ class EmailNotification < ActiveRecord::Base
     if self.reply_template? or self.cc_notification?
       "requester_template"
     end  
+  end
+
+  def bcc_disabled?
+    BCC_DISABLED_NOTIFICATIONS.include?(self.notification_type)
   end
 
   private
