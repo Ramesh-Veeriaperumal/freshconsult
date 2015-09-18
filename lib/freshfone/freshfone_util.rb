@@ -191,7 +191,12 @@ module Freshfone::FreshfoneUtil
   end
 
   def call_answered?
-    current_call.agent.present? && (current_call.user_id == agent_id.to_i)
+    current_call.agent.present? && (current_call.user_id == get_agent_id.to_i)
+  end
+  
+  def get_agent_id
+    return agent_id if agent_id.present?
+    sip_user_id(params[:From]) if (current_call.sip?)
   end
 
   def agent_id

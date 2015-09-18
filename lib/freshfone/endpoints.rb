@@ -4,8 +4,8 @@ module Freshfone::Endpoints
     "#{host}/freshfone/conference/outgoing_accepted?call=#{call_id}"
   end
 
-  def outgoing_status_url(call_id)
-    "#{status_url}?call=#{call_id}"
+  def outgoing_status_url(call_id,agent_id)
+    "#{status_url}?call=#{call_id}&agent_id=#{agent_id}"
   end
 
   def forward_accept_url(call_id, agent_id)
