@@ -107,7 +107,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       cc_emails_string = ticket.cc_email[:reply_cc].join(",") if ticket.cc_email 
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC) 
     else
-      cc_emails_string = options && options[:cc_emails] && options[:cc_emails].join(",")
+      cc_emails_string = options[:cc_emails].join(",") if (options && options[:cc_emails])
       e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NEW_TICKET_CC) 
     end
     return if cc_emails_string.blank?
