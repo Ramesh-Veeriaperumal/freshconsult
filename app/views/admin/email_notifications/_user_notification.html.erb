@@ -1,4 +1,4 @@
-<% unless !current_account.features_included?(:contact_merge_ui) and user_notification.notification_type == 17 %>
+<% unless user_notification.notification_type == EmailNotification::ADDITIONAL_EMAIL_VERIFICATION  %>
 	<tr>
 		<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(user_notification.can_turn_off_for_requester?) %>>
 			<% if !(user_notification.can_turn_off_for_requester?) %>
