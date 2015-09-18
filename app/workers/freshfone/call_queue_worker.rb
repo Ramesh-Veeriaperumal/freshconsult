@@ -25,7 +25,7 @@ module Freshfone
           
           self.current_account = account
           self.params          = params
-          current_user         = ::User.find(agent)
+          current_user         =  current_account.users.technicians.visible.find(agent)
           freshfone_user       =  current_user.freshfone_user if current_user.present?
           return if current_user.blank? || freshfone_user.blank? || !freshfone_user.online?
           
