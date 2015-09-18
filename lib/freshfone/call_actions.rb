@@ -200,7 +200,7 @@ class Freshfone::CallActions
 				params[:customer] = search_customer_with_number(params["#{direction}"])
 			end
 			Rails.logger.debug "Child Call Id:: #{current_call.id} :: Group_id::  #{current_call.group_id} :: params :: #{params[:group_id]}"
-			params[:group_id] ||= call.group_id unless call.group_id.blank?
+			params[:group_id] ||= call.group_id if call.group_id.present? && params[:group_transfer] == 'true'
 			call.build_child_call(params)
 		end
 
