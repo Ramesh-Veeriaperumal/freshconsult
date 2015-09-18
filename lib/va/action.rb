@@ -176,7 +176,7 @@ class Va::Action
       
       unless ticket_cc_emails.include?(cc_email_value)
         act_on.cc_email[:cc_emails] << cc_email_value 
-        Helpdesk::TicketNotifier.send_cc_email(act_on,{:cc_emails => cc_email_value.to_a })
+              Helpdesk::TicketNotifier.send_later(:send_cc_email, act_on, nil, {:cc_emails => cc_email_value.to_a })
       end
     end
   end
@@ -201,7 +201,7 @@ class Va::Action
   def send_email_to_requester(act_on)
     if act_on.requester_has_email?
       act_on.account.make_current
-      Helpdesk::TicketNotifier.email_to_requester(act_on, 
+      Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, act_on, 
         substitute_placeholders_for_requester(act_on, :email_body),
                       substitute_placeholders_for_requester(act_on, :email_subject)) 
       add_activity("Sent an email to the requester") 
@@ -271,9 +271,9 @@ class Va::Action
 
     def send_internal_email act_on, receipients
       act_on.account.make_current
-      Helpdesk::TicketNotifier.internal_email(act_on, 
+      Helpdesk::TicketNotifier.send_later(:deliver_internal_email, act_on, 
         receipients, substitute_placeholders(act_on, :email_body),
-          substitute_placeholders(act_on, :email_subject))
+          substitute_placeholders(act_on, :email_subject))      
     end
 
     def substitute_placeholders_for_requester act_on, content_key

@@ -44,7 +44,7 @@ SugarWidget.prototype= {
 
 	
 	initialize:function(sugarBundle){
-		jQuery("#sugarcrm_widget").addClass('loading-fb');
+		jQuery("#sugarcrm_contacts_widget").addClass('loading-fb');
 		sugarWidget = this;
 		this.sugarBundle = sugarBundle;
 		this.failureCount = 0;
@@ -52,7 +52,7 @@ SugarWidget.prototype= {
 		if(sugarBundle.domain) {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				app_name:"Sugar CRM",
-				widget_name:"sugarcrm",
+				widget_name:"sugarcrm_contacts_widget",
 				application_id:sugarBundle.application_id,
 				integratable_type:"crm",
 				domain:sugarBundle.domain,
@@ -81,7 +81,7 @@ SugarWidget.prototype= {
 			}
 			else{
 				sugarWidget.processFailure();
-				jQuery("#sugarcrm_widget").removeClass('loading-fb');
+				jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');
 				return;
 			}
 		}
@@ -94,7 +94,7 @@ SugarWidget.prototype= {
 			}
 			else if(resJ.result_count > 1){
 				sugarWidget.renderSearchResults();
-				jQuery("#sugarcrm_widget").removeClass('loading-fb');
+				jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');
 
 			}
 
@@ -165,7 +165,7 @@ SugarWidget.prototype= {
 	renderContactNa:function(){
 		sugarWidget.freshdeskWidget.options.application_html = function(){ return sugarWidget.SUGAR_CONTACT_NA.evaluate({});	} 
 		sugarWidget.freshdeskWidget.display();
-		jQuery("#sugarcrm_widget").removeClass('loading-fb');		
+		jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');		
 	},
 
 	renderContactWidget:function(){
@@ -213,7 +213,7 @@ SugarWidget.prototype= {
 		resJ = jQuery.parseJSON(responseText);
 		if (resJ.number != undefined && (resJ.number == 10)){
 			this.freshdeskWidget.alert_failure("Please verify your Sugar credentials and try again.")
-			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+			jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');
 		}
 		else{
 			Cookie.update("sugar_session", resJ.id);
@@ -252,7 +252,7 @@ SugarWidget.prototype= {
 		resJ = jQuery.parseJSON(responseText);
 		if (resJ.version == undefined){
 			this.freshdeskWidget.alert_failure("Sugar CRM version couldn't be determined. Please try after sometime or contact support.")
-			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+			jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');
 		}
 		else{
 			var version = resJ.version;
@@ -279,12 +279,12 @@ SugarWidget.prototype= {
 			if(sugarWidget.lead == true){
 				contactLink = sugarWidget.get_sugar_link("Leads", sugar_version, this.entry_list.id);
 				jQuery('#crm-contact-type').text("Lead");
-				jQuery('#sugarcrm_widget .contact-type').text("Lead").show();
+				jQuery('#sugarcrm_contacts_widget .contact-type').text("Lead").show();
 			}
 			else{
 				contactLink = sugarWidget.get_sugar_link("Contacts", sugar_version, this.entry_list.id);
 				jQuery('#crm-contact-type').text("Contact");
-				jQuery('#sugarcrm_widget .contact-type').text("Contact").show();
+				jQuery('#sugarcrm_contacts_widget .contact-type').text("Contact").show();
 			}
 			fullName = "<a target='_blank' href='" + contactLink  +"'>"+ escapeHtml(contactJson.name.value)+"</a>";
 			address = (address != "") ? address : "N/A" ;
@@ -300,7 +300,7 @@ SugarWidget.prototype= {
 			jQuery('#contact-dept').text(department);
 
 			jQuery('#crm-view').attr("href",contactLink);
-			jQuery("#sugarcrm_widget").removeClass('loading-fb');
+			jQuery("#sugarcrm_contacts_widget").removeClass('loading-fb');
 
 		}
 	},

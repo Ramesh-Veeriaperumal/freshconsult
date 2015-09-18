@@ -5,17 +5,20 @@ module Helpdesk::TimeSheetsHelper
     end
   end
   
-  def renderTimesheetIntegratedApps( liquid_values ) 
+  def render_timesheet_integrated_apps( liquid_values ) 
     integrated_apps.map do |app|
+      installed_app = get_app_details(app[0])
+      next if installed_app.blank? or is_timeactivity_disabled?(installed_app)  
       widget_code = get_app_widget_script(app[0], app[1], liquid_values)
-      widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values, :filters => [Integrations::FDTextFilter])
-      unless get_app_details(app[0]).blank?
-         content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
-           ("<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
-            '<div class="integration_container">' + widget_code_with_ticket_id + '</div>' +
-           content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small") ).html_safe     
-           #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
-         end
+      widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values, :filters => [Integrations::FDTextFilter])      
+      note_html = Liquid::Template.parse(installed_app.configs[:inputs]["#{app[0]}_note"]).render(liquid_values, :filters => [Integrations::FDTextFilter])
+      content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
+       ("<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
+        '<div class="integration_container">' +
+        content_tag(:div, content_tag(:div, '', :class => 'content'), :title => installed_app.configs_title, :id => "#{app[0]}_widget") +
+        content_tag(:div, note_html, :class => "hide", :id => "#{app[0]}-note") +
+        widget_code_with_ticket_id + '</div>' +
+       content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small") ).html_safe     
       end
     end
   end
@@ -93,7 +96,8 @@ module Helpdesk::TimeSheetsHelper
   def timesheet_integrations_enabled?
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
-      unless app_detail.blank?
+      if app_detail.present?
+        next if is_timeactivity_disabled?(app_detail)
         return true
       end
     end
@@ -115,12 +119,18 @@ module Helpdesk::TimeSheetsHelper
   end
   
   private 
-    def integrated_apps 
-      [
-        [Integrations::Constants::APP_NAMES[:freshbooks],   "#{Integrations::Constants::APP_NAMES[:freshbooks]}_timeentry_widget",   "freshbooksWidget"],
-        [Integrations::Constants::APP_NAMES[:harvest],      "#{Integrations::Constants::APP_NAMES[:harvest]}_timeentry_widget",      "harvestWidget"],
-        [Integrations::Constants::APP_NAMES[:workflow_max], "#{Integrations::Constants::APP_NAMES[:workflow_max]}_timeentry_widget", "workflowMaxWidget"],
-        [Integrations::Constants::APP_NAMES[:quickbooks], "#{Integrations::Constants::APP_NAMES[:quickbooks]}_timeentry_widget", "quickbooksWidget"]
-      ]
+    def integrated_apps
+      Integrations::Constants::TIMESHEET_APPS.map do |app|
+        if Integrations::Constants::INVOICE_APPS.include?(app)
+          [app, "#{app}_timeentry_widget", "Freshdesk.NativeIntegration.#{app}Widget"]
+        else
+          [app,"#{app}_timeentry_widget","#{app}Widget"]
+        end
+      end
     end
+
+    def is_timeactivity_disabled?(inst_app)    
+     Integrations::TimeSheetsSync.is_timeactivity_disabled?(inst_app)
+   end
+   
 end

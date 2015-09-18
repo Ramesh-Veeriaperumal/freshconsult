@@ -146,8 +146,7 @@ module Freshfone
         :timeout         => current_number.ringing_time,
         :to              => params[:external_number],
         :from            => current_call.number, #Showing freshfone number
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
-        :if_machine      => "hangup"
+        :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
       begin
         agent_call = telephony.make_call(call_params)
@@ -194,8 +193,7 @@ module Freshfone
         :timeout         => current_number.ringing_time,
         :to              => current_call.direct_dial_number,
         :from            => current_call.number, #Showing freshfone number
-        :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit,
-        :if_machine      => "hangup"
+        :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit
       }
       begin
         direct_dial = telephony.make_call(call_params)

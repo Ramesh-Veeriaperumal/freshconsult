@@ -35,7 +35,7 @@ module Solution::Cache
   def category_sort_order(cat)
     (cat[:portal_solution_categories].select do |psc|
       psc[:portal_id] == current_portal.id
-    end).first[:position]
+    end).first[:position].to_i
   end
 
   def visible_in_current_portal?(portal_sol_cat,portal_id)

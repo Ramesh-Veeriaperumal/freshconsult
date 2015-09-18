@@ -58,6 +58,14 @@
   }
 
   .article-sticky {
+    .breadcrumb-btns {
+      width: 300px;
+    }
+
+    .edit-container{
+      width: 140px;
+    }
+
     .breadcrumb.breadcrumb-edit {
       li::after {
         display: block;
@@ -65,7 +73,7 @@
       }
 
       a {
-        max-width: 200px;
+        max-width: 180px;
         display: inline-block;
         white-space: nowrap;
         overflow: hidden;

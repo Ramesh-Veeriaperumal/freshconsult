@@ -14,7 +14,8 @@ class Freshfone::CallMeta < ActiveRecord::Base
       [:ios, 3],
       [:available_on_phone, 4],
       [:direct_dial, 5],
-      [:external_transfer, 6]
+      [:external_transfer, 6],
+      [:sip,7]
     ]
   
   PINGED_AGENT_RESPONSE = [

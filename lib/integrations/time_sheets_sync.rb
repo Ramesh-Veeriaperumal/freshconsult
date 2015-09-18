@@ -49,7 +49,7 @@ class Integrations::TimeSheetsSync
 
   def self.quickbooks(inst_app, timeentry, user)
     integrated_resource = timeentry.integrated_resources.find_by_installed_application_id(inst_app)
-    return if integrated_resource.blank?
+    return if (integrated_resource.blank? || is_timeactivity_disabled?(inst_app))
     params = quickbooks_params('post', "v3/company/" + inst_app.configs[:inputs]['company_id'] + "/timeactivity")
     quickbooks_timeentry = quickbooks_fetch_timeentry(inst_app, integrated_resource.remote_integratable_id)
     quickbooks_timeentry["hours"] = timeentry.hours.to_f.floor
@@ -124,6 +124,10 @@ class Integrations::TimeSheetsSync
         :app_name => "quickbooks"
       }
       params
+    end
+
+    def self.is_timeactivity_disabled?(inst_app)    
+      (inst_app.configs_timeactivity.present? && !inst_app.configs_timeactivity.to_bool)
     end
 
     #Request Templates for the update operations on the third party apps.

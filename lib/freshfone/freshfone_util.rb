@@ -9,6 +9,18 @@ module Freshfone::FreshfoneUtil
     caller_id.match(/client:(\d+)/) ? $1 : nil
   end
 
+  def sip_user_id(caller_id=params[:From])
+    caller_id[/\d+/].to_i
+  end
+
+  def sip_call?
+    params[:SipCallId].present?
+  end
+
+  def sip_number
+    "+#{params[:To][/\d+/].to_i}"
+  end
+
   def host
     current_account.url_protocol + "://" + current_account.full_domain
   end
@@ -179,7 +191,12 @@ module Freshfone::FreshfoneUtil
   end
 
   def call_answered?
-    current_call.agent.present? && (current_call.user_id == agent_id.to_i)
+    current_call.agent.present? && (current_call.user_id == get_agent_id.to_i)
+  end
+  
+  def get_agent_id
+    return agent_id if agent_id.present?
+    sip_user_id(params[:From]) if (current_call.sip?)
   end
 
   def agent_id

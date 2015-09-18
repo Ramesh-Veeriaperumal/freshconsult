@@ -78,6 +78,35 @@
 	width: 70px;
 }
 
+.queue_setting_div.main {
+  border-left: 1px solid #bbb;
+  padding-left: 10px;
+  margin-top: 15px;
+  .message-container {
+  	padding-left: 0;
+  	.message-type {
+  		margin-left: 0;
+  	}
+  }
+  .queue_position_controls {
+  	padding-top: 10px;
+  	textarea {
+			width: 417px;
+			max-height: 80px;
+  	}
+  	.recording-alert {
+  		padding-left: 2px;
+  	}
+  }
+
+  .settings-label { 
+  	max-width: 185px;
+  	font-weight: normal; 
+  }
+  .controls {
+  	margin-left: 160px;
+  }
+}
 .queue_wait_time{
 	display: inline-block;
 	.queue_wait_time_options{

@@ -1810,8 +1810,17 @@ ol, ul, li{
 		}
 
 		.new_timer a {
-			font-size: 14px;
+			font-size: 13px;
 			font-weight: bold;
+			display: block;
+            @include margin(10px 0px);
+            padding: 8px;
+            background:#fff;
+
+			&:hover{
+			    background:#fafafa;
+			}
+
 		}
 
 		#timesheetlist {
@@ -1903,6 +1912,7 @@ ol, ul, li{
 			margin-bottom: 10px;
 			a {
 				@include margin(5px 10px 5px 0);
+				text-transform: capitalize;
 			}
 
 			.toggle_timer {
@@ -2044,6 +2054,13 @@ ol, ul, li{
 				width: 150px;
 			}
 
+		}
+
+		li.default_source.dynamic_sections, li.default_ticket_type.dynamic_sections{
+			width: 100%;
+			.customSelect, select, .select2-container{
+				width: 310px;
+			}
 		}
 
 		.chzn-container-single .chzn-single {
@@ -2317,6 +2334,11 @@ ol, ul, li{
 	margin: 5px;
 	padding: 0;
 	@include clear(both);
+
+	input.executed_at {
+        cursor: pointer;
+        background-color: #fff;
+    }
 
 	#timeentry_apps_add {
 		@include clear(both);

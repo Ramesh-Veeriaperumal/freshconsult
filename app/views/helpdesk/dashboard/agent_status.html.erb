@@ -1,4 +1,5 @@
 <%= stylesheet_link_tag :'cdn/agent_availability_status' %>
+<%= javascript_include_tag :'cdn/livechat_agentAvailability' %>
 <p class="mb20 clearfix"><a href="/helpdesk">< <%= t('helpdesk.dashboard.round_robin.back') %> </a></p>
 
 <div class="availabilty-status">
@@ -18,6 +19,11 @@
                         </li>
                   <% end %>
 
+                  <% if chat_active? %>
+                     <li>
+                         <a  class="lc-availability-tab" id="lc-availability-tab" href="#lc-availability" ><%= t('helpdesk.dashboard.livechat.chat') %></a>
+                     </li>
+                   <% end %>
             </ul>
 
             <div class="tab-content">
@@ -29,6 +35,60 @@
                      <%= render :partial => "freshfone" %>
                   <% end %>
 
+                  <% if chat_active? %>
+                    <div class="tab-pane" id="lc-availability">
+                      <div class="list-page">
+                        <div class="list-page-header clearfix">
+                          <ul class="">
+                            <li>
+                              <ul class="lc-minimal-swap pull-left pt5">
+                                  <li class="minimal-pill tab-link current" data-tab="lc-tab-1">
+                                    <%= t('helpdesk.dashboard.livechat.accepting') %>
+                                    <span id="accepting_count"></span>
+                                  </li>
+                                  <li class="tab-link" data-tab="lc-tab-2">
+                                    <%= t('helpdesk.dashboard.livechat.not_accepting') %>
+                                    <span id="not_accepting_count"></span>
+                                  </li>
+                              </ul>
+                              <ul class="agents-filter pull-left">
+                                 <li class="m10 ml20 group dropdown pull-left">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <b ><span class="filter-name" id="fc-group-name" ><%= t('helpdesk.dashboard.round_robin.all_agents') %></span></b>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" id="fc-group-filter">
+                                       <li class="all-agents" data-id="0"><a href="#"><%= t('helpdesk.dashboard.round_robin.all_agents') %></a></li>
+                                        <li class="divider"></li>
+                                          <% @groupOptions.each do |group| %>
+                                            <li data-id="<%= group[1] %>" class = "<%= (group[1] == "disabled") ? "disabled" : "" %>"><a href="#"><%= group[0] %></a></li>
+                                          <% end %>
+                                    </ul>
+                                  </li>
+                                  <li class="m10 ml20 sort dropdown pull-left">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= t('helpdesk.dashboard.livechat.sort_by') %>
+                                        <b ><span class="sort-filter" id="sort_by" ><%= t('helpdesk.dashboard.livechat.name') %></span></b>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" id="fc-sort-filter">
+                                       <li class="sort_name" data-id="sort_name">
+                                        <a href="#"><%= t('helpdesk.dashboard.livechat.name') %>
+                                        </a>
+                                       </li>
+                                       <li class="sort_presence" data-id="sort_presence">
+                                        <a href="#"><%= t('helpdesk.dashboard.livechat.last_modified') %>
+                                        </a>
+                                       </li>
+                                    </ul>
+                                  </li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div>
+                        <%= render :partial => "agent_list" %>
+                        </div>
+                    </div>
+                  <% end %>
             </div>
            
           <% content_for :sidebar do %>
@@ -44,7 +104,7 @@
     jQuery(active_tab+'-tab').tab('show');
   }
   else{
-    active_tab_order={"tickets-tab": <%= round_robin? %>,"phone-tab": <%= freshfone_active? %> } 
+    active_tab_order={"tickets-tab": <%= round_robin? %>,"phone-tab": <%= freshfone_active? %>, "lc-availability-tab": <%= chat_active? %> } 
     jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
           if(value){
             jQuery('.'+index).tab('show');
@@ -56,3 +116,40 @@
 <% end %>
 
 
+<% if chat_active? %>
+<script type="text/javascript">
+   App.Dashboard.bindToggle();
+  var liveChat = window.liveChat || {};
+  window.liveChat.agentsInGroups =  <%=@agents_in_groups%>;
+  if(window.userCollection){
+    window.liveChat.agentsAvailabilityView();
+  }else{
+    jQuery(document).on('chatLoaded',function(){
+       window.liveChat.agentsAvailabilityView();
+       jQuery(document).off('chatLoaded');
+    });
+  }
+  jQuery( document ).ready(function( $ ) {
+  $(".lc-offline-tab").hide();
+  $('#lc-availability .tab-link').click(function(){
+    var getClass = "#"+$(this).attr("data-tab");
+    if($(this).attr("data-tab") == "lc-tab-3"){
+      $(this).toggleClass("toggle");
+      $(getClass).toggleClass("current");
+    }else{
+      if(!($(this).hasClass('current'))){
+        $(this).addClass("current");
+        $(this).siblings().removeClass("current");
+        $(".agent-list").find(getClass).addClass("current");
+        $(".agent-list").find(getClass).siblings().removeClass("current");
+        if(!($(this).attr("data-tab") == "lc-tab-1")){
+          $(".lc-offline-tab").show();
+        }else{
+          $(".lc-offline-tab").hide();
+        }
+      }
+    }
+  });
+});
+</script>
+<% end %>
