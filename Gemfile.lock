@@ -1000,7 +1000,6 @@ DEPENDENCIES
   bullet
   bunny (= 1.7.0)
   business_time!
-  byebug
   carmen!
   chargebee (~> 1.5.1)
   clockwork (= 0.4.1)

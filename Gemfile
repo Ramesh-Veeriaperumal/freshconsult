@@ -5,7 +5,6 @@ source 'http://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rack", :git =>"git://github.com/freshdesk/rack.git", :branch => 'rack_1.4.5'
 gem "rails","3.2.18"
-gem "byebug"
 
 gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
