@@ -58,8 +58,14 @@
         elsif Integrations::Constants::INVOICE_APPS.include? app_name or app_name == Integrations::Constants::APP_NAMES[:shopify]
         	liquid_objects["widget_type"] = "_side_bar"
       	end
-        widget_code = widget_script(installed_app, widget, liquid_objects)
-        if app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
+        widget_code = widget_script(installed_app, widget, liquid_objects) %>
+        <%if app.application_type == 'freshplug' %>
+	        <div id="<%=app.name%>" class="widget">
+						<div class="content">
+								<%= widget_code %>
+						</div>
+	        </div>
+        <%elsif app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
         	<div id="<%=app_name%>" class="widget ">
         		<div class="content"></div>
         		<%= widget_code %>
