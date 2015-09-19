@@ -1,0 +1,40 @@
+<% if (models && models.length>0){ %>
+<% for(var i = 0,j = 0 ,length = models.length;i<length;i++){
+var modelJson = models[i].attributes;
+%>
+<tr data-count = "<%=++j%>" id = "<%=modelJson.id%>">
+  <td>
+    <span class="available_avatar_image cust-list-avatar pull-left preview_pic"><img data-src="/users/<%=modelJson.id%>/profile_image" src="/users/<%=modelJson.id%>/profile_image" alt="" />
+    </span>
+    <span class="name pull-left pl10"><%=modelJson.name%></span>
+  </td>
+  <td class="text-right">
+    <span class="presence_time_in_s muted">
+<% if(modelJson.onGoingChatCount == 0) { %>
+  <% if(modelJson.last_activity_at) { %>
+   <%= window.moment(modelJson.last_activity_at).fromNow()%>
+  <% }else{ %>
+   <%= CHAT_I18n.no_activity %>
+  <% } %>
+<% }else if(showCount){ %>
+  <% if(modelJson.onGoingChatCount == "1"){ %>
+    <%=modelJson.onGoingChatCount%><span> Chat in progress</span>
+  <% }else{ %>
+    <%=modelJson.onGoingChatCount%><span>&nbsp<%= CHAT_I18n.chats_in_progress %></span>
+  <% } %>
+<% }else{ %>
+  <% if(modelJson.last_activity_at) { %>
+      <%= window.moment(modelJson.last_activity_at).fromNow()%>
+    <% }else{ %>
+      <%= CHAT_I18n.no_activity %>
+  <% } %>
+<% } %>
+    </span>
+  </td>
+</tr>
+<% } %>
+<% }else{ %>
+  <tr>
+    <td><span class="no-data"><%= CHAT_I18n.no_agents %></span></td>
+  </tr>
+<% } %>

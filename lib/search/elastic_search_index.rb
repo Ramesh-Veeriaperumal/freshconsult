@@ -5,30 +5,16 @@ module Search::ElasticSearchIndex
       include Tire::Model::Search if ES_ENABLED
 
       def update_es_index
-        #Remove as part of Search-Resque cleanup
-        if Search::Job.sidekiq?
-          SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
-                                                            :id => self.id })
-        else
-          Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name,
-                                                      :id => self.id,
-                                                      :account_id => self.account_id })
-        end if ES_ENABLED #and !queued?
+        SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
+                                                          :id => self.id }) if ES_ENABLED #and !queued?
 
         # For multiplexing to the cluster that count is fetched from
         add_to_es_count if self.is_a?(Helpdesk::Ticket)
       end
 
       def remove_es_document
-        #Remove as part of Search-Resque cleanup
-        if Search::Job.sidekiq?
-          SearchSidekiq::RemoveFromIndex::Document.perform_async({ :klass_name => self.class.name, 
-                                                                    :id => self.id })
-        else
-          Resque.enqueue(Search::RemoveFromIndex::Document, { :klass_name => self.class.name,
-                                                              :id => self.id,
-                                                              :account_id => self.account_id })
-        end if ES_ENABLED
+        SearchSidekiq::RemoveFromIndex::Document.perform_async({ :klass_name => self.class.name, 
+                                                                  :id => self.id }) if ES_ENABLED
 
         # For multiplexing to the cluster that count is fetched from
         remove_from_es_count if self.is_a?(Helpdesk::Ticket)

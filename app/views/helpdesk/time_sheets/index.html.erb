@@ -1,16 +1,16 @@
-<div id="timesheetlist">
-	<%= each_or_message "time_entry", @ticket.time_sheets, t(".no_timeentry") %>
-</div>
 <div class="new_timer">
-	<a id="triggerAddTime" href="<%= new_helpdesk_ticket_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
+	<a  class="btn btn-flat" id="triggerAddTime" href="<%= new_helpdesk_ticket_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
 		rel="freshdialog" data-target="#new_timeentry" data-width="480"
 		 data-submit-label="<%= t('save')%>" data-submit-loading="<%= t('saving')%>"
 		 ><%= t('ticket.add_time') %></a>
 </div>
+<div id="timesheetlist">
+	<%= each_or_message "time_entry", @ticket.time_sheets, t(".no_timeentry") %>
+</div>
 <%= javascript_tag do -%> 
    jQuery('#timeentry_timer_total').data('staticTotal', false);
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
-   jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
+   jQuery('#timesheetlist .time-tracked-details:first .toggle_timer').show();
    trigger_event("sidebar_loaded",{name: "time_sheets", dom_id: "#TimesheetTab"});
 <% end %>
 <%= javascript_include_tag :'cdn/timesheet' %>

@@ -1,6 +1,21 @@
 <!-- Modal -->
 <!-- available -->
-<div id="sectionConfirmModal" class="section-dialog-confirm modal hide fade" role="dialog" aria-hidden="true">
+<%
+    var field_submit = '',
+        modal_id = '',
+        field_cancel = '';
+    if(confirm_type == 'deleteNonSecField'){
+      field_submit = 'confirmDeleteSubmit';
+      field_cancel = 'confirmDeleteCancel';
+      modal_id = 'ConfirmModal';
+    }
+    else{
+      field_submit = 'confirmFieldSubmit';
+      field_cancel = 'confirmFieldCancel';
+      modal_id = 'sectionConfirmModal';
+    }
+%>
+<div id="<%= modal_id %>" class="section-dialog-confirm modal hide fade" role="dialog" aria-hidden="true">
   <div class="modal-header">
     <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
     <h3>
@@ -77,6 +92,12 @@
 			 
 		</div>
 
+    <% } else if(confirm_type == 'deleteNonSecField'){%>
+
+    <div> 
+      <%= translate.get('confirmDelete') %>
+    </div>
+
 	<% } else{ %>	
 
 		<div>
@@ -88,9 +109,9 @@
   <span class="seperator"></span> 
   <div class="alignright modal-footer">
     <% if(confirm_type != 'available'){%>
-    <button class="btn" data-dismiss="modal" aria-hidden="true" id="confirmFieldCancel"><%= translate.get('cancel') %> </button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" id="<%= field_cancel %>"><%= translate.get('cancel') %> </button>
     <% } %>
-    <a class="btn btn-primary" id="confirmFieldSubmit">
+    <a class="btn btn-primary" id="<%= field_submit %>">
     	<% 
     		switch(confirm_type) {
     			case 'available':
@@ -105,6 +126,7 @@
     			case 'deleteSecField':
     			case 'deleteField':
     			case 'confirmDeleteField':
+          case 'deleteNonSecField' :
     				print(translate.get('delete_btn'));
     				break; 
 

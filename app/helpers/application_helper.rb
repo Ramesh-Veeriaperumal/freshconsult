@@ -431,7 +431,11 @@ module ApplicationHelper
 
   #Liquid template parsing methods used in Dashboard and Tickets view page
   def eval_activity_data(data)
-    unless data['eval_args'].nil?
+    if data['eval_args'].nil?
+      data.each_pair do |k,v|
+        data[k] = h v
+      end
+    else
       data['eval_args'].each_pair do |k, v|
         data[k] = send(v[0].to_sym, v[1])
       end
@@ -908,7 +912,8 @@ module ApplicationHelper
                      :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
         
     end
-    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field"
+    element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
+    content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
   end
 
   def construct_section_fields(f, field, is_edit, item, required)

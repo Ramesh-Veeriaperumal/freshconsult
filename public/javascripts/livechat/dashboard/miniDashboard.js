@@ -40,6 +40,10 @@
           if(userCollection.availabilityAgentsCount >= 0){
             jQuery('#online_agent_count').html(userCollection.availabilityAgentsCount);
           }
+          if(!CURRENT_USER.isAdmin){
+            this.$el.find("#online_agent_count").unwrap();
+            this.$el.find("#online_agent_count").parent("li").removeClass();
+          }
   
           visitorCollection.fetchCount();
           if(window.chat_socket && !window.chat_socket.connected){

@@ -56,7 +56,6 @@
 			this.editSectionDialogue();
 			this.deleteSectionDialogue();
 			this.sectionValidateOptions();
-
 			$(document).on('mouseover', this.options.sectionWrapper, function (e) {
 				var parent_field = $(this).parents('li.custom-field');
 				parent_field.find('.options-wrapper').first().hide();
@@ -83,10 +82,6 @@
 
 			$(this.options.formContainer).on('click', this.options.sectionWrapper, $.proxy(function (e) {
 				e.stopPropagation();
-			}, this));
-
-			$(document).on('click', this.options.sectionSubmitBtn, $.proxy(function () {
-				$(this.options.sectionPropertiesForm).submit();
 			}, this));
 
 			$(document).on('click', this.options.confirmFieldSubmit, $.proxy(function (e) {
@@ -130,7 +125,16 @@
 				this.options.ui = {};
 				$(this.options.sectionConfirmModal).data('isSubmited', true);
 				$('.options-wrapper').hide(); //UI Fix
+				$('.twipsy :visible').hide(); // tooltip fix
 				this.hideDialog(this.options.sectionConfirmModal);
+			}, this));
+
+			$(document).keypress(this.options.sectionConfirmModal, $.proxy(function(e) {
+				e.stopPropagation();
+				var keyCode = e.which || e.keyCode || e.charCode;
+				if(keyCode == 13) {
+					$(this.options.confirmFieldSubmit).click();
+				}
 			}, this));
 
 			$(document).on('click', this.options.confirmFieldCancel, $.proxy(function(e) { 
@@ -176,9 +180,9 @@
 		},
 		doWhileDrag: function (fieldData) {
 			var placeholder = $('.ui-sortable-placeholder'),
-				isDefault = /^default/.test(fieldData.field_type);
-				
-			if (isDefault) {
+				isDefault = /^default/.test(fieldData.field_type),
+				isType = /^default_ticket_type/.test(fieldData.field_type);
+			if (isDefault && !isType) {
 				$('.default-error-wrap').show();
 			}
 			if (placeholder.closest('ul').hasClass('section-body') && isDefault) {
@@ -191,6 +195,7 @@
 			var self = this;
 			$(element).smoothSort({
 					revert: true,
+					items: 'li',
 					helper: function (ev, ui) {
 					  self.options.copyHelper = ui.clone(true).insertAfter(ui).hide();
 					  return ui.clone().data('parent', $(this));
@@ -368,8 +373,10 @@
 			
 			if ( no_of_fields.length < 1) {
 				icon_dom.addClass(delete_enabled).prop('title', '');
+				$(container).find('.emptySectionInfo').show();
 			} else {
 				icon_dom.addClass(delete_disabled).prop('title', translate.get('section_has_fields'));
+				$(container).find('.emptySectionInfo').hide();
 			}
 		},
 

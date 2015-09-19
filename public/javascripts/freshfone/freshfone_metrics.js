@@ -108,6 +108,33 @@ window.App.Phone = window.App.Phone || {};
 					}
     	});
 
+    	$('body').on('click', '.ff_call_button', function (ev) { 
+    		if($(this).parent().prop('className')=="recent_calls_call_user"){
+    			self.recordSource("RECENT_CALL_BTN");
+    		} 
+    		else{
+    			self.recordSource("SEARCH_CALL_BTN");
+    		}
+    		self.resetCallDirection();
+				self.resetConvertedToTicket();
+    		self.push_event();
+    	});
+
+    	$('body').on('click', '.keypad-key', function (ev) { 
+    		if(freshfonecalls.isOngoingCall()){
+    			self.recordSource("CLICK_IVR");
+					self.push_event();
+				}
+				else{
+					self.recordSource("DIAL_BY_NUM_PAD");
+				}
+    	});
+    	
+    	$('body').on('click', '.ficon-ff-dialpad', function (ev) { 
+    		self.recordSource("CLICK_DIAL_PAD_WIDGET");
+    		self.push_event();
+    	});
+   
 		},
 
 		recordDateState: function(index,name_space){

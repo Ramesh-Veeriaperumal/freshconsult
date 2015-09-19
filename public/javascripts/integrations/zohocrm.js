@@ -2,11 +2,12 @@ var ZohoCrmWidget = Class.create();
 ZohoCrmWidget.prototype= {
 
   initialize:function(zohocrmBundle){
-    jQuery("#zohocrm_widget").addClass('loading-fb');
+    jQuery("#zohocrm_contacts_widget").addClass('loading-fb');
     zohocrmWidget = this;
     zohocrmBundle.app_name = "ZohoCrm";
     zohocrmBundle.integratable_type = "crm";
     zohocrmBundle.auth_type = "UAuth";
+    zohocrmBundle.widget_name = "zohocrm_contacts_widget";
     zohocrmBundle.url_token_key = "authtoken"
     zohocrmBundle.username = zohocrmBundle.k;
     zohocrmBundle.domain = "https://crm.zoho.com"

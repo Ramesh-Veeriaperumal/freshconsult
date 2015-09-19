@@ -30,9 +30,9 @@ module Helpdesk::Email::ParseEmailData
 			:stripped_html => params["stripped-html"] || params["body-html"],
 			:stripped_text => params["stripped-text"] || params["body-plain"],
 			:headers => params["message-headers"],
-			:message_id => params["Message-Id"],
+			:message_id => params["Message-Id"] || "",
 			:references => params["References"],
-			:in_reply_to => params["In-Reply-To"]
+			:in_reply_to => params["In-Reply-To"] || ""
 		}
 	end
 
@@ -174,5 +174,4 @@ module Helpdesk::Email::ParseEmailData
 	def get_portal email_config
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end
-
 end
