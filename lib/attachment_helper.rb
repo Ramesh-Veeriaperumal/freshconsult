@@ -102,5 +102,18 @@
             unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
   end
 
+  def note_attachment_details(attachment)
+    ["attachable", "droppable"].each do |name|
+      if attachment.respond_to?("#{name}_type") and 
+          attachment.send("#{name}_type") == "Helpdesk::Note" 
+        id = attachment.send("#{name}_id")
+        attachments_count = attachment.send(name).all_attachments.size + 
+                           attachment.send(name).cloud_files.size
+        return {:id => id , :attachments_count => attachments_count}
+      end
+    end
+    false
+  end
+
 
 end
