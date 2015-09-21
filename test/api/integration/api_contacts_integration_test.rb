@@ -22,7 +22,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_restore: 5,
         api_make_agent: 4,
 
-        create: 36,
+        create: 34,
         update: 28,
         show: 16,
         index: 17,
