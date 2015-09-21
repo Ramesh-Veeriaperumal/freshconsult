@@ -306,7 +306,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def outbound_email?
-    Account.current.compose_email_enabled? and (source == SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    # OPTIMIZE 
+    # Avoid querying if source is not outbound_email.
+    (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?  
   end
 
   #This method will return the user who initiated the outbound email

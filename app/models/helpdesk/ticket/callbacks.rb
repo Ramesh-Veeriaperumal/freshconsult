@@ -440,13 +440,13 @@ private
       portal = self.product.portal if self.product
       language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email]) #Assign languages only for non-email tickets
       requester = account.users.new
+      requester.account = account
       requester.signup!({:user => {
         :email => self.email, #user_email changed
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language, 
-        :account => account 
+        :phone => phone, :language => language
         }}, 
         portal, !outbound_email?) # check @requester_name and active
       
@@ -602,6 +602,8 @@ private
 
   def assign_flexifield
     build_flexifield
+    # TODO
+    # Shall we memcache this?
     self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
     assign_ff_values custom_field
     @custom_field = nil
