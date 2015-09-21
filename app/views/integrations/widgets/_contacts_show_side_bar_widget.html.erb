@@ -13,8 +13,12 @@
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('contacts_show_page_side_bar')
         liquid_objects = {"requester" => user, "widget_type" => "_contacts"}
-        widget_code = widget_script(installed_app, widget, liquid_objects)
-        if is_campaign_app?(app.name) %>
+        widget_code = widget_script(installed_app, widget, liquid_objects) %>
+        <% if app.application_type == 'freshplug' %> 
+          <div id="<%=app.name%>" class="sidepanel <%=widget.clazz_option%>">
+            <%=widget_code%>
+          </div>
+        <% elsif is_campaign_app?(app.name) %>
           <div id="<%=app.name%>" class="<%=widget.clazz_option%>">
             <div id="<%=app.name%>_widget"><div class="content"></div><div class="error modal_error hide "></div></div>
             <%=widget_code%>
