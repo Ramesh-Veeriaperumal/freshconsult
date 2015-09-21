@@ -735,8 +735,9 @@ Helpkit::Application.routes.draw do
     namespace :quickbooks do
       get :refresh_access_token
       get :render_success
+      post :create_company
     end
-    
+
     resources :dynamics_crm do
       collection do
         post :settings_update

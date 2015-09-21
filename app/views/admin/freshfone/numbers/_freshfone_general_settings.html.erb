@@ -100,11 +100,30 @@
 					<label> <%= t('freshfone.admin.number_settings.call_wait_time_suffix') %></label>
 				</div>
 			</div>
-			<div class="queue_setting_div togglable_message">
-				<label class="togglable_options_title"><%= t('freshfone.admin.number_settings.queue_message') %></label>
-				<div class="freshfone-controls on_hold_message"></div>
+			<div class="queue_setting_div main">
+				<div class="queue_setting_div control-group">
+					<label class="togglable_options_title control-label settings-label"><%= t('freshfone.admin.number_settings.queue_wait_message') %></label>
+					<div class="controls freshfone-controls on_hold_message"></div>
+				</div>
+
+				<div class="queue_setting_div control-group">
+					<%= f.label :queue_position_preference, t('freshfone.admin.number_settings.queue_position_preference'),
+											:class => " togglable_options_title control-label settings-label" %>
+
+					<div class="controls">
+						<%= f.check_box :queue_position_preference, 
+						"data-checked-label" => t('freshfone.admin.number_settings.queue_position_enable'),
+						"data-unchecked-label" => t('freshfone.admin.number_settings.queue_position_disable') %>
+					</div>
+					<div class="controls muted queue_position_controls queue_position_message_div">
+						<%= f.text_area :queue_position_message, :class => "span4", :placeholder => t('freshfone.admin.number_settings.queue_position_message_placeholder'), :maxlength => 255, :rows => 3 %>
+						<div class='recording-alert'>
+							<span><%= t('freshfone.admin.number_settings.queue_position_message_alert').html_safe %></span>
+						</div>
+					</div>
+				</div>
+				</div>
 			</div>
-		</div>
 	</div>
 
 	<div class="control-group">

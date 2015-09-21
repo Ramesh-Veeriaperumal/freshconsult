@@ -6,7 +6,7 @@
 </div>
 <script type="text/javascript">
 	if (window.opener) {
-		window.opener.location = "/integrations/applications";
+		window.opener.location = "<%= edit_integrations_installed_application_path(@installed_app) %>";
 		window.close();
 	}
 </script>

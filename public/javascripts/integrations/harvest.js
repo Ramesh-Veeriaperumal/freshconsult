@@ -288,7 +288,7 @@ HarvestWidget.prototype= {
 		} else if (evt.status == 404) {
 			alert("Selected project and/or task is no longer assigned to the logged-in user.");
 		} else {
-			alert(evt.responseText);
+			alert("Problem in connecting to Harvest. Response code: " + evt.status);
 		}
 	},
 

@@ -5,10 +5,10 @@
 		</ul>
 	</div>
 	<div class="sol-details-right">
-		<% if privilege?(:manage_solutions) && !@category.is_default? -%>
+		<% unless @category.is_default? -%>
 			<ul class="list-actions-right">
 				<li class="list-default-btns">
-					<%= reorder_btn %>
+					<%= reorder_btn if privilege?(:manage_solutions) %>
 					<%= new_solutions_button(:folder) %>
 				</li>
 			  <li class="list-reorder-btns">

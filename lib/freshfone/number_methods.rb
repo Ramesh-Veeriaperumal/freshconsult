@@ -1,5 +1,5 @@
 module Freshfone::NumberMethods
-
+  include Freshfone::FreshfoneUtil
 	def number_scoper
     @scoper ||= current_account.freshfone_numbers
   end
@@ -16,7 +16,8 @@ module Freshfone::NumberMethods
 	end
 	
 	def current_number
-		@current_number ||= is_outgoing_call? ? outgoing_number : incoming_number
+    @current_number ||= sip_call? ? sip_freshfone_number : 
+        (is_outgoing_call? ? outgoing_number : incoming_number)
 	end
 
   def queue_wait_time
@@ -53,6 +54,12 @@ module Freshfone::NumberMethods
 
     def agent_leg_number
       number_scoper.find_by_number(params[:From])
+    end
+
+    def sip_freshfone_number
+      #Temporarily using the first freshfone number as caller ID. 
+      #To be changed later when caller ID selection is offered
+      number_scoper.first 
     end
 
     def agent_call_leg?

@@ -45,8 +45,9 @@ module Helpdesk::TicketActions
   end
 
   def notify_cc_people cc_emails
-      Helpdesk::TicketNotifier.send_later(:deliver_send_cc_email, @ticket , {:cc_emails => cc_emails})
+    Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket , nil, {:cc_emails => cc_emails})
   end
+
   def set_default_values
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0

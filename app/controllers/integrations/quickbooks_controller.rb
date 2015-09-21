@@ -1,6 +1,6 @@
 class Integrations::QuickbooksController < ApplicationController
-include Integrations::OauthHelper
 
+	include Integrations::OauthHelper
 
 	def refresh_access_token
 		begin
@@ -28,8 +28,20 @@ include Integrations::OauthHelper
 	end
 
 	def render_success
+		@installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:quickbooks]).first
 		flash[:notice] = t(:'flash.application.install.success')
 		render :template => "/integrations/applications/quickbooks_install_success", :layout => "remote_configurations"
+	end
+	
+	def create_company
+		requester = current_account.users.find_by_email(params["requester_email"])
+		if (requester.present? && requester.customer_id.nil?)
+			requester.update_attributes({"company_name" => params["name"]})
+		end
+		render :json => {:name => params["name"]}
+	rescue Exception => e
+		Rails.logger.error "Error creating company from QuickBooks. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+		render :json => {:error=> "#{e}"}
 	end
 
 	private

@@ -2,10 +2,10 @@ var BatchbookWidget = Class.create();
 BatchbookWidget.prototype= {
 
 	initialize:function(batchbookBundle){
-		jQuery("#batchbook_widget").addClass('loading-fb');
+		jQuery("#batchbook_contacts_widget").addClass('loading-fb');
 		batchbookWidget = this;
 		batchbookBundle.app_name = "Batchbook";
-		batchbookBundle.widget_name = "batchbook_widget";
+		batchbookBundle.widget_name = "batchbook_contacts_widget";
 		batchbookBundle.username = batchbookBundle.k;
 		if(batchbookBundle.ver == "new"){
 			batchbookBundle.auth_type = "UAuth"

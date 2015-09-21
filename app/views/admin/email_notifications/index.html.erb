@@ -17,6 +17,7 @@
 <div class="list-page email-notification">
 	<div class="list-page-header"> 
 		<h3 class="lead"><%= t('email_notifications.title')%></h3>
+		<%= render :partial => "fontsettings" %>
 	</div>
 	<ul class="tabs nav-tabs" id="email-notifications-tabs">
 		<li class="first active">
@@ -26,110 +27,34 @@
 			<a id="requester-tab" data-toggle="tab" href="#requester"><%=t('email_notifications.requestor_notifications')%></a>
 		</li>
 		<li>
+			<a id="cc_notification-tab" data-toggle="tab" href="#cc_notification"><%=t('email_notifications.cc_notifications')%></a>
+		</li>
+		<li>
 			<a id="template-tab" data-toggle="tab" href="#template"><%=t('email_notifications.notification_template')%></a>
 		</li>
 	</ul>
-
-	<%= render :partial => "fontsettings" %>
 	
 	<div class="list-page-body tab-content">
 		<div class="tab-pane active" id="agent"> 
 			<table class="table table-striped">
-					<% @agent_notifications.each do |item| %>						
-							<tr>
-								<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if  !(item.can_turn_off_for_agent?)  %>>
-									<% if !(item.can_turn_off_for_agent?) %>	
-										<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.agent_notification) ? "checked" : "" %> disabled >
-									<%else%>
-										<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.agent_notification) ? "checked" : "" %> data-type="email_notification[agent_notification]" data-url=<%=admin_email_notification_path(item.id) %> >
-									<%end%> 
-								</td>
-								<td>
-									<span class="vertical-alignment event-name">
-										<strong>
-										<a href="<%=admin_edit_notification_path(:id => item.id, :type =>"agent_template") %>"><%= t("#{item.token}") %></a>
-										</strong>
-									</span>
-								</td>
-									<td class="text-right">
-									<% if current_account.features?(:dynamic_content) && 
-										 	item.outdated_agent_content? %>
-											<i class="common-icon-outdated"></i>
-											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
-									<%end%>	
-									</td>
-								
-								<td class="text-right">
-									<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"agent_template"), :class => 'btn btn-mini') %>
-								</td>
-							</tr>
-					<%end%>		
-				</table>
-			</div>
-			<div class="tab-pane hide" id="requester"> 
-				<table class="table table-striped">
-					<% @user_notifications.each do |item| %>
-					<% unless item.notification_type == 17 %>
-							<tr>
-								<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if !(item.can_turn_off_for_requester?) %>>
-									<% if !(item.can_turn_off_for_requester?) %>
-										<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> disabled >
-									<%else%> 	
-										<input rel="toggle" type="checkbox" id="email" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> data-type="email_notification[requester_notification]" data-url=<%=admin_email_notification_path(item.id) %>  >
-									<%end%>	
-								</td>
-								<td>
-									<span class="vertical-alignment event-name">
-										<strong>
-										<a href="<%= admin_edit_notification_path(:id => item.id, :type =>"requester_template")%>"> <%= t("#{item.token}") %></a>
-										</strong> 
-									</span>	
-								</td>
-
-									<td class="text-right">
-										<% if current_account.features?(:dynamic_content) && 
-											item.outdated_requester_content? %>
-											<i class="common-icon-outdated"></i>
-											<span class="muted"><%=t('email_notifications.index_outdated')%></span>
-										<%end%>	
-									</td>
-								
-								<td class="text-right">
-									<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"requester_template"), :class => 'btn btn-mini' ) %>
-								</td>
-							</tr>
-						<% end %>
-					<%end%>
-				</table>
-			</div>
-			<div class="tab-pane hide" id="template"> 
-				<table class="table table-striped ">
-					<% @reply_templates.each do |item| %>	
-						<tr>
-							<td class='email-tip'>
-								<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (item.requester_notification) ? "checked" : "" %> disabled >
-							</td>
-							<td>
-								<span class="vertical-alignment event-name">
-									<strong>
-									<a href="<%= admin_edit_notification_path(:id => item.id, :type =>"reply_template")%>"><%= t("#{item.token}") %></a>
-									</strong>
-								</span>
-							</td>
-								<td class="text-right">
-									<% if (item.outdated_requester_content == true ) %>
-										<i class="common-icon-outdated"></i>
-										<span class="muted"><%=t('email_notifications.index_outdated')%></span>
-									<%end%>	
-								</td>
-								
-							<td class="text-right">
-								<%= link_to(t('edit'), admin_edit_notification_path(:id => item.id, :type =>"reply_template"), :class => 'btn btn-mini') %>
-							</td>
-						</tr>
-					<%end%>	
-				</table>	
-			</div>
+				<%= render :partial => 'agent_notification', :collection => @agent_notifications %>
+			</table>
+		</div>
+		<div class="tab-pane hide" id="requester"> 
+			<table class="table table-striped">
+				<%= render :partial => 'user_notification', :collection => @user_notifications %>
+			</table>
+		</div>
+		<div class="tab-pane hide" id="cc_notification"> 
+			<table class="table table-striped ">
+				<%= render :partial => 'cc_notification', :collection => @cc_notifications %>
+			</table>	
+		</div>
+		<div class="tab-pane hide" id="template"> 
+			<table class="table table-striped ">
+				<%= render :partial => 'reply_template', :collection => @reply_templates %>
+			</table>	
+		</div>
 	</div>
 </div>
 <% content_for :helpcard do %> 

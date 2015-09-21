@@ -1,0 +1,21 @@
+<%installed_campaign_apps.each do |iapp| %>   
+	<div class='sidepanel'>             
+		<h3 class='app-title'> <%= Integrations::Constants::APP_NAMES[iapp] %> </h3>    
+		<a class='view-detail' onclick="displayAsModal('<%= "#{Integrations::Constants::APP_NAMES[iapp]}" %>')" href='#'> View Campaign Details </a>
+	</div>
+<% end %>
+
+<% if installed_campaign_apps.present? %>
+	<%= javascript_tag do %>
+		displayAsModal = function(app) {
+			var contact_title = "<%= contact.name %>";
+			jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');
+		  jQuery('#' + app.toLowerCase() + '_widget').dialog({ 
+	      show: "slide",
+	      title: contact_title, 
+	      dialogClass: 'email_marketing_widget',
+	      width: '600px', height: 'auto', modal: true, resizable: false 
+	    });
+		}
+	<% end %>
+<% end %>

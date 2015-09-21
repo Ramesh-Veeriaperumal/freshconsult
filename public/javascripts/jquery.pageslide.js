@@ -11,16 +11,19 @@
 		$parent.show();
 
 		var el = get_common_ancestor($slider, $parent);
+		var ancestor_width = $(el).outerWidth(true);
 		var parent_width = $parent.outerWidth(true);
 		var parent_height = Math.max($parent.outerHeight(true), $slider.outerHeight(true));
 		var org_width = (!settings.width) ? $slider.outerWidth(true) : settings.width;
-
+		org_width=(org_width/ancestor_width)*100;
 		$(el).css({'position':'relative', 'overflow':'hidden', 'padding':'0'}).data("sliderOpen", true);
-		$slider.css({'left':"-"+org_width+"px", 'position':'absolute'});
+		$slider.css({
+			'left':"-"+org_width+"%",
+			'position':'absolute'});
 		$parent.css({
 			'left':"0", 
-			'position':'relative', 
-			'width': org_width+parent_width, 
+			'position':'relative',
+			'width': "100%" , 
 			'min-height': parent_height,
 			'height':'auto !important'
 		});
@@ -48,11 +51,11 @@
 		      	$(el).addClass('slide-shadow', { duration: settings['duration'], "easing": "easeOutExpo"})
 		      	$slider.css({'visibility':'visible'})
 		        $slider.animate({ 'left':"0" }, { duration: settings['duration'], "easing": "easeOutExpo"})
-		        $parent.animate({"left":org_width+"px" }, { duration: settings['duration'] , "easing": "easeOutExpo"})
+		        $parent.animate({"left":org_width+"%" }, { duration: settings['duration'] , "easing": "easeOutExpo"})
 		        $(el).data("sliderOpen", false)
 		    }else{
 		    	$slider.animate({
-			        "left":"-"+org_width+"px"
+			        "left":"-"+org_width+"%"
 			        }, { duration: settings['duration'] , "easing": "easeOutExpo"})
 		    	$slider.css({'visibility':'hidden'})
 		        $parent.animate({

@@ -1,0 +1,27 @@
+<tr>
+	<td <%= "class='tooltip email-tip' title='#{t('email_notifications.disabled_toggle')}'".html_safe if  !(agent_notification.can_turn_off_for_agent?)  %>>
+		<% if !(agent_notification.can_turn_off_for_agent?) %>	
+			<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (agent_notification.agent_notification) ? "checked" : "" %> disabled >
+		<%else%>
+			<input rel="toggle" type="checkbox" id="em" name="timer" data-checked-label="ON" data-unchecked-label="OFF" <%= (agent_notification.agent_notification) ? "checked" : "" %> data-type="email_notification[agent_notification]" data-url=<%=admin_email_notification_path(agent_notification.id) %> >
+		<%end%> 
+	</td>
+	<td>
+		<span class="vertical-alignment event-name">
+			<strong>
+			<a href="<%=admin_edit_notification_path(:id => agent_notification.id, :type =>"agent_template") %>"><%= t("#{agent_notification.token}") %></a>
+			</strong>
+		</span>
+	</td>
+		<td class="text-right">
+		<% if current_account.features?(:dynamic_content) && 
+			 	agent_notification.outdated_agent_content? %>
+				<i class="common-icon-outdated"></i>
+				<span class="muted"><%=t('email_notifications.index_outdated')%></span>
+		<%end%>	
+		</td>
+	
+	<td class="text-right">
+		<%= link_to(t('edit'), admin_edit_notification_path(:id => agent_notification.id, :type =>"agent_template"), :class => 'btn btn-mini') %>
+	</td>
+</tr>
