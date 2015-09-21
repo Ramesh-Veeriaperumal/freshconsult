@@ -73,6 +73,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                        domains: domain_array, note: Faker::Lorem.characters(10))
     post :create, construct_params({}, name: name, description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10))
+    assert_response 409
     match_json([bad_request_error_pattern('name', 'has already been taken')])
   end
 
@@ -154,6 +155,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_delete_company
     company = create_company
     delete :destroy, construct_params(id: company.id)
+    assert_response 204
     assert_equal ' ', 	@response.body
     assert_nil Company.find_by_id(company.id)
   end
@@ -290,6 +292,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company1 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     company2 = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company2.id }, name: company1.name)
+    assert_response 409
     match_json([bad_request_error_pattern('name', 'has already been taken')])
   end
 
