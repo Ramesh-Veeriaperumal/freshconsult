@@ -3550,7 +3550,7 @@ body.popup-body{ min-width: 0px; }
 			p{
 				margin: 0 0 0 20px;
 				display: inline-block;
-				overflow-wrap: break-word;
+				word-break: break-word;
 			}
 			p.helper{
 				color: #666;
