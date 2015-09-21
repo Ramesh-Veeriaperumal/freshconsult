@@ -47,7 +47,6 @@ jQuery('#watcher_toggle').live('click', function(){
 });
   jQuery(document).live('click', function(e){
     if(!jQuery(e.target).parents().hasClass("monitor_div")){
-      jQuery("img:visible").trigger( "unveil" )
       if(!jQuery(e.target).parents().hasClass("watchers_tooltip")){
         jQuery("#new_watcher_page").hide();
         remove_highlight_class();

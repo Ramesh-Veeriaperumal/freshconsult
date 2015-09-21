@@ -224,11 +224,7 @@ include GoogleLoginHelper
 
     current_user_session.destroy unless current_user_session.nil?
     if current_account.sso_enabled? and current_account.sso_logout_url.present?
-      if current_account.sso_options[:sso_type] == SAML
-        sso_redirect_url = generate_saml_logout_url
-      else
-        sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
-      end
+      sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end
     
