@@ -32,7 +32,7 @@
   jQuery("#addwatcher select").trigger("click");
   jQuery(document).trigger('click');
 
-  jQuery("#monitor").on('click', function(ev) {
+  jQuery("#watcher_toggle").on('click', function(ev) {
     hideActivePopovers(ev);
     remove_highlight_class();
     jQuery("#new_watcher_page").toggle();
@@ -46,12 +46,10 @@ jQuery('#watcher_toggle').live('click', function(){
      jQuery("#watcherlist").find('img').trigger( "unveil" );
 });
   jQuery(document).live('click', function(e){
-    if(!jQuery(e.target).parents().hasClass("monitor_div")){
-      if(!jQuery(e.target).parents().hasClass("watchers_tooltip")){
+    if(!jQuery(e.target).parents().hasClass("ticket-btns")){
         jQuery("#new_watcher_page").hide();
         remove_highlight_class();
       }
-    }
   });
 
   function remove_highlight_class() {

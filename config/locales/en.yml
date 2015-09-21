@@ -1407,7 +1407,7 @@ en:
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
     supervisor_rules:
-      info_help: For <b>each tickets</b> updated within 30 days, Execute all matching rules.
+      new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
         human_name: Supervisor Rule
         title: Supervisor - Rules
@@ -4890,7 +4890,7 @@ en:
       index:
         todo_title: To-Do
       summary:
-        title: Ticket summary
+        new_title: Ticket Summary
         overdue: Overdue
         open: Open
         due_today: Due Today
