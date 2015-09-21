@@ -8,7 +8,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   before_filter :ensure_report_type_or_redirect
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
-  before_filter :normalize_params, :validate_params, :validate_scope,   :except => [:index]
+  before_filter :normalize_params, :validate_params, :validate_scope, 
+                :only_ajax_request,                                     :except => [:index]
   skip_before_filter :verify_authenticity_token,                        :except => [:index]
   
   attr_accessor :report_type
@@ -81,7 +82,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   def format_result
     if FORMATTING_REQUIRED.include? report_type.to_sym
-      @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_type).format
+      @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints).format
     else
       @data = @processed_result
     end
@@ -139,6 +140,10 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def check_feature
     return if current_account.reports_enabled?
     render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/non_covered_feature.html", :locals => {:feature => :bi_reports} }
+  end
+
+  def only_ajax_request
+    redirect_to reports_path unless request.xhr?
   end
   
   # def generate_pdf
