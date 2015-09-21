@@ -77,10 +77,10 @@
   </div>
 
   <div class="seperator-shadow"></div>
-  <% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
+  <% unless @ticket.notes.visible.public.exclude_source('meta').newest_first.blank? then %>
     <h3 class="forum-title"><%= t('conversation') %></h3>
     <div class="requestCnt request-conversation">
-      <%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.public.exclude_source('meta') %>
+      <%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.visible.public.exclude_source('meta') %>
     </div>
   <% end %>
 </div>
