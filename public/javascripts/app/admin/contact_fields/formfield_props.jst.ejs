@@ -182,10 +182,6 @@
 									</span>
 								</fieldset>
 							<% }) %>
-							<a class="add-choice" id="addchoice" href="#"> 
-								<span class='ficon-plus'></span> 
-								<span><%= translate.get('addNewChoice') %> </span>
-							</a> 
 						</div>
 					</div> 
 				<% } %>
@@ -194,9 +190,12 @@
 	</div>
 	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
-		<% if (!isDefault) { %>
-			<a class="btn pull-left delete-field"><%= translate.get('deleteField') %></a> 
-		<%  } %>
+	 	<% if (field_type == 'custom_dropdown') { %>
+			<a class="add-choice" id="addchoice" href="#"> 
+				<span class='ficon-plus'></span> 
+				<span><%= translate.get('addNewChoice') %> </span>
+			</a>
+		<% } %> 
 		<a class="btn" id="cancel-btn"><%= translate.get('cancel') %></a> 
 		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='PropsSubmitBtn' /> 
 	</div>
