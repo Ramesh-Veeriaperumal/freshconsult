@@ -11,14 +11,14 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     Account.current.business_calendar.all.each do |bc|
       pattern << business_calendar_index_pattern(BusinessCalendar.find(bc.id))
     end
-    assert_response :success
+    assert_response 200
     match_json(pattern)
   end
 
   def test_show_business_calendar
     business_calendar = create_business_calendar
     get :show, construct_params(id: business_calendar.id)
-    assert_response :success
+    assert_response 200
     match_json(business_calendar_pattern(BusinessCalendar.find(business_calendar.id)))
   end
 
@@ -39,14 +39,14 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :show, construct_params(id: business_calendar.id)
     @account.class.any_instance.unstub(:features_included?)
-    assert_response :forbidden
+    assert_response 403
   end
 
   def test_index_without_privilege
     business_calendar = create_business_calendar
     User.any_instance.stubs(:privilege?).returns(false).once
     get :show, construct_params(id: business_calendar.id)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
@@ -56,12 +56,12 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
     per_page = Account.current.business_calendar.all.count - 1
     get :index, construct_params(per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/business_calendars?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, construct_params(per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end

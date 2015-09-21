@@ -11,7 +11,7 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
     Account.current.company_form.company_fields.each do |cf|
       pattern << company_field_pattern(CompanyField.find(cf.id))
     end
-    assert_response :success
+    assert_response 200
     match_json(pattern)
   end
 end

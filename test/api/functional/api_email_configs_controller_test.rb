@@ -12,14 +12,14 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     Account.current.all_email_configs.all.each do |ec|
       pattern << email_config_pattern(EmailConfig.find(ec.id))
     end
-    assert_response :success
+    assert_response 200
     match_json(pattern)
   end
 
   def test_show_email_config
     email_config = create_email_config
     get :show, construct_params(id: email_config.id)
-    assert_response :success
+    assert_response 200
     match_json(email_config_pattern(EmailConfig.find(email_config.id)))
   end
 
@@ -39,7 +39,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     email_config = create_email_config
     User.any_instance.stubs(:privilege?).returns(false).once
     get :show, construct_params(id: email_config.id)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
@@ -49,12 +49,12 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     end
     per_page =   Account.current.all_email_configs.all.count - 1
     get :index, construct_params(per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/email_configs?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, construct_params(per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end

@@ -14,11 +14,11 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
       # contact_fields
       v2[:contact_fields], v2[:api_contact_fields], v2[:contact_fields_queries] = count_api_queries do
         get('/api/v2/contact_fields', {}.to_json, @write_headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:contact_fields] = count_queries do
         get('/admin/contact_fields.json', {}.to_json, @write_headers)
-        assert_response :success
+        assert_response 200
       end
 
       write_to_file(v1, v2)

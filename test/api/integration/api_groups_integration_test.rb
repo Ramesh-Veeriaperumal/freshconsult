@@ -18,57 +18,57 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         update: 22,
         index: 13,
         destroy: 35
-      } 
+      }
 
       v2_payload = v2_group_payload
 
       # create
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
         post('/api/v2/groups', v2_payload, @write_headers)
-        assert_response :created
+        assert_response 201
       end
       v1[:create] = count_queries do
         post('/groups.json', group_payload, @write_headers)
-        assert_response :created
+        assert_response 201
       end
       id1 = Group.last(2).first.id
       id2 = Group.last.id
       # show
       v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
         get("/api/v2/groups/#{id1}", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:show] = count_queries do
         get("/groups/#{id2}.json", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
         put("/api/v2/groups/#{id1}", v2_payload, @write_headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:update] = count_queries do
         put("/groups/#{id2}.json", group_payload, @write_headers)
-        assert_response :success
+        assert_response 200
       end
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/groups', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:index] = count_queries do
         get('/groups.json', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       # destroy
 
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
         delete("/api/v2/groups/#{id1}", nil, @headers)
-        assert_response :no_content
+        assert_response 204
       end
       v1[:destroy] = count_queries do
         delete("/groups/#{id2}.json", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
 
       write_to_file(v1, v2)

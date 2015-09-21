@@ -8,7 +8,7 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
     # index
     v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
       get('/api/v2/company_fields.json', nil, @headers)
-      assert_response :success
+      assert_response 200
     end
 
     write_to_file(nil, v2)

@@ -7,7 +7,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_create_group
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    assert_response :created
+    assert_response 201
     match_json(group_pattern(Group.last))
   end
 
@@ -20,7 +20,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_create_group_with_all_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.sentence(2),
                                        escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true, agent_ids: [1])
-    assert_response :created
+    assert_response 201
     match_json(group_pattern({ agent_ids: [1] }, Group.last))
   end
 
@@ -45,13 +45,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
-    assert_response :bad_request
+    assert_response 400
   end
 
   def test_create_group_with_valid_with_trailing_spaces
     post :create, construct_params({}, name: Faker::Lorem.characters(20) + white_space)
     match_json(group_pattern({}, Group.last))
-    assert_response :created
+    assert_response 201
   end
 
   def test_create_group_with_invalid_agent_list
@@ -73,14 +73,14 @@ class ApiGroupsControllerTest < ActionController::TestCase
     Account.current.groups.all.each do |group|
       pattern << group_pattern_for_index(Group.find(group.id))
     end
-    assert_response :success
+    assert_response 200
     match_json(pattern)
   end
 
   def test_show_group
     group = create_group(@account)
     get :show, construct_params(id: group.id)
-    assert_response :success
+    assert_response 200
     match_json(group_pattern(Group.find(group.id)))
   end
 
@@ -113,7 +113,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
                                                     auto_ticket_assign: true, agent_ids: [1])
-    assert_response :success
+    assert_response 200
     match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: 1,
                                agent_ids: [1] }, group.reload))
   end
@@ -121,7 +121,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_group_with_blank_name
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, name: '')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('name', "can't be blank")])
   end
 
@@ -136,13 +136,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
 
-    assert_response :bad_request
+    assert_response 400
   end
 
   def test_update_group_valid_with_trailing_spaces
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, name: Faker::Lorem.characters(20) + white_space)
-    assert_response :success
+    assert_response 200
     match_json(group_pattern({}, group.reload))
   end
 
@@ -155,7 +155,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_update_agents_of_group
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, agent_ids: [1])
-    assert_response :success
+    assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
   end
 
@@ -167,7 +167,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_delete_existing_agents_while_update
     group = create_group_with_agents(@account, agent_ids: [1, 2, 3], name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, agent_ids: [1])
-    assert_response :success
+    assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
   end
 
@@ -176,7 +176,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :show, construct_params(id: group.id)
     @account.class.any_instance.unstub(:features_included?)
-    assert_response :success
+    assert_response 200
     match_json(group_pattern_without_assingn_type(Group.find(group.id)))
   end
 
@@ -191,7 +191,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_destroy_all_agents_in_a_group
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3])
     put :update, construct_params({ id: group.id }, agent_ids: [])
-    assert_response :success
+    assert_response 200
     match_json(group_pattern({ agent_ids: [] }, group.reload))
   end
 
@@ -200,13 +200,13 @@ class ApiGroupsControllerTest < ActionController::TestCase
       create_group(@account)
     end
     get :index, construct_params(per_page: 1)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     get :index, construct_params(per_page: 1, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     get :index, construct_params(per_page: 1, page: 3)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
@@ -215,7 +215,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
     get :index, construct_params(per_page: 4)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
@@ -233,12 +233,12 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     per_page = @account.groups.all.count - 1
     get :index, construct_params(per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/groups?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, construct_params(per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end

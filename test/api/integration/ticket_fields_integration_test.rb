@@ -14,11 +14,11 @@ class TicketFieldsIntegrationTest < ActionDispatch::IntegrationTest
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/ticket_fields', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:index] = count_queries do
         get('/ticket_fields.json', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
 
       write_to_file(v1, v2)

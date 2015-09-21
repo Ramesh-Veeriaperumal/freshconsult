@@ -21,7 +21,7 @@ class ActionController::TestCase
 
   def teardown
     @controller.instance_variables.each do |ivar|
-      @controller.instance_variable_set(ivar,nil)
+      @controller.instance_variable_set(ivar, nil)
     end
     super
   end
