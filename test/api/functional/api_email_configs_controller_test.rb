@@ -25,13 +25,13 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
 
   def test_handle_show_request_for_missing_email_config
     get :show, construct_params(id: 2000)
-    assert_response :missing
+    assert_response 404
     assert_equal ' ', response.body
   end
 
   def test_handle_show_request_for_invalid_email_config_id
     get :show, construct_params(id: Faker::Name.name)
-    assert_response :missing
+    assert_response 404
     assert_equal ' ', response.body
   end
 
