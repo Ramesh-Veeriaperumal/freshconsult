@@ -1,7 +1,7 @@
 class TicketFieldDecorator < SimpleDelegator
   class << self
     def get_ticket_field_choices(tf)
-      @choices = tf.field_type == 'nested_field' ? tf.api_nested_choices : ticket_field_choices(tf)
+      @choices = tf.field_type == 'nested_field' ? tf.formatted_nested_choices : ticket_field_choices(tf)
     end
 
     def default_requester_field(tf)
