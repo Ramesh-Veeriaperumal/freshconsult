@@ -30,6 +30,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
+    assert_response 200
   end
 
   def test_show_a_non_existing_contact
@@ -49,11 +50,13 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
     match_json([bad_request_error_pattern('name', 'missing_field')])
+    assert_response 400
   end
 
   def test_create_contact_without_any_contact_detail
     post :create, construct_params({},  name: Faker::Lorem.characters(10))
     match_json([bad_request_error_pattern('email', 'Please fill at least 1 of email, mobile, phone, twitter_id fields.')])
+    assert_response 400
   end
 
   def test_create_contact_with_existing_email
@@ -64,6 +67,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
     match_json([bad_request_error_pattern('email', 'Email has already been taken')])
+    assert_response 409
   end
 
   def test_create_contact_with_prohibited_email
@@ -81,6 +85,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: 'String',
                                         company_id: comp.id)
     match_json([bad_request_error_pattern('client_manager', 'data_type_mismatch', data_type: 'Boolean')])
+    assert_response 400
   end
 
   def test_create_contact_with_client_manager_without_company
@@ -88,6 +93,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         client_manager: true)
     match_json([bad_request_error_pattern('company_id', 'company_id_required')])
+    assert_response 400
   end
 
   def test_create_contact_with_valid_client_manager
@@ -112,6 +118,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('language', 'not_included',
                                           list: I18n.available_locales.map(&:to_s).join(',')),
                 bad_request_error_pattern('time_zone', 'not_included', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+    assert_response 400
   end
 
   def test_create_contact_with_valid_language_and_timezone
@@ -135,6 +142,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         tags: 'tag1, tag2, tag3')
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
+    assert_response 400
   end
 
   def test_create_contact_with_invalid_avatar
@@ -147,6 +155,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 avatar: Faker::Internet.email }
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('avatar', 'data_type_mismatch', data_type: 'format')])
+    assert_response 400
   end
 
   def test_create_contact_with_invalid_avatar_file_type
@@ -161,6 +170,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('avatar', 'Invalid file type. Please upload a jpg or png file')])
+    assert_response 400
   end
 
   def test_create_contact_with_invalid_avatar_file_size
@@ -172,6 +182,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     match_json([bad_request_error_pattern('avatar', 'invalid_size', max_size: '5 MB')])
+    assert_response 400
   end
 
   def test_create_contact_with_invalid_field_in_custom_fields
@@ -184,6 +195,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 custom_fields: { dummyfield: Faker::Lorem.characters(20) } }
     post :create, construct_params({},  params)
     match_json([bad_request_error_pattern('dummyfield', 'invalid_field')])
+    assert_response 400
   end
 
   def test_create_contact_with_tags_avatar_and_custom_fields
@@ -394,6 +406,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = user1.email
     put :update, construct_params({ id: user2.id }, email: email)
     match_json([bad_request_error_pattern('email', 'Email has already been taken')])
+    assert_response 409
   end
 
   def test_update_length_invalid
@@ -452,6 +465,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_column(:deleted, true)
     get :show, construct_params(id: sample_user.id)
     match_json(deleted_contact_pattern(sample_user.reload))
+    assert_response 200
   end
 
   def test_restore_a_deleted_contact
