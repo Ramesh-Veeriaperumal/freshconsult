@@ -18,13 +18,13 @@ class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
     # show
     v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
       get("/api/v2/business_calendars/#{id}", nil, @headers)
-      assert_response :success
+      assert_response 200
     end
 
     # index
     v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
       get('/api/v2/business_calendars', nil, @headers)
-      assert_response :success
+      assert_response 200
     end
 
     write_to_file(nil, v2)

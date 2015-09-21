@@ -49,21 +49,21 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_destroy
     ts_id = create_time_entry.id
     delete :destroy, controller_params(id: ts_id)
-    assert_response :no_content
+    assert_response 204
     assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
     assert_equal ' ', @response.body
   end
 
   def test_destroy_invalid_id
     delete :destroy, controller_params(id: 78_979)
-    assert_response :not_found
+    assert_response :missing
   end
 
   def test_destroy_without_feature
     ts_id = create_time_entry.id
     @account.class.any_instance.stubs(:features_included?).returns(false).once
     delete :destroy, controller_params(id: ts_id)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
   end
 
@@ -71,7 +71,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts_id = create_time_entry(agent_id: other_agent.id).id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
@@ -79,7 +79,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts_id = create_time_entry.id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
-    assert_response :no_content
+    assert_response 204
     assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
     assert_equal ' ', @response.body
   end
@@ -88,21 +88,21 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :index, controller_params(billable: 0)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
-    assert_response :forbidden
+    assert_response 403
   end
 
   def test_index
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id, executed_at: 19.days.ago.to_s)
     get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -111,7 +111,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Helpdesk::TimeSheet.update_all(billable: true)
     create_time_entry(billable: false)
     get :index, controller_params(billable: false)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
@@ -120,14 +120,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_invalid_privileges
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :index, controller_params(billable: 0)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_index_with_extra_params
     hash = { user_id: 'test', contact_email: 'test' }
     get :index, controller_params(hash)
-    assert_response :bad_request
+    assert_response 400
     pattern = []
     hash.keys.each { |key| pattern << bad_request_error_pattern(key, 'invalid_field') }
     match_json pattern
@@ -138,10 +138,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
       create_time_entry(billable: false)
     end
     get :index, controller_params(billable: false, per_page: 1)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     get :index, controller_params(billable: false, per_page: 1)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
@@ -153,7 +153,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       create_time_entry(billable: false)
     end
     get :index, controller_params(billable: false, per_page: 4)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
@@ -165,7 +165,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
     pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
-    assert_response :bad_request
+    assert_response 400
     match_json pattern
   end
 
@@ -173,46 +173,46 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
     pattern = [bad_request_error_pattern('agent_id', "can't be blank")]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
-    assert_response :bad_request
+    assert_response 400
     match_json pattern
   end
 
   def test_index_with_billable
     Helpdesk::TimeSheet.update_all(billable: true)
     get :index, controller_params(billable: false)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(billable: false)
     get :index, controller_params(billable: false)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_after
     get :index, controller_params(executed_after: 6.hours.since.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(executed_at: 9.hours.since.to_s)
     get :index, controller_params(executed_after: 6.hours.since.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_before
     get :index, controller_params(executed_before: 25.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(executed_at: 26.days.ago.to_s)
     get :index, controller_params(executed_before: 25.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -220,13 +220,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_agent_id
     user = add_test_agent(@account)
     get :index, controller_params(agent_id: user.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(agent_id: user.id)
     get :index, controller_params(agent_id: user.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -234,27 +234,27 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_company_id
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(ticket_id: t.id)
     get :index, controller_params(company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_after_and_executed_before
     get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(executed_at: 10.days.ago.to_s)
     get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -262,13 +262,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_executed_after_and_agent_id
     user = add_test_agent(@account)
     get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(executed_at: 8.days.ago.to_s, agent_id: user.id)
     get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -276,14 +276,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_executed_after_and_company_id
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(executed_at: 8.days.ago.to_s, ticket_id: t.id)
     get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -292,14 +292,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(agent_id: agent.id, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(agent_id: agent.id, ticket_id: t.id)
     get :index, controller_params(agent_id: agent.id, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -307,14 +307,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_company_id_and_billable
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(billable: false, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id)
     get :index, controller_params(billable: false, company_id: user.customer_id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -322,14 +322,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_company_id_and_billable_and_executed_after
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id, executed_at: 5.hours.since.to_s)
     get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -338,34 +338,34 @@ class TimeEntriesControllerTest < ActionController::TestCase
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
     get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id)
     get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_create_arbitrary_params
     post :create, construct_params({ id: ticket.display_id }, test: 'junk')
-    assert_response :bad_request
+    assert_response 400
     match_json [bad_request_error_pattern('test', 'invalid_field')]
   end
 
   def test_create_presence_invalid
     post :create, construct_params(id: 90_909_090)
-    assert_response :not_found
+    assert_response :missing
   end
 
   def test_create_with_deleted_ticket
     t = ticket
     t.update_column(:deleted, true)
     post :create, construct_params(id: t.id)
-    assert_response :not_found
+    assert_response :missing
     t.update_column(:deleted, false)
   end
 
@@ -373,7 +373,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     post :create, construct_params(id: t.id)
-    assert_response :not_found
+    assert_response :missing
     t.update_column(:spam, false)
   end
 
@@ -381,7 +381,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params_hash.merge(agent_id: 99))
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('agent_id', 'invalid_field')])
     @controller.unstub(:privilege?)
   end
@@ -389,7 +389,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_create_start_time_and_timer_not_running
     post :create, construct_params({ id: ticket.display_id }, { start_time: (Time.zone.now - 10.minutes).as_json,
                                                                 timer_running: false }.merge(params_hash))
-    assert_response :bad_request
+    assert_response 400
     match_json [bad_request_error_pattern('start_time',
                                           'Should be blank if timer_running is false')]
   end
@@ -397,7 +397,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_create_with_no_params
     freeze_time do
       post :create, construct_params({ id: ticket.display_id }, params_hash)
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern({ timer_running: true, start_time: utc_time,
                                       executed_at: utc_time, time_spent: '00:00' },
@@ -410,7 +410,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       start_time = (Time.zone.now - 10.minutes).as_json
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time }.merge(params_hash))
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern(ts)
       match_json time_entry_pattern({ timer_running: true, start_time: utc_time(start_time.to_time),
@@ -424,7 +424,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       post :create, construct_params({ id: ticket.display_id }, { start_time: start_time,
                                                                   time_spent: '03:00' }.merge(params_hash))
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern(ts)
       match_json time_entry_pattern({ start_time: utc_time(start_time.to_time), time_spent: '03:00',
@@ -435,7 +435,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_create_time_spent_only
     freeze_time do
       post :create, construct_params({ id: ticket.display_id }, { time_spent: '03:00' }.merge(params_hash))
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern({}, ts)
       match_json time_entry_pattern({ timer_running: false, time_spent: '03:00', start_time: utc_time,
@@ -447,7 +447,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       post :create, construct_params({ id: ticket.display_id }, { time_spent: '03:00',
                                                                   timer_running: false }.merge(params_hash))
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern(ts)
       match_json time_entry_pattern({ time_spent: '03:00', timer_running: false, start_time: utc_time,
@@ -458,7 +458,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_create_with_other_timer_running
     other_ts = Helpdesk::TimeSheet.find_by_user_id_and_timer_running(@agent.id, true)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    assert_response :created
+    assert_response 201
     ts = time_entry(parse_response(response.body)['id'])
     match_json time_entry_pattern(ts)
     refute = other_ts.timer_running
@@ -471,7 +471,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       post :create, construct_params({ id: ticket.display_id }, { time_spent: '03:00', start_time: start_time,
                                                                   timer_running: true, executed_at: executed_at,
                                                                   note: 'test note', billable: true, agent_id: @agent.id }.merge(params_hash))
-      assert_response :created
+      assert_response 201
       ts = time_entry(parse_response(response.body)['id'])
       match_json time_entry_pattern(ts)
       match_json time_entry_pattern({ time_spent: '03:00', start_time: utc_time(start_time.to_time),
@@ -484,14 +484,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params_hash.except(:agent_id))
-    assert_response :created
+    assert_response 201
     @controller.unstub(:privilege?)
   end
 
   def test_create_with_other_user
     agent = other_agent
     post :create, construct_params({ id: ticket.display_id }, params_hash.merge(agent_id: agent.id))
-    assert_response :created
+    assert_response 201
     match_json time_entry_pattern(Helpdesk::TimeSheet.where(user_id: agent.id).first)
   end
 
@@ -503,7 +503,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       put :update, construct_params({ id: ts.id }, time_spent: '03:00', start_time: start_time,
                                                    timer_running: true, executed_at: executed_at,
                                                    note: 'test note', billable: true, agent_id: @agent.id)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '03:00', start_time: utc_time(start_time.to_time),
                                       timer_running: false, executed_at: utc_time(executed_at.to_time),
@@ -518,7 +518,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: 'yu')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
@@ -529,7 +529,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: '7878')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
   end
 
@@ -538,7 +538,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: '67/23',
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date'),
                 bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date')])
   end
@@ -550,7 +550,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('timer_running', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')])
   end
@@ -562,7 +562,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '08900', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('time_spent', 'is not a valid time_spent')])
   end
 
@@ -573,7 +573,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('start_time', 'Has to be lesser than current time')])
   end
 
@@ -584,7 +584,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: false, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
                 bad_request_error_pattern('start_time', 'Should be blank if timer_running is false')])
   end
@@ -596,7 +596,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00',
                                                   timer_running: true, executed_at: executed_at, start_time: start_time,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
                 bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
   end
@@ -607,7 +607,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
   end
 
@@ -619,7 +619,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', executed_at: executed_at,
                                                    note: 'test note', billable: true, agent_id: user.id)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '01:00', agent_id: user.id,
                                       timer_running: false, executed_at: utc_time(executed_at.to_time),
@@ -635,7 +635,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: true,
                                                    executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '01:00', agent_id: user.id,
                                       timer_running: true, executed_at: utc_time(executed_at.to_time),
@@ -650,7 +650,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
   end
 
@@ -661,7 +661,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: nil, timer_running: false,
                                                    executed_at: nil, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '00:00',
                                       timer_running: false, executed_at: nil,
@@ -675,7 +675,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
   end
 
@@ -685,7 +685,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running is false')])
   end
 
@@ -696,7 +696,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true, start_time: start_time,
                                                    executed_at: executed_at, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '09:42', timer_running: true, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true, start_time: utc_time(start_time.to_time) }, ts.reload)
@@ -709,7 +709,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
   end
 
@@ -719,7 +719,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, timer_running: true,
                                                    executed_at: executed_at, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ timer_running: true, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true, start_time: utc_time }, ts.reload)
@@ -737,7 +737,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       end
       put :update, construct_params({ id: ts.id }, timer_running: false,
                                                    executed_at: executed_at, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: time_spent, timer_running: false, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true }, ts.reload)
@@ -750,7 +750,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true,
                                                    executed_at: executed_at, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '09:42', timer_running: true, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true, start_time: utc_time }, ts.reload)
@@ -763,7 +763,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: false,
                                                    executed_at: executed_at, note: 'test note', billable: true)
-      assert_response :success
+      assert_response 200
       match_json time_entry_pattern(ts.reload)
       match_json time_entry_pattern({ time_spent: '09:42', timer_running: false, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true }, ts.reload)
@@ -775,7 +775,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
     User.any_instance.unstub(:privilege?)
     controller.class.any_instance.unstub(:privilege?)
@@ -786,17 +786,18 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false).once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
-    assert_response :forbidden
+    assert_response 403
     User.any_instance.stubs(:feature?)
   end
 
   def toggle_with_invalid_id
     put :toggle_timer, construct_params({ id: 99 }, test: 'junk')
+    assert_response :missing
   end
 
   def test_toggle_with_params
     put :toggle_timer, construct_params({ id: Helpdesk::TimeSheet.first }, test: 'junk')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('test', 'invalid_field')])
   end
 
@@ -806,7 +807,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       time = Time.zone.now - 1.hour - 23.minutes
       timer.update_column(:start_time, time)
       put :toggle_timer, construct_params({ id: timer.id }, {})
-      assert_response :success
+      assert_response 200
       match_json(time_entry_pattern({ timer_running: false, time_spent: '01:23' }, timer.reload))
     end
   end
@@ -816,7 +817,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     timer_off = Helpdesk::TimeSheet.where(timer_running: false).first
     Helpdesk::TimeSheet.update_all("user_id = #{@agent.id}", id: [timer_on.id, timer_off.id])
     put :toggle_timer, construct_params({ id: timer_off.id }, {})
-    assert_response :success
+    assert_response 200
     refute timer_on.reload.timer_running
     assert timer_off.reload.timer_running
   end
@@ -826,7 +827,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
     Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', "can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('user', "can't be blank")])
   end
 
@@ -834,7 +835,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     create_time_entry(ticket_id: t.id)
     get :ticket_time_entries, construct_params(id: t.id)
-    assert_response :success
+    assert_response 200
     result_pattern = []
     t.time_sheets.each do |n|
       result_pattern << time_entry_pattern(n)
@@ -846,7 +847,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:deleted, true)
     get :ticket_time_entries, construct_params(id: t.display_id)
-    assert_response :not_found
+    assert_response :missing
     ticket.update_column(:deleted, false)
   end
 
@@ -854,7 +855,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     t.update_column(:spam, true)
     get :ticket_time_entries, construct_params(id: t.display_id)
-    assert_response :not_found
+    assert_response :missing
     ticket.update_column(:spam, false)
   end
 
@@ -862,13 +863,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :ticket_time_entries, construct_params(id: t.display_id)
-    assert_response :forbidden
+    assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_ticket_time_entries_invalid_id
     get :ticket_time_entries, construct_params(id: 56_756_767)
-    assert_response :not_found
+    assert_response :missing
     assert_equal ' ', @response.body
   end
 
@@ -878,10 +879,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
       create_time_entry(ticket_id: t.id)
     end
     get :ticket_time_entries, construct_params(id: t.display_id, per_page: 1)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     get :ticket_time_entries, construct_params(id: t.display_id, per_page: 1, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
@@ -894,7 +895,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       create_time_entry(ticket_id: t.id)
     end
     get :ticket_time_entries, construct_params(id: ticket.display_id, per_page: 4)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
@@ -906,12 +907,12 @@ class TimeEntriesControllerTest < ActionController::TestCase
     end
     per_page = Helpdesk::TimeSheet.where(workable_id: t.id).count - 1
     get :ticket_time_entries, construct_params(id: t.display_id, per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/tickets/#{t.display_id}/time_entries?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :ticket_time_entries, construct_params(id: t.display_id, per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
@@ -922,12 +923,12 @@ class TimeEntriesControllerTest < ActionController::TestCase
     end
     per_page = Helpdesk::TimeSheet.count - 1
     get :index, controller_params(per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/time_entries?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, controller_params(per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end

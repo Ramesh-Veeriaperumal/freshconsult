@@ -11,7 +11,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_agent_index
     get :index, controller_params
-    assert_response :success
+    assert_response 200
     agents = @account.all_agents
     pattern = agents.map { |agent| agent_pattern(agent) }
     match_json(pattern)
@@ -19,11 +19,11 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_agent_filter_state
     get :index, controller_params(state: 'fulltime')
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert response.size == Agent.where(occasional: false).count
     get :index, controller_params(state: 'occasional')
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert response.size == Agent.where(occasional: true).count
   end
@@ -31,7 +31,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_filter_email
     email = @account.all_agents.first.user.email
     get :index, controller_params(email: email)
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -40,7 +40,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.all_agents.update_all(mobile: nil)
     @account.all_agents.first.user.update_column(:mobile, '1234567890')
     get :index, controller_params(mobile: '1234567890')
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -49,7 +49,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.all_agents.update_all(phone: nil)
     @account.all_agents.first.user.update_column(:phone, '1234567891')
     get :index, controller_params(phone: '1234567891')
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
@@ -60,21 +60,21 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.all_agents.last.user.update_column(:phone, '1234567890')
     email = @account.all_agents.first.user.email
     get :index, controller_params(email: email, phone: '1234567890')
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_agent_index_with_invalid_filter
     get :index, controller_params(name: 'John')
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('name', 'invalid_field')])
   end
 
   def test_show_agent
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)
-    assert_response :success
+    assert_response 200
     match_json(agent_pattern(sample_agent))
   end
 
@@ -90,12 +90,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     end
     per_page = @account.all_agents.count - 1
     get :index, controller_params(per_page: per_page)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/agents?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, controller_params(per_page: per_page, page: 2)
-    assert_response :success
+    assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end

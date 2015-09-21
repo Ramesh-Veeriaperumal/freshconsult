@@ -1,0 +1,83 @@
+<% all_field_values = @installed_application.configs[:inputs] unless @installed_application.blank? or @installed_application.configs.blank? 
+   app_name=@installing_application.name %>
+
+<div class="integration_config_settings">
+	<div class="field mb15">
+		<% field_value = all_field_values["invoices"] unless all_field_values.blank?
+			hide = field_value == "1" ? "" : "hide"
+			disabled = field_value != "1" %>
+		<span class="field toggle_child_on_click " data-child="invoice_option_div">
+			<%= check_box(:configs, "invoices", :checked => field_value == "1", :class => "toggle_child_on_click") %>
+			<%= content_tag(:span, t("integrations.#{app_name}.form.invoices"), :class => 'checkbox_label') %>
+		</span>
+		<div class="ml15 mt10 field <%= hide %> " id="invoice_option_div">
+			<% field_value = all_field_values["invoice_option"] unless all_field_values.blank? %>
+			<%= check_box(:configs, "invoice_option", :checked => field_value == "1", :disabled => disabled) %>
+			<%= content_tag(:span, t("integrations.#{app_name}.form.invoice_option"), :class => 'checkbox_label') %>
+		</div>
+	</div>
+
+	<span class="seperator"></span>
+
+	<div class="field mb15 mt15">
+		<% field_value = all_field_values["timeactivity"].blank? ? "1" : all_field_values["timeactivity"] unless all_field_values.blank?
+			hide = field_value == "1" ? "" : "hide"
+			disabled = field_value != "1" %>
+		<span class="field toggle_child_on_click " data-child="<%=app_name%>_note_div">
+			<%= check_box(:configs, "timeactivity", :checked => field_value == "1", :class => "toggle_child_on_click") %>
+			<%= content_tag(:span, t("integrations.#{app_name}.form.timeactivity"), :class => 'checkbox_label') %>
+		</span>
+		<div class="ml15 mt10 field <%= hide %> " id="<%=app_name%>_note_div">
+			<% field_value = (all_field_values.blank? || all_field_values["#{app_name}_note"].nil?) ? "Freshdesk Ticket # {{ticket.id}}" : all_field_values["#{app_name}_note"] %>
+			<%= construct_ui_element :configs, "#{app_name}_note", {:type => :text, :label => "integrations.#{app_name}.form.#{app_name}_note"}, field_value, nil, nil, disabled %>
+			<%= label_tag "#{app_name}-error", "" %>
+			<%= content_tag(:div, t("integrations.#{app_name}.form.#{app_name}_note_info").html_safe, :class => "info-data") %>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function check_description(event){
+      var desc = jQuery('#configs_<%=app_name%>_note').val();
+      var valid_desc_array = ['{{ticket.id}}', '{{ticket.subject}}', '{{ticket.status}}', '{{ticket.ticket_type}}', 
+      '{{ticket.tags}}', '{{ticket.due_by_time}}', '{{ticket.requester.name}}', '{{ticket.requester.firstname}}', 
+      '{{ticket.requester.lastname}}', '{{ticket.from_email}}', '{{ticket.requester.phone}}', 
+      '{{ticket.requester.address}}', '{{ticket.group.name}}', '{{ticket.agent.name}}', '{{ticket.agent.email}}', 
+      '{{helpdesk_name}}', '{{ticket.portal_name}}', '{{ticket.requester.email}}']
+      var regexp = /{{[A-z|\.]*}}/g;
+      var desc_array = [];
+      if(desc!=""){
+      desc_array = desc.match(regexp);
+      }
+      var invalid_array = [];
+      for(var i=0; i< desc_array.length; i++){
+        if(!_.contains(valid_desc_array, desc_array[i])){
+          invalid_array.push(desc_array[i]);
+        }          
+      }  
+      if(invalid_array.length > 0){
+        jQuery('label[for="<%=app_name%>-error"]').addClass('error').text( "value(s) " +invalid_array.toString()  + " is/are not allowed in Description");
+        return false;
+      }    
+      else{
+        return true;
+      }
+    }
+    
+    jQuery(document).ready(function(){
+    jQuery("#configs_<%=app_name%>_note").parents("form").find('[type ="submit"]').on('click', check_description);
+	jQuery('body').on('click', '.toggle_child_on_click', function() {
+		var div = jQuery(this).data('child');
+		var input = jQuery('#' + div).find('input');
+		input.attr('disabled', !input.attr('disabled'));
+		jQuery('#' + div).toggle();
+	});
+
+	jQuery('body').on('click', '.checkbox_label', function(ev) {
+		if (!jQuery(ev.target).is('input[type=checkbox]')) {
+			var checkbox = jQuery(this).prev("input[type=checkbox]");
+			checkbox.prop('checked', !checkbox.prop('checked'));
+		}
+	});
+});
+</script>

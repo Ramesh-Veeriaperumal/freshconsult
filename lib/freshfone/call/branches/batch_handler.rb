@@ -10,6 +10,7 @@ module Freshfone::Call::Branches::BatchHandler
   end
 
   def normal_batch_call
+    return handle_ended_batch_call if params[:CallStatus] == 'completed' # handling customer ends the call while agent's are ringed.
     return (render :xml => call_initiator.connect_caller_to_agent(@available_agents)) 
   end
 
@@ -38,6 +39,12 @@ module Freshfone::Call::Branches::BatchHandler
 
     def conference_call?
       current_account.features?(:freshfone_conference)
+    end
+
+    def handle_ended_batch_call
+      current_call.update_call(params)
+      add_cost_job
+      empty_twiml
     end
 
 end

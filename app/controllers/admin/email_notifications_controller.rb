@@ -8,6 +8,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @user_notifications = e_notifications.select { |n| n.visible_to_requester? }
     
     @reply_templates = e_notifications.select { |n| n.reply_template? }
+
+    @cc_notifications = e_notifications.select { |n| n.cc_notification? }
   end
   
   def update
@@ -42,10 +44,9 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @supported_languages = current_account.account_additional_settings.supported_languages
     @default_language = current_account.language 
     @type = params[:type]
-    url_check = (notification_type == EmailNotification::DEFAULT_REPLY_TEMPLATE and params[:type] == "reply_template") ? 
-                                        "requester_template" : params[:type]
+    url_check = @email_notification.fetch_template || params[:type]
     if @email_notification.send(url_check).nil?
-      flash[:error] = "This notification does not exist"
+      flash[:error] = t(:'flash.email_notifications.update.does_not_exist')
       redirect_to admin_email_notifications_path
     end
   end   
@@ -65,4 +66,5 @@ class Admin::EmailNotificationsController < Admin::AdminController
     end
     redirect_to :back
   end
+
 end

@@ -111,12 +111,12 @@ var FreshfoneNetworkError;
       });
     },
     bindNetworkErrorEvents: function(){
-      // if(this.isChromiumBrowser){
-      //   this.bindChromiumEvents();
-      // }
-      // else{ 
+      if(this.isChromiumBrowser){
+         this.bindChromiumEvents();
+      }
+      else{ 
         this.bindNonChromiumEvents(); 
-      // }
+      }
       this.bindCommonEvents();
     },
     networkDown: function(){

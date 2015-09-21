@@ -5,7 +5,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
   def test_multipart_form_data
     skip_bullet do
       post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))
-      assert_response :created
+      assert_response 201
     end
   end
 
@@ -38,11 +38,11 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       # create
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
         post('/api/v2/contacts', create_v2_payload, @write_headers)
-        assert_response :created
+        assert_response 201
       end
       v1[:create] = count_queries do
         post('/contacts.json', create_v1_payload, @write_headers)
-        assert_response :success
+        assert_response 200
       end
 
       id1 = User.last(2).first.id
@@ -51,11 +51,11 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
         put("/api/contacts/#{id1}", v2_contact_update_payload, @write_headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:update] = count_queries do
         put("/contacts/#{id2}.json", v1_contact_update_payload, @write_headers)
-        assert_response :success
+        assert_response 200
       end
 
       # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
@@ -65,11 +65,11 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       # show
       v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
         get("/api/v2/contacts/#{id1}", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:show] = count_queries do
         get("/contacts/#{id2}.json", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
 
       # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
@@ -79,41 +79,41 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/contacts', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:index] = count_queries do
         get('/contacts.json', nil, @headers)
-        assert_response :success
+        assert_response 200
       end
 
       # destroy
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
         delete("/api/v2/contacts/#{id1}", nil, @headers)
-        assert_response :no_content
+        assert_response 204
       end
       v1[:destroy] = count_queries do
         delete("/contacts/#{id2}.json", nil, @headers)
-        assert_response :success
+        assert_response 200
       end
 
       # restore
       v2[:restore], v2[:api_restore], v2[:restore_queries] = count_api_queries do
         put("/api/v2/contacts/#{id1}/restore", {}.to_json, @write_headers)
-        assert_response :no_content
+        assert_response 204
       end
       v1[:restore] = count_queries do
         put("/contacts/#{id2}/restore.json", {}.to_json, @write_headers)
-        assert_response :success
+        assert_response 200
       end
 
       # make_agent
       v2[:make_agent], v2[:api_make_agent], v2[:make_agent_queries] = count_api_queries do
         put("/api/v2/contacts/#{id1}/make_agent", {}.to_json, @write_headers)
-        assert_response :success
+        assert_response 200
       end
       v1[:make_agent] = count_queries do
         put("/contacts/#{id2}/make_agent.json", {}.to_json, @write_headers)
-        assert_response :success
+        assert_response 200
       end
 
       write_to_file(v1, v2)

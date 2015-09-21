@@ -2,11 +2,15 @@ var ShopifyWidget = Class.create();
 ShopifyWidget.prototype= {
 
     initialize:function(shopifyBundle){
-        jQuery("#shopify_widget").addClass('loading-fb');
+        if (shopifyBundle.widget_type == '_contacts') {
+            jQuery("#shopify_contacts_widget").removeClass("integration_widget crm_contact_widget");
+            jQuery("#shopify_contacts_widget .content").html('<div id="shopify_loading" class="sloading loading-block loading-small"></div>')
+        }
         shopifyWidget = this;
         shopifyBundle.app_name = "shopify";
         shopifyBundle.integratable_type = "crm";
         shopifyBundle.auth_type = "OAuth";
+        shopifyBundle.widget_name = "shopify" + shopifyBundle.widget_type + "_widget";
         shopifyBundle.handleRender = true;
         shopifyBundle.url_auth = true;
         shopifyBundle.url_token_key = "access_token";
@@ -63,7 +67,6 @@ ShopifyWidget.prototype= {
         } else {
             this.renderContactNa(crmWidget);
         }
-        jQuery("#"+crmWidget.options.widget_name).removeClass('loading-fb');
     },
 
     renderContactNa:function(crmWidget){
@@ -161,7 +164,7 @@ ShopifyWidget.prototype= {
         '<%= address1 %> <div class="shipping_address"> <%= address2 %> , <%= city %> <br> <%= country %>  <%= zip %> </div>',
 
     NO_ORDERS:
-        '<div class="shopify_orders"><span class="empty_orders" >No Shopify orders</span></div>',
+        '<div class="integ_empty_invoices">No Shopify orders</div>',
 
     CUSTOMER_ORDERS:
         '<div class="shopify_customer"><a class="name" href="<%= customer_url %>" target="_blank" ><%= requester %></a> <a href="<%= order_url  %>" target="_blank" style="float: right;">All orders</a></div>'+

@@ -31,4 +31,5 @@ class AgentGroup < ActiveRecord::Base
                                         :agent_id => user_id, :group_id => group_id,
                                         :type => 'add'}) if account.freshchat_routing_enabled?
   end
+  
 end

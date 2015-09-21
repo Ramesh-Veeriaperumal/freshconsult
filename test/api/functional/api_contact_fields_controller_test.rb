@@ -13,7 +13,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
   # Contact Field Index
   def test_contact_field_index
     get :index, controller_params
-    assert_response :success
+    assert_response 200
     contact_fields = ContactField.all
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern)
@@ -32,7 +32,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     ContactFieldChoice.update_all(contact_field_id: ContactField.find_by_name('cf_mcq').id)
 
     get :index, controller_params
-    assert_response :success
+    assert_response 200
     contact_fields = ContactField.all
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern)

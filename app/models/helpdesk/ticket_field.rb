@@ -150,7 +150,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type == "nested_field"
   end
 
-  def api_nested_choices
+  def formatted_nested_choices
     picklist_values.collect { |c| 
       [c.value, c.sub_picklist_values.collect{ |c| 
         [c.value, c.sub_picklist_values.collect{ |c| 

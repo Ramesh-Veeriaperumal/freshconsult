@@ -26,6 +26,7 @@ module Helpdesk
         end
       end
 
+      # Used by API v2
       def assign_element_html(note_body_attributes, *elements)
         elements.each do |element|
           element_html = "#{element}_html".to_sym

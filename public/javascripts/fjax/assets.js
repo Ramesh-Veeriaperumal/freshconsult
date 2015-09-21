@@ -5,7 +5,8 @@
 	Fjax.Assets = {
 		loaded: {
 			app: [],
-			plugins: []
+			plugins: [],
+			integrations: []
 		},
 		javascripts: {},
 		stylesheets: {},
@@ -77,6 +78,23 @@
 				if (this.isCSSNeeded(name, 'plugins')) {
 					this.load_css(this.stylesheets.plugins[name]);
 				}
+			}
+		},
+		
+		integration: function (name, callback) {
+			var $this = this;
+			if (typeof (callback) !== 'function') {
+				callback = function(){};
+			}
+			
+			if (!this.alreadyLoaded(name, 'integrations')) {
+				$LAB.script(this.javascripts.integrations[name]).wait(function () {
+					$this.loaded.integrations.push(name);
+					callback();
+				});
+			}
+			else {
+				callback();
 			}
 		}
 

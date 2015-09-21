@@ -98,9 +98,10 @@ TicketTimesheet.prototype = {
 };
 var timesheet = new TicketTimesheet();	
 
-jQuery("#time_integration .app-logo").live('click',function(ev) {
+jQuery("#time_integration .app-logo").live('click', function(ev) {
   if (!jQuery(ev.target).is('input[type=checkbox]')) {
-    var checkbox = jQuery(this).children("input[type=checkbox]");
-    checkbox.prop('checked', !checkbox.prop('checked'));
+      var checkbox = jQuery(this).children("input[type=checkbox]");
+      checkbox.prop('checked', !checkbox.prop('checked'));
   }
+  jQuery(this).siblings('.integration_container').toggle(jQuery(this).children("input[type='checkbox']").prop('checked'));
 });

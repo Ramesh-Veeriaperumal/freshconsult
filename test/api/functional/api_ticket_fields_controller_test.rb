@@ -12,14 +12,14 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     pdt.account_id = @account.id
     pdt.save
     get :index, construct_params({}, {})
-    assert_response :success
+    assert_response 200
     pattern = []
     @account.ticket_fields.each do |field|
       case field.field_type
       when 'default_requester'
         new_pattern = requester_ticket_field_pattern(field)
       when 'nested_field'
-        new_pattern = ticket_field_nested_pattern(field, choices: field.api_nested_choices)
+        new_pattern = ticket_field_nested_pattern(field, choices: field.formatted_nested_choices)
       else
         new_pattern = ticket_field_pattern(field)
         klass = TicketFieldDecorator.send(:ticket_field_choices, field).class
@@ -70,7 +70,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       picklist_vals_l1.last.save
     end
     get :index, construct_params({}, {})
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal 12, response.count
     cd_field = response.find { |x| x['type'] == 'custom_dropdown' }
@@ -161,7 +161,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       end
     end
     get :index, construct_params({}, {})
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal @account.main_portal.ticket_fields.count, response.count
     field = @account.ticket_fields.where(field_type: 'nested_field').first
@@ -178,19 +178,19 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_filter
     get :index, construct_params({ test: 'junk' }, {})
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('test', 'invalid_field')])
   end
 
   def test_index_with_invalid_filter_value
     get :index, construct_params({ type: 'junk' }, {})
-    assert_response :bad_request
+    assert_response 400
     match_json([bad_request_error_pattern('type', "can't be blank")])
   end
 
   def test_index_with_valid_filter
     get :index, construct_params({ type: 'nested_field' }, {})
-    assert_response :success
+    assert_response 200
     response = parse_response @response.body
     assert_equal ['nested_field'], response.map { |x| x['type'] }.uniq
     assert_equal 1, response.count

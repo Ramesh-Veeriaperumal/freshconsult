@@ -49,23 +49,42 @@
     widget = app.widget
       unless widget.blank?
       dip = widget.display_in_pages_option
-      if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
+      if dip.present? && dip.include?('helpdesk_tickets_show_page_side_bar')
+      	next if is_invoice_disabled?(installed_app)
+      	app_name = app.name
       	liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
-      	if app.name == Integrations::Constants::APP_NAMES[:xero]       	
-        	liquid_objects["timesheet"] = @ticket.time_sheets.to_json 
+      	if app_name == Integrations::Constants::APP_NAMES[:xero]       	
+        	liquid_objects["timesheet"] = @ticket.time_sheets.to_json
+        elsif Integrations::Constants::INVOICE_APPS.include? app_name or app_name == Integrations::Constants::APP_NAMES[:shopify]
+        	liquid_objects["widget_type"] = "_side_bar"
       	end
-        
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
-        <div id="<%=app.name%>" class="widget ">
-        	<!-- <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name) )%></h3> -->
-			<div class="content">
-        
-			<!-- <textarea style="display:none"> -->
-				<%= widget_code %>
-			<!-- </textarea> -->
-			</div>
-        </div>
-  <%  end
+        <%if app.application_type == 'freshplug' %>
+	        <div id="<%=app.name%>" class="widget">
+						<div class="content">
+								<%= widget_code %>
+						</div>
+	        </div>
+        <%elsif app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
+        	<div id="<%=app_name%>" class="widget ">
+        		<div class="content"></div>
+        		<%= widget_code %>
+        	</div>
+        <% else %>
+	        <div id="<%=app_name%>" class="widget inactive load_on_click ">
+	        	<h3 id="<%=app_name%>-title" class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
+						<div class="content">
+						<textarea style="display:none" rel="lazyload">
+							<div id="<%=app_name%>_side_bar_widget">
+								<div class="content"><div id="<%=app_name%>_loading" class="sloading loading-block loading-small"></div></div>
+								<div class="error"></div>
+							</div>
+							<%= widget_code %>
+						</textarea>
+						</div>
+	        </div>
+	    <% end
+  	 end
 	end
   end
 end %>

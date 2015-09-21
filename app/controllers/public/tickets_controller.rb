@@ -1,8 +1,6 @@
 class Public::TicketsController < ApplicationController
 
   include SupportTicketControllerMethods
-  include Redis::RedisKeys
-  include Redis::OthersRedis
 
   skip_before_filter :check_privilege
   before_filter :check_public_ticket_feature, :load_ticket, :check_scope, :set_selected_tab
@@ -20,7 +18,7 @@ class Public::TicketsController < ApplicationController
   private
 
   def check_public_ticket_feature
-    unless current_account.features_included?(:public_ticket_url) || exists?(GLOBAL_PUBLIC_TICKET_URL_ENABLED)
+    unless current_account.features_included?(:public_ticket_url)
       flash[:notice] = I18n.t(:'flash.general.access_denied')
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end

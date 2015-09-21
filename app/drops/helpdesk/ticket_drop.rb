@@ -2,8 +2,6 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	include Rails.application.routes.url_helpers
 	include TicketConstants
-	include Redis::RedisKeys
-	include Redis::OthersRedis
 
 	self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted	]
 
@@ -120,9 +118,9 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def public_url
-		return "" unless @source.account.features_included?(:public_ticket_url) || exists?(GLOBAL_PUBLIC_TICKET_URL_ENABLED)
+		return "" unless @source.account.features_included?(:public_ticket_url)
 
-		access_token = @source.get_access_token
+		access_token = @source.access_token.blank? ? @source.get_access_token : @source.access_token
 
 		public_ticket_url(access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
 	end

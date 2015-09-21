@@ -1,6 +1,6 @@
 var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
-	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+ jQuery('#freshbooks-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
+	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="Freshdesk.NativeIntegration.freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="Freshdesk.NativeIntegration.freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="Freshdesk.NativeIntegration.freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="Freshdesk.NativeIntegration.freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+ jQuery('#freshbooks-note').html() +'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="Freshdesk.NativeIntegration.freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
 	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
 	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>100</per_page><folder>active</folder></request>'),
 	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>100</per_page></request>'),
@@ -12,57 +12,58 @@ FreshbooksWidget.prototype = {
 	DELETE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.delete"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
 
 	initialize:function(freshbooksBundle, loadInline){
-		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
+		Freshdesk.NativeIntegration.freshbooksWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.projectData = ""; init_reqs = []; this.executed_date = new Date(); this.projectResults = "";
 		freshbooksBundle.freshbooksNote = jQuery('#freshbooks-note').html();
 		init_reqs = [null, {
-			body: widgetInst.STAFF_LIST_REQ.evaluate({}),
+			body: Freshdesk.NativeIntegration.freshbooksWidget.STAFF_LIST_REQ.evaluate({}),
 			content_type: "application/xml",
 			method: "post", 
-			on_success: widgetInst.loadStaffList.bind(this),
+			on_success: Freshdesk.NativeIntegration.freshbooksWidget.loadStaffList.bind(this),
 			on_failure: function(evt){}
 		}, {
-			body: widgetInst.CLIENT_LIST_REQ.evaluate({page:1}),
+			body: Freshdesk.NativeIntegration.freshbooksWidget.CLIENT_LIST_REQ.evaluate({page:1}),
 			content_type: "application/xml",
 			method: "post", 
-			on_success: widgetInst.loadClientList.bind(this)
+			on_success: Freshdesk.NativeIntegration.freshbooksWidget.loadClientList.bind(this)
 		}, {
-			body: widgetInst.PROJECT_LIST_REQ.evaluate({page:1}),
+			body: Freshdesk.NativeIntegration.freshbooksWidget.PROJECT_LIST_REQ.evaluate({page:1}),
 			content_type: "application/xml",
 			method: "post", 
-			on_success: widgetInst.loadProjectList.bind(this),
+			on_success: Freshdesk.NativeIntegration.freshbooksWidget.loadProjectList.bind(this),
 			on_failure: function(evt){}
 		}]
 		if (freshbooksBundle.remote_integratable_id)
 			init_reqs[0] = {
-				body: widgetInst.RETRIEVE_TIMEENTRY_REQ.evaluate({
+				body: Freshdesk.NativeIntegration.freshbooksWidget.RETRIEVE_TIMEENTRY_REQ.evaluate({
 					time_entry_id: freshbooksBundle.remote_integratable_id
 				}),
 				content_type: "application/xml",
 				method: "post", 
-				on_success: widgetInst.loadTimeEntry.bind(this),
+				on_success: Freshdesk.NativeIntegration.freshbooksWidget.loadTimeEntry.bind(this),
 				on_failure: function(evt){}
 			}
 		freshbooksOptions = {
 			app_name:"Freshbooks",
 			application_id:freshbooksBundle.application_id,
 			integratable_type:"timesheet",
-			domain: $('freshbooks_widget').getAttribute('api_url').escapeHTML(),
+		    use_server_password:true,
+		    auth_type:"NoAuth",
+		    ssl_enabled:true,
+			domain: freshbooksBundle.domain,
 			application_html: function() {
-				return widgetInst.FRESHBOOKS_FORM.evaluate({});
+				return Freshdesk.NativeIntegration.freshbooksWidget.FRESHBOOKS_FORM.evaluate({});
 			},
 			init_requests: init_reqs
 		};
 
-		if (typeof(freshbooksBundle) != 'undefined' && freshbooksBundle.k) {
-			freshbooksOptions.username = freshbooksBundle.k;
-			this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);
-		} else {
+		if (typeof(freshbooksBundle) == 'undefined') {
 			freshbooksOptions.login_html = function() {
-				return '<form onsubmit="freshbooksWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
+				return '<form onsubmit="Freshdesk.NativeIntegration.freshbooksWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
 			};
-			this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);
-		};
+		}
+
+		this.freshdeskWidget = new Freshdesk.Widget(freshbooksOptions);
 		if(loadInline) this.convertToInlineWidget();
 	},
 
@@ -265,14 +266,14 @@ FreshbooksWidget.prototype = {
 	createTimeEntry:function(integratable_id,resultCallback) {
 		if(integratable_id)
 			this.freshdeskWidget.local_integratable_id = integratable_id;
-		if (freshbooksWidget.validateInput()) {
+		if (Freshdesk.NativeIntegration.freshbooksWidget.validateInput()) {
 			var body = this.CREATE_TIMEENTRY_REQ.evaluate({
 				staff_id: $("freshbooks-timeentry-staff").value,
 				project_id: $("freshbooks-timeentry-projects").value,
 				task_id: $("freshbooks-timeentry-tasks").value,
 				notes: $("freshbooks-timeentry-notes").value,
 				hours: $("freshbooks-timeentry-hours").value,
-				date: new Date(jQuery('#executed_at_new').val()).toString("yyyy-MM-dd")
+				date: new Date(jQuery('.executed_at').val()).toString("yyyy-MM-dd")
 			});
 			this.freshdeskWidget.request({
 				body: body,
@@ -408,7 +409,7 @@ FreshbooksWidget.prototype = {
 	// Methods for external widgets use.
 	updateTimeEntry:function(resultCallback){
 		if (freshbooksBundle.remote_integratable_id) {
-			if (freshbooksWidget.validateInput()) {
+			if (Freshdesk.NativeIntegration.freshbooksWidget.validateInput()) {
 				var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
 					time_entry_id: freshbooksBundle.remote_integratable_id,
 					staff_id: $("freshbooks-timeentry-staff").value,
@@ -521,7 +522,6 @@ FreshbooksWidget.prototype = {
 		time_entry_node = XmlUtil.extractEntities(timeEntryXml, "time_entry")
 		if (time_entry_node.length > 0) 
 			return XmlUtil.getNodeValueStr(time_entry_node[0], fetchEntity);
-	},	
+	}	
 }
 
-freshbooksWidget = new FreshbooksWidget(freshbooksBundle, freshbooksinline);

@@ -892,7 +892,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
-  def self.api_filter(ticket_filter = nil, current_user = nil)
+  # Used by API v2
+  def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
       spam: {
         conditions: { spam: true }

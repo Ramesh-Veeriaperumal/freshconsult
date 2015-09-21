@@ -266,21 +266,11 @@ class Forum < ActiveRecord::Base
   end
 
   def update_search_index
-    #Remove as part of Search-Resque cleanup
-    if Search::Job.sidekiq?
-      SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id })
-    else
-      Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
-    end if ES_ENABLED
+    SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id }) if ES_ENABLED
   end
 
   def remove_topics_from_es
-    #Remove as part of Search-Resque cleanup
-    if Search::Job.sidekiq?
-      SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids })
-    else
-      Resque.enqueue(Search::RemoveFromIndex::ForumTopics, { :account_id => account_id, :deleted_topics => @deleted_topic_ids })
-    end if ES_ENABLED
+    SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
   end
 
   def backup_forum_topic_ids

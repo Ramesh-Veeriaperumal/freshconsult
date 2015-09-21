@@ -52,6 +52,11 @@ module Helpdesk::DashboardHelper
     	!current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.display_id
   	end
 
+  	def chat_active?
+  	    chat_activated? and
+        current_user.privilege?(:admin_tasks) and
+        current_account.chat_setting.active
+	end
 
 	def groups
 		current_account.groups_from_cache

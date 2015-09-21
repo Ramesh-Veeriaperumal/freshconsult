@@ -118,7 +118,9 @@ module Helpdesk::Email::TicketMethods
   end
 
   def header_processor
-    @header_processor ||= Helpdesk::Email::ProcessByMessageId.new(email[:message_id], email[:in_reply_to], email[:references])
+    @header_processor ||= Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
+                                                                  email[:in_reply_to][1..-2], 
+                                                                  email[:references])
   end
 
   def header_info_update ticket_message_id
@@ -128,5 +130,4 @@ module Helpdesk::Email::TicketMethods
   def create_redis_key_for_ticket ticket_message_id
     set_others_redis_key(header_processor.message_key(account, ticket_message_id), ticket.display_id, 86400 * 7)
   end
-
 end

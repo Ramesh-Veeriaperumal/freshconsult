@@ -41,6 +41,10 @@ class EmailNotification < ActiveRecord::Base
   PASSWORD_RESET = 14
   ADDITIONAL_EMAIL_VERIFICATION = 17
   PREVIEW_EMAIL_VERIFICATION = 18
+  NEW_TICKET_CC = 19
+  PUBLIC_NOTE_CC = 20
+  NOTIFY_COMMENT = 21
+
 
   DEFAULT_REPLY_TEMPLATE = 15
   
@@ -77,7 +81,8 @@ class EmailNotification < ActiveRecord::Base
     :AGENT_AND_REQUESTER   => 1,
     :AGENT_ONLY            => 2,
     :REQUESTER_ONLY        => 3,
-    :REPLY_TEMPLATE        => 4
+    :REPLY_TEMPLATE        => 4,
+    :CC_NOTIFICATION       => 5
   }
 
   # notification_token, notification_type, visibility
@@ -96,16 +101,21 @@ class EmailNotification < ActiveRecord::Base
     [:agent_closes_tkt,       TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]        ],
     [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ],
     [:additional_email_verification, ADDITIONAL_EMAIL_VERIFICATION, VISIBILITY[:REQUESTER_ONLY]  ],
+    [:notify_comment,         NOTIFY_COMMENT,                     VISIBILITY[:AGENT_ONLY]             ],
+    [:new_ticket_cc,          NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]        ],
+    [:public_note_cc,         PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]        ],
     [:preview_email_verification, PREVIEW_EMAIL_VERIFICATION,  VISIBILITY[:AGENT_ONLY]           ]
   ]
   
   # List of notfications to agents which cannot be turned off
-  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email ]
+  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment ]
   # List of notfications to requester which cannot be turned off
   REQUESTER_MANDATORY_LIST = [ :password_reset_email ]
 
   TOKEN_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[0]] }.flatten]
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
+
+  BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
 
   def token
     TOKEN_BY_KEY[self.notification_type]
@@ -121,6 +131,10 @@ class EmailNotification < ActiveRecord::Base
 
   def reply_template?
     (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:REPLY_TEMPLATE])
+  end
+
+  def cc_notification?
+    (VISIBILITY_BY_KEY[self.notification_type] == VISIBILITY[:CC_NOTIFICATION])
   end
 
   def can_turn_off_for_agent?
@@ -209,6 +223,16 @@ class EmailNotification < ActiveRecord::Base
 
   def self.disable_notification (account)
     Thread.current["notifications_#{account.id}"] = EmailNotification::DISABLE_NOTIFICATION  
+  end
+
+  def fetch_template
+    if self.reply_template? or self.cc_notification?
+      "requester_template"
+    end  
+  end
+
+  def bcc_disabled?
+    BCC_DISABLED_NOTIFICATIONS.include?(self.notification_type)
   end
 
   private

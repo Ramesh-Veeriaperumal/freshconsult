@@ -33,7 +33,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       assert_difference 'User.count', 1 do
         post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response :created
+        assert_response 201
       end
 
       sample_user = User.last
@@ -44,7 +44,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
                   tags: tags }
 
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
-      assert_response :success
+      assert_response 200
 
       stub_current_account do
         assert sample_user.reload.language == 'cs'
@@ -64,7 +64,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       assert_difference 'User.count', 1 do
         post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response :created
+        assert_response 201
       end
 
       sample_user = User.last
@@ -75,7 +75,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       company = get_company
       params = { client_manager: true, company_id: company.id }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
-      assert_response :success
+      assert_response 200
 
       assert sample_user.reload.client_manager == true
     end
@@ -88,7 +88,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       assert_difference 'User.count', 1 do
         post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response :created
+        assert_response 201
       end
 
       sample_user = User.last
@@ -97,10 +97,10 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       params = { email: Faker::Internet.email }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
-      assert_response :success
+      assert_response 200
 
       put "/api/v2/contacts/#{sample_user.id}/make_agent", nil, @write_headers
-      assert_response :success
+      assert_response 200
     end
   end
 
@@ -111,7 +111,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       assert_difference 'User.count', 1 do
         post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response :created
+        assert_response 201
       end
 
       sample_user = User.last

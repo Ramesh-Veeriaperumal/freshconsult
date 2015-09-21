@@ -126,7 +126,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :product_name => I18n.t('helpdesk.time_sheets.product'), 
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
-
+  
+  # Used by API v2
   def self.filter(filter_options=FILTER_OPTIONS)
     relation = scoped
     filter_options.each_pair do |key, value|
@@ -136,6 +137,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     relation
   end
 
+  # Used by API v2
   def self.filter_conditions(filter_options=FILTER_OPTIONS)
     {
       billable: {

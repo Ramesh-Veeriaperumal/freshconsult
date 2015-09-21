@@ -18,14 +18,14 @@ module ApiDiscussions
       define_method("test_#{action}_without_privilege") do
         controller.class.any_instance.stubs(:allowed_to_access?).returns(false).once
         send(methods[action], action, construct_params(id: fc.id))
-        assert_response :forbidden
+        assert_response 403
         match_json(request_error_pattern('access_denied'))
       end
 
       define_method("test_#{action}_without_login") do
         controller.class.any_instance.stubs(:api_current_user).returns(nil)
         send(methods[action], action, construct_params(id: fc.id))
-        assert_response :unauthorized
+        assert_response 401
         match_json(request_error_pattern('invalid_credentials'))
         controller.class.any_instance.unstub(:api_current_user)
       end
@@ -36,14 +36,14 @@ module ApiDiscussions
         subscription.update_column(:state, 'active')
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern('access_denied'))
-        assert_response :forbidden
+        assert_response 403
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
         @account.class.any_instance.stubs(:features_included?).returns(false).once
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern('require_feature', feature: 'Forums'))
-        assert_response :forbidden
+        assert_response 403
       end
     end
 
@@ -54,7 +54,7 @@ module ApiDiscussions
         subscription.update_column(:state, 'suspended')
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern('account_suspended'))
-        assert_response :forbidden
+        assert_response 403
         assert_equal 'current=v2; requested=v2', @response.headers['X-Freshdesk-API-Version']
         subscription.update_column(:state, 'trial')
       end
@@ -69,7 +69,7 @@ module ApiDiscussions
 
       define_method("test_#{action}_load_object_not_present") do
         send(methods[action], action, construct_params(id: 'x'))
-        assert_response :not_found
+        assert_response :missing
         assert_equal ' ', @response.body
       end
     end
@@ -78,13 +78,13 @@ module ApiDiscussions
       params_hash = { name: Faker::Lorem.characters(300) }
       post :create, construct_params({}, params_hash)
       match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
-      assert_response :bad_request
+      assert_response 400
     end
 
     def test_create_length_valid_with_trailing_spaces
       params_hash = { name: Faker::Lorem.characters(20) + white_space }
       post :create, construct_params({}, params_hash)
-      assert_response :success
+      assert_response 201
       match_json(forum_category_response_pattern(params_hash[:name].strip, nil))
       match_json(forum_category_pattern(ForumCategory.last))
     end
@@ -92,33 +92,33 @@ module ApiDiscussions
     def test_update_with_extra_params
       put :update, construct_params({ id: fc.id }, test: 'new')
       match_json([bad_request_error_pattern('test', 'invalid_field')])
-      assert_response :bad_request
+      assert_response 400
     end
 
     def test_update_with_missing_params
       put :update, construct_params({ id: fc.id }, {})
-      assert_response :bad_request
+      assert_response 400
       match_json(request_error_pattern('missing_params'))
     end
 
     def test_update_with_blank_name
       put :update, construct_params({ id: fc.id }, name: '')
       match_json([bad_request_error_pattern('name', "can't be blank")])
-      assert_response :bad_request
+      assert_response 400
     end
 
     def test_update_with_invalid_model
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: new_fc.name)
       match_json([bad_request_error_pattern('name', 'has already been taken')])
-      assert_response :conflict
+      assert_response 409
     end
 
     def test_update_length_invalid
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: Faker::Lorem.characters(300))
       match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
-      assert_response :bad_request
+      assert_response 400
     end
 
     def test_update_length_valid_with_trailing_space
@@ -127,14 +127,14 @@ module ApiDiscussions
       put :update, construct_params({ id: new_fc.id }, name: name)
       match_json(forum_category_response_pattern(name.strip, new_fc.reload.description))
       match_json(forum_category_pattern(new_fc.reload))
-      assert_response :success
+      assert_response 200
     end
 
     def test_update
       put :update, construct_params({ id: fc.id }, description: 'foo')
       match_json(forum_category_response_pattern(fc.name, 'foo'))
       match_json(forum_category_pattern(fc))
-      assert_response :success
+      assert_response 200
       assert_equal 'foo', ForumCategory.find_by_id(fc.id).description
     end
 
@@ -143,34 +143,33 @@ module ApiDiscussions
       fc = @account.forum_categories.create!(name: 'temp')
       delete :destroy, construct_params(id: fc.id)
       assert_equal ' ', @response.body
-      assert_response :no_content
+      assert_response 204
       assert_nil ForumCategory.find_by_id(fc.id)
     end
 
     def test_show
       get :show, construct_params(id: fc.id)
-      assert_response :success
       result_pattern = forum_category_response_pattern(fc.name, fc.description)
-      assert_response :success
+      assert_response 200
       match_json(result_pattern)
     end
 
     def test_show_invalid_id
       get :show, construct_params(id: 'x')
-      assert_response :not_found
+      assert_response :missing
       assert_equal ' ', @response.body
     end
 
     def test_show_portal_check
       User.any_instance.stubs(:privilege?).returns(false).once
       get :show, construct_params(id: fc.id)
-      assert_response :forbidden
+      assert_response 403
       match_json(request_error_pattern('access_denied'))
     end
 
     def test_create
       post :create, construct_params({}, name: 'test', description: 'test desc')
-      assert_response :success
+      assert_response 201
       match_json(forum_category_response_pattern('test', 'test desc'))
       match_json(forum_category_pattern(ForumCategory.last))
     end
@@ -180,7 +179,7 @@ module ApiDiscussions
       pattern = [
         bad_request_error_pattern('name', 'missing_field')
       ]
-      assert_response :bad_request
+      assert_response 400
       match_json(pattern)
     end
 
@@ -189,7 +188,7 @@ module ApiDiscussions
       pattern = [
         bad_request_error_pattern('junk', 'invalid_field')
       ]
-      assert_response :bad_request
+      assert_response 400
       match_json(pattern)
     end
 
@@ -198,7 +197,7 @@ module ApiDiscussions
       pattern = [
         bad_request_error_pattern('name', "can't be blank")
       ]
-      assert_response :bad_request
+      assert_response 400
       match_json(pattern)
     end
 
@@ -208,14 +207,14 @@ module ApiDiscussions
       pattern = [
         bad_request_error_pattern('name', 'has already been taken')
       ]
-      assert_response :conflict
+      assert_response 409
       match_json(pattern)
     end
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
       match_json([bad_request_error_pattern('name', "can't be blank")])
-      assert_response :bad_request
+      assert_response 400
     end
 
     def test_index
@@ -224,7 +223,7 @@ module ApiDiscussions
       Account.current.forum_categories.all.each do |fc|
         pattern << forum_category_response_pattern(fc.name, fc.description)
       end
-      assert_response :success
+      assert_response 200
       match_json(pattern)
     end
 
@@ -235,7 +234,7 @@ module ApiDiscussions
       get :index, request_params
       Rails.env.unstub(:test?)
       @request.unstub(:ssl?)
-      assert_response :internal_server_error
+      assert_response 500
       match_json(base_error_pattern('internal_error'))
     end
 
@@ -243,7 +242,7 @@ module ApiDiscussions
       Rails.env.stubs(:test?).returns(false).once
       get :index, request_params
       Rails.env.unstub(:test?)
-      assert_response :forbidden
+      assert_response 403
       match_json(request_error_pattern('ssl_required'))
     end
 
@@ -251,7 +250,7 @@ module ApiDiscussions
       name = Faker::Name.name
       post :create, construct_params({}, 'name' => name, 'description' => 'test desc')
       result = parse_response(@response.body)
-      assert_response :success
+      assert_response 201
       match_json(forum_category_response_pattern(name))
       match_json(forum_category_pattern(ForumCategory.last))
       assert_equal true, response.headers.include?('Location')
@@ -263,13 +262,13 @@ module ApiDiscussions
         create_test_category
       end
       get :index, construct_params(per_page: 1)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == 1
       get :index, construct_params(per_page: 1, page: 2)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == 1
       get :index, construct_params(per_page: 1, page: 3)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
@@ -278,7 +277,7 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
       get :index, construct_params(per_page: 4)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
@@ -289,12 +288,12 @@ module ApiDiscussions
       end
       per_page = ForumCategory.count - 1
       get :index, construct_params(per_page: per_page)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
       get :index, construct_params(per_page: per_page, page: 2)
-      assert_response :success
+      assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']
     end

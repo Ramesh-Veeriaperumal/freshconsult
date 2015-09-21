@@ -12,12 +12,7 @@ class EsEnabledAccount < ActiveRecord::Base
   private
 
     def clear_cache
-      #Remove as part of Search-Resque cleanup
-      if Search::Job.sidekiq?
-        SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async
-      else
-        Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id })
-      end if ES_ENABLED
+      SearchSidekiq::RemoveFromIndex::AllDocuments.perform_async if ES_ENABLED
     end
 
     def create_aliases
