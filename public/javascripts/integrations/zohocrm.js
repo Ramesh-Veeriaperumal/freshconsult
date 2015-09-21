@@ -16,8 +16,8 @@ ZohoCrmWidget.prototype= {
   },
 
   get_contact_request: function() {
-    return [{rest_url: "crm/private/json/Contacts/getSearchRecords?scope=crmapi&selectColumns=All&searchCondition=(Email|equals|"+this.zohocrmBundle.reqEmail+")"},
-            {rest_url: "crm/private/json/Leads/getSearchRecords?scope=crmapi&selectColumns=All&searchCondition=(Email|equals|"+this.zohocrmBundle.reqEmail+")"}];
+    return [{rest_url: "crm/private/json/Contacts/searchRecords?scope=crmapi&selectColumns=All&criteria=(Email:"+this.zohocrmBundle.reqEmail+")"},
+            {rest_url: "crm/private/json/Leads/searchRecords?scope=crmapi&selectColumns=All&criteria=(Email:"+this.zohocrmBundle.reqEmail+")"}];            
   },
 
   parse_contact: function(resJson){
