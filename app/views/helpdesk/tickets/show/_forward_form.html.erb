@@ -106,7 +106,7 @@
         <div class="email_container">
           <input type="text" id="fwd_bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
           <script type="text/javascript">
-            new Autocompleter.MultiValue("fwd_bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true,  separatorRegEx:/;|,/});
+            new Autocompleter.MultiValue("fwd_bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.map{|item|[item, item]}.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true,  separatorRegEx:/;|,/});
           </script>
         </div>
   </li>
