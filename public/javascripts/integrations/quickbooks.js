@@ -236,7 +236,7 @@ QuickBooksWidget.prototype = {
         Freshdesk.NativeIntegration.quickbooksWidget.enableTimeentryElements();
     },
 
-    enableTimeentryElements() {
+    enableTimeentryElements: function() {
       $("quickbooks-timeentry-client").enable();      
       $("quickbooks-timeentry-hours").enable();
       $("quickbooks-timeentry-notes").enable();
