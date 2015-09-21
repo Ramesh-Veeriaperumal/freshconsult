@@ -1426,13 +1426,18 @@ Redactor.prototype = {
 	},	
 	isNotEmpty:function(e){
 		this.deleteCursor();
-		var valid_tags = ["img", "iframe", "object", "embed"];
+		var valid_tags = ["img", "iframe", "object", "embed"], editor;
+		if(this.$el.is(':visible')){
+			editor = $('<div>').html(this.$el.val());
+		} else {
+			editor = this.$editor;
+		}
 		for(var i=0; i < valid_tags.length; i++){
-			if(this.$editor.find(valid_tags[i]).length !=0 ){
+			if(editor.find(valid_tags[i]).length !=0 ){
 				return true
 			}
 		}
-		return  (this.$editor.text().trim() !== "")
+		return  (editor.text().trim() !== "")
 	},
 	showAir: function(e)
 	{
