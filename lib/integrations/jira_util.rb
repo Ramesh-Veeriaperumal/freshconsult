@@ -68,13 +68,13 @@ class Integrations::JiraUtil
             mapped_data = obj_mapper.map_it(account.id, notify_value, data, :ours_to_theirs, [:map])
             Rails.logger.debug "mapped_data #{mapped_data}"
             invoke_action = notify_value.match("comment_in_jira") ? ADD_COMMENT : UPDATE_STATUS
-            if invoke_action == ADD_COMMENT
-              jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
+            response  = jira_obj.send(invoke_action, issue_id, mapped_data)
+            jira_key = if invoke_action == ADD_COMMENT
+              INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment_id => response[:json_data]["id"] }
             elsif invoke_action == UPDATE_STATUS
-              jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment => Digest::SHA512.hexdigest("@")}
+              INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment_id => Digest::SHA512.hexdigest("@")}
             end 
             set_integ_redis_key(jira_key, "true", 240) # The key will expire within 4 mins.
-            jira_obj.send(invoke_action, issue_id, mapped_data)
             jira_obj.construct_attachment_params(issue_id, data) if invoke_action == ADD_COMMENT && data.class == Helpdesk::Note && !exclude_attachment?(installed_jira_app)
           }
         end  
