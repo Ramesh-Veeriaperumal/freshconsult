@@ -1,7 +1,7 @@
 <% content_for :sidebar do %>
   <%= sidebar_content %>
-  <% if params[:action] != 'agent_status' and (round_robin? or freshfone_active?) %>
-    <div class="sidepanel pt10">
+  <% if params[:action] != 'agent_status' and (round_robin? or freshfone_active? or chat_active?) %>
+    <div class="sidepanel">
       <a class="dashboard_agent_status_link" href="/helpdesk/agent_status"><%= t('helpdesk.dashboard.round_robin.view_agent_status') %> </a>
     </div>
   <% end %>
@@ -12,12 +12,10 @@
 
     <%= content_tag :div, "", :rel => "remote", :class => "sidepanel", :id => "quests-section-container",
                "data-remote-url" => active_helpdesk_quests_path() %>
-  <% end %> 
+  <% end %>
 
   <%#= render :partial => '/helpdesk/shared/history' %>
 <% end %>
 <% content_for :onload_script do %>
 	App.Dashboard.init();
 <% end %>
-
-

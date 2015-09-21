@@ -34,7 +34,7 @@
           background-color: #D8DBDF;
           margin-top: 5px;
           display: inline-block;
-          margin-right: 20px;
+          @include margin-right(20px);
           float: right;
       }
 

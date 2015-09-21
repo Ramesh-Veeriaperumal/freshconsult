@@ -1,5 +1,5 @@
 <%= ticket_form.error_messages %>
-<%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
+<%= hidden_field_tag  :topic_id,  params[:topic_id] %>
 <% current_portal.ticket_fields.each do |field|
     next if field.section_field?
     if is_edit
@@ -8,17 +8,17 @@
     elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]
     end
-    field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe : 
+    field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe :
                                                 (field.label).html_safe
   %>
-  <%= construct_ticket_element f, :helpdesk_ticket, 
-                                  field, 
-                                  field_label, 
-                                  field.dom_type, 
-                                  field.required, 
-                                  field_value, 
-                                  "", 
-                                  false, 
+  <%= construct_ticket_element f, :helpdesk_ticket,
+                                  field,
+                                  field_label,
+                                  field.dom_type,
+                                  field.required,
+                                  field_value,
+                                  "",
+                                  false,
                                   is_edit  %>
 
   <% if field.has_section?
@@ -31,23 +31,26 @@
 <li class = "text default_tags field">
     <%= fields_for :helpdesk  do |ticket| %>
       <%= ticket.label(:tags, t('ticket_fields.fields.tags')) %>
-      <%= ticket.text_field :tags, :value => @item.tags.collect{|tag| tag.name}.join(','), 
+      <%= ticket.text_field :tags, :value => @item.tags.collect{|tag| tag.name}.join(','),
                                    :class => "select2 input-xxlarge"%>
     <%end%>
 </li>
 <%= ci_fields(ticket_form)%>
 
-<% content_for :onload_script do -%> 
+<% content_for :onload_script do -%>
 
   invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
   jQuery('input.requester').focus();
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
+      var select_agent = jQuery('#helpdesk_ticket_responder_id')[0];
+      var prev_val = select_agent.options[select_agent.selectedIndex].value;
+
       jQuery('#helpdesk_ticket_responder_id')
               .html("<option value=''>...</option>");
       jQuery.ajax({
         type:        'GET',
-        url: 		     '/helpdesk/commons/group_agents/'+this.value,
+        url: 		     prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
         contentType: 'application/text',
         success:     function(data){
                         jQuery('#helpdesk_ticket_responder_id')
@@ -56,7 +59,7 @@
       });
     });
 
-  jQuery("#helpdesk_tags").select2({  
+  jQuery("#helpdesk_tags").select2({
     tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
     tokenSeparators: [',']
   });

@@ -48,7 +48,8 @@ class Helpdesk::Email::ProcessByMessageId < Struct.new(:message_id, :in_reply_to
 
     def get_all_keys
       reply_to = in_reply_to
-      all_keys = (references || "").split('/t')
+      all_keys = (references || "").split("\t")
+      all_keys = all_keys.collect { |key| key.scan(/<([^>]+)/) }.flatten
       all_keys << reply_to if reply_to
       all_keys.reverse
     end

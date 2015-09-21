@@ -115,7 +115,7 @@ class Integrations::JiraIssueController < ApplicationController
   end
 
   def authenticated_agent_check
-    render :status => 401 if current_user.blank? || current_user.agent.blank?
+    render :status => 401 if current_user.blank? || !current_user.agent?
   end
 
   def jira_object

@@ -320,7 +320,7 @@ include GoogleLoginHelper
           @notice = t(:'flash.gmail_gadgets.kvp_missing')
         elsif @current_user.blank?
           @notice = t(:'flash.gmail_gadgets.user_missing')
-        elsif @current_user.agent.blank?
+        elsif !@current_user.agent?
           @notice = t(:'flash.gmail_gadgets.agent_missing')
         else
           @gauth_error=false

@@ -8,6 +8,7 @@ describe Admin::EmailNotificationsController do
 		@email_notifications = @account.email_notifications
 		@test_notification = @email_notifications.find_by_notification_type("1")		
 		@test_reply_temp = @email_notifications.find_by_notification_type("15")
+		@test_cc_temp = @email_notifications.find_by_notification_type("19")
 		@user1 = add_test_agent(@account)
 		@user2 = add_test_agent(@account)
 	end
@@ -78,6 +79,14 @@ describe Admin::EmailNotificationsController do
     	put :update, :id => @test_reply_temp.id, :requester => "1", :email_notification => { :requester_template => @sample_message }
 		@test_reply_temp.reload
 		@test_reply_temp.requester_template.should eql @sample_message
+	end
+
+	it "should edit cc_template" do
+		get :edit, :id => @test_cc_temp.id, :type => "cc_notification"
+		response.body.should =~ /CC Notifications/
+		put :update, :id => @test_cc_temp.id, :requester => "1", :email_notification => { :requester_template => @sample_message }
+		@test_cc_temp.reload
+		@test_cc_temp.requester_template.should eql @sample_message
 	end
 
 	it "should update agents" do

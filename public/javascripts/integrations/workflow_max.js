@@ -1,33 +1,33 @@
 var WorkflowMaxWidget = Class.create();
 WorkflowMaxWidget.prototype = {
-	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Client</label><select name="client-id" id="workflow-max-timeentry-client" onchange="workflowMaxWidget.clientChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-client-spinner"></div></div><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflowMaxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflowMaxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+ jQuery('#workflowmax-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflowMaxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
+	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Client</label><select name="client-id" id="workflow-max-timeentry-client" onchange="workflow_maxWidget.clientChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-client-spinner"></div></div><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflow_maxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflow_maxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+ jQuery('#workflow_max-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflow_maxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
 	CREATE_TIMEENTRY_REQ:new Template('<Timesheet><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Minutes>#{hours}</Minutes></Timesheet>'),
-	CREATE_JOB:new Template('<div id="workflowmaxNewJob"><form id="workflow-max-jobentry-form" class="timesheet_form ui-form"><input type="hidden" name="selectedClient" value=#{client_id} id="selectedClient"><dl><dt class="jobName"><label>Job Name</label></dt><dd><input type="text" name="jobName" id="jobName"></dd><dt class="jobDesc"><label>Job Description</label></dt><dd><textarea name="jobDesc" id="jobDesc"></textarea></dd><dt></dt><dd pull-right><input type="button" id="workflow-max-jobentry-submit" value="Submit" onClick="workflowMaxWidget.logNewJob()";return false;" class="btn btn-mini btn-primary"> <input type="button" id="workflow-max-jobentry-cancel" value="Cancel" class="btn btn-mini" onClick="workflowMaxWidget.cancelNewJob()"; return false;"><dd></dl></form></div>'),
+	CREATE_JOB:new Template('<div id="workflowmaxNewJob"><form id="workflow-max-jobentry-form" class="timesheet_form ui-form"><input type="hidden" name="selectedClient" value=#{client_id} id="selectedClient"><dl><dt class="jobName"><label>Job Name</label></dt><dd><input type="text" name="jobName" id="jobName"></dd><dt class="jobDesc"><label>Job Description</label></dt><dd><textarea name="jobDesc" id="jobDesc"></textarea></dd><dt></dt><dd pull-right><input type="button" id="workflow-max-jobentry-submit" value="Submit" onClick="workflow_maxWidget.logNewJob()";return false;" class="btn btn-mini btn-primary"> <input type="button" id="workflow-max-jobentry-cancel" value="Cancel" class="btn btn-mini" onClick="workflow_maxWidget.cancelNewJob()"; return false;"><dd></dl></form></div>'),
 	CREATE_JOBENTRY_REQ:new Template('<Job><Name>#{job_name}</Name><Description>#{job_desc}</Description><StartDate>#{start_date}</StartDate> <DueDate>#{due_date}</DueDate><ClientID>#{client_id}</ClientID></Job>'),
 	ASSIGN_STAFFENTRY_REQ:new Template('<Job><ID>#{job_id}</ID><add id="#{staff_id}"/></Job>'),
 	ASSIGN_TASKENTRY_REQ:new Template('<Task><Job>#{job_id}</Job><TaskID>#{task_id}</TaskID><EstimatedMinutes>#{estimated_minutes}</EstimatedMinutes></Task>'),
 
 	initialize:function(workflowMaxBundle, loadInline){
-		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
+		workflow_maxWidget = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.jobData = ""; init_reqs = []; this.executed_date = new Date();
 		this.bundle_data = workflowMaxBundle;
-		workflowMaxBundle.workflowMaxNote = jQuery('#workflowmax-note').html();
+		workflowMaxBundle.workflowMaxNote = jQuery('#workflow_max-note').html();
 		this.auth_keys = "?apiKey="+workflowMaxBundle.k+"&accountKey="+workflowMaxBundle.a
 		
 		init_reqs = [null, {
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "client.api/list"+this.auth_keys, 
-			on_success: widgetInst.loadClientList.bind(this) 
+			on_success: workflow_maxWidget.loadClientList.bind(this) 
 		}]
 		if (workflowMaxBundle.remote_integratable_id)
 			init_reqs[0] = {
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
-				on_success: widgetInst.loadTimeEntry.bind(this),
+				on_success: workflow_maxWidget.loadTimeEntry.bind(this),
 				on_failure: function(evt){}
 			}
 		workflowMaxOptions = {
@@ -37,7 +37,7 @@ WorkflowMaxWidget.prototype = {
 			integratable_type:"timesheet",
 			domain: workflowMaxBundle.api_url,
 			application_html: function() {
-				return widgetInst.WORKFLOW_MAX_FORM.evaluate({});
+				return workflow_maxWidget.WORKFLOW_MAX_FORM.evaluate({});
 			},
 			init_requests: init_reqs
 		};
@@ -47,7 +47,7 @@ WorkflowMaxWidget.prototype = {
 			this.freshdeskWidget = new Freshdesk.Widget(workflowMaxOptions);
 		} else {
 			workflowMaxOptions.login_html = function() {
-				return '<form onsubmit="workflowMaxWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
+				return '<form onsubmit="workflow_maxWidget.login(this); return false;" class="form">' + '<label>Authentication Key</label><input type="password" id="username"/>' + '<input type="hidden" id="password" value="X"/>' + '<input type="submit" value="Login" id="submit">' + '</form>';
 			};
 			this.freshdeskWidget = new Freshdesk.Widget(workflowMaxOptions);
 		};
@@ -58,7 +58,7 @@ WorkflowMaxWidget.prototype = {
 	delegateAddTimeClick: function(){
 		jQuery(document).on('hidden.bs.modal', '#new_timeentry', function () {
 			if(jQuery('#workflowmaxNewJob').length){
-				widgetInst.cancelNewJob();
+				workflow_maxWidget.cancelNewJob();
 			}
 		});
 	},
@@ -69,7 +69,7 @@ WorkflowMaxWidget.prototype = {
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "client.api/list"+this.auth_keys,
-			on_success: widgetInst.loadClientList.bind(this),
+			on_success: workflow_maxWidget.loadClientList.bind(this),
 			on_failure: function(evt){} })
 	},
 
@@ -143,7 +143,7 @@ WorkflowMaxWidget.prototype = {
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "job.api/get/"+job_id+this.auth_keys,
-			on_success: widgetInst.loadTaskEntry.bind(this),
+			on_success: workflow_maxWidget.loadTaskEntry.bind(this),
 			on_failure: function(evt){} })
 		}
 	},
@@ -157,7 +157,7 @@ WorkflowMaxWidget.prototype = {
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/staff/"+staff_id+this.auth_keys,
-		on_success: widgetInst.loadJobEntry.bind(this),
+		on_success: workflow_maxWidget.loadJobEntry.bind(this),
 		on_failure: function(evt){} })
 
 	},
@@ -212,7 +212,7 @@ WorkflowMaxWidget.prototype = {
 		if(integratable_id) this.freshdeskWidget.local_integratable_id = integratable_id;
 		//if(jQuery('.integration_container').css('display') != "none")
 		{
-			if (workflowMaxWidget.validateInput()) 
+			if (workflow_maxWidget.validateInput()) 
 			{
 				this.freshdeskWidget.request({
 					entity_name: "request",
@@ -416,7 +416,7 @@ WorkflowMaxWidget.prototype = {
 	// Methods for external widgets use.
 	updateTimeEntry:function(resultCallback){
 		if (workflowMaxBundle.remote_integratable_id) {
-			if (workflowMaxWidget.validateInput()) {
+			if (workflow_maxWidget.validateInput()) {
 				var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
 					time_entry_id: workflowMaxBundle.remote_integratable_id,
 					staff_id: $("workflow-max-timeentry-staff").value,
@@ -613,7 +613,7 @@ WorkflowMaxWidget.prototype = {
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/client/"+client_id+this.auth_keys,
-		on_success: widgetInst.loadStaffEntry.bind(this),
+		on_success: workflow_maxWidget.loadStaffEntry.bind(this),
 		on_failure: function(evt){} })
 	},
 
@@ -668,7 +668,7 @@ WorkflowMaxWidget.prototype = {
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "staff.api/list"+this.auth_keys,
-				on_success: widgetInst.loadAllStaffData.bind(this),
+				on_success: workflow_maxWidget.loadAllStaffData.bind(this),
 				on_failure: function(evt){} })
 			}
 	},
@@ -873,7 +873,7 @@ WorkflowMaxWidget.prototype = {
 	logNewJob:function(){
 		var job_desc = $("jobDesc").value;
 
-		if (workflowMaxWidget.validateJobInput()) { 
+		if (workflow_maxWidget.validateJobInput()) { 
 			jQuery("#workflow-max-jobentry-submit").attr("disabled","disabled");
 			var body = this.CREATE_JOBENTRY_REQ.evaluate({
 				client_id: $("selectedClient").value,
@@ -922,7 +922,7 @@ WorkflowMaxWidget.prototype = {
 					on_success: function(evt){
 						jQuery('.workflow_max_timetracking_widget').after('<div id="jobsuccessdiv" class="alert sucess">Job added successfully</div>');
 						window.setTimeout(function() {
-				  			widgetInst.cancelNewJob();
+				  			workflow_maxWidget.cancelNewJob();
 				         }, 2000);
 						//this.staffChanged($("workflow-max-timeentry-staff").value);
 					}.bind(this)
@@ -971,4 +971,4 @@ WorkflowMaxWidget.prototype = {
 	
 }
 
-workflowMaxWidget = new WorkflowMaxWidget(workflowMaxBundle, workflow_maxinline);
+new WorkflowMaxWidget(workflowMaxBundle, workflow_maxinline);

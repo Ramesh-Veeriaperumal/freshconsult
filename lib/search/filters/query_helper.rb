@@ -38,7 +38,7 @@ module Search::Filters::QueryHelper
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
 
         condition_block[:must].push(handle_field(cond_field, 
-                                    field['value'].to_s.split(','))) if (cond_field.present? and field['value'].present?)
+                                    field['value'].to_s.split(','))) if cond_field.present?
       end
 
       filtered_query(nil, bool_filter(condition_block))

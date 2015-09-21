@@ -565,6 +565,10 @@ module Helpdesk::TicketsHelper
 
   # ITIL Related Methods ends here
 
+  def is_invoice_disabled?(installed_app)
+    Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
+  end
+
 end
 
 def to_event_data_scenario(va_rule)

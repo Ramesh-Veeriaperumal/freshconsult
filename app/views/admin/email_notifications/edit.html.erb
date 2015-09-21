@@ -141,13 +141,15 @@
     			<h3 class="lead">
     				<%if @type == 'requester_template'%>
     					<% type_url = 'requester'%>
-    					<%= link_to "#{t('email_notifications.requestor_notification')}", "/admin/email_notifications##{type_url}" %>
+    					<%= link_to "#{t('email_notifications.requestor_notification')}", "#{admin_email_notifications_path}##{type_url}" %>
 					<%elsif @type == 'agent_template'%>
 							<% type_url = 'agent'%>
-							<%= link_to "#{t('email_notifications.agent_notification')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.agent_notification')}", "#{admin_email_notifications_path}##{type_url}"%>
+					<% elsif @type == "cc_notification"%>
+							<%= link_to "#{t('email_notifications.cc_notifications')}", "#{admin_email_notifications_path}##{@type}"%>
 					<%else%>
 							<% type_url = 'template'%>
-							<%= link_to "#{t('email_notifications.notification_template')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.notification_template')}", "#{admin_email_notifications_path}##{type_url}"%>
 					<%end%>/&nbsp;<%= t("#{@email_notification .token}") %>
     			</h3>
     		</div>

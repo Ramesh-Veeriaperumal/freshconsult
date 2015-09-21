@@ -13,6 +13,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
+  before_filter :update_agent_last_call_at, :only => [:status], :if => :single_leg_outgoing?
   before_filter :handle_direct_dial, :only => [:status]
   before_filter :populate_call_details, :only => [:status]
   before_filter :update_total_duration, :only => [:status]
@@ -93,7 +94,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def validate_twilio_request
-      @callback_params = params.except(*[:force_termination, :direct_dial_number, :conference_sid, :round_robin_call, :ParentCallSid, :forward_call, :call])
+      @callback_params = params.except(*[:force_termination, :direct_dial_number, :conference_sid, :round_robin_call, :ParentCallSid, :forward_call, :call, :agent_id])
       super
     end
 
@@ -170,7 +171,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def reset_outgoing_count
-      remove_device_from_outgoing(split_client_id(params[:From])) if current_call.present? && current_call.outgoing?
+      remove_device_from_outgoing(get_device_id) if current_call.present? && current_call.outgoing?
+    end
+
+    def get_device_id
+      current_call.sip? ? sip_user : split_client_id(params[:From])
     end
 
     def check_credit_balance

@@ -460,6 +460,15 @@ class Freshfone::Call < ActiveRecord::Base
     busy? || noanswer? || canceled?
   end
 
+  def sip?
+    return false if meta.blank?
+    meta.sip?
+  end
+
+  def create_sip_meta
+    create_meta(:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:sip])
+  end
+
   private
     def called_agent(params)
       agent_scoper.find_by_id(params[:agent]) if 

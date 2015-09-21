@@ -323,7 +323,11 @@ module ChatHelper
             :via_widget => t('freshchat.via_widget'),
             :reported => t('freshchat.reported'),
             :add_note => t('freshchat.add_note'),
-            :view_ticket => t('freshchat.view_ticket')
+            :view_ticket => t('freshchat.view_ticket'),
+            :no_agents => t('helpdesk.dashboard.livechat.no_agents'),
+            :no_activity => t('helpdesk.dashboard.livechat.no_activity'),
+            :last_active => t('helpdesk.dashboard.livechat.last_active'),
+            :chats_in_progress => t('helpdesk.dashboard.livechat.chats_in_progress')
         }
         return text.to_json.html_safe
   end

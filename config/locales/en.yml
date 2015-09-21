@@ -1941,6 +1941,8 @@ en:
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
+  new_ticket_cc: New Ticket Created
+  public_note_cc: Note added to ticket
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
@@ -3947,6 +3949,8 @@ en:
       social: Social
     search: Search
   agent_adds_comment: Agent Adds Comment to Ticket
+  notify_comment: Note added to ticket
+  add_cc: Added CC to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
   portal_customizer_option_tickets: Users can Submit a ticket without logging in
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
@@ -3962,6 +3966,7 @@ en:
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
     notification_template: Reply Templates
+    cc_notifications: CC Notifications
     title: Email Notifications
     singular_title: Notification
     index_outdated: Some translations are outdated
@@ -4015,6 +4020,15 @@ en:
       agent_template_13:
         topic: Resolution Time SLA Violation
         info1: "This notification is sent out to agent when the ticket assigned to them has not been resolved within the due by time. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      agent_template_21:
+        topic: Note added to ticket
+        info1: "This notification will be sent out to the agents mentioned in “notify agents” when a note is added to the ticket by an agent  This email could contain the ticket url {{ticket.url}} to make it easy for the agents to check the ticket."
+      cc_notification_19:
+        topic: New Ticket cc
+        info1: "This notification will be sent out to the cc-ed persons if the Requester has included email addresses under cc while submitting a ticket to your helpdesk. This email should ideally contain the Requester’s name {{ticket.requester.name}} and ticket description {{ticket.description}}."
+      cc_notification_20:
+        topic: Public Note cc
+        info1: "When a public note is added by an Agent or Requester, this email is sent out to the cc-ed person to inform them about the latest comment. This email should ideally contain last commenter {{comment.commenter.name}}  and last comment {{comment.body}}."
       requester_template_10:
         topic: User Activation Email
         info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -4044,6 +4058,7 @@ en:
     event: Event
     agent_notification: Agent Notification
     agent_notifications: Agent Notifications
+    cc_notifications: CC Notifications
     subject: Subject
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
@@ -4842,6 +4857,20 @@ en:
         call_in_progress: Call in progress
         no_agents: "- No Agents -"
         no_activity: "No Activity"
+      livechat:
+        chat: Live Chat
+        accepting: Accepting
+        not_accepting: Not Accepting
+        offline: Offline
+        no_agents: "- No Agents -"
+        in_all_agents_and_groups: in All Agents and Groups
+        select_by_group: Select by Group
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        chats_in_progress: Chats in progress
+        last_active: Last active
+        no_activity: No activity
       index:
         todo_title: To-Do
       summary:
@@ -5588,8 +5617,9 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
-      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
+      desc: "View client details, invoices, and add time sheet entries to your FreshBooks account"
+      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the FreshBooks API & Authentication token. <br/><br/>Log on to your FreshBooks account, click on your
+        <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.You can find your API URL and Authentication Token.<br/><br/>Select whether you would like agents to log time sheet entries to FreshBooks. You can also alter the default description, that is added for each timesheet entry.<br/><br/>Select whether you would like agents to see FreshBooks invoices.If required, you can restrict agents from viewing commercial details of an invoice such as “Invoiced Amount”, “Amount Due”,and  “Cost per unit”.<br/><br/>After the integration is enabled, contact details from the FreshBooks will be displayed on tickets and contacts page if a match is established based on Company name or Requester email."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -5598,6 +5628,9 @@ en:
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like cost, amount and total"
+        timeactivity: "Allow agents to log time entry in FreshBooks"
     seoshop:
       label: "SEOshop"
       desc: "Pull up order details instantly when your customers submit tickets in Freshdesk and help them to receive their answers as quickly as possible."
@@ -5801,13 +5834,22 @@ en:
       desc: "You can view contact information from Nimble crm in Freshdesk."
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
-      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
       connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
       remote_configurations:
         signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
         connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
         disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
         launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
+      helptext: '<h4>QuickBooks Integration</h4><p><br/>Select whether you would like agents to log time sheet entries to QuickBooks. You can also alter the default description, that is added for each timesheet entry.</p><p>Select whether you would like agents to see QuickBooks invoices. If required, you can restrict agents from viewing commercial details of an invoice such as "Invoiced Amount", "Amount Due" and "Cost per unit".</p><p>After the integration is enabled, customer details from the QuickBooks will be displayed on tickets and contacts page if a match is established based on 1. Company name or 2. Requester email</p><p>Based on the above match, agents can also view the most recent five invoices on the tickets page.</p>'
+      form:
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like rate, amount and total"
+        timeactivity: "Allow agents to log time entry in QuickBooks"
+        quickbooks_note: "Notes text"
+        quickbooks_note_info: "This text will be appended at the start of the note, with the time spent log."
+        account_settings: ""
+        account_settings_info: ""
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -7166,7 +7208,7 @@ en:
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
-        queue_message: "Queue Message"
+        queue_wait_message: "Queue wait message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
         non_business_hours_message: "Non-Business hours message"
@@ -7202,6 +7244,12 @@ en:
         number_accessible: "Accessible by"
         wait_music: "Wait Music"
         hold_music: "Hold Music"
+        queue_position_preference: "Read out queue position"
+        queue_position_message: "Queue position Message"
+        queue_position_message_placeholder: "You are currently in queue. Your queue position is {{queue.position}}"
+        queue_position_message_alert: "To read out queue position, use placeholder {{queue.position}} <br/> Eg: You are currently in queue. Your queue position is {{queue.position}}"
+        queue_position_enable: "ON"
+        queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."

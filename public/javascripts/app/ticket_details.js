@@ -236,23 +236,6 @@ TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 $('#ticket_original_request *').css({position: ''}); //Resetting the Position
-$('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	var group_id = $('#helpdesk_ticket_group_id').val();
-	$.ajax({type: 'GET',
-		url: '/helpdesk/commons/group_agents/' + group_id,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
 
 $('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	var hasMoment = $(this).attr('data-moment');
@@ -521,11 +504,15 @@ var scrollToError = function(){
 
 
 	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
+		// get the current selected agent if any
+		var select_agent = $('#TicketProperties .default_agent select')[0];
+		var prev_val = select_agent.options[select_agent.selectedIndex].value;
+
 		$('#TicketProperties .default_agent')
 			.addClass('sloading loading-small loading-right');
 
 		$.ajax({type: 'GET',
-			url: '/helpdesk/commons/group_agents/'+this.value,
+			url: prev_val == "" ? '/helpdesk/commons/group_agents/'+this.value : '/helpdesk/commons/group_agents/'+this.value+"?agent="+prev_val,
 			contentType: 'application/text',
 			success: function(data){
 				$('#TicketProperties .default_agent select')
@@ -537,7 +524,7 @@ var scrollToError = function(){
 		});
 	});
 
-	
+
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
 		$(this).find('.content').append(widget_code.val());
@@ -549,7 +536,7 @@ var scrollToError = function(){
 		$(this).children('.content').trigger('afterShow');
 		$(this).removeClass('inactive load_remote');
 	});
-	
+
 	$("body").on('click.ticket_details', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
 		$(this).parent().toggleClass('inactive');
 	});
@@ -816,10 +803,6 @@ var scrollToError = function(){
 			_form.find('.forward_email li.choice').remove();
 		}
 		$('#response_added_alert').remove();
-	});
-
-	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
-		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
 	function seperateQuoteText(_form){

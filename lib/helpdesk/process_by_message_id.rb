@@ -72,9 +72,8 @@ module Helpdesk::ProcessByMessageId
 
     def get_references
       headers = params[:headers]
-      if (headers =~ /references: (.+)/i)
+      if (headers =~ /references: (.+)/im)
         result = $1.scan(/<([^>]+)/).flatten
       end
     end
-
 end

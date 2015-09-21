@@ -16,10 +16,5 @@ module Search::Job
     def remove_job_key key
       remove_others_redis_key key
     end
-
-    #Remove as part of Search-Resque cleanup
-    def sidekiq?
-      get_others_redis_key("SEARCH_RESQUE_TO_SIDEKIQ")
-    end
   end
 end

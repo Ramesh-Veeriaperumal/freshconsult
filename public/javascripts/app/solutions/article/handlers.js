@@ -29,7 +29,7 @@ window.App = window.App || {};
     },
 		
 		toggleViews: function () {
-			$('.article-edit, .article-view, .article-edit-btn, .breadcrumb-btns').toggleClass('hide');
+			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container').toggleClass('hide');
 		},
     
     startEditing: function () {
