@@ -57,6 +57,15 @@ class Language
 			return nil if Account.current.blank?
 			(find_by_code(Account.current.language) || default)
 		end
+
+		def for_current_user
+			return nil if User.current.blank?
+			(find_by_code(User.current.language) || for_current_account)
+		end
+
+		def for_user(user)
+			find_by_code(user.language) || for_current_account
+		end
 		
 		def default
 			find_by_code("en")

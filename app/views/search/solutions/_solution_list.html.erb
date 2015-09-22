@@ -1,12 +1,12 @@
 <form id="searchmoreform" class="searchmoreform" action="#">
+	<%= select_tag "language_id", options_from_collection_for_select(Language.all, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"} %>
+
 	  <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
 	  <span class="searchicon"></span>
 </form>
 <div class="dialog-well links">
   <div id="default_solution_suggestions" class="request_well article-list">
-  	<table class="table table-striped">
-    <%= each_or_message("article", @search_results, t(:'ticket.suggested_solutions.no_result')) %>
-    </table>
+  	<%= render :partial => "results" %>
   </div>
   <div id="more_search_results" class="article-list"></div>
 </div>
@@ -117,19 +117,39 @@ jQuery('#solution_search').live('keyup', function(ev) {
 	}
 });
 
+jQuery('#language-select').on('change', function(ev){
+	ev.preventDefault();
+	var query = $('solution_search').value;
+	var lang_id = $('language-select').value;
+	if(query.length>0) {
+		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+
+				encodeURIComponent(query) + '&language_id=' + lang_id
+		fetchAndDisplayResults(url)
+	} else {
+		url = '/search/related_solutions/ticket/' + <%=@ticket.id%> + '?language_id=' + lang_id
+		fetchAndDisplayResults(url)
+	}
+	return false;
+})
+
 jQuery("#searchmoreform").submit(function(ev){
 	ev.preventDefault();
 	var query = $('solution_search').value;
+	var lang_id = $('language-select').value;
 	if(query.length>0) {
-		jQuery('#default_solution_suggestions').hide();
-		jQuery("#more_search_results").show().html('<div class="m20 p20"> </div>').addClass("sloading loading-small");
-		jQuery('#more_search_results')
-		  .load('/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+encodeURIComponent(query), 
-		        function() {
-		    jQuery("#more_search_results").removeClass("sloading loading-small");
-		  });
+		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+encodeURIComponent(query) + 
+			'&language_id=' + lang_id
+		fetchAndDisplayResults(url)
 	}
 	  
 	return false;
 });
+
+function fetchAndDisplayResults(url){
+	jQuery('#default_solution_suggestions').hide();
+	jQuery("#more_search_results").show().html('<div class="m20 p20"> </div>').addClass("sloading loading-small");
+	jQuery('#more_search_results').load(url, function() {
+		jQuery("#more_search_results").removeClass("sloading loading-small");
+	});
+}
 </script>

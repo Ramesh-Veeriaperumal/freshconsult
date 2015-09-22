@@ -2926,9 +2926,15 @@ $collision_delay: 1s;
 	width: 300px;
 	top: 20px;
 
+	.select2-container{
+		width: 34%;
+		margin-bottom: 3px;
+	}
+
 	input {
-		width: 100%;
+		width: 63%;
 		box-sizing: border-box;
+		@include margin-left(5px);
 	}
 
 	.searchicon {
