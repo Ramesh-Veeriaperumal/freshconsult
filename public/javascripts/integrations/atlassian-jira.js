@@ -235,17 +235,50 @@ JiraWidget.prototype = {
 	},
 
 	constructFieldsDynamically: function(evt){
-		resJson = evt.responseJSON;
-		jiraWidget.selectOnlyRequiredFields(resJson);
+		var resJson = evt.responseJSON;
+		jiraWidget.checkForAssignee(resJson);
 	},
 	processFailureCustomFields: function(evt){
 
 	},
-	selectOnlyRequiredFields:function(resJson){
+	checkForAssignee:function(resJson)
+	{
+		var isAssignee = false;
+		jiraWidget.allCustomfield = resJson;
 		jiraWidget.customFieldData = {};
+		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
+			if(field_key == "assignee")
+			{
+				isAssignee = true;
+				jiraWidget.customFieldData[field_key] = field_value;
+				project_key = jiraWidget.getProjectBy('id', jQuery('#jira-projects').val()).key;
+				jiraWidget.getAssignableUsers(project_key);
+			}
+		});
+		if(!isAssignee){
+			 jiraWidget.selectOnlyRequiredFields();
+		}
+	},
+	getAssignableUsers: function(project_key){
+		jiraWidget.freshdeskWidget.request({
+			rest_url: "rest/api/2/user/assignable/search?project=" + project_key,
+			content_type: "application/json",
+			on_success: function(evt) {
+				resJ = evt.responseJSON;
+				var unassigned = { displayName: "unassigned", name: "null" };
+				resJ.push(unassigned);
+				jiraWidget.customFieldData.assignee['allowedValues'] = resJ;
+				jiraWidget.selectOnlyRequiredFields();
+			},
+			on_failure: function(){
+				alert("unbale to get Assignee");
+			}
+		});
+	},
+	selectOnlyRequiredFields:function(){
 		
 		var tempo_flag = false;
-		jQuery.each(resJson.projects[0].issuetypes[0].fields,function(field_key,field_value){
+		jQuery.each(jiraWidget.allCustomfield.projects[0].issuetypes[0].fields,function(field_key,field_value){
 			if(field_value["required"]&& (field_key != "issuetype" && field_key != "project")){
 				jiraWidget.customFieldData[field_key] = field_value; 
 			}
@@ -327,6 +360,11 @@ JiraWidget.prototype = {
 		ticket_url = jiraBundle.ticket_url;
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
+		var assignee = "assignee"
+		if(created_issue.fields.hasOwnProperty(assignee) && created_issue.fields.assignee.name =="undefined")
+    {
+    	delete created_issue.fields.assignee;
+    }
     created_issue = jiraWidget.addAttachments(created_issue);	
 		this.jsonFix();
 		issue = JSON.stringify(created_issue);
@@ -804,8 +842,20 @@ JiraWidget.prototype = {
 	},
 	processJiraFieldUser:function(fieldKey,fieldData)
 	{
-		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>'+
-				'<input type="text" name="fields['+fieldKey+'][name]" id="fields['+ fieldKey+'][name]" value="'+jiraBundle.username+'"/>';
+		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>'
+		if(fieldKey == "reporter")
+		{
+			jiraWidget.fieldContainer +=	'<input type="text" name="fields['+fieldKey+'][name]" id="fields['+ fieldKey+'][name]" value="'+jiraBundle.username+'"/>';
+		}
+		else if (fieldKey == "assignee")
+		{	
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][name]">';
+			var selectOptions = "";
+			jQuery.each(fieldData["allowedValues"],function(key,data){
+				selectOptions += "<option value='"+data["key"]+"'>"+data["displayName"]+"</option>";
+			});
+			jiraWidget.fieldContainer += selectOptions+ '</select>';		
+		}
 	
 	},
 	processJiraFieldTimetracking:function(fieldKey,fieldData){
@@ -913,5 +963,3 @@ JiraWidget.prototype = {
 	},
 	
 }
-
-jiraWidget = new JiraWidget(jiraBundle);
