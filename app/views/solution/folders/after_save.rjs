@@ -1,5 +1,6 @@
+@folder.reload
 if @folder.errors.empty?
-	page << "jQuery('#version-#{@folder.parent_id}-#{@folder.language_id}').addClass('active');"
+	page.replace "item_#{@folder.parent_id}", render(:partial => "solution/categories/folder", :locals => {:folder => @folder.solution_folder_meta})
 	page << "jQuery('#version-#{@folder.parent_id}').modal('hide');"
 else
 	page.replace_html :error_messages, "#{error_messages_for :folder}"

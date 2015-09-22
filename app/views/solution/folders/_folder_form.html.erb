@@ -8,7 +8,7 @@
                          :autocomplete => "off",
                          :autofocus => true,
                          :name => "#{name}[name]" %>
-				<%= primary_preview(@primary, :name) if @primary != @folder %>
+				<%= primary_preview(@primary, :name) if @primary && @primary != @folder %>
     	</div>
 	</li>
 	<li class="control-group">
@@ -17,32 +17,36 @@
 	 		<%= f.text_area :description, 
 	 										:class => "smallpara",
 	 										:name => "#{name}[description]" %>
-	 		<%= primary_preview(@primary, :description) if @primary != @folder %>
+	 		<%= primary_preview(@primary, :description) if @primary && @primary != @folder %>
 	 	</div>
 	</li>  
 	<li class="control-group">
 		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
-			<%= dynamic_text_box(:category, @language) %>
+			<% if @folder_meta %>
+				<%= dynamic_text_box(:category, @language) %>
+			<% else %>
+				<%= f.select :category_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-large", :name => "solution_folder_meta[solution_category_meta_id]" } %>
+			<% end %>
 	 	</div>
 	</li>
 	<li class="companies_select control-group">
   	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
   	<div class="controls">
-  		<% if @primary == @folder %>
-  		<div class="row-fluid">
-	    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]", :selected => @folder_meta.visibility } %>
-    	</div>
-    	<br>
-    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
-				<%= render_autocomplete({
-								:selected_values => selected_companies(@customer_id),
-								:type => :companies,
-								:dom_id => "folder_customers"
-				}) %>
-			</div>
+  		<% if @folder_meta.present? && (@primary && @primary != @folder) %>
+  			<%= company_visibility_tooltip(@folder_meta) %>
 			<% else %>
-				<%= company_visibility_tooltip(@folder_meta) %>
+				<div class="row-fluid">
+		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]", :selected => @folder_meta && @folder_meta.visibility } %>
+	    	</div>
+	    	<br>
+	    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
+					<%= render_autocomplete({
+									:selected_values => selected_companies(@customer_id),
+									:type => :companies,
+									:dom_id => "folder_customers"
+					}) %>
+				</div>
 			<% end %>
   	</div>
   </li>

@@ -62,6 +62,7 @@ class Solution::Object
 	def build_meta
 		@meta_obj = @params[:id].blank? ? new_meta : initialize_meta
 		assign_meta_attributes
+		assign_meta_associations
 	end
 	
 	def new_meta
@@ -73,9 +74,14 @@ class Solution::Object
 	end
 
 	def assign_meta_associations
-		return unless META_ASSOCIATIONS.keys.include?(obj)
-		@meta_obj.send("#{META_ASSOCIATIONS[obj]}_meta=", get_parent_association(obj))
+		return unless @meta_obj.new_record? && META_ASSOCIATIONS.keys.include?(obj)
+		@meta_obj.send("#{META_ASSOCIATIONS[obj]}_meta=", get_parent_association)
 	end
+
+	def get_parent_association
+		raise "#{META_ASSOCIATIONS[obj]} id not specified" unless @params["#{META_ASSOCIATIONS[obj]}_meta_id"].present?
+		Account.current.send("#{META_ASSOCIATIONS[obj]}_meta").find_by_id(@params["#{META_ASSOCIATIONS[obj]}_meta_id"])
+	end	
 
 	def assign_meta_attributes
 		META_ATTRIBUTES[@obj].each do |attribute|

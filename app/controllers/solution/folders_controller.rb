@@ -10,9 +10,9 @@ class Solution::FoldersController < ApplicationController
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
   before_filter :load_category, :only => [:new, :show, :edit, :destroy, :create]
-  before_filter :fetch_new_category, :only => [:create]
   before_filter :load_meta, :only => [:edit, :update]
-  before_filter :set_customer_folder_params, :validate_customers, :only => [:create]
+  # to be done!
+  # before_filter :set_customer_folder_params, :validate_customers, :only => [:create]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
   before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
@@ -66,13 +66,11 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create
-    current_category = current_account.solution_categories.find(params[:category_id] || params[:solution_folder][:category_id])
-    @folder = current_category.folders.new(params[nscname]) 
-    @folder.category_id = @new_category.id
+    @folder = Solution::Builder.folder(params) 
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
-      if @folder.save
+      if @folder
         format.html { redirect_to solution_folder_path(@folder) }
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }     
@@ -92,7 +90,7 @@ class Solution::FoldersController < ApplicationController
         format.html do 
           redirect_to solution_folder_path(@folder.id)
         end
-        format.js { render 'update', :formats => [:rjs] }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else

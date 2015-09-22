@@ -4,7 +4,7 @@
 	<%= content_tag :h3, t(".new_folder"), :class => "lead itil-hide" %>
 <% end %>
 <%= form_for (@folder), :url => solution_folders_path , :html => {:multipart => true, :id => "folder-form"} do |f| %>
-	<%= render :partial => "folder_form" , :locals => { :f => f }%>
+	<%= render :partial => "folder_form" , :locals => { :f => f, :name => "solution_folder_meta[primary_folder]" }%>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_categories_path, :class => "btn" ) %>
