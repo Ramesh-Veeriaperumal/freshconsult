@@ -1109,7 +1109,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     previous_fr_due_by = t.frDueBy
     previous_due_by = t.due_by
-    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
+    p previous_fr_due_by
+    p previous_due_by
+    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 99.days.since.to_s }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     p response.body
