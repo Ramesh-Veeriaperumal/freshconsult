@@ -246,8 +246,8 @@ class Solution::FoldersController < ApplicationController
       render_to_string(
       :inline => t("solution.flash.folders_move_to_success",
                       :count => @updated_items.count - 1,
-                      :category_name => h(@new_category.name.truncate(15)),
-                      :folder_name => h(current_account.solution_folders.find(@updated_items.first).name.truncate(15)),
+                      :category_name => h(@new_category.name.truncate(30)),
+                      :folder_name => h(current_account.solution_folders.find(@updated_items.first).name.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 
@@ -261,8 +261,8 @@ class Solution::FoldersController < ApplicationController
     def error_flash_msg
       t("solution.flash.folders_move_to_error",
                       :count => @other_items.count - 1,
-                      :category_name => h(@new_category.name.truncate(15)),
-                      :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(15))
+                      :category_name => h(@new_category.name.truncate(30)),
+                      :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(30))
         ).html_safe
     end
 

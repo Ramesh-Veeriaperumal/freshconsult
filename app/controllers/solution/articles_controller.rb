@@ -383,8 +383,8 @@ class Solution::ArticlesController < ApplicationController
       render_to_string(
       :inline => t("solution.flash.articles_move_to_success",
                       :count => @updated_items.count - 1,
-                      :folder_name => h(@new_folder.name.truncate(15)),
-                      :article_name => h(current_account.solution_articles.find(@updated_items.first).title.truncate(15)),
+                      :folder_name => h(@new_folder.name.truncate(30)),
+                      :article_name => h(current_account.solution_articles.find(@updated_items.first).title.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
                                     :data => { 
@@ -398,8 +398,8 @@ class Solution::ArticlesController < ApplicationController
     def error_flash_msg
       t("solution.flash.articles_move_to_error",
                       :count => @other_items.count - 1,
-                      :folder_name => h(@new_folder.name.truncate(15)),
-                      :article_name => h(current_account.solution_articles.find(@other_items.first).title.truncate(15))
+                      :folder_name => h(@new_folder.name.truncate(30)),
+                      :article_name => h(current_account.solution_articles.find(@other_items.first).title.truncate(30))
         ).html_safe
     end
 
