@@ -22,7 +22,13 @@ class Role < ActiveRecord::Base
 
   def privilege_list=(privilege_data)
     privilege_data = privilege_data.collect {|p| p.to_sym unless p.blank?}.compact
-    self.privileges = Role.privileges_mask(privilege_data).to_s
+    # Remove this check once new privileges list shown in UI
+    unless self.default_role
+      Helpdesk::PrivilegesMap::MIGRATION_MAP.each do |key,value|
+          privilege_data.concat(value) if privilege_data.include?(key)
+      end
+    end
+    self.privileges = Role.privileges_mask(privilege_data.uniq).to_s
   end
 
   def self.privileges_mask(privilege_data)
