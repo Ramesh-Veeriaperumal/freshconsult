@@ -103,23 +103,4 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       assert_response 200
     end
   end
-
-  def test_create_delete_and_restore_contact
-    skip_bullet do
-      params = {  name: Faker::Lorem.characters(15),
-                  email: Faker::Internet.email }
-
-      assert_difference 'User.count', 1 do
-        post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response 201
-      end
-
-      sample_user = User.last
-      delete "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
-      assert sample_user.reload.deleted == true
-
-      put "/api/v2/contacts/#{sample_user.id}/restore", nil, @write_headers
-      assert sample_user.reload.deleted == false
-    end
-  end
 end

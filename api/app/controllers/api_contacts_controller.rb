@@ -1,7 +1,7 @@
 class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
 
-  before_filter :validate_empty_params, only: [:restore, :make_agent]
+  before_filter :validate_empty_params, only: [:make_agent]
 
   def contacts_filter(contacts)
     @contact_filter.conditions.each do |key|
@@ -37,16 +37,6 @@ class ApiContactsController < ApiApplicationController
   def destroy
     @item.update_attribute(:deleted, true)
     head 204
-  end
-
-  def restore
-    # Don't restore the contact if it has a parent
-    if @item.deleted && @item.parent_id != 0
-      head 404
-    else
-      @item.update_attribute(:deleted, false)
-      head 204
-    end
   end
 
   def make_agent

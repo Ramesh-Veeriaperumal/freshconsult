@@ -10,7 +10,6 @@ module ContactConstants
 
   DELETED_SCOPE = {
     'update' => false,
-    'restore' => true,
     'destroy' => false,
     'make_agent' => false
   }

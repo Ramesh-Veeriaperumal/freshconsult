@@ -468,30 +468,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
-  def test_restore_a_deleted_contact
-    sample_user = get_user
-    sample_user.update_column(:deleted, true)
-    put :restore, construct_params(id: sample_user.id)
-    assert_response 204
-  end
-
-  def test_restore_a_deleted_contact_with_params
-    sample_user = get_user
-    sample_user.update_column(:deleted, true)
-    put :restore, construct_params({ id: sample_user.id }, job_title: 'Employee')
-    assert_response 400
-    match_json([bad_request_error_pattern('job_title', 'invalid_field')])
-  end
-
-  def test_restore_a_merged_contact
-    (user1, user2) = @account.all_contacts.where(deleted: false).first(2)
-    user2.update_attribute(:deleted, true)
-    user2.update_attribute(:parent_id, user1.id)
-    put :restore, construct_params(id: user2.id)
-    assert_response :missing
-    assert user2.deleted == true
-  end
-
   # User Index and Filters
   def test_contact_index
     @account.all_contacts.update_all(deleted: false)
