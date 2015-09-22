@@ -45,6 +45,7 @@ module Helpdesk::TagMethods
                                                 })
   end
 
+  # Used by API v2
   def construct_tags(tags_to_be_added)
     tag_list = []
     # add tags to the item which already exists

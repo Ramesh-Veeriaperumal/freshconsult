@@ -111,7 +111,9 @@ module Users
     end
 
     def restrict_domain
-      if self.account.features?(:domain_restricted_access)
+      # OPTIMIZE
+      # Read it from cache.
+      if self.account.features_included?(:domain_restricted_access)
         domain = (/@(.+)/).match(self.email).to_a[1]
         wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
         unless Array.wrap(wl_domain).include?(domain)

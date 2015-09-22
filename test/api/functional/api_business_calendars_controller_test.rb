@@ -24,13 +24,13 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_handle_show_request_for_missing_business_calendar
     get :show, construct_params(id: 2000)
-    assert_response :missing
+    assert_response 404
     assert_equal ' ', response.body
   end
 
   def test_handle_show_request_for_invalid_business_calendar_id
     get :show, construct_params(id: Faker::Name.name)
-    assert_response :missing
+    assert_response 404
     assert_equal ' ', response.body
   end
 

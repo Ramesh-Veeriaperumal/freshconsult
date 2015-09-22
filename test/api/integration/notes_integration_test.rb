@@ -13,7 +13,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 7,
         api_ticket_notes: 5,
 
-        create: 58,
+        create: 57,
         reply: 59,
         update: 22,
         destroy: 20,
