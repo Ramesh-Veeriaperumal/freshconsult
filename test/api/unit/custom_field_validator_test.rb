@@ -84,6 +84,27 @@ class CustomFieldValidatorTest < ActionView::TestCase
     end
   end
 
+  class TestInvalidTypeValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute1, :error_options, :closed_status
+
+    validates :attribute1, custom_field: { attribute1: {
+      validatable_custom_fields: [ Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required
+    }
+                            }
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
   def test_choices_validatable_fields_valid
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'dropdown2_1' => 'first11' })
     assert test.valid?
@@ -194,5 +215,10 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_non_existent_validation_method
+    test = TestInvalidTypeValidation.new(attribute1: {'second_1' => "fdsfdfs"})
+    out, err = capture_io do 
+      test.valid?
+    end
+    assert_match %r%validate_junk_field%, err
   end
 end

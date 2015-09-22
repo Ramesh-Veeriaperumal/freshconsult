@@ -31,10 +31,6 @@ module ApiDiscussions
         FeatureConstants::DISCUSSION
       end
 
-      def set_custom_errors(_item = @item)
-        ErrorHelper.rename_error_fields({ topic: :topic_id }, @item)
-      end
-
       def validate_params
         return false if create? && !load_topic
         params[cname].permit(*(DiscussionConstants::POST_FIELDS))

@@ -34,7 +34,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     if respond_to?(method, true)
       send(method, record, attribute.to_sym)
     else
-      warn :"Validation Method #{method} is not present for the #{custom_field.field_type} - #{custom_field.inspect}"
+      warn :"Validation Method #{method} is not present for the #{current_field.field_type} - #{current_field.inspect}"
     end
   end
 

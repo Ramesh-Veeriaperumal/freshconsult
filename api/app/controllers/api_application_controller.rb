@@ -337,8 +337,8 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      handle_unverified_request
+    rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
+      render_request_error :credentials_required, 401
     end
 
     def get_request?

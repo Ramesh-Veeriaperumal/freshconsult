@@ -15,6 +15,7 @@ api_error_messages:
   access_denied: "You are not authorized to perform this action."
   require_feature: "The %{feature} feature is not supported in your plan. Please upgrade your account to use it."
   invalid_credentials: "You have to be logged in to perform this action."
+  credentials_required: "Authentication header is needed to log in."
   unverified_request: "You have initiated a unverifiable request." 
   account_suspended: "Your account has been suspended."
   invalid_multipart: "Multipart data is not properly formatted."

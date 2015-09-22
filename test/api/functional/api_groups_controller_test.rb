@@ -145,6 +145,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   end
 
+  def test_update_group_with_deleted_or_invalid_agent_id
+    agent_id = Faker::Number.between(5000, 10_000)
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    post :update, construct_params({ id: group.id }, escalate_to: 898989, agent_ids: [agent_id])
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_ids', 'list is invalid', list: agent_id.to_s),
+      bad_request_error_pattern('escalate_to', "can't be blank")])
+  end
+
   def test_update_group_valid_with_trailing_spaces
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, name: Faker::Lorem.characters(20) + white_space)
