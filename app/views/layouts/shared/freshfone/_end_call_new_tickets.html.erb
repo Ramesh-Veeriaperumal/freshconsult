@@ -3,15 +3,15 @@
 	<div class="control-group">
 		<label class="control-label" for="ticketSubject"><%= t('freshfone.widget.subject') %></label>
 		<div class="controls">
-			<input type="text" name="ticket_subject" id="ticketSubject" />
+			<input type="text" name="ticket_subject" id="ticketSubject" tabindex="1" />
 		</div>
 	</div>
 	<div class="requester_name_container">
 		<div class="control-group">
-			<label class="control-label" for="requesterName"><%= t('freshfone.widget.requester_name') %></label>
+			<label class="control-label" for="requesterName"><%= t('freshfone.widget.requester_name') %></label><br><br>
 			<div class="controls">
 				<form>
-				<input type="text" name="requester_name" id="requesterName"  class="requesterName" data-partialRequesterList="" data-current-user />
+				<input type="text" name="requester_name" id="requesterName"  class="requesterName" data-partialRequesterList="" data-current-user tabindex="2" />
 				<input type="hidden"  id="requesterId" />
 				 <div id="requesterName_choices" class="autocomplete"></div>
 				</form>
@@ -20,11 +20,11 @@
 		<div class="control-group hide" id="requesterEmail_dom">
 			<label class="control-label" for="requesterEmail"><%= t('freshfone.widget.requester_email') %></label>
 			<div class="controls">
-				<input type="text" name="requester_name" id="requesterEmail" />
+				<input type="text" name="requester_name" class="requesterEmail" id="requesterEmail" tabindex="3" />
 			</div>
 		</div>
 	</div>
 </div>
 <div class="btn-group ">
-	<button class="btn btn-primary save_ticket"><%= t('freshfone.widget.save') %></button>
+	<button class="btn btn-primary save_ticket" tabindex="4" data-loading-text="<%=t('freshfone.widget.saving')%>"><%= t('freshfone.widget.save')%></button>
 </div>

@@ -1,6 +1,7 @@
 module Freshfone
   class NotificationWorker < BaseWorker
     include Freshfone::FreshfoneUtil
+    include Freshfone::CallerLookup
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
 
@@ -53,7 +54,7 @@ module Freshfone
       call_params  = {
         :url             => client_accept_url(current_call.id, agent),
         :status_callback => client_status_url(current_call.id, agent),
-        :from            => params[:caller_id],
+        :from            => browser_caller_id(params[:caller_id]),
         :to              => "client:#{agent}",
         :timeout         => current_number.ringing_time,
         :timeLimit       => current_account.freshfone_credit.call_time_limit
@@ -104,7 +105,7 @@ module Freshfone
         :url             => transfer_accept_url(current_call.id, params[:source_agent_id], agent),
         :status_callback => transfer_status_url(current_call.children.last.id, agent),
         :to              => "client:#{agent}",
-        :from            => current_call.caller_number,
+        :from            => browser_caller_id(current_call.caller_number),
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :timeout         => current_number.ringing_time
       }
@@ -179,7 +180,7 @@ module Freshfone
                             round_robin_agent_wait_url(current_call) : 
                             forward_accept_url(current_call.id, agent["id"]),
         :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
-        :from            => browser_agent? ? params[:caller_id] : current_call.number,
+        :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : current_call.number,
         :to              => browser_agent? ? "client:#{agent['id']}" : 
                             current_account.users.find(agent["id"]).available_number,
         :timeout         => current_number.ringing_duration,
