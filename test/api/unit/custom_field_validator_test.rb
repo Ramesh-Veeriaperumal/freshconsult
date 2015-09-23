@@ -112,13 +112,13 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({
       check1_1: { data_type: 'Boolean' },
       check2_1: { data_type: 'Boolean' },
-      number2_1: { data_type: 'Positive Integer' },
-      number1_1: { data_type: 'Positive Integer' }
+      number2_1: { data_type: 'Integer' },
+      number1_1: { data_type: 'Integer' }
     }.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_format_validatable_fields_valid
-    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => 787, 'multi_1' => 'dff' })
+    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff' })
     assert test.valid?
     assert test.errors.empty?
   end
@@ -173,11 +173,11 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'data_type_mismatch', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'data_type_mismatch', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'data_type_mismatch', number2_1: 'data_type_mismatch', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: 'Positive Integer' }, number2_1: { data_type: 'Positive Integer' },
+                   number1_1: { data_type: 'Integer' }, number2_1: { data_type: 'Integer' },
                    check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -185,11 +185,11 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'data_type_mismatch', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'data_type_mismatch', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'data_type_mismatch', number2_1: 'data_type_mismatch', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: 'Positive Integer' }, number2_1: { data_type: 'Positive Integer' },
+                   number1_1: { data_type: 'Integer' }, number2_1: { data_type: 'Integer' },
                    check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 

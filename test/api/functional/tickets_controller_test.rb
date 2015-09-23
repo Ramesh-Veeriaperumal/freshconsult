@@ -18,16 +18,16 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph }
 
   ERROR_PARAMS =  {
-    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
+    'number' => ['data_type_mismatch', data_type: 'Integer'],
     'decimal' => ['data_type_mismatch', data_type: 'number'],
     'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
     'text' => ['is too long (maximum is 255 characters)']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
+    'number' => ['required_integer'],
     'decimal' => ['required_number'],
-    'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
+    'checkbox' => ['required_boolean'],
     'text' => ['missing'],
     'paragraph' => ['missing']
   }
