@@ -84,6 +84,7 @@ window.App = window.App || {};
         $this.autoSave.stopSaving();
         $(".article-edit-form")[0].reset();
         $('.breadcrumb').removeClass('breadcrumb-edit');
+        $this.highlightCode();
 
         if($this.autoSave.totalCount > 0) {
           $this.setFormValues();

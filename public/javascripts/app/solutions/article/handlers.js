@@ -18,6 +18,12 @@ window.App = window.App || {};
       this.data.description = null;
     },
 
+    highlightCode: function () {
+      if (window.location.hash != "#edit"){
+        highlight_code();
+      }
+    },
+
     editUrlChange: function (editingFlag) {
       window.location.hash = (editingFlag ? "#edit" : "");
     },
