@@ -24,7 +24,7 @@ class FreshfoneController < FreshfoneBaseController
 		rescue Exception => e # Spreadheet L 5
 			Rails.logger.error "Error in voice_conference for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       current_call.cleanup_and_disconnect_call if current_call.present?
-      render :xml => empty_twiml
+      empty_twiml and return
 		end
 	end
 	
