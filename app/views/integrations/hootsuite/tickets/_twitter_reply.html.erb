@@ -1,0 +1,43 @@
+<div id="not_following_message" class="info-highlight center"></div>
+<%= form_for [@ticket, @note], :url => twitter_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true, :class =>" twitter-form", :id => "social_reply_form" } do |f| %>
+    <%= hidden_field_tag :tkt_tweet_type, @ticket.tweet.tweet_type, :id => "tkt_tweet_type" %>
+    <%= hidden_field_tag :in_reply_to_handle, @ticket.latest_twitter_comment_user, :id => "in_reply_to_handle" %>
+    <%= hidden_field_tag :tweet, "true", :id => "tweet" %>
+    <%= f.hidden_field :private , :value => "false" %>
+    <label class="caption">From:</label>
+    <div class="fields">
+       <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name, {:selected => @ticket.fetch_twitter_handle}) %>
+    </div>
+    <div class="fields">
+            <%= f.fields_for(:note_body, @note_body) do |ff| %>
+            <%= ff.text_area :body ,  { :class => 'hs-textarea', :id => "msg-body", :value =>default_twitter_body_val(@ticket), :rows => "50", "data-tweet-count" => default_twitter_body_val(@ticket).length  } %>
+            <% end %>
+        <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
+                <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:tweet_ticket_status  )%>        
+    </div>
+    <div class="fields">
+        <span id="tweet_type_selector" class="pull-right">
+            <%= select_tag :tweet_type , options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) ,{}%>
+        </span>
+        <span class="tweet-counter" id="SendTweetCounter">140</span>
+    </div>
+    <div class="fields">
+        <label class="error hide" id="twitter_count_exceed">
+            <%= t("integrations.hootsuite.social.twitter_limit_exceed")%>
+        </label>
+    </div>
+    <div class="fields">
+        <%= f.submit "#{t("integrations.hootsuite.reply_btn")}", :id => "social_reply", :class => "hs_btnCtaSml hs_btnTypeSubmit pull-right"  %>
+    </div>
+<% end %>
+<script>
+jQuery('#msg-body').NobleCount('#SendTweetCounter', { on_negative : show_error , on_positive : hide_error });
+function show_error(){
+    jQuery("#twitter_count_exceed").show();
+}
+function hide_error(){
+    jQuery("#twitter_count_exceed").hide();
+}
+jQuery('#twitter_handle').trigger( "change" );
+jQuery("#tweet_type").trigger( "change" );
+</script>

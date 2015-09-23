@@ -151,14 +151,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
-  scope :with_display_id, lambda { |search_string| {  
-    :include => [ :requester ],
-    :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
-    :order => 'helpdesk_tickets.display_id',
-    :limit => 1000
-    } 
-  }
-
   scope :with_requester, lambda { |search_string| {  
     :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
       users.account_id = helpdesk_tickets.account_id and users.deleted = false),

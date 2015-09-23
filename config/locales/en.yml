@@ -5129,6 +5129,11 @@ en:
           public_note: "%{user_name} added a public note on %{note_date}"
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
+        hootsuite_created_on:
+          private_note: "%{user_name} added a private note on <br/>%{note_date}"
+          public_note: "%{user_name} added a public note on <br/>%{note_date}"
+          reply: "%{user_name} replied on <br/>%{note_date}"
+          forward: "%{user_name} forwarded on <br/>%{note_date}"
         created_on_live:
           private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
@@ -6180,6 +6185,61 @@ en:
       freshdesk_api_key: "Freshdesk API key"
       api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
       new_to_freshdesk: "New to Freshdesk? "
+    hootsuite:
+      auth_error: "Error: It appears that you are not loading this page from inside a HootSuite stream"
+      agent_error: "You should be an agent to view the tickets"
+      no_ticket_msg: "You don't have any tickets for this filter selection"
+      signup_message: "Not a Freshdesk customer yet? SignUp"
+      header:
+        tickets: "Your tickets"
+        reply: "Reply"
+        try_again: "Try Again"
+      ticket_heading: "Tickets"
+      filter:
+        status: "Status"
+        priority: "Priority"
+        all: "All"
+      submit: "Submit"
+      search:
+        keyword: "Keyword"
+        ticket_id: "Ticket ID"
+        placeholder_keyword: "Enter Keyword"
+        placeholder_ticket_id: "Enter Ticket ID"
+      logged_in_message: "Logged in as %{user_name}"
+      domain:
+        domain_message: "Please enter helpdesk URL"
+        continue_to_login: "Continue to login"
+        freshdesk_domain: "http://"
+        domain_error: "Unable to authorize freshdesk domain"
+      more:
+        help: "Help"
+        feedback: "Feedback"
+        freshdesk: "Freshdesk"
+      ticket_created_message: "By %{requester_name},%{created_date}"
+      notes_more: "%{count} more"
+      reply_btn: "Reply"
+      cc_bcc: "Cc/Bcc"
+      send: "Send"
+      social:
+        convert_to_ticket: "Convert to Ticket"
+        subjcet: "Subject"
+        description: "Description"
+        twitter_handles: "Requester twitter handles"
+        facebook_name: "Requester Facebook Name"
+        requester: "Requester"
+        already_converted: "This message is already converted to ticket"
+        successfully_converted: "Ticket has been successfully created"
+        twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+      note:
+        human_name: "note"
+      ticket:
+        human_name: "ticket"
+      reply:
+        human_name: "reply"
+      login:
+        login: "Login"
+        email: "Email"
+        password: "Password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."

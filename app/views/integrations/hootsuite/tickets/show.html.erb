@@ -1,0 +1,113 @@
+<%= csrf_meta_tag %>
+<%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
+<%= javascript_include_tag :'cdn/hootsuite' %>
+<script type="text/javascript">
+var uid = '<%= params[:uid]%>';
+var ts = '<%= params[:ts]%>';
+var token = '<%= params[:token]%>';
+var pid = '<%= params[:pid]%>';
+var args = "?uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
+TICKET_DETAILS_DATA = {
+ last_note_id		: <%= @ticket_note_all.present? ? @ticket_note_all.last.id : -1 %>
+};
+TICKET_CONSTANTS = {
+		statuses: 	{
+			resolved 	: 	<%= Helpdesk::Ticketfields::TicketStatus::RESOLVED %>,
+			closed 		: 	<%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>,
+		}
+	};
+	function displayAll(){
+		jQuery(".notes_all").removeClass("hide");
+		jQuery(".show_all").hide();
+	}
+var ticketId = <%= @ticket.display_id %>;
+</script>
+<div class="hs-stream">
+	<div class="ticket-header clearfix">
+		<a href='<%=helpdesk_ticket_url(@ticket) %>' target='_blank'>
+			<span class="<%= font_class('freshdesk', nil, 'pull-left') %>"></span>
+			<p class='tkt-title'>#<%= @ticket.display_id%> <%=truncate(@ticket.subject, :length => 90).html_safe %></p>
+		</a>
+		<ul class='ticket-options'>
+			<li class='view-icon'><a class="<%= font_class('open-in-new-window', nil, 'tooltip') %>" title='View on Freshdesk' href='<%=helpdesk_ticket_url(@ticket) %>' target='_blank'></a></li>
+			<li class='line-separator'></li>
+			<% if @show_reply %>
+				<li class='widget-top active' data-show="reply"> <span class="<%= font_class('reply', nil, 'tooltip') %>" title='Reply'></span></li>
+			<% end %>
+			<li class='widget-top' data-show="note"> <span class="<%= font_class('file-edit', nil, 'tooltip') %>" title='Note'></span></li>
+			<li class='widget-top' data-show="properties"> <span class="<%= font_class('edit', nil, 'tooltip') %>" title='Properties'></span></li>
+		</ul>
+	</div>
+	<div class="tkt-wrapper ticket_show clearfix" data-showing='notes'>
+		<div class="leftcontent">
+			<div class="conversation_thread">
+				<div class="conversation original-request">
+					<%= render :partial => "original_request" %> 
+				</div>
+				<%if @ticket_notes_total>1%>
+					<div class='more-wrapper'>
+						<a href="#" class="show_all" onclick="displayAll()">
+							<%= t("integrations.hootsuite.notes_more",
+							:count => @ticket_notes_total-1).html_safe %>
+						</a>
+					</div>
+				<%end%>
+			</div>
+			<div class="notes_all hide">
+				<div class="conversation_thread" id="all_notes" rel="activity_container">
+					<% all_notes = @ticket_note_all[0..-2] if @ticket_note_all.present? %>
+					<% if all_notes.present? %>
+						<%= render :partial => "note", :collection => all_notes %>
+					<% end %>
+				</div>
+			</div>
+			<div id="notes_last" class='notes_last'>
+				<div class="conversation_thread" id="last_notes" rel="activity_container">
+					<% last_note = @ticket_note_all.last(1) if @ticket_note_all.present? %>
+					<% if last_note.present? %>
+						<%= render :partial => "note", :collection => last_note %>
+					<% end %>
+				</div>
+			</div>
+
+		</div>
+		<div class='rightcontent'>
+			<div class="alert alert-error hide" id="alert">
+			</div>
+			<% if @show_reply %>
+				<div class="side-widget" id="reply" >
+					<div class='side-header'>
+		                <p class='hs_userName'> <%= t("integrations.hootsuite.header.reply")%> </p>
+					</div>
+					<% if @ticket.is_facebook? %> 
+						<%= render :partial => "/integrations/hootsuite/tickets/facebook_reply" %>
+					<% elsif @ticket.is_twitter? %> 
+						<%= render :partial => "/integrations/hootsuite/tickets/twitter_reply" %>
+					<% else %>
+					 <%= render :partial => "/integrations/hootsuite/tickets/email_reply" %>
+					<% end %>
+				</div>
+			<% end %>
+
+			<div class="side-widget hide" id="note" >
+				<div class='side-header'>
+					<p class='hs_userName'> <%= t("note")%> </p>
+				</div>
+				<div class='add-note-wrapper clearfix'>
+					<textarea id="note_body" class="hs-textarea" placeholder='Type your note here...'></textarea>
+					<div id="toggle-note-visibility">
+				    	<%= form_for @ticket do |f| %>
+				      		<%= f.check_box(:private, :checked => true, :disabled => false, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes" )  %>
+				    		<%= f.label :private, t("helpdesk.tickets.note.public_note_tip") %>
+							<button type="button" id="add_ticket_note" class='hs_btnCtaSml hs_btnTypeSubmit pull-right'><%= t("integrations.hootsuite.send")%></button>
+				      	<%end%>
+			    	</div>
+			    </div>
+			</div>
+
+			<div class="side-widget hide" id="properties">
+				<%=render :partial => "/integrations/hootsuite/tickets/ticket_fields",:locals =>{:ticket => @ticket } %>
+			</div>
+		</div>
+	</div>
+</div>

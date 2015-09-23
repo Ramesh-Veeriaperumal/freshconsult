@@ -219,7 +219,10 @@ Helpkit::Application.routes.draw do
   match '/imports/:type' => 'customers_import#csv'
   match '/imports/:type/map_fields' => 'customers_import#map_fields'
 
-  resources :health_check
+  namespace :health_check do
+    get :verify_domain
+    get :verify_credential
+  end
 
   resources :customers do
     member do
@@ -761,6 +764,33 @@ Helpkit::Application.routes.draw do
       get :authdone
       get :install
       post :create_invoices
+    end
+
+    namespace :hootsuite do
+      
+      resources :tickets, :only => [:update,:create,:show] do
+        collection do
+          post :add_note
+          post :add_reply
+          get :append_social_reply
+        end
+      end
+
+      namespace :home do
+        get :domain_page
+        post :plugin
+        post :verify_domain
+        get :handle_plugin
+        delete :destroy
+        get :log_out
+        post :uninstall
+        get :index
+        post :iframe_page
+        post :search
+        delete :delete_hootsuite_user
+        get :hootsuite_login
+        post :create_login_session
+      end
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action

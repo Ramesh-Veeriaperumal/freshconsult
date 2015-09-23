@@ -1,0 +1,18 @@
+<% bcc_email = bcc_drop_box_email.map {|x| x[1]} %>
+<div class='from-to-wrapper'>
+	<span> To: </span>
+	<span> <%= @ticket.requester.email %> </span>
+</div>
+<div class='from-to-wrapper'>
+	<span> From: </span>
+	<span class='from-mail'> <%= @ticket.selected_reply_email %> </span>
+</div>
+<div class='mail-options'>
+	<a href='#' class='option'> <%= t("integrations.hootsuite.cc_bcc")%> </a>
+	<div class='cc-bcc-input hide'>
+		<input type='text' class='hs_demoInput cc-input' placeholder='Cc' value='<%= to_cc_emails.join(',') %>' />
+		<input type='text' class='hs_demoInput bcc-input' placeholder='Bcc' value="<%= bcc_email %>"/>
+	</div>
+</div>
+<textarea id="msg_body" class="hs-textarea" placeholder='Type your reply here...'></textarea>
+<button type="button" id="add_ticket_reply" class='hs_btnCtaSml hs_btnTypeSubmit pull-right'><%= t("integrations.hootsuite.reply_btn")%></button>
