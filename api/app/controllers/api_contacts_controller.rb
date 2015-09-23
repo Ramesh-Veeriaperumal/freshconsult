@@ -48,8 +48,7 @@ class ApiContactsController < ApiApplicationController
     def before_load_object
       # Ensure that no parameters are passed along with the make_agent request
       if action_name == 'make_agent' && ! params[cname].blank?
-        errors = [[:json, ["Should be blank"]]]
-        render_errors errors
+        render_request_error :no_json_required, 400
       end
     end
 
@@ -61,12 +60,7 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
-      unless scope.nil?
-        if @item.deleted != scope
-          head 404
-          return false
-        end
-      end
+      head 404 if scope != nil && @item.deleted != scope
     end
 
     def validate_params
