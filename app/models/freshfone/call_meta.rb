@@ -87,9 +87,6 @@ class Freshfone::CallMeta < ActiveRecord::Base
   end
 
   def update_external_transfer_call(number, call_sid)
-    pinged_agents.each do |agent|
-      agent.merge!({:call_sid => call_sid}) if agent[:number] == number
-    end
     self.device_type = Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
     save
   end
