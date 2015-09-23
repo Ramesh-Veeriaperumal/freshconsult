@@ -1,5 +1,5 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields]
   attr_accessor(*ATTRS)
 
   def validate(record)

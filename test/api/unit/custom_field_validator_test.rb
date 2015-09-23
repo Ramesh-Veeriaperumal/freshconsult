@@ -193,6 +193,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
+  def test_nested_fields_with_changed_child_value
+    test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
+    refute test.valid?
+    Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name = {second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } }}
+    test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
+    assert test.valid?
+  end
+
   def test_non_existent_validation_method
   end
 end
