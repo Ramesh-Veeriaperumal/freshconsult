@@ -59,7 +59,12 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
 
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_incoming_call current_call, agent
+        raise e
+      end
       if agent_call.present?
         update_and_validate_pinged_agents(current_call, agent_call)
         set_browser_sid(agent_call.sid, current_call.call_sid)
@@ -82,7 +87,7 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_incoming_call current_call, agent
+        call_actions.handle_failed_incoming_call current_call, agent
         raise e
       end
 
@@ -104,7 +109,12 @@ module Freshfone
         :timeout         => current_number.ringing_time
       }
       
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_transfer_call current_call, agent
+        raise e
+      end
       
       if agent_call.present?
         update_and_validate_pinged_agents(current_call.children.last, agent_call)
@@ -130,7 +140,7 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_transfer_call current_call, agent
+        call_actions.handle_failed_transfer_call current_call, agent
         raise e
       end
       
@@ -179,7 +189,7 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_incoming_call(current_call, agent['id']) unless browser_agent?
+        call_actions.handle_failed_incoming_call(current_call, agent['id'])
         raise e
       end
       set_browser_sid(agent_call.sid, current_call.call_sid) if (browser_agent? && agent_call.present?)
