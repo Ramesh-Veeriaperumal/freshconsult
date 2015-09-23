@@ -1,16 +1,6 @@
 class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
 
-  before_filter :validate_empty_params, only: [:make_agent]
-
-  def contacts_filter(contacts)
-    @contact_filter.conditions.each do |key|
-      clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
-      contacts = contacts.where(clause[:conditions])
-    end
-    contacts
-  end
-
   def create
     assign_protected
     contact_delegator = ContactDelegator.new(@item)
@@ -55,51 +45,12 @@ class ApiContactsController < ApiApplicationController
 
   private
 
-    def load_objects
-      super contacts_filter(scoper).includes(:flexifield, :company)
-    end
-
-    def scoper
-      current_account.all_contacts
-    end
-
-    def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
-    end
-
-    def validate_params
-      contact_fields = current_account.contact_form.custom_contact_fields
-      allowed_custom_fields = contact_fields.map(&:name)
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-
-      field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
-      params[cname].permit(*(field))
-
-      contact = ContactValidation.new(params[cname], @item)
-      render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
-    end
-
-    def validate_empty_params
-      params[cname].permit(*ContactConstants::EMPTY_FIELDS)
-    end
-
-    def sanitize_params
-      prepare_array_fields [:tags]
-      params[cname][:tag_names] = params[cname].delete(:tags).join(',') if params[cname].key?(:tags)
-
-      # Making the client_manager as the last entry in the params[cname], since company_id has to be initialised first for
-      # making a contact as a client_manager
-      params[cname][:client_manager] = params[cname].delete(:client_manager).to_s if params[cname][:client_manager]
-
-      params[cname][:avatar_attributes] = { content: params[cname][:avatar] } if params[cname][:avatar]
-
-      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
-    end
-
-    def validate_filter_params
-      params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @contact_filter = ContactFilterValidation.new(params)
-      render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+    def before_load_object
+      # Ensure that no parameters are passed along with the make_agent request
+      if action_name == 'make_agent' && ! params[cname].blank?
+        errors = [[:json, ["Should be blank"]]]
+        render_errors errors
+      end
     end
 
     def load_object
@@ -116,6 +67,58 @@ class ApiContactsController < ApiApplicationController
           return false
         end
       end
+    end
+
+    def validate_params
+      contact_fields = current_account.contact_form.custom_contact_fields
+      allowed_custom_fields = contact_fields.map(&:name)
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
+
+      field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
+      params[cname].permit(*(field))
+
+      contact = ContactValidation.new(params[cname], @item)
+      render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
+    end
+
+    def sanitize_params
+      prepare_array_fields [:tags]
+      params_hash = params[cname]
+      params_hash[:tag_names] = params_hash.delete(:tags).join(',') if params_hash.key?(:tags)
+
+      # Making the client_manager as the last entry in the params_hash, since company_id
+      # has to be initialised first for making a contact as a client_manager
+      params_hash[:client_manager] = params_hash.delete(:client_manager).to_s if params_hash[:client_manager]
+
+      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
+
+      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
+    end
+
+    def validate_filter_params
+      params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      @contact_filter = ContactFilterValidation.new(params)
+      render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+    end
+
+    def load_objects
+      super contacts_filter(scoper).includes(:flexifield, :company)
+    end
+
+    def contacts_filter(contacts)
+      @contact_filter.conditions.each do |key|
+        clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
+        contacts = contacts.where(clause[:conditions])
+      end
+      contacts
+    end
+
+    def scoper
+      current_account.all_contacts
+    end
+
+    def set_custom_errors(item = @item)
+      ErrorHelper.rename_error_fields({ company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
     end
 
     def assign_protected

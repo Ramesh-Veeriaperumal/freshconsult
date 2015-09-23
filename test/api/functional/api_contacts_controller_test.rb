@@ -573,7 +573,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user_with_email
     put :make_agent, construct_params({ id: sample_user.id }, job_title: 'Employee')
     assert_response 400
-    match_json([bad_request_error_pattern('job_title', 'invalid_field')])
+    match_json([bad_request_error_pattern('json', 'Should be blank')])
   end
 
   def test_make_agent_out_of_a_user_without_email

@@ -2,8 +2,6 @@ module ContactConstants
   ARRAY_FIELDS = [{ 'tags' => [String] }]
   CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags) | ARRAY_FIELDS
 
-  EMPTY_FIELDS = []
-
   STATES = %w( verified unverified all deleted blocked )
 
   INDEX_FIELDS = %w( state email phone mobile company_id )
