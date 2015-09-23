@@ -1,4 +1,4 @@
-namespace :ecommerce_daily_api_report do 
+namespace :ebay_daily_api_report do 
   desc "Fetch the daily api usage of all ebay accounts"
   task :intimate => :environment do
 
