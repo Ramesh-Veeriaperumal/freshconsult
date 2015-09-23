@@ -150,7 +150,7 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      @ff = Account.current.flexifields_with_ticket_fields_from_cache
+      @ff = Account.current.ticket_fields_from_cache
       allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(@ff)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields

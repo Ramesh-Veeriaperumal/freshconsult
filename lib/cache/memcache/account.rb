@@ -119,6 +119,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def ticket_fields_from_cache
+    key = ACCOUNT_TICKETFIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      ticket_fields_with_nested_fields.all
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
