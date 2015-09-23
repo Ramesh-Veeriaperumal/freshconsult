@@ -38,11 +38,6 @@
 
 </div>
 
-<!-- Article properties overlay -->
-<% content_for :dialogs do %>
-	<div id="article-prop" class="hide"></div>
-<% end %>
-
 <script type="text/javascript">
 	jQuery('body').one('assetLoaded.fjax', function() {
 		App.Solutions.NavMenu.setActiveFolderAs(<%= @article.folder_id %>);

@@ -100,8 +100,8 @@ window.App = window.App || {};
     articleProperties: function () {
       var $this = this;
       this.formatSeoMeta();
-      $("#article-prop-cancel").bind("click", function () {
-        $('#article-prop-content #article-form').resetForm();
+      $("#article-prop-" + this.data.articleId + "-cancel").bind("click", function () {
+        $("#article-prop-" + $this.data.articleId + ' form').resetForm();
         $('.article-tags').select2('val', $this.articleTags);
       });
     },

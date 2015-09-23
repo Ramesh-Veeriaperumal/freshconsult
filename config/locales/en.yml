@@ -3770,6 +3770,7 @@ en:
       properties: Properties
       edit_properties: Edit Properties
       prop_updated_msg: The article properties were updated succesfully.
+      prop_updated_error: The article properties could not be updated.
       save_and_publish: Save and Publish
       save_as_draft: Save as Draft
       publish: Publish

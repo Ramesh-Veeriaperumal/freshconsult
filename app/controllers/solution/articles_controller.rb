@@ -329,6 +329,10 @@ class Solution::ArticlesController < ApplicationController
         else
           format.html { render_edit }
           format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+          format.js {
+            flash[:notice] = t('solution.articles.prop_updated_error')
+            render 'update_error'
+          }
         end
       end
     end
