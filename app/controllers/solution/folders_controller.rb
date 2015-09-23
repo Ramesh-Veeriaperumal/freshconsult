@@ -79,7 +79,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
-    @folder = @category.folders.find(params[:id])
+    @folder = current_account.solution_folders.where(:id => params[:id]).readonly(false).first
 
     @folder.category_id = @new_category.id
     
@@ -91,14 +91,17 @@ class Solution::FoldersController < ApplicationController
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else
-        format.html { render :action => "edit" }
+        format.html { 
+          set_customers_field
+          render :action => "edit" 
+        }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    @folder = (@category.present? ? @category.folders : current_account.solution_folders).find(params[:id])
+    @folder = current_account.solution_folders.where( :id => params[:id]).readonly(false).first
     redirect_to_url = solution_category_url(@folder.category_id)
     @folder.destroy unless @folder.is_default?
     respond_to do |format|
@@ -273,5 +276,9 @@ class Solution::FoldersController < ApplicationController
 
     def clear_cache
       current_account.clear_solution_categories_from_cache
+    end
+
+    def set_customers_field
+      @customer_id = params["customers"].present? ? params["customers"].split(',') : []
     end
 end
