@@ -832,6 +832,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @model_changes
   end
 
+  #Ecommerce methods
+  def ecommerce?
+    source == SOURCE_KEYS_BY_TOKEN[:ecommerce] && self.ebay_question.present?
+  end
+
+  def allow_ecommerce_reply?
+    (self.ecommerce? && self.ebay_account && self.ebay_account.active?)
+  end
+
+  #Ecommerce method code ends
+
   # To keep flexifield & @custom_field in sync
 
   def custom_field
@@ -874,6 +885,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
   # end
 
+  def show_reply?
+    (self.is_twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
+  end
 
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",

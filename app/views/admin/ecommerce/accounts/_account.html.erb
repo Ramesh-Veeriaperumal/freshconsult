@@ -1,0 +1,17 @@
+<tr>
+  <td> 
+    <p class="text-info">
+      <%= font_icon :ecommerce, { :size => 18, :class => "mr6" } %>
+      <%= link_to ecommerce_account.name, edit_admin_ecommerce_ebay_account_path(ecommerce_account) ,:class=> "item_info"%>
+    </p>
+  </td>
+  <td class="text">
+    <%= check_status(ecommerce_account) %>
+  </td>
+  <td class="text-right"> 
+    <%= link_to t('admin.ecommerce.index.renew'), renew_token_admin_ecommerce_ebay_account_path(ecommerce_account), :class => "btn btn-mini" if ecommerce_account.reauth_required %>
+    <%= link_to t('edit'), edit_admin_ecommerce_ebay_account_path(ecommerce_account), :class => "btn btn-mini" %>
+    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_ecommerce_ebay_account_path(ecommerce_account), :confirm => t('confirm_delete_message', :human_name => t('admin.ecommerce.human_name')), :method => :delete, :class => "btn btn-mini"%>
+  </td>
+</tr>
+  

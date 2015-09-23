@@ -41,6 +41,8 @@ class Group < ActiveRecord::Base
    has_many :freshfone_number_groups, :class_name => "Freshfone::NumberGroup",
               :foreign_key => "group_id", :dependent => :delete_all
 
+   has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
+
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type, :business_calendar_id,
                    :added_list, :removed_list, :agent_groups_attributes

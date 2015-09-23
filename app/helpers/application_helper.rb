@@ -469,6 +469,10 @@ module ApplicationHelper
     comment_path(args_hash, t('activities.reply'))
   end
 
+  def ecommerce_path(args_hash)
+    comment_path(args_hash, t('activities.ecommerce'))
+  end
+
   def fwd_path(args_hash)
     comment_path(args_hash, t('activities.forwarded'))
   end

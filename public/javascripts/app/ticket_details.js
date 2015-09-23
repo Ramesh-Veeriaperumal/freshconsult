@@ -207,7 +207,8 @@ insertIntoConversation = function(value,element_id){
 	$('#canned_responses').modal('hide');
 
 	if($element){
-		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body"){
+		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" || 
+				element_id == "send-ecommerce-post-cnt-reply-body" ){
 			var textValue = jQuery("<div />").html(value).text();
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
@@ -1276,7 +1277,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' &&
+			editorId != 'send-ecommerce-post-cnt-reply-body' ){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#canned_response_show').trigger('click');
@@ -1286,7 +1288,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#suggested_solutions_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' && 
+			editorId != 'send-ecommerce-post-cnt-reply-body'){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#suggested_solutions_show').trigger('click');

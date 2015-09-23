@@ -1,0 +1,18 @@
+
+<ul class="breadcrumb">
+  <li><%= link_to t('admin.ecommerce.index_title').html_safe, admin_ecommerce_accounts_path %> <span class="divider">/</span></li>
+  <li class="active"><%= "#{t('admin.ecommerce.new.title')}" %></li>
+</ul>
+<% content_for :helpcard do -%>
+  <%= render :partial => "/admin/ecommerce/helpnote" %>
+<% end %>
+
+<%= content_tag :h3, t('admin.ecommerce.new.title'), :class => "lead" %>
+<span class="seperator"></span>
+
+<div class="row-fluid">
+  <%= form_for( :ebay_account , :url => { :controller => "ebay_accounts", :action => "generate_session"}, :html => { :class => "form-horizontal", :rel => "validate"} ) do |f| %>
+    
+    <%= render :partial => "/admin/ecommerce/ebay_accounts/form", :locals => {:f => f, :page => "new"} %>
+  <% end %>
+</div>

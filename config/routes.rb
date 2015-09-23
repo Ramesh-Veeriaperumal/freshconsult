@@ -1035,6 +1035,21 @@ Helpkit::Application.routes.draw do
       resources :apps
     end
 
+    namespace :ecommerce do
+      resources :accounts
+      resources :ebay_accounts, :controller => 'ebay_accounts' do
+        collection do
+          post :generate_session
+          get :authorize
+          get :enable
+          get :failure
+        end
+        member do
+          get :renew_token
+        end
+      end
+    end
+
     resources :dynamic_notification_templates do
       collection do
         put :update
@@ -1079,6 +1094,8 @@ Helpkit::Application.routes.draw do
     end
 
   end
+
+  match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
   namespace :search do
     resources :home, :only => :index do
@@ -1517,6 +1534,7 @@ Helpkit::Application.routes.draw do
           post :mobihelp
           get :traffic_cop
           get :full_text
+          post :ecommerce
         end
       end
 

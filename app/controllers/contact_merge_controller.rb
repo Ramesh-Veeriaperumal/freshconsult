@@ -104,7 +104,7 @@ class ContactMergeController < ApplicationController
     def check_limits
       @error=""
       User::MERGE_VALIDATIONS.each do |att|
-        set_error(att[0], att[1]) if exceded_user_attribute(att[0], att[1])
+        set_error(att[2], att[1]) if exceded_user_attribute(att[0], att[1])
       end
     end
 

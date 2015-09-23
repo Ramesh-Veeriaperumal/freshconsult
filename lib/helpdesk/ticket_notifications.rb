@@ -71,7 +71,7 @@ module Helpdesk::TicketNotifications
   
   def notify_enabled?(notification_type)
     e_notification = account.email_notifications.find_by_notification_type(notification_type)
-    e_notification.requester_notification? or e_notification.agent_notification?
+    (e_notification.requester_notification? && !self.ecommerce?) or e_notification.agent_notification?
   end
 
   def send_outbound_email

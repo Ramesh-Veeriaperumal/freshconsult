@@ -135,6 +135,10 @@ class User < ActiveRecord::Base
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
+
+  def ebay_user?
+    (self.external_id && self.external_id =~ /\Afbay-/) ? true : false
+  end
   
   class << self # Class Methods
     #Search display

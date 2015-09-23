@@ -1,0 +1,42 @@
+<% @page_title = @ecommerce_accounts.empty? ? t('admin.ecommerce.helpnote.no_account') : t('admin.ecommerce.index.title') %>
+<% content_for :helpcard do -%>
+  <%= render :partial => "/admin/ecommerce/helpnote" %>
+<% end %>
+<div class="list-page">
+  <h4 class="sub-lead"><%=t('admin.ecommerce.index.title')%></h4>
+  <div class="list-page-header" >
+    <div class="row-fluid">
+        <div class="btn-group dropdown pull-right">
+          <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><%= t('admin.ecommerce.index.new_account') %>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+              <li><%= link_to "eBay", new_admin_ecommerce_ebay_account_path %></li>
+          </ul>
+      </div>
+    </div>
+  </div>
+
+  <% if @ecommerce_accounts.empty? %>
+    <ul class="ui-form">
+      <li class="inline-field">
+        <div class="admin_help_image">
+          <%= get_img("ecommerce-admin-page.png", :help) %>
+          <div class="content">
+            <h2 class="title"><%=t('admin.ecommerce.helpnote.integrate_ecommerce')%></h2>
+            <p class="info-data">
+              <%=t('admin.ecommerce.helpnote.account_desc', :product_name => current_account.portal_name).html_safe%>
+            </p>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+  <% else %>
+    <div class="list-page-body product-list" id="multi-product-list">
+      <table class="table table-striped">
+        <%= render(:partial => "account", :collection => @ecommerce_accounts, :as => :ecommerce_account) %>
+      </table>
+    </div>
+  <% end %>
+</div>

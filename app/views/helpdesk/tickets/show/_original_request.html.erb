@@ -53,6 +53,8 @@
 				<span class="ficon-twitter fsize-12 pr5 pl5"></span> <%= @ticket.tweet.twitter_handle.screen_name %> 
 			<% elsif @ticket.is_facebook? %>
 				<span class="ficon-facebook-setting fsize-12 pr5 pl5"></span> <%= @ticket.fb_post.facebook_page.page_name %>
+			<% elsif @ticket.ecommerce? and @ticket.ebay_account.present? %>
+				<span class="ficon-ecommerce fsize-14 pr5 pl5"></span> <%= @ticket.ebay_account.name %>
 			<% else %>
 				<%= @ticket.source_name %>
 			<% end %>

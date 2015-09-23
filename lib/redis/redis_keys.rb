@@ -98,6 +98,9 @@ module Redis::RedisKeys
 
 	PASSWORD_RESTRICTION_ENABLED = "PASSWORD_RESTRICTION_ENABLED" #Password restriction for certain customers
 
+	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
+	EBAY_ACCOUNT_THRESHOLD_COUNT = "EBAY:ACCOUNT:THRESHOLD:%{date}:%{account_id}:%{ebay_account_id}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield

@@ -48,7 +48,7 @@
 				
 				<li class="ticket-btns">
 					<div class="btn-group">
-						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp?) %>
+						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
 					  	<a class="btn tooltip" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
 					  		data-highlight="true" 

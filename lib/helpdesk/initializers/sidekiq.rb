@@ -15,7 +15,9 @@ Sidekiq.configure_client do |config|
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker"
+      "Freshfone::CallQueueWorker",
+      "Ecommerce::EbayWorker",
+      "Ecommerce::EbayUserWorker"
     ]
   end
 end
@@ -35,7 +37,9 @@ Sidekiq.configure_server do |config|
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker"
+      "Freshfone::CallQueueWorker",
+      "Ecommerce::EbayWorker",
+      "Ecommerce::EbayUserWorker"
     ]
   end
   config.client_middleware do |chain|
@@ -44,7 +48,9 @@ Sidekiq.configure_server do |config|
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker"
+      "Freshfone::CallQueueWorker",
+      "Ecommerce::EbayWorker",
+      "Ecommerce::EbayUserWorker"
     ]
   end
 end

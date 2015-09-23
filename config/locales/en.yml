@@ -158,6 +158,8 @@ en:
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
+  ecommerce_reauth:  "Your Ecommerce account is inaccessible. It looks like your auth token has expired. "
+  reauthorize_ecommerce: Reauthorize your ecommerce account.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
   upgrade_trial: Upgrade your trial!
@@ -182,6 +184,7 @@ en:
   facebook_source: Facebook
   facebook_user: Facebook User
   mobihelp: MobiHelp
+  ecommerce: Ecommerce
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach
@@ -976,6 +979,48 @@ en:
           storage_space_internal: Device Storage Free/Total in MB (Internal)
           storage_space_sd: Device Storage Free/Total in MB (External)
           mobihelp_sdk_version: Mobihelp SDK Version
+    ecommerce:
+      human_name: Ecommerce Account
+      index_title: Ecommerce
+      edit_account: Edit Account Details
+      limit_exceed: Maximum account limit reached.
+      ebay_note_not_added: "Note not added to eBay. Connection unstable."
+      inactive: inactive
+      active: active
+      ebay_error: 
+        invalid_source: Invalid ticket source.
+        invalid_reply: Reply not allowed for this ticket.
+        note_not_added: Note not added.
+        reply_length_exceed: Your reply exceeded the maximum length of 2000 characters.
+      helpnote:
+        no_account: Add new account
+        integrate_ecommerce: Bring your eCommerce messages into Freshdesk
+        account_desc: Link your eBay marketplace with <b> %{product_name} </b> to manage your customer requests within Freshdesk.
+        content1:
+            info1: Integrating ecommerce account
+            info2: "Freshdesk lets you manage customer queries coming into your eBay account from within your helpdesk. Once setup, all your customer queries from eBay will get converted into tickets automatically. You can also respond to them directly from within Freshdesk. "
+      index:
+        title: Ecommerce Accounts
+        renew: Renew Token
+        new_account: New Account
+      new:
+        title: New Account
+        save_account: Save Account
+        account_name: Account Name
+        ebay_site: eBay Site
+        site_helptext: select the eBay site where you sell your products
+        duplicate_account: This eBay Account is already associated with a Freshdesk account 
+        max_limit: You have reached the maximum ecommerce account limit
+        assign_group: Assign to Group
+        assign_product: Assign to Product
+        select_ebay_site: Select a eBay site
+        select_group: Select a group
+        select_product: Select a product
+      edit:
+        title: Edit Account
+        expiry_date: Token Expiry
+      form:
+        name: Account Name
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
@@ -2296,6 +2341,7 @@ en:
     action_verb: 'updated'
     email_response: "email response"
     reply: "reply"
+    ecommerce: "reply"
     forwarded: "forwarded"
     tweet: "tweet"
     time_entry: "time entry"
@@ -2430,6 +2476,10 @@ en:
         twitter:
           short: "{{user_path}} added a {{twitter_path}}"
           long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
+        ecommerce:
+          short: "{{user_path}} has sent a {{ecommerce_path}}"
+          long: "{{user_path}} has sent a {{ecommerce_path}} to the ticket {{notable_path}}"
+
       timesheet:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
@@ -5006,6 +5056,8 @@ en:
         facebook_form:
           reply_to: "Reply to"
           title: "Reply to %{user}"
+        ecommerce_reply_form:
+          title: "Reply to"
         history:
           recent_item: Recent Items
         max_tag_length_msg: "Tag cannot be greater than 32 characters"
