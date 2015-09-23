@@ -27,7 +27,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
     ids = ids.flatten.uniq.compact
     if @args[:group_ids].present?
       scoped_ids = scope_agents_with_group_filter
-      ids &= scoped_ids if scoped_ids.present?
+      ids &= scoped_ids
     end
     { ids: ids, metrics: metrics}
   end
