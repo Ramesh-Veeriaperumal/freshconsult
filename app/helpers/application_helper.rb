@@ -19,6 +19,7 @@ module ApplicationHelper
   include TabHelper
   include ReportsHelper
   include Freshfone::CallerLookup
+  include DateHelper
   
   require "twitter"
 
@@ -910,19 +911,24 @@ module ApplicationHelper
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
       when "date" then
-        date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
-        if field_value
-          time_format = Account.current.date_type(:short_day_separated)
-          field_value = (Time.parse(field_value.to_s)).strftime(time_format)
-        end 
-        element = label + text_field_tag("#{object_name}[#{field_name}]", field_value, 
-                    {:class => "#{element_class} datepicker_popover", 
-                     :'data-show-image' => "true",
-                     :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
-        
+        element = label + content_tag(:div, construct_date_field(field_value, 
+                                                                 object_name, 
+                                                                 field_name, 
+                                                                 element_class).html_safe,
+                                            :class => "controls input-date-field")
     end
     element_class = (field.has_sections_feature? && (field.field_type == "default_ticket_type" || field.field_type == "default_source")) ? " dynamic_sections" : ""
     content_tag :li, element.html_safe, :class => "#{ dom_type } #{ field.field_type } field" + element_class
+  end
+
+  def construct_date_field(field_value, object_name, field_name, element_class)
+    date_format = AccountConstants::DATEFORMATS[Account.current.account_additional_settings.date_format]
+    field_value = formatted_date(field_value) if field_value.present?
+    text_field_tag("#{object_name}[#{field_name}]", field_value, 
+              {:class => "#{element_class} datepicker_popover", 
+                :readonly => true,
+                :'data-show-image' => "true",
+                :'data-date-format' => AccountConstants::DATA_DATEFORMATS[date_format][:datepicker] })
   end
 
   def construct_section_fields(f, field, is_edit, item, required)

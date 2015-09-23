@@ -41,9 +41,9 @@ window.FactoryUI = {
 			value		= _value || "",
 			date_format = _date_format || "mm-dd-YY";
 
-		return jQuery("<div class='date-wrapper'/>")
+		return jQuery("<div class='date-wrapper input-date-field'/>")
 				.append(jQuery("<input type='text' />")
-					.prop({ "name": name, "placeholder":placeholder })
+					.prop({ "name": name, "placeholder":placeholder, "readonly": true })
 					.addClass(className)
 					.val(value)
 					.data('showImage',"true")

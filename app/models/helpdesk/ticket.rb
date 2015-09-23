@@ -852,6 +852,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   # flexifield - custom_field syncing code ends here
 
+  def custom_field_type_mappings
+    @custom_field_mapping ||= begin 
+      self.account.ticket_fields.custom_fields.inject({}) { |a, f| 
+        a[f.name] = f.field_type
+        a
+      }
+    end
+  end
+
   def resolution_status
     return "" unless [RESOLVED, CLOSED].include?(status)
     resolved_at.nil? ? "" : ((resolved_at < due_by)  ? t('export_data.in_sla') : t('export_data.out_of_sla'))

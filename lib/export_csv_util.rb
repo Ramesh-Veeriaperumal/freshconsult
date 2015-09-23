@@ -68,12 +68,20 @@ DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_resp
   end
 
   def tickets_data(items, headers, records = [])
+    custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
+    date_format = Account.current.date_type(:short_day_separated)
     items.each do |item|
       record = []
       headers.each do |val|
         data = item.is_a?(Helpdesk::ArchiveTicket) ? 
                   fetch_archive_ticket_value(item, val) : item.send(val)
-        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
+        if data.present?
+          if DATE_TIME_PARSE.include?(val.to_sym)
+            data = parse_date(data)
+          elsif custom_field_names.include?(val) && data.is_a?(Time)
+            data = data.utc.strftime(date_format)
+          end
+        end
         record << unescape_html(data)
       end
       records << record

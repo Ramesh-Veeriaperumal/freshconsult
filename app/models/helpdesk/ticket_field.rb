@@ -22,7 +22,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :custom_checkbox        => { :type => :custom, :dom_type => :checkbox},
     :custom_number          => { :type => :custom, :dom_type => :number},
     :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
-    # :custom_date            => { :type => :custom, :dom_type => :date},
+    :custom_date            => { :type => :custom, :dom_type => :date},
     :custom_decimal         => { :type => :custom, :dom_type => :decimal},
     :nested_field           => { :type => :custom, :dom_type => :nested_field}
   }

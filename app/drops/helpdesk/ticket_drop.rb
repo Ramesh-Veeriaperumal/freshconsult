@@ -2,6 +2,7 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	include Rails.application.routes.url_helpers
 	include TicketConstants
+	include DateHelper
 
 	self.liquid_attributes += [ :requester , :group , :ticket_type , :deleted	]
 
@@ -205,8 +206,11 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def before_method(method)
 		custom_fields = @source.custom_field
-		if custom_fields["#{method}_#{@source.account_id}"]
-			custom_fields["#{method}_#{@source.account_id}"]
+		mappings = @source.custom_field_type_mappings
+		field_name = "#{method}_#{@source.account_id}"
+		if custom_fields[field_name]
+			mappings[field_name] == "custom_date" ? formatted_date(custom_fields[field_name]) : 
+                                                                custom_fields[field_name]
 		else
 			super
 		end
