@@ -274,6 +274,31 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def render_placeholders(placeholders_list)
+    category_titles=""
+    category_placeholders=""
+    placeholders_list.each do |category, placeholders|
+      if placeholders.length > 0
+        category_titles << content_tag(:li,
+                              content_tag(:a,
+                                t("admin.placeholders.#{category}"),
+                                :class => "placeholder-category-title",
+                                :"data-toggle" => "tab",
+                                :"href" => "##{category}-list"
+                                 ).html_safe,
+                              :class => '',
+                              :"data-category" => category).html_safe
+        category_placeholders  <<  content_tag(:div,
+                              placeholder_list(placeholders) ,
+                              :id => "#{category}-list",
+                              :class => "tab-pane fade placeholder-category-list #{category}-list",
+                              :"data-category"=>category).html_safe
+      end
+    end
+
+    content_tag(:ul, category_titles.html_safe, :class => 'nav nav-tabs vertical placeholder-category-title-container').html_safe + content_tag(:div, category_placeholders.html_safe, :class => ' tab-content placeholder-category-list-container', :"rel" => "mouse-wheel", :"data-scroll-speed" => "10").html_safe
+  end
+
   def placeholder_list(fields)
     ph_button_list = ""
     fields.each do |field|
@@ -287,19 +312,7 @@ module ApplicationHelper
 													:class => 'btn-group').html_safe, 
                         :class => 'ph-item', :id => "placeholder-btn-#{field[3]}")
     end
-
-    add_show_more_less_buttons(ph_button_list)
     content_tag(:ul, ph_button_list.html_safe, :class => 'ph-list').html_safe
-  end
-
-  def add_show_more_less_buttons ph_button_list
-  	[:more, :less].each do |toggle_val|
-  		ph_button_list << content_tag(:li, 
-													content_tag(:button, "",
-														:class => "btn btn-flat tooltip ficon-ellipsis ph-#{toggle_val}",
-														:title => "Show #{toggle_val.capitalize}").html_safe, 
-												:class => 'ph-more-less')
-	  end
   end
 
   def nested_ph_menu nested_data
@@ -524,10 +537,15 @@ module ApplicationHelper
                       ['{{ticket.requester.firstname}}' , 'Requester first name', '',          'ticket_requester_firstname'],
                       ['{{ticket.requester.lastname}}' , 'Requester last name', '',           'ticket_requester_lastname'],
                       ['{{ticket.from_email}}',    'Requester email',      "",         'ticket_requester_email'],
-                      requester_company,
                       ['{{ticket.requester.phone}}', 'Requester phone number',   "",       'ticket_requester_phone'],
                       # ['{{ticket.requester.email}}', 'Contact Primary email', "", 'contact_primary_email'],
                       ['{{ticket.requester.address}}', 'Requester address',   "",       'ticket_requester_address']
+                    ],
+      :company => [
+                      ['{{ticket.requester.company.name}}',     'Company name',       '',         'ticket_requester_company_name'],
+                      ['{{ticket.requester.company.description}}',     'Company description',       '',         'ticket_requester_company_description'],
+                      ['{{ticket.requester.company.note}}',     'Company note',       '',         'ticket_requester_company_note'],
+                      ['{{ticket.requester.company.domains}}',     'Company domains',       '',         'ticket_requester_company_domains']
                     ],
       :helpdesk => [
                       ['{{helpdesk_name}}', 'Helpdesk name', '',         'helpdesk_name'],
@@ -546,6 +564,20 @@ module ApplicationHelper
 
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders[:ticket_fields] << ["{{ticket.#{name}}}", custom_field.label, "", "ticket_#{name}", { :nested => nested_vals }]
+    }
+    
+    # Contact Custom Field Placeholders
+    current_account.contact_form.custom_contact_fields.each { |custom_field|
+      name = custom_field.name[3..-1]
+      #date fields disabled till db fix
+      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"] unless custom_field.field_type == :custom_date
+    }
+
+    # Company Custom Field Placeholders
+    current_account.company_form.custom_company_fields.each { |custom_field|
+      name = custom_field.name[3..-1]
+      #date fields disabled till db fix
+      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"] unless custom_field.field_type == :custom_date
     }
 
     # Survey Placeholders
@@ -1326,10 +1358,6 @@ module ApplicationHelper
 
   def generate_breadcrumbs(params, form=nil, *opt)
     ""
-  end
-
-  def requester_company
-    ['{{ticket.requester.company_name}}', 'Requester company name',   "",          'ticket_requester_company_name'] #??? should it be requester.company.name?!
   end
   
   def load_manifest

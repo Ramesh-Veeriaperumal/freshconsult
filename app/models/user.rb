@@ -642,6 +642,8 @@ class User < ActiveRecord::Base
       self.user_emails = [self.primary_email] if has_multiple_user_emails?
       self.deleted = false
       self.helpdesk_agent = true
+      self.company = nil
+      self.address = nil
       self.role_ids = [account.roles.find_by_name("Agent").id] 
       agent = build_agent()
       agent.occasional = !!args[:occasional]
@@ -679,6 +681,10 @@ class User < ActiveRecord::Base
 
   def custom_field_aliases
     @custom_field_aliases ||= (helpdesk_agent? || account.blank?) ? [] : custom_form.custom_contact_fields.map(&:name)
+  end
+
+  def custom_field_types
+    @custom_field_types ||= (helpdesk_agent? || account.blank?) ? {} : custom_form.custom_contact_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
