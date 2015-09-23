@@ -96,6 +96,12 @@
 		.on('shown', function (e) {
 			freshfoneMetricsOnKeyPress();
 			freshfoneMetricsOnPaste();
+			if(freshfonecalls.recentCaller != 1){  
+				$number.val("");
+			} else {
+				freshfonecalls.recentCaller = 0;
+			}
+
 			$number.intlTelInput("setPreferredCountries");
 			freshfonecalls.hideText();
 	});

@@ -192,7 +192,7 @@ var FreshfoneDialpadEvents
 		}, 
 
 		showDialpadElem: function(){
-			this.$number.val('').focus();
+			this.$number.focus();
 			this.$searchContainer.hide();	
 			this.$contactDetails.hide();	
 		},
@@ -384,8 +384,9 @@ var FreshfoneDialpadEvents
 	  	if (this.isNumeric(searchString)) { 
 	  		searchString = freshfonecalls.addDialCode(searchString);
 		  	$direct_dial.toggle(true);
-		  	$direct_dial.addClass('active-element');
-		  	$direct_dial.find('.result-phone').text(searchString);
+		  	$direct_dial.removeClass('do-not-make-call')
+		  							.addClass('active-element')
+		  							.find('.result-phone').text(searchString);
 	  	} else {
 	  		$direct_dial.toggle(false);
 	  		$direct_dial.removeClass('active-element');
