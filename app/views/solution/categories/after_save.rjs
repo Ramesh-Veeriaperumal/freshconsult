@@ -1,7 +1,17 @@
 if @category.errors.empty?
-	page.replace "item_#{@category.parent_id}", render(:partial => "category", :locals => {:category => @category.solution_category_meta})
-	page << "jQuery('#version-#{@category.parent_id}').modal('hide');"
-	page << "jQuery('#new-cat').modal('hide');"
+	if params[:action].eql?('create')
+		page << "App.Solutions.AfterSave.hide('#new-cat');"
+		page << "if ((#{escape_javascript(@category.solution_category_meta.portal_ids.to_json)}).indexOf(App.Solutions.AfterSave.currentPortal) !== -1) {
+						jQuery('#categories_list').append('#{escape_javascript( render :partial => 'category', :locals => {:category => @category.solution_category_meta})}');
+					}"
+	else
+		page << "App.Solutions.AfterSave.hide('#version-#{@category.parent_id}');"
+		page << "if ((#{escape_javascript(@category.solution_category_meta.portal_ids.to_json)}).indexOf(App.Solutions.AfterSave.currentPortal) !== -1) {"
+		page.replace "item_#{@category.parent_id}", render(:partial => "category", :locals => {:category => @category.solution_category_meta})
+		page << "}else{"
+		page.remove "item_#{@category.parent_id}"
+		page << "}"
+	end
 else
 	page.replace_html :error_messages, "#{error_messages_for :category}"
 end
