@@ -20,6 +20,7 @@ window.App = window.App || {};
       App.Solutions.Reorder.start();
 			App.Solutions.NavMenu.start();
       App.Solutions.SearchConfig.onVisit();
+      App.Solutions.AfterSave.onVisit();
       this.bindHandlers();
       this.configurePlaceholder();
     },

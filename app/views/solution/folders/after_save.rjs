@@ -1,7 +1,14 @@
 @folder.reload
 if @folder.errors.empty?
-	page.replace "item_#{@folder.parent_id}", render(:partial => "solution/categories/folder", :locals => {:folder => @folder.solution_folder_meta})
-	page << "jQuery('#version-#{@folder.parent_id}').modal('hide');"
+	if params[:action].eql?('create')
+		page << "App.Solutions.AfterSave.hide('#new-fold');"
+		page << "if (App.Solutions.AfterSave.currentCategory === #{@folder.solution_folder_meta.solution_category_meta_id}) {
+						jQuery('#folders_list').append('#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder.solution_folder_meta})}');
+					}"
+	else
+		page << "App.Solutions.AfterSave.hide('#version-#{@folder.parent_id}');"
+		page.replace "item_#{@folder.parent_id}", render(:partial => "solution/categories/folder", :locals => {:folder => @folder.solution_folder_meta})
+	end
 else
 	page.replace_html :error_messages, "#{error_messages_for :folder}"
 end

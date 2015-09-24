@@ -37,3 +37,9 @@
 		<% end %>
 	</div>
 <% end %>
+
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Solutions.AfterSave.setCurrentObject(<%= @portal.id %>);
+	});
+</script>

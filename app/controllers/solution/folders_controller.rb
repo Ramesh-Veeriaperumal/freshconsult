@@ -72,6 +72,7 @@ class Solution::FoldersController < ApplicationController
     respond_to do |format|
       if @folder
         format.html { redirect_to solution_folder_path(@folder) }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }     
       else
