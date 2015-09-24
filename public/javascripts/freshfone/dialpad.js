@@ -2,7 +2,7 @@
 	"use strict";
 	var timeout,
 		longpress,
-		$number = $('.ff-dial-pad #number');
+		$number = $('#number');
 	
 //Invoking intlTelInput plugin 
     window.tel = $number.intlTelInput(); 

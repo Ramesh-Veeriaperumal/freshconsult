@@ -48,7 +48,6 @@ var FreshfoneWidget;
 			} else {
 				this.showOutgoing();
 				this.$dialNumber.val(this.$lastDial.val());
-				this.freshfonecalls.updateCountriesPreferred();
 			}
 			this.toggleSidebarTabsContainer(type === "ongoing");
 		},

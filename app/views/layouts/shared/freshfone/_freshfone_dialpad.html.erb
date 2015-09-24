@@ -1,65 +1,54 @@
 <div id="dial-pad" class="ff-dial-pad"> 
-	<div class="caller_id">
-		<% if current_account_freshfone_number_hash.length == 1 %>
-		 <% number = current_account_freshfone_number_hash.first %>
-		 <% if current_account_freshfone_names.present? %>
-		 	<% name = current_account_freshfone_names.first %>
-		 <% end %> 
-		 <%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon single_number" %>
-		 <div class="outgoing_number_info">
-		  <span data-number_id='<%= number[1] %>' class="outgoing_number"
-				id="outgoing_number_selector"><b class='ff_number_name'><%= name[1] %></b><%= number[0] %> </span>
-			</div>
-		<% else %>
-			<%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon" %>
-			<%= select_tag "outgoing_number_selector", 
-										options_for_select(current_account_freshfone_details),  
-										 :class => "span2 outgoing_numbers_list",
-										 :id => "outgoing_number_selector",
-										 :"data-dropdown-css-class" => "outgoing_numbers_list_dropdown",
-										 :"data-minimum-results-for-search" => 5,
-										 :"data-attachto-container-class" => ".freshfone_content_container.popupbox-content" %>
-		<% end %>
-	</div>
-	<input class="user_phone" id="number" type="tel" placeholder="<%=t('freshfone.dialpad.dialpad_placeholder')%>"></input>
-	<div class="search_results_bar hide" id="search_bar"> 
-		<ul class="contact_results_info contact_results ">
-				<li id="result-info" class="direct_dial_li">
-					<ul class='contact-num'>
-						<li class='contact-details direct_dial search-result'>
-							<div class="phone-contact result-phone ellipsis"></div>
-							<div class="ff_call_button pull-right hide">
-								<%= font_icon "ff-phone", :size => 11 %> Call
-							</div> 
-						</li>
-					</ul>
-				</li>
-			<div class="search_result_container"></div>
-		</ul>
-	</div>
-	<div class="contact-details-msg dialpad_background_pattern hide">
-		<div class="call-details-msg"></div>
-		<div class="message-type">
-			<span class="invalid_phone_text hide">
-				<p class="invalid_text"><%=t('freshfone.dialpad.not_valid_number')%></p>
-			</span>
-			<span class="invalid_phone_num hide">
-				<p id="invalid_num"><%=t('freshfone.dialpad.could_be_invalid_number')%><br><%=t('freshfone.dialpad.invalid_number_continue_call')%></p>
-				<a href=# id="back_to_dialer"><%=t('freshfone.dialpad.move_to_dialer')%></a>
-			</span>
-			<span class="already_in_call_text hide"><%=t('freshfone.dialpad.already_in_call')%></span>
-			<span class="info_message hide"><%=t('freshfone.dialpad.not_enough_credit')%></span>
-			<span class="restricted_country hide"><%=t('freshfone.dialpad.restricted_country')%></span>
+<div class="caller_id">
+	<% if current_account_freshfone_number_hash.length == 1 %>
+	 <% number = current_account_freshfone_number_hash.first %>
+	 <% if current_account_freshfone_names.present? %>
+	 	<% name = current_account_freshfone_names.first %>
+	 <% end %> 
+	 <%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon single_number" %>
+	 <div class="outgoing_number_info">
+	  <span data-number_id='<%= number[1] %>' class="outgoing_number"
+			id="outgoing_number_selector"><b class='ff_number_name'><%= name[1] %></b><%= number[0] %> </span>
+		</div>
+	<% else %>
+		<%= font_icon "ff-phone", :size => 12, :class => "caller_id_icon" %>
+		<%= select_tag "outgoing_number_selector", 
+									options_for_select(current_account_freshfone_details),  
+									 :class => "span2 outgoing_numbers_list",
+									 :id => "outgoing_number_selector",
+									 :"data-dropdown-css-class" => "outgoing_numbers_list_dropdown",
+									 :"data-minimum-results-for-search" => 5,
+									 :"data-attachto-container-class" => ".freshfone_content_container.popupbox-content" %>
+	<% end %>
+</div>
+<input class="user_phone" id="number" type="tel"></input>
+</div>
+<div class="search_results_bar hide" id="search_bar"> 
+	<ul class="contact_results_info contact_results "></ul>
+</div>
+<div class="contact-details-msg dialpad_background_pattern hide">
+	<div class="call-details-msg"></div>
+	<div class="message-type">
+		<span class="invalid_phone_text hide">
+			<p class="invalid_text"><%=t('freshfone.dialpad.not_valid_number')%></p>
+		</span>
+		<span class="invalid_phone_num hide">
+			<p id="invalid_num"><%=t('freshfone.dialpad.could_be_invalid_number')%><br><%=t('freshfone.dialpad.invalid_number_continue_call')%></p>
+			<a href=# id="back_to_dialer"><%=t('freshfone.dialpad.move_to_dialer')%></a>
+		</span>
+		<span class="already_in_call_text hide"><%=t('freshfone.dialpad.already_in_call')%></span>
+		<span class="info_message hide"><%=t('freshfone.dialpad.not_enough_credit')%></span>
+		<span class="restricted_country hide"><%=t('freshfone.dialpad.restricted_country')%></span>
 
-			<span class="strange_number hide"><%=t('freshfone.dialpad.strange_number')%></span>
-			<div class="call_loader hide"></div>
-		</div>
-		<div class='contact-details-msg-footer'>
-			<div id="cancel_call"><%=t('freshfone.dialpad.move_to_dialer')%></div>
-			<div class="connect_call phone-icons hide"><%=t('freshfone.dialpad.connect_call')%></div>
-		</div>
+		<span class="strange_number hide"><%=t('freshfone.dialpad.strange_number')%></span>
+		<div class="call_loader hide"></div>
+	</div>
+	<div class='contact-details-msg-footer'>
+		<div id="cancel_call"><%=t('freshfone.dialpad.move_to_dialer')%></div>
+		<div class="connect_call phone-icons hide"><%=t('freshfone.dialpad.connect_call')%></div>
 	</div>
 </div>
+
 <script id="ffone-connected-call-template" type="text/x-jquery-tmpl">
 	<div class='contact_avatar'> {{html contact_avatar}} </div>
 	<div class="contact_name">${contact_name}</div>

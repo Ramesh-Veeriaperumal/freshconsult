@@ -7135,7 +7135,6 @@ en:
       strange_number: "Cannot call a Restricted number"
       move_to_dialer: "Back to dialer"
       connect_call: "Call"
-      dialpad_placeholder: "Type Name or Number"
     search:
       work_phone: "Work"
       mobile_phone: "Mobile"
