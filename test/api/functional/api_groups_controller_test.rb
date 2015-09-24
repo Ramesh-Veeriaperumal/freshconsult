@@ -46,7 +46,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
   end
@@ -139,7 +139,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
 
