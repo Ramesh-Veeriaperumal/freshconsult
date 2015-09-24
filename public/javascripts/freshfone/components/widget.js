@@ -201,8 +201,9 @@ var FreshfoneWidget;
 		},
 		checkForStrangeNumbers: function(num){
 			if(num){
-				var numHelper = num.replace(/^\+1|\D/g, '');
-				return (parseInt(numHelper) in freshfone.strangeNumbers || numHelper == "");
+				var numHelper = num.replace(/\D/g, '');
+				numHelper = (numHelper.charAt(0) == '1') ? numHelper.substring(1,numHelper.length) : numHelper;
+				return (parseInt(numHelper) in freshfone.strangeNumbers);
 			}
 		},
 		classForStrangeNumbers: function(num) {

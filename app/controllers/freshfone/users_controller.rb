@@ -43,11 +43,8 @@ class Freshfone::UsersController < ApplicationController
 
 	def availability_on_phone
 		@freshfone_user.available_on_phone = params[:available_on_phone]
-		if @freshfone_user.save
-			publish_agent_device(@freshfone_user,current_user)
-			render :json => { :update_status =>  true } 
-		else
-			render :json => { :update_status =>  false } 
+		respond_to do |format|
+			format.json { render :json => { :update_status => @freshfone_user.save } }
 		end
 	end
 	

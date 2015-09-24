@@ -129,9 +129,5 @@ class Freshfone::QueueController < FreshfoneBaseController
     def freshfone_conference?
       current_account.features?(:freshfone_conference)
     end
-
-    def telephony
-      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
-    end
 end
 

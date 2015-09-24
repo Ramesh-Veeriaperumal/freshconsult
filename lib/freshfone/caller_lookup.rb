@@ -1,15 +1,15 @@
 module Freshfone::CallerLookup
 
   STRANGE_NUMBERS = {
-    :"7378742833" => 'RESTRICTED',
-    :"2562533"    => 'BLOCKED',
-    :"8656696"    => 'UNKNOWN',
-    :"266696687"  => 'ANONYMOUS',
-    :""           => 'UNKNOWN'
+    :"7378742833" => "RESTRICTED",
+    :"2562533" => "BLOCKED",
+    :"8656696" => "UNKNOWN",
+    :"266696687" => "ANONYMOUS"
   }
   
   def remove_country_code(number)
-    number.gsub(/^\+1|\D/, '') #removing phone numbers starting with +1 or non digits
+      num_helper = number.gsub(/\D/, '')
+      num_helper.starts_with?("1") ? num_helper[1, num_helper.length-1] : num_helper
   end
 
   def strange_number?(number)
@@ -37,15 +37,6 @@ module Freshfone::CallerLookup
 
   def strange_number_strikethrough(number, class_name)
     content_tag(:span, number,{:class => "strikethrough #{class_name}"})
-  end
-
-  def empty_number?(number)
-    number == "+"
-  end
-
-  def browser_caller_id(number)
-    return "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}" if empty_number?(number)
-    number
   end
 
 end

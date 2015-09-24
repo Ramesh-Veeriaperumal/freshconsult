@@ -46,7 +46,6 @@ class Freshfone::ForwardController < FreshfoneBaseController
     @transferred_call.set_call_duration(params)
     @transferred_call.update_call(params)
     remove_conf_transfer_job(current_call)
-    remove_value_from_set(pinged_agents_key(current_call.id), params[:CallSid])
     empty_twiml and return if @transferred_call.agent.blank?
     freshfone_user = @transferred_call.agent.freshfone_user 
     freshfone_user.set_last_call_at(Time.now)
@@ -56,7 +55,6 @@ class Freshfone::ForwardController < FreshfoneBaseController
   def complete
     #Check AnsweredBy params and store the meta info for the agent in call meta
     #Test this: if anseredby is machine, the other agents should still be getting the call and should be able to accept the call
-    remove_value_from_set(pinged_agents_key(current_call.id), params[:CallSid])
     return empty_twiml if ignored_call?
     current_call.set_call_duration(params)
     current_call.save!

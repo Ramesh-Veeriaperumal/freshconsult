@@ -45,7 +45,7 @@ class Freshfone::Initiator::AgentCallLeg
 
   def process_agent_leg
     begin
-      if current_call.connecting? && agent_connected?
+      if current_call.connecting?
         process_call_accept_callbacks
         notifier.disconnect_other_agents(current_call)
       
@@ -66,15 +66,14 @@ class Freshfone::Initiator::AgentCallLeg
   def disconnect
     current_call ||= current_account.freshfone_calls.find(params[:caller_sid] || params[:call]) # Needs refactoring
     params[:CallStatus] = 'no-answer' if params[:AnsweredBy] == 'machine'
-    remove_value_from_set(pinged_agents_key(current_call.id), params[:CallSid])
     @call_actions.update_agent_leg_response(params[:agent_id] || params[:agent], params[:CallStatus], current_call)
     @call_actions.update_external_transfer_leg_response(params[:external_number], params[:CallStatus], current_call) if params[:external_transfer].present? && params[:external_number].present?
     update_agent_last_call_at
     reset_outgoing_count
     transfer_reconnect_or_voicemail if current_call.meta.all_agents_missed? 
     handle_round_robin_calls if round_robin_call?
-    update_call_duration_and_total_duration if (agent_connected? || external_transfer?) && params[:CallSid].present?
-    current_call.disconnect_customer if (current_call.onhold? && agent_connected? && !child_ringing?(current_call))#fix for: agent disconnect not ending the customer on hold.
+    update_call_duration_and_total_duration if (connected_agent? || external_transfer?) && params[:CallSid].present?
+    current_call.disconnect_customer if (current_call.onhold? && connected_agent? && !child_ringing?(current_call))#fix for: agent disconnect not ending the customer on hold.
     @telephony.no_action
   end
 
@@ -84,7 +83,7 @@ class Freshfone::Initiator::AgentCallLeg
       current_call.noanswer? ? @telephony.incoming_missed : incoming_answered
     end
 
-    def agent_connected?
+    def connected_agent?
       current_call.user_id.present? && current_call.user_id.to_s == params[:agent_id]
     end
 

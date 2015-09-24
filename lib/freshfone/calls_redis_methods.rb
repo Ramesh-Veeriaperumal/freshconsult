@@ -87,18 +87,4 @@ module Freshfone::CallsRedisMethods
     @browser_key ||= FRESHFONE_CALL % { :account_id => current_account.id, :child_sid => child_sid }
   end
 
-  def add_pinged_agents_call(call_id, agent_call_sid)
-    key = pinged_agents_key(call_id)
-    add_to_set(key, agent_call_sid)
-    $redis_integrations.expire(key, 1800)
-  end
-
-  def get_pinged_agents_call(call_id)
-    integ_set_members(pinged_agents_key(call_id))
-  end
-
-  def pinged_agents_key(call_id)
-    @pinged_agents_key ||= FRESHFONE_PINGED_AGENTS % { :account_id => current_account.id, :call_id => call_id } 
-  end
-
 end

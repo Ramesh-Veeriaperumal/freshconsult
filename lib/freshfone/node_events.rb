@@ -48,12 +48,6 @@ module Freshfone::NodeEvents
   def publish_busy
     notify_socket(presence_channel("agent_busy"), offline_message)
   end
-  
-  def publish_agent_device(fuser,user)
-    @user = user
-    notify_socket(presence_channel("toggle_device"), online_message)
-  end
-
 
   def publish_freshfone_widget_state(account, status)
     @account = account

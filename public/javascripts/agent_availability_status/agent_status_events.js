@@ -107,9 +107,6 @@ window.App = window.App || {};
           case "agent_busy":
             App.Freshfoneagents.Node.changeToBusyAgent(data.user);
             break;
-          case "toggle_device":
-            App.Freshfoneagents.Node.changeAgentDevice(data.user);
-            break;
         }
       });  
     }

@@ -41,12 +41,6 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
           }  
          this.filter.updateNoOfAgents();
     },
-
-    changeAgentDevice: function(agent){
-       var device_image = (agent.on_phone=="true") ? this.filter.on_mobile_template : this.filter.on_browser_template;
-       var item=this.filter.AvailableAgentList.get("id",agent.id);
-       item.values({on_device_img: device_image });
-    },
     
     addAvailableAgentToList: function(agent){
       if(!this.filter.AvailableAgentList.get("id",agent.id)&&

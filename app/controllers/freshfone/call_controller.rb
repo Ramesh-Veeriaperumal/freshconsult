@@ -58,7 +58,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 	private
 		def load_user_by_phone
-			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
+			@user = search_user_with_number(params[:PhoneNumber])
 		end
 
 		def call_meta
