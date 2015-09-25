@@ -564,8 +564,8 @@ window.xhrPool = [];
           element = $(this)
           if(element.prop("type") == "checkbox")
             element.prev().remove()
-          element.siblings('label').find('.required_star').remove();
-          element.addClass('required').siblings('label').append('<span class="required_star">*</span>');
+          element.parents('.field').children('label').find('.required_star').remove();
+          element.addClass('required').parents('.field').children('label').append('<span class="required_star">*</span>');
         })
       }
       else{
@@ -573,7 +573,7 @@ window.xhrPool = [];
           element = $(this)
           element.removeClass('required');
           element.siblings('label.error').remove();
-          element.siblings('label').find('.required_star').remove();
+          element.parents('.field').children('label').find('.required_star').remove();
           if(element.prop("type") == "checkbox" && element.prev().attr('name') != element.attr('name')){
             var hidden_checkbox_input = FactoryUI.hidden(element.attr('name'), "0")
             element.before(hidden_checkbox_input)

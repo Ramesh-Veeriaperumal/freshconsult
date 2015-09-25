@@ -3,7 +3,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
   private 
   
   def process_metric
-    helper_hash = {}
+    @helper_hash = {}
     calculate_general_percentage_data
     
     return if processed_result[:general][:metric_result] == NOT_APPICABLE
@@ -14,18 +14,18 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
       row.each do |col_name, col_value|
         next if AVOIDABLE_COLUMNS.include?(col_name)
 
-        helper_hash[col_name] ||= {}
-        helper_hash[col_name][col_value] ||= {:violated => 0, :not_violated => 0}
+        @helper_hash[col_name] ||= {}
+        @helper_hash[col_name][col_value] ||= {:violated => 0, :not_violated => 0}
         case violated
         when "t"
-          helper_hash[col_name][col_value][:violated] += row[COLUMN_MAP[:count]].to_i 
+          @helper_hash[col_name][col_value][:violated] += row[COLUMN_MAP[:count]].to_i 
         when "f"
-          helper_hash[col_name][col_value][:not_violated] += row[COLUMN_MAP[:count]].to_i
+          @helper_hash[col_name][col_value][:not_violated] += row[COLUMN_MAP[:count]].to_i
         end
       end
     end
     
-    helper_hash.each do |col_name, col_value|
+    @helper_hash.each do |col_name, col_value|
       col_value.each do |val, res|
         processed_result[col_name] ||= {}
         processed_result[col_name][val] = calculate_sla_percentage(res[:not_violated], res[:violated])
@@ -91,6 +91,10 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
 
   def sla_column row
     row[COLUMN_MAP[:fr_escalated]] or row[COLUMN_MAP[:is_escalated]] or row[COLUMN_MAP[:fcr_violation]]
+  end
+  
+  def sla_percentage(column, key)
+    calculate_sla_percentage(@helper_hash[column][key][:not_violated], @helper_hash[column][key][:violated])
   end
 
 end

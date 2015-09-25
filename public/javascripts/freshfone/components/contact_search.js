@@ -25,6 +25,7 @@ var FreshfoneContactSearch;
 				freshfoneDialpadEvents.makeActive($prevElem,$(this)); 	
 
 	  	}).on('click', '.search-result', function(){
+	  		if($(this).hasClass('do-not-make-call')) { return; }
 		    var $parentElem = $(this).parents('li'),
 		    	 freshfone_number = $(this).find(".phone-contact").text().trim();
 		    freshfoneDialpadEvents.updateNumber(freshfone_number,$parentElem);
@@ -67,7 +68,7 @@ var FreshfoneContactSearch;
 	  		data: { q: string },
 	  		dataType : "html",
 				success: function(data){
-					self.$searchList.html(data);
+					self.$searchList.find('.search_result_container').html(data);
 					self.appendNoResults(string);
 				}
 			});	
@@ -76,15 +77,12 @@ var FreshfoneContactSearch;
 		appendNoResults: function(string){
 			var regex = /[a-zA-Z]/;
 			this.$container.show();
-			if(regex.test(string)){
-				$('.no_results').text("No results found");
-			}else{
-				var phone_icon = '<div class="ff_call_button pull-right"><i class="ficon-ff-phone fsize-11 " size="11"></i> Call </div>';
-				$('.no_results').text(string);
-				$('.searched-number')
-						.addClass('make-call')
-						.append(phone_icon);
-			}	
+			if(regex.test(string) && (this.$searchList.find('.no-search-result').length == 1)){
+				var $direct_dial = this.$searchList.find('.direct_dial')
+				 $direct_dial.addClass('do-not-make-call');
+				 $direct_dial.find('.ff_call_button').toggle(false);
+				 $direct_dial.find('.result-phone').text("No results found");
+			} 
 	  }
 	};
 

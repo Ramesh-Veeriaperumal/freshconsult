@@ -15,7 +15,7 @@ jQuery(document).ready(function(){
 	jQuery('.l_placeholder').bind("click", function(ev){
 			active_email_body = jQuery("#ca-content");
 			jQuery('#place-dialog').slideDown('fast', function(){
-        		jQuery(this).groupPlaceholders({'truncateItems': false});
+        		jQuery(this).groupPlaceholders();
 			});			
 	});
 
@@ -67,7 +67,7 @@ function toggleGroup(access_id)
 	<li>
 		<label for="ca-content">
 			<%= t('message') %><span class="required_star">*</span>
-			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
+			<a class='l_placeholder btn btn-mini btn-flat pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
 		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body required_redactor", :id => 'ca-content' %>		
 	</li>

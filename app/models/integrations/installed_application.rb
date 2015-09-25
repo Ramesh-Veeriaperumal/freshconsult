@@ -120,7 +120,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def sanitize_hash_values(inputs_hash)
       inputs_hash.each do |key, value|
-        inputs_hash[key] = sanitize_value(value)
+        inputs_hash[key] = sanitize_value(value) unless key == "password"
       end
     end
 

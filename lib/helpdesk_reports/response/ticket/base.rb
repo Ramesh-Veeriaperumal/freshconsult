@@ -39,7 +39,7 @@ class HelpdeskReports::Response::Ticket::Base
     processed_result.each do |column_name, value|
       if reverse_mapping_required?(column_name)
         mapping_hash = field_id_to_name_mapping(column_name)
-        convert_id_to_names(value, mapping_hash)
+        convert_id_to_names(column_name, value, mapping_hash)
         #merge_empty_fields_with_zero(value,mapping_hash)
       end
     end
@@ -50,21 +50,21 @@ class HelpdeskReports::Response::Ticket::Base
   # All such values are added in single NA for Count metrics.
   # For Avg and Percentage metrics, these cannot be simply added (illegal maths), hence
   # these values are shown as NA-1, NA-2 .. likewise, if there exists multiple such entries.
-  def convert_id_to_names(value, mapping_hash)
-    na_count = 1
-    value.keys.each do |k|
-      if self.class == HelpdeskReports::Response::Ticket::Count
-        new_key = mapping_hash[k.to_i] || NOT_APPICABLE
+  def convert_id_to_names(column_name, value, mapping_hash)
+    avg_count, percentage_count = 0 , 0
+    value.keys.each do |k| 
+      new_key = mapping_hash[k.to_i] || NOT_APPICABLE
+      
+      if self.class == HelpdeskReports::Response::Ticket::Count     
         value[new_key] = value[new_key].to_i + value[k] #incase we have multiple NA values
-      else
-        if mapping_hash[k.to_i]
-          new_key = mapping_hash[k.to_i]
-        else
-          new_key = na_count == 1 ? NOT_APPICABLE : "#{NOT_APPICABLE}-#{na_count}"
-          na_count += 1
-        end
-        value[new_key] = value[k]
+      elsif self.class == HelpdeskReports::Response::Ticket::Avg
+        value[new_key] = new_key == NOT_APPICABLE ? aggregate_avg(@helper_hash[column_name.to_s][k],{"avg"=>value[new_key].to_i, "count"=>avg_count}) : value[k]
+        avg_count += @helper_hash[column_name.to_s][k][:count] if new_key == NOT_APPICABLE
+      elsif self.class == HelpdeskReports::Response::Ticket::Percentage
+        percentage_count += 1 if new_key == NOT_APPICABLE and percentage_count < 2
+        value[new_key] = new_key == NOT_APPICABLE ? (value[new_key].to_i + sla_percentage(column_name, k))/percentage_count : value[k]
       end
+      
       value.delete(k)
     end
   end

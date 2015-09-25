@@ -19,6 +19,7 @@ class Product < ActiveRecord::Base
   has_one    :primary_email_config , :class_name => 'EmailConfig', :conditions => { :primary_role => true }
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
+  has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
 
   attr_protected :account_id
   

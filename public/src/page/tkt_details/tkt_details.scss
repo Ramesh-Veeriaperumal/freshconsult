@@ -802,6 +802,11 @@ ol, ul, li{
 		select { height: 25px; }
 	}
 
+	.ecommerce-counter {
+		position: static;
+		color: #888;
+	}
+
 
 	.post_in_forum {
 		@include float(left);
@@ -830,8 +835,11 @@ ol, ul, li{
     	@include border-radius(6px 6px 0 0);
     	@include float(none);
     	width: auto;
-		@include clear(both);
-
+			@include clear(both);
+			.ecom-from{
+				margin:8px;
+				font-weight:normal;
+			}
     	label {
     		@include float(none);
     		display: inline-block;
@@ -1435,7 +1443,7 @@ ol, ul, li{
 /*Survey stylesheet End*/
 
 .ticket_details {
-	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment, #HelpdeskMobihelpChat, #HelpdeskEcommerceReply {
 		overflow: hidden;
 	}
 }

@@ -196,6 +196,11 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def ecommerce_reauth_check_from_cache
+    key = ECOMMERCE_REAUTH_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }

@@ -64,7 +64,8 @@ class Freshfone::Call < ActiveRecord::Base
   INTERMEDIATE_CALL_STATUS = [
     CALL_STATUS_HASH[:default],
     CALL_STATUS_HASH[:'in-progress'],
-    CALL_STATUS_HASH[:'on-hold']
+    CALL_STATUS_HASH[:'on-hold'],
+    CALL_STATUS_HASH[:'connecting']
   ]
   CALL_TYPE = [
     [ :incoming,  'incoming', 1 ],

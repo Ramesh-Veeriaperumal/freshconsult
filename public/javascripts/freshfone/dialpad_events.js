@@ -15,14 +15,14 @@ var FreshfoneDialpadEvents
 	FreshfoneDialpadEvents.prototype = {
 		init: function () {
 				this.$dialpadContainer = $('.ff-dial-pad');
-				this.$number = $('#number');
-				this.$dialpadIcon = $('.dialpad_icon');
-			   this.$searchContainer = $('#search_bar');
+				this.$number = this.$dialpadContainer.find('#number');
+				this.$dialpadIcon = $('#freshfone_dialpad .dialpad_icon');
+			   this.$searchContainer = this.$dialpadContainer.find('#search_bar');
 			   this.$searchList = this.$searchContainer.find('.contact_results_info');
-			   this.$contactDetails = $('.contact-details-msg');
+			   this.$contactDetails = this.$dialpadContainer.find('.contact-details-msg');
 			   this.$recentCallContainer = $('#recent_calls');
-			   this.$outgoing_numbers_list = $('.outgoing_numbers_list');
-			   this.$selectedFlag = $('.selected-flag');
+			   this.$outgoing_numbers_list = this.$dialpadContainer.find('.outgoing_numbers_list');
+			   this.$selectedFlag = this.$dialpadContainer.find('.selected-flag');
 			   this.$activeRecentCall = $('.recent_calls_container .active-element');
 
 			   this.bindRecentCallsEvent();
@@ -35,6 +35,7 @@ var FreshfoneDialpadEvents
 			   this.bindHideCountryList();
 			   this.bindCountryListVisibility();
 			   this.unbindContactLinks();
+			   this.$number.intlTelInput("initPreferredCountries");
 		},
 
 		$connectedCallTemplate: $('#ffone-connected-call-template'),
@@ -67,16 +68,25 @@ var FreshfoneDialpadEvents
 			var self = this;
 			this.$number.on('input',function(e){
 				var searchString = $(this).val();
+				self.updateDirectDialNumber(searchString);
 				self.bindSearchResult(searchString);
 			});
+
+			this.$number.on('change',function(e){
+				var searchString = $(this).val();
+				isSearchBar = (searchString != '');
+			});
 		},	
+
 
 		bindSearchResult: function(searchString){
 			var self = this;
 			if (searchString == ''){
 			 self.bindEmptySearchResult();
+			 return;
 			}
-			else if($(this).data("lastval") != searchString){
+			self.$searchContainer.show(); 
+			if($(this).data("lastval") != searchString){
 				$(this).data("lastval",searchString);
 				addDelay(function(){
 					formattedString = freshfoneContactSearch.replaceSpecChar(searchString);
@@ -84,9 +94,6 @@ var FreshfoneDialpadEvents
 		      	self.contactSearch(searchString);
 		      }
 		    }, 450 );
-			} else{
-				self.$searchContainer.show(); 
-				isSearchBar = true;	
 			}
 		},
 
@@ -170,7 +177,7 @@ var FreshfoneDialpadEvents
 
 		bindHideCountryList: function(){
 			var self = this;	
-			this.$dialpadContainer.find('.backArrow').on('click',function(){
+			this.$dialpadContainer.find('.backArrow').bind('click',function(){
 				$('.countrySearch,.country-list').addClass("hide");
 				$('.selected-flag').trigger("ffCountryFlagList:off");
 	    	self.$selectedFlag.removeClass("hide");
@@ -194,6 +201,9 @@ var FreshfoneDialpadEvents
 	  	isSearchBar = true;
 	  	this.$activeRecentCall.removeClass('active-element');
 	    this.$searchContainer.show();
+			if (this.isNumeric(searchString)) { 
+				searchString = freshfonecalls.addDialCode(searchString);
+			}
 	    freshfoneContactSearch.getSearchResults(searchString);      
 		},
 
@@ -281,7 +291,7 @@ var FreshfoneDialpadEvents
 			}
 		},
 		makeFirstElementActive: function () {
-			var firstElementClass = isSearchBar ? ".search-result:first" : ".recent_call_entry:first";
+			var firstElementClass = isSearchBar ? ".search-result:visible:first" : ".recent_call_entry:first";
 			$(this.currentContainer()[0]).find(firstElementClass).addClass("active-element");
 		},
 		currentContainer: function() {
@@ -291,26 +301,41 @@ var FreshfoneDialpadEvents
 		getNextElement: function(current_element) {
 			if (current_element.next().length) { return current_element.next(); }
 			if (isSearchBar) { return this.nextElementOfSearch(current_element); }
-			return $('.recent_calls_container').find('div :first');
+			return $('.recent_calls_container').find('div .recent_call_entry :first');
 		},
 
 		nextElementOfSearch: function(current_element){
-			return (this.$searchList.find('li :last').is(current_element)) ? this.$searchList.find('li :first .contact-num').find('li:first') 
-																								: current_element.parents("li").next().find("li:first");
+			 var next_element = "";
+			 if (this.$searchList.find('li :last').is(current_element)) {
+			 	 next_element = this.$searchList.find('li :first .contact-num').find('li:first') 
+			 	} else if (this.isDirectDialElement(current_element)) {
+			 		next_element = current_element.parents('li').next().find('.contact-num:first li:first')
+			 	} else {
+			 		next_element = current_element.parents("li").next().find("li:first");
+			 	}
+			 	return next_element;
 		},
 
 		getPrevElement: function(current_element) {
-			if (current_element.prev().length) { return current_element.prev(); }
+			var elementType = isSearchBar ? "li" : "div"
+			if (current_element.prev(elementType).length) { return current_element.prev(); }
 			if (isSearchBar) { return this.prevElementOfSearch(current_element); }
 			return current_element;
 		},
 
 		prevElementOfSearch: function(current_element) {
-			return (this.$searchList.find('li :first .contact-num li:first').is(current_element)) ? current_element  
-																																			 	: current_element.parents("li").prev().find("li:last");
+			if(this.isDirectDialElement(current_element)){ return current_element  } 
+			if (this.$searchList.find('.search_result_container li :first .contact-num li:first').is(current_element)) {
+				return this.getDirectDialElementOrCurrent(current_element);
+			} else {
+				return current_element.parents("li").prev().find("li:last");
+			}
 		},
 
 		searchEnter: function(current_element) {
+			if(current_element.hasClass('do-not-make-call')) {
+				return;
+			}
 			freshfone_number = current_element.find('.phone-contact').text().trim();
 			this.updateNumber(freshfone_number,current_element.parents("li"));
 		},
@@ -353,7 +378,29 @@ var FreshfoneDialpadEvents
 	  },
 	  unbindContactLinks: function() {
 	  	$('body').on("click",'.recent_calls_container a', function(ev){ev.preventDefault(); return false;})
+	  },
+	  updateDirectDialNumber: function(searchString) {
+	  	var $direct_dial = this.$searchList.find('.direct_dial');
+	  	if (this.isNumeric(searchString)) { 
+	  		searchString = freshfonecalls.addDialCode(searchString);
+		  	$direct_dial.toggle(true);
+		  	$direct_dial.removeClass('do-not-make-call')
+		  							.addClass('active-element')
+		  							.find('.result-phone').text(searchString);
+	  	} else {
+	  		$direct_dial.toggle(false);
+	  		$direct_dial.removeClass('active-element');
+		  }
+	  },
+	  isDirectDialElement: function(element) {
+	  	return element.hasClass('direct_dial');
+	  },
+	  isNumeric: function(searchString) {
+	  	return /\W|(^[0-9.]|\+)[0-9]*$/.test(searchString);
+	  },
+	  getDirectDialElementOrCurrent: function(current_element) {
+	  	var directDialElem = current_element.parents("li").parent().prev().find("li:visible:last");
+	  	return (directDialElem.length > 0) ? directDialElem : current_element;
 	  }
-
 	};    
 }(jQuery));

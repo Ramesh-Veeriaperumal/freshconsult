@@ -335,8 +335,21 @@ RSpec.describe Helpdesk::TicketsController do
     it "should save draft for a ticket" do
       draft_key = HELPDESK_REPLY_DRAFTS % { :account_id => @account.id, :user_id => @agent.id,
         :ticket_id => @test_ticket.id}
-      post :save_draft, { :draft_data => "<p>Testing save_draft</p>", :id => @test_ticket.display_id }
-      get_tickets_redis_key(draft_key).should be_eql("<p>Testing save_draft</p>")
+      post :save_draft, { :draft_data => "<p>Testing save_draft</p>",
+                          :draft_cc => "ccemail@email.com",
+                          :draft_bcc => "bccemail@email.com",
+                          :id => @test_ticket.display_id }
+      draft_hash = get_tickets_redis_hash_key(draft_key)
+      if draft_hash
+        draft_message = draft_hash["draft_data"]
+        draft_cc = draft_hash["draft_cc"]
+        draft_bcc = draft_hash["draft_bcc"]
+        draft_message.should be_eql("<p>Testing save_draft</p>")
+        draft_cc.should be_eql("ccemail@email.com")
+        draft_bcc.should be_eql("bccemail@email.com")
+      else
+        fail "Draft hash is nil"
+      end
     end
 
     it "should execute a scenario" do

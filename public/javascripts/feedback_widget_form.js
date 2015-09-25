@@ -138,6 +138,22 @@
 			if(!jQuery.browser.msie && !jQuery.browser.opera)
 				jQuery('.flash').show();
 		});
+
+		// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
+    jQuery("input.datepicker_popover").livequery(function() {
+      var dateFormat = 'yy-mm-dd';
+      if(jQuery(this).data('date-format')) {
+        dateFormat = jQuery(this).data('date-format');
+      }
+      jQuery(this).datepicker({
+        dateFormat: dateFormat
+      });
+      if(jQuery(this).data('showImage')) {
+        jQuery(this).datepicker('option', 'showOn', "both" );
+        jQuery(this).datepicker('option', 'buttonText', "<i class='ficon-date'></i>" );
+      }
+    });
+
 	});
 
 }(window.jQuery);

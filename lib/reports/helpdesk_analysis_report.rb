@@ -109,7 +109,8 @@ module Reports::HelpdeskAnalysisReport
                  SOURCE_KEYS_BY_TOKEN[:chat].to_s=>{:name=>I18n.t('chat'),:type=>'line',:color=>'#8E7722',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:mobihelp].to_s=>{:name=>I18n.t('mobihelp'),:type=>'line',:color=>'#EEA222',:data=>[]},
                  SOURCE_KEYS_BY_TOKEN[:feedback_widget].to_s=>{:name=>I18n.t('feedback_widget'),:type=>'line',:color=>'#C46865',:data=>[]},
-                 SOURCE_KEYS_BY_TOKEN[:outbound_email].to_s=>{:name=>I18n.t('outbound_email'),:type=>'line',:color=>'#62bce1',:data=>[]}
+                 SOURCE_KEYS_BY_TOKEN[:outbound_email].to_s=>{:name=>I18n.t('outbound_email'),:type=>'line',:color=>'#62bce1',:data=>[]},
+                 SOURCE_KEYS_BY_TOKEN[:ecommerce].to_s=>{:name=>I18n.t('ecommerce'),:type=>'line',:color=>'#C4552AB',:data=>[]}
                 }
 
     dates_with_data = {}

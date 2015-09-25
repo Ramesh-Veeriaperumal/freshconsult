@@ -22,7 +22,8 @@ module Va
       "custom_checkbox" => "checkbox",
       "custom_number"   => "number",
       "custom_decimal"  => "decimal",
-      "nested_field"    => "nestedlist"
+      "nested_field"    => "nestedlist",
+      "custom_date"     => "date"
     }
 
     CF_CUSTOMER_TYPES = {

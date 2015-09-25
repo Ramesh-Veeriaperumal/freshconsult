@@ -108,9 +108,8 @@ class Freshfone::Notifier
 
   def disconnect_other_agents(current_call)
     Rails.logger.info "disconnect_other_agents => #{current_call.meta.pinged_agents.to_json}"
-    current_call.meta.pinged_agents.each do |agent|
-      terminate_api_call(agent[:call_sid]) if agent[:call_sid].present? && (agent[:id].to_i != current_call.user_id.to_i)
-    end
+    params.merge!({:call_id => current_call.id})
+    Freshfone::NotificationWorker.perform_async(params, nil, "disconnect_other_agents")
   end
 
 

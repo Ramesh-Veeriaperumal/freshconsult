@@ -503,7 +503,7 @@
 
       $(document).on('show', '.custom-fields-props-dialog.modal', function () {
         setTimeout(function(){
-          $('.modal-body input[type=text]:visible:enabled:first').focus();
+          $('.modal-body input[type=text]:visible:enabled:first').select().focus();
         },500)
       });
 

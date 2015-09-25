@@ -85,7 +85,8 @@ class CustomFieldsController < Admin::AdminController
                                 :text => field_data_group["paragraph"].length,
                                 :number => field_data_group["number"].length,
                                 :boolean => field_data_group["checkbox"].length,
-                                :decimal => field_data_group["decimal"].length
+                                :decimal => field_data_group["decimal"].length,
+                                :date => field_data_group["date"].length
                                 }
       error_str = ""
       field_data_count_by_type.keys.each do |key|

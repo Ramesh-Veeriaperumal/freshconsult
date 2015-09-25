@@ -28,6 +28,25 @@ module HelpdeskReports::Helper::Ticket
   def set_selected_tab
     @selected_tab = :reports
   end
+  
+  def report_specific_constraints
+    res = {report_type: report_type}
+    case report_type.to_sym
+      when :agent_summary
+        group_ids = []
+        @query_params.each do |param|
+          param[:filter].each{ |f| group_ids |= f["value"].split(",") if f["condition"] == "group_id"}
+        end
+        res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i })
+      when :group_summary
+        user_ids = []
+        @query_params.each do |param|
+          param[:filter].each{ |f| user_ids |= f["value"].split(",") if f["condition"] == "agent_id"}
+        end
+        res.merge!(user_ids: user_ids.map{|u_id| u_id.to_i })
+    end
+    res   
+  end
 
   # VALIDATION of all params before triggering any QUERY
   def validate_params

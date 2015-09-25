@@ -59,8 +59,22 @@ class UserDrop < BaseDrop
 	end
 
 	# !TODO This may be deprecated on a later release
+	# Removed reference from placeholders UI
 	def company_name
 		@company_name ||= @source.company.name if @source.company
+	end
+
+	def before_method(method)
+		custom_fields = @source.custom_field
+		field_types =  @source.custom_field_types
+		if(custom_fields["cf_#{method}"] || field_types["cf_#{method}"])
+	    unless custom_fields["cf_#{method}"].blank?
+	      return custom_fields["cf_#{method}"].gsub(/\n/, '<br/>') if field_types["cf_#{method}"] == :custom_paragraph
+	    end
+	    custom_fields["cf_#{method}"] 
+	  else
+	    super
+	  end
 	end
 
 end
