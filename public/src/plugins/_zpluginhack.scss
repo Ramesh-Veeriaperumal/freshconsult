@@ -226,6 +226,16 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	}
 }
 
+.profile-edit-form {
+	.ui-datepicker-trigger {
+		@include left(-1px);
+		top: 3px;
+		background: none;
+		border: 0;
+		position: absolute;
+	}
+}
+
 .support-date-field, .input-date-field{
 	position:relative;
 }
@@ -259,5 +269,5 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 }
 
 #ui-datepicker-div{
-	z-index: 3 !important;
+	z-index: 1051;
 }
