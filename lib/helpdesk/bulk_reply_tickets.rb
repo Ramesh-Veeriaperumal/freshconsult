@@ -152,5 +152,12 @@ class Helpdesk::BulkReplyTickets
     def mobihelp_reply ticket, note
       #Do nothing
     end
+    
+    def ecommerce_reply ticket,note
+      ebay_question = ticket.ebay_question
+      if ebay_question
+        Ecommerce::Ebay::Api.new({:ebay_account_id => ticket.ebay_question.ebay_account_id}).make_ebay_api_call(:reply_to_buyer, :ticket => ticket, :note => note)
+      end
+    end
 
 end

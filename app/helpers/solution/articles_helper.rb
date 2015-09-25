@@ -123,7 +123,7 @@ module Solution::ArticlesHelper
             :class => "article-properties",
             :title => t('solution.articles.properties'),
             :data => {
-              :target => "#article-prop",
+              :target => "#article-prop-#{@article.id}",
               :width => "700px",
               "close-label" => t('cancel'),
               "submit-label" => t('save'), 

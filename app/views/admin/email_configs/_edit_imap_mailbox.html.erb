@@ -55,11 +55,10 @@
       <div class="controls">
         <%= select_tag("email_config[imap_mailbox_attributes][authentication]", options_for_select(MailboxConstants::AUTHENTICATION_OPTIONS, @imap_mailbox.authentication), :class => "select2 input-large") %>
         <div class="form-inline mt15 row-fluid">
-          <div class="input-prepend tooltip disabled span6" title="<%= t('mailbox.imap_user_name_tooltip')%>" >
+          <div class="input-prepend span6">
             <span class="add-on"><i class="mailbox-username"></i></span>
-            <%= text_field_tag "user_name", "", :class => "text credentials input-large", :autocomplete => "off", :placeholder => t('mailbox.user_name'), :rel=> "username", :disabled => true, :value => @imap_mailbox.user_name %>
+            <%= imap_mailbox.text_field :user_name, :class => "text credentials input-large", :autocomplete => "off", :placeholder => t('mailbox.user_name'), :rel=> "username", :value => @imap_mailbox.user_name %>
           </div>
-          <%= imap_mailbox.hidden_field :user_name, :id => "hidden_imap_user_name", :rel=> "username" %>
           <div class="input-prepend ml5 span6">
             <span class="add-on"><i class="mailbox-password"></i></span>
             <%= imap_mailbox.password_field :password, :class => "password-icon credentials input-large", :placeholder => t('mailbox.password'), :value => "" %>

@@ -1,0 +1,66 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<script src="https://d2l6uygi1pgnys.cloudfront.net/jsapi/0-6/hsp.js"></script>
+		<%= stylesheet_link_tag_with_rtl :'cdn/hootsuite' %>
+		<%= javascript_include_tag :'cdn/hootsuite' %>
+		<script>
+		function openTicket(i){
+			var uid = '<%= params[:uid]%>';
+			var ts = '<%= params[:ts]%>';
+			var token = '<%= params[:token]%>';
+			var pid = '<%= params[:pid]%>';
+			var args = "?uid="+uid+"&ts="+ts+"&token="+token+"&pid="+pid;
+			hsp.showCustomPopup(location.origin+'/integrations/hootsuite/tickets/'+i+args, 'Freshdesk', '900', '500') ;
+		}
+		jQuery(document).ready(function(){
+			hsp.init({
+				apiKey: '<%= ThirdPartyAppConfig["hootsuite"]["api_key"] %>',
+				receiverPath: location.origin+'/my_receiver.html'
+			});
+			hsp.updatePlacementSubtitle('<%= current_user.name %>');
+			// hsp.bind('refresh', function() {
+			// 	window.location.replace(updateQueryStringParameter(window.location.href,"page","1"));
+			// 	// window.location.replace(updateQueryStringParameter(window.location.href,"search_type","none"));
+			// });
+			// function updateQueryStringParameter(uri, key, value) {
+			// 	var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+			// 	var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+			// 	if (uri.match(re)) {
+			//   		return uri.replace(re, '$1' + key + "=" + value + '$2');
+			// 	}
+			// 	else {
+			//   		return uri + separator + key + "=" + value;
+			// 	}
+			// }
+			hsp.bind('refresh', function() {
+				if(jQuery(window).scrollTop() < 20){
+					window.location.reload();
+				}
+			});
+			
+		});
+		</script>
+	<div class="hs_stream">
+		<%= render 'integrations/hootsuite/home/top_bar' %>
+		<% if @tickets.blank?%>
+			<div class="hs_error">
+				<p><%= t("integrations.hootsuite.no_ticket_msg")%></p>
+			</div>
+		<%end%>
+		<div id='Pages'>
+			<%= render :partial => 'integrations/hootsuite/home/ticket', :collection => @tickets %>
+		</div>
+
+		<%= will_paginate @tickets if false %>
+		<% opts = params.merge(:uid => params[:uid],
+						:ts => params[:ts],
+						:token => params[:token],
+						:pid => params[:pid]
+					) %>
+		<%= pageless(@total_pages, url_for(:controller => 'integrations/hootsuite/home', :action => 'index'), "", opts	) unless @tickets.empty?%>
+	</div>
+
+</body>
+</html>

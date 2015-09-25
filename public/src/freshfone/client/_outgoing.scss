@@ -173,9 +173,8 @@
 		width: 100%;
 	}
   .intl-tel-input {
-   	height: 371px;
    	width: 100%;
-   	top: 34px;
+   	top: 0;
 	}
   .intl-tel-input *{ 
 		box-sizing:border-box;
@@ -196,7 +195,6 @@
 	}
   .intl-tel-input .flag-dropdown{ 
 		position: absolute; 
-		top:0; 
 		bottom:0;
     height:371px; 
     z-index: 995;
@@ -215,8 +213,7 @@
 		width:37px; 
 		height:33px;
 		padding:8px 0 0 7px;
-		margin-top: 36px; 
-    margin-left: 8px;
+    margin-left: 7px;
     background-color: #EAEAEA;
     &:hover {
       background-color: #ccc;
@@ -230,7 +227,7 @@
   .intl-tel-input .selected-flag .arrow{ 
 		position:absolute;
 		top: 4px;
-		left: 17px; 
+		left: 18px; 
 		width:8px; 
 		height:15px; 
 		margin: 10px 15px 0 9px;
@@ -245,6 +242,7 @@
 	.intl-tel-input .countrySearch{
 		background-color: #f8f8f8;
 		width: 297px;
+    border-radius: 4px 4px 0 0;
 	}
   .intl-tel-input .countrySearch .backArrow{
     display: inline;
@@ -278,8 +276,8 @@
 		z-index:2; 
 		box-shadow:1px 1px 4px rgba(0,0,0,0.2); 
 		background-color:#FAFAFA; 
-		width:297px; 
-		max-height:390px; 
+		width:298px; 
+		max-height:395px; 
 		overflow-y:scroll; 
     border-radius: 3px;
 	}
@@ -350,13 +348,16 @@
   .contact_results_info {
     height: inherit;
     overflow-y: auto;
+    .direct_dial_li {
+      padding: 0;
+    }
   }
   .active-element{
     background-color: #efefef;
     width:100%;
   }
   .contact_results_info li{
-    width: 98.3%;
+    width: 100%;
     cursor: pointer;
     border-radius: 0px;
     border: none;
@@ -378,6 +379,7 @@
       padding: 2px 11px 2px 10px;
       font-size: 13px;
       background-color: #fff;
+      margin-right: 10px;
     }
     .ficon-ff-phone {
       color: #196019;
@@ -678,7 +680,6 @@
 		@include box-sizing(border-box);
 
 		height: 35px;
-		@include text-align(center);
 		font-size: 16px;
 		margin: 35px 0 0 15px;
 		

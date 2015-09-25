@@ -87,7 +87,7 @@
           c_dom = FactoryUI.paragraph("", value, initFeed[value]);
         break;
         case 'comment':  
-          var placeholder = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+          var placeholder = jQuery("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>")
 
           c_dom = jQuery("<div class=\"s_comment\" />")
                 .append(placeholder)
@@ -119,7 +119,7 @@
                       .append(control);
           }
 
-          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a>")
 
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
@@ -200,7 +200,7 @@
                         .append(method_dropdown)
                         .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
 
-          var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required insert-placeholder-target")
                                 .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
 
@@ -246,7 +246,7 @@
                         .append(simple_edit)
                         .append(FactoryUI.label("<%= t('.simple_webhook_tip') %>", 'tip'));
 
-          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a> </span>")
           var advanced_edit = jQuery("<div class='row-fluid'/>")
                                 .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params insert-placeholder-target').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
           var advanced = jQuery('<div class="edit2 span10"/>')

@@ -66,5 +66,6 @@ helpdesk:
     - autopilot_config
     - marketplace_config
     - doorkeeper
+    - ebay_config
 
 

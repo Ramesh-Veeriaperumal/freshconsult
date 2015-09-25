@@ -3,7 +3,7 @@
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
-save_draft = function(content) {
+save_draft = function(content, cc_email_list, bcc_email_list) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
 		$(".ticket_show #reply-draft").parent().addClass('draft_saved');
@@ -13,7 +13,9 @@ save_draft = function(content) {
 		$.ajax({
 			url: TICKET_DETAILS_DATA['draft']['save_path'],
 			type: 'POST',
-			data: {draft_data: content},
+			data: {draft_data: content,
+			       draft_cc: cc_email_list,
+			       draft_bcc: bcc_email_list},
 			success: function(response) {
 				$(".ticket_show #draft-save")
 					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
@@ -30,8 +32,21 @@ autosaveDraft = function() {
 	if(dontSaveDraft == 0 && TICKET_DETAILS_DATA['draft']['hasChanged']) {
 		var content = $('#cnt-reply-body').getCode();
 
-		if ($.trim(content) != '') 
-			save_draft(content);
+		var cc_email_list = "";
+		$("#cc-form-container-cnt-reply input[name='helpdesk_note[cc_emails][]']").each(function(idx,elem){
+						cc_email_list = cc_email_list + elem.value + ';'
+					});
+		if (cc_email_list.length > 0)
+			cc_email_list = cc_email_list.substr(0, cc_email_list.length - 1) ;
+
+		var bcc_email_list = "";
+		$("#bcc-form-container-cnt-reply input[name='helpdesk_note[bcc_emails][]']").each(function(idx,elem){
+						bcc_email_list = bcc_email_list + elem.value + ';'
+					});
+		if(bcc_email_list.length > 0)
+		  bcc_email_list = bcc_email_list.substr(0,bcc_email_list.length - 1);
+		if ($.trim(content) != '' || cc_email_list.length > 0 || bcc_email_list.length > 0)
+			save_draft(content, cc_email_list, bcc_email_list);
 	}
 
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
@@ -192,7 +207,8 @@ insertIntoConversation = function(value,element_id){
 	$('#canned_responses').modal('hide');
 
 	if($element){
-		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body"){
+		if(element_id == "send-tweet-cnt-reply-body" || element_id == "send-fb-post-cnt-reply-body" || element_id == "send-mobihelp-chat-cnt-reply-body" || 
+				element_id == "send-ecommerce-post-cnt-reply-body" ){
 			var textValue = jQuery("<div />").html(value).text();
 			$element.focus();
 			insertTextAtCursor($element.get(0), textValue);
@@ -698,6 +714,7 @@ var scrollToError = function(){
 		} else {
 			$('#' + $(this).data('toggle-checkbox')).prop('checked', true);
 		}
+		$(this).trigger('cleared.emailField');
 	});
 
 
@@ -803,6 +820,20 @@ var scrollToError = function(){
 			_form.find('.forward_email li.choice').remove();
 		}
 		$('#response_added_alert').remove();
+	});
+
+	// More Event bindings for Draft Saving
+	$('body').on("added.Autocompleter removed.Autocompleter cleared.emailField", function(ev) {
+		if (typeof(TICKET_DETAILS_DATA) !== 'undefined') {
+			if (typeof(TICKET_DETAILS_DATA['draft']['clearingDraft']) === 'undefined' || !TICKET_DETAILS_DATA['draft']['clearingDraft']) {
+				isDirty=true;
+				TICKET_DETAILS_DATA['draft']['hasChanged'] = true;
+			} else {
+				TICKET_DETAILS_DATA['draft']['clearingDraft'] = false;
+			}
+		} else {
+			isDirty=true;
+		}
 	});
 
 	function seperateQuoteText(_form){
@@ -1246,7 +1277,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#canned_response_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' &&
+			editorId != 'send-ecommerce-post-cnt-reply-body' ){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#canned_response_show').trigger('click');
@@ -1256,7 +1288,8 @@ var scrollToError = function(){
 		ev.preventDefault();
 		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		var editorId = $('#suggested_solutions_show').data('editorId');
-		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body'){
+		if (editorId != 'send-tweet-cnt-reply-body' && editorId != 'send-fb-post-cnt-reply-body' && editorId != 'send-mobihelp-chat-cnt-reply-body' && 
+			editorId != 'send-ecommerce-post-cnt-reply-body'){
 			$('#'+editorId).data('redactor').saveSelection();
 		}
 		$('#suggested_solutions_show').trigger('click');

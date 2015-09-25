@@ -5,12 +5,14 @@
 		<ul class="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
 			<%
-			crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks]
-			crm_apps.each do |crm_app| 
-				if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>   
-				<li><a href="#contact_info_<%=crm_app%>" class="requester-info-sprite requester-info-<%=crm_app%>"></a></li>
-				<% 
-				end 
+			unless @ticket.ecommerce?
+				crm_apps=[:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks]
+				crm_apps.each do |crm_app| 
+					if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app]) %>   
+					<li><a href="#contact_info_<%=crm_app%>" class="requester-info-sprite requester-info-<%=crm_app%>"></a></li>
+					<% 
+					end 
+				end
 			end
 			%> 
 		</ul>
@@ -30,9 +32,10 @@
 		</div>
 	</div>
 	<%
-	crm_apps.each do |crm_app| 
-		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
-	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
+	unless @ticket.ecommerce?
+		crm_apps.each do |crm_app| 
+			if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app]) %>
+				<div id="contact_info_<%=crm_app%>" class='requester_tab'>
 
 		<%
 		@liquid_objects = {"requester" => @ticket.requester, "widget_type" => "_contacts"}
@@ -42,9 +45,10 @@
 			<div id="<%=crm_app%>_contacts_widget" class="integration_widget crm_contact_widget "><div class="content"></div><div class="error hide "></div></div>
 			<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %></div></textarea>
 		
-	</div>
-	<% 
-		end 
+				</div>
+			<% 
+			end 
+		end
 	end
 	%>
 	</div>

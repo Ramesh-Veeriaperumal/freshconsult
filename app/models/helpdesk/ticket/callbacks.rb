@@ -520,7 +520,7 @@ private
   end
 
   def set_dueby_on_priority_change(sla_detail)
-    created_time = self.created_at || Time.zone.now
+    created_time = self.created_at.in_time_zone(Time.zone.name) || Time.zone.now
     business_calendar = Group.default_business_calendar(group)
     self.due_by = sla_detail.calculate_due_by_time_on_priority_change(created_time, business_calendar)      
     self.frDueBy = sla_detail.calculate_frDue_by_time_on_priority_change(created_time, business_calendar) 

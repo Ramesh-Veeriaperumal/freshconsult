@@ -132,7 +132,7 @@ class Freshfone::CallActions
   	call.meta.update_external_transfer_call_response(number, response) 
   end
 
-  def handle_failed_mobile_incoming_call(call, agent_id)
+  def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
     call_meta.update_pinged_agents_with_response(agent_id, :failed)
@@ -146,7 +146,7 @@ class Freshfone::CallActions
     telephony.redirect_call_to_voicemail call
   end
 
-  def handle_failed_mobile_transfer_call(call, agent_id)
+  def handle_failed_transfer_call(call, agent_id)
     child_call = call.children.last
     child_call_meta = child_call.meta
     return if child_call_meta.blank?

@@ -79,7 +79,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def update
-    @folder = @category.folders.find(params[:id])
+    @folder = current_account.solution_folders.where(:id => params[:id]).readonly(false).first
 
     @folder.category_id = @new_category.id
     
@@ -91,14 +91,17 @@ class Solution::FoldersController < ApplicationController
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else
-        format.html { render :action => "edit" }
+        format.html { 
+          set_customers_field
+          render :action => "edit" 
+        }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    @folder = (@category.present? ? @category.folders : current_account.solution_folders).find(params[:id])
+    @folder = current_account.solution_folders.where( :id => params[:id]).readonly(false).first
     redirect_to_url = solution_category_url(@folder.category_id)
     @folder.destroy unless @folder.is_default?
     respond_to do |format|
@@ -114,6 +117,7 @@ class Solution::FoldersController < ApplicationController
 
   def move_to
     flash[:notice] = moved_flash_msg if @updated_items.present?
+    flash[:error] = error_flash_msg if @other_items.present?
   end
 
   def move_back
@@ -223,6 +227,7 @@ class Solution::FoldersController < ApplicationController
       @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
       @new_category.reload
       @updated_items = params[:items].map(&:to_i) & @new_category.folder_ids
+      @other_items = params[:items].map(&:to_i) - @updated_items
     end
 
     def old_category
@@ -242,8 +247,10 @@ class Solution::FoldersController < ApplicationController
 
     def moved_flash_msg
       render_to_string(
-      :inline => t("solution.flash.folders_move_to",
-                      :category_name => h(current_account.solution_categories.find(params[:parent_id]).name),
+      :inline => t("solution.flash.folders_move_to_success",
+                      :count => @updated_items.count - 1,
+                      :category_name => h(@new_category.name.truncate(30)),
+                      :folder_name => h(current_account.solution_folders.find(@updated_items.first).name.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 
@@ -254,6 +261,14 @@ class Solution::FoldersController < ApplicationController
                   )).html_safe
     end
 
+    def error_flash_msg
+      t("solution.flash.folders_move_to_error",
+                      :count => @other_items.count - 1,
+                      :category_name => h(@new_category.name.truncate(30)),
+                      :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(30))
+        ).html_safe
+    end
+
     #META-READ-HACK!!    
     def meta_article_scope
       current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
@@ -261,5 +276,9 @@ class Solution::FoldersController < ApplicationController
 
     def clear_cache
       current_account.clear_solution_categories_from_cache
+    end
+
+    def set_customers_field
+      @customer_id = params["customers"].present? ? params["customers"].split(',') : []
     end
 end

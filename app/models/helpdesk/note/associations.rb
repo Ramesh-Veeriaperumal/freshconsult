@@ -41,5 +41,7 @@ class Helpdesk::Note < ActiveRecord::Base
   accepts_nested_attributes_for :tweet , :fb_post
 
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
+  
+  has_one :ebay_question, :as => :questionable, :class_name => 'Ecommerce::EbayQuestion', :dependent => :destroy
 
 end
