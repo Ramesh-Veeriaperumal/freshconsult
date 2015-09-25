@@ -90,7 +90,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def event_matches? current_events, evaluate_on
-    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self}"
+    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self.inspect}"
     events.each do  |e|
       if e.event_matches?(current_events, evaluate_on)
         @triggered_event = {e.name => current_events[e.name]}
