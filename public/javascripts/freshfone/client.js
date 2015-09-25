@@ -57,7 +57,8 @@ var globalconn;
 				freshfonecalls.recentCaller = 1;
 				freshfonecalls.number = $(this).data('phoneNumber');
 				freshfoneContactSearch.getSearchResults(freshfonecalls.number);
-				$('#number').intlTelInput("setNumber", freshfonecalls.number);
+				$('#number').intlTelInput("setNumber", freshfonecalls.number)
+										.trigger('input');
 				freshfonecalls.selectFreshfoneNumber($(this).data('freshfoneNumberId'));
 				setTimeout(function () { 
 					freshfonewidget.showDialPad(); 

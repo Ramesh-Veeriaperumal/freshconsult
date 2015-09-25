@@ -7135,6 +7135,7 @@ en:
       strange_number: "Cannot call a Restricted number"
       move_to_dialer: "Back to dialer"
       connect_call: "Call"
+      dialpad_placeholder: "Type Name or Number"
     search:
       work_phone: "Work"
       mobile_phone: "Mobile"
@@ -7200,6 +7201,7 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       save: "Save"
+      saving: "Saving..."
       notes: "Notes"
       new_requester: "New requester"
       low_credit: "Low on phone credit. Please contact your account admin."
