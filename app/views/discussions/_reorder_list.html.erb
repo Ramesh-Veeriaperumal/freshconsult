@@ -17,7 +17,7 @@
 							<span class="muted">(<%= forum.topics_count %>)</span>
 						</div>
 						<div class="comm-item-details muted">
-							<%= truncate(h(forum.description), :length => 100)%>
+							<%= h(truncate(forum.description, :length => 100)).html_safe %>
 						</div>
 					</div>
 					<div class="span4 mt6 pull-right">

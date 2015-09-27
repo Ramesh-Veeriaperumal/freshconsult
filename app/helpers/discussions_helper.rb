@@ -8,10 +8,10 @@ module DiscussionsHelper
 		_output << pjax_link_to(t('discussions.all_categories'), categories_discussions_path)
 		case page
 			when :category
-				_output << truncate(h(@forum_category.name), :length => 120)
+				_output << h(truncate(@forum_category.name, :length => 120))
 			when :forum
 				_output << category_link(@forum, page)
-				_output << truncate(h(@forum.name), :length => 50)
+				_output << h(truncate(@forum.name, :length => 50))
 			when :topic
 				_output << category_link(@forum, page)
 				_output << forum_link(@forum)
