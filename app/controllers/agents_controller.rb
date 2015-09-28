@@ -58,7 +58,7 @@ class AgentsController < ApplicationController
       format.html do
         @user = @agent.user
         @recent_unresolved_tickets = 
-                            current_account.tickets.assigned_to(@user).unresolved.visible.newest(5)
+                            current_account.tickets.permissible(current_user).assigned_to(@user).unresolved.visible.newest(5)
       end
       format.xml  { render :xml => @agent.to_xml }
       format.json { render :json => @agent.as_json }
