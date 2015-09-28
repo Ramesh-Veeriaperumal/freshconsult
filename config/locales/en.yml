@@ -5324,6 +5324,10 @@ en:
         roles: "Roles"
         ticket_scope: "Ticket scope"
         agent_type: "Agent Type"
+        language: "Language"
+        time_zone: "Timezone"
+        phone: "Phone"
+        mobile: "Mobile"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"

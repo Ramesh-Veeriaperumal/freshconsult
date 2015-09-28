@@ -675,6 +675,10 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  def language_name
+    Language.find_by_code(self.language.to_s).try(:name)
+  end
+
   def custom_form
     helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this 
   end
