@@ -38,10 +38,10 @@
 		@include right(0px);
 		.guided-tour-button{
 			display: inline;
-			@include padding(8px 8px 8px 33px);
+			padding: 8px 8px 8px 33px;
 			@if $rtl {
-				@include padding(5px 8px 5px 33px);
-				@include margin-right(15px);
+				padding: 5px 8px 5px 33px;
+				margin-right: 15px;
 				display: inline-block;
 			}
 		}
