@@ -1,8 +1,6 @@
 class EmailConfig < ActiveRecord::Base
   self.primary_key = :id
 
-  include AccountConstants
-
   belongs_to :account
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
@@ -28,12 +26,12 @@ class EmailConfig < ActiveRecord::Base
   end
   
   def friendly_email
-    active? ? "#{format(name)} <#{reply_email}>" : "support@#{account.full_domain}"
+    active? ? "#{name} <#{reply_email}>" : "support@#{account.full_domain}"
   end
   
   def friendly_email_personalize(user_name)
     user_name = user_name ? user_name : name
-    active? ? "#{format(user_name)} <#{reply_email}>" : "support@#{account.full_domain}"
+    active? ? "#{user_name} <#{reply_email}>" : "support@#{account.full_domain}"
   end
 
   def set_activator_token
@@ -47,11 +45,4 @@ class EmailConfig < ActiveRecord::Base
     old_config = EmailConfig.find id
     set_activator_token unless old_config.reply_email == reply_email
   end
-
-  private
-    # Wrap name with double quotes if it has a special character and not already wrapped
-    def format(name)
-      (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
-    end      
-
 end

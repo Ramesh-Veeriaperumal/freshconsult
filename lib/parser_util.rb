@@ -1,8 +1,6 @@
 # encoding: utf-8
 module ParserUtil
 
-require 'mail'
-
 include AccountConstants
 
   def parse_email(email)
@@ -16,21 +14,6 @@ include AccountConstants
     end
 
     { :email => email, :name => name }
-  end 
-
-  def parse_email_new(email)
-    parsed_hash = { :email => nil, :name => nil, :domain => nil }
-    parsed_email = Mail::AddressList.new email
-    email = parsed_email.addresses.first
-    if email.address =~ EMAIL_REGEX
-      parsed_hash[:email] = email.address
-      parsed_hash[:name] = email.name
-      parsed_hash[:domain] = email.domain
-    end
-    parsed_hash
-  rescue Exception => e
-    Rails.logger.debug "Exception when validating email list : #{email} : #{e.message} : #{e.backtrace}"
-    parsed_hash
   end 
 
   def get_emails emails
@@ -64,17 +47,6 @@ include AccountConstants
    		{:name => "", :email => email_text}	
   	end
 	end
-
-  def get_email_array_new emails
-    parsed_email = Mail::AddressList.new emails
-    plain_emails = parsed_email.addresses.collect do |e|
-      e.address if e.address =~ EMAIL_REGEX
-    end
-    plain_emails.compact.uniq
-  rescue Exception => e
-    Rails.logger.debug "Exception when validating email list : #{emails} : #{e.message} : #{e.backtrace}"
-    []
-  end
 
   def parse_email_with_domain(email_text)
     parsed_email = parse_email_text(email_text)   
@@ -128,26 +100,6 @@ include AccountConstants
     addresses.compact.uniq
   end
 
-  def fetch_valid_emails_new(addresses)
-    addresses = addresses.join(",")  if addresses.is_a? Array
-    parsed_emails = Mail::AddressList.new addresses
-     
-    addresses = parsed_emails.addresses.collect do |email|
-      if email.address =~ EMAIL_REGEX
-        if email.name.present?
-          "#{format(email.name)} <#{email.address}>"
-        else
-          email.address
-        end
-      end
-    end
-    addresses.compact.uniq
-  rescue Exception => e
-    Rails.logger.debug "Exception when validating email list : #{addresses} : #{e.message} : #{e.backtrace}"
-    []
-  end
-  
-  # possibly dead code validate_emails, extract_email, valid_email?
   def validate_emails(email_array, ticket = @parent)
     unless email_array.blank?
       if email_array.is_a? String
@@ -176,14 +128,5 @@ include AccountConstants
     email.sub(/\+.*@/,"@")
   end
 
-  def format(name)
-    name =~ SPECIAL_CHARACTERS_REGEX ? name = "\"#{name.gsub(/\./, ' ').strip}\"" : name
-  end
   
-alias_method :parse_email, :parse_email_new 
-alias_method :parse_email_text, :parse_email_new
-alias_method :parse_email_with_domain, :parse_email_new
-alias_method :get_email_array, :get_email_array_new
-alias_method :fetch_valid_emails, :fetch_valid_emails_new
-
 end

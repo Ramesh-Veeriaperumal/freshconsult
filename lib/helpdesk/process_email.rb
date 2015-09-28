@@ -256,12 +256,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return cc_array.compact.map{|i| i.downcase}.uniq
     end
 
-    def parse_cc_email_new
-      cc_array = get_email_array params[:cc]
-      cc_array.concat(additional_emails || [])
-      cc_array.compact.map{|i| i.downcase}.uniq
-    end
-
     def parse_to_emails
       to_emails = params[:to].split(",") if params[:to]
       parsed_to_emails = []
@@ -270,10 +264,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email].strip}>") if !parsed_email.blank? && !parsed_email[:email].blank?
       end
       parsed_to_emails
-    end
-
-    def parse_to_emails_new
-      fetch_valid_emails params[:to]
     end
 
     def fetch_ticket(account, from_email, user)
@@ -802,8 +792,4 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return ticket.parent
     end
   end   
-
-  alias_method :parse_cc_email, :parse_cc_email_new
-  alias_method :parse_to_emails, :parse_to_emails_new
-
 end
