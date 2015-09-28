@@ -10,6 +10,8 @@ module ApiTicketConstants
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
   DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status]
+  PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys
+  SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook, :outbound_email, :ecommerce).values
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },

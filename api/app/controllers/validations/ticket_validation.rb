@@ -10,11 +10,11 @@ class TicketValidation < ApiValidation
   validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
   validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?
 
-  validates :priority, custom_inclusion: { in: TicketConstants::PRIORITY_TOKEN_BY_KEY.keys }, allow_nil: true
+  validates :priority, custom_inclusion: { in: ApiTicketConstants::PRIORITIES }, allow_nil: true
 
   # proc is used as inclusion array is not constant
   validates :status, custom_inclusion: { in: proc { |x| x.status_ids } }, allow_nil: true
-  validates :source, custom_inclusion: { in: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook, :outbound_email).values }, allow_nil: true
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES }, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
 
