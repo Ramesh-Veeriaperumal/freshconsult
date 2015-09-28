@@ -2,8 +2,6 @@ module Va::Observer::Util
 
 	include Va::Observer::Constants
 	include Va::Util
-	include Redis::RedisKeys
-	include Redis::OthersRedis  
 
 	private
 
@@ -31,18 +29,10 @@ module Va::Observer::Util
 			observer_changes.merge! ticket_event observer_changes
 			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
 			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-			if redis_key_exists?(SIDEKIQ_OBSERVER)
-				Tickets::ObserverWorker.perform_async({ 	
-					:doer_id => doer_id, 
-					:ticket_id => evaluate_on_id, 
-					:current_events => observer_changes })
-			else
-				Resque.enqueue(Workers::Observer,{ 	
-					:doer_id => doer_id, 
-					:ticket_id => evaluate_on_id, 
-					:current_events => observer_changes })
 
-			end
+			Resque.enqueue(Workers::Observer,
+								{ :doer_id => doer_id, :ticket_id => evaluate_on_id, 
+									:current_events => observer_changes })
 		end
 
 		def ticket_event current_events
