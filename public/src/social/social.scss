@@ -162,7 +162,7 @@ $bdr-color:#e1e1e1;
   }
   .searchico{
     position: absolute;
-    right: 10%;
+    @include right(10%);
     top: 12px;
     opacity: 0.3;
     width: 16px;
@@ -175,7 +175,7 @@ $bdr-color:#e1e1e1;
     }
   }
   .select2-container-multi .select2-choices{
-    padding-left: 30px;
+    @include padding-left(30px);
   }
   .advsearch-box{
     overflow: auto;
@@ -205,13 +205,13 @@ $bdr-color:#e1e1e1;
   }
   .center-pane{
     width:62%;
-    float:left;
+    @include float(left);
     border-right: solid 1px #e1e1e1;
     min-height: 540px;
   }
   .tw-explorer{
     width:37.87%;
-    float:left;
+    @include float(left);
     z-index:10;
     .fs-notify{
       padding: 13px;
@@ -801,7 +801,7 @@ $bdr-color:#e1e1e1;
     position: relative;
       border-right: 1px solid #ddd;
       background: #f9f9f9;
-      float: left;
+      @include float(left);
       width: 32px;
       img{
         display: block;
@@ -834,8 +834,8 @@ $bdr-color:#e1e1e1;
 
   }
   .twt-as{
-    float: left;
-      padding-left: 10px;
+    @include float(left);
+    @include padding-left(10px);
       vertical-align: middle;
       i{
         margin-left: 5px;

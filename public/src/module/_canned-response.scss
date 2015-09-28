@@ -753,6 +753,9 @@ height: auto;
 .canned_create_folder{
 	height: 40px;
 	overflow: hidden;
+	.controls{
+		@include margin-left(160px);
+	}
 }
 
 .ca-response-move-options {
