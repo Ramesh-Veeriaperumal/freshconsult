@@ -1712,6 +1712,14 @@ class TicketsControllerTest < ActionController::TestCase
     match_json pattern
   end
 
+  def test_index_with_invalid_params_type
+    get :index, controller_params(company_id: 'a', requester_id: 'b')
+    pattern = [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')]
+    pattern << bad_request_error_pattern('requester_id', 'data_type_mismatch', data_type: 'number')
+    assert_response 400
+    match_json pattern
+  end
+
   def test_index_with_monitored_by
     get :index, controller_params(filter: 'watching')
     assert_response 200

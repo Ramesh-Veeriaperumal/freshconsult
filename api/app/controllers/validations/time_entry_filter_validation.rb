@@ -3,7 +3,7 @@ class TimeEntryFilterValidation < ApiValidation
 
   validates :billable, data_type: { rules: 'Boolean', allow_blank: true }
   validates :executed_after, :executed_before, date_time: { allow_nil: true }
-  validates :agent_id, :company_id, custom_numericality: { allow_nil: true }
+  validates :agent_id, :company_id, numericality: { allow_nil: true, only_integer: true }
   validate :valid_user?, if: -> { agent_id && errors[:agent_id].blank? }
   validate :valid_company?, if: -> { company_id && errors[:company_id].blank? }
 

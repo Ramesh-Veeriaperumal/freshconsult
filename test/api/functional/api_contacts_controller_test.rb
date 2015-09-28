@@ -558,6 +558,15 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('customer_id', 'invalid_field')])
   end
 
+  def test_contact_filter_invalid_company_id
+    comp = get_company
+    @account.all_contacts.update_all(customer_id: nil)
+    @account.all_contacts.first.update_column(:customer_id, comp.id)
+    get :index, controller_params(company_id: 'a')
+    assert_response 400
+    match_json [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')]
+  end
+
   # Make agent out of a user
   def test_make_agent
     assert_difference 'Agent.count', 1 do

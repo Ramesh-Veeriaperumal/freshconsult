@@ -4,6 +4,7 @@ class TicketFilterValidation < ApiValidation
 
   validate :check_requester, if: -> { requester_id || email }
   validate :check_company, if: -> { company_id }
+  validates :company_id, :requester_id, numericality: { allow_nil: true, only_integer: true }
   validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, allow_nil: true
   validates :updated_since, date_time: { allow_nil: true }
   validates :order_by, custom_inclusion: { in: ApiTicketConstants::ORDER_BY }, allow_nil: true
