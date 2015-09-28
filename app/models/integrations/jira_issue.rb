@@ -154,14 +154,12 @@ class Integrations::JiraIssue
 
   def push_existing_notes_to_jira(issue_id, tkt_obj)
     obj_mapper = Integrations::ObjectMapper.new
-    tkt_obj.notes.each do |note| 
-      unless note.meta?
+    tkt_obj.notes.visible.exclude_source('meta').each do |note| 
         mapped_data = obj_mapper.map_it(Account.current.id, "add_comment_in_jira" , note, :ours_to_theirs, [:map])
-        jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment => Digest::SHA512.hexdigest(mapped_data) }
+        response = add_comment(issue_id, mapped_data)
+        jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> Account.current.id, :local_integratable_id=> tkt_obj.id, :remote_integratable_id=> issue_id, :comment_id => response[:json_data]["id"] }
         set_integ_redis_key(jira_key, "true", 240)
-        add_comment(issue_id, mapped_data)
         construct_attachment_params(issue_id, note) unless exclude_attachment?(@installed_app)
-      end
     end
   end
 

@@ -318,7 +318,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 /* Print button in Solutions Page */
 .solution-print-icon {
-	float:right;
+	@include float(right);
 	margin-top:10px;
 }
 

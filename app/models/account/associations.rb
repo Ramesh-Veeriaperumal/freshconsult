@@ -262,6 +262,9 @@ class Account < ActiveRecord::Base
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
   has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
   has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
+  has_many :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :destroy
+  has_many :ebay_accounts, :class_name => 'Ecommerce::EbayAccount'
+  has_many :ebay_questions, :class_name => "Ecommerce::EbayQuestion", :through => :ebay_accounts
 
   has_many :forum_moderators
 

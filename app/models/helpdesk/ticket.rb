@@ -151,14 +151,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
-  scope :with_display_id, lambda { |search_string| {  
-    :include => [ :requester ],
-    :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
-    :order => 'helpdesk_tickets.display_id',
-    :limit => 1000
-    } 
-  }
-
   scope :with_requester, lambda { |search_string| {  
     :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
       users.account_id = helpdesk_tickets.account_id and users.deleted = false),
@@ -841,6 +833,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @model_changes
   end
 
+  #Ecommerce methods
+  def ecommerce?
+    source == SOURCE_KEYS_BY_TOKEN[:ecommerce] && self.ebay_question.present?
+  end
+
+  def allow_ecommerce_reply?
+    (self.ecommerce? && self.ebay_account && self.ebay_account.active?)
+  end
+
+  #Ecommerce method code ends
+
   # To keep flexifield & @custom_field in sync
 
   def custom_field
@@ -859,6 +862,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     flexifield.set_ff_value ff_alias, ff_value
   end
   # flexifield - custom_field syncing code ends here
+
+  def custom_field_type_mappings
+    @custom_field_mapping ||= begin 
+      self.account.ticket_fields.custom_fields.inject({}) { |a, f| 
+        a[f.name] = f.field_type
+        a
+      }
+    end
+  end
 
   def resolution_status
     return "" unless [RESOLVED, CLOSED].include?(status)
@@ -885,6 +897,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
   # end
 
+  def show_reply?
+    (self.is_twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
+  end
 
   def search_fields_updated?
     attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",

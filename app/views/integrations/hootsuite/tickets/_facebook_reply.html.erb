@@ -1,0 +1,18 @@
+<%= form_for [@ticket, @note], :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "social_reply_form" } do |f| %>
+    <%= f.error_messages %>
+    <%= hidden_field_tag(:ticket_requester_name, @ticket.requester.name, :id => "ticket_requester_name")%>
+    <%= hidden_field_tag(:parent_post, "", :id => "parent_post_id")%>
+    <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
+    <%= f.hidden_field :private , :value => "false" %>
+
+    <%= f.label(:reply_email, "From:", :class => "mailaddr-label from" ) %>&nbsp;
+    <%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %>
+    
+    <li class="inline-field field clearField continous message">
+        <%= f.fields_for :note_body, @note_body do |ff| %>
+        <%= ff.text_area :body, { :class => 'hs-textarea', :id => "msg-body", :rows => "6" } %>
+        <% end %>
+    </li>
+    <%= f.submit "#{t("integrations.hootsuite.reply_btn")}", :id => "social_reply", :class => "hs_btnCtaSml hs_btnTypeSubmit pull-right"  %>
+<% end %>

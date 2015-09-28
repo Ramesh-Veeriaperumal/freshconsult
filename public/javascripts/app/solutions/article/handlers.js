@@ -18,6 +18,12 @@ window.App = window.App || {};
       this.data.description = null;
     },
 
+    highlightCode: function () {
+      if (window.location.hash != "#edit"){
+        highlight_code();
+      }
+    },
+
     editUrlChange: function (editingFlag) {
       window.location.hash = (editingFlag ? "#edit" : "");
     },
@@ -80,6 +86,12 @@ window.App = window.App || {};
       // Check if there is an error, in that case return false.
       if (this.autoSave && !this.autoSave.lastSaveStatus) {
         return false;
+      }
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
+        var flag =  $('#solution_article_description').valid() || $('#solution_article_title').val().length > 0 ;
+        if (flag) {
+          return true;
+        }
       }
       return this.checkAttachments();
     },

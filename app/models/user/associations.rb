@@ -124,4 +124,6 @@ class User < ActiveRecord::Base
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device', :dependent => :destroy
 
   has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
+
+  has_many :ebay_questions, :class_name => 'Ecommerce::EbayQuestion'
 end

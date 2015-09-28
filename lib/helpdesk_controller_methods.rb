@@ -274,7 +274,19 @@ protected
         page << "if(document.getElementById('cnt-reply-quoted')){"
         page.replace_html 'cnt-reply-quoted', h(quoted_text(@parent)) if @parent
         page << "}"
-      else
+      elsif @cname == "attachment" || @cname == "cloud_file"
+        attachment = @items.first
+        note_details = note_attachment_details(attachment)
+        if note_details
+          if note_details[:attachments_count] > 0
+            page.replace_html "attachments_title_#{note_details[:id]}", 
+                              pluralize(note_details[:attachments_count], 
+                                        "Attachment")
+          else
+            page.replace_html "note_attachments_container_#{note_details[:id]}", ""
+          end
+        end
+
         if @items.present?
           page << "trigger_event('attachment_deleted', {attachment_id: #{@items[0].id}, attachment_type: '#{@items[0].class.name.split('::')[1].underscore}'});"
         end

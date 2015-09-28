@@ -199,7 +199,7 @@ class Va::Action
   end
 
   def send_email_to_requester(act_on)
-    if act_on.requester_has_email?
+    if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
       Helpdesk::TicketNotifier.email_to_requester(act_on, 
         substitute_placeholders_for_requester(act_on, :email_body),

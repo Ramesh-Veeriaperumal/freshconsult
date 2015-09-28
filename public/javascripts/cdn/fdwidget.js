@@ -1,5 +1,6 @@
 //= require prototype-1.6.js
 //= require jquery-1.7.1.min.js
+//= require frameworks/plugins/jquery.ui.js
 //= require widgetinit.js
 //= require utils.js
 //= require frameworks/plugins/jquery.tmpl.js

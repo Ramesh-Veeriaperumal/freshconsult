@@ -1,0 +1,76 @@
+<% 
+note_view_id = dom_id(note)
+notedetails  = "note_details_#{note.id.to_s()}"
+minimizable ||= false
+kind = note.kind
+%>
+
+<div id="<%= note_view_id %>" 
+			data-timestamp="<%= note.created_at.to_i%>" 
+			class="conversation <%= 'minimized minimizable' if minimizable %> <%= 'source_email' if note.email? %>">
+	<% if note.user %>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, "preview_pic circle small") %></div>
+	<% end %>
+	<div class="commentbox 
+					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
+					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
+
+		<%= note_lock_icon(note) %>
+		
+		<% if note.fb_post and note.fb_post.post_type_present? %>
+			<% if note.fb_post.comment? %>
+	      <span class="tooltip" data-original-title="Comment"> 
+	      	<%= content_tag(:span, "", :class => "ficon-chat-bubble fsize-21")%> 
+	      </span>
+	    <% elsif note.fb_post.reply_to_comment? %>
+	      <span class="tooltip" data-original-title="Reply to comment"> 
+	      	<%= content_tag(:span, "", :class => "ficon-reply fsize-21")%>
+	      </span>
+	    <% end %>
+      <% clazz = "fb-reply"%> 
+    <% else %>
+    	<% clazz = "helpdesk_note"%> 
+    <% end %>
+		
+		<div class="<%= clazz %>">
+			<% if note.deleted? %>
+				<div class="tag">
+					<%= t("helpdesk.tickets.note.deleted_note").html_safe %>
+				</div>
+		  <% end %>
+			<div class="author-mail-detail cc_bcc_info">
+				<% kind %>
+				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
+						:user_name => link_to_user(note.user), 
+						:note_date => formated_date(note.created_at), 
+						:timestamp => note.created_at.to_i 
+					).html_safe %><br>
+			</div>
+			<%  if privilege?(:manage_tickets)
+				conv_info = conversation_info(note) %>
+				<div class="author-mail-detail">
+				<%= content_tag :span, truncate(conv_info, :length => 100).html_safe, 
+						:rel => "hover-popover",
+						"data-placement" => "below",
+						"data-content" => conversation_popover_details(note).to_str%>
+				</div>
+			<% end %>
+			<div class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
+	        <%= note.body_html.html_safe %>
+      		<% if note.fwd_email? %>
+			      <div class="freshdesk_quote" data-remote-quote=true></div>
+			    <% end %>
+	    </div>
+			<div id="note_attachments_container_<%= note.id%>">
+				<% unless note.all_attachments.empty? and note.cloud_files.empty? %>				
+						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note }%>
+				<% end %>
+			</div>
+		</div>
+	
+	</div>
+</div>
+<script type="text/javascript">
+	if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' ||	TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
+		TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;
+</script>

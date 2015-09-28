@@ -4,24 +4,26 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
   "use strict";
   window.App.Freshfoneagents.Filter = {
     start: function(){
-      this.userList=[];
-      this.availableListArray=[];
-      this.unavailableListArray=[];
-      this.agent="";
-      this.is_sorted_by_name=false;
-      this.prev_sort="sort_presence";
-      this.prev_group="";
-      this.prev_pill="";
-      this.presence_in_words="";
-      this.last_call_in_words="";
-      this.list_length=freshfone.agents.length;
-      this.Status={ONLINE:1, OFFLINE:0, BUSY:2};
-      this.Preference={TRUE:1, FALSE:0};
+      this.userList = [];
+      this.availableListArray = [];
+      this.unavailableListArray = [];
+      this.agent = "";
+      this.is_sorted_by_name = false;
+      this.prev_sort= "sort_presence";
+      this.prev_group = "";
+      this.prev_pill = "";
+      this.presence_in_words = "";
+      this.last_call_in_words = "";
+      this.list_length = freshfone.agents.length;
+      this.Status = {ONLINE:1, OFFLINE:0, BUSY:2};
+      this.Preference = {TRUE:1, FALSE:0};
       this.AvailableAgentList = new List('ffone-tab-1',{page:this.list_length});
       this.UnavailableAgentList = new List('ffone-tab-2',{page:this.list_length});
-      this.sort_by="name"
-      this.sort_by_hash={"name" : 1, "presence_time" :  -1};
-      this.sort_order_list=["presence_time","name"];
+      this.sort_by = "name"
+      this.sort_by_hash = {"name" : 1, "presence_time" :  -1};
+      this.sort_order_list = ["presence_time","name"];
+      this.on_mobile_template = '<i class="ficon-available-on-mobile active fsize-20 pull-left "></i>';
+      this.on_browser_template = '<i class="ficon-ff-on-browser active fsize-20 pull-left "></i>';
     },
     init: function () {
       this.start();
@@ -139,9 +141,12 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
     
     addAgentByDevice: function(id){                                       
       this.agent=this.getAgent(id);
-      var on_device_img=(this.agent.on_phone)?'<i class="ficon-available-on-mobile active fsize-20 pull-left "></i>':'<i class="ficon-ff-on-browser active fsize-20 pull-left "></i>';
+      var on_device_img=this.set_device(this.agent.on_phone)
       this.AvailableAgentList.add(this.availableUserListItem(id,on_device_img));
     },
+    set_device: function(phone_flag){ 
+       return phone_flag  ? this.on_mobile_template : this.on_browser_template ;
+    },  
     setTickIcon: function(sort_by){
        if(sort_by=="name"){
             $(" .sort_name").prepend($('<span class="icon ticksymbol"></span>'));

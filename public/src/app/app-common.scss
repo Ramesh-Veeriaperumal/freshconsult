@@ -2231,13 +2231,13 @@ a.mobile_switchBtn {
 // ------------------------------------------------------------------------------------------------------------
 
 .notify-divider{
-	margin-left:20px; 
-	padding-left:20px; 
-	border-left:2px solid #aaa;
+	@include margin-left(20px); 
+	@include padding-left(20px); 
+	@include border-left(2px solid #aaa);
 	li {
 	    padding: 4px; 
 	    list-style: disc; 
-	    margin-left: 20px;
+	    @include margin-left(20px);
 	}
 }
 
@@ -3550,7 +3550,7 @@ body.popup-body{ min-width: 0px; }
 			p{
 				margin: 0 0 0 20px;
 				display: inline-block;
-				overflow-wrap: break-word;
+				word-break: break-word;
 			}
 			p.helper{
 				color: #666;

@@ -27,7 +27,7 @@ module Solution::Cache
   def other_categories
     @other_categories_from_cache ||= begin
       category_collection[:others].sort do |x,y|
-        x[:position] <=> y[:position]
+        x[:position].to_i <=> y[:position].to_i
       end
     end
   end

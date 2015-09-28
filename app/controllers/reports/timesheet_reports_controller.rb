@@ -39,7 +39,6 @@ class Reports::TimesheetReportsController < ApplicationController
   def time_sheet_list
     @report_date = params[:date_range]
     current_range_time_sheet
-    stacked_chart_data
     previous_range_time_sheet #Fetching the previous time range data.
     if Account.current.features?(:archive_tickets)
       archive_current_range_time_sheet
@@ -47,6 +46,7 @@ class Reports::TimesheetReportsController < ApplicationController
       sum_new_and_archived
       sum_data
     end
+    stacked_chart_data
   end
   
   def previous_range_time_sheet

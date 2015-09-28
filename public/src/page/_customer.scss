@@ -156,7 +156,8 @@
 		tr td{
 				width: 32%;
 		    	vertical-align: middle;
-		    	word-wrap:break-word;
+		    	word-wrap: break-word;
+		    	word-break: break-word;
 			    &:first-child{
 			        width:5%;
 				}

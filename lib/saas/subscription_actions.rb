@@ -2,7 +2,7 @@ class SAAS::SubscriptionActions
 
   FEATURES = [ :customer_slas, :business_hours, :multi_product, :facebook, :twitter, 
                 :custom_domain, :multiple_emails, :css_customization, :custom_roles, 
-                :dynamic_content, :mailbox ]
+                :dynamic_content, :mailbox, :dynamic_sections ]
 
   def change_plan(account, old_subscription, existing_addons)
     update_features(account, old_subscription, existing_addons)
@@ -109,6 +109,16 @@ class SAAS::SubscriptionActions
     def drop_mailbox_data(account)      
       account.imap_mailboxes.destroy_all
       account.smtp_mailboxes.destroy_all
+    end
+
+    def drop_dynamic_sections_data(account)
+      account.ticket_fields.each do |field|
+        if field.section_field?
+          field.field_options["section"] = false
+          field.save
+        end
+      end
+      account.sections.destroy_all
     end
 
     def remove_chat_feature(account)

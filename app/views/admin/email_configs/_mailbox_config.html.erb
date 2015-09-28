@@ -1,6 +1,5 @@
 <%= javascript_tag do %>
   jQuery(document).ready(function(){
-    jQuery("#hidden_imap_user_name").val(jQuery("#reply_to_id").val());
     jQuery("#EnableMailbox")
       .bind("change", function(ev){
         if(this.checked){
@@ -33,10 +32,10 @@
           jQuery("#div_reply_email").text(reply_email);
           jQuery("#hidden_reply_to").val(reply_email);
           jQuery("input[rel=username]").val(this.value);
-          jQuery("#email_config_smtp_mailbox_attributes_user_name").trigger("change");
+          jQuery("#email_config_smtp_mailbox_attributes_user_name");
       })        
 
-      if("<%= @smtp_mailbox.present? && @smtp_mailbox.new_record? %>") jQuery("#reply_to_id").trigger("change");
+      if(<%= @smtp_mailbox.present? && @smtp_mailbox.new_record? %>) jQuery("#reply_to_id").trigger("change");
 
       <% if (@smtp_mailbox.present? && @smtp_mailbox.user_name) %>
         jQuery("#email_config_smtp_mailbox_attributes_user_name").val("<%= @smtp_mailbox.user_name%>")

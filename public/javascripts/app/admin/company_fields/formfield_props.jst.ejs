@@ -1,7 +1,7 @@
 <% 
 	var isDefault = /^default/.test(field_type) ? true : false
 %>
-<div class="custom-fields-props-dialog modal hide fade single-column" id='CustomPropsModal'>
+<div class="contact_fields_dialog custom-fields-props-dialog modal hide fade single-column" id='CustomPropsModal'>
 	<div class='modal-header clearfix'>
 		<h3 class="ellipsis modal-title pull-left">
 			<% icon = 'ficon-'+((dom_type=='email') ? 'mail' : dom_type) %>
@@ -111,10 +111,6 @@
 									</span>
 								</fieldset>
 							<% }) %>
-							<a class="add-choice" id="addchoice" href="#"> 
-								<span class='ficon-plus'></span> 
-								<span><%= translate.get('addNewChoice') %> </span>
-							</a> 
 						</div>
 					</div> 
 				<% } %>
@@ -123,9 +119,12 @@
 	</div>
 	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
-		<% if (!isDefault) { %>
-			<a class="btn pull-left delete-field"><%= translate.get('deleteField') %></a> 
-		<%  } %>
+		<% if (field_type == 'custom_dropdown') { %>
+			<a class="add-choice" id="addchoice" href="#"> 
+				<span class='ficon-plus'></span> 
+				<span><%= translate.get('addNewChoice') %> </span>
+			</a>
+		<% } %> 
 		<a class="btn" id="cancel-btn"><%= translate.get('cancel') %></a> 
 		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='PropsSubmitBtn' /> 
 	</div>

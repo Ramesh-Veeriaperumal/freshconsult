@@ -377,6 +377,7 @@ Autocompleter.MultiValue = Class.create({
       title = title || id;
       if (!this.selectedEntries().include('' + id)) {
         this.searchFieldItem.insert({before: this.createSelectedElement(id, title)});
+        jQuery(this.searchField).trigger('added.Autocompleter');
       };
       var emptyValueField = this.emptyValueElement();
       if (emptyValueField) {
@@ -390,6 +391,7 @@ Autocompleter.MultiValue = Class.create({
     entryElement = Object.isElement(entryElement) ? entryElement : this.holder.down("li[choice_id=" + entryElement + "]");
     if (entryElement) {
       entryElement.remove();
+      jQuery(this.searchField).trigger('removed.Autocompleter');
       if (this.selectedEntries().length == 0) {
         this.setEmptyValue();
         jQuery(this.searchField).attr('placeholder', this.options.placeHolder);

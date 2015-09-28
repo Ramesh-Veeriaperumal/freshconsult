@@ -47,6 +47,11 @@
       return false;
     }
   }, '');
+  $.validator.addMethod("ecommerce", function(value, element) {
+    if($(element).data('ecommerce-count') >= 0){
+      return true;
+    }
+  }, "Your reply was over 2000 characters. You'll have to be more clever." );
   $.validator.addMethod("sla_min_time", function(value, element) {
     if (value>=900){
       jQuery('#text_'+element.id.match(/[0-9].+/)).removeClass('sla-error');

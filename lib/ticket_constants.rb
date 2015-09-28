@@ -22,7 +22,8 @@ module TicketConstants
     [ :chat,             'chat',             7 ],
     [ :mobihelp,         'mobihelp',         8 ],
     [ :feedback_widget,  'feedback_widget',  9 ],
-    [ :outbound_email,   'outbound_email',   10]
+    [ :outbound_email,   'outbound_email',   10],
+	[ :ecommerce,        'ecommerce',        11 ]
   
   ]
 
