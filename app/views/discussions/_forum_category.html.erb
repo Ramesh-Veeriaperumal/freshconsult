@@ -19,8 +19,7 @@
 		  	<%= content_tag :li, :item_id => pfc_id, :class => "comm-item #{'no_order' if pfc_id.blank?}" do %>
 		  		<% if privilege?(:manage_forums) %>
 			  		<div class="reorder-icon vertical-alignment handle-reorder">
-							<!-- <i class="community-reorder-icon" id="sortable-icon"></i> -->
-							<%= font_icon "reorder", :size => 15, :id => "sortable-icon" %>
+							<%= font_icon "rearrange", :size => 18, :id => "sortable-icon" %>
 						</div>
 					<% end %>
 				<div class="vertical-alignment reorder-content row-fluid">
