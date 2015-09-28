@@ -102,6 +102,8 @@ module Redis::RedisKeys
 
 	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
 	EBAY_ACCOUNT_THRESHOLD_COUNT = "EBAY:ACCOUNT:THRESHOLD:%{date}:%{account_id}:%{ebay_account_id}"
+        # run update_ticket_states using sidekiq instead of resque
+        UPDATE_TICKET_STATES_VIA_SIDEKIQ = "UPDATE_TICKET_STATES_VIA_SIDEKIQ"
 
 	def newrelic_begin_rescue
 	    begin

@@ -31,9 +31,9 @@ module Redis::OthersRedis
 	def increment_others_redis(key)
 		newrelic_begin_rescue { return $redis_others.INCR(key) }
 	end
-	
+
 	def decrement_others_redis(key, value=1)
-		newrelic_begin_rescue do 
+		newrelic_begin_rescue do
 			if value == 1
 				$redis_others.DECR(key)
 			else
@@ -42,7 +42,7 @@ module Redis::OthersRedis
 		end
 	end
 
-	def exists?(key)
+	def redis_key_exists?(key)
 		newrelic_begin_rescue { $redis_others.exists(key) }
 	end
 
