@@ -364,13 +364,9 @@ class Freshfone::Call < ActiveRecord::Base
     #If this call is the parent and has any children, all children legs should be disconnected
     begin
       if has_children?
-        meta = children.last.meta 
-        if meta
-          meta.pinged_agents.each do |agent| 
-            next if agent[:call_sid].blank?
-            agent_leg = account.freshfone_subaccount.calls.get(agent[:call_sid]) 
-            agent_leg.update(:status => "completed") 
-          end
+        child = children.last
+        if child.present?
+          Freshfone::NotificationWorker.perform_async({:call_id => child.id}, nil, "disconnect_other_agents")
         end
         # return
       end
