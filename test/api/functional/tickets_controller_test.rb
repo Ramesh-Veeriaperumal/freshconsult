@@ -18,16 +18,16 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph }
 
   ERROR_PARAMS =  {
-    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
+    'number' => ['data_type_mismatch', data_type: 'Integer'],
     'decimal' => ['data_type_mismatch', data_type: 'number'],
     'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
     'text' => ['is too long (maximum is 255 characters)']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => ['data_type_mismatch', data_type: 'Positive Integer'],
+    'number' => ['required_integer'],
     'decimal' => ['required_number'],
-    'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
+    'checkbox' => ['required_boolean'],
     'text' => ['missing'],
     'paragraph' => ['missing']
   }
@@ -1107,18 +1107,14 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_due_by_and_fr_due_by
     t = ticket
-    previous_fr_due_by = t.frDueBy
-    previous_due_by = t.due_by
-    p previous_fr_due_by
-    p previous_due_by
-    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 99.days.since.to_s }
+    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     p response.body
-    p t.attributes
+    p t.reload.attributes
     assert_response 200
-    assert t.reload.due_by != previous_due_by
-    assert t.reload.frDueBy != previous_fr_due_by
+    assert t.reload.due_by == params_hash[:due_by]
+    assert t.reload.frDueBy == params_hash[:fr_due_by]
   end
 
   def test_update_with_due_by

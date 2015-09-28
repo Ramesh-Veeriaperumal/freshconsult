@@ -4,16 +4,16 @@ class Helpers::TicketsValidationHelper
       Account.current ? Account.current.ticket_types_from_cache.map(&:value) : []
     end
 
-    def ticket_custom_field_keys(flexifields)
-      flexifields.map(&:flexifield_alias)
+    def ticket_custom_field_keys(ticket_fields)
+      ticket_fields.select{|x| !x.default}.collect(&:name)
     end
 
     def choices_validatable_custom_fields(delegator)
-      delegator.ff.map(&:ticket_field).select! { |c| (['custom_dropdown', 'nested_field'].include?(c.field_type)) }
+      delegator.ticket_fields.select { |c| (['custom_dropdown', 'nested_field'].include?(c.field_type)) }
     end
 
     def data_type_validatable_custom_fields(delegator)
-      delegator.ff.map(&:ticket_field).select! { |c| (['custom_dropdown', 'nested_field'].exclude?(c.field_type)) }
+      delegator.ticket_fields.select { |c| (!c.default && ['custom_dropdown', 'nested_field'].exclude?(c.field_type)) }
     end
 
     def dropdown_choices_by_field_name
@@ -22,8 +22,8 @@ class Helpers::TicketsValidationHelper
       end.to_h
     end
 
-    def check_box_type_custom_field_names(flexifields)
-      flexifields.select { |x| x.flexifield_coltype == 'checkbox' }.map(&:flexifield_alias)
+    def check_box_type_custom_field_names(ticket_fields)
+      ticket_fields.select { |x| x.field_type == 'custom_checkbox' }.map(&:name)
     end
 
     def nested_fields_choices_by_name

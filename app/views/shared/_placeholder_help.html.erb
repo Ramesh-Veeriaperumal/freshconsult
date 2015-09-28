@@ -4,16 +4,7 @@
     <button type="button" class="close" id="placeholder_close"></button>
   	<h3 class="title"><%=t('automations.available_placeholders')%></h3>
 	<div class="intro"><%=t('automations.info4')%>.</div>
-	<div id="placeholder-list-1" class="placeholder-list" rel='mouse-wheel' data-scroll-speed="10">	
-		<% placeholders.each do |category, subcategories| %>
-			<% if subcategories.length > 0 %>
-				<div class="placeholder-category">
-					<div class='placeholder-category-title'> <%= t('admin.placeholders.' +category.to_s) %> </div>
-					<div class='placeholder-category-list'>
-						<%= placeholder_list(subcategories) %>
-					</div>
-				</div>
-			<% end %>
-		<% end %>
+	<div id="placeholder-list-1" class="placeholder-list">	
+	    <%= render_placeholders(placeholders) %>
 	</div> 
 </div>

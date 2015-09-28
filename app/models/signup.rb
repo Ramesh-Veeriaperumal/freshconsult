@@ -48,9 +48,9 @@ class Signup < ActivePresenter::Base
     def build_roles
      default_roles_list.each do |role|
       account.roles.build(:name => role[0],
+        :default_role => true,
         :privilege_list => role[1],
-        :description => role[2],
-        :default_role => true)
+        :description => role[2])
       end
     end
 

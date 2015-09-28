@@ -2,7 +2,7 @@
 class TicketDelegator < SimpleDelegator
   include ActiveModel::Validations
 
-  attr_accessor :error_options, :ff
+  attr_accessor :error_options, :ticket_fields
   validate :group_presence, if: -> { group_id  }
   validate :responder_presence, if: -> { responder_id }
   validates :email_config, presence: true, if: -> { email_config_id }
@@ -20,7 +20,7 @@ class TicketDelegator < SimpleDelegator
                             }
 
   def initialize(record, options)
-    @ff = options[:ff]
+    @ticket_fields = options[:ticket_fields]
     super record
   end
 

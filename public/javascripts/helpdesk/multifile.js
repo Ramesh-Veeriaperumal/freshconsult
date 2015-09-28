@@ -4,6 +4,12 @@ Helpdesk.Multifile = {
     
     FILE_LOCATION : /^.*[\\\/]/ ,
 
+    MAX_ATTACHMENT : null,
+ 
+    MAX_SIZE: 15 ,
+
+    VALID_FILE_count: 0 ,
+
     load: function(){
         // jQuery("input[fileList]").each( function () {
         //     console.log("Attachment form " + this);
@@ -66,6 +72,7 @@ Helpdesk.Multifile = {
             validFile = this.validateTotalSize(oldInput);
             if(validFile){
                 this.incrementTotalSize(oldInput,filesize);
+                this.VALID_FILE_count = this.VALID_FILE_count + 1;
             }
             if (filesize < 1)
             {
@@ -107,7 +114,25 @@ Helpdesk.Multifile = {
     validateTotalSize: function(fileInput){
         var totalfilesize = this.getTotalSize(fileInput);
         var filesize = this.findFileSize(fileInput);
-        return !((filesize + totalfilesize) > 15);
+
+        if (jQuery(fileInput).attr('max_attachment') && jQuery(fileInput).attr('max_size') )
+        {
+            this.MAX_ATTACHMENT = jQuery(fileInput).attr('max_attachment');
+            this.MAX_SIZE = jQuery(fileInput).attr('max_size'); 
+            return !((filesize + totalfilesize) > this.MAX_SIZE) && this.checkFileType(fileInput) && this.VALID_FILE_count < this.MAX_ATTACHMENT;
+
+        }
+        else
+        {
+            return !((filesize + totalfilesize) > this.MAX_SIZE);
+        }
+    },
+
+    checkFileType: function(fileInput){
+ 
+        var supported_types = ["jpg", "jpeg", "gif", "png", "bmp", "tif"]
+        var type = jQuery(fileInput).prop("files")[0].name.split('.').pop().toLowerCase();
+        return supported_types.indexOf(type) > -1 ;
     },
 
     findFileSize: function(oldInput){
@@ -125,6 +150,7 @@ Helpdesk.Multifile = {
             if (window.FileReader)
             {
                 this.decrementTotalSize(fileInput);
+                this.VALID_FILE_count = this.VALID_FILE_count - 1;
             }
             var target = jQuery("#"+jQuery(fileInput).attr('fileList'));
             var container = jQuery(fileInput).attr('fileContainer');

@@ -111,5 +111,9 @@ class Company < ActiveRecord::Base
   def custom_field_aliases 
     @custom_field_aliases ||= custom_form.custom_company_fields.map(&:name)
   end
+
+  def custom_field_types
+    @custom_field_types ||=  custom_form.custom_company_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
+  end
   
 end

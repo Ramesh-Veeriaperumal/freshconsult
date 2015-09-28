@@ -129,9 +129,7 @@ end
 
 			<%= freshfone_audio_dom(note) %>
 			<div id="note_attachments_container_<%= note.id%>">
-				<% unless note.all_attachments.empty? and note.cloud_files.empty? %>				
 						<%= render :partial => "/helpdesk/tickets/show/note_attachments", :formats => [:html], :locals => { :note => note }%>
-				<% end %>
 			</div>
 		</div>
 		<%= remote_note_forward_form({  :id => forward_note_id,

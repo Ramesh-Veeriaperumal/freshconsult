@@ -194,19 +194,26 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			if (!country_enabled) { this.$restrictedCountryText().show(); }  
 			return (balance_available && country_enabled);
 		},
+		addDialCode: function(number){ 
+			var selectedCountryData = this.$number.intlTelInput("getSelectedCountryData");
+			 number = number || this.$number.val();
+			if (this.$number.intlTelInput("getDialCode") == "") {
+				number = ["+",selectedCountryData.dialCode, number].join("");
+			}
+			return number
+		},
 		makeCall: function (item) {
 			if (Twilio.Device.status() !== 'busy') {
-				this.number = this.$number.val();
+				this.number = this.addDialCode();
 				this.makeOutgoing(item);
 			}
 		},
 		makeOutgoing: function (item) {
+			this.number = formatE164(this.callerLocation(), this.number);
 			this.prefillDialerTemplate(item);
 			this.clearMessage();
-
 			if (this.freshfoneuser.isBusy()) { return this.toggleAlreadyInCallText(true); }
 			if (!this.canDialNumber()) { return this.toggleInvalidNumberText(true); }
-			this.number = formatE164(this.callerLocation(), this.number);
 			
 			var params = { PhoneNumber : this.number, phone_country: this.callerLocation(),
 										number_id: this.outgoingNumberId(), agent: this.currentUser, type: "outgoing" };

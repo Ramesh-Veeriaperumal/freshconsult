@@ -1,5 +1,5 @@
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields]
   attr_accessor(*ATTRS)
 
   def validate(record)
@@ -51,13 +51,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, only_integer: true, allow_nil: !@is_required }, 'data_type_mismatch')
+    numericality_options = construct_options({ attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
-  # Inclusion validator for boolean field
+  # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    DataTypeValidator.new(options.merge(attributes: field_name, rules: 'Boolean', allow_nil: !@is_required)).validate(record)
+    boolean_options = construct_options({attributes: field_name, rules: 'Boolean', allow_nil: !@is_required}, 'required_boolean')
+    DataTypeValidator.new(boolean_options).validate(record)
   end
 
   # Numericality validator for decimal field
@@ -120,6 +121,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @required_attribute = options[attribute][:required_attribute]
     end
 
+    # http://www.blrice.net/blog/2013/11/07/rails-validator-classes-and-instance-vars/
+    # Resetting attr_accessors since Validator class being instantiated only once.
     def reset_attr_accessors
       ATTRS.each { |var| instance_variable_set("@#{var}", nil) }
     end
@@ -184,7 +187,9 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # construct options hash for diff validators
     def construct_options(custom_options, required_message = 'missing')
       options_hash = options.merge(custom_options)
-      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined
+
+      # custom message to be merged to give missing_field as code in error response if no field is defined & is required.
+      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined 
       options_hash
     end
 

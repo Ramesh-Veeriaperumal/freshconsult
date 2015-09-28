@@ -14,6 +14,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Redis::TicketsRedis
   include Social::Util
   helper Helpdesk::NotesHelper
+  include Ecommerce::Ebay::ReplyHelper
   
   before_filter :build_note_body_attributes, :build_conversation, :except => [:full_text, :traffic_cop]
   before_filter :validate_fwd_to_email, :only => [:forward, :reply_to_forward]
@@ -23,8 +24,9 @@ class Helpdesk::ConversationsController < ApplicationController
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
   before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
-  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp]
+  before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
+  before_filter :validate_ecommerce_reply, :only => :ecommerce
 
   TICKET_REDIRECT_MAPPINGS = {
     "helpdesk_ticket_index" => "/helpdesk/tickets"
@@ -125,6 +127,10 @@ class Helpdesk::ConversationsController < ApplicationController
     else
       create_error
     end
+  end
+
+  def ecommerce
+    ebay_reply 
   end
 
   def full_text

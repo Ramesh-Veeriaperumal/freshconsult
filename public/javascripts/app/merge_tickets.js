@@ -122,13 +122,14 @@ window.App.Tickets.Merge_tickets = window.App.Tickets.Merge_tickets || {};
     },
 
     clickRespIcon: function () {
+      var $this = this;
       jQuery('body').on('click.merge_tickets', '.merge-cont:not(".cont-primary") #resp-icon', function(){
         var id = jQuery(this).closest("#contact-area").find("#merge-ticket").data("id");
         var element = jQuery('.ticketdiv').find("[data-id = '"+id+"']").parent();
         element.find("#resp-icon").removeClass("clicked").parents('li').removeClass("clicked");
         jQuery(this).closest(".merge-cont").remove();
-        this.enableContinue();
-        this.changeTicketCount();
+        $this.enableContinue();
+        $this.changeTicketCount();
       });
     },
 

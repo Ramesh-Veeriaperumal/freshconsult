@@ -117,6 +117,8 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
   def add_to_records(headers, items)
     @no_tickets = false
     @records ||= []
+    custom_field_names = Account.current.ticket_fields.custom_fields.map(&:name)
+    date_format = Account.current.date_type(:short_day_separated)
 
     # Temporary workaround for '.' in values
     # Need to check and remove with better fix after Rails 3 migration
@@ -131,7 +133,13 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
       record = []
       headers.each do |val|
         data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
-        data = parse_date(data) if DATE_TIME_PARSE.include?(val.to_sym) and data.present?
+        if data.present?
+          if DATE_TIME_PARSE.include?(val.to_sym)
+            data = parse_date(data)
+          elsif custom_field_names.include?(val) && data.is_a?(Time)
+            data = data.utc.strftime(date_format)
+          end
+        end
         record << escape_html(data)
       end
       @records << record

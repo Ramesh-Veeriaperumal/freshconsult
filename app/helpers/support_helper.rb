@@ -349,9 +349,9 @@ module SupportHelper
 					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
-		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"}">
-
-		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } }
+		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"}">
+		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value, 
+		   																						 { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
 		end
 	end
@@ -401,6 +401,8 @@ module SupportHelper
 	        end
 	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, check_box_html ) :
                                                    check_box(object_name, field_name, check_box_html.merge!({:checked => field_value.to_s.to_bool})) )
+	      when "date" then
+	      	construct_date_field(field_value, object_name, field_name, element_class)
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
@@ -492,6 +494,8 @@ module SupportHelper
 			    end
 			when "checkbox"
 				_field_value ? I18n.t('plain_yes') : I18n.t('plain_no')
+			when "date"
+				formatted_date(_field_value) if _field_value.present?
 			else
 			  	_field_value
 		end

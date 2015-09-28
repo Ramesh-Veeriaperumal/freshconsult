@@ -181,6 +181,10 @@
       },
       :custom_mailbox                  =>   {
         :privilege                     =>    current_account.features?(:mailbox)
+      },
+      :ecommerce                        =>   {
+        :url                           =>   "/admin/ecommerce/accounts",
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:ecommerce)
       }
     }
   end
@@ -188,7 +192,7 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "portals", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp"],
+      :"support-channels"       =>    ["email", "portals", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "email-notifications", "canned-response",
@@ -408,5 +412,14 @@ HTML
   end
 
   ############################################
+
+  def check_ecommerce_reauth_required
+    reauth_required = current_account.ecommerce_reauth_check_from_cache
+    if reauth_required
+      return content_tag('div', "<a href='javascript:void(0)'></a> #{t('ecommerce_reauth')} <a href='/admin/ecommerce/accounts' target='_blank'> #{t('reauthorize_ecommerce')} </a>".html_safe, :class =>
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
 
 end

@@ -22,7 +22,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :custom_checkbox        => { :type => :custom, :dom_type => :checkbox},
     :custom_number          => { :type => :custom, :dom_type => :number},
     :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
-    # :custom_date            => { :type => :custom, :dom_type => :date},
+    :custom_date            => { :type => :custom, :dom_type => :date},
     :custom_decimal         => { :type => :custom, :dom_type => :decimal},
     :nested_field           => { :type => :custom, :dom_type => :nested_field}
   }
@@ -102,6 +102,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
   scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
   scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
+  scope :default_fields, -> { where(:default => true ) }
 
 
   # Enumerator constant for mapping the CSS class name to the field type

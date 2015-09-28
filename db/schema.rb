@@ -964,6 +964,48 @@ ActiveRecord::Schema.define(:version => 20150909161854) do
     t.datetime "updated_at"
   end
 
+  create_table "ebay_questions", :force => true do |t|
+    t.string   "user_id",     :limit => 8
+    t.string   "message_id" 
+    t.string   "item_id"
+    t.integer  "questionable_id",   :limit => 8
+    t.string   "questionable_type"
+    t.integer  "ebay_account_id", :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ebay_questions", ["account_id", "ebay_account_id"], :name => "index_ebay_items_on_account_id_and_ebay_account_id"
+  add_index "ebay_questions", ["account_id", "user_id", "item_id"], :name => "index_ebay_items_on_account_id_and_user_id_and_item_id"
+  add_index "ebay_questions", ["account_id", "message_id"], :name => "index_ebay_items_on_account_id_and_message_id"
+  add_index "ebay_questions", ["account_id", "questionable_id", "questionable_type"], :name => "index_ebay_questions_account_id_questionable_id_questionable", :length => {"account_id"=>nil, "questionable_id"=>nil, "questionable_type"=>15}
+
+  create_table "ecommerce_accounts", :force => true do |t|
+    t.string   "name"
+    t.text     "configs"
+    t.string   "type"
+    t.integer  "account_id",  :limit => 8
+    t.string   "external_account_id"
+    t.integer  "status",      :default => 1
+    t.integer  "group_id",     :limit => 8
+    t.integer  "product_id",   :limit => 8
+    t.datetime "last_sync_time"
+    t.boolean  "reauth_required", :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ecommerce_accounts", ["account_id", "external_account_id"], :name => "index_ecommerce_accounts_on_account_id_and_external_account_id"
+
+  create_table "ecommerce_users", :force => true do |t|
+    t.integer  "user_id", :limit => 8   
+    t.integer  "ecommerce_account_id", :limit => 8    
+    t.integer  "account_id", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -2454,6 +2496,17 @@ ActiveRecord::Schema.define(:version => 20150909161854) do
   end
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
+
+  create_table "remote_integrations_mappings", :force => true do |t|
+    t.string   "remote_id"
+    t.string   "type"
+    t.integer  "account_id", :limit => 8
+    t.text     "configs"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "remote_integrations_mappings", ["remote_id", "type"], :name => "index_remote_integrations_mappings_on_remote_id_and_type", :unique => true
 
   create_table "report_filters", :force => true do |t|
     t.integer  "report_type"

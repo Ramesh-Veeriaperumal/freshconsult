@@ -261,7 +261,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    @draft = get_tickets_redis_key(draft_key)
+    draft_hash = get_tickets_redis_hash_key(draft_key)
+    @draft = draft_hash ? draft_hash["draft_data"] : ""
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -293,7 +294,7 @@ class Helpdesk::TicketsController < ApplicationController
         hash.merge!({:subscription => !@subscription.nil?}) 
         hash.merge!({:reply_emails => @reply_emails})
         hash.merge!({:to_cc_emails => @to_cc_emails})
-        hash.merge!({:bcc_drop_box_email => bcc_drop_box_email})                                         
+        hash.merge!({:bcc_drop_box_email => bcc_drop_box_email.map{|item|[item, item]}})
         hash.merge!({:last_reply => bind_last_reply(@ticket, @signature, false, true, true)})
         hash.merge!({:last_forward => bind_last_conv(@ticket, @signature, true)})
         hash.merge!({:ticket_properties => ticket_props})
@@ -762,7 +763,14 @@ class Helpdesk::TicketsController < ApplicationController
     tries = 3
     begin
       params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
-      set_tickets_redis_key(draft_key, params[:draft_data])
+      draft_cc = fetch_valid_emails(params[:draft_cc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
+      draft_bcc = fetch_valid_emails(params[:draft_bcc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
+      draft_hash_data = {
+        "draft_data" => params[:draft_data],
+        "draft_cc" => draft_cc,
+        "draft_bcc" => draft_bcc
+      }
+      set_tickets_redis_hash_key(draft_key, draft_hash_data)
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
@@ -1168,11 +1176,6 @@ class Helpdesk::TicketsController < ApplicationController
   def set_default_filter
     params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
     # When there is no data hash sent selecting all_tickets instead of new_and_my_open
-  end
-
-  def draft_key
-    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id, 
-      :ticket_id => @ticket.id}
   end
 
   def empty_trash_key

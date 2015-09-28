@@ -26,6 +26,7 @@ class Workers::MergeTickets
         TICKET_STATE_COLLECTION[state] = (TICKET_STATE_COLLECTION[state] || []).push(source_ticket.send(state))
       end
       add_note_to_source_ticket(source_ticket, args[:source_note_private], args[:source_note])
+      remove_ecommerce_mapping(source_ticket) if source_ticket.ecommerce?
       update_merge_activity(source_ticket,target_ticket)
     end
     update_target_ticket_states(target_ticket)
@@ -72,6 +73,13 @@ class Workers::MergeTickets
           {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
           {'ticket_id' => target_ticket.display_id, 'subject' => target_ticket.subject}]}}, 
                                 'activities.tickets.ticket_merge.short') 
+  end
+
+  def self.remove_ecommerce_mapping(source_ticket)
+     if source_ticket.ebay_question.present?
+        Ecommerce::EbayQuestion.where(:account_id => source_ticket.account_id,
+          :questionable_id => source_ticket.id, :questionable_type => source_ticket.class.name ).update_all({:questionable_id => nil, :questionable_type => nil})
+     end
   end
     
   

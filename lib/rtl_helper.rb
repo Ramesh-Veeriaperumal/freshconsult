@@ -1,6 +1,6 @@
 module RtlHelper
 
-  RTL_LANGUAGES = %w( ar )
+  RTL_LANGUAGES = %w( ar he )
 
   def is_current_language_rtl? lang = I18n.locale.to_s
     RTL_LANGUAGES.include? lang

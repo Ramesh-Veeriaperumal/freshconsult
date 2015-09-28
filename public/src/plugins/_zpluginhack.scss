@@ -207,7 +207,7 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	color:#fff;
 }
 
-.contact-form, .ui-form .conditionset fieldset {
+.contact-form, .input-date-field, .ui-form .conditionset fieldset {
 	.ui-datepicker-trigger {
 		@include left(-2px);
 		top: 0px;
@@ -226,7 +226,27 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	}
 }
 
- .profile-edit-form {
+.profile-edit-form {
+	.ui-datepicker-trigger {
+		@include left(-1px);
+		top: 3px;
+		background: none;
+		border: 0;
+		position: absolute;
+	}
+}
+
+.support-date-field, .input-date-field{
+	position:relative;
+}
+
+.input-date-field{
+	input.date.datepicker_popover{
+		width: 280px;
+	}
+}
+
+.input-date-field, .support-date-field {
  	.ui-datepicker-trigger {
  		@include left(-1px);
  		top: 3px;
@@ -234,4 +254,20 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
  		border: 0;
  		position: absolute;
  	}
- }
+
+	input:not([disabled]){
+		background: #fff;
+		cursor: pointer;
+	}	
+}
+
+.input-date-field{
+	.ui-datepicker-trigger{
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
+#ui-datepicker-div{
+	z-index: 1051;
+}

@@ -1,6 +1,6 @@
 class DateTimeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, values)
-    unless allow_nil(values) || self.class.parse_time(values)
+    unless self.class.parse_time(values)
       message = options[:message] || 'data_type_mismatch'
       record.errors[attribute] << message
       (record.error_options ||= {}).merge!(attribute => { data_type: 'date' })
@@ -16,10 +16,4 @@ class DateTimeValidator < ActiveModel::EachValidator
       Rails.logger.error("API Parse Time Error Value: #{value} Exception: #{e.class} Exception Message: #{e.message}")
       return false
   end
-
-  private
-
-    def allow_nil(value) # if validation allows nil values and the value is nil, this will pass the validation.
-      options[:allow_nil] == true && value.nil?
-    end
 end

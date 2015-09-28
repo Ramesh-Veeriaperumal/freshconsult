@@ -14,8 +14,8 @@ module Helpdesk::NoteActions
 
   def bcc_drop_box_email
     capsule_config = get_app_config('capsule_crm') 
-    bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /).map{|item|[item, item]}
-    fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /).map{|item|[item, item]}
+    bcc_drop_box_email = (capsule_config.blank?) ? [] : capsule_config["bcc_drop_box_mail"].split( /,* /)
+    fixed_bcc = (current_account.bcc_email.blank?) ? [] : current_account.bcc_email.split( /,* /)
     bcc_drop_box_email += fixed_bcc
   end
 

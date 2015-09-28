@@ -1,11 +1,18 @@
 class Helpers::CustomFieldValidatorHelper
-  attr_accessor :id, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
+  attr_accessor :id, :nested_fields_choices_by_name, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
+  
+  NESTED_CHOICES = {
+        first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
+        second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
+        third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
+      }
 
   def initialize(params = {})
     params.each { |key, value| instance_variable_set("@#{key}", value) }
   end
 
   class << self
+    @@nested_choices = NESTED_CHOICES
     def choices_validatable_custom_fields
       [
         Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'nested_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil),
@@ -52,12 +59,12 @@ class Helpers::CustomFieldValidatorHelper
       { dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'] }
     end
 
+    def nested_fields_choices_by_name=(custom_nested_choices)
+      @@nested_choices = NESTED_CHOICES.merge(custom_nested_choices)
+    end
+
     def nested_fields_choices_by_name
-      {
-        first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
-        second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
-        third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
-      }
+      @@nested_choices 
     end
   end
 end

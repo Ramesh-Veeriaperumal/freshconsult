@@ -288,7 +288,7 @@
                   url: '/admin/security/request_custom_ssl/?domain_name='+domain_name,
                   success: function(data){
                             $("#custom_ssl_link").hide();
-                            $(".custom_ssl_form").html("<%= t(".thanks_message").html_safe%> <%= t(".success_message").html_safe%>");
+                            $(".custom_ssl_form").html("<%= t(".thanks_message").html_safe%> <%= t(".success_message").html_safe.gsub('\"', "&quot;")%>");
                                     }
               });
       }

@@ -214,6 +214,7 @@ gem "will_paginate-liquidized", :path => "#{File.expand_path(__FILE__)}/../vendo
 gem "will_filter", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/will_filter"
 gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-openid"
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
+gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
 
 
 group :development, :test do

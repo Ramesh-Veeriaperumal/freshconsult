@@ -16,6 +16,8 @@ Custom Slas:
 Custom Ssl: 
   - :custom_domain
   - :custom_ssl
+Dynamic Sections:
+  - :dynamic_sections
 Enterprise Reporting:
   - :enterprise_reporting
   - :surveys

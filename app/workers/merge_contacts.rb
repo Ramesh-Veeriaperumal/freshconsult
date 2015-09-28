@@ -61,7 +61,7 @@ class MergeContacts < BaseWorker
   end
 
   def move_accessory_attributes children_ids
-    move_each_of(["google_contacts", "user_credentials", "mobihelp_devices"], children_ids)
+    move_each_of(["google_contacts", "user_credentials", "mobihelp_devices", "ebay_questions"], children_ids)
   end
 
   def move_forum_activities children_ids

@@ -28,6 +28,7 @@ api_error_messages:
   "is not a date": "Should be a valid date"
   required_number : "Should be a valid number"
   required_integer: "Should be a valid integer"
+  required_boolean: "Should be a valid boolean"
   required_date: "Should be a valid date"
   required_format: "Should be a valid format"
   "is not a number": "Should be a valid number"

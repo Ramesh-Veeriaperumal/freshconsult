@@ -2,7 +2,7 @@
 	"use strict";
 	var timeout,
 		longpress,
-		$number = $('#number');
+		$number = $('.ff-dial-pad #number');
 	
 //Invoking intlTelInput plugin 
     window.tel = $number.intlTelInput(); 
@@ -96,6 +96,12 @@
 		.on('shown', function (e) {
 			freshfoneMetricsOnKeyPress();
 			freshfoneMetricsOnPaste();
+			if(freshfonecalls.recentCaller != 1){  
+				$number.val("");
+			} else {
+				freshfonecalls.recentCaller = 0;
+			}
+
 			$number.intlTelInput("setPreferredCountries");
 			freshfonecalls.hideText();
 	});

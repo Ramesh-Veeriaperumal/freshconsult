@@ -68,5 +68,6 @@ helpdesk:
     - clean_api_middlewares
     - marketplace_config
     - doorkeeper
+    - ebay_config
 
 

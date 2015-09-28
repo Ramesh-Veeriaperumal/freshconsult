@@ -7,7 +7,7 @@ else
   page << 'jQuery.event.trigger({ type:"textInserted", message:"success", time:new Date() });'
   page << '$msg_body_element.getEditor().focus();'
 end
-if !@attachments.empty?
+if !@attachments.empty? && @allow_attachments
   page << "jQuery('.request_panel:visible .attachments').show()"
   attachment_dom = ""
   @attachments.each do |att|

@@ -4,7 +4,7 @@ class HelpdeskReports::Formatter::Ticket::Glance
   
   attr_accessor :result
 
-  def initialize data
+  def initialize data, args = {}
     @result = data
   end
   

@@ -132,7 +132,7 @@ $(document).ready(function(){
 
     $('.tag-list').on('click.tag_index', '.tag_name', function(e) {
        e.preventDefault();
-      
+
         var tag_id = $(this).parents("tr").data("tagId"),
             $tag_text = $("#tag_text_container_"+tag_id),
             tag_text = $tag_text.children(".textbox");
@@ -329,7 +329,7 @@ $(document).ready(function(){
             type: "PUT",
             data: {tag_id: tag_id, tag_name: tag_name },
             success: function(status){
-                location.reload();
+                location.replace("/helpdesk/tags");
             }
         });
     }

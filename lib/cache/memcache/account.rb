@@ -119,6 +119,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def ticket_fields_from_cache
+    key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      ticket_fields_with_nested_fields.all
+    end
+  end
+
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
@@ -194,6 +201,11 @@ module Cache::Memcache::Account
   def clear_account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
+  end
+
+  def ecommerce_reauth_check_from_cache
+    key = ECOMMERCE_REAUTH_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }
   end
 
   private
