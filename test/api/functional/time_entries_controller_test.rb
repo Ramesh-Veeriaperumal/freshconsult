@@ -798,7 +798,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_with_params
     put :toggle_timer, construct_params({ id: Helpdesk::TimeSheet.first }, test: 'junk')
     assert_response 400
-    match_json([bad_request_error_pattern('test', 'invalid_field')])
+    match_json(request_error_pattern('no_content_required'))
   end
 
   def test_toggle_off_timer

@@ -6,7 +6,6 @@ class TicketsController < ApiApplicationController
   include CloudFilesHelper
 
   before_filter :ticket_permission?, only: [:destroy]
-  before_filter :validate_restore_params, only: [:restore]
 
   def create
     assign_protected
@@ -70,6 +69,11 @@ class TicketsController < ApiApplicationController
     def after_load_object
       return false unless verify_object_state
       verify_ticket_permission if show? || update?
+
+      # Ensure that no parameters are passed along with the ticket restore request
+      if action_name == 'restore' && ! params[cname].blank?
+        render_request_error :no_content_required, 400
+      end
     end
 
     def ticket_notes
@@ -109,10 +113,6 @@ class TicketsController < ApiApplicationController
 
     def scoper
       current_account.tickets
-    end
-
-    def validate_restore_params
-      params[cname].permit(*ApiTicketConstants::RESTORE_FIELDS)
     end
 
     def validate_url_params

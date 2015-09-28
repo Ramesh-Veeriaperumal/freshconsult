@@ -2,7 +2,6 @@ class TimeEntriesController < ApiApplicationController
   include Concerns::TimeSheetConcern
 
   before_filter :ticket_exists?, only: [:ticket_time_entries]
-  before_filter :validate_toggle_params, only: [:toggle_timer]
 
   def create
     # If any validation is introduced in the TimeSheet model,
@@ -32,6 +31,13 @@ class TimeEntriesController < ApiApplicationController
   end
 
   private
+
+    def after_load_object
+      # Ensure that no parameters are passed along with the toggle_timer request
+      if action_name == 'toggle_timer' && ! params[cname].blank?
+        render_request_error :no_content_required, 400
+      end
+    end
 
     def load_objects
       super time_entry_filter.includes(:workable)
@@ -88,10 +94,6 @@ class TimeEntriesController < ApiApplicationController
       params[cname].permit(*fields)
       @time_entry_val = TimeEntryValidation.new(params[cname], @item, @timer_running)
       render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)
-    end
-
-    def validate_toggle_params
-      params[cname].permit({})
     end
 
     def sanitize_params

@@ -1110,8 +1110,6 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
-    p response.body
-    p t.reload.attributes
     assert_response 200
     assert t.reload.due_by == params_hash[:due_by]
     assert t.reload.frDueBy == params_hash[:fr_due_by]
@@ -1575,7 +1573,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, true)
     put :restore, construct_params({ id: ticket.display_id }, test: 1)
     assert_response 400
-    match_json [bad_request_error_pattern('test', 'invalid_field')]
+    match_json(request_error_pattern('no_content_required'))
   end
 
   def test_restore_load_object_not_present
