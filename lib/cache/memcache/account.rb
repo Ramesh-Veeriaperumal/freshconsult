@@ -120,7 +120,7 @@ module Cache::Memcache::Account
   end
 
   def ticket_fields_from_cache
-    key = ACCOUNT_TICKETFIELDS % { :account_id => self.id }
+    key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
       ticket_fields_with_nested_fields.all
     end

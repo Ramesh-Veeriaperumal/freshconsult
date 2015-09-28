@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :responder_id, :source, :status, :subject, :type,
-                :product_id, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ff
+                :product_id, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 

@@ -14,7 +14,7 @@ module Cache::Memcache::Helpdesk::TicketField
 		MemcacheKeys.delete_from_cache key
 		key = ACCOUNT_NESTED_FIELDS % { :account_id => self.account_id }
 		MemcacheKeys.delete_from_cache key
-		key = ACCOUNT_TICKETFIELDS % { :account_id => self.account_id }
+		key = ACCOUNT_TICKET_FIELDS % { :account_id => self.account_id }
 		MemcacheKeys.delete_from_cache key
 	end
   

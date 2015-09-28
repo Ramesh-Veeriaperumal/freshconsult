@@ -10,11 +10,11 @@ class Helpers::TicketsValidationHelper
     end
 
     def choices_validatable_custom_fields(delegator)
-      delegator.ff.select { |c| (['custom_dropdown', 'nested_field'].include?(c.field_type)) }
+      delegator.ticket_fields.select { |c| (['custom_dropdown', 'nested_field'].include?(c.field_type)) }
     end
 
     def data_type_validatable_custom_fields(delegator)
-      delegator.ff.select { |c| (!c.default && ['custom_dropdown', 'nested_field'].exclude?(c.field_type)) }
+      delegator.ticket_fields.select { |c| (!c.default && ['custom_dropdown', 'nested_field'].exclude?(c.field_type)) }
     end
 
     def dropdown_choices_by_field_name

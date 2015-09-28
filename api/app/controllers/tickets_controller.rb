@@ -10,7 +10,7 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -30,7 +30,7 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, {:ff => @ff})
+    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
@@ -150,14 +150,14 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      @ff = Account.current.ticket_fields_from_cache
-      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(@ff)
+      @ticket_fields = Account.current.ticket_fields_from_cache
+      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(@ticket_fields)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       load_ticket_status
-      ticket = TicketValidation.new(params[cname].merge(status_ids: @statuses.map(&:status_id), ff: @ff), @item)
+      ticket = TicketValidation.new(params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields), @item)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
@@ -188,7 +188,7 @@ class TicketsController < ApiApplicationController
 
     # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
     def assign_checkbox_value
-      check_box_names = Helpers::TicketsValidationHelper.check_box_type_custom_field_names(@ff)
+      check_box_names = Helpers::TicketsValidationHelper.check_box_type_custom_field_names(@ticket_fields)
       params[cname][:custom_fields].each_pair do |key, value|
         next unless check_box_names.include?(key.to_s)
         params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
