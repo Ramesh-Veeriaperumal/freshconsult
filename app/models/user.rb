@@ -456,7 +456,7 @@ class User < ActiveRecord::Base
 
   ##Authorization copy starts here
   def name_details #changed name_email to name_details
-    return "#{name} <#{email}>" unless email.blank?
+    return "#{format_name} <#{email}>" unless email.blank?
     return "#{name} (#{phone})" unless phone.blank?
     return "#{name} (#{mobile})" unless mobile.blank?
     return "@#{twitter_id}" unless twitter_id.blank?
@@ -465,7 +465,7 @@ class User < ActiveRecord::Base
 
   def search_data
     if has_contact_merge? and self.user_emails.present?
-      self.user_emails.map{|x| {:id => id, :details => "#{name} <#{x.email}>", :value => name, :email => x.email}}
+      self.user_emails.map{|x| {:id => id, :details => "#{format_name} <#{x.email}>", :value => name, :email => x.email}}
     else
       [{:id => id, :details => self.name_details, :value => name, :email => email}]
     end
@@ -813,6 +813,10 @@ class User < ActiveRecord::Base
       default_options.each do |key, value| 
         current_options[key] = current_options.key?(key) ? current_options[key] & default_options[key] : default_options[key]
       end
+    end
+
+    def format_name
+      (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end
 
 end
