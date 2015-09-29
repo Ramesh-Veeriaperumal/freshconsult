@@ -6,12 +6,12 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { "email" => "test@abc.com", "attachments" => "s" } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
   end
 
   def test_create_with_empty_attachment_array
     skip_bullet do
-      post '/api/tickets', { 'ticket' => { "email" => "test@abc.com", "attachments" => [] } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
+      post '/api/tickets', { 'ticket' => { "email" => "test@abc.com", "attachments" => [""] } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
     match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])

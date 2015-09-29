@@ -41,6 +41,24 @@ class NotesControllerTest < ActionController::TestCase
     params_hash
   end
 
+   def test_create_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    params_hash = create_note_params_hash
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_create_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    params_hash = create_note_params_hash
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_create
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
@@ -177,6 +195,25 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -227,10 +264,12 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_cc_kbase_mail_without_privilege
     article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
     assert_response 201
     match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -239,10 +278,12 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_bcc_kbase_mail_without_privilege
     article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
     assert_response 201
     match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -372,6 +413,27 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false).at_most_once
     params_hash = reply_note_params_hash
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    params = update_note_params_hash
+    n = note
+    put :update, construct_params({ id: n.id }, params)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    params = update_note_params_hash
+    n = note
+    put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -451,15 +513,18 @@ class NotesControllerTest < ActionController::TestCase
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:privilege?, :owns_object?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
-  def test_update_with_owns_object_privilege
+  def test_update_with_owns_object_privilege  
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:privilege?)
     assert_response 200
     match_json(note_pattern(params, n.reload))
     match_json(note_pattern({}, n.reload))
@@ -543,6 +608,25 @@ class NotesControllerTest < ActionController::TestCase
   def test_delete_without_privilege
     User.any_instance.stubs(:privilege?).with(:edit_conversation).returns(false).at_most_once
     delete :destroy, construct_params(id: Helpdesk::Note.first.id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
+    delete :destroy, construct_params(id: n.id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
+    delete :destroy, construct_params(id: n.id)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -586,6 +670,7 @@ class NotesControllerTest < ActionController::TestCase
     t = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
     get :ticket_notes, construct_params(id: t.display_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -643,5 +728,23 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+   def test_notes_with_ticket_trashed
+    t = ticket
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    get :ticket_notes, construct_params(id: t.display_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_notes_without_ticket_privilege
+    t = ticket
+    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    get :ticket_notes, construct_params(id: t.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
   end
 end

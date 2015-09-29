@@ -13,7 +13,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def ticket
-    t = Helpdesk::Ticket.where(deleted: false, spam: false).first
+    t = Helpdesk::Ticket.joins(:schema_less_ticket).where(deleted: false, spam: false, helpdesk_schema_less_tickets: {boolean_tc02: false}).order('created_at asc').first
     return t if t
     t = create_ticket
     t.update_column(:spam, false)
@@ -34,6 +34,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def utc_time(time = Time.zone.now)
     time.utc.as_json
+  end
+
+  def sample_time_entry
+    time_entry = Helpdesk::TimeSheet.first || create_time_entry
+    time_entry
   end
 
   def time_entry(id)
@@ -71,14 +76,52 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts_id = create_time_entry(agent_id: other_agent.id).id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_trashed
+    ts_id = create_time_entry(agent_id: other_agent.id).id
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    delete :destroy, controller_params(id: ts_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_spam
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    Helpdesk::Ticket.find(time_sheet.workable_id).update_attribute(:spam, true)
+    delete :destroy, controller_params(id: ts_id)
+    assert_response 404
+  end
+
+  def test_destroy_with_ticket_deleted
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    Helpdesk::Ticket.find(time_sheet.workable_id).update_attribute(:deleted, true)
+    delete :destroy, controller_params(id: ts_id)
+    assert_response 404
+  end
+
+  def test_destroy_without_ticket_privilege
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_destroy_with_ownership
     ts_id = create_time_entry.id
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 204
     assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
     assert_equal ' ', @response.body
@@ -87,6 +130,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_without_feature
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :index, controller_params(billable: 0)
+    @account.class.any_instance.unstub(:features_included?)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response 403
   end
@@ -120,6 +164,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_invalid_privileges
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :index, controller_params(billable: 0)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -504,6 +549,36 @@ class TimeEntriesControllerTest < ActionController::TestCase
     match_json time_entry_pattern(Helpdesk::TimeSheet.where(user_id: agent.id).first)
   end
 
+  def test_create_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    post :create, construct_params({ id: ticket.display_id }, {})
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_create_with_ticket_spam
+    new_ticket = create_ticket
+    new_ticket.update_column(:spam, true)
+    post :create, construct_params({ id: new_ticket.display_id }, {})
+    assert_response 404
+  end
+
+  def test_create_with_ticket_deleted
+    new_ticket = create_ticket
+    new_ticket.update_column(:deleted, true)
+    post :create, construct_params({ id: new_ticket.display_id }, {})
+    assert_response 404
+  end
+
+  def test_create_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    post :create, construct_params({ id: ticket.display_id }, {})
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_update
     start_time = (Time.zone.now - 10.minutes).iso8601
     executed_at = (Time.zone.now - 20.minutes).iso8601
@@ -816,9 +891,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
     controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
+    User.any_instance.unstub(:privilege?)
+    controller.class.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
-    User.any_instance.unstub(:privilege?)
     controller.class.any_instance.unstub(:privilege?)
   end
 
@@ -829,6 +905,38 @@ class TimeEntriesControllerTest < ActionController::TestCase
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response 403
     User.any_instance.stubs(:feature?)
+  end
+
+  def test_update_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_with_ticket_spam
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:spam, true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    new_ticket.update_column(:spam, false)
+    assert_response 404
+  end
+
+  def test_update_with_ticket_deleted
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:deleted, true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    new_ticket.update_column(:deleted, false)
+    assert_response 404
+  end
+
+  def test_update_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
   end
 
   def toggle_with_invalid_id
@@ -868,8 +976,41 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
     Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', "can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
+    Helpdesk::TimeSheet.any_instance.unstub(:update_attributes, :errors)
     assert_response 400
     match_json([bad_request_error_pattern('user', "can't be blank")])
+  end
+
+  def test_toggle_timer_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_toggle_timer_with_ticket_spam
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:spam, true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    new_ticket.update_column(:spam, false)
+    assert_response 404
+  end
+
+  def test_toggle_timer_with_ticket_deleted
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:deleted, true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    new_ticket.update_column(:deleted, false)
+    assert_response 404
+  end
+
+  def test_toggle_timer_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
   end
 
   def test_ticket_time_entries
@@ -904,6 +1045,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :ticket_time_entries, construct_params(id: t.display_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -941,6 +1083,25 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 
+  def test_ticket_time_entries_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    get :ticket_time_entries, construct_params(id: ticket.display_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_ticket_time_entries_without_ticket_privilege
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    get :ticket_time_entries, construct_params(id: time_sheet.workable.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+
   def test_ticket_time_entries_with_link_header
     t = ticket
     3.times do
@@ -962,7 +1123,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = Helpdesk::TimeSheet.count - 1
+    per_page = @account.time_sheets.count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page

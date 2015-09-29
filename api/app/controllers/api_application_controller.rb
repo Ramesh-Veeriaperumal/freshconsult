@@ -317,7 +317,11 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_privilege # this method is redefined because of api_current_user
-      access_denied && return if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
+      if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
+        access_denied
+        return false
+      end 
+      true
     end
 
     def allowed_to_access? # this method is redefined because of api_current_user
@@ -406,5 +410,15 @@ class ApiApplicationController < MetalApiController
 
     def current_action?(action)
       action_name.to_s == action
+    end
+
+    def verify_ticket_permission(user=api_current_user, ticket=@item)
+      # Should not allow to update/show/restore/add(or)edit(or)delete(or)show notes or time_entries to a ticket if ticket is deleted forever or user doesn't have permission
+      unless user.has_ticket_permission?(ticket) && !ticket.schema_less_ticket.try(:trashed)
+        Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
+        render_request_error :access_denied, 403
+        return false
+      end
+      true
     end
 end

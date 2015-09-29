@@ -1,3 +1,4 @@
+
 require_relative '../test_helper'
 
 class TicketsControllerTest < ActionController::TestCase
@@ -1541,6 +1542,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_verify_permission_invalid_permission
     User.any_instance.stubs(:has_ticket_permission?).with(ticket).returns(false).at_most_once
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1548,6 +1550,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_verify_permission_ticket_trashed
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true).at_most_once
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1557,6 +1560,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1567,6 +1571,7 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
     User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
     delete :destroy, construct_params(id: t.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
   end
 
@@ -1576,6 +1581,8 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(false).at_most_once
     Helpdesk::Ticket.stubs(:group_tickets_permission).returns([]).at_most_once
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.unstub(:group_tickets_permission)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1586,6 +1593,8 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(true).at_most_once
     Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([]).at_most_once
     delete :destroy, construct_params(id: ticket.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.unstub(:assigned_tickets_permission)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1597,6 +1606,7 @@ class TicketsControllerTest < ActionController::TestCase
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(group_id: group.id))
     delete :destroy, construct_params(id: t.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
   end
 
@@ -1607,6 +1617,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     delete :destroy, construct_params(id: t.display_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
     Helpdesk::Ticket.any_instance.unstub(:responder_id)
   end
@@ -1627,6 +1638,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_restore_without_privilege
     User.any_instance.stubs(:privilege?).with(:delete_ticket).returns(false).at_most_once
     put :restore, construct_params(id: Helpdesk::Ticket.first.display_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1639,6 +1651,26 @@ class TicketsControllerTest < ActionController::TestCase
     refute ticket.reload.deleted
   end
 
+  def test_restore_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    t = create_ticket
+    t.update_column(:deleted, true)
+    put :restore, construct_params(id: t.display_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_restore_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    t = create_ticket
+    t.update_column(:deleted, true)
+    put :restore, construct_params(id: t.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_show_object_not_present
     get :show, controller_params(id: 999)
     assert_response :missing
@@ -1648,6 +1680,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_show_without_permission
     User.any_instance.stubs(:has_ticket_permission?).returns(false).at_most_once
     get :show, controller_params(id: Helpdesk::Ticket.first.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -1731,6 +1764,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id)
     get :index, controller_params
     assert_response 200
+    Agent.any_instance.unstub(:ticket_permission)
     response = parse_response @response.body
     assert_equal 1, response.size
   end

@@ -260,7 +260,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_company_with_valid_custom_field_values
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
-                                       custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '21-1-2015',
+                                       custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '2015-01-15',
                                                         'cf_show_all_ticket' => true, 'cf_category' => 'Second' })
 
     assert_response 201

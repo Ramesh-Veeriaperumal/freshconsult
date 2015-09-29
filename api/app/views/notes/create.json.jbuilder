@@ -1,6 +1,6 @@
 json.extract! @item, :body, :body_html, :id, :incoming, :private, :user_id, :support_email
 
-json.set! :ticket_id, @ticket.display_id
+json.set! :ticket_id, @item.notable.display_id
 json.set! :notified_to, @item.to_emails
 
 json.set! :attachments do

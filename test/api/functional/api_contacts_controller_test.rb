@@ -169,6 +169,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 avatar: file }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  params)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
     match_json([bad_request_error_pattern('avatar', 'Invalid file type. Please upload a jpg or png file')])
     assert_response 400
   end
@@ -212,6 +213,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         tags: tags,
                                         avatar: file,
                                         custom_fields: { 'cf_department' => 'Sample Dept' })
+    DataTypeValidator.any_instance.stubs(:valid_type?)
     assert_response 201
     match_json(deleted_contact_pattern(User.last))
   end

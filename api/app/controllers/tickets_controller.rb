@@ -68,7 +68,7 @@ class TicketsController < ApiApplicationController
 
     def after_load_object
       return false unless verify_object_state
-      verify_ticket_permission if show? || update?
+      verify_ticket_permission if show? || update? || restore?
 
       # Ensure that no parameters are passed along with the ticket restore request
       if action_name == 'restore' && ! params[cname].blank?
@@ -124,7 +124,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:cc_emails, :tags]
+      prepare_array_fields [:cc_emails, :tags, :attachments]
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]
@@ -195,11 +195,6 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def verify_ticket_permission
-      # Should not allow to update ticket if item is deleted forever or api_current_user doesn't have permission
-      render_request_error :access_denied, 403 unless api_current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.try(:trashed)
-    end
-
     def ticket_permission?
       # Should allow to delete ticket based on agents ticket permission privileges.
       unless api_current_user.can_view_all_tickets? || group_ticket_permission?(params[:id]) || assigned_ticket_permission?(params[:id])
@@ -240,5 +235,9 @@ class TicketsController < ApiApplicationController
     def assign_ticket_status
       @item.status = OPEN unless @item.status_changed?
       @item.ticket_status = @statuses.find { |x| x.status_id == @item.status }
+    end
+
+    def restore?
+      @restore ||= current_action?('restore')
     end
 end
