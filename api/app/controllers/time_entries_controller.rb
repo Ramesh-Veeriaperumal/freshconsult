@@ -6,13 +6,13 @@ class TimeEntriesController < ApiApplicationController
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @item.save should be wrapped in a transaction.
-    update_running_timer params[cname][:agent_id] if @timer_running
+    update_running_timer params[cname][:user_id] if @timer_running
     @item.workable = @ticket
     super
   end
 
   def update
-    user_stop_timer =  params[cname].key?(:agent_id) ? params[cname][:agent_id] : @item.user_id
+    user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
     # Should stop timer if the timer is on or if different agent_id is set as part of update
     update_running_timer user_stop_timer if should_stop_running_timer?
     super
@@ -131,10 +131,6 @@ class TimeEntriesController < ApiApplicationController
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
       return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
-
-      # Should stop timer for the new user if different agent_id is set as part of this update call
-      return true if params[cname].key?(:agent_id) && params[cname][:agent_id] != @item.user_id && !@timer_running
-      false
     end
 
     def total_running_time
