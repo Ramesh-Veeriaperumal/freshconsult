@@ -127,6 +127,27 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal t.email_config_id, params[:email_config_id]
   end
 
+  def test_create_with_inactive_email_config_id
+    email_config = EmailConfig.first || create_email_config
+    email_config.update_column(:active, false)
+    params = { requester_id: requester.id, email_config_id: email_config.reload.id }
+    post :create, construct_params({}, params)
+    email_config.update_column(:active, true)
+    match_json([bad_request_error_pattern("email_config_id", "invalid_email_config")])
+    assert_response 400
+  end
+
+  def test_update_with_inactive_email_config_id
+    email_config = EmailConfig.first || create_email_config
+    email_config.update_column(:active, false)
+    params = { email_config_id: email_config.reload.id }
+    t = ticket
+    put :update, construct_params({id: t.display_id}, params)
+    email_config.update_column(:active, true)
+    match_json([bad_request_error_pattern("email_config_id", "invalid_email_config")])
+    assert_response 400
+  end
+
   def test_create_with_product_id
     product = create_product(email: Faker::Internet.email)
     params = { requester_id: requester.id, product_id: product.id }
@@ -147,11 +168,13 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_product_id_and_email_config_id
     product = create_product(email: Faker::Internet.email)
     product_1 = create_product(email: Faker::Internet.email)
-    params = { requester_id: requester.id, product_id: product.id, email_config_id: product_1.primary_email_config.id }
+    email_config = product_1.primary_email_config
+    email_config.update_column(:active, true)
+    params = { requester_id: requester.id, product_id: product.id, email_config_id: email_config.reload.id }
     post :create, construct_params({}, params)
-    assert_response 201
     t = Helpdesk::Ticket.last
     assert_equal t.product_id, product_1.id
+    assert_response 201
   end
 
   def test_create_numericality_invalid
@@ -302,7 +325,7 @@ class TicketsControllerTest < ActionController::TestCase
     51.times do
       cc_emails << Faker::Internet.email
     end
-    params = ticket_params_hash.merge(due_by: 30.days.ago.to_s, cc_emails: cc_emails)
+    params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
@@ -321,7 +344,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', "can't be blank"),
                 bad_request_error_pattern('responder_id', "can't be blank"),
-                bad_request_error_pattern('email_config_id', "can't be blank"),
+                bad_request_error_pattern('email_config_id', "invalid_email_config"),
                 bad_request_error_pattern('requester_id', 'user_blocked'),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", 'not_included', list: 'Australia,USA'),
                 bad_request_error_pattern("test_custom_dropdown_#{@account.id}", 'not_included', list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
@@ -872,7 +895,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', "can't be blank"),
                 bad_request_error_pattern('responder_id', "can't be blank"),
-                bad_request_error_pattern('email_config_id', "can't be blank"),
+                bad_request_error_pattern('email_config_id', "invalid_email_config"),
                 bad_request_error_pattern('requester_id', 'user_blocked'),
                 bad_request_error_pattern('product_id', "can't be blank"),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", 'not_included', list: 'Australia,USA'),
@@ -911,7 +934,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_product_id_and_diff_email_config_id
     product = create_product(email: Faker::Internet.email)
     product_1 = create_product(email: Faker::Internet.email)
-    params_hash = { product_id: product.id, email_config_id: product_1.primary_email_config.id }
+    email_config = product_1.primary_email_config
+    email_config.update_column(:active, true)
+    params_hash = { product_id: product.id, email_config_id: email_config.reload.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
@@ -1023,10 +1048,10 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { cc_emails: cc_emails }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
-    assert_response 200
+    match_json(ticket_pattern({}, t.reload))
     assert t.reload.cc_email[:cc_emails] == cc_emails
     assert t.reload.cc_email[:reply_cc] == cc_emails
-    match_json(ticket_pattern({}, t.reload))
+    assert_response 200
   end
 
   def test_update_with_tags
@@ -1634,11 +1659,18 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
   end
 
-  def test_detroy_deleted
+  def test_destroy_deleted
     ticket.update_column(:deleted, true)
     delete :destroy, construct_params(id: ticket.display_id)
     assert_response :missing
     ticket.update_column(:deleted, false)
+  end
+
+  def test_destroy_spammed
+    ticket.update_column(:spam, true)
+    delete :destroy, construct_params(id: ticket.display_id)
+    assert_response :missing
+    ticket.update_column(:spam, false)
   end
 
   def test_restore_not_deleted
@@ -1778,11 +1810,16 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_deleted
     tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
+    if tkts.empty?
+      ticket.update_column(:deleted, true)
+      tkts << ticket.reload
+    end
     get :index, controller_params(filter: 'deleted')
-    assert_response 200
     pattern = []
     tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
     match_json(pattern)
+    ticket.update_column(:deleted, false)
+    assert_response 200
   end
 
   def test_index_with_requester

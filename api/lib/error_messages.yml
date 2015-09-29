@@ -63,3 +63,4 @@ api_error_messages:
   inconsistent_state: "Email should be associated to the contact before converting it to an agent"
   invalid_integer: "Should have valid Positive Integers"
   no_content_required: "Content not required"
+  invalid_email_config: "Should be active"

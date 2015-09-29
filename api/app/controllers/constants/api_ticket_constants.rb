@@ -15,7 +15,7 @@ module ApiTicketConstants
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },
     'restore' => { deleted: true, spam: false },
-    'destroy' => { deleted: false }
+    'destroy' => { deleted: false, spam: false }
   }
 
   # all_tickets is not included because it is the default filter applied.

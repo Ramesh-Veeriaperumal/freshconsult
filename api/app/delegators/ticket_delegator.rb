@@ -5,7 +5,7 @@ class TicketDelegator < SimpleDelegator
   attr_accessor :error_options, :ticket_fields
   validate :group_presence, if: -> { group_id  }
   validate :responder_presence, if: -> { responder_id }
-  validates :email_config, presence: true, if: -> { email_config_id }
+  validate :active_email_config, if: -> { email_config_id }
   validate :product_presence, if: -> { product_conditions }
   validate :responder_belongs_to_group?, if: -> { group_id && responder_id && errors[:responder].blank? && errors[:group].blank? }
   validate :user_blocked?, if: -> { errors[:requester].blank? && requester_id }
@@ -22,6 +22,10 @@ class TicketDelegator < SimpleDelegator
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     super record
+  end
+
+  def active_email_config
+    errors.add(:email_config_id, "invalid_email_config") unless email_config.try(:active)
   end
 
   def product_conditions
