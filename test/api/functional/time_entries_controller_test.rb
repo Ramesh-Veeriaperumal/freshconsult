@@ -770,6 +770,19 @@ class TimeEntriesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
   end
 
+  def test_update_timer_running_false_for_all_other_timers_while_creating_time_entry
+    t = ticket
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    post :create, construct_params({ id: t.display_id }, params_hash)
+    assert_response 201
+    ts = time_entry(parse_response(response.body)['id'])
+    assert ts.timer_running
+    assert_equal 1, Account.current.time_sheets.where('user_id= (?) AND timer_running= true', @agent.id).length
+  end
+
   def test_update_with_nullable_fields
     start_time = (Time.zone.now - 10.minutes).iso8601
     executed_at = (Time.zone.now - 20.minutes).iso8601
