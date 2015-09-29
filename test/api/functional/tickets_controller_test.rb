@@ -79,7 +79,7 @@ class TicketsControllerTest < ActionController::TestCase
     @update_group ||= create_group_with_agents(@account, agent_list: [agent.id])
     params_hash = { description: description, cc_emails: cc_emails, subject: subject, priority: 4, status: 3, type: 'Lead',
                     responder_id: agent.id, source: 3, tags: ['update_tag1', 'update_tag2'],
-                    due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s, group_id: @update_group.id }
+                    due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601, group_id: @update_group.id }
     params_hash
   end
 
@@ -92,7 +92,7 @@ class TicketsControllerTest < ActionController::TestCase
     @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     params_hash = { email: email, cc_emails: cc_emails, description: description, subject: subject,
                     priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
-                    due_by: 14.days.since.to_s, fr_due_by: 1.days.since.to_s, group_id: @create_group.id }
+                    due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     params_hash
   end
 
@@ -270,14 +270,14 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_due_by_without_fr_due_by
-    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(due_by: 12.days.since.to_s)
+    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('fr_due_by', 'Should not be blank if due_by is given')])
   end
 
   def test_create_without_due_by_with_fr_due_by
-    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(fr_due_by: 12.days.since.to_s)
+    params = ticket_params_hash.except(:due_by, :fr_due_by).merge(fr_due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', 'Should not be blank if fr_due_by is given')])
@@ -829,7 +829,7 @@ class TicketsControllerTest < ActionController::TestCase
     51.times do
       cc_emails << Faker::Internet.email
     end
-    params = update_ticket_params_hash.merge(due_by: 30.days.ago.to_s, cc_emails: cc_emails)
+    params = update_ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
@@ -840,7 +840,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_without_due_by
     params = update_ticket_params_hash
     t = ticket
-    t.update_attribute(:due_by, (t.created_at - 10.days).to_s)
+    t.update_attribute(:due_by, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
   end
@@ -1107,7 +1107,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_due_by_and_fr_due_by
     t = ticket
-    params_hash = { fr_due_by: 2.hours.since.to_s, due_by: 100.days.since.to_s }
+    previous_fr_due_by = t.frDueBy
+    previous_due_by = t.due_by
+    p t.attributes
+    params_hash = { fr_due_by: 2.hours.since.iso8601, due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
@@ -1118,7 +1121,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_due_by
     t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
     previous_due_by = t.due_by
-    params_hash = { due_by: 100.days.since.to_s }
+    params_hash = { due_by: 100.days.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
@@ -1128,7 +1131,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_fr_due_by
     t = create_ticket(ticket_params_hash.except(:fr_due_by, :due_by))
     previous_fr_due_by = t.frDueBy
-    params_hash = { fr_due_by: 2.hours.since.to_s }
+    params_hash = { fr_due_by: 2.hours.since.iso8601 }
     Helpdesk::Ticket.any_instance.expects(:update_dueby).never
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
@@ -1145,7 +1148,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_status_resolved_and_due_by
     t = ticket
-    params_hash = { status: 4, due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s }
+    params_hash = { status: 4, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', 'invalid_field'),
@@ -1154,7 +1157,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_status_closed_and_due_by
     t = ticket
-    params_hash = { status: 5, due_by: 12.days.since.to_s, fr_due_by: 4.days.since.to_s }
+    params_hash = { status: 5, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', 'invalid_field'),
@@ -1880,20 +1883,20 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_dates
-    get :index, controller_params(updated_since: Time.now.to_s)
+    get :index, controller_params(updated_since: Time.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt = Helpdesk::Ticket.first
     tkt.update_column(:created_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.to_s)
+    get :index, controller_params(updated_since: Time.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     tkt.update_column(:updated_at, 1.days.from_now)
-    get :index, controller_params(updated_since: Time.now.to_s)
+    get :index, controller_params(updated_since: Time.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -1903,7 +1906,7 @@ class TicketsControllerTest < ActionController::TestCase
     tkt = Helpdesk::Ticket.where(deleted: false, spam: false).first
     old_time_zone = Time.zone.name
     Time.zone = 'Chennai'
-    get :index, controller_params(updated_since: tkt.updated_at.to_s)
+    get :index, controller_params(updated_since: tkt.updated_at.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert response.size > 0
@@ -1964,8 +1967,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash
     t = create_ticket
     put :update, construct_params({ id: t.display_id }, tags: [], cc_emails: [])
-    assert_response 200
     match_json(ticket_pattern({}, t.reload))
+    assert_response 200
   end
 
   def test_update_array_fields_with_compacting_array
@@ -1973,8 +1976,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash
     t = ticket
     put :update, construct_params({ id: t.display_id }, tags: [tag, '', '', nil])
-    assert_response 200
     match_json(ticket_pattern({ tags: [tag] }, t.reload))
+    assert_response 200
   end
 
   def test_index_with_link_header

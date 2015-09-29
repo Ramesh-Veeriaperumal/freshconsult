@@ -35,7 +35,7 @@ class ApiValidation
   end
 
   def format_value(value)
-    (FORMATTED_TYPES.include?(value.class) ? value.to_s : value)
+    (FORMATTED_TYPES.include?(value.class) ? value.iso8601 : value)
   end
 
   def trim_attributes

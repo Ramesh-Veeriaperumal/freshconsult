@@ -94,14 +94,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
+    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.iso8601, executed_before: 18.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id, executed_at: 19.days.ago.to_s)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
+    create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
+    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.iso8601, executed_before: 18.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -170,7 +170,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_model_params
-    get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
+    get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: true, executed_after: 23.days.ago.iso8601, executed_before: 2.days.ago.iso8601)
     pattern = [bad_request_error_pattern('agent_id', "can't be blank")]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     assert_response 400
@@ -192,26 +192,26 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_executed_after
-    get :index, controller_params(executed_after: 6.hours.since.to_s)
+    get :index, controller_params(executed_after: 6.hours.since.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 9.hours.since.to_s)
-    get :index, controller_params(executed_after: 6.hours.since.to_s)
+    create_time_entry(executed_at: 9.hours.since.iso8601)
+    get :index, controller_params(executed_after: 6.hours.since.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_before
-    get :index, controller_params(executed_before: 25.days.ago.to_s)
+    get :index, controller_params(executed_before: 25.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 26.days.ago.to_s)
-    get :index, controller_params(executed_before: 25.days.ago.to_s)
+    create_time_entry(executed_at: 26.days.ago.iso8601)
+    get :index, controller_params(executed_before: 25.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -247,13 +247,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_executed_after_and_executed_before
-    get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
+    get :index, controller_params(executed_before: 9.days.ago.iso8601, executed_after: 11.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 10.days.ago.to_s)
-    get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
+    create_time_entry(executed_at: 10.days.ago.iso8601)
+    get :index, controller_params(executed_before: 9.days.ago.iso8601, executed_after: 11.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -261,13 +261,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_executed_after_and_agent_id
     user = add_test_agent(@account)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, agent_id: user.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 8.days.ago.to_s, agent_id: user.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
+    create_time_entry(executed_at: 8.days.ago.iso8601, agent_id: user.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, agent_id: user.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -275,14 +275,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_executed_after_and_company_id
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(executed_at: 8.days.ago.to_s, ticket_id: t.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
+    create_time_entry(executed_at: 8.days.ago.iso8601, ticket_id: t.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -321,14 +321,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_company_id_and_billable_and_executed_after
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
+    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(billable: false, ticket_id: t.id, executed_at: 5.hours.since.to_s)
-    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
+    create_time_entry(billable: false, ticket_id: t.id, executed_at: 5.hours.since.iso8601)
+    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -496,8 +496,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '03:00', start_time: start_time,
@@ -512,8 +512,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_numericality_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -523,8 +523,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_presence_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -544,8 +544,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_inclusion_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: '89', executed_at: executed_at,
@@ -556,8 +556,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_format_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '08900', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -567,8 +567,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_greater_than_current_time
-    start_time = (Time.zone.now + 20.hours).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now + 20.hours).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -578,8 +578,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_timer_running_false_again
-    executed_at = (Time.zone.now - 20.minutes).to_s
-    start_time = (Time.zone.now - 20.hours).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
+    start_time = (Time.zone.now - 20.hours).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: false, executed_at: executed_at,
@@ -590,8 +590,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_timer_running_true_again
-    executed_at = (Time.zone.now - 20.minutes).to_s
-    start_time = (Time.zone.now - 20.hours).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
+    start_time = (Time.zone.now - 20.hours).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00',
                                                   timer_running: true, executed_at: executed_at, start_time: start_time,
@@ -603,7 +603,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_when_timer_running
     user = other_agent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
@@ -613,8 +613,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_when_timer_not_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', executed_at: executed_at,
@@ -629,8 +629,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_and_timer_running_true_when_timer_is_not_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: true,
@@ -645,8 +645,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_and_timer_running_false_when_timer_is_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
@@ -655,8 +655,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_nullable_fields
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: nil, timer_running: false,
@@ -670,8 +670,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_already
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -680,8 +680,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_is_not_running
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -690,8 +690,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_is_set_to_true
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true, start_time: start_time,
@@ -704,8 +704,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_is_set_to_false
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -714,7 +714,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_true_valid
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, timer_running: true,
@@ -727,7 +727,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_false_valid
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       time_spent = (Time.zone.now - ts.start_time).abs.round
@@ -745,7 +745,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_time_spent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true,
@@ -758,7 +758,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_false_and_time_spent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: false,

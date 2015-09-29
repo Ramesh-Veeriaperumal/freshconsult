@@ -47,7 +47,7 @@ class TicketValidation < ApiValidation
   def initialize(request_params, item)
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
-    @fr_due_by = item.try(:frDueBy).try(:to_s) if item
+    @fr_due_by = item.try(:frDueBy).try(:iso8601) if item
     @type = item.try(:ticket_type) if item
     super(request_params, item)
     check_params_set(request_params, item)
