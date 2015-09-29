@@ -456,12 +456,21 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_other_timer_running
-    other_ts = Helpdesk::TimeSheet.find_by_user_id_and_timer_running(@agent.id, true)
+    other_ts = create_time_entry(timer_running: true, user_id: @agent.id)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
     ts = time_entry(parse_response(response.body)['id'])
     match_json time_entry_pattern(ts)
-    refute = other_ts.timer_running
+    refute other_ts.reload.timer_running
+  end
+
+  def test_create_with_timer_running_false_when_another_timer_running
+    other_ts = create_time_entry(timer_running: true, user_id: @agent.id)
+    post :create, construct_params({ id: ticket.display_id }, agent_id: @agent.id, timer_running: false)
+    assert_response 201
+    ts = time_entry(parse_response(response.body)['id'])
+    match_json time_entry_pattern(ts)
+    assert other_ts.reload.timer_running
   end
 
   def test_create_with_all_params
@@ -641,6 +650,38 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                       timer_running: true, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true }, ts.reload)
     end
+  end
+
+  def test_update_agent_id_for_a_timer_when_another_timer_is_running_with_same_agent
+    user = other_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: user.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, agent_id: user.id, timer_running: true)
+    assert_response 200
+    match_json time_entry_pattern({ timer_running: true, agent_id: user.id }, ts.reload)
+    assert_equal other_ts.reload.user_id,ts.user_id
+    refute other_ts.timer_running
+  end
+
+  def test_update_timer_running_when_another_timer_is_running_with_same_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: @agent.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, timer_running: true)
+    assert_response 200
+    match_json time_entry_pattern({ timer_running: true, agent_id: @agent.id }, ts.reload)
+    assert_equal other_ts.reload.user_id,ts.user_id
+    refute other_ts.timer_running
+  end
+
+  def test_update_with_timer_running_false_when_another_timer_is_running_with_same_agent
+    user = other_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: user.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, agent_id: user.id)
+    assert_response 200
+    match_json time_entry_pattern({ agent_id: user.id }, ts.reload)
+    assert_equal other_ts.reload.user_id,ts.user_id
+    assert other_ts.timer_running
   end
 
   def test_update_agent_id_and_timer_running_false_when_timer_is_running
