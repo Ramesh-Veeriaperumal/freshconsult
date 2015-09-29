@@ -24,7 +24,7 @@ class Solution::FoldersController < ApplicationController
 
   def show
     #META-READ-HACK!!    
-    @folder = current_account.folders.find(params[:id], :include => { meta_article_scope => [:draft, :user]})
+    @folder = current_account.solution_folder_meta.find(params[:id], :include => { :solution_article_meta => Solution::ArticleMeta.translation_associations})
     @page_title = @folder.name
     respond_to do |format|
       format.html {

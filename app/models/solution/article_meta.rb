@@ -10,6 +10,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	include Solution::LanguageAssociations
 
+	delegate :draft, :status, :user, :to => :primary_article
+
 	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true
 
 	belongs_to :solution_folder_meta, 

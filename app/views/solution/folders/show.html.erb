@@ -2,16 +2,16 @@
 <% content_for :sticky_title do %>
   <%= render :partial => 'title_bar' %>
   <div class="bulk-actions-bar">
-    <%= render :partial => 'edit_bar' if privilege?(:publish_solution) && @folder.articles.present? %>
+    <%= render :partial => 'edit_bar' if privilege?(:publish_solution) && @folder.solution_article_meta.present? %>
   </div>
 <% end %>
 <% content_for :sticky_right do %>
-  <%= preview_portal(support_solutions_folder_path(@folder), @folder.category) %>
+  <%= preview_portal(support_solutions_folder_path(@folder), @folder.solution_category_meta) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder, :sticky_class => "sol-sticky category-sticky",
                       :search_url => "/search/solutions?folder_id=#{@folder.id}&term="} %>
 
-<% if @folder.articles.blank? %>
+<% if @folder.solution_article_meta.blank? %>
   <div class="no-data">
     <%= t('solution.no_articles_info') %>
     <div class="mt20">
@@ -24,12 +24,12 @@
 <% else %>
   <%= render :partial => '/solution/shared/search_container' %>
   <div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
-    <%= form_for @folder.articles, :url => reorder_solution_articles_path(:folder_id => @folder.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+    <%= form_for @folder.solution_article_meta, :url => reorder_solution_articles_path(:folder_id => @folder.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
       <input name="reorderlist" type="hidden" value="" />
-      <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder.category.id %>" />
+      <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @folder.solution_category_meta.id %>" />
       <input name="folder_id" id="reorder_folder_id" type="hidden" value="<%= @folder.id %>" />
       <ul class="row-fluid" rel="sortlist" id="articles_list">
-        <%= render(:partial => "article", :collection => @folder.articles) %>
+        <%= render(:partial => "article", :collection => @folder.solution_article_meta) %>
       </ul>
     <% end %>
   </div>

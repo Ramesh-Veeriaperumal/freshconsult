@@ -56,7 +56,7 @@ module ConfirmDeleteHelper
 	end
 
 	def solution_foldermeta_delete_message(folder)
-		t('folder.delete_confirm', :count => folder.articles.size)
+		t('folder.delete_confirm', :count => folder.solution_article_meta.size)
 	end
 
 	def solution_categorymeta_delete_message(category)

@@ -43,7 +43,7 @@ module SolutionHelper
 	end
 
 	def default_category?
-		((@category || (@folder.respond_to?(:category) ? @folder.category : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
+		((@category || (@folder.respond_to?(:solution_category_meta) ? @folder.solution_category_meta : (@article.folder.present? ? @article.folder.category : {}))) || {})[:is_default]
 	end
 
 	def folder_link folder
@@ -53,10 +53,10 @@ module SolutionHelper
 
 	def category_link(folder, page)
 		truncate_length = ( (page == :folder) ? 70 : 40 )
-		category_name = folder.category.name
+		category_name = folder.solution_category_meta.name
 		options = { :title => category_name } if category_name.length > truncate_length
-		pjax_link_to(truncate(folder.category.name, :length => truncate_length), 
-			 			"/solution/categories/#{folder.category_id}", (options || {}))
+		pjax_link_to(truncate(category_name, :length => truncate_length), 
+			 			"/solution/categories/#{folder.solution_category_meta.id}", (options || {}))
 	end
 	
 	def new_solutions_button(default_btn = :article)
