@@ -441,11 +441,25 @@ class TicketsControllerTest < ActionController::TestCase
     assert Helpdesk::Ticket.last.attachments.count == 2
   end
 
-  def test_create_with_invalid_attachment_params_format
+  def test_create_with_invalid_attachment_array
     params = ticket_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+  end
+
+  def test_create_with_invalid_attachment_type
+    params = ticket_params_hash.merge('attachments' => "test")
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
+  end
+
+  def test_create_with_invalid_empty_attachment
+    params = ticket_params_hash.merge('attachments' => nil)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', "can't be blank")])
   end
 
   def test_attachment_invalid_size_create

@@ -23,7 +23,7 @@ class TicketValidation < ApiValidation
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
   validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
   validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
-
+  validates :attachments, presence: true, if: -> {request_params.key? :attachments}
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
