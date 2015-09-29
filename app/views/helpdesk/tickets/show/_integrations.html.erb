@@ -65,20 +65,17 @@
 								<%= widget_code %>
 						</div>
 	        </div>
-        <%elsif app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
-        	<div id="<%=app_name%>" class="widget ">
-        		<div class="content"></div>
-        		<%= widget_code %>
-        	</div>
         <% else %>
 	        <div id="<%=app_name%>" class="widget inactive load_on_click ">
 	        	<h3 id="<%=app_name%>-title" class="title"><%= h(installed_app.configs_title || t(app.display_name).html_safe )%></h3>
 						<div class="content">
 						<textarea style="display:none" rel="lazyload">
-							<div id="<%=app_name%>_side_bar_widget">
-								<div class="content"><div id="<%=app_name%>_loading" class="sloading loading-block loading-small"></div></div>
-								<div class="error"></div>
-							</div>
+							<% unless app_name == Integrations::Constants::APP_NAMES[:google_calendar] %>
+								<div id="<%=app_name%>_side_bar_widget">
+									<div class="content"><div id="<%=app_name%>_loading" class="sloading loading-block loading-small"></div></div>
+									<div class="error"></div>
+								</div>
+						  <% end %>
 							<%= widget_code %>
 						</textarea>
 						</div>
