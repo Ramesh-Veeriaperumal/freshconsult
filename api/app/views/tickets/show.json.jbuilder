@@ -3,7 +3,7 @@ json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, 
   json.set! :fwd_emails, @item.cc_email[:fwd_emails]
   json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
 
-  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :to_email
+  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject
 
   json.set! :ticket_id, @item.display_id
   json.set! :type, @item.ticket_type

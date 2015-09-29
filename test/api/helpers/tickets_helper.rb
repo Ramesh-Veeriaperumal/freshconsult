@@ -48,7 +48,6 @@ module Helpers::TicketsHelper
       status: expected_output[:status] || ticket.status,
       subject:  expected_output[:subject] || ticket.subject,
       type:  expected_output[:ticket_type] || ticket.ticket_type,
-      to_email:  expected_output[:to_email] || ticket.to_email,
       to_emails: expected_output[:to_emails] || ticket.to_emails,
       product_id:  expected_output[:product_id] || ticket.product_id,
       attachments: Array,

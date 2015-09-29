@@ -6,7 +6,7 @@ json.array! @items do |tkt|
 
     json.set! :deleted, tkt.deleted if tkt.deleted
 
-    json.extract! tkt, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :to_email
+    json.extract! tkt, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject
 
     json.set! :to_emails, tkt.schema_less_ticket.try(:to_emails)
     json.set! :product_id, tkt.schema_less_ticket.try(:product_id)
