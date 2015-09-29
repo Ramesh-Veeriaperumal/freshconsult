@@ -120,6 +120,18 @@
     }
   }
 
+  #language-toggle{
+    margin: 10px 15px 0 0;
+    float: right;
+    #hide-link{
+      display: none;
+    }
+  }
+
+  #language-bar{
+    display: none;
+  }
+
   .solution-bulk-actions {
 
     .visible-to-btn {

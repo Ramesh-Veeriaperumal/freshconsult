@@ -9,27 +9,34 @@
 				<div class="solution-list-checkbox">
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
-			<% end %>	
-			<div class="span3 pull-right text-right article-list-meta">
-				<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
-					<%= font_icon "file-visible" %>
-					<%= article.hits %>
-				</span>
-				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
-					<%= font_icon "like", :size => 18 %>
-					<%= article.thumbs_up %>
-				</span>
-				<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
-					<%= font_icon "dislike", :size => 18 %>
-					<%= article.thumbs_down %>
-				</span>
-			</div>
-			<div class="span2 pull-right mt6 text-center article-info">
-				<% if article.draft.present? || article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
-					<span class="label">
-						<%= t('solutions.status.draft')%> 
+			<% end %>
+			<div id="article-details">
+				<div class="span3 pull-right text-right article-list-meta">
+					<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
+						<%= font_icon "file-visible" %>
+						<%= article.hits %>
 					</span>
-				<% end %>
+					<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+						<%= font_icon "like", :size => 18 %>
+						<%= article.thumbs_up %>
+					</span>
+					<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+						<%= font_icon "dislike", :size => 18 %>
+						<%= article.thumbs_down %>
+					</span>
+				</div>
+				<div class="span2 pull-right mt6 text-center article-info">
+					<% if article.draft.present? || article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] %>
+						<span class="label">
+							<%= t('solutions.status.draft')%> 
+						</span>
+					<% end %>
+				</div>
+			</div>
+			<div class="span5 pull-right mt8" id="language-bar">
+				<span class="pull-right">
+					<%= language_flags(article) %>
+				</span>
 			</div>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>

@@ -121,12 +121,24 @@ window.App = window.App || {};
         }
       });
 
+      $this.bindLanguageBarLinks();
+
       focusFirstModalElement('folders_articles');
     },
 
     toggleVisibleTo: function (flag) {
       $('.visible-to-btn').toggleClass('highlight-border', flag);
       $('.visible-to-btn .bulk-action-btns').toggleClass('drop-right', !flag).toggleClass('visible-to-selected', flag);
+    },
+
+    bindLanguageBarLinks: function () {
+      $('#show-link, #hide-link').on('click', function (ev) {
+        ev.preventDefault();
+        $('#article-details').toggle();
+        $('#language-bar').toggle();
+        $('#hide-link').toggle();
+        $('#show-link').toggle();
+      });
     },
 
     removeCurrentFolder: function () {

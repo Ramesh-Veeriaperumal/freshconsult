@@ -254,20 +254,22 @@ module SolutionHelper
 
 	def language_icon(solution_meta, version, language)
 		category = solution_meta.class.short_name
+		options = { 
+			:class => "language_icon #{'active' if version.present?} tooltip",
+			:title => "#{language.name} #{version.present? ? t("solution.plain_edit") : t("solution.plain_new")}",
+			:id => "version-#{solution_meta.id}-#{language.id}",
+		}
+		options.merge!({:rel => "freshdialog",
+			:data => {
+			"destroy-on-close" => true,
+			"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
+			"target" => "#version-#{solution_meta.id}",
+			"close-label" => t('cancel'),
+			"submit-label" => t('save')
+		}}) unless category.eql?('article')
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
-			send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
-			:rel => "freshdialog",
-			:class => "language_icon #{'active' if version.present?} tooltip",
-			:title => language.name,
-			:id => "version-#{solution_meta.id}-#{language.id}",
-			:data => {
-				"destroy-on-close" => true,
-				"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
-				"target" => "#version-#{solution_meta.id}",
-				"close-label" => t('cancel'),
-				"submit-label" => t('save')
-			})
+							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id), options)
 	end
 
 	def primary_preview(primary, identifier)

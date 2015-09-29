@@ -3602,6 +3602,10 @@ en:
   import_groups: Groups
   solution:
     on: 'on'
+    plain_new: New
+    plain_edit: Edit
+    show_languages: Show other languages
+    hide_languages: Hide other languages
     orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"
