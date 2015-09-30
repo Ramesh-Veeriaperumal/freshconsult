@@ -8,5 +8,5 @@ module GroupConstants
                          '8h' => 28_800, '12h' => 43_200, '1d' => 86_400, '2d' => 172_800, '3d' => 259_200, nil => 1800 }
   FIELDS_TO_BE_STRIPPED = %w(name)
 
-  UNASSIGNED_FOR_ACCEPTED_VALUES = [ '30m', '1h', '2h', '4h', '8h', '12h', '1d', '2d', '3d']
+  UNASSIGNED_FOR_ACCEPTED_VALUES = UNASSIGNED_FOR_MAP.keys.compact
 end
