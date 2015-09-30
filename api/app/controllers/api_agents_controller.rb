@@ -1,5 +1,4 @@
 class ApiAgentsController < ApiApplicationController
-  
   private
 
     def load_object
@@ -24,7 +23,7 @@ class ApiAgentsController < ApiApplicationController
       end
       agents
     end
-    
+
     def scoper
       current_account.all_agents
     end

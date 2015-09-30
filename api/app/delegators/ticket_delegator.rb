@@ -25,7 +25,7 @@ class TicketDelegator < SimpleDelegator
   end
 
   def active_email_config
-    errors.add(:email_config_id, "invalid_email_config") unless email_config.try(:active)
+    errors.add(:email_config_id, 'invalid_email_config') unless email_config.try(:active)
   end
 
   def product_conditions
@@ -42,7 +42,7 @@ class TicketDelegator < SimpleDelegator
     if product.nil?
       errors.add(:product, "can't be blank")
     else
-      self.schema_less_ticket.product = product
+      schema_less_ticket.product = product
     end
   end
 

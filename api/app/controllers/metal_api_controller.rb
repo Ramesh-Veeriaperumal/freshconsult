@@ -34,7 +34,7 @@ class MetalApiController < ActionController::Metal
   end
 end
 
-cache_config = YAML::load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
+cache_config = YAML.load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
 servers = cache_config.delete(:servers)
 MetalApiController.cache_store = :dalli_store, servers, cache_config
-Object.const_set("RAILS_CACHE", MetalApiController.cache_store) 
+Object.const_set('RAILS_CACHE', MetalApiController.cache_store)

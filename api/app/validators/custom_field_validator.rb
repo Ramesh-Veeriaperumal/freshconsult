@@ -57,7 +57,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({attributes: field_name, rules: 'Boolean', allow_nil: !@is_required}, 'required_boolean')
+    boolean_options = construct_options({ attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, 'required_boolean')
     DataTypeValidator.new(boolean_options).validate(record)
   end
 
@@ -189,7 +189,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       options_hash = options.merge(custom_options)
 
       # custom message to be merged to give missing_field as code in error response if no field is defined & is required.
-      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined 
+      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined
       options_hash
     end
 

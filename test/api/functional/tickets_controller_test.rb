@@ -134,7 +134,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { requester_id: requester.id, email_config_id: email_config.reload.id }
     post :create, construct_params({}, params)
     email_config.update_column(:active, true)
-    match_json([bad_request_error_pattern("email_config_id", "invalid_email_config")])
+    match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
     assert_response 400
   end
 
@@ -143,9 +143,9 @@ class TicketsControllerTest < ActionController::TestCase
     email_config.update_column(:active, false)
     params = { email_config_id: email_config.reload.id }
     t = ticket
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     email_config.update_column(:active, true)
-    match_json([bad_request_error_pattern("email_config_id", "invalid_email_config")])
+    match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
     assert_response 400
   end
 
@@ -345,7 +345,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', "can't be blank"),
                 bad_request_error_pattern('responder_id', "can't be blank"),
-                bad_request_error_pattern('email_config_id', "invalid_email_config"),
+                bad_request_error_pattern('email_config_id', 'invalid_email_config'),
                 bad_request_error_pattern('requester_id', 'user_blocked'),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", 'not_included', list: 'Australia,USA'),
                 bad_request_error_pattern("test_custom_dropdown_#{@account.id}", 'not_included', list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
@@ -473,7 +473,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_attachment_type
-    params = ticket_params_hash.merge('attachments' => "test")
+    params = ticket_params_hash.merge('attachments' => 'test')
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
@@ -896,7 +896,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', "can't be blank"),
                 bad_request_error_pattern('responder_id', "can't be blank"),
-                bad_request_error_pattern('email_config_id', "invalid_email_config"),
+                bad_request_error_pattern('email_config_id', 'invalid_email_config'),
                 bad_request_error_pattern('requester_id', 'user_blocked'),
                 bad_request_error_pattern('product_id', "can't be blank"),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", 'not_included', list: 'Australia,USA'),

@@ -123,7 +123,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def handle_invalid_multipart_form_data(exception_params)
-      return false unless request.raw_post == exception_params.join && request.headers["CONTENT_TYPE"] =~ /multipart\/form-data/
+      return false unless request.raw_post == exception_params.join && request.headers['CONTENT_TYPE'] =~ /multipart\/form-data/
       render_request_error :invalid_multipart, 400
       true
     end
@@ -320,7 +320,7 @@ class ApiApplicationController < MetalApiController
       if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
         access_denied
         return false
-      end 
+      end
       true
     end
 
@@ -412,7 +412,7 @@ class ApiApplicationController < MetalApiController
       action_name.to_s == action
     end
 
-    def verify_ticket_permission(user=api_current_user, ticket=@item)
+    def verify_ticket_permission(user = api_current_user, ticket = @item)
       # Should not allow to update/show/restore/add(or)edit(or)delete(or)show notes or time_entries to a ticket if ticket is deleted forever or user doesn't have permission
       unless user.has_ticket_permission?(ticket) && !ticket.schema_less_ticket.try(:trashed)
         Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"

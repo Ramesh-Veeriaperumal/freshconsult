@@ -77,7 +77,7 @@ class ApiGroupsController < ApiApplicationController
       if @agents.empty?
         agent_groups.destroy_all
       else
-        revised_agent_groups = agent_groups.select{ |ag| @agents.exclude?(ag.user_id) }.map(&:destroy)
+        revised_agent_groups = agent_groups.select { |ag| @agents.exclude?(ag.user_id) }.map(&:destroy)
         agent_groups -= revised_agent_groups
         @agents -= agent_groups.map(&:user_id)
         @item.agent_groups = agent_groups if @agents.empty? || agent_groups.empty?

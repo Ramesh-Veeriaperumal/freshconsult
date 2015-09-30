@@ -14,5 +14,4 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
     def data_type(allow_negative)
       allow_negative ? 'Integer' : 'Positive Integer'
     end
-
 end

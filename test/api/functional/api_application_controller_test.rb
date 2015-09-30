@@ -39,8 +39,8 @@ class ApiApplicationControllerTest < ActionController::TestCase
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     @controller.request.env['RAW_POST_DATA'] = "{ \n \"requester_id\":1\n}"
-    @controller.request.env['CONTENT_TYPE'] = "multipart/form-data; charset=UTF-8"
-    assert_nothing_raised do 
+    @controller.request.env['CONTENT_TYPE'] = 'multipart/form-data; charset=UTF-8'
+    assert_nothing_raised do
       @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(["{ \n \"requester_id\":1\n}"]))
     end
     assert_equal response.status, 400
@@ -50,10 +50,10 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_route_not_found_with_method_not_allowed
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    @controller.env['PATH_INFO'] = "api/v2/tickets/1000"
+    @controller.env['PATH_INFO'] = 'api/v2/tickets/1000'
     params = ActionController::Parameters.new(version: 2)
     @controller.send(:route_not_found)
-    assert_equal response.headers['Allow'], "GET, PUT, DELETE"
+    assert_equal response.headers['Allow'], 'GET, PUT, DELETE'
     assert_equal response.status, 405
     assert_equal response.body, base_error_pattern(:method_not_allowed, methods: 'GET, PUT, DELETE').to_json
   end
@@ -61,12 +61,12 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_route_not_found
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    @controller.env['PATH_INFO'] = "api/v2/junk/1000"
+    @controller.env['PATH_INFO'] = 'api/v2/junk/1000'
     params = ActionController::Parameters.new(version: 2)
     @controller.send(:route_not_found)
     assert_nil response.headers['Allow']
     assert_equal response.status, 404
-    assert_equal response.body, " "
+    assert_equal response.body, ' '
   end
 
   def test_cname
@@ -115,7 +115,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_verify_ticket_permission_valid_without_params
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    @controller.instance_variable_set("@item", Helpdesk::Ticket.first)
+    @controller.instance_variable_set('@item', Helpdesk::Ticket.first)
     actual = @controller.send(:verify_ticket_permission)
     assert actual
   end

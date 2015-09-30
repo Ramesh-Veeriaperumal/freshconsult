@@ -1,6 +1,6 @@
 require_relative '../unit_test_helper'
 
-class TimeEntryValidationsTest < ActionView::TestCase
+class TimeEntryValidationTest < ActionView::TestCase
   def test_user_numericality
     Account.stubs(:current).returns(Account.first)
     controller_params = { 'agent_id' => 'x' }
@@ -28,7 +28,7 @@ class TimeEntryValidationsTest < ActionView::TestCase
   def test_invalid_time_spent_minutes
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'time_spent' => "89:78" }
+    controller_params = { 'timer_running' => false, 'time_spent' => '89:78' }
     item = nil
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
@@ -40,7 +40,7 @@ class TimeEntryValidationsTest < ActionView::TestCase
   def test_invalid_time_spent_string
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'time_spent' => "sdfdgfd" }
+    controller_params = { 'timer_running' => false, 'time_spent' => 'sdfdgfd' }
     item = nil
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?

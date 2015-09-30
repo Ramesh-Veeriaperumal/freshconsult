@@ -2,7 +2,7 @@ module SimpleCovSetup
   require 'simplecov'
   require 'simplecov-csv'
   require 'simplecov-rcov'
-  
+
   # Simplecov does not show files with 0% coverage that are not eagerloaded. Hence including them.
   # all_files = Dir['api/lib/*.rb'] + Dir['api/app/delegators/*.rb']
   # base_result = {}

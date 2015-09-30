@@ -32,5 +32,4 @@ module ApiTicketConstants
 
   # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(restore)
-
 end

@@ -41,7 +41,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
   def test_custom_message
     test = TestValidation.new
     test.attribute2 = 1
-    test.attribute4 = "909"
+    test.attribute4 = '909'
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
@@ -53,7 +53,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     test = TestValidation.new
     test.attribute1 = -1
     test.attribute2 = -1
-    test.attribute3 = "9099"
+    test.attribute3 = '9099'
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h

@@ -90,7 +90,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :error_options, :closed_status
 
     validates :attribute1, custom_field: { attribute1: {
-      validatable_custom_fields: [ Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
+      validatable_custom_fields: [Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     }
@@ -217,16 +217,16 @@ class CustomFieldValidatorTest < ActionView::TestCase
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name = {second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } }}
+    Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
   end
 
   def test_non_existent_validation_method
-    test = TestInvalidTypeValidation.new(attribute1: {'second_1' => "fdsfdfs"})
-    out, err = capture_io do 
+    test = TestInvalidTypeValidation.new(attribute1: { 'second_1' => 'fdsfdfs' })
+    out, err = capture_io do
       test.valid?
     end
-    assert_match %r%validate_junk_field%, err
+    assert_match %r{validate_junk_field}, err
   end
 end

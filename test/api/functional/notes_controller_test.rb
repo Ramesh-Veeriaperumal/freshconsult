@@ -41,7 +41,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash
   end
 
-   def test_create_with_ticket_trashed
+  def test_create_with_ticket_trashed
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
@@ -239,7 +239,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_reply_with_cc_kbase_mail
     article_count = Solution::Article.count
     t = ticket
-    t.update_column(:subject, "More than 3 letters")
+    t.update_column(:subject, 'More than 3 letters')
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
@@ -252,9 +252,9 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_bcc_kbase_mail
-    article_count = Solution::Article.count  
+    article_count = Solution::Article.count
     t = ticket
-    t.update_column(:subject, "More than 3 letters")
+    t.update_column(:subject, 'More than 3 letters')
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
@@ -423,7 +423,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_ticket_trashed
-    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
@@ -433,7 +433,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_update_without_ticket_privilege
-    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
@@ -522,7 +522,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(request_error_pattern('access_denied'))
   end
 
-  def test_update_with_owns_object_privilege  
+  def test_update_with_owns_object_privilege
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
     params = update_note_params_hash
@@ -618,7 +618,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_destroy_with_ticket_trashed
-    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
     delete :destroy, construct_params(id: n.id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
@@ -627,7 +627,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_destroy_without_ticket_privilege
-    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
     n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
     delete :destroy, construct_params(id: n.id)
     User.any_instance.unstub(:has_ticket_permission?)
@@ -734,9 +734,9 @@ class NotesControllerTest < ActionController::TestCase
     assert_nil response.headers['Link']
   end
 
-   def test_notes_with_ticket_trashed
+  def test_notes_with_ticket_trashed
     t = ticket
-    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true) 
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     get :ticket_notes, construct_params(id: t.display_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
@@ -745,7 +745,7 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_notes_without_ticket_privilege
     t = ticket
-    User.any_instance.stubs(:has_ticket_permission?).returns(false) 
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
     get :ticket_notes, construct_params(id: t.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403

@@ -23,14 +23,14 @@ class TicketValidation < ApiValidation
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
   validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
   validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
-  validates :attachments, presence: true, if: -> {request_params.key? :attachments}
+  validates :attachments, presence: true, if: -> { request_params.key? :attachments }
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments && errors[:attachments].blank? }
 
-  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
-  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
+  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
   validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }

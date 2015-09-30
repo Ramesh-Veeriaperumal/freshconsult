@@ -12,7 +12,7 @@ class DataTypeValidator < ActiveModel::EachValidator
   end
 
   private
-  
+
     def valid_type?(type, value)
       type == 'Boolean' ? [true, false].include?(value) : (value.is_a? type)
     end

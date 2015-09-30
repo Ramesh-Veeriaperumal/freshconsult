@@ -13,7 +13,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def ticket
-    t = Helpdesk::Ticket.joins(:schema_less_ticket).where(deleted: false, spam: false, helpdesk_schema_less_tickets: {boolean_tc02: false}).order('created_at asc').first
+    t = Helpdesk::Ticket.joins(:schema_less_ticket).where(deleted: false, spam: false, helpdesk_schema_less_tickets: { boolean_tc02: false }).order('created_at asc').first
     return t if t
     t = create_ticket
     t.update_column(:spam, false)
@@ -205,7 +205,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', 'not_included', list: "true,false")]
+    pattern = [bad_request_error_pattern('billable', 'not_included', list: 'true,false')]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'number')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')
     pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
@@ -734,7 +734,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, agent_id: user.id, timer_running: true)
     assert_response 200
     match_json time_entry_pattern({ timer_running: true, agent_id: user.id }, ts.reload)
-    assert_equal other_ts.reload.user_id,ts.user_id
+    assert_equal other_ts.reload.user_id, ts.user_id
     refute other_ts.timer_running
   end
 
@@ -744,7 +744,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, timer_running: true)
     assert_response 200
     match_json time_entry_pattern({ timer_running: true, agent_id: @agent.id }, ts.reload)
-    assert_equal other_ts.reload.user_id,ts.user_id
+    assert_equal other_ts.reload.user_id, ts.user_id
     refute other_ts.timer_running
   end
 
@@ -755,7 +755,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, agent_id: user.id)
     assert_response 200
     match_json time_entry_pattern({ agent_id: user.id }, ts.reload)
-    assert_equal other_ts.reload.user_id,ts.user_id
+    assert_equal other_ts.reload.user_id, ts.user_id
     assert other_ts.timer_running
   end
 
@@ -1113,7 +1113,6 @@ class TimeEntriesControllerTest < ActionController::TestCase
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
-
 
   def test_ticket_time_entries_with_link_header
     t = ticket

@@ -1,7 +1,6 @@
 class TimeEntriesController < ApiApplicationController
   include Concerns::TimeSheetConcern
 
-
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @item.save should be wrapped in a transaction.
@@ -32,7 +31,7 @@ class TimeEntriesController < ApiApplicationController
 
     def after_load_object
       return false unless find_ticket # find ticket in case of APIs which has @item.id in url
-      
+
       # Verify ticket permission if ticket exists.
       return false if @ticket && !verify_ticket_permission(api_current_user, @ticket)
 
@@ -73,7 +72,7 @@ class TimeEntriesController < ApiApplicationController
       spam_or_deleted_ticket = @ticket.deleted || @ticket.spam
       if spam_or_deleted_ticket
         Rails.logger.error "Params: #{params.inspect} Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
-        head 404 
+        head 404
       end
       !spam_or_deleted_ticket
     end
@@ -129,7 +128,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def handle_default_timer_running
-    # Needed in validation to validate start_time based on timer_running attribute in create action.
+      # Needed in validation to validate start_time based on timer_running attribute in create action.
       timer_running = params[cname][:timer_running]
       unless params[cname].key?(:timer_running)
         timer_running ||= !params[cname].key?(:time_spent) || params[cname].key?(:start_time)

@@ -5,7 +5,7 @@ class Helpers::TicketsValidationHelper
     end
 
     def ticket_custom_field_keys(ticket_fields)
-      ticket_fields.select{|x| !x.default}.collect(&:name)
+      ticket_fields.select { |x| !x.default }.collect(&:name)
     end
 
     def choices_validatable_custom_fields(delegator)

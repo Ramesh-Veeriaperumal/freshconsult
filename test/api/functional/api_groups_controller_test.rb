@@ -142,16 +142,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
-
   end
 
   def test_update_group_with_deleted_or_invalid_agent_id
     agent_id = Faker::Number.between(5000, 10_000)
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
-    post :update, construct_params({ id: group.id }, escalate_to: 898989, agent_ids: [agent_id])
+    post :update, construct_params({ id: group.id }, escalate_to: 898_989, agent_ids: [agent_id])
     assert_response 400
     match_json([bad_request_error_pattern('agent_ids', 'list is invalid', list: agent_id.to_s),
-      bad_request_error_pattern('escalate_to', "can't be blank")])
+                bad_request_error_pattern('escalate_to', "can't be blank")])
   end
 
   def test_update_group_valid_with_trailing_spaces

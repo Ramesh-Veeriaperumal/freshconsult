@@ -9,7 +9,7 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -29,7 +29,7 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
@@ -71,7 +71,7 @@ class TicketsController < ApiApplicationController
       if show? || update? || restore?
         return false unless verify_ticket_permission
       end
-      
+
       if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
         render_request_error :no_content_required, 400
       end

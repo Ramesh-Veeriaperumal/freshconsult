@@ -47,7 +47,7 @@ class NotesController < ApiApplicationController
     def after_load_object
       find_ticket # find ticket in case of APIs which has @item.id in url
       return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
-      return false if update? && !can_update? 
+      return false if update? && !can_update?
       check_agent_note if update? || destroy?
     end
 
@@ -159,5 +159,4 @@ class NotesController < ApiApplicationController
     def ticket_notes?
       @ticket_notes ||= current_action?('ticket_notes')
     end
-
 end
