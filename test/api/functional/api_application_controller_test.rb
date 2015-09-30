@@ -123,7 +123,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_verify_ticket_permission_valid_with_params
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    ticket = Helpdesk::Ticket.new(requester_id: @agent.id)
+    ticket = Helpdesk::Ticket.new(requester_id: @agent.id, cc_email: {cc_emails: [], fwd_emails: [], reply_cc_emails: []})
     ticket.save
     actual = @controller.send(:verify_ticket_permission, @agent, ticket)
     assert actual
@@ -132,7 +132,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_verify_ticket_permission_invalid_ticket
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    ticket = Helpdesk::Ticket.new(requester_id: @agent.id)
+    ticket = Helpdesk::Ticket.new(requester_id: @agent.id, cc_email: {cc_emails: [], fwd_emails: [], reply_cc_emails: []})
     ticket.save
     ticket.schema_less_ticket.update_attribute(:trashed, true)
     User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
