@@ -166,4 +166,8 @@ class TimeEntriesController < ApiApplicationController
       @ticket_notes ||= current_action?('ticket_time_entries')
     end
 
+    def update_running_timer(user_id)
+      @time_cleared = current_account.time_sheets.where('user_id= (?) AND timer_running= true', user_id)
+      @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: calculate_time_spent(tc)) }
+    end
 end

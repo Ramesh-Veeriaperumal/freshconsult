@@ -1,4 +1,3 @@
-
 module Concerns::TimeSheetConcern
   extend ActiveSupport::Concern
 
@@ -6,9 +5,9 @@ module Concerns::TimeSheetConcern
 
     # Following method will stop running timer for the user. At a time one user can have only one timer.
     def update_running_timer(user_id)
-      @time_cleared = current_account.time_sheets.where('user_id= (?) AND timer_running= true', user_id)
-      if @time_cleared.present?
-        @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: calculate_time_spent(tc)) }
+      @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id, true)
+      if @time_cleared
+        @time_cleared.update_attributes(timer_running: false, time_spent: calculate_time_spent(@time_cleared))
       end
     end
 
