@@ -205,7 +205,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
+    pattern = [bad_request_error_pattern('billable', 'not_included', list: "true,false")]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'number')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')
     pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
