@@ -29,4 +29,8 @@ module ApiTicketConstants
 
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED
+
+  # Routes that doesn't accept any params
+  NO_PARAM_ROUTES = %w(restore)
+
 end

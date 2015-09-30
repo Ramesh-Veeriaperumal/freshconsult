@@ -6,4 +6,7 @@ module TimeEntryConstants
   LOAD_OBJECT_EXCEPT = [:ticket_time_entries]
 
   FIELDS_TO_BE_STRIPPED = %w(note time_spent)
+
+  # FilterConstants
+  BILLABLE_FILTER_VALUES = %w(true false)
 end

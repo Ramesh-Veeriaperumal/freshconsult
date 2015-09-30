@@ -68,10 +68,11 @@ class TicketsController < ApiApplicationController
 
     def after_load_object
       return false unless verify_object_state
-      verify_ticket_permission if show? || update? || restore?
-
-      # Ensure that no parameters are passed along with the ticket restore request
-      if action_name == 'restore' && ! params[cname].blank?
+      if show? || update? || restore?
+        return false unless verify_ticket_permission
+      end
+      
+      if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
         render_request_error :no_content_required, 400
       end
     end

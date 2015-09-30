@@ -37,7 +37,7 @@ class TimeEntriesController < ApiApplicationController
       return false if @ticket && !verify_ticket_permission(api_current_user, @ticket)
 
       # Ensure that no parameters are passed along with the toggle_timer request
-      if action_name == 'toggle_timer' && ! params[cname].blank?
+      if action_name == 'toggle_timer' && params[cname].present?
         render_request_error :no_content_required, 400
       end
     end

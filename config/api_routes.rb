@@ -55,7 +55,6 @@ Helpkit::Application.routes.draw do
 
     resources :contacts, as: "api_contacts", :controller => "api_contacts", :except => [:new, :edit] do
       member do
-        put :restore
         put :make_agent
       end
     end

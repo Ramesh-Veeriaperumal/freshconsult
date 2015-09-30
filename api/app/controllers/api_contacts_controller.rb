@@ -53,10 +53,13 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
-      head 404 if scope != nil && @item.deleted != scope
+      if scope != nil && @item.deleted != scope
+        head 404
+        return false
+      end
 
-      # Ensure that no parameters are passed along with the make_agent request
-      if action_name == 'make_agent' && ! params[cname].blank?
+      # make_agent route doesn't accept any parameters
+      if action_name == 'make_agent' && params[cname].present?
         render_request_error :no_content_required, 400
       end
     end
@@ -80,9 +83,9 @@ class ApiContactsController < ApiApplicationController
 
       # Making the client_manager as the last entry in the params_hash, since company_id
       # has to be initialised first for making a contact as a client_manager
-      params_hash[:client_manager] = params_hash.delete(:client_manager).to_s if params_hash[:client_manager]
+      params_hash[:client_manager] = params_hash.delete(:client_manager) if params_hash.key?(:client_manager)
 
-      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
+      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash.key?(:avatar)
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end

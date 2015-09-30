@@ -17,7 +17,6 @@ module ApiConstants
   DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
 
   # ValidationConstants
-  BOOLEAN_VALUES = [true, false, 'true', 'false'] # for boolean fields all these values are accepted.
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024

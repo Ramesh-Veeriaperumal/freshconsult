@@ -1,7 +1,9 @@
 class TimeEntryFilterValidation < ApiValidation
   attr_accessor :company_id, :agent_id, :billable, :executed_after, :executed_before
 
-  validates :billable, custom_inclusion: { in: ApiConstants::BOOLEAN_VALUES }, allow_nil: true
+  # Since query params in URL are always strings, we have to check with boolean strings instead of boolean values
+  validates :billable, custom_inclusion: { in: TimeEntryConstants::BILLABLE_FILTER_VALUES }, allow_nil: true 
+  
   validates :executed_after, :executed_before, date_time: { allow_nil: true }
   validates :agent_id, :company_id, numericality: { allow_nil: true, only_integer: true }
   validate :valid_user?, if: -> { agent_id && errors[:agent_id].blank? }
