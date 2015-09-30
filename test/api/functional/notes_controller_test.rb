@@ -238,26 +238,30 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_cc_kbase_mail
     article_count = Solution::Article.count
+    t = ticket
+    t.update_column(:subject, "More than 3 letters")
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
-    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
     match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
-    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.title == t.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
     refute Helpdesk::Note.last.cc_emails.include?(@account.kbase_email)
   end
 
   def test_reply_with_bcc_kbase_mail
-    article_count = Solution::Article.count
+    article_count = Solution::Article.count  
+    t = ticket
+    t.update_column(:subject, "More than 3 letters")
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
-    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
     match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
-    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.title == t.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
     refute Helpdesk::Note.last.bcc_emails.include?(@account.kbase_email)
   end

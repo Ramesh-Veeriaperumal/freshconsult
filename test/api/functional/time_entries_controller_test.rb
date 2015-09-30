@@ -643,7 +643,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     start_time = (Time.zone.now - 10.minutes).iso8601
     executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
-    put :update, construct_params({ id: ts.id },  time_spent: '08900', start_time: start_time,
+    put :update, construct_params({ id: ts.id },  time_spent: '89:78', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
