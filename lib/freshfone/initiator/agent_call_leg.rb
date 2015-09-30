@@ -80,6 +80,7 @@ class Freshfone::Initiator::AgentCallLeg
 
   private
     def handle_simultaneous_answer
+      Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{current_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
       return incoming_answered unless intended_agent?
       current_call.noanswer? ? @telephony.incoming_missed : incoming_answered
     end

@@ -5,9 +5,11 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallValidator
 	include Freshfone::Response
+	include Freshfone::CallerLookup
 
 	attr_accessor :freshfone_users
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
+	before_filter :invalid_number_incoming_fix, :only => [:voice, :ivr_flow]
 	before_filter :set_native_mobile, :only => :create_ticket
 	before_filter :apply_conference_mode, :only => [:voice, :ivr_flow]
 		
@@ -78,6 +80,14 @@ class FreshfoneController < FreshfoneBaseController
 			 	reset_caller_params
 			 end
 		end
+
+		def invalid_number_incoming_fix
+			return if params[:From].blank? || sip_call?
+			Rails.logger.info "Invalid Number Check For Account Id :: #{current_account.id}, CallSid :: #{params[:CallSid]} for From Number : #{params[:From]}"
+			if invalid_number?(params[:From]) && !strange_number?(params[:From])
+				params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
+			end
+ 		end
 
 		def reset_caller_params
 			params[:FromCountry] = country_from_global(params[:From])
