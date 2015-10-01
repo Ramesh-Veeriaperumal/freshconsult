@@ -33,7 +33,7 @@ class TicketValidation < ApiValidation
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
-  validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+  validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: {excluded_chars: [','] }
 
   validates :custom_fields, custom_field: { custom_fields:
                               {

@@ -158,6 +158,13 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal t.email_config_id, product.primary_email_config.id
   end
 
+  def test_create_with_tags_invalid
+    params = { requester_id: requester.id, tags: ["test,,,,comma","test"] }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('tags', 'special_char_present', chars: ",")])
+  end
+
   def test_create_with_responder_id_not_in_group
     group = create_group(@account)
     params = { requester_id: requester.id, responder_id: @agent.id, group_id: group.id }
@@ -981,6 +988,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     assert t.reload.ticket_type == 'Incident'
     match_json(ticket_pattern({}, t.reload))
+  end
+
+  def test_update_with_tags_invalid
+    t = ticket
+    params_hash = { tags: ["test,,,,comma","test"] }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('tags', 'special_char_present', chars: ",")])
   end
 
   def test_update_with_subject

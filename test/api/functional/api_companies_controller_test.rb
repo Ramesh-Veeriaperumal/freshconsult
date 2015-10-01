@@ -51,6 +51,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', 'missing_field')])
   end
 
+  def test_create_company_domains_invalid
+    post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
+                                       domains: ["test,,,comma", "test"])
+    assert_response 400
+    match_json([bad_request_error_pattern('domains', 'special_char_present', chars: ",")])
+  end
+
   def test_create_company_with_wrong_format
     post :create, construct_params({}, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
                                        domains: domain_array)
@@ -116,6 +123,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                         custom_fields: { 'cf_linetext' => Faker::Lorem.characters(10) })
     assert_equal ' ', @response.body
     assert_response :missing
+  end
+
+  def test_update_company_domains_invalid
+    post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
+                                       domains: ["test,,,comma", "test"])
+    assert_response 400
+    match_json([bad_request_error_pattern('domains', 'special_char_present', chars: ",")])
   end
 
   def test_update_company_with_invalid_fields
