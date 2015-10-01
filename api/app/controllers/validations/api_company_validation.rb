@@ -2,7 +2,8 @@ class ApiCompanyValidation < ApiValidation
   attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types
   validates :name, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
   validates :name, :description, :note, data_type: { rules: String, allow_nil: true }
-  validates :domains, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String, allow_nil: true } }, string_rejection: {excluded_chars: [','] }
+  validates :domains, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String, allow_nil: true } }
+  validates :domains, string_rejection: { excluded_chars: [','] }, if: -> { errors[:domains].blank? }
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Helpers::CompaniesValidationHelper.data_type_validatable_custom_fields },
     required_attribute: :required_for_agent

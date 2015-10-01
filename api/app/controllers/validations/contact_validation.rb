@@ -17,7 +17,8 @@ class ContactValidation < ApiValidation
   validates :job_title, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
   validates :language, data_type: { rules: String }, custom_inclusion: { in: ContactConstants::LANGUAGES }, allow_nil: true
   validates :name, data_type: { rules: String }, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-  validates :tags,  data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] }
+  validates :tags,  data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+  validates :tags, string_rejection: { excluded_chars: [','] }, if: -> { errors[:tags].blank? }
   validates :time_zone, custom_inclusion: { in: ContactConstants::TIMEZONES }, allow_nil: true
 
   validate :contact_detail_missing
