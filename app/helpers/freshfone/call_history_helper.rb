@@ -83,6 +83,15 @@ module Freshfone::CallHistoryHelper
 		result.to_json
 	end
 
+	def filtered_by_business_hours_options
+		result = [
+			{ :id => 0, :value => t('freshfone.call_history.filter_option_all_calls'), :business_hour_call => '' },
+			{ :id => 1, :value =>t('freshfone.call_history.filter_option_within_business_hours'), :business_hour_call => "true" },
+			{ :id => 2, :value =>t('freshfone.call_history.filter_option_outside_business_hours'),:business_hour_call => "false" }
+		]
+		result.to_json
+	end
+
 	def date_picker_labels
 		[
 			{ :today => t('freshfone.call_history.today') ,
