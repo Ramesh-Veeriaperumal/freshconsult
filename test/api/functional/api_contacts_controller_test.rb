@@ -55,7 +55,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_tags_with_comma
     post :create, construct_params({},  email: Faker::Internet.email, name: Faker::Lorem.characters(10), tags: ["test,,,,comma","test"])
-    match_json([bad_request_error_pattern('tags', 'special_char_present', chars: ",")])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
     assert_response 400
   end
 
@@ -322,7 +322,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_contact_tags_with_comma
     params_hash ={tags: ["test,,,,comma","test"]}
     put :update, construct_params({ id: get_user.id }, params_hash)
-    match_json([bad_request_error_pattern('tags', 'special_char_present', chars: ",")])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
     assert_response 400
   end
 

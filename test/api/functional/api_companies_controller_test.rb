@@ -55,7 +55,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
                                        domains: ["test,,,comma", "test"])
     assert_response 400
-    match_json([bad_request_error_pattern('domains', 'special_char_present', chars: ",")])
+    match_json([bad_request_error_pattern('domains', 'special_chars_present', chars: ",")])
   end
 
   def test_create_company_with_wrong_format
@@ -129,7 +129,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
                                        domains: ["test,,,comma", "test"])
     assert_response 400
-    match_json([bad_request_error_pattern('domains', 'special_char_present', chars: ",")])
+    match_json([bad_request_error_pattern('domains', 'special_chars_present', chars: ",")])
   end
 
   def test_update_company_with_invalid_fields
