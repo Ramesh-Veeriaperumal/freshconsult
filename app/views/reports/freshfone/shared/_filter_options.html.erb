@@ -27,6 +27,10 @@
               { :multiple => false, 
                 :class => "select2 filter_item report-metric",
                       "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
+
+      <label class="control-label"><%=t('reports.freshfone.business_hours')%></label>  
+
+      <input type="hidden" id='ff_business_hours' name='business_hours' class = "select2 filter_item"/>
   </li> 
     <li>
       <br/>

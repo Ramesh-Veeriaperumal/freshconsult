@@ -17,6 +17,7 @@ module Reports::FreshfoneReport
     @call_type = params[:call_type] || Freshfone::Call::CALL_TYPE_HASH[:incoming]
     @group_id = params[:group_id]
     @freshfone_number = params[:freshfone_number] || current_account.freshfone_numbers.first.id
+    @business_hours = params[:business_hours]
   end
 
   def filter(start_date, end_date)
@@ -55,10 +56,11 @@ module Reports::FreshfoneReport
 
     def select_conditions
       group_condition
-      conditions = ["freshfone_calls.call_type = ? #{number_condition} #{group_condition}", 
+      conditions = ["freshfone_calls.call_type = ? #{number_condition} #{group_condition} #{business_hours_condition}", 
        @call_type]
       conditions.push(@freshfone_number) if @freshfone_number != ALL_NUMBERS
       conditions.push(@group_id) unless all_or_unassigned?
+      conditions.push(@business_hours) unless @business_hours.blank?
       conditions
     end
 
@@ -70,6 +72,10 @@ module Reports::FreshfoneReport
       query = "and freshfone_calls.group_id = ? " unless @group_id.blank?
       query = "and freshfone_calls.group_id IS NULL"  if @group_id == UNASSIGNED_GROUP
       query
+    end
+
+    def business_hours_condition
+      "and freshfone_calls.business_hour_call = ? " unless @business_hours.blank?
     end
 
     def all_or_unassigned?

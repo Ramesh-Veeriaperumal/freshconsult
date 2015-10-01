@@ -41,6 +41,20 @@ include Freshfone::CallHistoryHelper
     numbers_options.to_json
   end
 
+  def business_hours_hash
+    @business_hour_hash ||=
+      {""  => t('freshfone.call_history.filter_option_all_calls'),
+      "1" => t('freshfone.call_history.filter_option_within_business_hours'),
+      "0" => t('freshfone.call_history.filter_option_outside_business_hours')}
+  end
+
+  def filter_by_business_hours_options
+    business_hours_options = []
+    business_hours_options =  business_hours_hash.each_with_index.map { |(k,v),index| 
+      { :id => index, :value => v, :business_hour_call=> k}
+    }.to_json
+  end
+
   def filter_default_number
     selected_number = freshfone_numbers.find(@freshfone_number)
     {:id => selected_number.id, :value => "#{selected_number.name} (#{selected_number.number})" }.to_json

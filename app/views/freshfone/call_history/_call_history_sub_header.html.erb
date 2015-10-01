@@ -48,6 +48,15 @@
 	<input type="hidden" id="groupName"  name="group_name" class="groupName ff_item" condition='group_id' 
 	operator='is' value = '' data-filtername="<%= t('freshfone.call_history.filter_by_group')%>" data-value=''/>
 	</div>
+
+<div class="filter_title">
+	<label><%= t('freshfone.call_history.filter_by_business_hours') %></label>
+</div>
+
+<div class="filter_tool_select2">
+	<input type="hidden" id="ff_business_hours" class="ff_item" condition="business_hour_call" operator="is" 
+	value='' data-filtername="<%= t('freshfone.call_history.filter_by_business_hours') %>" data-value="All calls"/>
+</div>
 <div class="filter_footer">
 	<a class="btn btn-primary" id="submitfilter">Filter</a>
 	<a class="btn" id="cancel" data-dismiss="slider" class="filter-close">Close</a>
