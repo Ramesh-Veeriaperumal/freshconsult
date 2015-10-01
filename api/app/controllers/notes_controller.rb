@@ -1,7 +1,7 @@
 class NotesController < ApiApplicationController
   wrap_parameters :note, exclude: [], format: [:json, :multipart_form]
 
-  include Concerns::NoteConcern
+  include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
 
@@ -45,7 +45,7 @@ class NotesController < ApiApplicationController
   private
 
     def after_load_object
-      find_ticket # find ticket in case of APIs which has @item.id in url
+      load_notable_from_item # find ticket in case of APIs which has @item.id in url
       return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
       return false if update? && !can_update?
       check_agent_note if update? || destroy?
@@ -95,13 +95,13 @@ class NotesController < ApiApplicationController
       true
     end
 
-    def load_ticket # Needed here in controller to find the item by display_id
+    def load_parent_ticket # Needed here in controller to find the item by display_id
       @ticket = current_account.tickets.find_by_param(params[:id], current_account)
       head 404 unless @ticket
       @ticket
     end
 
-    def find_ticket
+    def load_notable_from_item
       @ticket = @item.notable
     end
 
@@ -148,7 +148,7 @@ class NotesController < ApiApplicationController
       return false unless super # break if there is no enough privilege.
 
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
-      return false if (create? || reply? || ticket_notes?) && !load_ticket
+      return false if (create? || reply? || ticket_notes?) && !load_parent_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
     end
 
@@ -158,5 +158,16 @@ class NotesController < ApiApplicationController
 
     def ticket_notes?
       @ticket_notes ||= current_action?('ticket_notes')
+    end
+
+    def build_note_body_attributes
+      if params[cname][:body] || params[cname][:body_html]
+        note_body_hash = {:note_body_attributes => { :body => params[cname][:body],
+                            :body_html => params[cname][:body_html] }} 
+        params[cname].merge!(note_body_hash).tap do |t| 
+          t.delete(:body) if t[:body]
+          t.delete(:body_html) if t[:body_html]
+        end 
+      end 
     end
 end

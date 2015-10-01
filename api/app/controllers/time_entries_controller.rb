@@ -1,5 +1,6 @@
 class TimeEntriesController < ApiApplicationController
   include Concerns::TimeSheetConcern
+  include TicketConcern
 
   def create
     # If any validation is introduced in the TimeSheet model,
@@ -30,7 +31,7 @@ class TimeEntriesController < ApiApplicationController
   private
 
     def after_load_object
-      return false unless find_ticket # find ticket in case of APIs which has @item.id in url
+      return false unless load_workable_from_item # find ticket in case of APIs which has @item.id in url
 
       # Verify ticket permission if ticket exists.
       return false if @ticket && !verify_ticket_permission(api_current_user, @ticket)
@@ -60,18 +61,18 @@ class TimeEntriesController < ApiApplicationController
       FeatureConstants::TIME_ENTRIES
     end
 
-    def load_ticket
+    def load_parent_ticket
       # Load only non deleted ticket.
       @ticket = current_account.tickets.where(display_id: params[:id].to_i, deleted: false, spam: false).first
       head 404 unless @ticket
       @ticket
     end
 
-    def find_ticket
+    def load_workable_from_item
       @ticket = @item.workable
       spam_or_deleted_ticket = @ticket.deleted || @ticket.spam
       if spam_or_deleted_ticket
-        Rails.logger.error "Params: #{params.inspect} Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
+        Rails.logger.error "Can't load spam/deleted ticket. Params: #{params.inspect} Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
         head 404
       end
       !spam_or_deleted_ticket
@@ -157,7 +158,7 @@ class TimeEntriesController < ApiApplicationController
       return false unless super # break if there is no enough privilege.
 
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
-      return false if (create? || ticket_time_entries?) && !load_ticket
+      return false if (create? || ticket_time_entries?) && !load_parent_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
     end
 

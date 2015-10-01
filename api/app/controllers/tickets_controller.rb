@@ -4,6 +4,7 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TicketActions
   include Helpdesk::TagMethods
   include CloudFilesHelper
+  include TicketConcern
 
   before_filter :ticket_permission?, only: [:destroy]
 
