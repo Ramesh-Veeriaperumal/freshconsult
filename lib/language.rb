@@ -27,6 +27,10 @@ class Language
 		code.gsub('-','_').downcase
 	end
 
+	def make_current
+		Thread.current[:language] = self
+	end
+
 	class << self
 
 		def all
@@ -38,14 +42,55 @@ class Language
 		end
 
 		def find_by_code(code)
-			all.select { |lang| lang.code == strip_bom(code).to_s}.first
+			all.select { |lang| lang.code == strip_bom(code.to_s).to_s}.first
 		end
 
 		def find_by_name(name)
 			all.select { |lang| lang.name == name.to_s}.first
 		end
 
+		def reset_current
+			Thread.current[:language] = nil
+		end
+
+		def set_current(params={})
+			[:url, :user, :browser, :portal, :primary].each do |meth|
+				Thread.current[:language] = send("fetch_from_#{meth}", params)
+				break if Language.current?
+			end
+		end
+
+		def fetch_from_url params
+			if params[:url_locale] && I18n.available_locales.include?(params[:url_locale].to_sym)
+				Language.find_by_code(params[:url_locale]) 
+			end
+		end
+
+		def fetch_from_user params
+			Language.for_current_user
+		end
+
+		def fetch_from_browser params
+			Language.find_by_code(params[:request_language])
+		end
+
+		def fetch_from_portal params
+			Language.find_by_code(Portal.current.language)
+		end
+
+		def fetch_from_primary params
+			Language.for_current_account
+		end
+
 		def current
+			Thread.current[:language]
+		end
+
+		def current?
+			Thread.current[:language].present?
+		end
+
+		def current_old
 			return nil unless Portal.current || Account.current
 			portal = Portal.current || Account.current.main_portal
 			supported_languages = [portal.language, Account.current.supported_languages].flatten

@@ -5,6 +5,7 @@ require 'rails/all'
 require 'rack/throttle'
 require 'gapps_openid'
 require File.expand_path('../../lib/facebook_routing', __FILE__)
+require File.expand_path('../../lib/locale_routing', __FILE__)
 require "rate_limiting"
 require "rack/ssl"
 require "statsd"

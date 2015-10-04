@@ -3,6 +3,7 @@ class SupportController < ApplicationController
   skip_before_filter :check_privilege, :set_cache_buster
   layout :resolve_layout
   before_filter :portal_context
+  before_filter :set_language
   
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -218,5 +219,19 @@ class SupportController < ApplicationController
 
   def agent?
     current_user && current_user.agent?
+  end
+
+  def set_language
+    Language.reset_current
+    Language.set_current(
+      request_language: http_accept_language.compatible_language_from(I18n.available_locales), 
+      url_locale: params[:url_locale])
+    override_default_locale unless Language.current.code.to_sym == I18n.locale
+    redirect_to request.path.prepend("/#{Language.current.code}") if 
+        params[:url_locale] != Language.current.code
+  end
+
+  def override_default_locale
+    I18n.locale = Language.current.code.to_sym
   end
 end

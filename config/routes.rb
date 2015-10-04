@@ -1977,7 +1977,7 @@ Helpkit::Application.routes.draw do
     :controller => 'monitorships', :action => 'toggle',
     :as => :toggle_monitorship
 
-
+  filter :locale
 
   namespace :support do
     match 'home' => 'home#index', :as => :home
