@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150928092424) do
+ActiveRecord::Schema.define(:version => 20151004181828) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3728,6 +3728,8 @@ ActiveRecord::Schema.define(:version => 20150928092424) do
     t.integer "application_id", :limit => 8
     t.text    "options"
   end
+
+  add_index "widgets", ["application_id"], :name => "index_widgets_on_application_id"
   
   create_table "whitelist_users", :force => true do |t|
     t.integer "user_id",    :limit => 8
