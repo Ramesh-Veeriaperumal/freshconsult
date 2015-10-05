@@ -1135,7 +1135,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = @account.time_sheets.count - 1
+    per_page = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0}).count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
