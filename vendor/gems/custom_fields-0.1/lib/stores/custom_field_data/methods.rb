@@ -14,7 +14,7 @@ module Stores
       def get_ff_value ff_alias
         ff_field = to_ff_field ff_alias
         if ff_field
-          send(ff_field)
+          read_attribute(ff_field)
         else
           raise ArgumentError, "CustomField alias: #{ff_alias} not found in flexifeld def mapping"
         end
@@ -24,7 +24,7 @@ module Stores
         ff_field = to_ff_field ff_alias
         if ff_field
           ff_value = nil if ff_value.blank?
-          send :"#{ff_field}=", ff_value
+          write_attribute(ff_field, ff_value)
         else
           raise ArgumentError, "CustomField alias: #{ff_alias} not found in flexifeld def mapping"
         end

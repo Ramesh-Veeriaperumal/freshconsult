@@ -570,14 +570,14 @@ module ApplicationHelper
     current_account.contact_form.custom_contact_fields.each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
-      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"] unless custom_field.field_type == :custom_date
+      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
     }
 
     # Company Custom Field Placeholders
     current_account.company_form.custom_company_fields.each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
-      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"] unless custom_field.field_type == :custom_date
+      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
     }
 
     # Survey Placeholders
