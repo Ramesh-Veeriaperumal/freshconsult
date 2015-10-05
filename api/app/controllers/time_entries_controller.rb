@@ -103,7 +103,7 @@ class TimeEntriesController < ApiApplicationController
 
     def sanitize_params
       params[cname][:timer_running] = @timer_running
-      params[cname][:time_spent] = time_spent
+      set_time_spent(params)
       params[cname][:agent_id] ||= api_current_user.id if create?
       current_time = Time.now
       params[cname][:executed_at] ||= current_time if create?
@@ -116,10 +116,9 @@ class TimeEntriesController < ApiApplicationController
       @item.workable = @ticket
     end
 
-    def time_spent
-      time_spent = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      time_spent ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
-      time_spent
+    def set_time_spent(params)
+      params[cname][:time_spent] = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
+      params[cname][:time_spent] ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
     end
 
     def handle_existing_timer_running
