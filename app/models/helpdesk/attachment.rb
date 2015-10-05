@@ -35,6 +35,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :s3_protocol => :https,
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
+    :s3_host_name => S3_CONFIG[:s3_host_name],
     :whiny => false,
     :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
