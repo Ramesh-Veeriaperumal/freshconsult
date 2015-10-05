@@ -69,10 +69,7 @@ class Solution::CategoriesController < ApplicationController
         flash[:notice] = I18n.t('category_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-        format.html { render  :layout => false, 
-                              :locals => {
-                                :language_id => params[:language_id]
-                              } if @modal }
+        format.html { render  :layout => false if @modal }
       end
       format.xml  { render :xml => @category }
     end

@@ -56,10 +56,7 @@ class Solution::FoldersController < ApplicationController
         flash[:notice] = I18n.t('folder_edit_not_allowed')
         format.html {redirect_to :action => "show" }
       else
-         format.html { render :layout => false,
-                              :locals => {
-                                :language_id => params[:language_id]
-                              }  if @modal }
+         format.html { render :layout => false if @modal }
       end
       format.xml  { render :xml => @folder }
     end

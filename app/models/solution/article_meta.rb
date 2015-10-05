@@ -17,6 +17,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	belongs_to :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 
 		:foreign_key => :solution_folder_meta_id
+
+	has_one :solution_category_meta,
+		:class_name => "Solution::CategoryMeta",
+		:through => :solution_folder_meta
 			
 	has_one :solution_folder, :class_name => "Solution::Folder", :through => :solution_folder_meta
 

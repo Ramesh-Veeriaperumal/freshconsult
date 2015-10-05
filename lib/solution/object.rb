@@ -17,7 +17,7 @@ class Solution::Object
 
 	def initialize(args, obj)
 		throw "Invalid Object Type" unless META_ATTRIBUTES.keys.include?(obj.to_sym)
-		@params = (args[obj] || args["#{obj}_meta"])
+		@params = args["#{obj}_meta"]
 		@args = args
 		@obj = obj
 	end

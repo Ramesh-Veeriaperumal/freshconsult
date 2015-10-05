@@ -31,13 +31,13 @@
 			<h5 class="leads"><%= t('event.type') %>:</h5> <span><%= t(@article.type_name) %></span>
 		</div>
 		
-		<% unless @article.folder.is_default? %>
+		<% unless @article_meta.solution_folder_meta.is_default? %>
 			<div class="folder-name section">
 				<h5 class="leads"><%= t('solution.folders.folder_form.category') %>:</h5>
-				<%= pjax_link_to @article.folder.category.name, solution_category_path(@article.folder.category_id) %>
+				<%= pjax_link_to @article_meta.solution_category_meta.name, solution_category_path(@article_meta.solution_category_meta.id) %>
 				<p class="muted">
-					<% if @article.folder.category.portals.present? %>
-						<%= t('solution_category.product_portal_visibility') %>: <%= @article.folder.category.portals.map(&:name).join(", ") %>
+					<% if @article_meta.solution_category_meta.portals.present? %>
+						<%= t('solution_category.product_portal_visibility') %>: <%= @article_meta.solution_category_meta.portals.map(&:name).join(", ") %>
 					<% else %>
 						<span class="red"><%= t('solution.orphan_category_info') %></span>
 					<% end %>
@@ -46,9 +46,9 @@
 			
 			<div class="folder-name section">
 				<h5 class="leads"><%= t('solution.folder') %>:</h5>
-				<%= pjax_link_to @article.folder.name, solution_folder_path(@article.folder_id) %>
+				<%= pjax_link_to @article_meta.solution_folder_meta.name, solution_folder_path(@article_meta.solution_folder_meta.id) %>
 				<p class="muted">
-					<%= t('forum.visible_to') %>: <%= company_visibility_tooltip(@article.folder) %>
+					<%= t('forum.visible_to') %>: <%= company_visibility_tooltip(@article_meta.solution_folder_meta) %>
 				</p>
 			</div>
 		<% else %>

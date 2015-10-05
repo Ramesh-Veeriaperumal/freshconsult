@@ -1780,6 +1780,7 @@ Helpkit::Application.routes.draw do
         put :reset_ratings
         get :properties
         get :voted_users
+        put :version
       end
       
       resources :tag_uses, :drafts

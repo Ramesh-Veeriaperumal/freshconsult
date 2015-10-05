@@ -1,11 +1,14 @@
+<% name = "solution_article_meta[#{@language_scoper}]"%>
 <div class="article-edit <%= 'hide' unless @article.new_record? %>">
   <%= form_for @article, 
-              :url => @article.new_record? ? solution_articles_path : solution_article_path(@article.id), 
+              :url => @article_meta.new_record? ? solution_articles_path : version_solution_article_path(@article_meta.id), 
               :html => {
+                :method => @article_meta.new_record? ? :post : :put,
                 :multipart => true, 
                 :id => "article-form", 
                 :class => "article-edit-form form-horizontal",
-                :data => form_data_attrs
+                :data => form_data_attrs,
+                :rel => :validate
               } do |f| %>
     <%= f.error_messages %>
     <div class="row-fluid">
@@ -17,6 +20,7 @@
                 :autofocus => true,
                 :minlength => 3,
                 :maxlength => 240,
+                :name => "#{name}[title]",
                 :value => (@article.new_record? ? @article.title : '') %>
     
       </div>
@@ -26,6 +30,7 @@
         <%= f.text_area  :description, 'editor-type' => :solution, :height => "400px", 
               :class => "required_redactor", 
               :value => (@article.new_record? ? @article.description : ''),
+              :name => "#{name}[description]",
               :data => {
                 :"remove-cursor" => true,
                 :"toolbar-external" => '#sticky_redactor_toolbar'
@@ -60,7 +65,20 @@
       </div>
     <% end %>
 
-    <% if !@article.new_record? && @article.folder.is_default? %>
+    <% if @article_meta %>
+      <div class="control-group">
+        <%= f.label(:category_id, t('solution.category'), { :class => 'control-label'}) %>
+        <div class="controls">
+          <%= dynamic_text_box(:category, @language) %>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= f.label(:folder_id, t('solution.folder'), { :class => 'control-label'}) %>
+        <div class="controls">
+          <%= dynamic_text_box(:folder, @language) %>
+        </div>
+      </div>
+    <% elsif !@article.new_record? && @article.folder.is_default? %>
       <div class="row-fluid select-folder">
         <div class="control-group">
           <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
@@ -83,7 +101,7 @@
     <% if @article.new_record? %>
       <div id="solution-properties-container" class="article-properties-edit">
           <div id="solution-properties">
-  	        <%= render :partial => "article_properties", :locals => { :f => f} %>
+  	        <%= render :partial => "article_properties", :locals => { :f => f, :name => name} %>
           </div>
       </div>
     <% end %>
@@ -91,12 +109,13 @@
     <div class="row-fluid action-btns-container">
       <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
         <div class="pull-left itil-hide">
-          <%= confirm_delete(@article, solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article)) %>
+          <%= confirm_delete(@article_meta, solution_category_folder_article_path(@article_meta.solution_category_meta.id,@article_meta.solution_folder_meta,@article_meta)) %>
         </div>
       <% end %>
       <div class="span6 pull-right pagination-right header_buttons align-right">
         <%= article_btns %>
       </div>
     </div>
+    <%= dynamic_hidden_fields(:article) %>
   <% end %>
 </div>

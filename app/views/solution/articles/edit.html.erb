@@ -1,0 +1,24 @@
+<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :sticky_right do %>
+	<%= article_btns('save-btn', 'publish-btn') %>
+<% end %>
+<%= render :partial => '/solution/shared/sticky', 
+           :locals => { :page => :article, :sticky_class => 'article-sticky', :toolbar => true} %>
+           
+<%= render :partial => 'article_form' %>
+		
+<% content_for :helpcard do %>
+	<h3 class="lead"> <%=t('solution.title').html_safe%> </h3>
+<% end %>
+
+<script type="text/javascript">
+  jQuery('body').one('assetLoaded.fjax', function() {
+    App.Solutions.Article.STRINGS = {
+      reload: "<%= escape_javascript(t('reload')).html_safe %>",
+      unsavedContent: "<%= escape_javascript(t('solution.general.unsaved_content')).html_safe %>",
+      leaveQuestion: "<%= escape_javascript(t('solution.general.leave_page_que')).html_safe %>",
+      somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
+      maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>"
+    };
+  });
+</script>

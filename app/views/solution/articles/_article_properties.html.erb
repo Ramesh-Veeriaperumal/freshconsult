@@ -9,6 +9,7 @@
 													  %>
 			<% end %>
 		</div>
+		<% unless @article_meta %>
 		<div class="span4">
 			<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
 			<%= f.select :folder_id , 
@@ -19,14 +20,16 @@
 						), 
 						{ :include_blank => true },
 						:class => "select2 span12 required",
+						:name => "solution_article_meta[solution_folder_meta_id]",
 						:placeholder => t('solution.folders.choose_folder')
 			%>
 		</div>
+		<% end %>
 		<div class="span4">
 			<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
 			<div class="span12 pt3">
 				<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])), :name => "#{name}[art_type]" %>
 					<%= f.label :art_type, t(type), :value => val %>
 				<% end %>
 			</div>
@@ -39,14 +42,15 @@
   <a><%= t('solution.solution_meta') %></a>
 </div>
 <div id="solution-properties-seo" class="hide">
-	<%= f.fields_for :seo_data  do |s| %>
+	<%= fields_for :seo_data  do |s| %>
 						
 		<div class="control-group">
 			<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
 			<div class="controls">
 				<%= s.text_field :meta_title, :class => "text", :rel => "charcounter", 
 					'data-counter' => "TitleCounter", 'data-limit' => 72, 
-					:value => (@article.seo_data || {})[:meta_title] %>
+					:value => (@article.seo_data || {})[:meta_title],
+					:name => "#{name}[seo_data][meta_title]" %>
 				<div class="muted">
 					<%= t('solution.article_properties.title_counter_message') %>
 				</div>
@@ -59,7 +63,8 @@
 	    	<%= s.text_area  :meta_description, :rel => "charcounter", 
 					'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
 					:value => (@article.seo_data || {})[:meta_description], 
-					:class => "solution-properties-description" %>
+					:class => "solution-properties-description",
+					:name => "#{name}[seo_data][meta_description]" %>
 				<div class="muted">
 		    		<%= t('solution.article_properties.description_counter_message') %>
 	  		</div>
@@ -70,7 +75,8 @@
 			<%= s.label(:meta_keywords, t('solution.solution_meta_keywords'), :class => 'control-label') %>
 			<div class="controls">
 				<%= s.text_field :meta_keywords, :class => "text", 
-					:value => (@article.seo_data || {})[:meta_keywords] %>
+					:value => (@article.seo_data || {})[:meta_keywords],
+					:name => "#{name}[seo_data][meta_keywords]" %>
 				<div class="muted">
 					<%= t('solution.meta_keywords_message') %>
 				</div>

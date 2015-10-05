@@ -242,6 +242,13 @@ module SolutionHelper
 		identifier.delete(' ').underscore 
 	end
 
+	def dynamic_hidden_fields f
+		parent_meta = instance_variable_get("@#{f}_meta")
+		op = hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id) if parent_meta
+		op << hidden_field_tag(:language_id,  @language.id)
+		op.html_safe
+	end
+
 	def language_flags(solution_meta)
 		content = ""
 		Account.current.supported_languages.each do |lan|
@@ -267,6 +274,7 @@ module SolutionHelper
 			"close-label" => t('cancel'),
 			"submit-label" => t('save')
 		}}) unless category.eql?('article')
+		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id), options)

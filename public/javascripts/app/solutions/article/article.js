@@ -16,7 +16,7 @@ window.App = window.App || {};
     autoSave: null,
 
     onVisit: function (data) {
-      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
+      if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create" || App.namespace === "solution/articles/edit") {
         $('#sticky_redactor_toolbar').removeClass('hide');
         invokeRedactor('solution_article_description', 'solution');
         this.eventsForNewPage();

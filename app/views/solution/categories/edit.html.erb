@@ -13,7 +13,6 @@
 							:rel => :validate
 						} do |f| %>
 	<%= render :partial => "category_form" , :locals => { :f => f, :name => "solution_category_meta[#{@language_scoper}]" }%>
-	<%= f.hidden_field :language_id, :value => language_id %>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<div class="pull-left">

@@ -1,6 +1,6 @@
 <% content_for :sidebar do %>
 	<div class="solution-sidebar">
-		<%= render partial: "sidebar" %>
+		<%= render partial: "sidebar" unless @article.new_record? %>
 	</div>
 <% end %>
 

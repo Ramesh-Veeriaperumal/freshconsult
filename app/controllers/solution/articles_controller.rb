@@ -3,6 +3,7 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   include CloudFilesHelper
+  include Solution::LanguageControllerMethods
   helper SolutionHelper
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
@@ -12,7 +13,8 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:edit, :update, :destroy, :reset_ratings, :properties]
+  before_filter :load_article, :only => [:update, :destroy, :reset_ratings, :properties]
+  before_filter :load_meta_objects, :only => [:show, :edit]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
@@ -26,11 +28,13 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @article = current_account.solution_articles.find_by_id!(params[:id])
+    @article = @article_meta.send(language_scoper)
     respond_to do |format|
       format.html {
-        @current_item = @article.draft || @article
-        @page_title = @current_item.title
+        if @article 
+          @current_item = @article.draft || @article
+          @page_title = @current_item.title
+        end
       }
       format.xml  { render :xml => @article }
       format.json { render :json => @article }
@@ -51,12 +55,27 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def edit
-    @page_title = @article.title
+    @article = @article_meta.send(language_scoper)
+    @article = current_account.solution_articles.new unless @article
     respond_to do |format|
-      format.html {
-        render_edit
-      }
+      format.html
       format.xml  { render :xml => @article }
+    end
+  end
+
+  def version
+    set_user
+    @article = Solution::Builder.article(params)
+    @article.tags_changed = set_solution_tags
+    respond_to do |format| 
+      if @article
+        format.html { redirect_to solution_article_path(@article.solution_article_meta.id) }
+        format.xml  { render :xml => @article, :status => :created, :location => @article }     
+        format.json { render :json => @article, :status => :ok, :location => @article }     
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
@@ -182,10 +201,20 @@ class Solution::ArticlesController < ApplicationController
     def nscname
       @nscname ||= controller_path.gsub('/', '_').singularize
     end
+
+    def load_meta_objects
+      @article_meta = current_account.solution_article_meta.find_by_id!(params[:id])
+      @folder_meta = @article_meta.solution_folder_meta
+      @category_meta = @folder_meta.solution_category_meta
+    end
     
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account
+    end
+
+    def set_user
+      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
     end
 
     def set_selected_tab

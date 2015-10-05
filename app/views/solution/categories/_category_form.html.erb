@@ -38,5 +38,5 @@
 		</div>
 	</div>
 	<% end %>
-	<%= f.hidden_field :id, :name => "solution_category_meta[id]", :value => @category_meta.id if @category_meta %>
+	<%= dynamic_hidden_fields(:category) %>
 </div>
