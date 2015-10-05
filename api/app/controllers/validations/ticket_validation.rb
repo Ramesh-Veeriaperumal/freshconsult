@@ -70,7 +70,16 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    errors.add(:due_by, 'due_by_gt_created_and_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+    invalid = (due_by < (@item.try(:created_at) || Time.now))
+    invalid ||= due_by_less_than_fr_due_by? if errors[:fr_due_by].blank?
+    errors.add(:due_by, 'due_by_gt_created_and_lt_frdueby') if invalid
+  end
+
+  def due_by_less_than_fr_due_by?
+    # parsing is needed because when both are strings, < operator does not work.
+    parsed_due_by = DateTime.parse due_by
+    parsed_fr_due_by = DateTime.parse fr_due_by
+    parsed_due_by < parsed_fr_due_by
   end
 
   def cc_emails_max_count

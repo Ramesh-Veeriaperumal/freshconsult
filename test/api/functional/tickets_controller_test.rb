@@ -358,7 +358,14 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'due_by_gt_created_and_now')])
+                bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+  end
+
+  def test_create_with_due_by_greater_than_created_at_less_than_fr_due_by
+    params = ticket_params_hash.merge(due_by: 30.days.since.iso8601, fr_due_by: 31.days.since.iso8601)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
   end
 
   def test_create_invalid_model
@@ -900,7 +907,15 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'due_by_gt_created_and_now')])
+                bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+  end
+
+  def test_update_with_due_by_greater_than_created_at_less_than_fr_due_by
+    t = ticket
+    params = ticket_params_hash.merge(due_by: 30.days.since.iso8601, fr_due_by: 31.days.since.iso8601)
+    put :update, construct_params({id: t.id}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
   end
 
   def test_update_without_due_by
