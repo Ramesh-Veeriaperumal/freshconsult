@@ -75,7 +75,7 @@ module ApiDiscussions
 
     def test_update_duplicate_name
       fc = fc_obj
-      forum = f_obj
+      forum = create_test_forum(fc)
       another_forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: another_forum.name)
       assert_response 409
@@ -101,8 +101,10 @@ module ApiDiscussions
 
     def test_update_invalid_forum_category_id
       fc = fc_obj
+      fc.update_column(:account_id, 999)
       forum = f_obj
-      put :update, construct_params({ id: forum.id }, forum_category_id: 89)
+      put :update, construct_params({ id: forum.id }, forum_category_id: fc.reload.id)
+      fc.update_column(:account_id, @account.id)
       assert_response 400
       match_json([bad_request_error_pattern('forum_category_id', "can't be blank")])
     end
@@ -360,7 +362,9 @@ module ApiDiscussions
     end
 
     def test_create_invalid_model
-      post :create, construct_params({ id: ForumCategory.first.id }, forum_visibility: '1', forum_type: 1, name: Forum.first.name)
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      post :create, construct_params({ id: fc.id }, forum_visibility: '1', forum_type: 1, name: forum.name)
       match_json([bad_request_error_pattern('name', 'already exists in the selected category')])
       assert_response 409
     end

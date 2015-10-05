@@ -149,6 +149,27 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+    def test_create_with_invalid_email_config_id
+    email_config = EmailConfig.first || create_email_config
+    email_config.update_column(:account_id, 999)
+    params = { requester_id: requester.id, email_config_id: email_config.reload.id }
+    post :create, construct_params({}, params)
+    email_config.update_column(:account_id, @account.id)
+    match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
+    assert_response 400
+  end
+
+  def test_update_with_invalid_email_config_id
+    email_config = EmailConfig.first || create_email_config
+    email_config.update_column(:account_id, 999)
+    params = { email_config_id: email_config.reload.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params)
+    email_config.update_column(:account_id, @account.id)
+    match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
+    assert_response 400
+  end
+
   def test_create_with_product_id
     product = create_product(email: Faker::Internet.email)
     params = { requester_id: requester.id, product_id: product.id }
