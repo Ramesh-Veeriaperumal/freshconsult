@@ -197,9 +197,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def agent_permission user
       case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
       when :assigned_tickets
-        ["responder_id=?", user.id]
+        ["`helpdesk_tickets`.responder_id=?", user.id]
       when :group_tickets
-        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+        ["`helpdesk_tickets`.group_id in (?) OR `helpdesk_tickets`.responder_id=? OR `helpdesk_tickets`.requester_id=?", 
                     user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
       when :all_tickets
         []

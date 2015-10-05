@@ -128,8 +128,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end                    
   
   # Used by API v2
-  def self.filter(filter_options=FILTER_OPTIONS)
-    relation = scoped
+  def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
+    relation = scoped.where(permissible_ticket_conditions(user))
     filter_options.each_pair do |key, value|
       clause = filter_conditions(filter_options)[key.to_sym] || {}
       relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
@@ -161,6 +161,18 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         conditions: {:users => {:customer_id => filter_options[:company_id]}}
       }
     }
+  end
+
+  def self.permissible_ticket_conditions(user)
+    # Not spammed tickets only
+    ticket_conditions = ["`helpdesk_tickets`.spam =0"]
+
+    # get permissible tickets for the user.
+    conditions = Helpdesk::Ticket.agent_permission(user) if user.agent?
+
+    # merge above two conditions to one.
+    ticket_conditions = [(ticket_conditions | conditions.take(1)).join(" AND ")].concat(conditions.drop(1)) if conditions.present?
+    ticket_conditions
   end
 
   def hours 

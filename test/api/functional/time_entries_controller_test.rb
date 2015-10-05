@@ -1146,4 +1146,66 @@ class TimeEntriesControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
   end
+
+  def test_index_with_agent_has_assigned_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(3)
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil)
+    Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
+    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, responder_id: @agent.id}).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission_and_ticket_requested
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
+    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, requester_id: @agent.id}).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission_and_ticket_responded
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
+    Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
+    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, responder_id: @agent.id}).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    group_id = (Group.first || create_group).id
+    User.any_instance.stubs(:agent_groups).returns([AgentGroup.new(group_id: group_id)])
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil, requester_id: user.id)
+    Helpdesk::TimeSheet.first.workable.update_column(:group_id, group_id)
+    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, group_id: group_id}).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+    User.any_instance.unstub(:agent_groups)
+  end
+
+  def test_index_with_agent_has_all_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(1)
+    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0}).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
 end
