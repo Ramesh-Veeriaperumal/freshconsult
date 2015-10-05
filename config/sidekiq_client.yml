@@ -30,6 +30,7 @@ defaults: &defaults
     - [reset_group]
     - [reset_responder]
     - [new_es_index]
+    - [reset_gamification_score]
     - [solution_language_change]
     - [export_agents]
     - [ebay_worker]

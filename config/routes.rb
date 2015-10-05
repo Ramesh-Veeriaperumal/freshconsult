@@ -351,6 +351,7 @@ Helpkit::Application.routes.draw do
       get :convert_to_user
       put :reset_password
       put :convert_to_contact
+      put :reset_score
       post :toggle_availability
       get :api_key
     end
@@ -973,6 +974,7 @@ Helpkit::Application.routes.draw do
         post :toggle
         get :quests
         put :update_game
+        put :reset_arcade
       end
     end
 

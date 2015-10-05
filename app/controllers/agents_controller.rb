@@ -12,12 +12,12 @@ class AgentsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
-    :convert_to_contact, :api_key] 
+    :convert_to_contact, :reset_score, :api_key] 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
   before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
-    :convert_to_contact, :reset_password ]
+    :convert_to_contact, :reset_score, :reset_password ]
   before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  [:restore, :create] 
   before_filter :check_agent_limit_on_update, :validate_params, :can_edit_roles_and_permissions, :only => [:update]
@@ -278,6 +278,12 @@ class AgentsController < ApplicationController
       flash[:notice] = t('agent.invalid_export_params')
     end
     redirect_to :back
+  end
+
+  def reset_score
+    GamificationReset.perform_async({"agent_id" => @agent.id })
+    flash[:notice] = I18n.t('gamification.score_reset_successfull')
+    redirect_to agent_path(@agent)
   end
 
  protected
