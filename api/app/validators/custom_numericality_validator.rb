@@ -1,6 +1,6 @@
 class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValidator
   def validate_each(record, attribute, value)
-    if !options[:ignore_string].nil?  && record.send(options[:ignore_string])
+    if !options[:ignore_string].nil? && record.send(options[:ignore_string])
       super(record, attribute, value)
     else
       validate_numeric(record, attribute, value)
@@ -16,7 +16,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
         message = options[:message] || 'data_type_mismatch'
         record.errors[attribute] << message
         (record.error_options ||= {}).merge!(attribute => { data_type: data_type(options[:allow_negative]) })
-      end      
+      end
     end
 
     def data_type(allow_negative)

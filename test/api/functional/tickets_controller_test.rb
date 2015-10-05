@@ -149,7 +149,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
-    def test_create_with_invalid_email_config_id
+  def test_create_with_invalid_email_config_id
     email_config = EmailConfig.first || create_email_config
     email_config.update_column(:account_id, 999)
     params = { requester_id: requester.id, email_config_id: email_config.reload.id }
@@ -180,10 +180,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_tags_invalid
-    params = { requester_id: requester.id, tags: ["test,,,,comma","test"] }
+    params = { requester_id: requester.id, tags: ['test,,,,comma', 'test'] }
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ',')])
   end
 
   def test_create_with_responder_id_not_in_group
@@ -1013,10 +1013,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_tags_invalid
     t = ticket
-    params_hash = { tags: ["test,,,,comma","test"] }
+    params_hash = { tags: ['test,,,,comma', 'test'] }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ',')])
   end
 
   def test_update_with_subject
@@ -2118,7 +2118,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_array_fields_with_invalid_tags_and_nil_custom_field
     params_hash = update_ticket_params_hash
     t = create_ticket
-    put :update, construct_params({ id: t.display_id }, tags: [1,2], custom_fields: nil)
+    put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: nil)
     assert_response 400
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'String')])
   end
@@ -2150,10 +2150,10 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = {}
     t = ticket
     due_by = 5.hours.since.utc.iso8601
-    fr_due_by = 3.hours.since.to_time.in_time_zone("Tokelau Is.")
+    fr_due_by = 3.hours.since.to_time.in_time_zone('Tokelau Is.')
     t.update_attributes(manual_dueby: Time.now.iso8601)
-    put :update, construct_params({ id: t.display_id }, due_by: due_by.chop, 
-      fr_due_by: fr_due_by.iso8601 )
+    put :update, construct_params({ id: t.display_id }, due_by: due_by.chop,
+                                                        fr_due_by: fr_due_by.iso8601)
     match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
     assert_response 200
   end

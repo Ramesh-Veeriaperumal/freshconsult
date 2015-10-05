@@ -227,7 +227,7 @@ module ApiDiscussions
       name = Faker::Name.name
       forum_category_id =  ForumCategory.first.id
       post :create, construct_params({ id: forum_category_id }, description: 'desc', forum_visibility: '1',
-                                                                     forum_type: 1, name: name)
+                                                                forum_type: 1, name: name)
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: forum_category_id)
       assert_response 201

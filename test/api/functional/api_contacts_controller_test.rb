@@ -54,8 +54,8 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_contact_tags_with_comma
-    post :create, construct_params({},  email: Faker::Internet.email, name: Faker::Lorem.characters(10), tags: ["test,,,,comma","test"])
-    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
+    post :create, construct_params({},  email: Faker::Internet.email, name: Faker::Lorem.characters(10), tags: ['test,,,,comma', 'test'])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ',')])
     assert_response 400
   end
 
@@ -303,7 +303,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_length_valid_with_trailing_spaces
-    params = {name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space]}
+    params = { name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space] }
     post :create, construct_params({}, params)
     match_json(deleted_contact_pattern(User.last))
     assert_response 201
@@ -320,9 +320,9 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_tags_with_comma
-    params_hash ={tags: ["test,,,,comma","test"]}
+    params_hash = { tags: ['test,,,,comma', 'test'] }
     put :update, construct_params({ id: get_user.id }, params_hash)
-    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ",")])
+    match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ',')])
     assert_response 400
   end
 
@@ -446,9 +446,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
-    params = { name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space]}
+    params = { name: Faker::Lorem.characters(20) + white_space, job_title: Faker::Lorem.characters(20) + white_space, mobile: Faker::Lorem.characters(20) + white_space, address: Faker::Lorem.characters(20) + white_space, email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space, twitter_id: Faker::Lorem.characters(20) + white_space, phone: Faker::Lorem.characters(20) + white_space, tags: [Faker::Lorem.characters(20) + white_space] }
     put :update, construct_params({ id: sample_user.id }, params)
-    match_json(deleted_contact_pattern(sample_user.reload)) 
+    match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
     sample_user.update_attribute(:email, email)
   end
@@ -706,7 +706,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: true,
                                         company_id: comp.id,
                                         language: 'en',
-                                        tags: [1,2,3])
+                                        tags: [1, 2, 3])
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'String')])
     assert_response 400
   end
@@ -722,8 +722,8 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_invalid_format_custom_field
     sample_user = get_user_with_email
-    put :update, construct_params({ id: sample_user.id }, {custom_fields: [1,2]})
-    match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])   
+    put :update, construct_params({ id: sample_user.id }, custom_fields: [1, 2])
+    match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])
     assert_response 400
   end
 end

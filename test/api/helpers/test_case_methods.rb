@@ -106,37 +106,35 @@ module TestCaseMethods
 
   EOL = "\015\012"  # "\r\n"
   # Encode params and image in multipart/form-data.
-  def encode_multipart(params,image_param=nil,image_file_path=nil,content_type=nil, encoding=true)
-    headers={}
-    parts=[]
-    boundary="234092834029834092830498"
-    params.each_pair do |key,val|
+  def encode_multipart(params, image_param = nil, image_file_path = nil, content_type = nil, encoding = true)
+    headers = {}
+    parts = []
+    boundary = '234092834029834092830498'
+    params.each_pair do |key, val|
       if val.is_a? Hash
         val.each_pair do |child_key, child_value|
-          parts.push %{Content-Disposition: form-data; }+%{name="#{key}[#{child_key}]"#{EOL}#{EOL}#{child_value}#{EOL}}
+          parts.push %(Content-Disposition: form-data; ) + %(name="#{key}[#{child_key}]"#{EOL}#{EOL}#{child_value}#{EOL})
         end
       elsif val.is_a? Array
         val.each do |x|
-          parts.push %{Content-Disposition: form-data; }+%{name="#{key}[]"#{EOL}#{EOL}#{x}#{EOL}}
+          parts.push %(Content-Disposition: form-data; ) + %(name="#{key}[]"#{EOL}#{EOL}#{x}#{EOL})
         end
       else
-        parts.push %{Content-Disposition: form-data; }+%{name="#{key}"#{EOL}#{EOL}#{val}#{EOL}}
+        parts.push %(Content-Disposition: form-data; ) + %(name="#{key}"#{EOL}#{EOL}#{val}#{EOL})
       end
     end
     if image_param
       image_part = \
-        %{Content-Disposition: form-data; name="#{image_param}"; }+
-        %{filename="#{File.basename(image_file_path)}"#{EOL}}+
-        %{Content-Type: #{content_type}#{EOL}#{EOL}}
-      file_read_params = encoding ? [image_file_path, encoding: "UTF-8"] : [image_file_path]
+        %(Content-Disposition: form-data; name="#{image_param}"; ) + %(filename="#{File.basename(image_file_path)}"#{EOL}) + %(Content-Type: #{content_type}#{EOL}#{EOL})
+      file_read_params = encoding ? [image_file_path, encoding: 'UTF-8'] : [image_file_path]
       image_part << File.read(*file_read_params) << EOL
-      image_part = image_part.force_encoding("BINARY") if image_part.respond_to?(:force_encoding) && encoding
+      image_part = image_part.force_encoding('BINARY') if image_part.respond_to?(:force_encoding) && encoding
       parts.push(image_part)
     end
     body = parts.join("--#{boundary}#{EOL}")
-    body = "--#{boundary}#{EOL}" + body + "--#{boundary}--"+EOL
-    headers['CONTENT_TYPE']="multipart/form-data; boundary=#{boundary}"
-    [ headers , body.scrub! ]
+    body = "--#{boundary}#{EOL}" + body + "--#{boundary}--" + EOL
+    headers['CONTENT_TYPE'] = "multipart/form-data; boundary=#{boundary}"
+    [headers, body.scrub!]
   end
 end
 

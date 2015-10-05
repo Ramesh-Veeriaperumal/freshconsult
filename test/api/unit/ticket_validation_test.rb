@@ -1,7 +1,6 @@
 require_relative '../unit_test_helper'
 
 class TicketValidationTest < ActionView::TestCase
-  
   def tear_down
     Account.unstub(:current)
     super
@@ -40,7 +39,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_comma_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ["comma,test"] }
+    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma,test'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -51,7 +50,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_comma_valid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ["comma","test"] }
+    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma', 'test'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)

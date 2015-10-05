@@ -4,7 +4,7 @@ class ApiCompanyValidation < ApiValidation
   validates :name, :description, :note, data_type: { rules: String, allow_nil: true }
   validates :domains, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String, allow_nil: true } }
   validates :domains, string_rejection: { excluded_chars: [','] }, if: -> { errors[:domains].blank? }
-  validates :custom_fields, data_type: {rules: Hash, allow_nil: true}
+  validates :custom_fields, data_type: { rules: Hash, allow_nil: true }
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Helpers::CompaniesValidationHelper.data_type_validatable_custom_fields },
     required_attribute: :required_for_agent

@@ -25,7 +25,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.array = [1, 2]
     test.hash = { a: 1 }
     test.boolean = true
-    test.allow_string_boolean = "false"
+    test.allow_string_boolean = 'false'
     assert test.valid?
     assert test.errors.empty?
   end
@@ -43,10 +43,10 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.string_param = false
     test.array = 1
     test.hash = 2
-    test.boolean = "true"
-    test.allow_string_boolean = "false"
+    test.boolean = 'true'
+    test.allow_string_boolean = 'false'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ array: 'data_type_mismatch', hash: 'data_type_mismatch', boolean: 'data_type_mismatch', :allow_string_boolean => 'data_type_mismatch' }, errors)
+    assert_equal({ array: 'data_type_mismatch', hash: 'data_type_mismatch', boolean: 'data_type_mismatch', allow_string_boolean: 'data_type_mismatch' }, errors)
   end
 end

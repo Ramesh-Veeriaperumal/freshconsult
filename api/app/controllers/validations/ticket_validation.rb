@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
 
   # proc is used as inclusion array is not constant
   validates :status, custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :string_param }, allow_nil: true
-  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :string_param}, allow_nil: true
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :string_param }, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_fr_due_by?
   validates :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
@@ -34,7 +34,7 @@ class TicketValidation < ApiValidation
   validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
   validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long },
-                            data_type: {rules: String} }
+                            data_type: { rules: String } }
   validates :tags, string_rejection: { excluded_chars: [','] }, if: -> { errors[:tags].blank? }
 
   validates :custom_fields, custom_field: { custom_fields:
@@ -96,7 +96,6 @@ class TicketValidation < ApiValidation
   def disallowed_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
-
 
   def attributes_to_be_stripped
     ApiTicketConstants::FIELDS_TO_BE_STRIPPED

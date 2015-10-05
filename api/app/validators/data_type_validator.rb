@@ -13,7 +13,7 @@ class DataTypeValidator < ActiveModel::EachValidator
 
   private
 
-    # check if value class is same as type. case & when uses === operator which compares the type first. 
+    # check if value class is same as type. case & when uses === operator which compares the type first.
     # Faster than is_a? check
     def valid_type?(type, value, record)
       case value

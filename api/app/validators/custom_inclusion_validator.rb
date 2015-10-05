@@ -6,7 +6,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
 
     # Include string representation of values also in the list if request is multipart.
     inclusion_list = (inclusion_list | inclusion_list.map(&:to_s)) if !options[:ignore_string].nil? && record.send(options[:ignore_string])
-    
+
     record.errors.add(attribute, 'should_be_blank', options) if value.present? && inclusion_list.empty?
     unless inclusion_list.send(inclusion_method(inclusion_list), value) || inclusion_list.empty?
 

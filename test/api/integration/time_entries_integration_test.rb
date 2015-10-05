@@ -93,7 +93,7 @@ class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
       write_to_file(v1, v2)
 
       v1.keys.each do |key|
-        api_key = "api_#{key}".to_sym 
+        api_key = "api_#{key}".to_sym
         assert v2[key] <= v1[key]
         assert_equal v2_expected[api_key], v2[api_key]
         assert_equal v2_expected[key], v2[key]

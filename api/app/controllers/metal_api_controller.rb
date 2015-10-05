@@ -27,14 +27,14 @@ class MetalApiController < ActionController::Metal
 
   # Metal controller doesn't know the view path. So appending it.
   append_view_path "#{Rails.root}/api/app/views"
-  
+
   def self.wrap_params
     ApiConstants::WRAP_PARAMS
   end
 
   # wrap params will wrap only attr_accessible fields if this is removed.
   def self.inherited(subclass)
-    subclass.wrap_parameters(*self.wrap_params)
+    subclass.wrap_parameters(*wrap_params)
   end
 end
 

@@ -1,5 +1,4 @@
 class TicketsController < ApiApplicationController
-
   include Helpdesk::TicketActions
   include Helpdesk::TagMethods
   include CloudFilesHelper

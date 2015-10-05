@@ -96,8 +96,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_multipart_invalid_data_unparsable
     skip_bullet do
-      headers, params = encode_multipart({ 'ticket' => {'email' => 'test@abc.com', 'subject' => 'Test Subject' }}, 'attachments', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', false)
-      Rack::Utils::stubs(:parse_nested_query).raises(ArgumentError)
+      headers, params = encode_multipart({ 'ticket' => { 'email' => 'test@abc.com', 'subject' => 'Test Subject' } }, 'attachments', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', false)
+      Rack::Utils.stubs(:parse_nested_query).raises(ArgumentError)
       post '/api/tickets', params, @headers.merge(headers)
     end
     assert_response :internal_server_error
@@ -116,20 +116,20 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_multipart_data_with_valid_data_types
-    tkt_field1 = create_custom_field("test_custom_decimal", 'decimal')
-    tkt_field2 = create_custom_field("test_custom_checkbox", 'checkbox')
+    tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
+    tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
     field1, field2 = tkt_field1.name, tkt_field2.name
-    headers, params = encode_multipart({'subject' => 'Test Subject', 'requester_id' => "#{@agent.id}", "custom_fields" => { "#{field1}" => "2.34", "#{field2}" => "false"} }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    headers, params = encode_multipart({ 'subject' => 'Test Subject', 'requester_id' => "#{@agent.id}", 'custom_fields' => { "#{field1}" => '2.34', "#{field2}" => 'false' } }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
     end
-    [tkt_field1, tkt_field2].each { |x| x.destroy }
+    [tkt_field1, tkt_field2].each(&:destroy)
     assert_response 201
     assert_equal Hash, parse_response(@response.body).class
     result = JSON.parse(@response.body)
-    assert_equal @agent.id, result["requester_id"]
-    assert_equal "2.34", result["custom_fields"]["#{field1}"]
-    assert_equal false, result["custom_fields"]["#{field2}"]
+    assert_equal @agent.id, result['requester_id']
+    assert_equal '2.34', result['custom_fields']["#{field1}"]
+    assert_equal false, result['custom_fields']["#{field2}"]
   end
 
   def test_not_acceptable_invalid_type
@@ -360,7 +360,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   # end
 
   def test_multipart_data_for_not_allowed_route
-    headers, params = encode_multipart({"name" => Faker::Name.name})
+    headers, params = encode_multipart('name' => Faker::Name.name)
     skip_bullet do
       post '/api/discussions/categories', params, @headers.merge(headers)
     end

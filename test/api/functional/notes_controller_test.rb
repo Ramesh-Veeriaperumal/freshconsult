@@ -759,7 +759,7 @@ class NotesControllerTest < ActionController::TestCase
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
- 
+
   def test_update_with_nil_params_for_attachments
     params_hash = { attachments: nil }
     post :create, construct_params({ id: ticket.display_id }, params_hash)

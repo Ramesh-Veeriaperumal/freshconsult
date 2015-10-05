@@ -25,7 +25,7 @@ class ActionController::TestCase
     end
     super
   end
-  ActiveRecord::Base.logger.level = 1 
+  ActiveRecord::Base.logger.level = 1
   self.use_transactional_fixtures = false
   fixtures :all
 end

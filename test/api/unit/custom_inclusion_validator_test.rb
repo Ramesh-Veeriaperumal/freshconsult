@@ -8,7 +8,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     validates :attribute1, custom_inclusion: { in: [1, 2], message: 'attribute1_invalid', allow_nil: true }
     validates :attribute2, custom_inclusion: { in: [1, 2], required: true }
     validates :attribute3, custom_inclusion: { in: [1, 2], exclude_list: true, allow_blank: true }
-    validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :string_param, allow_blank: true}
+    validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :string_param, allow_blank: true }
   end
 
   def test_custom_message
@@ -88,7 +88,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.attribute1 = 1
     test.attribute2 = 1
     test.attribute3 = 2
-    test.attribute4 = "2"
+    test.attribute4 = '2'
     test.string_param = true
     assert test.valid?
     assert test.errors.empty?
@@ -98,9 +98,9 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test = TestValidation.new
     test.attribute1 = 3
     test.attribute3 = 2
-    test.attribute4 = "2"
+    test.attribute4 = '2'
     test.string_param = false
-    refute test.valid? 
+    refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute1: 'attribute1_invalid', attribute2: 'required_and_inclusion', attribute4: 'not_included' }, errors)
