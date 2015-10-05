@@ -31,4 +31,6 @@ module ApiConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json]
+
+  UTC = "UTC"
 end

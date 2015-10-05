@@ -427,4 +427,8 @@ class ApiApplicationController < MetalApiController
     def multipart_params
       {string_param: multipart_or_get_request?}
     end
+
+    def set_time_zone
+      Time.zone = ApiConstants::UTC
+    end
 end

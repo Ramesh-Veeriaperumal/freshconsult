@@ -70,7 +70,7 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    errors.add(:due_by, 'start_time_lt_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+    errors.add(:due_by, 'due_by_gt_created_and_now') if due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
   def cc_emails_max_count

@@ -358,7 +358,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'start_time_lt_now')])
+                bad_request_error_pattern('due_by', 'due_by_gt_created_and_now')])
   end
 
   def test_create_invalid_model
@@ -900,7 +900,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'start_time_lt_now')])
+                bad_request_error_pattern('due_by', 'due_by_gt_created_and_now')])
   end
 
   def test_update_without_due_by
@@ -2144,5 +2144,17 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_update_due_by_without_time_zone_fr_due_by_with_time_zone
+    params_hash = {}
+    t = ticket
+    due_by = 5.hours.since.utc.iso8601
+    fr_due_by = 3.hours.since.to_time.in_time_zone("Tokelau Is.")
+    t.update_attributes(manual_dueby: Time.now.iso8601)
+    put :update, construct_params({ id: t.display_id }, due_by: due_by.chop, 
+      fr_due_by: fr_due_by.iso8601 )
+    match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
+    assert_response 200
   end
 end
