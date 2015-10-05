@@ -2,6 +2,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
+  skip_before_filter :set_language
   before_filter :build_item, :only => :new
   before_filter :set_native_mobile, :only => [:create]
   include SupportTicketControllerMethods 
