@@ -7,19 +7,19 @@ class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 5,
-        api_update: 5,
+        api_create: 7,
+        api_update: 7,
         api_index: 2,
-        api_toggle_timer: 5,
-        api_destroy: 5,
-        api_ticket_time_entries: 2,
+        api_toggle_timer: 7,
+        api_destroy: 7,
+        api_ticket_time_entries: 3,
 
-        create: 21,
-        update: 17,
+        create: 22,
+        update: 18,
         index: 13,
-        toggle_timer: 19,
-        destroy: 16,
-        ticket_time_entries: 14
+        toggle_timer: 20,
+        destroy: 18,
+        ticket_time_entries: 15
       }
 
       ticket = create_ticket

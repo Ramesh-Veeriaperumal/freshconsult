@@ -699,7 +699,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_nil response.headers['Link']
   end
 
-  def test_create_contact_with_invalid_tags
+  def test_create_contact_with_invalid_tag_values
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
@@ -716,7 +716,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     sample_user.update_column(:deleted, false)
     put :update, construct_params({ id: sample_user.reload.id }, params)
-    match_json(contact_pattern(sample_user.reload))
+    match_json(deleted_contact_pattern(sample_user))
     assert_response 200
   end
 

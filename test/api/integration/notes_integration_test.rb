@@ -7,17 +7,17 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 1,
-        api_reply: 1,
-        api_update: 4,
-        api_destroy: 7,
+        api_create: 2,
+        api_reply: 2,
+        api_update: 6,
+        api_destroy: 9,
         api_ticket_notes: 5,
 
         create: 57,
         reply: 59,
-        update: 22,
-        destroy: 20,
-        ticket_notes: 16
+        update: 23,
+        destroy: 21,
+        ticket_notes: 17
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id
