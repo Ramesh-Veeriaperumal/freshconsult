@@ -1209,6 +1209,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Agent.any_instance.unstub(:ticket_permission)
   end
 
+  def test_update_running_timer_with_start_time_nil
+    te = sample_time_entry
+    assert_not_nil te.time_spent
+    put :update, construct_params({ id: te.id }, start_time: nil)
+    assert_not_nil te.reload.time_spent
+  end
+
   def test_update_time_spent_present_timer_with_timer_running_true
     te = sample_time_entry
     put :update, construct_params({ id: te.id }, time_spent: "05:00")

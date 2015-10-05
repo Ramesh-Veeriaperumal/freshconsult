@@ -142,7 +142,9 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def total_running_time
-      @item.time_spent.to_i + (Time.now - @item.start_time).abs.round
+      time = @item.time_spent.to_i
+      time += (Time.now - @item.start_time).abs.round if @item.start_time
+      time
     end
 
     def convert_duration(time_spent)
