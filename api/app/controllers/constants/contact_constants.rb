@@ -1,6 +1,6 @@
 module ContactConstants
-  ARRAY_FIELDS = [{ 'tags' => [String] }]
-  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags) | ARRAY_FIELDS
+  ARRAY_FIELDS = [{ 'tags' => [] }]
+  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags custom_fields) | ARRAY_FIELDS
 
   STATES = %w( verified unverified all deleted blocked )
 

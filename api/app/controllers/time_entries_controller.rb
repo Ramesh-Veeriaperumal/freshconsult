@@ -139,7 +139,7 @@ class TimeEntriesController < ApiApplicationController
 
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
-      return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
+      return true if params[cname][:timer_running] && !@item.timer_running
     end
 
     def total_running_time

@@ -108,6 +108,21 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern({ name => name }, company.reload))
   end
 
+  def test_update_company_with_nil_custom_field
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: company.id }, custom_fields: nil)
+    match_json(company_pattern({}, company.reload))
+    assert_response 200
+  end
+
+  def test_update_company_with_custom_field_invalid_format
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    name = Faker::Lorem.characters(10)
+    put :update, construct_params({ id: company.id }, custom_fields: [1, 2])
+    match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])   
+    assert_response 400
+  end
+
   def test_update_company_with_blank_name
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, name: '', description: Faker::Lorem.paragraph,
@@ -237,7 +252,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_create_companies_with_empty_domains
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: [], note: Faker::Lorem.characters(10))
+                                       domains: nil, note: Faker::Lorem.characters(10))
     assert_response 201
     match_json(company_pattern(Company.last))
   end
@@ -312,7 +327,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_delete_existing_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
-    put :update, construct_params({ id: company.id }, domains: [])
+    put :update, construct_params({ id: company.id }, domains: nil)
     assert_response 200
     match_json(company_pattern(company.reload))
   end

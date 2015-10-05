@@ -284,7 +284,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_data_type_invalid
     cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
-    params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [])
+    params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [1])
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array'),
@@ -1210,6 +1210,22 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('fr_due_by', 'invalid_field')])
   end
 
+  def test_update_with_status_resolved_and_only_due_by
+    t = ticket
+    params_hash = { status: 4, due_by: 12.days.since.iso8601 }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'invalid_field')])
+  end
+
+  def test_update_with_status_closed_and_only_fr_due_by
+    t = ticket
+    params_hash = { status: 5, fr_due_by: 4.days.since.iso8601 }
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('fr_due_by', 'invalid_field')])
+  end
+
   def test_update_with_status_closed_and_due_by
     t = ticket
     params_hash = { status: 5, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
@@ -1326,7 +1342,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_data_type_invalid
     t = ticket
     cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
-    params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [])
+    params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [1])
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
@@ -1741,6 +1757,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern_with_notes({}, ticket))
   end
 
+  def test_show_with_empty_include
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: '')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', "can't be blank")])
+  end
+
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
@@ -1785,10 +1808,10 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_sort_params
-    get :index, controller_params(order_type: 'test', order_by: 'test')
+    get :index, controller_params(order_type: 'test', order_by: 'priority')
     assert_response 400
     pattern = [bad_request_error_pattern('order_type', 'not_included', list: 'asc,desc')]
-    pattern << bad_request_error_pattern('order_by', 'not_included', list: 'due_by,created_at,updated_at,priority,status')
+    pattern << bad_request_error_pattern('order_by', 'not_included', list: 'due_by,created_at,updated_at,status')
     match_json(pattern)
   end
 
@@ -2066,16 +2089,24 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_array_fields_with_empty_array
     params_hash = update_ticket_params_hash
     t = create_ticket
-    put :update, construct_params({ id: t.display_id }, tags: [], cc_emails: [])
+    put :update, construct_params({ id: t.display_id }, tags: nil, cc_emails: nil)
     match_json(ticket_pattern({}, t.reload))
     assert_response 200
+  end
+
+  def test_update_array_fields_with_invalid_tags_and_nil_custom_field
+    params_hash = update_ticket_params_hash
+    t = create_ticket
+    put :update, construct_params({ id: t.display_id }, tags: [1,2], custom_fields: nil)
+    assert_response 400
+    match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'String')])
   end
 
   def test_update_array_fields_with_compacting_array
     tag = Faker::Name.name
     params_hash = update_ticket_params_hash
     t = ticket
-    put :update, construct_params({ id: t.display_id }, tags: [tag, '', '', nil])
+    put :update, construct_params({ id: t.display_id }, tags: [tag, '', ''])
     match_json(ticket_pattern({ tags: [tag] }, t.reload))
     assert_response 200
   end

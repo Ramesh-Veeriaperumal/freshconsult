@@ -206,9 +206,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_destroy_all_agents_in_a_group
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3])
-    put :update, construct_params({ id: group.id }, agent_ids: [])
+    put :update, construct_params({ id: group.id }, agent_ids: nil)
     assert_response 200
-    match_json(group_pattern({ agent_ids: [] }, group.reload))
+    match_json(group_pattern({ agent_ids: nil }, group.reload))
   end
 
   def test_group_with_pagination_enabled

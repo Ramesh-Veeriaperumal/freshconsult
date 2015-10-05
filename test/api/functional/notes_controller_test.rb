@@ -110,16 +110,16 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    assert_response 400
     match_json([bad_request_error_pattern('notify_emails', 'data_type_mismatch', data_type: 'Array'),
                 bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
+    assert_response 400
   end
 
   def test_create_email_format_invalid
     params_hash = { notify_emails: ['tyt@'] }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    assert_response 400
     match_json([bad_request_error_pattern('notify_emails', 'is not a valid email')])
+    assert_response 400
   end
 
   def test_create_invalid_ticket_id
@@ -243,7 +243,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     assert Solution::Article.last.title == parent_ticket.subject
@@ -258,7 +258,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     assert Solution::Article.last.title == parent_ticket.subject
@@ -275,7 +275,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
@@ -289,7 +289,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
@@ -300,7 +300,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     refute Solution::Article.last.title == ticket.subject
@@ -750,5 +750,27 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_with_nil_array_fields
+    params_hash = reply_note_params_hash.merge(cc_emails: nil, bcc_emails: nil, attachments: nil)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
+  end
+ 
+  def test_update_with_nil_params_for_attachments
+    params_hash = { attachments: nil }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
+  end
+
+  def test_create_datatype_nil_array_fields
+    params_hash = { notify_emails: nil, attachments: nil }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
   end
 end

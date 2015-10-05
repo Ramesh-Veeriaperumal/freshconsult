@@ -1,11 +1,13 @@
 module ApiTicketConstants
   # ControllerConstants
   ARRAY_FIELDS = ['tags' => [],  'cc_emails' => [], 'attachments' => []]
-  FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id tags attachments) | ARRAY_FIELDS
+  FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority 
+    email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id 
+    tags attachments custom_fields) | ARRAY_FIELDS
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = ['notes', nil, '']
+  ALLOWED_INCLUDE_PARAMS = ['notes', nil]
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s)
-  ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s)
+  ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ["priority"]
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
   DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status]

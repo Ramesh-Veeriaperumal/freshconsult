@@ -670,7 +670,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_field_with_empty_array
     sample_user = get_user
-    put :update, construct_params({ id: sample_user.id }, tags: [])
+    put :update, construct_params({ id: sample_user.id }, tags: nil)
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   end
@@ -697,5 +697,33 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_create_contact_with_invalid_tags
+    comp = get_company
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        client_manager: true,
+                                        company_id: comp.id,
+                                        language: 'en',
+                                        tags: [1,2,3])
+    match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'String')])
+    assert_response 400
+  end
+
+  def test_update_contact_with_nil_custom_fields
+    params = { custom_fields: nil }
+    sample_user = get_user
+    sample_user.update_column(:deleted, false)
+    put :update, construct_params({ id: sample_user.reload.id }, params)
+    match_json(contact_pattern(sample_user.reload))
+    assert_response 200
+  end
+
+  def test_update_invalid_format_custom_field
+    sample_user = get_user_with_email
+    put :update, construct_params({ id: sample_user.id }, {custom_fields: [1,2]})
+    match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])   
+    assert_response 400
   end
 end
