@@ -65,6 +65,10 @@ body.community {
 			content: none;
 		}
 	}
+
+	.comm-item.active {
+		background-color: #FEFAC3;
+	}
 }
 
 .reorder-icon .ficon-reorder{
