@@ -43,6 +43,9 @@
 </div>
 <% end %>
 
+<% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>
+<div id="fa-dev-pholder" style="display:none"></div>
+
 <% installed_apps.each do |key,installed_app|
   app = installed_app.application
   unless app.blank?
