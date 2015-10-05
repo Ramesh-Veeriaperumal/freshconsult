@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class ApiFlowsTest < ActionDispatch::IntegrationTest
   include Helpers::DiscussionsHelper
+  include Helpers::TicketFieldsHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers
@@ -95,7 +96,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_multipart_invalid_data_unparsable
     skip_bullet do
-      headers, params = encode_multipart({ 'ticket' => { 'email' => 'test@abc.com', 'subject' => 'Test Subject' } }, 'attachments', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', false)
+      headers, params = encode_multipart({ 'ticket' => {'email' => 'test@abc.com', 'subject' => 'Test Subject' }}, 'attachments', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', false)
+      Rack::Utils::stubs(:parse_nested_query).raises(ArgumentError)
       post '/api/tickets', params, @headers.merge(headers)
     end
     assert_response :internal_server_error
@@ -111,6 +113,23 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get '/api/discussions/categories', nil, @headers
     assert_response 200
     assert_equal Array, parse_response(@response.body).class
+  end
+
+  def test_multipart_data_with_valid_data_types
+    tkt_field1 = create_custom_field("test_custom_decimal", 'decimal')
+    tkt_field2 = create_custom_field("test_custom_checkbox", 'checkbox')
+    field1, field2 = tkt_field1.name, tkt_field2.name
+    headers, params = encode_multipart({'subject' => 'Test Subject', 'requester_id' => "#{@agent.id}", "custom_fields" => { "#{field1}" => "2.34", "#{field2}" => "false"} }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    skip_bullet do
+      post '/api/tickets', params, @headers.merge(headers)
+    end
+    [tkt_field1, tkt_field2].each { |x| x.destroy }
+    assert_response 201
+    assert_equal Hash, parse_response(@response.body).class
+    result = JSON.parse(@response.body)
+    assert_equal @agent.id, result["requester_id"]
+    assert_equal "2.34", result["custom_fields"]["#{field1}"]
+    assert_equal false, result["custom_fields"]["#{field2}"]
   end
 
   def test_not_acceptable_invalid_type
@@ -319,24 +338,33 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '0', response.headers['X-RateLimit-Remaining']
   end
 
-  EOL = "\015\012"  # "\r\n"
-  # Encode params and image in multipart/form-data.
-  def encode_multipart(params, image_param, image_file_path, content_type, encoding)
-    headers = {}
-    parts = []
-    boundary = '234092834029834092830498'
-    params.each_pair do |key, val|
-      parts.push %(Content-Disposition: form-data; ) + %(name="#{key}"#{EOL}#{EOL}#{val}#{EOL})
+  def test_get_with_filters_numeric
+    user_id = add_new_user(@account).id
+    Helpdesk::Ticket.update_all(requester_id: @agent.id)
+    Helpdesk::Ticket.first.update_column(:requester_id, user_id)
+    get "/api/tickets?requester_id=#{user_id}", nil, @headers
+    assert_response 200
+    result = parse_response(@response.body)
+    assert_equal Array, result.class
+    assert_equal 1, result.count
+  end
+
+  # def test_get_with_filters_boolean
+  #   Helpdesk::TimeSheet.update_all(billable: true)
+  #   Helpdesk::TimeSheet.first.update_column(:billable, false)
+  #   get "/api/time_entries?billable=false", nil, @headers
+  #   assert_response 200
+  #   result = parse_response(@response.body)
+  #   assert_equal Array, result.class
+  #   assert_equal 1, result.count
+  # end
+
+  def test_multipart_data_for_not_allowed_route
+    headers, params = encode_multipart({"name" => Faker::Name.name})
+    skip_bullet do
+      post '/api/discussions/categories', params, @headers.merge(headers)
     end
-    image_part = \
-      %(Content-Disposition: form-data; name="#{image_param}"; ) + %(filename="#{File.basename(image_file_path)}"#{EOL}) + %(Content-Type: #{content_type}#{EOL}#{EOL})
-    file_read_params = encoding ? [image_file_path, encoding: 'UTF-8'] : [image_file_path]
-    image_part << File.read(*file_read_params) << EOL
-    image_part = image_part.force_encoding('BINARY') if image_part.respond_to?(:force_encoding) if encoding
-    parts.push(image_part)
-    body = parts.join("--#{boundary}#{EOL}")
-    body = "--#{boundary}#{EOL}" + body + "--#{boundary}--" + EOL
-    headers['CONTENT_TYPE'] = "multipart/form-data; boundary=#{boundary}"
-    [headers, body.scrub!]
+    assert_response 415
+    response.body.must_match_json_expression(un_supported_media_type_error_pattern)
   end
 end

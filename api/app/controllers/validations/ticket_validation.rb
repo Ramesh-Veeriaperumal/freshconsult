@@ -5,16 +5,16 @@ class TicketValidation < ApiValidation
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
-  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, custom_numericality: { allow_nil: true }
+  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :string_param  }
 
   validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
   validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?
 
-  validates :priority, custom_inclusion: { in: ApiTicketConstants::PRIORITIES }, allow_nil: true
+  validates :priority, custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :string_param }, allow_nil: true
 
   # proc is used as inclusion array is not constant
-  validates :status, custom_inclusion: { in: proc { |x| x.status_ids } }, allow_nil: true
-  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES }, allow_nil: true
+  validates :status, custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :string_param }, allow_nil: true
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :string_param}, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
   validates :fr_due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_fr_due_by?
   validates :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
@@ -41,7 +41,8 @@ class TicketValidation < ApiValidation
                               {
                                 validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
-                                required_attribute: :required
+                                required_attribute: :required,
+                                ignore_string: :string_param
                               }
                            }, if: -> { errors[:custom_fields].blank? }
   validates :subject, :twitter_id, :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }

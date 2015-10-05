@@ -103,4 +103,23 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       assert_response 200
     end
   end
+
+  def test_multipart_create_with_all_params
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Sample check box', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'number', field_type: 'custom_number', label: 'sample_number', editable_in_signup: 'true'))
+    tags = [Faker::Name.name, Faker::Name.name]
+    comp = Company.first || create_company
+    params_hash = {name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true, 
+                   company_id: comp.id, language: 'en', tags: tags, custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_number' => 7878 }}
+    headers, params = encode_multipart(params_hash, 'avatar', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    skip_bullet do 
+      post '/api/contacts', params, @headers.merge(headers)
+    end
+    assert_response 201
+    stub_current_account do
+      match_json(deleted_contact_pattern(params_hash, User.last))
+      match_json(deleted_contact_pattern({}, User.last))
+    end
+  end
 end

@@ -1846,7 +1846,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_invalid_params
-    get :index, controller_params(company_id: 999, requester_id: 999, filter: 'x')
+    get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
     pattern = [bad_request_error_pattern('filter', 'not_included', list: 'new_and_my_open,watching,spam,deleted')]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     pattern << bad_request_error_pattern('requester_id', "can't be blank")
@@ -1856,8 +1856,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params_type
     get :index, controller_params(company_id: 'a', requester_id: 'b')
-    pattern = [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')]
-    pattern << bad_request_error_pattern('requester_id', 'data_type_mismatch', data_type: 'number')
+    pattern = [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')]
+    pattern << bad_request_error_pattern('requester_id', 'data_type_mismatch', data_type: 'Positive Integer')
     assert_response 400
     match_json pattern
   end
@@ -1918,7 +1918,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_index_with_requester
     Helpdesk::Ticket.update_all(requester_id: User.first.id)
     create_ticket(requester_id: User.last.id)
-    get :index, controller_params(requester_id: User.last.id)
+    get :index, controller_params(requester_id: "#{User.last.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.count
@@ -1944,7 +1944,7 @@ class TicketsControllerTest < ActionController::TestCase
     company = create_company
     user = User.first
     user.update_attributes(customer_id: company.id)
-    get :index, controller_params(company_id: company.id)
+    get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
 
     tkts = Helpdesk::Ticket.where(requester_id: user.id)
@@ -1956,13 +1956,13 @@ class TicketsControllerTest < ActionController::TestCase
     user = add_new_user(@account)
     requester = User.first
     Helpdesk::Ticket.update_all(requester_id: user.id)
-    get :index, controller_params(filter: 'new_and_my_open', requester_id: requester.id)
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.count
 
     Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: requester.id, status: 2)
-    get :index, controller_params(filter: 'new_and_my_open', requester_id: requester.id)
+    get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.count
@@ -1970,7 +1970,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_filter_and_company
     Helpdesk::Ticket.update_all(status: 3)
-    get :index, controller_params(filter: 'new_and_my_open', company_id: Company.first.id)
+    get :index, controller_params(filter: 'new_and_my_open', company_id: "#{Company.first.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.count
@@ -1978,7 +1978,7 @@ class TicketsControllerTest < ActionController::TestCase
     user_id = Company.first.users.map(&:id).first
     tkt = Helpdesk::Ticket.first
     tkt.update_attributes(status: 2, requester_id: user_id, responder_id: nil)
-    get :index, controller_params(filter: 'new_and_my_open', company_id: Company.first.id)
+    get :index, controller_params(filter: 'new_and_my_open', company_id: "#{Company.first.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.count
@@ -1992,13 +1992,13 @@ class TicketsControllerTest < ActionController::TestCase
     user1.reload
 
     expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id).count
-    get :index, controller_params(company_id: company.id, requester_id: user1.id)
+    get :index, controller_params(company_id: company.id, requester_id: "#{user1.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal expected_size, response.size
 
     user2.update_column(:customer_id, nil)
-    get :index, controller_params(company_id: company.id, requester_id: user2.id)
+    get :index, controller_params(company_id: company.id, requester_id: "#{user2.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
@@ -2011,7 +2011,7 @@ class TicketsControllerTest < ActionController::TestCase
     add_new_user(@account, customer_id: new_company.id)
     Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(requester_id: new_company.users.map(&:id).first)
     get :index, controller_params(company_id: company.id,
-                                  requester_id: User.first.id, filter: 'new_and_my_open')
+                                  requester_id: "#{User.first.id}", filter: 'new_and_my_open')
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
@@ -2020,7 +2020,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user_id,
                                                                         status: 2, responder_id: nil)
     get :index, controller_params(company_id: company.id,
-                                  requester_id: user_id, filter: 'new_and_my_open')
+                                  requester_id: "#{user_id}", filter: 'new_and_my_open')
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size

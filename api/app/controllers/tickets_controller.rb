@@ -1,5 +1,4 @@
 class TicketsController < ApiApplicationController
-  wrap_parameters :ticket, exclude: [], format: [:json, :multipart_form]
 
   include Helpdesk::TicketActions
   include Helpdesk::TagMethods
@@ -53,6 +52,10 @@ class TicketsController < ApiApplicationController
   def show
     @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
     super
+  end
+
+  def self.wrap_params
+    ApiTicketConstants::WRAP_PARAMS
   end
 
   private
@@ -109,7 +112,7 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @ticket_filter = TicketFilterValidation.new(params)
+      @ticket_filter = TicketFilterValidation.new(params.merge(multipart_params))
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
@@ -159,7 +162,8 @@ class TicketsController < ApiApplicationController
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
       load_ticket_status
-      ticket = TicketValidation.new(params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields), @item)
+      params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
+      ticket = TicketValidation.new(params_hash.merge(multipart_params), @item)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
@@ -242,4 +246,7 @@ class TicketsController < ApiApplicationController
     def restore?
       @restore ||= current_action?('restore')
     end
+
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

@@ -14,4 +14,7 @@ module NoteConstants
 
   CREATE_ARRAY_FIELDS = %w(notify_emails)
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails)
+
+  # Wrap parameters args
+  WRAP_PARAMS = [:note, exclude: [], format: [:json, :multipart_form]]
 end

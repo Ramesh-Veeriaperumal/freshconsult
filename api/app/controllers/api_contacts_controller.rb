@@ -43,6 +43,10 @@ class ApiContactsController < ApiApplicationController
     end
   end
 
+  def self.wrap_params
+    ContactConstants::WRAP_PARAMS
+  end
+
   private
 
     def load_object
@@ -72,7 +76,7 @@ class ApiContactsController < ApiApplicationController
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
 
-      contact = ContactValidation.new(params[cname], @item)
+      contact = ContactValidation.new(params[cname].merge(multipart_params), @item)
       render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
     end
 
@@ -92,7 +96,7 @@ class ApiContactsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @contact_filter = ContactFilterValidation.new(params)
+      @contact_filter = ContactFilterValidation.new(params.merge(multipart_params))
       render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
@@ -123,4 +127,7 @@ class ApiContactsController < ApiApplicationController
     def reached_agent_limit?
       current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
     end
+
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

@@ -34,6 +34,7 @@ api_error_messages:
   required_format: "Should be a valid format"
   "is not a number": "Should be a valid number"
   must be an integer: "Should be a valid integer"
+  positive_number: "Should be a valid Positive Integer"
   required_and_numericality: "Should be a valid number"
   "list is invalid": "List has invalid values '%{list}'"
   invalid_format: "Should be a valid format" 

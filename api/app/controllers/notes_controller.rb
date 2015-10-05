@@ -1,5 +1,4 @@
 class NotesController < ApiApplicationController
-  wrap_parameters :note, exclude: [], format: [:json, :multipart_form]
 
   include TicketConcern
   include CloudFilesHelper
@@ -40,6 +39,10 @@ class NotesController < ApiApplicationController
   def ticket_notes
     notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).includes(:schema_less_note, :note_old_body, :attachments)
     @notes = paginate_items(notes)
+  end
+
+  def self.wrap_params
+    NoteConstants::WRAP_PARAMS
   end
 
   private
@@ -116,7 +119,7 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item)
+      @note_validation = NoteValidation.new(params[cname].merge(multipart_params), @item)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid
@@ -170,4 +173,7 @@ class NotesController < ApiApplicationController
         end 
       end 
     end
+
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

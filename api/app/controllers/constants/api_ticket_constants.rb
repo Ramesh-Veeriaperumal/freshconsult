@@ -34,4 +34,7 @@ module ApiTicketConstants
 
   # Routes that doesn't accept any params
   NO_PARAM_ROUTES = %w(restore)
+
+  # Wrap parameters args
+  WRAP_PARAMS = [:ticket, exclude: [], format: [:json, :multipart_form]]
 end

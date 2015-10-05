@@ -1,7 +1,7 @@
 module ApiDiscussions
   class MonitorValidation < ApiValidation
     attr_accessor :user_id
-    validates :user_id, numericality: { allow_nil: true, only_integer: true }
+    validates :user_id, custom_numericality: { allow_nil: true, ignore_string: :string_param }
 
     def initialize(request_params)
       super(request_params, nil)

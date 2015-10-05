@@ -4,11 +4,12 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :attribute4, :error_options
+    attr_accessor :attribute1, :attribute2, :attribute3, :attribute4, :error_options, :attribute5, :string_param
     validates :attribute1, custom_numericality: { allow_nil: true }
     validates :attribute2, custom_numericality: { allow_nil: false }
     validates :attribute3, custom_numericality: { allow_negative: true, allow_nil: true }
     validates :attribute4, custom_numericality: { allow_negative: true, allow_nil: true, message: 'only integers are allowed' }
+    validates :attribute5, custom_numericality: { ignore_string: :string_param, allow_nil: true }
   end
 
   def test_disallow_nil
@@ -34,6 +35,8 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     test.attribute1 = 1
     test.attribute2 = 1
     test.attribute3 = -2
+    test.attribute5 = "787"
+    test.string_param = true
     assert test.valid?
     assert test.errors.empty?
   end
@@ -54,10 +57,12 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     test.attribute1 = -1
     test.attribute2 = -1
     test.attribute3 = '9099'
+    test.attribute5 = '67'
+    test.string_param = false
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'data_type_mismatch', attribute1: 'data_type_mismatch', attribute3: 'data_type_mismatch' }.sort.to_h, errors.sort.to_h)
-    assert_equal({ attribute2: { data_type: 'Positive Integer' }, attribute1: { data_type: 'Positive Integer' }, attribute3: { data_type: 'Integer' } }.sort.to_h, error_options.sort.to_h)
+    assert_equal({ attribute2: 'data_type_mismatch', attribute1: 'data_type_mismatch', attribute3: 'data_type_mismatch', attribute5: 'data_type_mismatch' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ attribute2: { data_type: 'Positive Integer' }, attribute1: { data_type: 'Positive Integer' }, attribute3: { data_type: 'Integer' }, attribute5: {data_type: 'Positive Integer'} }.sort.to_h, error_options.sort.to_h)
   end
 end

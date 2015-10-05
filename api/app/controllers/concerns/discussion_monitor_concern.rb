@@ -88,13 +88,13 @@ module DiscussionMonitorConcern
     def validate_follow_params
       fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
       params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
-      validate params
+      validate params.merge(multipart_params)
       params[:user_id] ||= api_current_user.id
     end
 
     def validate(params_hash)
       monitor = ApiDiscussions::MonitorValidation.new(params_hash)
-      render_errors monitor.errors unless monitor.valid?
+      render_errors monitor.errors, monitor.error_options unless monitor.valid?
     end
 
     def privileged_to_send_user?

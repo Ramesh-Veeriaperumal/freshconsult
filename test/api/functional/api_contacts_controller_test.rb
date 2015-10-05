@@ -550,7 +550,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     @account.all_contacts.update_all(customer_id: nil)
     @account.all_contacts.first.update_column(:customer_id, comp.id)
-    get :index, controller_params(company_id: comp.id)
+    get :index, controller_params(company_id: "#{comp.id}")
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -563,7 +563,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     @account.all_contacts.first.update_column(:email, email) if @account.all_contacts.first.email != email
     @account.all_contacts.last.update_column(:customer_id, comp.id)
-    get :index, controller_params(company_id: comp.id, email: email)
+    get :index, controller_params(company_id: "#{comp.id}", email: email)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -581,7 +581,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.first.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: 'a')
     assert_response 400
-    match_json [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'number')]
+    match_json [bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')]
   end
 
   # Make agent out of a user

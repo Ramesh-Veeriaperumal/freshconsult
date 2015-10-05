@@ -1,7 +1,7 @@
 class ApiValidation
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
-  attr_accessor :error_options
+  attr_accessor :error_options, :string_param
 
   before_validation :trim_attributes
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]

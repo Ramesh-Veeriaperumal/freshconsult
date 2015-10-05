@@ -29,6 +29,8 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
+  
+  before_filter :support_string?, if: :multipart_or_get_request?
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
   # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.
@@ -155,6 +157,12 @@ class ApiApplicationController < MetalApiController
 
     def feature_name
       # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+    
+    def support_string?
+      unless get_request? || self.class.wrap_params.last.values.flatten.include?(:multipart_form)
+        render_request_error :invalid_content_type, 415
+      end
     end
 
     def before_build_object
@@ -410,5 +418,13 @@ class ApiApplicationController < MetalApiController
 
     def current_action?(action)
       action_name.to_s == action
+    end
+
+    def multipart_or_get_request?
+      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request?)
+    end
+
+    def multipart_params
+      {string_param: multipart_or_get_request?}
     end
 end
