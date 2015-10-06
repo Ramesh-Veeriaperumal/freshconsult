@@ -563,7 +563,7 @@ span.fb_add
 	position: relative;
 	left: 0px;
   top: 5px;  
-  float: left;
+  @include float(left);
   font-size: 14px;
   cursor: move;
 }
