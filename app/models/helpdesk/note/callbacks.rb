@@ -1,12 +1,12 @@
 class Helpdesk::Note < ActiveRecord::Base
-  
+
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
   before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
 
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  # Doing update note count before pushing to ticket_states queue 
+  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event
+  # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, :notify_ticket_monitor, :push_mobile_notification, on: :create
@@ -16,20 +16,24 @@ class Helpdesk::Note < ActiveRecord::Base
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
-  
+
   after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :report_note_metrics?
 
-  after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check  
+  after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
 
-  # Callbacks will be executed in the order in which they have been included. 
+  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher 
+  include RabbitMq::Publisher
+
+  # For using Redis related functionalities
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def construct_note_old_body_hash
     {
       :body => self.note_body_content.body,
-      :body_html => self.note_body_content.body_html, 
+      :body_html => self.note_body_content.body_html,
       :full_text => self.note_body_content.full_text,
       :full_text_html => self.note_body_content.full_text_html,
       :raw_text => self.note_body_content.raw_text,
@@ -40,9 +44,9 @@ class Helpdesk::Note < ActiveRecord::Base
       :note_id => self.id
     }
   end
-  
+
   def load_full_text
-    self.note_body.full_text ||= note_body.body unless note_body.body.blank? 
+    self.note_body.full_text ||= note_body.body unless note_body.body.blank?
     self.note_body.full_text_html ||= note_body.body_html unless note_body.body_html.blank?
     if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
       self.note_body.full_text = note_body.body unless note_body.body.blank?
@@ -55,9 +59,9 @@ class Helpdesk::Note < ActiveRecord::Base
   	def validate_schema_less_note
       return unless human_note_for_ticket?
       emails = [schema_less_note.to_emails, schema_less_note.cc_emails, schema_less_note.bcc_emails]
-      if email_conversation? 
+      if email_conversation?
         if schema_less_note.to_emails.blank?
-          schema_less_note.to_emails = notable.from_email 
+          schema_less_note.to_emails = notable.from_email
           schema_less_note.from_email ||= account.primary_email_config.reply_email
         end
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
@@ -124,35 +128,35 @@ class Helpdesk::Note < ActiveRecord::Base
         end
 
         # notable.responder ||= self.user unless private_note? # Added as a default observer rule
-        
+
       end
     end
-    
+
     def add_activity
       return if (!human_note_for_ticket? or zendesk_import?)
-          
+
       if outbound_email?
         unless private?
           notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
-            {'eval_args' => {'reply_path' => ['reply_path', 
+            {'eval_args' => {'reply_path' => ['reply_path',
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
             'activities.tickets.conversation.out_email.short')
         end
       elsif inbound_email?
-        notable.create_activity(user, 'activities.tickets.conversation.in_email.long', 
-          {'eval_args' => {'email_response_path' => ['email_response_path', 
+        notable.create_activity(user, 'activities.tickets.conversation.in_email.long',
+          {'eval_args' => {'email_response_path' => ['email_response_path',
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           'activities.tickets.conversation.in_email.short')
       else
-        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", 
-          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path", 
+        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long",
+          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path",
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
       end
     end
 
   private
-    
+
     def load_schema_less_note
       build_schema_less_note unless schema_less_note
       schema_less_note
@@ -165,13 +169,13 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
 
       if user.customer?
-        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] : 
+        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] :
           CATEGORIES[:customer_response]
       else
-        schema_less_note.category = private? ? CATEGORIES[:agent_private_response] : 
+        schema_less_note.category = private? ? CATEGORIES[:agent_private_response] :
           CATEGORIES[:agent_public_response]
       end
-    end 
+    end
 
     def load_note_body
       build_note_body(:body => self.body, :body_html => self.body_html) unless note_body
@@ -186,9 +190,18 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, 
-            { :id => id, :model_changes => @model_changes,
-              :freshdesk_webhook => freshdesk_webhook? }) unless zendesk_import?
+      if redis_key_exists?(UPDATE_TICKET_STATES_VIA_SIDEKIQ)
+        # moved from resque to sidekiq
+        Tickets::UpdateTicketStatesWorker.perform_async(
+              { :id => id, :model_changes => @model_changes,
+                :freshdesk_webhook => freshdesk_webhook? }
+              ) unless zendesk_import?
+      else
+        Resque.enqueue(Helpdesk::UpdateTicketStates,
+                      { :id => id, :model_changes => @model_changes,
+                        :freshdesk_webhook => freshdesk_webhook?
+                      }) unless zendesk_import?
+      end
     end
 
 	def push_mobile_notification
