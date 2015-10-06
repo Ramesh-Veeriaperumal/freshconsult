@@ -5673,12 +5673,22 @@ en:
       contacts: "Contact details of "
     cti:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
+      add_note_as_private: "Mark in call notes as a private"
+      cti_error: "No Integration of type cti enabled for this account"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
       helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
+    knowlarity:
+      label: "Knowlarity"
+      desc: "Seamlessly merge your Knowlarity on call support with your Freshdesk"
+      helptext: "<h4>knowlarity Integration Help</h4><p><br/>You can setup this integration by entering knowlarity number and API key.</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page.</p>"
+      api_key: "Knowlarity API Key"
+      number: "Knowlarity number"
+      number_info: ""
+      apikey_info: ""
     five9:
       label: "Five9"
       desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
@@ -7123,6 +7133,8 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       save: "Save"
+      call_notes: "notes"
+      notes: "Notes"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"

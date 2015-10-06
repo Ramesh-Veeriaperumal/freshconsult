@@ -196,6 +196,18 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+    end
+  end
+
+  def clear_cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   def ecommerce_reauth_check_from_cache
     key = ECOMMERCE_REAUTH_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }

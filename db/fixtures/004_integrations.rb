@@ -752,10 +752,17 @@ if Integrations::Application.count == 0
     s.description = "integrations.czentrix.desc"
     s.account_id = 0
     s.listing_order = 27
-    s.options = {:direct_install => false,:keys_order => [:host_ip,:convert_to_ticket],
+    s.options = {:direct_install => false,:keys_order => [:host_ip,:convert_to_ticket,:add_note_as_private],
         :host_ip => { :type => :text, :required => true, :label => "integrations.czentrix.host_name", 
         :info => "integrations.czentrix.host_name_info"},
-        :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'}}
+        :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'},
+        :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
+        :dimensions => {:width => "200px",:height => "450px"},
+        :after_commit => {
+          :clazz => 'Integrations::Cti',
+          :method => 'clear_memcache'
+        }
+    }
     s.application_type = "cti_integration" 
   end 
 
@@ -767,7 +774,7 @@ if Integrations::Application.count == 0
     s.listing_order = 28
     s.options = {
       :direct_install => false,
-      :keys_order => [:host_ip,:convert_to_ticket],
+      :keys_order => [:host_ip,:convert_to_ticket,:add_note_as_private],
       :host_ip => { 
         :type => :text,
         :required => true, 
@@ -778,8 +785,14 @@ if Integrations::Application.count == 0
         :type => :checkbox, 
         :label => "integrations.cti.convert_to_ticket", 
         :default_value => '1'
-        }
+        },
+      :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
+      :dimensions => {:width => "200px",:height => "450px"},
+      :after_commit => {
+        :clazz => 'Integrations::Cti',
+        :method => 'clear_memcache'
       }
+    }
     s.application_type = "cti_integration"
   end
 
@@ -828,7 +841,17 @@ if Integrations::Application.count == 0
     s.description = "integrations.five9.desc"
     s.account_id = 0
     s.listing_order = 30
-    s.options = { :direct_install => true }
+    s.options = { 
+      :direct_install => false,
+      :keys_order => [:convert_to_ticket, :add_note_as_private],
+      :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
+      :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'},
+      :dimensions => {:width => "200px",:height => "450px"},
+      :after_commit => {
+        :clazz => 'Integrations::Cti',
+        :method => 'clear_memcache'
+      }
+    }
     s.application_type = "cti_integration"
   end
 
@@ -851,5 +874,27 @@ if Integrations::Application.count == 0
     s.options = {:direct_install => true, :auth_url=> "/integrations/xero/authorize", 
       :edit_url => "/integrations/xero/edit"}
     s.application_type = "xero"
+  end
+
+  knowlarity = Integrations::Application.seed(:name) do |s|
+    s.name = "knowlarity"
+    s.display_name = "integrations.knowlarity.label"
+    s.description = "integrations.knowlarity.desc"
+    s.listing_order = 34
+    s.options = {
+      :direct_install => false,
+      :keys_order => [:knowlarity_number,:api_key,:convert_to_ticket,:add_note_as_private],
+      :knowlarity_number => { :type => :text, :required => true, :label => "integrations.knowlarity.number",:info => "integrations.knowlarity.number_info"},
+      :api_key => { :type => :text, :required => true, :label => "integrations.knowlarity.api_key",:info => "integrations.knowlarity.apikey_info"},
+      :convert_to_ticket => {:type => :checkbox, :label => "integrations.cti.convert_to_ticket", :default_value => '1'},
+      :add_note_as_private => {:type => :checkbox, :label => "integrations.cti.add_note_as_private", :default_value => '1'},
+      :dimensions => {:width => "200px",:height => "450px"},
+      :after_commit => {
+        :clazz => 'Integrations::Cti',
+        :method => 'clear_memcache'
+      }
+    }
+    s.application_type = "cti_integration"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
   end
 end

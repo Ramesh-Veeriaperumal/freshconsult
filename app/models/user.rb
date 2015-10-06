@@ -32,7 +32,6 @@ class User < ActiveRecord::Base
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-  scope :with_contact_number, lambda { |number| { :conditions => ["mobile=? or phone=?",number,number]}}
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash
   alias_attribute :preferences, :text_uc01  

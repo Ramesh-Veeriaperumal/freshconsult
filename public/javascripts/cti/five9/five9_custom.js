@@ -47,7 +47,7 @@ var recUrl;
                             for(var i=0;i<cav.length;i++){
                             if(cav[i].groupName=="Call"&&cav[i].name=="session_id") {
                                  recUrl = recUrl + cav[i].value + '.wav';
-                                
+                                 remoteId = "Five9_Call_Id_"+cav[i].value;
                                 }
                             }
                             break;

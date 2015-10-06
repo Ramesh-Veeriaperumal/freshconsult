@@ -17,7 +17,7 @@ function parseData(e){
   else if(params[0]=="Accept"){
     var callerId = params[1];
     var sessionId = params[2];
-    remoteId = sessionId;
+    remoteId = "Czentrix_Call_Id_"+sessionId;
     freshdeskShowCrm(callerId);
   }
 }
