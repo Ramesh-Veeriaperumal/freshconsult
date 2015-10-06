@@ -94,7 +94,7 @@ module Cache::Memcache::Account
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.custom_dropdown_fields.find(:all, :include => :flexifield_def_entry )
+      ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
     end
   end
 

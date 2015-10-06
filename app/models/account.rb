@@ -327,7 +327,7 @@ class Account < ActiveRecord::Base
   end
   
   def ticket_type_values
-    ticket_fields.type_field.first.picklist_values
+    ticket_fields_without_choices.type_field.first.level1_picklist_values
   end
   
   def ticket_status_values

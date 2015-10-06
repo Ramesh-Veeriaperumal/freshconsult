@@ -895,7 +895,6 @@ module ApplicationHelper
     label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
                                      object_name+"_"+field.field_name), 
                       field_label.html_safe
-    choices = field.choices
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))
