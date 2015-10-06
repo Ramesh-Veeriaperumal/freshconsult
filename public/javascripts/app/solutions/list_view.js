@@ -260,6 +260,7 @@ window.App = window.App || {};
     hideSelectAll: function () {
       if ($('#fa_item-select-all:checked').size() > 0) {
         $("#fa_item-select-all").attr('checked', false);
+        $('.comm-item').removeClass('active');
       }
     },
 
