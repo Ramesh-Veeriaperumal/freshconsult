@@ -346,6 +346,12 @@ p.imp{
     	margin-top: 10px;
     }
     display: none;
+    & ul.small-list-right{
+    	max-height: 260px;
+    	@include float(left);
+    	overflow-x: hidden;
+    	overflow-y: auto;
+    }
 }
 
 #recently_used_list{
