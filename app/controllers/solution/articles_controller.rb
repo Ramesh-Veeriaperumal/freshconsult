@@ -13,8 +13,8 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_article, :only => [:update, :destroy, :reset_ratings, :properties]
-  before_filter :load_meta_objects, :only => [:show, :edit]
+  before_filter :load_meta_objects, :only => [:show, :update, :edit]
+  before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
@@ -28,7 +28,6 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @article = @article_meta.send(language_scoper)
     respond_to do |format|
       format.html {
         if @article 
@@ -55,36 +54,21 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def edit
-    @article = @article_meta.send(language_scoper)
-    @article = current_account.solution_articles.new unless @article
+    @page_title = @article.title
     respond_to do |format|
-      format.html
+      format.html {
+        render_edit
+      }
       format.xml  { render :xml => @article }
     end
   end
 
-  def version
-    set_user
-    @article = Solution::Builder.article(params)
-    @article.tags_changed = set_solution_tags
-    respond_to do |format| 
-      if @article
-        format.html { redirect_to solution_article_path(@article.solution_article_meta.id) }
-        format.xml  { render :xml => @article, :status => :created, :location => @article }     
-        format.json { render :json => @article, :status => :ok, :location => @article }     
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   def create
-    @article = @current_folder.articles.new(params[nscname]) 
-    set_item_user 
+    set_user
+    set_status
+    @article = Solution::Builder.article(params)
+    @article.tags_changed = set_solution_tags 
     build_attachments
-    @article.set_status(get_status)
-    @article.tags_changed = set_solution_tags
     respond_to do |format|
       if @article.save
         @article.reload
@@ -175,7 +159,7 @@ class Solution::ArticlesController < ApplicationController
   protected
 
     def load_article
-      @article = current_account.solution_articles.find(params[:id])
+      @article = @article_meta.send(language_scoper)
     end
 
     def scoper #possible dead code
@@ -447,6 +431,10 @@ class Solution::ArticlesController < ApplicationController
       if draft.present? && draft.errors.present?
         flash[:error] = draft.errors.full_messages.join("<br />\n").html_safe
       end
+    end
+
+    def set_status
+      params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
     end
 
     def get_status

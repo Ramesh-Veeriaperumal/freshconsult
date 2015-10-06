@@ -1,7 +1,6 @@
-<% name = "solution_article_meta[#{@language_scoper}]"%>
 <div class="article-edit <%= 'hide' unless @article.new_record? %>">
   <%= form_for @article, 
-              :url => @article_meta.new_record? ? solution_articles_path : version_solution_article_path(@article_meta.id), 
+              :url => @article_meta.new_record? ? solution_articles_path : solution_article_path(@article_meta.id, :language_id => @language.id), 
               :html => {
                 :method => @article_meta.new_record? ? :post : :put,
                 :multipart => true, 
@@ -20,7 +19,6 @@
                 :autofocus => true,
                 :minlength => 3,
                 :maxlength => 240,
-                :name => "#{name}[title]",
                 :value => (@article.new_record? ? @article.title : '') %>
     
       </div>
@@ -30,7 +28,6 @@
         <%= f.text_area  :description, 'editor-type' => :solution, :height => "400px", 
               :class => "required_redactor", 
               :value => (@article.new_record? ? @article.description : ''),
-              :name => "#{name}[description]",
               :data => {
                 :"remove-cursor" => true,
                 :"toolbar-external" => '#sticky_redactor_toolbar'
@@ -101,7 +98,7 @@
     <% if @article.new_record? %>
       <div id="solution-properties-container" class="article-properties-edit">
           <div id="solution-properties">
-  	        <%= render :partial => "article_properties", :locals => { :f => f, :name => name} %>
+  	        <%= render :partial => "article_properties", :locals => { :f => f} %>
           </div>
       </div>
     <% end %>
@@ -109,7 +106,7 @@
     <div class="row-fluid action-btns-container">
       <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
         <div class="pull-left itil-hide">
-          <%= confirm_delete(@article_meta, solution_category_folder_article_path(@article_meta.solution_category_meta.id,@article_meta.solution_folder_meta,@article_meta)) %>
+          <%= confirm_delete(@article_meta, solution_category_folder_article_path(@category_meta.id,@folder_meta.id,@article_meta)) %>
         </div>
       <% end %>
       <div class="span6 pull-right pagination-right header_buttons align-right">

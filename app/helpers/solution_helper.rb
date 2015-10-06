@@ -277,7 +277,10 @@ module SolutionHelper
 		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
-							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id), options)
+							category.eql?('article') ? 
+							solution_article_version_path(solution_meta.id, language.code) :
+							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
+							options)
 	end
 
 	def status v
