@@ -43,9 +43,6 @@
 </div>
 <% end %>
 
-<% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>
-<div id="fa-dev-pholder" style="display:none"></div>
-
 <% installed_apps.each do |key,installed_app|
   app = installed_app.application
   unless app.blank?
@@ -89,16 +86,8 @@
   end
 end %>
 
-<% installed_app = get_app_details(Integrations::Constants::APP_NAMES[:logmein]) %>
-<% unless installed_app.blank? %> 
-	<div id="logmein" class="widget">
-		<%
-		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @ticket.responder, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
-		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
-		%>
-		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
-	</div>
-<% end %>
+<% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>
+<div id="fa-dev-pholder" style="display:none"></div>
 
 <!-- Marketplace Plugs -->
 <% if feature?(:marketplace) %>
@@ -110,3 +99,15 @@ end %>
     </div>
   <% end %>
 <% end %>
+
+<% installed_app = get_app_details(Integrations::Constants::APP_NAMES[:logmein]) %>
+<% unless installed_app.blank? %> 
+	<div id="logmein" class="widget">
+		<%
+		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @ticket.responder, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
+		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
+		%>
+		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
+	</div>
+<% end %>
+
