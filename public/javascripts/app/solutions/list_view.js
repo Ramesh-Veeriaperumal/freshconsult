@@ -134,8 +134,8 @@ window.App = window.App || {};
     bindLanguageBarLinks: function () {
       $('#show-link, #hide-link').on('click', function (ev) {
         ev.preventDefault();
-        $('#article-details').toggle();
-        $('#language-bar').toggle();
+        $('.article-details').toggle();
+        $('.language-bar').toggle();
         $('#hide-link').toggle();
         $('#show-link').toggle();
       });

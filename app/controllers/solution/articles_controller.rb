@@ -17,6 +17,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
+  before_filter :language, :only => [:create, :new]
   before_filter :set_current_folder, :only => [:create]
   before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
@@ -64,8 +65,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    set_user
-    set_status
+    builder_params
     @article = Solution::Builder.article(params)
     @article.tags_changed = set_solution_tags 
     build_attachments
@@ -207,6 +207,14 @@ class Solution::ArticlesController < ApplicationController
     
     def page_title
       @page_title = t("header.tabs.solutions")    
+    end
+
+    def builder_params
+      params[:solution_article_meta][language_scoper.to_sym] = {}
+      set_user
+      set_status
+      params[:solution_article_meta][language_scoper.to_sym][:title] = params[nscname][:title]
+      params[:solution_article_meta][language_scoper.to_sym][:description] = params[nscname][:description]
     end
 
     def set_solution_tags

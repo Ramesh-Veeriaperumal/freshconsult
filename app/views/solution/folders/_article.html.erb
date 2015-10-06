@@ -10,7 +10,7 @@
 					<input type="checkbox" id="article-<%= article.id %>" name="ids[]" value="<%= article.id %>" class="item_ids_checkbox"/>
 				</div>
 			<% end %>
-			<div id="article-details">
+			<div class="article-details">
 				<div class="span3 pull-right text-right article-list-meta">
 					<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 						<%= font_icon "file-visible" %>
@@ -33,7 +33,7 @@
 					<% end %>
 				</div>
 			</div>
-			<div class="span5 pull-right mt8" id="language-bar">
+			<div class="span5 pull-right mt8 language-bar">
 				<span class="pull-right">
 					<%= language_flags(article) %>
 				</span>

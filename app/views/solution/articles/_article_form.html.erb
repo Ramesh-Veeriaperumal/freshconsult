@@ -1,8 +1,8 @@
 <div class="article-edit <%= 'hide' unless @article.new_record? %>">
   <%= form_for @article, 
-              :url => @article_meta.new_record? ? solution_articles_path : solution_article_path(@article_meta.id, :language_id => @language.id), 
+              :url => @article_meta.blank? ? solution_articles_path : solution_article_path(@article_meta.id, :language_id => @language.id), 
               :html => {
-                :method => @article_meta.new_record? ? :post : :put,
+                :method => @article_meta.blank? ? :post : :put,
                 :multipart => true, 
                 :id => "article-form", 
                 :class => "article-edit-form form-horizontal",
