@@ -262,7 +262,7 @@ module SolutionHelper
 	def language_icon(solution_meta, version, language)
 		category = solution_meta.class.short_name
 		options = { 
-			:class => "language_icon #{'active' if version.present?} tooltip",
+			:class => "language_icon #{status(version)} tooltip",
 			:title => "#{language.name} #{version.present? ? t("solution.plain_edit") : t("solution.plain_new")}",
 			:id => "version-#{solution_meta.id}-#{language.id}",
 		}
@@ -278,6 +278,10 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id), options)
+	end
+
+	def status v
+		v.present? ? v.respond_to?(:outdated) && v.outdated ? 'outdated' : 'active' : ''
 	end
 
 	def primary_preview(primary, identifier)
@@ -299,6 +303,30 @@ module SolutionHelper
 	    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
 	  end
     op.html_safe
+	end
+
+	def language_tab l, outdated
+		op = ""
+		op << "<div class='lang-tab #{'selected' if l == @language}'>"
+		op << pjax_link_to("<span class='language_symbol #{outdated ? 'outdated' : 'active'}'>
+													<span class='language_name'>
+														#{l.name[0..1].capitalize}
+													</span>
+												</span>
+												<span class='language_label'>
+													#{l.name}
+												</span>".html_safe, 
+							solution_article_version_path(@article_meta.id, l.code))
+		op << "</div>"
+		op.html_safe
+	end
+
+	def add_translation(lang_ids)
+		options_select = lang_ids.map{|l| [Language.find(l).name, l]}
+		select_tag("language_id", 
+							options_for_select(options_select), 
+							:class => "select2 pull-right",
+							"data-placeholder" => "Add translation")
 	end
 
 end

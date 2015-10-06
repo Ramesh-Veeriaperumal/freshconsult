@@ -1793,6 +1793,7 @@ Helpkit::Application.routes.draw do
         post :publish
       end
     end
+    match '/articles/:id/:language' => "articles#show", :as => :article_version
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
     match '/all_categories/(:portal_id)' => "categories#all_categories", :as => :all_categories, :via => :get
   end

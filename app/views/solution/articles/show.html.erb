@@ -8,6 +8,7 @@
 
 	<% content_for :layoutType do %>community solutions<% end %>
 	<% content_for :sticky_title do %>
+		<%= render :partial => "language_tabs" %>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
 		</div>

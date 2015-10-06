@@ -10,4 +10,12 @@ class Account < ActiveRecord::Base
       obj.to_key if obj
     end).compact
   end
+
+  def applicable_language_ids
+    @multilingual_applicable_languages ||= (supported_languages.collect do |lang|
+      obj = Language.find_by_code(lang)
+      obj.id if obj
+    end).compact
+  end
+
 end

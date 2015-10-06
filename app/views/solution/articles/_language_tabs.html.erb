@@ -1,0 +1,5 @@
+<% @article_meta.solution_articles.each do |sa| %>
+	<%= language_tab(Language.find(sa.language_id), sa.outdated)%>
+<% end %>
+
+<%= add_translation(current_account.applicable_language_ids - @article_meta.solution_articles.map(&:language_id))%>
