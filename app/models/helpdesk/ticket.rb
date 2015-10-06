@@ -752,10 +752,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    ticket_to_emails = (self.to_emails || []).collect {|e| e.tr('"','').strip}
+    ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).compact.uniq
 
     account.support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
