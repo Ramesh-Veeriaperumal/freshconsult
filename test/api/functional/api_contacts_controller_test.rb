@@ -713,6 +713,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_contact_with_apostrophe_in_email
+    name = "abc'd#{rand(1000)}"
+    email = "#{rand(1000)}abc'd@f.com"
+    post :create, construct_params({},  name: name,
+                                        email: email)
+    p response
+    assert_response 201
+    contact = User.last
+    assert_equal name, conatct.name
+    assert_equal email, contact.email
+  end
+
   def test_update_contact_with_nil_custom_fields
     params = { custom_fields: nil }
     sample_user = get_user
