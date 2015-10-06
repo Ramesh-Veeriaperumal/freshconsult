@@ -69,8 +69,8 @@ class ApiContactsController < ApiApplicationController
     end
 
     def validate_params
-      contact_fields = current_account.contact_form.custom_contact_fields
-      allowed_custom_fields = contact_fields.map(&:name)
+      @contact_fields = current_account.contact_form.custom_contact_fields
+      allowed_custom_fields = @contact_fields.map(&:name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
 
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
@@ -89,7 +89,9 @@ class ApiContactsController < ApiApplicationController
       # has to be initialised first for making a contact as a client_manager
       params_hash[:client_manager] = params_hash.delete(:client_manager) if params_hash.key?(:client_manager)
 
-      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash.key?(:avatar)
+      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
+
+      assign_checkbox_value if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end
@@ -126,6 +128,15 @@ class ApiContactsController < ApiApplicationController
 
     def reached_agent_limit?
       current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
+    end
+
+    # If false given, nil is getting saved in db as there is nil assignment if blank. Hence assign 0
+    def assign_checkbox_value
+      check_box_names = @contact_fields.select { |x| x.field_type == :custom_checkbox }.map(&:name)
+      params[cname][:custom_fields].each_pair do |key, value|
+        next unless check_box_names.include?(key.to_s)
+        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
+      end
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

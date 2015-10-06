@@ -230,6 +230,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Sample check box', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Another check box', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'sample_date', editable_in_signup: 'true'))
 
     create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'sample_dropdown', editable_in_signup: 'true'))
@@ -244,9 +245,10 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: true,
                                         company_id: comp.id,
                                         language: 'en',
-                                        custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_date' => '2010-11-01', 'cf_sample_dropdown' => 'Choice 1' })
+                                        custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_another_check_box' => false, 'cf_sample_date' => '2010-11-01', 'cf_sample_dropdown' => 'Choice 1' })
     assert_response 201
     assert User.last.custom_field['cf_sample_check_box'] == true
+    assert User.last.custom_field['cf_another_check_box'] == false
     assert User.last.custom_field['cf_department'] == 'Sample Dept'
     assert User.last.custom_field['cf_sample_date'].to_date == Date.parse('2010-11-01')
     assert User.last.custom_field['cf_sample_dropdown'] == 'Choice 1'
