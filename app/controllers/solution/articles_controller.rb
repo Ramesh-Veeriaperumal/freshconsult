@@ -68,6 +68,7 @@ class Solution::ArticlesController < ApplicationController
     builder_params
     @article = Solution::Builder.article(params)
     @article.tags_changed = set_solution_tags
+    @article.create_draft_from_article if save_as_draft?
     respond_to do |format|
       if @article
         format.html { 
