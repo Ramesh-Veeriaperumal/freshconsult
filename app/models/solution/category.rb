@@ -88,7 +88,7 @@ class Solution::Category < ActiveRecord::Base
       Account.current.launched?(:meta_read) ? self.solution_category_meta : self
     end
  
-    def clear_cache
+    def clear_cache(obj=nil)
       account.clear_solution_categories_from_cache
     end
 
