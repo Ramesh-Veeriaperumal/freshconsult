@@ -14,8 +14,8 @@
 			<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
 			<%= f.select :folder_id , 
 						option_groups_from_collection_for_select(
-								current_account.solution_categories.reject(&:is_default), 
-								:folders, :name, :id, :name, 
+								current_account.solution_category_meta.reject(&:is_default), 
+								:solution_folder_meta, :name, :id, :name, 
 								@article.folder_id
 						), 
 						{ :include_blank => true },

@@ -1,4 +1,6 @@
 class Solution::Object
+
+	include CloudFilesHelper
 	
 	META_ATTRIBUTES = {
 		:solution_category => [:is_default, :portal_ids, :portals],
@@ -12,6 +14,8 @@ class Solution::Object
 	}
 	
 	PREFIXES = Language.all.collect(&:to_key).collect(&:to_s).prepend('primary')
+
+	ASSOCIATIONS = [:attachments, :cloud_file_attachments]
 
 	attr_accessor :args, :obj, :params
 
@@ -101,12 +105,23 @@ class Solution::Object
 		params_for(lang).each do |k,v|
 			object.send("#{k}=", v)
 		end
+		build_associations(object, lang)
 		@objects << object
 	end
 	
 	def params_for(lang)
-		return @params["#{lang}_#{short_name}"] unless lang == 'primary'
-		@params["primary_#{short_name}"] || @params.reject { |k,v| META_ATTRIBUTES[obj].include?(k) }
+		return filter(@params["#{lang}_#{short_name}"]) unless lang == 'primary'
+		filter(@params["primary_#{short_name}"]) || @params.reject { |k,v| META_ATTRIBUTES[obj].include?(k) }
+	end
+
+	def filter p
+		p.reject{|k,v| ASSOCIATIONS.include?(k.to_sym) }
+	end
+
+	def build_associations object, lang
+		attachment_builder(object, 
+			@params["#{lang}_#{short_name}"][:attachments], 
+			@params["#{lang}_#{short_name}"][:cloud_file_attachments] )
 	end
 	
 	def response

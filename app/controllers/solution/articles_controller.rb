@@ -211,10 +211,10 @@ class Solution::ArticlesController < ApplicationController
 
     def builder_params
       params[:solution_article_meta][language_scoper.to_sym] = {}
+      params[:solution_article_meta][language_scoper.to_sym].merge!(params[nscname])
+      params[:solution_article_meta][language_scoper.to_sym][:cloud_file_attachments] = params[:cloud_file_attachments]
       set_user
       set_status
-      params[:solution_article_meta][language_scoper.to_sym][:title] = params[nscname][:title]
-      params[:solution_article_meta][language_scoper.to_sym][:description] = params[nscname][:description]
     end
 
     def set_solution_tags
@@ -453,8 +453,7 @@ class Solution::ArticlesController < ApplicationController
 
     def set_article_folder
       return if params[:folder_id].nil?
-      current_folder = current_account.solution_folders.find(params[:folder_id])
-      @article.folder_id = current_folder.id if current_folder.present?
+      @article.folder_id = current_account.solution_folder_meta.find_by_id(params[:folder_id])
     end
 
 end
