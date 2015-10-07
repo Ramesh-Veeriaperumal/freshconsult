@@ -3658,8 +3658,8 @@ en:
     on: 'on'
     plain_new: New
     plain_edit: Edit
-    show_languages: Show other languages
-    hide_languages: Hide other languages
+    show_languages: Show languages
+    hide_languages: Hide languages
     orphan_category_info: "This category is not associated with any portal"
     sidebar:
       orphan: "Orphan Categories"

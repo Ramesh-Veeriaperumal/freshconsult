@@ -298,7 +298,9 @@ module SolutionHelper
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
 		if parent_meta.send("#{language.to_key}_#{f}").present?
+			op << "<div class='pt5'>"
 			op << parent_meta.send("#{language.to_key}_#{f}").name
+			op << "</div>"
 		else
 			op << text_field_tag("solution_#{f}_meta[#{language.to_key}_#{f}][name]",	nil,
 	                         :class => "required",

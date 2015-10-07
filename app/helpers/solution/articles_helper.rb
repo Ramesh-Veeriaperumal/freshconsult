@@ -84,7 +84,7 @@ module Solution::ArticlesHelper
     company_names = folder.customers.first(5).map(&:name).join(', ')
     count = folder.customers.size - 5
     company_names += t('solution.folders.visibility.extra_companies', :count => count) if count > 0
-    %(<span #{ "class=\"tooltip\" title=\"#{company_names}\"" if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]}>
+    %(<span #{ "class=\"tooltip\" data-placement=\"right\" title=\"#{company_names}\"" if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]}>
         #{Solution::Constants::VISIBILITY_NAMES_BY_KEY[folder.visibility]}
       </span>).html_safe
   end
@@ -138,6 +138,13 @@ module Solution::ArticlesHelper
       <span class="pull-right">
         #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"),:target => "draft-"+@article.id.to_s}
       </span>).html_safe
+  end
+
+  def drafts_present? article
+    drafts_array = article.solution_articles.select do |a|
+      a.draft.present? || a.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+    end
+    drafts_array.present?
   end
   
 end

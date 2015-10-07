@@ -34,7 +34,9 @@
   	<%= f.label :visibility, t('.visible_to'),{:class =>'control-label'} %>
   	<div class="controls">
   		<% if @folder_meta.present? && (@primary && @primary != @folder) %>
-  			<%= company_visibility_tooltip(@folder_meta) %>
+  			<div class="pt5">
+  				<%= company_visibility_tooltip(@folder_meta) %>
+  			</div>
 			<% else %>
 				<div class="row-fluid">
 		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]", :selected => @folder_meta && @folder_meta.visibility } %>
