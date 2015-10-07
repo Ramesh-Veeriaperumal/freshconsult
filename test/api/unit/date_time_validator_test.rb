@@ -4,8 +4,10 @@ class DateTimeValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :fr_due_by, :due_by, :due_by_1, :error_options
-    validates :due_by, :fr_due_by, date_time: { allow_nil: true }
+    attr_accessor :fr_due_by, :due_by, :due_by_1, :error_options, :multi_error
+
+    validates :multi_error, data_type: { rules: Date, allow_nil: true }
+    validates :due_by, :fr_due_by, :multi_error, date_time: { allow_nil: true }
     validates :due_by_1, date_time: { allow_nil: false }
   end
 
@@ -26,6 +28,15 @@ class DateTimeValidatorTest < ActionView::TestCase
     refute test.errors.empty?
     refute test.errors.full_messages.include?('Fr due by data_type_mismatch')
     assert test.errors.full_messages.include?('Due by data_type_mismatch')
+  end
+
+  def test_attributes_multiple_error
+    test = TestValidation.new
+    test.due_by_1 = Time.zone.now.iso8601
+    test.multi_error = "thy"
+    refute test.valid?
+    assert test.errors.count == 1
+    assert_equal({multi_error: 'data_type_mismatch'}, test.errors.to_h)
   end
 
   def test_valid_allow_nil

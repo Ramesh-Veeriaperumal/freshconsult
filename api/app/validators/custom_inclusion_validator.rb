@@ -2,9 +2,10 @@
 
 class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
   def validate_each(record, attribute, value)
+    return if record.errors[attribute].present?
     inclusion_list = delimiter.respond_to?(:call) ? delimiter.call(record) : delimiter
 
-    # Include string representation of values also in the list if request is multipart.
+    # Include string representation of values also in the list if ignore_string is true.
     inclusion_list = (inclusion_list | inclusion_list.map(&:to_s)) if !options[:ignore_string].nil? && record.send(options[:ignore_string])
 
     record.errors.add(attribute, 'should_be_blank', options) if value.present? && inclusion_list.empty?

@@ -27,7 +27,7 @@ class TicketValidation < ApiValidation
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
-  }, if: -> { attachments && errors[:attachments].blank? }
+  }, if: -> { attachments }
 
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
   validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
@@ -35,7 +35,7 @@ class TicketValidation < ApiValidation
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
   validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long },
                             data_type: { rules: String } }
-  validates :tags, string_rejection: { excluded_chars: [','] }, if: -> { errors[:tags].blank? }
+  validates :tags, string_rejection: { excluded_chars: [','] }
 
   validates :custom_fields, custom_field: { custom_fields:
                               {
@@ -44,7 +44,7 @@ class TicketValidation < ApiValidation
                                 required_attribute: :required,
                                 ignore_string: :string_param
                               }
-                           }, if: -> { errors[:custom_fields].blank? }
+                           }
   validates :subject, :twitter_id, :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 
   def initialize(request_params, item)

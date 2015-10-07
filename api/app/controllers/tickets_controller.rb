@@ -160,7 +160,7 @@ class TicketsController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      load_ticket_status
+      load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash.merge(multipart_params), @item)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?

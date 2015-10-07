@@ -29,4 +29,17 @@ class ApiCompanyValidationTest < ActionView::TestCase
     company = ApiCompanyValidation.new(controller_params, item)
     assert company.valid?(:create)
   end
+
+  def test_domains_multiple_errors
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
+    CompanyForm.any_instance.stubs(:custom_company_fields).returns([])
+    controller_params = { 'name' => 'test', domains: 'comma,test' }
+    item = nil
+    company = ApiCompanyValidation.new(controller_params, item)
+    refute company.valid?(:create)
+    errors = company.errors.full_messages
+    assert errors.include?('Domains data_type_mismatch')
+    assert errors.count == 1
+  end
 end

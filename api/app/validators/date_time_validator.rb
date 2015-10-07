@@ -8,6 +8,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   ISO_TIME_DELIMITER     = ':'
 
   def validate_each(record, attribute, values)
+    return if record.errors[attribute].present?
     unless parse_time(values)
       message = options[:message] || 'data_type_mismatch'
       record.errors[attribute] << message

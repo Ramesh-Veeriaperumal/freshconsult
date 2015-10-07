@@ -4,6 +4,7 @@ class DataTypeValidator < ActiveModel::EachValidator
   DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'format' }
 
   def validate_each(record, attribute, values)
+    return if record.errors[attribute].present?
     unless valid_type?(options[:rules], values, record)
       record.errors[attribute] = options[:message] || 'data_type_mismatch'
       data_type = DATA_TYPE_MAPPING.key?(options[:rules]) ? DATA_TYPE_MAPPING[options[:rules]] : options[:rules]

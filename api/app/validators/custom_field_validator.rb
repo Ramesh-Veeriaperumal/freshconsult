@@ -5,7 +5,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate(record)
     attributes.each do |attribute|
       values = record.read_attribute_for_validation(attribute)
-      next if (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
+      next if record.errors[attribute].present? || (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
       reset_attr_accessors
       assign_options(attribute)
 

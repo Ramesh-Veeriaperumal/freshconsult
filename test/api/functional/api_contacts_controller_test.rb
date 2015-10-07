@@ -721,7 +721,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     p response
     assert_response 201
     contact = User.last
-    assert_equal name, conatct.name
+    assert_equal name, contact.name
     assert_equal email, contact.email
   end
 

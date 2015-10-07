@@ -14,7 +14,7 @@ class TimeEntryValidation < ApiValidation
   # start_time param has no meaning when timer is off.
   validates :start_time, inclusion: { in: [nil], message: 'timer_running_false' },
                          unless: -> { errors[:start_time].any? || errors[:timer_running].any? || timer_running }
-  validates :start_time, date_time: { allow_nil: true }, if: -> { errors[:start_time].blank? }
+  validates :start_time, date_time: { allow_nil: true }
 
   # start_time should be lesser than current_time to avoid negative time_spent values.
   validate :start_time_value, if: -> { start_time && errors[:start_time].blank? }
@@ -27,7 +27,7 @@ class TimeEntryValidation < ApiValidation
   # agent_id can't be changed in update if timer is running for the user.
   validates :agent_id, inclusion: { in: [nil], message: 'cant_update_user' },
                        if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
-  validates :agent_id, custom_numericality: { allow_nil: true }, if: -> { errors[:agent_id].blank? }
+  validates :agent_id, custom_numericality: { allow_nil: true }
 
   # if agent_id is not a number or not set in update, to avoid query, below if condition is used.
   validate :valid_user?,  if: -> { errors[:agent_id].blank? && @agent_id_set }

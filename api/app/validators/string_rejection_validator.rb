@@ -1,5 +1,6 @@
 class StringRejectionValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
+    return if record.errors[attribute].present?
     excluded_chars = options[:excluded_chars] || []
     case value
     when Array

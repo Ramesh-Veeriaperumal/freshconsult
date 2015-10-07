@@ -61,7 +61,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :string_param
 
-    validates :attribute1, :attribute2, custom_field: { attribute1: {
+    validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
       nested_field_choices: proc { Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name },
@@ -188,6 +188,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     assert_equal({ country_1: 'conditional_not_blank', state_1: 'conditional_not_blank' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { child: 'city_1' }, state_1: { child: 'city_1' } }.sort.to_h, test.error_options.sort.to_h)
+  end
+
+  def test_attribute_with_errors
+    test = TestValidation.new(attribute1: "Junk string 1", attribute2: "junk string 2")
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({attribute1: 'data_type_mismatch', attribute2: 'data_type_mismatch'}, errors)
+    assert errors.count == 2
   end
 
   def test_nested_fields_without_required_fields

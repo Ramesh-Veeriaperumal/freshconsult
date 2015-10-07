@@ -4,7 +4,10 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :attribute4, :error_options, :attribute5, :string_param
+    attr_accessor :attribute1, :attribute2, :attribute3, :attribute4, :error_options, :attribute5, :string_param, :multi_error
+
+    validates :multi_error, data_type: { rules: Fixnum, allow_nil: true }
+    validates :multi_error, custom_numericality: { allow_nil: true }
     validates :attribute1, custom_numericality: { allow_nil: true }
     validates :attribute2, custom_numericality: { allow_nil: false }
     validates :attribute3, custom_numericality: { allow_negative: true, allow_nil: true }
@@ -39,6 +42,15 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     test.string_param = true
     assert test.valid?
     assert test.errors.empty?
+  end
+
+  def test_attributes_multiple_error
+    test = TestValidation.new
+    test.attribute2 = 1
+    test.multi_error = "890"
+    refute test.valid?
+    assert test.errors.count == 1
+    assert_equal({multi_error: 'data_type_mismatch'}, test.errors.to_h)
   end
 
   def test_custom_message

@@ -5,6 +5,8 @@ class StringRejectionValidatorTest < ActionView::TestCase
     include ActiveModel::Validations
 
     attr_accessor :attribute1, :attribute2, :attribute3, :error_options
+
+    validates :attribute2, data_type: {rules: Array, allow_nil: true}
     validates :attribute1, string_rejection: { excluded_chars: [','] }
     validates :attribute2, string_rejection: { excluded_chars: [',', 'junk', '!', '$'] }
     validates :attribute3, string_rejection: { excluded_chars: [6767] }
@@ -30,6 +32,15 @@ class StringRejectionValidatorTest < ActionView::TestCase
     error_options = test.error_options.to_h
     assert_equal({ attribute2: 'special_chars_present' }, errors)
     assert_equal({ attribute2: { chars: [',', 'junk', '!', '$'].join('\',\'') } }, error_options)
+  end
+
+  def test_attributes_with_error
+    test = TestValidation.new(attribute2: '%$,test, junk')
+    refute test.valid?
+    errors = test.errors.to_h
+    error_options = test.error_options.to_h
+    assert_equal({ attribute2: 'data_type_mismatch' }, errors)
+    assert errors.count == 1
   end
 
   def test_attribute_string_valid

@@ -4,7 +4,7 @@ class RequiredValidator < ActiveModel::Validations::PresenceValidator
   def validate(record)
     attributes.each do |attribute|
       value = record.read_attribute_for_validation(attribute)
-      next if (value.nil? && options[:allow_nil]) || (value.blank? && options[:allow_blank])
+      next if record.errors[attribute].present? || (value.nil? && options[:allow_nil]) || (value.blank? && options[:allow_blank])
       validate_each(record, attribute, value)
     end
   end
