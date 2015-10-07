@@ -26,5 +26,30 @@ class Solution::FolderMeta < ActiveRecord::Base
 		:order => :"solution_article_meta.position"
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
+	CACHEABLE_ATTRIBUTES  = ["is_default","name","id","article_count"]
+
+	after_create :clear_cache
+	after_destroy :clear_cache
+	after_update :clear_cache_with_condition
+
+	def article_count
+	  solution_article_meta.size
+	end
+
+	def as_cache
+	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
+	    res.merge({ attribute => self.send(attribute) })
+	  end).with_indifferent_access
+	end
+
+	private
+
+	def clear_cache
+		account.clear_solution_categories_from_cache
+	end
+
+	def clear_cache_with_condition
+		account.clear_solution_categories_from_cache unless (self.changes.keys & ['solution_category_meta_id', 'position']).empty?
+	end
 
 end

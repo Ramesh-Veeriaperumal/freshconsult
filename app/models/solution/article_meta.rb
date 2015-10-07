@@ -28,7 +28,18 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	HITS_CACHE_THRESHOLD = 100
 
+	after_create :clear_cache
+	after_destroy :clear_cache
+	after_update :clear_cache, :if => :solution_folder_meta_id_changed?
+
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
 	end
+
+	private
+
+	def clear_cache
+		account.clear_solution_categories_from_cache
+	end
+
 end

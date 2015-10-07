@@ -15,15 +15,6 @@ class ArticleObserver < ActiveRecord::Observer
 
 	def after_create(article) 
 		create_activity(article)
-		article.account.clear_solution_categories_from_cache
-	end
-	
-	def after_destroy(article)
-		article.account.clear_solution_categories_from_cache
-	end
-
-	def after_update(article)
-		article.account.clear_solution_categories_from_cache if article.folder_id_changed?
 	end
 
 private
