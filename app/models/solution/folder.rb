@@ -6,7 +6,6 @@ class Solution::Folder < ActiveRecord::Base
 
   concerned_with :associations, :meta_associations
 
-  CACHEABLE_ATTRS = ["is_default","name","id","article_count"]
   attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
@@ -25,9 +24,7 @@ class Solution::Folder < ActiveRecord::Base
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
   
-  after_create :clear_cache
-  after_destroy :clear_cache
-  after_update :clear_cache_with_condition
+  after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
   
   has_many :customers, :through => :customer_folders
 
@@ -206,10 +203,8 @@ class Solution::Folder < ActiveRecord::Base
     save
   end
 
-  def as_cache
-    (CACHEABLE_ATTRS.inject({}) do |res, attribute|
-      res.merge({ attribute => self.send(attribute) })
-    end).with_indifferent_access
+  def primary?
+    (language_id == Language.for_current_account.id)
   end
 
   private
@@ -236,10 +231,6 @@ class Solution::Folder < ActiveRecord::Base
     
     def clear_cache
       account.clear_solution_categories_from_cache
-    end
-    
-    def clear_cache_with_condition
-      account.clear_solution_categories_from_cache unless (self.changes.keys & ['name', 'category_id', 'position']).empty?
     end
 
     def add_companies(customer_ids, add_to_existing)

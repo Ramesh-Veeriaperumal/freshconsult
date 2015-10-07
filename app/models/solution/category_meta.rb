@@ -33,4 +33,20 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:source => :app
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
+	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
+
+	after_create :clear_cache
+	after_destroy :clear_cache
+
+	def as_cache
+	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
+	    res.merge({ attribute => self.send(attribute) })
+	  end).with_indifferent_access
+	end
+
+	private
+
+	def clear_cache
+		account.clear_solution_categories_from_cache
+	end
 end

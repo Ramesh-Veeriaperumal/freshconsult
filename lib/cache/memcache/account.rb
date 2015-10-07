@@ -157,12 +157,12 @@ module Cache::Memcache::Account
   
   def solution_categories_from_cache
     MemcacheKeys.fetch(ALL_SOLUTION_CATEGORIES % { :account_id => self.id }) do
-      #META-READ-HACK!!
-      self.solution_categories.all(:conditions => {:is_default => false},:include => folder_scope_with_psc).collect do |cat|
+      self.solution_category_meta.all(:conditions => {:is_default => false},
+          :include => [:primary_category,{ :solution_folder_meta => [:primary_folder]}, :portal_solution_categories]).collect do |c_meta|
         {
-          :folders => cat.folders.map(&:as_cache),
-          :portal_solution_categories => cat.portal_solution_categories.map(&:as_cache)
-        }.merge(cat.as_cache).with_indifferent_access
+          :folders => c_meta.solution_folder_meta.map(&:as_cache),
+          :portal_solution_categories => c_meta.portal_solution_categories.map(&:as_cache)
+        }.merge(c_meta.as_cache).with_indifferent_access
       end
     end
   end
@@ -224,14 +224,5 @@ module Cache::Memcache::Account
     
     def handles_memcache_key
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
-    end
-
-    #META-READ-HACK!!
-    def folder_scope_with_psc
-       unless Account.current.present? && Account.current.launched?(:meta_read)
-         return [:portal_solution_categories, :folders]
-       end
-       [ :portal_solution_categories_through_meta, :folders_through_meta ]
-    end
-    
+    end    
 end
