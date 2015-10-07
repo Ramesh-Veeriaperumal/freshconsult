@@ -1842,6 +1842,7 @@ Helpkit::Application.routes.draw do
       end
     end
     match '/articles/:id/:language' => "articles#show", :as => :article_version
+    match '/articles/new/:id/:language' => "articles#new", :as => :new_article_version
     match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
     match '/all_categories/(:portal_id)' => "categories#all_categories", :as => :all_categories, :via => :get
   end

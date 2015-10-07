@@ -13,11 +13,10 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_meta_objects, :only => [:show, :update, :edit]
+  before_filter :load_meta_objects, :only => [:show, :new, :update, :edit]
   before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
-  before_filter :language, :only => [:create, :new]
   before_filter :set_current_folder, :only => [:create]
   before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
@@ -29,6 +28,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
+    @article = current_account.solution_articles.new unless @article
     respond_to do |format|
       format.html {
         if @article 
@@ -67,15 +67,15 @@ class Solution::ArticlesController < ApplicationController
   def create
     builder_params
     @article = Solution::Builder.article(params)
-    @article.tags_changed = set_solution_tags 
-    build_attachments
+    @article.tags_changed = set_solution_tags
     respond_to do |format|
-      if @article.save
-        @article.reload
+      if @article
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article)).html_safe if publish?
-          redirect_to @article
+          redirect_to solution_article_version_path(
+                          @article.solution_article_meta,
+                          @article.language.code)
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -187,6 +187,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def load_meta_objects
+      return if params[:id].blank?
       @article_meta = current_account.solution_article_meta.find_by_id!(params[:id])
       @folder_meta = @article_meta.solution_folder_meta
       @category_meta = @folder_meta.solution_category_meta
@@ -457,7 +458,7 @@ class Solution::ArticlesController < ApplicationController
 
     def set_article_folder
       return if params[:folder_id].nil?
-      @article.folder_id = current_account.solution_folder_meta.find_by_id(params[:folder_id])
+      @article.folder_id = current_account.solution_folder_meta.find_by_id(params[:folder_id]).id
     end
 
 end

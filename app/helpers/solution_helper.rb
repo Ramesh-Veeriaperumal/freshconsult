@@ -279,7 +279,8 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
-							solution_article_version_path(solution_meta.id, language.code) :
+							version.present? ? solution_article_version_path(solution_meta.id, language.code) :
+							solution_new_article_version_path(solution_meta.id, language.code) :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
 	end
@@ -309,7 +310,7 @@ module SolutionHelper
     op.html_safe
 	end
 
-	def language_tab l, outdated
+	def language_tab l, outdated = false
 		op = ""
 		op << "<div class='lang-tab #{'selected' if l == @language}'>"
 		op << pjax_link_to("<span class='language_symbol #{outdated ? 'outdated' : 'active'}'>
@@ -326,6 +327,7 @@ module SolutionHelper
 	end
 
 	def add_translation(lang_ids)
+		return if lang_ids.blank?
 		options_select = lang_ids.map{|l| [Language.find(l).name, l]}
 		select_tag("language_id", 
 							options_for_select(options_select), 

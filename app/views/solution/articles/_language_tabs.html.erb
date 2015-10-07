@@ -3,3 +3,5 @@
 <% end %>
 
 <%= add_translation(current_account.applicable_language_ids - @article_meta.solution_articles.map(&:language_id))%>
+
+<%= language_tab(@language) if @article.new_record? %>

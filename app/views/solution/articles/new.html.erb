@@ -2,6 +2,10 @@
 <% content_for :sticky_right do %>
 	<%= article_btns('save-btn', 'publish-btn') %>
 <% end %>
+
+<% content_for :sticky_title do %>
+    <%= render :partial => "language_tabs" if @article_meta %>
+<% end %>
 <%= render :partial => '/solution/shared/sticky', 
            :locals => { :page => :article, :sticky_class => 'article-sticky', :toolbar => true} %>
            
