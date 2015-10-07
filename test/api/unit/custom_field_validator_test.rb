@@ -120,14 +120,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_invalid
-    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff' })
+    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff', 'url' => 'udp:/testurl' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal(
       {
         check1_1: 'data_type_mismatch', check2_1: 'data_type_mismatch', decimal1_1: 'is not a number',
         decimal2_1: 'is not a number', number1_1: 'data_type_mismatch',
-        number2_1: 'data_type_mismatch'
+        number2_1: 'data_type_mismatch',:url=>'invalid_format'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
@@ -139,7 +139,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_valid
-    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff' })
+    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff', 'url' => 'http://testurl.co.test' })
     assert test.valid?
     assert test.errors.empty?
   end
