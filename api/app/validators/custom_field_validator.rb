@@ -105,6 +105,11 @@ class CustomFieldValidator < ActiveModel::EachValidator
     ActiveModel::Validations::FormatValidator.new(format_options).validate(record)
   end
 
+  def validate_custom_phone_number(record, field_name)
+    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
+  end
+
   # Date validator for date field
   def validate_custom_date(record, field_name)
     date_options = construct_options({ attributes: field_name, allow_nil: !@is_required }, 'required_date')
