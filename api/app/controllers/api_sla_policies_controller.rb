@@ -16,8 +16,11 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def assign_protected
-      @item.conditions[:company_id] = params[cname][:applicable_to][:company_ids].compact if params[cname][:applicable_to][:company_ids]
-      @item.conditions.delete(:company_id) if params[cname][:applicable_to].key?(:company_ids) && params[cname][:applicable_to][:company_ids].blank?
+      if params[cname][:applicable_to][:company_ids].present?
+        @item.conditions[:company_id] = params[cname][:applicable_to][:company_ids].uniq.compact
+      else
+        @item.conditions.delete(:company_id)
+      end
     end
 
     def validate_params
