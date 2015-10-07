@@ -214,19 +214,6 @@ module Integrations::GoogleContactsUtil
       current_config
     end
 
-    def construct_installed_app_config goog_acc
-      installed_app = goog_acc.account.installed_applications.with_name("google_contacts").first
-      current_config = nil # Can do a compact & flatten and can make the initial assignment as {}
-      current_config = installed_app["configs"][:inputs] unless installed_app["configs"].blank?
-      unless current_config.blank? || current_config["OAuth2"].blank?
-        current_config["OAuth2"] << "#{goog_acc.email}"
-      else
-        current_config = {}
-        current_config["OAuth2"] = ["#{goog_acc.email}"]
-      end
-      current_config
-    end
-
     def copy(from_user, to_user)
       USER_FIELDS.each { |prop_name|
         if(from_user.has_attribute?(prop_name))

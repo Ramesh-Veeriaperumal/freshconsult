@@ -59,21 +59,11 @@ module Helpdesk::TicketElasticSearchMethods
       end
        
       def delete_from_es_notes
-        #Remove as part of Search-Resque cleanup
-        if Search::Job.sidekiq?
-          SearchSidekiq::Notes::DeleteNotesIndex.perform_async({ :ticket_id => id })
-        else
-          Resque.enqueue(Search::Notes::DeleteNotesIndex, { :ticket_id => id, :account_id => account_id })
-        end if ES_ENABLED
+        SearchSidekiq::Notes::DeleteNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
       end
 
       def restore_es_notes
-        #Remove as part of Search-Resque cleanup
-        if Search::Job.sidekiq?
-          SearchSidekiq::Notes::RestoreNotesIndex.perform_async({ :ticket_id => id })
-        else
-          Resque.enqueue(Search::Notes::RestoreNotesIndex, { :ticket_id => id, :account_id => account_id })
-        end if ES_ENABLED
+        SearchSidekiq::Notes::RestoreNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
       end
 
     end

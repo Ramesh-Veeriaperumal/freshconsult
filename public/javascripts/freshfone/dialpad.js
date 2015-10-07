@@ -2,7 +2,7 @@
 	"use strict";
 	var timeout,
 		longpress,
-		$number = $('#number');
+		$number = $('.ff-dial-pad #number');
 	
 //Invoking intlTelInput plugin 
     window.tel = $number.intlTelInput(); 
@@ -27,7 +27,6 @@
 			longpress = false;
 		},
 		onMousedown: function (keypad, inst) {
-			freshfoneMetricsOnClick($(this));
 			var searchString = $number.val() + $(this).html();
 			freshfoneDialpadEvents.bindSearchResult(searchString);
 			
@@ -97,25 +96,15 @@
 		.on('shown', function (e) {
 			freshfoneMetricsOnKeyPress();
 			freshfoneMetricsOnPaste();
+			if(freshfonecalls.recentCaller != 1){  
+				$number.val("");
+			} else {
+				freshfonecalls.recentCaller = 0;
+			}
+
 			$number.intlTelInput("setPreferredCountries");
 			freshfonecalls.hideText();
 	});
-	function freshfoneMetricsOnClick(classValue){
-		if(classValue.hasClass('keypad-key')){
-				if(freshfonecalls.isOngoingCall()){
-					App.Phone.Metrics.recordSource("CLICK_IVR");
-					App.Phone.Metrics.push_event();
-				}
-				else{
-					App.Phone.Metrics.recordSource("DIAL_BY_NUM_PAD");
-				}
-			}
-			if(classValue.hasClass('keypad-special')){
-				App.Phone.Metrics.resetCallDirection();
-				App.Phone.Metrics.resetConvertedToTicket();
-				App.Phone.Metrics.push_event();
-			}
-	}
 
 	function freshfoneMetricsOnKeyPress(){
 		jQuery(".user_phone").keypress(function(ev){

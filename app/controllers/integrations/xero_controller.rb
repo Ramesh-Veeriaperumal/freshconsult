@@ -122,7 +122,7 @@
         invoices = @xero_client.Invoice.all(:where => query, :modified_since => 1.month.ago.utc)  
       end
     end   
-    ticket = current_account.tickets.with_display_id(params["ticket_id"]).first
+    ticket = current_account.tickets.find_by_display_id(params["ticket_id"])
     content = installed_app.configs_default_desc
     ticket_description =  RailsSanitizer.full_sanitizer.sanitize(Liquid::Template.parse(content).render('ticket' => ticket))
     render :json => {:inv_items => invoices, :ticket_description => ticket_description, :remote_id => {"remote_integratable_id" => integrated_resource.try(:remote_integratable_id).to_s, "integrated_resource_id" => integrated_resource.try(:id).to_s } }

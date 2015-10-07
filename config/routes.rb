@@ -219,7 +219,10 @@ Helpkit::Application.routes.draw do
   match '/imports/:type' => 'customers_import#csv'
   match '/imports/:type/map_fields' => 'customers_import#map_fields'
 
-  resources :health_check
+  namespace :health_check do
+    get :verify_domain
+    get :verify_credential
+  end
 
   resources :customers do
     member do
@@ -735,8 +738,9 @@ Helpkit::Application.routes.draw do
     namespace :quickbooks do
       get :refresh_access_token
       get :render_success
+      post :create_company
     end
-    
+
     resources :dynamics_crm do
       collection do
         post :settings_update
@@ -760,6 +764,33 @@ Helpkit::Application.routes.draw do
       get :authdone
       get :install
       post :create_invoices
+    end
+
+    namespace :hootsuite do
+      
+      resources :tickets, :only => [:update,:create,:show] do
+        collection do
+          post :add_note
+          post :add_reply
+          get :append_social_reply
+        end
+      end
+
+      namespace :home do
+        get :domain_page
+        post :plugin
+        post :verify_domain
+        get :handle_plugin
+        delete :destroy
+        get :log_out
+        post :uninstall
+        get :index
+        post :iframe_page
+        post :search
+        delete :delete_hootsuite_user
+        get :hootsuite_login
+        post :create_login_session
+      end
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
@@ -1034,6 +1065,21 @@ Helpkit::Application.routes.draw do
       resources :apps
     end
 
+    namespace :ecommerce do
+      resources :accounts
+      resources :ebay_accounts, :controller => 'ebay_accounts' do
+        collection do
+          post :generate_session
+          get :authorize
+          get :enable
+          get :failure
+        end
+        member do
+          get :renew_token
+        end
+      end
+    end
+
     resources :dynamic_notification_templates do
       collection do
         put :update
@@ -1078,6 +1124,8 @@ Helpkit::Application.routes.draw do
     end
 
   end
+
+  match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
   namespace :search do
     resources :home, :only => :index do
@@ -1516,6 +1564,7 @@ Helpkit::Application.routes.draw do
           post :mobihelp
           get :traffic_cop
           get :full_text
+          post :ecommerce
         end
       end
 

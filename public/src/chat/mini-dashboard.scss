@@ -43,7 +43,8 @@
 			padding: 10px;
 			display: block;
 			@include box-shadow(-1px 0px 0px 0px #fff);
-			&.chat-link-large{
+			&.chat-link-large,
+			&.chat-link-small{
 				width:100%;
 				padding: 0px;
 				a{
@@ -51,13 +52,33 @@
 					padding: 10px;
 					display: block;
 					color: #666;
+					position: relative;
 					&:hover{
 						background-color: #eee;
+					}
+					&:after{
+						content: "";
+				    display: inline-block;
+						border-top: 5px solid transparent;
+				    border-left: 5px solid #555;
+				    border-bottom: 5px solid transparent;
+						position: absolute;
+				    right: 10px;
+						top: 13px;
 					}
 					b{
 						float: right;
 						position: relative;
 						top: 2px;
+					}
+				}
+			}
+			&.chat-link-small{
+				width: 50%;
+				a{
+					background-color:#f2f2f2; 
+					&:after{
+						display:none;
 					}
 				}
 			}

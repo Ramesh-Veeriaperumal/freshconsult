@@ -2,13 +2,13 @@ var DynamicsWidget = Class.create();
 DynamicsWidget.prototype= {
 
 	CONTACT_SEARCH_RESULTS:
-		'<div class="title salesforce_widget_bg">' +
+		'<div class="title salesforce_contacts_widget_bg">' +
 			'<div id="number-returned"><b> <%=resLength%> results for <%=requester%> </b></div>'+
 			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
 		'</div>',
 
 	VIEW_CONTACT:
-		'<div class="title salesforce_widget_bg">' +
+		'<div class="title salesforce_contacts_widget_bg">' +
 			'<div class="row-fluid">' +
 				'<div id="contact-name" class="span8">'+
 				'<a id="search-back" href="#"><div class="search-back <%=(count>1 ? "": "hide")%>"> <i class="arrow-left"></i> </div></a>'+
@@ -26,7 +26,7 @@ DynamicsWidget.prototype= {
 		'<%=domain_name%>'+'/main.aspx?etn='+'<%=entity_type%>'+'&pagetype=entityrecord&id=%7B'+'<%=contact_id%>'+'%7D',
 
 	initialize:function(dynamicsBundle){
-		jQuery("#dynamicscrm_widget").addClass('loading-fb');
+		jQuery("#dynamicscrm_contacts_widget").addClass('loading-fb');
 		dynamicsWidget = this;
 		this.dynamicsBundle = dynamicsBundle;
 		this.crmData = null;
@@ -45,13 +45,13 @@ DynamicsWidget.prototype= {
 			this.freshdeskWidget = new Freshdesk.Widget({
 				/* TODO : check if the below values needed to come via bundle and what is the usage of these values */
 				app_name:"Dynamics CRM",
-				widget_name:"dynamicscrm_widget",
+				widget_name:"dynamicscrm_contacts_widget",
 				application_id: 25,
 				integratable_type:"crm",
 				init_requests: init_reqs
 			});
 		} else {
-			this.freshdeskWidget = new Freshdesk.Widget({app_name: "Dynamics CRM", widget_name:"dynamicscrm_widget"});
+			this.freshdeskWidget = new Freshdesk.Widget({app_name: "Dynamics CRM", widget_name:"dynamicscrm_contacts_widget"});
 			this.freshdeskWidget.alert_failure("Email not available for this requester. A valid Email is required to fetch the contact from DynamicsCRM.");
 		}
 	},
@@ -98,17 +98,17 @@ DynamicsWidget.prototype= {
 	},
 
 	renderContactNa:function(){
-		var eval_params = { widget_name: "salesforce_widget", reqName : dynamicsWidget.dynamicsBundle.reqEmail, app_name : "DynamicsCRM" };
+		var eval_params = { widget_name: "salesforce_contacts_widget", reqName : dynamicsWidget.dynamicsBundle.reqEmail, app_name : "DynamicsCRM" };
 		dynamicsWidget.freshdeskWidget.options.application_html = function(){ return _.template(dynamicsWidget.CONTACT_NA, eval_params);} 
 		dynamicsWidget.freshdeskWidget.display();
-		jQuery("#dynamicscrm_widget").removeClass('loading-fb');
+		jQuery("#dynamicscrm_contacts_widget").removeClass('loading-fb');
 	},
 
 	renderContactWidget:function(eval_params, entity_index){
 		var contact_fields_template = dynamicsWidget.getTemplate(entity_index); // Field and label html is populated here.
 		dynamicsWidget.freshdeskWidget.options.application_html = function(){ return _.template(dynamicsWidget.VIEW_CONTACT, eval_params)+""+contact_fields_template;	} // in contact_fields_template custom field is populated
 		dynamicsWidget.freshdeskWidget.display();
-		jQuery("#dynamicscrm_widget").on('click','#search-back', (function(ev){
+		jQuery("#dynamicscrm_contacts_widget").on('click','#search-back', (function(ev){
 			ev.preventDefault();
 			dynamicsWidget.renderCrmResults();
 		}));
@@ -117,7 +117,7 @@ DynamicsWidget.prototype= {
 	renderSearchResultsWidget:function(results_number){
 		dynamicsWidget.freshdeskWidget.options.application_html = function(){ return _.template(dynamicsWidget.CONTACT_SEARCH_RESULTS, results_number);}
 		dynamicsWidget.freshdeskWidget.display();
-		jQuery("#dynamicscrm_widget").removeClass('loading-fb');
+		jQuery("#dynamicscrm_contacts_widget").removeClass('loading-fb');
 	},
 
 	parse_nested_custom_field:function(field_json){

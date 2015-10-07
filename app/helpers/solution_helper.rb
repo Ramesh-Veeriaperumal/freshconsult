@@ -81,8 +81,8 @@ module SolutionHelper
 						btn_dropdown_menu(folder, [category], opts)
 					end
 			end
-		elsif privilege?(:create_article)
-			pjax_link_to(*article, :class => 'btn')
+		elsif privilege?(:publish_solution)
+			new_article_btn(article)
 		else
 			""
 		end
@@ -331,6 +331,14 @@ module SolutionHelper
 							options_for_select(options_select), 
 							:class => "select2 pull-right",
 							"data-placeholder" => "Add translation")
+	end
+
+	def new_article_btn article
+	  output = %(<div class="btn-group">)
+	  output << pjax_link_to(article[0],article[1],
+	  	                     article[3].merge({:class => "btn btn-primary"}))
+	  output << %(</div>)
+	  output.html_safe
 	end
 
 end

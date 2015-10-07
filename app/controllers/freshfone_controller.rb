@@ -5,9 +5,11 @@ class FreshfoneController < FreshfoneBaseController
 	include Freshfone::NumberMethods
 	include Freshfone::CallValidator
 	include Freshfone::Response
+	include Freshfone::CallerLookup
 
 	attr_accessor :freshfone_users
 	before_filter :indian_number_incoming_fix, :only => [:voice, :ivr_flow]
+	before_filter :invalid_number_incoming_fix, :only => [:voice, :ivr_flow]
 	before_filter :set_native_mobile, :only => :create_ticket
 	before_filter :apply_conference_mode, :only => [:voice, :ivr_flow]
 		
@@ -22,9 +24,9 @@ class FreshfoneController < FreshfoneBaseController
 			response = initiator.resolve_call
 			render :xml => response
 		rescue Exception => e # Spreadheet L 5
-			Rails.logger.error "Error in voice_conference for #{current_account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      current_call.cleanup_and_disconnect_call if current_call.present?
-      render :xml => empty_twiml
+			Rails.logger.error "Error in voice_conference for #{current_account.id}\n CallSid :: #{params[:CallSid]}\n #{e.message}\n#{e.backtrace.join("\n\t")}"
+      current_call.cleanup_and_disconnect_call if current_call.present? && params[:agent_id].blank?
+      empty_twiml and return
 		end
 	end
 	
@@ -73,11 +75,19 @@ class FreshfoneController < FreshfoneBaseController
 		def indian_number_incoming_fix
 			#Temp fix suggested by Twilio to truncate +1 country code in incoming calls from India
 			from = params[:From]
-			 if params[:FromCountry] == "US" and from.starts_with?("+1") and from.length > 12
+			 if from.starts_with?("+1") and from.length > 12
 	 			params[:From] = from.gsub(/^\+1/, "+")
 			 	reset_caller_params
 			 end
 		end
+
+		def invalid_number_incoming_fix
+			return if params[:From].blank? || sip_call?
+			Rails.logger.info "Invalid Number Check For Account Id :: #{current_account.id}, CallSid :: #{params[:CallSid]} for From Number : #{params[:From]}"
+			if invalid_number?(params[:From]) && !strange_number?(params[:From])
+				params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
+			end
+ 		end
 
 		def reset_caller_params
 			params[:FromCountry] = country_from_global(params[:From])

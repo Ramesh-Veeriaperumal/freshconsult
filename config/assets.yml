@@ -208,6 +208,10 @@ javascripts:
     - public/javascripts/livechat/templates/dashboard/miniDashboard.jst.ejs
     - public/javascripts/livechat/dashboard/miniDashboard.js
 
+  livechat_agentAvailability:
+    - public/javascripts/livechat/templates/agentAvailability/agentAvailability.jst.ejs
+    - public/javascripts/livechat/agentAvailability/agentAvailability.js
+
   livechat_archive:
     #Library
     - public/javascripts/report/daterangepicker.jQuery.js

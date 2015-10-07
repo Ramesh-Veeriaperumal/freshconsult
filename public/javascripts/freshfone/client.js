@@ -57,7 +57,8 @@ var globalconn;
 				freshfonecalls.recentCaller = 1;
 				freshfonecalls.number = $(this).data('phoneNumber');
 				freshfoneContactSearch.getSearchResults(freshfonecalls.number);
-				$('#number').intlTelInput("setNumber", freshfonecalls.number);
+				$('#number').intlTelInput("setNumber", freshfonecalls.number)
+										.trigger('input');
 				freshfonecalls.selectFreshfoneNumber($(this).data('freshfoneNumberId'));
 				setTimeout(function () { 
 					freshfonewidget.showDialPad(); 
@@ -69,20 +70,14 @@ var globalconn;
 		});
 
 		function recordSource(parentClass){
-			switch(parentClass){
-				case "recent_calls_container":
-					App.Phone.Metrics.recordSource("RECENT_CALL_BTN");
-					break;
-				case "call_user pull-right":
-					App.Phone.Metrics.recordSource("CLICK_CALL_BTN");
-					break;
-				case "recent_calls_call_user","recent calls":
-					break;
-				default:
-					App.Phone.Metrics.recordSource("CLICK_NUM");
-					break;
+			if(parentClass=="call_user pull-right"){
+				App.Phone.Metrics.recordSource("CLICK_CALL_BTN");
+			}
+			else{
+				App.Phone.Metrics.recordSource("CLICK_NUM");
 			}
 		}
+	
 	});
 		
 		

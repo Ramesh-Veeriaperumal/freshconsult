@@ -5,7 +5,7 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
   private
 
   def process_metric
-    helper_hash = {}
+    @helper_hash = {}
 
     calculate_general_avg_data
     raw_result.each do |row|
@@ -16,14 +16,14 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
         value = label_for_x_axis(row["y"].to_i, row["doy"].to_i, value.to_i, column, date_range) if trend_column? column
         
         processed_result[column] ||= {}
-        helper_hash[column] ||= {}
+        @helper_hash[column] ||= {}
 
         processed_result[column][value] ||= 0
-        helper_hash[column][value] ||= {:avg => 0, :count => 0}
+        @helper_hash[column][value] ||= {:avg => 0, :count => 0}
 
-        processed_result[column][value]    = aggregate_avg(helper_hash[column][value], row)
-        helper_hash[column][value][:avg]   = processed_result[column][value]
-        helper_hash[column][value][:count] += row[COLUMN_MAP[:count]].to_i
+        processed_result[column][value]    = aggregate_avg(@helper_hash[column][value], row)
+        @helper_hash[column][value][:avg]   = processed_result[column][value]
+        @helper_hash[column][value][:count] += row[COLUMN_MAP[:count]].to_i
       end
     end
     pad_result_with_complete_time_range
@@ -68,7 +68,7 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
     new_row_avg = new_row[COLUMN_MAP[:avg]].to_f * new_row[COLUMN_MAP[:count]].to_i
     total_count = avg_hash[:count] + new_row[COLUMN_MAP[:count]].to_i
     resulting_avg = (cur_avg + new_row_avg) / total_count.to_f if total_count != 0
-    resulting_avg ? resulting_avg.round(2) : 0.0
+    resulting_avg ? resulting_avg.to_i : 0
   end
 
   # Sending averages as integers (in minutes) since JS lib used to render charts needs integer 

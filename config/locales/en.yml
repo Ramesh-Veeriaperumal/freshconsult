@@ -158,6 +158,8 @@ en:
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   reauthorize_twitter: Reauthorize your twitter handle.
+  ecommerce_reauth:  "Your Ecommerce account is inaccessible. It looks like your auth token has expired. "
+  reauthorize_ecommerce: Reauthorize your ecommerce account.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
   upgrade_trial: Upgrade your trial!
@@ -182,6 +184,7 @@ en:
   facebook_source: Facebook
   facebook_user: Facebook User
   mobihelp: MobiHelp
+  ecommerce: Ecommerce
   logmein_source: LogMeIn Rescue
   working: Working
   attach: Attach
@@ -264,7 +267,7 @@ en:
     insert_field: Drag & Drop Field
     drag_drop_field_intro: Drag and drop any field type into the "%{name}" form below to add a new custom field
     number: Number
-    empty_section_info: Drop field here
+    empty_section_info: Drop fields here
     text: Single Line Text
     paragraph: Multi Line Text
     checkbox: Checkbox
@@ -301,7 +304,7 @@ en:
     first_choice: First Choice
     second_choice: Second Choice
     confirm_delete: Are you sure you want to delete this field?
-    confirm_deletion: This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?
+    confirm_deletion: Warning! You will lose the data pertaining to this field in all old tickets permanently. Are you sure you want to delete this field?
     no_choice_message: "At least one valid choice has to be present"
     customer_label_missing: Customer label cannot not be empty
     index:
@@ -976,6 +979,48 @@ en:
           storage_space_internal: Device Storage Free/Total in MB (Internal)
           storage_space_sd: Device Storage Free/Total in MB (External)
           mobihelp_sdk_version: Mobihelp SDK Version
+    ecommerce:
+      human_name: Ecommerce Account
+      index_title: Ecommerce
+      edit_account: Edit Account Details
+      limit_exceed: Maximum account limit reached.
+      ebay_note_not_added: "Note not added to eBay. Connection unstable."
+      inactive: inactive
+      active: active
+      ebay_error: 
+        invalid_source: Invalid ticket source.
+        invalid_reply: Reply not allowed for this ticket.
+        note_not_added: Note not added.
+        reply_length_exceed: Your reply exceeded the maximum length of 2000 characters.
+      helpnote:
+        no_account: Add new account
+        integrate_ecommerce: Bring your eCommerce messages into Freshdesk
+        account_desc: Link your eBay marketplace with <b> %{product_name} </b> to manage your customer requests within Freshdesk.
+        content1:
+            info1: Integrating ecommerce account
+            info2: "Freshdesk lets you manage customer queries coming into your eBay account from within your helpdesk. Once setup, all your customer queries from eBay will get converted into tickets automatically. You can also respond to them directly from within Freshdesk. "
+      index:
+        title: Ecommerce Accounts
+        renew: Renew Token
+        new_account: New Account
+      new:
+        title: New Account
+        save_account: Save Account
+        account_name: Account Name
+        ebay_site: eBay Site
+        site_helptext: select the eBay site where you sell your products
+        duplicate_account: This eBay Account is already associated with a Freshdesk account 
+        max_limit: You have reached the maximum ecommerce account limit
+        assign_group: Assign to Group
+        assign_product: Assign to Product
+        select_ebay_site: Select a eBay site
+        select_group: Select a group
+        select_product: Select a product
+      edit:
+        title: Edit Account
+        expiry_date: Token Expiry
+      form:
+        name: Account Name
     portal_settings:
       flash:
         portal_published_success: "Portal changes published successfully."
@@ -1407,7 +1452,7 @@ en:
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
     supervisor_rules:
-      info_help: For <b>each tickets</b> updated within 30 days, Execute all matching rules.
+      new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
         human_name: Supervisor Rule
         title: Supervisor - Rules
@@ -1896,6 +1941,7 @@ en:
       tickets: Tickets
       ticket_fields: Ticket Fields
       requester: Requester
+      company: Company
       helpdesk: Helpdesk
       events: Events
       survey: Survey
@@ -1941,6 +1987,8 @@ en:
   password_reset_email: Password Reset Email
   default_reply_template: Agent Reply Template
   additional_email_verification: Additional Email Verification
+  new_ticket_cc: New Ticket Created
+  public_note_cc: Note added to ticket
   import_user_org: Users, Organizations & Groups
   to_do: To Do
   does_not_contain: Does not contain
@@ -2152,6 +2200,7 @@ en:
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
+        date: You are not allowed to create more than 10 date fields.
     cf:
       type:
         contact_fields_controller: Contact Fields
@@ -2294,6 +2343,7 @@ en:
     action_verb: 'updated'
     email_response: "email response"
     reply: "reply"
+    ecommerce: "reply"
     forwarded: "forwarded"
     tweet: "tweet"
     time_entry: "time entry"
@@ -2428,6 +2478,10 @@ en:
         twitter:
           short: "{{user_path}} added a {{twitter_path}}"
           long: "{{user_path}} added a {{twitter_path}} to the ticket {{notable_path}}"
+        ecommerce:
+          short: "{{user_path}} has sent a {{ecommerce_path}}"
+          long: "{{user_path}} has sent a {{ecommerce_path}} to the ticket {{notable_path}}"
+
       timesheet:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
@@ -3725,6 +3779,7 @@ en:
       properties: Properties
       edit_properties: Edit Properties
       prop_updated_msg: The article properties were updated succesfully.
+      prop_updated_error: The article properties could not be updated.
       save_and_publish: Save and Publish
       save_as_draft: Save as Draft
       publish: Publish
@@ -3972,6 +4027,8 @@ en:
       social: Social
     search: Search
   agent_adds_comment: Agent Adds Comment to Ticket
+  notify_comment: Note added to ticket
+  add_cc: Added CC to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
   portal_customizer_option_tickets: Users can Submit a ticket without logging in
   feedbackwidget_help_para2: "Customizable tab opens into a Support ticket form. "
@@ -3987,6 +4044,7 @@ en:
     requestor_notification: Requester Notification
     requestor_notifications: Requester Notifications
     notification_template: Reply Templates
+    cc_notifications: CC Notifications
     title: Email Notifications
     singular_title: Notification
     index_outdated: Some translations are outdated
@@ -4040,6 +4098,15 @@ en:
       agent_template_13:
         topic: Resolution Time SLA Violation
         info1: "This notification is sent out to agent when the ticket assigned to them has not been resolved within the due by time. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      agent_template_21:
+        topic: Note added to ticket
+        info1: "This notification will be sent out to the agents mentioned in “notify agents” when a note is added to the ticket by an agent  This email could contain the ticket url {{ticket.url}} to make it easy for the agents to check the ticket."
+      cc_notification_19:
+        topic: New Ticket cc
+        info1: "This notification will be sent out to the cc-ed persons if the Requester has included email addresses under cc while submitting a ticket to your helpdesk. This email should ideally contain the Requester’s name {{ticket.requester.name}} and ticket description {{ticket.description}}."
+      cc_notification_20:
+        topic: Public Note cc
+        info1: "When a public note is added by an Agent or Requester, this email is sent out to the cc-ed person to inform them about the latest comment. This email should ideally contain last commenter {{comment.commenter.name}}  and last comment {{comment.body}}."
       requester_template_10:
         topic: User Activation Email
         info1: "When a new user creates a ticket you can create a customer account in your helpdesk for them and send out an activation email. This notification should contain the activation URL for your customers.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -4069,6 +4136,7 @@ en:
     event: Event
     agent_notification: Agent Notification
     agent_notifications: Agent Notifications
+    cc_notifications: CC Notifications
     subject: Subject
   errors_in_plan_change: "Errors encountered with your change:"
   formatting_help: Formatting Help
@@ -4867,10 +4935,24 @@ en:
         call_in_progress: Call in progress
         no_agents: "- No Agents -"
         no_activity: "No Activity"
+      livechat:
+        chat: Live Chat
+        accepting: Accepting
+        not_accepting: Not Accepting
+        offline: Offline
+        no_agents: "- No Agents -"
+        in_all_agents_and_groups: in All Agents and Groups
+        select_by_group: Select by Group
+        sort_by: Sorted by
+        last_modified: Last Activity
+        name: Name
+        chats_in_progress: Chats in progress
+        last_active: Last active
+        no_activity: No activity
       index:
         todo_title: To-Do
       summary:
-        title: Ticket summary
+        new_title: Ticket Summary
         overdue: Overdue
         open: Open
         due_today: Due Today
@@ -4986,6 +5068,8 @@ en:
         facebook_form:
           reply_to: "Reply to"
           title: "Reply to %{user}"
+        ecommerce_reply_form:
+          title: "Reply to"
         history:
           recent_item: Recent Items
         max_tag_length_msg: "Tag cannot be greater than 32 characters"
@@ -5057,6 +5141,11 @@ en:
           public_note: "%{user_name} added a public note on %{note_date}"
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
+        hootsuite_created_on:
+          private_note: "%{user_name} added a private note on <br/>%{note_date}"
+          public_note: "%{user_name} added a public note on <br/>%{note_date}"
+          reply: "%{user_name} replied on <br/>%{note_date}"
+          forward: "%{user_name} forwarded on <br/>%{note_date}"
         created_on_live:
           private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
@@ -5613,8 +5702,9 @@ en:
         widget_title: "Widget Title"
     freshbooks:
       label: "Freshbooks"
-      desc: "You can log time spent on tickets into your Freshbooks projects and tasks."
-      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the Freshbooks API & Authentication token. <br/><br/>Log on to your Freshbooks account, click on your <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.  You can find your API URL and Authentication Token.<br/><br/>In Freshdesk, click on a ticket and go to the Time Sheet tab.  You can then add your time tracking entry into Freshbooks."
+      desc: "View client details, invoices, and add time sheet entries to your FreshBooks account"
+      helptext: "<h4>Freshbooks Integration Help</h4><p><br/>To integrate Freshbooks with Freshdesk, you first need to get the FreshBooks API & Authentication token. <br/><br/>Log on to your FreshBooks account, click on your
+        <b>People tab</b> and go on to the <b>Staff and Contractors subtab</b>. Click on <b>Edit</b> in your Admin.You can find your API URL and Authentication Token.<br/><br/>Select whether you would like agents to log time sheet entries to FreshBooks. You can also alter the default description, that is added for each timesheet entry.<br/><br/>Select whether you would like agents to see FreshBooks invoices.If required, you can restrict agents from viewing commercial details of an invoice such as “Invoiced Amount”, “Amount Due”,and  “Cost per unit”.<br/><br/>After the integration is enabled, contact details from the FreshBooks will be displayed on tickets and contacts page if a match is established based on Company name or Requester email."
       form:
         freshbooks_note: "Notes text"
         freshbooks_note_info: "This text will be appended at the end of the note, with the time spent log."
@@ -5623,6 +5713,9 @@ en:
         api_key: "Authentication Token"
         api_key_info: ""
         widget_title: "Widget Title"
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like cost, amount and total"
+        timeactivity: "Allow agents to log time entry in FreshBooks"
     seoshop:
       label: "SEOshop"
       desc: "Pull up order details instantly when your customers submit tickets in Freshdesk and help them to receive their answers as quickly as possible."
@@ -5771,7 +5864,7 @@ en:
       label: "Atlassian JIRA"
       desc: "Convert tickets into issues that can be tracked in JIRA."
       helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/>
-        To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <i class='jira-icon'></i><br/><br/>
+        To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <i class='integrations-jira vertical-alignment'></i><br/><br/>
         To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below.
         <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
       form:
@@ -5826,13 +5919,22 @@ en:
       desc: "You can view contact information from Nimble crm in Freshdesk."
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
-      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
       connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
       remote_configurations:
         signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
         connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
         disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
         launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
+      helptext: '<h4>QuickBooks Integration</h4><p><br/>Select whether you would like agents to log time sheet entries to QuickBooks. You can also alter the default description, that is added for each timesheet entry.</p><p>Select whether you would like agents to see QuickBooks invoices. If required, you can restrict agents from viewing commercial details of an invoice such as "Invoiced Amount", "Amount Due" and "Cost per unit".</p><p>After the integration is enabled, customer details from the QuickBooks will be displayed on tickets and contacts page if a match is established based on 1. Company name or 2. Requester email</p><p>Based on the above match, agents can also view the most recent five invoices on the tickets page.</p>'
+      form:
+        invoices: "Agents can view invoices"
+        invoice_option: "Show commercial details like rate, amount and total"
+        timeactivity: "Allow agents to log time entry in QuickBooks"
+        quickbooks_note: "Notes text"
+        quickbooks_note_info: "This text will be appended at the start of the note, with the time spent log."
+        account_settings: ""
+        account_settings_info: ""
     zohocrm:
       label: "Zoho CRM"
       desc: "You can view contact information from Zoho crm in Freshdesk."
@@ -6095,6 +6197,61 @@ en:
       freshdesk_api_key: "Freshdesk API key"
       api_key_available: "You can get the API key under Profile Settings in your Freshdesk account "
       new_to_freshdesk: "New to Freshdesk? "
+    hootsuite:
+      auth_error: "Error: It appears that you are not loading this page from inside a HootSuite stream"
+      agent_error: "You should be an agent to view the tickets"
+      no_ticket_msg: "You don't have any tickets for this filter selection"
+      signup_message: "Not a Freshdesk customer yet? SignUp"
+      header:
+        tickets: "Your tickets"
+        reply: "Reply"
+        try_again: "Try Again"
+      ticket_heading: "Tickets"
+      filter:
+        status: "Status"
+        priority: "Priority"
+        all: "All"
+      submit: "Submit"
+      search:
+        keyword: "Keyword"
+        ticket_id: "Ticket ID"
+        placeholder_keyword: "Enter Keyword"
+        placeholder_ticket_id: "Enter Ticket ID"
+      logged_in_message: "Logged in as %{user_name}"
+      domain:
+        domain_message: "Please enter helpdesk URL"
+        continue_to_login: "Continue to login"
+        freshdesk_domain: "http://"
+        domain_error: "Unable to authorize freshdesk domain"
+      more:
+        help: "Help"
+        feedback: "Feedback"
+        freshdesk: "Freshdesk"
+      ticket_created_message: "By %{requester_name},%{created_date}"
+      notes_more: "%{count} more"
+      reply_btn: "Reply"
+      cc_bcc: "Cc/Bcc"
+      send: "Send"
+      social:
+        convert_to_ticket: "Convert to Ticket"
+        subjcet: "Subject"
+        description: "Description"
+        twitter_handles: "Requester twitter handles"
+        facebook_name: "Requester Facebook Name"
+        requester: "Requester"
+        already_converted: "This message is already converted to ticket"
+        successfully_converted: "Ticket has been successfully created"
+        twitter_limit_exceed: "Your Tweet is over 140 characters. You'll have to be more clever."
+      note:
+        human_name: "note"
+      ticket:
+        human_name: "ticket"
+      reply:
+        human_name: "reply"
+      login:
+        login: "Login"
+        email: "Email"
+        password: "Password"
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -6145,6 +6302,10 @@ en:
         agent: "Agent"
         group: "Group"
         call_type: "Call Type"
+        business_hours: "Business Hours"
+        filter_option_all_calls: "All Calls"
+        filter_option_within_business_hours: "Within Business hours"
+        filter_option_outside_business_hours: "Outside Business hours"
         filter_report: "Edit Filter"
         select_agent: "Select Agent"
         select_group: "Select Group"
@@ -6987,6 +7148,7 @@ en:
       strange_number: "Cannot call a Restricted number"
       move_to_dialer: "Back to dialer"
       connect_call: "Call"
+      dialpad_placeholder: "Type Name or Number"
     search:
       work_phone: "Work"
       mobile_phone: "Mobile"
@@ -7052,6 +7214,7 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       save: "Save"
+      saving: "Saving..."
       notes: "Notes"
       new_requester: "New requester"
       low_credit: "Low on phone credit. Please contact your account admin."
@@ -7093,6 +7256,7 @@ en:
       filter_by_group: "Incoming Calls to Group"
       filter_by_call_status: "Call Type"
       filter_by_caller: "Requester"
+      filter_by_business_hours: "Business Hours"
       received_date: "Date"
       duration: "Duration"
       cost: "Cost"
@@ -7121,6 +7285,8 @@ en:
       filter_option_missed_calls: "Missed"
       filter_option_voicemail: "Voicemail"
       filter_option_blocked_calls: "Blocked"
+      filter_option_within_business_hours: "Within Business hours"
+      filter_option_outside_business_hours: "Outside Business hours"
       recording_delete:
         done_by: "Deleted By"
         tooltip: "Delete Recording"
@@ -7191,7 +7357,7 @@ en:
         max_queue_calls: "Maximum Calls in Queue"
         call_wait_time: "with maximum wait time of"
         call_wait_time_suffix: " per call"
-        queue_message: "Queue Message"
+        queue_wait_message: "Queue wait message"
         non_availability_message: "Non-Availability Message"
         voicemail_message: "Voicemail Message"
         non_business_hours_message: "Non-Business hours message"
@@ -7227,6 +7393,12 @@ en:
         number_accessible: "Accessible by"
         wait_music: "Wait Music"
         hold_music: "Hold Music"
+        queue_position_preference: "Read out queue position"
+        queue_position_message: "Queue position Message"
+        queue_position_message_placeholder: "You are currently in queue. Your queue position is {{queue.position}}"
+        queue_position_message_alert: "To read out queue position, use placeholder {{queue.position}} <br/> Eg: You are currently in queue. Your queue position is {{queue.position}}"
+        queue_position_enable: "ON"
+        queue_position_disable: "OFF"
       numbers:
         sidebar_title: "Freshdesk’s built-in phone channel"
         sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."

@@ -6,7 +6,6 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
   before_filter :authorize_freshdesk_user, :only => [ :create ]
   before_filter :validate_wrt_app, :only => [ :show ]
 
-  APPCONFIG = YAML::load_file File.join(Rails.root, 'config', 'app_config.yml')
 
   def show
     if(params[:app] == "seoshop")
@@ -61,7 +60,7 @@ class Integrations::RemoteConfigurationsController < Admin::AdminController
 
   def validate_wrt_app
     if(params[:app] == "seoshop")
-      validate_seoshop(APPCONFIG["seoshop"])
+      validate_seoshop(ThirdPartyAppConfig["seoshop"])
     end
   end
 
@@ -69,7 +68,7 @@ private
   def authorize_freshdesk_user
     begin
       return if(params[:app] == "quickbooks")
-      site = RestClient::Resource.new("#{params[:domain]}/health_check.json", params[:key], "X")
+      site = RestClient::Resource.new("#{params[:domain]}#{health_check_verify_credential_path}.json", params[:key], "X")
       response = site.get(:accept => "application/json")
       if !response.body.include? "success"
         show_notice "Unable to authorize user in Freshdesk..... Please check your domain and API Key....."
@@ -103,7 +102,7 @@ private
 
   def build_configs
     if(params[:app] == "seoshop")
-      build_seoshop_configs(APPCONFIG["seoshop"])
+      build_seoshop_configs(ThirdPartyAppConfig["seoshop"])
     end
   end
 

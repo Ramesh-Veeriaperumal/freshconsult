@@ -4,6 +4,9 @@ module Freshfone::Conference::EndCallActions
     begin
       return empty_twiml if current_call.blank?
       return complete_transfer_leg if transfered_call_end? || external_transfer_call?
+      handle_sip_end_call if current_call.sip?
+
+
       current_call.disconnect_customer if current_call.onhold?
       current_call.disconnect_agent
       current_call.update_call(params) if !params[:To].empty? || single_leg_outgoing? # Outgoing issue fix. Explanation in spreadsheet: F59
@@ -45,11 +48,8 @@ module Freshfone::Conference::EndCallActions
     end
 
     def disconnect_ringing_agents
-      return if current_call.meta.blank?
-      current_call.meta.pinged_agents.each do |agent| 
-        next if agent[:call_sid].blank? || !agent[:response].blank?
-        telephony.disconnect_call(agent[:call_sid])
-      end
+      return if current_call.blank?
+      Freshfone::NotificationWorker.perform_async({:call_id => current_call.id}, nil, "disconnect_other_agents")
     end
 
     def still_ringing?
@@ -66,4 +66,15 @@ module Freshfone::Conference::EndCallActions
         :billing_type => Freshfone::OtherCharge::ACTION_TYPE_HASH[:ivr_preview] }
       Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params)
     end
-end
+
+    def sip_user
+      current_call.user_id
+    end
+                                                                       
+    def handle_sip_end_call
+      freshfone_user = current_account.freshfone_users.find_by_user_id sip_user
+      return if freshfone_user.blank?
+      freshfone_user.reset_presence.save!
+    end
+
+  end

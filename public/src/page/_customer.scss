@@ -156,7 +156,8 @@
 		tr td{
 				width: 32%;
 		    	vertical-align: middle;
-		    	word-wrap:break-word;
+		    	word-wrap: break-word;
+		    	word-break: break-word;
 			    &:first-child{
 			        width:5%;
 				}
@@ -256,7 +257,7 @@ $iconColorList: "ticket" $bg_color_ticket,
 }
 
 .contact-sidebar {
-	@include padding(0 20px);
+	@include padding(0 10px);
 	background-color: #fcfcfc;
 	@include border-left(1px solid #eee);
 	display: table-cell;
@@ -289,6 +290,52 @@ $iconColorList: "ticket" $bg_color_ticket,
 	.add-contact {
 		.control-group {
 			margin-bottom: 0;
+		}
+	}
+	.widget {
+		border-top: 2px #AAA solid;
+		width: 100%;
+		@include min-height(60px);
+		@include clear(both);
+		margin-bottom: 20px;
+		position: relative;
+
+		& > h3 {
+			font-size: 18px;
+			font-weight: 300;
+			padding: 2px 0px 15px 20px;
+			display: inline-block;			
+			cursor: pointer;
+			z-index: 2;
+			position: relative;
+
+			&:before {
+				@include triangle(down, #000, 6px);
+				content: "";
+				@include margin(6px 0 0 -19px);
+				padding: 0;
+				position: absolute;
+			}
+		}
+
+		&.inactive {
+			margin-bottom: 0;
+			min-height: 30px;
+			cursor: pointer;
+			h3 {
+				@include padding-left(15px);
+				&:before {
+					@include triangle(right, #000, 6px);
+					content: "";
+					@include margin(6px 0 0 -14px);
+					padding: 0;
+					position: absolute;
+				}
+			}
+
+			.content {
+				display: none;
+			}
 		}
 	}
 }

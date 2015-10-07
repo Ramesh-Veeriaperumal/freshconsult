@@ -3,6 +3,8 @@ class HttpRequestProxy
   include Integrations::OauthHelper
   include HttpProxyMethods
 
+  DEFAULT_TIMEOUT = 30
+
   def fetch(params, request)
     unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
@@ -67,7 +69,8 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
-      options[:timeout] = params[:timeout] || 30 #Returns status code 504 on timeout expiry 
+      timeout = params[:timeout].to_i
+      options[:timeout] = timeout.between?(1, DEFAULT_TIMEOUT)  ? timeout : DEFAULT_TIMEOUT #Returns status code 504 on timeout expiry
       begin
         if (params[:auth_type] == 'OAuth1')
           send_req_options = Hash.new

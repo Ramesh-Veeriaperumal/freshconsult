@@ -2,7 +2,8 @@ class AssetLoader
 	
 	JS = {
 		:app => 'public/javascripts/cdn/app',
-		:plugins => 'public/javascripts/cdn/plugins'
+		:plugins => 'public/javascripts/cdn/plugins',
+		:integrations => 'public/javascripts/cdn/integrations'
 	}
 	
 	CSS = {
@@ -16,7 +17,8 @@ class AssetLoader
 		Rails.logger.debug "Generating JS Manifest for AssetLoader"
 		{
 			:app => js_app_assets(:app),
-			:plugins => js_app_assets(:plugins)
+			:plugins => js_app_assets(:plugins),
+			:integrations => js_app_assets(:integrations)
 		}
 	end
 	

@@ -1,6 +1,7 @@
 class Freshfone::CallActions
   include Freshfone::NodeNotifier
   include Freshfone::NodeEvents
+  include Freshfone::FreshfoneUtil
 
 	attr_accessor :params, :current_account, :current_number, :agent, :outgoing
 	
@@ -15,7 +16,6 @@ class Freshfone::CallActions
 			:freshfone_number => current_number,
 			:customer => search_customer_with_number(params[:From]),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:incoming],
-			:business_hour_call => working_hours?,
 			:params => params
 		)
 	end
@@ -26,7 +26,6 @@ class Freshfone::CallActions
 			:customer => search_customer_with_number(params[:From]),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:incoming],
 			:call_status => Freshfone::Call::CALL_STATUS_HASH[:blocked],
-			:business_hour_call => working_hours?,
 			:params => params
 		)
 	end
@@ -34,10 +33,9 @@ class Freshfone::CallActions
 	def register_outgoing_call
 		current_account.freshfone_calls.create(
 			:freshfone_number => current_number,
-			:agent => calling_agent,
+			:agent => sip_call? ? calling_agent(sip_user_id(params[:From])) : calling_agent,
 			:customer => search_customer_with_number(called_number),
 			:call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing],
-			:business_hour_call => working_hours?,
 			:params => params
 		)
 	end
@@ -131,7 +129,7 @@ class Freshfone::CallActions
   	call.meta.update_external_transfer_call_response(number, response) 
   end
 
-  def handle_failed_mobile_incoming_call(call, agent_id)
+  def handle_failed_incoming_call(call, agent_id)
     call_meta = call.meta
     return if call_meta.blank?
     call_meta.update_pinged_agents_with_response(agent_id, :failed)
@@ -145,7 +143,7 @@ class Freshfone::CallActions
     telephony.redirect_call_to_voicemail call
   end
 
-  def handle_failed_mobile_transfer_call(call, agent_id)
+  def handle_failed_transfer_call(call, agent_id)
     child_call = call.children.last
     child_call_meta = child_call.meta
     return if child_call_meta.blank?
@@ -200,7 +198,7 @@ class Freshfone::CallActions
 				params[:customer] = search_customer_with_number(params["#{direction}"])
 			end
 			Rails.logger.debug "Child Call Id:: #{current_call.id} :: Group_id::  #{current_call.group_id} :: params :: #{params[:group_id]}"
-			params[:group_id] ||= call.group_id unless call.group_id.blank?
+			params[:group_id] ||= call.group_id if call.group_id.present? && params[:group_transfer] == 'true'
 			call.build_child_call(params)
 		end
 
@@ -235,19 +233,6 @@ class Freshfone::CallActions
 		def users_scoper
 			current_account.users
 		end
-
-		def working_hours?
-      current_number.present? && (current_number.non_business_hour_calls? or within_business_hours?)
-    end
-
-    def within_business_hours?
-		   default_business_calendar = current_number.business_calendar 
-		   default_business_calendar.blank? ? (default_business_calendar = Freshfone::Number.default_business_calendar(current_number)) :
-		        (Time.zone = default_business_calendar.time_zone)  
-		   business_hours = Time.working_hours?(Time.zone.now,default_business_calendar)
-		  ensure
-		    TimeZone.set_time_zone
-    end
 
     def telephony
       @telephony ||= Freshfone::Telephony.new params, current_account, current_number

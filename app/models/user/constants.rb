@@ -34,10 +34,13 @@ class User < ActiveRecord::Base
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
                                 "external_id", "job_title", "language", "description"] #client_manager will be moved directly
 
-  MERGE_VALIDATIONS = [["emails", 5], ["twitter_id", 1], ["fb_profile_id", 1]] #[Attribute, limit] ["phone", 1]
+  MERGE_VALIDATIONS = [["emails", 5, "emails"], ["twitter_id", 1, "Twitter User"], ["fb_profile_id", 1, "Facebook User"], ["external_id", 1, "Ecommerce User or Mobihelp User"]] #[Attribute, limit, message] ["phone", 1, "Phone User"]
 
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 
   MAX_USER_EMAILS = 5
   PASSWORD_LENGTH = 4
+
+  ALPHA_NUMERIC_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
+  SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/
 end

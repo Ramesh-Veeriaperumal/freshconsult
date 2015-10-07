@@ -1,0 +1,266 @@
+html{
+	font-size: 13px;
+	background-color: #fff;
+}
+a{ color: #06c;}
+.hide {
+	display: none;
+}
+.pull-left {
+	@include float(left);
+}
+.pull-right {
+	@include float(right);
+}
+.clearfix::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+.hidden{
+	display:none;
+}
+.inline-block{
+	display: inline-block;
+	vertical-align: middle;
+}
+input {
+	@include border-radius(3px);
+}
+.hs-textarea {
+	@include border-radius(5px);
+	height: 100px;
+	display: block;
+	line-height: 20px;
+}
+input[type=text].hs_demoInput, textarea.hs-textarea {
+	color: #333;
+}
+
+input[type="text"], input[type="password"]{
+  background-color: #fff;
+  border: 1px solid #ccc;
+  @include box-shadow(0 4px 5px -4px #CCC inset);
+  @include transition(border linear .2s, box-shadow linear .2s);
+}
+
+.hs_btnCtaSml {
+	margin-top: 15px;
+}
+.status {
+	@include padding(2px 6px);
+	background: #ddd;
+	@include border-radius(3px);
+	font-size: 11px;
+}
+.friendly {
+	color: #fff;
+	background: #363636;
+}
+.bold {
+	font-weight: bold;
+}
+.post-user-data {
+	font-size: 12px;
+	color: #999;
+}
+.note-wrapper {
+	@include padding(5px 0 5px 5px);
+	border-left: 2px solid #ddd;
+	margin-top: 5px;
+}
+.note-wrapper img {
+	height: 25px;
+  width: 25px;
+  float: left;	
+}
+.note-wrapper .preview_pic {
+	float: left;
+	margin-right: 10px;
+}
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.separator {
+	margin-top: 8px;
+}
+.note-wrapper .avatar-text {
+	float: left;
+	margin: 4px 11px 0 3px;
+}
+.avatar-text img {
+	width: 100%;
+	height: 100%;
+}
+#Pages {
+	margin-top: 40px;
+	.hs_message {
+		cursor: pointer;
+	}
+}
+.hs_message {
+	padding: 10px;
+	border-bottom: 1px solid #ddd;
+	.hs_contentText {
+		font-size: 12px;
+	}
+	&:hover {
+		.hs_userName {
+			color: #00aeef;
+		}
+	}
+}
+.hs_userName {
+	font-weight: 500;
+	font-size: 14px;
+	color: #000;
+	line-height: 24px;
+}
+
+.disabled {
+	pointer-events: none;
+	cursor: default;
+	color: #999;
+	background-color:#F0F0F0;  
+	border:	1px solid #cfcfcf;
+	&:hover{
+		color: #999;
+	}
+}
+
+/* Used to highlight records upon creation or update */
+.record_highlight{
+	@include animation(record_blink 1s ease-out 1); 
+}
+
+@include keyframes(record_blink) {
+	0% { background-color: rgba(#ff0,.8);}
+	100% { background-color: rgba(#ff0,0);}
+}
+
+
+.conversation_thread .comment-lock {
+	background: none;
+	font-size: 18px;
+	color: #999;
+	@extend .#{$font-class}lock;
+}
+
+.required_star {
+	color: #d00;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 0;
+	@include margin-left(2px);
+}
+
+/* For Closed and REsolved ticket */
+.hs_message.gray {
+	.hs_userName {
+		color: #999;
+		font-weight: 500;
+	}
+	.note-wrapper .hs_contentText {
+		color: #999
+	}
+}
+.hootsuite-error{
+	background-color: #f7f7dc;
+    padding: 25px;
+    margin: 10px;
+    text-align: center;
+    border: 1px #edeabf solid;
+    box-sizing: border-box;
+    a{display: block; padding-top: 10px;}
+    p{ color: #777;}
+}
+
+
+.hs_form{
+  padding: 20px;
+  .control-group {
+    margin-bottom: 10px;
+  }
+
+  .controls {
+    margin-top: 5px;
+  }
+
+  .text-center{
+    text-align: center;
+  }
+  .signup-link{
+  	display: block;
+    text-align: center;
+    margin-top: 20px;
+  }
+}
+
+.hs_login{
+  .remember_me{
+    margin-right: 5px;
+  }
+
+}
+
+.hs_domain{
+  .controls{
+    margin: 10px 0;
+  }
+}
+
+.hs_topBarDropdown {
+  padding: 15px;
+}
+
+.hs_login .button-container .hs_btnCtaSml, .hs_dropdownFilterOptions .button-container .hs_btnCtaSml{
+  margin-top: 10px;
+}
+
+.hs_dropdownSettings{
+  .signout_text{
+    display: inline-block;
+  }
+  .button_to{
+    display: inline-block;
+    margin-left: 50px;
+  }
+}
+
+.hs_dropdownSearch .hs_searchWrapper{ 
+	margin-right: 0px; 
+  	.search_text{
+    	width: 100%;
+    	margin:0; 
+  	}
+}
+
+.search_type_wrap {
+	position: relative;
+	margin-top: 10px;
+	.first_radio{
+		margin-right: 5px;
+	}
+	.second_radio{
+		margin-right: 5px;
+		margin-left: 10px;
+	}
+	button.hs_btnTypeSubmit{
+		position: absolute;
+  		right: 0px;
+	}
+	input[type=radio] {
+		vertical-align: middle;
+	}
+	label{
+		font-weight: normal;
+	}
+}
+
+.login-error {
+	padding: 5px 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}

@@ -64,7 +64,8 @@ class Freshfone::Call < ActiveRecord::Base
   INTERMEDIATE_CALL_STATUS = [
     CALL_STATUS_HASH[:default],
     CALL_STATUS_HASH[:'in-progress'],
-    CALL_STATUS_HASH[:'on-hold']
+    CALL_STATUS_HASH[:'on-hold'],
+    CALL_STATUS_HASH[:'connecting']
   ]
   CALL_TYPE = [
     [ :incoming,  'incoming', 1 ],
@@ -363,13 +364,9 @@ class Freshfone::Call < ActiveRecord::Base
     #If this call is the parent and has any children, all children legs should be disconnected
     begin
       if has_children?
-        meta = children.last.meta 
-        if meta
-          meta.pinged_agents.each do |agent| 
-            next if agent[:call_sid].blank?
-            agent_leg = account.freshfone_subaccount.calls.get(agent[:call_sid]) 
-            agent_leg.update(:status => "completed") 
-          end
+        child = children.last
+        if child.present?
+          Freshfone::NotificationWorker.perform_async({:call_id => child.id}, nil, "disconnect_other_agents")
         end
         # return
       end
@@ -458,6 +455,15 @@ class Freshfone::Call < ActiveRecord::Base
 
   def missed_or_busy?
     busy? || noanswer? || canceled?
+  end
+
+  def sip?
+    return false if meta.blank?
+    meta.sip?
+  end
+
+  def create_sip_meta
+    create_meta(:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:sip])
   end
 
   private

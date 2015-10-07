@@ -2,13 +2,14 @@ class HelpdeskReports::Formatter::Ticket
   
   attr_accessor :result, :report_type
   
-  def initialize data, report
+  def initialize data, args
     @result = data
-    @report_type = report
+    @report_type = args[:report_type]
+    @args = args
   end
   
   def format
-    klass.new(result).perform
+    klass.new(result, @args).perform
   end
   
   def klass

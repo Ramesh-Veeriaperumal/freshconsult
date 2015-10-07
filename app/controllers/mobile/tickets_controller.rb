@@ -91,27 +91,21 @@ class Mobile::TicketsController < ApplicationController
       view.deserialize_from_params(view.data)
       filter_id = view[:id]
       filter_name = view[:name]
-      joins = view.get_joins(view.sql_conditions)
-      options = { :joins => joins, :conditions => view.sql_conditions, :select => :id}
-      options[:distinct] = true if view.sql_conditions[0].include?("helpdesk_tags.name")
-      ticket_count =  current_account.tickets.permissible(current_user).count(options)
 
       { 
         :id => filter_id, 
         :name => filter_name, 
-        :type => :view, 
-        :count=> ticket_count
+        :type => :view
       } 
 
     })
     
     #Fallback incase all custom views has 0 count..
     FILTER_NAMES.each { |view_name|
-      count = filter_count(view_name)
       name = t("helpdesk.tickets.views.#{view_name}")
       view_name = :all_tickets if view_name.eql?(:all)
       view_list.push( :id => view_name, :name => name, 
-        :type => :filter, :count => count )
+        :type => :filter)
     } 
     render :json => view_list.to_json
   end

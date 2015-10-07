@@ -113,7 +113,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      elsif "unresolved".eql?filter_name
        unresolved_filter
      else
-       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value])
+       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
      end
   end
   

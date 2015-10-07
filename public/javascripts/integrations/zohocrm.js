@@ -2,11 +2,12 @@ var ZohoCrmWidget = Class.create();
 ZohoCrmWidget.prototype= {
 
   initialize:function(zohocrmBundle){
-    jQuery("#zohocrm_widget").addClass('loading-fb');
+    jQuery("#zohocrm_contacts_widget").addClass('loading-fb');
     zohocrmWidget = this;
     zohocrmBundle.app_name = "ZohoCrm";
     zohocrmBundle.integratable_type = "crm";
     zohocrmBundle.auth_type = "UAuth";
+    zohocrmBundle.widget_name = "zohocrm_contacts_widget";
     zohocrmBundle.url_token_key = "authtoken"
     zohocrmBundle.username = zohocrmBundle.k;
     zohocrmBundle.domain = "https://crm.zoho.com"
@@ -15,8 +16,8 @@ ZohoCrmWidget.prototype= {
   },
 
   get_contact_request: function() {
-    return [{rest_url: "crm/private/json/Contacts/getSearchRecords?scope=crmapi&selectColumns=All&searchCondition=(Email|equals|"+this.zohocrmBundle.reqEmail+")"},
-            {rest_url: "crm/private/json/Leads/getSearchRecords?scope=crmapi&selectColumns=All&searchCondition=(Email|equals|"+this.zohocrmBundle.reqEmail+")"}];
+    return [{rest_url: "crm/private/json/Contacts/searchRecords?scope=crmapi&selectColumns=All&criteria=(Email:"+this.zohocrmBundle.reqEmail+")"},
+            {rest_url: "crm/private/json/Leads/searchRecords?scope=crmapi&selectColumns=All&criteria=(Email:"+this.zohocrmBundle.reqEmail+")"}];            
   },
 
   parse_contact: function(resJson){

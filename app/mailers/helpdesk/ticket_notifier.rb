@@ -1,5 +1,7 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
+
+  extend ParserUtil
   include Helpdesk::NotifierFormattingMethods
   
   layout "email_font"
@@ -8,11 +10,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?
       if (notification_type == EmailNotification::NEW_TICKET)
-        e_notification.agents.group_by{|agent| agent[:language]}.each do |email_agents|
-          agents = email_agents.last
-          i_receips = agents.collect{ |a| a.email }
-          deliver_agent_notification(agents.first, i_receips, e_notification, ticket, comment)          
-        end  
+        language_group_agent_notification(e_notification.agents, e_notification, ticket, comment)
       else  
         i_receips = internal_receips(e_notification, ticket)
         deliver_agent_notification(ticket.responder, i_receips, e_notification, ticket, comment)
@@ -43,6 +41,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
   end
 
+  def self.notify_comment(comment)
+      ticket = comment.notable
+      emails_string = comment.to_emails.join(", ")
+      emails = get_email_array emails_string
+      agents_list = ticket.account.technicians.where(:email => emails)
+      email_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NOTIFY_COMMENT) 
+      language_group_agent_notification(agents_list, email_notification, ticket, comment)
+  end
+
   def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil)
       agent_template = e_notification.get_agent_template(agent)
       agent_plain_template = e_notification.get_agent_plain_template(agent)
@@ -59,8 +66,62 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_plain => plain_version,
              :email_body_html => html_version,
              :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
-             :survey_id => survey_id
+             :survey_id => survey_id,
+             :disable_bcc_notification => e_notification.bcc_disabled?
           }) unless receips.nil?
+  end
+
+  def self.language_group_agent_notification(agents_list, e_notification, ticket, comment)
+    agents_list.group_by(&:language).each do |language, agents|
+      i_receips = agents.map(&:email)
+      deliver_agent_notification(agents.first, i_receips, e_notification, ticket, comment)          
+    end 
+  end
+
+  def self.deliver_requester_notification(requester, receips, e_notification, ticket, comment = nil, non_user = false)
+    if e_notification.requester_notification?
+        (requester = comment.try(:user) || ticket.requester) if non_user
+        notification_template = e_notification.get_requester_template(requester)
+        requester_template = notification_template.last
+        requester_plain_template = e_notification.get_requester_plain_template(requester)
+        requester_subject = notification_template.first
+
+      r_template = Liquid::Template.parse(requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
+      r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
+      r_s_template = Liquid::Template.parse(requester_subject.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      html_version = r_template.render('ticket' => ticket, 
+                  'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      plain_version = r_plain_template.render('ticket' => ticket, 
+                  'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe
+      params = { :ticket => ticket,
+               :notification_type => e_notification.notification_type,
+               :receips => receips,
+               :email_body_plain => plain_version,
+               :email_body_html => html_version,
+               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
+               :disable_bcc_notification => e_notification.bcc_disabled?}
+      deliver_email_notification(params) unless receips.nil?
+    end
+  end
+
+  def self.send_cc_email(ticket, comment=nil, options={})
+    if comment
+      cc_emails_string = ticket.cc_email[:reply_cc].join(",") if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
+      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC) 
+    else
+      cc_emails_string = options[:cc_emails].join(",") if (options && options[:cc_emails])
+      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NEW_TICKET_CC) 
+    end
+    return if cc_emails_string.blank?
+    cc_emails = get_email_array cc_emails_string
+    db_users = ticket.account.users.where(:email => cc_emails)
+    db_users_email = db_users.map(&:email).map(&:downcase)
+    non_db_user_ccs = cc_emails - db_users_email
+    db_users.group_by(&:language).each do |language, users|
+      i_receips = users.map(&:email).join(", ")
+      deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment)          
+    end
+    deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true) unless non_db_user_ccs.empty?
   end
 
   def self.internal_receips(e_notification, ticket)
@@ -76,12 +137,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
    
   def email_notification(params)
     ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
-    
+      
+    bcc_email = params[:disable_bcc_notification] ? "" : account_bcc_email(params[:ticket])
+
     headers = {
       :subject                   => params[:subject],
       :to                        => params[:receips],
       :from                      => params[:ticket].friendly_reply_email,
-      :bcc                       => account_bcc_email(params[:ticket]),
+      :bcc                       => bcc_email,
       "Reply-to"                 => "#{params[:ticket].friendly_reply_email}", 
       "Auto-Submitted"           => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", 
@@ -135,7 +198,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     ActionMailer::Base.set_mailbox email_config.smtp_mailbox
 
     options = {} unless options.is_a?(Hash) 
-    
     headers = {
       :subject                       => formatted_subject(ticket),
       :to                            => note.to_emails,
@@ -256,86 +318,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     mail(headers) do |part|
       part.text { render "reply_to_forward.text.plain" }
       part.html { render "reply_to_forward.text.html" }
-    end.deliver
-  end
-
-  def send_cc_email(ticket,options={})
-    ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
-
-    headers = {
-      :subject                        => formatted_subject(ticket),
-      :from                           => ticket.friendly_reply_email,
-      :sent_on                        => Time.now,
-      "Reply-to"                      => "#{ticket.friendly_reply_email}", 
-      "Auto-Submitted"                => "auto-generated", 
-      "X-Auto-Response-Suppress"      => "DR, RN, OOF, AutoReply", 
-      "References"                    => generate_email_references(ticket)
-    }
-    # TODO-RAILS3 why the hell all this code cann't top invoking this method if the cc_emails is blank
-    headers[:to] = options[:cc_emails] unless options[:cc_emails].blank?
-
-    inline_attachments = []
-    @ticket = ticket 
-    @body = ticket.description
-    @cloud_files = ticket.cloud_files
-    @body_html = generate_body_html(ticket.description_html)
-    @account = ticket.account
-
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, ticket.description_html, ticket.account)
-    end
-
-    self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-      ticket.attachments.each do |a|
-        attachments[ a.content_file_name] = { 
-          :mime_type => a.content_content_type, 
-          :content => File.read(a.content.to_file.path, :mode => "rb")
-        }
-      end
-    end
-    mail(headers) do |part|
-      part.text { render "send_cc_email.text.plain" }
-      part.html { render "send_cc_email.text.html" }
-    end.deliver
-  end
-  
-  def notify_comment(ticket, note , reply_email, options={})
-    inline_attachments = []
-
-    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
-    ActionMailer::Base.set_mailbox email_config.smtp_mailbox
-
-    headers = {
-      :subject                        => formatted_subject(ticket),
-      :to                             => options[:notify_emails],
-      :from                           => reply_email,
-      :sent_on                        => Time.now,
-      "Reply-to"                      => "#{reply_email}", 
-      "Auto-Submitted"                => "auto-generated", 
-      "X-Auto-Response-Suppress"      => "DR, RN, OOF, AutoReply", 
-      "References"                    => generate_email_references(ticket)
-    }
-
-    @ticket_url = helpdesk_ticket_url(ticket,:host => ticket.account.host, :protocol => ticket.url_protocol)
-    @body_html = generate_body_html(note.body_html)
-    @note = note
-    @ticket = ticket
-    @account = note.account
-    
-    if attachments.present? && attachments.inline.present?
-      handle_inline_attachments(attachments, note.body_html, note.account)
-    end
-
-    note.all_attachments.each do |a|
-      attachments[a.content_file_name] = {
-        :mime_type => a.content_content_type, 
-        :content => File.read(a.content.to_file.path, :mode => "rb")
-      }
-    end
-
-    mail(headers) do |part|
-      part.text { render "notify_comment.text.plain" }
-      part.html { render "notify_comment.text.html" }
     end.deliver
   end
   

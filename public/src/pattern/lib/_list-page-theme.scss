@@ -111,8 +111,8 @@
             div.preview_pic{
                 @include border-radius(100%);
             }
-            img{  
-                @include border-radius(100%);     
+            img{
+                @include border-radius(100%);
             }
         }
     }
@@ -168,7 +168,7 @@
         }
     }
 }
-.cr-tab-actions{  
+.cr-tab-actions{
     position: absolute;
     margin: 0;
     padding: 0;
@@ -322,18 +322,18 @@
   }
 }
 // -------------------------------------------------------------------------------------------
-//                        Customer Satisfaction Settings(Survey) 
+//                        Customer Satisfaction Settings(Survey)
 // -------------------------------------------------------------------------------------------
 .cust-satisfaction{
     table{
         table-layout: fixed;
         tr td{
             &:first-child{ width:70px; padding: 3px; }
-            width:70%; 
+            width:70%;
             &:last-child{ width:20%; }
             form{ margin:0; }
         }
-    }   
+    }
     a{
         cursor:pointer;
     }
@@ -379,7 +379,76 @@
 }
 .agents-list-round-robin {
     clear: both;
-    text-align: center;
+}
+.roundrobin-tabs{
+    padding-top: 25px;
+	li{
+		@include margin(0 10px);
+		a,
+		a:hover{
+			border: 0;
+			border-bottom: 2px solid transparent;
+			background: none;
+			@include padding(10px 0);
+		}
+		&.active{
+			a,
+			a:hover{
+				border: 0;
+				border-bottom: 2px solid #aaa;
+			}
+		}
+	}
+}
+ul.ffone-minimal-swap li, ul.ticket-minimal-swap li, ul.lc-minimal-swap li{
+  display: inline-block;
+  padding: 4px 15px;
+  border-radius: 20px;
+  border: 1px #ddd solid;
+  cursor: pointer;
+  @include margin-right(5px);
+  &.current{
+    background-color: #888; color: $white ;
+    border: 1px #888 solid;
+    &:hover{ background-color: #888; }
+  }
+  &:hover{ background-color: #fafafa;
+    border: 1px solid #888;
+  }
+}
+.ffone-minimal-tab, .ticket-minimal-tab{
+ display: none;
+ &.current{display: table;}
+ td{ line-height: 24px;}
+}
+
+.lc-minimal-tab{
+  display: none;
+  &.current{display: table;}
+  td{ line-height: 24px;}
+  .lc-offline-agents{
+   text-align: left;
+   list-style: none;
+   padding: 10px 10px 10px 35px;
+   border-top: 1px solid #C6C6C6;
+   color:#3a3a3a;
+   &:before {
+     content: "";
+     display: inline-block;
+     border-top: 5px solid transparent;
+     border-left: 5px solid #555;
+     border-bottom: 5px solid transparent;
+     position: relative;
+     left: -15px;
+     @include transition(0.3s ease);
+     @include border-radius(3px);
+   }
+   &.toggle{
+     &:before {
+       @include transform(rotate(90deg));
+     }
+   }
+  }
 }
 
 // -------------------------------------------------------------------------------------------
@@ -431,12 +500,12 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
   border: 1px #ddd solid;
   cursor: pointer;
   @include margin-right(5px);
-  &.current{ 
+  &.current{
     background-color: #888; color: $white ;
-    border: 1px #888 solid; 
+    border: 1px #888 solid;
     &:hover{ background-color: #888; }
   }
-  &:hover{ background-color: #fafafa; 
+  &:hover{ background-color: #fafafa;
     border: 1px solid #888;
   }
 }
@@ -445,4 +514,41 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
  display: none;
  &.current{display: table;}
  td{ line-height: 24px;}
+}
+.lc-offline{
+  opacity: 0.5;
+}
+.lc-offline-agents{
+ text-align: left;
+ list-style: none;
+ padding: 10px 10px 10px 35px;
+ border-top: 1px solid #C6C6C6;
+ color:#3a3a3a;
+ &:before {
+   content: "";
+   display: inline-block;
+   border-top: 5px solid transparent;
+   border-left: 5px solid #555;
+   border-bottom: 5px solid transparent;
+   position: relative;
+   left: -15px;
+   @include transition(0.3s ease);
+   @include border-radius(3px);
+ }
+ &.toggle{
+   &:before {
+     @include transform(rotate(90deg));
+   }
+ }
+}
+
+// --- Agent Availability CSS
+.lc-minimal-tab {
+	.available_avatar_image {
+    line-height: 9px;
+    img{
+  		width: 25px;
+  		height: 25px;
+  	}
+  }
 }

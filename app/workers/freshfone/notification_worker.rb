@@ -1,6 +1,7 @@
 module Freshfone
   class NotificationWorker < BaseWorker
     include Freshfone::FreshfoneUtil
+    include Freshfone::CallerLookup
     include Freshfone::Endpoints
     include Freshfone::CallsRedisMethods
 
@@ -37,6 +38,8 @@ module Freshfone
             notify_round_robin_agent
           when "direct_dial"
             notify_direct_dial
+          when "disconnect_other_agents"
+            disconnect_other_agents
         end
         Rails.logger.info "Completion time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       rescue Exception => e
@@ -51,13 +54,18 @@ module Freshfone
       call_params  = {
         :url             => client_accept_url(current_call.id, agent),
         :status_callback => client_status_url(current_call.id, agent),
-        :from            => params[:caller_id],
+        :from            => browser_caller_id(params[:caller_id]),
         :to              => "client:#{agent}",
         :timeout         => current_number.ringing_time,
         :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
 
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_incoming_call current_call, agent
+        raise e
+      end
       if agent_call.present?
         update_and_validate_pinged_agents(current_call, agent_call)
         set_browser_sid(agent_call.sid, current_call.call_sid)
@@ -80,12 +88,11 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_incoming_call current_call, agent
+        call_actions.handle_failed_incoming_call current_call, agent
         raise e
       end
 
       if agent_call.present?
-        current_call.meta.reload.update_mobile_agent_call(agent, agent_call.sid) # SpreadsheetL 27  
         update_and_validate_pinged_agents(current_call, agent_call)
       end
     end
@@ -98,12 +105,17 @@ module Freshfone
         :url             => transfer_accept_url(current_call.id, params[:source_agent_id], agent),
         :status_callback => transfer_status_url(current_call.children.last.id, agent),
         :to              => "client:#{agent}",
-        :from            => current_call.caller_number,
+        :from            => browser_caller_id(current_call.caller_number),
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :timeout         => current_number.ringing_time
       }
       
-      agent_call = telephony.make_call(call_params)
+      begin
+        agent_call = telephony.make_call(call_params)
+      rescue => e
+        call_actions.handle_failed_transfer_call current_call, agent
+        raise e
+      end
       
       if agent_call.present?
         update_and_validate_pinged_agents(current_call.children.last, agent_call)
@@ -129,7 +141,7 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_transfer_call current_call, agent
+        call_actions.handle_failed_transfer_call current_call, agent
         raise e
       end
       
@@ -146,8 +158,7 @@ module Freshfone
         :timeout         => current_number.ringing_time,
         :to              => params[:external_number],
         :from            => current_call.number, #Showing freshfone number
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
-        :if_machine      => "hangup"
+        :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
       begin
         agent_call = telephony.make_call(call_params)
@@ -156,6 +167,7 @@ module Freshfone
         raise e
       end
       current_call.children.last.update_call({:DialCallSid  => agent_call.sid})
+      add_pinged_agents_call(current_call.children.last.id, agent_call.sid)
       current_call.children.last.meta.reload.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
     end
 
@@ -168,7 +180,7 @@ module Freshfone
                             round_robin_agent_wait_url(current_call) : 
                             forward_accept_url(current_call.id, agent["id"]),
         :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
-        :from            => browser_agent? ? params[:caller_id] : current_call.number,
+        :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : current_call.number,
         :to              => browser_agent? ? "client:#{agent['id']}" : 
                             current_account.users.find(agent["id"]).available_number,
         :timeout         => current_number.ringing_duration,
@@ -178,7 +190,7 @@ module Freshfone
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_mobile_incoming_call(current_call, agent['id']) unless browser_agent?
+        call_actions.handle_failed_incoming_call(current_call, agent['id'])
         raise e
       end
       set_browser_sid(agent_call.sid, current_call.call_sid) if (browser_agent? && agent_call.present?)
@@ -194,8 +206,7 @@ module Freshfone
         :timeout         => current_number.ringing_time,
         :to              => current_call.direct_dial_number,
         :from            => current_call.number, #Showing freshfone number
-        :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit,
-        :if_machine      => "hangup"
+        :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit
       }
       begin
         direct_dial = telephony.make_call(call_params)
@@ -235,8 +246,25 @@ module Freshfone
 
     def update_and_validate_pinged_agents(call, agent_api_call)
       Rails.logger.info "agent call sid update :: Call => #{call.id} :: agent => #{agent} :: call_sid => #{agent_api_call.sid}"
-      call.meta.reload.update_agent_call_sids(agent, agent_api_call.sid) 
+      add_pinged_agents_call(call.id, agent_api_call.sid)
       disconnect_api_call(agent_api_call) if call.meta.reload.any_agent_accepted?      
+    end
+
+    def disconnect_other_agents
+      agent_calls = get_pinged_agents_call(params[:call_id])
+      agent_calls.each do |call|
+        terminate_api_call(call) if call.present? && (call != params[:CallSid])
+      end
+    end
+
+    def terminate_api_call(call_sid)
+      begin
+        call = current_account.freshfone_subaccount.calls.get(call_sid)
+        call.update(:status => "canceled")
+        Rails.logger.info "terminate_api_call :: #{call_sid}"
+      rescue Exception => e
+        Rails.logger.error "Error in disconnect_other_agents for account #{current_account.id} for call #{call_sid}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      end
     end
 
   end

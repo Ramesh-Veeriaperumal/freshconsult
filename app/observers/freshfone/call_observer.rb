@@ -7,7 +7,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
 	def before_save(freshfone_call)
 		set_customer_on_ticket_creation(freshfone_call) if freshfone_call.customer_id.blank?
-    update_caller_data(freshfone_call)
+    update_caller_data(freshfone_call) if freshfone_call.caller.blank?
 	end
 
   def after_update(freshfone_call)
@@ -17,6 +17,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 	private
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
+			freshfone_call.business_hour_call = freshfone_call.freshfone_number.working_hours?
 			freshfone_call.call_sid = params[:CallSid]
 		end
 
@@ -52,7 +53,6 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 		end
 
 		def outgoing_customer_data(freshfone_call, params)
-      return if freshfone_call.caller.present?
       options = {
           :number  => params[:PhoneNumber] || params[:To],
           :country => params[:ToCountry].blank? ? params[:phone_country] : params[:ToCountry],

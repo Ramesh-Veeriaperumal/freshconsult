@@ -278,6 +278,11 @@
 
     .comm-item-main {
       @include margin-left(15px);
+      .comm-item-title {
+        .muted {
+          display: inline-block;
+        }
+      }
     }
 
     .solution-list-checkbox {

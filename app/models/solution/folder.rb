@@ -197,12 +197,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def update_search_index
-    #Remove as part of Search-Resque cleanup
-    if Search::Job.sidekiq?
-      SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id })
-    else
-      Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
-    end if ES_ENABLED
+    SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if ES_ENABLED
   end
 
   def add_visibility(visibility, customer_ids, add_to_existing)

@@ -30,12 +30,11 @@ if Integrations::Application.count == 0
     s.account_id = 0
     s.listing_order = 2
     s.options = {
-        :keys_order => [:title, :api_url, :api_key, :freshbooks_note], 
+        :keys_order => [:title, :api_url, :api_key, :settings], 
         :title => { :type => :text, :required => true, :label => "integrations.freshbooks.form.widget_title", :default_value => "Freshbooks"},
         :api_url => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_url", :info => "integrations.freshbooks.form.api_url_info", :validator_type => "url_validator" }, 
         :api_key => { :type => :text, :required => true, :label => "integrations.freshbooks.form.api_key", :info => "integrations.freshbooks.form.api_key_info" },
-        :freshbooks_note => { :type => :text, :required => false, :label => "integrations.freshbooks.form.freshbooks_note", 
-                            :info => "integrations.freshbooks.form.freshbooks_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
+        :settings => { :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", :partial => "/integrations/applications/invoice_timeactivity_settings" }
     }
     s.application_type = "freshbooks"
   end
@@ -807,7 +806,18 @@ if Integrations::Application.count == 0
     s.listing_order = 32
     s.options = {
       :direct_install => true,
-      :oauth_url => "/auth/quickbooks?origin=id%3D{{account_id}}"
+      :configurable => true,
+      :keys_order => [:settings],
+      :settings => {
+        :type => :custom,
+        :required => false,
+        :partial => "/integrations/applications/invoice_timeactivity_settings",
+        :label => "integrations.quickbooks.form.account_settings"
+      },
+      :after_destroy => {
+        :clazz => "Integrations::QuickbooksUtil",
+        :method => "remove_app_from_qbo"
+      }
     }
     s.application_type = "quickbooks"
   end

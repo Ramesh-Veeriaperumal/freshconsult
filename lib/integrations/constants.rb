@@ -26,7 +26,8 @@ module Integrations::Constants
     :slack => "slack",
     :quickbooks => "quickbooks",
     :dynamicscrm => "dynamicscrm",
-    :xero => "xero"
+    :xero => "xero",
+    :hootsuite => "hootsuite"
   }
 
   APP_CATEGORY_ID_TO_NAME = {
@@ -46,4 +47,10 @@ module Integrations::Constants
   DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
 
   GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
+  INVOICE_APPS = [APP_NAMES[:quickbooks], APP_NAMES[:freshbooks]]
+
+  CAMPAIGN_APPS = [:mailchimp, :icontact, :constantcontact, :campaignmonitor]
+
+  TIMESHEET_APPS = [APP_NAMES[:freshbooks], APP_NAMES[:harvest], APP_NAMES[:workflow_max], APP_NAMES[:quickbooks]]
 end

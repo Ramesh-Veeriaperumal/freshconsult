@@ -79,4 +79,8 @@ module Redis::IntegrationsRedis
 		newrelic_begin_rescue { $redis_integrations.scard(key) }
 	end
 
+	def incr_val(key)
+		newrelic_begin_rescue { $redis_integrations.incr(key) }
+	end
+
 end

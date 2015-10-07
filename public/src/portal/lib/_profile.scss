@@ -106,6 +106,7 @@
 input.date.datepicker_popover {
 	@include padding(4px 4px 4px 25px);
 	height: auto;
+	width: 100%;
 }
 
 .form-horizontal {

@@ -35,9 +35,15 @@
         saveBtn:            '.save-custom-form',
         fieldLabelClass:    '.custom-form-label',
         sectionbody:        '.section-body',
+        dialogContainer:    '#CustomFieldsPropsDialog',
+        confirmModal:       '#ConfirmModal',
+        confirmFieldSubmit:   '#confirmDeleteSubmit',
+        confirmFieldCancel:   '#confirmDeleteCancel',
         currentData:        null,
         existingFields:     {},
         disabledByDefault:  [],
+        deleteFieldItem:    null,
+        deleteFieldId:      null
     }
     this.settings = $.extend({}, defaults, options);
     this.settings.fieldTemplate = fieldTemplate[this.settings.customFormType];
@@ -255,6 +261,8 @@
 
     deleteField: function(sourcefield){
       var id = sourcefield.data('id');
+      this.settings.deleteFieldItem = sourcefield;
+      this.settings. deleteFieldId = id;
       this.settings.currentData = $H(this.data.get(id));
       if(/^default/.test(this.settings.currentData.get('field_type'))) {
         return;
@@ -266,8 +274,10 @@
 
       }else{
 
-        if(confirm(this.settings.customMessages.confirmDelete))
-            this.deleteFormField(sourcefield, id);
+        $(this.settings.dialogContainer).html(JST['custom-form/template/section_confirm']({
+          'confirm_type': 'deleteNonSecField'
+        }));
+        $(this.settings.confirmModal).modal('show');
 
       }
       this.fieldDialog.hideDialog();
@@ -459,6 +469,32 @@
         return false;
       }, this));
 
+      $(document).on('click', this.settings.confirmFieldSubmit, $.proxy(function (e) {
+        e.stopPropagation();
+        this.deleteFormField(this.settings.deleteFieldItem, this.settings.deleteFieldId);
+        this.settings.deleteFieldItem = null;
+        this.settings.deleteField = null;
+        $('.options-wrapper').hide(); //UI Fix
+        $(this.settings.confirmModal).modal('hide');
+        $('.twipsy :visible').hide(); // tooltip fix
+
+      }, this));
+
+      $(document).keypress(this.settings.confirmModal, $.proxy(function(e) {
+        e.stopPropagation();
+        var keyCode = e.which || e.keyCode || e.charCode;
+        if(keyCode == 13) {
+          $(this.settings.confirmFieldSubmit).click();
+        }
+      }, this));
+
+      $(document).on('click', this.settings.confirmFieldCancel, $.proxy(function(e) { 
+
+        e.stopPropagation();
+        $(this.settings.confirmModal).modal('hide');
+
+      },this));
+
       //Save Form
       $(this.settings.saveBtn).on('click', $.proxy(function(e) {
           this.saveCustomFields(e);
@@ -467,7 +503,7 @@
 
       $(document).on('show', '.custom-fields-props-dialog.modal', function () {
         setTimeout(function(){
-          $('.modal-body input[type=text]:visible:enabled:first').focus();
+          $('.modal-body input[type=text]:visible:enabled:first').select().focus();
         },500)
       });
 

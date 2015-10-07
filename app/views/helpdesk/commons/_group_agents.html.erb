@@ -3,6 +3,10 @@
 <% else %>
   <option value=""><%= blank_value %></option>
   <% @agents.each do |agent| %>
+    <% if !assigned_agent.nil? && assigned_agent.to_i == agent.user.id %>
+    <option value="<%=agent.user.id%>" selected="selected"><%=agent.user.name%></option>
+    <% else %>
 	  <option value="<%=agent.user.id%>"><%=agent.user.name%></option>
+    <% end %>
   <% end %>
 <% end %>

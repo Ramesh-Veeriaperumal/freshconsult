@@ -29,7 +29,17 @@ class ConversionMetric < ActiveRecord::Base
       "freshdesk.fr" => "freshdesk_france",
       "freshdesk.it" => "freshdesk_italy",
       "freshdesk.nl" => "freshdesk_netherlands",
-      "freshdesk.co.za" => "freshdesk_southafrica"
+      "freshdesk.co.za" => "freshdesk_southafrica",
+      "freshdesk.no" => "freshdesk_norway",
+      "se.freshdesk.com" => "freshdesk_sweden",
+      "freshdesk.fi" => "freshdesk_finland",
+      "freshdesk.be" => "freshdesk_belgium",
+      "cz.freshdesk.com" => "freshdesk_czech",
+      "freshdesk.kr" => "freshdesk_korea",
+      "freshdesk.jp" => "freshdesk_japan",
+      "freshdesk.hk" => "freshdesk_hongkong",
+      "cn.freshdesk.com" => "freshdesk_china",
+      "freshdesk.ru" => "freshdesk_russia"
     }
 
 

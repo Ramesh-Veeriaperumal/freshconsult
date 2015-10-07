@@ -5031,7 +5031,7 @@ zh-CN:
     jira:
       label: "Atlassian JIRA"
       desc: 将工单转化为问题，以便在JIRA中跟踪。
-      helptext: "<h4>JIRA集成帮助</h4><p><br/>配置JIRA与Freshdesk集成，请输入JIRA管理员用户名和密码。支持集成JIRA 4.2到5.0版本，包括本地和云端版。<br/><br/>从Freshdesk创建一个问题或链接到一个已有问题，请转到工单页面，点击<i class='jira-icon'></i><br/><br/>若在JIRA中查看链接的Freshdesk工单信息或在Freshdesk中查看JIRA问题信息，推荐JIRA管理员创建一个命名为&quot;Freshdesk工单&quot;的自由文本字段。步骤如下：<br/><br/>登录JIRA账号，点击<b>管理</b>，转到<b>问题</b> -&gt; <b>字段</b>，点击<b>添加自定义字段。</b>在<b>创建自定义字段</b>页面，选择<b>自由文本字段，</b>然后点击<b>新一步</b>。在字段名中输入<b>&quot;Freshdesk工单&quot;</b>点击完成。在<b>关联字段到屏幕</b>页面，勾选所有选择框，点击'更新'。<br/><br/>"
+      helptext: "<h4>JIRA集成帮助</h4><p><br/>配置JIRA与Freshdesk集成，请输入JIRA管理员用户名和密码。支持集成JIRA 4.2到5.0版本，包括本地和云端版。<br/><br/>从Freshdesk创建一个问题或链接到一个已有问题，请转到工单页面，点击<i class='integrations-jira vertical-alignment'></i><br/><br/>若在JIRA中查看链接的Freshdesk工单信息或在Freshdesk中查看JIRA问题信息，推荐JIRA管理员创建一个命名为&quot;Freshdesk工单&quot;的自由文本字段。步骤如下：<br/><br/>登录JIRA账号，点击<b>管理</b>，转到<b>问题</b> -&gt; <b>字段</b>，点击<b>添加自定义字段。</b>在<b>创建自定义字段</b>页面，选择<b>自由文本字段，</b>然后点击<b>新一步</b>。在字段名中输入<b>&quot;Freshdesk工单&quot;</b>点击完成。在<b>关联字段到屏幕</b>页面，勾选所有选择框，点击'更新'。<br/><br/>"
       form:
         domain: 域名
         domain_info: "输入完整的JIRA账号URL地址，包括https/http。例如：https://example.atlassian.net。<br /><span class='italics'>提示：JIRA须开放到互联网上。</span>"

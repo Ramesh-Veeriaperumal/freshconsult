@@ -428,3 +428,42 @@ body, .feedback-wrapper{
 		position: static;
 	}
 }
+
+.support-date-field, .input-date-field{
+	position:relative;
+}
+
+input.date.datepicker_popover {
+  padding: 4px 4px 4px 25px;
+  height: auto;
+  width: 100%;
+}
+
+.ui-datepicker-trigger {
+		@include left(-2px);
+		top: 0px;
+		font-size: 20px;
+		position: absolute;
+		text-indent: 0;
+		width: 25px;
+		height: 25px;
+		background: none;
+		border: 0;
+		@include margin(0);
+		.ficon-date {
+			@include margin(0);
+			color: #999;
+		}
+}
+
+.ui-datepicker {
+  background: #ffffff;
+  border-radius: 5px;
+}
+
+.support-date-field, .input-date-field{
+	input[readonly]{
+		background: #fff;
+		cursor: pointer;
+	}	
+}

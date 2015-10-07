@@ -31,13 +31,12 @@ class UserDrop < BaseDrop
 	end
 
 	def firstname
-		name_part("given")
-	end
-
+   		source.first_name
+   	end	
+   	
 	def lastname
-		name_part("family")
-	end
-
+		source.last_name
+	end	
 	def all_emails
 		source.user_emails.collect(&:email)
 	end
@@ -60,18 +59,22 @@ class UserDrop < BaseDrop
 	end
 
 	# !TODO This may be deprecated on a later release
+	# Removed reference from placeholders UI
 	def company_name
 		@company_name ||= @source.company.name if @source.company
 	end
 
+	def before_method(method)
+		custom_fields = @source.custom_field
+		field_types =  @source.custom_field_types
+		if(custom_fields["cf_#{method}"] || field_types["cf_#{method}"])
+	    unless custom_fields["cf_#{method}"].blank?
+	      return custom_fields["cf_#{method}"].gsub(/\n/, '<br/>') if field_types["cf_#{method}"] == :custom_paragraph
+	    end
+	    custom_fields["cf_#{method}"] 
+	  else
+	    super
+	  end
+	end
 
-	private
-		def name_part(part)
-			part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
-			parsed_name[part].blank? ? @source.name : parsed_name[part]
-		end
-
-		def parsed_name
-			@parsed_name ||= Namae::Name.parse(@source.name)
-		end
 end

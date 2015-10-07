@@ -195,13 +195,30 @@ module Helpdesk::TicketsHelper
     o.join
   end
 
+  def reply_draft(item, signature)
+    last_reply_info = get_tickets_redis_hash_key(draft_key)
+    if last_reply_info.empty?
+      {"draft_text" => bind_last_conv(item, signature, false, false),
+       "draft_cc" => @to_cc_emails,
+       "draft_bcc" => bcc_drop_box_email }
+    else
+      {"draft_text" => last_reply_info["draft_data"],
+       "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
+       "draft_bcc" => last_reply_info["draft_bcc"].split(";") }
+    end
+  end
+
+  def draft_key
+    HELPDESK_REPLY_DRAFTS % { :account_id => current_account.id, :user_id => current_user.id,
+      :ticket_id => @ticket.id}
+  end
+
   def bind_last_reply(item, signature, forward = false, quoted = false, remove_cursor = false)
-    ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     # last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
-    key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    draft_message = get_tickets_redis_key(key)
+    draft_hash = get_tickets_redis_hash_key(draft_key)
+    draft_message = draft_hash ? draft_hash["draft_data"] : ""
 
     if(remove_cursor)
       unless draft_message.blank?
@@ -564,6 +581,10 @@ module Helpdesk::TicketsHelper
   end
 
   # ITIL Related Methods ends here
+
+  def is_invoice_disabled?(installed_app)
+    Integrations::Constants::INVOICE_APPS.include?(installed_app.application.name) && !installed_app.configs_invoices.to_s.to_bool
+  end
 
 end
 

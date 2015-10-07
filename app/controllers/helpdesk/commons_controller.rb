@@ -5,12 +5,16 @@ class Helpdesk::CommonsController < ApplicationController
 
   def group_agents
   	group_id = params[:id]
+    assigned_agent = params[:agent]
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
-    @agents = current_account.agents.all(:include =>:user)
-    @agents = AgentGroup.find(:all, :joins=>:user, :conditions => { :group_id =>group_id ,:users =>{:account_id =>current_account.id , :deleted => false } } ) unless group_id.nil?
+    @agents = if group_id.present?
+      AgentGroup.where({ :group_id => group_id, :users => {:account_id => current_account.id , :deleted => false } }).joins(:user)
+    else
+      current_account.agents.includes(:user)
+    end
     respond_to do |format|
       format.html {
-        render :partial => "group_agents", :locals =>{ :blank_value => blank_value }
+        render :partial => "group_agents", :locals =>{ :blank_value => blank_value, :assigned_agent => assigned_agent }
       }
       format.mobile {
         array = []

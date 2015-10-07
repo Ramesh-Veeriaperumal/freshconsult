@@ -4,8 +4,9 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   
   attr_accessor :result
 
-  def initialize data
+  def initialize data, args = {}
     @result = data
+    @args = args
   end
   
   def perform
@@ -23,7 +24,19 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
       agents = res[:agent_id] || res[:actor_id] || res[:previous_object_id]
       ids << agents.keys.collect{|id| id ? id.to_i : nil} if agents
     end
-    { ids: ids.flatten.uniq.compact, metrics: metrics}
+    ids = ids.flatten.uniq.compact
+    if @args[:group_ids].present?
+      scoped_ids = scope_agents_with_group_filter
+      ids &= scoped_ids
+    end
+    { ids: ids, metrics: metrics}
+  end
+  
+  def scope_agents_with_group_filter
+    acc_groups = Account.current.groups_from_cache.select{|g| (@args[:group_ids] || []).include? g.id}
+    acc_groups.inject([]) do |agents, group|
+      agents |= group.agents.collect{|a| a.id}
+    end
   end
   
   def build_summary id_metric_hash

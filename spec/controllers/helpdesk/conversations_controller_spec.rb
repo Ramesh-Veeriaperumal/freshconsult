@@ -243,5 +243,74 @@ RSpec.describe Helpdesk::ConversationsController do
                     }
       assigns['note'].errors.messages[:source].should include("is not included in the list")
     end
+
   end
+  
+   describe "Reply to ecommerce Ticket" do
+      before(:each) do
+        @ebay_account = @account.ebay_accounts.new(:name => "Test account #{Time.now}",:configs => {},:status => 2,:reauth_required => false ,:external_account_id=>"#{Time.now}")
+        @ebay_account.save
+        @ecommerce_ticket = create_ticket({:status => 2, :source => 10, :subject => "Details about item: testuser_priyo456 sent a message about item #110162958894"})
+        @ecommerce_ticket.requester.external_id = "bssmb_us_03"
+        @ecommerce_ticket.requester.save
+        @ecommerce_ticket.build_ebay_question(:user_id => @ecommerce_ticket.requester.id, :item_id => "110162958894", :ebay_account_id => @ebay_account.id, :account_id => @account.id, :message_id => "82321455326753")
+        @ecommerce_ticket.ebay_question.save
+        log_in(@agent)
+      end
+
+      it "should reply to ecommerce ticket" do 
+        Sidekiq::Testing.inline!
+        sent_messages = [{:sender=>"testuser_priyo456", :sending_user_id=>"133055377", :recipient_user_id=>"testuser_priyo456", 
+          :send_to_name=>"bssmb_us_06", :subject=>"Details about item: testuser_priyo456 sent a message about item #110162958894", 
+          :message_id=>"5879180", :external_message_id=>"11364210101", :flagged=>"false", :read=>"true", :receive_date=>"2015-06-22T12:33:59.000Z", 
+          :expiration_date=>"2016-06-21T12:33:59.000Z", :item_id=>"110162958894", :response_details=>{:response_enabled=>"false"}, :folder=>{:folder_id=>"1"}, 
+          :message_type=>"AskSellerQuestion", :replied=>"false", :item_end_time=>"2015-07-04T12:03:00.000Z", :item_title=>"固定价刊登范本US-yzy"}, 
+          {:sender=>"testuser_priyo456", :sending_user_id=>"133055377", :recipient_user_id=>"testuser_priyo456", :send_to_name=>"bssmb_us_03", 
+          :subject=>"Details about item: testuser_priyo456 sent a message about 3D Transparent Water drop Raindrop Slim Case Cover For iPhone 5 New Hot Yell #110146234712",
+          :message_id=>"5879110", :external_message_id=>"11364130410", :flagged=>"false", :read=>"true", :receive_date=>"2015-06-22T10:42:33.000Z", 
+          :expiration_date=>"2016-06-21T10:42:33.000Z", :response_details=>{:response_enabled=>"false"}, 
+          :folder=>{:folder_id=>"1"}, :message_type=>"AskSellerQuestion", :replied=>"false", :item_end_time=>"2015-06-25T13:44:14.000Z", 
+          :item_title=>"3D Transparent Water drop Raindrop Slim Case Cover For iPhone 5 New Hot Yell"}]
+        Helpdesk::ConversationsController.any_instance.stubs(:ebay_call).returns({:ack => "Success", :timestamp => Time.now})
+        Ecommerce::Ebay::Message.any_instance.stubs(:sent_folder_messages).returns(sent_messages)
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "12"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+          Sidekiq::Testing.disable!
+      end
+
+      it "should reply to ecommerce ticket" do 
+        Helpdesk::ConversationsController.any_instance.stubs(:ebay_call).returns(false)
+        note_body = "<div>#{(Time.now.to_f*1000).to_i}</div>"
+         post :ecommerce, {
+                     :helpdesk_note =>  { :note_body_attributes =>{:body_html => note_body},
+                                        :private => "true",
+                                        :source => "12"
+                                        },
+                     :ticket_status => "",
+                     :format => "js",
+                     :showing => "notes",
+                     :since_id => "1",
+                     :quoted_text_html => "",
+                     :ticket_id => @ecommerce_ticket.display_id
+                    }
+          ecommerce_reply = @account.tickets.find(@ecommerce_ticket.id).notes.last
+          ecommerce_reply.body_html.should be_eql(note_body)
+          Sidekiq::Testing.disable!
+      end
+
+    end
+
 end

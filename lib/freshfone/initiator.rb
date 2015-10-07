@@ -1,11 +1,13 @@
 class Freshfone::Initiator
   include Freshfone::CallValidator
+  include Freshfone::FreshfoneUtil
 
   CALL_TYPES = [ 
                   Freshfone::Initiator::Incoming, 
                   Freshfone::Initiator::Outgoing,
                   Freshfone::Initiator::Transfer,
-                  Freshfone::Initiator::Record
+                  Freshfone::Initiator::Record,
+                  Freshfone::Initiator::Sip
                ]
 
   attr_accessor :params, :call_resolver, :current_account
@@ -17,7 +19,8 @@ class Freshfone::Initiator
     @current_user        = current_user
     @current_call        = current_call
 
-    params[:type] ||= outgoing? ? "outgoing" : "incoming"
+    params[:type] ||= resolve_call_type
+
   end
 
   def resolve_call
@@ -42,5 +45,15 @@ class Freshfone::Initiator
 
     def has_client_id?
       params[:From].match(/(client:)/) ? true : false
+    end
+
+    def resolve_call_type
+      return sip_type if sip_call?
+      outgoing? ? "outgoing" : "incoming"
+    end
+
+    def sip_type
+      params[:PhoneNumber] = sip_number  
+      return "sip"
     end
 end

@@ -54,6 +54,7 @@ class PasswordResetsController < SupportController
       flash[:notice] = t(:'flash.password_resets.update.success')
       redirect_to root_url
     else
+      set_portal_page :password_reset
       render :action => :edit
     end
   end

@@ -34,7 +34,7 @@ describe Admin::RolesController do
 
 	it "should create a new Role" do
 		privileges = [ "manage_tickets", "reply_ticket", "forward_ticket", "view_solutions", "view_forums", 
-			"view_contacts", "view_reports", "", "0", "0", "0", "0" ] 
+			"view_contacts", "view_reports", "manage_contacts", "", "0", "0", "0", "0" ] 
 		post :create, { :role => {  :name => "Create: New role test #{@now}", :description => Faker::Lorem.paragraph, 
 									:privilege_list => privileges
 									} 

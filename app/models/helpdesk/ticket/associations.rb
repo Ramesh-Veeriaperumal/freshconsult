@@ -87,5 +87,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :article_ticket, :as => :ticketable, :dependent => :destroy
   has_one :article, :through => :article_ticket
-
+  has_one :ebay_question, :as => :questionable, :class_name => 'Ecommerce::EbayQuestion', :dependent => :destroy
+  has_one :ebay_account, :class_name => 'Ecommerce::EbayAccount', :through => :ebay_question
+  
 end

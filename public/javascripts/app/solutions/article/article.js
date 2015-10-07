@@ -50,7 +50,7 @@ window.App = window.App || {};
       this.showPageBindings();
       this.handleEdit();
       this.formValidate();
-      highlight_code();
+      this.highlightCode();
     }
 
   };

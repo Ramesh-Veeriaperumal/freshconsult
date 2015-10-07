@@ -42,7 +42,7 @@
 			
 		});
 		
-		jQuery('a[data-toggle="tab"]').on('show', function(e) {
+		jQuery('#language-tab a[data-toggle="tab"]').on('show', function(e) {
 		 jQuery('#default_help').show();	
 		 jQuery('#default_help_show').hide();
 		 jQuery('.hide-default').show();	
@@ -102,7 +102,7 @@
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
 				jQuery('#place-dialog').slideDown('fast', function(){
-        			jQuery(this).groupPlaceholders({'truncateItems': false});
+        			jQuery(this).groupPlaceholders();
 				});
 		});
 		jQuery('.redactor_editor').live('click', function(){
@@ -141,13 +141,15 @@
     			<h3 class="lead">
     				<%if @type == 'requester_template'%>
     					<% type_url = 'requester'%>
-    					<%= link_to "#{t('email_notifications.requestor_notification')}", "/admin/email_notifications##{type_url}" %>
+    					<%= link_to "#{t('email_notifications.requestor_notification')}", "#{admin_email_notifications_path}##{type_url}" %>
 					<%elsif @type == 'agent_template'%>
 							<% type_url = 'agent'%>
-							<%= link_to "#{t('email_notifications.agent_notification')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.agent_notification')}", "#{admin_email_notifications_path}##{type_url}"%>
+					<% elsif @type == "cc_notification"%>
+							<%= link_to "#{t('email_notifications.cc_notifications')}", "#{admin_email_notifications_path}##{@type}"%>
 					<%else%>
 							<% type_url = 'template'%>
-							<%= link_to "#{t('email_notifications.notification_template')}", "/admin/email_notifications##{type_url}"%>
+							<%= link_to "#{t('email_notifications.notification_template')}", "#{admin_email_notifications_path}##{type_url}"%>
 					<%end%>/&nbsp;<%= t("#{@email_notification .token}") %>
     			</h3>
     		</div>
@@ -223,7 +225,7 @@
 			<%end%>	
 			
 			<div class="row-fluid">
-				<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini"><%=t('email_notifications.insert_placeholder')%> &raquo;</a></span>
+				<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini btn-flat"><%=t('email_notifications.insert_placeholder')%></a></span>
 				<label><b><%= t('email_notifications.subject') %></b> <span class="required_star">*</span></label>
 				<% if (@type == 'agent_template')
 					 		description_field = :agent_template
@@ -343,7 +345,7 @@
 					
 				</div>
 				<div class="row-fluid">
-					<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini"><%=t('email_notifications.insert_placeholder')%> &raquo;</a></span>
+					<span class="pull-right"><a href="#" class="pull-right link_placeholder btn btn-mini btn-flat"><%=t('email_notifications.insert_placeholder')%></a></span>
 						<label><b><%= t('email_notifications.subject') %></b> <span class="required_star">*</span> </label> 
 							<%= c.text_field :subject, {:id => "subject_#{lang}", :class => "email-notification-subject insert-placeholder-target required" } %>
 							<br/>

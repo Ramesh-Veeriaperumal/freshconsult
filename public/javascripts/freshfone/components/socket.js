@@ -160,6 +160,16 @@ var FreshfoneSocket;
 					
 			});
 
+      this.freshfone_socket_channel.on('toggle_device', function (data) {
+        data = JSON.parse(data) || {};
+         var result = {
+            user: data.user,
+            event: "toggle_device"
+          }
+          trigger_event('ffone_socket', result);
+      });
+
+
 			this.freshfone_socket_channel.on('token', function (data) {
 				data = JSON.parse(data) || {};
 				self.updataTwilioDevice(data.token);

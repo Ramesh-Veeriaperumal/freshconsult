@@ -123,6 +123,24 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       <br/><br/>Thanks, <br/>{{helpdesk_name}} <br/></p>',
     :requester_subject_template => '{{helpdesk_name}} Email Activation'
 },
+  {
+  :notification_type => EmailNotification::NOTIFY_COMMENT,
+  :account_id => account.id, :requester_notification => false, :agent_notification => true,
+  :agent_template => '<p>Hi , <br/><br/> {{comment.commenter.name}} added a note and wants you to have a look.</p><br> Ticket URL:<br> {{ticket.url}} <br><br> Subject: <br>{{ticket.subject}}<br><br> Requester: {{ticket.requester.name}} <br><br> Note Content: <br> {{comment.body}}',
+  :agent_subject_template => 'Note Added - [#{{ticket.id}}] {{ticket.subject}}'
+},
+{
+  :notification_type => EmailNotification::NEW_TICKET_CC,
+  :account_id => account.id, :requester_notification => true, :agent_notification => false,
+  :requester_template => '<p>{{ticket.requester.name}} submitted a new ticket to {{ticket.portal_name}} and requested that we copy you</p><br><br>Ticket Description: <br>{{ticket.description}}',
+  :requester_subject_template => 'Added as CC - [#{{ticket.id}}] {{ticket.subject}}'
+},
+{
+  :notification_type => EmailNotification::PUBLIC_NOTE_CC,
+  :account_id => account.id, :requester_notification => true, :agent_notification => false,
+  :requester_template => '<p>There is a new comment in the ticket submitted by {{ticket.requester.name}} to {{ticket.portal_name}}</p><br> Comment added by : {{comment.commenter.name}}<br><br>Comment Content: <br>{{comment.body}}',
+  :requester_subject_template => 'New comment - [#{{ticket.id}}] {{ticket.subject}}'
+},
 {
     :notification_type => EmailNotification::PREVIEW_EMAIL_VERIFICATION,
     :account_id => account.id, :requester_notification => false, :agent_notification => true,

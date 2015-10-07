@@ -130,6 +130,11 @@ class Account < ActiveRecord::Base
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
+  #Password restriction hardcode for certain customers
+  def password_restriction_enabled?
+    ismember?(PASSWORD_RESTRICTION_ENABLED, self.id)
+  end
+
   def freshfone_active?
     features?(:freshfone) and freshfone_numbers.present?
   end

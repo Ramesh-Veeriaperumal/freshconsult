@@ -1,6 +1,6 @@
-// -------------------------------------------------------------------------------------------- 
-// 											Layout without sidebar styles 									
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
+// 											Layout without sidebar styles
+// --------------------------------------------------------------------------------------------
 .side-panel{
 	background-color:#ffffff;
 	border:1px solid #b3b3b3;
@@ -17,22 +17,22 @@
 		line-height:1.6em;
 		@include margin(0 0 14px 0);
 		color:#444;
-	}  
+	}
 	h4{
 		font-size:1.1em;
 		font-weight:bold;
 		line-height:1.4em;
 	}
-	
+
 	.element{
 		@include padding(4px 16px 16px 16px);
-		margin:0 -20px; 
+		margin:0 -20px;
 		font-size:$default-font-size;
 		h4{
 			border-bottom:1px solid #f1f1f1;
 			padding-bottom:1px;
 			margin-bottom:6px;
-		} 
+		}
 		.edit{
 			@include float(right);
 			margin-top:4px;
@@ -49,13 +49,37 @@
 		@include float(right);
 		position:relative;
 	 	@include left(5px);
-		top:3px;			
+		top:3px;
 	}
-} 
+
+	// --- Agent Availability Button --- //
+	.dashboard_agent_status_link{
+	  background-color: #e7e7e7;
+	  padding: 10px;
+	  display: block;
+	  color: #666;
+		position: relative;
+		@include border-radius(3px);
+		&:hover{
+			background-color: #eee;
+		}
+    &:after{
+      content: "";
+      display: inline-block;
+      border-top: 5px solid transparent;
+      border-left: 5px solid #555;
+      border-bottom: 5px solid transparent;
+      position: absolute;
+      right: 10px;
+      top: 13px;
+    }
+	}
+
+}
 .sidepanel .cnt li {
 	border-bottom: 1px solid #F3F3F3;
 	padding: 6px 0;
-	
+
 	a{ text-decoration:none; }
 	label{
 		display:block;
@@ -66,7 +90,7 @@
 	select{
 		font-size:11px;
 		max-width:100%;
-	} 
+	}
 	.name_label {
 		color: #666666;
 		font-size: 12px;
@@ -78,11 +102,11 @@
 		font-weight: normal;
 	}
 }
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 //										Free Trial Notification
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 .trial_expiry {
-	
+
 	margin:(-$common-padding) (-$common-padding) 0;
 	padding: $common-padding / 2 $common-padding;
 	p{
@@ -140,12 +164,12 @@
 }
 
 
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 //											Todo
-// -------------------------------------------------------------------------------------------- 
+// --------------------------------------------------------------------------------------------
 
-.rtCnt .rtDetails.todo{ 
-   background-color:#ffffe2; 
+.rtCnt .rtDetails.todo{
+   background-color:#ffffe2;
 	label{ font-size:14px; }
 	h3.title{
 	   @include padding(1px 0 5px 0);
@@ -156,11 +180,11 @@
 	border:0;
 }
 .reminders, .todo{
-	position:relative; 
+	position:relative;
 	padding-top:10px;
-	h3.title{ 
+	h3.title{
 		display:block;
-	}   
+	}
    	ul{
 		display:block;
 		border-top:1px dotted #ddd;
@@ -177,19 +201,19 @@
 				font-size: $default-font-size;
 				font-weight:normal;
 				@include margin-left(5px);
-				line-height:18px;	
+				line-height:18px;
 				padding-top:0;
 				display:block;
 				word-break:break-all;
 				width: 90%;
 			}
 			a.request_link{
-				display:block; 
+				display:block;
 				@include link-colors(#666666, #6f8698, #6f8698, #6f8698);
-				font-size:12px;		
-				text-decoration:none;		
+				font-size:12px;
+				text-decoration:none;
 			}
-			.checked{ 
+			.checked{
 				font-size:12px;
 				text-decoration:line-through;
 				a.request_link{
@@ -199,20 +223,20 @@
 			}
 			.delete{
 				@include float(right);
-				width:16px; height:16px; 
+				width:16px; height:16px;
 				overflow:hidden;
 				visibility:hidden;
 				position:relative;
 			 	@include left(-3px);
 			}
-		}  
+		}
 		li:hover, li.active{
 			background-color:#FEFEF2;
 			.delete{
 				visibility:visible;
 			}
 		}
-	} 
+	}
 }
 div.addReminder{
 	margin:0 0;
@@ -240,9 +264,9 @@ div.addReminder{
 			padding:0;
 		}
 	}
-} 
+}
 // -----------------------------------------------------------
-//							Gamification 
+//							Gamification
 // -----------------------------------------------------------
 .sidepanel .action-right{
 	@include float(right);
