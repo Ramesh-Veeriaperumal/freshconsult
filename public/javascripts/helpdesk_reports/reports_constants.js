@@ -85,17 +85,17 @@ HelpdeskReports.Constants = {
         bucket_data : {
             interactions: {
                 series: {
-                    'agent_interactions': 'Agent Interactions', 
-                    'customer_interactions' : 'Customer Interactions'
+                    'agent_interactions': 'Agent Responses', 
+                    'customer_interactions' : 'Customer Responses'
                 },
                 name_series: {
-                    'Agent Interactions': 'agent_interactions',
-                    'Customer Interactions': 'customer_interactions'
+                    'Agent Responses': 'agent_interactions',
+                    'Customer Responses': 'customer_interactions'
                 },
                 meta_data:{
                     dom_element: 'interactions',
                     legend: true,
-                    xtitle: 'No. of Interactions',
+                    xtitle: 'No. of Responses',
                     ytitle: 'No. of Tickets',
                     chart_height: '300',
                     title: 'Agent & Customer Responses'
@@ -111,11 +111,11 @@ HelpdeskReports.Constants = {
                 meta_data: {
                     dom_element:  'reopened_tickets',
                     legend: false,
-                    xtitle: 'Reopened Tickets',
+                    xtitle: 'No. of Tickets',
                     ytitle: 'No. of Reopens',
                     pointWidth: 6,
                     chart_height: '275',
-                    title: 'Reopened Tickets Count'
+                    title: 'Reopened Tickets'
                 }
             }
         },
