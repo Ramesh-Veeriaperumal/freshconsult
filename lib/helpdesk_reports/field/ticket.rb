@@ -3,9 +3,9 @@ module HelpdeskReports::Field::Ticket
   # Filter data for reports, Check template at the end of file
   def show_options(column_order, columns_keys_by_token, columns_option)
     
-    excluded_filters = ReportsAppConfig::EXCLUDE_FILTERS[report_type.to_sym]
+    excluded_filters = ReportsAppConfig::EXCLUDE_FILTERS[report_type]
     if excluded_filters
-      column_order -=  excluded_filters[Account.current.subscription_plan.name.to_sym]||[]
+      column_order -=  excluded_filters[Account.current.subscription.subscription_plan.name]||[]
     end
     
     @show_options ||= begin

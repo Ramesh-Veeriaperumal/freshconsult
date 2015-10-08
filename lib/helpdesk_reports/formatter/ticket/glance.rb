@@ -15,8 +15,8 @@ class HelpdeskReports::Formatter::Ticket::Glance
   
   def sort_group_by_values
     result.each do |metric, res|
-      next if res[:error].present? || bucket_metric?(metric)
       res.symbolize_keys!
+      next if res[:error].present? || bucket_metric?(metric)     
       res.each do |gp_by, values|
         next if gp_by == :general
         values = values.to_a

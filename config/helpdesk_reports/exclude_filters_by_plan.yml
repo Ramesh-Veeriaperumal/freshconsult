@@ -1,10 +1,14 @@
-:glance: 
-  :Sprout:
-  :Blossom:
+glance: 
+  Blossom:
   - :agent_id
   - :group_id
-  :Garden:
+  Blossom Classic:
   - :agent_id
   - :group_id
-  :Estate:
-  :Forest:
+  Garden:
+  - :agent_id
+  - :group_id
+  Garden Classic:
+  - :agent_id
+  - :group_id
+
