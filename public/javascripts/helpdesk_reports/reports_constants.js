@@ -111,8 +111,8 @@ HelpdeskReports.Constants = {
                 meta_data: {
                     dom_element:  'reopened_tickets',
                     legend: false,
-                    xtitle: 'No. of Tickets',
-                    ytitle: 'No. of Reopens',
+                    xtitle: 'No. of Reopens',
+                    ytitle: 'No. of Tickets',
                     pointWidth: 6,
                     chart_height: '275',
                     title: 'Reopened Tickets'
