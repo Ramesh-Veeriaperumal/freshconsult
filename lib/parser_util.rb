@@ -25,7 +25,7 @@ include AccountConstants
     parsed_email.addresses.each_with_index do |email,index|
       if email.address =~ EMAIL_REGEX
         parsed_hash[:email] = email.address
-        parsed_hash[:name] = "#{name_prefix}#{email.name}"
+        parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
         parsed_hash[:domain] = email.domain
         break
       else
