@@ -255,12 +255,12 @@ window.App = window.App || {};
         $('.solution-list li[item_id="' + ids[i] + '"]').remove();
       }
       $(".item_ids_checkbox:checked").attr('checked', false);
+      $('.comm-item').removeClass('active');
     },
     
     hideSelectAll: function () {
       if ($('#fa_item-select-all:checked').size() > 0) {
         $("#fa_item-select-all").attr('checked', false);
-        $('.comm-item').removeClass('active');
       }
     },
 
