@@ -34,10 +34,14 @@ module Helpers::TimeEntriesHelper
   end
 
   def v2_time_entry_payload
+    v2_time_entry_params.to_json
+  end
+
+  def v2_time_entry_params
     {
       start_time: 4.days.ago.iso8601, executed_at: 89.days.ago.iso8601, time_spent: '89:09',
       agent_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
-    }.to_json
+    }
   end
 
   def v1_time_entry_payload

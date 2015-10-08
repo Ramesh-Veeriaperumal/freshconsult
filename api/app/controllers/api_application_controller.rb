@@ -7,6 +7,10 @@ class ApiApplicationController < MetalApiController
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
 
+  # Check if content-type is appropriate for specific endpoints.
+  # This check should be done before any app specific filter starts.
+  before_filter :validate_content_type 
+
   include Concerns::ApplicationConcern
 
   # App specific Before filters Starts
@@ -29,8 +33,6 @@ class ApiApplicationController < MetalApiController
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
-
-  before_filter :validate_content_type
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
   # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.

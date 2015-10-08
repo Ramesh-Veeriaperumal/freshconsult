@@ -111,4 +111,41 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_not_nil @controller.instance_variable_get(:@item)
     assert_equal 'test', @controller.instance_variable_get(:@item).name
   end
+
+  def test_validate_content_type_with_get_request
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'GET'
+    @controller.request = request
+    @controller.send(:validate_content_type)
+    assert response.body.blank?
+  end
+
+  def test_validate_content_type_with_json_post_request
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'POST'
+    request.env['CONTENT_TYPE'] = 'application/json'
+    params = { 'category' => { 'name' => 'test' } }
+    @controller.params = params
+    @controller.request = request
+    @controller.send(:validate_content_type)
+    assert response.body.blank?
+  end
+
+  def test_validate_content_type_with_non_json_post_request 
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'POST'
+    request.env['CONTENT_TYPE'] = 'application/xml'
+    params = { 'category' => { 'name' => 'test' } }
+    @controller.params = params
+    @controller.request = request
+    actual = @controller.send(:validate_content_type)
+    assert_equal response.status, 415
+    assert_equal response.body, request_error_pattern(:invalid_content_type).to_json
+  end
 end

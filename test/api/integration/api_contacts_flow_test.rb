@@ -21,6 +21,19 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     old_value.make_current unless old_value.nil?
   end
 
+  JSON_ROUTES = {'/api/contacts/1/restore' => 'put'}
+
+  JSON_ROUTES.each do |path, verb|
+    define_method("test_#{path}_#{verb}_with_multipart") do
+      headers, params = encode_multipart(v2_contact_params)
+      skip_bullet do
+        send(verb.to_sym, path, params, @write_headers.merge(headers))
+      end
+      assert_response 415
+      response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    end
+  end
+
   def test_create_contact_as_in_quick_create_and_update_the_details
     skip_bullet do
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))

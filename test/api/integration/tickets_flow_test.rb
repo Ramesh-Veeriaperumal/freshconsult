@@ -3,6 +3,19 @@ require_relative '../test_helper'
 class TicketsFlowTest < ActionDispatch::IntegrationTest
   include Helpers::TicketsHelper
 
+  JSON_ROUTES = {'/api/tickets/1/restore' => 'put'}
+
+  JSON_ROUTES.each do |path, verb|
+    define_method("test_#{path}_#{verb}_with_multipart") do
+      headers, params = encode_multipart(v2_ticket_params)
+      skip_bullet do
+        send(verb.to_sym, path, params, @write_headers.merge(headers))
+      end
+      assert_response 415
+      response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    end
+  end
+
   def test_create_with_invalid_attachment_type
     skip_bullet do
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => 's' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
