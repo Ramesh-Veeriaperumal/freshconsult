@@ -14,6 +14,8 @@ module HelpdeskReports::Constants::Ticket
     [:PRIVATE_NOTES,               "Count"],
     [:CUSTOMER_INTERACTIONS,       "Count"],
     [:AGENT_INTERACTIONS,          "Count"],
+    [:RESPONSE_VIOLATED,           "Count"],#Already preprocessed and returning violated % 
+    [:RESOLUTION_VIOLATED,         "Count"],
     [:AVG_FIRST_RESPONSE_TIME,     "Avg"],
     [:AVG_RESPONSE_TIME,           "Avg"],
     [:AVG_RESOLUTION_TIME,         "Avg"],
@@ -46,7 +48,7 @@ module HelpdeskReports::Constants::Ticket
   
   AVOIDABLE_COLUMNS = ["h", "dow", "avg", "count", "range_benchmark", "fr_escalated",
                        "is_escalated", "fcr_violation", "resolved", "received", 
-                       "received_count", "resolved_count", "received_avg", "resolved_avg"]
+                       "received_count", "resolved_count", "received_avg", "resolved_avg","tickets_count"]
   
   DEFAULT_COLUMNS = [
     [ :agent_id,       "Agent",      :dropdown],
@@ -68,11 +70,16 @@ module HelpdeskReports::Constants::Ticket
     [ :TICKET_VOLUME,                102],
     [ :PERFORMANCE_DISTRIBUTION,     104],
     [ :AGENT_SUMMARY,                105],
-    [ :GROUP_SUMMARY,                106]
+    [ :GROUP_SUMMARY,                106],
+    # [ :CUSTOMER_REPORT,              107]
   ]
   
   REPORT_TYPE_BY_NAME = REPORT_TYPE.map { |i| i[0].to_s.downcase }   
   REPORT_TYPE_BY_KEY  = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
+  
+  DEFAULT_REPORTS     = ["agent_summary", "group_summary"]
+  ADVANCED_REPORTS    = DEFAULT_REPORTS + ["glance"]
+  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + ["ticket_volume", "performance_distribution","customer_report"] 
 
   REPORT_ARTICAL_LINKS = {
     :HELPDESK_GLANCE           => '',
@@ -85,9 +92,10 @@ module HelpdeskReports::Constants::Ticket
 
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :time_spent, :list]
   
+  # REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution, :customer_report]
   REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution]
-  
-  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary]
+
+  FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report]
   
   PARAM_INCLUSION_VALUES = {
     :model       =>  ["TICKET"],
@@ -136,10 +144,23 @@ module HelpdeskReports::Constants::Ticket
     "mon"       => 12,
     "qtr"       => 4
   }     
+  
+  # Constraint on date_range by subscription plan (Restrict query to x days from today)
+  DATE_LAG_CONSTRAINT = {
+    "Sprout"  => 1,
+    "Blossom" => 1,
+    "Garden"  => 1,
+    "Estate"  => 0,
+    "Forest"  => 0
+  }
 
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
 
   NOT_APPICABLE = "NA"
+  
+  NA_PLACEHOLDER_SUMMARY = "-"
+  
+  NA_PLACEHOLDER_GLANCE = 0
   
   TICKET_FILTER_LIMIT = 5
   

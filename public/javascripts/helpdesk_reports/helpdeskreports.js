@@ -11,7 +11,8 @@ window.App = window.App || {};
 			'glance': 'Glance',
 			'agent_summary': 'AgentSummary',
 			'group_summary': 'GroupSummary',
-			'performance_distribution': 'PerformanceDistribution'
+			'performance_distribution': 'PerformanceDistribution',
+			// 'customer_report': 'CustomerReport'
 		},
 
 		onFirstVisit: function(data) {
@@ -20,8 +21,8 @@ window.App = window.App || {};
 
 		onVisit: function(data) {
 			var report = window.location.pathname.split('/reports/v2/').last();
-			HelpdeskReports.CoreUtil.bindEvents();
-			if(this.URL_MAPPING[report]) {
+			if(this.URL_MAPPING[report] && HelpdeskReports.locals && HelpdeskReports.locals.report_field_hash) {
+				HelpdeskReports.CoreUtil.bindEvents();
 				HelpdeskReports.ReportUtil[this.URL_MAPPING[report]].init();
 			}
 		},
@@ -31,6 +32,9 @@ window.App = window.App || {};
 			core.flushLocals();
 			core.flushCharts();
 			core.flushEvents();
+			core.actions.closeFilterMenu();
+			core.actions.hideTicketList();
+			core.actions.hideViewMore();
 		}
 	}
 }(window.jQuery));

@@ -1,0 +1,47 @@
+<%
+	var tableTrClass = function (i) {
+		if (i % 2 == 0) { 
+			return 'even'; 
+		} else{ 
+			return 'odd';
+		}
+	};
+	
+	var agentTdTmpl = function (data, i, j, agent_metrics) {
+		var metric_data, td_class;
+		var current_data = data[i][agent_metrics[j]];
+		if (consts.percentage_metrics.indexOf(agent_metrics[j]) > -1) {
+			metric_data = HelpdeskReports.CoreUtil.addsuffix(current_data);
+			td_class = (typeof current_data !== 'number') ? 'disable' : '';
+		} else if (consts.time_metrics.indexOf(agent_metrics[j]) > -1) { 
+			metric_data = HelpdeskReports.CoreUtil.timeMetricConversion(current_data);
+			td_class = (typeof current_data !== 'number') ? 'disable' : '';
+		} else { 
+			metric_data = HelpdeskReports.CoreUtil.shortenLargeNumber(current_data, 1);
+			td_class = (current_data == 0) ? 'disable' : '';
+		}
+
+		var tmpl =  "<td data-agent-id=" + data[i]['agent_id'] + " class='" + td_class + "' data-metric-name=" + agent_metrics[j] + ">" + 
+			metric_data + "</td>";
+
+		return tmpl;
+	};
+
+	var consts = jQuery.extend({}, HelpdeskReports.Constants.AgentSummary);
+	var agent_metrics = consts.metrics;
+%>
+
+<%if (data && data.length>0) { %>
+	<% for (var i = 0; i < data.length; i++) { %>
+		<tr class="<%= tableTrClass(i) %>" >
+			<% for (var j = 0; j < agent_metrics.length; j++) { %>
+				<% var summary_tmpl = agentTdTmpl(data, i, j, agent_metrics); %>
+				<% if (consts.repeat.indexOf(agent_metrics[j]) > -1) { %>
+					<%= summary_tmpl + summary_tmpl %>
+				<% } else { %>
+					<%= summary_tmpl%>
+				<% } %>
+			<% } %> 
+		</tr>
+	<% } %>
+<% } %>

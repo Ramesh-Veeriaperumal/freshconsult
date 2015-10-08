@@ -6890,7 +6890,7 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume:
+    ticket_volume: 
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6963,8 +6963,8 @@ en:
       title:  Customer Report
       received_tickets: Customers with the most received
       resolved_tickets: Customers with the most resolved
-      response_sla: Most SLA Violations for Response
-      resolution_sla: Most SLA Violations for resolution
+      response_violated: Most SLA Violations for response
+      resolution_violated: Most SLA Violations for resolution
       customer_interactions: Customer Interactions
       agent_interactions: Agent Interactions
   adv_reports:

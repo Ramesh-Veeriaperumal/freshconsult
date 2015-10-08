@@ -14,28 +14,35 @@
 	</div>
 
 	<%= render :partial => "reports/v2/tickets/reports/shared/filter" %>
-	<!-- code for ticket list template -->
+
 </div>
 
-<% if @report_type == 'glance'%>
-	<% content_for :dialogs do %>
-	<div class="view-more-metrics hide" id="view_more_wrapper">
+<% content_for :dialogs do %>
+	
+	<%= render :partial => "reports/v2/tickets/reports/shared/tickets" %>
+
+	<% if @report_type == 'glance'%>
+		<div class="view-more-metrics hide" id="view_more_wrapper">
 			<div class="title">
 				<span id="view_title" class="view_title"></span>
 				<span class="close" data-action="close-view-all"> 
 					<i class="ficon-cross fsize-20 " size="20"></i> 
 				</span>	
 			</div>
-			<div id="view_all_container" class="view_all_container"></div> 
+			<div id="view_all_container" class="view_all_container" data-report="glance-container"></div> 
 		</div>
 	<% end %>
+
 <% end %>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	window.HelpdeskReports = window.HelpdeskReports || {};
 	HelpdeskReports.locals = HelpdeskReports.locals || {};
-	HelpdeskReports.locals.report_field_hash = <%= @show_options.to_json.html_safe %> ;
+	HelpdeskReports.locals.report_type = "<%= @report_type %>";
+	HelpdeskReports.locals.report_field_hash = <%= @show_options.to_json.html_safe %>;
 	HelpdeskReports.locals.field_name_mapping = <%= @label_hash.to_json.html_safe %>;
+	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
+	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
 });
 </script>

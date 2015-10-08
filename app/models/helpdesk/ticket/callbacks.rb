@@ -122,12 +122,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def process_agent_and_group_changes 
     
-    # For reports related 
-    # Added this check to handle the case for tickets with agents assigned before the code deploy
-    if ticket_states.first_assigned_at 
-      schema_less_ticket.set_agent_assigned_flag
-    end
-    
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at 

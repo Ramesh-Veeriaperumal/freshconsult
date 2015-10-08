@@ -89,7 +89,7 @@
                             </span>
                         </td>
                     </tr>
-                </thead>
+                </thead>    
                 <tbody class="dynamic-ticket-datas" data-table="ticket-data"></tbody>
             </table>
         </div>
@@ -98,9 +98,13 @@
         <table>
             <thead>
                 <tr class="title">
-                    <th> <span id="agent-details-prev" data-action='data-tab-nav' class="agent-details-prev show-metrics disabled"><%= font_icon "arrow-left", :size => 14 %></span>
- <span id="agent-details-next" data-action='data-tab-nav' class="agent-details-next show-metrics"><%= font_icon "arrow-right", :size => 14  %></span>
-
+                    <th>
+                        <span id="agent-details-prev" data-action='data-tab-nav' class="agent-details-prev show-metrics disabled">
+                            <%= font_icon "arrow-left", :size => 14 %>
+                        </span>
+                        <span id="agent-details-next" data-action='data-tab-nav' class="agent-details-next show-metrics">
+                            <%= font_icon "arrow-right", :size => 14  %>
+                        </span>
                     </th>
                 </tr>
             </thead>
