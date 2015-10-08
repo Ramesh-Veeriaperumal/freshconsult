@@ -23,7 +23,7 @@ class NoteValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
     Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
-    controller_params = { 'user_id' => 1, attachments: ["file.png"] }
+    controller_params = { 'user_id' => 1, attachments: ['file.png'] }
     item = nil
     note = NoteValidation.new(controller_params, item)
     refute note.valid?

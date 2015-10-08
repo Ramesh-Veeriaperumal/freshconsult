@@ -16,7 +16,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => [''] } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_multipart_create_ticket_with_all_params

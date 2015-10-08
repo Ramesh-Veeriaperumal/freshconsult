@@ -76,7 +76,7 @@ class ApiContactsController < ApiApplicationController
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
 
-      contact = ContactValidation.new(params[cname].merge(multipart_params), @item)
+      contact = ContactValidation.new(params[cname], @item, multipart_or_get_request?)
       render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
     end
 
@@ -98,7 +98,7 @@ class ApiContactsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @contact_filter = ContactFilterValidation.new(params.merge(multipart_params))
+      @contact_filter = ContactFilterValidation.new(params, nil, multipart_or_get_request?)
       render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
@@ -137,6 +137,12 @@ class ApiContactsController < ApiApplicationController
         next unless check_box_names.include?(key.to_s)
         params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
       end
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = ContactConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

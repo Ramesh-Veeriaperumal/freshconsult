@@ -30,7 +30,7 @@ class ApiApplicationController < MetalApiController
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
-  before_filter :support_string?, if: :multipart_or_get_request?
+  before_filter :validate_content_type
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
   # Modify ApiConstants::LOAD_OBJECT_EXCEPT to include any new methods introduced in the controller that does not require load_object.
@@ -159,8 +159,8 @@ class ApiApplicationController < MetalApiController
       # Template method - Redefine if the controller needs requires_feature before_filter
     end
 
-    def support_string?
-      unless get_request? || self.class.wrap_params.last.values.flatten.include?(:multipart_form)
+    def validate_content_type
+      unless get_request? || request.delete? || valid_content_type?
         render_request_error :invalid_content_type, 415
       end
     end
@@ -422,10 +422,12 @@ class ApiApplicationController < MetalApiController
 
     def multipart_or_get_request?
       @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request?)
+      @multipart
     end
 
-    def multipart_params
-      { string_param: multipart_or_get_request? }
+    def valid_content_type?
+      return true if request.content_mime_type.nil?
+      request.content_mime_type.ref == :json
     end
 
     def set_time_zone

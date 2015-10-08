@@ -1,13 +1,13 @@
 class ApiValidation
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
-  attr_accessor :error_options, :string_param
+  attr_accessor :error_options, :allow_string_param
 
   before_validation :trim_attributes
   FORMATTED_TYPES = [ActiveSupport::TimeWithZone]
 
   # Set instance variables of validation class from request params or items. so that manual assignment is not needed.
-  def initialize(request_params, item = nil)
+  def initialize(request_params, item = nil, allow_string_param = false)
     # Set instance variables of validation class from loaded item's attributes (incase of PUT/update request)
     if item
       item.attributes.each_pair do |field, value|
@@ -19,6 +19,9 @@ class ApiValidation
     request_params.each_pair do |key, value|
       instance_variable_set("@#{key}", value)
     end
+
+    # Allow string param based on action & content_type
+    @allow_string_param = allow_string_param
   end
 
   # Set true for instance_variable_set if it is part of request params.

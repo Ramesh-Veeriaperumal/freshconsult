@@ -111,7 +111,7 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @ticket_filter = TicketFilterValidation.new(params.merge(multipart_params))
+      @ticket_filter = TicketFilterValidation.new(params, nil, multipart_or_get_request?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
@@ -162,7 +162,7 @@ class TicketsController < ApiApplicationController
       params[cname].permit(*(field))
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
-      ticket = TicketValidation.new(params_hash.merge(multipart_params), @item)
+      ticket = TicketValidation.new(params_hash, @item, multipart_or_get_request?)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
@@ -244,6 +244,12 @@ class TicketsController < ApiApplicationController
 
     def restore?
       @restore ||= current_action?('restore')
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

@@ -12,7 +12,7 @@ class DateTimeValidator < ActiveModel::EachValidator
     unless parse_time(values)
       message = options[:message] || 'data_type_mismatch'
       record.errors[attribute] << message
-      (record.error_options ||= {}).merge!(attribute => { data_type: 'date' })
+      (record.error_options ||= {}).merge!(attribute => { data_type: 'date format' })
     end
   end
 

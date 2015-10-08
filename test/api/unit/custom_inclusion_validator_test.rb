@@ -4,11 +4,11 @@ class CustomInclusionValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :string_param, :attribute4, :multi_error
+    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :allow_string_param, :attribute4, :multi_error
     validates :attribute1, custom_inclusion: { in: [1, 2], message: 'attribute1_invalid', allow_nil: true }
     validates :attribute2, custom_inclusion: { in: [1, 2], required: true }
     validates :attribute3, custom_inclusion: { in: [1, 2], exclude_list: true, allow_blank: true }
-    validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :string_param, allow_blank: true } 
+    validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :allow_string_param, allow_blank: true }
     validates :multi_error, custom_numericality: { allow_nil: true }
     validates :multi_error, custom_inclusion: { in: [8, 9], allow_nil: true }
   end
@@ -91,7 +91,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.attribute2 = 1
     test.attribute3 = 2
     test.attribute4 = '2'
-    test.string_param = true
+    test.allow_string_param = true
     assert test.valid?
     assert test.errors.empty?
   end
@@ -101,7 +101,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.attribute1 = 3
     test.attribute3 = 2
     test.attribute4 = '2'
-    test.string_param = false
+    test.allow_string_param = false
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
@@ -112,9 +112,9 @@ class CustomInclusionValidatorTest < ActionView::TestCase
   def test_attributes_with_errors
     test = TestValidation.new
     test.attribute2 = 1
-    test.multi_error = "78"
+    test.multi_error = '78'
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({multi_error: 'data_type_mismatch'}, test.errors.to_h)
+    assert_equal({ multi_error: 'data_type_mismatch' }, test.errors.to_h)
   end
 end

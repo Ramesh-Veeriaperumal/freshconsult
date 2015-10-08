@@ -37,4 +37,9 @@ module ApiTicketConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [:ticket, exclude: [], format: [:json, :multipart_form]]
+
+  ALLOWED_CONTENT_TYPE_FOR_ACTION = {
+    create: [:json, :multipart_form],
+    update: [:json, :multipart_form]
+  }
 end

@@ -51,19 +51,19 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ ignore_string: :string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
+    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({ ignore_string: :string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, 'required_boolean')
+    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, 'required_boolean')
     DataTypeValidator.new(boolean_options).validate(record)
   end
 
   # Numericality validator for decimal field
   def validate_custom_decimal(record, field_name)
-    numericality_options = construct_options({ ignore_string: :string_param, attributes: field_name, allow_nil: !@is_required }, 'required_number')
+    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_nil: !@is_required }, 'required_number')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 

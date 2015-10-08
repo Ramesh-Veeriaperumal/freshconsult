@@ -49,27 +49,27 @@ class TimeEntryValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-   def test_start_time_multiple_errors
+  def test_start_time_multiple_errors
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'time_spent' => 'sdfdgfd', 'start_time' => "23/12/2001" }
+    controller_params = { 'timer_running' => false, 'time_spent' => 'sdfdgfd', 'start_time' => '23/12/2001' }
     item = nil
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
     assert error.include?('Start time timer_running_false')
     Account.unstub(:current)
-  end
+ end
 
-   def test_agent_id_multiple_errors
+  def test_agent_id_multiple_errors
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'timer_running' => false, 'agent_id' => '89', 'start_time' => "23/12/2001" }
+    controller_params = { 'timer_running' => false, 'agent_id' => '89', 'start_time' => '23/12/2001' }
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert error.include?('Agent cant_update_user')
     Account.unstub(:current)
-  end
+ end
 end

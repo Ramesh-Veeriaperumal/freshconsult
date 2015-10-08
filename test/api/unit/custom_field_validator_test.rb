@@ -5,7 +5,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class RequiredTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute3, :attribute4, :error_options, :closed_status, :string_param
+    attr_accessor :attribute3, :attribute4, :error_options, :closed_status, :allow_string_param
     validates :attribute3, :attribute4, custom_field:  { attribute3: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.required_choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
@@ -32,7 +32,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class RequiredClosureTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute5, :attribute6, :error_options, :closed_status, :string_param
+    attr_accessor :attribute5, :attribute6, :error_options, :closed_status, :allow_string_param
     validates :attribute5, :attribute6, custom_field:  { attribute5: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.required_closure_choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
@@ -59,7 +59,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :string_param
+    attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.choices_validatable_custom_fields },
@@ -68,11 +68,11 @@ class CustomFieldValidatorTest < ActionView::TestCase
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
-                                                        attribute2: {
-                                                          validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.data_type_validatable_custom_fields },
-                                                          required_based_on_status: proc { |x| x.required_for_closure? },
-                                                          required_attribute: :required
-                                                        }
+                                                                                                     attribute2: {
+                                                                                                       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.data_type_validatable_custom_fields },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required
+                                                                                                     }
                             }
 
     def initialize(params = {})
@@ -87,7 +87,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class TestInvalidTypeValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :error_options, :closed_status, :string_param
+    attr_accessor :attribute1, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, custom_field: { attribute1: {
       validatable_custom_fields: [Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
@@ -127,7 +127,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
       {
         check1_1: 'data_type_mismatch', check2_1: 'data_type_mismatch', decimal1_1: 'is not a number',
         decimal2_1: 'is not a number', number1_1: 'data_type_mismatch',
-        number2_1: 'data_type_mismatch',:url=>'invalid_format'
+        number2_1: 'data_type_mismatch', url: 'invalid_format'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
@@ -191,10 +191,10 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_attribute_with_errors
-    test = TestValidation.new(attribute1: "Junk string 1", attribute2: "junk string 2")
+    test = TestValidation.new(attribute1: 'Junk string 1', attribute2: 'junk string 2')
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({attribute1: 'data_type_mismatch', attribute2: 'data_type_mismatch'}, errors)
+    assert_equal({ attribute1: 'data_type_mismatch', attribute2: 'data_type_mismatch' }, errors)
     assert errors.count == 2
   end
 

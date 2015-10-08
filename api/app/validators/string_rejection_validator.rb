@@ -8,7 +8,6 @@ class StringRejectionValidator < ActiveModel::EachValidator
       reject_special_chars(record, attribute, joined_array, excluded_chars)
     when String
       reject_special_chars(record, attribute, value, excluded_chars)
-    else
     end
   end
 

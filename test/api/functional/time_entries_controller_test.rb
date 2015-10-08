@@ -208,8 +208,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
-    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
+    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date format')
+    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date format')
     assert_response 400
     match_json pattern
   end
@@ -623,8 +623,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date'),
-                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date')])
+    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date format')])
   end
 
   def test_update_inclusion_invalid
@@ -647,7 +647,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('time_spent', 'is not a valid time_spent')])
+    match_json([bad_request_error_pattern('time_spent', 'invalid_time_spent')])
   end
 
   def test_update_start_time_greater_than_current_time
@@ -1135,7 +1135,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0}).count - 1
+    per_page = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
@@ -1152,7 +1152,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     user = add_new_user(@account)
     Helpdesk::Ticket.update_all(responder_id: nil)
     Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
-    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, responder_id: @agent.id}).count
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, responder_id: @agent.id }).count
     get :index, controller_params({})
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
@@ -1163,7 +1163,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_agent_has_group_ticket_permission_and_ticket_requested
     Agent.any_instance.stubs(:ticket_permission).returns(2)
     Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
-    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, requester_id: @agent.id}).count
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, requester_id: @agent.id }).count
     get :index, controller_params({})
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
@@ -1175,7 +1175,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Agent.any_instance.stubs(:ticket_permission).returns(2)
     Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
     Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
-    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, responder_id: @agent.id}).count
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, responder_id: @agent.id }).count
     get :index, controller_params({})
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
@@ -1190,7 +1190,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     user = add_new_user(@account)
     Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil, requester_id: user.id)
     Helpdesk::TimeSheet.first.workable.update_column(:group_id, group_id)
-    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0, group_id: group_id}).count
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, group_id: group_id }).count
     get :index, controller_params({})
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
@@ -1201,7 +1201,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_agent_has_all_ticket_permission
     Agent.any_instance.stubs(:ticket_permission).returns(1)
-    expected = @account.time_sheets.where(helpdesk_tickets: {spam: 0, deleted: 0}).count
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count
     get :index, controller_params({})
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
@@ -1218,9 +1218,9 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_time_spent_present_timer_with_timer_running_true
     te = sample_time_entry
-    put :update, construct_params({ id: te.id }, time_spent: "05:00")
-    assert_equal 18000, te.reload.time_spent
+    put :update, construct_params({ id: te.id }, time_spent: '05:00')
+    assert_equal 18_000, te.reload.time_spent
     put :update, construct_params({ id: te.id }, timer_running: true)
-    assert_equal 18000, te.reload.time_spent
+    assert_equal 18_000, te.reload.time_spent
   end
 end

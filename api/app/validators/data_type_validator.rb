@@ -1,7 +1,7 @@
 class DataTypeValidator < ActiveModel::EachValidator
   # Introduced this as the error message should show layman terms.
   # Should have error_options attribute for a class to use this validator
-  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'format' }
+  DATA_TYPE_MAPPING = { Hash => 'key/value pair', ActionDispatch::Http::UploadedFile => 'valid format' }
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?

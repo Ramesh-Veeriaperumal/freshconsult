@@ -342,7 +342,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     user_id = add_new_user(@account).id
     Helpdesk::Ticket.update_all(requester_id: @agent.id)
     Helpdesk::Ticket.first.update_column(:requester_id, user_id)
-    get "/api/tickets?requester_id=#{user_id}", nil, @headers
+    skip_bullet do
+      get "/api/tickets?requester_id=#{user_id}", nil, @headers
+    end
     assert_response 200
     result = parse_response(@response.body)
     assert_equal Array, result.class

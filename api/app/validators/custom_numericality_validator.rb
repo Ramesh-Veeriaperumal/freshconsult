@@ -1,7 +1,7 @@
 class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValidator
   def validate_each(record, attribute, value)
     return if record.errors[attribute].present?
-    
+
     # if ignore_string is present and true, proceed with numericality validator.
     # else fall back to custom numericality which will not allow numbers in string representation say "1".
     if !options[:ignore_string].nil? && record.send(options[:ignore_string])
@@ -17,7 +17,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
       valid_value = value.is_a?(Integer) # true if integer.
 
       # true if value is +ve when allow_negative is false or nil
-      valid_value = (value > 0) if valid_value && options[:allow_negative] != true 
+      valid_value = (value > 0) if valid_value && options[:allow_negative] != true
       unless valid_value
         message = options[:message] || 'data_type_mismatch'
         record.errors[attribute] << message

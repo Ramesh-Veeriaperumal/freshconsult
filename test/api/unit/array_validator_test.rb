@@ -51,7 +51,7 @@ class ArrayValidatorTest < ActionView::TestCase
 
   def test_attribute_with_errors
     test = TestValidation.new
-    test.multi_error = "Junk String"
+    test.multi_error = 'Junk String'
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ multi_error: 'data_type_mismatch' }, errors)

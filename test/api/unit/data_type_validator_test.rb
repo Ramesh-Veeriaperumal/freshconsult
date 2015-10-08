@@ -4,13 +4,13 @@ class DataTypeValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :array, :hash, :error_options, :string_param, :allow_string_boolean, :boolean, :multi_error
+    attr_accessor :array, :hash, :error_options, :allow_string_param, :allow_string_boolean, :boolean, :multi_error
 
     validates :multi_error, required: true
     validates :array, :multi_error, data_type: { rules: Array, allow_nil: true }
     validates :hash, data_type: { rules: Hash }
     validates :boolean, data_type: { rules: 'Boolean', allow_nil: true }
-    validates :allow_string_boolean, data_type: { rules: 'Boolean', ignore_string: :string_param, allow_nil: true }
+    validates :allow_string_boolean, data_type: { rules: 'Boolean', ignore_string: :allow_string_param, allow_nil: true }
   end
 
   def test_disallow_nil
@@ -24,7 +24,7 @@ class DataTypeValidatorTest < ActionView::TestCase
 
   def test_valid_values
     test = TestValidation.new
-    test.string_param = true
+    test.allow_string_param = true
     test.array = [1, 2]
     test.multi_error = [1, 2]
     test.hash = { a: 1 }
@@ -45,15 +45,15 @@ class DataTypeValidatorTest < ActionView::TestCase
 
   def test_attributes_multiple_error
     test = TestValidation.new
-    test.hash = {o: 9}
+    test.hash = { o: 9 }
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({multi_error: 'missing'}, test.errors.to_h)
+    assert_equal({ multi_error: 'missing' }, test.errors.to_h)
   end
 
   def test_valid_values_invalid
     test = TestValidation.new
-    test.string_param = false
+    test.allow_string_param = false
     test.array = 1
     test.hash = 2
     test.boolean = 'true'

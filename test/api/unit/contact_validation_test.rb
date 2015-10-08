@@ -41,7 +41,7 @@ class ContactValidationTest < ActionView::TestCase
   def test_avatar_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
-    controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: "file.png" }
+    controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: 'file.png' }
     item = nil
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
@@ -51,5 +51,3 @@ class ContactValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 end
-
-

@@ -317,8 +317,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'is not a date'),
-                bad_request_error_pattern('fr_due_by', 'is not a date')])
+    match_json([bad_request_error_pattern('due_by', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('fr_due_by', 'data_type_mismatch', data_type: 'date format')])
   end
 
   def test_create_with_due_by_without_fr_due_by
@@ -504,7 +504,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_create_with_invalid_attachment_type
@@ -882,7 +882,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_update
@@ -913,7 +913,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_due_by_greater_than_created_at_less_than_fr_due_by
     t = ticket
     params = ticket_params_hash.merge(due_by: 30.days.since.iso8601, fr_due_by: 31.days.since.iso8601)
-    put :update, construct_params({id: t.id}, params)
+    put :update, construct_params({ id: t.id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
   end
@@ -1390,8 +1390,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'is not a date'),
-                bad_request_error_pattern('fr_due_by', 'is not a date')])
+    match_json([bad_request_error_pattern('due_by', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('fr_due_by', 'data_type_mismatch', data_type: 'date format')])
   end
 
   def test_update_extra_params_invalid

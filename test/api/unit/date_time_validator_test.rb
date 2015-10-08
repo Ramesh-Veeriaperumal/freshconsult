@@ -33,10 +33,10 @@ class DateTimeValidatorTest < ActionView::TestCase
   def test_attributes_multiple_error
     test = TestValidation.new
     test.due_by_1 = Time.zone.now.iso8601
-    test.multi_error = "thy"
+    test.multi_error = 'thy'
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({multi_error: 'data_type_mismatch'}, test.errors.to_h)
+    assert_equal({ multi_error: 'data_type_mismatch' }, test.errors.to_h)
   end
 
   def test_valid_allow_nil

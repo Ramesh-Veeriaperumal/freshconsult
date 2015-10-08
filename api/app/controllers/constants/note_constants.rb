@@ -17,4 +17,10 @@ module NoteConstants
 
   # Wrap parameters args
   WRAP_PARAMS = [:note, exclude: [], format: [:json, :multipart_form]]
+
+  ALLOWED_CONTENT_TYPE_FOR_ACTION = {
+    create: [:json, :multipart_form],
+    update: [:json, :multipart_form],
+    reply: [:json, :multipart_form]
+  }
 end

@@ -118,7 +118,7 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname].merge(multipart_params), @item)
+      @note_validation = NoteValidation.new(params[cname], @item, multipart_or_get_request?)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid
@@ -171,6 +171,12 @@ class NotesController < ApiApplicationController
           t.delete(:body_html) if t[:body_html]
         end
       end
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = NoteConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

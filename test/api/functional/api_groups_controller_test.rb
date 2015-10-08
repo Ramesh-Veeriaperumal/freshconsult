@@ -61,7 +61,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have Positive Integers')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -176,7 +176,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have Positive Integers')])
   end
 
   def test_delete_existing_agents_while_update

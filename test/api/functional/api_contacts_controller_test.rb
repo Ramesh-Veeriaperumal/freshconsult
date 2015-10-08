@@ -160,7 +160,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 language: 'en',
                 avatar: Faker::Internet.email }
     post :create, construct_params({},  params)
-    match_json([bad_request_error_pattern('avatar', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('avatar', 'data_type_mismatch', data_type: 'valid format')])
     assert_response 400
   end
 
@@ -268,7 +268,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response 400
     match_json([bad_request_error_pattern('cf_check_me', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('cf_doj', 'is not a date')])
+                bad_request_error_pattern('cf_doj', 'data_type_mismatch', data_type: 'date format')])
   end
 
   def test_create_contact_with_invalid_dropdown_field

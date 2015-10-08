@@ -213,12 +213,13 @@ module ApiDiscussions
 
     def test_create_with_visibility_company_users
       name = Faker::Name.name
-      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: '4',
-                                                                     forum_type: 1, name: name)
+      fc = ForumCategory.first
+      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: '4',
+                                                    forum_type: 1, name: name)
       pattern = forum_pattern(Forum.last).merge(company_ids: [])
       match_json(pattern)
       pattern = forum_response_pattern(Forum.last, description: 'desc', forum_visibility: 4,
-                                                   forum_type: 1, name: name, forum_category_id: ForumCategory.first.id).merge(company_ids: [])
+                                                   forum_type: 1, name: name, forum_category_id: fc.id).merge(company_ids: [])
       match_json(pattern)
       assert_response 201
     end

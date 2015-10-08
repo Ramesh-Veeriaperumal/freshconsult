@@ -177,7 +177,7 @@ class NotesControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_attachment_invalid_size_create
@@ -410,7 +410,7 @@ class NotesControllerTest < ActionController::TestCase
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_reply_without_privilege
@@ -508,7 +508,7 @@ class NotesControllerTest < ActionController::TestCase
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_update_without_privilege
