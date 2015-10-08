@@ -1580,6 +1580,7 @@ Helpkit::Application.routes.draw do
         collection do
           get :since
           get :agents_autocomplete
+          get :public_conversation
         end
 
         member do

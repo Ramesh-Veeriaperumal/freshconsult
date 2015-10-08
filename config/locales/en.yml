@@ -2880,6 +2880,10 @@ en:
       asc: Ascending
       desc: Descending
   topic:
+    requester: Requester
+    requester_details: "%{name} <%{email}>"
+    first_email: First Email Text
+    full_conversation: Last 5 conversations (except private notes)
     ideas_stamps:
       planned: Planned
       implemented: Implemented
@@ -4401,6 +4405,7 @@ en:
       wrote_on: 'On'
       wrote: wrote
     add_time: Add time
+    convert_to_topic: Convert to Topic
     support:
       reply: "Reply"
       reply_and_open: "Reply"

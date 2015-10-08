@@ -68,6 +68,17 @@ body.community {
 
 	.comm-item.active {
 		background-color: #FEFAC3;
+	}	
+	.topic-ticket-option {
+		display: inline-block;
+		@include margin-left(20px);
+		margin-top: -8px;
+		margin-bottom: 20px;
+	}
+
+	.topic-ticket-requester {
+		margin-top: 5px;
+		color: #a8a8a8;
 	}
 }
 

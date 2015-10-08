@@ -6,7 +6,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
-    resource :"helpdesk/note", :only => [:index, :agents_autocomplete]
+    resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
     resource :user, :only => [:delete_avatar, :block, :me]
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"

@@ -1,13 +1,13 @@
 <%
-	attach_id ||= "post"
-	attachments ||= {:regular => [], :cloud_files => []}
-	nsc_param = nsc_param || "post"
+  attach_id ||= "post"
+  attachments ||= {:regular => [], :cloud_files => []}
+  nsc_param = nsc_param || "post"
 %>
 <div class="attachments-wrap">
-	<div id="<%=attach_id%>-container" class="attachments-container">
+  <div id="<%=attach_id%>-container" class="attachments-container">
 
-		<% if cloud_files_installed?  %>
-			<div class="dropdown dropup">        
+    <% if cloud_files_installed?  %>
+      <div class="dropdown dropup">        
         <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
           <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
         </a>
@@ -26,34 +26,42 @@
                 </div>
             </a>
           </li>
-           <% get_enabled_cloud_files_app.each do |c_f| %>
-            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id} %>
-          <% end %>
+          <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} %>
+          <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
+
         </ul>      
       </div>
-		<% else %>
-			<div class="hidden_upload">
-				<div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
-				<input type="file" id="<%=attach_id%>_file" name="emptyfile"
-								nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
-								fileContainer="<%=attach_id%>-container"
-								fileList="<%=attach_id%>-attachments"
-								sendFocusTo="<%=attach_id%>-body"/>
-			</div>
-		<% end %>
-		<div class="clear"> </div>
-		<label class="hide"><i class="a-count">0 </i> <%= t('attachments')%>: </label>
-		<div class="attachment_wrapper">
-			<ul class="attachment_list" id="<%=attach_id%>-attachments">
-				<% attachments[:regular].each do |attached| %>
-					<%= attachment_list(attached, true, "topic", nil) %>
-		    <% end %>
-        <% attachments[:cloud_files].each do |attached| %>
-          <%= attachment_list(attached, true, "cloud_file", nil) %>
+    <% else %>
+      <div class="hidden_upload">
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <input type="file" id="<%=attach_id%>_file" name="emptyfile"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
+                fileContainer="<%=attach_id%>-container"
+                fileList="<%=attach_id%>-attachments"
+                sendFocusTo="<%=attach_id%>-body"/>
+      </div>
+    <% end %>
+    <div class="clear"> </div>
+    <label class="hide"><i class="a-count">0 </i> <%= t('attachments')%>: </label>
+    <div class="attachment_wrapper">
+      <ul class="attachment_list" id="<%=attach_id%>-attachments">
+        <% attachments[:regular].each do |attachment| %>
+          <% if(@topic.new_record?) %>
+            <%= attachment_view(attachment, "topic") %>
+          <% else %>
+            <%= attachment_list(attachment, true, "topic", nil) %>
+          <% end %>
         <% end %>
-		    </ul>
-		</div>
-	</div>
+        <% attachments[:cloud_files].each do |attachment| %>
+          <% if(@topic.new_record?) %>
+            <%= attachment_view(attachment, "cloud_file") %>
+          <% else %>
+            <%= attachment_list(attachment, true, "cloud_file", nil) %>
+          <% end %>
+        <% end %>
+        </ul>
+    </div>
+  </div>
 </div>
 <script id="file-list-template" type="text/x-jquery-tmpl">
   <li class="attachment list_element {{if (!file_valid)}}invalid tooltip{{/if}}"{{if (!file_valid)}} title="<%= t('helpdesk.tickets.note.attachment_size.exceed_limit') %>"{{/if}}>

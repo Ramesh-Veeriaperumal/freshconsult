@@ -257,4 +257,36 @@ describe Discussions::TopicsController do
 			@account.topics.find_by_id(topic.id).should be_nil
 		end
 	end
+
+	describe "Topic creation from ticket" do
+
+		it "should have ticket assosiation when created from ticket" do
+			ticket = create_ticket({:status => 2 })
+			post :create,
+				{ :topic =>
+						{:title=> ticket.subject, 
+						:body_html=> ticket.description_html, 
+						:forum_id=> @forum.id,
+						:sticky => 0,
+						:locked => 0,
+						:display_id => ticket.display_id
+					},
+					:post => {}
+				}
+			topic = @account.topics.find_by_title(ticket.subject)
+			topic.ticket.should_not be_nil
+			topic.ticket.id.should be_eql(ticket.id)
+		end
+
+		it "should redirect to topic page when topic is already created from ticket" do
+			ticket = create_ticket({:status => 2 })
+			topic = create_test_topic(@forum)
+			topic.build_ticket_topic(ticketable_id: ticket.id, ticketable_type: 'Helpdesk::Ticket')
+			topic.save
+			topic.reload
+			get :new, :display_id => ticket.display_id
+			response.should redirect_to discussions_topic_path(topic)
+		end
+
+	end
 end
