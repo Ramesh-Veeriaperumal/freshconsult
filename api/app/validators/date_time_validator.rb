@@ -6,6 +6,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   ZONE_PLUS_PREFIX       = '+'
   ZONE_MINUS_PREFIX      = '-'
   ISO_TIME_DELIMITER     = ':'
+  FORMAT_EXCEPTION_MSG   = "invalid_format"
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
@@ -20,8 +21,11 @@ class DateTimeValidator < ActiveModel::EachValidator
     # We will accept dates only only in the iso8601 format.This is to avoid cases were other formats may behave unexpectedly.
     # iso8601 expects date to follow the yyyy-mm-ddThh:mm:ss+dddd format, but it does not raise error, if say for "2000"
     # parse is more strict, but it accepts a wide variety of formats say, 3rd Feb 2001 04:05:06 PM
-    # Hence we are using both, but still both of them do not handle seconds: 60, hours: 24 and invalid time zones, hence _parse is used.
-    DateTime.iso8601(value) && DateTime.parse(value)
+    # Hence we are using both, but still both of them do not handle seconds: 60, hours: 24 and invalid time zones, hence manipulation is done.
+    # yyyy-mm-dd, yyyy-mm-ddThh:mm, yyyy-mm-ddThh:mm:ss, yyyy-mm-ddThh:mm:ssZ, yyyy-mm-ddThh:mm:ssz,
+    # yyyy-mm-ddThh:mm:ss+hh, yyyy-mm-ddThh:mm:ss-hh, yyyy-mm-ddThh:mm:ss+hhmm, yyyy-mm-ddThh:mm:ss-hhmm
+    # yyyy-mm-ddThh:mm:ss+hh:mm, yyyy-mm-ddThh:mm:ss-hh:mm
+    DateTime.iso8601(value) && DateTime.parse(value) && iso8601_format(value)
     parse_sec_hour_and_zone(get_time_and_zone(value)) if time_info?(value) # avoid extra call if only date is present
     return true
     rescue => e
@@ -30,6 +34,11 @@ class DateTimeValidator < ActiveModel::EachValidator
   end
 
   private
+
+    def iso8601_format(value)
+      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ /^\d{4}-\d{2}-\d{2}/
+      return true
+    end
 
     def get_time_and_zone(value)
       value.split(ISO_DATE_DELIMITER).last

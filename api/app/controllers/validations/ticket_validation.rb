@@ -70,7 +70,7 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    invalid = (due_by < (@item.try(:created_at) || Time.now))
+    invalid = (due_by < (@item.try(:created_at) || Time.zone.now))
     invalid ||= due_by_less_than_fr_due_by? if errors[:fr_due_by].blank?
     errors.add(:due_by, 'due_by_gt_created_and_lt_frdueby') if invalid
   end

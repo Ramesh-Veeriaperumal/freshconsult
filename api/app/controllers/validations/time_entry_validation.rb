@@ -54,7 +54,7 @@ class TimeEntryValidation < ApiValidation
     end
 
     def start_time_value
-      errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.now.utc
+      errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.zone.now.utc
     end
 
     def attributes_to_be_stripped

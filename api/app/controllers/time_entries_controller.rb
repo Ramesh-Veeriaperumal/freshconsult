@@ -53,7 +53,7 @@ class TimeEntriesController < ApiApplicationController
         # If any validation is introduced in the TimeSheet model,
         # update_running_timer and @item.update_attributes should be wrapped in a transaction.
         update_running_timer @item.user_id
-        { start_time: Time.now }
+        { start_time: Time.zone.now }
       end
     end
 
@@ -105,7 +105,7 @@ class TimeEntriesController < ApiApplicationController
       params[cname][:timer_running] = @timer_running
       set_time_spent(params)
       params[cname][:agent_id] ||= api_current_user.id if create?
-      current_time = Time.now
+      current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
       params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
       ParamsHelper.assign_and_clean_params({ agent_id: :user_id },
@@ -143,7 +143,7 @@ class TimeEntriesController < ApiApplicationController
 
     def total_running_time
       time = @item.time_spent.to_i
-      time += (Time.now - @item.start_time).abs.round if @item.start_time
+      time += (Time.zone.now - @item.start_time).abs.round if @item.start_time
       time
     end
 

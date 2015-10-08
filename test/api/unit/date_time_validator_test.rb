@@ -67,7 +67,8 @@ class DateTimeValidatorTest < ActionView::TestCase
     include ActiveModel::Validations
     ATTRIBUTES = :attr0, :attr1, :attr2, :attr3, :attr4, :attr5, :attr6, :attr7, :attr8, :attr9, :attr10,
                  :attr11, :attr12, :attr13, :attr14, :attr15, :attr16, :attr17, :attr18, :attr19, :attr20, :attr21,
-                 :attr22, :attr23, :attr24, :attr25, :attr26, :attr27, :attr28, :attr29
+                 :attr22, :attr23, :attr24, :attr25, :attr26, :attr27, :attr28, :attr29, :attr30, :attr31, :attr32,
+                 :attr33, :attr34
 
     attr_accessor(*ATTRIBUTES, :error_options)
 
@@ -107,6 +108,11 @@ class DateTimeValidatorTest < ActionView::TestCase
               '2009-02-28T24:00:00++2359', # invalid_time_zone_format
               '2009-02-28T24:00:00+2399', # invalid_minutes_in_time_zone
               '2009-02-28T24:00:00+2400', # invalid_hours_in_time_zone
+              '2015-280', # accepted by iso but invalid format 
+              '2015-W4-3', # accepted by iso but invalid format 
+              '20150909', # accepted by iso but invalid format 
+              '2015-09-09T0909', # invalid without hyphen in time
+              '2015-09-09T09:09+0530', # valid without second info
              ]
 
     values.each_with_index { |value, i| date_time_validator.validate_each(test, "attr#{i}", value) }
@@ -129,8 +135,14 @@ class DateTimeValidatorTest < ActionView::TestCase
               'Attr26 data_type_mismatch',
               'Attr27 data_type_mismatch',
               'Attr28 data_type_mismatch',
-              'Attr29 data_type_mismatch']
+              'Attr29 data_type_mismatch',
+              'Attr30 data_type_mismatch',
+              'Attr31 data_type_mismatch',
+              'Attr32 data_type_mismatch',
+              'Attr33 data_type_mismatch'
+              ]
 
     assert_equal errors, test.errors.full_messages
   end
+
 end
