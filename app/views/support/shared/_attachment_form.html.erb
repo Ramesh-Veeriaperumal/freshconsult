@@ -34,6 +34,7 @@
            </li>
           <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} unless current_user.blank? %>
           <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
+          <%= render :partial => "integrations/applications/onedrive", :locals => {:attach_id => attach_id} if installed_apps[:onedrive].present? %>
           </ul>      
         </div>
       <% else %>      

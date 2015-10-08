@@ -810,7 +810,15 @@ module ApplicationHelper
   end
 
   def cloud_files_installed?
-    dropbox_app_key || installed_apps[:box]
+    dropbox_app_key || installed_apps[:box] || installed_apps[:onedrive]
+  end
+
+  def get_enabled_cloud_files_app
+    array = []
+    [:box, :dropbox, :onedrive].each do |c_f|
+      array << c_f if installed_apps[c_f]
+    end
+    array
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)

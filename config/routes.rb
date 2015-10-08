@@ -793,6 +793,12 @@ Helpkit::Application.routes.draw do
         post :create_login_session
       end
     end
+	
+	  namespace :onedrive do
+      get :callback
+      get :onedrive_render_application
+      get :onedrive_view
+    end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install

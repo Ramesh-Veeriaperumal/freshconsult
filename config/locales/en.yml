@@ -199,6 +199,7 @@ en:
   dropbox_choose_file: Choose file
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
+  onedrive_attach_from_text: Attach from <b>Onedrive</b>
   cloudfile_plaintext: Attachments on Cloud
   box_attach_label: Attach from
   box_attach_from: Attach from <b>Box</b>
@@ -6196,6 +6197,12 @@ en:
         accounts: "Chart of Accounts Selection(Revenue)"
         inventory_items: "Inventory Items Selection"
         default_desc: "Default Invoice Item Description"
+    onedrive:
+      chooser_title: "Choose a file form OneDrive"
+      label: "OneDrive"
+      desc: "Attach and Share your data/files from onedrive."
+      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again." 
+      error: "A problem has occured in opening your Onedrive files. Please try again."
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"

@@ -1,0 +1,22 @@
+<li id="onedrivejs">    
+   <input type="hidden"  id="<%=attach_id%>_onedrive_url" name="onedriveURL" nameWhenFilled="[cloud_file_attachments][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+   <a href="#" class="dropbox_button" name="selected-file" id="onedrive-chooser"
+     data-holder="<%=attach_id%>_onedrive_url" onclick='init_onedrive(this); event.preventDefault();'><%=I18n.t('onedrive_attach_from_text').html_safe%></a>           
+</li>
+
+<script type="text/javascript" src="https://js.live.net/v5.0/wl.js"></script>    
+<%= javascript_include_tag :'cdn/integrations/onedrive' %>
+<script type="text/javascript">    
+function init_onedrive(inp){      
+var integrations_url= "<%= AppConfig['integrations_url'][Rails.env] %>/integrations/onedrive/callback";
+WL.init({ client_id: '<%=  Integrations::ONEDRIVE_CLIENT_ID %>',              
+ redirect_uri:  integrations_url, response_type: "code"});   
+WL.login({ "scope": "<%= Integrations::Onedrive::Constant::ONEDRIVE_SCOPE %>" , "state": "<%= request.protocol + request.host_with_port%>"}).then(
+   function(response) {  
+    openFromSkyDrive(inp);
+   },
+   function(errorResponse){
+   }
+   );     
+  }    
+</script>

@@ -897,4 +897,14 @@ if Integrations::Application.count == 0
     s.application_type = "cti_integration"
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
   end
+  
+  onedrive = Integrations::Application.seed(:name) do |s|
+    s.name = "onedrive"
+    s.display_name = "integrations.onedrive.label"
+    s.description = "integrations.onedrive.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 35
+    s.options = { :direct_install => true, :user_specific_auth => true }   
+    s.application_type = "onedrive" 
+  end 
 end
