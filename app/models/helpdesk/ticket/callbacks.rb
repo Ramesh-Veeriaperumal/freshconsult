@@ -467,7 +467,7 @@ private
   end
 
   def assign_sender_email
-    self.sender_email = self.email if self.email
+    self.sender_email = self.email if self.email && self.email =~ EMAIL_REGEX
   end
 
   def assign_email_config_and_product
