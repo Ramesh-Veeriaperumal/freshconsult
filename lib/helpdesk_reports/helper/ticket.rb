@@ -31,7 +31,7 @@ module HelpdeskReports::Helper::Ticket
   
   def date_lag_constraint
     # Used to restrict date range in UI according to subscription plan
-    @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription_plan.name]
+    @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription.subscription_plan.name] || 1
   end
   
   def report_specific_constraints
