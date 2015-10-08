@@ -217,6 +217,21 @@
       display: none;
     }
   }
+  .language-item {
+    margin: 5px;
+  }
+  .popover-language-icon {
+    border: 1px solid;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    color: #ccc;
+    text-align: center;
+    margin-right: 10px;
+  }
   .lang-tab{
     display: inline-block;
     margin-right: 15px;

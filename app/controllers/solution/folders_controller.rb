@@ -24,7 +24,7 @@ class Solution::FoldersController < ApplicationController
 
   def show
     #META-READ-HACK!!    
-    @folder = current_account.solution_folder_meta.find(params[:id], :include => { :solution_article_meta => Solution::ArticleMeta.translation_associations})
+    @folder = current_account.solution_folder_meta.find(params[:id], :include => { :solution_article_meta => Solution::ArticleMeta.translations_with_draft})
     @page_title = @folder.name
     respond_to do |format|
       format.html {
@@ -214,7 +214,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def valid_customers(customer_ids)
-      current_account.companies.find_all_by_id(customer_ids.split(','), :select => "id").map(&:id) if customer_ids.present?
+      current_account.companies.where({ :id => customer_ids.split(',') }).map(&:id) if customer_ids.present?
     end
 
     def change_visibility

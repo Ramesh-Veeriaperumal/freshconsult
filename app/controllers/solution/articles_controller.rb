@@ -172,7 +172,7 @@ class Solution::ArticlesController < ApplicationController
     end
     
     def reorder_scoper
-      current_account.solution_articles.find(:all, :conditions => {:folder_id => params[:folder_id] })
+      current_account.solution_articles.where({ :folder_id => params[:folder_id] })
     end
     
     def reorder_redirect_url
@@ -226,7 +226,7 @@ class Solution::ArticlesController < ApplicationController
       @article.tags.clear   
       @tags_input.each do |tag|      
         begin
-          @article.tags << Helpdesk::Tag.find_or_initialize_by_name_and_account_id(tag, current_account.id)
+          @article.tags << Helpdesk::Tag.where(:name => tag, :account_id => current_account.id).first_or_initialize
         rescue ActiveRecord::RecordInvalid => e
         end
       end

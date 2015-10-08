@@ -36,6 +36,11 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
 	end
 
+	def self.translations_with_draft
+    base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
+    (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| {:"#{s}_#{base_name}" => :draft}}
+  end
+
 	private
 
 	def clear_cache

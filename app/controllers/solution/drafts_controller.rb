@@ -44,7 +44,7 @@ class Solution::DraftsController < ApplicationController
 	end
 
 	def autosave
-		@draft = current_account.solution_drafts.find_or_initialize_by_article_id(params[:id])
+		@draft = current_account.solution_drafts.where(:article_id => params[:id]).first_or_initialize
 		@draft.category_meta_id ||= @draft.article.solution_folder_meta.solution_category_meta_id
 		render :json => autosave_validate.to_json, :formats => [:js], :status => 200
 	end

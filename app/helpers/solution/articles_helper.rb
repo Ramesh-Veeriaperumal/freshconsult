@@ -1,4 +1,6 @@
 module Solution::ArticlesHelper
+
+  include ActionView::Helpers::NumberHelper
   
   def breadcrumb
     output = []
@@ -141,10 +143,18 @@ module Solution::ArticlesHelper
   end
 
   def drafts_present? article
-    drafts_array = article.solution_articles.select do |a|
+    articles_array = Solution::ArticleMeta.translation_associations.map do |association|
+      article.send(association)
+    end
+    drafts_array = articles_array.compact.select do |a|
       a.draft.present? || a.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
     end
+    @language_ids = drafts_array.map(&:language_id)
     drafts_array.present?
+  end
+
+  def formatted_value number
+    number_to_human(number, :units => {:thousand => "K", :million => "M", :billion => "B"}).delete(' ')
   end
   
 end

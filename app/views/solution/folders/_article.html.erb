@@ -12,24 +12,29 @@
 			<% end %>
 			<div class="article-details">
 				<div class="span3 pull-right text-right article-list-meta">
-					<span class="span3 align-left meta-component <%= 'faded' if article.hits == 0 %>">
+					<span class="span4 align-right meta-component <%= 'faded' if article.hits == 0 %>">
 						<%= font_icon "file-visible" %>
-						<%= article.hits %>
+						<%= formatted_value(article.hits) %>
 					</span>
-					<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+					<span class="span4 align-right meta-component <%= 'faded' if article.thumbs_up == 0 %>">
 						<%= font_icon "like", :size => 18 %>
-						<%= article.thumbs_up %>
+						<%= formatted_value(article.thumbs_up) %>
 					</span>
-					<span class="span3 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+					<span class="span4 align-right meta-component <%= 'faded' if article.thumbs_down == 0 %>">
 						<%= font_icon "dislike", :size => 18 %>
-						<%= article.thumbs_down %>
+						<%= formatted_value(article.thumbs_down) %>
 					</span>
 				</div>
 				<div class="span2 pull-right mt6 text-center article-info">
 					<% if drafts_present?(article) %>
-						<span class="label">
-							<%= t('solutions.status.draft')%> 
-						</span>
+						<%= content_tag :a, t('solutions.status.draft'),
+														:rel => "hover-popover",
+														:class => "label",
+														"data-placement" => "below",
+														"data-widget-container" => "languages-popover-contents-#{article.id}" %>
+						<textarea id="languages-popover-contents-<%= article.id %>" class="hide">
+							<%= languages_popover(@language_ids) %>
+						</textarea>
 					<% end %>
 				</div>
 			</div>

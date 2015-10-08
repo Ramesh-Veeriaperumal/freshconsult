@@ -56,8 +56,8 @@ class Solution::Folder < ActiveRecord::Base
     VISIBILITY_NAMES_BY_KEY[self.visibility]
   end
 
-  def self.find_all_folders(account)   
-    self.find(:all).select { |a| a.account_id.eql?(account) }
+  def self.find_all_folders(account)
+    self.where({ :account_id => account })
   end
 
   def visible?(user)    
