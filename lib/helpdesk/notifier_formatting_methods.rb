@@ -1,5 +1,8 @@
 module Helpdesk::NotifierFormattingMethods
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   REPLY_PREFIX = "Re:"
   FWD_PREFIX  = "Fwd:"
 
@@ -39,7 +42,19 @@ module Helpdesk::NotifierFormattingMethods
   end
 
   def generate_email_references(ticket)
-    references = (ticket.header_info && ticket.header_info[:message_ids]) ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
+    ticket.header_info_present? ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
+  end
+
+  def in_reply_to(ticket)
+    ret_val = ""
+    if ticket.header_info_present?
+      message_id = ticket.header_info[:message_ids].first
+      message_key = EMAIL_TICKET_ID % { :account_id => ticket.account_id, 
+                                        :message_id => message_id }
+      value = get_others_redis_key(message_key)
+      ret_val = (value =~ /:(.+)/) ? "<#{$1}>" : "<#{message_id}>"
+    end
+    ret_val
   end
 
   def handle_inline_attachments(inline_attachments, html, account)

@@ -381,7 +381,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue ActiveRecord::RecordInvalid => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
-      set_others_redis_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
+      set_ticket_id_with_message_id account, message_key, ticket
     end
     
     def check_for_spam(ticket)

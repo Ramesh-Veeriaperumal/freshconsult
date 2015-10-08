@@ -145,10 +145,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to                        => params[:receips],
       :from                      => params[:ticket].friendly_reply_email,
       :bcc                       => bcc_email,
-      "Reply-to"                 => "#{params[:ticket].friendly_reply_email}", 
+      "Reply-To"                 => "#{params[:ticket].friendly_reply_email}", 
       "Auto-Submitted"           => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", 
       "References"               => generate_email_references(params[:ticket]),
+      "In-Reply-To"              => in_reply_to(params[:ticket]),
       :sent_on                   => Time.now
     }
 
@@ -204,8 +205,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :bcc                           => note.bcc_emails,
       :from                          => note.from_email,
       :sent_on                       => Time.now,
-      "Reply-to"                     => "#{note.from_email}", 
-      "References"                   => generate_email_references(ticket)
+      "Reply-To"                     => "#{note.from_email}", 
+      "References"                   => generate_email_references(ticket),
+      "In-Reply-To"                  => in_reply_to(ticket)
     }
 
     headers[:cc] = note.cc_emails unless options[:include_cc].blank?
@@ -254,8 +256,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :bcc                                    => note.bcc_emails,
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
-      "Reply-to"                              => "#{note.from_email}", 
-      "References"                            => generate_email_references(ticket)
+      "Reply-To"                              => "#{note.from_email}", 
+      "References"                            => generate_email_references(ticket),
+      "In-Reply-To"                           => in_reply_to(ticket)
     }
 
     inline_attachments = []
@@ -293,8 +296,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :bcc                                    => note.bcc_emails,
       :from                                   => note.from_email,
       :sent_on                                => Time.now,
-      "Reply-to"                              => "#{note.from_email}", 
-      "References"                            => generate_email_references(ticket)
+      "Reply-To"                              => "#{note.from_email}", 
+      "References"                            => generate_email_references(ticket),
+      "In-Reply-To"                           => in_reply_to(ticket)
     }
 
     inline_attachments = []
@@ -329,10 +333,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to                           => ticket.from_email,
       :from                         => ticket.friendly_reply_email,
       :sent_on                      => Time.now,
-      "Reply-to"                    => "#{ticket.friendly_reply_email}", 
+      "Reply-To"                    => "#{ticket.friendly_reply_email}", 
       "Auto-Submitted"              => "auto-replied", 
       "X-Auto-Response-Suppress"    => "DR, RN, OOF, AutoReply", 
-      "References"                  => generate_email_references(ticket)
+      "References"                  => generate_email_references(ticket),
+      "In-Reply-To"                 => in_reply_to(ticket)
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
@@ -359,10 +364,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to                             => receips,
       :from                           => ticket.friendly_reply_email,
       :sent_on                        => Time.now,
-      "Reply-to"                      => "#{ticket.friendly_reply_email}", 
+      "Reply-To"                      => "#{ticket.friendly_reply_email}", 
       "Auto-Submitted"                => "auto-generated", 
       "X-Auto-Response-Suppress"      => "DR, RN, OOF, AutoReply", 
-      "References"                    => generate_email_references(ticket)
+      "References"                    => generate_email_references(ticket),
+      "In-Reply-To"                   => in_reply_to(ticket)
     }
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
@@ -396,8 +402,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                      => from_email,
       :cc                        => ticket.cc_email[:cc_emails],
       :bcc                       => account_bcc_email(ticket),
-      "Reply-to"                 => from_email, 
+      "Reply-To"                 => from_email, 
       "References"               => generate_email_references(ticket),
+      "In-Reply-To"              => in_reply_to(ticket),
       :sent_on                   => Time.now
     }
 

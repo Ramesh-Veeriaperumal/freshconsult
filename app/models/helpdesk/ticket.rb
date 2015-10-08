@@ -898,6 +898,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
+  def header_info_present?
+    header_info.present? && header_info[:message_ids].present?
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

@@ -247,7 +247,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_message_id
     (self.header_info[:message_ids] || []).each do |parent_message|
       message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
+      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, 
+                                                                            "#{self.display_id}:#{parent_message}", 
+                                                                            86400*7)
     end
   end
 
