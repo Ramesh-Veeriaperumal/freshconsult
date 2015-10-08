@@ -138,14 +138,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def email_notification(params)
     ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
       
-    bcc_email = params[:disable_bcc_notification] ? "" : account_bcc_email(params[:ticket])
+    bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]), 
+                                                                         params[:ticket])
+    receips = validate_emails(params[:receips], params[:ticket])
+    from_email = validate_emails(params[:ticket].friendly_reply_email, params[:ticket])
+    return if receips.empty? || from_email.empty?
 
     headers = {
       :subject                   => params[:subject],
-      :to                        => params[:receips],
-      :from                      => params[:ticket].friendly_reply_email,
+      :to                        => receips,
+      :from                      => from_email,
       :bcc                       => bcc_email,
-      "Reply-To"                 => "#{params[:ticket].friendly_reply_email}", 
+      "Reply-To"                 => "#{from_email}", 
       "Auto-Submitted"           => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", 
       "References"               => generate_email_references(params[:ticket]),
@@ -198,19 +202,24 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_mailbox email_config.smtp_mailbox
 
+    to_emails = validate_emails(note.to_emails, note)
+    bcc_emails = validate_emails(note.bcc_emails, note)
+    from_email = validate_emails(note.from_email, note)
+    return if from_email.empty? || to_emails.empty?
+
     options = {} unless options.is_a?(Hash) 
     headers = {
       :subject                       => formatted_subject(ticket),
-      :to                            => note.to_emails,
-      :bcc                           => note.bcc_emails,
-      :from                          => note.from_email,
+      :to                            => to_emails,
+      :bcc                           => bcc_emails,
+      :from                          => from_email,
       :sent_on                       => Time.now,
-      "Reply-To"                     => "#{note.from_email}", 
+      "Reply-To"                     => "#{from_email}", 
       "References"                   => generate_email_references(ticket),
       "In-Reply-To"                  => in_reply_to(ticket)
     }
 
-    headers[:cc] = note.cc_emails unless options[:include_cc].blank?
+    headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
 
     inline_attachments = []
 
@@ -248,15 +257,21 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def forward(ticket, note, options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+
+    to_emails = validate_emails(note.to_emails - [note.account.kbase_email], note)
+    from_email = validate_emails(note.from_email, note)
+    return if from_email.empty? || to_emails.empty?
+    bcc_emails = validate_emails(note.bcc_emails, note)
+    cc_emails = validate_emails(note.cc_emails, note)
     
     headers = {
       :subject                                => fwd_formatted_subject(ticket),
-      :to                                     => note.to_emails - [note.account.kbase_email],
-      :cc                                     => note.cc_emails,
-      :bcc                                    => note.bcc_emails,
-      :from                                   => note.from_email,
+      :to                                     => to_emails,
+      :cc                                     => cc_emails,
+      :bcc                                    => bcc_emails,
+      :from                                   => from_email,
       :sent_on                                => Time.now,
-      "Reply-To"                              => "#{note.from_email}", 
+      "Reply-To"                              => "#{from_email}", 
       "References"                            => generate_email_references(ticket),
       "In-Reply-To"                           => in_reply_to(ticket)
     }
@@ -288,15 +303,21 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def reply_to_forward(ticket, note, options={})
     email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
     ActionMailer::Base.set_mailbox email_config.smtp_mailbox
+
+    to_emails = validate_emails(note.to_emails, note)
+    from_email = validate_emails(note.from_email, note)
+    return if from_email.empty? || to_emails.empty?
+    bcc_emails = validate_emails(note.bcc_emails, note)
+    cc_emails = validate_emails(note.cc_emails, note)
     
     headers = {
       :subject                                => formatted_subject(ticket),
-      :to                                     => note.to_emails,
-      :cc                                     => note.cc_emails,
-      :bcc                                    => note.bcc_emails,
-      :from                                   => note.from_email,
+      :to                                     => to_emails,
+      :cc                                     => cc_emails,
+      :bcc                                    => bcc_emails,
+      :from                                   => from_email,
       :sent_on                                => Time.now,
-      "Reply-To"                              => "#{note.from_email}", 
+      "Reply-To"                              => "#{from_email}", 
       "References"                            => generate_email_references(ticket),
       "In-Reply-To"                           => in_reply_to(ticket)
     }
@@ -395,13 +416,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     else
       ticket.friendly_reply_email
     end
-    
+
+    from_email = validate_emails(from_email, ticket)
+    to_email = validate_emails(ticket.from_email, ticket)
+    return if from_email.empty? || to_email.empty?
+    cc_emails = validate_emails(ticket.cc_email[:cc_emails], ticket)
+    bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
+
     headers = {
       :subject                   => ticket.subject,
-      :to                        => ticket.from_email,
+      :to                        => to_email,
       :from                      => from_email,
-      :cc                        => ticket.cc_email[:cc_emails],
-      :bcc                       => account_bcc_email(ticket),
+      :cc                        => cc_emails,
+      :bcc                       => bcc_emails,
       "Reply-To"                 => from_email, 
       "References"               => generate_email_references(ticket),
       "In-Reply-To"              => in_reply_to(ticket),

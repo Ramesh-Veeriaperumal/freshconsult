@@ -2,6 +2,7 @@ module Helpdesk::NotifierFormattingMethods
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include AccountConstants
 
   REPLY_PREFIX = "Re:"
   FWD_PREFIX  = "Fwd:"
@@ -66,5 +67,38 @@ module Helpdesk::NotifierFormattingMethods
         inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
       end
     end
+  end
+
+  def validate_emails(addresses, model)
+    return [] unless addresses
+    addresses = addresses.join(",") if addresses.is_a? Array
+    parsed_emails = Mail::AddressList.new(addresses).addresses
+    return [] if parsed_emails.blank?
+    msg = " #{model.class.name} : #{model.id} Account ID : #{model.account_id}"
+    emails = []
+    name = ""
+     
+    parsed_emails.each_with_index do |email, index|
+      if email.address =~ EMAIL_REGEX
+        if email.name.present?
+          email.name.prepend(name) and name="" if name.present?
+          emails << "#{format(email.name)} <#{email.address.downcase.strip}>".strip
+        else
+          emails << email.address.downcase.strip
+        end
+      else
+        Rails.logger.debug "Rejecting #{email.address} from #{addresses}" + msg
+        name << "#{email.address} , "
+      end
+    end
+    emails.compact.uniq
+  rescue Exception => e
+    Rails.logger.debug "Exception when validating email list : #{addresses}" + msg + 
+                        "#{e.message} : #{e.backtrace}"
+    addresses
+  end
+
+  def format(name)
+    (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end
 end
