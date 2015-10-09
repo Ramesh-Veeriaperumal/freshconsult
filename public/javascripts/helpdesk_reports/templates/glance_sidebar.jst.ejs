@@ -2,37 +2,6 @@
 <% var metrics = _.keys(constants.metrics); %>
 <% var css_class = constants.metrics %>
 
-<%
-	var formattingNumber = function(num, digits) {
-	    var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
-	        decimal;
-
-	    for(var i=units.length-1; i>=0; i--) {
-	        decimal = Math.pow(1000, i+1);
-
-	        if(num <= -decimal || num >= decimal) {
-	            return +(num / decimal).toFixed(digits) + units[i];
-	        }
-	    }
-    	return num;
-	};
-
-	var formattingTime = function (value ) {
-		var v = '' + value;
-		
-    	return v.replace(/[hms]/g,  function(matched) { 
-			return '<span class="time-char-format">'+matched+'</span>'
-		});
-	};
-	var formattingPercent = function (value ) {
-		var v = '' + value;
-		
-    	return v.replace(/%/g,  function(matched) { 
-			return '<span class="time-char-format">'+matched+'</span>'
-		});
-	};
-%>
-
 <% if (data) { %>
 	<ul>
 		<% for (i = 0; i < metrics.length; i++) { %>
@@ -42,18 +11,16 @@
 					<div class="active-indicator"></div>
 					<div class="metrics-content">
 						<div>
-							<%  var result = "";
-								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
-									result = formattingTime(data[metrics[i]].general.metric_result)
-								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
-									result = formattingPercent(data[metrics[i]].general.metric_result)
-								} else {
-									result = formattingNumber(data[metrics[i]].general.metric_result,2)
-								} 
-								 
-							%> 
-							<span class="ticket-count"><%= result %></span>
-							<% 	
+
+							<% if (constants.time_metrics.indexOf(metrics[i]) > -1) { %>
+									<span class="ticket-count"> <%= HelpdeskReports.CoreUtil.timeMetricConversion(data[metrics[i]].general.metric_result) %> </span>
+							<% } else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) { %>
+									<span class="ticket-count"> <%= HelpdeskReports.CoreUtil.addsuffix(data[metrics[i]].general.metric_result) %>  </span>
+							<%	} else { %>
+									<span class="ticket-count">  <%= HelpdeskReports.CoreUtil.shortenLargeNumber(data[metrics[i]].general.metric_result, 1) %> </span>
+							<%	} %>
+
+							<% 
 								var template; 
 								var percent = data[metrics[i]].general.diff_percentage;
 								if (parseFloat(percent) !== NaN && parseFloat(percent) > 0) {
@@ -79,16 +46,16 @@
 
 			<% } else if (jQuery.isEmptyObject(data[metrics[i]])) { %>
 
-				<li data-metric= <%= metrics[i] %> >
+				<li data-metric= <%= metrics[i] %> class="disable" >
 					<div class="active-indicator"></div>
 					<div class="metrics-content">
 						<div>
 							<% 
 								var value = "";
 								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
-									value = "0m 0s";
+									value = "0<span class='time-char-format'>m</span> 0<span class='time-char-format'>s</span>";
 								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
-									value = "0%";
+									value = "0<span class='time-char-format'>%</span>";
 								} else {
 									value = "0";
 								} 
@@ -106,11 +73,21 @@
 
 			<% } else if (!jQuery.isEmptyObject(data[metrics[i]])['error']) {%>
 
-				<li data-metric= <%= metrics[i] %> class="disabled">
+				<li data-metric= <%= metrics[i] %> class="disable">
 					<div class="active-indicator"></div>
 					<div class="metrics-content">
 						<div>
-							<span class="ticket-count"> NA </span>
+							<% 
+								var value = "";
+								if (constants.time_metrics.indexOf(metrics[i]) > -1) {
+									value = "0<span class='time-char-format'>m</span> 0<span class='time-char-format'>s</span>";
+								} else if (constants.percentage_metrics.indexOf(metrics[i]) > -1) {
+									value = "0<span class='time-char-format'>%</span>";
+								} else {
+									value = "0";
+								} 
+							%>
+							<span class="ticket-count"><%= value %> </span>						
 						</div>
 						<div class="ticket-status"> 
 							<%= constants.metrics[metrics[i]].name %> 

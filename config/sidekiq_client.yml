@@ -30,6 +30,7 @@ defaults: &defaults
     - [reset_group]
     - [reset_responder]
     - [new_es_index]
+    - [reset_gamification_score]
     - [solution_language_change]
     - [export_agents]
     - [ebay_worker]
@@ -40,6 +41,8 @@ defaults: &defaults
     - [archive_build_create_ticket]
     - [archive_modify_ticket_association]
     - [archive_delete_ticket]
+    - [update_ticket_states]
+    - [ticket_observer]
 
 development:
   <<: *defaults

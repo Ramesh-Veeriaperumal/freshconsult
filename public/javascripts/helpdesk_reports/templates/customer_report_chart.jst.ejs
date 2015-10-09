@@ -1,0 +1,19 @@
+	
+	<%
+		var title_name = HelpdeskReports.Constants.CustomerReport.metrics[metric].title;
+	%>
+
+	<div class="chart-container">
+		<div class="title">
+			<%= title_name %>
+			<div class="reports-help-icon tooltip" data-placement="right" data-original-title="<%= 
+			HelpdeskReports.Constants.CustomerReport.metrics[metric].description %>">
+							<i class="ficon-help-icon fsize-14" size="14"></i>
+			</div>
+			<span class="toggle-icon" data-container="toggle" data-chart="<%= metric %>" data-sorting="ASC">
+				<i class="ficon-reports-sorting fsize-20" size="20"></i>
+			</span>
+
+		</div>
+		<div id="<%= metric %>_container" class="half-container" data-metric="<%= metric %>" data-report="customer-report-container"></div>
+	</div>

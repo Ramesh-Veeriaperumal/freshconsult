@@ -25,6 +25,13 @@ module Helpdesk::ProcessByMessageId
     (message_id =~ /@zendesk.com/ and in_reply_to =~ /@zendesk.com/) ? in_reply_to : nil
   end
 
+  def set_ticket_id_with_message_id account, ticket_key, ticket
+    latest_msg_id = zendesk_email || message_id
+    set_others_redis_key(message_key(account, ticket_key), 
+                         "#{ticket.display_id}:#{latest_msg_id}", 
+                         86400*7) unless ticket_key.nil?
+  end
+
   private
 
     def parent_ticket from_email, account
@@ -34,9 +41,12 @@ module Helpdesk::ProcessByMessageId
       return nil if all_keys.blank?
       all_keys.reverse.each do |ticket_key|
         ticket_id = get_others_redis_key(message_key(account, ticket_key))
-        ticket = account.tickets.find_by_display_id(ticket_id) if ticket_id
+        if ticket_id
+          ticket_id = $1 if ticket_id =~ /(.+?):/
+          ticket = account.tickets.find_by_display_id(ticket_id)
+        end
         if ticket
-          set_others_redis_expiry(message_key(account, ticket_key), 86400*7)
+          set_ticket_id_with_message_id account, ticket_key, ticket
           return ticket
         end
       end
@@ -50,9 +60,12 @@ module Helpdesk::ProcessByMessageId
       return nil if all_keys.blank?
       all_keys.reverse.each do |ticket_key|
         ticket_id = get_others_redis_key(message_key(account, ticket_key))
-        ticket = account.archive_tickets.find_by_display_id(ticket_id) if ticket_id
+        if ticket_id
+          ticket_id = $1 if ticket_id =~ /(.+?):/
+          ticket = account.archive_tickets.find_by_display_id(ticket_id)
+        end
         if ticket
-          set_others_redis_expiry(message_key(account, ticket_key), 86400*7)
+          set_ticket_id_with_message_id account, ticket_key, ticket
           return ticket
         end
       end

@@ -346,6 +346,12 @@ p.imp{
     	margin-top: 10px;
     }
     display: none;
+    & ul.small-list-right{
+    	max-height: 260px;
+    	@include float(left);
+    	overflow-x: hidden;
+    	overflow-y: auto;
+    }
 }
 
 #recently_used_list{
@@ -753,6 +759,9 @@ height: auto;
 .canned_create_folder{
 	height: 40px;
 	overflow: hidden;
+	.controls{
+		@include margin-left(160px);
+	}
 }
 
 .ca-response-move-options {

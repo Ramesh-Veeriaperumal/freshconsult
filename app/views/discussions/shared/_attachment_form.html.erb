@@ -26,9 +26,9 @@
                 </div>
             </a>
           </li>
-          <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} %>
-          <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
-
+           <% get_enabled_cloud_files_app.each do |c_f| %>
+            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id} %>
+          <% end %>
         </ul>      
       </div>
 		<% else %>
@@ -46,7 +46,7 @@
 		<div class="attachment_wrapper">
 			<ul class="attachment_list" id="<%=attach_id%>-attachments">
 				<% attachments[:regular].each do |attached| %>
-					<%= attachment_list(attached, true, "article", nil) %>
+					<%= attachment_list(attached, true, "topic", nil) %>
 		    <% end %>
         <% attachments[:cloud_files].each do |attached| %>
           <%= attachment_list(attached, true, "cloud_file", nil) %>

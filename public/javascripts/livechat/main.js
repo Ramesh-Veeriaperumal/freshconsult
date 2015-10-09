@@ -129,14 +129,8 @@
 			frm.setHours(0, 0, 0, 0);
 			var to = new Date(toDate);
 			to.setHours(23, 59, 59, 999);
-			filterVal.frm = frm.getTime();
-			filterVal.to  = to.getTime();
- 		}else{
- 			jQuery("#date_range_error").show();
- 			filterVal.frm = new Date("Thu, 01 Jan 1970 00:00:00 UTC").getTime();
-			filterVal.to  = new Date("Thu, 01 Jan 1970 00:00:00 UTC").getTime();
-			filterName.timePeriod = " - ";
-			return false;
+			filterVal.frm = frm.toUTCString();
+			filterVal.to  = to.toUTCString();
  		}
 
  		//Agent 

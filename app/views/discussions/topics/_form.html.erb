@@ -2,6 +2,24 @@
 	<%= render :partial => 'helpnote' %>
 <%-end %>
 <div class="form-horizontal">
+
+	<% if @topic_ticket %>
+		<div class="control-group">
+			<label for="topic_title" class="control-label">
+				<%= t('topic.requester') %>
+				<span class="required_star">*</span>
+			</label>
+			<div class="controls topic-ticket-requester">
+		  	<span> 
+		  		<%= t('topic.requester_details',
+		  					 :name =>  @topic_ticket.requester.name,
+		  					 :email => @topic_ticket.requester.email) %>
+		  	</span>
+			</div>
+		</div>
+		<%= form.hidden_field :display_id, :value => params[:ticket_id] %>
+	<% end %>
+	
 	<div class="control-group">
 		<label for="topic_title" class="control-label">
 			<%= t('topic.name') %>
@@ -16,19 +34,48 @@
 			<%= t('message') %>
 			<span class="required_star">*</span>
 		</label>
+
+
+		<% if @topic_ticket %>
+			<ul class="nested-ul">
+			  <li class="topic-ticket-option">
+			    <label class="radio">
+			      <input type="radio" name="topic-options" value="first-email" checked="true">
+			      <%= t('topic.first_email') %>
+			    </label>
+			  </li>
+			  
+			  <li class="topic-ticket-option">
+			    <label class="radio">
+			      <input type="radio" name="topic-options" value="full-conversation">
+			      <%= t('topic.full_conversation') %>
+			    </label>
+			  </li>
+			</ul>
+		<% end %>
+
 		<div class="controls flow-form">
 			<%= form.rich_editor(:body_html,
 						:class => 'required_redactor',
-						:value => !@topic.new_record? ? @topic.posts.first.body_html : "",
-						:height => "200px", 'editor-type' => :forum) %>
+						:value => !@topic.posts.empty? ? @topic.posts.first.body_html : "",
+						:tabindex => 20, :height => "200px", 'editor-type' => :forum) %>
 
-			<%= render :partial=> "discussions/shared/attachment_form", :locals => {
-										:attachments => {
-											:regular => @topic.new_record? ? [] : @topic.posts.first.attachments,
-											:cloud_files => @topic.new_record? ? [] : @topic.posts.first.cloud_files
-											},
-										:show_delete => true
-									} %>
+				<% if (@topic.new_record? and @topic_ticket) 
+					regular_attachments =  @topic_ticket ? @topic_ticket.attachments : []
+					cloud_files = @topic_ticket ? @topic_ticket.cloud_files : [] 
+				else
+					regular_attachments = @topic.posts.empty? ? [] : @topic.posts.first.attachments
+					cloud_files =  @topic.posts.empty? ? [] : @topic.posts.first.cloud_files
+				end 
+				%>
+
+			<%= render :partial=> "discussions/topics/attachment_form", :locals => {
+									:attachments => {
+										:regular => regular_attachments,
+										:cloud_files => cloud_files
+									},
+									:show_delete => true
+									}%>
 		</div>
 	</div>
 

@@ -2,8 +2,15 @@ module HelpdeskReports::Field::Ticket
 
   # Filter data for reports, Check template at the end of file
   def show_options(column_order, columns_keys_by_token, columns_option)
+    
+    excluded_filters = ReportsAppConfig::EXCLUDE_FILTERS[report_type]
+    if excluded_filters
+      column_order -=  excluded_filters[Account.current.subscription.subscription_plan.name]||[]
+    end
+    
     @show_options ||= begin
       defs = {}
+      @nf_hash = {}
       #default fields
 
       column_order.each do |name|
@@ -20,6 +27,7 @@ module HelpdeskReports::Field::Ticket
           :ff_name    =>  "default",
           :active     =>  false
         }
+        field_label_id_hash(defs[name])
       end
 
       #Custom fields
@@ -37,6 +45,7 @@ module HelpdeskReports::Field::Ticket
           :ff_name    =>  col.name,
           :active     =>  false
         }
+        field_label_id_hash(defs[condition])
       end
 
       Account.current.nested_fields_from_cache.each do |col|
@@ -72,8 +81,22 @@ module HelpdeskReports::Field::Ticket
           :ff_name        =>  col.name,
           :active         =>  false
         }
+        field_label_id_hash(defs[condition])
       end
       defs
+    end
+  end
+  
+  def field_label_id_hash(parent_field)
+    @nf_hash[parent_field[:condition]] = parent_field[:options].collect{|op| [op.first, op.second]}.to_h
+    (parent_field[:nested_fields]||[]).each_with_index do |nf, index|
+      helper = []
+      if index == 0
+        parent_field[:options].each{|op| helper << op.third.collect{|i| [i.first, i.second]}}
+      else
+        parent_field[:options].each{|op| op.third.each{|nested_op| helper << nested_op.third.collect{|i| [i.first, i.second]}}}
+      end
+      @nf_hash[nf[:condition]] = helper.flatten(1).to_h
     end
   end
 

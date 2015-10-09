@@ -3,24 +3,19 @@ HelpdeskReports.ChartsInitializer = HelpdeskReports.ChartsInitializer || {};
 HelpdeskReports.ChartsInitializer.Glance = (function () {
     var _FD = {
         DATA_POINT_LIMIT: 4,
-        bucket_series: {
-            'agent_interactions': 'Agent Interactions', 
-            'customer_interactions' : 'Customer Interactions'
-        },
         bindevents: function(){
             jQuery('#reports_wrapper').on('click.helpdesk_reports.glance', "[data-container='view-more'].active", function (event) {
+                HelpdeskReports.CoreUtil.actions.hideTicketList();
+                HelpdeskReports.CoreUtil.actions.closeFilterMenu();
                 _FD.actions.viewMoreInit(this);
             });
             jQuery(document).on('click.helpdesk_reports.glance', "[data-action='close-view-all']", function (event) {
-                _FD.actions.closeViewMore();
+                HelpdeskReports.CoreUtil.actions.hideViewMore();
             });
         },
         actions: {
             viewMoreInit: function (el) {
                 _FD.renderViewMore(el);
-            },
-            closeViewMore: function () {
-                jQuery('#view_more_wrapper').removeClass('show-all-metrics');
             }
         },
         constructSidebar: function (hash) {
@@ -60,8 +55,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 }
 
                 if(HelpdeskReports.Constants.Glance.bucket_condition_metrics.indexOf(active_metric) > -1) {
-                    _FD.renderBucketConditionsGraph(hash,active_metric);
+                    var bucket_types = HelpdeskReports.Constants.Glance.metrics[active_metric].bucket_graph_map;
+                    for (var i = 0; i < bucket_types.length; i++) {
+                        _FD.renderBucketConditionsGraph(hash, active_metric, bucket_types[i]);
+                    }
                 }
+
             } else {
                 var msg = 'Something went wrong, please try again';
                 var div = ["glance_main"];
@@ -75,6 +74,11 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var options = {};
             var current_hash = hash_active[group_by];
 
+            var current_value_array = [];
+            _.each(_.values(current_hash), function(i) {
+                current_value_array.push(i.value);
+            });
+
             if (constants.percentage_metrics.indexOf(active_metric) > -1) {
 
                 options = {    
@@ -83,17 +87,20 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     lrRadius : 5,
                     value : 100,
                     sharedTooltip: false,
+                    enableTooltip: true,
                     timeFormat: false,
-                    suffix: '{value}%'
+                    suffix: '{value}%',
+                    cursor: 'pointer',
+                    first_series: 'violated',
+                    second_series: 'compliant'
                 }
 
             } else {
-
                 var value;
                 if (view_all) {
-                    value = _.max(_.values(current_hash));
+                    value = _.max(current_value_array);
                 } else {
-                    value = _.max(_.first(_.values(current_hash),_FD.DATA_POINT_LIMIT));
+                    value = _.max(_.first(current_value_array,_FD.DATA_POINT_LIMIT));
                 }
                 options = {    
                     color : REPORT_COLORS["plotBG"],
@@ -101,37 +108,43 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     lrRadius : null,
                     value : value,
                     sharedTooltip: true,
-                    timeFormat: (constants.time_metrics.indexOf(active_metric) > -1) ? true : false
+                    enableTooltip: (constants.time_metrics.indexOf(active_metric) > -1) ? false : true,
+                    timeFormat: (constants.time_metrics.indexOf(active_metric) > -1) ? true : false,
+                    minPoint: true,
+                    cursor: 'default',
+                    first_series: 'dummy',
+                    second_series: 'actual',
+                    total: hash_active['general']['metric_result']
                 }
 
             }
-            _FD.renderCommonChart(current_hash, options, group_by, view_all);
+            _FD.renderCommonChart(current_hash, options, group_by, view_all, current_value_array);
         },
-        renderCommonChart: function (current_hash, options, group_by, view_all) {
+        renderCommonChart: function (current_hash, options, group_by, view_all, current_value_array) {
             var height, data1, data2, dataLab, labels, container;
             if (view_all) {
                 labels = _.keys(current_hash);
                 height = _FD.calculateChartheight(labels.length);
-                dataLab = _.values(current_hash);
-                data1 = this.fillArray(options.value,_.values(current_hash).length);
-                data2 = _.values(current_hash);
+                dataLab = current_value_array;
+                data1 = this.fillArray(options.value,current_value_array.length);
+                data2 = current_value_array;
                 container = 'view_all';
             } else {
-                if (_.values(current_hash).length > _FD.DATA_POINT_LIMIT) {
+                if (current_value_array.length > _FD.DATA_POINT_LIMIT) {
                     labels = _.first(_.keys(current_hash), _FD.DATA_POINT_LIMIT);
                     height = _FD.calculateChartheight(_FD.DATA_POINT_LIMIT);
-                    dataLab = _.first(_.values(current_hash),_FD.DATA_POINT_LIMIT);
+                    dataLab = _.first(current_value_array,_FD.DATA_POINT_LIMIT);
                     data1 = this.fillArray(options.value, _FD.DATA_POINT_LIMIT);
-                    data2 = _.first(_.values(current_hash),_FD.DATA_POINT_LIMIT); 
+                    data2 = _.first(current_value_array,_FD.DATA_POINT_LIMIT); 
 
                     jQuery("[data-group-container='"+ group_by +"']").addClass('active');
 
                 } else {
                     labels = _.keys(current_hash);
                     height = _FD.calculateChartheight(labels.length);
-                    dataLab = _.values(current_hash);
-                    data1 = this.fillArray(options.value,_.values(current_hash).length);
-                    data2 = _.values(current_hash);
+                    dataLab = current_value_array;
+                    data1 = this.fillArray(options.value,current_value_array.length);
+                    data2 = current_value_array;
 
                     jQuery("[data-group-container='"+ group_by +"']").removeClass('active');
                     
@@ -143,11 +156,20 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             data_array.push({
                 animation: false,
                 dataLabels: { enabled: false },
-                //data: this.fillArray(options.value,_.values(current_hash).length),
                 data: data1,
                 color: options.color,
                 states: { hover: { brightness: 0 } },
-                borderRadius: 5
+                borderRadius: 5,
+                cursor: options.cursor,
+                name: options.first_series,
+                point: {
+                    events: {
+                        click: function () {
+                            var ev = this;
+                            _FD.clickEventForTicketList(ev);
+                        }
+                    }
+                }
             }, {
                 data: data2,
                 color: REPORT_COLORS['barChartReal'],
@@ -155,15 +177,18 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 animation: {
                     duration: 1000,
                     easing: 'easeInOutQuart'
-                }
-                //borderRadius: options.radius,
-                // borderRadiusBottomRight: options.lrRadius,
-                // borderRadiusBottomLeft: options.lrRadius
-                // events: {
-                //     click: function (ev) {
-                //         console.log('Category: ' + ev.point.category + ', value: ' + ev.point.y);
-                //     }
-                // }
+                },
+                cursor: 'pointer',
+                name: options.second_series,
+                point: {
+                    events: {
+                        click: function () {
+                            var ev = this;
+                            _FD.clickEventForTicketList(ev);
+                        }
+                    }
+                },
+                total: options.total 
             });
             var settings = {
                 renderTo: container + "_container",
@@ -172,57 +197,118 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 chartData: data_array,
                 dataLabels: dataLab,
                 sharedTooltip: options.sharedTooltip,
+                enableTooltip: options.enableTooltip,
                 timeFormat: options.timeFormat,
-                suffix: options.suffix
+                suffix: options.suffix,
+                minPoint: options.minPoint
             }
             var groupByCharts = new barChart(settings);
             groupByCharts.barChartGraph();
         },
-        renderBucketConditionsGraph: function (hash,metric) {
-            var key = metric + '_BUCKET'
+        clickEventForTicketList: function (el) {
+
+            var active_metric = HelpdeskReports.locals.active_metric
+
+            if (!(HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(active_metric) < 0 && el.series.name == 'dummy')) {
+                var container = el.series.chart.container;
+                var group_by = jQuery(container).closest('[data-report="glance-container"]').attr('data-group');
+                HelpdeskReports.CoreUtil.actions.hideViewMore();
+                var data = {};
+                data.label = el.category;
+                data.series = el.series.name;
+                data.group_by = group_by;
+                data.metric = active_metric;
+                data.id = HelpdeskReports.locals.chart_hash[active_metric][group_by][el.category].id;
+
+                trigger_event("glance_ticket_list.helpdesk_reports", data);
+            }
+
+        },
+        renderBucketConditionsGraph: function (hash, metric, bucket) {
+            var key = metric + '_BUCKET';
+            var bucket_data = HelpdeskReports.Constants.Glance.bucket_data;
+            var meta = bucket_data[bucket].meta_data;
             if (hash[key] !== undefined) {
                 var tmpl = JST["helpdesk_reports/templates/bucket_conditions_div"]({
-                    data: 'bucket_conditions'
+                    id: meta.dom_element,
+                    title: meta.title,
+                    bucket: bucket
                 });
                 jQuery('#glance_main').append(tmpl);
 
-                if (!jQuery.isEmptyObject(hash[key])) {
-                    var data_array = [];
-                    var series = _.keys(_FD.bucket_series);
-                    for (i = 0; i < series.length; i++) {
-                        data_array.push({
-                            name: _FD.bucket_series[series[i]],
-                            data: _.values(hash[key][series[i]]).reverse(),
-                            legendIndex: i
-                        });
-                    }
-
-                    var labels = _.keys(hash[key][series[0]]).reverse();
-                    var settings = {
-                        renderTo: "bucket_conditions_container",
-                        height: '325',
-                        xAxisLabel: labels,
-                        chartData: data_array,
-                        xAxis_title: 'No. of Interactions',
-                        yAxis_title: 'No. of Tickets',
-                    }
-
-                    var bucketChart = new barChartMultipleSeries(settings);
-                    bucketChart.barChartSeriesGraph();
-                } else {
-                    var msg = 'No data to display';
-                    var div = ["bucket_conditions_container"];
-                    HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-                }
-                    
+                var current_series = bucket_data[bucket].series;
+                _FD.constructBucketsChart(hash[key], current_series, meta);
             }
+        },
+        constructBucketsChart: function (hash, current_series, meta) {
+            if (jQuery.isEmptyObject(hash["error"]) && !jQuery.isEmptyObject(hash)) {
+                var data_array = [];
+                var series = _.keys(current_series);
+                for (i = 0; i < series.length; i++) {
+                    data_array.push({
+                        name: current_series[series[i]],
+                        data: _.values(hash[series[i]]).reverse(),
+                        legendIndex: i,
+                        id: series[i],
+                        point: {
+                            events: {
+                                click: function () {
+                                    var ev = this;
+                                    _FD.clickEventForBucketTicketList(ev);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                var labels = _.keys(hash[series[0]]).reverse();
+                var settings = {
+                    renderTo: meta.dom_element + '_container',
+                    height: meta.chart_height,
+                    xAxisLabel: labels,
+                    chartData: data_array,
+                    xAxis_title: meta.xtitle,
+                    yAxis_title: meta.ytitle,
+                    legend: meta.legend,
+                    pointWidth: meta.pointWidth
+                }
+
+                var bucketChart = new barChartMultipleSeries(settings);
+                bucketChart.barChartSeriesGraph();
+
+            } else if (jQuery.isEmptyObject(hash)) {
+                var msg = 'No data to display';
+                var divs = [];
+                divs.push(meta.dom_element + '_container');
+                HelpdeskReports.CoreUtil.populateEmptyChart(divs, msg);
+            } else if (!jQuery.isEmptyObject(hash["error"])) {
+                var msg = 'Something went wrong, please try again';
+                var divs = [];
+                divs.push(meta.dom_element + '_container');
+                HelpdeskReports.CoreUtil.populateEmptyChart(divs, msg);
+            }
+        },
+        clickEventForBucketTicketList: function (ev) {
+
+            var container = ev.series.chart.container;
+            var bucket_type = jQuery(container).closest('[data-glance-container="bucket"]').data('bucket-name');
+            var series = ev.series.name;
+            var bucket_name = HelpdeskReports.Constants.Glance.bucket_data[bucket_type].name_series[series];
+
+            var hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric + '_BUCKET'].value_map;
+
+            var data = {
+                condition: bucket_name,
+                operator: hash[bucket_name][ev.category][1],
+                value: hash[bucket_name][ev.category][0]
+            };
+
+            trigger_event("glance_bucket_ticket_list.helpdesk_reports", data);         
+
         },
         customFields: function (hash) {
             var locals = HelpdeskReports.locals
             var active_custom_field = locals.active_custom_field;
-            jQuery('#custom_field_group_by .half-container').attr('id', active_custom_field + '_container');
-            jQuery('#custom_field_group_by .half-container').attr('data-group', active_custom_field);
-            jQuery("#custom_field_group_by [data-container='view-more']").attr("data-group-container", active_custom_field);
             if (jQuery.isEmptyObject(hash[locals.active_metric]["error"]) && !jQuery.isEmptyObject(hash[locals.active_metric])) {
                 _FD.renderCustomFieldChart(hash, active_custom_field);
 
@@ -249,18 +335,17 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         renderViewMore: function (el) {
             var attr = jQuery(el).data('group-container');
-            var active_metric_hash = HelpdeskReports.locals.active_metric_data_hash;
-            var active_cf_hash = HelpdeskReports.locals.custom_field_data_hash;
+            jQuery('#view_all_container').attr('data-group',attr);
+            var active_metric_hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric];
+
             if (!jQuery.isEmptyObject(active_metric_hash[attr])) {
                 _FD.constructChartSettings(active_metric_hash, attr, true);
-            } else if(!jQuery.isEmptyObject(active_cf_hash[attr])) {
-                _FD.constructChartSettings(active_cf_hash, attr, true);
             } else {
                 console.log('Data not available');
             }
 
             if (!jQuery('#view_more_wrapper').hasClass('show-all-metrics')) {
-                jQuery('#view_more_wrapper').addClass('show-all-metrics');
+                HelpdeskReports.CoreUtil.actions.showViewMore();
             }
 
             if (jQuery(el).closest('.chart-container').attr('id') !== 'custom_field_group_by') {
@@ -283,23 +368,57 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         calculateChartheight: function (dataPoints) {
             var height = 50 * dataPoints;
             return height;
+        },
+        mergeDataHash: function (hash) {
+            var active_metric = HelpdeskReports.locals.active_metric;
+            var group_by = HelpdeskReports.locals.current_group_by;
+
+            if (HelpdeskReports && HelpdeskReports.locals && HelpdeskReports.locals.chart_hash) {
+                for (var key in hash) {
+                    if (HelpdeskReports.locals.chart_hash.hasOwnProperty(key) && key === active_metric) {
+                        for (var i = 0; i < group_by.length; i++) {
+                            HelpdeskReports.locals.chart_hash[active_metric][group_by[i]] = hash[key][group_by[i]]; 
+                        };
+                    } else {
+                        HelpdeskReports.locals.chart_hash[key] = hash[key];
+                    }
+                }
+            };
+        },
+        mergeCustomFieldDataHash: function (hash) {
+            var active_metric = HelpdeskReports.locals.active_metric;
+            var group_by = HelpdeskReports.locals.custom_fields_group_by;
+
+            if (HelpdeskReports && HelpdeskReports.locals && HelpdeskReports.locals.chart_hash) {
+                for (var key in hash[active_metric]) {
+                    if (group_by.indexOf(key) > -1) {
+                        HelpdeskReports.locals.chart_hash[active_metric][key] = hash[active_metric][key];
+                    }
+                }
+            };
+        },
+        constructViewAllTicketsLink: function () {
+            var view_all_tmpl = JST["helpdesk_reports/templates/view_all_tickets_template"]();
+            jQuery('#view_all_tickets').html(view_all_tmpl);
         }
     };
    return {
         init: function (hash) {
+            
             _FD.bindevents();
 
             if(_.keys(hash).length > 2) {
                 _FD.constructSidebar(hash);
+            } else {
+                _FD.mergeDataHash(hash);
             }
-
+            _FD.constructViewAllTicketsLink();
             _FD.contructCharts(hash);
 
-            HelpdeskReports.locals.active_metric_data_hash = hash[HelpdeskReports.locals.active_metric];
         },
         customFieldInit: function (hash) {
+            _FD.mergeCustomFieldDataHash(hash)
             _FD.customFields(hash);
-            HelpdeskReports.locals.custom_field_data_hash = hash[HelpdeskReports.locals.active_metric];
         }
     };
 })();

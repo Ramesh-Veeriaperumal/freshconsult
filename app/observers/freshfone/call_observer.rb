@@ -17,6 +17,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 	private
 		def initialize_data_from_params(freshfone_call)
 			params = freshfone_call.params || {}
+			freshfone_call.business_hour_call = freshfone_call.freshfone_number.working_hours?
 			freshfone_call.call_sid = params[:CallSid]
 		end
 

@@ -152,6 +152,9 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
+    
+  has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
+    :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"   
 
   # added below mapping for multiform phase1 only
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'

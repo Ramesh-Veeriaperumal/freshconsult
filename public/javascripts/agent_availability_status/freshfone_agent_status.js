@@ -12,6 +12,7 @@ window.App = window.App || {};
           this.Filter.init();
           this.Node.init();
           App.AgentEvents.ffoneEventsInit();
+         App.AgentEvents.bindPresenceToggle();
   		}
     },
     onLeave: function () {

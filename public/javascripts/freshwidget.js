@@ -140,6 +140,7 @@
 				link.className 			   = "freshwidget-customimage";
 				text = document.createElement("img");
 				text.src = options.backgroundImage;
+				$(text).attr('alt',options.buttonText);
 				text = useFilterforIE(text);
 			}
 
@@ -194,10 +195,10 @@
 
 			$widget_attr.container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
+						' <img alt="Close Feedback Form" id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
 						'<div class="mobile-widget-close" id="mobile-widget-close"></div>'+
 						' <div class="frame-container">' +
-						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
+						' 	<iframe title="Feedback Form" id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
 						' </div>'
 						'</div>';
 

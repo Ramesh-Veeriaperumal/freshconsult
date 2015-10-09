@@ -63,6 +63,9 @@
 		&:hover{
 			background-color: #eee;
 		}
+	  @if $rtl{
+	  	padding-right: 20px;
+	  }
     &:after{
       content: "";
       display: inline-block;

@@ -117,6 +117,25 @@ window.App.Freshfone = window.App.Freshfone || {};
         });
         jQuery("#freshfone_number").select2("data",selection);
     },
+    businessHoursOptions: function (filter_business_hours_options,placeholder) {
+      business_hours_list = filter_business_hours_options;
+
+      $('#ff_business_hours').select2({
+          placeholder: placeholder,
+          dropdownCssClass : 'no-search',
+          data: {
+            text: 'value',
+            results:  business_hours_list },
+          formatResult: function (result) {
+            return result.value;
+          },
+          formatSelection: function (result) {
+            $('#ff_business_hours').attr('value',result.business_hour_call);
+            $('#ff_business_hours').data('value', result.value);
+            return result.value;
+          }
+        });
+    },
     leave: function(){
       $('body').off('.freshfone_reports');
     }

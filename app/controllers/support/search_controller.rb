@@ -255,7 +255,7 @@ class Support::SearchController < SupportController
     def topic_result topic
       { 'title' => topic.es_highlight('title').html_safe, 
         'group' => h(topic.forum.name), 
-        'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
+        'desc' => h(truncate(topic.posts.first.body, :length => truncate_length)).html_safe,
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end

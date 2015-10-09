@@ -3,7 +3,7 @@ HelpdeskReports.ChartsInitializer = HelpdeskReports.ChartsInitializer || {};
 HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
     var _FD = {
         populatetemplate: function(data){
-                var metricsData = JST["helpdesk_reports/templates/metrics_list"]({
+                var metricsData = JST["helpdesk_reports/templates/group_summary_tmpl"]({
                     'data':  data,
                     'report' : 'group'
                 });

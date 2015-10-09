@@ -136,7 +136,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
 
   def throw_error
     if request.xhr?
-      render :json => {:status => "failed", :msg => t(:'integrations.hootsuite.access_denied_error.message')} and return
+      render :json => {:status => "failed", :msg => t(:'flash.general.access_denied')} and return
     else
       render(:partial => "access_denied") and return
     end

@@ -122,12 +122,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def process_agent_and_group_changes 
     
-    # For reports related 
-    # Added this check to handle the case for tickets with agents assigned before the code deploy
-    if ticket_states.first_assigned_at 
-      schema_less_ticket.set_agent_assigned_flag
-    end
-    
     if (@model_changes.key?(:responder_id) && responder)
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at 
@@ -253,7 +247,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def update_message_id
     (self.header_info[:message_ids] || []).each do |parent_message|
       message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
+      deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, 
+                                                                            "#{self.display_id}:#{parent_message}", 
+                                                                            86400*7)
     end
   end
 
@@ -471,7 +467,7 @@ private
   end
 
   def assign_sender_email
-    self.sender_email = self.email if self.email
+    self.sender_email = self.email if self.email && self.email =~ EMAIL_REGEX
   end
 
   def assign_email_config_and_product
