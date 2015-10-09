@@ -73,6 +73,10 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+
+  def set_time_zone    
+    TimeZone.set_time_zone    
+  end
  
   def activerecord_error_list(errors)
     error_list = '<ul class="error_list">'

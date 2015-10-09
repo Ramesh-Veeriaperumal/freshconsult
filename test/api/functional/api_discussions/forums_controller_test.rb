@@ -75,7 +75,7 @@ module ApiDiscussions
 
     def test_update_duplicate_name
       fc = fc_obj
-      forum = f_obj
+      forum = create_test_forum(fc)
       another_forum = create_test_forum(fc)
       put :update, construct_params({ id: forum.id }, name: another_forum.name)
       assert_response 409
@@ -101,8 +101,10 @@ module ApiDiscussions
 
     def test_update_invalid_forum_category_id
       fc = fc_obj
+      fc.update_column(:account_id, 999)
       forum = f_obj
-      put :update, construct_params({ id: forum.id }, forum_category_id: 89)
+      put :update, construct_params({ id: forum.id }, forum_category_id: fc.reload.id)
+      fc.update_column(:account_id, @account.id)
       assert_response 400
       match_json([bad_request_error_pattern('forum_category_id', "can't be blank")])
     end
@@ -211,22 +213,24 @@ module ApiDiscussions
 
     def test_create_with_visibility_company_users
       name = Faker::Name.name
-      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: '4',
-                                                                     forum_type: 1, name: name)
+      fc = ForumCategory.first
+      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: '4',
+                                                    forum_type: 1, name: name)
       pattern = forum_pattern(Forum.last).merge(company_ids: [])
       match_json(pattern)
       pattern = forum_response_pattern(Forum.last, description: 'desc', forum_visibility: 4,
-                                                   forum_type: 1, name: name, forum_category_id: ForumCategory.first.id).merge(company_ids: [])
+                                                   forum_type: 1, name: name, forum_category_id: fc.id).merge(company_ids: [])
       match_json(pattern)
       assert_response 201
     end
 
     def test_create_returns_location_header
       name = Faker::Name.name
-      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: '1',
-                                                                     forum_type: 1, name: name)
+      forum_category_id =  ForumCategory.first.id
+      post :create, construct_params({ id: forum_category_id }, description: 'desc', forum_visibility: '1',
+                                                                forum_type: 1, name: name)
       match_json(forum_pattern Forum.last)
-      match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: ForumCategory.first.id)
+      match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: forum_category_id)
       assert_response 201
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
@@ -360,7 +364,9 @@ module ApiDiscussions
     end
 
     def test_create_invalid_model
-      post :create, construct_params({ id: ForumCategory.first.id }, forum_visibility: '1', forum_type: 1, name: Forum.first.name)
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      post :create, construct_params({ id: fc.id }, forum_visibility: '1', forum_type: 1, name: forum.name)
       match_json([bad_request_error_pattern('name', 'already exists in the selected category')])
       assert_response 409
     end

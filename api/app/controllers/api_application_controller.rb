@@ -1,4 +1,4 @@
-class ApiApplicationController < MetalApiConfiguration
+class ApiApplicationController < MetalApiController
   prepend_before_filter :response_headers
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception|
@@ -6,6 +6,10 @@ class ApiApplicationController < MetalApiConfiguration
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
+
+  # Check if content-type is appropriate for specific endpoints.
+  # This check should be done before any app specific filter starts.
+  before_filter :validate_content_type 
 
   include Concerns::ApplicationConcern
 
@@ -116,9 +120,16 @@ class ApiApplicationController < MetalApiConfiguration
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
+      return if handle_invalid_multipart_form_data(exception.params)
       Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
+    end
+
+    def handle_invalid_multipart_form_data(exception_params)
+      return false unless request.raw_post == exception_params.join && request.headers['CONTENT_TYPE'] =~ /multipart\/form-data/
+      render_request_error :invalid_multipart, 400
+      true
     end
 
     def ensure_proper_fd_domain # 404
@@ -148,6 +159,12 @@ class ApiApplicationController < MetalApiConfiguration
 
     def feature_name
       # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+
+    def validate_content_type
+      unless get_request? || request.delete? || valid_content_type?
+        render_request_error :invalid_content_type, 415
+      end
     end
 
     def before_build_object
@@ -310,7 +327,11 @@ class ApiApplicationController < MetalApiConfiguration
     end
 
     def check_privilege # this method is redefined because of api_current_user
-      access_denied && return if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
+      if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
+        access_denied
+        return false
+      end
+      true
     end
 
     def allowed_to_access? # this method is redefined because of api_current_user
@@ -330,8 +351,8 @@ class ApiApplicationController < MetalApiConfiguration
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      handle_unverified_request
+    rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
+      render_request_error :credentials_required, 401
     end
 
     def get_request?
@@ -399,5 +420,19 @@ class ApiApplicationController < MetalApiConfiguration
 
     def current_action?(action)
       action_name.to_s == action
+    end
+
+    def multipart_or_get_request?
+      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request?)
+      @multipart
+    end
+
+    def valid_content_type?
+      return true if request.content_mime_type.nil?
+      request.content_mime_type.ref == :json
+    end
+
+    def set_time_zone
+      Time.zone = ApiConstants::UTC
     end
 end

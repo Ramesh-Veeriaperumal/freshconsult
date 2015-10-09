@@ -70,8 +70,8 @@ module DiscussionMonitorConcern
 
     def get_monitorship(params)
       user_id = params[cname][:user_id] || api_current_user.id
-      monitorship = Monitorship.where(user_id: user_id,
-                                      monitorable_id: @item.id, monitorable_type: @item.class.to_s)
+      Monitorship.where(user_id: user_id,
+                        monitorable_id: @item.id, monitorable_type: @item.class.to_s)
     end
 
     def fetch_active_monitorship_for_user
@@ -93,8 +93,8 @@ module DiscussionMonitorConcern
     end
 
     def validate(params_hash)
-      monitor = ApiDiscussions::MonitorValidation.new(params_hash)
-      render_errors monitor.errors unless monitor.valid?
+      monitor = ApiDiscussions::MonitorValidation.new(params_hash, nil, multipart_or_get_request?)
+      render_errors monitor.errors, monitor.error_options unless monitor.valid?
     end
 
     def privileged_to_send_user?

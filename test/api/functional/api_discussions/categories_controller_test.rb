@@ -64,7 +64,7 @@ module ApiDiscussions
       define_method("test_#{action}_load_object_present") do
         ForumCategory.any_instance.stubs(:destroy).returns(true)
         send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
-        assert_equal fc, assigns(:item)
+        assert_equal fc.reload, assigns(:item)
       end
 
       define_method("test_#{action}_load_object_not_present") do

@@ -5,7 +5,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate(record)
     attributes.each do |attribute|
       values = record.read_attribute_for_validation(attribute)
-      next if (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
+      next if record.errors[attribute].present? || (values.nil? && options[:allow_nil]) || (values.blank? && options[:allow_blank])
       reset_attr_accessors
       assign_options(attribute)
 
@@ -34,7 +34,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     if respond_to?(method, true)
       send(method, record, attribute.to_sym)
     else
-      warn :"Validation Method #{method} is not present for the #{custom_field.field_type} - #{custom_field.inspect}"
+      warn :"Validation Method #{method} is not present for the #{current_field.field_type} - #{current_field.inspect}"
     end
   end
 
@@ -51,19 +51,19 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
+    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({attributes: field_name, rules: 'Boolean', allow_nil: !@is_required}, 'required_boolean')
+    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, 'required_boolean')
     DataTypeValidator.new(boolean_options).validate(record)
   end
 
   # Numericality validator for decimal field
   def validate_custom_decimal(record, field_name)
-    numericality_options = construct_options({ attributes: field_name, allow_nil: !@is_required }, 'required_number')
+    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_nil: !@is_required }, 'required_number')
     ActiveModel::Validations::NumericalityValidator.new(numericality_options).validate(record)
   end
 
@@ -101,8 +101,13 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Format validator for url field
   def validate_custom_url(record, field_name)
-    format_options = construct_options({ attributes: field_name, with: URI.regexp,  allow_nil: !@is_required, message: 'invalid_format' }, 'required_format')
+    format_options = construct_options({ attributes: field_name, with: /(^$)|(^(ftp|http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(([0-9]{1,5})?\/.*)?$)/ix,  allow_nil: !@is_required, message: 'invalid_format' }, 'required_format')
     ActiveModel::Validations::FormatValidator.new(format_options).validate(record)
+  end
+
+  def validate_custom_phone_number(record, field_name)
+    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Date validator for date field
@@ -189,7 +194,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       options_hash = options.merge(custom_options)
 
       # custom message to be merged to give missing_field as code in error response if no field is defined & is required.
-      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined 
+      options_hash.merge!(message: required_message) if @is_required && !@current_field_defined
       options_hash
     end
 

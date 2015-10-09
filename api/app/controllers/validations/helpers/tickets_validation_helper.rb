@@ -1,12 +1,11 @@
 class Helpers::TicketsValidationHelper
   class << self
-
     def ticket_type_values
       Account.current ? Account.current.ticket_types_from_cache.map(&:value) : []
     end
 
     def ticket_custom_field_keys(ticket_fields)
-      ticket_fields.select{|x| !x.default}.collect(&:name)
+      ticket_fields.select { |x| !x.default }.collect(&:name)
     end
 
     def choices_validatable_custom_fields(delegator)
@@ -18,8 +17,9 @@ class Helpers::TicketsValidationHelper
     end
 
     def dropdown_choices_by_field_name
-      Account.current.custom_dropdown_fields_from_cache.collect { |x| 
-        [x.name.to_sym, x.choices.flatten.uniq] }.to_h
+      Account.current.custom_dropdown_fields_from_cache.collect do |x|
+        [x.name.to_sym, x.choices.flatten.uniq]
+      end.to_h
     end
 
     def check_box_type_custom_field_names(ticket_fields)

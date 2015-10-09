@@ -15,7 +15,6 @@ class ApiGroupsController < ApiApplicationController
 
   def update
     @item.assign_attributes(params[cname])
-    @item.agent_groups = @item.agent_groups
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
       render_errors(group_delegator.errors, group_delegator.error_options)
@@ -70,15 +69,18 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def build_agents
-      @agents.each { |agent| @item.agent_groups.build(user_id: agent) } unless @agents.blank?
+      @agents.each { |agent| @item.agent_groups.build(user_id: agent, account: Account.current, group: @item) } unless @agents.blank?
     end
 
     def drop_existing_agents
+      agent_groups = @item.agent_groups
       if @agents.empty?
-        @item.agent_groups.destroy_all
+        agent_groups.destroy_all
       else
-        @item.agent_groups.where('user_id not in (?)', @agents).destroy_all
+        revised_agent_groups = agent_groups.select { |ag| @agents.exclude?(ag.user_id) }.map(&:destroy)
+        agent_groups -= revised_agent_groups
+        @agents -= agent_groups.map(&:user_id)
+        @item.agent_groups = agent_groups if @agents.empty? || agent_groups.empty?
       end
-      @agents -= @item.agent_groups.map(&:user_id)
     end
 end

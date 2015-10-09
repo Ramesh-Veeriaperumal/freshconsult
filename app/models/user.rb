@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = '#{self[:email]}' and id != '#{self.id}'"])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
   end
 
   def only_primary_email
@@ -224,7 +224,7 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, active: false }
         },
         blocked: {
-          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.now+5.days, Time.now+5.days ]
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
         all: {
           conditions: { deleted: false }
@@ -366,19 +366,6 @@ class User < ActiveRecord::Base
       args = [ portal,false, params[:email_config]]
       job_args = self.language ? [nil] : [nil, 5.minutes.from_now]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), *job_args) 
-    end
-    true
-  end
-
-  # Used by API V2
-  def create_contact!
-    self.avatar = self.avatar
-    return false unless save_without_session_maintenance
-    if (!self.deleted and !self.email.blank?)
-      portal = nil
-      force_notification = false
-      args = [ portal, force_notification ]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end

@@ -13,7 +13,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def ticket
-    t = Helpdesk::Ticket.where(deleted: false, spam: false).first
+    t = Helpdesk::Ticket.joins(:schema_less_ticket).where(deleted: false, spam: false, helpdesk_schema_less_tickets: { boolean_tc02: false }).order('created_at asc').first
     return t if t
     t = create_ticket
     t.update_column(:spam, false)
@@ -34,6 +34,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def utc_time(time = Time.zone.now)
     time.utc.as_json
+  end
+
+  def sample_time_entry
+    time_entry = Helpdesk::TimeSheet.first || create_time_entry
+    time_entry
   end
 
   def time_entry(id)
@@ -71,14 +76,52 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts_id = create_time_entry(agent_id: other_agent.id).id
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_trashed
+    ts_id = create_time_entry(agent_id: other_agent.id).id
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    delete :destroy, controller_params(id: ts_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_spam
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    Helpdesk::Ticket.find(time_sheet.workable_id).update_attribute(:spam, true)
+    delete :destroy, controller_params(id: ts_id)
+    assert_response 404
+  end
+
+  def test_destroy_with_ticket_deleted
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    Helpdesk::Ticket.find(time_sheet.workable_id).update_attribute(:deleted, true)
+    delete :destroy, controller_params(id: ts_id)
+    assert_response 404
+  end
+
+  def test_destroy_without_ticket_privilege
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_destroy_with_ownership
     ts_id = create_time_entry.id
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     delete :destroy, controller_params(id: ts_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 204
     assert Helpdesk::TimeSheet.find_by_id(ts_id).nil?
     assert_equal ' ', @response.body
@@ -87,6 +130,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_without_feature
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :index, controller_params(billable: 0)
+    @account.class.any_instance.unstub(:features_included?)
     match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
     assert_response 403
   end
@@ -94,14 +138,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
+    get :index, controller_params(billable: 'false', company_id: "#{user.customer_id}", agent_id: agent.id, executed_after: 20.days.ago.iso8601, executed_before: 18.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id, executed_at: 19.days.ago.to_s)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id, executed_after: 20.days.ago.to_s, executed_before: 18.days.ago.to_s)
+    create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id, executed_at: 19.days.ago.iso8601)
+    get :index, controller_params(billable: 'false', company_id: "#{user.customer_id}", agent_id: agent.id, executed_after: 20.days.ago.iso8601, executed_before: 18.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -110,7 +154,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_eager_loaded_association
     Helpdesk::TimeSheet.update_all(billable: true)
     create_time_entry(billable: false)
-    get :index, controller_params(billable: false)
+    get :index, controller_params(billable: 'false')
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -120,6 +164,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_invalid_privileges
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :index, controller_params(billable: 0)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -137,10 +182,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry(billable: false)
     end
-    get :index, controller_params(billable: false, per_page: 1)
+    get :index, controller_params(billable: 'false', per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
-    get :index, controller_params(billable: false, per_page: 1)
+    get :index, controller_params(billable: 'false', per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
   end
@@ -152,7 +197,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     4.times do
       create_time_entry(billable: false)
     end
-    get :index, controller_params(billable: false, per_page: 4)
+    get :index, controller_params(billable: 'false', per_page: 4)
     assert_response 200
     assert JSON.parse(response.body).count == 3
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
@@ -163,14 +208,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date')
-    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date')
+    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date format')
+    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date format')
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_model_params
-    get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: true, executed_after: 23.days.ago.to_s, executed_before: 2.days.ago.to_s)
+    get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: 'true', executed_after: 23.days.ago.iso8601, executed_before: 2.days.ago.iso8601)
     pattern = [bad_request_error_pattern('agent_id', "can't be blank")]
     pattern << bad_request_error_pattern('company_id', "can't be blank")
     assert_response 400
@@ -179,39 +224,39 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_billable
     Helpdesk::TimeSheet.update_all(billable: true)
-    get :index, controller_params(billable: false)
+    get :index, controller_params(billable: 'false')
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     create_time_entry(billable: false)
-    get :index, controller_params(billable: false)
+    get :index, controller_params(billable: 'false')
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_after
-    get :index, controller_params(executed_after: 6.hours.since.to_s)
+    get :index, controller_params(executed_after: 6.hours.since.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 9.hours.since.to_s)
-    get :index, controller_params(executed_after: 6.hours.since.to_s)
+    create_time_entry(executed_at: 9.hours.since.iso8601)
+    get :index, controller_params(executed_after: 6.hours.since.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
   end
 
   def test_index_with_executed_before
-    get :index, controller_params(executed_before: 25.days.ago.to_s)
+    get :index, controller_params(executed_before: 25.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 26.days.ago.to_s)
-    get :index, controller_params(executed_before: 25.days.ago.to_s)
+    create_time_entry(executed_at: 26.days.ago.iso8601)
+    get :index, controller_params(executed_before: 25.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -247,13 +292,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_with_executed_after_and_executed_before
-    get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
+    get :index, controller_params(executed_before: 9.days.ago.iso8601, executed_after: 11.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 10.days.ago.to_s)
-    get :index, controller_params(executed_before: 9.days.ago.to_s, executed_after: 11.days.ago.to_s)
+    create_time_entry(executed_at: 10.days.ago.iso8601)
+    get :index, controller_params(executed_before: 9.days.ago.iso8601, executed_after: 11.days.ago.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -261,13 +306,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_executed_after_and_agent_id
     user = add_test_agent(@account)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, agent_id: user.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    create_time_entry(executed_at: 8.days.ago.to_s, agent_id: user.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, agent_id: user.id)
+    create_time_entry(executed_at: 8.days.ago.iso8601, agent_id: user.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, agent_id: user.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -275,14 +320,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_executed_after_and_company_id
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(executed_at: 8.days.ago.to_s, ticket_id: t.id)
-    get :index, controller_params(executed_after: 9.days.ago.to_s, company_id: user.customer_id)
+    create_time_entry(executed_at: 8.days.ago.iso8601, ticket_id: t.id)
+    get :index, controller_params(executed_after: 9.days.ago.iso8601, company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -306,14 +351,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_company_id_and_billable
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -321,14 +366,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_company_id_and_billable_and_executed_after
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id, executed_after: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
-    create_time_entry(billable: false, ticket_id: t.id, executed_at: 5.hours.since.to_s)
-    get :index, controller_params(billable: false, company_id: user.customer_id, executed_after: Time.zone.now.to_s)
+    create_time_entry(billable: false, ticket_id: t.id, executed_at: 5.hours.since.iso8601)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id, executed_after: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -337,14 +382,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_company_id_and_billable_and_agent_id
     agent = add_test_agent(@account)
     user = add_new_user(@account, customer_id: create_company.reload.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id, agent_id: agent.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 0, response.size
 
     t = create_ticket(requester_id: user.id)
     create_time_entry(billable: false, ticket_id: t.id, agent_id: agent.id)
-    get :index, controller_params(billable: false, company_id: user.customer_id, agent_id: agent.id)
+    get :index, controller_params(billable: 'false', company_id: user.customer_id, agent_id: agent.id)
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
@@ -456,12 +501,21 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_other_timer_running
-    other_ts = Helpdesk::TimeSheet.find_by_user_id_and_timer_running(@agent.id, true)
+    other_ts = create_time_entry(timer_running: true, user_id: @agent.id)
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
     ts = time_entry(parse_response(response.body)['id'])
     match_json time_entry_pattern(ts)
-    refute = other_ts.timer_running
+    refute other_ts.reload.timer_running
+  end
+
+  def test_create_with_timer_running_false_when_another_timer_running
+    other_ts = create_time_entry(timer_running: true, user_id: @agent.id)
+    post :create, construct_params({ id: ticket.display_id }, agent_id: @agent.id, timer_running: false)
+    assert_response 201
+    ts = time_entry(parse_response(response.body)['id'])
+    match_json time_entry_pattern(ts)
+    assert other_ts.reload.timer_running
   end
 
   def test_create_with_all_params
@@ -495,9 +549,39 @@ class TimeEntriesControllerTest < ActionController::TestCase
     match_json time_entry_pattern(Helpdesk::TimeSheet.where(user_id: agent.id).first)
   end
 
+  def test_create_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    post :create, construct_params({ id: ticket.display_id }, {})
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_create_with_ticket_spam
+    new_ticket = create_ticket
+    new_ticket.update_column(:spam, true)
+    post :create, construct_params({ id: new_ticket.display_id }, {})
+    assert_response 404
+  end
+
+  def test_create_with_ticket_deleted
+    new_ticket = create_ticket
+    new_ticket.update_column(:deleted, true)
+    post :create, construct_params({ id: new_ticket.display_id }, {})
+    assert_response 404
+  end
+
+  def test_create_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    post :create, construct_params({ id: ticket.display_id }, {})
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_update
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '03:00', start_time: start_time,
@@ -512,8 +596,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_numericality_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -523,8 +607,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_presence_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -539,13 +623,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date'),
-                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date')])
+    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date format')])
   end
 
   def test_update_inclusion_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '03:00', start_time: start_time,
                                                   timer_running: '89', executed_at: executed_at,
@@ -556,19 +640,19 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_format_invalid
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
-    put :update, construct_params({ id: ts.id },  time_spent: '08900', start_time: start_time,
+    put :update, construct_params({ id: ts.id },  time_spent: '89:78', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('time_spent', 'is not a valid time_spent')])
+    match_json([bad_request_error_pattern('time_spent', 'invalid_time_spent')])
   end
 
   def test_update_start_time_greater_than_current_time
-    start_time = (Time.zone.now + 20.hours).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now + 20.hours).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: true, executed_at: executed_at,
@@ -578,8 +662,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_timer_running_false_again
-    executed_at = (Time.zone.now - 20.minutes).to_s
-    start_time = (Time.zone.now - 20.hours).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
+    start_time = (Time.zone.now - 20.hours).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', start_time: start_time,
                                                   timer_running: false, executed_at: executed_at,
@@ -590,8 +674,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_timer_running_true_again
-    executed_at = (Time.zone.now - 20.minutes).to_s
-    start_time = (Time.zone.now - 20.hours).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
+    start_time = (Time.zone.now - 20.hours).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00',
                                                   timer_running: true, executed_at: executed_at, start_time: start_time,
@@ -603,7 +687,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_when_timer_running
     user = other_agent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
@@ -613,8 +697,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_when_timer_not_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', executed_at: executed_at,
@@ -629,8 +713,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_agent_id_and_timer_running_true_when_timer_is_not_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: true,
@@ -643,10 +727,42 @@ class TimeEntriesControllerTest < ActionController::TestCase
     end
   end
 
+  def test_update_agent_id_for_a_timer_when_another_timer_is_running_with_same_agent
+    user = other_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: user.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, agent_id: user.id, timer_running: true)
+    assert_response 200
+    match_json time_entry_pattern({ timer_running: true, agent_id: user.id }, ts.reload)
+    assert_equal other_ts.reload.user_id, ts.user_id
+    refute other_ts.timer_running
+  end
+
+  def test_update_timer_running_when_another_timer_is_running_with_same_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: @agent.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, timer_running: true)
+    assert_response 200
+    match_json time_entry_pattern({ timer_running: true, agent_id: @agent.id }, ts.reload)
+    assert_equal other_ts.reload.user_id, ts.user_id
+    refute other_ts.timer_running
+  end
+
+  def test_update_with_timer_running_false_when_another_timer_is_running_with_same_agent
+    user = other_agent
+    other_ts = create_time_entry(timer_running: true, agent_id: user.id)
+    ts = create_time_entry(timer_running: false, user_id: @agent.id)
+    put :update, construct_params({ id: ts.id }, agent_id: user.id)
+    assert_response 200
+    match_json time_entry_pattern({ agent_id: user.id }, ts.reload)
+    assert_equal other_ts.reload.user_id, ts.user_id
+    assert other_ts.timer_running
+  end
+
   def test_update_agent_id_and_timer_running_false_when_timer_is_running
     user = other_agent
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
@@ -654,9 +770,22 @@ class TimeEntriesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
   end
 
+  def test_update_timer_running_false_for_all_other_timers_while_creating_time_entry
+    t = ticket
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    create_time_entry(agent_id: @agent.id, timer_running: true)
+    post :create, construct_params({ id: t.display_id }, params_hash)
+    assert_response 201
+    ts = time_entry(parse_response(response.body)['id'])
+    assert ts.timer_running
+    assert_equal 1, Account.current.time_sheets.where('user_id= (?) AND timer_running= true', @agent.id).length
+  end
+
   def test_update_with_nullable_fields
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: nil, timer_running: false,
@@ -670,8 +799,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_already
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -680,8 +809,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_is_not_running
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -690,8 +819,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_is_set_to_true
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true, start_time: start_time,
@@ -704,8 +833,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_start_time_when_timer_running_is_set_to_false
-    start_time = (Time.zone.now - 10.minutes).to_s
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
@@ -714,7 +843,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_true_valid
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, timer_running: true,
@@ -727,7 +856,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_false_valid
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       time_spent = (Time.zone.now - ts.start_time).abs.round
@@ -745,7 +874,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_time_spent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: false)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: true,
@@ -758,7 +887,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_timer_running_false_and_time_spent
-    executed_at = (Time.zone.now - 20.minutes).to_s
+    executed_at = (Time.zone.now - 20.minutes).iso8601
     ts = create_time_entry(timer_running: true)
     freeze_time do
       put :update, construct_params({ id: ts.id }, time_spent: '09:42', timer_running: false,
@@ -775,9 +904,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
     controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
+    User.any_instance.unstub(:privilege?)
+    controller.class.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
-    User.any_instance.unstub(:privilege?)
     controller.class.any_instance.unstub(:privilege?)
   end
 
@@ -790,6 +920,38 @@ class TimeEntriesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:feature?)
   end
 
+  def test_update_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_with_ticket_spam
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:spam, true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    new_ticket.update_column(:spam, false)
+    assert_response 404
+  end
+
+  def test_update_with_ticket_deleted
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:deleted, true)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    new_ticket.update_column(:deleted, false)
+    assert_response 404
+  end
+
+  def test_update_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def toggle_with_invalid_id
     put :toggle_timer, construct_params({ id: 99 }, test: 'junk')
     assert_response :missing
@@ -798,7 +960,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_with_params
     put :toggle_timer, construct_params({ id: Helpdesk::TimeSheet.first }, test: 'junk')
     assert_response 400
-    match_json([bad_request_error_pattern('test', 'invalid_field')])
+    match_json(request_error_pattern('no_content_required'))
   end
 
   def test_toggle_off_timer
@@ -827,8 +989,41 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
     Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', "can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
+    Helpdesk::TimeSheet.any_instance.unstub(:update_attributes, :errors)
     assert_response 400
     match_json([bad_request_error_pattern('user', "can't be blank")])
+  end
+
+  def test_toggle_timer_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_toggle_timer_with_ticket_spam
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:spam, true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    new_ticket.update_column(:spam, false)
+    assert_response 404
+  end
+
+  def test_toggle_timer_with_ticket_deleted
+    new_ticket = sample_time_entry.workable
+    new_ticket.update_column(:deleted, true)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    new_ticket.update_column(:deleted, false)
+    assert_response 404
+  end
+
+  def test_toggle_timer_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
   end
 
   def test_ticket_time_entries
@@ -863,6 +1058,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     t = ticket
     User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(false).at_most_once
     get :ticket_time_entries, construct_params(id: t.display_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -900,6 +1096,24 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
   end
 
+  def test_ticket_time_entries_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    get :ticket_time_entries, construct_params(id: ticket.display_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_ticket_time_entries_without_ticket_privilege
+    time_sheet = create_time_entry(agent_id: other_agent.id)
+    ts_id = time_sheet.id
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    get :ticket_time_entries, construct_params(id: time_sheet.workable.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_ticket_time_entries_with_link_header
     t = ticket
     3.times do
@@ -921,7 +1135,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = Helpdesk::TimeSheet.count - 1
+    per_page = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
@@ -931,5 +1145,82 @@ class TimeEntriesControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_index_with_agent_has_assigned_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(3)
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil)
+    Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, responder_id: @agent.id }).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission_and_ticket_requested
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, requester_id: @agent.id }).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission_and_ticket_responded
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil)
+    Helpdesk::TimeSheet.first.workable.update_column(:responder_id, @agent.id)
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, responder_id: @agent.id }).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_index_with_agent_has_group_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(2)
+    group_id = (Group.first || create_group).id
+    User.any_instance.stubs(:agent_groups).returns([AgentGroup.new(group_id: group_id)])
+    user = add_new_user(@account)
+    Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil, requester_id: user.id)
+    Helpdesk::TimeSheet.first.workable.update_column(:group_id, group_id)
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0, group_id: group_id }).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+    User.any_instance.unstub(:agent_groups)
+  end
+
+  def test_index_with_agent_has_all_ticket_permission
+    Agent.any_instance.stubs(:ticket_permission).returns(1)
+    expected = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count
+    get :index, controller_params({})
+    assert_response 200
+    assert_equal expected, JSON.parse(response.body).count
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
+  end
+
+  def test_update_running_timer_with_start_time_nil
+    te = sample_time_entry
+    assert_not_nil te.time_spent
+    put :update, construct_params({ id: te.id }, start_time: nil)
+    assert_not_nil te.reload.time_spent
+  end
+
+  def test_update_time_spent_present_timer_with_timer_running_true
+    te = sample_time_entry
+    put :update, construct_params({ id: te.id }, time_spent: '05:00')
+    assert_equal 18_000, te.reload.time_spent
+    put :update, construct_params({ id: te.id }, timer_running: true)
+    assert_equal 18_000, te.reload.time_spent
   end
 end

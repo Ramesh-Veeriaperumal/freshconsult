@@ -1,8 +1,6 @@
 module ContactConstants
-  ARRAY_FIELDS = [{ 'tags' => [String] }]
-  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags) | ARRAY_FIELDS
-
-  EMPTY_FIELDS = []
+  ARRAY_FIELDS = [{ 'tags' => [] }]
+  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags custom_fields) | ARRAY_FIELDS
 
   STATES = %w( verified unverified all deleted blocked )
 
@@ -10,7 +8,6 @@ module ContactConstants
 
   DELETED_SCOPE = {
     'update' => false,
-    'restore' => true,
     'destroy' => false,
     'make_agent' => false
   }
@@ -28,4 +25,12 @@ module ContactConstants
   LANGUAGES = I18n.available_locales.map(&:to_s)
 
   FIELDS_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields)
+
+  # Wrap parameters args
+  WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]]
+
+  ALLOWED_CONTENT_TYPE_FOR_ACTION = {
+    create: [:json, :multipart_form],
+    update: [:json, :multipart_form]
+  }
 end

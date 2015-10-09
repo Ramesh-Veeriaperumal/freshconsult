@@ -19,7 +19,6 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_show: 3,
         api_index: 3,
         api_destroy: 5,
-        api_restore: 5,
         api_make_agent: 4,
 
         create: 34,
@@ -27,7 +26,6 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         show: 16,
         index: 17,
         destroy: 20,
-        restore: 19,
         make_agent: 47
       }
 
@@ -96,15 +94,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      # restore
-      v2[:restore], v2[:api_restore], v2[:restore_queries] = count_api_queries do
-        put("/api/v2/contacts/#{id1}/restore", {}.to_json, @write_headers)
-        assert_response 204
-      end
-      v1[:restore] = count_queries do
-        put("/contacts/#{id2}/restore.json", {}.to_json, @write_headers)
-        assert_response 200
-      end
+      id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
+      id2 = User.where(helpdesk_agent: false, deleted: false).last.id
 
       # make_agent
       v2[:make_agent], v2[:api_make_agent], v2[:make_agent_queries] = count_api_queries do

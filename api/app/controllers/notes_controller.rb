@@ -1,13 +1,9 @@
 class NotesController < ApiApplicationController
-  wrap_parameters :note, exclude: [], format: [:json, :multipart_form]
-
-  include Concerns::NoteConcern
+  include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
 
   before_filter :can_send_user?, only: [:create, :reply]
-  before_filter :load_ticket, only: [:reply]
-  before_filter :ticket_exists?, only: [:ticket_notes]
 
   def create
     is_success = create_note
@@ -26,6 +22,7 @@ class NotesController < ApiApplicationController
   end
 
   def update
+    @item.notable = @ticket # assign notable instead of id as the object is already loaded.
     build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
     @item.assign_element_html(params[cname][:note_body_attributes], 'body', 'full_text') if params[cname][:note_body_attributes]
     unless @item.update_note_attributes(params[cname])
@@ -39,15 +36,21 @@ class NotesController < ApiApplicationController
   end
 
   def ticket_notes
-    notes = scoper.visible.exclude_source('meta').where(notable_id: @id).includes(:schema_less_note, :note_old_body, :attachments)
+    notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).includes(:schema_less_note, :note_old_body, :attachments)
     @notes = paginate_items(notes)
+  end
+
+  def self.wrap_params
+    NoteConstants::WRAP_PARAMS
   end
 
   private
 
     def after_load_object
+      load_notable_from_item # find ticket in case of APIs which has @item.id in url
+      return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
+      return false if update? && !can_update?
       check_agent_note if update? || destroy?
-      can_update? if update?
     end
 
     def create_solution_article
@@ -89,19 +92,19 @@ class NotesController < ApiApplicationController
       unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
         @error = BaseError.new(:method_not_allowed, methods: 'DELETE')
         render '/base_error', status: 405
+        return false
       end
+      true
     end
 
-    def load_ticket # Needed here in controller to find the item by display_id
+    def load_parent_ticket # Needed here in controller to find the item by display_id
       @ticket = current_account.tickets.find_by_param(params[:id], current_account)
       head 404 unless @ticket
       @ticket
     end
 
-    def ticket_exists?
-      @display_id = params[:id].to_i
-      @id = current_account.tickets.where(display_id: @display_id).limit(1).select(:id).first
-      head 404 unless @id
+    def load_notable_from_item
+      @ticket = @item.notable
     end
 
     def load_object
@@ -113,10 +116,9 @@ class NotesController < ApiApplicationController
     end
 
     def validate_params
-      return false if create? && !load_ticket
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item)
+      @note_validation = NoteValidation.new(params[cname], @item, multipart_or_get_request?)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid
@@ -143,4 +145,40 @@ class NotesController < ApiApplicationController
     def check_agent_note
       render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
     end
+
+    def check_privilege
+      return false unless super # break if there is no enough privilege.
+
+      # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
+      return false if (create? || reply? || ticket_notes?) && !load_parent_ticket
+      verify_ticket_permission(api_current_user, @ticket) if @ticket
+    end
+
+    def reply?
+      @reply ||= current_action?('reply')
+    end
+
+    def ticket_notes?
+      @ticket_notes ||= current_action?('ticket_notes')
+    end
+
+    def build_note_body_attributes
+      if params[cname][:body] || params[cname][:body_html]
+        note_body_hash = { note_body_attributes: { body: params[cname][:body],
+                                                   body_html: params[cname][:body_html] } }
+        params[cname].merge!(note_body_hash).tap do |t|
+          t.delete(:body) if t[:body]
+          t.delete(:body_html) if t[:body_html]
+        end
+      end
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = NoteConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

@@ -1,16 +1,14 @@
 class TicketsController < ApiApplicationController
-  wrap_parameters :ticket, exclude: [], format: [:json, :multipart_form]
-
   include Helpdesk::TicketActions
   include Helpdesk::TagMethods
   include CloudFilesHelper
+  include TicketConcern
 
   before_filter :ticket_permission?, only: [:destroy]
-  before_filter :validate_restore_params, only: [:restore]
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -30,7 +28,7 @@ class TicketsController < ApiApplicationController
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, {:ticket_fields => @ticket_fields})
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
@@ -55,6 +53,10 @@ class TicketsController < ApiApplicationController
     super
   end
 
+  def self.wrap_params
+    ApiTicketConstants::WRAP_PARAMS
+  end
+
   private
 
     def set_custom_errors(item = @item)
@@ -69,7 +71,13 @@ class TicketsController < ApiApplicationController
 
     def after_load_object
       return false unless verify_object_state
-      verify_ticket_permission if show? || update?
+      if show? || update? || restore?
+        return false unless verify_ticket_permission
+      end
+
+      if ApiTicketConstants::NO_PARAM_ROUTES.include?(action_name) && params[cname].present?
+        render_request_error :no_content_required, 400
+      end
     end
 
     def ticket_notes
@@ -103,16 +111,12 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @ticket_filter = TicketFilterValidation.new(params)
+      @ticket_filter = TicketFilterValidation.new(params, nil, multipart_or_get_request?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
       current_account.tickets
-    end
-
-    def validate_restore_params
-      params[cname].permit(*ApiTicketConstants::RESTORE_FIELDS)
     end
 
     def validate_url_params
@@ -124,7 +128,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:cc_emails, :tags]
+      prepare_array_fields [:cc_emails, :tags, :attachments]
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]
@@ -156,8 +160,9 @@ class TicketsController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      load_ticket_status
-      ticket = TicketValidation.new(params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields), @item)
+      load_ticket_status # loading ticket status to avoid multiple queries in model.
+      params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
+      ticket = TicketValidation.new(params_hash, @item, multipart_or_get_request?)
       render_errors ticket.errors, ticket.error_options unless ticket.valid?
     end
 
@@ -170,7 +175,7 @@ class TicketsController < ApiApplicationController
       end
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       if create? # assign attachments so that it will not be queried again in model callbacks
-        @item.attachments = @item.attachments 
+        @item.attachments = @item.attachments
         @item.inline_attachments = @item.inline_attachments
       end
     end
@@ -193,11 +198,6 @@ class TicketsController < ApiApplicationController
         next unless check_box_names.include?(key.to_s)
         params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
       end
-    end
-
-    def verify_ticket_permission
-      # Should not allow to update ticket if item is deleted forever or api_current_user doesn't have permission
-      render_request_error :access_denied, 403 unless api_current_user.has_ticket_permission?(@item) && !@item.schema_less_ticket.try(:trashed)
     end
 
     def ticket_permission?
@@ -239,6 +239,19 @@ class TicketsController < ApiApplicationController
 
     def assign_ticket_status
       @item.status = OPEN unless @item.status_changed?
-      @item.ticket_status = @statuses.find {|x| x.status_id == @item.status }
+      @item.ticket_status = @statuses.find { |x| x.status_id == @item.status }
     end
+
+    def restore?
+      @restore ||= current_action?('restore')
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    wrap_parameters(*wrap_params)
 end

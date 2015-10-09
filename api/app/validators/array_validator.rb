@@ -3,6 +3,7 @@ class ArrayValidator < ActiveModel::EachValidator
     return unless values.is_a? Array
     values.each do |value|
       options.each do |key, args|
+        next if record.errors[attribute].present?
         validator_options = { attributes: attribute }
         validator_options.merge!(args) if args.is_a?(Hash)
 

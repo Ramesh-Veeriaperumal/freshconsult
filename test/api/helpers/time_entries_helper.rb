@@ -34,16 +34,20 @@ module Helpers::TimeEntriesHelper
   end
 
   def v2_time_entry_payload
+    v2_time_entry_params.to_json
+  end
+
+  def v2_time_entry_params
     {
-      start_time: 4.days.ago.to_s, executed_at: 89.days.ago.to_s, time_spent: '89:09',
+      start_time: 4.days.ago.iso8601, executed_at: 89.days.ago.iso8601, time_spent: '89:09',
       agent_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
-    }.to_json
+    }
   end
 
   def v1_time_entry_payload
     {
       time_entry: {
-        start_time: 4.days.ago.to_s, executed_at: 23.days.ago.to_s, hhmm: '89:09',
+        start_time: 4.days.ago.iso8601, executed_at: 23.days.ago.iso8601, hhmm: '89:09',
         user_id: @agent.id, billable: true, timer_running: true, note: Faker::Lorem.paragraph
       }
     }.to_json
@@ -51,13 +55,13 @@ module Helpers::TimeEntriesHelper
 
   def v2_time_entry_update_payload
     {
-      executed_at: 1.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph
+      executed_at: 1.days.ago.iso8601, billable: false, note: Faker::Lorem.paragraph
     }.to_json
   end
 
   def v1_time_entry_update_payload
     {
-      time_entry: { executed_at: 2.days.ago.to_s, billable: false, note: Faker::Lorem.paragraph }
+      time_entry: { executed_at: 2.days.ago.iso8601, billable: false, note: Faker::Lorem.paragraph }
     }.to_json
   end
 end

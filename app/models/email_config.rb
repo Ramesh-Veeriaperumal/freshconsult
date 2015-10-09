@@ -1,7 +1,7 @@
 class EmailConfig < ActiveRecord::Base
   self.primary_key = :id
 
-  belongs_to :account
+  belongs_to_account
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
 

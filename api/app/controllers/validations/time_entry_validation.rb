@@ -5,7 +5,7 @@ class TimeEntryValidation < ApiValidation
   # Common validations
   validates :billable, :timer_running, data_type: { rules: 'Boolean', allow_blank: true }
   validates :executed_at, date_time: { allow_nil: true }
-  validates :time_spent, format: { with: /^(\d+):(\d+)$/, message: 'invalid_time_spent', allow_nil: true }
+  validates :time_spent, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent', allow_nil: true }
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
@@ -14,7 +14,7 @@ class TimeEntryValidation < ApiValidation
   # start_time param has no meaning when timer is off.
   validates :start_time, inclusion: { in: [nil], message: 'timer_running_false' },
                          unless: -> { errors[:start_time].any? || errors[:timer_running].any? || timer_running }
-  validates :start_time, date_time: { allow_nil: true }, if: -> { errors[:start_time].blank? }
+  validates :start_time, date_time: { allow_nil: true }
 
   # start_time should be lesser than current_time to avoid negative time_spent values.
   validate :start_time_value, if: -> { start_time && errors[:start_time].blank? }
@@ -27,7 +27,7 @@ class TimeEntryValidation < ApiValidation
   # agent_id can't be changed in update if timer is running for the user.
   validates :agent_id, inclusion: { in: [nil], message: 'cant_update_user' },
                        if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
-  validates :agent_id, custom_numericality: { allow_nil: true }, if: -> { errors[:agent_id].blank? }
+  validates :agent_id, custom_numericality: { allow_nil: true }
 
   # if agent_id is not a number or not set in update, to avoid query, below if condition is used.
   validate :valid_user?,  if: -> { errors[:agent_id].blank? && @agent_id_set }
@@ -54,7 +54,7 @@ class TimeEntryValidation < ApiValidation
     end
 
     def start_time_value
-      errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.now.utc
+      errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.zone.now.utc
     end
 
     def attributes_to_be_stripped

@@ -33,7 +33,6 @@ helpdesk:
     - liquid
     - load_config
     - memcached
-    - metal_api_configuration
     - mime_types
     - new_rails_defaults
     - omniauth

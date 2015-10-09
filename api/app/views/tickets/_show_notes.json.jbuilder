@@ -1,5 +1,5 @@
 json.set! :notes, @notes do |note|
-  json.cache! CacheLib.key(note, params) do
+  json.cache! CacheLib.compound_key(note, note.note_body, params) do
     json.extract! note, :body, :body_html, :id, :user_id, :support_email
 
     json.set! :ticket_id, @item.display_id

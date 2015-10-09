@@ -1,19 +1,16 @@
 class TimeEntriesController < ApiApplicationController
   include Concerns::TimeSheetConcern
-
-  before_filter :ticket_exists?, only: [:ticket_time_entries]
-  before_filter :validate_toggle_params, only: [:toggle_timer]
+  include TicketConcern
 
   def create
     # If any validation is introduced in the TimeSheet model,
     # update_running_timer and @item.save should be wrapped in a transaction.
-    update_running_timer params[cname][:agent_id] if @timer_running
-    @item.workable = @ticket
+    update_running_timer params[cname][:user_id] if @timer_running
     super
   end
 
   def update
-    user_stop_timer =  params[cname].key?(:agent_id) ? params[cname][:agent_id] : @item.user_id
+    user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
     # Should stop timer if the timer is on or if different agent_id is set as part of update
     update_running_timer user_stop_timer if should_stop_running_timer?
     super
@@ -27,11 +24,23 @@ class TimeEntriesController < ApiApplicationController
   end
 
   def ticket_time_entries
-    @items = paginate_items(scoper.where(workable_id: @id))
+    @items = paginate_items(scoper.where(workable_id: @ticket.id))
     render '/time_entries/index'
   end
 
   private
+
+    def after_load_object
+      return false unless load_workable_from_item # find ticket in case of APIs which has @item.id in url
+
+      # Verify ticket permission if ticket exists.
+      return false if @ticket && !verify_ticket_permission(api_current_user, @ticket)
+
+      # Ensure that no parameters are passed along with the toggle_timer request
+      if action_name == 'toggle_timer' && params[cname].present?
+        render_request_error :no_content_required, 400
+      end
+    end
 
     def load_objects
       super time_entry_filter.includes(:workable)
@@ -52,18 +61,21 @@ class TimeEntriesController < ApiApplicationController
       FeatureConstants::TIME_ENTRIES
     end
 
-    def ticket_exists?
-      # Load only non deleted ticket.
-      @display_id = params[:id].to_i
-      @id = current_account.tickets.select(:id).where(display_id: @display_id, deleted: false, spam: false).first
-      head 404 unless @id
-    end
-
-    def load_ticket
+    def load_parent_ticket
       # Load only non deleted ticket.
       @ticket = current_account.tickets.where(display_id: params[:id].to_i, deleted: false, spam: false).first
       head 404 unless @ticket
       @ticket
+    end
+
+    def load_workable_from_item
+      @ticket = @item.workable
+      spam_or_deleted_ticket = @ticket.deleted || @ticket.spam
+      if spam_or_deleted_ticket
+        Rails.logger.error "Can't load spam/deleted ticket. Params: #{params.inspect} Id: #{params[:id]} Ticket display_id: #{@ticket.try(:display_id)} spam_or_deleted_ticket: #{spam_or_deleted_ticket}}"
+        head 404
+      end
+      !spam_or_deleted_ticket
     end
 
     def scoper
@@ -77,12 +89,11 @@ class TimeEntriesController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      timeentry_filter = TimeEntryFilterValidation.new(params, nil)
+      timeentry_filter = TimeEntryFilterValidation.new(params, nil, multipart_or_get_request?)
       render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
     def validate_params
-      return false if create? && !load_ticket
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
       fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS")
       params[cname].permit(*fields)
@@ -90,13 +101,9 @@ class TimeEntriesController < ApiApplicationController
       render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)
     end
 
-    def validate_toggle_params
-      params[cname].permit({})
-    end
-
     def sanitize_params
       params[cname][:timer_running] = @timer_running
-      params[cname][:time_spent] = time_spent
+      set_time_spent(params)
       params[cname][:agent_id] ||= api_current_user.id if create?
       current_time = Time.zone.now
       params[cname][:executed_at] ||= current_time if create?
@@ -105,10 +112,13 @@ class TimeEntriesController < ApiApplicationController
                                            params[cname])
     end
 
-    def time_spent
-      time_spent = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      time_spent ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
-      time_spent
+    def assign_protected
+      @item.workable = @ticket
+    end
+
+    def set_time_spent(params)
+      params[cname][:time_spent] = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
+      params[cname][:time_spent] ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
     end
 
     def handle_existing_timer_running
@@ -128,20 +138,37 @@ class TimeEntriesController < ApiApplicationController
 
     def should_stop_running_timer?
       # Should stop timer if the timer is on as part of this update call
-      return true if params[cname][:timer_running].to_s.to_bool && !@item.timer_running
-
-      # Should stop timer for the new user if different agent_id is set as part of this update call
-      return true if params[cname].key?(:agent_id) && params[cname][:agent_id] != @item.user_id && !@timer_running
-      false
+      return true if params[cname][:timer_running] && !@item.timer_running
     end
 
     def total_running_time
-      @item.time_spent.to_i + (Time.now - @item.start_time).abs.round
+      time = @item.time_spent.to_i
+      time += (Time.zone.now - @item.start_time).abs.round if @item.start_time
+      time
     end
 
     def convert_duration(time_spent)
       # Convert hh:mm string to seconds. Say 00:02 string to 120 seconds.
-      time = time_spent.to_s.split(':').map.with_index { |x, i| x.to_i.send(ApiConstants::TIME_UNITS[i]) }.reduce(:+).to_i
+      # Preferring naive conversion because of performance.
+      time_split = time_spent.to_s.split(':')
+      time = (time_split.first.to_i.hours + time_split.last.to_i.minutes).to_i
       time
+    end
+
+    def check_privilege
+      return false unless super # break if there is no enough privilege.
+
+      # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
+      return false if (create? || ticket_time_entries?) && !load_parent_ticket
+      verify_ticket_permission(api_current_user, @ticket) if @ticket
+    end
+
+    def ticket_time_entries?
+      @ticket_notes ||= current_action?('ticket_time_entries')
+    end
+
+    def update_running_timer(user_id)
+      @time_cleared = current_account.time_sheets.where('user_id= (?) AND timer_running= true', user_id)
+      @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: calculate_time_spent(tc)) }
     end
 end

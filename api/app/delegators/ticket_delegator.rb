@@ -5,7 +5,7 @@ class TicketDelegator < SimpleDelegator
   attr_accessor :error_options, :ticket_fields
   validate :group_presence, if: -> { group_id  }
   validate :responder_presence, if: -> { responder_id }
-  validates :email_config, presence: true, if: -> { email_config_id }
+  validate :active_email_config, if: -> { email_config_id }
   validate :product_presence, if: -> { product_conditions }
   validate :responder_belongs_to_group?, if: -> { group_id && responder_id && errors[:responder].blank? && errors[:group].blank? }
   validate :user_blocked?, if: -> { errors[:requester].blank? && requester_id }
@@ -24,6 +24,10 @@ class TicketDelegator < SimpleDelegator
     super record
   end
 
+  def active_email_config
+    errors.add(:email_config_id, 'invalid_email_config') unless email_config.try(:active)
+  end
+
   def product_conditions
     if validation_context == :create # validation_context is a ActiveModel::Validations method
       product_id && email_config_id.blank?
@@ -34,16 +38,16 @@ class TicketDelegator < SimpleDelegator
 
   def product_presence
     ticket_product_id = schema_less_ticket.product_id
-    product = Account.current.products_from_cache.detect {|x| ticket_product_id == x.id}
+    product = Account.current.products_from_cache.detect { |x| ticket_product_id == x.id }
     if product.nil?
       errors.add(:product, "can't be blank")
     else
-      self.schema_less_ticket.product = product
+      schema_less_ticket.product = product
     end
   end
 
   def group_presence # this is a custom validate method so that group cache can be used.
-    group = Account.current.groups_from_cache.detect {|x| group_id == x.id}
+    group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
       errors.add(:group, "can't be blank")
     else
@@ -51,8 +55,8 @@ class TicketDelegator < SimpleDelegator
     end
   end
 
-  def responder_presence # 
-    responder = Account.current.agents_from_cache.detect{|x| x.user_id == responder_id}.try(:user)
+  def responder_presence #
+    responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
     if responder.nil?
       errors.add(:responder, "can't be blank")
     else

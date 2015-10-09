@@ -1,22 +1,20 @@
 class SlaPolicyDelegator < SimpleDelegator
   include ActiveModel::Validations
 
-  attr_accessor :error_options, :company_ids
+  attr_accessor :error_options
 
-  validate :valid_company?, if: -> { conditions[:company_id] }
+  validate :valid_companies?
 
-  validate :valid_conditions?, if: -> { conditions[:company_id].nil? }
-
-  def valid_company?
+  def valid_companies?
     company_ids = conditions[:company_id]
-    invalid_company_ids = company_ids - Account.current.companies_from_cache.map(&:id)
-    if invalid_company_ids.present?
-      errors.add(:company_ids, 'list is invalid')
-      @error_options = { company_ids: { list: "#{invalid_company_ids.join(', ')}" } }
+    if company_ids
+      invalid_company_ids = company_ids - Account.current.companies_from_cache.map(&:id)
+      if invalid_company_ids.present?
+        errors.add(:company_ids, 'list is invalid')
+        @error_options = { company_ids: { list: "#{invalid_company_ids.join(', ')}" } }
+      end
+    else
+      errors.add(:company_ids, "can't be blank") if conditions.empty?
     end
-  end
-
-  def valid_conditions?
-    errors.add(:applicable_to, "can't be blank") if conditions.empty?
   end
 end

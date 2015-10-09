@@ -5,7 +5,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class RequiredTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute3, :attribute4, :error_options, :closed_status
+    attr_accessor :attribute3, :attribute4, :error_options, :closed_status, :allow_string_param
     validates :attribute3, :attribute4, custom_field:  { attribute3: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.required_choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
@@ -32,7 +32,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class RequiredClosureTestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute5, :attribute6, :error_options, :closed_status
+    attr_accessor :attribute5, :attribute6, :error_options, :closed_status, :allow_string_param
     validates :attribute5, :attribute6, custom_field:  { attribute5: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.required_closure_choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
@@ -59,20 +59,41 @@ class CustomFieldValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :error_options, :closed_status
+    attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :allow_string_param
 
-    validates :attribute1, :attribute2, custom_field: { attribute1: {
+    validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.choices_validatable_custom_fields },
       drop_down_choices: proc { Helpers::CustomFieldValidatorHelper.dropdown_choices_by_field_name },
       nested_field_choices: proc { Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
-                                                        attribute2: {
-                                                          validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.data_type_validatable_custom_fields },
-                                                          required_based_on_status: proc { |x| x.required_for_closure? },
-                                                          required_attribute: :required
-                                                        }
+                                                                                                     attribute2: {
+                                                                                                       validatable_custom_fields: proc { Helpers::CustomFieldValidatorHelper.data_type_validatable_custom_fields },
+                                                                                                       required_based_on_status: proc { |x| x.required_for_closure? },
+                                                                                                       required_attribute: :required
+                                                                                                     }
+                            }
+
+    def initialize(params = {})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+    end
+
+    def required_for_closure?
+      closed_status == true
+    end
+  end
+
+  class TestInvalidTypeValidation
+    include ActiveModel::Validations
+
+    attr_accessor :attribute1, :error_options, :closed_status, :allow_string_param
+
+    validates :attribute1, custom_field: { attribute1: {
+      validatable_custom_fields: [Helpers::CustomFieldValidatorHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
+      required_based_on_status: proc { |x| x.required_for_closure? },
+      required_attribute: :required
+    }
                             }
 
     def initialize(params = {})
@@ -99,14 +120,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_invalid
-    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff' })
+    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff', 'url' => 'udp:/testurl' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal(
       {
         check1_1: 'data_type_mismatch', check2_1: 'data_type_mismatch', decimal1_1: 'is not a number',
         decimal2_1: 'is not a number', number1_1: 'data_type_mismatch',
-        number2_1: 'data_type_mismatch'
+        number2_1: 'data_type_mismatch', url: 'invalid_format'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
@@ -118,7 +139,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_valid
-    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff' })
+    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff', 'url' => 'http://testurl.co.test' })
     assert test.valid?
     assert test.errors.empty?
   end
@@ -169,11 +190,19 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ country_1: { child: 'city_1' }, state_1: { child: 'city_1' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
+  def test_attribute_with_errors
+    test = TestValidation.new(attribute1: 'Junk string 1', attribute2: 'junk string 2')
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ attribute1: 'data_type_mismatch', attribute2: 'data_type_mismatch' }, errors)
+    assert errors.count == 2
+  end
+
   def test_nested_fields_without_required_fields
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
@@ -185,7 +214,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing' }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
@@ -196,11 +225,16 @@ class CustomFieldValidatorTest < ActionView::TestCase
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name = {second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } }}
+    Helpers::CustomFieldValidatorHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
   end
 
   def test_non_existent_validation_method
+    test = TestInvalidTypeValidation.new(attribute1: { 'second_1' => 'fdsfdfs' })
+    out, err = capture_io do
+      test.valid?
+    end
+    assert_match %r{validate_junk_field}, err
   end
 end

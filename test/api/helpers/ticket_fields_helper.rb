@@ -182,8 +182,8 @@ module Helpers::TicketFieldsHelper
     )
   end
 
-  def ticket_field_nested_pattern(tf, _hash = {})
-    ticket_field_pattern(tf).merge(
+  def ticket_field_nested_pattern(tf, hash = {})
+    ticket_field_pattern(tf, hash).merge(
       nested_ticket_fields: Array
     )
   end

@@ -4,10 +4,13 @@ class CustomInclusionValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options
+    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :allow_string_param, :attribute4, :multi_error
     validates :attribute1, custom_inclusion: { in: [1, 2], message: 'attribute1_invalid', allow_nil: true }
     validates :attribute2, custom_inclusion: { in: [1, 2], required: true }
     validates :attribute3, custom_inclusion: { in: [1, 2], exclude_list: true, allow_blank: true }
+    validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :allow_string_param, allow_blank: true }
+    validates :multi_error, custom_numericality: { allow_nil: true }
+    validates :multi_error, custom_inclusion: { in: [8, 9], allow_nil: true }
   end
 
   def test_custom_message
@@ -87,7 +90,31 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.attribute1 = 1
     test.attribute2 = 1
     test.attribute3 = 2
+    test.attribute4 = '2'
+    test.allow_string_param = true
     assert test.valid?
     assert test.errors.empty?
+  end
+
+  def test_invalid_values
+    test = TestValidation.new
+    test.attribute1 = 3
+    test.attribute3 = 2
+    test.attribute4 = '2'
+    test.allow_string_param = false
+    refute test.valid?
+    errors = test.errors.to_h
+    error_options = test.error_options.to_h
+    assert_equal({ attribute1: 'attribute1_invalid', attribute2: 'required_and_inclusion', attribute4: 'not_included' }, errors)
+    assert_equal({ attribute1: { list: '1,2' }, attribute2: { list: '1,2' }, attribute4: { list: '1,2' } }, error_options)
+  end
+
+  def test_attributes_with_errors
+    test = TestValidation.new
+    test.attribute2 = 1
+    test.multi_error = '78'
+    refute test.valid?
+    assert test.errors.count == 1
+    assert_equal({ multi_error: 'data_type_mismatch' }, test.errors.to_h)
   end
 end

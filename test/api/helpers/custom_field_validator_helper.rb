@@ -1,11 +1,11 @@
 class Helpers::CustomFieldValidatorHelper
   attr_accessor :id, :nested_fields_choices_by_name, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
-  
+
   NESTED_CHOICES = {
-        first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
-        second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
-        third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
-      }
+    first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
+    second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
+    third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
+  }
 
   def initialize(params = {})
     params.each { |key, value| instance_variable_set("@#{key}", value) }
@@ -35,7 +35,9 @@ class Helpers::CustomFieldValidatorHelper
         Helpers::CustomFieldValidatorHelper.new(id: 24, account_id: 1, name: 'decimal2_1', label: 'decimal2', label_in_portal: 'decimal2', description: '', active: true, field_type: 'custom_decimal', position: 5, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 14, created_at: '2015-08-10 09:24:38', updated_at: '2015-08-10 09:24:38', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
         Helpers::CustomFieldValidatorHelper.new(id: 18, account_id: 1, name: 'number1_1', label: 'number1', label_in_portal: 'number1', description: '', active: true, field_type: 'custom_number', position: 12, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 8, created_at: '2015-08-10 09:19:29', updated_at: '2015-08-10 09:24:42', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
         Helpers::CustomFieldValidatorHelper.new(id: 26, account_id: 1, name: 'number2_1', label: 'number2', label_in_portal: 'number2', description: '', active: true, field_type: 'custom_number', position: 8, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 16, created_at: '2015-08-10 09:24:40', updated_at: '2015-08-11 05:40:02', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
-        Helpers::CustomFieldValidatorHelper.new(id: 19, account_id: 1, name: 'multi_1', label: 'multi', label_in_portal: 'multi', description: '', active: true, field_type: 'custom_paragraph', position: 14, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 9, created_at: '2015-08-10 09:19:29', updated_at: '2015-08-10 09:24:42', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil)
+        Helpers::CustomFieldValidatorHelper.new(id: 19, account_id: 1, name: 'multi_1', label: 'multi', label_in_portal: 'multi', description: '', active: true, field_type: 'custom_paragraph', position: 14, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 9, created_at: '2015-08-10 09:19:29', updated_at: '2015-08-10 09:24:42', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
+        Helpers::CustomFieldValidatorHelper.new(id: 27, account_id: 1, name: 'phone', label: 'phone', label_in_portal: 'phone', description: '', active: true, field_type: 'custom_phone_number', position: 27, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 1, created_at: '2015-08-10 09:19:26', updated_at: '2015-08-11 05:40:01', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
+        Helpers::CustomFieldValidatorHelper.new(id: 28, account_id: 1, name: 'url', label: 'url', label_in_portal: 'url', description: '', active: true, field_type: 'custom_url', position: 28, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 1, created_at: '2015-08-10 09:19:26', updated_at: '2015-08-11 05:40:01', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil)
       ]
     end
 
@@ -64,7 +66,7 @@ class Helpers::CustomFieldValidatorHelper
     end
 
     def nested_fields_choices_by_name
-      @@nested_choices 
+      @@nested_choices
     end
   end
 end

@@ -30,7 +30,7 @@ module Helpers::CompaniesHelper
       name: company_field.name,
       default: company_field.default_field?,
       label: company_field.label,
-      field_type: company_field.field_type,
+      type: company_field.field_type,
       position: company_field.position,
       required_for_agent: company_field.required_for_agent,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

@@ -4,12 +4,13 @@ class ArrayValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :emails, :domains, :attributes, :error_options
+    attr_accessor :emails, :domains, :attributes, :multi_error, :error_options
     # traditional validator
     validates :emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
     # custom validator
     validates :domains, array: { data_type: { rules: String, allow_blank: true } }
     validates :attributes, array: { numericality: true }
+    validates :multi_error, data_type: { rules: Array }, array: { data_type: { rules: String, allow_blank: true } }, allow_blank: true
   end
 
   def test_array_allow_nil_blank
@@ -46,5 +47,14 @@ class ArrayValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ attributes: 'is not a number' }, errors)
+  end
+
+  def test_attribute_with_errors
+    test = TestValidation.new
+    test.multi_error = 'Junk String'
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ multi_error: 'data_type_mismatch' }, errors)
+    assert errors.count == 1
   end
 end

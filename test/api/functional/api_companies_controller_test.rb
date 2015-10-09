@@ -51,6 +51,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('name', 'missing_field')])
   end
 
+  def test_create_company_domains_invalid
+    post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
+                                       domains: ['test,,,comma', 'test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('domains', 'special_chars_present', chars: ',')])
+  end
+
   def test_create_company_with_wrong_format
     post :create, construct_params({}, name: Faker::Number.number(10).to_i, description: Faker::Number.number(10).to_i,
                                        domains: domain_array)
@@ -101,6 +108,21 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     match_json(company_pattern({ name => name }, company.reload))
   end
 
+  def test_update_company_with_nil_custom_field
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    put :update, construct_params({ id: company.id }, custom_fields: nil)
+    match_json(company_pattern({}, company.reload))
+    assert_response 200
+  end
+
+  def test_update_company_with_custom_field_invalid_format
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    name = Faker::Lorem.characters(10)
+    put :update, construct_params({ id: company.id }, custom_fields: [1, 2])
+    match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])
+    assert_response 400
+  end
+
   def test_update_company_with_blank_name
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, name: '', description: Faker::Lorem.paragraph,
@@ -116,6 +138,13 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                         custom_fields: { 'cf_linetext' => Faker::Lorem.characters(10) })
     assert_equal ' ', @response.body
     assert_response :missing
+  end
+
+  def test_update_company_domains_invalid
+    post :create, construct_params({}, description: Faker::Lorem.paragraph, name: Faker::Lorem.characters(10),
+                                       domains: ['test,,,comma', 'test'])
+    assert_response 400
+    match_json([bad_request_error_pattern('domains', 'special_chars_present', chars: ',')])
   end
 
   def test_update_company_with_invalid_fields
@@ -223,7 +252,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_create_companies_with_empty_domains
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: [], note: Faker::Lorem.characters(10))
+                                       domains: nil, note: Faker::Lorem.characters(10))
     assert_response 201
     match_json(company_pattern(Company.last))
   end
@@ -243,7 +272,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
+                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
@@ -260,7 +289,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_company_with_valid_custom_field_values
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
-                                       custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '21-1-2015',
+                                       custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '2015-01-15',
                                                         'cf_show_all_ticket' => true, 'cf_category' => 'Second' })
 
     assert_response 201
@@ -275,7 +304,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date'),
+                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
@@ -298,7 +327,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_delete_existing_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
-    put :update, construct_params({ id: company.id }, domains: [])
+    put :update, construct_params({ id: company.id }, domains: nil)
     assert_response 200
     match_json(company_pattern(company.reload))
   end

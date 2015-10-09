@@ -21,6 +21,19 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     old_value.make_current unless old_value.nil?
   end
 
+  JSON_ROUTES = {'/api/contacts/1/restore' => 'put'}
+
+  JSON_ROUTES.each do |path, verb|
+    define_method("test_#{path}_#{verb}_with_multipart") do
+      headers, params = encode_multipart(v2_contact_params)
+      skip_bullet do
+        send(verb.to_sym, path, params, @write_headers.merge(headers))
+      end
+      assert_response 415
+      response.body.must_match_json_expression(un_supported_media_type_error_pattern)
+    end
+  end
+
   def test_create_contact_as_in_quick_create_and_update_the_details
     skip_bullet do
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
@@ -104,22 +117,22 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
-  def test_create_delete_and_restore_contact
+  def test_multipart_create_with_all_params
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Sample check box', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'number', field_type: 'custom_number', label: 'sample_number', editable_in_signup: 'true'))
+    tags = [Faker::Name.name, Faker::Name.name]
+    comp = Company.first || create_company
+    params_hash = { name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true,
+                    company_id: comp.id, language: 'en', tags: tags, custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_number' => 7878 } }
+    headers, params = encode_multipart(params_hash, 'avatar', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
-      params = {  name: Faker::Lorem.characters(15),
-                  email: Faker::Internet.email }
-
-      assert_difference 'User.count', 1 do
-        post '/api/v2/contacts', params.to_json, @write_headers
-        assert_response 201
-      end
-
-      sample_user = User.last
-      delete "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
-      assert sample_user.reload.deleted == true
-
-      put "/api/v2/contacts/#{sample_user.id}/restore", nil, @write_headers
-      assert sample_user.reload.deleted == false
+      post '/api/contacts', params, @headers.merge(headers)
+    end
+    assert_response 201
+    stub_current_account do
+      match_json(deleted_contact_pattern(params_hash, User.last))
+      match_json(deleted_contact_pattern({}, User.last))
     end
   end
 end

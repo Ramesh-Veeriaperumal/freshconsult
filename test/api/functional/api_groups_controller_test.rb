@@ -46,7 +46,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                        auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
   end
@@ -61,7 +61,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(5), description: Faker::Lorem.paragraph,
                                        agent_ids: ['asd', 'asd1'])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have Positive Integers')])
   end
 
   def test_create_group_with_deleted_or_invalid_agent_id
@@ -139,10 +139,18 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     auto_ticket_assign: Faker::Lorem.characters(5))
     assert_response 400
     match_json([bad_request_error_pattern('escalate_to', 'data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d,'),
+                bad_request_error_pattern('unassigned_for', 'not_included', list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', 'is too long (maximum is 255 characters)'),
                 bad_request_error_pattern('auto_ticket_assign', 'data_type_mismatch', data_type: 'Boolean')])
+  end
 
+  def test_update_group_with_deleted_or_invalid_agent_id
+    agent_id = Faker::Number.between(5000, 10_000)
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+    post :update, construct_params({ id: group.id }, escalate_to: 898_989, agent_ids: [agent_id])
+    assert_response 400
+    match_json([bad_request_error_pattern('agent_ids', 'list is invalid', list: agent_id.to_s),
+                bad_request_error_pattern('escalate_to', "can't be blank")])
   end
 
   def test_update_group_valid_with_trailing_spaces
@@ -168,7 +176,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])
     assert_response 400
-    match_json([bad_request_error_pattern('agent_ids', 'Should have valid Positive Integers')])
+    match_json([bad_request_error_pattern('agent_ids', 'Should have Positive Integers')])
   end
 
   def test_delete_existing_agents_while_update
@@ -198,9 +206,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_destroy_all_agents_in_a_group
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3])
-    put :update, construct_params({ id: group.id }, agent_ids: [])
+    put :update, construct_params({ id: group.id }, agent_ids: nil)
     assert_response 200
-    match_json(group_pattern({ agent_ids: [] }, group.reload))
+    match_json(group_pattern({ agent_ids: nil }, group.reload))
   end
 
   def test_group_with_pagination_enabled

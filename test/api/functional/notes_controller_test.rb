@@ -41,6 +41,24 @@ class NotesControllerTest < ActionController::TestCase
     params_hash
   end
 
+  def test_create_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    params_hash = create_note_params_hash
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_create_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    params_hash = create_note_params_hash
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
   def test_create
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
@@ -92,16 +110,16 @@ class NotesControllerTest < ActionController::TestCase
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    assert_response 400
     match_json([bad_request_error_pattern('notify_emails', 'data_type_mismatch', data_type: 'Array'),
                 bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
+    assert_response 400
   end
 
   def test_create_email_format_invalid
     params_hash = { notify_emails: ['tyt@'] }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    assert_response 400
     match_json([bad_request_error_pattern('notify_emails', 'is not a valid email')])
+    assert_response 400
   end
 
   def test_create_invalid_ticket_id
@@ -159,7 +177,7 @@ class NotesControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_attachment_invalid_size_create
@@ -177,6 +195,25 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
     params_hash = create_note_params_hash
     post :create, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    params_hash = reply_note_params_hash
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -201,50 +238,58 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_reply_with_cc_kbase_mail
     article_count = Solution::Article.count
+    parent_ticket = ticket
+    parent_ticket.update_column(:subject, 'More than 3 letters')
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
-    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
-    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.title == parent_ticket.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
     refute Helpdesk::Note.last.cc_emails.include?(@account.kbase_email)
   end
 
   def test_reply_with_bcc_kbase_mail
     article_count = Solution::Article.count
+    parent_ticket = ticket
+    parent_ticket.update_column(:subject, 'More than 3 letters')
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
-    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    post :reply, construct_params({ id: parent_ticket.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
-    assert Solution::Article.last.title == ticket.subject
+    assert Solution::Article.last.title == parent_ticket.subject
     assert Solution::Article.last.description == Helpdesk::Note.last.body_html
     refute Helpdesk::Note.last.bcc_emails.include?(@account.kbase_email)
   end
 
   def test_reply_with_cc_kbase_mail_without_privilege
     article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
 
   def test_reply_with_bcc_kbase_mail_without_privilege
     article_count = Solution::Article.count
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(bcc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(bcc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert article_count == Solution::Article.count
   end
@@ -255,7 +300,7 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: t.display_id }, params_hash)
     assert_response 201
-    match_json(reply_note_pattern(params_hash.merge(cc_emails: []), Helpdesk::Note.last))
+    match_json(reply_note_pattern(params_hash.merge(cc_emails: nil), Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
     assert (article_count + 1) == Solution::Article.count
     refute Solution::Article.last.title == ticket.subject
@@ -365,13 +410,34 @@ class NotesControllerTest < ActionController::TestCase
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_reply_without_privilege
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false).at_most_once
     params_hash = reply_note_params_hash
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    params = update_note_params_hash
+    n = note
+    put :update, construct_params({ id: n.id }, params)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_update_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    params = update_note_params_hash
+    n = note
+    put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -442,7 +508,7 @@ class NotesControllerTest < ActionController::TestCase
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'format')])
+    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
   end
 
   def test_update_without_privilege
@@ -451,15 +517,18 @@ class NotesControllerTest < ActionController::TestCase
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:privilege?, :owns_object?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_update_with_owns_object_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
+    User.any_instance.unstub(:privilege?)
     assert_response 200
     match_json(note_pattern(params, n.reload))
     match_json(note_pattern({}, n.reload))
@@ -543,39 +612,58 @@ class NotesControllerTest < ActionController::TestCase
   def test_delete_without_privilege
     User.any_instance.stubs(:privilege?).with(:edit_conversation).returns(false).at_most_once
     delete :destroy, construct_params(id: Helpdesk::Note.first.id)
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_with_ticket_trashed
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
+    delete :destroy, construct_params(id: n.id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_destroy_without_ticket_privilege
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    n = create_note(ticket_id: ticket.id, source: 2, user_id: @agent.id)
+    delete :destroy, construct_params(id: n.id)
+    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
 
   def test_notes
-    t = ticket
-    get :ticket_notes, construct_params(id: t.display_id)
+    parent_ticket = ticket
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
+    parent_ticket.notes.visible.exclude_source('meta').each do |n|
       result_pattern << note_pattern(n)
     end
     match_json(result_pattern)
   end
 
   def test_notes_return_only_non_deleted_notes
-    t = ticket
-    create_note(user_id: @agent.id, ticket_id: t.id, source: 2)
+    parent_ticket = ticket
+    create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
 
-    get :ticket_notes, construct_params(id: t.display_id)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
+    parent_ticket.notes.visible.exclude_source('meta').each do |n|
       result_pattern << note_pattern(n)
     end
-    assert JSON.parse(response.body).count == t.notes.visible.exclude_source('meta').count
+    assert JSON.parse(response.body).count == parent_ticket.notes.visible.exclude_source('meta').count
     match_json(result_pattern)
 
-    Helpdesk::Note.where(notable_id: t.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
-    get :ticket_notes, construct_params(id: t.display_id)
+    Helpdesk::Note.where(notable_id: parent_ticket.id, notable_type: 'Helpdesk::Ticket').update_all(deleted: true)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
-    t.notes.visible.exclude_source('meta').each do |n|
+    parent_ticket.notes.visible.exclude_source('meta').each do |n|
       result_pattern << note_pattern(n)
     end
     assert JSON.parse(response.body).count == 0
@@ -583,9 +671,10 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_notes_without_privilege
-    t = ticket
+    parent_ticket = ticket
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    get :ticket_notes, construct_params(id: t.display_id)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern('access_denied'))
   end
@@ -597,8 +686,8 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_notes_eager_loaded_association
-    t = ticket
-    get :ticket_notes, construct_params(id: t.display_id)
+    parent_ticket = ticket
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
     assert_response 200
     assert controller.instance_variable_get(:@notes).all? { |x| x.association(:attachments).loaded? }
     assert controller.instance_variable_get(:@notes).all? { |x| x.association(:schema_less_note).loaded? }
@@ -629,19 +718,59 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_notes_with_link_header
-    t = ticket
+    parent_ticket = ticket
     3.times do
-      create_note(user_id: @agent.id, ticket_id: t.display_id, source: 2)
+      create_note(user_id: @agent.id, ticket_id: parent_ticket.display_id, source: 2)
     end
-    per_page = t.notes.visible.exclude_source('meta').count - 1
-    get :ticket_notes, construct_params(id: t.display_id, per_page: per_page)
+    per_page = parent_ticket.notes.visible.exclude_source('meta').count - 1
+    get :ticket_notes, construct_params(id: parent_ticket.display_id, per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
-    assert_equal "<http://#{@request.host}/api/v2/tickets/#{t.display_id}/notes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+    assert_equal "<http://#{@request.host}/api/v2/tickets/#{parent_ticket.display_id}/notes?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :ticket_notes, construct_params(id: t.display_id, per_page: per_page, page: 2)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id, per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_notes_with_ticket_trashed
+    parent_ticket = ticket
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_notes_without_ticket_privilege
+    parent_ticket = ticket
+    User.any_instance.stubs(:has_ticket_permission?).returns(false)
+    get :ticket_notes, construct_params(id: parent_ticket.display_id)
+    User.any_instance.unstub(:has_ticket_permission?)
+    assert_response 403
+    match_json(request_error_pattern('access_denied'))
+  end
+
+  def test_reply_with_nil_array_fields
+    params_hash = reply_note_params_hash.merge(cc_emails: nil, bcc_emails: nil, attachments: nil)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(reply_note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
+  end
+
+  def test_update_with_nil_params_for_attachments
+    params_hash = { attachments: nil }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
+  end
+
+  def test_create_datatype_nil_array_fields
+    params_hash = { notify_emails: nil, attachments: nil }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(note_pattern({}, Helpdesk::Note.last))
+    assert_response 201
   end
 end

@@ -8,9 +8,5 @@ class ContactFieldDecorator
         contact_field.choices.map { |x| x[:value] }
       end
     end
-
-    def default_contact_field?(contact_field)
-      contact_field.column_name == 'default'
-    end
   end
 end

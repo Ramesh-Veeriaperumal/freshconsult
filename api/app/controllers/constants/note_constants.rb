@@ -1,8 +1,8 @@
 module NoteConstants
   # ControllerConstants
-  REPLY_FIELDS = ['body', 'body_html', 'user_id', { 'cc_emails' => [String] }, { 'bcc_emails' => [String] }, { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
-  CREATE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', { 'notify_emails' => [String] }, { 'attachments' => [ApiConstants::UPLOADED_FILE_TYPE] }]
-  UPDATE_FIELDS = ['body', 'body_html', { 'attachments' => [] }]
+  REPLY_FIELDS = ['body', 'body_html', 'user_id', 'cc_emails', 'bcc_emails', 'attachments', { 'cc_emails' => [] }, { 'bcc_emails' => [] }, { 'attachments' => [] }]
+  CREATE_FIELDS = ['body', 'body_html', 'private', 'incoming', 'user_id', 'notify_emails', 'attachments', { 'notify_emails' => [] }, { 'attachments' => [] }]
+  UPDATE_FIELDS = ['body', 'body_html', 'attachments', { 'attachments' => [] }]
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
@@ -14,4 +14,13 @@ module NoteConstants
 
   CREATE_ARRAY_FIELDS = %w(notify_emails)
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails)
+
+  # Wrap parameters args
+  WRAP_PARAMS = [:note, exclude: [], format: [:json, :multipart_form]]
+
+  ALLOWED_CONTENT_TYPE_FOR_ACTION = {
+    create: [:json, :multipart_form],
+    update: [:json, :multipart_form],
+    reply: [:json, :multipart_form]
+  }
 end

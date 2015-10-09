@@ -5,51 +5,54 @@ class TicketValidation < ApiValidation
 
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
 
-  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, custom_numericality: { allow_nil: true }
+  validates :group_id, :requester_id, :responder_id, :product_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param  }
 
   validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory?
   validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?
 
-  validates :priority, custom_inclusion: { in: ApiTicketConstants::PRIORITIES }, allow_nil: true
+  validates :priority, custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param }, allow_nil: true
 
   # proc is used as inclusion array is not constant
-  validates :status, custom_inclusion: { in: proc { |x| x.status_ids } }, allow_nil: true
-  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES }, allow_nil: true
+  validates :status, custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param }, allow_nil: true
+  validates :source, custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param }, allow_nil: true
   validates :type, custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }, allow_nil: true
-  validates :fr_due_by, :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
-
+  validates :fr_due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_fr_due_by?
+  validates :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
   validates :tags, :cc_emails, :attachments, data_type: { rules: Array }, allow_nil: true
   validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
   validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
   validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
-
+  validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
     base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
-  }, if: -> { attachments && errors[:attachments].blank? }
+  }, if: -> { attachments }
 
-  validates :email, format: { with: ApiConstants::EMAIL_REGEX, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
-  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_REGEX, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
+  validates :cc_emails, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
-  validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+  validates :tags, array: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long },
+                            data_type: { rules: String } }
+  validates :tags, string_rejection: { excluded_chars: [','] }
 
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
-                                required_attribute: :required
+                                required_attribute: :required,
+                                ignore_string: :allow_string_param
                               }
-                           }, if: -> { errors[:custom_fields].blank? }
+                           }
   validates :subject, :twitter_id, :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 
-  def initialize(request_params, item)
+  def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
-    @fr_due_by = item.try(:frDueBy).try(:to_s) if item
+    @fr_due_by = item.try(:frDueBy).try(:iso8601) if item
     @type = item.try(:ticket_type) if item
-    super(request_params, item)
+    super(request_params, item, allow_string_param)
     check_params_set(request_params, item)
     @item = item
   end
@@ -67,7 +70,16 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    errors.add(:due_by, 'start_time_lt_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+    invalid = (due_by < (@item.try(:created_at) || Time.zone.now))
+    invalid ||= due_by_less_than_fr_due_by? if errors[:fr_due_by].blank?
+    errors.add(:due_by, 'due_by_gt_created_and_lt_frdueby') if invalid
+  end
+
+  def due_by_less_than_fr_due_by?
+    # parsing is needed because when both are strings, < operator does not work.
+    parsed_due_by = DateTime.parse due_by
+    parsed_fr_due_by = DateTime.parse fr_due_by
+    parsed_due_by < parsed_fr_due_by
   end
 
   def cc_emails_max_count
@@ -83,9 +95,15 @@ class TicketValidation < ApiValidation
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
-    if [:due_by, :fr_due_by].any? { |c| request_params.key?(c) }
-      [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
-    end
+    request_params.key?(:due_by) && disallowed_status?
+  end
+
+  def disallow_fr_due_by?
+    request_params.key?(:fr_due_by) && disallowed_status?
+  end
+
+  def disallowed_status?
+    [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
   def attributes_to_be_stripped
