@@ -1,7 +1,7 @@
 class AddOnedriveToApplication < ActiveRecord::Migration
   shard :all
   def up
-    onedrive = Integrations::Application.create(
+    onedrive = Integrations::Application.new(
         :name => "onedrive",
         :display_name => "integrations.onedrive.label", 
         :description => "integrations.onedrive.desc", 
