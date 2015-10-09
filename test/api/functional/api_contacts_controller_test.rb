@@ -255,6 +255,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(User.last))
   end
 
+  def test_create_contact_without_required_custom_fields
+    cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email)
+
+    assert_response 400
+    match_json([bad_request_error_pattern('cf_code', 'missing_field')])
+    cf.update_attribute(:required_for_agent, false)
+  end
+
   def test_create_contact_with_invalid_custom_fields
     comp = get_company
     create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Check Me', editable_in_signup: 'true'))
@@ -718,7 +729,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     email = "#{rand(1000)}abc'd@f.com"
     post :create, construct_params({},  name: name,
                                         email: email)
-    p response
     assert_response 201
     contact = User.last
     assert_equal name, contact.name

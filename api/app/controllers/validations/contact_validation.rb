@@ -13,7 +13,7 @@ class ContactValidation < ApiValidation
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
   }
-  }, if: -> { custom_fields.is_a?(Hash) }
+  }
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
   validates :job_title, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, allow_nil: true
   validates :language, custom_inclusion: { in: ContactConstants::LANGUAGES }, allow_nil: true
