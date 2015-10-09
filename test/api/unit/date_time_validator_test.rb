@@ -145,4 +145,17 @@ class DateTimeValidatorTest < ActionView::TestCase
     assert_equal errors, test.errors.full_messages
   end
 
+  def test_date_comparison_with_time_zones
+    zone = Time.zone
+    Time.zone = "UTC"
+    utc_time = Time.zone.now
+    utc_time_string = utc_time.iso8601
+    zone_time = (utc_time - 1.second).in_time_zone("Chennai")
+    zone_time_string = zone_time.iso8601
+    assert zone_time_string > utc_time_string # zone_time_string is greater than utc_time_string when string comparison is done.
+    assert utc_time > zone_time_string # when one of the operands is a Time object AR compares time info with time zones properly
+    assert utc_time > zone_time # When both operands are time objects AR compares time info with time zones properly
+    Time.zone = zone
+  end
+
 end
