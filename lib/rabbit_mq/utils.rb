@@ -56,21 +56,25 @@ module RabbitMq::Utils
 
   #made this as a function, incase later we want to compress the data before sending
   def send_message(exchange, message, key)
+    Rails.logger.debug "ROUTING KEY - #{key}"
     return unless key.include?("1")
     self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
       Timeout::timeout(CONNECTION_TIMEOUT) {
+        Rails.logger.debug " Inside send message to RMQ - #{Account.current.id} -- #{exchange}"
         publish_message_to_xchg(Account.current.rabbit_mq_exchange(exchange), message, key)
       }
     end
   rescue Timeout::Error => e 
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
     Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    Rails.logger.debug "Sidekiq Job Id #{job_id} ---- #{Account.current.id} -- #{exchange}"
     RabbitMq::Init.restart
   rescue => e
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    Rails.logger.debug "Sidekiq Job Id #{job_id} ----- #{Account.current.id} -- #{exchange}"
     RabbitMq::Init.restart
   end
 
@@ -78,11 +82,13 @@ module RabbitMq::Utils
     # Having all the messages as persistant is an overkill. Need to refactor
     # so that the options for publish can be passed as a parameter. Messages
     # should also have message_id for unique identification
+    Rails.logger.debug "Gonna publish to RMQ for #{Account.current.id}"
     exchange.publish(
       message, 
       :routing_key => key,
       :persistant => true
     )
+    Rails.logger.debug "Finished publish to RMQ for #{Account.current.id}"
   end
   
   
