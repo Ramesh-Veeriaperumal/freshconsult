@@ -66,8 +66,8 @@ class Freshfone::User < ActiveRecord::Base
 		self
 	end
 	
-	def change_presence_and_preference(status, user_avatar_content, nmobile = false)
-		self.user_avatar = user_avatar_content
+	def change_presence_and_preference(status, user_avatar_content=nil, nmobile = false)
+		self.user_avatar = user_avatar_content if user_avatar_content.present?
 		if nmobile
 			self.mobile_token_refreshed_at = Time.now if self.incoming_preference == INCOMING[:allowed]
 		else

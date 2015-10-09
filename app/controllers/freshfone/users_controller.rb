@@ -76,7 +76,13 @@ class Freshfone::UsersController < ApplicationController
 		end
 	end
 
-	
+	def manage_presence
+		Rails.logger.debug "Admin agent availability manage :: #{current_account.id} :: #{params[:agent_id]}"
+		phone_user = current_account.freshfone_users.find_by_user_id(params[:agent_id])
+		return modify_presence(phone_user,Freshfone::User::PRESENCE[:offline]) if phone_user.presence==1
+		modify_presence(phone_user,Freshfone::User::PRESENCE[:online])
+	end
+
 	private
 		def validate_freshfone_state
 			render :json => { :update_status => false } and return if
@@ -166,5 +172,10 @@ class Freshfone::UsersController < ApplicationController
 		def force_generate_token?
 			return true if is_native_mobile?
 			params[:force].present? ? params[:force].to_bool : false
+		end
+
+		def modify_presence(user, status)
+			user.change_presence_and_preference(status) 
+			render :json => { :status => user.save }
 		end
 end

@@ -511,6 +511,7 @@ Helpkit::Application.routes.draw do
         post :refresh_token
         post :in_call
         post :reset_presence_on_reconnect
+        post :manage_presence
       end
     end
 

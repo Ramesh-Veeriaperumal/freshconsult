@@ -4938,6 +4938,7 @@ en:
         accepting: Accepting
         not_accepting: Not Accepting
         call_in_progress: Call in progress
+        agent_on_call: Agent on call
         no_agents: "- No Agents -"
         no_activity: "No Activity"
       livechat:
