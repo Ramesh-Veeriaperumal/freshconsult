@@ -92,6 +92,7 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def force_termination
 			if params[:force_termination]
+				return empty_twiml if in_progress?
 				add_cost_job
 				update_call_status unless preview?
 				return empty_twiml
@@ -152,5 +153,9 @@ class Freshfone::CallController < FreshfoneBaseController
 				:user_hover => avatar,
 				:user_name => user.name
 			}
+		end
+
+		def in_progress?
+			params[:CallStatus] == 'in-progress'
 		end
 end
