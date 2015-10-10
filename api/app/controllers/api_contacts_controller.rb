@@ -91,7 +91,7 @@ class ApiContactsController < ApiApplicationController
 
       params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
 
-      assign_checkbox_value if params_hash[:custom_fields]
+      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], @contact_fields) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end

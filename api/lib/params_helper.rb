@@ -14,5 +14,14 @@ class ParamsHelper
         controller_params.delete(field)
       end
     end
+
+    # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
+    def assign_checkbox_value(custom_fields, fields)
+      check_box_names = fields.select { |x| x.field_type.to_sym == :custom_checkbox }.map(&:name)
+      custom_fields.each_pair do |key, value|
+        next unless check_box_names.include?(key.to_s)
+        custom_fields[key] = 0 if value.is_a?(FalseClass) || value == 'false'
+      end
+    end
   end
 end

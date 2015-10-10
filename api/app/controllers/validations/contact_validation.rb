@@ -37,18 +37,18 @@ class ContactValidation < ApiValidation
 
     def contact_detail_missing
       if email.blank? && mobile.blank? && phone.blank? && twitter_id.blank?
-        errors.add(:email, 'Please fill at least 1 of email, mobile, phone, twitter_id fields.')
+        errors.add(:email, 'fill_a_mandatory_field')
       end
     end
 
     def validate_avatar
       unless  avatar.original_filename =~ ContactConstants::AVATAR_EXT_REGEX
-        errors.add(:avatar, 'Invalid file type. Please upload a jpg or png file')
+        errors.add(:avatar, 'upload_jpg_or_png_file')
       end
     end
 
     def check_update_email
-      errors.add(:email, 'Email cannot be updated') if @email_update
+      errors.add(:email, 'email_cant_be_updated') if @email_update
     end
 
     def attributes_to_be_stripped

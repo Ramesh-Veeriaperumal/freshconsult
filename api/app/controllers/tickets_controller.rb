@@ -135,10 +135,10 @@ class TicketsController < ApiApplicationController
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
       @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
-
+    
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
-      assign_checkbox_value if params[cname][:custom_fields]
+      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @ticket_fields) if params[cname][:custom_fields]
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
@@ -189,15 +189,6 @@ class TicketsController < ApiApplicationController
         end
       end
       true
-    end
-
-    # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
-    def assign_checkbox_value
-      check_box_names = Helpers::TicketsValidationHelper.check_box_type_custom_field_names(@ticket_fields)
-      params[cname][:custom_fields].each_pair do |key, value|
-        next unless check_box_names.include?(key.to_s)
-        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
-      end
     end
 
     def ticket_permission?

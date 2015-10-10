@@ -290,9 +290,10 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '2015-01-15',
-                                                        'cf_show_all_ticket' => true, 'cf_category' => 'Second' })
+                                                        'cf_show_all_ticket' => false, 'cf_category' => 'Second' })
 
     assert_response 201
+    assert Company.last.custom_field['cf_show_all_ticket'] == false
     match_json(company_pattern(Company.last))
   end
 

@@ -255,6 +255,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(User.last))
   end
 
+  def test_create_contact_with_invalid_custom_url_and_custom_date
+    create_contact_field(cf_params(type: 'url', field_type: 'custom_url', label: 'Sample URL', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Sample Date', editable_in_signup: 'true'))
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        custom_fields: { 'cf_sample_url' => 'aaaa', 'cf_sample_date' => 'bbbb' })
+    assert_response 400
+    match_json([bad_request_error_pattern('cf_sample_date', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('cf_sample_url', 'Should be a valid format')])
+  end
+
   def test_create_contact_without_required_custom_fields
     cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
 
