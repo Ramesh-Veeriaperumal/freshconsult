@@ -98,7 +98,12 @@ ul.multi_value_field li.choice{
 
 #redactor_modal .redactorInsertCode label{
 	@include margin(3px 0 0 0 !important);
-	@include float(left !important);
+	@if $rtl{
+	   float: right !important;
+	}
+	@else{
+		float:left !important;
+	}
 }
 
 #redactor_modal .redactorInsertCode textarea{

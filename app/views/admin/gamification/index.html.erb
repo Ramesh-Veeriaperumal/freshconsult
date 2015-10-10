@@ -1,10 +1,24 @@
 <div class="pull-right">
+	<a href='#all-agents-gamification-reset' 
+        id="scoreboard_start_over"
+        rel="freshdialog"
+        title="<%= t('reset_arcade') %>"
+        data-submit-label="<%= t('reset') %>"
+        data-width="400px"
+        data-close-on-submit="true"
+        data-close-label="<%= t('cancel') %>"
+        data-destroy-on-close="true"
+        <% unless feature?(:gamification_enable) %>style="display:none"<% end %> >
+        	<%=t('.start_over')%>
+	</a>
 	<%= check_box_tag :gamification_enable, 1, feature?(:gamification_enable), 
 			:rel => "toggle", 
 			"data-checked-label" => "enabled", 
 			"data-unchecked-label" => "disabled", 
-			:onchange => remote_function( :url => toggle_admin_gamification_index_path, :complete => "jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+			:onchange => remote_function( :url => toggle_admin_gamification_index_path, :complete => "jQuery('#scoreboard_start_over').toggle();jQuery('#gamification-intro').slideToggle();jQuery('#scoreboard_elements').slideToggle();") %>
+	<%= link_to 'reset', reset_arcade_admin_gamification_index_path, :method => 'put', :id => "all_agents_score_reset", :class => "hide" %>       
 </div>
+
 <h3 class="lead"><%=t('.title')%></h3>
 
 <div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
@@ -61,8 +75,11 @@
 		jQuery('#'+this.id+'-help').addClass('active');
 	});
 	jQuery('#enable-gamification-button').bind("click", function(){
-	jQuery('#gamification_enable').trigger('click');
-});
+		jQuery('#gamification_enable').trigger('click');
+	});
+	jQuery('#all-agents-gamification-reset-submit').live('click', function(){ 
+      jQuery('#all_agents_score_reset').trigger('click');
+    });
 <% end %>
 
 <% content_for :helpcard do %>

@@ -47,7 +47,7 @@ class Freshfone::Initiator::AgentCallLeg
     begin
       if current_call.connecting? && agent_connected?
         process_call_accept_callbacks
-        notifier.disconnect_other_agents(current_call)
+        notifier.cancel_other_agents(current_call)
       
         @telephony.current_number = current_call.freshfone_number
         @telephony.initiate_agent_conference({

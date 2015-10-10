@@ -3,7 +3,7 @@ HelpdeskReports.ChartsInitializer = HelpdeskReports.ChartsInitializer || {};
 HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 	var _FD = {
 		populatetemplate: function(data){
-			var metricsData = JST["helpdesk_reports/templates/metrics_list"]({
+			var metricsData = JST["helpdesk_reports/templates/agent_summary_tmpl"]({
 				'data':  data,
 				'report' : "agent"
 			});
@@ -27,21 +27,21 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 				jQuery("#agent-details-"+dataToLoad).addClass('disabled');
 				 // Todo : Remove when changing table to datatable
 				if(dataToLoad === 'next'){
-					 jQuery('.footer').removeClass('shadow');
-                    				 jQuery('.header').addClass('shadow');
-					 if (jQuery('html').attr('dir') === 'rtl'){
+					jQuery('.footer').removeClass('shadow');
+                    jQuery('.header').addClass('shadow');
+					if (jQuery('html').attr('dir') === 'rtl'){
 					 	jQuery("[data-table='wrapper']").animate({'right':'-100%'});
-					 }else{
-					 	jQuery("[data-table='wrapper']").animate({'left':'-100%'});
-					 }
+					}else{
+						jQuery("[data-table='wrapper']").animate({'left':'-100%'});
+					}
 				}else{
-					 jQuery('.header').removeClass('shadow');
-                    				 jQuery('.footer').addClass('shadow');
+					jQuery('.header').removeClass('shadow');
+                    jQuery('.footer').addClass('shadow');
 					if (jQuery('html').attr('dir') === 'rtl'){
 					 	jQuery("[data-table='wrapper']").animate({'right':'0'});
-					 }else{
+					}else{
 					 	jQuery("[data-table='wrapper']").animate({'left':'0'});
-					 }
+					}
 				}
 			}
 		}

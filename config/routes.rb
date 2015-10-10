@@ -351,6 +351,7 @@ Helpkit::Application.routes.draw do
       get :convert_to_user
       put :reset_password
       put :convert_to_contact
+      put :reset_score
       post :toggle_availability
       get :api_key
     end
@@ -510,6 +511,7 @@ Helpkit::Application.routes.draw do
         post :refresh_token
         post :in_call
         post :reset_presence_on_reconnect
+        post :manage_presence
       end
     end
 
@@ -792,6 +794,12 @@ Helpkit::Application.routes.draw do
         post :create_login_session
       end
     end
+	
+	  namespace :onedrive do
+      get :callback
+      get :onedrive_render_application
+      get :onedrive_view
+    end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
@@ -973,6 +981,7 @@ Helpkit::Application.routes.draw do
         post :toggle
         get :quests
         put :update_game
+        put :reset_arcade
       end
     end
 
@@ -1572,6 +1581,7 @@ Helpkit::Application.routes.draw do
         collection do
           get :since
           get :agents_autocomplete
+          get :public_conversation
         end
 
         member do

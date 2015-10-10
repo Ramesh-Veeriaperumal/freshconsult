@@ -14,9 +14,11 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
   after_save :after_save_customize
+  after_commit :after_commit_customize
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
+  scope :with_type_cti, -> { where("applications.application_type = 'cti_integration'").includes(:application) }
   
   def to_liquid
     configs[:inputs]
@@ -108,6 +110,10 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def after_destroy_customize
       execute_custom_clazz(:after_destroy)
+    end
+
+    def after_commit_customize
+      execute_custom_clazz(:after_commit)
     end
 
     def execute_custom_clazz(action)

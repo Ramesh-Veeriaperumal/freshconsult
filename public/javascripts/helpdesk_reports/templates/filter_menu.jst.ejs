@@ -1,3 +1,5 @@
 <% for (var i in data) { %>
-    <li data-position='<%= data[i].position %>' data-action='pop-field' data-menu='<%= data[i].condition %>'> <%= escapeHtml(data[i].name) %> </li>
+	<% if (HelpdeskReports.CoreUtil.disabled_filter.indexOf(data[i].condition) < 0) { %>
+    	<li data-position='<%= data[i].position %>' data-action='pop-field' data-menu='<%= data[i].condition %>'> <%= escapeHtml(data[i].name) %> </li>
+    <% } %>
 <% } %>

@@ -1,5 +1,6 @@
  <%
-  date_range = date_range_val(29.days.ago,0.days.ago)
+  date_by_plan = default_date_range(@date_lag_by_plan)
+  date_range = date_range_val(date_by_plan[0], date_by_plan[1])
 %>
 <div class="report-filters-container animated hide" id="report-filters">
  	<ul class="unstyled">
@@ -19,21 +20,23 @@
 						</div>
 					</div>
 		        </div>
-		        <div id="active-report-filters"></div>
-				<div class="report-fields-selector" data-action="add-filter">
-					<%= font_icon "plus-circle", :size => 16 %> <a href="javascript:void(0)"><%=t('helpdesk_reports.more') %></a>
-				</div>
-				<div class="report-fields-menu hide" id="report_fields_list">
-					<ul></ul>
-				</div>
+		        
+		    	<% if current_account.subscription.non_sprout_plan? %>
+		    		<div id="active-report-filters"></div>
+					<div class="report-fields-selector" data-action="add-filter">
+						<%= font_icon "plus-circle", :size => 16 %> <a href="javascript:void(0)"><%=t('helpdesk_reports.more') %></a>
+					</div>
+					<div class="report-fields-menu hide" id="report_fields_list">
+						<ul></ul>
+					</div>
+				<% end %>
 			</div>
 		</li>
 		<li class="generate-reports">
-		<div class="filter-validations" id="filter_validation_errors">
-			<span class="error-msg"></span>
-		</div>
+			<div class="filter-validations" id="filter_validation_errors">
+				<span class="error-msg"></span>
+			</div>
 			<a class="btn btn-primary" href="javascript:void(0)" data-action="reports-submit"><%=t('helpdesk_reports.generate') %></a>
 		</li>
 	</ul>
  </div>
- 

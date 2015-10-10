@@ -2,8 +2,12 @@ module HelpdeskReports::Util::Ticket
   include HelpdeskReports::Constants::Ticket
 
   def reverse_mapping_required? field
-    return true if (field.to_s.starts_with?("ffs") || TICEKT_FIELD_NAMES.include?(field.to_sym)) and !["agent_summary", "group_summary"].include? report_type
+    return true if valid_field_name?(field) and [101, 107].include? REPORT_TYPE_BY_KEY[report_type]
     false
+  end
+  
+  def valid_field_name? field
+    field.to_s.starts_with?("ffs") || TICEKT_FIELD_NAMES.include?(field.to_sym)
   end
 
   def field_id_to_name_mapping(field_type)
@@ -22,7 +26,7 @@ module HelpdeskReports::Util::Ticket
       Account.current.groups_from_cache.collect { |g| [g.id, g.name]}.to_h
     when :product_id
       Account.current.products.collect {|p| [p.id, p.name]}.to_h
-    when :customer_id
+    when :company_id
       Account.current.companies_from_cache.collect { |au| [au.id, au.name] }.to_h
     else
       field_type.to_s.start_with?("ffs") ? flexifield_picklist_value_mapping(field_type) : {}
@@ -74,13 +78,6 @@ module HelpdeskReports::Util::Ticket
       when "y"
         date.year
     end
-  end
-  
-  def formatted_duration total_seconds
-    hours = (total_seconds / (60 * 60)).to_i
-    minutes = ((total_seconds / 60) % 60).to_i
-    seconds = (total_seconds % 60).to_i
-    return total_seconds > 3600 ? "#{hours}h #{minutes}m" : "#{minutes}m #{seconds}s"
   end
   
 end

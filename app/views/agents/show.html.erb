@@ -40,6 +40,18 @@
 		<% else %>
 			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
+			<%= link_to 'reset', { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>		
+			<a href='#agent-gamification-reset' 
+				id="scoreboard_start_over"
+				rel="freshdialog"
+				title="<%= t('agent.reset_score_title') %>"
+				data-submit-label="<%= t('reset') %>"
+				data-width="400px"
+				data-close-on-submit="true"
+				data-close-label="<%= t('cancel') %>"
+				data-destroy-on-close="true"> 
+				<%= t('agent.reset_scores') %>
+			</a>
 	</div>
 	<%end%>
 <%- end %> 
@@ -96,6 +108,11 @@
 <div id="agent-deletion-confirmation" class="hide">
 	<p class="margin-bottom"><br/><%= t('agent.convert_agent_confirmation')%></p>
 </div>
+<div id="agent-gamification-reset" class="hide">
+	<p class="margin-bottom"><br/> 
+		<% reset_score_alert = (@user == current_user ? 'agent.reset_score_alert_you' : 'agent.reset_score_alert_them') %>
+		<%= t(reset_score_alert, :points => current_account.scoreboard_levels.least_points.first.points, :name => @user.name) %></p>
+</div>
 <%= javascript_tag do %> 
 jQuery("#reset_password_button").click(function() 
 {
@@ -124,5 +141,9 @@ jQuery(document).ready(function(){
 
 jQuery('#agent-deletion-confirmation-submit').live("click", function(){
 	jQuery('#agent_contact_convert').trigger('click');
+});
+
+jQuery('#agent-gamification-reset-submit').live('click', function(){ 
+	jQuery('#agent_score_reset').trigger('click');
 });
 <%end%>

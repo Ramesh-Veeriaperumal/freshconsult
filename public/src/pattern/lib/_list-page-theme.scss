@@ -172,7 +172,7 @@
     position: absolute;
     margin: 0;
     padding: 0;
-    right: 20px;
+    @include right(20px);
     top: 25px;
     .btn-primary,
     .btn-primary:hover{

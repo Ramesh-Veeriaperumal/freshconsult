@@ -1,0 +1,16 @@
+<% if (HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(HelpdeskReports.locals.active_metric) > -1) { %>
+	<div class="view-all-tickets compliant" data-ticket="view_all" data-sla="false">
+		View all compliant tickets
+		<span class="view-all-arrow"></span>
+	</div>
+
+	<div class="view-all-tickets violated" data-ticket="view_all" data-sla="true">
+		View all violated tickets
+		<span class="view-all-arrow"></span>
+	</div>	
+<% } else { %>
+	<div class="view-all-tickets compliant" data-ticket="view_all">
+		View all tickets
+		<span class="view-all-arrow"></span>
+	</div>
+<% } %>

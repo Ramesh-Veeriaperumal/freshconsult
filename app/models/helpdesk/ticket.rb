@@ -25,6 +25,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
+  include AccountConstants
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -752,10 +753,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    ticket_to_emails = (self.to_emails || []).collect {|e| e.tr('"','').strip}
+    ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).compact.uniq
 
     account.support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
@@ -896,6 +897,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     include_fields = es_flexifield_columns
     all_fields = attribute_fields | include_fields
     (@model_changes.keys.map(&:to_s) & all_fields).any?
+  end
+
+  def header_info_present?
+    header_info.present? && header_info[:message_ids].present?
   end
 
   private

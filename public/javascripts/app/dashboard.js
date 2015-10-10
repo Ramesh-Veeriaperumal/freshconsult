@@ -27,6 +27,7 @@ window.App = window.App || {};
 
 				var items = [];
 				var $el = $(this);
+				$el.prop('disabled','disabled');
 				$.ajax({
 					type: "POST",
 					dataType: "json",
@@ -72,6 +73,7 @@ window.App = window.App || {};
 		resetToggleButton : function(agent_id){
 			$("#agent_status_"+agent_id).find('.toggle-button').remove();
 			$("#agent_available_"+agent_id).data("itoggle", false);
+			$("#agent_available_"+agent_id).removeAttr('disabled');
 			$("#agent_available_"+agent_id).itoggle();
 		},
 		checkAgentListLength : function(table_id,title_id){

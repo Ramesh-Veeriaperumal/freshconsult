@@ -524,7 +524,7 @@ div.action_buttons:hover{
   display: block;
   @include border-radius(20px);
   height: auto;
-  @include padding(6px 0 7px 33px);
+  padding: 6px 0 7px 33px;
   background-image: inline-image("cdn-ignored/inline-images/tourmyapp-btn-arrow.png");
   background-repeat: no-repeat;
   background-position: 7px 6px;

@@ -26,7 +26,8 @@ class Freshfone::CallCostCalculator
 	end
 	
 	def calculate_cost
-		return if current_call.present? && current_call.missed_conf_transfer?
+		return if current_call.present? && current_call.call_cost.present?
+		return if current_call.present? && current_call.missed_conf_transfer? 
 		return missed_call_cost if current_call.present? && (current_call.missed_or_busy? || current_call.failed?)
 		get_first_leg_cost
 		dial_call_cost unless one_leg_calls?

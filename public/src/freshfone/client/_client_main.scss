@@ -106,7 +106,7 @@
 	overflow: hidden;
   	min-height: 51px;
   	padding-bottom: 6px;
-	.freshfone_dashboard_cells {
+	.freshfone_dashboard_cells, .available_agents_cells {
 		width: 128px;
 		@include box-sizing(border-box);
 		@include float(left);
@@ -119,18 +119,22 @@
 		h4 { font-size: 15px; }
 		.dash-lbl{ font-size: 12px; }
 	}
+	.available_agents_cells {
+		&:hover{
+				background-color: #e7e7e7;
+			}
+	}
 }
-.dashboard_call_history_link, .dashboard_agent_status_link {
+.dashboard_call_history_link{
 	display: inline-block;
 	@include box-sizing(border-box);
 	height: 30px;
-	width: 256px;
+	width: 257px;
 	padding: 7px 9px;
 
 	background-color: #E7E7E7;
 	color: $dashboard-cells-header;
-
-	@include margin-left(1px);
+	margin-top: 1px;
 	&:after {
 		content:"";
 		@include triangle(right, $dashboard-right-arrow, 4px);

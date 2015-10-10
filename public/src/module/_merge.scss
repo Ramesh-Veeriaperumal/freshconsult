@@ -654,11 +654,13 @@
 	}
 	#mergebox{
 		.search-content{
+	    	position: relative;
 			width: 370px;
 			margin-top: -3px;
 			.searchicon{
-				top: 99px;
-				@include right(32px);
+			 	top: 10px;
+				@include right(15px);
+
 			}
 		}
 	}

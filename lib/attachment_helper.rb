@@ -24,7 +24,7 @@
       output << %(<div>)
 
       if show_delete
-        if (page == "article")
+        if (page == "article" or page == "topic")
           output << attachment_delete_link(custom_delete_link || helpdesk_attachment_path(attached))
         elsif (page == "cloud_file")
           output << attachment_delete_link(custom_delete_link || helpdesk_cloud_file_path(attached))

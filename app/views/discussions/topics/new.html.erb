@@ -10,7 +10,8 @@
 	:html => {:multipart => true, :id => "post-form", :rel => "validate"} do |f| -%>
 	<%= render :partial => "form", :object => f %>
 	<div class="button-container">
-		<%= pjax_link_to t('cancel'), discussions_path , :class => "btn" %>
+    <% cancel_url = @topic_ticket ? helpdesk_ticket_path(@topic_ticket) : discussions_path %>
+		<%= pjax_link_to t('cancel'), cancel_url , :class => "btn" %>
 		<%= submit_tag t('topic.post'), :class => "btn btn-primary" %>
 	</div>
 <% end -%>

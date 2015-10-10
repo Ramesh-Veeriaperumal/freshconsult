@@ -48,12 +48,14 @@ class ExportAgents < BaseWorker
       end
     end
 
-    def agent_name agent
-      agent.user.name
-    end
-
-    def agent_email agent
-      agent.user.email
+    ["name", "phone", "mobile", "language", "time_zone", "email"].each do |identifier|
+      define_method("agent_#{identifier}") do |agent|
+        if identifier == "language"
+          agent.user.language_name
+        else
+          agent.user.send(identifier)
+        end
+      end
     end
 
     def agent_type agent

@@ -189,4 +189,21 @@ describe Helpdesk::NotesController do
     topic.reload
     topic.last_post.body.strip.should eql(body)
   end
+
+  it "should return public conversations" do
+
+    private_ticket_note = create_note({ :source => @test_ticket.source,
+                               :ticket_id => @test_ticket.id,
+                               :body => Faker::Lorem.paragraph,
+                               :user_id => @agent.id,
+                               :private => true })
+    public_ticket_note = create_note( {:source => @test_ticket.source,
+                               :ticket_id => @test_ticket.id,
+                               :body => Faker::Lorem.paragraph,
+                               :user_id => @agent.id })
+    get :public_conversation, :ticket_id => @test_ticket.id
+    response.body.should =~ /#{public_ticket_note.body}/
+    response.body.should_not =~ /#{private_ticket_note.body}/
+    response.should render_template "helpdesk/notes/public_conversation"
+  end
 end

@@ -3,22 +3,22 @@ HelpdeskReports.ChartsInitializer = HelpdeskReports.ChartsInitializer || {};
 HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
     var _FD = {
         WEEKDAY_MAPPING: {
-            'sunday'   : 0,
             'monday'   : 1,
             'tuesday'  : 2,
             'wednesday': 3,
             'thursday' : 4,
             'friday'   : 5,
-            'saturday' : 6
+            'saturday' : 6,
+            'sunday'   : 0
         },
         DAY_MAPPING: {
-            0 : 'Sundays',
             1 : 'Mondays',
             2 : 'Tuesdays',
             3 : 'Wednesdays',
             4 : 'Thursdays',
             5 : 'Fridays',
-            6 : 'Saturdays'
+            6 : 'Saturdays',
+            0 : 'Sundays'
         },
         trend_subtitle: {
             'doy': 'Daily',
@@ -64,6 +64,9 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var time_trend_data = [];
             var dateRange = this.dateRangeLimit();
             var current_trend = dateRange.default_trend;
+            // If current trend is doy, then making current trend as w!
+            current_trend = (current_trend == "doy" && HelpdeskReports.CoreUtil.dateRangeDiff() >= 6) ? 'w' : current_trend;
+
             if (dateRange.deactive.length) {
                 jQuery.each(dateRange.deactive, function (i) {
                     jQuery('[data-format="' + dateRange.deactive[i] + '"]').addClass('deactive').attr('title', 'Disabled for this date range');
@@ -91,16 +94,20 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             jQuery("[data-title='trend']").text(this.trend_subtitle[current_trend]);
         },
         dayTrend: function (hash) {
-            var default_day = this.findDefaultDay();
+            var defaults = this.findDefaultDay();
+            var default_day = defaults.active;
+
             HelpdeskReports.locals.active_day = this.DAY_MAPPING[default_day];
             var day_trend_data = [];
             var max = this.maxValue();
             day_trend_data.push({
                 name: this.received_name,
-                data: _.values(this.hash_received[this.week_trend][default_day])
+                data: _.values(this.hash_received[this.week_trend][default_day]),
+                events: _FD.legendClickEvent(),
             }, {
                 name: this.resolved_name,
-                data: _.values(this.hash_resolved[this.week_trend][default_day])
+                data: _.values(this.hash_resolved[this.week_trend][default_day]),
+                events: _FD.legendClickEvent(),
             });
             var settings = {
                 renderTo: this.day_trend_chart + '_chart',
@@ -113,10 +120,24 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var day_trend = new lineChart(settings);
             day_trend.lineChartGraph();
         },
+        legendClickEvent: function () {
+            var click_event = {
+                show: function () {
+                    _FD.toggleMiniChartSeries(this.index, 'show');
+                },
+                hide: function () {
+                    _FD.toggleMiniChartSeries(this.index, 'hide');
+                }
+            }
+
+            return click_event;
+        },
         miniDayTrends: function (hash) {
             var max = this.maxValue();
             var days =  _.keys(this.WEEKDAY_MAPPING);
-            var default_day = _FD.findDefaultDay();
+            var defaults = this.findDefaultDay();
+            var default_day = defaults.active;
+            var bgcolor, titleColor;
             _FD.constructMiniTrendTmpl(days);
 
             _.each(days, function (i) {
@@ -131,20 +152,36 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                     data: _.values(_FD.hash_resolved[_FD.week_trend][_FD.WEEKDAY_MAPPING[i]])
                 });
 
+                if ((_FD.WEEKDAY_MAPPING[i]) == default_day) {
+
+                    bgcolor = REPORT_COLORS["plotBG"];
+                    titleColor = REPORT_COLORS["miniActive"]
+                    jQuery('#' + i + '_chart').addClass('active');
+
+                } else if (defaults.disabled.indexOf(_FD.WEEKDAY_MAPPING[i]) > -1) {
+
+                    bgcolor = REPORT_COLORS["miniDisable"];
+                    titleColor = REPORT_COLORS["miniDisableTitle"]
+                    jQuery('#' + i + '_chart').addClass('disable');
+
+                } else {
+
+                    bgcolor = REPORT_COLORS["miniChartBG"];
+                    titleColor = REPORT_COLORS["miniAlt"]
+
+                }
+
                 var settings = {
                     renderTo: i + '_chart',
                     chartData: data_array,
                     title: title,
-                    bgcolor: (_FD.WEEKDAY_MAPPING[i] == default_day) ? REPORT_COLORS["plotBG"] : REPORT_COLORS["miniChartBG"],
+                    bgcolor: bgcolor,
                     yMax: max,
-                    titleColor: (_FD.WEEKDAY_MAPPING[i] == default_day) ? REPORT_COLORS["miniActive"] : REPORT_COLORS["miniAlt"]
+                    titleColor: titleColor
                 }
                 var trend = new miniLineChart(settings);
                 trend.miniLineChartGraph();
 
-                if ((_FD.WEEKDAY_MAPPING[i]) == default_day) {
-                    jQuery('#' + i + '_chart').addClass('active');
-                }
             });
 
         },
@@ -155,18 +192,37 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             jQuery('#mini_chart_wrapper').html(tmpl);
         },
         findDefaultDay: function () {
+            var doy = _.values(_FD.WEEKDAY_MAPPING);
             var date_range = HelpdeskReports.locals.date_range.split('-');
             var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
-            var default_day;
+            var default_day, default_hash = {}, disabled_days = [];
+
             if (date_range.length > 1 && diff >= 6) {
+
                 default_day = _FD.WEEKDAY_MAPPING['monday'];
+
             } else if (date_range.length > 1 && diff < 6) {
-                default_day = this.defaultDayInsideWeek(date_range);
+
+                var doy_active = this.defaultDayInsideWeek(date_range);
+                default_day = (doy_active[0] === 0 && doy_active.length > 1) ? doy_active[1] : doy_active[0];
+
+                disabled_days = _.difference(doy, doy_active);
+
             } else {
+
+                var doy_active = [];
                 default_day = Date.parse(date_range[0]).getDay();
+                doy_active.push(default_day);
+                disabled_days = _.difference(doy, doy_active);
+
             }
 
-            return default_day;
+            default_hash = {
+                active: default_day,
+                disabled: disabled_days
+            }
+
+            return default_hash;
         },
         defaultDayInsideWeek: function (date_range) {
             var end = Date.parse(date_range[1]);
@@ -176,7 +232,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }
             daysOfYear.sort();
 
-            return daysOfYear[0];
+            return daysOfYear;
         },
         dateRangeLimit: function () {
             var date_range = HelpdeskReports.locals.date_range.split('-');
@@ -210,7 +266,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             return _.max(maxArray);
         },
         bindChartEvents: function () {
-            jQuery("#reports_wrapper").on("click.helpdesk_reports.vol", "[data-name='mini-chart']", function () {
+            jQuery("#reports_wrapper").on("click.helpdesk_reports.vol", "[data-name='mini-chart']:not('.disable')", function () {
                 var prev_active = jQuery(".active[data-name='mini-chart']").attr('id');
                 jQuery("[data-name='mini-chart']").removeClass('active');
                 jQuery(this).addClass('active');
@@ -264,6 +320,23 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 }, false);
             }
             chart.redraw(true);
+        },
+        toggleMiniChartSeries: function (index, toggle) {
+            
+            var mini = _.keys(_FD.WEEKDAY_MAPPING);
+
+            for (var j = 0; j < mini.length; j++) {
+
+                var mini_chart = jQuery('#' + mini[j] + '_chart').highcharts();
+
+                if(toggle == 'show') {
+                    mini_chart.series[index].show();
+                } else if(toggle == 'hide') {
+                    mini_chart.series[index].hide();
+                }
+
+            };
+
         }
     };
     return {

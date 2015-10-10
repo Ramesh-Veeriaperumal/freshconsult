@@ -36,6 +36,16 @@
               freshfone.name="<%= t('helpdesk.dashboard.freshfone.name') %>";
               freshfone.last_modifed="<%= t('helpdesk.dashboard.freshfone.last_modified') %>";
               freshfone.call_in_progress="<%= t('helpdesk.dashboard.freshfone.call_in_progress') %>";
+              freshfone.agent_on_call="<%= t('helpdesk.dashboard.freshfone.agent_on_call') %>";
               freshfone.no_activity="<%= t('helpdesk.dashboard.freshfone.no_activity') %>";
             <% end %>
-        
+<script id="phone_toggle" type="text/x-jquery-tmpl">
+    <input  rel = "toggle" type = "checkbox"  data-id = ${id}  class="phone_item ${value}" ${value} >
+    <div class="tooltip" twipsy-content-set="false"></div>
+</script>
+<script id="busy_phone_toggle" type="text/x-jquery-tmpl">
+    <span class="busy_agent_set">
+      <input  rel = "toggle" type = "checkbox"  data-id = ${id}  class="phone_item ${value}" ${value} >
+    </span>
+    <div class="itoggle-disable tooltip" twipsy-content-set="true" data-original-title="${in_progress}"></div>
+</script>

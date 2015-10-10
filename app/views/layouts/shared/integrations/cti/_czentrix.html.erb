@@ -1,22 +1,11 @@
-<%= stylesheet_link_tag_with_rtl :'cdn/cti' %>
-<%= javascript_include_tag :'cdn/cti_ticket_search' %>
-<%= javascript_include_tag :'cdn/cti_client' %>
 <%= javascript_include_tag :'cdn/czentrix' %>
-
-<div class="cti_widget">
-	<%= render 'layouts/shared/cti/cti_popup_tabs' %>
-</div>
-
-<div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
-<div class="popupbox-content hide cti_content_container" rel="cti_widget">
-	<%= render 'layouts/shared/cti/cti_popupbox_content' %>
-</div>
 
 <%= javascript_tag do %>
 	if (typeof cti_user === "undefined") { cti_user = {}; }
-	<% app_config = get_app_config('czentrix') %>
+	<% app_config = installed_app.configs[:inputs] %>
 	cti_user.host_ip = '<%= app_config[:host_ip] %>';
 	cti_user.hide_dont_convert = <%= app_config[:convert_to_ticket] || 0 %>;
 	cti_user.email = '<%= current_user.email %>';
 	cti_user.widget_name = 'czentrix_widget';
+	cti_user.add_note_as_private = <%= app_config[:add_note_as_private] || 0 %>;
 <% end %>

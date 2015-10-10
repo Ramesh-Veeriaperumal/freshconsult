@@ -206,6 +206,10 @@ class SupportController < ApplicationController
       feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums)
     end
 
+    def check_forums_access
+      render_404 unless feature?(:forums) 
+    end
+
     protected
 
     def render_tracker
