@@ -71,10 +71,10 @@ module Helpdesk::NotifierFormattingMethods
 
   def validate_emails(addresses, model)
     return [] unless addresses
+    msg = " #{model.class.name} : #{model.id} Account ID : #{model.account_id}"
     addresses = addresses.join(",") if addresses.is_a? Array
     parsed_emails = Mail::AddressList.new(addresses).addresses
     return [] if parsed_emails.blank?
-    msg = " #{model.class.name} : #{model.id} Account ID : #{model.account_id}"
     emails = []
     name = ""
      
