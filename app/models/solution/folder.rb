@@ -207,6 +207,10 @@ class Solution::Folder < ActiveRecord::Base
     (language_id == Language.for_current_account.id)
   end
 
+  def visible_in? portal
+    category.portal_ids.include?(portal.id)
+  end
+
   private
 
     def populate_account

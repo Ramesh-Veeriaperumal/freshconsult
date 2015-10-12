@@ -28,7 +28,9 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def assign_header_based_ticket
-    header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id], email[:in_reply_to], email[:references])
+    header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
+                                                               email[:in_reply_to][1..-2], 
+                                                               email[:references])
     self.ticket = header_processor.ticket_from_headers(email[:from_email], account)
   end
 
@@ -138,7 +140,9 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def archive_assign_header_based_ticket
-    header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id], email[:in_reply_to], email[:references])
+    header_processor = Helpdesk::Email::ProcessByMessageId.new(email[:message_id][1..-2], 
+                                                               email[:in_reply_to][1..-2], 
+                                                               email[:references])
     self.archived_ticket = header_processor.archive_ticket_from_headers(email[:from_email], account)
   end
 

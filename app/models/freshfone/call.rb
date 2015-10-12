@@ -366,7 +366,9 @@ class Freshfone::Call < ActiveRecord::Base
       if has_children?
         child = children.last
         if child.present?
-          Freshfone::NotificationWorker.perform_async({:call_id => child.id}, nil, "disconnect_other_agents")
+          Freshfone::NotificationWorker.perform_async(
+            { :call_id => child.id }, nil,
+            'complete_other_agents')
         end
         # return
       end

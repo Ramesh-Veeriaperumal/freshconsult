@@ -133,7 +133,7 @@ class Integrations::DynamicsCrmController < ApplicationController
           result_flag = "success"
         end
       rescue => e
-        Rails.logger.debugger "#{e}"
+        Rails.logger.debug "#{e}"
         result_flag = "failure"
       end
       result_flag

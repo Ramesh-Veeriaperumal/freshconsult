@@ -124,6 +124,13 @@ class Helpdesk::NotesController < ApplicationController
     end
   end
 
+  def public_conversation
+    @notes = @parent.conversation(nil, 5, [:note_old_body]).public
+    respond_to do |format|
+      format.html { render :layout => false }
+    end
+  end
+
   protected
 
     def build_note_body_attributes

@@ -31,10 +31,11 @@
     <%= javascript_include_tag :'cdn/client_logger' %>
 <% end %>
 <% if current_user && current_user.agent? %>
-	<% cti_app = current_account.installed_applications.detect {|app| app.application.cti?} %>
-	<% unless cti_app.blank? %>
-	<% @cti_app_name = cti_app.application.name %>
-	<%= render :partial => 'layouts/shared/integrations/cti/' + @cti_app_name %>
+	<% cti_app = current_account.cti_installed_app_from_cache %>
+	<% if cti_app.present? %>
+	<% cti_app_name = cti_app.application.name %>
+	<%= render :partial => 'layouts/shared/integrations/cti/cti_toolbar', :locals => {:app => cti_app.application} %>
+	<%= render :partial => 'layouts/shared/integrations/cti/' + cti_app_name, :locals => {:installed_app => cti_app} %>
 	<% end %>
 <% end %>
 <%if @debuging %>

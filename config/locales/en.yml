@@ -199,6 +199,7 @@ en:
   dropbox_choose_file: Choose file
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
+  onedrive_attach_from_text: Attach from <b>Onedrive</b>
   cloudfile_plaintext: Attachments on Cloud
   box_attach_label: Attach from
   box_attach_from: Attach from <b>Box</b>
@@ -516,6 +517,7 @@ en:
       expert: Expert
       master: Master
       guru: Guru
+    score_reset_successfull: "Please wait while we reset the arcade points. This might take a few minutes."
     notifications:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
@@ -1079,6 +1081,7 @@ en:
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
       survey_preview_error: The current user is not an agent. Error while previewing the survey.
+      reset_arcade_alert: "Agent(s) will lose their badges and points will be reset to %{points}. Any changes made in the Points and Quests configuration will remain intact. Are you sure you want to proceed?"
       help_text:
         why_game: "Points and levels"
         why_game_info1: "Points are awarded to agents based on how fast they resolve the tickets assigned to them. There are also bonus points for first call resolution and satisfied customers. Agents also lose points for late resolution of tickets and for unhappy customers."
@@ -1103,6 +1106,7 @@ en:
        </p>"
       index:
         title: Arcade Settings
+        start_over: Reset
         info1: Now every support ticket that flows in is a chance for agents to score. What’s even cooler - you get to award bonus points to your support team based on what is most important to you. Like shooting out answers super fast, getting the solution right the first time, and winning awesome satisfaction ratings from customers.
         info2: Follow your support teams’ progress with the leaderboard right off the dashboard. And award special trophies to the top scorers for being the Speed Racer, Sharp Shooter, Customer Wow Champ, and best of all, your Most Valuable Player of the month.
         video: Check out the video
@@ -2877,6 +2881,10 @@ en:
       asc: Ascending
       desc: Descending
   topic:
+    requester: Requester
+    requester_details: "%{name} <%{email}>"
+    first_email: First Email Text
+    full_conversation: Last 5 conversations (except private notes)
     ideas_stamps:
       planned: Planned
       implemented: Implemented
@@ -3150,6 +3158,7 @@ en:
   zip: Zip
   import_solution_article: Convert Article forum to solution
   close: Close
+  reset_arcade: "Reset Arcade"
   agent:
     full_time_agent: Full-Time Agent
     occasional_agent: Occasional Agent
@@ -3166,6 +3175,10 @@ en:
     convert_agent_confirmation: Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?
     agent_restored: The agent has been restored
     convert_to_contact: Convert To Contact
+    reset_score_title: Reset Badges and Points
+    reset_scores: Reset badges and points
+    reset_score_alert_you: "You will lose your badges and your points will be reset to %{points}. Are you sure you want to proceed?"
+    reset_score_alert_them: "%{name} will lose his/her badges and points will be reset to %{points}. Are you sure you want to proceed?"
     status:
       active: Active
       deleted: Deleted
@@ -4405,6 +4418,7 @@ en:
       wrote_on: 'On'
       wrote: wrote
     add_time: Add time
+    convert_to_topic: Convert to Topic
     support:
       reply: "Reply"
       reply_and_open: "Reply"
@@ -4937,6 +4951,7 @@ en:
         accepting: Accepting
         not_accepting: Not Accepting
         call_in_progress: Call in progress
+        agent_on_call: Agent on call
         no_agents: "- No Agents -"
         no_activity: "No Activity"
       livechat:
@@ -5337,6 +5352,10 @@ en:
         roles: "Roles"
         ticket_scope: "Ticket scope"
         agent_type: "Agent Type"
+        language: "Language"
+        time_zone: "Timezone"
+        phone: "Phone"
+        mobile: "Mobile"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
@@ -5674,12 +5693,22 @@ en:
       contacts: "Contact details of "
     cti:
       convert_to_ticket: "Convert all call recordings into a ticket at the end of the call"
+      add_note_as_private: "Mark in call notes as a private"
+      cti_error: "No Integration of type cti enabled for this account"
     czentrix:
       label: "C-Zentrix"
       desc: "Answer calls or trigger an outgoing call with this powerful C-zentrix's telephony capabilities embedded inside Freshdesk"
       helptext: "<h4>C-Zentrix Integration Help</h4><p><br/>You can setup this integration by entering C-zentrix’s CTI bar address, which can be either IP address or domain name</p><p>You can choose to convert the call recordings into a ticket or add as a note to an existing ticket. Click on the option 'convert all recordings into a ticket' to make it a default setup</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page</p>"
       host_name: "Host ip:Port"
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
+    knowlarity:
+      label: "Knowlarity"
+      desc: "Seamlessly merge your Knowlarity on call support with your Freshdesk"
+      helptext: "<h4>knowlarity Integration Help</h4><p><br/>You can setup this integration by entering knowlarity number and API key.</p><p>Once enabled, you will be able to see the phone icon at the bottom of the page.</p>"
+      api_key: "Knowlarity API Key"
+      number: "Knowlarity number"
+      number_info: ""
+      apikey_info: ""
     five9:
       label: "Five9"
       desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
@@ -6187,6 +6216,12 @@ en:
         accounts: "Chart of Accounts Selection(Revenue)"
         inventory_items: "Inventory Items Selection"
         default_desc: "Default Invoice Item Description"
+    onedrive:
+      chooser_title: "Choose a file form OneDrive"
+      label: "OneDrive"
+      desc: "Attach and Share your data/files from onedrive."
+      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again." 
+      error: "A problem has occured in opening your Onedrive files. Please try again."
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -6881,7 +6916,7 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume:
+    ticket_volume: 
       title: Ticket Volume
       time_trends:
         day: Day
@@ -6954,8 +6989,8 @@ en:
       title:  Customer Report
       received_tickets: Customers with the most received
       resolved_tickets: Customers with the most resolved
-      response_sla: Most SLA Violations for Response
-      resolution_sla: Most SLA Violations for resolution
+      response_violated: Most SLA Violations for response
+      resolution_violated: Most SLA Violations for resolution
       customer_interactions: Customer Interactions
       agent_interactions: Agent Interactions
   adv_reports:
@@ -7124,6 +7159,8 @@ en:
       requester_name: "Requester Name"
       requester_email: "Requester Email"
       save: "Save"
+      call_notes: "notes"
+      notes: "Notes"
   freshfone:
     recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
     not_enough_credit: "Not Enough Credit!"

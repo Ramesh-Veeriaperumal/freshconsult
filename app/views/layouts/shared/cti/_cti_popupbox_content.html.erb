@@ -2,7 +2,11 @@
 	<%= render :partial => 'layouts/shared/cti/cti_end_call' %>
 </div>
 <div id="toolbar" class="hide" style="background:darkgray;">
-	<%= render :partial => 'layouts/shared/cti/'+ @cti_app_name +'_toolbar' %>
+	<% partial = "layouts/shared/cti/#{app.name}_toolbar" %>
+	<%= render :partial => partial,:locals => {:width => app[:options][:dimensions][:width],:height => app[:options][:dimensions][:height]} %>
+</div>
+<div id="cti_add_notes" class="hide ffone-add-notes">
+	<%= render :partial => 'layouts/shared/cti/cti_add_notes' %>
 </div>
 
 <span class="triangle"></span>

@@ -291,6 +291,10 @@ class Solution::Article < ActiveRecord::Base
     set_status(true)
     save
   end
+  
+  def visible_in? portal
+    folder.visible_in?(portal)
+  end
 
   private
 

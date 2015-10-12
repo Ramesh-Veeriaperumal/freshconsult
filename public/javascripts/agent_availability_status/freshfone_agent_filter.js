@@ -19,11 +19,14 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       this.Preference = {TRUE:1, FALSE:0};
       this.AvailableAgentList = new List('ffone-tab-1',{page:this.list_length});
       this.UnavailableAgentList = new List('ffone-tab-2',{page:this.list_length});
+      this.busyState = { BUSY : "1", NOT_BUSY : "0" };
       this.sort_by = "name"
-      this.sort_by_hash = {"name" : 1, "presence_time" :  -1};
-      this.sort_order_list = ["presence_time","name"];
+      this.sort_by_hash = {"name" : 1, "presence_time" :  -1, "busy_agent" : -1};
+      this.sort_order_list = ["busy_agent","presence_time","name"];
       this.on_mobile_template = '<i class="ficon-available-on-mobile active fsize-20 pull-left "></i>';
       this.on_browser_template = '<i class="ficon-ff-on-browser active fsize-20 pull-left "></i>';
+      this.toggle_button_template = $("#phone_toggle").clone();
+      this.busy_toggle_button_template = $("#busy_phone_toggle").clone();
     },
     init: function () {
       this.start();
@@ -55,7 +58,9 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                available_avatar_image : this.agent.avatar,
                presence_time : this.agent.last_call_time,
                presence_time_in_s : this.presence_in_words, 
-               on_device_img : img_on_device
+               on_device_img : img_on_device,
+               busy_agent : this.agent.presence==this.Status.BUSY ? this.busyState.BUSY : this.busyState.NOT_BUSY,
+               toggle_button : this.toggleButton(this.agent.id,this.agent.presence,true)
               }
     },
     unavailableUserListItem: function(id){
@@ -70,7 +75,25 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                presence_time : this.agent.last_call_time,
                unavailable_avatar_image : this.agent.avatar, 
                presence_time_in_s : this.presence_in_words,
+               busy_agent : this.agent.presence==this.Status.BUSY ? this.busyState.BUSY : this.busyState.NOT_BUSY,
+               toggle_button : this.toggleButton(this.agent.id,this.agent.presence,false)
               }
+    },
+    toggleButton: function(user_id,presence,flag){
+      if(presence==this.Status.BUSY){
+        var busy_template = this.busy_toggle_button_template.tmpl(this.toggleButtonParams(user_id,this.toggleButtonType(flag),true));
+        var busy_toggle_template = busy_template[0].outerHTML+busy_template[2].outerHTML
+        return busy_toggle_template;
+      }
+      else{
+        return this.toggle_button_template.tmpl(this.toggleButtonParams(user_id,this.toggleButtonType(flag),false))[0].outerHTML;
+      }
+    },
+    toggleButtonType: function(flag){
+      return flag ? "checked" : "" ;
+    },
+    toggleButtonParams: function(user_id,checked,busy){
+      return  busy ? {id : user_id, value : checked, in_progress: freshfone.agent_on_call } : {id : user_id, value : checked } ;
     },
     populateAgents: function(){  
          this.AvailableAgentList.clear();
@@ -107,7 +130,7 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
                                 self.setTickIcon(self.sort_order_list[0]);
                                 self.sortLists();
                                 self.updateNoOfAgents();
-                              }  
+                              }
                         } ,
                         error: function(data){
                         }

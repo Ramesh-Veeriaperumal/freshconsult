@@ -8,7 +8,7 @@ class HelpdeskReports::Response::Ticket::Base
   def initialize result, date_range, report_type
     @raw_result       = result
     @date_range       = date_range
-    @report_type      = report_type
+    @report_type      = report_type.upcase.to_sym
     @processed_result = {}
   end
 
@@ -53,18 +53,20 @@ class HelpdeskReports::Response::Ticket::Base
   def convert_id_to_names(column_name, value, mapping_hash)
     avg_count, percentage_count = 0 , 0
     value.keys.each do |k| 
-      new_key = mapping_hash[k.to_i] || NOT_APPICABLE
+      new_key = mapping_hash[k.to_i] || NOT_APPICABLE 
+      value[new_key] ||= {value: 0, id: nil}
       
       if self.class == HelpdeskReports::Response::Ticket::Count     
-        value[new_key] = value[new_key].to_i + value[k] #incase we have multiple NA values
+        val = value[new_key][:value].to_i + value[k] #incase we have multiple NA values
       elsif self.class == HelpdeskReports::Response::Ticket::Avg
-        value[new_key] = new_key == NOT_APPICABLE ? aggregate_avg(@helper_hash[column_name.to_s][k],{"avg"=>value[new_key].to_i, "count"=>avg_count}) : value[k]
+        val = new_key == NOT_APPICABLE ? aggregate_avg(@helper_hash[column_name.to_s][k],{"avg"=>value[new_key][:value].to_i, "count"=>avg_count}) : value[k]
         avg_count += @helper_hash[column_name.to_s][k][:count] if new_key == NOT_APPICABLE
       elsif self.class == HelpdeskReports::Response::Ticket::Percentage
         percentage_count += 1 if new_key == NOT_APPICABLE and percentage_count < 2
-        value[new_key] = new_key == NOT_APPICABLE ? (value[new_key].to_i + sla_percentage(column_name, k))/percentage_count : value[k]
+        val = new_key == NOT_APPICABLE ? (value[new_key][:value].to_i + sla_percentage(column_name, k))/percentage_count : value[k]
       end
       
+      value[new_key] = {value: val, id: new_key == NOT_APPICABLE ? nil : k}
       value.delete(k)
     end
   end
@@ -108,14 +110,28 @@ class HelpdeskReports::Response::Ticket::Base
       (start_day.year..end_day.year).each do |y|
         start_point  = (start_day.year == y) ? date_part(start_day, trend) : 1
         end_point = (end_day.year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
-
+        
         (start_point..end_point).each do |i|
-          i = label_for_x_axis(y, i, trend, date_range)
+          month = trend == "w" ? week_1_specialcase(y) : nil
+          i = label_for_x_axis(y, i, trend, date_range, month)
           padding_hash[i] = 0
         end
       end
     end
     padding_hash
+  end
+  
+  def week_1_specialcase year
+    # By definition (ISO 8601), the first week of a year contains January 4 of that year. (The ISO-8601 week starts on Monday.) 
+    # Due to above definiton it can happen that an year has two separate weeks with week number 1, which is an expected behaviour
+    # and in any such case, week number 1 occurring in December is actually week number 1 of next year.
+    # Below code is written to get month as we need month to distinguis between week 1 occuring in Jan or Dec.
+    start_day = Date.parse(date_range.split("-").first)
+    if start_day.year == year and start_day.cweek == 1
+      return start_day.month
+    else
+      nil
+    end
   end
 
   def trend_max_value trend, year
@@ -123,30 +139,57 @@ class HelpdeskReports::Response::Ticket::Base
       when "doy"
         Date.leap?(year) ? TREND_MAX_VALUE["leap_year"] : TREND_MAX_VALUE["year"]
       else
+        if trend == "w"
+          start_day = Date.parse(date_range.split("-").first)
+          return 1 if start_day.year == year and start_day.cweek == 1 and start_day.month == 12
+        end
         TREND_MAX_VALUE[trend]
     end
   end
 
-  def label_for_x_axis year, point, trend, date_range
+  def label_for_x_axis year, point, trend, date_range, month = nil
     case trend
       when "doy"
-        "#{Date.ordinal(year, point).strftime('%d %b')}, #{year}"
+        date = "#{Date.ordinal(year, point).strftime('%d %b')}, #{year}"
       when "w"
-        "#{week_to_date(point, year, date_range)}"
+        date = "#{week_to_date(point, year, date_range, month)}"      
       when "mon"
-        "#{Date::ABBR_MONTHNAMES[point]}, #{year}"
+        date = "#{Date::ABBR_MONTHNAMES[point]}, #{year}"      
       when "qtr"
-        "#{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 1]} - #{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 3]}, #{year}"
+        date = "#{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 1]} - #{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 3]}, #{year}"      
       when "y"
-        "#{point}"
+        date = "#{point}"
     end
+    date_according_to_report_type date, trend, year
+  end
+  
+  def date_according_to_report_type date, trend, year
+    r_t_code = REPORT_TYPE_BY_KEY[report_type]
+    case trend
+      when "qtr"
+        r_t_code == 104 ? (Date.parse(date.split("-").first+year.to_s).strftime('%s').to_i * 1000) : date
+      when "y"
+        r_t_code == 104 ? (Date.ordinal(date.to_i).strftime('%s').to_i * 1000) : date
+      else
+        r_t_code == 104 ? (Date.parse(date).strftime('%s').to_i * 1000) : date
+      end
   end
 
-  def week_to_date week, year, date_range
+  def week_to_date week, year, date_range, month
     dates      = date_range.split("-")
     start_date = Date.parse(dates.first)
-    res_date   = Date.commercial(year, week)
-    res_date < start_date ? start_date.strftime('%d %b, %Y') : res_date.strftime('%d %b, %Y')
+    res_date   = date_from_week week, month, year #Date.commercial(year, week)
+    if REPORT_TYPE_BY_KEY[report_type] == 104
+      res_date
+    else
+      res_date < start_date ? start_date.strftime('%d %b, %Y') : res_date.strftime('%d %b, %Y')
+    end
+    
+  end
+  
+  def date_from_week week, month, year
+    year += 1 if month and week == 1 and month == 12
+    Date.commercial(year, week)
   end
 
 end

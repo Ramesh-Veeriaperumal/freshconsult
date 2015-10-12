@@ -25,6 +25,7 @@ class ChatsController < ApplicationController
     ticket_params = {
                       :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
                       :email  => params[:ticket][:email],
+                      :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
                       :requester_name => params[:ticket][:name],
                       :ticket_body_attributes => { :description_html => params[:ticket][:content] },

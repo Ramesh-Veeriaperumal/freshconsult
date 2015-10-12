@@ -13,7 +13,8 @@ function freshdeskShowCrm(phone, additionalParams) {
         	},
           error: function (data) {
           }
-    }); 
+    });
+  jQuery(".cti_notes").show(); 
 
 }
 
@@ -36,17 +37,19 @@ function freshdeskHandleEndCall(recordingUrl){
   if(cti===undefined){
     cti = new CtiEndCall();
   }
-  cti.showEndCallForm();
-  cti.recordingUrl=recordingUrl||"";
-  //cti.$endCallNote.val(recordingUrl||"");
+  if (!jQuery('#cti_end_call').hasClass('in')) {
+    cti.showEndCallForm();
+    cti.recordingUrl=recordingUrl||"";
+  }
+  jQuery(".cti_notes").hide();
 }
 function show_incomming_popup(data){
   jQuery('.cti').removeClass('hide');
   if(jQuery("#toolbar").css("display")=="none")
             jQuery("#cust_det").trigger("click");
-            jQuery("#cust_name").text(data.name || " ");
-            jQuery("#cust_mobile").text(data.mobile);
-            jQuery("#cust_company").text(data.company_name || " ");
+            jQuery("#cust_name").text(escapeHtml(truncateString(data.name || " ",26)));
+            jQuery("#cust_mobile").text(escapeHtml(data.mobile));
+            jQuery("#cust_company").text(escapeHtml(truncateString(data.company_name || " ",36)));
             jQuery("#profile_pic").html("");
             if(data.avatar!="NA"){
               jQuery("#profile_pic").html(data.avatar || " ");
@@ -61,7 +64,9 @@ function show_incomming_popup(data){
               var obj =  JSON.parse(tickets);
               var len = obj.length;
                 for (var i=0; i<len; i++) {
-                myTable+="<li><i class='ficon-ticket fsize-18 '></i><a href='/helpdesk/tickets/"+obj[i]["helpdesk_ticket"].display_id+"' target='_blank'>"+obj[i]["helpdesk_ticket"].subject+"</a></li>";
+                  var sub = escapeHtml(obj[i]["helpdesk_ticket"].subject);
+                  var trunc_sub = escapeHtml(truncateString(obj[i]["helpdesk_ticket"].subject,29));
+                myTable+="<li><i class='ficon-ticket fsize-18 '></i><a href='/helpdesk/tickets/"+obj[i]["helpdesk_ticket"].display_id+"' data-toggle='tooltip' title='"+sub+"'"+ "target='_blank'>"+trunc_sub+"</a></li>";
                 }
             }
             document.getElementById('tickets_table').innerHTML = myTable;
@@ -77,3 +82,11 @@ function show_incomming_popup(data){
 
             
 }
+
+jQuery(document).ready(function() {
+  jQuery(".cti_notes").hide();
+});
+
+function truncateString(str, length) {
+     return str.length > length ? str.substring(0, length - 3) + '...' : str
+  }

@@ -4,11 +4,19 @@ HelpdeskReports.locals = HelpdeskReports.locals || {};
 HelpdeskReports.CoreUtil = {
     MULTI_SELECT_SELECTION_LIMIT: 10,
     FILTER_LIMIT: 5,
-    FILTER_LIMIT_MSG: "* You can select a maximum of 5 filters. (Each level of nested field counts as one filter)",
+    FILTER_LIMIT_MSG: "* You can select a maximum of 5 filters. (Each selected level of nested field counts as one filter)",
     CONST: {
         base_url    : "/reports/v2/",
         metrics_url : "/fetch_metrics",
         tickets_url : "/fetch_ticket_list"
+    },
+    disabled_filter: ['status'],
+    //Time-outs for ajax requests in milliseconds
+    timeouts: {
+        main_request: 45000,
+        glance_right_pane: 30000,
+        ticket_list: 15000,
+        custom_field: 15000
     },
     getFilterDisplayData: function () {
         var _this = this;
@@ -157,7 +165,7 @@ HelpdeskReports.CoreUtil = {
                     var present = locals.custom_field_hash[custom_fields[i]];
                     for(j=0; j < present.length; j++){ 
                         var val = jQuery('#div_ff_' + present[j]).children('select').val();
-                        if(val === null || val === ""){
+                        if(val === null || val === "" || (j == present.length -1)){
                             group_by.push(present[j]);
                             break;
                         }
@@ -281,7 +289,7 @@ HelpdeskReports.CoreUtil = {
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="close-filter-menu"]', function () {
             _this.actions.closeFilterMenu();
         });
-        jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="hide-ticket-list"]', function () {
+        jQuery(document).on('click.helpdesk_reports', '[data-action="hide-ticket-list"]', function () {
             _this.actions.hideTicketList();
         }); 
         jQuery('#reports_wrapper').on('keypress.helpdesk_reports keyup.helpdesk_reports keydown.helpdesk_reports', "#date_range", function (ev) {
@@ -303,6 +311,7 @@ HelpdeskReports.CoreUtil = {
         _this.generateReportFiltersMenu();
         _this.customFieldHash();
         _this.scrollTop();
+        _this.actions.setTicketListFlag();
     },
     actions : {
         closeFilterMenu: function () {
@@ -319,12 +328,25 @@ HelpdeskReports.CoreUtil = {
         openFilterMenu: function () {
             jQuery("#report-filters").show();
             jQuery('#inner').addClass('openedit');
+            this.hideTicketList();
+            this.hideViewMore();
+        },
+        showTicketList: function () {
+            jQuery("#ticket_list").html("").addClass('sloading loading-small');
+            jQuery('#ticket_list_wrapper').addClass('active');
         },
         hideTicketList: function () {
-            jQuery('#ticket_list_wrapper').removeClass('active');
+            if(jQuery('#ticket_list_wrapper').hasClass('active')) {
+                jQuery('#ticket_list_wrapper').removeClass('active');
+            }
         },
-        hideViewMore: function(){
-            jQuery('#view_more_wrapper').removeClass('show-all-metrics');
+        hideViewMore: function() {
+            if(jQuery('#view_more_wrapper').hasClass('show-all-metrics')) {
+                jQuery('#view_more_wrapper').removeClass('show-all-metrics');
+            }
+        },
+        showViewMore: function () {
+            jQuery('#view_more_wrapper').addClass('show-all-metrics');
         },
         toggleReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
@@ -357,6 +379,9 @@ HelpdeskReports.CoreUtil = {
         disableKeyPress: function (ev) {
             ev.preventDefault();
             return false;
+        },
+        setTicketListFlag: function () {
+            HelpdeskReports.locals.ticket_list_flag = false;
         }
     },
     addIndexToFields: function () {
@@ -390,7 +415,7 @@ HelpdeskReports.CoreUtil = {
         var menu_tmpl = JST["helpdesk_reports/templates/filter_menu"]({
             data: locals.report_field_hash
         });
-        jQuery("#report_fields_list" + ' ul').html(menu_tmpl);
+        jQuery("#report_fields_list ul").html(menu_tmpl);
     },
     constructReportField: function (field, val) {
         var _this = this;
@@ -484,7 +509,7 @@ HelpdeskReports.CoreUtil = {
         
         if (filter.length) {
             jQuery(filter).each(function (index, hash) {
-                if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition)) {
+                if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.disabled_filter.indexOf(hash.condition) < 0) {
                     _this.constructReportField(hash.condition, hash.value);
                 }
             });
@@ -495,22 +520,41 @@ HelpdeskReports.CoreUtil = {
 
         return date;
     },
+    calculateDateLag: function () {
+        var date_lag = HelpdeskReports.locals.date_lag;
+        var date = {};
+
+        if (date_lag === undefined) {
+            date_lag = 0;   
+        }
+
+        date = {
+            7:       'Today-' + (6  + date_lag),
+            30:      'Today-' + (29 + date_lag),
+            90:      'Today-' + (89 + date_lag),
+            endDate: 'Today-' + date_lag
+        }
+        
+        return date;
+    },
     constructDateRangePicker: function () {
+        var date = this.calculateDateLag();
+
         jQuery("#date_range").daterangepicker({
             earliestDate: Date.parse('04/01/2013'),
-            latestDate: Date.parse('Today'),
+            latestDate: Date.parse(date.endDate),
             presetRanges: [{
                 text: 'Last 7 Days',
-                dateStart: 'Today-6',
-                dateEnd: 'Today'
+                dateStart: date[7],
+                dateEnd: date.endDate
             }, {
                 text: 'Last 30 Days',
-                dateStart: 'Today-29',
-                dateEnd: 'Today'
+                dateStart: date[30],
+                dateEnd: date.endDate
             }, {
                 text: 'Last 90 Days',
-                dateStart: 'Today-89',
-                dateEnd: 'Today'
+                dateStart: date[90],
+                dateEnd: date.endDate
             }],
             presets: {
                 dateRange: 'Date Range'
@@ -530,37 +574,43 @@ HelpdeskReports.CoreUtil = {
             dataType: 'html',
             contentType: 'application/json',
             data: Browser.stringify(params),
-            timeout: 45000,
+            timeout: _this.timeouts.main_request,
             success: function (data) {
-                jQuery('#view_more_wrapper').removeClass('hide');
-                jQuery('#reports_wrapper').removeClass('hide');
+                _this.showWrappers();
                 jQuery("#reports_container").html(data);
-                jQuery('#loading-box').hide();
             },
             error: function (data) {
-                jQuery('#view_more_wrapper').removeClass('hide');
-                jQuery('#reports_wrapper').removeClass('hide');
+                _this.showWrappers();
                 var text = "Something went wrong, please try again";
                 _this.populateEmptyChart(["reports_container"], text);
-                jQuery('#loading-box').hide();
             }
         }
         _this.makeAjaxRequest(opts);
     },
+    showWrappers: function () {
+        jQuery('#view_more_wrapper').removeClass('hide');
+        jQuery('#reports_wrapper').removeClass('hide');
+        jQuery('#ticket_list_wrapper').removeClass('hide');
+        jQuery('#loading-box').hide();
+    },
     fetchTickets: function (params) {
         var _this = this;
+        _this.actions.closeFilterMenu();
+
         var opts = {
             url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.tickets_url,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: Browser.stringify(params),
+            timeout: _this.timeouts.ticket_list,
             success: function (data) {
                 _this.appendTicketList(data);
+                _this.actions.setTicketListFlag();
             },
             error: function (data) {
-                console.log(data.responseText);
-                console.log('fired AJaX error');
+                _this.appendTicketListError();
+                _this.actions.setTicketListFlag();
             }
         }
         _this.makeAjaxRequest(opts);
@@ -571,6 +621,13 @@ HelpdeskReports.CoreUtil = {
         });
         jQuery("#ticket_list").removeClass('sloading loading-small');
         jQuery('#ticket_list').html(tmpl);
+    },
+    appendTicketListError: function () {
+        var _this = this;
+        var div = ['ticket_list'];
+        var msg = "Something went wrong, please try again";
+        jQuery("#ticket_list").removeClass('sloading loading-small');
+        _this.populateEmptyChart(div, msg);
     },
     flushLocals: function () {
         HelpdeskReports.locals = {};
@@ -615,5 +672,42 @@ HelpdeskReports.CoreUtil = {
         for (var i = 0; i < container_id.length; i++) {
             jQuery('#'+container_id[i]).html(emptychartSection);
         };
+    },
+    timeMetricConversion: function( total_seconds ){
+        if(typeof total_seconds !== 'number')  return total_seconds;
+        var hrs = '<span class="time-char-format">h</span>';
+        var mins= '<span class="time-char-format">m</span>';
+        var secs= '<span class="time-char-format">s</span>';
+        var h   = Math.floor(total_seconds / 3600);
+        var min = Math.floor((total_seconds / 60) % 60);
+        var sec = Math.floor(total_seconds % 60);
+
+        return total_seconds > 3600 ? (h + hrs +' '+min + mins) : (min + mins +' '+sec + secs );
+    },
+    shortenLargeNumber: function(num, digits) {
+        var units = ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'],
+            decimal;
+
+        for(var i=units.length-1; i>=0; i--) {
+            decimal = Math.pow(1000, i+1);
+
+            if(num <= -decimal || num >= decimal) {
+                return +(num / decimal).toFixed(digits) + units[i];
+            }
+        }
+        return num;
+    },
+    addsuffix: function (m) {
+        if(typeof m !== 'number')  {
+            return m;
+        } else {
+            return m + '<span class="time-char-format">%</span>';
+        }
+    },
+    dateRangeDiff: function () {
+        var date_range = HelpdeskReports.locals.date_range.split('-');
+        var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
+
+        return diff;
     }
 };

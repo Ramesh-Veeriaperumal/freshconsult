@@ -9,7 +9,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   has_many :sub_picklist_values, :as => :pickable, 
                                  :class_name => 'Helpdesk::PicklistValue', 
-                                 :include => :sub_picklist_values,
                                  :dependent => :destroy,
                                  :order => "position"
 

@@ -42,13 +42,17 @@ window.App = window.App || {};
       $("#folder-bulk-action, #article-bulk-action").toggleClass('faded', checked);
       if (checked === false) {
         $(".bulk-action-btns").removeClass('disabled');
-        $('.visible-to-btn .bulk-action-btns').attr('disabled', false)
+        $('.visible-to-btn .bulk-action-btns').attr('disabled', false);
+        $('.action-btns-bar').fadeOut(10);
+        $('.category-details').addClass('list-selected');
       } else {
         $(".bulk-action-btns").addClass('disabled');
         $("#move_to").addClass('hide');
         $("#visible_to").addClass('hide');
         $("#change_author").addClass('hide');
-        $('.visible-to-btn .bulk-action-btns').attr('disabled', true)
+        $('.visible-to-btn .bulk-action-btns').attr('disabled', true);
+        $('.action-btns-bar').fadeIn();
+        $('.category-details').removeClass('list-selected');
       }
     },
 
@@ -62,6 +66,7 @@ window.App = window.App || {};
 
       //generic for folder listing and article listing page
       $('body').on('change.folders_articles', '.item_ids_checkbox', function () {
+        $this.toggleListingSelection(this);
         $this.selectedElementsCount();
       });
 
@@ -122,6 +127,9 @@ window.App = window.App || {};
       });
 
       $this.bindLanguageBarLinks();
+      $("body").on('click.folders_articles', '.confirm-delete' ,function (e) {
+        $('.modal').modal('hide');
+      });
 
       focusFirstModalElement('folders_articles');
     },
@@ -151,7 +159,12 @@ window.App = window.App || {};
 
     allSelectAction: function (checked) {
       $(".item_ids_checkbox").attr('checked', checked);
+      $(".comm-item").toggleClass('active', checked);
       this.selectedElementsCount();
+    },
+
+    toggleListingSelection: function (el) {
+      $(el).closest('.comm-item').toggleClass('active');
     },
 
     visibleToSelection: function (data) {
@@ -253,6 +266,7 @@ window.App = window.App || {};
         $('.solution-list li[item_id="' + ids[i] + '"]').remove();
       }
       $(".item_ids_checkbox:checked").attr('checked', false);
+      $('.comm-item').removeClass('active');
     },
     
     hideSelectAll: function () {

@@ -58,4 +58,16 @@ describe Support::Discussions::ForumsController do
 	 	@account.features.hide_portal_forums.destroy
 	end
 
+
+	it "should render 404 for accounts without forum feature" do
+		@account.remove_feature(:forums)
+		@account.reload
+
+		get :show, :id => @forum.id
+		response.status.should eql(404)
+
+		@account.add_features(:forums)
+		@account.reload
+	end
+
 end

@@ -1,5 +1,6 @@
 class Support::Solutions::FoldersController < SupportController
 	before_filter :scoper, :check_folder_permission
+  before_filter :render_404, :unless => :folder_visible?, :only => :show
 	before_filter { |c| c.check_portal_scope :open_solutions }
 	
 	def show
@@ -35,4 +36,8 @@ class Support::Solutions::FoldersController < SupportController
 		def check_folder_permission			
 	    return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
 	  end
+
+    def folder_visible?
+      @folder.visible_in?(current_portal)
+    end
 end

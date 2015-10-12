@@ -8,7 +8,7 @@
 	        iframeDiv = document.getElementById("czentrixIframeDiv");
 	       // iframeUrl = zentrixBaseUrl + "czhandler/cti_handler.php?e="+agent_id;
 	      	iframeUrl = zentrixBaseUrl + "bar/cti_handler.php?e="+agent_id;
-	        iframeHtml = '<iframe height="350px" width="250px" id="czentrixIframe" src="' + iframeUrl + '"></iframe>';
+	        iframeHtml = '<iframe height="<%= height %>" width="<%= width %>" id="czentrixIframe" src="' + iframeUrl + '"></iframe>';
 	        iframeDiv.innerHTML = iframeHtml;
         }
 		jQuery(document).ready(function() {

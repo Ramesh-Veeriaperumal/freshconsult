@@ -29,7 +29,11 @@
     @include border-left(1px solid white);
 
     .action-btns-bar {
-      padding: 20px 0px;
+
+      @include float(left);
+      padding-top: 20px;
+      padding-bottom: 20px;
+      @include padding-left(20px);
 
       .delete-icon {
         @include margin-left(20px);
@@ -65,6 +69,7 @@
     .category-details {
       margin-top: 5px;
       @include border-left(1px solid #ddd);
+      @include transition(all .1s linear);
 
       .list-title {
         line-height: 1.4;
@@ -77,6 +82,11 @@
       .orphan-cat-info {
         color: #DF013A;
       }
+    }
+
+    .list-selected {
+      margin-top: 5px;
+      @include margin-left(0px);
     }
 
     .dropdown-menu {

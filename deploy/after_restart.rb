@@ -2,18 +2,18 @@ if node[:opsworks]
   require 'aws-sdk'
   # establishing connection with aws to run custom restart of nginx
   awscreds = {
-    # :access_key_id    => node[:opsworks_access_keys][:access_key_id],
-    # :secret_access_key => node[:opsworks_access_keys][:secret_access_key],
-    :region           => node[:opsworks_access_keys][:region]
+     :access_key_id    => node[:opsworks_access_keys][:access_key_id],
+     :secret_access_key => node[:opsworks_access_keys][:secret_access_key],
+     :region           => node[:opsworks_access_keys][:opsworks_region]
   }
 
   #TODO-RAILS3 once migrations is done we can remove setting from stack and bellow code.
-  unless node[:rails3][:use_iam_profile]
-    awscreds.merge!({
-      :access_key_id    => node[:opsworks_access_keys][:access_key_id],
-      :secret_access_key => node[:opsworks_access_keys][:secret_access_key]
-    })
-  end
+  # unless node[:rails3][:use_iam_profile]
+  #   awscreds.merge!({
+  #     :access_key_id    => node[:opsworks_access_keys][:access_key_id],
+  #     :secret_access_key => node[:opsworks_access_keys][:secret_access_key]
+  #   })
+  # end
 
   AWS.config(awscreds)
 

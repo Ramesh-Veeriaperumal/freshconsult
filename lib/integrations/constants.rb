@@ -27,7 +27,8 @@ module Integrations::Constants
     :quickbooks => "quickbooks",
     :dynamicscrm => "dynamicscrm",
     :xero => "xero",
-    :hootsuite => "hootsuite"
+    :hootsuite => "hootsuite",
+    :onedrive => "onedrive"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

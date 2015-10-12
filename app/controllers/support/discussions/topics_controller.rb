@@ -9,6 +9,7 @@ class Support::Discussions::TopicsController < SupportController
                                       :users_voted, :destroy, :toggle_solution, :hit]
   before_filter :require_user, :except => [:index, :show, :hit]
 
+  before_filter :check_forums_access, :only => [:new, :show]
   before_filter { |c| c.requires_feature :forums }
   before_filter :check_forums_state
   before_filter { |c| c.check_portal_scope :open_forums }

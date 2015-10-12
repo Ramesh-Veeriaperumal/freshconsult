@@ -57,6 +57,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   private
     def validate_dial_call_status
       if current_call.present?
+        return if voicemail?
         return if current_call.direct_dial_number.present?
         return set_outgoing_status if single_leg_outgoing?
         return handle_agent_hunt_status if current_call.meta.present? && current_call.meta.agent_hunt?

@@ -6,6 +6,14 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
                 _FD.actions.submitReports();
             });
+            jQuery(document).on("perf_ticket_list.helpdesk_reports", function (ev, data) {
+                var flag = HelpdeskReports.locals.ticket_list_flag;
+                if (flag == false) {
+                    HelpdeskReports.locals.ticket_list_flag = true;
+                    _FD.core.actions.showTicketList();
+                    _FD.constructTicketListParams(data);
+                }
+            });
         },
         actions: {
             submitReports: function () {
@@ -16,6 +24,31 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
                     _FD.core.resetAndGenerate();
                 }
             }
+        },
+        constructTicketListParams: function (data) {
+            HelpdeskReports.locals.list_params = [];
+            var list_params = HelpdeskReports.locals.list_params;
+
+            var list_hash = {
+                bucket: true,
+                date_range: HelpdeskReports.locals.date_range,
+                filter: HelpdeskReports.locals.query_hash,
+                list: true,
+                list_conditions: [],
+                metric: data.metric
+            }
+
+            list_hash.list_conditions.push({
+                condition: data.bucket,
+                operator: data.operator,
+                value: data.value
+            });
+
+            var hash = jQuery.extend({},_FD.constants.params, list_hash);
+            list_params.push(hash);
+
+            _FD.core.fetchTickets(list_params);
+
         },
        setDefaultValues: function () {
             var current_params = [];
@@ -41,7 +74,7 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
                 current_params.push(trendparams);
 
             });
-            HelpdeskReports.locals.params = current_params;
+            HelpdeskReports.locals.params = current_params.slice();
             _FD.actions.submitReports();
         },
         flushEvents: function () {
@@ -52,7 +85,6 @@ HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
         init: function () {
             _FD.core = HelpdeskReports.CoreUtil;    
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.PerformanceDistribution);
-            HelpdeskReports.locals.report_type = _FD.constants.report_type;
             _FD.bindEvents();
             _FD.setDefaultValues();
         }

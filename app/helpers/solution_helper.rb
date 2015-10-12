@@ -369,4 +369,23 @@ module SolutionHelper
 		op.html_safe
 	end
 
+	def category_delete_btn category
+		confirm_delete(category, solution_category_path(category))
+	end
+
+	def folder_delete_btn folder
+		confirm_delete(folder, solution_folder_path(folder))
+	end
+
+	def solution_modal_footer object
+		output = %(<div class="modal-footer">)
+		output << %(<div class="pull-left">)
+		if object.is_a?(Solution::Folder)
+			output << folder_delete_btn(object)
+		else
+			output << category_delete_btn(object)
+		end
+		output << %(</div></div>)
+		output.html_safe
+	end
 end

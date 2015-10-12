@@ -3437,7 +3437,7 @@ body.popup-body{ min-width: 0px; }
 		color: #888888;
 		cursor: default;
 		padding-top: 1px;
-		right: 55px;
+		@include right(55px);
 		position: absolute;
 	}
 
@@ -3523,6 +3523,8 @@ body.popup-body{ min-width: 0px; }
 	.ue_text{
 		display: inline-block;
 		@include margin(0 0 0 5px);
+		width: 75%;
+    	word-break: break-word;
 	}
 
 }
@@ -3561,6 +3563,7 @@ body.popup-body{ min-width: 0px; }
 			p.primary_email_text{
 				width: 195px;
 				font-weight: bold;
+				@include margin-left(20px);
 			}
 			p.verify{
 				@include margin-left(9%);

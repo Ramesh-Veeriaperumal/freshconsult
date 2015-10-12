@@ -54,5 +54,17 @@ describe Support::DiscussionsController do
 	# end
 
 
+	it "should render 404 for accounts without forum feature" do
+		@account.remove_feature(:forums)
+		@account.reload
 
+		get :index
+		response.status.should eql(404)
+
+		get :show, :id => @category.id
+		response.status.should eql(404)
+
+		@account.add_features(:forums)
+		@account.reload
+	end
 end
