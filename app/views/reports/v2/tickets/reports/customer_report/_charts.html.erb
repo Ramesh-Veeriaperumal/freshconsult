@@ -1,0 +1,28 @@
+<div class="customer-report"> 
+	<div class="customer-chart-wrapper" id="customer_report_chart_wrapper">
+		<div class="loading-bar hide">
+			<div class="loading-box" id="loading-box"> 
+				<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports"><%=t('helpdesk_reports.loading_text') %></div> 
+			</div>
+		</div>
+		<div class="customer-chart" id="customer_report_main"></div>
+	</div>
+	
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+	    var locals = HelpdeskReports.locals;
+	    locals.chart_hash = <%= @data.to_json.html_safe %>;
+
+	    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+
+	    if (err) {
+	    	var div = ["reports_container"];
+	        HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+	    } else {
+	    	HelpdeskReports.ChartsInitializer.CustomerReport.init(locals.chart_hash);
+	    }
+
+	});
+</script>

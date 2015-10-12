@@ -214,6 +214,10 @@ class Solution::Folder < ActiveRecord::Base
     end).with_indifferent_access
   end
 
+  def visible_in? portal
+    category.portal_ids.include?(portal.id)
+  end
+
   private
 
     def populate_account

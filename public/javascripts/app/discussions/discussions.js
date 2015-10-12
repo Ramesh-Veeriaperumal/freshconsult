@@ -43,6 +43,9 @@ window.App = window.App || {};
 				this.current_module = 'Category';
 				break;
 
+			case 'discussions/topics/new':
+				this.current_module = 'NewTopic';
+				break;
 			}
 		},
 

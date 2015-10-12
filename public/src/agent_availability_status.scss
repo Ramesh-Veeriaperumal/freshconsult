@@ -17,4 +17,16 @@
 	        position: relative;
 	        top: 2px;
 	    }
+      .pt2{padding-top: 2px;}
+      .on_device_img{
+        i{ padding-top: 2px;}
+      }
 }	    
+
+.cust-list-avatar{
+  padding-left: inherit;
+}
+
+.busy_agent_set{
+  @include opacity(0.3);
+}

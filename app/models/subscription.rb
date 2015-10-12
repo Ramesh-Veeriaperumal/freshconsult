@@ -356,6 +356,11 @@ class Subscription < ActiveRecord::Base
   def plan_name
     subscription_plan.name
   end
+  
+  def non_sprout_plan?
+    !(sprout? || sprout_classic?) 
+  end
+  
   protected
   
     def non_social_plans
@@ -406,10 +411,6 @@ class Subscription < ActiveRecord::Base
       chk_change_agents unless trial?
     end
 
-
-    
-
-    
     def finished_trial?
       next_renewal_at < Time.zone.now
     end

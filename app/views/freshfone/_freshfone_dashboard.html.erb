@@ -14,14 +14,18 @@
 			<h4> <span class="live-calls">0</span></h4>
 			<span class="dash-lbl"><%= t('freshfone.dashboard.in_conversation') %></span>
 		</div>
-		<div class="freshfone_dashboard_cells">
+	<% if (freshfone_active?) %>
+		<a class="available_agents_cells" href="/helpdesk/agent_status#phone">
+	<% else %>
+		<div class="freshfone_dashboard_cells">	
+	<% end %>	
 			<h4> <span class="live-available-agents">0</span></h4>
-			<% if (freshfone_active?) %>
-				<a class="dash-lbl" href="/helpdesk/agent_status#phone"><%= t('freshfone.dashboard.available_agents') %> </a>
-			<% else %>
-				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %></span>
-			<% end %>
+				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %> </span>
+	<% if (freshfone_active?) %>
+		</a>
+	<% else %>
 		</div>
+	<% end %>		
 	</div>
 	<!-- <div class="freshfone_dashboard_cells">
 		<h4 class="daily-burn"> $18.75 </h4>

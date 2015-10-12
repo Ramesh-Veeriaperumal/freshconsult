@@ -1,5 +1,5 @@
 var CtiEndCall;
-var remoteId=0;
+var remoteId="";
 (function ($) {
 	"use strict";
 	CtiEndCall = function () {
@@ -173,7 +173,8 @@ var remoteId=0;
 				"requester_name": this.requesterName(),
 				"number" : this.number,
 				"recordingUrl" : this.recordingUrl,
-				"remoteId" : remoteId
+				"remoteId" : remoteId,
+				"private" : cti_user.add_note_as_private
 			}};
 			$.ajax({
 				type: 'POST',
@@ -193,7 +194,9 @@ var remoteId=0;
 						  "ticketId" : this.ticketId,
 						  "msg" : this.ticket_notes,
 						  "recordingUrl" : this.recordingUrl,
-						  "remoteId" : remoteId
+						  "number" : this.number,
+						  "remoteId" : remoteId,
+						  "private" : cti_user.add_note_as_private
 						};
 			$.ajax({
 				type: 'POST',
@@ -221,6 +224,7 @@ var remoteId=0;
 			return this.$ticketSubject.val();
 		},
 		resetForm: function () {
+			this.$endCallNote.val("");
 			this.$ticketSearchPane.hide();
 			this.$endCallNewTicketDetailsForm.hide();
 			this.$endCallMainContent.show();
@@ -241,6 +245,9 @@ var remoteId=0;
 			this.$ticketSubject.val(this.generateTicketSubject());
 			this.$requesterName.val(this.number);
 			this.$requesterTicketSearch.initializeRequester(this.callerName);
+			var notes = jQuery("#call_notes").val();
+			this.$endCallNote.val(notes);
+			jQuery("#call_notes").val("");
 		},
 		generateTicketSubject: function () {
 			return 'Call with ' +  "(" + this.formattedNumber() + ")" +

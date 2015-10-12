@@ -725,10 +725,10 @@ CZ:
       :usca_tollfree: 0.105
       :uk_tollfree: 0.143
     '420967,420966,420965,420964,420963,420962,420961,420608,420607,420606,420605,420604,420603,420602,420601,42093,42079,42077,42073,42072,4209,4207,4206':
-      :outgoing: 0.483
-      :standard: 0.495
-      :usca_tollfree: 0.52
-      :uk_tollfree: 0.558
+      :outgoing: 0.0483
+      :standard: 0.0483
+      :usca_tollfree: 0.0483
+      :uk_tollfree: 0.0483
   :country: Czech Republic
 DK:
   :max_digits: 7

@@ -94,7 +94,7 @@ module Cache::Memcache::Account
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.custom_dropdown_fields.find(:all, :include => :flexifield_def_entry )
+      ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
     end
   end
 
@@ -200,6 +200,18 @@ module Cache::Memcache::Account
 
   def clear_account_additional_settings_from_cache
     key = ACCOUNT_ADDITIONAL_SETTINGS % { :account_id => self.id }
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      self.installed_applications.with_type_cti.first ? self.installed_applications.with_type_cti.first : false
+    end
+  end
+
+  def clear_cti_installed_app_from_cache
+    key = INSTALLED_CTI_APP % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
   end
 

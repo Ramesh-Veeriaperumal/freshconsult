@@ -20,7 +20,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
     ids, metrics = [], []
     result.each do |metric, res|
       res.symbolize_keys!
-      metrics << metric.downcase
+      metrics << metric
       agents = res[:agent_id] || res[:actor_id] || res[:previous_object_id]
       ids << agents.keys.collect{|id| id ? id.to_i : nil} if agents
     end
@@ -73,7 +73,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
         tmp = result[met][:agent_id] || result[met][:actor_id] || result[met][:previous_object_id]
         # If particular QUERY failed(query error, system error, timedout) for a metric, its result is shown as NOT_APPLICABLE
         if result[met][:error]
-          agent[metric] = NOT_APPICABLE
+          agent[metric] = NA_PLACEHOLDER_SUMMARY
         elsif tmp and tmp[id.to_s]
           agent[metric] = tmp[id.to_s]
         else
@@ -84,7 +84,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   end
 
   def default_value metric
-    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Count" ? 0 : NOT_APPICABLE
+    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Count" ? 0 : NA_PLACEHOLDER_SUMMARY
   end
 
 end

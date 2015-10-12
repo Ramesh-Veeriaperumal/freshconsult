@@ -10,7 +10,7 @@ module HelpdeskReports::Helper::Ticket
                   "validate_max_filters", "validate_max_multi_selects", "validate_group_by"]
 
   def filter_data
-    @show_options = show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
+    show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
     @label_hash = column_id_label_hash
   end
   
@@ -27,6 +27,11 @@ module HelpdeskReports::Helper::Ticket
 
   def set_selected_tab
     @selected_tab = :reports
+  end
+  
+  def date_lag_constraint
+    # Used to restrict date range in UI according to subscription plan
+    @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription.subscription_plan.name] || 1
   end
   
   def report_specific_constraints
@@ -96,17 +101,26 @@ module HelpdeskReports::Helper::Ticket
   def validate_dates param
     begin
       range = param[:date_range].split("-")
-      Date.parse(range.first)
-      Date.parse(range.second) if range.length > 1
+      start_date = Date.parse(range.first)
+      end_date = range.length > 1 ? Date.parse(range.second) : start_date 
+      if end_date == account_today and @date_lag_by_plan > 0 # Restrict date_range acc to subscription plan
+        start_date -= @date_lag_by_plan
+        end_date -= @date_lag_by_plan
+        param[:date_range] = "#{start_date.strftime("%d %b,%Y")} - #{end_date.strftime("%d %b,%Y")}"
+      end
       []
     rescue ArgumentError
       ["Invalid Date"]
     end
   end
+  
+  def account_today
+    Time.now.in_time_zone(Account.current.time_zone).to_date
+  end
 
   def validate_time_trend param
     report_duration = date_range(param[:date_range])
-    if report_duration.present? && report_type != "performance_distribution"
+    if report_duration.present? && REPORT_TYPE_BY_KEY[report_type.upcase.to_sym] != 104
        TIME_TREND.each{ |trend| (param[:time_trend_conditions]||[]).delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
     end
     

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150909161854) do
+ActiveRecord::Schema.define(:version => 20150713070533) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -305,6 +305,7 @@ ActiveRecord::Schema.define(:version => 20150909161854) do
   add_index "archive_tickets", ["account_id", "requester_id"], :name => "index_archive_tickets_on_account_id_and_requester_id"
   add_index "archive_tickets", ["account_id", "responder_id"], :name => "index_archive_tickets_on_account_id_and_responder_id"
   add_index "archive_tickets", ["account_id", "source"], :name => "index_archive_tickets_on_account_id_and_source"
+  add_index "archive_tickets", ["account_id", "ticket_id", "progress"], :name => "index_on_account_id_and_ticket_id_and_progress"
   add_index "archive_tickets", ["account_id", "ticket_type"], :name => "index_archive_tickets_on_account_id_and_ticket_type", :length => {"account_id"=>nil, "ticket_type"=>10}
   add_index "archive_tickets", ["account_id", "updated_at"], :name => "index_archive_tickets_on_account_id_and_updated_at"
   add_index "archive_tickets", ["id"], :name => "index_on_id"
@@ -3727,6 +3728,8 @@ ActiveRecord::Schema.define(:version => 20150909161854) do
     t.integer "application_id", :limit => 8
     t.text    "options"
   end
+
+  add_index "widgets", ["application_id"], :name => "index_widgets_on_application_id"
   
   create_table "whitelist_users", :force => true do |t|
     t.integer "user_id",    :limit => 8

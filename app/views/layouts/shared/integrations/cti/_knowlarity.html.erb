@@ -1,0 +1,10 @@
+<%= javascript_tag do %>
+	<% app_config = installed_app.configs[:inputs] %>
+	var KNOWLARITY_NUMBER = '<%= app_config[:knowlarity_number] %>';
+	var KNOWLARITY_API_KEY = '<%= app_config[:api_key] %>';
+	if (typeof cti_user === "undefined") { cti_user = {}; }
+	cti_user.email = '<%= current_user.email %>';
+	cti_user.number = '<%= current_user.mobile.blank? ? current_user.phone : current_user.mobile %>';
+	cti_user.hide_dont_convert = <%= app_config[:convert_to_ticket] || 0 %>;
+	cti_user.add_note_as_private = <%= app_config[:add_note_as_private] || 0 %>;
+<% end %>

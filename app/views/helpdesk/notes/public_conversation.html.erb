@@ -1,0 +1,7 @@
+<div> 
+  <%= @parent.description_html.html_safe %>
+  <% @notes.reverse.each do |note| %>
+  <p> ------------------------ </p>
+  <div> <%= note.body_html.html_safe %> </div>
+  <% end %>
+</div>

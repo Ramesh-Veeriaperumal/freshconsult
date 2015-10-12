@@ -99,7 +99,7 @@ module Helpdesk::MergeTicketActions
 				unless @header[:message_ids].include? source
 					@header[:message_ids] << source
 					source_key = EMAIL_TICKET_ID % { :account_id => current_account.id, :message_id => source }
-					set_others_redis_key(source_key, @target_ticket.display_id, 86400*7)
+					set_others_redis_key(source_key, "#{@target_ticket.display_id}:#{source}", 86400*7)
 				end
 			end
 		end

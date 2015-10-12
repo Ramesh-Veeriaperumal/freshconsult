@@ -60,8 +60,9 @@
                 </div>
             </a>
           </li>
-          <%= render :partial => "integrations/applications/box", :locals => {:attach_id => attach_id} %>
-          <%= render :partial => "integrations/applications/dropbox", :locals => {:attach_id => attach_id} %>
+          <% get_enabled_cloud_files_app.each do |c_f| %>
+            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id} %>
+          <% end %>
         </ul>      
       </div>
     <% else %>      

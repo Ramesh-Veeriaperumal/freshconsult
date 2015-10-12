@@ -38,6 +38,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$filterDetails = this.$freshfoneCallHistory.find("#filterdetails");
       this.$fNumberSelect2 = this.$callFilter.find("#ff_number");
       this.$fCallStatusSelect2 = this.$callFilter.find("#ff_call_status");
+      this.$fBusinessHoursSelect2 = this.$callFilter.find("#ff_business_hours");
       this.$filterFreshfoneNumberLabel = this.$freshfoneCallHistory.find(".filter_freshfone_number");
       this.$export_div = $('.call_history_export_div');
       this.filterString = '';
@@ -53,6 +54,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.bindRequesterSelect2();
       this.bindCallerSelect2();
       this.bindGroupSelect2();
+      this.bindBusinessHoursSelect2();
     },
     bindFreshfoneNumberSelect2: function () {
       var self = this;
@@ -151,6 +153,25 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           self.$groupName.data('value', result.value);
           return result.value;
 
+        }
+      });
+    },
+    bindBusinessHoursSelect2: function () {
+      var self = this;
+      this.$fBusinessHoursSelect2.select2({
+        dropdownCssClass : 'no-search',
+        data:{
+          text: 'value',
+          results:freshfone.business_hours_list
+        },
+        formatResult: function (result) {
+          return result.value;
+        },
+        formatSelection: function (result) {
+          self.$fBusinessHoursSelect2
+                .attr('value', result.business_hour_call)
+                .data('value', result.value);
+          return result.value;
         }
       });
     },
@@ -315,6 +336,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       number_object = number_object || freshfone.freshfone_number_list[0];
       this.$fNumberSelect2.select2('data',number_object);
       this.$fCallStatusSelect2.select2('data',freshfone.call_status_list[0]);
+      this.$fBusinessHoursSelect2.select2('data',freshfone.business_hours_list[0]);
       // this.$responder.select2('data',freshfone.agents_list[0]);
     },
     settingsForDatePicker: function () {

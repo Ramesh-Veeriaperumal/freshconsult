@@ -126,7 +126,13 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
 				@include border-radius(4px);
 			}
 			&:after{
-				@extend .#{$font-class-name}arrow-right:before;
+				@if $rtl{
+					@extend .#{$font-class-name}arrow-left:before;
+				}
+				@else{
+					@extend .#{$font-class-name}arrow-right:before;
+				}
+
 			}
 		}
 	}
@@ -563,7 +569,7 @@ span.fb_add
 	position: relative;
 	left: 0px;
   top: 5px;  
-  float: left;
+  @include float(left);
   font-size: 14px;
   cursor: move;
 }

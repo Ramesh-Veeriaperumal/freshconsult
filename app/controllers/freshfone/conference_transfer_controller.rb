@@ -29,7 +29,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
   def transfer_success
     begin
       notifier.notify_transfer_success(current_call)
-      notifier.disconnect_other_agents transfer_leg
+      notifier.cancel_other_agents transfer_leg
       current_call.completed!
       render :xml => telephony.initiate_agent_conference({
                       :wait_url => target_agent_wait_url, 
@@ -62,7 +62,7 @@ class Freshfone::ConferenceTransferController < FreshfoneBaseController
     render :json => {:status => :error} and return unless (parent_call.present? && parent_call.onhold? && current_call.ringing?)
     current_call.canceled!
     parent_call.inprogress!
-    notifier.disconnect_other_agents(current_call)
+    notifier.cancel_other_agents(current_call)
     telephony.initiate_transfer_fall_back(parent_call)
     render :json => {:status => :unhold_initiated}
   end

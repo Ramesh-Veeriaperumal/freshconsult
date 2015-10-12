@@ -69,7 +69,7 @@ module Helpdesk::DashboardHelper
 	 		:last_call_time => (agent.last_call_at) ,
 	 		:presence => agent.presence,
 	 		:on_phone => agent.available_on_phone,
-	 		:avatar => user_avatar(agent.user, 'thumb', 'preview_pic thumb'),
+	 		:avatar => user_avatar(agent.user, 'small', 'preview_pic thumb'),
 	 		:preference => agent.incoming_preference}
 	  }.to_json
 	 end

@@ -76,7 +76,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def article_visible?
-      return false unless ((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?)
+      return false unless (((current_user && current_user.agent? && privilege?(:view_solutions)) || @article.published?) and @article.visible_in?(current_portal))
       draft_preview_agent_filter?
     end
     

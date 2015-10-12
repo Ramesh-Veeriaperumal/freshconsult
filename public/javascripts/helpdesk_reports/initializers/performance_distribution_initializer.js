@@ -2,6 +2,8 @@ HelpdeskReports.ChartsInitializer = HelpdeskReports.ChartsInitializer || {};
 
 HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
     var _FD = {
+        DEFAULT_TREND_WEEK: 'w',
+        DEFAULT_TREND_DAYS: 'doy',
         COLORS: {
             'first_response_time' : '#e05651',
             'response_time'       : '#5194CC',
@@ -24,7 +26,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         },
         LABEL_MAPPING: {
             'doy': '{value:%e %b \'%y}',
-            'w'  : '{value:%W \'%y}',
+            'w'  : '{value: %W \'%y}',
             'mon': '{value:%b, %Y}',
             'qtr': '{value:%qtr, %Y}',
             'y'  : '{value:%Y}'
@@ -44,11 +46,21 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 },{
                     data: current_data,
                     color: this.COLORS[chart_name],
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                var ev = this; 
+                                _FD.ticketListEvent(ev);
+                            }
+                        }
+                    },
                     borderRadius: 5,
                     animation: {
                         duration: 1000,
                         easing: 'easeInOutQuart'
-                    }
+                    },
+                    total: hash["tickets_count"][chart_name]
                 });
                 var labels = _.keys(hash[chart_name]);
                 var settings = {
@@ -58,6 +70,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     chartData: data_array,
                     dataLabels: current_data,
                     sharedTooltip: true,
+                    enableTooltip: true,
                     timeFormat: false,
                 }
                 var groupByCharts = new barChart(settings);
@@ -68,9 +81,22 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }
         },
+        ticketListEvent: function (ev) {
+            var data = {};
+            var hash = HelpdeskReports.locals.chart_hash;
+            var chart = ev.series.chart.container;
+            var label = ev.category;
+
+            data.bucket = jQuery(chart).closest('.chart-wrapper').data('bucket-name');
+            data.metric = jQuery(chart).closest('.chart-wrapper').data('metric-name');
+            data.value = hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][0];
+            data.operator =  hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][1];
+
+            trigger_event("perf_ticket_list.helpdesk_reports", data);
+        },
         responseTimeTrend: function (hash) {
             var time_trend_data = [];
-            var current_trend = "doy"; 
+            var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
             HelpdeskReports.locals.trend = current_trend; 
             var chart_data = hash["AVG_RESPONSE_TIME"];
             
@@ -86,6 +112,9 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 jQuery('.response_time_trend.trend-type').hide();
             }
             else {
+
+                var first_response_data = this.convertingIntoFractionalPart(_.values(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]),plot_type);
+                var response_data       = this.convertingIntoFractionalPart(_.values(hash["AVG_RESPONSE_TIME"][current_trend]),plot_type);
                 var data_length         = _.size(hash["AVG_RESPONSE_TIME"][current_trend]);
                 var plot_type           = (_.max(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]) > 3600 || _.max(hash["AVG_RESPONSE_TIME"][current_trend]) > 3600 ) ? 'Hours' : 'Mins';                
                 var start_value         = _.keys(hash["AVG_RESPONSE_TIME"][current_trend])[0];
@@ -99,6 +128,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                         radius: 2,
                         symbol: 'circle'
                     };
+
                 HelpdeskReports.locals.response = plot_type;
     
                 time_trend_data.push({
@@ -124,8 +154,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         },
         resolutionTimeTrend: function (hash) {
             var time_trend_data = [];
-            var current_trend = "doy"; 
-            
+            var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
             HelpdeskReports.locals.trend = current_trend;
             var chart_data = hash["AVG_RESOLUTION_TIME"];
             
@@ -154,8 +183,8 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                         radius: 2,
                         symbol: 'circle'
                     };    
-                HelpdeskReports.locals.resolution = plot_type;
 
+                HelpdeskReports.locals.resolution = plot_type;
                     
                 time_trend_data.push({
                     name: 'Avg Resolution Time',
@@ -174,6 +203,8 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var responseTimeStamp   = _.keys(HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'])[0];
             var resolutionTimeStamp = _.keys(HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'])[0];
             HelpdeskReports.locals.startTimestamp = (typeof responseTimeStamp === 'undefined') ? ((typeof resolutionTimeStamp === 'undefined') ? null : resolutionTimeStamp ) : responseTimeStamp
+
+            HelpdeskReports.locals.response       = plot_type;
                 
             var stepValue = Math.ceil(length/11);                
                 stepValue = stepValue <= 0 ? 1 : stepValue;
@@ -203,7 +234,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 _FD.redrawTimeBased(HelpdeskReports.locals.trend, charttype);
             });
 
-            jQuery('#reports_wrapper').on('click.helpdesk_reports.perf', '#response, #first_response', function (event) {
+            jQuery('#reports_wrapper').on('click.helpdesk_reports.perf', '#response:not(".active"), #first_response:not(".active")', function (event) {
                 jQuery('#response, #first_response').toggleClass('active');
                 jQuery('#first_response_time_bar_chart, #response_time_bar_chart').toggle();
             });
@@ -273,13 +304,21 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             };
             return sum;
         },
+        convertingIntoFractionalPart: function(data,type) {
+            var arr = [];
+            var divider = (type === 'Hours') ? 3600 : 60
+            for (var i = 0; i < data.length; i++) {
+                arr.push(parseFloat((data[i]/divider).toFixed(2)));
+            }
+            return arr;
+        },       
         convertHashIntoArrayOfArray: function(hash,type){
             if(typeof hash === 'undefined')
                 return [];
             arrArr = [];
             var divider = (type === 'Hours') ? 3600 : 60
             jQuery.each(hash, function(i,value){
-                arrArr.push([parseInt(i),parseFloat((value/divider).toFixed(2))]);
+                arrArr.push([parseInt(i),parseFloat((value/divider).toPrecision(12))]);
             });
             return arrArr;
         },

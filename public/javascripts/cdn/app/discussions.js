@@ -7,3 +7,4 @@
 //= require app/discussions/moderation.js
 //= require app/discussions/merge.js
 //= require app/discussions/monitorship.js
+//= require app/discussions/new_topic.js

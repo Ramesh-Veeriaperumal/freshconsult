@@ -3,33 +3,38 @@
 
 	<div class="row-fluid">	
 		<div class="chart-container">
-			<div class="clearfix">
-				<span id="first_response" class="title pointer">
-					<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
-				</span>
-				<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
-                    <i class="ficon-help-icon fsize-14" size="14"></i>
-                </span>
-				<span class="sep">|</span>
-				<span id="response" class="title pointer">
-					<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
-				</span>
-				<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
-                    <i class="ficon-help-icon fsize-14" size="14"></i>
-                </span>
-			</div>
-				<div id="first_response_time_bar_chart" class="chart-wrapper"></div>
-				<div id="response_time_bar_chart" class="chart-wrapper"></div>
+		
+			<span id="first_response" class="pointer">
+				<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
+			</span>
+			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+			<span class="sep">|</span>
+			<span id="response" class="pointer">
+				<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
+			</span>
+			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+
+			<div id="first_response_time_bar_chart" class="chart-wrapper" data-bucket-name="first_response_time" data-metric-name="AVG_FIRST_RESPONSE_TIME"></div>
+			
+			<div id="response_time_bar_chart" class="chart-wrapper" data-bucket-name="response_time" data-metric-name="AVG_RESPONSE_TIME"></div>
+
 		</div>
 
 		<div class="chart-container">
+
 			<span class='title'>
 				<%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>
 			</span>
 			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.resolution_time')%>"> 
                 <i class="ficon-help-icon fsize-14" size="14"></i>
             </span>
-			<div id="resolution_time_bar_chart" class="chart-wrapper"></div>
+
+			<div id="resolution_time_bar_chart" class="chart-wrapper" data-bucket-name="resolution_time" data-metric-name="AVG_RESOLUTION_TIME"></div>
+
 		</div>
 	</div>
 <!-- Ends here -->

@@ -21,11 +21,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
     if @installing_application.cti?
-      cti_app = current_account.installed_applications.detect {|app| app.application.cti?}
-      unless cti_app.blank?
+      if current_account.cti_installed_app_from_cache
         flash[:notice] = t(:'flash.application.install.cti_error')
-        redirect_to :controller=> 'applications', :action => 'index'
-        return
+        redirect_to integrations_applications_path and return
       end
       if current_account.freshfone_active?
         flash[:notice] = t(:'flash.application.install.freshfone_alert')

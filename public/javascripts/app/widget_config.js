@@ -95,7 +95,7 @@ var WidgetConfig = function () {};
 				'<' + 'style type="text/css" media="screen, projection">\n' +
 				'\t@import url(' + this.asset_url + '/freshwidget.css); \n' +
 				'</' + 'style> \n' +
-				'<' + 'iframe class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="' + this.account_url +
+				'<' + 'iframe title="Feedback Form" class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="' + this.account_url +
 				'/widgets/feedback_widget/new?' + jsonOfHash.queryString + '" scrolling="no" height="' + jsonOfHash.formHeight +
 				'" width="100%" frameborder="0" >\n' +
 				'<' + '/iframe>';
