@@ -61,7 +61,7 @@
       jQuery('#meta_referrer').val(document.referrer.escapeHTML());
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
-          jQuery.ajax({ url: "/support/search/solutions?max_matches=5&term="+string, 
+          jQuery.ajax({ url: "/<%= Language.current.code %>/support/search/solutions?max_matches=5&term="+string, 
             dataType: 'json',
             success: function(data){
                 var search_items = jQuery("<ul class='unstyled'>")
@@ -75,7 +75,7 @@
                 })
                 if(data.length > 4){
                   jQuery("<li>")
-                    .append("<a href='/support/search/solutions?max_matches=5&term="+string+"'>" + "<%= I18n.t('widgets.feedback_widgets.new.show_all_results') %>" + "</a> ").appendTo( search_items )
+                    .append("<a href='/<%= Language.current.code %>/support/search/solutions?max_matches=5&term="+string+"'>" + "<%= I18n.t('widgets.feedback_widgets.new.show_all_results') %>" + "</a> ").appendTo( search_items )
                 }
                 if(data.length > 0){
                   jQuery("#new-ticket-search")

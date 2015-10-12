@@ -53,7 +53,7 @@ module Portal::Helpers::Article
 		output << %(<section class="article-list">)
 		output << %(<h3 class="list-lead">#{I18n.t('portal.article.related_articles')}</h3>)
 		output << %(<ul rel="remote" 
-			data-remote-url="/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
+			data-remote-url="/#{Language.current.code}/support/search/articles/#{article.id}/related_articles?container=#{container}&limit=#{limit}" 
 			id="related-article-list"></ul>)
 		output << %(</section></div></div>)
 		output.join("")	

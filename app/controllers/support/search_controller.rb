@@ -138,6 +138,8 @@ class Support::SearchController < SupportController
               if search_in.include?(Solution::Article)
                 f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
                               { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
+                f.filter :or, { :not => { :exists => { :field => 'language_id' } } },
+                              { :term => { 'language_id' => Language.current.id } }
               end
               if search_in.include?(Topic)
                   f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },

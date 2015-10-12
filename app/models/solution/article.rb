@@ -142,6 +142,8 @@ class Solution::Article < ActiveRecord::Base
                           { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
             f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
                          { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_id) } }
+            f.filter :or, { :not => { :exists => { :field => 'language_id' } } },
+                         { :term => { 'language_id' => Language.current.id } }
           end
         end
         search.from options[:size].to_i * (options[:page].to_i-1)
