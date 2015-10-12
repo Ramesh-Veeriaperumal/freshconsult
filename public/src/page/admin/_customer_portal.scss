@@ -20,6 +20,11 @@
 			@include margin-left(5px);
 			@include margin-right(20px);
 		}
+		@if $rtl{
+			label{
+				unicode-bidi: -moz-isolate; unicode-bidi: -webkit-isolate; unicode-bidi: isolate;
+			}
+		}
 		.control-label{
 			padding-top: 0;
 			width: 320px;
