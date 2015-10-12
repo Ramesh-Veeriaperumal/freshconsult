@@ -236,6 +236,7 @@ group :test do
   gem "database_cleaner"
   gem "fuubar"
   gem "json-compare", "0.1.8"
+  gem "minitest-rails", "~> 1.0" # Used by API and Search
 end
 
 # group :development, :assets do
@@ -268,3 +269,6 @@ end
 
 # Marketplace
 gem 'doorkeeper', '2.2.1'
+
+# search v2
+gem 'typhoeus'

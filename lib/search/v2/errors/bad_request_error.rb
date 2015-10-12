@@ -1,0 +1,3 @@
+class BadRequestError < StandardError
+
+end

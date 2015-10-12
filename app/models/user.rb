@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
   include AccountConstants
+  include Search::V2::Index
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams

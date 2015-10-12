@@ -67,5 +67,6 @@ helpdesk:
     - marketplace_config
     - doorkeeper
     - ebay_config
+    - search/supported_types
 
 
