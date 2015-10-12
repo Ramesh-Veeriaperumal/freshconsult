@@ -133,6 +133,7 @@ class Solution::Article < ActiveRecord::Base
           query.filtered do |f|
             f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
             f.filter :term, { :account_id => account_id }
+            f.filter :term, { :language_id => Language.for_current_account.id }
             f.filter :not, { :ids => { :values => [self.id] } }
             f.filter :or, { :not => { :exists => { :field => :status } } },
                           { :not => { :term => { :status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] } } }
