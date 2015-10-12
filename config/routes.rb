@@ -1615,8 +1615,7 @@ Helpkit::Application.routes.draw do
       resources :tag_uses
       resources :reminders
       resources :time_sheets
-      resources :mobihelp_ticket_extras, :only => :index
-
+      resources :mobihelp_info, :only => :index
     end
     
     match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
