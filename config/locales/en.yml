@@ -3722,6 +3722,14 @@ en:
       articles_move_to_fail: "The selected folder does not exist"
       articles_changed_author: Author has been succesfully changed
       articles_change_author_fail: "The selected agent does not exist"
+      folders_visibility_success:
+        zero: 'Visibility was changed for <b>%{folder_name}</b>'
+        one: 'Visibility was changed for <b>%{folder_name}</b> and %{count} other'
+        other: 'Visibility was changed for <b>%{folder_name}</b> and %{count} others'
+      folders_visibility_failure:
+        zero: 'Visibility was not changed for <b>%{folder_name}</b>'
+        one: 'Visibility was not changed for <b>%{folder_name}</b> and %{count} other'
+        other: 'Visibility was not changed for <b>%{folder_name}</b> and %{count} others'
     general:
       created_by: Created by
       last_published: Last Published by
@@ -3744,6 +3752,7 @@ en:
         no_companies: You haven't selected any valid companies.
         success: Successfully changed the visibility.
         failure: Could not change the visibility of the selected folders.
+        companies_limit_exceeded: Companies limit exceeded
         extra_companies:  
           one: " and one more company."
           other: " and %{count} more companies."
