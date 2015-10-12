@@ -62,6 +62,7 @@ module RabbitMq::Utils
       Timeout::timeout(CONNECTION_TIMEOUT) {
         Rails.logger.debug " Inside send message to RMQ - #{Account.current.id} -- #{exchange}"
         publish_message_to_xchg(Account.current.rabbit_mq_exchange(exchange), message, key)
+        Rails.logger.debug " Finished send message to RMQ - #{Account.current.id} -- #{exchange}"
       }
     end
   rescue Timeout::Error => e 
@@ -82,13 +83,11 @@ module RabbitMq::Utils
     # Having all the messages as persistant is an overkill. Need to refactor
     # so that the options for publish can be passed as a parameter. Messages
     # should also have message_id for unique identification
-    Rails.logger.debug "Gonna publish to RMQ for #{Account.current.id}"
     exchange.publish(
       message, 
       :routing_key => key,
       :persistant => true
     )
-    Rails.logger.debug "Finished publish to RMQ for #{Account.current.id}"
   end
   
   
