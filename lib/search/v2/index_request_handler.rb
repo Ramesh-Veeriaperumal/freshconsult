@@ -1,18 +1,25 @@
 class Search::V2::IndexRequestHandler
   # To-Do: Errors maybe for sending back messages like account not found, ES errors, etc
-  attr_accessor :type, :tenant, :document_id, :payload, :ext_version
+  attr_accessor :type, :tenant, :document_id
 
-  def initialize(type, tenant_id, document_id, version, payload)
+  def initialize(type, tenant_id, document_id)
     @type           = type
-    @tenant         = Tenant.fetch(tenant_id)
+    @tenant         = Search::V2::Tenant.fetch(tenant_id)
     @document_id    = document_id
-    @ext_version    = version
-    @payload        = payload
   end
 
   # Sync by default
   def perform(op_type)
-    false ? perform_async(op_type) : perform_sync(op_type)
+    perform_sync(op_type)
+  end
+
+  def index(version, payload)
+    path = tenant.document_path(type, document_id) + add_versioning(version)
+    handle_update(path, payload)
+  end
+
+  def remove
+    handle_delete(tenant.document_path(type, document_id))
   end
 
   private
@@ -23,24 +30,29 @@ class Search::V2::IndexRequestHandler
       when :index_document
         handle_update(tenant.document_path(type, document_id) + add_versioning)
       when :remove_document
-        handle_update(tenant.document_path(type, document_id))
+        handle_delete(tenant.document_path(type, document_id))
       when :bulk_request
         Typhoeus.post(tenant.bulk_path(@type), body: payload)
       end
     end
 
-    # => Can rename as perform once its default
-    def perform_async(op_type)
-      # Put into Kafka/Kinesis/anywhere, store and return
+    def add_versioning(version)
+      "?version_type=external&version=#{version}"
     end
 
-    def add_versioning
-      "?version_type=external&version=#{ext_version}"
-    end
-
-    def handle_update(path)
+    def handle_update(path, payload)
       request = Typhoeus::Request.new(path, method: :put, body: payload)
+      attach_callbacks request
+      request.run
+    end
 
+    def handle_delete(path)
+      request = Typhoeus::Request.new(path, method: :delete)
+      attach_callbacks request
+      request.run
+    end
+
+    def attach_callbacks (request)
       request.on_failure do |response|
         handle_failure(response)
       end
@@ -48,8 +60,6 @@ class Search::V2::IndexRequestHandler
       request.on_success do |response|
         Rails.logger.info "response success: #{response.inspect}" if response.success?
       end
-
-      request.run
     end
 
     def handle_failure(response)
