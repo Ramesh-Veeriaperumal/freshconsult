@@ -2,9 +2,10 @@ class ProfilesController < ApplicationController
   
    before_filter :require_user 
    before_filter :load_user, :only => [:edit, :change_password]
-   before_filter :set_user, :clean_params, :only => [:update]
+   before_filter :set_user, :filter_params, :only => [:update]
    skip_before_filter :check_privilege
    include ModelControllerMethods  
+   include UserHelperMethods
 
   def edit       
     respond_to do |format|
@@ -113,15 +114,12 @@ protected
  def cname
       @cname ='user'
  end
- 
- def clean_params
+
+ def filter_params
   if params[:user]
     params[:user].delete(:helpdesk_agent)
     params[:user].delete(:role_ids)
-    params[:user]['phone'].try(:strip!)
-    params[:user]['mobile'].try(:strip!)
-    params[:user].delete('mobile') if @user.mobile.blank? and params[:user]['mobile'].blank?
-    params[:user].delete('phone') if @user.phone.blank? and params[:user]['phone'].blank?
+    validate_phone_field_params @user
   end
   if params[:agent]
     params[:agent].delete(:user_id)

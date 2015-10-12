@@ -1,6 +1,7 @@
 # encoding: utf-8
 class AgentsController < ApplicationController
   include AgentsHelper
+  include UserHelperMethods
   helper AgentsHelper
   include APIHelperMethods
   include ExportCsvUtil
@@ -399,16 +400,17 @@ private
     params[:agent].delete(:user)
   end
  
-  def clean_params
+  def filter_params
     params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
     params[:user].except!(:helpdesk_agent, :deleted, :active)
+    validate_phone_field_params @agent.user
   end
 
   def validate_params
     validate_scoreboard_level
     validate_ticket_permission
     format_api_params
-    clean_params
+    filter_params
     validate_roles
   end
 
