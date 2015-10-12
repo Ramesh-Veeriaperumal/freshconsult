@@ -20,7 +20,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
     ids, metrics = [], []
     result.each do |metric, res|
       res.symbolize_keys!
-      metrics << metric.downcase
+      metrics << metric
       groups = res[:group_id] || res[:previous_object_id]
       ids << groups.keys.collect{|id| id ? id.to_i : nil} if groups
     end
@@ -72,7 +72,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
         tmp = result[met][:group_id] || result[met][:previous_object_id]   
         # If particular QUERY failed(query error, system error, timedout) for a metric, its result is shown as NOT_APPLICABLE
         if result[met][:error]
-          group[metric] = NOT_APPICABLE
+          group[metric] = NA_PLACEHOLDER_SUMMARY
         elsif tmp and tmp[id.to_s]
           group[metric] = tmp[id.to_s]
         else
@@ -83,7 +83,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   end
 
   def default_value metric
-    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Count" ? 0 : NOT_APPICABLE
+    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Count" ? 0 : NA_PLACEHOLDER_SUMMARY
   end
 
 end

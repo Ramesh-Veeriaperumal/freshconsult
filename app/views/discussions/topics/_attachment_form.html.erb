@@ -1,0 +1,118 @@
+<%
+  attach_id ||= "post"
+  attachments ||= {:regular => [], :cloud_files => []}
+  nsc_param = nsc_param || "post"
+%>
+<div class="attachments-wrap">
+  <div id="<%=attach_id%>-container" class="attachments-container">
+
+    <% if cloud_files_installed?  %>
+      <div class="dropdown dropup">        
+        <a class="dropdown-toggle attach-link" data-toggle="dropdown" href="#">
+          <i class="wicon-paper-clip"></i><%=I18n.t('attach')%><b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <li class="portal-attach">
+            <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-list-wrap attach-link-wrap">
+                <%= I18n.t('portal.attach_file').html_safe %>
+                <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
+                  <input type="file" name="emptyfile" 
+                    id="<%=attach_id%>_file"
+                    data-attach-id="<%=attach_id%>"
+                    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                    fileContainer="<%=attach_id%>-container" 
+                    fileList="<%=attach_id%>-attachments"
+                    sendFocusTo="<%=attach_id%>-body" />
+                </div>
+            </a>
+          </li>
+          <% get_enabled_cloud_files_app.each do |c_f| %>
+            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id} %>
+          <% end %>
+
+        </ul>      
+      </div>
+    <% else %>
+      <div class="hidden_upload">
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <input type="file" id="<%=attach_id%>_file" name="emptyfile"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
+                fileContainer="<%=attach_id%>-container"
+                fileList="<%=attach_id%>-attachments"
+                sendFocusTo="<%=attach_id%>-body"/>
+      </div>
+    <% end %>
+    <div class="clear"> </div>
+    <label class="hide"><i class="a-count">0 </i> <%= t('attachments')%>: </label>
+    <div class="attachment_wrapper">
+      <ul class="attachment_list" id="<%=attach_id%>-attachments">
+        <% attachments[:regular].each do |attachment| %>
+          <% if(@topic.new_record?) %>
+            <%= attachment_view(attachment, "topic") %>
+          <% else %>
+            <%= attachment_list(attachment, true, "topic", nil) %>
+          <% end %>
+        <% end %>
+        <% attachments[:cloud_files].each do |attachment| %>
+          <% if(@topic.new_record?) %>
+            <%= attachment_view(attachment, "cloud_file") %>
+          <% else %>
+            <%= attachment_list(attachment, true, "cloud_file", nil) %>
+          <% end %>
+        <% end %>
+        </ul>
+    </div>
+  </div>
+</div>
+<script id="file-list-template" type="text/x-jquery-tmpl">
+  <li class="attachment list_element {{if (!file_valid)}}invalid tooltip{{/if}}"{{if (!file_valid)}} title="<%= t('helpdesk.tickets.note.attachment_size.exceed_limit') %>"{{/if}}>
+    <div>
+      {{if (file_valid)}}
+      <a  class="delete mr10" href="#" 
+        onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;"
+        inputId="${inputId}" >
+      </a>
+      {{/if}}
+      {{if provider != ''}}
+        <div class="file-types-${provider}"></div>
+      {{else}}
+        <div class="attachment-type"></div>
+      {{/if}}
+      <div class="attach_content">
+        <div class="ellipsis">
+          <a href="javascript:void(0)">${name}</a>
+        </div>
+        <span class="file-size">
+          {{if provider == ''}}
+            {{if (size != '0.00 KB ') }} (${size}) {{/if}}
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </li>
+</script>
+<div class="clearfix"></div>
+
+<script type="text/javascript">
+  // Fix for Firefox/IE - To override :hover style persistance after click on input[type=file] element
+  jQuery('#<%=attach_id%>-container a[data-toggle="dropdown"]').bind('click', function(){
+    jQuery(this).parents('div.attach-wrapper').find('a.attach-link-wrap').first().css({
+          'background-color': 'inherit',
+          'background-image': 'inherit',
+          'color': 'inherit',
+          'box-shadow': 'inherit'
+      });
+  });
+  jQuery('li.portal-attach a.attach-link-wrap')
+    .bind('mouseover', function(){
+      jQuery(this).removeAttr('style');
+    })
+    .bind('mousemove', function(event){
+      // Fix to move "Browse" button along with mouse pointer - fix for IE.
+      p=jQuery(this).find('div').first();
+      newLeft = Math.min(175, Math.max(event.clientX - p.offset().left + p.position().left - 5, 0));
+      window.title = newLeft;
+      p.css({left: newLeft, top: 0});
+    })
+</script>
+

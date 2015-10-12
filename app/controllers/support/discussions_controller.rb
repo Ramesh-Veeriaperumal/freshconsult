@@ -1,6 +1,7 @@
 class Support::DiscussionsController < SupportController
 	# before_filter :scoper
 	before_filter :load_category, :only => :show
+  before_filter :check_forums_access
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
 	before_filter { |c| c.check_portal_scope :open_forums }

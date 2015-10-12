@@ -9,4 +9,8 @@ module Integrations
 	XERO_PATH_TO_SSL_CLIENT_CERT = File.join(Rails.root,'config' ,'cert','integrations','xero', 'entrust-cert.pem')
 	XERO_PATH_TO_SSL_CLIENT_KEY = File.join(Rails.root,'config' ,'cert','integrations','xero', 'entrust-private-nopass.pem')
 	#========================================================
+	onedrive_key_hash = hash["onedrive"]
+	ONEDRIVE_CLIENT_ID = onedrive_key_hash["client_id"]
+	ONEDRIVE_CLIENT_SECRET =  onedrive_key_hash["client_secret"]
+	#========================================================
 end

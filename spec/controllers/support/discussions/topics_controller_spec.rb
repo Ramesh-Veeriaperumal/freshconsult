@@ -338,6 +338,20 @@ describe Support::Discussions::TopicsController do
 		@account.features.hide_portal_forums.destroy
 	end
 
+	it "should render 404 for accounts without forum feature" do
+		@account.remove_feature(:forums)
+		@account.reload
+
+		get :new
+		response.status.should eql(404)
+
+		get :show, :id => @topic.id
+		response.status.should eql(404)
+
+		@account.add_features(:forums)
+		@account.reload
+	end
+
 
 	# it "should lock a topic on put 'update_lock'" do
 	# 	topic = publish_topic(create_test_topic(@forum, @user))

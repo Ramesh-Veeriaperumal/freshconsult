@@ -128,6 +128,6 @@ module Helpdesk::Email::TicketMethods
   end
 
   def create_redis_key_for_ticket ticket_message_id
-    set_others_redis_key(header_processor.message_key(account, ticket_message_id), ticket.display_id, 86400 * 7)
+    header_processor.set_ticket_id_with_message_id account, ticket_message_id, ticket
   end
 end

@@ -31,9 +31,15 @@ class Helpdesk::TicketField < ActiveRecord::Base
   belongs_to :flexifield_def_entry, :dependent => :destroy
   has_many :picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',
-                             :include => :sub_picklist_values,
+                             :include => {:sub_picklist_values => :sub_picklist_values},
                              :dependent => :destroy, 
                              :order => "position"
+
+  has_many :level1_picklist_values, :as => :pickable, 
+                             :class_name => 'Helpdesk::PicklistValue',
+                             :dependent => :destroy, 
+                             :order => "position"                  
+
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', 
                                   :dependent => :destroy, 
                                   :order => "level"
@@ -166,9 +172,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
      case field_type
        when "custom_dropdown" then
           if(admin_pg)
-            picklist_values.collect { |c| [c.value, c.value, c.id] }
+            level1_picklist_values.collect { |c| [c.value, c.value, c.id] }
           else
-            picklist_values.collect { |c| [c.value, c.value] }
+            level1_picklist_values.collect { |c| [c.value, c.value] }
           end
        when "default_priority" then
          TicketConstants.priority_names
@@ -204,7 +210,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
   
   def dropdown_choices_with_id
-    picklist_values.collect { |c| [c.id, c.value] }
+    level1_picklist_values.collect { |c| [c.id, c.value] }
   end
   
   def nested_choices_with_id
@@ -245,7 +251,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def html_unescaped_choices(ticket = nil)
     case field_type
        when "custom_dropdown" then
-         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+         level1_picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
        when "default_priority" then
          TicketConstants.priority_names
        when "default_source" then

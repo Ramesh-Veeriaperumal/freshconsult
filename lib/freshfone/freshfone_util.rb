@@ -14,7 +14,7 @@ module Freshfone::FreshfoneUtil
   end
 
   def sip_call?
-    params[:SipCallId].present?
+    params[:SipCallId].present? && params[:SipDomain].present? && params[:SipDomainSid].present?
   end
 
   def sip_number

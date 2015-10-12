@@ -10,13 +10,16 @@ namespace :ebay_daily_api_report do
     csv_string = CSVBridge.generate do |csv| 
       csv << ["account_id", "account_domain", "ebay_account_id", "ebay_account_name", "api_count"]
       Sharding.execute_on_all_shards do
-        Ecommerce::EbayAccount.current_pod.where(:status => Ecommerce::Account::ACCOUNT_STATUS[:active] ).find_in_batches(:batch_size => 200) do |ebay_accounts|
-          ebay_accounts.each do |ebay_account| 
-            account = ebay_account.account
-            account.make_current 
-            key = EBAY_ACCOUNT_THRESHOLD_COUNT % { :date => date, :account_id => account.id, :ebay_account_id =>  ebay_account.id}
-            api_count = get_integ_redis_key(key)
-            csv << [account.id, account.full_domain, ebay_account.id, ebay_account.name, api_count.to_i]
+        Sharding.run_on_slave do
+          Ecommerce::EbayAccount.current_pod.where(:status => Ecommerce::Account::ACCOUNT_STATUS[:active] ).find_in_batches(:batch_size => 200) do |ebay_accounts|
+            ebay_accounts.each do |ebay_account| 
+              account = ebay_account.account
+              account.make_current 
+              key = EBAY_ACCOUNT_THRESHOLD_COUNT % { :date => date, :account_id => account.id, :ebay_account_id =>  ebay_account.id}
+              api_count = get_integ_redis_key(key)
+              csv << [account.id, account.full_domain, ebay_account.id, ebay_account.name, api_count.to_i]
+              Account.reset_current_account
+            end
           end
         end
       end

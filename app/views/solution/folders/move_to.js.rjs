@@ -4,3 +4,4 @@ show_ajax_flash(page) if @updated_items.present? or @other_items.present?
 page << "App.Solutions.Folder.hideSelectAll()"
 page << "App.Solutions.Reorder.toggleReorderButton()"
 page << "jQuery('.bulk-action-menu').hide();"
+page << "App.Solutions.Folder.toggleActionsClass(true)"

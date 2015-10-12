@@ -114,6 +114,8 @@ module MemcacheKeys
 
   MKP_EXTENSIONS = "v1/FA:MKP_EXTENSIONS:%{category_id}"
 
+  INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
+
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
 
   class << self

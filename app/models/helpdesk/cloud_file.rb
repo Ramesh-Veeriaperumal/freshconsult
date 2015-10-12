@@ -21,7 +21,7 @@ class Helpdesk::CloudFile < ActiveRecord::Base
   end
 
   def provider
-    Integrations::Application.find_by_id(application_id).name
+    self.application.name
   end
 
   def filename

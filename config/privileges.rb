@@ -6,7 +6,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard", :only => [:index, :activity_list,:latest_activities,:latest_summary,:sales_manager]
     resource :"helpdesk/quest"
     resource :"helpdesk/leaderboard"
-    resource :"helpdesk/note", :only => [:index, :agents_autocomplete]
+    resource :"helpdesk/note", :only => [:index, :agents_autocomplete,:public_conversation]
     resource :user, :only => [:delete_avatar, :block, :me]
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
@@ -357,7 +357,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                                :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact, 
-                               :configure_export, :export_csv]
+                               :configure_export, :export_csv, :reset_score]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]

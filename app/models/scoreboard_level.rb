@@ -32,4 +32,6 @@ class ScoreboardLevel < ActiveRecord::Base
     } if level
   }
 
+  scope :least_points, lambda {{ :order => 'points ASC', :limit => 1 }}
+
 end

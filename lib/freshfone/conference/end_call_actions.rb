@@ -49,7 +49,7 @@ module Freshfone::Conference::EndCallActions
 
     def disconnect_ringing_agents
       return if current_call.blank?
-      Freshfone::NotificationWorker.perform_async({:call_id => current_call.id}, nil, "disconnect_other_agents")
+      Freshfone::NotificationWorker.perform_async({:call_id => current_call.id}, nil, "cancel_other_agents")
     end
 
     def still_ringing?

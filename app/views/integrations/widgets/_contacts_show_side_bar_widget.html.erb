@@ -3,6 +3,9 @@
   dom_helper_data = <%= raw @user.to_json({:only=>api_permitted_data}) %>;
 </script>
 
+<% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>
+<div id="fa-dev-pholder" style="display:none"></div>
+
 <%= javascript_include_tag :'cdn/marketplace/freshapps_contact_dom_helper' %>
 
 <% installed_apps.each{ |key,installed_app|

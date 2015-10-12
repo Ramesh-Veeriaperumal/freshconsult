@@ -53,4 +53,13 @@ describe Support::Solutions::FoldersController do
     get 'show', id: default_folder
     response.status.should eql(404)
   end
+
+  it "should render 404 for folders not visible in current portal" do 
+    portal = create_portal
+    category = create_category({:portal_ids => [portal.id]})
+    folder = create_folder({:visibility => 1, :category_id => category.id })
+    get 'show', :id => folder
+    response.status.should eql(404)
+  end
+  
 end

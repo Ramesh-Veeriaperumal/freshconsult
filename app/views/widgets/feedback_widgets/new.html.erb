@@ -332,7 +332,7 @@
       .on("change", function(e){
         var id = jQuery('option:selected', this).data('id');
         jQuery('div.ticket_section').remove();
-        var element = jQuery('#picklist_section_'+id).parent();
+        var element = jQuery('.picklist_section_'+id).parent();
         if(element.length != 0) {
       		jQuery(jQuery('.picklist_section_'+id).val()
       						.replace(new RegExp('&lt', 'g'), '<')

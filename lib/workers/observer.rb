@@ -4,15 +4,20 @@ class Workers::Observer
   def self.perform args
     begin
       account = Account.current
-      evaluate_on = account.tickets.find args[:ticket_id]
-      doer = account.users.find args[:doer_id]
-      current_events = args[:current_events].symbolize_keys
-      Thread.current[:observer_doer_id] = doer.id
+      evaluate_on = account.tickets.find_by_id args[:ticket_id]
+      doer = account.users.find_by_id args[:doer_id]
 
-      account.observer_rules_from_cache.each do |vr|
-        vr.check_events doer, evaluate_on, current_events
+      if evaluate_on.present? && doer.present?
+        current_events = args[:current_events].symbolize_keys
+        Thread.current[:observer_doer_id] = doer.id
+
+        account.observer_rules_from_cache.each do |vr|
+          vr.check_events doer, evaluate_on, current_events
+        end
+        evaluate_on.save!
+      else
+        Rails.logger.debug "Observer Rules are not executed for account id :: #{Account.current.id}, Ticket id :: #{args[:ticket_id]}, Doer id :: #{args[:doer_id]}"
       end
-      evaluate_on.save!
     rescue Resque::DirtyExit
      Resque.enqueue(Workers::Observer, args)
     rescue Exception => e

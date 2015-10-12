@@ -101,6 +101,10 @@ module Redis::RedisKeys
 	VALIDATE_REQUIRED_TICKET_FIELDS = "VALIDATE_REQUIRED_TICKET_FIELDS"
 
 	PASSWORD_RESTRICTION_ENABLED = "PASSWORD_RESTRICTION_ENABLED" #Password restriction for certain customers
+	# run update_ticket_states using sidekiq instead of resque
+	UPDATE_TICKET_STATES_VIA_SIDEKIQ = "UPDATE_TICKET_STATES_VIA_SIDEKIQ"
+	# run observer queue using sidekiq instead of resque
+	SIDEKIQ_OBSERVER = "SIDEKIQ_OBSERVER"
 
 	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
 	EBAY_ACCOUNT_THRESHOLD_COUNT = "EBAY:ACCOUNT:THRESHOLD:%{date}:%{account_id}:%{ebay_account_id}"

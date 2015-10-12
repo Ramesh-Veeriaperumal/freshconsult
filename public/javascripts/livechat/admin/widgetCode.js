@@ -25,7 +25,7 @@ window.liveChat.widgetCode = function($){
 				complete: function(client, args){
 					$('.chat_code_copy').attr('data-original-title', CHAT_I18n.copied);
 					$('.chat_code_copy').twipsy('show');
-					$("#EmbedCode").select();    
+					$("#EmbedCode").select();
 					$("#EmbedCode").removeClass("code_fade_effect");
 				},
 				mouseover: function(client, args){
@@ -54,11 +54,11 @@ window.liveChat.widgetCode = function($){
 			var url1 		= asset_url.cloudfront;
 			var code 		= "var fc_CSS=document.createElement('link');fc_CSS.setAttribute('rel','stylesheet');"+
 					"var isSecured = (window.location && window.location.protocol == 'https:');"+
-					"var rtlSuffix = ((document.getElementsByTagName('html')[0].getAttribute('lang')) === 'ar') ? '-rtl' : '';"+
+					"var lang = document.getElementsByTagName('html')[0].getAttribute('lang'); var rtlLanguages = ['ar','he']; var rtlSuffix = (rtlLanguages.indexOf(lang) >= 0) ? '-rtl' : '';"+
 					"fc_CSS.setAttribute('type','text/css');fc_CSS.setAttribute('href',((isSecured)? '"+url1+"':'"+asset_url.css+
 					"')+'/css/visitor'+rtlSuffix+'.css');"+"document.getElementsByTagName('head')[0].appendChild(fc_CSS);"+
 					"var fc_JS=document.createElement('script'); fc_JS.type='text/javascript';"+
-					"fc_JS.src=((isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+ 
+					"fc_JS.src=((isSecured)?'"+url1+"':'"+asset_url.js+"')+'/js/visitor.js';"+
 					"(document.body?document.body:document.getElementsByTagName('head')[0]).appendChild(fc_JS);"+
 					"window.freshchat_setting= '"+Base64.encode(JSON.stringify(_widget))+"';";
 

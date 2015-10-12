@@ -3,4 +3,6 @@ icontact:
 xero:
  consumer_key: "DNG4K32A9OTRBYEH4X2GGLY0UFCOJJ"
  consumer_secret: "QHZI3HGLARWOPQCBZFPQHMKPUHPENE"
-
+onedrive:
+ client_id: "0000000044164F31"
+ client_secret: "0aJhfYIgkDDPb-cE57TehreBwVlRKQd4" 

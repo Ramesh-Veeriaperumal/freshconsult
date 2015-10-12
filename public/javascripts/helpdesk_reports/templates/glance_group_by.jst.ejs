@@ -9,7 +9,7 @@
 		<div class="title">
 			<%= title_name %> by <%= fields_hash[data] %>
 		</div>
-		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>"></div>
+		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>
 		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
 	</div>
 <% } else { %>
@@ -27,7 +27,7 @@
 			<% jQuery('#custom_field_group_by select').select2('val', fields_hash[data]) %>
 
 		</div>
-		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>"></div>
+		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>
 		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
 	</div>
 <% } %>

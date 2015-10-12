@@ -27,7 +27,7 @@ class Integrations::LogmeinController < ApplicationController
           note_body += t("integrations.logmein.note.tech_email") + " : " + params["TechEmail"] + "<br /><br />"
           note_body += t("integrations.logmein.note.platform") + " : " + params["Platform"] + "<br />"
           note_body += t("integrations.logmein.note.work_time") + " : " + params["WorkTime"] + "<br /><br />"
-          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>")
+          note_body += "<b>" + t("integrations.logmein.note.chatlog")+ "</b>" + ("<div class = 'logmein_chatlog'>" + chatlog + "</div>") unless params['ChatLog'].blank?
           note_body += ("<b>" +  t("integrations.logmein.note.tech_notes") + "</b>" + ("<div class = 'logmein_technotes'>" + tech_notes + "</div>")) unless tech_notes.blank?
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?

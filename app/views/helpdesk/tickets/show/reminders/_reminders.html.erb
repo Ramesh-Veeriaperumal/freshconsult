@@ -10,7 +10,7 @@
   <% end %>
 </ul>
 <ul id="compeleted_reminders" class="reminderlist">
-  <% reminders.logged.map do |r| %>
+  <% reminders.logged(1.day.ago).map do |r| %>
     <%= render :partial => "/helpdesk/tickets/show/reminders/reminder", :object => r %>
   <% end %>
 </ul>

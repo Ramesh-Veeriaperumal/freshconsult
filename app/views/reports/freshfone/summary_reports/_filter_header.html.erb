@@ -16,4 +16,8 @@
   <% unless @group_id.blank? %>
     <li><%=t('reports.freshfone.group')%> : <strong><%=agent_groups_hash[@group_id.to_i]%></strong></li>
   <%end%>
+  <% unless @business_hours.blank? %>
+    <li><%=t('reports.freshfone.business_hours')%> : <strong ><%=business_hours_hash[@business_hours]%></strong></li>
+  <%end%>
 </ul>
+

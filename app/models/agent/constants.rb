@@ -27,7 +27,11 @@ class Agent < ActiveRecord::Base
     {:label => "export_data.agents.fields.agent_type", :value => "agent_type", :selected => false},
     {:label => "export_data.agents.fields.ticket_scope",    :value => "ticket_scope", :selected => true},
     {:label => "export_data.agents.fields.roles", :value => "agent_roles", :selected => false},
-    {:label => "export_data.agents.fields.groups", :value => "groups", :selected => false}
+    {:label => "export_data.agents.fields.groups", :value => "groups", :selected => false},
+    {:label => "export_data.agents.fields.phone", :value => "agent_phone", :selected => false},
+    {:label => "export_data.agents.fields.mobile", :value => "agent_mobile", :selected => false},
+    {:label => "export_data.agents.fields.language", :value => "agent_language", :selected => false},
+    {:label => "export_data.agents.fields.time_zone", :value => "agent_time_zone", :selected => false}
   ]
 
   EXPORT_FIELD_VALUES = EXPORT_FIELDS.map { |field| field[:value] }

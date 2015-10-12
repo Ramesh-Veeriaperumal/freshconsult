@@ -26,6 +26,7 @@ RSpec.describe Solution::ArticlesController do
     result = parse_json(response)
     expected = (response.status === 201) && (compare(result["article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS,{}).empty?)
     expected.should be(true)
+    result["article"]["status"].should be_eql(2)
   end
   it "should be able to update a solution article" do
     params = article_api_params
@@ -82,10 +83,10 @@ RSpec.describe Solution::ArticlesController do
       "solution_article"=>
         {
           "title"=>Faker::Lorem.sentence(2),
-          "status"=>1, 
+          "status"=> "2", 
           "art_type"=>2, 
           "description"=>Faker::Lorem.sentence(3), 
-          "folder_id"=>1
+          "folder_id"=> @solution_folder.id
         }
     }
   end

@@ -38,8 +38,10 @@ module Freshfone
             notify_round_robin_agent
           when "direct_dial"
             notify_direct_dial
-          when "disconnect_other_agents"
-            disconnect_other_agents
+          when "cancel_other_agents"
+            disconnect_other_agents('canceled')
+          when "complete_other_agents"
+            disconnect_other_agents('completed')
         end
         Rails.logger.info "Completion time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       rescue Exception => e
@@ -250,20 +252,20 @@ module Freshfone
       disconnect_api_call(agent_api_call) if call.meta.reload.any_agent_accepted?      
     end
 
-    def disconnect_other_agents
+    def disconnect_other_agents(call_status)
       agent_calls = get_pinged_agents_call(params[:call_id])
       agent_calls.each do |call|
-        terminate_api_call(call) if call.present? && (call != params[:CallSid])
+        terminate_api_call(call, call_status) if call.present? && (call != params[:CallSid])
       end
     end
 
-    def terminate_api_call(call_sid)
+    def terminate_api_call(call_sid, call_status)
       begin
         call = current_account.freshfone_subaccount.calls.get(call_sid)
-        call.update(:status => "canceled")
-        Rails.logger.info "terminate_api_call :: #{call_sid}"
+        call.update(:status => call_status)
+        Rails.logger.info "terminate_api_call :: #{call_sid} call_status :: #{call_status}"
       rescue Exception => e
-        Rails.logger.error "Error in disconnect_other_agents for account #{current_account.id} for call #{call_sid}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+        Rails.logger.error "Error in disconnect_other_agents for account #{current_account.id} for call #{call_sid} for call status : #{call_status}. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end
 

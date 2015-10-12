@@ -100,7 +100,9 @@ class Support::Discussions::PostsController < SupportController
   def create_attachments
   	if @post.respond_to?(:cloud_files)
 	    (params[:cloud_file_attachments] || []).each do |attachment_json|
-	      @post.cloud_files.create(build_cloud_files(attachment_json))
+	      result = build_cloud_files(attachment_json)
+	      next if result.blank?
+	      @post.cloud_files.create(result)
 	    end
 	  end
    	return unless @post.respond_to?(:attachments)

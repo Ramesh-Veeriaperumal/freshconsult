@@ -40,7 +40,14 @@ module Freshfone::CallerLookup
   end
 
   def empty_number?(number)
+    Rails.logger.info "Empty Number Check #{number}"
     number == "+"
+  end
+
+  def invalid_number?(number)
+    Rails.logger.info "Invalid Number Check #{number}"
+    parsed_number = GlobalPhone.parse(number)
+    parsed_number.blank? || !parsed_number.valid?
   end
 
   def browser_caller_id(number)
