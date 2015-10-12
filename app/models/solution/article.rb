@@ -14,7 +14,7 @@ class Solution::Article < ActiveRecord::Base
   has_one :draft, :dependent => :destroy
 
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
   include Mobile::Actions::Article
   include Solution::Constants
@@ -276,7 +276,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def draft_attributes(opts = {})
-    draft_attrs = opts.merge(:article => self, :category_meta => folder.solution_category_meta)
+    draft_attrs = opts.merge(:article => self, :category_meta => solution_folder_meta.solution_category_meta)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
       draft_attrs[attribute] = self.send(attribute)
     end
@@ -309,7 +309,7 @@ class Solution::Article < ActiveRecord::Base
 
     def category_obj
       self.reload
-      Account.current.launched?(:meta_read) ? folder.solution_category_meta : folder.category
+      Account.current.launched?(:meta_read) ? solution_folder_meta.solution_category_meta : solution_folder_meta.category
     end
 
     def content_changed?

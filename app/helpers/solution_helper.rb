@@ -19,8 +19,8 @@ module SolutionHelper
 					_output << category_link(@folder, page)
 					_output << truncate(h(@folder.name), :length => 50)
 				when :article
-					_output << category_link(@article.folder, page)
-					_output << folder_link(@article.folder)
+					_output << category_link(@article.solution_folder_meta, page)
+					_output << folder_link(@article.solution_folder_meta)
 				else
 			end
 		end
@@ -338,15 +338,6 @@ module SolutionHelper
 							solution_article_version_path(@article_meta.id, l.code))
 		op << "</div>"
 		op.html_safe
-	end
-
-	def add_translation(lang_ids)
-		return if lang_ids.blank?
-		options_select = lang_ids.map{|l| [Language.find(l).name, l]}
-		select_tag("language_id", 
-							options_for_select(options_select), 
-							:class => "select2 pull-right",
-							"data-placeholder" => "Add translation")
 	end
 
 	def new_article_btn article

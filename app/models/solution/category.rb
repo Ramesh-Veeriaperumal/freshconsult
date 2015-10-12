@@ -33,7 +33,7 @@ class Solution::Category < ActiveRecord::Base
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
+  # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'

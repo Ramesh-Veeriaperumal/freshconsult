@@ -3824,6 +3824,7 @@ en:
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
+      add_translation: Add Translation
     draft:
       name: Drafts
       all_drafts: All Drafts

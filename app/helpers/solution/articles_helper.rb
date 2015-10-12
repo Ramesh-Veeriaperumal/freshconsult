@@ -2,18 +2,6 @@ module Solution::ArticlesHelper
 
   include ActionView::Helpers::NumberHelper
   
-  def breadcrumb
-    output = []
-    output << pjax_link_to(t('solution.title'), solution_categories_path)
-    if @article.folder.is_default?
-      output << pjax_link_to(t('solution.draft.name'), solution_drafts_path)
-    else
-      output << pjax_link_to(@article.folder.category.name, solution_category_path(@article.folder.category))
-      output << pjax_link_to(@article.folder.name, solution_folder_path(@article.folder))
-    end
-    output.join(' ').html_safe
-  end
-  
   def language_tabs
     %{<div class="tab">
         <a href="/" class="active"><span>English</span></a>
@@ -48,7 +36,7 @@ module Solution::ArticlesHelper
   end
 
   def publish_link
-    return if @article.folder.is_default? or !privilege?(:publish_solution)
+    return if @article.solution_folder_meta.is_default? or !privilege?(:publish_solution)
     link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
@@ -60,7 +48,7 @@ module Solution::ArticlesHelper
     {
       :"autosave-path" => autosave_solution_draft_path(@article.id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
-      :"default-folder" => @article.folder.is_default,
+      :"default-folder" => @article.solution_folder_meta.is_default,
       :"draft-discard-url" => "#{solution_article_draft_path(@article.id, @article.draft.present? ? @article.draft : 1)}",
       :"preview-path" => support_draft_preview_path(@article, 'preview'),
       :"preview-text" =>  t('solution.articles.view_draft'),
@@ -155,6 +143,27 @@ module Solution::ArticlesHelper
 
   def formatted_value number
     number_to_human(number, :units => {:thousand => "K", :million => "M", :billion => "B"}).delete(' ')
+  end
+
+  def add_new_lang_article(lang_ids)
+    return if lang_ids.blank?
+    content = []
+    lang_ids.each do |lang_id|
+      lang = Language.find(lang_id)
+      next if lang.blank?
+      content << %(<li>)
+      content << pjax_link_to( "<span class=\"language_icon\">#{lang.code}</span> #{lang.name}".html_safe, 
+                  solution_new_article_version_path(@article_meta.id, lang.code)).html_safe
+      content << %(</li>)
+    end
+    %(<span class="add-new-trans pull-right">
+        <div class="drop-right nav-trigger" disabled href="#" menuid="#new-translation">
+          #{t('solution.articles.add_translation')}
+        </div>
+        <div class="fd-menu" id="new-translation">
+          <ul> #{content.join('')}</ul>
+        </div>
+      </span>).html_safe
   end
   
 end
