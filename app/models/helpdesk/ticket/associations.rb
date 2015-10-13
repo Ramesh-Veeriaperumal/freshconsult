@@ -26,6 +26,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
 
+  has_many :mobihelp_notes,  :class_name => 'Helpdesk::Note',
+    :as => 'notable', :conditions => {:private =>  false, :deleted => false},
+    :order => "CREATED_AT DESC LIMIT 10"
+
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',
     :as => 'notable', :conditions => {:private =>  false, :deleted => false}

@@ -25,11 +25,23 @@ class Support::Mobihelp::TicketsController < SupportController
   end
 
   def show
-    render_json(@ticket)
+    if current_account.features_included?(:limit_mobihelp_results)
+      render_json(@ticket.to_mobihelp_json())
+    else
+      render_json(@ticket)
+    end
   end
 
   def index
-    render_json(@tickets)
+    if current_account.features_included?(:limit_mobihelp_results)
+      ticket_json_list = []
+      @tickets.each do |ticket|
+        ticket_json_list << ticket.to_mobihelp_json()
+      end
+      render_json("[#{ticket_json_list.join(",")}]")
+    else
+      render_json(@tickets.to_json())
+    end
   end
 
   def close
@@ -62,7 +74,11 @@ class Support::Mobihelp::TicketsController < SupportController
     def build_tickets
       if params[:device_uuid] #filter by device id
         @assoc_device = current_user.mobihelp_devices.find_by_device_uuid(params[:device_uuid])
-        @tickets = @assoc_device.tickets
+        @tickets = if current_account.features_included?(:limit_mobihelp_results)
+          @assoc_device.tickets.includes(:mobihelp_notes =>  [:note_old_body])
+        else
+          @assoc_device.tickets.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
+        end
       else # fallback to mobihelp filter
         @tickets = current_user.tickets.find_by_source( TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp] )
       end
@@ -103,7 +119,13 @@ class Support::Mobihelp::TicketsController < SupportController
     end
 
     def load_ticket
-      @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
+      @ticket = @item = if current_account.features_included?(:limit_mobihelp_results)
+        Helpdesk::Ticket.includes(:mobihelp_notes =>  [:note_old_body])
+          .where(:id => params[:id], :account_id => current_account.id ).first
+      else
+        Helpdesk::Ticket.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
+          .where(:id => params[:id], :account_id => current_account.id ).first
+      end
     end
 
     def check_ticket_permissions
