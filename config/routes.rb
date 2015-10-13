@@ -2201,6 +2201,7 @@ Helpkit::Application.routes.draw do
         get :ticket_properties
         get :load_reply_emails
         get :get_filtered_tickets
+        get :get_solution_url
         get :mobile_filter_count
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
