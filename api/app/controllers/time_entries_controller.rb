@@ -106,9 +106,9 @@ class TimeEntriesController < ApiApplicationController
       if create?
         params[cname][:timer_running] = @timer_running 
         params[cname][:agent_id] ||= api_current_user.id
-        params[cname][:executed_at] ||= current_time
       end
-      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running]
+      params[cname][:executed_at] ||= get_executed_at(current_time)
+      params[cname][:start_time] ||= get_start_time(current_time)
       set_time_spent(params)
       ParamsHelper.assign_and_clean_params({ agent_id: :user_id },
                                            params[cname])
@@ -116,6 +116,14 @@ class TimeEntriesController < ApiApplicationController
 
     def assign_protected
       @item.workable = @ticket
+    end
+
+    def get_executed_at(current_time)
+      create? ? current_time : @item.executed_at
+    end
+
+    def get_start_time(current_time)
+      (create? || params[cname][:timer_running]) ? current_time : @item.start_time
     end
 
     def set_time_spent(params)

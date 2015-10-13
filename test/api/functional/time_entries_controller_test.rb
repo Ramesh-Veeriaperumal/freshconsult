@@ -1212,12 +1212,15 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_update_running_timer_with_start_time_nil
     te = sample_time_entry
     te.update_column(:start_time, Time.zone.now)
+    te.update_column(:executed_at, Time.zone.now)
     time_spent = te.reload.time_spent
     assert_not_nil time_spent
     start_time = te.start_time
-    put :update, construct_params({ id: te.id }, start_time: nil)
+    executed_at = te.executed_at
+    put :update, construct_params({ id: te.id }, start_time: nil, executed_at: nil)
     assert_equal time_spent, te.reload.time_spent
     assert_equal start_time, te.start_time
+    assert_equal executed_at, te.executed_at
   end
 
   def test_update_time_spent_present_timer_with_timer_running_true
@@ -1233,6 +1236,6 @@ class TimeEntriesControllerTest < ActionController::TestCase
     te.update_column(:start_time, nil)
     put :toggle_timer, construct_params({:id => te.id}, {})
     assert_response 200
-    assert_equal 0, te.time_spent
+    assert_not_nil te.time_spent
   end
 end
