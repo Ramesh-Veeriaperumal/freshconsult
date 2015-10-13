@@ -4,7 +4,7 @@ class BaseError
   API_ERROR_CODES = {
     missing_field: ['missing_field', 'Mandatory attribute missing', 'missing',
                     'requester_id_mandatory', 'phone_mandatory', 'required_and_numericality',
-                    'required_and_inclusion', 'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format'],
+                    'required_and_inclusion', 'required_and_data_type_mismatch', 'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format'],
     duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
     invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
     datatype_mismatch: ['is not a date', 'is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],

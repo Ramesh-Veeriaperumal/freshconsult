@@ -60,8 +60,8 @@ class TicketsController < ApiApplicationController
   private
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
-                                        product: :product_id }, item)
+      ErrorHelper.rename_error_fields({ group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
+                                      product: :product_id, ticket_type: :type }, item)
     end
 
     def load_objects
@@ -163,7 +163,7 @@ class TicketsController < ApiApplicationController
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, multipart_or_get_request?)
-      render_errors ticket.errors, ticket.error_options unless ticket.valid?
+      render_custom_errors(ticket, true) unless ticket.valid?
     end
 
     def assign_protected
@@ -235,6 +235,11 @@ class TicketsController < ApiApplicationController
 
     def restore?
       @restore ||= current_action?('restore')
+    end
+
+  def error_options_mappings
+      { group: :group_id, agent: :responder_id, requester: :requester_id, email_config: :email_config_id,
+                                        product: :product_id, ticket_type: :type }
     end
 
     def valid_content_type?

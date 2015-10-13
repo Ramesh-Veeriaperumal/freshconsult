@@ -25,6 +25,7 @@ api_error_messages:
   invalid_content_type: "Content-Type header should have application/json"
   missing_params: "Your update call does not have any parameter."
   data_type_mismatch: "Should be a %{data_type}"
+  required_and_data_type_mismatch: "Should be a %{data_type}"
   "is not a date": "Should be a valid date"
   special_chars_present: "Should not have value containing '%{chars}'"
   required_number : "Should be a number"

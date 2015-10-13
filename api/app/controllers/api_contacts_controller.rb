@@ -77,7 +77,7 @@ class ApiContactsController < ApiApplicationController
       params[cname].permit(*(field))
 
       contact = ContactValidation.new(params[cname], @item, multipart_or_get_request?)
-      render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
+      render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
 
     def sanitize_params
@@ -119,7 +119,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
+      ErrorHelper.rename_error_fields({ company_name: :company_id, tag_names: :tags, company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
+    end
+
+    def error_options_mappings
+      {company_name: :company_id, tag_names: :tags}
     end
 
     def assign_protected

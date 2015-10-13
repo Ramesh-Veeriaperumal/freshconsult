@@ -761,4 +761,83 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])
     assert_response 400
   end
+
+  def test_create_with_all_default_fields_required_invalid
+    default_non_required_fiels = ContactField.where(required_for_agent: false, column_name: 'default')
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    post :create, construct_params({},  name: Faker::Name.name)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', 'missing'),
+                bad_request_error_pattern('job_title', 'required_and_data_type_mismatch', {data_type: 'String'}),
+                bad_request_error_pattern('mobile', 'missing'),
+                bad_request_error_pattern('address', 'missing'),
+                bad_request_error_pattern('description', 'missing'),
+                bad_request_error_pattern('twitter_id', 'missing'),
+                bad_request_error_pattern('phone', 'missing'),
+                bad_request_error_pattern('tags', 'required_and_data_type_mismatch', {data_type: 'Array'}),
+                bad_request_error_pattern('company_id', 'missing'),
+                bad_request_error_pattern('client_manager', 'required_and_data_type_mismatch', {data_type: 'Boolean'}),
+                bad_request_error_pattern('language', 'required_and_inclusion',
+                                          list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern('time_zone', 'required_and_inclusion', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+  end
+
+  def test_create_with_all_default_fields_required_valid
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        client_manager: true,
+                                        company_id: Company.first.id,
+                                        language: 'en',
+                                        time_zone: 'Mountain Time (US & Canada)',
+                                        mobile: Faker::Lorem.characters(15),
+                                        phone: Faker::Lorem.characters(15),
+                                        job_title: Faker::Lorem.characters(15),
+                                        description: Faker::Lorem.characters(300),
+                                        tags: [Faker::Name.name, Faker::Name.name],
+                                        twitter_id: Faker::Name.name,
+                                        address: Faker::Lorem.characters(15)
+                                        )
+    assert_response 201
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+  end
+
+  def test_update_with_all_default_fields_required_invalid
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id} ,  email: nil,
+                                        client_manager: nil,
+                                        company_id: nil,
+                                        language: nil,
+                                        time_zone: nil,
+                                        mobile: nil,
+                                        phone: nil,
+                                        job_title: nil,
+                                        description: nil,
+                                        tags: nil,
+                                        twitter_id: nil,
+                                        address: nil
+                                        )
+    assert_response 400
+    match_json([bad_request_error_pattern('email', "can't be blank"),
+                bad_request_error_pattern('job_title', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('mobile', "can't be blank"),
+                bad_request_error_pattern('address', "can't be blank"),
+                bad_request_error_pattern('description', "can't be blank"),
+                bad_request_error_pattern('twitter_id', "can't be blank"),
+                bad_request_error_pattern('phone', "can't be blank"),
+                bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('company_id', "can't be blank"),
+                bad_request_error_pattern('client_manager', 'data_type_mismatch', data_type: 'Boolean'),
+                bad_request_error_pattern('language', 'not_included',
+                                          list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern('time_zone', 'not_included', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+  end
 end

@@ -13,7 +13,7 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tags special_chars_present')
+    assert errors.include?('Tag names special_chars_present')
     Account.unstub(:current)
   end
 
@@ -33,7 +33,7 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tags data_type_mismatch')
+    assert errors.include?('Tag names data_type_mismatch')
     assert errors.count == 1
     Account.unstub(:current)
   end

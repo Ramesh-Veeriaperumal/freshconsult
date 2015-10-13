@@ -39,5 +39,18 @@ class Helpers::TicketsValidationHelper
     def attachment_size(item)
       item.try(:attachments).try(:sum, &:content_file_size).to_i
     end
+
+    def default_field_validations
+      { 
+        status: {custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param }},
+        priority: {custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param }},
+        source: {custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param }},
+        ticket_type: {custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }},
+        group: {custom_numericality: {ignore_string: :allow_string_param}},
+        agent: {custom_numericality: {ignore_string: :allow_string_param}},
+        product: {custom_numericality: {ignore_string: :allow_string_param}},
+        subject: {length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }}
+      }
+    end
   end
 end

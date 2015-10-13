@@ -10,11 +10,18 @@ class RequiredValidator < ActiveModel::Validations::PresenceValidator
   end
 
   def validate_each(record, attribute, value)
+    # return if value is there or a falseclass
+    return if present_or_false?(value)
     if record.instance_variable_defined?("@#{attribute}".to_sym)
-      record.errors.add(attribute, :blank, options) if value.blank?
+      record.errors.add(attribute, :blank, options)
     else
       message = options[:message] || 'missing'
       record.errors.add(attribute, message, options)
     end
+  end
+
+  # check if value is present or false class
+  def present_or_false?(value)
+    value.present? || value.is_a?(FalseClass)
   end
 end

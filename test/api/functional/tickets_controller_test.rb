@@ -112,7 +112,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_email
-    params = { email: Faker::Internet.email }
+    params = { email: Faker::Internet.email, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     assert_response 201
     t = Helpdesk::Ticket.last
@@ -121,7 +121,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_email_config_id
     email_config = create_email_config
-    params = { requester_id: requester.id, email_config_id: email_config.id }
+    params = { requester_id: requester.id, email_config_id: email_config.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     assert_response 201
     t = Helpdesk::Ticket.last
@@ -131,7 +131,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_inactive_email_config_id
     email_config = EmailConfig.first || create_email_config
     email_config.update_column(:active, false)
-    params = { requester_id: requester.id, email_config_id: email_config.reload.id }
+    params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:active, true)
     match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
@@ -152,7 +152,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_invalid_email_config_id
     email_config = EmailConfig.first || create_email_config
     email_config.update_column(:account_id, 999)
-    params = { requester_id: requester.id, email_config_id: email_config.reload.id }
+    params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:account_id, @account.id)
     match_json([bad_request_error_pattern('email_config_id', 'invalid_email_config')])
@@ -172,7 +172,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_product_id
     product = create_product(email: Faker::Internet.email)
-    params = { requester_id: requester.id, product_id: product.id }
+    params = { requester_id: requester.id, product_id: product.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     assert_response 201
     t = Helpdesk::Ticket.last
@@ -180,7 +180,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_tags_invalid
-    params = { requester_id: requester.id, tags: ['test,,,,comma', 'test'] }
+    params = { requester_id: requester.id, tags: ['test,,,,comma', 'test'], status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('tags', 'special_chars_present', chars: ',')])
@@ -188,7 +188,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_responder_id_not_in_group
     group = create_group(@account)
-    params = { requester_id: requester.id, responder_id: @agent.id, group_id: group.id }
+    params = { requester_id: requester.id, responder_id: @agent.id, group_id: group.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('responder_id', 'not_part_of_group')])
@@ -199,7 +199,7 @@ class TicketsControllerTest < ActionController::TestCase
     product_1 = create_product(email: Faker::Internet.email)
     email_config = product_1.primary_email_config
     email_config.update_column(:active, true)
-    params = { requester_id: requester.id, product_id: product.id, email_config_id: email_config.reload.id }
+    params = { requester_id: requester.id, product_id: product.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     t = Helpdesk::Ticket.last
     assert_equal t.product_id, product_1.id
@@ -404,7 +404,11 @@ class TicketsControllerTest < ActionController::TestCase
     params = {}
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory')])
+    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory'), 
+      bad_request_error_pattern('subject', 'missing'),
+      bad_request_error_pattern('description', 'missing'),
+      bad_request_error_pattern('priority', 'required_and_inclusion', list: '1,2,3,4'),
+      bad_request_error_pattern('status', 'required_and_inclusion', list: '2,3,4,5,6,7')])
   end
 
   def test_create_with_existing_user
@@ -2171,5 +2175,70 @@ class TicketsControllerTest < ActionController::TestCase
                                                         fr_due_by: fr_due_by.iso8601)
     match_json(ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
     assert_response 200
+  end
+
+  def test_create_with_all_default_fields_required_invalid
+    default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    post :create, construct_params({},  requester_id: @agent.id)
+    assert_response 400
+    match_json([bad_request_error_pattern('description', 'missing'),
+                bad_request_error_pattern('subject', 'missing'),
+                bad_request_error_pattern('group_id', 'required_and_data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', 'required_and_data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('product_id', 'required_and_data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('priority', 'required_and_inclusion', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'required_and_inclusion', list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'required_and_inclusion', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'required_and_inclusion', list: '1,2,3,7,8,9')])
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
+  end
+
+  def test_create_with_all_default_fields_required_valid
+    default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    product = create_product(email: Faker::Internet.email)
+    post :create, construct_params({},  requester_id: @agent.id,
+                                        status: 2,
+                                        priority: 2,
+                                        type:'Lead',
+                                        source: 1,
+                                        description: Faker::Lorem.characters(15),
+                                        group_id: ticket_params_hash[:group_id],
+                                        responder_id: ticket_params_hash[:responder_id],
+                                        product_id: product.id,
+                                        subject: Faker::Lorem.characters(15)
+                                        )
+    assert_response 201
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
+  end
+
+  def test_update_with_all_default_fields_required_invalid
+    default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    put :update, construct_params({id: ticket.id},  subject: nil,
+                                        description: nil,
+                                        group_id: nil,
+                                        product_id: nil,
+                                        responder_id: nil,
+                                        status: nil,
+                                        priority: nil,
+                                        source: nil,
+                                        type: nil
+                                        )
+    assert_response 400
+    match_json([bad_request_error_pattern('description', "can't be blank"),
+                bad_request_error_pattern('subject', "can't be blank"),
+                bad_request_error_pattern('group_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('responder_id', 'data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('product_id', 'data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('priority', 'not_included', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'not_included', list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('type', 'not_included', list: 'Question,Incident,Problem,Feature Request,Lead'),
+                bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
+  ensure
+    default_non_required_fiels.map{|x| x.toggle!(:required)}
   end
 end
