@@ -15,6 +15,12 @@
 					<p><%= formated_date(@article.modified_at) %></p>
 			</div>
 		<% end %>
+    
+    <div class="published-label">
+    	<span> 
+    		<%= @article.published? ? t('solutions.status.published') : t('solutions.status.draft') %> 
+    	</span>
+    </div>
 	</div>
 
 	<div class="sidebar-section">

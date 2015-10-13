@@ -46,7 +46,7 @@ toolbar ||= false
   <div class="sticky_title"><%= yield :sticky_title %></div>
   <% if toolbar %>
     <div class="clearfix"></div>
-    <div id="sticky_redactor_toolbar" class="hide"></div>
+    <div id="sticky_redactor_toolbar" class="hide <%= 'language-multi' if current_account.launched?(:meta_read) %>"></div>
   <% end %>
 </div>
 <div class="clearfix"></div>

@@ -12,6 +12,10 @@
       top: 110px;
       z-index: 2;
     }
+
+    &.language-multi .redactor_toolbar {
+      top: 142px;
+    }
     
     &.has-notification .redactor_toolbar {
       top: 178px;
@@ -110,14 +114,6 @@
         li {
           overflow: hidden;
         }
-        .lang-icon {
-          display: inline;
-          border: 2px solid #ccc;
-          border-radius: 100%;
-          padding: 2px 4px;
-          color: #bbb;
-          text-transform: capitalize;
-        } 
       }
     }
   }
@@ -518,6 +514,15 @@
       }
       .created-history {
         margin-bottom: 15px;
+      }
+      .published-label {
+        margin-bottom: 15px;
+        span {
+          color: #B7A68C;
+          border: 1px solid #B7A68C;
+          padding: 2px 7px;
+          border-radius: 4px;
+        }
       }
     }
     p{
