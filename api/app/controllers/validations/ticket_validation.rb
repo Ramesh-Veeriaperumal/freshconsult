@@ -67,7 +67,7 @@ class TicketValidation < ApiValidation
     @item = item
   end
 
-  def should_set_request_params(request_params)
+  def should_set_description?(request_params)
     request_params[:description].nil? && request_params[:description_html].present?
   end
 
