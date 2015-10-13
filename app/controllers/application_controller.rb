@@ -140,6 +140,9 @@ class ApplicationController < ActionController::Base
       format.json do 
         render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
       end
+      format.nmobile do 
+        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
+      end
       format.widget do 
         render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
       end
