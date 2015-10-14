@@ -275,7 +275,7 @@ module SolutionHelper
 			:data => {
 			"destroy-on-close" => true,
 			"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
-			"target" => "#version-#{solution_meta.id}",
+			"target" => "#version-#{solution_meta.id}-l#{language.id}",
 			"close-label" => t('cancel'),
 			"submit-label" => t('save')
 		}}) unless category.eql?('article')

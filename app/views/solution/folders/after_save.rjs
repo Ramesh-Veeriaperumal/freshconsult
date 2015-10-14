@@ -6,7 +6,7 @@ if @folder.errors.empty?
 						jQuery('#folders_list').append('#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder.solution_folder_meta})}');
 					}"
 	else
-		page << "App.Solutions.AfterSave.hide('#version-#{@folder.parent_id}');"
+		page << "App.Solutions.AfterSave.hide('#version-#{@folder.parent_id}-l#{@folder.language_id}');"
 		page.replace "item_#{@folder.parent_id}", render(:partial => "solution/categories/folder", :locals => {:folder => @folder.solution_folder_meta})
 	end
 else
