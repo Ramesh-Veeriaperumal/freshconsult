@@ -49,7 +49,7 @@ class ContactValidation < ApiValidation
     end
 
     def validate_avatar
-      unless  avatar.original_filename =~ ContactConstants::AVATAR_EXT_REGEX
+      if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)
         errors.add(:avatar, 'upload_jpg_or_png_file')
       end
     end

@@ -208,7 +208,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_with_tags_avatar_and_custom_fields
     cf_dept = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name]
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg')
     comp = get_company
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -221,6 +221,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_department' => 'Sample Dept' })
     DataTypeValidator.any_instance.stubs(:valid_type?)
     match_json(deleted_contact_pattern(User.last))
+    assert User.last.avatar.content_content_type == 'image/jpeg'
     assert_response 201
   end
 

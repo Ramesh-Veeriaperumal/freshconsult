@@ -89,7 +89,11 @@ class ApiContactsController < ApiApplicationController
       # has to be initialised first for making a contact as a client_manager
       params_hash[:client_manager] = params_hash.delete(:client_manager) if params_hash.key?(:client_manager)
 
-      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
+      if params_hash[:avatar]
+        extension = File.extname(params_hash[:avatar].original_filename).downcase
+        params_hash[:avatar].content_type = ContactConstants::AVATAR_CONTENT[extension]
+        params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
+      end
 
       ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], @contact_fields) if params_hash[:custom_fields]
 
