@@ -8,9 +8,10 @@ class BadRequestErrorTest < ActionView::TestCase
                       'required_and_inclusion', 'required_and_data_type_mismatch', 'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format'],
       duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
       invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
-      datatype_mismatch: ['is not a date', 'is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],
+      datatype_mismatch: [ 'is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],
       invalid_field: ['invalid_field', "Can't update user when timer is running"],
-      invalid_size: ['invalid_size']
+      invalid_size: ['invalid_size'],
+      invalid_date: ["invalid_date", "invalid_date_time"]
     }
     assert_equal error_codes, BaseError::API_ERROR_CODES
   end
@@ -49,7 +50,7 @@ class BadRequestErrorTest < ActionView::TestCase
   end
 
   def test_data_type_mismatch_code
-    datatype_mismatch_messages = { 'is not a date' => {}, 'is not a number' => {}, 'data_type_mismatch' => { data_type: 'date format' }, 'must be an integer' => {}, 'positive_number' => {} }
+    datatype_mismatch_messages = { 'is not a number' => {}, 'data_type_mismatch' => { data_type: 'date format' }, 'must be an integer' => {}, 'positive_number' => {} }
     datatype_mismatch_messages.each do |message, params|
       test = BadRequestError.new('attribute', message, params)
       assert_equal 'datatype_mismatch', test.code.to_s

@@ -11,9 +11,9 @@ class DateTimeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
     unless parse_time(values)
-      message = options[:message] || 'data_type_mismatch'
+      message = options[:message] || get_code
       record.errors[attribute] << message
-      (record.error_options ||= {}).merge!(attribute => { data_type: 'date format' })
+      (record.error_options ||= {}).merge!(attribute => { format: get_format })
     end
   end
 
@@ -35,9 +35,21 @@ class DateTimeValidator < ActiveModel::EachValidator
 
   private
 
+    def get_code
+      options[:only_date] ? 'invalid_date' : 'invalid_date_time'
+    end
+
+    def get_format
+      options[:only_date] ? 'yyyy-mm-dd' : 'yyyy-mm-ddThh:mm:ss±hh:mm'
+    end
+
     def iso8601_format(value)
-      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ /^\d{4}-\d{2}-\d{2}/
+      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ get_date_time_regex_for_value
       return true
+    end
+
+    def get_date_time_regex_for_value
+      options[:only_date] ? /^\d{4}-\d{2}-\d{2}$/ : /^\d{4}-\d{2}-\d{2}/
     end
 
     def get_time_and_zone(value)
@@ -45,7 +57,7 @@ class DateTimeValidator < ActiveModel::EachValidator
     end
 
     def time_info?(value)
-      value.include?(ISO_DATE_DELIMITER)
+      !options[:only_date] && value.include?(ISO_DATE_DELIMITER)
     end
 
     def parse_sec_hour_and_zone(tz_value) # time_and_zone_value

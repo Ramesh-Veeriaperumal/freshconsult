@@ -2,7 +2,6 @@ Helpkit::Application.routes.draw do
   api_routes = Proc.new do
     resources :tickets, :except => [:new, :edit] do
       member do
-        put :assign
         put :restore
         get :time_entries, to: 'time_entries#ticket_time_entries'
         get :notes, to: 'notes#ticket_notes'
