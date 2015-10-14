@@ -787,6 +787,7 @@ Helpkit::Application.routes.draw do
         get :log_out
         post :uninstall
         get :index
+        get :refresh
         post :iframe_page
         post :search
         delete :delete_hootsuite_user
