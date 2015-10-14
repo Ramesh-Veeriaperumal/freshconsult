@@ -207,14 +207,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },
                    number1_1: { data_type: 'Integer' }, number2_1: { data_type: 'Integer' },
-                   check2_1: { data_type: 'Boolean' }, date: {format: "yyyy-mm-dd"} }.sort.to_h, test.error_options.sort.to_h)
+                   check2_1: { data_type: 'Boolean' }, date_1: {format: "yyyy-mm-dd"} }.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_nested_fields_without_required_closure_fields
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing', :date=>"required_date" }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing', :date_1=>"required_date" }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' },
                    dropdown1_1: { list: '1st,2nd' }, check1_1: { data_type: 'Boolean' },

@@ -900,7 +900,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
-    params[:custom_fields]["test_custom_date_1"] = params[:custom_fields]["test_custom_date_1"].to_time.iso8601  
+    params_hash[:custom_fields]["test_custom_date_1"] = params_hash[:custom_fields]["test_custom_date_1"].to_time.iso8601  
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
