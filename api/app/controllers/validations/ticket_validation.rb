@@ -12,7 +12,7 @@ class TicketValidation < ApiValidation
   validates :source, :ticket_type, :description, :status, :subject, :priority, :product, :agent, :group, default_field: 
                               { 
                                 required_fields: proc { |x| x.required_default_fields },
-                                field_validations: Helpers::TicketsValidationHelper.default_field_validations
+                                field_validations: proc { |x| x.default_field_validations }
                               } 
 
   validates :requester_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param  }
@@ -127,5 +127,18 @@ class TicketValidation < ApiValidation
   def required_default_fields
     closure_status = required_based_on_status?
     ticket_fields.select{ |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
+  end
+
+  def default_field_validations
+    { 
+      status: {custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param }},
+      priority: {custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param }},
+      source: {custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param }},
+      ticket_type: {custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }},
+      group: {custom_numericality: {ignore_string: :allow_string_param}},
+      agent: {custom_numericality: {ignore_string: :allow_string_param}},
+      product: {custom_numericality: {ignore_string: :allow_string_param}},
+      subject: {length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }}
+    }
   end
 end

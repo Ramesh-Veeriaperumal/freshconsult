@@ -150,11 +150,6 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     assert test.errors.empty?
   end
 
-  def test_invalid_options
-    assert_raises(ArgumentError) do
-      test = DefaultFieldValidator.new(attributes: :attribute1, required_fields: {}, field_validations: [])
-    end
-  end
 
   def test_invalid_validator
     assert_raises(ArgumentError) do

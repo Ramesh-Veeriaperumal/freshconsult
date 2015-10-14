@@ -21,20 +21,13 @@ class DefaultFieldValidator < ActiveModel::EachValidator
   def validate(record)
     # Assign list of required_fields before calling validate_each for each attribute
     @required_fields = proc_to_object(options[:required_fields], record)
-    @default_field_validations = proc_to_object(options[:field_validations])
+    @default_field_validations = proc_to_object(options[:field_validations], record)
     super
 
     #Assign empty array after validate_each of all attributes are over as validator object will be reused in subsequent calls.
     ensure
       @required_fields = []
       @default_field_validations = []
-  end
-
-  # Overridden check_validity! to check for proper option
-  def check_validity!
-    unless options[:required_fields].is_a?(Array) || options[:field_validations].is_a?(Hash)
-      raise ArgumentError.new("Need either required_fields or field_validations options in array or hash format respectively")
-    end
   end
 
   # Call validators for each validation in field_validation array.

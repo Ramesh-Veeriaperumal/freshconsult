@@ -9,7 +9,7 @@ class ContactValidation < ApiValidation
   validates :email, :phone, :mobile, :client_manager, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, default_field: 
                               { 
                                 required_fields: proc { |x| x.required_default_fields },
-                                field_validations: Helpers::ContactsValidationHelper.default_field_validations
+                                field_validations: ContactConstants::DEFAULT_FIELD_VALIDATIONS
                               }
 
   validates :name, required: true, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
@@ -37,7 +37,7 @@ class ContactValidation < ApiValidation
   end
 
   def required_default_fields
-    Helpers::ContactsValidationHelper.default_contact_fields.select{ |x| x.required_for_agent  }
+    Account.current.contact_form.default_contact_fields.select{ |x| x.required_for_agent  }
   end
 
   private

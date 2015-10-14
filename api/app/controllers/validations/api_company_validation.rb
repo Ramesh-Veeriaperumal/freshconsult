@@ -3,7 +3,7 @@ class ApiCompanyValidation < ApiValidation
   validates :description, :domains, :note, default_field: 
                               { 
                                 required_fields: proc { |x| x.required_default_fields },
-                                field_validations: Helpers::CompaniesValidationHelper.default_field_validations
+                                field_validations: CompanyConstants::DEFAULT_FIELD_VALIDATIONS
                               } 
   validates :name, required: true, data_type: { rules: String }
   validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? } 
@@ -26,6 +26,6 @@ class ApiCompanyValidation < ApiValidation
   end
 
   def required_default_fields
-    Helpers::CompaniesValidationHelper.default_company_fields.select{ |x| x.required_for_agent  }
+    Account.current.company_form.default_company_fields.select{ |x| x.required_for_agent  }
   end
 end

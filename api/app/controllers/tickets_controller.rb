@@ -60,8 +60,7 @@ class TicketsController < ApiApplicationController
   private
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
-                                      product: :product_id, ticket_type: :type }, item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS, item)
     end
 
     def load_objects
@@ -237,9 +236,8 @@ class TicketsController < ApiApplicationController
       @restore ||= current_action?('restore')
     end
 
-  def error_options_mappings
-      { group: :group_id, agent: :responder_id, requester: :requester_id, email_config: :email_config_id,
-                                        product: :product_id, ticket_type: :type }
+    def error_options_mappings
+      ApiTicketConstants::FIELD_MAPPINGS
     end
 
     def valid_content_type?

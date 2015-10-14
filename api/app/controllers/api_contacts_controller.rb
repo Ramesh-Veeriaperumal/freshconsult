@@ -123,11 +123,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ company_name: :company_id, tag_names: :tags, company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
+      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS, item)
     end
 
     def error_options_mappings
-      {company_name: :company_id, tag_names: :tags}
+      ContactConstants::FIELD_MAPPINGS
     end
 
     def assign_protected

@@ -34,4 +34,19 @@ module ContactConstants
     create: [:json, :multipart_form],
     update: [:json, :multipart_form]
   }
+
+  DEFAULT_FIELD_VALIDATIONS = {
+        client_manager: { data_type: { rules: 'Boolean', ignore_string: :allow_string_param }},
+        job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }},
+        language: { custom_inclusion: { in: ContactConstants::LANGUAGES }},
+        tag_names:  { data_type: { rules: Array }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] }},
+        time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES }},
+        phone: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }},
+        mobile: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }},
+        address: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }},
+        twitter_id: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }},
+        email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+      }
+
+  FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }
 end
