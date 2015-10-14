@@ -17,9 +17,9 @@ module ContactConstants
 
   MAILER_DAEMON_REGEX = /MAILER-DAEMON@(.+)/i
 
-  # Only xxx.jpg and xxx.png are allowed to upload (Other JPG extensions such as xxx.jpeg and xxx.jpe are not allowed)
-  AVATAR_EXT = %w( .jpg .png )
-  AVATAR_CONTENT = { ".jpg" => "image/jpeg", ".png" => "image/png" }
+  # Only xxx.jpg and xxx.png are allowed to upload
+  AVATAR_EXT = %w( .jpg .jpeg .jpe .png )
+  AVATAR_CONTENT = { ".jpg" => "image/jpeg", ".jpeg" => "image/jpeg", ".jpe" => "image/jpeg",".png" => "image/png" }
 
   TIMEZONES = ActiveSupport::TimeZone.all.map(&:name)
 

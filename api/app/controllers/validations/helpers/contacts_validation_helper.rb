@@ -1,7 +1,7 @@
 class Helpers::ContactsValidationHelper
   class << self
     def custom_contact_fields
-      Account.current.contact_form.custom_contact_fields.select { |c| c.field_type != :custom_dropdown }
+      custom_fields.select { |c| c.field_type != :custom_dropdown }
     end
 
     def custom_contact_dropdown_fields
@@ -9,7 +9,11 @@ class Helpers::ContactsValidationHelper
     end
 
     def custom_contact_fields_for_delegator
-      Account.current.contact_form.custom_contact_fields.select { |c| c.field_type == :custom_dropdown }
+      custom_fields.select { |c| c.field_type == :custom_dropdown }
+    end
+
+    def custom_fields
+      Account.current.contact_form.custom_contact_fields
     end
   end
 end
