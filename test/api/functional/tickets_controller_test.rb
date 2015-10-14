@@ -9,20 +9,21 @@ class TicketsControllerTest < ActionController::TestCase
     request_params.merge(params)
   end
 
-  CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city )
+  CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text)
 
-  CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Pursuit of Happiness' }
-  UPDATE_CUSTOM_FIELDS_VALUES = { 'country' => 'Australia', 'state' => 'Queensland', 'city' => 'Brisbane', 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Armaggedon' }
-  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph }
-  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph }
+  CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Pursuit of Happiness', 'date' => '2015-09-09' }
+  UPDATE_CUSTOM_FIELDS_VALUES = { 'country' => 'Australia', 'state' => 'Queensland', 'city' => 'Brisbane', 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Armaggedon', 'date' => '2015-09-09' }
+  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph, 'date' => '31-13-09' }
+  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
     'number' => ['data_type_mismatch', data_type: 'Integer'],
     'decimal' => ['data_type_mismatch', data_type: 'number'],
     'checkbox' => ['data_type_mismatch', data_type: 'Boolean'],
-    'text' => ['is too long (maximum is 255 characters)']
+    'text' => ['is too long (maximum is 255 characters)'],
+    'date' => ['invalid_date', format: 'yyyy-mm-dd']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
@@ -30,7 +31,8 @@ class TicketsControllerTest < ActionController::TestCase
     'decimal' => ['required_number'],
     'checkbox' => ['required_boolean'],
     'text' => ['missing'],
-    'paragraph' => ['missing']
+    'paragraph' => ['missing'],
+    'date' => ['required_date']
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
     'dropdown' => ['required_and_inclusion', list: 'Get Smart,Pursuit of Happiness,Armaggedon'],
@@ -104,6 +106,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     post :create, construct_params({}, params)
     assert_response 201
+    params[:custom_fields]["test_custom_date_1"] = params[:custom_fields]["test_custom_date_1"].to_time.iso8601  
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -317,8 +320,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'data_type_mismatch', data_type: 'date format'),
-                bad_request_error_pattern('fr_due_by', 'data_type_mismatch', data_type: 'date format')])
+    match_json([bad_request_error_pattern('due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('fr_due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_create_with_due_by_without_fr_due_by
@@ -681,7 +684,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -694,7 +697,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -707,7 +710,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -790,7 +793,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -804,7 +807,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -819,7 +822,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}_#{@account.id}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -897,6 +900,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
+    params_hash[:custom_fields]["test_custom_date_1"] = params_hash[:custom_fields]["test_custom_date_1"].to_time.iso8601  
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
@@ -1394,8 +1398,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'data_type_mismatch', data_type: 'date format'),
-                bad_request_error_pattern('fr_due_by', 'data_type_mismatch', data_type: 'date format')])
+    match_json([bad_request_error_pattern('due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('fr_due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_update_extra_params_invalid

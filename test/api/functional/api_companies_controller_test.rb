@@ -267,12 +267,12 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_company_with_invalid_custom_field_values
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
-                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => 'test_date',
+                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => '2015-09-09T08:00:00+0530',
                                                         'cf_show_all_ticket' => Faker::Number.number(5) })
 
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
@@ -305,7 +305,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end

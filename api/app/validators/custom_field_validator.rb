@@ -113,7 +113,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Date validator for date field
   def validate_custom_date(record, field_name)
-    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required }, 'required_date')
+    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required, only_date: true }, 'required_date')
     DateTimeValidator.new(date_options).validate(record)
   end
 
