@@ -1234,7 +1234,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_timer_when_start_time_is_nil
     te = sample_time_entry
     te.update_column(:start_time, nil)
-    put :toggle_timer, construct_params({:id => te.id}, {})
+    put :toggle_timer, construct_params({ id: te.id }, {})
     assert_response 200
     assert_not_nil te.time_spent
   end
