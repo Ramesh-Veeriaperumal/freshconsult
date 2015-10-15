@@ -473,4 +473,15 @@ RSpec.describe Support::Solutions::ArticlesController do
     end
   end
 
+  it "should render 404 for articles not visible in current portal" do
+    portal = create_portal
+    category = create_category({:portal_ids => [portal.id]})
+    folder = create_folder({:visibility => 1, :category_id => category.id })
+    article = create_article( { :title => "article #{Faker::Name.name}", 
+                                :description => "#{Faker::Lorem.sentence(3)}", :folder_id => folder.id, 
+                                :status => "2", :art_type => "1", :user_id => "#{@agent.id}" } )
+    get 'show', :id => article
+    response.status.should eql(404)
+  end
+  
 end

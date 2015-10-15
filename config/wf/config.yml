@@ -80,6 +80,7 @@ defaults: &defaults
          varchar:            [text]
          float:              [numeric, numeric_range]
          text:               [text]
+         tinyint:            [nil, boolean]
 
   operators:              # operators precedence
     is:                   100

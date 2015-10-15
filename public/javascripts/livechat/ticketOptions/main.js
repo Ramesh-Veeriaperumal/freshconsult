@@ -321,6 +321,7 @@
 				var ticket = { 
 					"email" : this.ticket.requesterEmail, 
 					"name" : this.ticket.requesterName, 
+					"phone" : this.visitor.phone,
 					"subject" : this.ticket.ticketSubject, 
 					"widget_id" : chat.widget_id,
 					"content": tkt_desc

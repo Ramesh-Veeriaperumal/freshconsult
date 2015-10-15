@@ -67,6 +67,10 @@
         </div>
     <% end %>
 </div>
+<div id="all-agents-gamification-reset" class="hide">
+  <p class="margin-bottom"><br/> <%= t('admin.gamification.reset_arcade_alert', :points => current_account.scoreboard_levels.least_points.first.points) %></p>
+</div>
+
 
 <% content_for :onload_script do %>
     jQuery.validator.addMethod("level", function(value, element, param) {

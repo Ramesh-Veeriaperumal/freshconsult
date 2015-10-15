@@ -375,7 +375,23 @@ var TimeFormat = function(milliseconds){
 
 		constructFilter(dateRange);
 
-		var data = {site_id: SITE_ID, date_range: dateRange, chat_type: chatType, 
+		if(dateRange){
+			var fromDate = dateRange.split('-')[0];
+			var	toDate;
+			if(dateRange.split('-')[1]){
+				toDate = dateRange.split('-')[1];
+			}else{
+				toDate = dateRange.split('-')[0];
+			}
+			var frm = new Date(fromDate);
+			frm.setHours(0, 0, 0, 0);
+			var to = new Date(toDate);
+			to.setHours(23, 59, 59, 999);
+			var fromDateUTC = frm.toUTCString();
+			var toDateUTC = to.toUTCString();
+ 		}
+
+		var data = {site_id: SITE_ID, fromDateUTC: fromDateUTC, toDateUTC: toDateUTC, chat_type: chatType, 
 									auth_token: LIVECHAT_TOKEN, user_id: CURRENT_USER.id};
 
 		if(widget_id == "deleted") {

@@ -12,6 +12,7 @@ class Discussions::TopicsController < ApplicationController
 	before_filter :fetch_monitorship, :only => :show
 	before_filter :set_page, :only => :show
 	before_filter :after_destroy_path, :only => :destroy
+	before_filter :verify_ticket_permission, :only => :new
 
 	before_filter { |c| c.requires_feature :forums }
 	before_filter { |c| c.check_portal_scope :open_forums }
@@ -23,6 +24,7 @@ class Discussions::TopicsController < ApplicationController
 
 	def new
 		@topic = current_account.topics.new
+		populate_topic if params[:ticket_id]
 	end
 
 	def create
@@ -41,6 +43,7 @@ class Discussions::TopicsController < ApplicationController
 		# only save topic if post is valid so in the view topic will be a new record if there was an error
 		@topic.body_html = @post.body_html # incase save fails and we go back to the form
 		build_attachments
+		associate_ticket if params[:topic][:display_id]
 
 		if @topic.save
 			respond_to do |format|
@@ -273,10 +276,43 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def topic_param
-			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id].include? k }
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id].include? k }
 		end
 
 		def post_param
-			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked].include? k }
+			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked,:display_id].include? k }
+		end
+
+		def populate_topic
+			@topic_ticket = nil unless @topic_ticket.requester.active?
+			return if @topic_ticket.nil?
+			redirect_to discussions_topic_path(@topic_ticket.topic) unless @topic_ticket.topic.blank? 
+			@topic.title = @topic_ticket.subject
+		  @topic.posts.build(body_html: @topic_ticket.description_html)
+		end
+
+		def associate_ticket
+			@topic_ticket = current_account.tickets.where(:display_id => params[:topic][:display_id]).first
+			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
+			add_ticket_attachments if ( params[:post] and params[:post][:ticket_attachments])
+		end
+
+		def add_ticket_attachments
+			ticket_attachments = params[:post][:ticket_attachments]
+			ticket_attachments.each do |a|
+				attachment = Helpdesk::Attachment.find_by_id(a[:resource])
+				next unless attachment
+				@topic.posts.first.attachments.build(:content => attachment.content, :description => attachment.description)
+			end
+		end
+
+		def verify_ticket_permission
+			return true unless params[:ticket_id]
+			@topic_ticket = current_account.tickets.where(:display_id => params[:ticket_id]).first
+			unless current_user && current_user.has_ticket_permission?(@topic_ticket) && !@topic_ticket.trashed
+			  flash[:notice] = t("flash.general.access_denied")
+			  redirect_to helpdesk_tickets_url 
+			end
+			true
 		end
 end

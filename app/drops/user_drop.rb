@@ -2,6 +2,7 @@ class UserDrop < BaseDrop
 
 	include Rails.application.routes.url_helpers
 	include Integrations::AppsUtil
+	include DateHelper
 
 	self.liquid_attributes += [:name, :first_name, :last_name, :email, :phone, :mobile, 
 						:job_title, :time_zone, :twitter_id, :external_id, :language, :address, :description, :active]
@@ -70,6 +71,7 @@ class UserDrop < BaseDrop
 		if(custom_fields["cf_#{method}"] || field_types["cf_#{method}"])
 	    unless custom_fields["cf_#{method}"].blank?
 	      return custom_fields["cf_#{method}"].gsub(/\n/, '<br/>') if field_types["cf_#{method}"] == :custom_paragraph
+	      return formatted_date(custom_fields["cf_#{method}"]) if field_types["cf_#{method}"] == :custom_date
 	    end
 	    custom_fields["cf_#{method}"] 
 	  else

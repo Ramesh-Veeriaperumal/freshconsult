@@ -426,7 +426,7 @@ class Solution::ArticlesController < ApplicationController
 
     def get_status
       status = params[nscname][:status]
-      return status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
+      return status.to_i == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
       save_as_draft? ? false : publish?
     end
 

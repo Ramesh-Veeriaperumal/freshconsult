@@ -5,7 +5,9 @@
 		window.FC_HTTP_ONLY = http_only;
 		var isSecured = ((window.location && window.location.protocol == 'https:') && !window.FC_HTTP_ONLY);
 		var fc_CSS = document.createElement('link');
-		var rtlSuffix = ((document.getElementsByTagName('html')[0].getAttribute('lang')) === 'ar') ? "-rtl" : "";
+		var lang = document.getElementsByTagName('html')[0].getAttribute('lang');
+		var rtlLanguages = ['ar','he'];
+		var rtlSuffix = (rtlLanguages.indexOf(lang) >= 0) ? "-rtl" : "";
 		fc_CSS.setAttribute('rel','stylesheet');
 		fc_CSS.setAttribute('type','text/css');
 		fc_CSS.setAttribute('href',((isSecured) ? asset.cloudfront : asset.css)+'/css/visitor'+ rtlSuffix +'.css');
@@ -19,7 +21,7 @@
 		<% if current_user %>
 			window.FRESHCHAT_VISITORINFO = {name:"<%= current_user.name%>",email:"<%= current_user.email%>"};
 		<% end %>
-		<%if Rails.env == 'development' %>  
+		<%if Rails.env == 'development' %>
 			jQuery.getScript(asset.js+"/js/visitor-devtools.js");
 		<%end%>
 	});

@@ -171,7 +171,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => :application )
+    installed_apps = self.installed_applications.includes(:application).all
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result
@@ -327,7 +327,7 @@ class Account < ActiveRecord::Base
   end
   
   def ticket_type_values
-    ticket_fields.type_field.first.picklist_values
+    ticket_fields_without_choices.type_field.first.level1_picklist_values
   end
   
   def ticket_status_values

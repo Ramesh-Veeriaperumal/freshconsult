@@ -570,14 +570,14 @@ module ApplicationHelper
     current_account.contact_form.custom_contact_fields.each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
-      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"] unless custom_field.field_type == :custom_date
+      place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
     }
 
     # Company Custom Field Placeholders
     current_account.company_form.custom_company_fields.each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
-      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"] unless custom_field.field_type == :custom_date
+      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
     }
 
     # Survey Placeholders
@@ -810,7 +810,15 @@ module ApplicationHelper
   end
 
   def cloud_files_installed?
-    dropbox_app_key || installed_apps[:box]
+    dropbox_app_key || installed_apps[:box] || installed_apps[:onedrive]
+  end
+
+  def get_enabled_cloud_files_app
+    array = []
+    [:box, :dropbox, :onedrive].each do |c_f|
+      array << c_f if installed_apps[c_f]
+    end
+    array
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs)
@@ -887,7 +895,6 @@ module ApplicationHelper
     label = label_tag (pl_value_id ? object_name+"_"+field.field_name+"_"+pl_value_id : 
                                      object_name+"_"+field.field_name), 
                       field_label.html_safe
-    choices = field.choices
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email", :formats => [:html], :locals => { :object_name => object_name, :field => field, :url => requesters_search_autocomplete_index_path }))

@@ -24,12 +24,12 @@ window.App = window.App || {};
             }
            else{
              if($(this).data("id")=="sort_name"){
-              self.filter.sort_order_list=["name","presence_time"];
+              self.filter.sort_order_list=["busy_agent","name","presence_time"];
                 $(" #sort_by ").text(freshfone.name);
                 $(" .sort_presence").find('.icon').remove();
               }
              else if($(this).data("id")=="sort_presence"){   
-               self.filter.sort_order_list=["presence_time","name"];
+               self.filter.sort_order_list=["busy_agent","presence_time","name"];
                 $(" #sort_by ").text(freshfone.last_modifed); 
                 $(" .sort_name ").find('.icon').remove();
               }
@@ -112,7 +112,21 @@ window.App = window.App || {};
             break;
         }
       });  
+    },
+    bindPresenceToggle: function(){
+      $('body').on('change','.phone_item',function() {
+        $(this).prop('disabled','disabled')
+            $.ajax({
+               type: "POST",
+               dataType: "json",
+               url: '/freshfone/users/manage_presence',
+               data: {
+                 'agent_id': $(this).data("id")
+               },
+               success: function (data) {
+               }
+             });
+        });
     }
-
   };
 }(window.jQuery));

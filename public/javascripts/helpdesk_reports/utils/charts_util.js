@@ -1,26 +1,30 @@
 REPORT_COLORS = {
-    plotBG          : "rgba(255,255,255,0.1)",
-    title           : "#999999",
-    label           : "#191919",
-    lineColor       : '#EBEBEB',
-    miniChartBG     : '#F1F1F1',
-    alternateBG     : "#F4FBFF",
-    miniActive      : "#333333",
-    miniAlt         : "#555555",
-    series_colors   : ['#1387C2', '#80B447'],
-    borderColor     : 'rgba(0,0,0,0)',
-    tooltip_bg      : "rgba(0,0,0,0.6)",
-    barChartDummy   : "#F8F8F8",
-    barChartReal    : "#5194CC",
-    barChartPercent : "#CFA495",
-    gridLineColor   : "#f0f0f0",
-    bucket_series   : ['#FFCA7E', '#6FB5EC']
+    plotBG           : "rgba(255,255,255,0.1)",
+    title            : "#999999",
+    label            : "#191919",
+    lineColor        : '#EBEBEB',
+    miniChartBG      : '#F1F1F1',
+    miniDisable      : '#F9F9F9',
+    alternateBG      : "#F4FBFF",
+    miniActive       : "#333333",
+    miniAlt          : "#555555",
+    miniDisableTitle : "#D6D6D6",
+    series_colors    : ['#1387C2', '#80B447'],
+    borderColor      : 'rgba(0,0,0,0)',
+    tooltip_bg       : "rgba(0,0,0,0.6)",
+    barChartDummy    : "#F8F8F8",
+    barChartReal     : "#5194CC",
+    barChartPercent  : "#CFA495",
+    gridLineColor    : "#f0f0f0",
+    bucket_series    : ['#6FB5EC', '#FFCA7E']
 }
 
 COLUMN_SERIES = {
     'Received': "RECEIVED_TICKETS",
     'Resolved': "RESOLVED_TICKETS"
 }
+
+MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 // TODO: Namespace it to helpdesk reports
 function helpdeskReports(opts) {
     Highcharts.dateFormats = {
@@ -31,7 +35,6 @@ function helpdeskReports(opts) {
             return Highcharts.dateFormat('%e %b',current_date);
         },
         qtr: function (timestamp) {
-            var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             var current_date = new Date(timestamp),
                 point = current_date.getMonth();
             return MONTHS[point] + '-' + MONTHS[point+2];
@@ -73,7 +76,7 @@ helpdeskReports.prototype = {
             return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + 'Total Tickets ' + this.series.name + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
         }
     },
-    perfXAisTrendLabel: function(timestamp){
+    perfXAxisTrendLabel: function(timestamp){
         var trend = HelpdeskReports.locals.trend;
          switch (trend) {
             case 'doy':
@@ -135,6 +138,10 @@ helpdeskReports.prototype = {
             }
         }
     },
+    lineLabelFormatter: function() {
+        if ( this.isFirst ) { return ''; }
+        return this.value;
+    },
     columnChartDataLabels: function () {
         if (this.y > 0) return this.y;
     },
@@ -160,17 +167,17 @@ helpdeskReports.prototype = {
     performancelineTooltip: function(obj, plot_type){
         var _this = obj;
         var x = "<div class='tooltip'>";
-        x += '<p style="margin:0;display:inline-block;color:ffffff">' + this.perfXAisTrendLabel(_this.x) + '</p></br>'; 
+        x += '<p style="margin:0;display:inline-block;color:ffffff">' + this.perfXAxisTrendLabel(_this.x) + '</p></br>'; 
         
         jQuery.each(_this.points, function (i, point) {
-            var y     = (point.y) % 1 === 0 ? (_this.y) : (point.y).toFixed(2);
+            var y     = (point.y) % 1 === 0 ? (_this.y) : (point.y);
             var value = plot_type === "Hours" ? (y * 3600): (y * 60); //Converting it into seconds
-            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' + helpdeskReports.prototype.daysLabelFormatter(value) + '</p><br/>';
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + point.series.name + ' : ' + helpdeskReports.prototype.timeLabelFormatter(value) + '</p><br/>';
         });
         x += "</div>";
         return x;
     },
-    barChartTooltip: function () {
+    barChartSLATooltip: function () {
         var series = this.series.index;
         var fp,sp;
         if (series == 1) {
@@ -181,24 +188,32 @@ helpdeskReports.prototype = {
             var point = parseInt(100 - this.series.chart.series[1].data[index].y);
             return '<div class="tooltip"><p style="margin:0;color:#f48f6c;"> Violated: ' + point + '%</p></div>';
         }
-        
+    },
+    barChartTooltip: function(){
+        var value = this.points[1].y;
+        if (value == 0 ) return false;
+        var dataSum = this.points[1].series.options.total;
+        var pcnt = (value / dataSum) * 100;
+        return '<div class="tooltip"><p style="margin:0;color:#63b3f5;"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
     },
     barChartSeriesTooltip: function () {
         if (this.point.series.index == 0) {
-            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
-        } else {
             return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
+        } else {
+            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
         }
     },
-
-    daysLabelFormatter: function (secs) {
+    numberLabelFormatter: function(number){
+        var num = this.value || number;
+        if (num == 0 || typeof num === 'undefined' ) 
+            return '0';
+        return HelpdeskReports.CoreUtil.shortenLargeNumber(num,1);
+    },
+    timeLabelFormatter: function (secs) {
         var total_seconds = this.value || secs;
         if (total_seconds == 0 || typeof total_seconds === 'undefined' ) 
             return '0m 0s';
-        var h   = Math.floor(total_seconds / 3600);
-        var min = Math.floor((total_seconds / 60) % 60);
-        var sec = Math.floor(total_seconds % 60);
-        return total_seconds > 3600 ? h + 'h ' + min + 'm' : min + 'm ' + sec + 's';
+        return HelpdeskReports.CoreUtil.timeMetricConversion(total_seconds);
     },
     barLabelFormatter: function () {
         var s = this.value;
@@ -235,7 +250,7 @@ function columnChart(opts) {
             borderColor: REPORT_COLORS['borderColor'],
             plotBackgroundColor: REPORT_COLORS['plotBG'],
             backgroundColor: REPORT_COLORS['plotBG'],
-            height: 350
+            height: 375
         },
         title: {
             text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
@@ -280,8 +295,7 @@ function columnChart(opts) {
             minorGridLineWidth: 0,
             lineColor: REPORT_COLORS['lineColor'],
             lineWidth: 1,
-            startOnTick: true,
-            endOnTick: false
+            startOnTick: true
         },
         colors: REPORT_COLORS["series_colors"],
         plotOptions: {
@@ -292,18 +306,17 @@ function columnChart(opts) {
             series: {
                 shadow: false,
                 groupPadding: 0.3,
-                //Commenting out ticket_list code for first cut
-                //cursor: 'pointer',
-                // point: {
-                //     events: {
-                //         click: function () {
-                //             trigger_event("timetrend_point_click", {
-                //                 sub_metric: COLUMN_SERIES[this.series.name],
-                //                 date: this.category
-                //             });
-                //         }
-                //     }
-                // },
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function () {
+                            trigger_event("timetrend_point_click.helpdesk_reports", {
+                                sub_metric: COLUMN_SERIES[this.series.name],
+                                date: this.category
+                            });
+                        }
+                    }
+                },
                 animation: {
                     duration: 1000,
                     easing: 'easeInOutQuart'
@@ -318,7 +331,8 @@ function columnChart(opts) {
             shadow: false,
             style: {
                 padding: 0
-            }
+            },
+            hideDelay: 50
         },
         series: opts['chartData'],
         legend: {
@@ -384,7 +398,7 @@ function lineChart(opts) {
             minorTickLength: 0,
             lineColor: REPORT_COLORS['lineColor'],
             min: 0.5,
-            startOnTick: false,
+            startOnTick: false
         }, {
             title: {
                 text: null
@@ -411,7 +425,8 @@ function lineChart(opts) {
                 style: {
                     fontSize: '12px',
                     color: REPORT_COLORS['label']
-                }
+                },
+                formatter: this.lineLabelFormatter
             },
             gridLineWidth: 1,
             gridLineColor: REPORT_COLORS['gridLineColor'],
@@ -419,8 +434,7 @@ function lineChart(opts) {
             minorGridLineWidth: 0,
             lineColor: REPORT_COLORS['lineColor'],
             lineWidth: 1,
-            startOnTick: true,
-            endOnTick: false
+            startOnTick: true
         }, {
             min: 0,
             title: {
@@ -465,7 +479,8 @@ function lineChart(opts) {
             shadow: false,
             style: {
                 padding: 0
-            }
+            },
+            hideDelay: 50
         },
         series: opts['chartData'],
         legend: {
@@ -498,7 +513,12 @@ function miniLineChart(opts) {
             height: 80,
             backgroundColor: (typeof opts['bgcolor'] === 'undefined') ? REPORT_COLORS["miniChartBG"] : opts['bgcolor'],
             plotBackgroundColor: REPORT_COLORS['plotBG'],
-            borderRadius: 0
+            borderRadius: 0,
+            margin: [25, 10, 10, 10],
+            spacingTop: 10,
+            spacingBottom: 10,
+            spacingLeft: 10,
+            spacingRight: 10
         },
         title: {
             text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
@@ -613,7 +633,7 @@ function barChart(opts) {
                     fontWeight: 600
                 },
                 useHTML : true,
-                formatter: opts['timeFormat'] == true ? this.daysLabelFormatter : null,
+                formatter: opts['timeFormat'] == true ? this.timeLabelFormatter : ( opts['suffix'] === undefined ? this.numberLabelFormatter : null),
                 format: opts['suffix'] === undefined ? null : opts['suffix']
             },
             minorTickLength: 0,
@@ -630,6 +650,7 @@ function barChart(opts) {
             labels: {
                 enabled: false
             },
+            max: opts['yAxisMaxValue'] === undefined ? null : opts['yAxisMaxValue'],
             gridLineWidth: 0,
             minorGridLineWidth: 0,
             minPadding: 0,
@@ -638,22 +659,23 @@ function barChart(opts) {
         plotOptions: {
             bar: {
                 pointWidth: 12,
-                grouping: false
-                //cursor: 'pointer'
+                grouping: false,
+                minPointLength: opts['minPoint'] === undefined ? 0 : 2
             },
         },
         tooltip: {
             useHTML: true,
             shared: opts['sharedTooltip'],
-            formatter: opts['sharedTooltip'] == true ? null : this.barChartTooltip,
+            formatter: opts['sharedTooltip'] == true ? this.barChartTooltip : this.barChartSLATooltip,
             followPointer: true,
-            enabled: opts['sharedTooltip'] == true ? false : true,
+            enabled: opts['enableTooltip'] == true ? true : false,
             backgroundColor: REPORT_COLORS['tooltip_bg'],
             borderColor: 'none',
             shadow: false,
             style: {
                 padding: 0
-            }
+            },
+            hideDelay: 50
         },
         series: opts['chartData'],
         legend: {
@@ -707,9 +729,9 @@ function barChartMultipleSeries(opts) {
             },
             minorTickLength: 0,
             tickLength: 0,
-            lineWidth: 0,
-            gridLineWidth: 1,
-            gridLineColor: REPORT_COLORS['gridLineColor'],
+            lineWidth: 1,
+            lineColor: REPORT_COLORS['gridLineColor'],
+            gridLineWidth: 0,
         },
         yAxis: {
             min: 0,
@@ -723,14 +745,16 @@ function barChartMultipleSeries(opts) {
                 margin: 15
             },
             allowDecimals: false,
-            gridLineWidth: 1,
-            gridLineColor: REPORT_COLORS['gridLineColor'],
+            gridLineWidth: 0,
+            lineWidth: 1,
+            lineColor: REPORT_COLORS['gridLineColor'],
         },
         colors: REPORT_COLORS["bucket_series"],
         plotOptions: {
             bar: {
                 borderWidth: 0,
-                pointPadding: 0
+                pointPadding: 0,
+                pointWidth: opts['pointWidth'] === undefined ? null : opts['pointWidth']
             },
             series: {
                 shadow: false,
@@ -738,7 +762,8 @@ function barChartMultipleSeries(opts) {
                 animation: {
                     duration: 1000,
                     easing: 'easeInOutQuart'
-                }
+                },
+                cursor: 'pointer'
             }
         },
         tooltip: {
@@ -750,10 +775,12 @@ function barChartMultipleSeries(opts) {
             followPointer: true,
             style: {
                 padding: 0
-            }
+            },
+            hideDelay: 50
         },
         series: opts['chartData'],
         legend: {
+            enabled : opts['legend'] == true ? true : false, 
             borderWidth: 0,
             itemStyle: {
                 bottom: 0,
@@ -761,7 +788,11 @@ function barChartMultipleSeries(opts) {
                 fontWeight: 'normal',
                 cursor: 'pointer'
             },
-            verticalAlign: 'bottom'
+            verticalAlign: 'bottom',
+            symbolPadding: 10,
+            symbolWidth: 10,
+            symbolHeight: 10,
+            x: 25,
         }
     });
 }
@@ -916,7 +947,8 @@ function perfLineChart(opts) {
             shadow: false,
             style: {
                 padding: 0
-            }
+            },
+            hideDelay: 50
         },
         series: opts['chartData']
     });

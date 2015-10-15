@@ -26,7 +26,9 @@ RSpec.describe Solution::ArticlesController do
     result = parse_xml(response)
     expected = (response.status === 201) && (compare(result["solution_article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS-[ "tags", "folder"],{}).empty?)
     expected.should be(true)
+    result["solution_article"]["status"].should be_eql(2)
   end
+
   it "should be able to update a solution article" do
     params = article_api_params
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
@@ -82,10 +84,10 @@ it "should be able to view a solution article" do
       "solution_article"=>
         {
           "title"=>Faker::Lorem.sentence(2),
-          "status"=>1, 
+          "status"=>"2", 
           "art_type"=>2, 
           "description"=>Faker::Lorem.sentence(3), 
-          "folder_id"=>1
+          "folder_id"=> @solution_folder.id
         }
     }
   end

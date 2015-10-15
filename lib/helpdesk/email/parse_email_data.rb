@@ -76,6 +76,10 @@ module Helpdesk::Email::ParseEmailData
 		self.recipients ||= params[:recipient].split(',')
 	end
 
+	def parse_recipients_new
+		self.recipients ||= fetch_valid_emails(params[:recipient])
+	end
+
 	def check_for_kbase_email
 		recipients.include?(kbase_email) or (common_email_data[:cc] && common_email_data[:cc].include?(kbase_email))
 	end
@@ -174,4 +178,7 @@ module Helpdesk::Email::ParseEmailData
 	def get_portal email_config
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end
+
+	#alias_method :parse_recipients, :parse_recipients_new
+
 end

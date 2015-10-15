@@ -11,20 +11,15 @@ module Stores
         write_attribute form_id, ff_def_id
       end
       
-      def get_ff_value ff_alias
-        ff_field = to_ff_field ff_alias
-        if ff_field
-          send(ff_field)
-        else
-          raise ArgumentError, "CustomField alias: #{ff_alias} not found in flexifeld def mapping"
-        end
+      def get_ff_value column_name, field_type
+        process_while_reading(column_name, field_type)
       end
       
       def set_ff_value ff_alias, ff_value
         ff_field = to_ff_field ff_alias
         if ff_field
           ff_value = nil if ff_value.blank?
-          send :"#{ff_field}=", ff_value
+          write_attribute(ff_field, ff_value)
         else
           raise ArgumentError, "CustomField alias: #{ff_alias} not found in flexifeld def mapping"
         end
@@ -40,11 +35,23 @@ module Stores
       end
 
       def retrieve_ff_values
-        ff_aliases.inject({}) do  |ff_values, ff_alias| 
-          ff_values[ff_alias] = (get_ff_value ff_alias)
+        custom_fields_cache.inject({}) do  |ff_values, custom_field| 
+          ff_values[custom_field.name] = get_ff_value(custom_field.column_name, custom_field.field_type)
           ff_values
         end || {}
       end
+
+      private
+
+        def process_while_reading column_name, field_type
+          value = read_attribute(column_name)
+          case field_type
+          when :custom_date
+            value.utc if value.present?
+          else
+            value
+          end
+        end
 
     end
 

@@ -15,7 +15,7 @@ class Freshfone::VoicemailController <  FreshfoneBaseController
     current_call.update_call(params)
     empty_twiml
   ensure
-    if params[:cost_added].blank?
+    if params[:cost_added].blank? && !current_account.features?(:freshfone_conference)
       Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, { 
                           :account_id => current_account.id,
                           :call => current_call.id,

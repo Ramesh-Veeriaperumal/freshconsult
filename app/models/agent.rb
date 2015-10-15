@@ -136,4 +136,27 @@ class Agent < ActiveRecord::Base
     Helpdesk::ResetResponder.perform_async({:user_id => self.user_id })
   end
 
+  def reset_gamification
+    destroy_achieved_quests
+    destroy_support_scores
+    reset_to_beginner_level
+  end
+
+  private
+
+  def reset_to_beginner_level
+    beginner = Account.current.scoreboard_levels.least_points.first
+    self.points = beginner.points
+    self.save
+    SupportScore.add_agent_levelup_score(self.user, beginner.points)
+  end
+
+  def destroy_achieved_quests
+    self.achieved_quests.destroy_all
+  end
+
+  def destroy_support_scores
+    self.support_scores.destroy_all
+  end
+
 end

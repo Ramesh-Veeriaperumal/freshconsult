@@ -37,7 +37,7 @@ class Freshfone::Initiator::Transfer
       transfer_leg.inprogress!
       if params[:transferType].blank?
         update_freshfone_presence(parent_call.agent, Freshfone::User::PRESENCE[:online])
-        notifier.disconnect_other_agents(transfer_leg)
+        notifier.cancel_other_agents(transfer_leg)
         @telephony.initiate_transfer_on_unhold(parent_call) if parent_call.onhold?
         parent_call.completed!
       else #Warm Transfer

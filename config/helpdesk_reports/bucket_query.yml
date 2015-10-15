@@ -76,9 +76,6 @@
     label: 5+
 :reopen_count: 
   - operator: eql
-    value: 0
-    label: 0
-  - operator: eql
     value: 1
     label: 1
   - operator: eql

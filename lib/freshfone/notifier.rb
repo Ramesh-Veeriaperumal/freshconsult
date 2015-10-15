@@ -106,12 +106,17 @@ class Freshfone::Notifier
     Freshfone::NotificationWorker.perform_async(params, nil, "direct_dial")
   end
 
-  def disconnect_other_agents(current_call)
-    Rails.logger.info "disconnect_other_agents => #{current_call.meta.pinged_agents.to_json}"
-    params.merge!({:call_id => current_call.id})
-    Freshfone::NotificationWorker.perform_async(params, nil, "disconnect_other_agents")
+  def cancel_other_agents(current_call)
+    Rails.logger.info "cancel_other_agents => #{current_call.meta.pinged_agents.to_json}"
+    params.merge!({ :call_id => current_call.id })
+    Freshfone::NotificationWorker.perform_async(params, nil, "cancel_other_agents")
   end
 
+  def complete_other_agents(current_call)
+    Rails.logger.info "complete_other_agents => #{current_call.meta.pinged_agents.to_json}"
+    params.merge!({ :call_id => current_call.id })
+    Freshfone::NotificationWorker.perform_async(params, nil, 'complete_other_agents')
+  end
 
   def notify_source_agent_to_reconnect(call)
     if call.parent.present?

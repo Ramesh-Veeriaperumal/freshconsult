@@ -1,8 +1,13 @@
 <ul class="popupbox-tabs outgoing">
 	<li>
 		<a href="#toolbar" class="recentCalls tooltip" data-toggle="popupbox"
-			 data-offset=12 id="cust_det" title=<%=@cti_app_name%>>
+			 data-offset=12 id="cust_det" title=<%=cti_name%>>
 			<i class='ficon-ff-phone fsize-16'></i>
 		</a>
+	</li>
+
+	<li class="cti_notes">
+		<a href="#cti_add_notes" class="add_notes tooltip" data-toggle="popupbox"
+			 data-offset=12 title="<%= t('cti.widget.call_notes') %>"><%= font_icon "ff-add-note", :size => 16 %></a>
 	</li>
 </ul>

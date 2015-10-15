@@ -3,10 +3,11 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::Ticket
   include ApplicationHelper
   helper HelpdeskV2ReportsHelper
+  helper_method :has_scope?
   
   before_filter :check_feature
   
-  before_filter :ensure_report_type_or_redirect
+  before_filter :ensure_report_type_or_redirect, :date_lag_constraint
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
   before_filter :normalize_params, :validate_params, :validate_scope, 
                 :only_ajax_request,                                     :except => [:index]
@@ -54,7 +55,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   def ensure_report_type_or_redirect
     @report_type = params[:report_type]
-    redirect_to reports_path unless REPORT_TYPE_BY_NAME.include?(report_type)
+    redirect_to reports_path unless REPORT_TYPE_BY_NAME.include?(report_type) && has_scope?(report_type)
   end
 
   def build_and_execute
@@ -95,13 +96,19 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   # TODO -> Ticket from Archive
   def ticket_from_db id_list
-    tkt = current_account.tickets.permissible(current_user)
+    tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
+    archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
     begin
-      tickets = tkt.newest(TICKET_LIST_LIMIT).find_all_by_id(id_list, :select => "display_id, subject, responder_id, status, priority, requester_id")
+      tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
+      archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
     rescue
-      tickets = []
+      tickets, archive_tickets = [], []
     end
-    @data = tickets_data(tickets)
+    @data = tickets_data(tickets + archive_tickets)
+  end
+  
+  def ticket_list_columns
+    "display_id, subject, responder_id, status, priority, requester_id"
   end
   
   def tickets_data(tickets)
@@ -116,14 +123,14 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         :priority   => priority_hash[t.priority],
         :requester  => user_data[:users][t.requester_id],
         :avatar     => user_data[:avatars][t.requester_id],
-        :agent      => t.responder_name
+        :agent      => (t.responder_id and user_data[:users][t.responder_id]) ? user_data[:users][t.responder_id] : "No Agent"
       }
     end
     res
   end
   
   def pre_load_users ids
-    users = current_account.users.find(ids, :include => :avatar) # eager loading user avatar
+    users = current_account.all_users.find_all_by_id(ids, :include => :avatar) # eager loading user avatar
     id_hash = users.collect{ |u| [u.id, u.name]}.to_h
     avatars = users.collect{ |u| [u.id, user_avatar(u)]}.to_h
     {users: id_hash, avatars: avatars}
@@ -144,6 +151,16 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   def only_ajax_request
     redirect_to reports_path unless request.xhr?
+  end
+  
+  def has_scope?(report_type)
+    if current_account.features_included?(:enterprise_reporting)
+      ENTERPRISE_REPORTS.include?(report_type)
+    elsif current_account.features_included?(:advanced_reporting)
+      ADVANCED_REPORTS.include?(report_type)
+    else
+      DEFAULT_REPORTS.include?(report_type)
+    end 
   end
   
   # def generate_pdf

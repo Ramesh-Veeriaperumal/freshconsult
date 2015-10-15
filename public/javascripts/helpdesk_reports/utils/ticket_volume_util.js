@@ -6,14 +6,16 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
                 _FD.actions.submitReports();
             });
-            //Commenting out ticket_list code for first cut
-            // jQuery('#reports_wrapper').on("timetrend_point_click.helpdesk_reports", function (ev, data) {
-            //     if (data.sub_metric && data.date && HelpdeskReports.locals.trend) {
-            //         _FD.modifyTicketListParams(data.sub_metric, data.date, HelpdeskReports.locals.trend);
-            //         jQuery("#ticket_list").html("").addClass('sloading loading-small');
-            //         _FD.core.animateright(0, 'ticket-list-wrapper');
-            //     }
-            // });
+            jQuery(document).on("timetrend_point_click.helpdesk_reports", function (ev, data) {
+                var flag = HelpdeskReports.locals.ticket_list_flag;
+                if (flag == false) {
+                    if (data.sub_metric && data.date && HelpdeskReports.locals.trend) {
+                        HelpdeskReports.locals.ticket_list_flag = true;
+                        _FD.core.actions.showTicketList();
+                        _FD.constructTicketListParams(data.sub_metric, data.date, HelpdeskReports.locals.trend);
+                    }
+                }
+            });
         },
         actions: {
             submitReports: function () {
@@ -25,33 +27,30 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
                 }
             }
         },
-        // modifyTicketListParams: function (sub_metric, date, trend) {
-        //     jQuery.each(HelpdeskReports.locals.params, function (i) {
-        //         var reset_param = {
-        //             list: true,
-        //             list_conditions: [],
-        //             metric: sub_metric
-        //         }
-        //         reset_param.list_conditions.push({
-        //             condition: trend,
-        //             operator: 'is_in',
-        //             value: date
-        //         })
-        //         jQuery.extend(HelpdeskReports.locals.params[i], reset_param);
-        //     });
-        //     _FD.core.fetchTickets(HelpdeskReports.locals.params);
-        //     _FD.resetTicketListParams();
-        // },
-        // resetTicketListParams: function () {
-        //     jQuery.each(HelpdeskReports.locals.params, function (i) {
-        //         var reset_param = {
-        //             list: false,
-        //             list_conditions: [],
-        //             metric: HelpdeskReports.locals.metric
-        //         }
-        //         jQuery.extend(HelpdeskReports.locals.params[i], reset_param);
-        //     });
-        // },
+        constructTicketListParams: function (sub_metric, date, trend) {
+            HelpdeskReports.locals.list_params = [];
+            var list_params = HelpdeskReports.locals.list_params;
+
+            var list_hash = {
+                date_range: HelpdeskReports.locals.date_range,
+                filter: HelpdeskReports.locals.query_hash,
+                list: true,
+                list_conditions: [],
+                metric: sub_metric
+            }
+
+            list_hash.list_conditions.push({
+                condition: trend,
+                operator: 'is_in',
+                value: date
+            });
+
+            var hash = jQuery.extend({},_FD.constants.params, list_hash);
+            list_params.push(hash);
+
+            _FD.core.fetchTickets(list_params);
+
+        },
         setDefaultValues: function () {
             var current_params = [];
             var date = _FD.core.setReportFilters();
@@ -64,7 +63,7 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
                 var param = jQuery.extend({}, _FD.constants.params, merge_hash);
                 current_params.push(param);
             });
-            HelpdeskReports.locals.params = current_params;
+            HelpdeskReports.locals.params = current_params.slice();
             _FD.actions.submitReports();
         },
         flushEvents: function () {
@@ -76,7 +75,6 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
             _FD.core = HelpdeskReports.CoreUtil;    
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.TicketVolume);
             HelpdeskReports.locals.metric = _FD.constants.metric;
-            HelpdeskReports.locals.report_type = _FD.constants.report_type;
             _FD.bindEvents();
             _FD.setDefaultValues();
         }

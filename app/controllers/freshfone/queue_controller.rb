@@ -51,7 +51,7 @@ class Freshfone::QueueController < FreshfoneBaseController
                         set_key(redis_queue_key, members.to_json)
     render :nothing => true
     ensure
-      unless BRIDGE_STATUS.include?(params[:QueueResult])
+      if BRIDGE_STATUS.exclude?(params[:QueueResult]) && !current_account.features?(:freshfone_conference)
         Resque::enqueue_at(2.minutes.from_now, 
                            Freshfone::Jobs::CallBilling,
                            { :account_id => current_account.id, 

@@ -45,7 +45,7 @@ module Integrations::DynamicsCrm::CrmUtil
           hash_data[label] = eval("data[:entities].first."+field)
         rescue
           hash_data[label] = nil
-          RAILS.logger.debugger("Dynamics cannot evaluate #{field} \n#{e.message}\n#{e.backtrace.join("\n")}")
+          Rails.logger.debug("Dynamics cannot evaluate #{field} \n#{e.message}\n#{e.backtrace.join("\n")}")
         end
       end
       hash_data

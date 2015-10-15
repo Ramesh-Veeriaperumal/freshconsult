@@ -47,7 +47,7 @@ class Freshfone::Initiator::AgentCallLeg
     begin
       if current_call.connecting? && agent_connected?
         process_call_accept_callbacks
-        notifier.disconnect_other_agents(current_call)
+        notifier.cancel_other_agents(current_call)
       
         @telephony.current_number = current_call.freshfone_number
         @telephony.initiate_agent_conference({
@@ -80,6 +80,7 @@ class Freshfone::Initiator::AgentCallLeg
 
   private
     def handle_simultaneous_answer
+      Rails.logger.info "Handle Simultaneous Answer For Account Id :: #{current_account.id}, Call Id :: #{current_call.id}, CallSid :: #{params[:CallSid]}, AgentId :: #{params[:agent_id]}"
       return incoming_answered unless intended_agent?
       current_call.noanswer? ? @telephony.incoming_missed : incoming_answered
     end

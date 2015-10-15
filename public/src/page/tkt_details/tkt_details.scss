@@ -1589,7 +1589,7 @@ ol, ul, li{
 	border: none;
 	padding: 0;
 	position: relative;
-	right: -15px;
+	@include right(-15px);
 	@include margin-left(-30px);
 	top: 24px;
 	.form-layout{

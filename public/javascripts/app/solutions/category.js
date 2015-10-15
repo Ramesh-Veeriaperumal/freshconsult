@@ -19,12 +19,33 @@ window.App.Solutions = window.App.Solutions || {};
         $this.normalizeHeight(false);
       })
 
-      $("body").on('click.solutionCategory', '.drafts-filter-me, .drafts-filter-all', function (e) {
-        $('.drafts-filter-title').text($(e.target).text());
+      $("body").on('click.solutionCategory', '.feedbacks-filter-all', function (e) {
+        $this.changeAllFilterSettings(e,'.feedbacks-filter');
       });
-      $("body").on('click.solutionCategory', '.feedbacks-filter-me, .feedbacks-filter-all', function (e) {
-        $('.feedbacks-filter-title').text($(e.target).text());
+
+      $("body").on('click.solutionCategory', '.drafts-filter-all', function (e) {
+        $this.changeAllFilterSettings(e,'.drafts-filter');
       });
+
+      $("body").on('click.solutionCategory', '.feedbacks-filter-me', function (e) {
+        $this.changeMyFilterSettings(e,'.feedbacks-filter');
+      });
+
+      $("body").on('click.solutionCategory', '.drafts-filter-me', function (e) {
+        $this.changeMyFilterSettings(e,'.drafts-filter');  
+      });
+    },
+
+    changeAllFilterSettings: function (e,container) {
+      $(container+'-title').text($(e.target).text());
+      $(container+'-all').parent().addClass('active');
+      $(container+'-me').parent().removeClass('active');
+    },
+
+    changeMyFilterSettings: function (e,container) {
+      $(container+'title').text($(e.target).text());
+      $(container+'-me').parent().addClass('active');
+      $(container+'-all').parent().removeClass('active');
     },
 
     bindHandlers: function () {

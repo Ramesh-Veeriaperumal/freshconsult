@@ -270,6 +270,22 @@ body.community.cs-always-show #community-sidebar {
 
       .dropdown-menu {
         min-width: 120px;
+        li {
+          &:before {
+            color: #666;
+          }
+          a { 
+          color: #333;
+          &:hover{
+            color: #fff;
+          } 
+          }
+          &.active a {
+            background-color: #fff;
+            color: #333;
+            background-image: none;
+          }
+        }
       }
     }
 
