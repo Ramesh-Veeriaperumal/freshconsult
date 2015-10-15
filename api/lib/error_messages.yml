@@ -44,6 +44,7 @@ api_error_messages:
   not_a_valid_email: "Should be a valid email address"
   "Should be a valid Hash": "Should be a key/value pair"
   not_part_of_group: "Should be part of a given group"
+  not_part_of_email_config_group: 'Should be equal to the group_id of the email_config or the primary email_config of the product'
   max_count_exceeded: "List has exceeded maximum count of %{max_count}"
   user_blocked: "has been blocked. No more tickets are allowed to be created for this user"
   "Should be a valid ActionDispatch::Http::UploadedFile": "invalid_format"
@@ -72,3 +73,5 @@ api_error_messages:
   upload_jpg_or_png_file: "Invalid file type. Please upload a jpg or png file"
   email_cant_be_updated: "Email cannot be updated"
   fill_a_mandatory_field: "Please fill at least 1 of email, mobile, phone, twitter_id fields."
+  email_config_mismatch: "Should be equal to the email_config of the product"
+  product_mismatch: "Should be equal to the product id of the email_config"

@@ -8,7 +8,9 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    delegator_options = {ticket_fields: @ticket_fields, 
+      product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id)}
+    ticket_delegator = TicketDelegator.new(@item, delegator_options)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -24,11 +26,12 @@ class TicketsController < ApiApplicationController
 
   def update
     assign_protected
-
+    delegator_options = {ticket_fields: @ticket_fields, 
+      product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id)}
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    ticket_delegator = TicketDelegator.new(@item, delegator_options)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
