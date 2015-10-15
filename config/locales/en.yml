@@ -3825,6 +3825,7 @@ en:
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
       add_translation: Add Translation
+      show_all_analytics: See analytics for all languages
     draft:
       name: Drafts
       all_drafts: All Drafts

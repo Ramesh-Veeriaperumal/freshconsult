@@ -16,7 +16,7 @@
 						option_groups_from_collection_for_select(
 								current_account.solution_category_meta.reject(&:is_default), 
 								:solution_folder_meta, :name, :id, :name, 
-								@article.folder_id
+								@article.solution_folder_meta.id
 						), 
 						{ :include_blank => true },
 						:class => "select2 span12 required",

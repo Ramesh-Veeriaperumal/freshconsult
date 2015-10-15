@@ -1841,19 +1841,18 @@ Helpkit::Application.routes.draw do
         get :voted_users
       end
       
-      resources :tag_uses, :drafts
+      resources :tag_uses
       match '/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :attachments_delete, :via => :delete
     end
 
-    resources :drafts, :only => [:index] do
-      member do
-        post :autosave
-        post :publish
-      end
-    end
+    resources :drafts, :only => [:index]
+    post 'drafts/:article_id/:language_id/autosave' => "drafts#autosave", :as => :draft_autosave
+    post 'drafts/:article_id/:language_id/publish' => "drafts#publish", :as => :draft_publish
+    delete 'drafts/:article_id/:language_id/delete' => "drafts#destroy", :as => :draft_delete
+    get '/drafts/:type' => "drafts#index", :as => :my_drafts
+
     match '/articles/:id/:language' => "articles#show", :as => :article_version
     match '/articles/new/:id/:language' => "articles#new", :as => :new_article_version
-    match '/drafts/:type' => "drafts#index", :as => :my_drafts, :via => :get
     match '/all_categories/(:portal_id)' => "categories#all_categories", :as => :all_categories, :via => :get
   end
 

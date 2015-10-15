@@ -14,7 +14,7 @@
     }
 
     &.language-multi .redactor_toolbar {
-      top: 142px;
+      top: 143px;
     }
     
     &.has-notification .redactor_toolbar {
@@ -308,7 +308,7 @@
   }
 }
 
-#article-likes, #article-dislikes {
+#article-like, #article-dislike {
   .voted-user{
     width: 100%;
     overflow: hidden;
@@ -512,11 +512,9 @@
         margin-bottom: 15px;
         cursor: pointer;
       }
-      .created-history {
-        margin-bottom: 15px;
-      }
       .published-label {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
+        margin-top: 15px;
         span {
           color: #B7A68C;
           border: 1px solid #B7A68C;
@@ -594,9 +592,63 @@
   .analytics{
     border: 0;
     .section{
+      .views {
+        display: inline-block;
+        .leads {
+          margin-bottom: 3px;
+        }
+      }
+      .votes-stats {
+        display: inline-block;
+        border-left: 1px solid #ccc;
+        @include margin-left(7px);
+        @include padding-left(15px);
+
+        .votes-btn {
+          display: inline-block;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+          padding: 3px;
+          text-align: center;
+          width: 55px;
+          color: #333;
+        }
+
+        a .votes-btn:hover {
+          background-color: #eee;
+        }
+      }
       p{
         font-size: 14px;
         color: #333;
+      }
+    }
+    .cumulative-stats {
+      margin-top: 10px;
+    }
+    .show-cumulative-stats {
+      cursor: pointer;
+      color: #06c;
+      margin-top: 25px;
+      &.drop-right {
+        padding: 0;
+        margin: 0;
+        margin-top: 25px;
+        &:after {
+          border-top: 4px solid #000;
+          margin-left: 8px;
+        }
+      }
+      &.selected:after{
+        content: "";
+        width: 0;
+        height: 0;
+        margin-top: 5px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-bottom: 4px solid #000;
+        position: absolute;
+        @include margin-left(8px);
       }
     }
   }

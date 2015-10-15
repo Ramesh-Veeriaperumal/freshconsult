@@ -29,25 +29,11 @@
 			</div>
 		</div>
 	<% end %>
-
+	
 	<div class="sidebar-section analytics">
-		<div class="title-wrapper">
-			<p class="leads span2"><%= t('solution.general.analytics') %></p>
-		</div>
-		<div class="section">
-			<h5 class="leads"><%= t('solution.articles.views') %></h5>
-			<div class="<%= 'muted' unless @article.hits > 0 %>">
-				<%= font_icon :"file-visible" if @article.hits > 0 %>
-				<%= t('discussions.topics.title_meta.hits', :count => @article.hits) %>
-			</div>
-
-			<br/>
-			<h5 class="leads"><%= t('solution.articles.votes') %></h5>
-			<p id="article_voting"> 
-			 	<%= render :partial => "voting", :object => @article %> 
-			</p>
-		</div>
+		<%= render :partial => 'sidebar_analytics' %>
 	</div>
+
 </div>
 <div id="article-likes"> </div>
 <div id="article-dislikes"> </div>

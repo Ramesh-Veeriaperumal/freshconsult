@@ -21,7 +21,7 @@
 								option_groups_from_collection_for_select(
 										current_account.solution_categories.reject(&:is_default), 
 										:folders, :name, :id, :name, 
-										(@article.folder.is_default? ? nil : @article.folder_id )
+										(@article.solution_folder_meta.is_default? ? nil : @article.solution_folder_meta.id )
 								), 
 								{ :include_blank => true },
 								:class => "select2 span4 required",
@@ -100,6 +100,6 @@
 				</div>
 			<% end %>
 		<% end %>	
-
+		<%= dynamic_hidden_fields(:article) %>
 	<% end %>
 </div>

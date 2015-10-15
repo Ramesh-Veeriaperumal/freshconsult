@@ -10,6 +10,7 @@ window.App = window.App || {};
     showPageBindings: function () {
       var $this = this;
       this.articleHistoryEllipsisExpand();
+      this.cumulativeStatsToggle();
 
       this.bindForCancelBtn();
       this.bindForEditBtn();
@@ -47,6 +48,14 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-history .ellipsis', function () {
         $('.created-history').toggleClass('hide');
         $('.article-history .ellipsis').toggleClass('hide');
+      });
+    },
+
+    cumulativeStatsToggle: function() {
+      $('body').on('click.articles', '.analytics .show-cumulative-stats', function () {
+        $('.analytics .cumulative-stats').toggleClass('hide');
+        $('.analytics .show-cumulative-stats').toggleClass('drop-right');
+        $('.analytics .show-cumulative-stats').toggleClass('selected');
       });
     },
 

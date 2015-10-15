@@ -13,7 +13,7 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_meta_objects, :only => [:show, :new, :update, :edit]
+  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties]
   before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
@@ -137,7 +137,8 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def voted_users
-    @article = current_account.solution_articles.find(params[:id], :include =>[:votes => :user])
+    @article_meta = current_account.solution_article_meta.find_by_id!(params[:id])
+    @article = @article_meta.solution_articles.find_by_language_id(params[:language_id], :include =>[:votes => :user])
     render :layout => false
   end
 
@@ -188,10 +189,17 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def load_meta_objects
-      return if params[:id].blank?
-      @article_meta = current_account.solution_article_meta.find_by_id!(params[:id])
+      id = get_meta_id
+      return if id.blank?
+      @article_meta = current_account.solution_article_meta.find_by_id!(id)
       @folder_meta = @article_meta.solution_folder_meta
       @category_meta = @folder_meta.solution_category_meta
+    end
+
+    def get_meta_id
+      id = params[:id] || params[:article_id]
+      id = params[:solution_article_meta][:id] if params[:solution_article_meta].present?
+      id
     end
     
     def set_item_user

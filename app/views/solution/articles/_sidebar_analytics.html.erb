@@ -1,0 +1,39 @@
+<div class="title-wrapper">
+	<p class="leads span2"><%= t('solution.general.analytics') %></p>
+</div>
+
+<div class="section">
+	<div class="views">
+		<h5 class="leads"><%= t('solution.articles.views') %></h5>
+		<div class="<%= 'muted' unless @article.hits > 0 %>">
+			<%= font_icon :"file-visible" if @article.hits > 0 %>
+			<%= (@article.hits > 0 ? "&nbsp;#{@article.hits}" : t('discussions.topics.title_meta.hits', :count => @article.hits)).html_safe %>
+		</div>
+	</div>	
+	<div class="votes-stats">
+		<h5 class="leads"><%= t('solution.articles.votes') %></h5>
+		<div class="article_voting"> 
+		 	<%= render :partial => "voting", :locals => {:meta_child => true} %> 
+		</div>
+	</div>
+</div>
+
+<div class="show-cumulative-stats drop-right"> 
+	<%= t('solution.articles.show_all_analytics') %>
+</div>
+
+<div class="section cumulative-stats hide">
+	<div class="views">
+		<h5 class="leads"><%= t('solution.articles.views') %></h5>
+		<div class="<%= 'muted' unless @article_meta.hits > 0 %>">
+			<%= font_icon :"file-visible" if @article_meta.hits > 0 %>
+			<%= (@article_meta.hits > 0 ? "&nbsp;#{@article_meta.hits}" : t('discussions.topics.title_meta.hits', :count => @article_meta.hits)).html_safe %>
+		</div>
+	</div>	
+	<div class="votes-stats">
+		<h5 class="leads"><%= t('solution.articles.votes') %></h5>
+		<div class="article_voting"> 
+		 	<%= render :partial => "voting", :locals => {:meta_child => false} %> 
+		</div>
+	</div>
+</div>

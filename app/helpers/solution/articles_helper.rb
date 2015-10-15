@@ -28,7 +28,8 @@ module Solution::ArticlesHelper
   
   def discard_link
     return unless privilege?(:delete_solution)
-    link_to(t('solutions.drafts.discard'), solution_article_draft_path(@article.id, @article.draft), 
+    link_to(  t('solutions.drafts.discard'), 
+              solution_draft_delete_path(@article.parent_id, @article.language_id),
               :method => 'delete',
               :confirm => t('solution.articles.draft.discard_confirm'),
               :class => 'draft-btn'
@@ -37,7 +38,8 @@ module Solution::ArticlesHelper
 
   def publish_link
     return if @article.solution_folder_meta.is_default? or !privilege?(:publish_solution)
-    link_to(t('solutions.drafts.publish'), publish_solution_draft_path(@article), 
+    link_to(  t('solutions.drafts.publish'), 
+              solution_draft_publish_path(@article.parent_id, @article.language_id),
               :method => 'post', 
               :class => 'draft-btn') if (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
   end
@@ -46,28 +48,30 @@ module Solution::ArticlesHelper
     return {} if @article.new_record?
     
     {
-      :"autosave-path" => autosave_solution_draft_path(@article.id),
+      :"autosave-path" => solution_draft_autosave_path(@article.parent_id, @article.language_id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
       :"default-folder" => @article.solution_folder_meta.is_default,
-      :"draft-discard-url" => "#{solution_article_draft_path(@article.id, @article.draft.present? ? @article.draft : 1)}",
+      :"draft-discard-url" => solution_draft_delete_path(@article.parent_id, @article.language_id),
       :"preview-path" => support_draft_preview_path(@article, 'preview'),
       :"preview-text" =>  t('solution.articles.view_draft'),
       :"article-id" => @article.id
     }
   end
 
-  def user_votes_stats count, type
-    t_type = (type ==  1) ? 'likes' : 'dislikes'
-    return "0 #{t(t_type)}" if count < 1
-    link_to( "#{count} #{t(t_type)}".html_safe,
-            voted_users_solution_article_path(@article, {:vote => type}),
-            :rel => "freshdialog",
-            :class => "article-#{t_type}",
-            :title => t(t_type), 
-            "data-target" => "#article-#{t_type}",
-            "data-template-footer" => "",
-            "data-width" => "400px" 
-          ).html_safe
+  def user_votes_stats count, type, meta_child
+    t_type = (type ==  1) ? 'like' : 'dislike'
+    content = %(<div class="votes-btn"> #{font_icon(t_type)}&nbsp; #{count} </div>)
+    return content.html_safe if count < 1 || !meta_child
+    %(
+      #{link_to( "<div class=\"votes-btn\"> #{font_icon(t_type)}&nbsp; #{count} </div>".html_safe,
+        voted_users_solution_article_path(@article_meta.id, {:vote => type, :language_id => @article.language_id}),
+        :rel => "freshdialog",
+        :class => "article-#{t_type}",
+        :title => t(t_type.pluralize), 
+        "data-target" => "#article-#{t_type}",
+        "data-template-footer" => "",
+        "data-width" => "400px" )}
+    ).html_safe
   end
 
   def company_visibility_tooltip(folder)
@@ -108,7 +112,7 @@ module Solution::ArticlesHelper
   def article_properties_edit_link(link_text)
     return unless privilege?(:manage_solutions) || privilege?(:publish_solution)
     link_to( link_text, 
-            properties_solution_article_path(@article, {:edit => true}),
+            properties_solution_article_path(@article.parent_id,{:edit => true, :language_id => @article.language_id}),
             :rel => "freshdialog",
             :class => "article-properties",
             :title => t('solution.articles.properties'),
