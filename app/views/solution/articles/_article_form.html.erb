@@ -74,16 +74,16 @@
           <%= dynamic_text_box(:folder, @language) %>
         </div>
       </div>
-    <% elsif !@article.new_record? && @article.folder.is_default? %>
+    <% elsif !@article.new_record? && @article.solution_folder_meta.is_default? %>
       <div class="row-fluid select-folder">
         <div class="control-group">
           <%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
           <div class="controls">
             <%= f.select :folder_id , 
                   option_groups_from_collection_for_select( 
-                      current_account.solution_categories.reject(&:is_default), 
-                      :folders, :name, :id, :name, 
-                      (@article.folder.is_default? ? nil : @article.folder_id )
+                      current_account.solution_category_meta.reject(&:is_default), 
+                      :solution_folder_meta, :name, :id, :name, 
+                      (@article.solution_folder_meta.is_default? ? nil : @article.solution_folder_meta.id)
                   ), 
                   { :include_blank => true },
                   :class => "select2 span4 required",

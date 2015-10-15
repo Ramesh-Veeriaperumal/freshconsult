@@ -299,6 +299,10 @@ class Solution::Article < ActiveRecord::Base
     folder.visible_in?(portal)
   end
 
+  def is_primary?
+    self.id == self.solution_article_meta.primary_article.id
+  end
+
   private
 
     def queue_quest_job
