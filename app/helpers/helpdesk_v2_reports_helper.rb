@@ -6,12 +6,14 @@ module HelpdeskV2ReportsHelper
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ],
 			["/reports/v2/group_summary", 			 "group_summary",            "group-summary" ],
 			["/reports/v2/agent_summary", 			 "agent_summary", 	         "agent-summary" ],
-			# ["/reports/v2/customer_report",          "customer_report",          "customer-report"]
+			["/reports/v2/customer_report",          "customer_report",          "customer-report"]
 		]
 
 	METRIC_HASH = Hash[*REPORT_MAPPING.map{ |i| [i[1], i[2]]}.flatten]
 	
 	DEFAULT_DATE_RANGE = 29 
+
+	DUMP_TIME_IN_SECONDS = [1800,16200,30600,45000,59400,73800,88200] 
 
 	def graph_icon(metrics_name)
 		font_icon(METRIC_HASH[metrics_name], :size => 32)
@@ -41,6 +43,15 @@ HTML
 
 	def default_date_range lag
 		return [(DEFAULT_DATE_RANGE + lag).days.ago, lag.days.ago]
+	end
+
+	def fetch_dump_time
+		current_seconds_since_midnight   = Time.now.utc.seconds_since_midnight.seconds.to_i
+		next_dump_seconds_since_midnight = DUMP_TIME_IN_SECONDS.select{|sec| sec if sec > current_seconds_since_midnight}.first
+		next_dump_time = Time.now.utc.beginning_of_day + next_dump_seconds_since_midnight
+		if current_account.features_included?(:enterprise_reporting)
+			"Next data refresh will be on #{Time.parse(next_dump_time.to_s).in_time_zone(current_account.time_zone).strftime('%d %b,%l:%M %p %Z')}" 
+	    end 
 	end
 
 end

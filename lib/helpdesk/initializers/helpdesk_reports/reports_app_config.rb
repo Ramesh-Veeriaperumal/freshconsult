@@ -8,4 +8,6 @@ module ReportsAppConfig
   
   # Filters that are excluded for specific report_type/subscription_plan combination
   EXCLUDE_FILTERS = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'exclude_filters_by_plan.yml'))
+
+  DISABLE_TICKET_LIST = YAML::load_file(File.join(Rails.root, 'config/helpdesk_reports', 'disable_ticket_list_by_plan.yml'))
 end

@@ -194,7 +194,8 @@ helpdeskReports.prototype = {
         if (value == 0 ) return false;
         var dataSum = this.points[1].series.options.total;
         var pcnt = (value / dataSum) * 100;
-        return '<div class="tooltip"><p style="margin:0;color:#63b3f5;"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
+        var color = this.points[1].series.color;
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '%</p></div>'
     },
     barChartSeriesTooltip: function () {
         if (this.point.series.index == 0) {
@@ -608,6 +609,7 @@ function barChart(opts) {
                     width: '65px',
                     'min-width': '65px',
                     fontSize: '12px',
+                    textAlign: 'right',
                 },
                 formatter: this.barLabelFormatter,
                 useHTML: true
@@ -763,7 +765,6 @@ function barChartMultipleSeries(opts) {
                     duration: 1000,
                     easing: 'easeInOutQuart'
                 },
-                cursor: 'pointer'
             }
         },
         tooltip: {

@@ -43,6 +43,7 @@ jQuery(document).ready(function(){
 	HelpdeskReports.locals.report_field_hash = <%= @show_options.to_json.html_safe %>;
 	HelpdeskReports.locals.field_name_mapping = <%= @label_hash.to_json.html_safe %>;
 	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
+	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list_by_plan %>;
 	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
 });
 </script>

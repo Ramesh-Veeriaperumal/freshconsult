@@ -5,6 +5,7 @@ development:
   custom_mailbox_realtime_queue: custom_mailbox_dev
   forums_moderation_queue: forum_moderation_dev
   helpdesk_reports_export_queue: helpdesk_reports_export_dev
+  reports_etl_msg_queue: reports_etl_msgs_dev
 staging:
   twitter_realtime_queue: social_gnip_tweet_staging1
   facebook_realtime_queue: social_fb_feed_staging
@@ -12,6 +13,7 @@ staging:
   custom_mailbox_realtime_queue: custom_mailbox_staging
   forums_moderation_queue: forum_moderation_staging_rails3
   helpdesk_reports_export_queue: helpdesk_reports_export_staging
+  reports_etl_msg_queue: reports_etl_msgs_staging
 production:
   twitter_realtime_queue: social_gnip_tweet_production
   facebook_realtime_queue: social_fb_feed_production
@@ -19,6 +21,7 @@ production:
   custom_mailbox_realtime_queue: custom_mailbox_production
   forums_moderation_queue: forum_moderation_production
   helpdesk_reports_export_queue: helpdesk_reports_export_production
+  reports_etl_msg_queue: reports_etl_msgs_production
 test:
   twitter_realtime_queue: social_gnip_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -26,3 +29,4 @@ test:
   custom_mailbox_realtime_queue: custom_mailbox_test
   forums_moderation_queue: forum_moderation_test
   helpdesk_reports_export_queue: helpdesk_reports_export_test
+  reports_etl_msg_queue: reports_etl_msgs_test

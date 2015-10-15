@@ -6983,12 +6983,12 @@ en:
         avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the agent
     customer_report:
       title:  Customer Report
-      received_tickets: Customers with the most received
-      resolved_tickets: Customers with the most resolved
-      response_violated: Most SLA Violations for response
-      resolution_violated: Most SLA Violations for resolution
-      customer_interactions: Customer Interactions
-      agent_interactions: Agent Interactions
+      received_tickets: Tickets Submitted
+      resolved_tickets: Tickets Resolved
+      response_violated: Response SLA Violations %
+      resolution_violated: Resolution SLA Violations %
+      customer_interactions: Customer Responses
+      agent_interactions: Agent Responses
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
