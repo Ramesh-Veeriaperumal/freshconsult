@@ -3,6 +3,7 @@ class ProfilesController < ApplicationController
    before_filter :require_user 
    before_filter :load_user, :only => [:edit, :change_password]
    before_filter :set_user, :filter_params, :only => [:update]
+   before_filter :load_password_policy, :only => :edit
    skip_before_filter :check_privilege
    include ModelControllerMethods  
    include UserHelperMethods
@@ -69,28 +70,39 @@ end
   
 def change_password    
     @check_session = current_account.user_sessions.new(:email => current_user.email, :password => params[:user][:current_password], :remember_me => false)
-    if @check_session.save && reset_password 
-      flash[:notice] = t(:'flash.profile.change_password.success')
-      @check_session.destroy
-      current_user_session.destroy
-      redirect_to new_user_session_url      
-    else     
-      flash[:notice] = t(:'flash.profile.change_password.failure')
-      if current_user.customer?
-        redirect_to edit_support_profile_path 
+    if @check_session.save 
+      if reset_password
+        flash[:notice] = t(:'flash.profile.change_password.success')
+        @check_session.destroy
+        current_user_session.destroy
+        redirect_to new_user_session_url     
       else
-        redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+        change_password_fail 
       end
+    else     
+      flash[:error] = t(:'flash.profile.change_password.failure')
+      change_password_fail
     end      
 end
 
 def reset_password
-    return false if params[:user][:password] != params[:user][:password_confirmation]
+    return false if params[:user][:password] != params[:user][:password_confirmation] || params[:user][:password].blank?
+
     @user = current_user
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
-    @user.save
+    result = @user.save
+    flash[:error] = @user.errors.full_messages.join("<br/>").html_safe if @user.errors.any?
+    result
+end
+
+def change_password_fail
+  if current_user.customer?
+    redirect_to edit_support_profile_path 
+  else
+    redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+  end
 end
 
 def notification_read
@@ -107,6 +119,10 @@ private
   def set_user
     @profile = current_user.agent
     @user = current_account.users.find(@profile.user_id)  
+  end
+
+  def load_password_policy
+    @password_policy = current_user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy 
   end
 
 protected

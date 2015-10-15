@@ -171,3 +171,23 @@
     margin:-27px;
   }
 }
+
+
+.popover .password-wrapper{
+
+    .policy-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size:14px;
+    }
+
+    ul{
+        @include margin-left(5px);
+    }
+
+    li{
+    @include margin-left(10px);
+    list-style-type: disc;
+    line-height: 22px;
+  }
+}

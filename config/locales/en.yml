@@ -1625,11 +1625,42 @@ en:
         notifications: "Notification will be sent when"
         agent_create_or_delete: "Agent is Added or Deleted"
         whitelisted_ip_modified: "IP Whitelisting is modified"
+        password_security: Password Security
+        for_agents: For Agents
+        for_contacts: For Contacts
+        password_policy_info1: Changes you make to the password policy will be applicable within 8 hours. Your users will be prompted to update their passwords during this time. In case they fail to conform, they will be logged out of the support portal and be forced to change their passwords once they login back.
+        password_policy_info2: Note that once you enable password policy for your account (either default or advanced), you will not be able to disable it for your account.
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
         info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
         trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
+        info3: <b>Password Security</b><br>You can set up different levels of password security for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers.
+      password_security:
+        default: Default
+        advanced: Advanced
+        never: Never
+        minimum_characters: Minimum of %{count} characters
+        minimum_of: Minimum of
+        characters: characters
+        cannot_contain_user_name: Cannot contain username
+        cannot_be_same_as_last: Cannot be same as last
+        password: "password"
+        passwords: "passwords"
+        password_expiry: Password expires in
+        days: days
+        session_expiry: User session expires in
+        atleast_an_alphabet_and_number: Have an alphabet and a number
+        have_mixed_case: Have mixed case
+        have_special_character: Have a special character
+      password_policy_popover:
+        password_must: Password must
+        minimum_characters: Contain atleast %{count} characters
+        cannot_contain_user_name: Not contain the username
+        cannot_be_same_as_past_passwords: Be different from your past passwords
+        atleast_an_alphabet_and_number: Contain atleast 1 alphabet and 1 number
+        have_mixed_case: Contain mixed case
+        have_special_character: Contain atleast 1 special character
     products:
       helpnote:
         tour: Help me support multiple products
@@ -1998,6 +2029,7 @@ en:
   does_not_contain: Does not contain
   non_ssl_request: This request needs a secure connection.You need to enable SSL encryption from /admin/security
   flash:
+    password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
       user_missing: "In Freshdesk, your email does not exist.  Add an agent with your email and try again."
@@ -2252,6 +2284,7 @@ en:
     password_resets:
       update:
         success: Password successfully updated
+        password_does_not_match: "The passwords don't match. Please try again."
         invalid_token: We're sorry, but we could not locate your account. If you are having issues try copying and pasting the URL from your email into your browser or restarting the reset password process.
       email:
         reset: "A reset mail with instructions has been sent to %{requester}."
@@ -2293,6 +2326,7 @@ en:
       update:
         success: The %{human_name} has been updated.
         failure: The %{human_name} could not be updated.
+      password_expired: "Your password has expired. Kindly login to update your old password."
     post:
       deleted: "Post of %{title} was deleted."
       page_not_found: "This post could not be found. It might have been deleted or the URL mistyped."
@@ -8233,3 +8267,16 @@ en:
         admin_portal: Admin
       error:
         authorize_failure: You are not allowed to access this page
+  password_policy:
+    alphanumeric: "Password must be alphanumeric"      
+    special_characters: "Password must have special characters"
+    mixed_case: "Password must have both uppercase and lowercase alphabets"
+    username: "Password cannot contain username"
+    history: "New password should be different from last %{history_depth} password"
+    history_plural: "New password should be different from last %{history_depth} passwords"
+    min_length: "Password must have atleast %{min_length} characters"
+    wrong_password_length: Please enter a valid minimum no of characters.
+    wrong_no_of_past_password: Please enter a valid number of past passwords.
+    wrong_expiry_days: Please enter a valid number of expiry days.
+    invalid_config: Please enter a valid configuration.
+    

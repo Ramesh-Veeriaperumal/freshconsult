@@ -321,6 +321,9 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
     t.datetime "updated_at"
   end
 
+  add_index "authorizations", ["account_id", "user_id"], :name => "index_authorizations_on_account_id_and_user_id"
+  add_index "authorizations", ["account_id", "uid", "provider"], :name => "index_authorizations_on_account_id_uid_and_provider"
+
   create_table "business_calendars", :force => true do |t|
     t.integer  "account_id",         :limit => 8
     t.text     "business_time_data"
@@ -2360,6 +2363,17 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
   end
 
   add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
+
+  create_table "password_policies" do |t|
+    t.integer "account_id", :limit => 8
+    t.integer "user_type",  :null => false
+    t.string "policies"
+    t.text "configs"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+  end
+
+  add_index "password_policies", ["account_id", "user_type"], :name => "index_password_polices_on_account_id_and_user_type", :unique => true
 
   create_table "password_resets", :force => true do |t|
     t.string   "email"

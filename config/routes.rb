@@ -283,6 +283,8 @@ Helpkit::Application.routes.draw do
       put :make_agent
       put :make_occasional_agent
       put :verify_email
+      get :change_password
+      put :update_password
       get :unblock
       post :create_contact
       put :update_contact

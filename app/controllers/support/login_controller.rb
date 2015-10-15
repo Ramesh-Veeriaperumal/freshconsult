@@ -3,7 +3,7 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 	include SsoUtil
-	MAX_ATTEMPT = 5
+	MAX_ATTEMPT = 3
 	SUB_DOMAIN = "freshdesk.com"
 
 	before_filter :set_no_ssl_msg, :only => :new
@@ -21,19 +21,24 @@ class Support::LoginController < SupportController
 		end
 	end
 
-	def create   
+	def create
 		@user_session = current_account.user_sessions.new(params[:user_session])
-    	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
-    	if @verify_captcha && @user_session.save 
-			#Temporary hack due to current_user not returning proper value
-			@current_user_session = @user_session
-			@current_user = @user_session.record
-			#Hack ends here
+   	@verify_captcha = (params[:recaptcha_challenge_field] ? verify_recaptcha : true )
+   	if @verify_captcha && @user_session.save 
 
-			remove_old_filters if @current_user.agent?
+      @current_user_session = current_account.user_sessions.find
+      @current_user = @current_user_session.record
+      if @current_user_session && !@current_user && @current_user_session.stale_record && @current_user_session.stale_record.password_expired 
+        stale_user = @current_user_session.stale_record
+        stale_user.reset_perishable_token!
 
-			redirect_back_or_default('/') if grant_day_pass 
-			#Unable to put 'grant_day_pass' in after_filter due to double render
+        redirect_to(edit_password_reset_path(stale_user.perishable_token))
+      else
+  			remove_old_filters if @current_user.agent?
+
+  			redirect_back_or_default('/') if grant_day_pass 
+  			#Unable to put 'grant_day_pass' in after_filter due to double render
+      end
 		else
 			note_failed_login
       		show_recaptcha?
