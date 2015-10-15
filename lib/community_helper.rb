@@ -16,7 +16,8 @@ module CommunityHelper
 
   def article_attachment_link(att, type)
     if @article.present? && att.parent_type == @article.class.name
-      return %(#{solution_article_attachments_delete_path(@article, type, att)}).html_safe
+      # return %(#{solution_article_attachments_delete_path(@article, type, att)}).html_safe
+      return %(#{solution_draft_attachments_delete_path(@article.parent_id, @article.language_id, type, att)}).html_safe
     end
   end
 

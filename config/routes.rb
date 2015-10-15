@@ -1846,10 +1846,11 @@ Helpkit::Application.routes.draw do
     end
 
     resources :drafts, :only => [:index]
+    get '/drafts/:type' => "drafts#index", :as => :my_drafts
     post 'drafts/:article_id/:language_id/autosave' => "drafts#autosave", :as => :draft_autosave
     post 'drafts/:article_id/:language_id/publish' => "drafts#publish", :as => :draft_publish
     delete 'drafts/:article_id/:language_id/delete' => "drafts#destroy", :as => :draft_delete
-    get '/drafts/:type' => "drafts#index", :as => :my_drafts
+    delete 'drafts/:article_id/:language_id/:attachment_type/:attachment_id/delete' => "drafts#attachments_delete", :as => :draft_attachments_delete
 
     match '/articles/:id/:language' => "articles#show", :as => :article_version
     match '/articles/new/:id/:language' => "articles#new", :as => :new_article_version

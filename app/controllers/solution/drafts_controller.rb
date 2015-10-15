@@ -7,8 +7,7 @@ class Solution::DraftsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :set_selected_tab, :only => [:index]
   before_filter :page_title, :only => [:index]
-  before_filter :load_article, :only => [:attachments_delete]
-  before_filter :load_article_with_meta, :only => [:autosave, :publish, :destroy]
+  before_filter :load_article_with_meta, :only => [:autosave, :publish, :destroy, :attachments_delete]
   before_filter :load_attachment, :only => [:attachments_delete]
 
   def index
@@ -78,13 +77,9 @@ class Solution::DraftsController < ApplicationController
       @page_title = t("header.tabs.solutions")
     end
 
-    def load_article
-      @article = current_account.solution_articles.find_by_id((params[:article_id] || params[:id]), :include => :draft, :readonly => false)
-    end
-
     def load_article_with_meta
       @article_meta = current_account.solution_article_meta.find_by_id!(params[:article_id])
-      @article = @article_meta.solution_articles.find_by_language_id(params[:language_id])
+      @article = @article_meta.solution_articles.find_by_language_id(params[:language_id], :include => :draft, :readonly => false)
     end
 
     def load_attachment
