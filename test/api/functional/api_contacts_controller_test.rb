@@ -695,7 +695,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_field_with_empty_array
     sample_user = get_user
-    put :update, construct_params({ id: sample_user.id }, tags: nil)
+    put :update, construct_params({ id: sample_user.id }, tags: [])
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   end
@@ -748,7 +748,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_nil_custom_fields
-    params = { custom_fields: nil }
+    params = { custom_fields: {} }
     sample_user = get_user
     sample_user.update_column(:deleted, false)
     put :update, construct_params({ id: sample_user.reload.id }, params)
@@ -777,7 +777,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('phone', 'missing'),
                 bad_request_error_pattern('tags', 'required_and_data_type_mismatch', {data_type: 'Array'}),
                 bad_request_error_pattern('company_id', 'missing'),
-                bad_request_error_pattern('client_manager', 'required_and_data_type_mismatch', {data_type: 'Boolean'}),
                 bad_request_error_pattern('language', 'required_and_inclusion',
                                           list: I18n.available_locales.map(&:to_s).join(',')),
                 bad_request_error_pattern('time_zone', 'required_and_inclusion', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
@@ -834,7 +833,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('phone', "can't be blank"),
                 bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
                 bad_request_error_pattern('company_id', "can't be blank"),
-                bad_request_error_pattern('client_manager', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('language', 'not_included',
                                           list: I18n.available_locales.map(&:to_s).join(',')),
                 bad_request_error_pattern('time_zone', 'not_included', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])

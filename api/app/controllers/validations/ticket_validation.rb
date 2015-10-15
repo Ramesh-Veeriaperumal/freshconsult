@@ -22,8 +22,8 @@ class TicketValidation < ApiValidation
 
   # Due by and First response due by validations
   validates :due_by, :fr_due_by, date_time: { allow_nil: true } # No
-  validates :fr_due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_fr_due_by?
-  validates :due_by, inclusion: { in: [nil], message: 'invalid_field' }, if: :disallow_due_by?
+  validates :fr_due_by, custom_absence: { allow_nil: false, message: 'invalid_field' }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: false, message: 'invalid_field' }, if: :disallow_due_by?
   validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
   validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
   validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
@@ -38,15 +38,15 @@ class TicketValidation < ApiValidation
 
   # Email related validations
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
-  validates :cc_emails, data_type: { rules: Array, allow_nil: true }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :cc_emails, data_type: { rules: Array, allow_nil: false, allow_unset: true }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
  
   # Tags validations
-  validates :tags, data_type: { rules: Array,  allow_nil: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true }}
+  validates :tags, data_type: { rules: Array,  allow_nil: false, allow_unset: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true }}
   validates :tags, string_rejection: { excluded_chars: [','] }
  
   # Custom fields validations
-  validates :custom_fields, data_type: { rules: Hash }, allow_nil: true
+  validates :custom_fields, data_type: { rules: Hash, allow_nil: false, allow_unset: true }
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
@@ -61,8 +61,8 @@ class TicketValidation < ApiValidation
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
     @fr_due_by = item.try(:frDueBy).try(:iso8601) if item
-    request_params[:description] = request_params[:description_html] if should_set_description?(request_params)
     super(request_params, item, allow_string_param)
+    @description = request_params[:description_html] if should_set_description?(request_params)
     check_params_set(request_params, item)
     @item = item
   end

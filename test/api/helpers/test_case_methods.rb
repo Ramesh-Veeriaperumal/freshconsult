@@ -64,7 +64,11 @@ module TestCaseMethods
   # and the rest like 'id' for 'unwrapped'
   def construct_params(unwrapped, wrapped = false)
     params_hash = request_params.merge(unwrapped)
-    params_hash.merge!(wrap_cname(wrapped)) if wrapped
+    if wrapped
+      wrapped_params = wrap_cname(wrapped)
+      @request.env['RAW_POST_DATA'] = wrapped.to_json
+      params_hash.merge!(wrapped_params) 
+    end
     params_hash
   end
 

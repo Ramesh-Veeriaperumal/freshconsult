@@ -59,12 +59,47 @@ class TimeEntryValidationTest < ActionView::TestCase
     error = time_entry.errors.full_messages
     assert error.include?('Start time timer_running_false')
     Account.unstub(:current)
- end
+  end
+
+  def test_start_time_when_timer_running_already
+    Account.stubs(:current).returns(Account.first)
+    tkt = Helpdesk::Ticket.first
+    item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
+    controller_params = {start_time: nil}
+    time_entry = TimeEntryValidation.new(controller_params, item, true)
+    time_entry.valid?(:update)
+    error = time_entry.errors.full_messages
+    assert error.include?('Start time timer_running_true')
+    Account.unstub(:current)
+  end
+
+  def test_start_time_when_timer_running_is_false
+    Account.stubs(:current).returns(Account.first)
+    tkt = Helpdesk::Ticket.first
+    controller_params = {start_time: nil, timer_running: false}
+    time_entry = TimeEntryValidation.new(controller_params, nil, false)
+    time_entry.valid?
+    error = time_entry.errors.full_messages
+    assert error.include?('Start time timer_running_false')
+    Account.unstub(:current)
+  end
 
   def test_agent_id_multiple_errors
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
     controller_params = { 'timer_running' => false, 'agent_id' => '89', 'start_time' => '23/12/2001' }
+    item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
+    time_entry = TimeEntryValidation.new(controller_params, item, false)
+    time_entry.valid?(:update)
+    error = time_entry.errors.full_messages
+    assert error.include?('Agent cant_update_user')
+    Account.unstub(:current)
+  end
+
+  def test_agent_id_when_timer_running
+    Account.stubs(:current).returns(Account.first)
+    tkt = Helpdesk::Ticket.first
+    controller_params = { 'agent_id' => nil }
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)

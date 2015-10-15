@@ -47,10 +47,10 @@ module Helpers::SlaPoliciesHelper
   # private
   def sla_policy_params
     company_ids = Company.first(2).map(&:id)
-    company_ids = if company_ids.empty?
-                    2.times { create_company }
-                    Company.first(2).map(&:id)
-                  end
+    if company_ids.empty?
+      2.times { create_company }
+      company_ids = Company.first(2).map(&:id)
+    end
     { applicable_to: { company_ids: company_ids } }
   end
 

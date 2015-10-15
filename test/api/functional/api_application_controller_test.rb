@@ -47,6 +47,28 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.body, request_error_pattern(:invalid_multipart).to_json
   end
 
+  def test_invalid_field_handler_with_invalid_parseable_json
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.request.env['RAW_POST_DATA'] = "test junk"
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    assert_nothing_raised do
+      @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(["_json"]))
+    end
+    assert_equal response.status, 400
+    assert_equal response.body, request_error_pattern(:invalid_json).to_json
+  end
+
+  def test_handle_empty_array
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.params = ActionController::Parameters.new({"api_application" => {"requester_id" => nil}})
+    @controller.request.env['RAW_POST_DATA'] = "{\n\"requester_id\":[]\n}"
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    @controller.send(:handle_empty_array)
+    assert_equal({"requester_id" => []}.to_h, @controller.params["api_application"].to_h)
+  end
+
   def test_route_not_found_with_method_not_allowed
     response = ActionDispatch::TestResponse.new
     @controller.response = response

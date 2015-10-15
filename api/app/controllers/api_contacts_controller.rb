@@ -100,6 +100,10 @@ class ApiContactsController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end
 
+    def complex_fields
+      ContactConstants::COMPLEX_FIELDS
+    end
+
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @contact_filter = ContactFilterValidation.new(params, nil, multipart_or_get_request?)

@@ -4,7 +4,7 @@ class ApiGroupValidation < ApiValidation
   validates :escalate_to, custom_numericality: { allow_nil: true }
   validates :unassigned_for, custom_inclusion: { in: GroupConstants::UNASSIGNED_FOR_ACCEPTED_VALUES }, allow_nil: true
   validates :auto_ticket_assign, data_type: { rules: 'Boolean', allow_nil: true }
-  validates :agent_ids, data_type: { rules: Array, allow_nil: true }, array: { custom_numericality: { allow_nil: true, message: 'invalid_integer' } }
+  validates :agent_ids, data_type: { rules: Array, allow_nil: false, allow_unset: true  }, array: { custom_numericality: { allow_nil: true, message: 'invalid_integer' } }
   validates :name, :description, data_type: { rules: String, allow_nil: true }
 
   def attributes_to_be_stripped

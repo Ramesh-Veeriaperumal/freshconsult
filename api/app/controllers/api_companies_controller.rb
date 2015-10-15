@@ -47,4 +47,8 @@ class ApiCompaniesController < ApiApplicationController
       ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @company_fields) if params[cname][:custom_fields]
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
+
+    def complex_fields
+      CompanyConstants::COMPLEX_FIELDS
+    end
 end

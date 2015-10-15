@@ -33,4 +33,17 @@ class NoteValidationTest < ActionView::TestCase
     Account.unstub(:current)
     Helpers::TicketsValidationHelper.unstub(:attachment_size)
   end
+
+  def test_complex_fields_with_nil
+    controller_params = { 'notify_emails' => nil, 'cc_emails' => nil, 'bcc_emails' => nil, attachments: nil  }
+    item = nil
+    note = NoteValidation.new(controller_params, item)
+    refute note.valid?
+    errors = note.errors.full_messages
+    assert errors.include?('Notify emails data_type_mismatch')
+    assert errors.include?('Bcc emails data_type_mismatch')
+    assert errors.include?('Cc emails data_type_mismatch')
+    assert errors.include?("Attachments data_type_mismatch")
+    Account.unstub(:current)
+  end
 end

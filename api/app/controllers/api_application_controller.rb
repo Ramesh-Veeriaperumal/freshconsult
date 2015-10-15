@@ -9,7 +9,8 @@ class ApiApplicationController < MetalApiController
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
-  before_filter :validate_content_type 
+  before_filter :validate_content_type
+  before_filter :handle_empty_array, :if => :complex_fields_has_nil?
 
   include Concerns::ApplicationConcern
 
@@ -120,7 +121,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
-      return if handle_invalid_multipart_form_data(exception.params)
+      return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
       Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
@@ -129,6 +130,12 @@ class ApiApplicationController < MetalApiController
     def handle_invalid_multipart_form_data(exception_params)
       return false unless request.raw_post == exception_params.join && request.headers['CONTENT_TYPE'] =~ /multipart\/form-data/
       render_request_error :invalid_multipart, 400
+      true
+    end
+
+    def handle_invalid_parseable_json(exception_params)
+      return false unless exception_params.join == "_json"
+      render_request_error :invalid_json, 400
       true
     end
 
@@ -439,9 +446,29 @@ class ApiApplicationController < MetalApiController
       @multipart
     end
 
+    # Handling empty array only when params have array fields and it's value is nil.
+    def complex_fields_has_nil?
+      complex_fields.present? && params[cname].present? && json_request? && params[cname].any? { |key, value| complex_fields.include?(key.to_s) && value.nil? }
+    end
+
+    # https://github.com/rails/rails/blob/3-2-stable/actionpack/lib/action_dispatch/middleware/params_parser.rb#L46
+    # Doing the same thing as above but without deep munge as it has no effect on our API Write Calls.
+    def handle_empty_array
+      parsed_json = ActiveSupport::JSON.decode(request.body)
+      params[cname].merge!(parsed_json) if parsed_json.is_a?(Hash)
+    end
+
+    def json_request?
+      @json_request ||= request.content_mime_type.try(:ref) == :json
+    end
+
+    def complex_fields
+      []
+    end
+
     def valid_content_type?
       return true if request.content_mime_type.nil?
-      request.content_mime_type.ref == :json
+      json_request?
     end
 
     def set_time_zone

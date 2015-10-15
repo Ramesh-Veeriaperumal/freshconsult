@@ -1,7 +1,8 @@
 module DiscussionConstants
   # ControllerConstants
   CATEGORY_FIELDS = ['name', 'description']
-  CREATE_FORUM_FIELDS = ['name', 'description', 'forum_type', 'forum_visibility', 'company_ids', 'company_ids' => []]
+  FORUM_ARRAY_FIELDS = ["company_ids" ]
+  CREATE_FORUM_FIELDS = ['name', 'description', 'forum_type', 'forum_visibility', 'company_ids'] | FORUM_ARRAY_FIELDS.map{|x| Hash[x, [nil]]}
   UPDATE_FORUM_FIELDS = CREATE_FORUM_FIELDS << 'forum_category_id'
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'] }

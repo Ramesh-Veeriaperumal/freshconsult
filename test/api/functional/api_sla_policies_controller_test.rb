@@ -26,7 +26,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_update_remove_company_sla_policy
     company = create_company
     sla_policy = quick_create_sla_policy
-    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: nil })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: [] })
     assert_response 200
     match_json(sla_policy_pattern(sla_policy.reload))
     match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, sla_policy))
@@ -61,15 +61,23 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('applicable_to', "can't be blank")])
+    match_json([bad_request_error_pattern('company_ids', 'required_and_data_type_mismatch', data_type: 'Array')])
+  end
+
+  def test_update_with_nil_conditions
+    company = create_company
+    sla_policy = quick_create_sla_policy
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
+    assert_response 400
+    match_json([bad_request_error_pattern('company_ids', 'required_and_data_type_mismatch', data_type: 'Array')])
   end
 
   def test_update_emptying_conditions_with_blank_company_ids
     company = create_company
     sla_policy = create_sla_policy_with_only_company_ids
-    put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: nil })
+    put :update, construct_params({ id: sla_policy.id }, applicable_to: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', "can't be blank")])
+    match_json([bad_request_error_pattern('applicable_to', 'data_type_mismatch', data_type: 'key/value pair')])
   end
 
   def test_update_default_sla_policy
