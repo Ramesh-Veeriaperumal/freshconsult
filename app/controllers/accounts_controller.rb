@@ -105,6 +105,7 @@ class AccountsController < ApplicationController
     @signup = Signup.new(params[:signup])
    
     if @signup.save
+       @signup.user.deliver_admin_activation
        add_to_crm       
        @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
        @rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if @rediret_url.blank?

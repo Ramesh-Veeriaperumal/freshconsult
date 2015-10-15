@@ -13,6 +13,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_destroy :before_destroy_customize
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
+  before_create :before_create_customize
+  after_create :after_create_customize
   after_save :after_save_customize
   after_commit :after_commit_customize
 
@@ -102,6 +104,14 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def after_save_customize
       execute_custom_clazz(:after_save)
+    end
+
+    def before_create_customize
+      execute_custom_clazz(:before_create)
+    end
+
+    def after_create_customize
+      execute_custom_clazz(:after_create)
     end
 
     def before_destroy_customize

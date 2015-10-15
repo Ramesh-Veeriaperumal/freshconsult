@@ -633,10 +633,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :remote_configurations do
-      get :open_id_complete, on: :collection
-      get :open_id, on: :collection
-    end
+    resources :remote_configurations
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -740,9 +737,25 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :quickbooks do
-      get :refresh_access_token
+      post :refresh_access_token
       get :render_success
       post :create_company
+    end
+
+    namespace :marketplace do
+      namespace :login do
+        get :login
+      end
+
+      namespace :quickbooks_sso do
+        get :open_id
+        get :open_id_complete
+      end
+
+      namespace :signup do
+        put :associate_account
+        put :create_account
+      end
     end
 
     resources :dynamics_crm do
@@ -2293,9 +2306,6 @@ Helpkit::Application.routes.draw do
     end
   end
   #  end
-  match '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
-  match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
-  match '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
     # namespace :billing do

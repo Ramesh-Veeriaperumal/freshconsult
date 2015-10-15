@@ -6259,6 +6259,30 @@ en:
       api_key: "API Token"
       api_key_info: "API Token can be accessed from your Pivotal Tracker Profile Page - https://www.pivotaltracker.com/profile"
       pivotal_updates: "Select to get updates from Pivotal Tracker"
+    marketplace_login:
+      associate_account:
+        new_account: New account
+        existing_user: Existing account
+        company_name: Company Name
+        helpdesk_url: Helpdesk URL
+        your_freshdesk_url: Your Helpdesk URL
+        domain_info: "ex. if your helpdesk is 'http://apple.freshdesk.com' then enter 'apple'"
+        phone_no: "Phone Number"
+        create_my_account: Create your Account
+        terms_and_policy: "By clicking 'Create your Account', you agree to our <a href='http://freshdesk.com/terms' target='_blank'>terms of service</a> and <a href='http://freshdesk.com/privacy' target='_blank'>privacy policy</a>"
+        helpdesk_name: "Helpdesk name"
+        submit: Submit
+      admin_credentials:
+        link_your_helpdesk: Link your helpdesk
+        login_your_helpdesk: Login to your helpdesk
+        email_address: Email address
+        your_helpdesk: Your helpdesk
+        login: Login
+        login_with_admin: "You need to be an Account administrator to link your freshdesk account with Google login"
+      error:
+        insufficient_privilege: "<center><p class='big-text aligncenter'>Sorry! This integration can only be enabled<br> by a Freshdesk account administrator.</p></center>"
+        already_exist: "<center><p class='big-text aligncenter'>This app has already been installed<br> by another user.</p></center>"
+        account_not_exist: "<center><p class='big-text aligncenter'>This account does not exist.</p></center>"
     remote_login:
       connect: "Connect"
       sign_up: "Sign Up"

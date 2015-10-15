@@ -1,0 +1,158 @@
+class Integrations::Marketplace::SignupController < ApplicationController
+  include Integrations::Marketplace::LoginHelper
+
+  layout :choose_layout
+
+  skip_filter :select_shard, :only => [:create_account]
+  around_filter :select_latest_shard, :only => [:create_account]
+
+  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state, 
+    :set_time_zone, :check_day_pass_usage, :set_locale
+
+  before_filter :initialize_attr, :check_remote_integrations_mapping
+  before_filter :load_account, :only => [:associate_account]
+  before_filter :build_signup_param, :only => [:create_account]
+
+  def associate_account
+    @account.make_current
+    login_user = get_user(@account, @email)
+    if login_user.present?
+      verify_user_and_redirect(login_user)
+    else
+      redirect_url = send(@app_name + '_url')
+      redirect_to redirect_url
+    end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => e
+      redirect_url = send(@app_name + '_url')
+      redirect_to redirect_url
+  end
+
+  def create_account
+    @signup = Signup.new(params[:signup])
+
+    if @signup.save
+      @signup.user.deliver_admin_activation
+      @account = @signup.account
+      add_to_crm
+      update_remote_integrations_mapping(@app_name, @remote_id, @account, @signup.user)
+      set_redis_and_redirect(@app_name, @account, @remote_id, @email, @operation)
+    else
+      @account = @signup.account
+      @user = @signup.user
+      @call_back_url = params[:call_back]
+      render 'integrations/marketplace/associate_account'
+    end
+  end
+
+  protected
+
+  def choose_layout
+    'signup_google'
+  end
+
+  private
+
+  def select_shard(&block)
+    if full_domain.blank?
+      flash.now[:error] = t(:'flash.g_app.no_subdomain')
+      render 'integrations/marketplace/associate_account' and return
+    end
+
+    Sharding.select_shard_of(full_domain) do
+      yield
+    end
+  end
+
+  def select_latest_shard(&block)
+    Sharding.select_latest_shard(&block)
+  end
+
+  def add_to_crm
+    if Rails.env.production?
+      Resque.enqueue_at(3.minute.from_now, Marketo::AddLead, { :account_id => @signup.account.id, 
+        :signup_id => params[:signup_id] })
+    end
+  end
+
+  def build_signup_param
+    params[:signup] = {}
+
+    [:user, :account].each do |param|
+      params[param].each do |key, value|
+        params[:signup]["#{param}_#{key}"] = value
+      end
+    end
+
+    params[:signup][:locale] = http_accept_language.compatible_language_from(I18n.available_locales)
+    params[:signup][:time_zone] = params[:utc_offset]
+    params[:signup][:metrics] = build_metrics
+  end
+
+  def build_metrics
+    return if params[:session_json].blank?
+
+    begin
+      metrics =  JSON.parse(params[:session_json])
+      metrics_obj = {}
+
+      metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+      metrics_obj[:landing_url] = metrics["current_session"]["url"]
+      metrics_obj[:first_referrer] = params[:first_referrer]
+      metrics_obj[:first_landing_url] = params[:first_landing_url]
+      metrics_obj[:country] = metrics["location"]["countryName"] unless metrics["location"].blank?
+      metrics_obj[:language] = metrics["locale"]["lang"]
+      metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+      metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+      metrics_obj[:visits] = params[:pre_visits]
+
+      if metrics["device"]["is_mobile"]
+        metrics_obj[:device] = "M"
+      elsif  metrics["device"]["is_phone"]
+        metrics_obj[:device] = "P"
+      elsif  metrics["device"]["is_tablet"]
+        metrics_obj[:device] = "T"
+      else
+        metrics_obj[:device] = "C"
+      end
+
+      metrics_obj[:browser] = metrics["browser"]["browser"]
+      metrics_obj[:os] = metrics["browser"]["os"]
+      metrics_obj[:offset] = metrics["time"]["tz_offset"]
+      metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+      metrics_obj[:session_json] = metrics
+      metrics_obj
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
+      Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      nil
+    end
+  end
+
+  def initialize_attr
+    @name = params[:user][:name]
+    @email = params[:user][:email]
+    @remote_id = params[:user][:remote_id]
+    @operation = params[:request_params][:operation]
+    @app_name = params[:request_params][:app_name]
+  end
+
+  def check_remote_integrations_mapping
+    if find_account_by_remote_id(@remote_id, @app_name)
+      render :template => 'integrations/marketplace/error', :locals => { :error_type => 'already_exist' }
+    end
+  end
+
+  def load_account
+    @account = Account.find_by_full_domain(full_domain)
+    if @account.nil?
+      render :template => 'integrations/marketplace/error', :locals => { :error_type => 'account_not_exist' }
+    end
+  end
+
+  def full_domain
+    base_domain = AppConfig['base_domain'][Rails.env]    
+    @sub_domain = params[:account][:sub_domain] || params[:account][:domain]
+    @full_domain = @sub_domain + "." + base_domain
+  end
+
+end
