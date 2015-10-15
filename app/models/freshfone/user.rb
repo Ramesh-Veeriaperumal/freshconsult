@@ -174,7 +174,7 @@ class Freshfone::User < ActiveRecord::Base
 	end
 
 	def mobile_refreshed_an_hour_ago?
-		self.mobile_token_refreshed_at > 1.hour.ago
+		self.mobile_token_refreshed_at.present? && self.mobile_token_refreshed_at > 1.hour.ago
 	end
 
 	private
