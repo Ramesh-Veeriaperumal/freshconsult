@@ -157,7 +157,7 @@ module ApiDiscussions
       user = other_user
       monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: user.id,
                                       monitorable_id: first_topic.id).first || monitor_topic(first_topic, user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: user.id)
+      delete :unfollow, construct_params({ id: first_topic.id, user_id: user.id })
       assert_response 204
       monitorship.reload
       refute monitorship.active
@@ -165,7 +165,7 @@ module ApiDiscussions
 
     def test_unfollow_user_id_invalid
       monitor_topic(first_topic, other_user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: 999)
+      delete :unfollow, construct_params({ id: first_topic.id, user_id: 908989 })
       assert_response :missing
     end
 
@@ -174,14 +174,14 @@ module ApiDiscussions
       user = User.find_by_id(monitor.user_id)
       email = user.email
       user.update_column(:email, nil)
-      delete :unfollow, construct_params({ id: monitor.monitorable_id }, user_id: user.id)
+      delete :unfollow, construct_params({ id: monitor.monitorable_id, user_id: user.id })
       assert_response 400
       user.update_column(:email, email)
     end
 
     def test_permit_toggle_params_deleted_user
       monitor_topic(first_topic, deleted_user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: deleted_user.id)
+      delete :unfollow, construct_params({ id: first_topic.id, user_id: deleted_user.id })
       assert_response 204
       deleted_user.update_column(:deleted, false)
     end

@@ -16,7 +16,7 @@ class Middleware::ApiRequestInterceptor
       extract_request_attributes(env)
       if content_type_required_method?
         valid_content_type = validate_content_type 
-      elsif @method == 'GET'
+      elsif ['GET', 'DELETE'].include?(@method)
         env["CONTENT_TYPE"] = env["Content-Type"] = nil
       end
       valid_accept_header = validate_accept_header if @accept_header 

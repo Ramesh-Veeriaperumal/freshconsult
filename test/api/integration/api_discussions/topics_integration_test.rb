@@ -105,7 +105,7 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
       v2[:unfollow], v2[:api_unfollow], v2[:unfollow_queries] = count_api_queries do
-        delete(api_follow_path, nil, @write_headers)
+        delete(api_follow_path, nil, @headers)
         assert_response 204
       end
 

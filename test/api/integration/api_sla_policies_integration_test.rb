@@ -32,7 +32,7 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 7,
         api_index: 1,
 
-        update: 17,
+        update: 18,
         index: 11
       }
       agent = add_test_agent(@account)

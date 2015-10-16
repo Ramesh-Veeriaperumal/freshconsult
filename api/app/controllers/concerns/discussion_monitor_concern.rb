@@ -1,14 +1,14 @@
 module DiscussionMonitorConcern
   extend ActiveSupport::Concern
   included do
-    before_filter :validate_toggle_params, only: [:follow, :unfollow]
+    before_filter :validate_toggle_params, only: [:follow]
 
     # followed_by and is_following would not follow the before_load_object, load_object, after_load_object flow,
     # as both methods do not require the topic/forum object to be loaded. Hence privileged_to_send_user? is not part of before_laod_object.
     before_filter :privileged_to_send_user?, only: [:followed_by, :is_following]
 
     # For same reason above validate_follow_params is not part of after_load_object.
-    before_filter :validate_follow_params, only: [:followed_by, :is_following]
+    before_filter :validate_follow_params, only: [:followed_by, :is_following, :unfollow]
 
     # find_monitorship is not aprt of after_load_object as that would necessitate a unfollow? check in after_load_object.
     before_filter :find_monitorship, only: [:unfollow]
@@ -60,7 +60,7 @@ module DiscussionMonitorConcern
     end
 
     def fetch_monitorship
-      @monitorship = get_monitorship(params).first_or_initialize
+      @monitorship = get_monitorship(params[cname]).first_or_initialize
     end
 
     def find_monitorship
@@ -68,9 +68,8 @@ module DiscussionMonitorConcern
       head 404 unless @monitorship
     end
 
-    def get_monitorship(params)
-      user_id = params[cname][:user_id] || api_current_user.id
-      Monitorship.where(user_id: user_id,
+    def get_monitorship(params_hash)
+      Monitorship.where(user_id: params_hash[:user_id],
                         monitorable_id: @item.id, monitorable_type: @item.class.to_s)
     end
 
@@ -80,9 +79,10 @@ module DiscussionMonitorConcern
     end
 
     def validate_toggle_params
-      toggle_params = DiscussionConstants::FOLLOWED_BY_FIELDS
+      toggle_params = DiscussionConstants::FOLLOW_FIELDS
       params[cname].permit(*toggle_params)
       validate params[cname]
+      params[cname][:user_id] ||= api_current_user.id
     end
 
     def validate_follow_params

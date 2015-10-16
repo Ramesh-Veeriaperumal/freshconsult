@@ -8,7 +8,7 @@ module DiscussionConstants
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'] }
   POST_FIELDS = %w(body_html answer)
   IS_FOLLOWING_FIELDS = ['user_id', 'id']
-  FOLLOWED_BY_FIELDS = ['user_id']
+  FOLLOWED_BY_FIELDS = FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id']
 
   # ValidationConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN
