@@ -422,7 +422,7 @@ module ApiDiscussions
     def test_before_filters_unfollow_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :unfollow, construct_params({ id: f_obj.id }, {})
+      delete :unfollow, controller_params({ id: f_obj.id }, {})
     end
 
     def test_before_filters_is_following_logged_in
@@ -437,14 +437,14 @@ module ApiDiscussions
     end
 
     def test_unfollow_invalid_forum_id
-      delete :unfollow, construct_params(id: 999)
+      delete :unfollow, controller_params(id: 999)
       assert_response :missing
     end
 
     def test_permit_toggle_params_valid
       Monitorship.where(monitorable_type: 'Forum', user_id: @agent.id,
                         monitorable_id: f_obj.id).first || monitor_forum(f_obj, @agent, 1)
-      delete :unfollow, construct_params({ id: f_obj.id, user_id: other_user.id})
+      delete :unfollow, controller_params({ id: f_obj.id, user_id: other_user.id})
       assert_response 204
       monitorship = Monitorship.where(monitorable_type: 'Forum', user_id: other_user.id, monitorable_id: f_obj.id).first
       refute monitorship.active
@@ -453,7 +453,7 @@ module ApiDiscussions
     def test_permit_toggle_params_deleted_user
       Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id,
                         monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
-      delete :unfollow, construct_params({ id: f_obj.id, user_id: deleted_user.id})
+      delete :unfollow, controller_params({ id: f_obj.id, user_id: deleted_user.id})
       assert_response 204
       deleted_user.update_column(:deleted, false)
     end
