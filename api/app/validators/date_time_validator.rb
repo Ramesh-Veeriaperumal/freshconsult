@@ -11,7 +11,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
     unless parse_time(values)
-      message = options[:message] || get_code
+      message = options[:message] || 'invalid_date'
       record.errors[attribute] << message
       (record.error_options ||= {}).merge!(attribute => { format: get_format })
     end
@@ -34,10 +34,6 @@ class DateTimeValidator < ActiveModel::EachValidator
   end
 
   private
-
-    def get_code
-      options[:only_date] ? 'invalid_date' : 'invalid_date_time'
-    end
 
     def get_format
       options[:only_date] ? 'yyyy-mm-dd' : 'yyyy-mm-ddThh:mm:ss±hh:mm'

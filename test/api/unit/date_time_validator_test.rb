@@ -26,8 +26,8 @@ class DateTimeValidatorTest < ActionView::TestCase
     test.fr_due_by = Time.zone.now.iso8601
     test.valid?
     refute test.errors.empty?
-    refute test.errors.full_messages.include?('Fr due by invalid_date_time')
-    assert test.errors.full_messages.include?('Due by invalid_date_time')
+    refute test.errors.full_messages.include?('Fr due by invalid_date')
+    assert test.errors.full_messages.include?('Due by invalid_date')
   end
 
   def test_attributes_multiple_error
@@ -53,14 +53,14 @@ class DateTimeValidatorTest < ActionView::TestCase
     test.due_by = ''
     test.valid?
     refute test.errors.empty?
-    assert test.errors.full_messages.include?('Due by invalid_date_time')
+    assert test.errors.full_messages.include?('Due by invalid_date')
   end
 
   def test_invalid_allow_nil
     test = TestValidation.new
     test.valid?
     refute test.errors.empty?
-    assert_equal ['Due by 1 invalid_date_time'], test.errors.full_messages
+    assert_equal ['Due by 1 invalid_date'], test.errors.full_messages
   end
 
   class TestFormat
@@ -117,30 +117,30 @@ class DateTimeValidatorTest < ActionView::TestCase
 
     values.each_with_index { |value, i| test.send("attr#{i}=", value) }
     refute test.valid?
-    errors = ['Attr0 invalid_date_time',
-              'Attr1 invalid_date_time',
-              'Attr3 invalid_date_time',
-              'Attr4 invalid_date_time',
-              'Attr5 invalid_date_time',
-              'Attr6 invalid_date_time',
-              'Attr7 invalid_date_time',
-              'Attr9 invalid_date_time',
-              'Attr10 invalid_date_time',
-              'Attr13 invalid_date_time',
-              'Attr14 invalid_date_time',
-              'Attr19 invalid_date_time',
-              'Attr20 invalid_date_time',
-              'Attr21 invalid_date_time',
-              'Attr22 invalid_date_time',
-              'Attr23 invalid_date_time',
-              'Attr26 invalid_date_time',
-              'Attr27 invalid_date_time',
-              'Attr28 invalid_date_time',
-              'Attr29 invalid_date_time',
-              'Attr30 invalid_date_time',
-              'Attr31 invalid_date_time',
-              'Attr32 invalid_date_time',
-              'Attr33 invalid_date_time'
+    errors = ['Attr0 invalid_date',
+              'Attr1 invalid_date',
+              'Attr3 invalid_date',
+              'Attr4 invalid_date',
+              'Attr5 invalid_date',
+              'Attr6 invalid_date',
+              'Attr7 invalid_date',
+              'Attr9 invalid_date',
+              'Attr10 invalid_date',
+              'Attr13 invalid_date',
+              'Attr14 invalid_date',
+              'Attr19 invalid_date',
+              'Attr20 invalid_date',
+              'Attr21 invalid_date',
+              'Attr22 invalid_date',
+              'Attr23 invalid_date',
+              'Attr26 invalid_date',
+              'Attr27 invalid_date',
+              'Attr28 invalid_date',
+              'Attr29 invalid_date',
+              'Attr30 invalid_date',
+              'Attr31 invalid_date',
+              'Attr32 invalid_date',
+              'Attr33 invalid_date'
              ]
 
     assert_equal errors, test.errors.full_messages

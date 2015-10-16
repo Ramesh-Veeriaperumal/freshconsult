@@ -11,7 +11,7 @@ class BadRequestErrorTest < ActionView::TestCase
       datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],
       invalid_field: ['invalid_field', "Can't update user when timer is running"],
       invalid_size: ['invalid_size'],
-      invalid_date: ['invalid_date', 'invalid_date_time']
+      invalid_date: ['invalid_date']
     }
     assert_equal error_codes, BaseError::API_ERROR_CODES
   end

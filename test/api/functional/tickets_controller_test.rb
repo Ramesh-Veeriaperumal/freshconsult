@@ -308,8 +308,9 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('fr_due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+  end
   end
 
   def test_create_with_due_by_without_fr_due_by
@@ -1373,8 +1374,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(due_by: '7/7669/0', fr_due_by: '7/9889/0')
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('fr_due_by', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('fr_due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_update_extra_params_invalid
