@@ -11,6 +11,7 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :check_account_state, :only => [:index]
   before_filter :redirect_to_mobile_url, :only=>[:index] 
   before_filter :set_mobile, :only => [:index]
+  before_filter :show_password_expiry_warning, :only => [:index]
   
   before_filter :load_items, :only => [:activity_list]
   before_filter :set_selected_tab

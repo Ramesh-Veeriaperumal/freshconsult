@@ -74,6 +74,7 @@ class Helpdesk::TicketsController < ApplicationController
     :unless => lambda { |controller| 
       controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
+  before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
  

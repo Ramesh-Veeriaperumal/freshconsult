@@ -336,6 +336,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/streams"
     resource :"social/welcome"
+    resource :"contact", :only => [:change_password, :update_password]
     resource :"social/facebook_page"
     resource :"social/facebook_tab"
     resource :"admin/survey"

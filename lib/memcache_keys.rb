@@ -118,6 +118,8 @@ module MemcacheKeys
 
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
 
+  ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
+
   class << self
 
     def newrelic_begin_rescue(&block)

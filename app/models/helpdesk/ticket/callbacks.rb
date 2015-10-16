@@ -362,7 +362,10 @@ private
   end 
 
   def push_update_notification
-	push_mobile_notification(:update)
+    if @model_changes.key?(:responder_id)
+      return unless send_agent_assigned_notification?
+    end
+    push_mobile_notification(:update) unless spam? || deleted? 
   end
 
   def push_mobile_notification(type)

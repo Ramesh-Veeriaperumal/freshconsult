@@ -219,7 +219,10 @@ class Solution::FoldersController < ApplicationController
       else
         change_result = !(@folders.map {|f| f.update_attributes(:visibility => @visibility)}.include?(false))
       end
-      flash[:notice] = t("solution.folders.visibility.#{change_result ? "success" : "failure"}")
+      @updated_folders = @folders.select { |f| f.valid? }
+      @other_folders = @folders - @updated_folders
+      flash[:notice] = visibility_update_flash_msg("success", @updated_folders) if @updated_folders.present?
+      flash[:error] = visibility_update_flash_msg("failure", @other_folders) if @other_folders.present?
     end
 
     def bulk_update_category
@@ -266,6 +269,13 @@ class Solution::FoldersController < ApplicationController
                       :count => @other_items.count - 1,
                       :category_name => h(@new_category.name.truncate(30)),
                       :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(30))
+        ).html_safe
+    end
+
+    def visibility_update_flash_msg(flag, items)
+      t("solution.flash.folders_visibility_"+flag,
+                      :count => items.count - 1,
+                      :folder_name => h(items.first.name.truncate(30))
         ).html_safe
     end
 

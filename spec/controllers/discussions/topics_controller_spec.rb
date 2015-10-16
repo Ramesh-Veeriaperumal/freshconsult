@@ -276,16 +276,57 @@ describe Discussions::TopicsController do
 			topic = @account.topics.find_by_title(ticket.subject)
 			topic.ticket.should_not be_nil
 			topic.ticket.id.should be_eql(ticket.id)
+      topic.user_id.should be_eql(ticket.requester_id)
+      topic.posts.first.user_id.should be_eql(ticket.requester_id)
+      topic.published?.should be_eql(true)
+      topic.posts.first.published?.should be_eql(true)
 		end
 
-		it "should redirect to topic page when topic is already created from ticket" do
+		it "should redirect to topic page when topic is already created from ticket for Topic New page" do
 			ticket = create_ticket({:status => 2 })
-			topic = create_test_topic(@forum)
-			topic.build_ticket_topic(ticketable_id: ticket.id, ticketable_type: 'Helpdesk::Ticket')
-			topic.save
-			topic.reload
-			get :new, :display_id => ticket.display_id
-			response.should redirect_to discussions_topic_path(topic)
+			post :create,
+				{ :topic =>
+						{:title=> ticket.subject,
+						:body_html=> ticket.description_html, 
+						:forum_id=> @forum.id,
+						:sticky => 0,
+						:locked => 0,
+						:display_id => ticket.display_id
+					},
+					:post => {}
+	      }
+			topic = @account.topics.find_by_title(ticket.subject)
+			get :new, :ticket_id => ticket.display_id
+			response.should redirect_to discussions_topic_path(ticket.topic)
+		end
+
+		it "should redirect to topic page when topic is already created from ticket for Topic Create action" do
+			ticket = create_ticket({:status => 2 })
+			post :create,
+				{ :topic =>
+						{:title=> ticket.subject,
+						:body_html=> ticket.description_html, 
+						:forum_id=> @forum.id,
+						:sticky => 0,
+						:locked => 0,
+						:display_id => ticket.display_id
+					},
+					:post => {}
+	      }
+			topic = @account.topics.find_by_title(ticket.subject)
+      
+      post :create,
+				{ :topic =>
+						{:title=> ticket.subject,
+						:body_html=> ticket.description_html, 
+						:forum_id=> @forum.id,
+						:sticky => 0,
+						:locked => 0,
+						:display_id => ticket.display_id
+					},
+					:post => {}
+	      }
+			response.should redirect_to discussions_topic_path(ticket.topic)
 		end
 
 	end

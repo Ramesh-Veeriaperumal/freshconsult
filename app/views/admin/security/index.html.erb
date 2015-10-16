@@ -186,14 +186,15 @@
     <li>
       <div class="ml10">
         <h3 class="rebrand-head-text top-space-none"><%= t('.admin_notifications') %></h3>
-        <div class="pull-left">
+        <div class="row-fluid">
+        <div class="span6">
           <div class="btn-bold pb5"><%= t('.send_notifications') %></div>
           <%= select_tag "account[account_configuration_attributes][]",
             options_for_select( @account.account_managers.collect{|i| [i.name, i.email]},
             selected = @account.account_configuration.contact_info[:notification_emails] ),
             { :class => "select2 required input-xlarge", :multiple => :multiple, :placeholder => t('.select_admin') } %>  
         </div>
-        <div class="pull-left notify-divider" style="">
+        <div class="span6 notify-divider" style="">
           <div class="btn-bold pb5"><%= t('.notifications') %></div>
           <ul>
             <li>
@@ -206,7 +207,32 @@
             <% end %>
           </ul>
         </div>
+        </div>
+        <div class="clear"></div>
       </div>
+    </li>
+
+    <li class="password-policy-section <%= 'disabled faded' if @account.sso_enabled? %>">
+      <div class="ml10">
+        <h3 class="rebrand-head-text top-space-none"><%= t('.password_security') %></h3>  
+          <p class="info-data">
+            <%= t('.password_policy_info1') %>
+            <%= t('.password_policy_info2') if(@agent_policy.new_record? or @contact_policy.new_record?) %>
+          </p>
+        <div class="row-fluid">   
+          <div class="span6 input-xlarge password-policy-container">
+            <div class="btn-bold pb5"><%= t('.for_agents') %></div>
+            <%= render :partial => "password_security",
+              :locals => { :user => "agent", :policy => @agent_policy  } %>
+          </div>
+          <div class="span6 notify-divider password-policy-container">
+            <div class="btn-bold pb5"><%= t('.for_contacts') %></div>
+            <%= render :partial => "password_security",
+              :locals => { :user => "contact",  :policy => @contact_policy} %>
+          </div>
+          <div class="clear"></div>     
+        </div>
+      </div>  
     </li>
   </ul>
 
@@ -221,7 +247,7 @@
 		</div>
 	</script>
 
-  <div class="button-container itil-hide pt20">
+  <div class="button-container row-fluid itil-hide pt20">
     <%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
     <%= f.submit t('save'), :class => "btn btn-primary" %>
   </div>
@@ -236,7 +262,10 @@
 
     $("#account_sso_enabled").bind("change",function(e){
       $("#sso_enabled_content").slideToggle(this.checked);
-      $("#sso_enabled_content").find(":text").not(":disabled").val("")
+      $("#sso_enabled_content").find(":text").not(":disabled").val("");
+      $(".password-policy-section").toggleClass("faded");
+      $(".password-policy-section").toggleClass("disabled");
+
     });
 
     function slide($slideObj, condition){
@@ -266,6 +295,22 @@
 
     $("#account_sso_options_sso_type_saml, #account_sso_options_sso_type_simple").bind("change", ssoFormSlideHandler );
 
+    $(".policies-checkbox").click(function(){
+      var container = $(this).parents('.policy-checkbox-container');
+      var select_opt = container.find('.select2')
+      if(select_opt){
+        select_opt.attr('disabled', !$(this).is(":checked"));
+        container.toggleClass('checked');
+      }
+    });
+
+    $(".password-policy-toggle").click(function(){
+      var container = $(this).parents('.password-policy-container');
+      var section  = $(this).val();
+      container.find('.password-policies').hide();
+      container.find('.password-policies[data-section="'+section+'"]').show();
+    });
+
     $("#account_ssl_enabled").bind("change", function(){
       $(".ssl_options").slideToggle(this.checked);
       if(!(this.checked)) $("#ssl_type_1").val("0");
@@ -279,7 +324,23 @@
       $('#ip-form').slideToggle(this.checked);
     });
 
+    function validatePasswordPolicy(){
+      $('.password-policy-container').each(function(){
+        var is_default = $(this).find(".password-policy-toggle[value='default']").is(":checked");
+        if(is_default){
+          $(this).find(".advanced-policies").removeAttr('checked');
+          $(this).find("#minimum-characters").attr('value', '');
+          $(this).find("#password-expiry").attr('value', '');
+        }
+      });
+    }
+
+    $('#sso_form').submit(function() {
+       validatePasswordPolicy();
+    });
+
     $(".submit_request").click(function(){
+
       if($("#sso_form").valid()){
         $(".submit_request").button('loading');
         var domain_name = $(".domain_field").val();

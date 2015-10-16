@@ -1,11 +1,13 @@
 module Freshfone::Conference::Branches::RoundRobinHandler
   include Freshfone::CallsRedisMethods
+  include Freshfone::Call::Branches::Bridge
   
   def handle_round_robin_calls
-    if round_robin_call?
+    if round_robin_agents_pending?
       initiate_round_robin
     else
       if params[:round_robin_call].present?
+        reset_presence_for_forward_calls
         end_customer_conference if batch_agents_online.blank?
         clear_batch_key(get_call_sid) 
       end
@@ -18,8 +20,13 @@ module Freshfone::Conference::Branches::RoundRobinHandler
   end
 
   private
-    def round_robin_call?
+    def round_robin_agents_pending?
       missed_call? && batch_agents_ids.present? && batch_agents_online.present?
+    end
+
+    def reset_presence_for_forward_calls
+      return unless params[:CallStatus] == 'completed'
+      check_for_bridged_calls
     end
 
     def batch_agents_ids
@@ -57,5 +64,9 @@ module Freshfone::Conference::Branches::RoundRobinHandler
     def missed_call?
       Freshfone::CallInitiator::VOICEMAIL_TRIGGERS.include?(params[:CallStatus]) and 
           !current_call.outgoing?
+    end
+
+    def call_forwarded?
+      params[:forward_call].present?
     end
 end

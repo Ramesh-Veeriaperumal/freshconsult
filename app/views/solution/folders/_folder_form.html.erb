@@ -32,7 +32,8 @@
 				<%= render_autocomplete({
 								:selected_values => selected_companies(@customer_id),
 								:type => :companies,
-								:dom_id => "folder_customers"
+								:dom_id => "folder_customers",
+								:max_limit => 250
 				}) %>
 			</div>
   	</div>

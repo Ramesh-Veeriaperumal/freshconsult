@@ -121,10 +121,10 @@ class Support::Mobihelp::TicketsController < SupportController
     def load_ticket
       @ticket = @item = if current_account.features_included?(:limit_mobihelp_results)
         Helpdesk::Ticket.includes(:mobihelp_notes =>  [:note_old_body])
-          .where(:id => params[:id], :account_id => current_account.id ).first
+          .where(:display_id => params[:id], :account_id => current_account.id ).first
       else
         Helpdesk::Ticket.includes(:notes =>  [:note_old_body, :attachments,:schema_less_note])
-          .where(:id => params[:id], :account_id => current_account.id ).first
+          .where(:display_id => params[:id], :account_id => current_account.id ).first
       end
     end
 
