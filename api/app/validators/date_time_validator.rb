@@ -6,7 +6,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   ZONE_PLUS_PREFIX       = '+'
   ZONE_MINUS_PREFIX      = '-'
   ISO_TIME_DELIMITER     = ':'
-  FORMAT_EXCEPTION_MSG   = "invalid_format"
+  FORMAT_EXCEPTION_MSG   = 'invalid_format'
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
@@ -45,7 +45,7 @@ class DateTimeValidator < ActiveModel::EachValidator
 
     def iso8601_format(value)
       fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ get_date_time_regex_for_value
-      return true
+      true
     end
 
     def get_date_time_regex_for_value

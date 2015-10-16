@@ -57,11 +57,11 @@ class TicketDelegator < SimpleDelegator
       @old_email_config_id = email_config_id
       product_email_config_match
     end
-    
+
     responder_belongs_to_group(flag) if responder_id && errors[:responder].blank? && errors[:group].blank?
 
     if flag
-      set_product_id(@old_product_id) 
+      set_product_id(@old_product_id)
       self.email_config_id = @old_email_config_id
     end
   end
@@ -73,22 +73,22 @@ class TicketDelegator < SimpleDelegator
   end
 
   def assign_email_config_and_product_values
-    validation_context == :create ? self.send(:assign_email_config_and_product) : self.send(:assign_email_config)
+    validation_context == :create ? send(:assign_email_config_and_product) : send(:assign_email_config)
   end
 
   def assign_email_config_and_product
     if email_config
       set_product_id(email_config.product_id)
     elsif get_product_id
-      self.email_config = self.schema_less_ticket.product.primary_email_config
+      self.email_config = schema_less_ticket.product.primary_email_config
     end
   end
 
   def assign_email_config
     return unless schema_less_ticket
-    if schema_less_ticket.changed.include?("product_id")
-      if self.product
-        self.email_config = self.product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != self.product.id))      
+    if schema_less_ticket.changed.include?('product_id')
+      if product
+        self.email_config = product.primary_email_config if email_config.nil? || (email_config.product.nil? || (email_config.product.id != product.id))
       else
         self.email_config = nil
       end
@@ -136,5 +136,4 @@ class TicketDelegator < SimpleDelegator
   def required_based_on_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
-
 end

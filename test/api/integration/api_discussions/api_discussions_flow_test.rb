@@ -18,15 +18,15 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     Post.last || create_test_post(t)
   end
 
-  JSON_ROUTES = Rails.application.routes.routes.select { |r| 
-                        r.path.spec.to_s.starts_with("/api/discussions/") && 
-                        ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
-                      }.collect { |x| 
-                          [ 
-                            x.path.spec.to_s.gsub("(.:format)", ''),  
-                            x.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase 
-                          ]
-                      }.to_h
+  JSON_ROUTES = Rails.application.routes.routes.select do |r|
+    r.path.spec.to_s.starts_with('/api/discussions/') &&
+    ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
+  end.collect do |x|
+    [
+      x.path.spec.to_s.gsub('(.:format)', ''),
+      x.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase
+    ]
+  end.to_h
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -106,11 +106,11 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     assert_response 201
     assert forum.customer_forums.count == 1
 
-    put "/api/discussions/forums/#{forum.id}", {company_ids: nil}.to_json, @write_headers
+    put "/api/discussions/forums/#{forum.id}", { company_ids: nil }.to_json, @write_headers
     assert_response 400
     match_json([bad_request_error_pattern('company_ids', 'data_type_mismatch', data_type: 'Array')])
 
-    put "/api/discussions/forums/#{forum.id}", {company_ids: []}.to_json, @write_headers
+    put "/api/discussions/forums/#{forum.id}", { company_ids: [] }.to_json, @write_headers
     assert_response 200
     assert forum.reload.customer_forums.count == 0
   end

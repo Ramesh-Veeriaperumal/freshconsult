@@ -67,7 +67,7 @@ module TestCaseMethods
     if wrapped
       wrapped_params = wrap_cname(wrapped)
       @request.env['RAW_POST_DATA'] = wrapped.to_json
-      params_hash.merge!(wrapped_params) 
+      params_hash.merge!(wrapped_params)
     end
     params_hash
   end

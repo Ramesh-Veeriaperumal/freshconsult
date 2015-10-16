@@ -43,7 +43,7 @@ class NoteValidationTest < ActionView::TestCase
     assert errors.include?('Notify emails data_type_mismatch')
     assert errors.include?('Bcc emails data_type_mismatch')
     assert errors.include?('Cc emails data_type_mismatch')
-    assert errors.include?("Attachments data_type_mismatch")
+    assert errors.include?('Attachments data_type_mismatch')
     Account.unstub(:current)
   end
 end

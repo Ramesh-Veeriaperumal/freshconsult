@@ -50,10 +50,10 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_invalid_field_handler_with_invalid_parseable_json
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    @controller.request.env['RAW_POST_DATA'] = "test junk"
+    @controller.request.env['RAW_POST_DATA'] = 'test junk'
     @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
     assert_nothing_raised do
-      @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(["_json"]))
+      @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(['_json']))
     end
     assert_equal response.status, 400
     assert_equal response.body, request_error_pattern(:invalid_json).to_json
@@ -62,11 +62,11 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_handle_empty_array
     response = ActionDispatch::TestResponse.new
     @controller.response = response
-    @controller.params = ActionController::Parameters.new({"api_application" => {"requester_id" => nil}})
+    @controller.params = ActionController::Parameters.new('api_application' => { 'requester_id' => nil })
     @controller.request.env['RAW_POST_DATA'] = "{\n\"requester_id\":[]\n}"
     @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
     @controller.send(:handle_empty_array)
-    assert_equal({"requester_id" => []}.to_h, @controller.params["api_application"].to_h)
+    assert_equal({ 'requester_id' => [] }.to_h, @controller.params['api_application'].to_h)
   end
 
   def test_route_not_found_with_method_not_allowed
@@ -157,7 +157,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert response.body.blank?
   end
 
-  def test_validate_content_type_with_non_json_post_request 
+  def test_validate_content_type_with_non_json_post_request
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     request = ActionDispatch::TestRequest.new

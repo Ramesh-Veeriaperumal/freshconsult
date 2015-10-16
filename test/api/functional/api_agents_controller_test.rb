@@ -80,7 +80,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_filter_invalid_state
     get :index, controller_params(state: 'active')
     assert_response 400
-    match_json([bad_request_error_pattern('state', 'not_included', list: "occasional,fulltime")])
+    match_json([bad_request_error_pattern('state', 'not_included', list: 'occasional,fulltime')])
   end
 
   def test_show_agent

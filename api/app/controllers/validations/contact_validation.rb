@@ -7,19 +7,19 @@ class ContactValidation < ApiValidation
   alias_attribute :tags, :tag_names
 
   # Default fields validation
-  validates :email, :phone, :mobile, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, default_field: 
-                              { 
+  validates :email, :phone, :mobile, :company_name, :tag_names, :address, :job_title, :twitter_id, :language, :time_zone, :description, default_field:
+                              {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: ContactConstants::DEFAULT_FIELD_VALIDATIONS
                               }
 
   validates :name, required: true, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
   validates :client_manager, data_type: { rules: 'Boolean', allow_nil: true,  ignore_string: :allow_string_param }
- 
+
   validate :contact_detail_missing
   validate :check_update_email, if: -> { email }, on: :update
 
-  validates :company_name, required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' } 
+  validates :company_name, required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' }
 
   validates :custom_fields, data_type: { rules: Hash, allow_nil: false, allow_unset: true  }, allow_nil: true
   validates :custom_fields, custom_field: { custom_fields: {
@@ -31,7 +31,7 @@ class ContactValidation < ApiValidation
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     min: nil, max: ContactConstants::ALLOWED_AVATAR_SIZE, base_size: 0 }, if: -> { avatar }
-  validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? } 
+  validate :validate_avatar, if: -> { avatar && errors[:avatar].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -40,13 +40,13 @@ class ContactValidation < ApiValidation
   end
 
   def required_default_fields
-    Account.current.contact_form.default_contact_fields.select{ |x| x.required_for_agent  }
+    Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
   end
 
   private
 
     def contact_detail_missing
-      if [:email, :mobile, :phone, :twitter_id].all?{ |x| send(x).blank? && errors[x].blank? }
+      if [:email, :mobile, :phone, :twitter_id].all? { |x| send(x).blank? && errors[x].blank? }
         errors.add(:email, 'fill_a_mandatory_field')
       end
     end
@@ -64,5 +64,4 @@ class ContactValidation < ApiValidation
     def attributes_to_be_stripped
       ContactConstants::FIELDS_TO_BE_STRIPPED
     end
-
 end

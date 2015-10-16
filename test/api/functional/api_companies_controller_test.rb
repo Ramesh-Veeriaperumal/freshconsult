@@ -372,41 +372,41 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_create_with_all_default_fields_required_invalid
     default_non_required_fiels = CompanyField.where(required_for_agent: false, column_name: 'default')
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
-    match_json([bad_request_error_pattern('description', 'required_and_data_type_mismatch', {data_type: 'String'}),
-                bad_request_error_pattern('domains', 'required_and_data_type_mismatch', {data_type: 'Array'}),
-                bad_request_error_pattern('note','required_and_data_type_mismatch', {data_type: 'String'})])
+    match_json([bad_request_error_pattern('description', 'required_and_data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('domains', 'required_and_data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('note', 'required_and_data_type_mismatch', data_type: 'String')])
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 
   def test_create_with_all_default_fields_required_valid
     default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         note: Faker::Lorem.characters(15),
                                         description: Faker::Lorem.characters(300),
                                         domains: [Faker::Name.name, Faker::Name.name]
-                                        )
+                                  )
     assert_response 201
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     put :update, construct_params({ id: company.id },  domains: [],
-                                        description: nil,
-                                        note: nil)
+                                                       description: nil,
+                                                       note: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('note', 'data_type_mismatch', {data_type: 'String'}),
-                bad_request_error_pattern('description', 'data_type_mismatch', {data_type: 'String'}),
-                bad_request_error_pattern('domains', "can't be blank", {data_type: 'Array'})])
+    match_json([bad_request_error_pattern('note', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('domains', "can't be blank", data_type: 'Array')])
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 
   def clear_contact_field_cache

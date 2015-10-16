@@ -25,10 +25,10 @@ class ErrorHelper
         end
       end
     end
-    
+
     def rename_keys(mappings, fields_hash)
       return if fields_hash.blank?
-      fields_hash.keys.each { |k| fields_hash[ mappings[k] ] = fields_hash.delete(k) if mappings[k] }
+      fields_hash.keys.each { |k| fields_hash[mappings[k]] = fields_hash.delete(k) if mappings[k] }
     end
   end
 end

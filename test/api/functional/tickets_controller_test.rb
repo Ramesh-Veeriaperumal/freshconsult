@@ -106,7 +106,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     post :create, construct_params({}, params)
     assert_response 201
-    params[:custom_fields]["test_custom_date_1"] = params[:custom_fields]["test_custom_date_1"].to_time.iso8601  
+    params[:custom_fields]['test_custom_date_1'] = params[:custom_fields]['test_custom_date_1'].to_time.iso8601
     match_json(ticket_pattern(params, Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
@@ -395,11 +395,11 @@ class TicketsControllerTest < ActionController::TestCase
     params = {}
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory'), 
-      bad_request_error_pattern('subject', 'missing'),
-      bad_request_error_pattern('description', 'missing'),
-      bad_request_error_pattern('priority', 'required_and_inclusion', list: '1,2,3,4'),
-      bad_request_error_pattern('status', 'required_and_inclusion', list: '2,3,4,5,6,7')])
+    match_json([bad_request_error_pattern('requester_id', 'requester_id_mandatory'),
+                bad_request_error_pattern('subject', 'missing'),
+                bad_request_error_pattern('description', 'missing'),
+                bad_request_error_pattern('priority', 'required_and_inclusion', list: '1,2,3,4'),
+                bad_request_error_pattern('status', 'required_and_inclusion', list: '2,3,4,5,6,7')])
   end
 
   def test_create_with_existing_user
@@ -888,7 +888,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 200
-    params_hash[:custom_fields]["test_custom_date_1"] = params_hash[:custom_fields]["test_custom_date_1"].to_time.iso8601  
+    params_hash[:custom_fields]['test_custom_date_1'] = params_hash[:custom_fields]['test_custom_date_1'].to_time.iso8601
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
   end
@@ -2158,66 +2158,66 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_all_default_fields_required_invalid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
     assert_response 400
     match_json([bad_request_error_pattern('description', 'missing'),
                 bad_request_error_pattern('subject', 'missing'),
                 bad_request_error_pattern('group_id', 'required_and_data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', 'required_and_data_type_mismatch', {data_type: 'Positive Integer'}),
-                bad_request_error_pattern('product_id', 'required_and_data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('responder_id', 'required_and_data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', 'required_and_data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', 'required_and_inclusion', list: '1,2,3,4'),
                 bad_request_error_pattern('status', 'required_and_inclusion', list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', 'required_and_inclusion', list: 'Question,Incident,Problem,Feature Request,Lead'),
                 bad_request_error_pattern('source', 'required_and_inclusion', list: '1,2,3,7,8,9')])
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
   end
 
   def test_create_with_all_default_fields_required_valid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
     product = create_product(email: Faker::Internet.email)
     post :create, construct_params({},  requester_id: @agent.id,
                                         status: 2,
                                         priority: 2,
-                                        type:'Lead',
+                                        type: 'Lead',
                                         source: 1,
                                         description: Faker::Lorem.characters(15),
                                         group_id: ticket_params_hash[:group_id],
                                         responder_id: ticket_params_hash[:responder_id],
                                         product_id: product.id,
                                         subject: Faker::Lorem.characters(15)
-                                        )
+                                  )
     assert_response 201
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
   end
 
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
-    put :update, construct_params({id: ticket.id},  subject: nil,
-                                        description: nil,
-                                        group_id: nil,
-                                        product_id: nil,
-                                        responder_id: nil,
-                                        status: nil,
-                                        priority: nil,
-                                        source: nil,
-                                        type: nil
-                                        )
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
+    put :update, construct_params({ id: ticket.id },  subject: nil,
+                                                      description: nil,
+                                                      group_id: nil,
+                                                      product_id: nil,
+                                                      responder_id: nil,
+                                                      status: nil,
+                                                      priority: nil,
+                                                      source: nil,
+                                                      type: nil
+                                 )
     assert_response 400
     match_json([bad_request_error_pattern('description', "can't be blank"),
                 bad_request_error_pattern('subject', "can't be blank"),
                 bad_request_error_pattern('group_id', 'data_type_mismatch', data_type: 'Positive Integer'),
-                bad_request_error_pattern('responder_id', 'data_type_mismatch', {data_type: 'Positive Integer'}),
-                bad_request_error_pattern('product_id', 'data_type_mismatch', {data_type: 'Positive Integer'}),
+                bad_request_error_pattern('responder_id', 'data_type_mismatch', data_type: 'Positive Integer'),
+                bad_request_error_pattern('product_id', 'data_type_mismatch', data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', 'not_included', list: '1,2,3,4'),
                 bad_request_error_pattern('status', 'not_included', list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', 'not_included', list: 'Question,Incident,Problem,Feature Request,Lead'),
                 bad_request_error_pattern('source', 'not_included', list: '1,2,3,7,8,9')])
   ensure
-    default_non_required_fiels.map{|x| x.toggle!(:required)}
+    default_non_required_fiels.map { |x| x.toggle!(:required) }
   end
 end

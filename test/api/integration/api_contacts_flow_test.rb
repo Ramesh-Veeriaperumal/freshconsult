@@ -21,7 +21,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     old_value.make_current unless old_value.nil?
   end
 
-  JSON_ROUTES = {'/api/contacts/1/restore' => 'put'}
+  JSON_ROUTES = { '/api/contacts/1/restore' => 'put' }
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -137,17 +137,17 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def test_empty_tags
-    skip_bullet do 
+    skip_bullet do
       params = v2_contact_params.merge(tags: [Faker::Name.name])
       post '/api/contacts', params.to_json, @write_headers
       contact = User.find_by_email(params[:email])
       assert_response 201
       assert contact.tag_names.split(',').count == 1
-      
-      put "/api/contacts/#{contact.id}", {tags: nil}.to_json, @write_headers  
+
+      put "/api/contacts/#{contact.id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
 
-      put "/api/contacts/#{contact.id}", {tags: []}.to_json, @write_headers
+      put "/api/contacts/#{contact.id}", { tags: [] }.to_json, @write_headers
       assert_response 200
       assert contact.reload.tag_names.split(',').count == 0
     end

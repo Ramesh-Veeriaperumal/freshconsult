@@ -65,7 +65,7 @@ class TimeEntryValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
-    controller_params = {start_time: nil}
+    controller_params = { start_time: nil }
     time_entry = TimeEntryValidation.new(controller_params, item, true)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
@@ -76,7 +76,7 @@ class TimeEntryValidationTest < ActionView::TestCase
   def test_start_time_when_timer_running_is_false
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = {start_time: nil, timer_running: false}
+    controller_params = { start_time: nil, timer_running: false }
     time_entry = TimeEntryValidation.new(controller_params, nil, false)
     time_entry.valid?
     error = time_entry.errors.full_messages
@@ -111,7 +111,7 @@ class TimeEntryValidationTest < ActionView::TestCase
   def test_billable_does_not_allow_empty_string
     Account.stubs(:current).returns(Account.first)
     tkt = Helpdesk::Ticket.first
-    controller_params = { 'billable' => ""}
+    controller_params = { 'billable' => '' }
     item = Helpdesk::TimeSheet.new(timer_running: true, user_id: 2)
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)
@@ -129,15 +129,15 @@ class TimeEntryValidationTest < ActionView::TestCase
     error = time_entry.errors.full_messages
     assert_equal [], error
 
-    controller_params = {billable: true}
+    controller_params = { billable: true }
     time_entry = TimeEntryValidation.new(controller_params, item, false)
     time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert_equal [], error
 
-    controller_params = {billable: false}
+    controller_params = { billable: false }
     time_entry = TimeEntryValidation.new(controller_params, item, false)
-    time_entry.valid?(:update)    
+    time_entry.valid?(:update)
     error = time_entry.errors.full_messages
     assert_equal [], error
   end

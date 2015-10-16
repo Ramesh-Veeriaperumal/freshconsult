@@ -9,5 +9,5 @@ class ApiGroupValidation < ApiValidation
 
   def attributes_to_be_stripped
     GroupConstants::FIELDS_TO_BE_STRIPPED
-  end 
+  end
 end

@@ -108,9 +108,9 @@ class DateTimeValidatorTest < ActionView::TestCase
               '2009-02-28T24:00:00++2359', # invalid_time_zone_format
               '2009-02-28T24:00:00+2399', # invalid_minutes_in_time_zone
               '2009-02-28T24:00:00+2400', # invalid_hours_in_time_zone
-              '2015-280', # accepted by iso but invalid format 
-              '2015-W4-3', # accepted by iso but invalid format 
-              '20150909', # accepted by iso but invalid format 
+              '2015-280', # accepted by iso but invalid format
+              '2015-W4-3', # accepted by iso but invalid format
+              '20150909', # accepted by iso but invalid format
               '2015-09-09T0909', # invalid without hyphen in time
               '2015-09-09T09:09+0530', # valid without second info
              ]
@@ -141,17 +141,17 @@ class DateTimeValidatorTest < ActionView::TestCase
               'Attr31 invalid_date_time',
               'Attr32 invalid_date_time',
               'Attr33 invalid_date_time'
-              ]
+             ]
 
     assert_equal errors, test.errors.full_messages
   end
 
   def test_date_comparison_with_time_zones
     zone = Time.zone
-    Time.zone = "UTC"
+    Time.zone = 'UTC'
     utc_time = Time.zone.now
     utc_time_string = utc_time.iso8601
-    zone_time = (utc_time - 1.second).in_time_zone("Chennai")
+    zone_time = (utc_time - 1.second).in_time_zone('Chennai')
     zone_time_string = zone_time.iso8601
     assert zone_time_string > utc_time_string # zone_time_string is greater than utc_time_string when string comparison is done.
     assert utc_time > zone_time_string # when one of the operands is a Time object AR compares time info with time zones properly
@@ -168,7 +168,7 @@ class DateTimeValidatorTest < ActionView::TestCase
 
     attr_accessor(*ATTRIBUTES, :error_options)
 
-    validates(*ATTRIBUTES, date_time: {only_date: true})
+    validates(*ATTRIBUTES, date_time: { only_date: true })
   end
 
   def test_invalid_date_format
@@ -204,9 +204,9 @@ class DateTimeValidatorTest < ActionView::TestCase
               '2009-02-28T24:00:00++2359', # invalid_time_zone_format
               '2009-02-28T24:00:00+2399', # invalid_minutes_in_time_zone
               '2009-02-28T24:00:00+2400', # invalid_hours_in_time_zone
-              '2015-280', # accepted by iso but invalid format 
-              '2015-W4-3', # accepted by iso but invalid format 
-              '20150909', # accepted by iso but invalid format 
+              '2015-280', # accepted by iso but invalid format
+              '2015-W4-3', # accepted by iso but invalid format
+              '20150909', # accepted by iso but invalid format
               '2015-09-09T0909', # invalid without hyphen in time
               '2015-09-09T09:09+0530', # valid without second info # but has time info so invalid
              ]
@@ -245,10 +245,9 @@ class DateTimeValidatorTest < ActionView::TestCase
               'Attr31 invalid_date',
               'Attr32 invalid_date',
               'Attr33 invalid_date',
-              'Attr34 invalid_date',
-              ]
+              'Attr34 invalid_date'
+             ]
 
     assert_equal errors, test.errors.full_messages
   end
-
 end

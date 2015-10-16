@@ -10,7 +10,7 @@ class ApiApplicationController < MetalApiController
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
   before_filter :validate_content_type
-  before_filter :handle_empty_array, :if => :complex_fields_has_nil?
+  before_filter :handle_empty_array, if: :complex_fields_has_nil?
 
   include Concerns::ApplicationConcern
 
@@ -134,7 +134,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def handle_invalid_parseable_json(exception_params)
-      return false unless exception_params.join == "_json"
+      return false unless exception_params.join == '_json'
       render_request_error :invalid_json, 400
       true
     end
@@ -291,18 +291,18 @@ class ApiApplicationController < MetalApiController
 
       # Remove raw errors from model if remove option specified
       Array.wrap(options.delete(:remove)).each { |field| item.errors[field].clear } if options
-      
+
       # Rename keys in error_options if error_options_mappings exists
       if merge_item_error_options && item.error_options
         ErrorHelper.rename_keys(error_options_mappings, item.error_options)
-        (options ||= {}).merge!(item.error_options) 
+        (options ||= {}).merge!(item.error_options)
       end
       render_errors(item.errors, options)
     end
 
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
     def error_options_mappings
-      { }
+      {}
     end
 
     def render_errors(errors, meta = nil)

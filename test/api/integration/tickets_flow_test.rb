@@ -3,7 +3,7 @@ require_relative '../test_helper'
 class TicketsFlowTest < ActionDispatch::IntegrationTest
   include Helpers::TicketsHelper
 
-  JSON_ROUTES = {'/api/tickets/1/restore' => 'put'}
+  JSON_ROUTES = { '/api/tickets/1/restore' => 'put' }
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -85,11 +85,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def sample_product
-    Product.all.detect{|p| p.primary_email_config.present?} || create_product
+    Product.all.detect { |p| p.primary_email_config.present? } || create_product
   end
 
   def other_product(product)
-    Product.where("id != ?", product.id).first || create_product
+    Product.where('id != ?', product.id).first || create_product
   end
 
   def sample_group
@@ -97,16 +97,16 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def other_group(group)
-    Group.where("id != ?", group.id).first || create_group(@account)
+    Group.where('id != ?', group.id).first || create_group(@account)
   end
 
   def agent(group)
-    group.agents.first || add_agent(@account, {group_id: group.id, name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1,
-                                                agent: 1, role_ids: [@account.roles.find_by_name('Agent').id.to_s], ticket_permission: 1})
+    group.agents.first || add_agent(@account, group_id: group.id, name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1,
+                                              agent: 1, role_ids: [@account.roles.find_by_name('Agent').id.to_s], ticket_permission: 1)
   end
 
   def other_email_config(*email_configs)
-    EmailConfig.where("id not in (?) and primary_role = false", email_configs.map(&:id)).first || create_email_config
+    EmailConfig.where('id not in (?) and primary_role = false', email_configs.map(&:id)).first || create_email_config
   end
 
   def v2_ticket_params_sans_group
@@ -135,8 +135,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_email_config_product_nil_values
     setup_for_email_config_product_test
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: nil, product_id: nil}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: nil, product_id: nil).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     ticket = Helpdesk::Ticket.last
     assert_nil ticket.email_config
@@ -146,71 +146,71 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_responder_product_with_matching_email_config_and_group
     setup_for_email_config_product_test
-    params = v2_ticket_params_sans_group.merge({responder_id: @responder.id, product_id: @product_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(responder_id: @responder.id, product_id: @product_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     assert_equal @group_1, Helpdesk::Ticket.last.group
   end
 
   def test_email_config_responder_with_matching_group
     setup_for_email_config_product_test
-    params = v2_ticket_params_sans_group.merge({responder_id: @responder.id, email_config_id: @primary_email_config_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(responder_id: @responder.id, email_config_id: @primary_email_config_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     assert_equal @group_1, Helpdesk::Ticket.last.group
   end
 
   def test_responder_group_mismatch
     setup_for_email_config_product_test
-    params = v2_ticket_params_sans_group.merge({responder_id: @responder.id, group_id: @group_2.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(responder_id: @responder.id, group_id: @group_2.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("responder_id", "not_part_of_group")])
+    match_json([bad_request_error_pattern('responder_id', 'not_part_of_group')])
 
     # mismatched group will get assigned in callbacks from ec
-    params = v2_ticket_params_sans_group.merge({responder_id: @responder.id, email_config_id: @primary_email_config_2.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(responder_id: @responder.id, email_config_id: @primary_email_config_2.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("responder_id", "not_part_of_email_config_group")])
+    match_json([bad_request_error_pattern('responder_id', 'not_part_of_email_config_group')])
 
     # mismatched group will get assigned in callbacks, ec from product and group from ec in next save.
-    params = v2_ticket_params_sans_group.merge({responder_id: @responder.id, product_id: @product_2.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(responder_id: @responder.id, product_id: @product_2.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("responder_id", "not_part_of_email_config_group")])
+    match_json([bad_request_error_pattern('responder_id', 'not_part_of_email_config_group')])
 
     last_ticket = Helpdesk::Ticket.last
     last_ticket.update_column(:responder_id, @responder.id)
     last_ticket.update_column(:group_id, nil)
     last_ticket.schema_less_ticket.update_column(:product_id, @product_1.id)
-byebug
+
     # mismatched group will get assigned in callbacks, ec from product and group from ec in next save.
-    params = v2_ticket_params_sans_group.merge({product_id: @product_2.id}).to_json
+    params = v2_ticket_params_sans_group.merge(product_id: @product_2.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("responder_id", "not_part_of_email_config_group")])
+    match_json([bad_request_error_pattern('responder_id', 'not_part_of_email_config_group')])
 
     # mismatched group will get assigned in callbacks from ec
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_2.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_2.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("responder_id", "not_part_of_email_config_group")])
+    match_json([bad_request_error_pattern('responder_id', 'not_part_of_email_config_group')])
   end
 
   def test_email_config_product_present_mismatch
     setup_for_email_config_product_test
     # create mismatch
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: @email_config_1.id, 
-      product_id: @product_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
+                                               product_id: @product_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("product_id", "product_mismatch")])
+    match_json([bad_request_error_pattern('product_id', 'product_mismatch')])
 
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: @email_config_1.id, 
-      product_id: nil}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
+                                               product_id: nil).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("product_id", "product_mismatch")])
+    match_json([bad_request_error_pattern('product_id', 'product_mismatch')])
 
     last_ticket = Helpdesk::Ticket.last
     last_ticket.update_column(:group_id, nil)
@@ -218,90 +218,90 @@ byebug
     last_ticket.reload
 
     # nil will get assigned to ec in callbacks
-    params = v2_ticket_params_sans_group.merge({email_config_id: @email_config_1.id, product_id: nil}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @email_config_1.id, product_id: nil).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     # update mismatch
-    params = {email_config_id: @email_config_1.id, product_id: @product_1.id}.to_json
+    params = { email_config_id: @email_config_1.id, product_id: @product_1.id }.to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: nil, 
-      product_id: @product_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: nil,
+                                               product_id: @product_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     last_ticket.schema_less_ticket.update_column(:product_id, nil)
     last_ticket.update_column(:email_config_id, nil)
     last_ticket.reload
 
     # ec will not be nil after callbacks when both are nil
-    params = v2_ticket_params_sans_group.merge({email_config_id: nil, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: nil, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     # update mismatch when both are nil
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_2.id, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_2.id, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     last_ticket.schema_less_ticket.update_column(:product_id, @product_2.id)
     last_ticket.reload
 
     # ec will not be nil after callbacks when email_config_id is nil
-    params = v2_ticket_params_sans_group.merge({email_config_id: nil, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: nil, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     last_ticket.update_column(:email_config_id, @primary_email_config_1.id)
     last_ticket.reload
 
     # ec will be nil after callbacks
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_1.id, product_id: nil}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_1.id, product_id: nil).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")]) 
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     # ec will not be nil after callbacks when both are present
-    params = v2_ticket_params_sans_group.merge({email_config_id: nil, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: nil, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")])    
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     # update_mismatch when both are present
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_2.id, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_2.id, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")]) 
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     last_ticket.schema_less_ticket.update_column(:product_id, nil)
-    last_ticket.reload  
+    last_ticket.reload
 
     # ec will not be nil after callbacks when product is nil
-    params = v2_ticket_params_sans_group.merge({email_config_id: nil, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: nil, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")]) 
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     # update mismatch when product is nil
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_2.id, product_id: @product_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_2.id, product_id: @product_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 400
-    match_json([bad_request_error_pattern("email_config_id", "email_config_mismatch")]) 
+    match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
   end
 
   def test_email_config_product_present_valid
     setup_for_email_config_product_test
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: @email_config_1.id, 
-      product_id: @product_2.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
+                                               product_id: @product_2.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     ticket = Helpdesk::Ticket.last
     assert_equal @email_config_1, ticket.email_config
@@ -312,8 +312,8 @@ byebug
   def test_default_product_assignment_from_email_config
     setup_for_email_config_product_test
 
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id, email_config_id: @email_config_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id, email_config_id: @email_config_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     ticket = Helpdesk::Ticket.last
     assert_equal @email_config_1, ticket.email_config
@@ -322,12 +322,11 @@ byebug
   end
 
   def test_default_email_config_assignment_from_product
-    byebug
     setup_for_email_config_product_test
 
-    params = v2_ticket_params_sans_group.merge({requester_id: @agent.id,
-      product_id: @product_1.id}).to_json
-    skip_bullet { post "/api/tickets", params, @write_headers }
+    params = v2_ticket_params_sans_group.merge(requester_id: @agent.id,
+                                               product_id: @product_1.id).to_json
+    skip_bullet { post '/api/tickets', params, @write_headers }
 
     assert_response 201
     ticket = Helpdesk::Ticket.last
@@ -336,9 +335,9 @@ byebug
     assert_equal @group_1, ticket.reload.group
 
     # default email_config gets assigned on update as it is nil.
-    skip_bullet { put "/api/tickets/#{ticket.display_id}", {email_config_id: nil}.to_json, @write_headers }
+    skip_bullet { put "/api/tickets/#{ticket.display_id}", { email_config_id: nil }.to_json, @write_headers }
 
-    params = v2_ticket_params_sans_group.merge({product_id: @product_2.id}).to_json
+    params = v2_ticket_params_sans_group.merge(product_id: @product_2.id).to_json
     skip_bullet { put "/api/tickets/#{ticket.display_id}", params, @write_headers }
     assert_response 200
     assert_equal @primary_email_config_2, ticket.reload.email_config
@@ -346,7 +345,7 @@ byebug
     assert_equal @group_1, ticket.reload.group
 
     # passed email_config gets assigned as it matches with the product
-    params = v2_ticket_params_sans_group.merge({email_config_id: @email_config_1.id, product_id: @product_2.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @email_config_1.id, product_id: @product_2.id).to_json
     skip_bullet { put "/api/tickets/#{ticket.display_id}", params, @write_headers }
     assert_response 200
     assert_equal @email_config_1, ticket.reload.email_config
@@ -357,26 +356,25 @@ byebug
   def test_email_config_with_matching_group
     setup_for_email_config_product_test
     last_ticket = Helpdesk::Ticket.last
-    params = v2_ticket_params_sans_group.merge({email_config_id: @primary_email_config_2.id, group_id: @group_1.id}).to_json
+    params = v2_ticket_params_sans_group.merge(email_config_id: @primary_email_config_2.id, group_id: @group_1.id).to_json
     skip_bullet { put "/api/tickets/#{last_ticket.display_id}", params, @write_headers }
     assert_response 200
     assert_equal @group_1, last_ticket.reload.group
     assert_equal @primary_email_config_2, last_ticket.email_config
   end
 
-
   def test_empty_tags
-    skip_bullet do 
+    skip_bullet do
       params = v2_ticket_params.merge(tags: [Faker::Name.name])
       post '/api/tickets', params.to_json, @write_headers
       ticket = Helpdesk::Ticket.find_by_subject(params[:subject])
       assert_response 201
       assert ticket.tags.count == 1
-      
-      put "/api/tickets/#{ticket.id}", {tags: nil}.to_json, @write_headers  
+
+      put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
 
-      put "/api/tickets/#{ticket.id}", {tags: []}.to_json, @write_headers
+      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
       assert_response 200
       assert ticket.reload.tags.count == 0
     end

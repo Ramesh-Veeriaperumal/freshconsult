@@ -68,7 +68,7 @@ class ForumValidationsTest < ActionView::TestCase
   end
 
   def test_update_forum_type_invalid
-    controller_params = {forum_type: nil}
+    controller_params = { forum_type: nil }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
@@ -77,7 +77,7 @@ class ForumValidationsTest < ActionView::TestCase
   end
 
   def test_company_ids_invalid
-    controller_params = {company_ids: nil}
+    controller_params = { company_ids: nil }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
@@ -86,7 +86,7 @@ class ForumValidationsTest < ActionView::TestCase
   end
 
   def test_company_ids_data_type_mismatch
-    controller_params = {company_ids: nil}
+    controller_params = { company_ids: nil }
     item = Forum.new(forum_type: 1, forum_visibility: 4, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)

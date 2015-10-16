@@ -8,8 +8,8 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    delegator_options = {ticket_fields: @ticket_fields, 
-      product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id)}
+    delegator_options = { ticket_fields: @ticket_fields,
+                          product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id) }
     ticket_delegator = TicketDelegator.new(@item, delegator_options)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
@@ -26,8 +26,8 @@ class TicketsController < ApiApplicationController
 
   def update
     assign_protected
-    delegator_options = {ticket_fields: @ticket_fields, 
-      product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id)}
+    delegator_options = { ticket_fields: @ticket_fields,
+                          product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id) }
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
@@ -137,7 +137,7 @@ class TicketsController < ApiApplicationController
 
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
       @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup } unless cc_emails.nil?
-    
+
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
       ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @ticket_fields) if params[cname][:custom_fields]

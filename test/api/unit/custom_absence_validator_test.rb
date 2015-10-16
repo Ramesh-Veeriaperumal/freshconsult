@@ -11,10 +11,10 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
 
   def test_attribute_defined
     test = TestValidation.new
-    test.name = "hjhj"
+    test.name = 'hjhj'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: "present"}, errors)
+    assert_equal({ name: 'present' }, errors)
   end
 
   def test_attribute_not_defined
@@ -35,14 +35,14 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
     test.name = nil
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: "present"}, errors)
+    assert_equal({ name: 'present' }, errors)
   end
 
   def test_custom_message
     test = TestValidation.new
-    test.id = "nnn"
+    test.id = 'nnn'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ id: "required_and_numericality"}, errors)
+    assert_equal({ id: 'required_and_numericality' }, errors)
   end
 end

@@ -7,13 +7,13 @@ class TicketValidation < ApiValidation
   alias_attribute :product_id, :product
   alias_attribute :group_id, :group
   alias_attribute :responder_id, :agent
-  
+
   # Default fields validation
-  validates :source, :ticket_type, :description, :status, :subject, :priority, :product, :agent, :group, default_field: 
-                              { 
+  validates :source, :ticket_type, :description, :status, :subject, :priority, :product, :agent, :group, default_field:
+                              {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              } 
+                              }
 
   validates :requester_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param  }
 
@@ -40,11 +40,11 @@ class TicketValidation < ApiValidation
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
   validates :cc_emails, data_type: { rules: Array, allow_nil: false, allow_unset: true }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
- 
+
   # Tags validations
-  validates :tags, data_type: { rules: Array,  allow_nil: false, allow_unset: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true }}
+  validates :tags, data_type: { rules: Array,  allow_nil: false, allow_unset: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
   validates :tags, string_rejection: { excluded_chars: [','] }
- 
+
   # Custom fields validations
   validates :custom_fields, data_type: { rules: Hash, allow_nil: false, allow_unset: true }
   validates :custom_fields, custom_field: { custom_fields:
@@ -126,19 +126,19 @@ class TicketValidation < ApiValidation
 
   def required_default_fields
     closure_status = required_based_on_status?
-    ticket_fields.select{ |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
+    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status)) }
   end
 
   def default_field_validations
-    { 
-      status: {custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param }},
-      priority: {custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param }},
-      source: {custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param }},
-      ticket_type: {custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } }},
-      group: {custom_numericality: {ignore_string: :allow_string_param}},
-      agent: {custom_numericality: {ignore_string: :allow_string_param}},
-      product: {custom_numericality: {ignore_string: :allow_string_param}},
-      subject: {length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }}
+    {
+      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param } },
+      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
+      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param } },
+      ticket_type: { custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } } },
+      group: { custom_numericality: { ignore_string: :allow_string_param } },
+      agent: { custom_numericality: { ignore_string: :allow_string_param } },
+      product: { custom_numericality: { ignore_string: :allow_string_param } },
+      subject: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
     }
   end
 end

@@ -1,6 +1,5 @@
 class Helpers::CompaniesValidationHelper
   class << self
-  
     def data_type_validatable_custom_fields
       Account.current.company_form.custom_company_fields.select { |c| c.field_type != :custom_dropdown }
     end

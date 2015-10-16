@@ -21,7 +21,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
     end
   end
 
-  def required_attribute_not_defined?(record, attribute, value)
+  def required_attribute_not_defined?(record, attribute, _value)
     options[:required] && !record.instance_variable_defined?("@#{attribute}".to_sym)
   end
 end

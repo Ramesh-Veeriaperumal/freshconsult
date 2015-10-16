@@ -57,7 +57,7 @@ class ContactValidationTest < ActionView::TestCase
     assert errors.count == 1
   end
 
-   def test_complex_fields_with_nil
+  def test_complex_fields_with_nil
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     ContactForm.any_instance.stubs(:default_contact_fields).returns([])

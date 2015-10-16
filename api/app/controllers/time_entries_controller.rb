@@ -104,7 +104,7 @@ class TimeEntriesController < ApiApplicationController
     def sanitize_params
       current_time = Time.zone.now
       if create?
-        params[cname][:timer_running] = @timer_running 
+        params[cname][:timer_running] = @timer_running
         params[cname][:agent_id] ||= api_current_user.id
       end
       params[cname][:executed_at] ||= get_executed_at(current_time)

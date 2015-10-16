@@ -21,7 +21,7 @@ class ApiValidation
         send("#{key}=", value)
       else
         instance_variable_set("@#{key}", value)
-      end 
+      end
     end
 
     # Allow string param based on action & content_type

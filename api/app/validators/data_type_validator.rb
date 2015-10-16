@@ -5,7 +5,7 @@ class DataTypeValidator < ActiveModel::EachValidator
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
-    
+
     message = options[:message]
     message ||= required_attribute_not_defined?(record, attribute, values) ? 'required_and_data_type_mismatch' : 'data_type_mismatch'
 
@@ -42,12 +42,12 @@ class DataTypeValidator < ActiveModel::EachValidator
     def allow_nil?(record, attribute)
       # 1. if value shoudn't be set nil or it might not be part of request param then allow_nil = false & allow_unset = true
       # 2. if value can be set as nil irrespective of whether it is part of request param => allow_nil = true
-      # 3. if required attribute, options[:required] => true. 
+      # 3. if required attribute, options[:required] => true.
       return false if options[:required]
       options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}".to_sym)
     end
 
-    def required_attribute_not_defined?(record, attribute, value)
+    def required_attribute_not_defined?(record, attribute, _value)
       options[:required] && !record.instance_variable_defined?("@#{attribute}".to_sym)
     end
 
