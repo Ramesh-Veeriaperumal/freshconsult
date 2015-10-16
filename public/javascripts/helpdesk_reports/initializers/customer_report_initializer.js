@@ -51,12 +51,21 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     color : REPORT_COLORS["plotBG"],
                     radius : 5,
                     lrRadius : null,
-                    maxValue : (constants.percentage_metrics.indexOf(metric) > -1) ? 100 : _.max(_.values(current_hash)),
+                    maxValue : (constants.percentage_metrics.indexOf(metric) > -1) ? 100 : _FD.calculateMaxValue(current_hash),
                     enableTooltip: false,
                     cursor: 'default',
                     suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
                 }   
             _FD.renderCommonChart(current_hash, options, metric);
+        },
+        calculateMaxValue: function (hash) {
+            var modified_hash = _.values(hash); 
+            var values = []; 
+            for (i = 0; i < modified_hash.length; i++) { 
+                values.push(modified_hash[i].value) 
+            };
+
+            return _.max(values);
         },
         renderCommonChart: function (current_hash, options, metric) {
             var constants = _FD.constants;
