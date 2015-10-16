@@ -61,8 +61,8 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
         calculateMaxValue: function (hash) {
             var modified_hash = _.values(hash); 
             var values = []; 
-            for (i = 0; i < modified_hash.length; i++) { 
-                values.push(modified_hash[i].value) 
+            for (var i = 0; i < modified_hash.length; i++) { 
+                values.push(modified_hash[i].value);
             };
 
             return _.max(values);
