@@ -91,7 +91,7 @@ class PasswordPolicy < ActiveRecord::Base
 	def update_password_expiry
 		unless get_others_redis_key(password_expiry_key)
 			last_date = (Time.now.utc + GRACE_PERIOD).to_s
-			PasswordExpiryWorker.perform_at(1.minute.from_now, {:account_id => self.account.id, :user_type => self.user_type, :last_date => last_date })
+			PasswordExpiryWorker.perform_at(4.hours.from_now, {:account_id => self.account.id, :user_type => self.user_type, :last_date => last_date })
 			set_others_redis_key(password_expiry_key, GRACE_PERIOD.from_now.to_s)
 		end
 	end
