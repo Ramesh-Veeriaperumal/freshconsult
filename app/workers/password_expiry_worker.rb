@@ -26,11 +26,11 @@ class PasswordExpiryWorker
         end
       end
       key = password_expiry_key(user_type)
-      remove_others_redis_key(key) if exists? key
+      remove_others_redis_key(key) if redis_key_exists? key
     end
   rescue => e
     Rails.logger.debug "The error is  ::: #{e}"
-    NewRelic::Agent.notice_error(e, {:description => "Error while updating password expiry on Account #{account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => "Error while updating password expiry on Account #{args[:account_id]}"})
     raise e
   ensure
     ::Account.reset_current_account
