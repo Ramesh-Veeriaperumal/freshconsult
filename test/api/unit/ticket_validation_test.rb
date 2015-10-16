@@ -101,10 +101,7 @@ class TicketValidationTest < ActionView::TestCase
     controller_params = { 'requester_id' => 1, ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: nil, fr_due_by: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?(:create)
-    errors = ticket.errors.full_messages
-    assert errors.include?('Fr due by invalid_field')
-    assert errors.include?('Due by invalid_field')
+    assert ticket.valid?(:create)
     Account.unstub(:current)
   end
 

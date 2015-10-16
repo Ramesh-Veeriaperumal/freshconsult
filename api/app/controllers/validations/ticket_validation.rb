@@ -21,12 +21,13 @@ class TicketValidation < ApiValidation
   validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
 
   # Due by and First response due by validations
-  validates :due_by, :fr_due_by, date_time: { allow_nil: true } # No
-  validates :fr_due_by, custom_absence: { allow_nil: false, message: 'invalid_field' }, if: :disallow_fr_due_by?
-  validates :due_by, custom_absence: { allow_nil: false, message: 'invalid_field' }, if: :disallow_due_by?
-  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by }
-  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by }
-  validate :due_by_validation, if: -> { @due_by_set && errors[:due_by].blank? }
+  validates :fr_due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_due_by?
+  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by && errors[:fr_due_by].blank?}
+  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by && errors[:due_by].blank?}
+  validates :due_by, :fr_due_by, date_time: { allow_nil: true }
+  validate :due_by_validation, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
+  validate :fr_due_by_validation, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
 
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
@@ -60,10 +61,11 @@ class TicketValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     @cc_emails = item.cc_email[:cc_emails] if item
-    @fr_due_by = item.try(:frDueBy).try(:iso8601) if item
     super(request_params, item, allow_string_param)
     @description = request_params[:description_html] if should_set_description?(request_params)
     check_params_set(request_params, item)
+    @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
+    @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
   end
 
@@ -84,9 +86,11 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    invalid = (due_by < (@item.try(:created_at) || Time.zone.now))
-    invalid ||= due_by_less_than_fr_due_by? if errors[:fr_due_by].blank?
-    errors.add(:due_by, 'due_by_gt_created_and_lt_frdueby') if invalid
+    errors.add(:due_by, 'gt_created_and_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+  end
+
+  def fr_due_by_validation
+    errors.add(:fr_due_by, 'gt_created_and_now') if fr_due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
   def due_by_less_than_fr_due_by?
@@ -109,11 +113,11 @@ class TicketValidation < ApiValidation
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
   def disallow_due_by?
-    request_params.key?(:due_by) && disallowed_status?
+    request_params[:due_by] && disallowed_status?
   end
 
   def disallow_fr_due_by?
-    request_params.key?(:fr_due_by) && disallowed_status?
+    request_params[:fr_due_by] && disallowed_status?
   end
 
   def disallowed_status?

@@ -145,7 +145,9 @@ class TicketsController < ApiApplicationController
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
-      ParamsHelper.clean_params([:cc_emails], params[cname])
+      params_to_be_deleted = [:cc_emails]
+      [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
+      ParamsHelper.clean_params(params_to_be_deleted, params[cname])
 
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(@tags) if @tags

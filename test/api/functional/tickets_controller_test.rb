@@ -311,6 +311,61 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
                 bad_request_error_pattern('fr_due_by', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
+
+  def test_create_with_nil_due_by_without_fr_due_by
+    params = ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
+    post :create, construct_params({}, params)
+    assert_response 201
+    t = Helpdesk::Ticket.last
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_create_with_nil_fr_due_by_without_due_by
+    params = ticket_params_hash.except(:due_by).merge(status: 5, fr_due_by: nil)
+    post :create, construct_params({}, params)
+    assert_response 201
+    t = Helpdesk::Ticket.last
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_create_closed_with_nil_fr_due_by_with_due_by
+    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'invalid_field')])
+  end
+
+  def test_create_with_nil_fr_due_by_with_due_by
+    params = ticket_params_hash.merge(fr_due_by: nil, due_by: 12.days.since.iso8601)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('fr_due_by', 'Should not be blank if due_by is given')])
+  end
+
+  def test_create_with_nil_due_by_with_fr_due_by
+    params = ticket_params_hash.merge(due_by: nil, fr_due_by: 12.days.since.iso8601)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'Should not be blank if fr_due_by is given')])
+  end
+
+  def test_create_closed_with_nil_due_by_fr_due_by
+    params = ticket_params_hash.merge(status: 5, due_by: nil, fr_due_by: nil)
+    post :create, construct_params({}, params)
+    assert_response 201
+    t = Helpdesk::Ticket.last
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_create_with_nil_due_by_fr_due_by
+    params = ticket_params_hash.merge(due_by: nil, fr_due_by: nil)
+    post :create, construct_params({}, params)
+    assert_response 201
+    t = Helpdesk::Ticket.last
+    assert_not_nil t.due_by && t.frDueBy
   end
 
   def test_create_with_due_by_without_fr_due_by
@@ -341,6 +396,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_with_invalid_fr_due_by_and_due_by
+    params = ticket_params_hash.merge(fr_due_by: 30.days.ago.iso8601, due_by: 30.days.ago.iso8601)
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'gt_created_and_now'),
+                bad_request_error_pattern('fr_due_by', 'gt_created_and_now')])
+  end
+
   def test_create_with_invalid_due_by_and_cc_emails_count
     cc_emails = []
     51.times do
@@ -350,14 +413,18 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+                bad_request_error_pattern('due_by', 'gt_created_and_now')])
   end
 
   def test_create_with_due_by_greater_than_created_at_less_than_fr_due_by
-    params = ticket_params_hash.merge(due_by: 30.days.since.iso8601, fr_due_by: 31.days.since.iso8601)
+    due_by = 30.days.since.utc.iso8601
+    fr_due_by = 31.days.since.utc.iso8601
+    params = ticket_params_hash.merge(due_by: due_by, fr_due_by: fr_due_by)
     post :create, construct_params({}, params)
-    assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+    assert_response 201
+    ticket = Helpdesk::Ticket.last
+    assert_equal due_by, ticket.due_by.iso8601
+    assert_equal fr_due_by, ticket.frDueBy.iso8601
   end
 
   def test_create_invalid_model
@@ -894,6 +961,89 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t.reload))
   end
 
+  def test_update_closed_with_nil_due_by_without_fr_due_by
+    t = ticket
+    params = ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    t = Helpdesk::Ticket.last
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_update_with_nil_fr_due_by_without_due_by
+    t = ticket
+    params = ticket_params_hash.except(:due_by).merge(status: 5, fr_due_by: nil)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    t = Helpdesk::Ticket.last
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_update_closed_with_nil_fr_due_by_with_due_by
+    t = ticket
+    params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'invalid_field')])
+  end
+
+  def test_update_with_nil_fr_due_by_with_due_by
+    t = ticket
+    due_by = 12.days.since.utc.iso8601
+    params = ticket_params_hash.merge(fr_due_by: nil, due_by: due_by)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    assert_not_nil t.reload.frDueBy
+    assert_equal due_by, t.due_by.iso8601
+  end
+
+  def test_update_with_nil_due_by_with_fr_due_by
+    t = ticket
+    fr_due_by = 12.days.since.utc.iso8601
+    params = ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    t.update_column(:status, 2)
+    assert_not_nil t.reload.due_by 
+    assert_equal fr_due_by, t.frDueBy.iso8601
+  end
+
+  def test_update_closed_with_nil_due_by_fr_due_by
+    t = ticket
+    params = ticket_params_hash.merge(status: 5, due_by: nil, fr_due_by: nil)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    t.update_column(:status, 2)
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_update_with_nil_due_by_fr_due_by
+    t = ticket
+    params = ticket_params_hash.merge(due_by: nil, fr_due_by: nil)
+    put :update, construct_params({id: t.display_id}, params)
+    assert_response 200
+    assert_not_nil t.due_by && t.frDueBy
+  end
+
+  def test_update_with_invalid_fr_due_by
+    params = update_ticket_params_hash.merge(fr_due_by: 30.days.ago.iso8601)
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('fr_due_by', 'gt_created_and_now')])
+  end
+
+  def test_update_with_invalid_fr_due_by_and_due_by
+    params = update_ticket_params_hash.merge(fr_due_by: 30.days.ago.iso8601, due_by: 30.days.ago.iso8601)
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('due_by', 'gt_created_and_now'),
+                bad_request_error_pattern('fr_due_by', 'gt_created_and_now')])
+  end
+
   def test_update_with_invalid_due_by_and_cc_emails_count
     cc_emails = []
     51.times do
@@ -904,21 +1054,32 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'max_count_exceeded', max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
-                bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+                bad_request_error_pattern('due_by', 'gt_created_and_now')])
   end
 
   def test_update_with_due_by_greater_than_created_at_less_than_fr_due_by
     t = ticket
-    params = ticket_params_hash.merge(due_by: 30.days.since.iso8601, fr_due_by: 31.days.since.iso8601)
+    due_by = 30.days.since.utc.iso8601
+    fr_due_by = 31.days.since.utc.iso8601
+    params = ticket_params_hash.merge(due_by: due_by, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.id }, params)
-    assert_response 400
-    match_json([bad_request_error_pattern('due_by', 'due_by_gt_created_and_lt_frdueby')])
+    assert_response 200
+    assert_equal due_by, t.reload.due_by.iso8601
+    assert_equal fr_due_by, t.reload.frDueBy.iso8601
   end
 
   def test_update_without_due_by
     params = update_ticket_params_hash
     t = ticket
     t.update_attribute(:due_by, (t.created_at - 10.days).iso8601)
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 200
+  end
+
+  def test_update_without_fr_due_by
+    params = update_ticket_params_hash
+    t = ticket
+    t.update_attribute(:frDueBy, (t.created_at - 10.days).iso8601)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
   end
