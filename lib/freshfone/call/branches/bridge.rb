@@ -3,9 +3,9 @@ module Freshfone::Call::Branches::Bridge
 
   def check_for_bridged_calls
     if answered_on_mobile?
-      agent = current_account.users.find_by_id(params[:agent]) 
+      agent = current_account.users.find_by_id(params[:agent] || params[:agent_id]) 
       update_freshfone_presence(agent, Freshfone::User::PRESENCE[:online])
-      bridge_queued_call(params[:agent]) #if this is faster, replace with add_to_call_queue_worker
+      bridge_queued_call(params[:agent] || params[:agent_id]) #if this is faster, replace with add_to_call_queue_worker
     end
   end
 

@@ -15,7 +15,7 @@ class Billing::BillingController < ApplicationController
   
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
               "subscription_cancelled", "subscription_reactivated", "card_added", 
-              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted" ]          
+              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted", "customer_changed"]          
 
   LIVE_CHAT_EVENTS = [ "subscription_activated", "subscription_renewed", "subscription_cancelled", 
                         "subscription_reactivated", "subscription_changed"]
@@ -225,6 +225,13 @@ class Billing::BillingController < ApplicationController
     def card_deleted(content)
       @account.subscription.clear_billing_info
       @account.subscription.save
+      auto_collection_off_trigger
+    end
+
+    def customer_changed(content)
+      if content['customer'] and content['customer']['auto_collection'] and content['customer']['auto_collection'] == OFFLINE
+        auto_collection_off_trigger 
+      end
     end
 
     def payment_succeeded(content)
@@ -321,4 +328,8 @@ class Billing::BillingController < ApplicationController
       redirect_to redirect_url
     end
 
+    def auto_collection_off_trigger
+      Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
+          :event_type => :auto_collection_off })
+    end
 end

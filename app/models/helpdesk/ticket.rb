@@ -899,6 +899,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
+  def to_mobihelp_json
+    json_data = as_json({
+            :root => "helpdesk_ticket",
+            :tailored_json => true,
+            :only => [ :display_id, :subject, :description, :status, :id, :deleted, :source, :created_at,
+              :updated_at ],
+            :include => { :mobihelp_notes => { :except => :account_id } }
+      },
+      false)
+    hash_data = ActiveSupport::JSON.decode(json_data.to_json)
+    notes = []
+    hash_data["helpdesk_ticket"]["mobihelp_notes"].each do |n|
+      notes << { :note => n }
+    end
+    hash_data["helpdesk_ticket"]["notes"] = notes
+    hash_data["helpdesk_ticket"].delete "mobihelp_notes"
+    hash_data.to_json()
+  end
+
   def header_info_present?
     header_info.present? && header_info[:message_ids].present?
   end

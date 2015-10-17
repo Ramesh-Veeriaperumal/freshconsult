@@ -1,5 +1,9 @@
 class ContactFieldData < ActiveRecord::Base
 
+  
+  serialize :text_uc02, Hash
+  alias_attribute :history_column, :text_uc02
+  
   self.table_name = "contact_field_data"
   self.primary_key = :id
 

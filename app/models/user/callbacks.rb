@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
 
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?
   after_commit :update_search_index, on: :update, :if => :company_info_updated?
-  after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
+  #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
   
   # Callbacks will be executed in the order in which they have been included. 

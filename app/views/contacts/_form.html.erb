@@ -25,6 +25,9 @@ jQuery('body').on('assetLoaded.fjax', function() {
 <div class="row-fluid">
   <div class="span3">
     <%= render :partial => "/shared/profile_avatar", :formats => [:html], :locals => { :user => @user} %> 
+    <% if privilege?(:admin_tasks) and @user.allow_password_update? %>
+      <br /><%= link_to(t('change_password').html_safe, change_password_contact_path(@user), :'data-pjax' => "#body-container")%> 
+    <% end %>
   </div>
 
   <div class="span9">

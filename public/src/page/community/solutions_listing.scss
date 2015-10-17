@@ -196,6 +196,8 @@
         
         .autocomplete_filter .select2-container {
           width: 100%;
+          max-height: 200px;
+          overflow-y: auto;
         }
 
         .company-form-submit-btns {

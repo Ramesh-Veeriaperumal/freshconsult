@@ -28,6 +28,13 @@
       return true;
     }
   }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
+  
+  
+  $.validator.addMethod("password_confirmation", function(value, element){
+    return ($(element).val() == $("#password").val());
+  }, "The passwords don't match. Please try again.");
+
+  $.validator.addClassRules("password_confirmation", { password_confirmation : true });
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);

@@ -1,0 +1,12 @@
+page.replace_html 'Pages', render(:partial => "ticket", :collection => @tickets)
+opts = {
+	:totalPages   => @total_pages,
+	:url          => url_for(:controller => 'integrations/hootsuite/home', :action => 'index'),
+	:currentPage  => 1,
+	:dataType     => "html",
+	:ts => params[:ts],
+	:token => params[:token],
+	:pid => params[:pid]
+}
+page << "jQuery('#Pages').pageless(#{opts.to_json});"
+page << "jQuery('#loaderFD').hide();"

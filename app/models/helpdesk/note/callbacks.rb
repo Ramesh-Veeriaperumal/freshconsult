@@ -213,7 +213,7 @@ class Helpdesk::Note < ActiveRecord::Base
                   :subject => truncate(notable.subject, :length => 100),
                   :priority => notable.priority,
                   :time => created_at.to_i }
-		  send_mobile_notification(:response,message)
+		  send_mobile_notification(:response,message) unless notable.spam? || notable.deleted?
 	end
 
     def notify_ticket_monitor

@@ -6,6 +6,8 @@ class Mobile::TicketsController < ApplicationController
 
   before_filter :require_user_login, :set_mobile
   
+  before_filter :set_native_mobile, :load_ticket, :load_article , :only => [:get_solution_url]
+
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   
   MOBILE_FILTERS = [ :overdue, :due_today, :on_hold, :open, :new ]
@@ -55,7 +57,24 @@ class Mobile::TicketsController < ApplicationController
     render :json => { :tickets => tickets_json, :top_view => top_view }
   end
 
+  def get_solution_url
+    respond_to do |format|
+      format.nmobile{ 
+        article_url = support_solutions_article_url(@article, :host => @ticket.solution_article_host(@article))
+        render :json => { :solution_url => article_url }}
+    end
+  end
+
   private
+  
+  def load_ticket
+    @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
+  end
+  
+  def load_article
+    @article = current_account.solution_articles.find(params[:article_id])  
+  end
+
   # possible dead code
   def customer_view_list
     view_list = []

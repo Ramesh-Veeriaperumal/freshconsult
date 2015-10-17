@@ -9,7 +9,10 @@ class ContactsController < ApplicationController
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
-   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent]
+   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent, 
+                                        :change_password, :update_password]
+   before_filter :can_change_password?, :only => [:change_password, :update_password]
+   before_filter :load_password_policy, :only => [:change_password]                                        
    before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
 
    around_filter :run_on_slave, :only => [:index]
@@ -92,6 +95,31 @@ class ContactsController < ApplicationController
 
   def create_contact # new method to implement dynamic validations, as many forms post to create action 
     create
+  end
+  
+  def change_password
+    #do nothing
+  end
+  
+  def update_password
+   
+    if params[:user][:password] != params[:user][:password_confirmation]
+      flash[:error] = t(:'flash.password_resets.update.password_does_not_match')
+      redirect_to change_password_contact_path(@user)
+    else
+      @user.password = params[:user][:password]
+      @user.password_confirmation = params[:user][:password_confirmation]
+      @user.active = true #by Shan need to revisit..
+      
+      if @user.save
+        flash[:notice] = t(:'flash.password_resets.update.success')
+        redirect_to contact_path(@user)
+      else
+        flash[:error] = @user.errors.full_messages.join("<br/>").html_safe
+        redirect_to change_password_contact_path(@user)
+      end     
+    end
+    
   end
 
   def unblock
@@ -399,5 +427,13 @@ protected
 
     def run_on_slave(&block) 
       Sharding.run_on_slave(&block)
+    end
+    
+    def load_password_policy
+      @password_policy = @user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy
+    end
+    
+    def can_change_password?
+      redirect_to helpdesk_dashboard_url unless @user.allow_password_update?
     end
 end

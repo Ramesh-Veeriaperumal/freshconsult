@@ -830,6 +830,10 @@ if Integrations::Application.count == 0
       :after_destroy => {
         :clazz => "Integrations::QuickbooksUtil",
         :method => "remove_app_from_qbo"
+      },
+      :after_create => {
+        :clazz => "Integrations::QuickbooksUtil",
+        :method => "add_remote_integrations_mapping"
       }
     }
     s.application_type = "quickbooks"

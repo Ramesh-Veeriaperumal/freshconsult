@@ -2,7 +2,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account,:check_account_state,
    :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:domain_page, :iframe_page, :plugin, :uninstall, :verify_domain, :delete_hootsuite_user]
-  before_filter :agent_check, :filter_tickets, :only => [:index, :search]
+  before_filter :agent_check, :filter_tickets, :only => [:index, :search, :refresh]
   skip_before_filter :authenticate_hootsuite_user, :only => [:uninstall,:delete_hootsuite_user]
   skip_before_filter :check_privilege, :only => [:hootsuite_login, :create_login_session, :log_out, :agent_error]
 
@@ -10,6 +10,9 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
     if request.xhr? and !request.headers['X-PJAX']
       render(:partial => "ticket", :collection => @tickets)
     end
+  end
+
+  def refresh
   end
 
   def iframe_page

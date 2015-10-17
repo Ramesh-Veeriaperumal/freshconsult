@@ -4,8 +4,7 @@ module HelpdeskSystem
     store_location unless current_user
     respond_to do |format|
       format.html { 
-        flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
-                                        I18n.t(:'flash.general.need_login')
+        flash[:notice] = access_denied_message
 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
@@ -19,11 +18,19 @@ module HelpdeskSystem
         end
       }
       format.widget {
-        render :text =>  (current_user ? I18n.t(:'flash.general.access_denied') : 
-                                        I18n.t(:'flash.general.need_login'))
+        render :text =>  access_denied_message
       }
     end
  end 
+
+ def password_expired?
+  current_user_session && current_user_session.stale_record && current_user_session.stale_record.password_expired
+ end
+
+ def access_denied_message
+   current_user ? I18n.t(:'flash.general.access_denied') : 
+        password_expired? ? I18n.t(:'flash.general.password_expired') : I18n.t(:'flash.general.need_login')
+ end
 
   def unprocessable_entity
     respond_to do |format|
