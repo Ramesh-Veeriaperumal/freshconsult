@@ -19,9 +19,9 @@ class User < ActiveRecord::Base
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
   include AccountConstants
-  include Search::V2::Index
+  include Search::V2::EsCommitObserver
   
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -565,29 +565,6 @@ class User < ActiveRecord::Base
     super(options)
   end
 
-  def to_indexed_json
-    as_json({
-              :root => "user",
-              :tailored_json => true,
-              :only => [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted,
-                         :helpdesk_agent, :created_at, :updated_at ], 
-              :include => { :customer => { :only => [:name] },
-                            :user_emails => { :only => [:email] }, 
-                            :flexifield => { :only => es_contact_field_data_columns } } }, true
-           ).to_json
-  end
-
-  def es_contact_field_data_columns
-    @@es_contact_field_data_columns ||= ContactFieldData.column_names.select{ |column_name| 
-                                    column_name =~ /^cf_(str|text|int|decimal|date)/}.map &:to_sym
-  end
-  
-  def es_columns
-    @@es_columns ||= [:name, :email, :description, :job_title, :phone, :mobile, :twitter_id, 
-      :fb_profile_id, :customer_id, :deleted, :helpdesk_agent].concat(es_contact_field_data_columns)
-  end
-
   def has_company?
     customer? and company
   end
@@ -729,10 +706,6 @@ class User < ActiveRecord::Base
     write_attribute(:mobile, RailsFullSanitizer.sanitize(value))
   end
   # Hack ends here
-  
-  def search_fields_updated?
-    (@all_changes.keys & es_columns).any?
-  end
 
   def company_id
     self.customer_id

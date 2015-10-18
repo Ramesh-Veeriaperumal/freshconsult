@@ -43,6 +43,7 @@ defaults: &defaults
     - [archive_delete_ticket]
     - [update_ticket_states]
     - [ticket_observer]
+    - [es_v2_shard1]
 
 development:
   <<: *defaults
