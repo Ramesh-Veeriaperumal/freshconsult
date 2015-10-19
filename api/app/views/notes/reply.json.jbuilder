@@ -1,4 +1,4 @@
-json.extract! @item, :body, :body_html, :id, :user_id, :from_email, :cc_emails, :bcc_emails
+json.extract! @item, :body, :body_html, :id, :user_id, :from_email, :cc_emails, :bcc_emails, :created_at, :updated_at
 
 json.set! :ticket_id, @item.notable.display_id
 json.set! :replied_to, @item.to_emails
@@ -10,8 +10,6 @@ json.set! :attachments do
     json.set! :size, att.content_file_size
     json.set! :name, att.content_file_name
     json.set! :attachment_url, att.attachment_url_for_api
-    json.partial! 'shared/utc_date_format', item: att
+    json.extract! att, :created_at, :updated_at
   end
 end
-
-json.partial! 'shared/utc_date_format', item: @item

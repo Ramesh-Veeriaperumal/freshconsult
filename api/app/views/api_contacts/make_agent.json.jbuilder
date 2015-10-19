@@ -1,5 +1,4 @@
-json.extract! @agent.user, :active, :email, :job_title, :language, :last_login_at, :mobile, :name, :phone, :time_zone
-json.partial! 'shared/utc_date_format', item: @agent.user
+json.extract! @agent.user, :active, :email, :job_title, :language, :last_login_at, :mobile, :name, :phone, :time_zone, :created_at, :updated_at
 
 json.set! :agent do
   json.set! :available_since, @agent.active_since
@@ -10,5 +9,5 @@ json.set! :agent do
 
   json.set! :ticket_scope, @agent.ticket_permission
 
-  json.partial! 'shared/utc_date_format', item: @agent, add: { active_since: :available_since }
+  json.extract @agent, :created_at, :updated_at
 end

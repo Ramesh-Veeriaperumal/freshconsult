@@ -1,5 +1,4 @@
-json.extract! @item, :active, :address, :client_manager, :company_id, :deleted, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
-json.partial! 'shared/utc_date_format', item: @item
+json.extract! @item, :active, :address, :client_manager, :company_id, :deleted, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :created_at, :updated_at
 
 json.set! :custom_fields, @item.custom_field
 
@@ -12,7 +11,7 @@ if @item.avatar
     json.set! :id, @item.avatar.id
     json.set! :name, @item.avatar.content_file_name
     json.set! :size, @item.avatar.content_file_size
-    json.partial! 'shared/utc_date_format', item: @item.avatar
+    json.extract! @item.avatar, :created_at, :updated_at
   end
 else
   json.set! :avatar, nil
