@@ -22,7 +22,7 @@ class ContactsController < ApplicationController
    before_filter :init_user_email, :only => :edit
    before_filter :check_parent, :only => :restore
    before_filter :fetch_contacts, :only => [:index]
-   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore]
+   before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore,:update]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
   
@@ -197,6 +197,7 @@ class ContactsController < ApplicationController
         format.html { redirect_to redirection_url }
         format.xml  { head 200 }
         format.json { head 200}
+        format.nmobile { render :json => { :success => true } }
       end
     else
       check_email_exist
@@ -204,6 +205,7 @@ class ContactsController < ApplicationController
         format.html { render :action => :edit }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
         format.json { render :json => @item.errors.fd_json, :status => :unprocessable_entity}
+        format.nmobile { render :json => { :success => false, :err => @item.errors.full_messages ,:status => :unprocessable_entity} }
       end
     end
   end

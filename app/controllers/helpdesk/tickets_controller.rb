@@ -48,7 +48,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by]
   before_filter :load_ticket, :verify_permission,
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
@@ -587,12 +587,22 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def change_due_by
-    due_date = get_due_by_time    
+    due_date = get_due_by_time   
+    update_success = true 
     unless @item.update_attributes({:due_by => due_date, :manual_dueby => true})
+      update_success = false
       flash[:error] = @item.errors.messages[:base]
       @item.reload
     end
-    render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
+    respond_to do |format|
+      format.any(:html,:js) {
+        render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
+      }
+      format.nmobile {
+          render :json => {:success => update_success, :msg => @item.errors.full_messages }
+      }
+      
+    end
   end  
   
   def get_due_by_time
@@ -1132,6 +1142,8 @@ class Helpdesk::TicketsController < ApplicationController
           return false
         elsif request.xhr?
           params[:redirect] = "true"
+        elsif is_native_mobile?
+          render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
         end
