@@ -4,7 +4,8 @@
 		<div class="control-group">
 			<label class="control-label required"><%= t('create_password') %></label>
 			<div class="controls">
-				<input class="special span6 password required" id="password" name="user[password]" type="password" autocomplete="off" autofocus="true">
+				<input class="special span6 password popover-enabled required" id="password" name="user[password]" type="password"
+					data-content="<%= password_policies_for_popover %>" autocomplete="off">
 			</div>
 		</div>
 		<div class="control-group">
@@ -17,4 +18,29 @@
 			<button type="submit" class="btn btn-primary"> <%= t('update_and_log_in') %> </button>
 		</div>	
 	</fieldset>
+<% end %>
+
+<%= javascript_tag do %>
+ 	(function($){
+		$("input.popover-enabled").focus(function(){
+		  var popover_message= $(this).attr("data-content");
+      	  if(popover_message){
+		    $(this).popover({
+  	   		  html: true,
+  	   		  trigger: 'manual',
+  	   		  template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+  	   		  content:function(){
+                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
+                  	+popover_message + "</div>"
+                }
+  	   	    }).popover("show");
+      	  }
+		});
+	
+		$(".popover-enabled").blur(function(){
+	  	  $(this).popover("hide");
+		});
+	
+	})(jQuery);
+
 <% end %>

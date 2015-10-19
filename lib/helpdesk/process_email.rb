@@ -380,6 +380,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         raise e
       rescue ActiveRecord::RecordInvalid => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
+        NewRelic::Agent.notice_error(e)
       end
       set_ticket_id_with_message_id account, message_key, ticket
     end

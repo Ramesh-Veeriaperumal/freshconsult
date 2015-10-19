@@ -12,11 +12,11 @@ class Mobihelp::SolutionsController < MobihelpController
 
   def articles
     solution_data = "[]"
-    unless @categories.blank?
+    unless @category_ids.blank?
       if request_version_2?
-        solution_data = @mobihelp_app.solutions_with_category(@categories)
+        solution_data = @mobihelp_app.solutions_with_category(@category_ids)
       else
-        solution_data = @mobihelp_app.solutions_without_category(@categories)
+        solution_data = @mobihelp_app.solutions_without_category(@category_ids)
       end
     end
     render_json(solution_data)
@@ -24,7 +24,7 @@ class Mobihelp::SolutionsController < MobihelpController
 
   private
     def load_mobihelp_solution_category
-      @categories = @mobihelp_app.solution_categories
+      @category_ids = @mobihelp_app.app_solution_category_ids
     end
 
     def request_version_2?

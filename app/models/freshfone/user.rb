@@ -173,6 +173,10 @@ class Freshfone::User < ActiveRecord::Base
 		save
 	end
 
+	def mobile_refreshed_an_hour_ago?
+		self.mobile_token_refreshed_at.present? && self.mobile_token_refreshed_at > 1.hour.ago
+	end
+
 	private
 
 		def call_agent_on_phone(xml_builder, forward_call_url)

@@ -7,6 +7,9 @@
     <% }else{ %>
     <span class="email-tick tooltip fsize-20 make_primary" title="Mark as Default"></span> 
     <% }%>
+    <% if(unverified){%>
+    <span class="email-tick tooltip ficon-unverified unverified fsize-16" data-original-title="Unverified" twipsy-content-set="true"></span>
+    <% }%>
     <input class="ue_id" id="user_user_emails_attributes_<%= number %>_id" name="user[user_emails_attributes][<%= number %>][id]" type="hidden" value="<%= email_id %>">
     <input class="ue_primary" id="user_user_emails_attributes_<%= number %>_primary_role" name="user[user_emails_attributes][<%= number %>][primary_role]" type="hidden" value="<%= primary %>">
     <input class="ue_destroy" id="user_user_emails_attributes_<%= number %>__destroy" name="user[user_emails_attributes][<%= number %>][_destroy]" type="hidden" value="false">

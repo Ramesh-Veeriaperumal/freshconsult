@@ -53,7 +53,7 @@ class Freshfone::Initiator::Incoming
   end
 
   def initiate_incoming
-    @telephony.initiate_customer_conference({ :wait_url => wait_url }, true)
+    @telephony.initiate_customer_conference({ :wait_url => wait_url, :available_agents => get_pinged_agents }, true)
   end
 
   def initiate_queue
@@ -142,6 +142,13 @@ class Freshfone::Initiator::Incoming
     def preview_ivr
       register_ivr_preview
       trigger_ivr_flow
+    end
+
+    def get_pinged_agents
+      return if current_call.blank?
+      call_meta = current_call.meta
+      return if call_meta.blank? || call_meta.pinged_agents.blank?
+      call_meta.pinged_agents
     end
 
 end

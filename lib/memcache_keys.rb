@@ -94,10 +94,12 @@ module MemcacheKeys
 
   MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
 
+  MOBIHELP_SOLUTION_CATEGORY_IDS = "MOBIHELP_SOLUTION_CATEGORY_IDS:%{account_id}:%{app_key}"
+
   MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
   
   MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
-
+  
   PRODUCT_NOTIFICATION = "v2/PRODUCT_NOTIFICATION"
 
   POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
@@ -115,6 +117,8 @@ module MemcacheKeys
   INSTALLED_CTI_APP = "v1/INSTALLED_CTI_APP:%{account_id}"
 
   ECOMMERCE_REAUTH_CHECK = "v1/ECOMMERCE_REAUTH_CHECK:%{account_id}"
+
+  ACCOUNT_PASSWORD_POLICY = "v1/ACCOUNT_PASSWORD_POLICIES:%{account_id}:%{user_type}"
 
   class << self
 

@@ -131,8 +131,8 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
       var self = this;
       $('body').on('click.contact_form', '.email-tick.make_primary', function(){
         $(this).twipsy('hide');
-        self.buildUEObject($('ul.user_emails li.disabled').first(), 0);
-        self.buildUEObject($(this).parent(), 1);
+        self.buildUEObject($('ul.user_emails li.disabled').first(), 0, $('ul.user_emails li.disabled').first().find(".unverified").length > 0);
+        self.buildUEObject($(this).parent(), 1, $(this).parent().find(".unverified").length > 0);
       });
     },
 
@@ -143,11 +143,11 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
         return ""
     },
 
-    buildUEObject: function (obj, primary) {
+    buildUEObject: function (obj, primary, unverified) {
       var number = obj.data("count");
       var email_id = obj.data("id");
       var value = obj.data("email");
-      $(JST["app/contacts/email_template"]({"number" : number, "value" : value, "email_id" : email_id, "primary" : primary, "disabledclass" : this.primaryDisabled(primary)})).insertAfter(".user_emails li:eq("+number+")");
+      $(JST["app/contacts/email_template"]({"number" : number, "value" : value, "unverified" : unverified, "email_id" : email_id, "primary" : primary, "disabledclass" : this.primaryDisabled(primary)})).insertAfter(".user_emails li:eq("+number+")");
       obj.remove();
     },
 

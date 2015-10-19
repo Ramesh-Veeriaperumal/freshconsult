@@ -6,7 +6,7 @@
 	<div class="content">
 		<div class="ticket-app-info">
 			<%= render :partial => 'helpdesk/tickets/show/app_info_sidebar', :locals => {:extra_info => extra_info}  %>
-			<%= link_to( t('ticket.app_info.show_more'), helpdesk_ticket_mobihelp_ticket_extras_path(@ticket), :id => "app_info_show", :rel => 'freshdialog',
+			<%= link_to( t('ticket.app_info.show_more'), helpdesk_ticket_mobihelp_info_index_path(@ticket), :id => "app_info_show", :rel => 'freshdialog',
 		 		"data-target" => "#app_info_dialog", "data-template-footer" => "", :title => t('ticket.app_info.title') ) %>
 		</div>
 	</div>

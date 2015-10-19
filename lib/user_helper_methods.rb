@@ -26,6 +26,13 @@ module UserHelperMethods
     end
   end
 
+  def validate_phone_field_params(user)
+    params[:user]['phone'].try(:strip!)
+    params[:user]['mobile'].try(:strip!)
+    params[:user].delete('mobile') if user.mobile.blank? and params[:user]['mobile'].blank?
+    params[:user].delete('phone') if user.phone.blank? and params[:user]['phone'].blank?
+  end
+
   def initialize_and_signup!
     @user ||= current_account.users.new
     @user.signup!(params)

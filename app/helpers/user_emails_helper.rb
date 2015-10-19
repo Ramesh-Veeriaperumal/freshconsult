@@ -59,16 +59,10 @@ HTML
         end
 
         unless ue.object.new_record?
-          if ue.object.verified?
-            output << content_tag(:span, "", 
-                        :class => "email-tick tooltip fsize-20 #{ue.object.primary_role ? "ficon-checkmark-round primary" : "make_primary"}",
-                        :title => title)
-          else
-            output << content_tag(:span, "", 
-                        :class => "email-tick tooltip ficon-checkmark-round fsize-20 primary disabled",
-                        :title => title) if ue.object.primary_role
-            output << content_tag(:span, "", :class => "email-tick tooltip ficon-unverified unverified fsize-16", :title => t('merge_contacts.not_verified'))
-          end
+          output << content_tag(:span, "", 
+                      :class => "email-tick tooltip fsize-20 #{ue.object.primary_role ? "ficon-checkmark-round primary" : "make_primary"}",
+                      :title => title)
+          output << content_tag(:span, "", :class => "email-tick tooltip ficon-unverified unverified fsize-16", :title => t('merge_contacts.not_verified')) unless ue.object.verified?
         end
         output << ue.hidden_field(:id, :class => "ue_id")
         output << ue.hidden_field(:primary_role, :class => "ue_primary") 

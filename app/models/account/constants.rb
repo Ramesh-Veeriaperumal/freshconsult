@@ -85,10 +85,10 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false, :sort_by_customer_response => false, :no_list_view_count_query => false,
     :round_robin_revamp =>  false, :contact_merge_ui => true, :client_debugging => false, :collision_socket => false,
     :spam_dynamo => true , :saml_old_issuer => false, :forum_captcha_disable => false, :autorefresh_node => false, 
-    :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => false, :es_multilang_solutions => false,
+    :resource_rate_limit => false, :disable_agent_forward => false, :bi_reports => true, :es_multilang_solutions => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
-    :ecommerce => false  }
+    :limit_mobihelp_results => false, :ecommerce => false  }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

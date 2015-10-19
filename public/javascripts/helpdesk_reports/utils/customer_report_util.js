@@ -75,16 +75,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
                     operator: 'eql',
                     value: string_val
                 }
-            } else {
-
-                if(_.values(hash_values).length){
-                    list_hash = {
-                        condition : 'company_id',
-                        operator: 'is_not_in',
-                        value: _.values(hash_values).join()
-                    }
-                }
-            }
+            }    
             return list_hash;
         },
         setDefaultValues: function () {
@@ -111,7 +102,6 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
         init: function () {
             _FD.core = HelpdeskReports.CoreUtil;    
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.CustomerReport);
-            HelpdeskReports.locals.report_type = _FD.constants.report_type;
             _FD.bindEvents();
             _FD.setDefaultValues();
         }
