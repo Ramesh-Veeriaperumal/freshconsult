@@ -15,22 +15,32 @@ class Mobile::SettingsController < ApplicationController
       # header json string  
       # {'id':'...','times':'...','app_version':'1.2.3','api_version':1,'mobile_type':1,'os_version':'1.1.1','domain_name':'something','device_desc':'moto-g'}
       result_code = MOBILE_API_RESULT_PARAM_FAILED
+      sso_enabled = false
+      sso_logout_url = ""
       unless request.headers['Request-Id'].nil?
         request_data = JSON.parse(request.headers['Request-Id'])
 
           sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['times'])
 
           if sha_generated == request_data['id'] 
+
             full_domain = DomainMapping.full_domain(params[:cname]).first
-            full_domain = full_domain.domain unless full_domain.nil?
+            unless full_domain.nil? 
+              full_domain = full_domain.domain 
+              account = Account.find_by_full_domain(full_domain)
+              unless account.nil?
+                sso_enabled = account.sso_enabled? 
+                sso_logout_url = account.sso_logout_url
+              end
+            end
+
             result_code = MOBILE_API_RESULT_SUCCESS  #Success
           else
             #Failure case 2 : sha mismatch
             result_code = MOBILE_API_RESULT_SHA_FAIL 
           end
       end 
-
-    render :json => {full_domain: full_domain,result_code: result_code}
+    render :json => {sso_logout_url: sso_logout_url,sso_enabled: sso_enabled,full_domain: full_domain,result_code: result_code}
   end
 
 # Mobile devices to fetch admin level settings
