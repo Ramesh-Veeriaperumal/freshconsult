@@ -93,13 +93,6 @@ class TicketValidation < ApiValidation
     errors.add(:fr_due_by, 'gt_created_and_now') if fr_due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
-  def due_by_less_than_fr_due_by?
-    # parsing is needed because when both are strings, < operator does not work.
-    parsed_due_by = DateTime.parse due_by
-    parsed_fr_due_by = DateTime.parse fr_due_by
-    parsed_due_by < parsed_fr_due_by
-  end
-
   def cc_emails_max_count
     if cc_emails.count > TicketConstants::MAX_EMAIL_COUNT
       errors.add(:cc_emails, 'max_count_exceeded')
