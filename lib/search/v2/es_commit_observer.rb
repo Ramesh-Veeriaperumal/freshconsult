@@ -1,6 +1,14 @@
 module Search
   module V2
 
+    #####################################################
+    ### Module for pushing after_commit changes to ES ###
+    ###-----------------------------------------------###
+    ### Before including, define following methods:   ###
+    ### (*) to_esv2_json?                             ###
+    ### (*) esv2_fields_updated? - If needed          ###
+    #####################################################
+
     module EsCommitObserver
       extend ActiveSupport::Concern
 
@@ -28,7 +36,7 @@ module Search
           #
           def update_search
             SearchV2::IndexOperations::DocumentAdd.perform_async({
-              :type         => self.es_doc_type,
+              :type         => self.class.to_s.demodulize.downcase,
               :account_id   => self.account_id,
               :document_id  => self.id,
               :klass_name   => self.class.to_s,
@@ -41,7 +49,7 @@ module Search
           #
           def es_delete
             SearchV2::IndexOperations::DocumentRemove.perform_async({
-              :type         => self.es_doc_type,
+              :type         => self.class.to_s.demodulize.downcase,
               :account_id   => self.account_id,
               :document_id  => self.id
             })
