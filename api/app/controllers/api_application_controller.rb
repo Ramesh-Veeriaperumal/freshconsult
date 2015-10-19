@@ -6,6 +6,7 @@ class ApiApplicationController < MetalApiController
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
+  rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
@@ -118,6 +119,11 @@ class ApiApplicationController < MetalApiController
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       @error = BaseError.new(:internal_error)
       render '/base_error', status: 500
+    end
+
+    def duplicate_value_error(e)
+      Rails.logger.error("API Duplicate error: #{params.inspect} \n#{e.try(:original_exception)} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      render_request_error(:duplicate_value, 409)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.

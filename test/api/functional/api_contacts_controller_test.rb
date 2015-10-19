@@ -565,6 +565,16 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(email: nil)
     email = Faker::Internet.email
     @account.all_contacts.first.update_column(:email, email)
+    @account.all_contacts.first.primary_email.update_column(:email, email)
+    get :index, controller_params(email: email)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_contact_filter_secondary_email
+    email = Faker::Internet.email
+    @account.all_contacts.first.user_emails.create(email: email)
     get :index, controller_params(email: email)
     assert_response 200
     response = parse_response @response.body
@@ -582,11 +592,11 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_combined_filter
-    email = @account.all_contacts.first.email || Faker::Internet.email
+    email = Faker::Internet.email
     comp = get_company
     @account.all_contacts.update_all(customer_id: nil)
     @account.all_contacts.first.update_column(:customer_id, comp.id)
-    @account.all_contacts.first.update_column(:email, email) if @account.all_contacts.first.email != email
+    @account.all_contacts.first.user_emails.create(email: email)
     @account.all_contacts.last.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: "#{comp.id}", email: email)
     assert_response 200

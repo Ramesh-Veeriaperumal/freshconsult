@@ -30,7 +30,7 @@ class BaseError
   ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml'))['api_error_messages']
 
   def initialize(value, params_hash = {})
-    message = ERROR_MESSAGES.key?(value.to_s) ? ERROR_MESSAGES[value.to_s].to_s : value
+    message = ERROR_MESSAGES.key?(value.to_s) ? ERROR_MESSAGES[value.to_s].to_s : value.to_s
     @message = message % params_hash
   end
 end

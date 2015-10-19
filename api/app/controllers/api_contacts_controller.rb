@@ -117,7 +117,7 @@ class ApiContactsController < ApiApplicationController
     def contacts_filter(contacts)
       @contact_filter.conditions.each do |key|
         clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
-        contacts = contacts.where(clause[:conditions])
+        contacts = contacts.where(clause[:conditions]).joins(clause[:joins])
       end
       contacts
     end

@@ -115,6 +115,13 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal Array, parse_response(@response.body).class
   end
 
+  def test_record_not_unique_error
+    User.any_instance.stubs(:save).raises(ActiveRecord::RecordNotUnique.new("RecordNotUnique", "Duplicate-Entry"))
+    post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
+    assert_response 409
+    response.body.must_match_json_expression(request_error_pattern('duplicate_value'))
+  end
+
   def test_multipart_data_with_valid_data_types
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')

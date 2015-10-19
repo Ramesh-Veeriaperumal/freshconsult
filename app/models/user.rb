@@ -232,8 +232,9 @@ class User < ActiveRecord::Base
           conditions: { customer_id: contact_filter.company_id }
         },
         email: {
-          conditions: { email: contact_filter.email }
-        },
+          joins: :user_emails, 
+          conditions: { user_emails: { email: contact_filter.email }}
+        }
         phone: {
           conditions: { phone: contact_filter.phone }
         },
