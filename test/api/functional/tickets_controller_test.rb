@@ -991,11 +991,14 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_nil_fr_due_by_with_due_by
     t = ticket
+    fr_due_by = Time.now
+    t.update_column(:frDueBy, fr_due_by)
+    t.update_attribute(:manual_dueby, true)
     due_by = 12.days.since.utc.iso8601
     params = ticket_params_hash.merge(fr_due_by: nil, due_by: due_by)
     put :update, construct_params({id: t.display_id}, params)
     assert_response 200
-    assert_not_nil t.reload.frDueBy
+    assert_equal fr_due_by.utc.iso8601, t.reload.frDueBy.iso8601
     assert_equal due_by, t.due_by.iso8601
   end
 

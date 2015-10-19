@@ -46,6 +46,7 @@ class TicketDelegator < SimpleDelegator
     schema_less_ticket.product_id = product_id if schema_less_ticket
   end
 
+  # This will return true only if the product and email_config value is expected to change in an unexpected manner, i.e. different from the user's input.
   def config_conditions
     @product_email_config_changed && errors[:email_config_id].blank? && errors[:product_id].blank?
   end
@@ -58,8 +59,10 @@ class TicketDelegator < SimpleDelegator
       product_email_config_match
     end
 
+    # This is not a separate validation to avoid extra call to assign_email_config_and_product_values
     responder_belongs_to_group(flag) if responder_id && errors[:responder].blank? && errors[:group].blank?
 
+    # Reverting back to the input supplied by the user, as validations should not change state of object.
     if flag
       set_product_id(@old_product_id)
       self.email_config_id = @old_email_config_id
@@ -76,6 +79,7 @@ class TicketDelegator < SimpleDelegator
     validation_context == :create ? send(:assign_email_config_and_product) : send(:assign_email_config)
   end
 
+  # Similar to the method present in ticket callbacks.
   def assign_email_config_and_product
     if email_config
       set_product_id(email_config.product_id)
@@ -84,6 +88,7 @@ class TicketDelegator < SimpleDelegator
     end
   end
 
+  # Similar to the method present in ticket callbacks.
   def assign_email_config
     return unless schema_less_ticket
     if schema_less_ticket.changed.include?('product_id')

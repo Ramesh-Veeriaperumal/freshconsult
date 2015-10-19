@@ -142,12 +142,13 @@ class TicketsController < ApiApplicationController
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
       ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @ticket_fields) if params[cname][:custom_fields]
 
-      # Assign original fields from api params and clean api params.
-      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
-                                             type: :ticket_type }, params[cname])
       params_to_be_deleted = [:cc_emails]
       [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
       ParamsHelper.clean_params(params_to_be_deleted, params[cname])
+
+      # Assign original fields from api params and clean api params.
+      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
+                                             type: :ticket_type }, params[cname])
 
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(@tags) if @tags

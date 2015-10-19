@@ -7,6 +7,10 @@ class DateTimeValidator < ActiveModel::EachValidator
   ZONE_MINUS_PREFIX      = '-'
   ISO_TIME_DELIMITER     = ':'
   FORMAT_EXCEPTION_MSG   = 'invalid_format'
+  DATE_FORMAT            = 'yyyy-mm-dd'
+  DATE_TIME_FORMAT       = 'yyyy-mm-ddThh:mm:ss±hh:mm'
+  DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
+  DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
@@ -36,7 +40,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   private
 
     def get_format
-      options[:only_date] ? 'yyyy-mm-dd' : 'yyyy-mm-ddThh:mm:ss±hh:mm'
+      options[:only_date] ? DATE_FORMAT : DATE_TIME_FORMAT
     end
 
     def iso8601_format(value)
@@ -45,7 +49,7 @@ class DateTimeValidator < ActiveModel::EachValidator
     end
 
     def get_date_time_regex_for_value
-      options[:only_date] ? /^\d{4}-\d{2}-\d{2}$/ : /^\d{4}-\d{2}-\d{2}/
+      options[:only_date] ? DATE_REGEX : DATE_TIME_REGEX
     end
 
     def get_time_and_zone(value)

@@ -1218,6 +1218,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     start_time = te.start_time
     executed_at = te.executed_at
     put :update, construct_params({ id: te.id }, start_time: nil, executed_at: nil)
+    assert_response 200
     assert_equal time_spent, te.reload.time_spent
     assert_equal start_time, te.start_time
     assert_equal executed_at, te.executed_at
@@ -1226,8 +1227,10 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_update_time_spent_present_timer_with_timer_running_true
     te = sample_time_entry
     put :update, construct_params({ id: te.id }, time_spent: '05:00')
+    assert_response 200
     assert_equal 18_000, te.reload.time_spent
     put :update, construct_params({ id: te.id }, timer_running: true)
+    assert_response 200
     assert_equal 18_000, te.reload.time_spent
   end
 
