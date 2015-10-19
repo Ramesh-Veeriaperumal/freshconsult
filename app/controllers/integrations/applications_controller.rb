@@ -11,7 +11,7 @@ class Integrations::ApplicationsController < Admin::AdminController
     @applications = Integrations::Application.available_apps(current_account)
     @installed_applications = get_installed_apps
     @custom_applications = Integrations::Application.freshplugs(current_account)
-    installed_plugs(:integrations_list)
+    installed_plugs(:integrations_list) if feature?(:marketplace)
   end
 
   def oauth_install
