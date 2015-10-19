@@ -10,16 +10,20 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
 
-      entity  = args[:klass_name].constantize.find_by_account_id_and_id(args[:account_id], [:document_id])
+      entity  = args[:klass_name].constantize.find_by_account_id_and_id(args[:account_id], args[:document_id])
 
-      Search::V2::IndexRequestHandler.new(
-                                            args[:type],
-                                            args[:account_id],
-                                            args[:document_id]
-                                          ).send_to_es(
-                                                        args[:version],
-                                                        entity.to_esv2_json
-                                                      ) if entity
+      # All dates to be stored in UTC
+      #
+      Time.use_zone('UTC') do
+        Search::V2::IndexRequestHandler.new(
+                                              args[:type],
+                                              args[:account_id],
+                                              args[:document_id]
+                                            ).send_to_es(
+                                                          args[:version],
+                                                          entity.to_esv2_json
+                                                        ) if entity
+      end
     end
   end
 

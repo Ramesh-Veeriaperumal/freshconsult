@@ -26,6 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
+  include Search::V2::EsCommitObserver
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -37,7 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -772,39 +773,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.pass_through_enabled? ? friendly_reply_email : account.default_friendly_email
   end
 
-  def to_indexed_json
-    as_json({
-            :root => "helpdesk/ticket",
-            :tailored_json => true,
-            :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
-            :only => [ :display_id, :subject, :description, :account_id, :responder_id,
-                       :group_id, :requester_id, :status, :spam, :deleted, :source, :priority, :due_by,
-                       :created_at, :updated_at ],
-            :include => { :flexifield => { :only => es_flexifield_columns },
-                          :attachments => { :only => [:content_file_name] },
-                          :ticket_states => { :only => [ :resolved_at, :closed_at, :agent_responded_at,
-                                                         :requester_responded_at, :status_updated_at ] }
-                        }
-            },
-            false).to_json
-  end
-
-  #To-do: Need to verify with mappings
-  def to_es_json
-    as_json({
-      :root => false,
-      :tailored_json => true,
-      :methods => [
-                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
-                    :status_deleted, :product_id, :trashed
-                  ],
-      :only => [
-                  :requester_id, :responder_id, :status, :source, :spam, :deleted, 
-                  :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
-                  :frDueBy, :priority, :ticket_type
-                ]
-    }, false).merge(custom_attributes).to_json
-  end
+  
 
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
@@ -889,14 +858,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def show_reply?
     (self.is_twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
-  end
-
-  def search_fields_updated?
-    attribute_fields = ["subject", "description", "responder_id", "group_id", "requester_id",
-                       "status", "spam", "deleted", "source", "priority", "due_by", "to_emails", "cc_email"]
-    include_fields = es_flexifield_columns
-    all_fields = attribute_fields | include_fields
-    (@model_changes.keys.map(&:to_s) & all_fields).any?
   end
 
   def to_mobihelp_json

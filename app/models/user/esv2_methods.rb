@@ -1,15 +1,10 @@
+# encoding: utf-8
 class User < ActiveRecord::Base
 
   # Trigger push to ES only if ES fields updated
   #
   def esv2_fields_updated?
     (@all_changes.keys & es_columns).any?
-  end
-
-  # Type to indexed under in ES
-  #
-  def es_doc_type
-    'user'
   end
 
   # Custom json used by ES v2

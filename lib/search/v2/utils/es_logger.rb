@@ -22,10 +22,9 @@ module Search
         # [01dc7d52106eabd6a8e8d173f8cb9b38] [2015-10-17 18:05:54:271] GET localhost:9200/_search
         # '{"query":{"match":{"query_string":"term*"}}}'
         #
-        # (*) Log timestamp in IST
+        # (*) Log timestamp in UTC
         # (*) Log HTTP method
         # (*) Log endpoint
-        # (*) Log payload based on check?
         #
         def log_request(endpoint, http_method='get', payload=nil)
           output = []
@@ -39,11 +38,10 @@ module Search
 
         # [01dc7d52106eabd6a8e8d173f8cb9b38] [2015-10-17 18:08:54:448] [200] (20 msec)
         #
-        # (*) Log timestamp in IST
+        # (*) Log timestamp in UTC
         # (*) Log response code
         # (*) Log time taken
         # (*) Log error message if any
-        # (*) Log payload based on check?
         #
         def log_response(response_code, response_time=nil, error_msg=nil, payload=nil)
           output = []
@@ -63,7 +61,7 @@ module Search
           # Get timestamp event is happening at in custom format
           #
           def timestamp
-            Time.zone.now.strftime('%Y-%m-%d %H:%M:%S:%L')
+            Time.zone.now.utc.strftime('%Y-%m-%d %H:%M:%S:%L')
           end
 
           # Log filepath
@@ -84,7 +82,7 @@ module Search
             begin
               log_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
             rescue Exception => e
-              Rails.logger.debug("Exception in ES Logger :: #{e.message}")
+              Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
               NewRelic::Agent.notice_error(e)
             end
           end
