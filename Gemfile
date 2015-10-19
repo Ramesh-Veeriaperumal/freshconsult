@@ -10,7 +10,6 @@ gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
 
 gem "json", "~> 1.8"
-
 gem "mysql2", "~> 0.3.0"
 
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git"
@@ -31,7 +30,9 @@ gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
 
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.2', :platform => [:mri_20, :mri_21]
-
+group :assets do
+  gem 'turbo-sprockets-rails3', 0.3.14
+end
 group :development, :test do
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
@@ -247,7 +248,7 @@ end
 
   gem "sprockets",            	"2.2.2"
   gem "asset_sync",           	"1.1.0"
-  gem "turbo-sprockets-rails3", "0.3.14"	
+ # gem "turbo-sprockets-rails3", "0.3.14"	
   gem "ejs",                  	"1.1.1"
 
   # SASS and Compass gems
