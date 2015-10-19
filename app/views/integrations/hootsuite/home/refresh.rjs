@@ -4,9 +4,12 @@ opts = {
 	:url          => url_for(:controller => 'integrations/hootsuite/home', :action => 'index'),
 	:currentPage  => 1,
 	:dataType     => "html",
-	:ts => params[:ts],
-	:token => params[:token],
-	:pid => params[:pid]
+	:params       => {
+		:uid => params[:uid],
+		:ts => params[:ts],
+		:token => params[:token],
+		:pid => params[:pid]
+		},
 }
 page << "jQuery('#Pages').pageless(#{opts.to_json});"
 page << "jQuery('#loaderFD').hide();"
