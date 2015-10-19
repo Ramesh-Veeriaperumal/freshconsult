@@ -2528,7 +2528,7 @@ Helpkit::Application.routes.draw do
   end
 
   namespace :doorkeeper, :path => '' do
-    namespace :api do
+    namespace :api, :path => '' do
       namespace :marketplace do
         get :data
       end
