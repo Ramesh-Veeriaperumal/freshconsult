@@ -964,7 +964,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_closed_with_nil_due_by_without_fr_due_by
     t = ticket
     params = ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     t = Helpdesk::Ticket.last
     t.update_column(:status, 2)
@@ -974,7 +974,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_nil_fr_due_by_without_due_by
     t = ticket
     params = ticket_params_hash.except(:due_by).merge(status: 5, fr_due_by: nil)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     t = Helpdesk::Ticket.last
     t.update_column(:status, 2)
@@ -984,7 +984,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_closed_with_nil_fr_due_by_with_due_by
     t = ticket
     params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', 'invalid_field')])
   end
@@ -996,7 +996,7 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_attribute(:manual_dueby, true)
     due_by = 12.days.since.utc.iso8601
     params = ticket_params_hash.merge(fr_due_by: nil, due_by: due_by)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     assert_equal fr_due_by.utc.iso8601, t.reload.frDueBy.iso8601
     assert_equal due_by, t.due_by.iso8601
@@ -1006,17 +1006,17 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     fr_due_by = 12.days.since.utc.iso8601
     params = ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     t.update_column(:status, 2)
-    assert_not_nil t.reload.due_by 
+    assert_not_nil t.reload.due_by
     assert_equal fr_due_by, t.frDueBy.iso8601
   end
 
   def test_update_closed_with_nil_due_by_fr_due_by
     t = ticket
     params = ticket_params_hash.merge(status: 5, due_by: nil, fr_due_by: nil)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     t.update_column(:status, 2)
     assert_not_nil t.due_by && t.frDueBy
@@ -1025,7 +1025,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_nil_due_by_fr_due_by
     t = ticket
     params = ticket_params_hash.merge(due_by: nil, fr_due_by: nil)
-    put :update, construct_params({id: t.display_id}, params)
+    put :update, construct_params({ id: t.display_id }, params)
     assert_response 200
     assert_not_nil t.due_by && t.frDueBy
   end

@@ -23,8 +23,8 @@ class TicketValidation < ApiValidation
   # Due by and First response due by validations
   validates :fr_due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_fr_due_by?
   validates :due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_due_by?
-  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by && errors[:fr_due_by].blank?}
-  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by && errors[:due_by].blank?}
+  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
+  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by && errors[:due_by].blank? }
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
   validate :due_by_validation, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
   validate :fr_due_by_validation, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
