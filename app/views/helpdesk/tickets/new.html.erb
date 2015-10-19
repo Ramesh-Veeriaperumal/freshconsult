@@ -1,40 +1,11 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
-<%= content_tag(:h3, t("ticket.submit_ticket_new_title"), :class => "lead") %>
-<div class="muted ticket_sub_text"><%= t("ticket.submit_a_ticket_info") %></div>
-<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
-  <ul class="ui-form">  
+
+<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" , :rel=>"validate"} do |f| %>
+    <%= render :partial => "helpdesk/tickets/ticket_widget/new_ticket_title" %>
+    <div class="muted"><%= t("ticket.submit_a_ticket_info") %></div>
+  <ul class="compose-new-ticket">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => (@item.errors.any? ? true : false), :f => f } %>
-    <li>
-      <%= render( :partial => "/helpdesk/shared/attachment_form" ) %>
-    </li>
-    <% if is_application_installed?("screenr") %>
-      <li>
-        <%= render :partial => "shared/screenr_recorder" , :locals => { :location => "agent_ticket" } %>
-      </li>
-    <% end %>
   </ul>
-
-  <div class="btn-toolbar pull-right">
-    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
-
-    <span class="btn-group dropup">
-      <button class="btn btn-primary">
-        <%= t('save') %>
-        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-          <span class="caret"></span>
-        </button>
-      </button>
-
-      <ul class="dropdown-menu pull-right">
-        <li>
-          <%= link_to t('save_and_close').html_safe, '#', :name => "action_save", :id => "save_and_close" %>
-        </li>
-        <li>
-          <%= link_to t('save_and_new').html_safe, '#', :name => "action_save" %>
-        </li>
-      </ul>
-    </span>  
-  </div>
 <% end %>
 <%= javascript_tag do %>
   jQuery('a[name="action_save"]').bind('click', function(ev){

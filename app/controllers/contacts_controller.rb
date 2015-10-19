@@ -152,6 +152,14 @@ class ContactsController < ApplicationController
       }
   end
 
+  def contact_details_for_ticket
+    user_detail = {}
+    search_options = {:email => params[:email], :phone => params[:phone]}
+    @user = current_account.all_users.find_by_an_unique_id(search_options)
+    user_detail = {:name => @user.name, :avatar => view_context.user_avatar(@user), :title => @user.job_title, :email => @user.email, :phone => @user.phone, :mobile => @user.mobile} if @user
+    render :json => user_detail.to_json
+  end
+
   def configure_export
     render :partial => "contacts/contact_export", :locals => {:csv_headers => export_customer_fields("contact")}
   end

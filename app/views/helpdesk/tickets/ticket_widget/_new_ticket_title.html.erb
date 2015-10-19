@@ -1,0 +1,23 @@
+<!--  Header section -->
+<div rel="sticky" class="cb tickets-title">
+	<h3 class="lead pull-left"><%= t("ticket.submit_ticket_new_title") %></h3>
+	<div class="btn-toolbar pull-right">
+		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
+		<span class="btn-group dropdown">
+			<button class="btn btn-primary" data-loading-text="Submitting...">
+				<%= t('marketplace.feedback_action.submit')  %>
+				<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<span class="caret"></span>
+				</button>
+			</button>
+			<ul class="dropdown-menu pull-right">
+				<li>
+					<%= link_to t('submit_and_close').html_safe, '#', :name => "action_save", :id => "save_and_close" %>
+				</li>
+				<li>
+					<%= link_to t('submit_and_new').html_safe, '#', :name => "action_save" %>
+				</li>
+			</ul>
+		</span>  
+	</div> 
+</div>

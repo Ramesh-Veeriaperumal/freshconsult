@@ -1,185 +1,358 @@
-.compose-from-select2{
-  .select2-drop{
-    border-color: #eee;
-    @include box-shadow( none );
+%cb{
+        content: "";
+        display: table;
+        clear: both;
+    }
+  %animatebg{
+    @include transition (background-color 200ms cubic-bezier(0.65, 0.05, 0.36, 1)); 
   }
-  input{
-    margin-top: 0px;
-        &:focus{
-          border-color: #eee;
-          @include box-shadow( none );
-        }
-  }
+  %ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  -moz-binding: url(/assets/xml/ellipsis.xml#ellipsis.css);
 }
 
-
-.compose_email{
-  &.tkt-wrapper-inner{
-    margin: 0;
-  }
-  .tkt-sidebar #TicketProperties .ticket_section{
-    @include margin-left(0);
-  }
-  .page-header-sticky{
-    border: none;
-    padding-top: 10px;
-    &.is_stuck{
-      .sticky-header-wrapper{
-        padding-top: 15px;
-        span.sub-text{
-          display: none;
+  .tickets-title{
+      width: 100%;
+        margin: 0 -20px;
+        padding: 0 20px;
+        &:after{
+          @extend %cb;
         }
-      }
-    }
-    .sticky-header-wrapper{
-      span.sub-text{
-        display: block;
-        padding-top: 20px;
-      }
-    }
-  }
-
-.from_address_wrapper {
-  min-width: 400px;
-  border: none;
-    a.select2-choice{
-      height: 34px;
-      line-height: 30px;
-      width: 400px;
-      border: none;
-      background-color: #fff !important;
-      box-shadow: none;
-       background-image: none;
-    }
-    .select2-arrow b{
-        &::after{
-          top: 15px;
+        .btn-toolbar {
+          margin: 0;
+        }
+        &.is_stuck{
+          @include box-shadow(0 2px 4px rgba(63,63,63,0.1));
+           background-color: #fff;
+           padding-top:10px;
         }
     }
-    &.select2-dropdown-open .select2-choice .select2-arrow b::after{
-        top: 9px;
+
+  /*Compose new ticket!!*/
+  .compose-new-ticket{
+    margin-top: 20px;
+    li{
+          list-style-type: none;
     }
-} 
-.page-header-sticky .sticky-header-wrapper {
-    padding-top: 15px;
-  }
-  .compose-cancel{
-    @include float(left);
-    @include margin-right(10px);
-  }
-  .compose-send{
-    @include float(left);
-  }
-  .new_ticket_body{
-  	border: 1px solid #cccccc;
-  	@include border-radius(5px);
-  	overflow: hidden;
-  	#helpdesk_ticket_subject{
-  		border: none;
-  		box-shadow: none;
-  		width: 98%;
-  		height: 30px;
-  		@include margin(0);
-  	}
-  	li + li { 
-  		border-top: 1px solid #f3f3f3;  
-  	}
-  	.redactor_toolbar{
-  		background: none;
-  		border: none;
-      li{
-        border: none;
+      li.field{
+        @include margin(0 -20px);      
+            &:after{
+                   @extend %cb;
+            }
+            label.error{
+                clear: both;
+                padding-top: 5px;
+                display: block;
+            }
+            &.hidden{
+                  position: absolute;
+                  left: -999em;
+            }       
+            .requester-email, .cc-address {
+                  @include padding (10px 20px);
+                  @extend %animatebg;
+                  &:hover{
+                      @extend %animatebg;
+                        background: #f5f5f5;;
+                  }
+            }
+            .checkbox-wrapper{
+              padding-top: 8px;
+            }
+            label.error{
+              @include padding-left(15%);
+            }
+            .cc-address{
+                  position: relative;
+                  &:after{
+                    @extend %cb;
+                  }
+            }
+            .hide-cc-label{
+                 @include transition (all 200ms cubic-bezier(0.65, 0.05, 0.36, 1)); 
+                  color: #0063cf;
+                  position: absolute;
+                  cursor: pointer;
+                  @include right (30px) ;
+                  top: 18px;
+            }
+            .input-date-field{
+              @include float (left );
+               width: 300px;
+                  input{
+                    width: 100%;
+                  }
+                  label.error{
+                      width: auto;
+                      @include padding-left(0);
+                  }
+            }
       }
-  	}
-  	.redactor_box{
-  		border: none;
-  		@include border-radius(0);
-  	}
-    .caption{
-      font-weight: bold;
-      display: inline-block;
-      @include margin(0 20px 0 10px);
-      line-height: 35px;
-    }
-    .attach-wrapper{
-      min-height: 40px;
-      padding-top: 10px;
-    }
-    .new-attach .attachments-wrap .item{
-      padding: 5px;
+       li.field:not(.default_requester):not(.nested_field){
+          @include padding (10px 20px 8px);
+          @extend %animatebg;
+           &:hover{
+              @extend %animatebg;
+                background-color: #f5f5f5;;
+            }
+       }
+      span:not(.required_star), .add_requester_button{
+        font-weight: normal;
+      }
+      .requester-details{
+        position: relative;
+        input.requester{
+          @include padding-right(170px);
+          &:focus{
+                @include border-radius( 4px );
+          }
+        }
+        .requester-email, .cc-address{
+          &:after{
+              @extend %cb;
+          }
+        }
+        label.error{
+          @include padding ( 5px 0 0 );
+          width: auto !important;
+          clear: both;
+        } 
+        .add-requester{
+            position: absolute;
+            top: 18px;
+            @include right (25px );
+            span{
+                @include padding( 0 7px);
+                color: #0063cf;
+                cursor: pointer;
+                &.muted{
+                      color: #999;
+                }
+            }
+            .cc-label{
+              @include border-left (1px solid #d9d9d9);
+            }
+        }
+        .cc-address{
+              @include padding (20px 0 0);
+        }
+        .multi_value_field{
+                @include box-shadow( 0 4px 5px -4px #CCC inset);
+                border-radius: 3px;
+                width: 85%;
+                @include float (left);
+                @include box-sizing ( border-box );
+        }
+        .autocomplete{
+          ul{
+            border: 1px solid rgba(82, 168, 236, 0.8);
+            border-top: none;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            border-radius: 0 0 5px 5px;
+            top: -3px;
+            box-sizing: border-box;
+            li{
+              background: none;
+              border: none;
+              font-size: 13px;
+              &.selected{
+                 @include padding( 5px 10px );
+                  background: #3875d7;
+                  color: #fff;
+              } 
+            }
+          }
+        }
+      }
+      .field:not(.checkbox){
+        label:not(.error){
+              width: 15%;
+              margin-top: 8px;
+               @include float(left);
+        }
+        input{
+             /*padding: 13px 0 13px 5px;*/
+             height: 30px;
+        }
+        .multi_value_field input{
+              height: auto;
+        }
+        input, .redactor_wrapper, textarea{
+              @include margin(0);
+              width: 85%;
+              @include box-sizing(border-box);
+               @include float(left);
+               .redactor_editor{
+                height: 250px !important;
+                li{
+                 list-style: inherit;
+                }
+               }
+               .error{
+                @include padding-left(10px);
+                width: auto;
+               }
+               &.paragraph{
+                height: 300px;
+               }
+        }
+        .redactor_wrapper{
+               .redactor_box{
+                    border-bottom: 0;
+               }
+               .attachment-wrapper{
+                    border: 1px solid #c6c6c6;
+                    margin-top: -2px;
+                    background-color: #fafafa;
+                    border-radius: 0px 0px 5px 5px;
+                    padding-top: 10px;
+                    .attachment-type{
+                          @include padding-left(0);
+                          a{
+                            color: #666;
+                            cursor: default;
+                          }
+                    }
+                    .item{
+                          @include margin-left( 6px );
+                           @include padding( 8px);
+                           .attachment-type {
+                                width: 250px;
+                            @extend %ellipsis;
+                           }
+                    }
+                    .a-count{
+                      @include padding-left(5px);
+                    }
+                    .span8{
+                      width: 100%;
+                    }
+                    .add_attachment{
+                      top: 18px;
+                    }
+                    .attach-link{
+                          @include padding (7px 0 14px 12px );
+                          display: inline-block;
+                    }
+                    .invalid_attachment {
+                            text-decoration: none;
+                            a{
+                                text-decoration: line-through;
+                            }
+                    }
+               }
+        }
+        .select2, .select2-container{
+            margin-bottom: 5px;
+              width: 300px;
+              @include box-sizing(border-box);
+              @include float(left);
+        }
+      }
+      .custom_checkbox{
+        .checkbox{
+          @include margin(0 10px 0 15%);
+        }
+      }
+      .field.nested_field{
+        & > label, & > .select2{
+              margin-bottom: 10px;
+        }
+        .main_field{          
+            @include padding(10px 20px 8px);
+            @extend %animatebg;
+              &:after{
+                  @extend %cb;
+              }
+              &:hover{
+                  @extend %animatebg;
+                      background: #f5f5f5;;
+              }
+        }
+        .level_2, .level_3{
+          @extend %cb;
+          @include padding(10px 20px 8px);
+          position: relative;
+          width: 100%;
+          @include box-sizing(border-box);
+          @include border-left(none);
+          @extend %animatebg;
+          &:before{
+                  content: "";
+                  display: block;
+                  position: absolute;
+                  top: 0;
+                  width: 1px;
+                 @include border-left(1px dotted #afafaf);
+                  height: 100%;
+          }
+          label{
+                /*text-indent: 10px; */
+                @include box-sizing (border-box);
+                @include padding-left (10px);
+          }
+          &:hover{
+                  background: #f5f5f5;;
+                    @extend %animatebg;
+          }
+        }
+      }
+  }
+
+  /*Add new requester form*/
+  .add-requester-form{
+      :after{
+        @extend %cb;
+      }
+        li{
+          @include padding(7px 0);
+          &:after{
+           @extend %cb;
+          }
+        }
+    label{
+        width: 20%;
+        padding-top: 6px;
+        @include float( left );
+        @include box-sizing(border-box)
     }
     label.error{
-      display: block;
-      @include padding(10px);
+      width: auto;
+      @include padding-left(20%);
+    }
+    input{
+         width: 80%;
+         height: 30px;
+         @include box-sizing(border-box);
+         @include margin(0);
+         @include float( left );
+    } 
+    .button-container {
+      overflow: visible;
     }
   }
 
-  .new_ticket_address{
-    margin-bottom: 10px;
-    select{
-      border: none;
-      margin: 0;
-    }
-    .add_requester_button{
-      font-weight: normal;
-      @include margin-left(10px);
-      line-height: 30px;
-      @include margin-right(10px);
-    }
-    #add_cc_btn{
-      @include margin-right(5px);
-    }
-    .new_ticket_cc_button{
-      @include margin(-27px 10px 0 0);
-    }
-    input.requester{
-      width: 63%;
-      border: none;
-      box-shadow: none;
-      @include margin(0 0 0 15px);
-    }
-    #cc_emails_sec, #bcc_emails_sec{
-      padding: 0;
-      min-height: 30px;
-      overflow: auto;
-      .multi_value_field{
-        display: inline-block;
-        width: 89%;
-        box-shadow: none;
-        border: none;
-        min-height: 30px;
-        @include float(right);
+
+
+  /**************************/
+  /*Compose new ticket styles*/
+
+  .dropdown-menu.new-ticket-dropdown{
+      li.active > a {
+                background-color: #fff;
+                background-image: none;
+                color: #333;
       }
-    }
-
-    li#cc_emails_sec{
-      border-top: 1px solid #f3f3f3;
-    }
-
-  }
-
-  .tkt-sidebar{
-    .widget{
-      border: none;
-      .checkbox{
-      @include margin(3px 5px 0 0);
+      li.active > a:hover{
+        background-color: #999;
+        color: #fff;
       }
-    }
-  }
-
-  #tkt-inner{
-    .leftcontent{
-      width: 95%;
-    }
-  }
-
-.tkt-wrapper-inner {
-    width: 100%;
-    margin: 0 auto;
 }
-
-}
-
 .dropdown-menu.new-ticket-dropdown li a {
       padding: 7px 14px;
   }
@@ -190,3 +363,236 @@
     border-radius: 4px;
     min-width: 120px;
   }
+.compose-new-email{
+  .tickets-title{
+    margin: 0px -20px;
+    padding: 0 20px;
+    &.is_stuck{
+      @include box-shadow(0 2px 4px rgba(63, 63, 63, 0.1));
+       padding-top: 12px;
+       background-color: #fff;
+    }
+    .btn-cancel{
+      @include margin-right ( 5px );
+    }
+    .btn-send{
+      display: inline-block;
+    }
+  }
+  .notice{
+        @include margin (0 0 20px 0) ;
+  }
+  .address-details{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 15px;
+    .details-widget{
+      min-height: 40px;
+      line-height: 40px;
+      @include box-sizing(border-box);
+      @include padding( 0 15px);
+      position: relative;
+        &:after{
+             @extend %cb;
+        }
+      label.error{
+        @include padding-left (50px);
+      }
+      &.light-border{
+        border-bottom: 1px solid #f3f3f3;
+      }
+      .show-cc{
+        top: 0;
+      }
+      .show-cc, .hide-cc{
+          position: absolute;
+         @include right ( 8px );
+          color: #06c;
+          cursor: pointer;
+          &.muted {
+                 color: #999;
+          }
+      }
+
+      .inline-label{
+        color: #1f1010;
+        font-weight: bold;
+        font-size: 13px;
+        display: inline-block;
+        width: 50px;
+        padding-top: 12px;
+        @include float(left);
+      }
+      input{
+        @include padding-left(0);
+        @include box-shadow(none);
+        width: 500px;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+      }
+      .from_address_wrapper, .multi_value_field{
+            width: 85%;
+            margin-top: 6px;
+            @include float (left);
+
+      }
+      .from_address_wrapper{
+        margin-top: 8px;
+      }
+      .multi_value_field{
+         border: none;
+        .search_field_item input{
+              width: 100%;
+              &:focus{
+                @include box-shadow(inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px rgba(82,168,236,0.3) !important);
+              }
+        }
+      }
+
+    }
+    .cc-email{
+      margin-bottom: 2px;
+    }
+    .requester-email{
+            label.error{
+              clear: both;
+            }
+              .select2-container{
+                      width: 400px;
+                      .select2-choice{
+                              @include box-shadow(none);
+                              border: 0;
+                              @include padding-left( 0 );
+                      }
+                      &.select2-dropdown-open{
+                        .select2-choice{
+                              @include background( none );
+
+                        }
+                      }
+              }
+        }
+  }
+  .ticket-details{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    .ticket-subject{
+      margin: 0;
+      border: none;
+      @include box-shadow (none);
+      height: 35px;
+      &:focus{
+        border: none;
+      }
+    } 
+    .error{ 
+      @include padding-left (8px);
+    }
+    /*Custom redaactor configuration for redactor*/
+    .redactor_box{
+      border-radius: 0;
+      border-width: 0;
+      margin: 0 !important;
+      .redactor_toolbar{
+        background: #fff;
+        border-top: 1px solid #eee;
+        border-radius: 0;
+        @box-shadow (none);
+          border-bottom: 0;
+          .redactor_separator{
+              border: none;
+          }
+      }
+    }
+    .attachment-wrapper{
+      .span8{
+        width: 100%;
+      }
+      @include padding ( 7px 0 );
+      border-radius: 0 0px 5px 5px;
+      border-top: 1px solid #f3f3f3;
+      background-color: #fdfdfd;
+            .invalid_attachment {
+                            text-decoration: none;
+                            a{
+                                text-decoration: line-through;
+                            }
+                    }
+    .item{
+            @include padding( 8px );
+            @include margin-left ( 5px );
+            &:last-child{
+              margin-bottom: 8px;
+            }
+      }
+      .attachment-type{
+        @extend %ellipsis;
+        width: 250px;
+        @include padding-left ( 0 );
+        a{
+          color: #666;
+          cursor: default;
+        }
+      }
+      .attach-link{
+            display: inline-block;
+            @include padding( 6px 0 6px 10px );
+      }
+    }
+  }
+  .compose-new-ticket{
+    .lead{
+      margin-bottom: 0px;
+      font-size: 16px;
+      font-weight: 500;
+      border-top: 1px solid #eee;
+      margin-top: 40px;
+      padding-top: 4px;
+      padding-bottom: 20px;
+    }
+  }
+     .autocomplete{
+          margin-top: 10px;
+    margin-left: -15px;
+          ul{
+            border: 1px solid rgba(82, 168, 236, 0.8);
+            border-top: none;
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            border-radius: 0 0 5px 5px;
+            top: -3px;
+            box-sizing: border-box;
+            li{
+              background: none;
+              border: none;
+              font-size: 13px;
+              &.selected{
+                 @include padding( 5px 10px );
+                  background: #3875d7;
+                  color: #fff;
+              } 
+            }
+          }
+        }
+}
+
+.compose-from-select2{
+  .select2-drop{
+    border-color: #eee;
+    margin-top: 5px;
+    .select2-results{
+      padding-bottom: 8px;
+    }
+  }
+  input{
+    margin-top: 0px;
+    @include background( none );
+        &:focus{
+          border-color: #eee;
+          @include background( none );
+          @include box-shadow( none );
+        }
+  }
+}

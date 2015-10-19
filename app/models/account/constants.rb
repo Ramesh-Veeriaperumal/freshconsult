@@ -40,12 +40,12 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections ],
       :inherits => [ :garden ]
     },
 
     :forest => {
-      :features => [ :mailbox, :whitelisted_ips, :dynamic_sections ],
+      :features => [ :mailbox, :whitelisted_ips ],
       :inherits => [ :estate ]
     },
 

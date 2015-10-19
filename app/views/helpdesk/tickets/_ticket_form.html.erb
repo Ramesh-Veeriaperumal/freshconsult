@@ -11,7 +11,7 @@
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe :
                                                 (field.label).html_safe
   %>
-  <%= construct_ticket_element f, :helpdesk_ticket,
+  <%= construct_new_ticket_element f, :helpdesk_ticket,
                                   field,
                                   field_label,
                                   field.dom_type,
@@ -22,7 +22,7 @@
                                   is_edit  %>
 
   <% if field.has_section?
-    section_container = construct_section_fields(f, field, is_edit, @item, false) %>
+    section_container = construct_new_section_fields(f, field, is_edit, @item, false) %>
     <%=content_tag(:li, section_container.html_safe)%>
   <% end %>
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
@@ -76,5 +76,9 @@
                 .replace(new RegExp('&gt', 'g'), '>'));
       }
   }).trigger("change");
-
+     //TODO - Change to a generic truncate function.
+  jQuery('.invalid_attachment a').livequery(function(ev){
+      jQuery(this).text(jQuery(this).text().substring(0,19)+"...");
+    });
+    
 <%- end %>

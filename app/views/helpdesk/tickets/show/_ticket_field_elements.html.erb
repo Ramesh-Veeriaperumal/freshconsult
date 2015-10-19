@@ -24,7 +24,7 @@
     end
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
     field_value = nested_ticket_field_value(@ticket, field) if(field.field_type == "nested_field") and !@ticket.new_record?
-    field_html = construct_ticket_element(form_builder, :helpdesk_ticket, 
+    field_html = construct_new_ticket_element(form_builder, :helpdesk_ticket, 
                                           field, field_label, dom_type, 
                                           field.required, field_value, '', false, false)
     if field.is_default_field?
@@ -36,7 +36,7 @@
     else
       custom_fields << field_html
     end
-    section_container += construct_section_fields(form_builder, field, false, @ticket, !@ticket.new_record?) if field.has_section?
+    section_container += construct_new_section_fields(form_builder, field, false, @ticket, !@ticket.new_record?) if field.has_section?
   end
 end
 default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field_order.index(y.first) }

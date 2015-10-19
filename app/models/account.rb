@@ -110,7 +110,7 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
-    features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def dashboard_disabled?

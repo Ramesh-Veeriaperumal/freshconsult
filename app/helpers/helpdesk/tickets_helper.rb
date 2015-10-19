@@ -505,12 +505,12 @@ module Helpdesk::TicketsHelper
 
   def ticket_body_form form_builder, to=false
     contents = []
-    contents << content_tag(:li, (form_builder.text_field :subject, :class => "required text", :placeholder => t('ticket.compose.enter_subject')).html_safe)
+    contents << content_tag(:div, (form_builder.text_field :subject, :class => "required text ticket-subject", :placeholder => t('ticket.compose.enter_subject')).html_safe)
     form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
       signature_value = current_user.agent.signature_value ? ("<p><br /></p>"*2)+current_user.agent.signature_value.to_s : ""
-      contents << content_tag(:li, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
+      contents << content_tag(:div, (builder.text_area :description_html, :class => "required html_paragraph", :"data-wrap-font-family" => true, :value => (signature_value), :placeholder => "Enter Message...").html_safe)
     end
-    contents << content_tag(:li) do 
+    contents << content_tag(:div, :class=> "attachment-wrapper") do 
       render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => "ticket" , :nsc_param => "helpdesk_ticket" }
     end
     contents.join(" ").html_safe
