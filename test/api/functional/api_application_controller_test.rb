@@ -65,7 +65,9 @@ class ApiApplicationControllerTest < ActionController::TestCase
     @controller.request.env['RAW_POST_DATA'] = 'test junk'
     @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
     assert_nothing_raised do
-      @controller.send(:duplicate_value_error, ActiveRecord::RecordNotUnique.new("RecordNotUnique", "Duplicate-Entry"))
+      error = ActiveRecord::RecordNotUnique.new("RecordNotUnique", "Duplicate-Entry")
+      error.set_backtrace(["a", "b"])
+      @controller.send(:duplicate_value_error, error)
     end
     assert_equal response.status, 409
     assert_equal response.body, request_error_pattern(:duplicate_value).to_json

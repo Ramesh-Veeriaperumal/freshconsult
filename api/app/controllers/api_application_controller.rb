@@ -92,8 +92,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      @error = BaseError.new(:method_not_allowed, methods: allows.join(', '))
-      render '/base_error', status: 405
+      render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
       head :not_found
@@ -117,12 +116,11 @@ class ApiApplicationController < MetalApiController
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      @error = BaseError.new(:internal_error)
-      render '/base_error', status: 500
+      render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
-      Rails.logger.error("API Duplicate error: #{params.inspect} \n#{e.try(:original_exception)} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_request_error(:duplicate_value, 409)
     end
 
@@ -158,6 +156,11 @@ class ApiApplicationController < MetalApiController
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
       render '/request_error', status: status
+    end
+
+    def render_base_error(code, status, params_hash = {})
+      @error = BaseError.new(code, params_hash)
+      render '/base_error', status: status
     end
 
     def check_account_state
