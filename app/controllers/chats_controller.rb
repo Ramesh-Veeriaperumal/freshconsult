@@ -28,7 +28,7 @@ class ChatsController < ApplicationController
                       :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
                       :requester_name => params[:ticket][:name],
-                      :ticket_body_attributes => { :description_html => params[:ticket][:content] },
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content], :description => Helpdesk::HTMLSanitizer.plain(params[:ticket][:content].gsub(/(\s{3,})/,"")) },
                       :responder_id => params[:ticket][:agent_id]
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
