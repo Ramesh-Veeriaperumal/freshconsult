@@ -102,14 +102,22 @@
             unlink_shared_helpdesk_attachment_path(attachment, {:note_id => note_id})
   end
 
-  def note_attachment_details(attachment)
+  def ticket_page_attachment(attachment)
     ["attachable", "droppable"].each do |name|
       if attachment.respond_to?("#{name}_type") and 
-          attachment.send("#{name}_type") == "Helpdesk::Note" 
+        ["Helpdesk::Note", "Helpdesk::Ticket"].include?(attachment.send("#{name}_type")) 
+  
         id = attachment.send("#{name}_id")
-        attachments_count = attachment.send(name).all_attachments.size + 
+        if attachment.send("#{name}_type") == "Helpdesk::Note"
+          attachments_count = attachment.send(name).all_attachments.size + 
                            attachment.send(name).cloud_files.size
-        return {:id => id , :attachments_count => attachments_count}
+          type = 'note'
+        else
+          attachments_count = attachment.send(name).attachments.size + 
+                           attachment.send(name).cloud_files.size
+          type = 'ticket'
+        end
+        return {id: id , attachments_count: attachments_count , type: type}
       end
     end
     false

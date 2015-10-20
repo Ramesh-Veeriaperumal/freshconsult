@@ -91,7 +91,7 @@ end
         <% unless note.all_attachments.empty? and note.cloud_files.empty? %>        
             <span class="seperator"></span> 
             <div class="attachments-wrap clearfix">
-              <h5><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+              <h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
               <ul class="attachment_list">
                   <% note.all_attachments.each do |attached| %> 
                     <%= attachment_list(attached, false, "ticket", note.id) %>
