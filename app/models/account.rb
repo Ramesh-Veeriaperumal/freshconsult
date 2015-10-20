@@ -217,6 +217,14 @@ class Account < ActiveRecord::Base
   def active?
     !self.subscription.suspended?
   end
+
+  def spam_email?
+    ismember?(SPAM_EMAIL_ACCOUNTS, self.id)
+  end
+
+  def premium_email?
+    ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
+  end
   
   def plan_name
     subscription.subscription_plan.canon_name
