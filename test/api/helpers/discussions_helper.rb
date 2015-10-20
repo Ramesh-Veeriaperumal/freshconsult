@@ -7,7 +7,6 @@ module Helpers::DiscussionsHelper
       id: Fixnum,
       name: name,
       description: desc,
-      position: Fixnum,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -18,7 +17,6 @@ module Helpers::DiscussionsHelper
       id: Fixnum,
       name: fc.name,
       description: fc.description,
-      position: fc.position,
       created_at: fc.created_at,
       updated_at: fc.updated_at
     }
