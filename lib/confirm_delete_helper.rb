@@ -7,10 +7,10 @@ module ConfirmDeleteHelper
 
 	def confirm_delete(item, url, options = {})
 		return "" unless SUPPORTED_DIALOGS.include? item.class.name
-		link_to (options[:text] || t('delete').html_safe), url, confirm_delete_defaults(item, url).merge(options)
+		link_to (options[:text] || t('delete').html_safe), url, confirm_delete_defaults(item, url, options).merge(options)
 	end
 
-	def confirm_delete_defaults(item, url)
+	def confirm_delete_defaults(item, url, options)
 		{
 			:class => 'btn confirm-delete',
 			:rel => 'confirmdelete',
@@ -19,7 +19,7 @@ module ConfirmDeleteHelper
 			
 			"data-details-message" => deletion_message(item).html_safe,
 			"data-destroy-url" => url,
-			"data-item-title" => item_title(item),
+			"data-item-title" => item_title(item, options),
 			"data-dialog-id" => "deletion_#{dom_id(item)}",
 
 			"data-delete-msg" => deletion_hint(item),
@@ -39,8 +39,8 @@ module ConfirmDeleteHelper
 			send("#{item.class.name.parameterize.underscore}_delete_message", item) : default_deletion_message
 	end
 
-	def item_title(item)
-		item[:name] || item[:title] || ""
+	def item_title(item, options)
+		options[:"item-title"] || item[:name] || item[:title] || ""
 	end
 
 	def deletion_hint(item)

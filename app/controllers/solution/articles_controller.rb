@@ -13,7 +13,7 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties]
+  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties, :destroy]
   before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
@@ -102,10 +102,11 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def destroy
-    @article.destroy
+    redirect_path = solution_folder_path(@article_meta.solution_folder_meta_id)
+    @article_meta.destroy
     
     respond_to do |format|
-      format.html { redirect_to(solution_category_folder_url(params[:category_id],params[:folder_id])) }
+      format.html { redirect_to redirect_path }
       format.xml  { head :ok }
       format.json { head :ok }
     end
@@ -197,9 +198,8 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def get_meta_id
-      id = params[:id] || params[:article_id]
       id = params[:solution_article_meta][:id] if params[:solution_article_meta].present?
-      id
+      id ||= params[:id] || params[:article_id]
     end
     
     def set_item_user

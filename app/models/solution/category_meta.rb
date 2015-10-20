@@ -8,11 +8,11 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
-	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position
+	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position, :dependent => :destroy
 
 	has_many :solution_folders, :through => :solution_folder_meta, :order => 'solution_folder_meta.position'
 
-	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true
+	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true, :dependent => :destroy
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :through => :solution_folder_meta
 

@@ -12,7 +12,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	delegate :draft, :status, :user, :to => :primary_article
 
-	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true
+	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true, :dependent => :destroy
 
 	belongs_to :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 

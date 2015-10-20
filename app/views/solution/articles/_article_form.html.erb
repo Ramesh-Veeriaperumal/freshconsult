@@ -61,7 +61,7 @@
       </div>
     <% end %>
 
-    <% if @article_meta %>
+    <% if @article_meta && @article.new_record? %>
       <div class="control-group">
         <%= f.label(:category_id, t('solution.category'), { :class => 'control-label'}) %>
         <div class="controls">
@@ -103,9 +103,9 @@
     <% end %>
     
     <div class="row-fluid action-btns-container">
-      <% if !@article.new_record? && privilege?(:delete_solution, @article) %>
+      <% if !@article.new_record? && privilege?(:delete_solution, @article) && @article.is_primary? %>
         <div class="pull-left itil-hide">
-          <%= confirm_delete(@article_meta, solution_category_folder_article_path(@category_meta.id,@folder_meta.id,@article_meta)) %>
+          <%= confirm_delete(@article_meta, solution_article_path(@article_meta), {:"item-title" => @article_meta.title }) %>
         </div>
       <% end %>
       <div class="span6 pull-right pagination-right header_buttons align-right">
