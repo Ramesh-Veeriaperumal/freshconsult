@@ -30,8 +30,10 @@ class RabbitmqWorker
   
   
   def sqs_push(message)
-    $sqs_reports_etl.send_message(message)
+    options = { :delay_seconds => 10 }
+    $sqs_reports_etl.send_message(message, options)
   rescue => e
+     rmq_logger.info "#{message}"
      sns_notification("Reports SQS push error", message)
      NewRelic::Agent.notice_error(e, {
                                    :custom_params => {
