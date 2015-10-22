@@ -451,7 +451,7 @@ module ApiDiscussions
 
     def test_topics
       f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
-      3.times do 
+      3.times do
         create_test_topic(f, User.first)
       end
       get :forum_topics, construct_params(id: f.id)

@@ -21,7 +21,7 @@ module Helpers::TicketsHelper
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
-  def ticket_pattern_with_notes(ticket, limit=false)
+  def ticket_pattern_with_notes(ticket, limit = false)
     notes_pattern = []
     ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
       notes_pattern << note_pattern(n)

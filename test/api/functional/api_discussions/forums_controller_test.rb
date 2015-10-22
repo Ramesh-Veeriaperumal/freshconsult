@@ -422,7 +422,7 @@ module ApiDiscussions
     def test_before_filters_unfollow_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :unfollow, controller_params({ id: f_obj.id })
+      delete :unfollow, controller_params(id: f_obj.id)
     end
 
     def test_before_filters_is_following_logged_in

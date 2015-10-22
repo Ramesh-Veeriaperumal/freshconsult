@@ -53,7 +53,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     assert_response 200
     pattern = []
     email_configs.limit(per_page).each do |ec|
-      pattern << email_config_pattern(ec.id)
+      pattern << email_config_pattern(ec)
     end
     match_json(pattern.ordered!)
     assert JSON.parse(response.body).count == per_page

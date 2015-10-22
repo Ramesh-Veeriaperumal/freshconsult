@@ -53,7 +53,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def load_objects
-      super(scoper.sort_by{|x| x.name.downcase})
+      super(scoper.sort_by { |x| x.name.downcase })
     end
 
     def sanitize_params

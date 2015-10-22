@@ -116,7 +116,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_record_not_unique_error
-    User.any_instance.stubs(:save).raises(ActiveRecord::RecordNotUnique.new("RecordNotUnique", "Duplicate-Entry"))
+    User.any_instance.stubs(:save).raises(ActiveRecord::RecordNotUnique.new('RecordNotUnique', 'Duplicate-Entry'))
     post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
     assert_response 409
     response.body.must_match_json_expression(request_error_pattern('duplicate_value'))

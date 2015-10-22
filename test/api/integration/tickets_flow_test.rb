@@ -201,13 +201,13 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     setup_for_email_config_product_test
     # create mismatch
     params = v2_ticket_params_sans_group_responder.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
-                                               product_id: @product_1.id).to_json
+                                                         product_id: @product_1.id).to_json
     skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
     match_json([bad_request_error_pattern('product_id', 'product_mismatch')])
 
     params = v2_ticket_params_sans_group_responder.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
-                                               product_id: nil).to_json
+                                                         product_id: nil).to_json
     skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
     match_json([bad_request_error_pattern('product_id', 'product_mismatch')])
@@ -230,7 +230,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
 
     params = v2_ticket_params_sans_group_responder.merge(requester_id: @agent.id, email_config_id: nil,
-                                               product_id: @product_1.id).to_json
+                                                         product_id: @product_1.id).to_json
     skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 400
     match_json([bad_request_error_pattern('email_config_id', 'email_config_mismatch')])
@@ -300,7 +300,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   def test_email_config_product_present_valid
     setup_for_email_config_product_test
     params = v2_ticket_params_sans_group_responder.merge(requester_id: @agent.id, email_config_id: @email_config_1.id,
-                                               product_id: @product_2.id).to_json
+                                                         product_id: @product_2.id).to_json
     skip_bullet { post '/api/tickets', params, @write_headers }
     assert_response 201
     ticket = Helpdesk::Ticket.last
@@ -325,7 +325,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     setup_for_email_config_product_test
 
     params = v2_ticket_params_sans_group_responder.merge(requester_id: @agent.id,
-                                               product_id: @product_1.id).to_json
+                                                         product_id: @product_1.id).to_json
     skip_bullet { post '/api/tickets', params, @write_headers }
     p response.body
     assert_response 201
