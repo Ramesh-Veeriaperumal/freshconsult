@@ -576,7 +576,7 @@ GEM
     hashie (3.2.0)
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.2)
+    hitimes (1.2.3)
     htmlentities (4.3.1)
     http (0.5.1)
       http_parser.rb
@@ -936,7 +936,7 @@ GEM
     thread_safe (0.3.4)
     tilt (1.4.1)
     timecop (0.7.3)
-    timers (4.0.1)
+    timers (4.0.4)
       hitimes
     treetop (1.4.15)
       polyglot
@@ -1057,8 +1057,8 @@ DEPENDENCIES
   json_expressions
   jwt (= 1.0.0)
   koala (= 1.10.1)
-  launchy
   launchparty (= 0.1.1)!
+  launchy
   lhm!
   liquid!
   lockfile (= 1.4.3)
