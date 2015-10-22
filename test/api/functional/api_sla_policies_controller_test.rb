@@ -9,7 +9,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     get :index, request_params
     pattern = []
     Account.current.sla_policies.all.each do |sp|
-      pattern << sla_policy_pattern(sp.id)
+      pattern << sla_policy_pattern(sp)
     end
     assert_response 200
     match_json(pattern.ordered!)
