@@ -64,7 +64,7 @@
               padding-top: 8px;
             }
             label.error{
-              @include padding-left(15%);
+              @include padding-left(20%);
             }
             .cc-address{
                   position: relative;
@@ -143,7 +143,7 @@
         .multi_value_field{
                 @include box-shadow( 0 4px 5px -4px #CCC inset);
                 border-radius: 3px;
-                width: 85%;
+                width: 80%;
                 @include float (left);
                 @include box-sizing ( border-box );
         }
@@ -171,7 +171,7 @@
       }
       .field:not(.checkbox){
         label:not(.error){
-              width: 15%;
+              width: 20%;
               margin-top: 8px;
                @include float(left);
         }
@@ -184,7 +184,7 @@
         }
         input, .redactor_wrapper, textarea{
               @include margin(0);
-              width: 85%;
+              width: 80%;
               @include box-sizing(border-box);
                @include float(left);
                .redactor_editor{
@@ -256,7 +256,7 @@
       }
       .custom_checkbox{
         .checkbox{
-          @include margin(0 10px 0 15%);
+          @include margin(0 10px 0 20%);
         }
       }
       .field.nested_field{
@@ -432,7 +432,7 @@
         margin: 0;
       }
       .from_address_wrapper, .multi_value_field{
-            width: 85%;
+            width: 80%;
             margin-top: 6px;
             @include float (left);
 
