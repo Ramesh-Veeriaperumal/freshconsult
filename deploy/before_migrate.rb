@@ -29,6 +29,7 @@ run "ln -nfs #{shared_path}/config/redis_display_id.yml #{rel_path}/config/redis
 run "ln -nfs #{shared_path}/config/chat.yml #{rel_path}/config/chat.yml"
 run "ln -nfs #{shared_path}/config/email.yml #{rel_path}/config/email.yml"
 run "ln -nfs #{shared_path}/config/pod_info.yml #{rel_path}/config/pod_info.yml"
+run "ln -nfs #{shared_path}/config/infra_layer.yml #{rel_path}/config/infra_layer.yml"
 run "ln -nfs #{shared_path}/config/redis_routes.yml #{rel_path}/config/redis_routes.yml"
 run "ln -nfs #{shared_path}/config/integrations_config.yml #{rel_path}/config/integrations_config.yml"
 run "ln -nfs #{shared_path}/config/mobile_config.yml #{rel_path}/config/mobile_config.yml"

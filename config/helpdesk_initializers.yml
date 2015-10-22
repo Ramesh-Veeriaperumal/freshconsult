@@ -4,6 +4,7 @@ helpdesk:
     - rails3_patches
     - authlogic_patch
     - helpdesk
+    - clean_api_middlewares
     - action_mailer_callbacks
     - action_mailer_no_tmail
     - activerecord_log
@@ -65,7 +66,6 @@ helpdesk:
     - integrations
     - autopilot_config
     - launch_profiler
-    - clean_api_middlewares
     - marketplace_config
     - doorkeeper
     - ebay_config
