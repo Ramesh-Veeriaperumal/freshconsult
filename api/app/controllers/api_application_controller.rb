@@ -248,11 +248,13 @@ class ApiApplicationController < MetalApiController
       # the imput sent using strong params and custom validations.
     end
 
-    # will take scoper as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def load_objects(items = scoper, is_array = false)
+    # will take scoper as one argument.
+    def load_objects(items = scoper)
+      is_array = !items.respond_to?(:scoped) # check if it is array or AR
       @items = paginate_items(items, is_array)
     end
 
+    # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
     def paginate_items(item, is_array = false)
       paginated_items = item.paginate(paginate_options(is_array))
 

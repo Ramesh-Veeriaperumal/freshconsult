@@ -451,13 +451,16 @@ module ApiDiscussions
 
     def test_topics
       f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
+      3.times do 
+        create_test_topic(f, User.first)
+      end
       get :forum_topics, construct_params(id: f.id)
       result_pattern = []
-      f.topics.each do |t|
+      f.topics.newest.each do |t|
         result_pattern << topic_pattern(t)
       end
       assert_response 200
-      match_json(result_pattern)
+      match_json(result_pattern.ordered!)
     end
 
     def test_topics_with_pagination

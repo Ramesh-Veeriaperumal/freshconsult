@@ -515,9 +515,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(deleted: false)
     get :index, controller_params
     assert_response 200
-    users = @account.all_contacts
+    users = @account.all_contacts.order(:name)
     pattern = users.map { |user| index_contact_pattern(user) }
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_contact_filter

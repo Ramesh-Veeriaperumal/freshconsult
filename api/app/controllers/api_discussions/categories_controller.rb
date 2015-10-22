@@ -13,7 +13,7 @@ module ApiDiscussions
       end
 
       def scoper
-        current_account.forum_categories
+        index? ? current_account.forum_categories.reorder(:name) : current_account.forum_categories
       end
   end
 end

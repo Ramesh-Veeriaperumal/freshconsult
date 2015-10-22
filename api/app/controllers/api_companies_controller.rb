@@ -24,7 +24,7 @@ class ApiCompaniesController < ApiApplicationController
   private
 
     def load_objects
-      super scoper.includes(:flexifield)
+      super scoper.includes(:flexifield).order(:name)
     end
 
     def scoper

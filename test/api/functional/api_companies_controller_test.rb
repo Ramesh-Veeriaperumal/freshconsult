@@ -209,13 +209,16 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index
+    3.times do
+      create_company
+    end
     get :index, request_params
     pattern = []
-    Account.current.companies.all.each do |company|
+    Account.current.companies.order(:name).all.each do |company|
       pattern << company_pattern(Company.find(company.id))
     end
     assert_response 200
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_company_with_pagination_enabled

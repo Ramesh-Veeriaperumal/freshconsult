@@ -1938,7 +1938,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'notes')
     assert_response 200
-    match_json(ticket_pattern_with_notes({}, ticket))
+    match_json(ticket_pattern_with_notes(ticket))
   end
 
   def test_show_with_empty_include
@@ -2223,17 +2223,17 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_show_with_notes_exceeding_limit
     ticket.update_column(:deleted, false)
-    2.times do
+    4.times do
       create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     end
-    stub_const(NoteConstants, 'MAX_INCLUDE', 1) do
+    stub_const(NoteConstants, 'MAX_INCLUDE', 3) do
       get :show, controller_params(id: ticket.display_id, include: 'notes')
     end
     assert_response 200
-    match_json(ticket_pattern_with_notes({}, ticket))
+    match_json(ticket_pattern_with_notes(ticket, 3))
     response = parse_response @response.body
-    assert_equal 1, response['notes'].size
-    assert ticket.reload.notes.visible.exclude_source('meta').size > 1
+    assert_equal 3, response['notes'].size
+    assert ticket.reload.notes.visible.exclude_source('meta').size > 3
   end
 
   def test_show_spam

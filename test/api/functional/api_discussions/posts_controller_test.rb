@@ -183,6 +183,11 @@ module ApiDiscussions
       per_page = t.posts.count - 1
       get :topic_posts, construct_params(id: t.id, per_page: per_page)
       assert_response 200
+      pattern = []
+      t.posts.limit(per_page).each do |f|
+        pattern << post_pattern(f)
+      end
+      match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/topics/#{t.id}/posts?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 

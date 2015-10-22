@@ -10,11 +10,14 @@ class ApiAgentsControllerTest < ActionController::TestCase
   end
 
   def test_agent_index
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
     get :index, controller_params
     assert_response 200
-    agents = @account.all_agents
+    agents = @account.all_agents.order('users.name')
     pattern = agents.map { |agent| agent_pattern(agent) }
-    match_json(pattern)
+    match_json(pattern.ordered)
   end
 
   def test_agent_filter_state

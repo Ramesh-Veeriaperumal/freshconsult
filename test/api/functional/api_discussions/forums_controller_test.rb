@@ -536,7 +536,7 @@ module ApiDiscussions
       fc_obj.forums.each do |f|
         result_pattern << forum_pattern(f)
       end
-      match_json(result_pattern)
+      match_json(result_pattern.ordered!)
     end
 
     def test_category_forums_invalid_id
@@ -577,6 +577,11 @@ module ApiDiscussions
       end
       get :category_forums, construct_params(id: fc.id,  per_page: 2)
       assert_response 200
+      pattern = []
+      fc.forums.limit(per_page).each do |f|
+        pattern << forum_pattern(f)
+      end
+      match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == 2
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories/#{fc.id}/forums?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
 

@@ -85,7 +85,7 @@ class TicketsController < ApiApplicationController
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
       # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
+      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end
 
     def paginate_options(is_array = false)

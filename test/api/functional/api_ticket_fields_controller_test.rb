@@ -27,7 +27,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
       end
       pattern << new_pattern
     end
-    match_json pattern
+    match_json pattern.ordered!
   end
 
   def test_index_with_custom_dropdown

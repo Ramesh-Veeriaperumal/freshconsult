@@ -73,13 +73,16 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_index
+    3.times do
+      create_group(@account)
+    end
     get :index, request_params
     pattern = []
-    Account.current.groups.all.each do |group|
+    Account.current.groups.order(:name).all.each do |group|
       pattern << group_pattern_for_index(Group.find(group.id))
     end
     assert_response 200
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_show_group

@@ -16,7 +16,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     assert_response 200
     contact_fields = ContactField.all
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_contact_field_index_with_all_custom_field_types

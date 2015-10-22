@@ -1,6 +1,7 @@
 Dir["#{Rails.root}/test/api/helpers/ticket_fields_helper.rb"].each { |file| require file }
 module Helpers::TicketsHelper
   include GroupHelper
+  include Helpers::NotesHelper
   include Helpers::TicketFieldsHelper
   include EmailConfigsHelper
   include ProductsHelper
@@ -20,8 +21,13 @@ module Helpers::TicketsHelper
     index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
-  def ticket_pattern_with_notes(_expected_output = {}, ticket)
-    ticket_pattern(ticket).merge(notes: Array)
+  def ticket_pattern_with_notes(ticket, limit=false)
+    notes_pattern = []
+    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+      notes_pattern << note_pattern(n)
+    end
+    notes_pattern = notes_pattern.take(limit) if limit
+    ticket_pattern(ticket).merge(notes: notes_pattern.ordered!)
   end
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)

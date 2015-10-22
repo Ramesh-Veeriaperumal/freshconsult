@@ -6,13 +6,16 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
   end
 
   def test_index
+    3.times do
+      create_business_calendar
+    end
     get :index, request_params
     pattern = []
-    Account.current.business_calendar.all.each do |bc|
-      pattern << business_calendar_index_pattern(BusinessCalendar.find(bc.id))
+    Account.current.business_calendar.order(:name).all.each do |bc|
+      pattern << business_calendar_index_pattern(bc)
     end
     assert_response 200
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_show_business_calendar

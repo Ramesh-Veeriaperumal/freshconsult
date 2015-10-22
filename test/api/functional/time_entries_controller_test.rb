@@ -1135,10 +1135,16 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count - 1
+    total_time_entries = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 })
+    per_page = total_time_entries.count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
+    result_pattern = []
+    total_time_entries.take(per_page).each do |n|
+      result_pattern << time_entry_pattern(n)
+    end
+    match_json(result_pattern.ordered!)
     assert_equal "<http://#{@request.host}/api/v2/time_entries?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, controller_params(per_page: per_page, page: 2)

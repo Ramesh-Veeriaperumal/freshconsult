@@ -6,6 +6,6 @@ class ApiBusinessCalendarsController < ApiApplicationController
     end
 
     def scoper
-      current_account.business_calendar
+      current_account.business_calendar.order(:name)
     end
 end

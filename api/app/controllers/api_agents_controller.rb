@@ -13,7 +13,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def load_objects
-      super agents_filter(scoper).includes(:user)
+      super agents_filter(scoper).includes(:user).order('users.name')
     end
 
     def agents_filter(agents)

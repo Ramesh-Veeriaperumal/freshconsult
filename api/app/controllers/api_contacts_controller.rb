@@ -111,7 +111,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def load_objects
-      super contacts_filter(scoper).includes(:flexifield, :company)
+      super contacts_filter(scoper).includes(:flexifield, :company).order('users.name')
     end
 
     def contacts_filter(contacts)

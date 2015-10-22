@@ -289,6 +289,11 @@ module ApiDiscussions
       per_page = ForumCategory.count - 1
       get :index, construct_params(per_page: per_page)
       assert_response 200
+      pattern = []
+      Account.current.forum_categories.limit(per_page).reorder(:name).each do |fc|
+        pattern << forum_category_response_pattern(fc.name, fc.description)
+      end
+      match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
