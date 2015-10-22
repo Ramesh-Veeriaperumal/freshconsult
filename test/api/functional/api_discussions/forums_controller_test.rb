@@ -578,7 +578,7 @@ module ApiDiscussions
       get :category_forums, construct_params(id: fc.id,  per_page: 2)
       assert_response 200
       pattern = []
-      fc.forums.limit(per_page).each do |f|
+      fc.forums.limit(2).each do |f|
         pattern << forum_pattern(f)
       end
       match_json(pattern.ordered!)

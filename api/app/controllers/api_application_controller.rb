@@ -448,6 +448,10 @@ class ApiApplicationController < MetalApiController
       @destroy ||= current_action?('destroy')
     end
 
+    def index?
+      @index ||= current_action?('index')
+    end
+
     def current_action?(action)
       action_name.to_s == action
     end
