@@ -28,6 +28,8 @@ class Solution::Folder < ActiveRecord::Base
   
   has_many :customers, :through => :customer_folders
 
+  validate :companies_limit_check
+
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
@@ -209,6 +211,15 @@ class Solution::Folder < ActiveRecord::Base
 
   def visible_in? portal
     category.portal_ids.include?(portal.id)
+  end
+
+  def companies_limit_check
+    if customer_folders.size > 250
+      errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
+      return false
+    else
+      return true
+    end
   end
 
   private

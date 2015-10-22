@@ -8,8 +8,8 @@ unless Account.current
       :locale => I18n.default_locale,
       
       :user_name => 'Support',
-      :user_password => 'test',
-      :user_password_confirmation => 'test', 
+      :user_password => 'test1234',
+      :user_password_confirmation => 'test1234', 
       :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )

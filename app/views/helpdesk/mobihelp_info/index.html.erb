@@ -1,9 +1,5 @@
 <% 
-  debug_data = @extra_info.debug_data unless @extra_info.nil?
-  if debug_data
-    json_data_str = AwsWrapper::S3Object.read(debug_data.content.path(:original),debug_data.content.bucket_name)
-    debug_data_json = JSON.parse(json_data_str);
-  end
+  debug_data_json = JSON.parse(@json_data_str) if @json_data_str
 %>
 <div class="tab-pane fade active in" id="myAppTab">
   	<div id="ticket-data" class="selection-bottom app-content-wrapper">
@@ -15,17 +11,17 @@
   		</ul>
   		<div class="tab-content">
   			<div class="tab-pane active" id="metaData">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["app_info"] ,  :source => 'app_info'} if debug_data %>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["app_info"] ,  :source => 'app_info'} if debug_data_json %>
   			</div>
   			<div class="tab-pane" id="customData">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["custom_data"] , :source => 'custom_data'} if debug_data %>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["custom_data"] , :source => 'custom_data'} if debug_data_json %>
   			</div>
   			<div class="tab-pane" id="breadCrumb">
-          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data%>
+          <%= render :partial => 'helpdesk/tickets/show/app_device_info', :locals => {:extra_info => @extra_info, :info => debug_data_json["breadcrumbs"] , :source => 'breadcrumbs'} if debug_data_json%>
   			</div>
         <div class="tab-pane" id="debugLog">
           <div id="debugLogContent">
-            <pre><%=debug_data_json["debug_logs"].strip if debug_data%>
+            <pre><%=debug_data_json["debug_logs"].strip if debug_data_json%>
             </pre>
           </div>
   			</div>

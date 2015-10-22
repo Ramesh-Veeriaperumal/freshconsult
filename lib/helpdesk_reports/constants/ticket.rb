@@ -71,7 +71,7 @@ module HelpdeskReports::Constants::Ticket
     [ :PERFORMANCE_DISTRIBUTION,     104],
     [ :AGENT_SUMMARY,                105],
     [ :GROUP_SUMMARY,                106],
-    # [ :CUSTOMER_REPORT,              107]
+    [ :CUSTOMER_REPORT,              107]
   ]
   
   REPORT_TYPE_BY_NAME = REPORT_TYPE.map { |i| i[0].to_s.downcase }   
@@ -90,11 +90,10 @@ module HelpdeskReports::Constants::Ticket
     :GROUP_SUMMARY             => '',
   }
 
-  REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :time_spent, :list]
+  REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
-  # REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution, :customer_report]
-  REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution]
-
+  REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution, :customer_report]
+  
   FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report]
   
   PARAM_INCLUSION_VALUES = {
@@ -103,7 +102,6 @@ module HelpdeskReports::Constants::Ticket
     :reference   =>  [true, false],
     :bucket      =>  [true, false],
     :time_trend  =>  [true, false],
-    :time_spent  =>  [true, false],
     :list        =>  [true, false]   
   }
   

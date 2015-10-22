@@ -179,6 +179,6 @@ module Helpdesk::Email::ParseEmailData
 		(email_config && email_config.product) ? email_config.product.portal : account.main_portal
 	end
 
-	alias_method :parse_recipients, :parse_recipients_new
+	#alias_method :parse_recipients, :parse_recipients_new
 
 end

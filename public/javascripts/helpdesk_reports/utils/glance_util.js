@@ -20,7 +20,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             });
 
             jQuery('#reports_wrapper').on('change.helpdesk_reports', '#custom_field_group_by select', function() {
-                _FD.actions.submitCustomField(this);
+                var flag = HelpdeskReports.locals.customFieldFlag;
+                if (flag == false) {
+                    HelpdeskReports.locals.customFieldFlag = true;
+                    _FD.actions.submitCustomField(this);
+                }
             });
 
             jQuery(document).on("glance_ticket_list.helpdesk_reports", function (ev, data) {
@@ -42,6 +46,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             });
 
             _FD.actions.setAjaxContainer();
+            _FD.actions.setCustomFieldFlag();
         },
         actions: {
             submitReports: function () {
@@ -108,10 +113,18 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 jQuery('#custom_field_group_by .half-container').attr('id', val + '_container');
                 jQuery('#custom_field_group_by .half-container').attr('data-group', val);
                 jQuery("#custom_field_group_by [data-container='view-more']").attr("data-group-container", val);
-                _FD.constructCustomFieldParams(val);
+                if (!HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric].hasOwnProperty(val)) {
+                    _FD.constructCustomFieldParams(val);
+                } else {
+                    HelpdeskReports.ChartsInitializer.Glance.customFieldInit(HelpdeskReports.locals.chart_hash, false);
+                    _FD.actions.setCustomFieldFlag();
+                }
             },
             setAjaxContainer: function () {
                 HelpdeskReports.locals.ajaxContainer = false;
+            },
+            setCustomFieldFlag: function () {
+               HelpdeskReports.locals.customFieldFlag = false; 
             },
             viewAllTickets: function (el) {
                 var metric = HelpdeskReports.locals.active_metric;
@@ -269,11 +282,13 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 data: Browser.stringify(params),
                 timeout: _FD.core.timeouts.custom_field,
                 success: function (data) {
-                    HelpdeskReports.ChartsInitializer.Glance.customFieldInit(data);
+                    HelpdeskReports.ChartsInitializer.Glance.customFieldInit(data, true);
+                    _FD.actions.setCustomFieldFlag();
                 },
                 error: function (data) {
                     var text = "Something went wrong, please try again";
                     HelpdeskReports.CoreUtil.populateEmptyChart([HelpdeskReports.locals.active_custom_field + "_container"], text);
+                    _FD.actions.setCustomFieldFlag();
                 }
             }
             _FD.core.makeAjaxRequest(opts);

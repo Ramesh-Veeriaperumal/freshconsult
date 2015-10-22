@@ -83,8 +83,8 @@ class FreshfoneController < FreshfoneBaseController
 
 		def invalid_number_incoming_fix
 			return if params[:From].blank? || sip_call?
-			Rails.logger.info "Invalid Number Check For Account Id :: #{current_account.id}, CallSid :: #{params[:CallSid]} for From Number : #{params[:From]}"
 			if invalid_number?(params[:From]) && !strange_number?(params[:From])
+				Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
 				params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
 			end
  		end

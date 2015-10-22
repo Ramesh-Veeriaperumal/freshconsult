@@ -1400,4 +1400,22 @@ module ApplicationHelper
     raise ArgumentError, "Missing block" unless block_given?
     raw TabHelper::TabsRenderer.new( *options, &block ).render
   end
+
+  def password_policies_for_popover
+    return "" if (@password_policy.nil? or @password_policy.new_record?)
+    list = Proc.new do
+      @password_policy.policies.collect do |policy|
+        case policy
+        when :minimum_characters
+          concat(content_tag :li, t("admin.security.password_policy_popover.#{policy.to_s}", :count => @password_policy.configs[policy.to_s]) )
+        when :cannot_contain_user_name, :atleast_an_alphabet_and_number,
+          :have_mixed_case, :have_special_character, :cannot_be_same_as_past_passwords
+          concat(content_tag :li, t("admin.security.password_policy_popover.#{policy.to_s}") )
+        end
+      end
+    end
+    
+    content_tag :ul, &list
+  end
+
 end

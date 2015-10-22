@@ -45,9 +45,8 @@ $(function(){
       "request-page-details" : GetPageInfo
     }
 
-    if(typeof msg_method_map[todo] == 'function')
+    if(typeof msg_method_map[todo] == 'function'){
       todo == "request-page-details" ? msg_method_map[todo](event) : msg_method_map[todo](event.data.options);
-    else
-      console.log('Invalid DOM Request');
+    }
   }
 })();

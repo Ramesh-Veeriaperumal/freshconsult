@@ -213,6 +213,26 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.ecommerce_accounts.reauth_required.present? }
   end
 
+  def contact_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+    MemcacheKeys.fetch(key) { self.contact_password_policy }
+  end
+
+  def agent_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+    MemcacheKeys.fetch(key) { self.agent_password_policy }
+  end
+
+  def clear_contact_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def clear_agent_password_policy_from_cache
+    key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:agent])
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
@@ -237,4 +257,9 @@ module Cache::Memcache::Account
     def handles_memcache_key
       ACCOUNT_TWITTER_HANDLES % { :account_id => self.id }
     end    
+
+    def password_policy_memcache_key(user_type)
+      ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
+    end
+
 end

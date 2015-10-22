@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   include ApiWebhooks::Methods
   include Social::Ext::UserMethods
   include AccountConstants
+  include PasswordPolicies::UserHelpers
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
@@ -41,6 +42,8 @@ class User < ActiveRecord::Base
   # alias_attribute :last_name, :string_uc02 # string_uc02 is used in Freshservice to store last name
   alias_attribute :user_type, :user_role # Used for "System User"
   alias_attribute :extn, :string_uc03 # Active Directory User - Phone Extension
+
+  delegate :history_column=, :history_column, :to => :flexifield
     
   acts_as_authentic do |c|    
     c.login_field(:email)
@@ -54,34 +57,35 @@ class User < ActiveRecord::Base
     c.merge_validates_length_of_email_field_options :if =>:chk_email_validation? 
     c.merge_validates_uniqueness_of_email_field_options :if =>:chk_email_validation?, :case_sensitive => true
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.validate :password_format?, :if => :require_password_check? #Password restriction hardcode
-  end
 
-  #Password restriction hardcode - TBD Remove after password_policy completed
-  def require_password_check?
-    !new_record? && password_changed? && Account.current.password_restriction_enabled?
-  end
+    c.validate_password_length = {:if => :password_length_enabled?, 
+                                  :min_length => :minimum_password_length}
 
-  def password_format?
-    short =  self.password.blank? || self.password.length < 8
-    alphanumeric = self.password =~ ALPHA_NUMERIC_REGEX #should have atleast one uppercase alphabet, one lowercase alphabet and one number
-    special = self.password =~ SPECIAL_CHARACTERS_REGEX # special character
-    username = self.password.downcase.include?(self.email[/.+(?=@)/].downcase) # should not contain username
+    c.password_history_field(:history_column)
 
-    #No I18n, since only for Walby Parker and won't be used for password policy feature
-    error_message = "Your password must have at least 8 characters,
-                     an uppercase and lowercase alphabet, a number and a
-                    special character, and must not be the same as your email id."
-    self.errors.add(:base, error_message) if !alphanumeric or !special or username or short
+    c.validate_password_history = {:if => :password_history_enabled?, 
+                                   :depth => :password_history_depth}
+  
+    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => I18n.t('password_policy.alphanumeric')}, 
+                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => I18n.t('password_policy.special_characters')}, 
+                               {:if => :password_mixed_case_enabled?, :regex => FDPasswordPolicy::Regex.mixed_case, :error => I18n.t('password_policy.mixed_case')}])
+
+    c.validate_password_contains_login(:if => :password_contains_login_enabled?)
+
+    c.password_expiry_field(:text_uc01)
+    c.password_expiry_timeout = { :if => :password_expiry_enabled?, 
+                                  :duration => :password_expiry_duration}
+
+    # enable for Phase 2
+    # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?, 
+    #                                  :duration => :periodic_login_duration}
   end
-  #End Password restriction hardcode
 
   validate :has_role?, :unless => :customer?
   validate :email_validity, :if => :chk_email_validation?
   validate :user_email_presence, :if => :email_required?
   validate :only_primary_email, on: :update, :if => [:agent?, :has_contact_merge?]
   validate :max_user_emails, :if => [:has_contact_merge?]
-
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
@@ -120,6 +124,10 @@ class User < ActiveRecord::Base
 
   def avatar_url(profile_size = :thumb)
     (avatar ? avatar.expiring_url(profile_size, 30.days.to_i) : is_user_social(profile_size)) if present?
+  end
+  
+  def allow_password_update?
+    !deleted? and !spam? and !blocked? and !email.blank? and !agent?
   end
 
   def is_user_social(profile_size)
@@ -631,6 +639,8 @@ class User < ActiveRecord::Base
       agent.destroy
       freshfone_user.destroy if freshfone_user
       email_notification_agents.destroy_all
+      self.set_password_expiry({:password_expiry_date => 
+              (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s})
       return true
     end 
     return false
@@ -646,6 +656,8 @@ class User < ActiveRecord::Base
       self.role_ids = [account.roles.find_by_name("Agent").id] 
       agent = build_agent()
       agent.occasional = !!args[:occasional]
+      self.set_password_expiry({:password_expiry_date => 
+          (Time.now.utc + FDPasswordPolicy::Constants::GRACE_PERIOD).to_s}, false)
       save ? true : (raise ActiveRecord::Rollback)
     end
   end
