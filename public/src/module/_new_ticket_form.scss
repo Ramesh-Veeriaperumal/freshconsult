@@ -37,6 +37,9 @@
     margin-top: 20px;
     li{
           list-style-type: none;
+          &.dropdown_blank, &.nested_field{
+                position: relative;
+          }
     }
       li.field{
         @include margin(0 -20px);      
@@ -247,7 +250,7 @@
                     }
                }
         }
-        .select2, .select2-container{
+        .select2:not(select), .select2-container{
             margin-bottom: 5px;
               width: 300px;
               @include box-sizing(border-box);
