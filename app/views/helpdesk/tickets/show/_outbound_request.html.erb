@@ -55,6 +55,7 @@
       <%= @ticket.description_html.html_safe %>
   </div>
 
+  <div id="ticket_attachments_container_<%= @ticket.id%>">
   <% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
     <span class="seperator"></span>
     <div class="attachments-wrap clearfix">
@@ -70,5 +71,6 @@
       </ul>
     </div>
   <% end %>
+  </div>
 </div>
 </div>
