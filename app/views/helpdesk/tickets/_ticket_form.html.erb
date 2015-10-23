@@ -54,7 +54,7 @@
         contentType: 'application/text',
         success:     function(data){
                         jQuery('#helpdesk_ticket_responder_id')
-                          .html(data);
+                          .html(data).trigger('change');
                      }
       });
     });
