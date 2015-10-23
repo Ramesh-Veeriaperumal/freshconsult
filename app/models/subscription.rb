@@ -464,13 +464,13 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       if next_renewal_at_changed? and (trial? or suspended?)
-        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
       elsif free_customer?
-        Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
       end
 
       if state_changed?
-        Resque.enqueue(CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
       end
     end
 

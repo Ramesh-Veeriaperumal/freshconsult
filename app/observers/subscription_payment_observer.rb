@@ -66,7 +66,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     end
 
     def add_to_crm(payment)
-      Resque.enqueue(CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
+      Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
     end
 end
 
