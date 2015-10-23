@@ -154,6 +154,56 @@ describe Discussions::TopicsController do
 		response.should redirect_to "/discussions/topics/#{topic.id}"
 	end
 
+
+	it "should unmark post answer when a topic's forum type is changed from a question type to a different type" do
+		question_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:howto])
+		problem_forum = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:problem])
+
+		topic = create_test_topic(question_forum)
+		post = create_test_post(topic)
+		post.toggle_answer
+		post.reload
+		topic.reload
+		post.answer.should eql true
+		topic.stamp_type.should eql Topic::QUESTIONS_STAMPS_BY_TOKEN[:answered]
+
+		put :update,
+			:id => topic.id,
+			:topic =>
+					{:forum_id => problem_forum.id}
+        
+        post.reload
+		topic.reload
+		post.answer.should eql false
+		post.forum_id.should eql problem_forum.id
+		topic.stamp_type.should_not eql Topic::QUESTIONS_STAMPS_BY_TOKEN[:answered]
+	end
+
+	it "should NOT change post answer when a topic's forum type is changed from a question type to a question type itself" do
+		question_forum_old = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:howto])
+		question_forum_new = create_test_forum(@category,Forum::TYPE_KEYS_BY_TOKEN[:howto])
+
+		topic = create_test_topic(question_forum_old)
+		post = create_test_post(topic)
+		post.toggle_answer
+		post.reload
+		topic.reload
+		post.answer.should eql true
+		topic.stamp_type.should eql Topic::QUESTIONS_STAMPS_BY_TOKEN[:answered]
+
+		put :update,
+			:id => topic.id,
+			:topic =>
+					{:forum_id => question_forum_new.id}
+        
+        post.reload
+		topic.reload
+		post.answer.should eql true
+		post.forum_id.should eql question_forum_new.id
+		topic.stamp_type.should eql Topic::QUESTIONS_STAMPS_BY_TOKEN[:answered]
+	end
+
+
 	it "should not update a topic on put 'update' when message is invalid" do
 		topic = create_test_topic(@forum, @agent)
 		create_test_post(topic, @agent)
