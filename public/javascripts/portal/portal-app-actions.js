@@ -66,7 +66,7 @@
 			data: [],
 			multiple: true,
 			tokenSeparators: [",", " "],
-			formatNoMatches: function () { return "Add multiple cc emails seperated by \",\""; },
+			formatNoMatches: function () { return "Add multiple cc emails separated by \",\""; },
 			createSearchChoice: function(term, data) {
 									if(jQuery(data).filter(function() { return this.text.localeCompare(term)===0; }).length===0) { 
 										if(term.isValidEmail())

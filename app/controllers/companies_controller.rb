@@ -10,6 +10,7 @@ class CompaniesController < ApplicationController
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
+  before_filter :set_native_mobile, :only => [:update]
 
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -71,10 +72,12 @@ class CompaniesController < ApplicationController
         format.html { redirect_to(@company, :notice => t(:'company.updated')) }
         format.xml  { head :ok }
         format.json { render :json => "", :status => :ok }
+        format.nmobile { render :json => { :success => true }}
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @company.errors, :status => :unprocessable_entity }
         format.json { render :json => @company.errors.fd_json, :status => :unprocessable_entity }
+        format.nmobile { render :json => { :success => false ,:err => @company.errors.full_messages ,:status => :unprocessable_entity } }
       end
     end
   end

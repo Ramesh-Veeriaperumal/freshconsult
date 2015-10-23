@@ -137,4 +137,45 @@ describe MonitorshipsController do
     end
   end
 
+  describe "Contact" do
+
+    before(:each) do
+      @user_contact = add_new_user(@account)
+      @forum_category = create_test_category
+      @forum = create_test_forum(@forum_category)
+      @topic = create_test_topic(@forum)
+    end
+
+    it "should deactivate monitors (unfollow topics forums) when contact is deleted" do
+      old_monitors_count = @user_contact.monitorships.active_monitors.count
+      post :toggle, :object => "topic" ,
+           :id => @topic.id , 
+           :type => "follow",
+           :user_id => @user_contact.id
+      @topic.reload
+      @user_contact.monitorships.active_monitors.count.should eql old_monitors_count+1
+      Sidekiq::Testing.inline! do
+        @user_contact.update_attribute(:deleted, true)
+      end
+      @user_contact.reload
+      @user_contact.monitorships.active_monitors.count.should eql 0
+    end
+
+    it "should deactivate monitors (unfollow topics forums) when contact is blocked" do
+      old_monitors_count = @user_contact.monitorships.active_monitors.count
+      post :toggle, :object => "topic" ,
+           :id => @topic.id , 
+           :type => "follow",
+           :user_id => @user_contact.id
+      @topic.reload
+      @user_contact.monitorships.active_monitors.count.should eql old_monitors_count+1
+      Sidekiq::Testing.inline! do
+        @user_contact.update_attribute(:blocked, true)
+      end
+      @user_contact.reload
+      @user_contact.monitorships.active_monitors.count.should eql 0
+    end
+  
+  end
+
 end

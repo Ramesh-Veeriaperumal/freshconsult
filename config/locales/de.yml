@@ -115,11 +115,13 @@ de:
     creditcard: "Geben Sie bitte eine gültige Kreditkartennummer ein."
     equalTo: "Bitte geben Sie den Wert nochmals ein."
   confirm_delete_message: "Möchten Sie %{human_name} wirklich löschen?"
+  reload: "Neu laden"
   any: Jeder
   or: oder
   reorder_rules: "Aktive Regeln neu sortieren"
   plain_yes: Ja
   plain_no: Nein
+  add_all: "Alle hinzufügen"
   unspam: "Kein Spam"
   unblock: Whitelist
   enabled: Aktiviert
@@ -218,6 +220,7 @@ de:
   security_code: Sicherheitscode
   example: Beispiel
   pending: Ausstehend
+  outbound_email: "Ausgehende E-Mail"
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebook-Nutzer
@@ -303,16 +306,22 @@ de:
     insert_field: "Feld per Drag & Drop hinzufügen"
     drag_drop_field_intro: "Um ein neues individuelles Feld hinzuzufügen, ziehen Sie einen beliebigen Feld-Typ nach unten in das \"%{name}\"-Formular"
     number: Nummer
+    empty_section_info: "Feld hier ablegen"
     text: "Einzeiliges Textfeld"
     paragraph: "Mehrzeiliges Textfeld"
     checkbox: Kontrollkästchen
     dropdown: Auswahlfeld
+    decimal: Dezimalzahl
     dropdown_blank: Auswahlfeld
     phone_number: Telefonnummer
     url: URL
     date: Datum
+    delete: Löschen
     regex: Regex
     email: E-Mail
+    nested_field: "Abhängiges Feld"
+    drag_and_drop_field: "Feld per Drag & Drop hinzufügen"
+    default_field_error: "Standardfelder können in Abschnitt nicht abgelegt werden"
   ticket_fields:
     fields:
       source: Quelle
@@ -329,9 +338,11 @@ de:
       tags: Tags
     saving_ticket: "Ticketfelder werden gespeichert..."
     untitled: "Ohne Titel"
+    properties: Eigenschaften
     first_choice: "Erste Option"
     second_choice: "Zweite Option"
     confirm_delete: "Möchten Sie dieses Feld wirklich löschen?"
+    confirm_deletion: "Durch diese Aktion wird das Feld entfernt. Es wird dauerhaft aus der Datenbank gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie fortfahren möchten?"
     no_choice_message: "Es muss mindestens eine gültige Option vorhanden sein"
     index:
       number: Nummer
@@ -343,24 +354,31 @@ de:
       paragraph: Absatz
       checkbox: Kontrollkästchen
       save: "Ticketfelder speichern"
+      save_ticket_fields: Speichern
       drag_drop_intro: "Ziehen Sie beliebige Feldtypen mit der Maus unten in das „Neues Ticket“-Formular, um ein neues eigenes Feld hinzuzufügen."
       dropdown: Auswahlfeld
       nestedfield: "Abhängiges Feld"
+      drag_and_drop_field: "Feld per Drag & Drop hinzufügen"
     formfield_props:
       form_title: Feldeigenschaften
       behavior: Verhalten
       label: Feldname
       nested_label: "Eingerückte Feldnamen"
+      level: Ebene
       level1: Ebene 1
       level2: Ebene 2
       level3: Ebene 3
       nestedfield_helptext: "Verwenden Sie den nachstehenden leeren Formulartextbereich, um Elemente für Ihre Auswahlfeldliste hinzuzufügen oder zu bearbeiten, und rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder zweimal drücken. Je nach Einrückung konvertieren wir es zu den Auswahlfeldelementen. Geben Sie daher besondere Obacht.<a target='_blank' href=%{learn_more}>Mehr erfahren</a> "
+      nested_field_helptext: "Verwenden Sie den nachstehenden Textbereich, um Elemente für Ihre Auswahlfeldliste hinzuzufügen oder zu bearbeiten. Rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder zweimal drücken. Je nach Einrückung konvertieren wir sie zu Auswahlfeldelementen. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Hier finden Sie dazu mehr Informationen</a> "
       dropdown_items_edit: "Auswahlfeldelemente - Ansicht bearbeiten"
+      drop_down_items_edit: "Dropdown-Elemente - Bearbeiten"
       dropdown_items_preview: "Auswahlfeldelemente - Vorschau"
       status_choices: Statusoptionen
       display_to_customer: "Nachricht für Kunden anzeigen"
       sla_timer: SLA-Timer
+      section_type_change: "Bitte speichern Sie das Ticketformular, um die letzten Änderungen anzuzeigen, die Sie für diesen Feldtyp vorgenommen haben."
       nestedfield_helptext_preview: "Hier sehen Sie die „Vorschau“ für ein Beispiel von Auswahlfeldelementen. Verwenden Sie den leeren Formulartextbereich in der Ansicht „Bearbeiten“, um Elemente zu bearbeiten."
+      nested_field_helptext_preview: "Dies ist eine Vorschau von Dropdown-Elementen. Klicken Sie auf „Bearbeiten“, um die Werte jedes einzelnen  Dropdown-Elements zu ändern."
       delete_field: "Feld löschen"
       field_label_agents: "Feldname für Bearbeiter"
       field_label_customer: "Feldname für Kunden"
@@ -383,13 +401,43 @@ de:
       display_cc_field: "Cc-Feld anzeigen"
       cc_company_contacts: "Kann nur Firmenkontakte ins Cc setzen"
       cc_any_email: "Kann alle E-Mail-Adressen ins Cc setzen"
+      field_delete_disabled: "Standardfelder können Sie nicht löschen."
+      default_field_delete_disabled: "Standardfelder können nicht gelöscht werden."
+      dropdown_choice_disabled: "Standardauswahl kann nicht gelöscht werden."
+      nested_tree_validation: "Sie benötigen mindestens eine Kategorie und Unterkategorie"
+      nested_unique_names: "Agentenbezeichnung darf nicht den beiden anderen Ebenen entsprechen"
+      nested_3rd_level: "Bezeichnung für Elemente der dritten Ebene benötigt"
+    section:
+      remove_type: "Abschnitt ist mit diesem Typ assoziiert"
+      new_section: "Neuer Abschnitt"
+      confirm_text: "Bitte bestätigen..."
+      oops_btn: Ups!
+      move_keep_copy: "Feld in den Zielabschnitt kopieren"
+      delete_field_section: "Feld aus diesem Abschnitt löschen"
+      would_you_like_to: "Möchten Sie"
+      move_field_remove_section: "Feld in Zielabschnitt verschieben"
+      delete_permanent: "Feld aus allen Abschnitten löschen"
+      delete_from_section: "Möchten Sie dieses Feld aus diesem Abschnitt wirklich löschen?"
+      field_remove_all_section: "Durch das Verschieben des Felds wird es aus allen Abschnitten gelöscht"
+      delete_section: "Möchten Sie diesen Abschnitt wirklich Lösung löschen?"
+      section_has_fields: "Abschnitt enthält Felder"
+      field_available: "Dieses Feld ist bereits im Zielabschnitt enthalten."
+      section_delete_btn: "Abschnitt löschen"
+      ok_btn: OK
+      confirm_btn: Bestätigen
+      delete_btn: Löschen
+      continue_btn: Fortfahren
+      section_prop: Abschnittseigenschaften
+      sectino_label: Abschnittstitel
+      section_type_is: "Abschnitt anzeigen, wenn Typ ist"
+      section_name_unique: "Abschnittsname wird bereits verwendet"
   folder:
     edit: "Ordner bearbeiten"
     info1: "Möchten Sie diesen Ordner wirklich löschen?"
     add_folder: "Ordner hinzufügen"
     delete_confirm:
       one: "Durch Löschen dieses Ordners wird ein darin enthaltener Artikel gelöscht."
-      other: "Durch Löschen des Ordners werden alle %{count} darin enthaltenen Artikel gelöscht."
+      other: "Durch Löschen dieses Ordners werden alle %{count} darin enthaltenen Artikel gelöscht."
   amount_per_month: "%{amount} $ %{period}"
   amount_for_annual: "%{amount} $ jährlich"
   agent_deleted_message: "Dies ist ein gelöschter Bearbeiter"
@@ -428,15 +476,20 @@ de:
   support:
     tickets:
       ticket_survey:
+        subject: "Test-E-Mail für Umfrage - %{title}"
+        survey_preview_ticket_message: "Dies ist ein Beispielticket, das während der Vorschau der Kundenzufriedenheitsumfrage erstellt wurde"
         title: Kundenumfrage
         rating_sub_title: "Sie haben uns bewertet"
-        survey_title: "Bitte nehmen Sie sich kurz Zeit, um unseren Support zu bewerten"
+        survey_title: "Wie gut der Kundenservice-Vertreter Ihre Fragen beantwortet oder Ihr Problem gelöst?"
+        survey_question_title: "Wie gut der Kundenservice-Vertreter Ihre Fragen beantwortet oder Ihr Problem gelöst?"
         feedback_title: "Beschreiben Sie ihre Erfahrungen mit dem Support (freiwillig)"
         rated_on: "am %{rated_on}"
         change_of_mind: "Sie haben Ihre Meinung geändert?"
         rate_again: "Bewerten Sie uns erneut"
         submit: Abschicken
         cancel: Abbrechen
+        back: Zurück
+        loading_feedback: "Feedback wird geladen"
     login:
       form:
         email: E-Mail
@@ -465,25 +518,25 @@ de:
     surveys:
       thanks_for_feedback: "Wir haben Ihr Feedback erhalten. Vielen Dank!"
       feedback_already_done: "Für diese Antwort haben Sie bereits Ihr Feedback abgegeben."
+      handle_expired: "Ihr Link zur Umfrageanfrage ist abgelaufen."
+      preview_feedback_error: "Die eingegebene URL ist ungültig."
+      no_survey_result_error: "Für die Feedbackerstellung ungültige Parameter."
+      no_survey_active_error: "In der Umfrage ist die Feedbackerstellung nicht aktiviert."
+      feedback_not_given: "Keine Kommentare"
       new:
         thanks_info: "Vielen Dank, dass Sie sich die Zeit genommen haben, um Ihre Erfahrungen mit unserem Support zu bewerten."
         feedback_info: "Wir schätzen Ihr Feedback sehr."
         feedback_optional: "Ihr Feedback ist eine freiwillige Angabe"
+        send: Senden
         submit: Senden
-        happy: Hervorragend
-        neutral: Ausreichend
-        unhappy: Ungenügend
-        additional_info: "Sie könnten zudem Ihre Erfahrung mit uns teilen."
-        customer_satisfaction: Kundenzufriedenheitsbewertung
-        rating: "Ihre Bewertung"
-      index:
-        thanks_info: "Vielen Dank, dass Sie sich die Zeit genommen haben, um Ihre Erfahrungen mit unserem Support zu bewerten."
+        additional_comments: "Zusätzliche Kommentare"
         thanks: "Vielen Dank für Ihre Bewertung!"
         sorry: "Wir möchten uns vielmals für die Unannehmlichkeiten entschuldigen."
         happy_info: "Es war uns eine Freude, Ihnen zu helfen. Wir freuen uns, dass Sie mit uns zufrieden waren."
-        neutral_info: "Es wäre so schön, Sie glücklicher zu sehen."
         neutral_information: "Es wäre so schön, Sie glücklicher zu sehen."
+        neutral_info: "Wir wünschten, Sie wären etwas zufriedener mit uns."
         unhappy_info: "Das nächste Mal werden wir uns mehr Mühe geben."
+        additional_info: "Außerdem könnten Sie Ihre Erfahrung der Zusammenarbeit mit uns teilen."
   gamification:
     levels:
       beginner: Anfänger
@@ -525,6 +578,7 @@ de:
       love_trophie_info_group: "Gruppe mit den höchsten Kundenzufriedenheitspunkten dieses Monats"
   quests:
     delete: "Möchten Sie diese Quest wirklich löschen?"
+    survey_disabled_event: "Umfragen sind deaktiviert. Ereignisse im Zusammenhang mit der Umfrage erfolgen eventuell nicht wie erwartet."
     inactive_quests: "Inaktive Quests"
     date: Datum
     satisfaction: Kundenzufriedenheitsbewertung
@@ -609,6 +663,7 @@ de:
     help_image_alt:
       helpdesk_arcarde: "Helpdesk Arcade"
       import_csv_file_pattern: "CSV-Dateimuster importieren"
+    survey_modified: "Die mit der Umfrage im Zusammenhang stehende Regel wurde verändert. Bitte konfigurieren Sie sie neu."
     social:
       helpcard:
         title1: "Hinzufügen von sozialen Konten"
@@ -722,7 +777,9 @@ de:
         nestedfield_helptext_preview: "Hier finden Sie die „Vorschau“ für ein Beispiel an Auswahlfeldelementen. Verwenden Sie den leeren Formulartextbereich in der Ansicht „Bearbeiten“, um Elemente zu bearbeiten."
         delete_field: "Feld löschen"
         field_label_agents: "Feldname für Agente"
+        field_label_agents_level2: "Name der zweiten Ebene für Agenten"
         field_label_customer: "Feldname für Kunden"
+        field_label_customer_level2: "Name der zweiten Ebene für Kunden"
         add_new_choice: "Element hinzufügen"
         customer_mandatory: "Erforderlich beim Senden des Formulars"
         customer_edit_signup: "Kunden können dies bei ihrer Anmeldung sehen"
@@ -790,8 +847,11 @@ de:
         sla_timer: SLA-Timer
         nestedfield_helptext_preview: "Hier finden Sie die „Vorschau“ für ein Beispiel an Auswahlfeldelementen. Verwenden Sie den leeren Formulartextbereich in der Ansicht „Bearbeiten“, um Elemente zu bearbeiten."
         delete_field: "Feld löschen"
+        delete_section: "Abschnitt löschen"
         field_label_agents: "Feldname für Agenten"
         field_label_customer: "Feldname für Kunden"
+        field_label_agents_level2: "Name der zweiten Ebene für Agenten"
+        field_label_customer_level2: "Name der zweiten Ebene für Kunden"
         add_new_choice: "Element hinzufügen"
         customer_mandatory: "Erforderlich beim Senden des Formulars"
         customer_edit_signup: "Kunden können dies bei ihrer Anmeldung sehen"
@@ -817,16 +877,24 @@ de:
         regexp_example_html: "Beispiel: Um einer Zeichenkette zu entsprechen, die nur Buchstaben und Ziffern enthält:  <b> /^[a-zA-Z0-9]*$/ </b>.  Um einer Zeichenkette zu entsprechen, die mit dem Wort „fresh“ beginnt: <b> %{regex} </b>."
         max_choices: "Maximale Zahl der Elemente erreicht"
     portal:
-      index:
-        portal_customizer_title: "Einstellungen für das Kundenportal"
+      delete_confirm:
+        title: "Durch das Löschen dieses Portals erfolgt die Entfernung von"
+        info1: "Alle Einstellungen in der Portalanpassung"
+        info2: "Alle verlinkten Lösungs- und Forumskategorien"
+      settings:
+        title: Kundenportale
+        portal_customizer_title: "Konfiguration des Kundenportals"
         signup_login: "Benutzeranmeldung und Login"
         allow_signup: "Benutzern erlauben, sich über das Kundenportal anzumelden"
         allow_signin: "Benutzern erlauben, sich anzumelden mit..."
         google: Google
         twitter: Twitter
         facebook: Facebook
-        user_permissions: "Nutzerberechtigung für Portal"
+        user_permissions: "Nutzerberechtigungen für Portal"
         submit_ticket: "Wer auf dem Portal ein neues Ticket senden kann"
+        portal_security: Portalsicherheit
+        enable_public_urls: "Öffentliches Ticket-URL aktivieren"
+        enable_public_urls_help: "Durch die öffentliche Ticket-URL kann jeder das Ticket sehen, ohne sich anzumelden. Wenn Sie dies deaktivieren, sind Benutzer nicht in der Lage, in E-Mail-Antworten und Benachrichtigungen auf öffentliche Ticket-Links zuzugreifen."
         logged_in: "Angemeldete Benutzer"
         everyone: Jeder
         none: Niemand
@@ -849,6 +917,13 @@ de:
         moderate_all_help: "Aktivieren Sie diese Funktion, wenn Sie jeden Beitrag bewerten möchten, der in Ihrer Community erstellt wird."
         moderate_none: "Nicht moderieren"
         moderate_none_help: "Aktivieren Sie diese Funktion, wenn Sie sicher sind, dass Ihre Community keine Spammer anlockt."
+      helpnote:
+        title: "Einrichtung Ihrer Portale"
+        tour: "Hilfe bei der Konfiguration meines Portals"
+        info1: "Wenn Sie möchten, dass Ihre Kunden und Support-Bearbeiter in Ihrer eigenen Domäne auf Ihr Support-Portal zugreifen, können Sie Ihre Support-URL ​<b>yourcompany.freshdesk.com​</b> auf Ihre Domäne (z. B.  ​<b>support.yourcompany.com</b> verweisen."
+        info2: "Sie können auch eine spezifische Lösung und Forumskategorien auswählen, die im Hauptportal und anderen Portalen aufgelistet werden.​"
+        info3: "Außerdem können Sie Ihren Helpdesk neu gestalten, indem Sie Ihr Logo und Favicon hochladen, Ihrem Helpdesk einen Namen geben und die Farben Ihres Portals anpassen."
+        info4: "Falls Sie Benutzerberechtigungen einrichten und Einstellungen für die Forumsmoderation optimieren möchten, klicken Sie auf die Registerkarte „Einstellungen\". Die Einstellungen können nicht für jedes Portal einzeln konfiguriert werden, sondern gelten allgemein für alle  erstellten Portale."
     mobihelp:
       app_review:
         request_sent: "Anfrage für App-Prüfung geschickt"
@@ -885,6 +960,7 @@ de:
           app_key: App-Schlüssel
           app_secret: App-Geheimnis
           integration_details: Integrationsdetails
+          saving: "Wird gespeichert..."
         index:
           title: MobiHelp-Apps
           new_app: "Neue App"
@@ -983,6 +1059,7 @@ de:
       points: Punkte
       successfully_updated: "Die Gamification-Einstellungen wurden erfolgreich aktualisiert."
       error_updated: "Fehler beim Aktualisieren der Gamification-Einstellungen."
+      survey_preview_error: "Der aktuelle Benutzer ist kein Agent. Fehler während der Vorschau der Umfrage."
       help_text:
         why_game: "Punkte und Level"
         why_game_info1: "Die Anzahl der Punkte, die ein Bearbeiter erhält, richtet sich nach seiner Schnelligkeit bei der Lösungsfindung der ihim zugewiesenen Tickets. Zudem werden Bonuspunkte vergeben, wenn ein Ticket beim ersten Anruf gelöst wird und ein Kunde zufrieden ist. Ein Bearbeiter kann auch Punkte verlieren, wenn er Tickets erst spät löst oder ein Kunde unzufrieden ist."
@@ -1024,16 +1101,114 @@ de:
         new_quest: "Neue Quest"
         quest_title: Quests
     surveys:
+      successfully_created: "Die Einstellungen zur Kundenzufriedenheit wurden erfolgreich erstellt."
       successfully_updated: "Die Einstellungen zur Kundenzufriedenheit wurden erfolgreich aktualisiert."
+      successfully_deleted: "Die Umfrage wurde erfolgreich gelöscht."
       error_updated: "Fehler beim Aktualisieren der Umfrageeinstellungen."
+      custom_helptext: |-
+          <p><b>Aktivieren von Kundenzufriendenheitsumfragen</b> <br>
+          Sie können in Agententicketantworten Kundenzufriendenheitsumfragen hinzufügen, um zu ermitteln, wie glücklich Kunden mit dem Support/dem Unternehmen/dem Produkt sind. Sie können auswählen, ob Sie Umfragen mit allen E-Mails versenden oder nur dann, wenn ein Problem „geschlossen“ oder „gelöst“ wurde. Die Antworten der Kunden können Sie unter <b>Berichten > Kundenzufriedenheitsbericht</b> anzeigen<br><br> <b>Agentenumfrage und Folgebefragung</b><br> Sie können im Rahmen einer Agentenumfrage eine Frage oder auch mehrere Follow-up-Fragen stellen. Die Agentenumfrage wird innerhalb der E-Mail angezeigt, und wenn Kunden die Umfrageoption wählen, werden sie zu einer Seite mit der Folgebefragung geleitet. Die Beobachterregeln und Gamifizierungspunkte werden allein auf der Agentenumfragebewertung beruhen.<br> <br><br> <b>Punkteskala</b><br> Sie können verschiedene Punkteskalen für die Agentenumfrage und Folgebefragung auswählen, z. B. <br> 2 Punkte (z. B. für Ja oder Nein)<br> 3 Punkte (z. B. für Stimme zu, Unsicher, Stimme nicht zu)<br> 5 Punkte (z. B. für Immer bis Niemals)<br> 7 Punkte (z. B. für Sehr schlecht bis Ausgezeichnet)<br><br>.
+          Sobald ein Kunde an einer Umfrage teilnimmt, werden die Skalen fixiert und können nicht mehr bearbeitet werden. </p>
       helptext: |-
           <p><b>Warum Zufriedenheitsumfragen aktivieren?</b> <br>
           Führen Sie einen Link in Ihre Antwort-E-Mails ein und sammeln Sie in einer Zufriedenheitsumfrage von Ihren Kunden direktes Feedback. <br><br> <b>Durch folgende Schritte und einen Link in Ihren Antwort-E-Mails können Sie Feedback von Ihren Kunden sammeln:</b><br>:<br> 1. Aktivieren Sie das Kontrollkästchen für Kundenzufriedenheitsumfragen<br> 2. Legen Sie den Text für den Link zur Kundenbefragung fest. Der Standardtext lautet&ldquo;Bitte teilen Sie uns mit, was Sie über Ihre Support-Erfahrung denken.&rdquo;<br> <br> <b>Wählen Sie die E-Mails aus, die einen Link zur Kundenzufriedenheitsumfrage enthalten sollen:</b><br> Sie können auswählen, ob Kunden in jeder E-Mail ein Link zur Kundenzufriedenheitsumfrage gesendet werden soll oder lediglich in der letzten E-Mail nach Lösen des Tickets.<br><br> Auf unserer Lösungsseite erfahren Sie mehr über Kundenzufriedenheitsumfragen. </p>
+      limit_exceed_error: "Sie können nur bis zu %{count} Umfragen hinzufügen."
+      custom_helptext_v2: |-
+          <p><b>Aktivieren einer Kundenzufriendenheitsumfrage</b> <br>
+          Sie können in Agententicketantworten eine Kundenzufriendenheitsumfrage hinzufügen, um zu ermitteln, wie glücklich Kunden mit dem Support/dem Unternehmen/dem Produkt sind. Sie können auswählen, ob Sie Umfragen mit allen E-Mails versenden oder nur dann, wenn ein Problem „geschlossen“ oder „gelöst“ wurde.  Die Antworten der Kunden können Sie unter <b>Berichten > Kundenzufriedenheitsbericht</b> anzeigen<br><br> <b>Kundenzufriendenheitsumfrage</b><br> Sie können im Rahmen einer Kundenzufriendenheitsumfrage eine Frage und zusätzliche Fragen stellen. Die Kundenzufriendenheitsumfrage wird innerhalb der E-Mail angezeigt, und wenn Kunden die Umfrageoption wählen, werden sie zu einer Seite mit den zusätzlichen Fragen der Umfrage geleitet. Die Beobachterregeln und Gamifizierungspunkte werden allein auf der Kundenzufriendenheitsumfrage beruhen.<br> <br><br> <b>Point scales</b><br>Sie können verschiedene Punkteskalen für die Kundenzufriendenheitsumfrage und zusätzliche Fragen auswählen, z. B. <br> 2 Punkte (z. B. für Ja oder Nein)<br> 3 Punkte (z. B. für Stimme zu, Unsicher, Stimme nicht zu)<br> 5 Punkte (z. B. für Immer bis Niemals)<br> 7 Punkte (z. B. für Sehr schlecht bis Ausgezeichnet)<br><br>.
+          Sobald ein Kunde an einer Umfrage teilnimmt, werden die Skalen fixiert und können nicht mehr bearbeitet werden. </p>
+      questions:
+        limit_exceed_error: "Sie können nur bis zu %{count} Fragen hinzufügen."
+      new_layout:
+        loading: "Wird geladen..."
+        default_survey: Standardumfrage
+        title: Titel
+        title_error_text: "Umfragename wurde bereits vergeben"
+        result_exist_msg: "Da für diese Umfrage bereits Antworten gesammelt wurden, können die Punkteskala und die Anzahl der Antworten nicht geändert werden. Sie können allerdings die Fragen und Antworten beantworten."
+      new_rating:
+        content_text: "Diese Frage hilft, die allgemeine Zufriedenheit mit der vom Agenten gelieferten Antwort zu ermitteln. Sie erscheint unterhalb der Unterschrift unten in der E-Mail, die an den Kunden gesendet wird. Die Skala kann nicht geändert werden, sobald die Antwort auf diese Frage eingegangen ist."
+        content_text_v2: "Diese Frage hilft, die allgemeine Zufriedenheit mit der vom Agenten gelieferten Antwort zu ermitteln. Sie erscheint unterhalb Ihrer Unterschrift unten in der E-Mail, die an den Kunden gesendet wird."
+        survey_question: "Frage in der Umfrage"
+        survey_question_v2: "Frage in der Umfrage"
+        error_text: "Dies ist eine Pflichtangabe"
+        points_scale: Punkteskala
+        point_scale_v2: Punkteskala
+        scale_text: "Sie haben ausgewählt"
+        scale: Punkteskala
+      new_thanks:
+        survey_feedback: "Feedbackseite zur Umfrage"
+        survey_feedback_v2: Danksagungsseite
+        thanks_feedback: "Vielen Dank für Ihr wertvolles Feedback."
+        thanks_feedback_v2: "Danke sehr. Ihre Rückmeldung wurde gesendet."
+        additional_comments_feedback: "Zusätzliches Feedback sammeln"
+        comments_feedback: "Fügen Sie mehr Details über Kundenerfahrungen hinzu."
+        thanks_message_feedback: "Danksagungsnachricht für Feedbackumfrage"
+        thanks_message_feedback_v2: "Danksagungsnachricht für zusätzliche Fragen"
+        default_question_text: "Wie gut sind Ihre Erfahrungen mit dem Kundensupport? Sind Sie zufrieden?"
+        thanks_label: "Die Nachricht wird angezeigt, nachdem die Feedbackumfrage versendet wurde"
+        thanks_label_v2: "Die Nachricht wird angezeigt, nachdem die Feedbackumfrage gesendet wurde"
+        feedback_response_text: "Danke sehr. Ihr Feedback wurde gesendet."
+        help_text: "Die Folgebefragung wird auf der neuen Seite angezeigt, nachdem der Kunde an der Agentenumfrage teilgenommen hat. Fragen können zu Produkten/Unternehmen/Agenten gestellt werden."
+        help_text_v2: "Die Fragen werden auf der neuen Seite angezeigt, nachdem der Kunde an der Zufriedenheitsumfrage teilgenommen hat. Fragen können zu Produkten/Unternehmen/Agenten gestellt werden."
+      new_questions_layout:
+        title_text: "Wählen Sie die Punkteskala für Ihre Fragen"
+        title_text_v2: "Wählen Sie die Punkteskala für Ihre Fragen"
+        add_question: "Frage hinzufügen"
+        questions: Fragen
       index:
+        custom_title: Umfragen
         title: "Einstellungen für Zufriedenheitsumfrage"
+        new_survey: "Neue Umfrage"
+        load_text: "Umfrageliste wird geladen..."
+        editing_survey: "Umfrage bearbeiten"
+        deleting_survey: "Umfrage löschen"
+        saving_survey: "Umfrage speichern"
+        enabling_survey: "Umfrage aktivieren"
+        disabling_survey: "Umfrage deaktivieren"
+        feedback_survey_begin: "Umfragefeedback an Ihre E-Mail-ID senden"
+        feedback_survey_end: "Umfragefeedback wurde an Ihre E-Mail-ID gesendet"
+        survey_feedback: "Feedback wird gesendet..."
+        portal_msg: "Umleitung an Ticketseite"
+        update: Aktualisierung
+        new: Neu
+        edit: Bearbeiten
+        cancel: Abbrechen
+        hide: Entfernen
+        preview: Testen
+        enabled: Aktiviert
+        disabled: Deaktiviert
+        save_survey: Speichern
+        default_survey: Standardumfrage
+        delete_survey: "Umfrage löschen"
+        delete_msg: "Möchten Sie diese Umfrage wirklich löschen?"
+        survey_help_msg: "Die Auswahl einer Bewertung oben wird zur Seite unten verweisen"
+        survey_help_msg_v2: "Nach der Auswahl einer Zufriedenheitsbewertung wird eine Danksagungsseite angezeigt."
+        ? "true"
+        : true
+        ? "false"
+        : false
+      choice_contents:
+        strongly_disagree: "Stimme überhaupt nicht zu"
+        some_what_disagree: "Stimme nicht wirklich zu"
+        disagree: "Stimme nicht zu"
+        neutral: Neutral
+        agree: "Stimme zu"
+        some_what_agree: "Stimme etwas zu"
+        strongly_agree: "Stimme sehr zu"
+      thanks_contents:
+        title_text: "Danksagungsnachricht für Kundenzufriedenheitsbewertung"
+        title_text_v2: "Danksagungsnachricht für Kundenzufriedenheitsumfrage"
+        message_text: "Vielen Dank für Ihr wertvolles Feedback."
+        label_text: "Feedbackumfrage hinzufügen"
+        label_text_v2: "Zusätzliche Fragen der Umfrage"
+        question_error_text: "Frage wurde bereits eingegeben"
+        empty_text: "Fragewert darf nicht leer sein"
       satisfaction_settings:
-        enable_label: Kundenzufriedenheitsumfragen
+        enable_label: Kundenzufriedenheitsbewertung
+        enable_label_v2: Kundenzufriedenheitsumfrage
+        satisfaction_text: "Ich bin zufrieden mit dem Service, der mir bereitgestellt wird/wurde durch"
         link_text_label: "Link-Text für Zufriedenheitsumfrage"
+        link_text_input_label: "Wie würden Sie allgemein bewerten, wie zufrieden Sie mit der vom Agenten bereitgestellten Lösung sind?"
         link_text_input: "Bitte teilen Sie Ihre Erfahrung mit dem Support mit."
         link_text_info: "Dieser Text erscheint unter der Signatur in der E-Mail, die an den Kunden geschickt wird."
         send_while_option1: "Alle E-Mails, die an den Kunden geschickt werden"
@@ -1199,7 +1374,7 @@ de:
         human_name: Supervisor-Regel
         title: "Supervisor - Regeln"
       helpnote:
-        tour: "Hilfe bei der Erstellung einer Supvervisor-Regel"
+        tour: "Hilfe bei der Erstellung einer Supervisor-Regel"
         help_title: Supervisor
         help_info_1: "Der Supervisor führt ticketspezifische Aktionen aus, die Sie je nach zeit- und ereignisbedingten Auslösern festlegen. Verwenden Sie den Supervisor, um regelmäßig aktuelle Tickets zu prüfen und Aktionen durchzuführen, wie das Senden von Erinnerungen an Kunden für ausstehende Tickets oder das Eskalieren von überfälligen Tickets an die richtige Person in Ihrem Team."
         help_info_2: "Der Supervisor wird stündlich ausgeführt, um Tickets zu verarbeiten, die in den letzten 30 Tagen aktualisiert wurden. Supervisor-Regeln werden nacheinander verarbeitet, d. h. die Reihenfolge der Regeln ist wichtig. Eine Regel kann bestimmte Aktionen anweisen, die nachfolgende Regeln auslösen."
@@ -1212,7 +1387,8 @@ de:
       clone_rule:
         title: "Supervisor - Clone-Regel"
     observer_rules:
-      info_help: "Für jedes, in einem Ticket auftretendes Ereignis können Sie mithilfe der Beobachterregeln bestimmte Aktionen auslösen."
+      info_help_1: "Für jedes, in einem Ticket auftretendes Ereignis können Sie mithilfe der Beobachterregeln bestimmte Aktionen auslösen."
+      survey_disabled_rule: "Umfragen sind deaktiviert. Regeln im Zusammenhang mit der Umfrage lauten eventuell nicht wie erwartet."
       index:
         human_name: Beobachterregel
         title: "Beobachter – Regeln"
@@ -1373,26 +1549,31 @@ de:
         heading1: "Mehrere Produkte"
         content1: "Sie können mehrere Produkte mit separaten angepassten Portalen in einem einzelnen Freshdesk-Konto verwalten. Konfigurieren Sie einzelne Support-E-Mails für jedes Produkt und ordnen Sie sie einer spezifischen Gruppe zu."
         heading2: "Konfigurieren eines separaten Portals für Produkte"
+        heading3: "Support mehrerer Produkte"
         content2: "Wenn Sie für jedes Produkt ein separat angepasstes Portal konfigurieren möchten, können Sie für jedes Produkt eine Auswahl von Wissensdatenbankartikeln und Foren bieten."
+        content3: "Sie können Portale für diese Produkte konfigurieren, indem Sie auf die Registerkarte „Admin“ und dann auf „Portale“ klicken​."
       new:
         title: "Neues Produkt"
         saving: "Wird gespeichert..."
       portal:
         select_forum_category: "Forenkategorie auswählen..."
         portal_rebranding: Portalanpassung
-        cname_configure_info: "Vor der Nutzung dieses Feldes sollten Sie sicherstellen, dass Sie einen CNAME DNS-Eintrag in der DNS-Zonendatei erstellt haben, der <strong>help.<b id=\"domain_info_name\">mycompanyname</b>.com</strong> auf %{full_domain} verweist. Ihr Webmaster oder Serveradministrator kann Ihnen bei der Einrichtung helfen."
+        cname_configure_info: "Vor der Nutzung dieses Feldes sollten Sie sicherstellen, dass Sie einen CNAME DNS-Eintrag in der DNS-Zonendatei erstellt haben, der <strong>help.<b id=\"domain_info_name\">yourcompany</b>.com</strong> auf %{full_domain} verweist. Ihr Webmaster oder Serveradministrator kann Ihnen bei der Einrichtung helfen."
         select_solution_category: "Eine Lösungskategorie auswählen..."
         solution_categories_info: "Sie können diesem Produkt mehrere Lösungskategorien zuweisen. Alle anderen Lösungen werden nicht den Kunden angezeigt, wenn sie die Lösungsregisterkarte im Produktportal aufrufen."
         forum_categories_info: "Sie können diesem Produkt mehrere Forenkategorien zuweisen. Alle anderen Foren werden den Kunden nicht angezeigt, wenn sie im Produktportal die Forenregisterkarte  aufrufen."
-        portal_settings: Portaleinstellungen
+        settings: Einstellungen
         portal_name_info: "Der Name wird im Produktportal neben dem Kopfzeilenlogo angezeigt."
         portal_url: Portal-URL
         solution_categories: Lösungskategorien
         forum_categories: Forenkategorien
         portal_name: Portalname
         portal_language: Portalsprache
+        default_portal_language: "Standardmäßige Portalsprache"
         portal_language_info: "Dies ist die Standardsprache, wenn Kunden Ihr Portal besuchen"
         portal_customization: Portalanpassung
+        portal_settings: Portaleinstellungen
+        edit_portal: "Portal bearbeiten"
         customize_portal: "Portal anpassen"
         save_and_customize: "Speichern und Portal anpassen"
         save_and_continue: "Es sind ungespeicherte Änderungen im Formular vorhanden. Möchten Sie sie speichern und fortfahren?"
@@ -1401,9 +1582,15 @@ de:
         last_published: "Letzte Portalveröffentlichung:"
         contact_us: Kontaktaufnahme
         logo_and_favicon: "Logo und Favicon"
+        customer_portal: Kundenportal
+        categories_visible: Portalkategorien
+        product_label: "Produkt: %{product_name}"
       edit:
         title: "Produkt bearbeiten"
         updating: "Wird aktualisiert..."
+      footer:
+        edit_portal: "Portal speichern und anpassen"
+        enable_portal: "Portal speichern und aktivieren"
       form:
         configure_seperate_portal: "Kundenportal aktivieren"
         enable_product_portal: "Produktportal aktivieren"
@@ -1421,6 +1608,8 @@ de:
         edit_facebook_page: "Facebook-Seite %{page_name} bearbeiten"
         customize_portal: "Portal anpassen"
         enable_portal: "Portal aktivieren"
+        portal_disabled: "Portal deaktiviert"
+        disable_portal: "Portal deaktivieren"
         email_not_verified: "Nicht verifiziert"
         view_portal: "Portal anzeigen"
         delete: "Möchten Sie dieses Produkt wirklich löschen?"
@@ -1530,6 +1719,7 @@ de:
         survey-settings: Kundenzufriedenheit
         gamification-settings: Arcade
         rebranding: Helpdesk-Anpassung
+        helpdesk-settings: Helpdesk
         account-settings: Kontoeinstellungen
         helpdesk-productivity: Helpdesk-Produktivität
         canned-response: "Vorgefertigte Antworten"
@@ -1567,6 +1757,7 @@ de:
         tags: Tags
         mobihelp: MobiHelp
         customer-portal: Kundenportal
+        portals: Portale
       keywords:
         forum_moderation: Forummoderation
         configure_support_email: "Support-E-Mail konfigurieren"
@@ -1763,12 +1954,25 @@ de:
       tickets:
         create:
           success: "Ihr Ticket wurde erstellt und eine Kopie an Ihre E-Mail-Adresse verschickt."
+      create:
+        success: "Portal wurde für '%{product_name}' aktiviert"
+        failure: "Portal konnte nicht aktiviert werden"
+      update:
+        success: "Portal wurde aktualisiert"
+        failure: "Portal konnte nicht aktualisiert werden"
+      destroy:
+        success: "Portal von '%{product_name}' wurde deaktiviert"
+        failure: "Hauptportal kann nicht deaktiviert werden"
+      not_found:
+        portal: "Dieses Portal konnte nicht gefunden werden. Er wurde möglicherweise gelöscht oder die URL wurde falsch eingegeben."
+        product: "Dieses Produkt konnte nicht gefunden werden. Er wurde möglicherweise gelöscht oder die URL wurde falsch eingegeben."
     g_app:
       user_deleted: "Benutzer wurde gelöscht."
       authentication_failed: "Authentifizierung fehlgeschlagen"
       authentication_success: "Authentifizierung erfolgreich abgeschlossen"
       no_subdomain: "Diese Subdomain existiert nicht. Bitte versuchen Sie mit einem anderen Namen."
       page_unavailable: "Leider ist diese Seite momentan nicht für Sie verfügbar. Wenden Sie sich für weitere Informationen bitte an den Administrator."
+      domain_restriction: "Es gilt eine Domäneneinschränkung. Diese E-Mail ist nicht zugelassen."
     freshfone:
       credits:
         successful_purchase: "Telefon-Credits erfolgreich erworben."
@@ -1877,6 +2081,7 @@ de:
         stop: "Sie folgen diesem Ticket nicht mehr"
         start: "Sie folgen nun diesem Ticket"
       empty_trash:
+        delay_delete: "Bitte warten Sie, bis alle Tickets aus Ihrem Papierkorb gelöscht sind. Dies kann einige Minuten dauern."
         success: "Der Papierkorb wurde geleert."
       delete_forever:
         success: "%{tickets} gelöscht."
@@ -1901,6 +2106,8 @@ de:
       type:
         contact_fields_controller: Kontaktfelder
         company_fields_controller: Unternehmensfelder
+        surveys_controller: Umfragen
+        custom_surveys_controller: Umfragen
       success: "%{type} wurden erfolgreich aktualisiert."
       delete:
         failure: "Löschen fehlgeschlagen."
@@ -1979,6 +2186,7 @@ de:
       create:
         failure: "%{human_name} konnte nicht gespeichert werden"
         success: "%{human_name} wurde erstellt."
+        compose_email_success: "Ihre E-Mail wurde versendet, und ein neues Ticket wurde erstellt."
       update:
         success: "%{human_name} wurde aktualisiert."
         failure: "%{human_name} konnte nicht aktualisiert werden"
@@ -2154,6 +2362,9 @@ de:
       new_ticket:
         short: "{{user_path}} hat das Ticket gesendet"
         long: "{{user_path}} hat ein neues Ticket „{{notable_path}}“ gesendet"
+      new_outbound:
+        short: "{{user_path}} hat ein Ticket erstellt"
+        long: "{{user_path}} hat ein Ticket erstellt {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} hat eine {{reply_path}} gesendet"
@@ -2268,8 +2479,12 @@ de:
     helpcard:
       title: "Passen Sie Ihr Support-Portal an"
       tour: "Wie kann ich meinen Helpdesk anpassen?"
+      tour1: "Wie kann ich meinen Helpdesk einrichten?"
+      setup: "Einrichten Ihres Helpdesk"
       info1: "Sie können Ihren Freshdesk-Helpdesk vollständig für Ihre Bearbeiter und Ihre Kunden anpassen, die sich an Ihrem Self-Service-Portal anmelden. Passen Sie das Aussehen und die Wirkung Ihres Helpdesk mit Ihrem Logo und verschiedenen Stilen an, indem Sie Ihr Logo und Favicon hochladen, Ihren Helpdesk benennen und die Portalfarben festlegen."
       info2: "Damit Ihre Kunden und Support-Bearbeiter in Ihrer eigenen Domäne auf Ihr Support-Portal zugreifen können, stellen Sie Ihre Support-URL als ihrefirma.freshdesk.com in Ihrer Domäne ein, wie z. B. support.meinefirma.com."
+      info3: "Alle Grundeinstellungen Ihres Helpdesk können individuell angepasst werden, z. B. Sprache, Zeitzone und Farbschemas."
+      info4: "Mit der Option „Portal bearbeiten“ können Sie das Portal für Ihr Produkt konfigurieren."
     cancel:
       cancel_account: "Freshdesk-Konto löschen"
       info_text: "Bitte nehmen Sie sich einen Moment Zeit, um zu erklären, wieso Sie Ihr Konto löschen möchten. Vielleicht können wir noch helfen..."
@@ -2428,6 +2643,7 @@ de:
   feedbackwidget_btcustomize: "Schaltflächen anpassen"
   chatwidget_agentsonline: "Wenn Bearbeiter online sind"
   solution_category:
+    all: "Alle Kategorien"
     name: Name
     new: "Neue Lösungskategorie"
     edit: "Lösungskategorie bearbeiten"
@@ -2438,6 +2654,7 @@ de:
     product_portal_visibility: "Sichtbar in"
     select_solution_category: "Ein Produktportal auswählen..."
     solution_categories_portal_info: "Diese Kategorie wird im Hauptproduktportal zusammen mit den oben ausgewählten Produktportalen sichtbar sein."
+    more_catogories: "Alle Kategorien anzeigen"
   forum_category:
     product_portal_visibility: "Sichtbar in"
     select_product: "Ein Produktportal auswählen..."
@@ -2464,7 +2681,8 @@ de:
     clone: "Verteiler: Clone-Regel"
     new: "Verteiler - Neue Regel"
     cascade_text: "Für jedes eingehende Ticket Folgendes ausführen:"
-    cascade: "alle zutreffenden Regeln"
+    info_help: "Führen Sie für jedes eingehende Ticket die erste übereinstimmende Regel aus"
+    cascade: "alle übereinstimmenden Regeln"
     no_cascade: "erste übereinstimmende Regel"
     add_new_choice: "Neue Auswahl hinzufügen"
     add_watcher: "Beobachter hinzufügen"
@@ -2521,6 +2739,15 @@ de:
       placeholder: "Alle Lösungen durchsuchen"
     search:
       placeholder: "%{name} suchen"
+    drafts:
+      empty: "Es gibt keine Entwürfe hier."
+      discard: Verwerfen
+      publish: Veröffentlichen
+    delete: Löschen
+    edit: Bearbeiten
+    company:
+      add_existing: "Zu vorhandenen hinzufügen"
+      replace_existing: "Vorhandene ersetzen"
   auto_suggest_solutions:
     info: "<b>Wissen Sie was? Wir haben wahrscheinlich schon eine Antwort auf Ihre Frage.</b><br/>Prüfen Sie, ob eine dieser Antworten passt."
   requester_reopens: "Anfragender eröffnet Ticket erneut"
@@ -2792,6 +3019,9 @@ de:
     select_an_agent: "Bearbeiter auswählen"
     select_business_calendar: "Geschäftszeiten wählen"
     learn_more: "Mehr erfahren"
+    settings_saved: "Ihre Einstellung wurde erfolgreich gespeichert."
+    disable_round_robin_info1: "Ermöglichen Sie es Agenten, die automatische Ticketzuweisung an- und abzuschalten"
+    disable_round_robin_info2: "Bei Deaktivierung werden Agenten immer als  „verfügbar“ gesetzt sein. Bei Bedarf können Administratoren die Verfügbarkeit über das Dashboard ändern."
     round_robin_desc: "Bei Aktivierung werden dieser Gruppe zugewiesene Tickets unter den Bearbeitern in Round Robin Fashion verteilt. Wenn Sie manuell Tickets zuweisen und sie mithilfe der Verteiler- oder Supervisor-Automatisierung verteilen möchten, können Sie diese Funktion deaktivieren. "
     assigntime:
       half: "30 Minuten"
@@ -3033,6 +3263,7 @@ de:
       verified: "Aktive Kontakte"
       unverified: "Kontake mit nicht verifizierten E-Mails"
       deleted: "Gelöschte Kontakte"
+      blocked: "Blockierte Kontakte"
       all: "Alle Kontakte"
     verified:
       no_contacts: "Sie haben keine Kontakte."
@@ -3049,6 +3280,7 @@ de:
   between: Zwischen
   profile_settings: Profileinstellungen
   portal_key: Portal
+  portals_key: Portale
   add_new_forum: "Neues Forum hinzufügen"
   no_forum_category: "Keine Foren in dieser Kategorie"
   sla_policy:
@@ -3102,6 +3334,11 @@ de:
     applicable_info: "Wählen Sie mindestens eine auslösende Bedingung aus."
     disabled_old_policy: "Legen Sie eine Auslösebedingung fest, um diese SLA-Richtlinie zu aktivieren."
     default_policy: "Die standardmäßige SLA-Richtlinie kann nicht deaktiviert werden."
+    update_company_sla_api:
+      update_failed: "Aktualisierung der SLA-Richtlinie fehlgeschlagen."
+      invalid_arguments_for_update: "Ungültige Argumente."
+      invalid_data_type: "Unternehmens-IDs sollten kommagetrennte Werte sein."
+      default_policy_update: "Die standardmäßige SLA-Richtlinie lässt sich nicht aktualisieren."
   left: Links
   subscription:
     error:
@@ -3308,13 +3545,103 @@ de:
   urgent: Eilig
   import_groups: Gruppen
   solution:
+    ? "true"
+    : an
+    orphan_category_info: "Diese Kategorie ist mit keinerlei Portal verknüpft"
+    sidebar:
+      orphan: "Seltene Kategorien"
+      orphan_desc: "Diese Kategorien sind mit keinerlei Portal verknüpft"
+      view_all: "Alle anzeigen"
+      view_less: "Weniger anzeigen"
+      drafts:
+        title: Entwürfe
+        me: "Meine Entwürfe"
+        all: "Alle Entwürfe"
+        details: "Bearbeitet von %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+      feedbacks:
+        title: Artikelfeedback
+        me: "Ihr Feedback"
+        all: "Sämtliches Feedback"
+        details: "Feedback von %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        status: "Status : %{status}"
+    anonymous_votes: "Anonym (%{count})"
+    home: Lösungsstartseite
+    add_category: "Neue Kategorie"
+    orphan: Selten
+    add_folder: "Neuer Ordner"
+    add_article: "Neuer Artikel"
+    view_feedback: "Sämtliches Feedback anzeigen"
+    change_author: "Autor ändern"
+    move_to: "Verschieben nach"
+    details: "Von %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    flash:
+      folders_move_to: "Ordner wurden in ausgewählte Kategorie verschoben \"<b>%{category_name}</b>\" %{undo}"
+      articles_move_to: "Artikel wurden in den ausgewälten Ordner verschoben \"<b>%{folder_name}</b>\" %{undo}"
+      articles_changed_author: "Autor wurde erfolgreich geändert"
+    general:
+      created_by: "Erstellt von"
+      last_published: "Zuletzt veröffentlicht von"
+      article_prop: Artikeleigenschaften
+      feedback: Feedback
+      analytics: Analysen
+      unsaved_content: "Auf dieser Seite gibt es nicht abgespeicherten Inhalt."
+      leave_page_que: "Möchten Sie diese Seite wirklich verlassen?"
+      something_wrong: "Etwas ist fehlgeschlagen!"
     folders:
+      view_all: "Alle Ordner anzeigen..."
+      choose_folder: "Ordner auswählen"
+      choose_folder_warning: "Bitte wählen Sie einen Ordner, in dem der Artikel gespeichert werden soll."
       new:
         new_folder: "Ordner hinzufügen"
       folder_form:
         category: Kategorie
         visible_to: "Sichtbar für"
+      visibility:
+        no_companies: "Sie haben keine gültigen Unternehmen ausgewählt."
+        success: "Die Sichtbarkeit wurde erfolgreich geändert."
+        failure: "Die Sichtbarkeit konnte für die ausgewählten Ordner nicht geändert werden."
+        extra_companies:
+          one: "und ein weiteres Unternehmen."
+          other: " und %{count} mehr Unternehmen."
+      draft: "Alle an kbase@%{domain_name} gesendeten E-Mails werden hier als Entwurf gespeichert"
     articles:
+      search_all: "Artikel durchsuchen"
+      search_in: "In %{search_scope} suchen"
+      type: Artikeltyp
+      prop_tabs:
+        tag_fol: "Tags und Ordner"
+        meta: Meta
+      draft:
+        show:
+          edit: Bearbeiten
+        show_page_msg: "Entwurf anzeigen, der bearbeitet wurde durch"
+        you: Sie
+        unpublish:
+          msg: "Die Veröffentlichung des Artikels auf dem Portal rückgängig machen"
+          with_draft: "Dadurch wird der veröffentlichte Artikel permanent gelöscht. Der Inhalt des Entwurfs wird unter „Entwürfen“ gespeichert."
+          without_draft: "Dadurch wird der veröffentlichte Artikel vom Portal gelöscht. Der Inhalt wird unter „Entwürfen“ gespeichert."
+        save_error: "Dieser Artikel konnte nicht gespeichert werden."
+        portal_preview_msg: "Es wird die Vorschau der Entwurfsversion dieses Artikels angezeigt."
+        discard_msg: "Dieser Entwurf wurde verworfen."
+        discard_confirm: "Möchten Sie den Entwurf wirklich verwerfen?"
+        revert_msg: "Die Änderungen am Entwurf wurden erfolgreich rückgängig gemacht."
+      tag_max_len: "Maximale Schlüssellänge"
+      locked: Gesperrt
+      cant_publish: "Artikel kann im standardmäßigen/r Ordner/Kategorie nicht zu „veröffentlicht“ geändert werden"
+      draft_published_label: "Es gibt auch eine veröffentlichte Version."
+      unpublished_version: "Es wird eine nicht veröffentlichte Version des Artikels angezeigt."
+      att_deleted: "Ein Anhang wurde gelöscht."
+      published_success: "Dieser Artikel wurde erfolgreich veröffentlicht.<a href= \"%{url}\" target = \"_blank\"> Im Portal anzeigen </a>"
+      published_failure: "Dieser Artikel konnte nicht veröffentlicht werden."
+      view_draft: Vorschauentwurf
+      restrict_edit: "%{name} bearbeitet momentan diesen Artikel."
+      edit: "Artikel bearbeiten"
+      properties: Eigenschaften
+      edit_properties: "Eigenschaften bearbeiten"
+      prop_updated_msg: "Die Artikeleigenschaften wurden erfolgreich aktualisiert"
+      save_and_publish: "Speichern und veröffentlichen"
+      save_as_draft: "Als Entwurf speichern"
+      publish: Veröffentlichen
       where: Wo
       search_articles: "Artikel durchsuchen"
       guides: Leitung
@@ -3329,6 +3656,8 @@ de:
       article_useful: "Schön, dass wir helfen konnten. Danke für Ihr Feedback."
       article_not_useful: "Vielen Dank für Ihr Feedback. Wir werden diesen Artikel verbessern."
       error_message: "Ein Fehler ist aufgetreten: %{error_msg}"
+      votes: Stimmen
+      views: Ansichten
       reset_rating:
         link: Zurücksetzen
         dialog_title: "Positive und negative Bewertungen zurücksetzen"
@@ -3336,11 +3665,28 @@ de:
         resetting: "Wird zurückgesetzt"
         dialog_msg: "Sind Sie sicher, dass Sie die Artikelbewertungen zurücksetzen möchten, d. h. positive und negative Bewertungen auf null?"
         count: "%{no_of_likes} positive und %{no_of_dislikes} negative Bewertungen werden auf null zurückgesetzt."
-    info9: "Öffentlich (wird im Self-Service veröffentlicht)"
+        confirm_msg: "Sind Sie sicher, dass Sie sowohl '%{no_of_likes} positive als auch '%{no_of_dislikes} negative Bewertungen auf null zurücksetzen möchten?"
+    draft:
+      name: Entwürfe
+      all_drafts: "Alle Entwürfe"
+      my_drafts: "Meine Entwürfe"
+      kbase: KBase-E-Mail
+      portal:
+        all: Alle
+      autosave:
+        save_success: "Entwurf gespeichert"
+        somebody_editing: "%{name} bearbeitet momentan diesen Artikel."
+        content_changed_other: "%{name} hat während Ihrer Abwesenheit den Inhalt aktualisiert."
+        content_changed_you: "Sie haben woanders den Inhalt aktualisiert."
+        content_changed: "Der Inhalt hat sich geändert."
+        other_problem: "Der Inhalt konnte nicht gespeichert werden."
+    no_articles_info: "Keine Artikel im Ordner."
+    you: Sie
+    info9: "Falls Sie mehrere Produkte nutzen, können <b>Kategorien</b> in ihren entsprechenden Produktportalen sichtbar gemacht werden."
     edit: "Lösung bearbeiten"
     view_on_portal: "Im Portal anzeigen"
     add: "Lösung hinzufügen"
-    info10: "Privat (nur für Bearbeiter sichtbar)"
+    info10: "Ordner sind für vier Typen sichtbar."
     add_new_solution: "Lösung hinzufügen"
     title: Lösungen
     title_singular: Lösung
@@ -3355,6 +3701,17 @@ de:
     info7: "Keine Lösung in diesem Ordner"
     status: Lösungsstatus
     info8: "Möchten Sie diese Lösung wirklich löschen?"
+    info11: "<b>Alle</b> - Dadurch werden sie für jeden sichtbar sein, der auf das Self-Service-Portal zugreift."
+    info12: "<b>Angemeldete Benutzer</b> - Dadurch werden sie nur sichtbar sein für Benutzer, die sich registriert und mit ihren Anmeldedaten angemeldet haben."
+    info13: "<b>Agenten</b> - Dadurch werden sie privat sein, sodass nur Agenten Ihres Helpdesk sie sehen können. Diese Einstellung eignet sich für den internen Wissensaustausch."
+    info14: "<b>Ausgewählte Unternehmen</b> - Dadurch werden sie nur für bestimmte Unternehmen sichtbar sein, die Sie aus Ihren Kontakten auswählen."
+    info15: "Artikel können entweder als ein <b>Entwurf</b> gespeichert oder direkt <b>veröffentlicht</b> werden."
+    info16: "<b>Veröffentlichte</b> Artikel sind im Self-Service-Portal sichtbar oder werden auch in den Suchergebnissen angezeigt."
+    info17: "<b>Artikelentwürfe</b> sind nur für Agenten sichtbar und werden auch nur für Agenten in den Suchergebnissen angezeigt."
+    info18: "Ein veröffentlichter Artikel kann als Entwurf bearbeitet und gespeichert werden, wobei die veröffentlichte Version auf dem Portal verbleibt. Für Agenten steht zur Bearbeitung ein zusätzlicher Entwurf bereit. Dies ist nützlich, wenn Sie Artikel aktualisieren möchten, ohne sie vom Portal entfernen zu müssen."
+    info19: "Artikeltypen sind entweder <b>permanent</b> oder <b>Problemumgehungen</b>."
+    info20: "Sie können <b>Tags</b> an Ihre Artikel anbringen, was nützlich für die Kategorisierung ähnlicher Artikel ist."
+    info21: "Agenten können Lösungsartikel an  <b>kbase@defaultportal.com</b> senden, die dann unterhalb des Entwurfabschnitts angezeigt werden."
     folder: Ordner
     solution_meta: "Meta-Tags für Suchmaschinen"
     solution_meta_title: Titel-Tags
@@ -3369,6 +3726,12 @@ de:
     feedback_message_2: "Schwer zu verstehen"
     feedback_message_3: "Fehlerhafter/irrelevanter Inhalt"
     feedback_message_4: "Fehlender/defekter Link"
+    properties: Eigenschaften
+    solution_title: Titel
+    via: über
+    article_properties:
+      title_counter_message: "Beste SEO-Seiten empfehlen 50 bis 60 Zeichen pro Titel."
+      description_counter_message: "Beste SEO-Seiten empfehlen 150 bis 160 Zeichen für Beschreibungen."
   import_updated: Aktualisiert
   feedbackwidget_intro: "Passen Sie Ihr Freshdesk-Widget unterhalb an und zeigen Sie eine Echtzeit-Vorschau an."
   chatwidget_intro: "Passen Sie Ihr Live-Chat-Widget unten an und zeigen eine Echtzeitvorschau an."
@@ -3483,6 +3846,8 @@ de:
     welcome: Willkommen
     new_ticket: Neu
     new_ticket_tip: "Neues Ticket"
+    new_phone_ticket: Ticket
+    compose_email: E-Mail
     search: Suchen
     submit_a_ticket: "Ticket senden"
     login: Anmelden
@@ -3504,6 +3869,9 @@ de:
       admin: Admin
       checkstatus: "Ticketstatus prüfen"
       solutions: Lösungen
+      new_solution: "Neue Lösung"
+      new_folder: "Neuer Ordner"
+      new_solution_category: "Neue Kategorie"
       forums: Foren
       tickets: Tickets
       home: Start
@@ -3764,6 +4132,7 @@ de:
     include_quoted_text: "Vorherige Antworten einbeziehen"
     more_details: "Mehr Details..."
     reported: meldete
+    outbound: "per E-Mail gesendet"
     new_ticket: "Neues Ticket"
     new_tickets: "Neue Tickets"
     ticket_updated: "Ticket aktualsiert"
@@ -3773,6 +4142,7 @@ de:
     reported_on: "von %{username}, zuletzt aktualisiert am %{date}"
     scenarios: Szenarien
     ticket_from: "Von: %{username}"
+    ticket_to: "An: %{username}"
     ticket_list_status_closed_at: "Von: %{username}, Geschlossen: <span class='emphasize'>vor %{time_ago}</span>"
     ticket_list_status_resolved_at: "Von: %{username}, Gelöst: <span class='emphasize'>vor %{time_ago}</span>"
     ticket_list_status_agent_responded_at: "Von: %{username}, Antwort vom Bearbeiter: <span class='emphasize'>vor %{time_ago}</span>"
@@ -3822,6 +4192,7 @@ de:
     spam_btn_title: "Als Spam markieren"
     assigned_to: "Zugewiesen zu"
     assigned_agent: Bearbeiter
+    action: Aktion
     edit: "Ticket bearbeiten"
     ham_btn_title: "Kein Spam"
     reported_from_source: "Erfasst über %{source}"
@@ -3881,7 +4252,11 @@ de:
     pick_up: Auswählen
     unwatch: "Beobachtung beenden"
     submit_ticket_title: "Ticket senden"
+    learn_more: "Mehr erfahren."
+    submit_ticket_new_title: "Neues Ticket erstellen"
     create_ticket_title: "Ticket erstellen"
+    compose_email_info: "Die E-Mail wird an den Kunden gesendet und als Ticket angemeldet, ohne Benachrichtigungen auszulösen."
+    submit_a_ticket_info: "Der Anfragende wird eine E-Mail-Benachrichtigung erhalten, dass ein neues Ticket erstellt wurde. Dies kann unter „Admin >  E-Mail-Benachrichtigungen“ deaktiviert werden."
     convert_ticket_title: "In Ticket umwandeln"
     reply_form:
       post_to_linked_forum: "In verknüpftem Forum veröffentlichen"
@@ -4092,7 +4467,9 @@ de:
     non_us: TAG-MONAT-JAHR
     us: MONAT-TAG-JAHR
     helpdesk_name: Helpdesk-/Portalname
+    helpdesk_name_plain: Helpdesk-Name
     rebrand: "Anpassung Ihres Helpdesk"
+    helpdesk: Helpdesk
     helpdesk_url: Helpdesk-/Portal-URL
     language: Sprache
     primary_language: "Primäre Sprache"
@@ -4123,7 +4500,7 @@ de:
     delete: "Möchten Sie dies wirklich löschen?"
     valid_time: "Geben Sie eine gültige Zeit ein"
     holiday_name: "Name der Feiertage"
-    import_holiday: "Arbeitsfreie Tage importieren"
+    holiday_calendar: Feiertagskalender
     title: Geschäftszeiten
     info1: "Geschäftszeiten ermöglichen eine bessere Kontrolle über SLA-Richtlinien und die Fälligkeit von Tickets in Ihrem Helpdesk. Wenn Ihre Geschäftszeiten z. B. Mo-Fr von 9 bis 16 Uhr sind, dann muss ein am Dienstag um 19 Uhr eingehendes Ticket erst am Mittwoch um 9 Uhr gelöst sein."
     info2: "Urlaubs-/Feiertage werden in den Geschäftszeiten beachtet. Wenn Ihr Helpdesk Mo-Fr von 9:00 bis 18 Uhr zur Verfügung steht und ein Kunde ein Ticket mit mittlerer Priorität und einer Bearbeitungsdauer von 24 Stunden am Freitag um 20 Uhr schickt, wird die Fälligkeit des Tickets auf Dienstag 9 Uhr festgelegt (nicht Samstag 20 Uhr)."
@@ -4166,6 +4543,17 @@ de:
   export_to_CSV: "Nach CSV exportieren"
   back_to_reports: "← Zurück zu Berichten"
   helpdesk:
+    send_email: "Eine E-Mail senden"
+    send: Senden
+    send_and_new: "Senden und <strong> Neu </strong>"
+    enter_subject: "Betreff eingeben"
+    from: "Von:"
+    to: "An:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: "Anfragenden hinzufügen"
+    surveys:
+      invalid_rating: "Bewertungswert \"%{rating}\" ist ungültig. Bitte machen Sie eine Bewertung mit einem korrekten Wert."
     ticket_notifier:
       reply:
         happy: Hervorragend
@@ -4233,6 +4621,7 @@ de:
         tags_merge: "Es exisitiert ein Tag mit dem gleichen Namen. Möchten Sie diese Tags zusammenführen?"
         remove_tags: "Tag-Zuordnung entfernen"
         remove_confirmation: "Möchten Sie die Tag-Zuordnung wirklich entfernen?"
+        delete_confirmation: "Möchten Sie die/den ausgewählten Tag(s) wirklich löschen?"
       tag:
         ticket: Ticket
         tickets: Tickets
@@ -4423,6 +4812,16 @@ de:
           addbcc: "Bcc hinzufügen"
           removebcc: "Bcc entfernen"
           not_sent: "Antwort wurde nicht weitergeleitet!"
+        reply_to_forward:
+          title: Antworten
+          cc: Cc
+          to: An
+          addcc: "Cc hinzufügen"
+          removecc: "Cc entfernen"
+          bcc: Bcc
+          addbcc: "Bcc hinzufügen"
+          removebcc: "Bcc entfernen"
+          not_sent: "Antwort wurde nicht gesendet!"
         tweet_form:
           title: "%{user} antworten"
         facebook_form:
@@ -4488,6 +4887,8 @@ de:
         open_or_pending: "Offen oder Ausstehend"
         resolved_or_closed: "Gelöst oder Geschlossen"
         no_tickets: "Sie haben in der aktuellen Ansicht keine Tickets"
+        article_feedback: Artikelfeedback
+        my_article_feedback: "Mein Feedback auf Artikel"
       note:
         posted_on: "%{user_name} am %{note_date}"
         created_on:
@@ -4502,6 +4903,7 @@ de:
           reply: "%{user_name} hat geantwortet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} hat weitergeleitet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} hat dieses Ticket bewertet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} hat zur Weiterleitung von <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date}) geantwortet"
         edit_note: "Notiz bearbeiten"
         split_this_as_new_ticket: "In ein neues Ticket abspalten"
         delete_note: "Ticket aus der Konversation entfernen?"
@@ -4515,10 +4917,13 @@ de:
         outbound_email: "Ausgehende E-Mail"
         not_added: "Notiz wurde hinzugefügt!"
         attachment_size:
-          exceed: "Ihr Anhang überschreitet 15 MB. Bitte nehmen Sie Änderungen vor, bevor Sie fortfahren."
+          exceed: "Ihre Anhänge überschreiten 15 MB. Bitte nehmen Sie Änderungen vor, bevor Sie fortfahren."
           not_added: "(Nicht hinzugefügt)"
           not_added_greater: "(> 15 mb nicht hinzugefügt)"
           exceed_limit: "Übersteigt Anhanggröße"
+        survey_response: "Umfrageantwort für %{survey_name}"
+        survey_response_to: "an %{agent}"
+        survey_satisfaction: "Wie würden Sie allgemein bewerten, wie zufrieden Sie mit der vom Agenten bereitgestellten Lösung sind?"
     merge:
       merge:
         merge_into: "Zusammenführen in?"
@@ -4698,6 +5103,7 @@ de:
       tags: Tags
       survey_result: Umfrageergebnis
       product: Produkt
+      requester_phone: "Telefon des Anfragestellers"
     call_history:
       info:
         success: "Wir haben damit begonnen, all Ihre Anrufberichte zu exportieren. Sie werden nach Abschluss an Sie gesendet werden."
@@ -4805,7 +5211,7 @@ de:
         reauth_required: "Erneute Autorisierung erforderlich"
       enable_facebook_page:
         associate: "Wählen Sie die Facebook-Seiten aus, die Sie Helpdesk zuordnen möchten."
-        no_page_info: "Ups, anscheinend haben Sie gar keine Facebook-Seite. <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>Erstellen Sie eine Seite und beginnen Sie mit Ihrem Support!</a>"
+        no_page_info: "Ups, anscheinend haben Sie gar keine Facebook-Seite. <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'>>Erstellen Sie eine Seite und beginnen Sie mit Ihrem Support!</a>"
       engage_info:
         title: "Fügen Sie Ihre Facebook-Seiten hinzu"
         engage_customers: "Binden Sie Ihre Kunden direkt in Facebook ein"
@@ -4964,7 +5370,7 @@ de:
       label: "Capsule CRM"
       desc: "Sie können Kontaktinformationen von Capsule CRM in Freshdesk anzeigen. Diese Informationen sind über die Ticketdetailseite und die Kontaktdetailseite verfügbar."
       form:
-        bcc_drop_box_mail: Dropbox-E-Mail-Adresse
+        bcc_drop_box_mail: "Dropbox-Adresse per E-Mail senden"
         bcc_drop_box_mail_info: "Sie finden Ihre eindeutige Capsule Dropbox-E-Mail-Adresse unter <b>„Einstellungen-&gt; Mail-Dropbox“</b>.<br /> (Sie finden den Punkt in der oberen rechten Fensterecke).<br /> Kopieren Sie die E-Mail-Adresse und fügen Sie sie in das oben stehenden Textfeld ein. <br /> Freshdesk fügt diese E-Mail-Adresse automatisch in das Bcc-Feld ein, wenn Sie auf ein Ticket antworten."
         domain: Domäne
         domain_info: "Geben Sie einfach die Domäne allein an, ohne HTTPS. Beispiel: beispiel.capsulecrm.com"
@@ -4981,7 +5387,7 @@ de:
         api_url: API-URL
         api_url_info: "Geben Sie eine vollständige API-URL mit HTTPS ein. Beispiel: https://beispiel.freshbooks.com/api/2.1/xml-in"
         api_key: Authentifizierungstoken
-        api_key_info: ""
+        api_key_info: "(eine leere Phrase)"
         widget_title: Widget-Titel
     seoshop:
       label: SEOshop
@@ -5113,8 +5519,8 @@ de:
       form:
         sync_type: Synchronisierungstyp
         sync_type_info: "Wie möchten Sie die Kontakte zwischen Google und Freshdesk synchronisieren?"
-        account_settings: ""
-        account_settings_info: ""
+        account_settings: "(eine leere Phrase)"
+        account_settings_info: "(eine leere Phrase)"
         account_not_configured: "<br/>Die Google-Kontoeinstellungen sind noch nicht konfiguriert. Klicken Sie auf „%{action}“, um das neue Konto mit Google zu konfigurieren.<br/><br/>"
       update_action:
         success: "Google-Konto wurde erfolgreich hinzugefügt."
@@ -5160,6 +5566,7 @@ de:
       send_reply_in_fd: "Kunde per E-Mail benachrichtigen"
       add_comment_in_jira: "Kommentar in JIRA hinzufügen"
       update_jira_status: "JIRA-Status aktualisieren"
+      add_attachments_in_jira: "Zum Synchronisieren Ticketanhänge ausschließen"
     salesforce:
       label: Salesforce
       desc: "Sie können Kontaktinformationen aus Salesforce CRM in Freshdesk anzeigen."
@@ -5167,7 +5574,7 @@ de:
       add_fields:
         remove: Entfernen
       form:
-        salesforce_settings_info: ""
+        salesforce_settings_info: "(eine leere Phrase)"
         salesforce_settings: Salesforce-Einstellungen
         select: "Option auswählen"
         contact: Kontaktfelder
@@ -5179,6 +5586,12 @@ de:
     quickbooks:
       label: "QuickBooks<span class='beta'>Vorausschau</span>"
       desc: "Zeigen Sie QuickBooks-Kundendetails an und erstellen/aktualisieren Sie Stundenlisteneinträge für Kunden in Ihrem QuickBooks-Konto."
+      connect_text: "Die Verbindung zu QuickBooks wird es Ihren Agenten einfacher machen, direkt über das Helpdesk auf Daten zuzugreifen und sie zu aktualisieren."
+      remote_configurations:
+        signup: "<p>Sie werden nun auf die Seite zur Kontoerstellung von Freshdesk geleitet. Wir empfehlen sehr, dass Sie sich die Produktvorstellung anschauen (die bei der allerersten Anmeldung angezeigt wird), nachdem Sie Ihr Konto erstellt haben. Sie können Ihren Helpdesk auch mit QuickBooks verknüpfen. Gehen Sie dazu auf <b>Admin-->Integrationen</b>.</p><br><p>Wenn Sie bei der Einrichtung oder der Nutzung des Helpdesk auf irgendwelche Schwierigkeiten stoßen sollten, wenden Sie sich gerne an unser Supportteam per E-Mail an <b>support@freshdesk.com</b></p>"
+        connect: "<p>Sie werden nun an Ihre Integrationsseite von Freshdesk weitergeleitet, auf der Sie die Option habem, Ihr Konto mit QuickBooks zu verlinken.</p>"
+        disconnect: "<p>Sie werden nun an Ihre Integrationsseite von Freshdesk weitergeleitet, auf der Sie die Option habem, Ihr Konto auf QuickBooks zu deaktivieren.</p>"
+        launch: "<p>Sie werden nun an Ihre Dashboardseite von Freshdesk weitergeleitet.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "Sie können Kontaktinformationen von Zoho CRM in Freshdesk anzeigen."
@@ -5195,8 +5608,8 @@ de:
       inline_help: "Verfolgungs-ID eingeben für "
       domain: Domäne
       form:
-        google_analytics_settings_info: ""
-        google_analytics_settings: ""
+        google_analytics_settings_info: "(eine leere Phrase)"
+        google_analytics_settings: "(eine leere Phrase)"
         tracking_id: "Verfolgungs-ID für "
         tracking_id_example: "Beispiel: UA-123456-1"
         copy_settings: "Die oben stehende Verfolgungs-ID für alle Portale verwenden"
@@ -5564,6 +5977,32 @@ de:
       customer_champion: Kundenchampion
       valuable_player: "Wertvollster Mitarbeiter"
     survey_reports:
+      main:
+        all: Alle
+        time_period: Zeitraum
+        group: Gruppe
+        agent: Agent
+        overview: Übersicht
+        responses: Antworten
+        response_to: "Anwort an"
+        rating: Bewertung
+        question: Q
+        positive: Positiv
+        neutral: Neutral
+        negative: Negativ
+        answered: Beantwortet
+        unanswered: "Nicht beantwortet"
+        total_responses: "Gesamtzahl der Antworten"
+        filter_by: "Filtern nach"
+        preparing_chart_for: "Das Diagramm vorbereiten für"
+        loading_chart: "Wird geladen..."
+        no_remarks: "Keine Antworten verfügbar"
+        loading_remarks: "Bemerkungen werden geladen"
+        fetching_responses: "Antworten werden abgerufen"
+        no_overview: "Keine Daten verfügbar"
+        view_report_by: "Angesehen durch"
+        overall_rating: Bewertung
+        all_responses: "Alle Antworten"
       index:
         agent_list_loading: "Bearbeiterliste wird abgerufen"
       feedbacks:
@@ -5636,6 +6075,7 @@ de:
       info2: "E-Mail-Befehle müssen eine korrekte Syntax aufweisen und innerhalb eines vorkonfigurierten Trenntextes platziert werden. Beispiel eines Befehls: „@simonsays agent : John Roberts Status:Resolved @simonsays“ weist das Ticket dem Bearbeiter John Roberts zu und markiert es als „Gelöst“."
       info3: "Der Rest Ihres E-Mail-Inhalts wird der Freshdesk-Konversation angefügt und dem Anfragenden ebenfalls per E-Mail geschickt."
       ticket_type_example: Frage
+      note: Notiz
   email_command_delimeter_label: "Trennzeichen für E-Mail-Befehle"
   email_command_preview_to_email: An
   email_command_preview_to_email_value: support@acme.freshdesk.com
@@ -5647,8 +6087,11 @@ de:
       tour: "Hilfe für Ticketfelder"
       title1: Ticket-Felder
       title2: "Abhängige Felder"
+      title3: "Dynamische Felder"
       info1: "Das Ticketformular ist der einfachste Weg, alle Kundendaten zu erfassen, selbst wenn sie ein Ticket senden. Die Anfrage-ID eines Kunden in einer E-Commerce-Einstellung hilft Ihnen beispielsweise beim Aufrufen des richtigen Kontexts und der Beschleunigung des Vorgangs. Sie können Ihr Ticketformular in Freshdesk anpassen, um die richtigen Ticketfelder für Ihr Unternehmen einzufügen sowie Kunden und Bearbeiter die Informationen in dem von Ihnen gewünschten Format eintragen zu lassen."
+      info_1: "Das Ticketformular hilft bei der Erfassung der Daten, die Sie vom Kunden benötigen, wenn sie ein Ticket senden. Sie können Ihr Ticketformular individuell anpassen, sodass sie die richtigen Ticketfelder für Ihr Unternehmen enthalten. Lassen Sie Ihre Kunden und Agenten die benötigten Informationen im gewünschten Format eingeben. Beispiel: Im Fall eines E-Commerce-Unternehmens wäre es sehr hilfreich, im Ticketformular die Bestell-ID des Kundern zu erhalten, damit der Agent das Ticket lösen kann."
       info2: "Mit abhängigen Felder können Sie einfach tiefgehendere Ticketkategorien erstellen und die größten Probleme erkennen, die Ihren Support ausbremsen.  Dank der abhängigen Felder können Sie Tickets hierarchisch in Kategorien, Unterkategorien und beeinflussten Elementen organisieren."
+      info3: "Falls Sie einen Estate-Plan oder obiges haben, können Sie dynamische Felder nutzen, die auf Grundlage der Option angezeigt werden, die im Typenfeld ausgewählt ist. Für jede Option im Typenfeld können Sie einen anderen Bereich erstellen. Dort können Sie weitere Ticketfelder hinzufügen. Beispiel: Wird in einem E-Commerce-Szenario der Typ „Ersatz“ gewählt, kann ein Bereich mit einem Feld „Grund“ geöffnet werden, in welchem der oder die Gründe gesammelt werden, weswegen der Kunde einen Ersatz für das Produkt benötigt. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Mehr über dynamische Felder erfahren</a>."
   contact_field:
     helpcard:
       title2: "Anpassung Ihrer Kontaktfelder"
@@ -5690,6 +6133,8 @@ de:
     sorted_by: "Sortiert nach:"
     by: "von:"
     in: in
+    created_by: "Erstellt durch"
+    edited_by: "Bearbeitet durch"
     requested_by: "Angefordert von,"
     agent: "Bearbeiter:"
     status: "Status:"
@@ -5729,6 +6174,7 @@ de:
   fwd_to: Weiterleiten
   add_cc: "Cc hinzufügen"
   add_a_cc: "CC hinzufügen"
+  reply_to_fwd: Antworten
   add_new_requester: "Neuen Anfragenden hinzufügen"
   fwd_success_msg: "Das Ticket wurde erfolgreich weitergeleitet"
   validate_fwd_to_email_msg: "Bitte geben Sie eine gültige E-Mail-Adresse an"
@@ -5763,6 +6209,7 @@ de:
   forwarded_to: "Weitergeleitet an"
   replied_to: "Geantwortet auf"
   notified_to: "Benachrichtigung gesendet an"
+  reply_to_forward: "Zur Weiterleitung geantwortet"
   to: an
   cc_emails_key: ", cc : %{cc_emails}"
   bcc_emails_key: ", bcc : %{bcc_emails}"
@@ -5950,6 +6397,10 @@ de:
   last_month: "Letzter Monat"
   two_months: "Letzte 2 Monate"
   six_months: "Letzte 6 Monate"
+  last_seven_days: "Letzte 7 Tage"
+  last_thirty_days: "Letzte 30 Tage"
+  last_sixty_days: "Letzte 60 Tage"
+  last_one_eighty_days: "Letzte 180 Tage"
   set_date: "Zeitraum auswählen"
   Source: Quelle
   Subject: Betreff
@@ -5995,6 +6446,32 @@ de:
   activation_link: "Der Aktivierungslink wurde an %{email} gesendet."
   activation_link_no_email: "Erfolgreich registriert"
   not_given: "Nicht angegeben."
+  helpdesk_reports:
+    time_period: "Select Time Period"
+    filter_by: "Filtern nach"
+    edit_filter: Filter
+    ticket_volume:
+      title: Ticketvolumen
+      time_trends:
+        day: Tag
+        week: Woche
+        month: Monat
+        qtr: Quartal
+        year: Jahr
+        title: "Trend der erhaltenen und gelösten Tickets"
+      day_trend:
+        title: "Wochentagstrend der erhaltenen und gelösten Tickets"
+        subtitle: "Sehen Sie, zu welcher Stunde welchen Tages die größte Anzahl an Tickets erhalten wird und Ihren Mitarbeitern entsprechend zugewiesen wird."
+    glance:
+      title: "Helpdesk auf einen Blick"
+    performance:
+      title: Performanceverteilung
+    group_summary:
+      title: Gruppenübersicht
+    agent_summary:
+      title: Agentenübersicht
+    customer_report:
+      title: Kundenbericht
   adv_reports:
     at_a_glance: "Auf einen Blick"
     select_an_option: "Option auswählen"
@@ -6166,6 +6643,8 @@ de:
     not_enough_credit: "Nicht genügend Guthaben!"
     recharge: Aufladen
     ff_number: Telefonnummer
+    via_browser: "über Browser/App"
+    via_phone: "über Telefon"
     subscription:
       auto_recharge_text: "Wir belasten Ihr Konto nur, wenn das Guthaben unter 5 $ liegt"
       current_balance: "Ihr aktuelles Guthaben"
@@ -6176,6 +6655,7 @@ de:
       auto_recharge_amt: "Betrag für automatisches Aufladen"
       see_detailed_pricing: "Siehe detaillierte Bepreisung"
       followup: "äquivalente Telefon-Credits"
+      followup_text: "äquivalente Freshfone-Credits"
     dialpad:
       not_valid_number: "Geben Sie bitte eine gültige Nummer ein"
       could_be_invalid_number: "Könnte eine ungültige Nummer sein."
@@ -6184,6 +6664,11 @@ de:
       restricted_country: "Eingeschränktes Land"
       already_in_call: "Gleichzeitig geführter Anruf beschränkt"
       strange_number: "Kann keine eingeschränkte Nummer anrufen"
+      move_to_dialer: "zurück zum Wählgerät"
+      connect_call: Anruf
+    search:
+      work_phone: Geschäftlich
+      mobile_phone: Mobil
     call_status:
       default: ""
       completed: Abschlossen
@@ -6197,6 +6682,8 @@ de:
       voicemail: Sprachnachricht
       restricted: Eingeschränkt
       all_calls: "Alle Anrufe"
+      answered: Angenommen
+      on-hold: Wartend
     general:
       suspended_account_msg: "Ihr Telefonkanal ist momentan deaktiviert. Bitte aktivieren Sie das Telefon, um Anrufe tätigen und entgegennehmen zu können."
       suspended_on_low_balance_msg: "Ihr Telefonkanal wurde deaktiviert, da das Guthaben gering ist. Bitte laden Sie es zur Aktivierung des Kanals auf."
@@ -6211,9 +6698,15 @@ de:
       accept: Akzeptieren
       end_call: "Anruf beenden"
       mute: "Stumm schalten"
+      hold: Warteschleife
+      holding: |-
+          Entschuldigen Sie, die Verbindung kann nicht gehalten werden...
+          Bitte versuchen Sie es später nochmals...
+      hold_success: "Anruf nun in Warteschleife"
       transfer_call: "Anruf weiterleiten"
       dialpad: Wählfeld
       call_notes: Anrufanmerkungen
+      phone_icon: Telefon
       on_phone: "Am Telefon verfügbar"
       on_browser: "Im Browser verfügbar"
       invalid_phone_number: "Fügen Sie Ihrer Telefonnummer in den Profileinstellungen bitte das Präfix „+“ und die Ländervorwahl hinzu."
@@ -6246,6 +6739,20 @@ de:
       forward_number_alert: "Aktualisieren Sie bitte Ihre Telefonnummer in den Profileinstellungen, um Anrufe auf Ihr Telefon weiterzuleiten."
       desktop_notification: "Desktop-Benachrichtigung einschalten"
       network_error: "Überprüfen Sie Ihre Internetverbindung"
+      transfer:
+        tranfer_via: über
+        to: "An:"
+        transferring: Übertragung...
+        transfer_canceled: Ignoriert
+        tranfer_no_answer: "Nicht verfügbar"
+        tranfer_connected: Übertragen
+        group_tranfer_no_answer: "Keine Agenten verfügbar"
+        group_tranfer_connected: "Verbunden mit Kunden"
+        close: Schließen
+        resume: Fortsetzen
+        cancel: Abbrechen
+        cancelling: "Abbruchvorgang läuft"
+        resuming: "Fortsetzung erfolgt..."
     call_history:
       title: Anrufverlauf
       sort_by: "Sortiert nach:"
@@ -6308,6 +6815,8 @@ de:
       unknown: UNBEKANNT
       anonymous: ANONYM
       empty: LEER
+      total_duration: Dauer
+      minutes: Minuten
     ticket:
       recording: "Nachricht wiedergeben"
       ticket_desc_with_name: "Gespräch mit <b> %{customer_name} </b> (%{customer_number}, %{location}) und <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6345,7 +6854,7 @@ de:
         round_robin: "Freie Agenten zuerst anrufen"
       number_settings:
         title_text: "Ihren Callcenter verwalten"
-        info_content: "<b>Zuweisung von Anrufen an Agenten und Gruppen</b></br>Sie können ein interaktives Sprachdialogsystem (IVR) einrichten und Anrufe an verschiedene Gruppen oder Agenten Ihres Teams weiterleiten. Beispiel: Ihre Kundenanrufe können an Ihr Supportteam weitergeleitet werden, wenn sie 1 drücken, oder an jemanden im Vertrieb, wenn 2 gedrückt wird.<br/>Zusätzlich können Sie die Nachrichten einrichten, die für Ihre Kunden abgespielt werden. Zeichnen Sie dazu Ihre Stimme auf und laden die Datei hoch oder verwenden die Text-in-Sprache-Funktion.<br><br><b>Anpassung Ihrer Nummern</b><br>Sie können außerdem sämtliche Ihrer Nummern unabhängig voneinander konfigurieren und anpassen. Dazu gehören Grundeinstellungen wie z. B. die maximale Zahl der Personen in der Warteschleife und die maximale Wartezeit für Ihre Kunden. Sobald eine der Nummern erreicht wird, wird Ihren Kunden automatisch eine Nichtverfügbarkeitsnachricht abgespielt.<br/>Wenn Sie die Möglichkeit zur Anrufaufzeichnung aktivieren, werden alle Telefonanrufe in Ihrem Helpdesk aufgezeichnet und diese den Tickets angehängt. Die Aufzeichnungen können den Kunden verfügbar gemacht werden oder privat bleiben. Sie können Ihren Telefonkanal so einrichten, dass außerhalb der Geschäftszeiten keine Anrufe entgegen genommen werden. Beispiel: Sie können zwei Supportleitungen bereitstellen, eine für Anrufe während der üblichen Geschäftszeiten und eine weitere Notrufnummer mit hoher Priorität, die rund um die Uhr verfügbar ist.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Hier erfahren Sie mehr über die Anpasssungsmöglichkeiten Ihrer Telefonnummern</a>"
+        info_content: "<b>Zuweisung von Anrufen an Agenten und Gruppen</b></br>Sie können ein interaktives Sprachdialogsystem (IVR) einrichten und Anrufe an verschiedene Gruppen oder Agenten Ihres Teams weiterleiten. Beispiel: Ihre Kundenanrufe können an Ihr Supportteam weitergeleitet werden, wenn sie 1 drücken, oder an jemanden im Vertrieb, wenn 2 gedrückt wird.<br/>Zusätzlich können Sie die Nachrichten einrichten, die für Ihre Kunden abgespielt werden. Zeichnen Sie dazu Ihre Stimme auf und laden die Datei hoch oder verwenden die Text-in-Sprache-Funktion.<br><br><b>Anpassung Ihrer Nummern</b><br>Sie können außerdem sämtliche Ihrer Nummern unabhängig voneinander konfigurieren und anpassen. Dazu gehören Grundeinstellungen wie z. B. die maximale Zahl der Personen in der Warteschleife und die maximale Wartezeit für Ihre Kunden. Sobald eine der Nummern erreicht wird, wird Ihren Kunden automatisch eine Nichtverfügbarkeitsnachricht abgespielt.<br/>Wenn Sie die Möglichkeit zur Anrufaufzeichnung aktivieren, werden alle Telefonanrufe in Ihrem Helpdesk aufgezeichnet und diese den Tickets angehängt. Die Aufzeichnungen können den Kunden verfügbar gemacht werden oder privat bleiben. Sie können Ihren Telefonkanal so einrichten, dass außerhalb der Geschäftszeiten keine Anrufe entgegen genommen werden. Beispiel: Sie können zwei Supportleitungen bereitstellen, eine für Anrufe während der üblichen Geschäftszeiten und eine weitere Notrufnummer mit hoher Priorität, die rund um die Uhr verfügbar ist.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Hier erfahren Sie mehr über die Anpasssungsmöglichkeiten Ihrer Telefonnummer</a>"
         non_business_hours: "Anrufe annehmen während…"
         business_calendar: "Geschäftszeit auswählen"
         transcript_voice: Transkriptstimme
@@ -6360,7 +6869,7 @@ de:
         max_queue_calls: "Maximale Anrufanzahl in Warteschleife"
         call_wait_time: "mit maximaler Wartezeit von"
         call_wait_time_suffix: " pro Anruf"
-        wait_message: Wartenachricht
+        queue_message: Warteschleifennachricht
         non_availability_message: Nichtverfügbarkeitsnachricht
         voicemail_message: Voicemail-Nachricht
         non_business_hours_message: "Nachricht für außerhalb der Geschäftszeiten"
@@ -6375,7 +6884,8 @@ de:
         recorded_voice: "Aufgezeichnete Stimme"
         audio_upload: "Hochzuladende Datei auswählen"
         greeting_message: "Geben Sie Ihre Nachricht hier ein"
-        attachment_help_info: "Akzeptiert Audiodateien &lt; 5 MB"
+        attachment_help_info: "Akzeptiert Audiodateien (mp3) &lt; 5 MB"
+        attachment_help_text: "Akzeptiert Audiodateien (mp3) < 5 MB"
         recording_help_info: "Schalten Sie das Mikrofon ein. Dauer &lt; 5 Min."
         cancel: Abbrechen
         change: Ändern
@@ -6393,9 +6903,11 @@ de:
         recording_privacy_private: "Nur für Agenten sichtbar"
         name_maxlength: "Name darf nicht mehr als 255 Zeichen haben"
         number_accessible: "Zugriff möglich durch"
+        wait_music: Wartemusik
+        hold_music: Warteschleifenmusik
       numbers:
         sidebar_title: "Der integrierte Telefonkanal von Freshdesk"
-        sidebar_content: "Über den Telefonkanal können Sie im Browser, per Mobiltelefon oder unter Verwendung des Telefonkanals der mobilen Apps von Freshdesk Anrufe starten und empfangen. Diese Funktionen sind eng in das Ticketingsystem von Freshdesk integriert. So können Sie Anrufe nachverfolgen, indem Sie sie bei Bedarf aufzeichnen und in Tickets umwandeln. <br/><br/> <b>Einrichtung des Telefons</b></br>Um mit der Verwendung des Telefons beginnen zu können, muss es zunächst aktiviert und muss eine Supportnummer erworben werden. Sie können lokale Nummern in den hier aufgeführten Ländern erwerben und Anrufe von überall in der Welt starten oder entgegennehmen. Falls Ihre Kunden Sie in den USA, Großbritannien oder Kanada anrufen, können Sie dazu auch gebührenfreie Supportnummern kaufen (bzw. \"freephone\" in Großbritannien). <br/><br/><b> Verwendung von Sprachdialogsystemen  (IVRs)</b><br/> Sie können intelligente Sprachdialogsysteme (IVR) nutzen, um Kunden besser zu kategorisieren, wenn diese Ihre Supportnummer anrufen, und diese an die richtige Abteilung, das entsprechende Team oder geeignete Agenten weiterleiten. </b><br/><br/> <a href='http://freshdesk.com/freshfone'>Erfahren Sie mehr über die Nutzungsmöglichkeiten des Telefons</a>."
+        sidebar_content: "Über den Telefonkanal können Sie im Browser, per Mobiltelefon oder unter Verwendung des Telefonkanals der mobilen Apps von Freshdesk Anrufe starten und empfangen. Diese Funktionen sind eng in das Ticketingsystem von Freshdesk integriert. So können Sie Anrufe nachverfolgen, indem Sie sie bei Bedarf aufzeichnen und in Tickets umwandeln. <br/><br/> <b>Einrichtung des Telefons</b></br>Um mit der Verwendung des Telefons beginnen zu können, muss es zunächst aktiviert und muss eine Supportnummer erworben werden. Sie können lokale Nummern in den hier <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>aufgeführten Ländern erwerben</a> und Anrufe von überall in der Welt starten oder entgegennehmen. Falls Ihre Kunden Sie in den USA, Großbritannien oder Kanada anrufen, können Sie dazu auch gebührenfreie Supportnummern kaufen (bzw. \"freephone\" in Großbritannien). <br/><br/><b> Verwendung von Sprachdialogsystemen  (IVRs)</b><br/> Sie können intelligente Sprachdialogsysteme (IVR) nutzen, um Kunden besser zu kategorisieren, wenn diese Ihre Supportnummer anrufen, und diese an die richtige Abteilung, das entsprechende Team oder geeignete Agenten weiterleiten. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Erfahren Sie mehr über die Nutzungsmöglichkeiten des Telefons</a>."
         purchase_number: "Nummer erwerben"
         purchase_phone_number: "Nummer (%{number}) kaufen"
         buy: "Nummer kaufen"
@@ -6420,7 +6932,7 @@ de:
           required_field: "Alle Felder sind erforderlich"
         setup:
           title_text: "Einrichtung eines Callcenters"
-          info_text: "Um mit der Nutzung eines Telefonkanals zu beginnen, müssen Sie zunächst eine Einwahlnummer erwerben, die Sie Ihren Kunden bereitstellen. Sie können eine lokale Nummer in jedem hier aufgeführten Land kaufen. Wenn Ihre Kunden Sie aus den USA, Großbritannien oder Kanada anrufen, können Sie ihnen auch eine gebührenfreie Telefonnummer anbieten.<br/><br/>Sie können mehrere Telefonnummern aus verschiedenen Ländern erwerben und gebührenfreie Notrufnummern in Freshdesk einrichten, ohne dass Sie dazu einen Service eines Drittanbietern benötigen. Ihnen werden Standardtarife für eingehende, ausgehende und aus dem Helpdesk weitergeleitete Anrufe in Rechnung gestellt. Hier finden Sie weitere Informationen zu den <a href='http://freshdesk.com/freshfone/pricing'>Anruftarifen</a>.<br/><br/> Sobald Sie eine Telefonnummer für Ihren Support erworben haben, werden alle eingehenden Anrufe an Agenten verteilt, die in Ihrem Helpdesk angemeldet sind. Außerdem gibt es für Ihre Agenten die Option, Anrufe im Browser auszuwählen und anzunehmen oder direkt und automatisch an ihr Telefon weiterleiten zu lassen."
+          info_text: "Um mit der Nutzung des Telefonkanals zu beginnen, müssen Sie zunächst eine Einwahlnummer erwerben, die Sie Ihren Kunden bereitstellen. Sie können eine lokale Nummer in jedem <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>hier aufgeführten Land</a> kaufen. Wenn Ihre Kunden Sie aus den USA, Großbritannien oder Kanada anrufen, können Sie ihnen auch eine gebührenfreie Telefonnummer anbieten.<br/><br/>Sie können mehrere Telefonnummern aus verschiedenen Ländern erwerben und gebührenfreie Notrufnummern in Freshdesk einrichten, ohne dass Sie dazu einen Service eines Drittanbietern benötigen. Ihnen werden Standardtarife für eingehende, ausgehende und aus dem Helpdesk weitergeleitete Anrufe in Rechnung gestellt. Hier finden Sie weitere Informationen zu den  <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>Anruftarifen</a>.<br/><br/> Sobald Sie eine Telefonnummer für Ihren Support erworben haben, werden alle eingehenden Anrufe an Agenten verteilt, die in Ihrem Helpdesk angemeldet sind. Außerdem gibt es für Ihre Agenten die Option, Anrufe im Browser auszuwählen und anzunehmen oder direkt und automatisch an ihr Telefon weiterleiten zu lassen."
       invalid_attachment: "Der Anhang „%{name}“ ist keine gültige Audiodatei / ist größer als 5 MB."
       ivr:
         simple_message_title: "Einfache Nachricht"
@@ -6526,7 +7038,6 @@ de:
     chat_availability: Chat-Verfügbarkeit
     show_chat_hours: "Chat anzeigen"
     show_chat_hours_msg: "Legen Sie die Zeiten fest, zu denen Sie online sind und Chats annehmen. "
-    show_chat_hours_info: "Hinweis: Das Chat-Fenster wird nur angezeigt, wenn Bearbeiter verfügbar sind."
     business_hours: "Während Geschäftszeiten"
     anytime: "Immer (rund um die Uhr)"
     business_calendar: "Geschäftszeit auswählen"
@@ -6672,7 +7183,6 @@ de:
     chatsettings_save: "Ihre Änderungen wurden nicht gespeichert. Änderungen speichern?"
     transfer_accepted_msg: "Besucherübertragung akzeptiert"
     transfer_request_timeout_msg: "Zeitüberschreitung bei Übertragungsanfrage"
-    integrate_freshchat_info: "Hinweis: Das Chat-Fenster wird nur angezeigt, wenn Bearbeiter online sind."
     click_to_go_online: "Es werden keine Besucher-Chats angenommen"
     click_to_go_offline: "Es werden Besucher-Chats angenommen"
     fetching: "Bitte warten"
@@ -6738,6 +7248,7 @@ de:
     agent_initiated: "Initiierter Agent"
     agent_to_agent: "Agent zu Agent"
     missed_chat: Verpasst
+    spam_chat: Spam
     filter: Filter
     close: Schließen
     visitorId: Besucher-ID
@@ -6770,6 +7281,15 @@ de:
     missed_chat_info: "Chat wurde verpasst!"
     change_livechat_tone: LiveChat-Benachrichtigungston
     message: Nachricht
+    unmark_spam: "Als „Kein Spam“ markieren"
+    mark_spam: "Als Spam markieren"
+    convert: Umwandeln
+    add_note: "Notiz hinzufügen"
+    conversation: Gespräch
+    and: und
+    via_widget: über
+    reported: gemeldet
+    view_ticket: "Ticket anzeigen"
   facebook_tab:
     remove_tab: "Seitenregisterkarte entfernen"
     tab_not_removed: "Registerkarte konnte nicht entfernt werden"
@@ -6978,6 +7498,7 @@ de:
         hits:
           one: 1 Ansicht
           other: "%{count} Ansichten"
+        no_votes: "Keine Stimmen"
         vote_info:
           ideas:
             one: "%{count} Person gefällt diese Idee"
@@ -7158,3 +7679,5 @@ de:
       code_mandatory: "Es sind beide Felder erforderlich. Kurzmeldungen können bis zu 10 Zeichen lang sein und dürfen keine Sonderzeichen enthalten (außer '-')."
       code_duplicate: "Diese Kurzmeldung wird bereits verwendet."
   new_label: NEU
+  api:
+    record_not_found: "Ressource nicht gefunden"

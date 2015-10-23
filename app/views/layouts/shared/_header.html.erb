@@ -224,14 +224,7 @@
 	jQuery('#shortcuts_info').bind('click', function(ev){
 		ev.preventDefault();
 		jQuery('#shortcut_help_chart').trigger('click');
-	});
-
-	//Toggle compose email and new ticket button active state
-	jQuery(".new-ticket-dropdown").on("click", "a", function(e){
-		var _currentTarget = e.currentTarget;
-		jQuery(_currentTarget).parent().siblings().removeClass('active');
-		jQuery(_currentTarget).parent().addClass('active');
-	});
+	});	
 });
 
 

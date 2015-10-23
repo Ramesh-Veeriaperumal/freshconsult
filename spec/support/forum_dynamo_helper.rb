@@ -165,6 +165,13 @@ module ForumDynamoHelper
     end
   end
 
+  def provisioned_throughput(name)
+    begin
+      table_data = $dynamo.describe_table(:table_name => name)
+      return table_data[:table][:provisioned_throughput]
+    end
+  end
+
   def store_attachments(folder_name)
   	@attachment_arr.each do |att|
 			filename = att[:resource].original_filename
