@@ -27,7 +27,7 @@ class Helpdesk::Subscription < ActiveRecord::Base
       SearchSidekiq::TicketActions::DocumentAdd.perform_async({ 
                                                   :klass_name => 'Helpdesk::Ticket', 
                                                   :id => self.ticket_id,
-                                                  :version_value => Time.now.to_i
+                                                  :version_value => Search::Job.es_version
                                                 })
     end
 
