@@ -27,6 +27,7 @@ class Middleware::ApiRequestInterceptor
         message =  { code: 'invalid_json', message: "Request body has invalid json format" }
         set_response(400, RESPONSE_HEADERS, message)
       rescue StandardError => error
+        notify_new_relic_agent(error, env['REQUEST_URI'], { description: "Error occurred while processing API", request_method: env['REQUEST_METHOD'], request_body: env["rack.input"].string})
         Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
         message =  { code: 'internal_error', message: "We're sorry, but something went wrong." }
         set_response(500, RESPONSE_HEADERS, message)
@@ -70,5 +71,10 @@ class Middleware::ApiRequestInterceptor
 
   def content_type_required_method?
     CONTENT_TYPE_REQUIRED_METHODS.include?(@method)
+  end
+
+  def notify_new_relic_agent(exception, uri, custom_params={})
+    options_hash =  custom_params.present? ? { custom_params: custom_params } : {}
+    NewRelic::Agent.notice_error(exception, {uri: uri}.merge(options_hash))
   end
 end

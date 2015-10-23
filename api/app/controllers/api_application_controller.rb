@@ -114,18 +114,20 @@ class ApiApplicationController < MetalApiController
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
+      notify_new_relic_agent(e, description: "Error occured while processing api request")
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
+      notify_new_relic_agent(e, description: "Duplicate Record Error.")
       Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_request_error(:duplicate_value, 409)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
       return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
-      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
+      Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
     end
@@ -471,5 +473,10 @@ class ApiApplicationController < MetalApiController
 
     def set_time_zone
       Time.zone = ApiConstants::UTC
+    end
+
+    def notify_new_relic_agent(exception, custom_params={})
+      options_hash =  custom_params.present? ? { custom_params: custom_params.merge(method: request.method, params: params) } : {}
+      NewRelic::Agent.notice_error(exception, {uri: request.original_url}.merge(options_hash))
     end
 end

@@ -73,6 +73,12 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.body, request_error_pattern(:duplicate_value).to_json
   end
 
+  def test_notify_new_relic_agent
+    @controller.request.env['ORIGINAL_FULLPATH'] = "/api/tickets"
+    NewRelic::Agent.expects(:notice_error).with("Exception",  {uri: @controller.request.original_url}).once
+    @controller.send(:notify_new_relic_agent, "Exception")
+  end
+
   def test_route_not_found_with_method_not_allowed
     response = ActionDispatch::TestResponse.new
     @controller.response = response
