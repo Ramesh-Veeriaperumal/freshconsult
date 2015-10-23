@@ -4,10 +4,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     { api_agent: params }
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   def test_agent_index
     3.times do

@@ -93,12 +93,12 @@ module DiscussionMonitorConcern
     end
 
     def validate(params_hash)
-      monitor = ApiDiscussions::MonitorValidation.new(params_hash, nil, multipart_or_get_request?)
+      monitor = ApiDiscussions::MonitorValidation.new(params_hash, nil, string_request_params?)
       render_errors monitor.errors, monitor.error_options unless monitor.valid?
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && params[:user_id] != api_current_user.id && !privilege?(:manage_forums)
+      if params[:user_id].present? && params[:user_id].to_i != api_current_user.id && !privilege?(:manage_forums)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end

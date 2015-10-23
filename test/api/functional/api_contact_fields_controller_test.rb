@@ -5,10 +5,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     { api_contact_field: params }
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   # Contact Field Index
   def test_contact_field_index

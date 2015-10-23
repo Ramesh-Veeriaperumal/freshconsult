@@ -456,8 +456,8 @@ class ApiApplicationController < MetalApiController
       action_name.to_s == action
     end
 
-    def multipart_or_get_request?
-      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request?)
+    def string_request_params?
+      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request? || request.delete?)
       @multipart
     end
 

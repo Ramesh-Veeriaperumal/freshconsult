@@ -72,6 +72,14 @@ module TestCaseMethods
     params_hash
   end
 
+  def controller_params(params = {}, query_string = true)
+    remove_wrap_params
+
+    # Stringifying the values as controller params are going to be used as query params in only GET & PUT request.
+    params.each {|k, v| params[k] = "#{v}"} if query_string
+    request_params.merge(params)
+  end
+
   def add_content_type
     @headers ||= {}
     @headers['CONTENT_TYPE'] = 'application/json'

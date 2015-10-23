@@ -131,11 +131,12 @@ module ApiDiscussions
     end
 
     def test_update
-      put :update, construct_params({ id: fc.id }, description: 'foo')
-      match_json(forum_category_response_pattern(fc.name, 'foo'))
-      match_json(forum_category_pattern(fc))
+      forum_category = fc
+      put :update, construct_params({ id: forum_category.id }, description: 'foo')
+      match_json(forum_category_response_pattern(forum_category.name, 'foo'))
+      match_json(forum_category_pattern(forum_category))
       assert_response 200
-      assert_equal 'foo', ForumCategory.find_by_id(fc.id).description
+      assert_equal 'foo', ForumCategory.find_by_id(forum_category.id).description
     end
 
     def test_destroy

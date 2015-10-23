@@ -3,10 +3,6 @@ require_relative '../test_helper'
 class TimeEntriesControllerTest < ActionController::TestCase
   include Helpers::TimeEntriesHelper
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   def wrap_cname(params = {})
     { time_entry: params }

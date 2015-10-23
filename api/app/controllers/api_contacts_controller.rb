@@ -76,7 +76,7 @@ class ApiContactsController < ApiApplicationController
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
 
-      contact = ContactValidation.new(params[cname], @item, multipart_or_get_request?)
+      contact = ContactValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
 
@@ -106,7 +106,7 @@ class ApiContactsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @contact_filter = ContactFilterValidation.new(params, nil, multipart_or_get_request?)
+      @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
       render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 

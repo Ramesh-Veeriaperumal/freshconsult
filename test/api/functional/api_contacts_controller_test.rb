@@ -20,10 +20,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     company
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   # Show User
   def test_show_a_contact

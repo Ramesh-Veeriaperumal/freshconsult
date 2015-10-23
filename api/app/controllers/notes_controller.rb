@@ -117,7 +117,7 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item, multipart_or_get_request?)
+      @note_validation = NoteValidation.new(params[cname], @item, string_request_params?)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid

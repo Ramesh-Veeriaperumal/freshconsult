@@ -113,7 +113,7 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @ticket_filter = TicketFilterValidation.new(params, nil, multipart_or_get_request?)
+      @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
@@ -167,7 +167,7 @@ class TicketsController < ApiApplicationController
       params[cname].permit(*(field))
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
-      ticket = TicketValidation.new(params_hash, @item, multipart_or_get_request?)
+      ticket = TicketValidation.new(params_hash, @item, string_request_params?)
       render_custom_errors(ticket, true) unless ticket.valid?
     end
 

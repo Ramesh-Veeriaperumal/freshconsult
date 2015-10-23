@@ -5,8 +5,8 @@ class ApiProductsIntegrationTest < ActionDispatch::IntegrationTest
   def test_query_count
     v2 = {}
     v2_expected = {
-      api_show: 1,
-      api_index: 1,
+      api_show: 0,
+      api_index: 0,
 
       show: 11,
       index: 11

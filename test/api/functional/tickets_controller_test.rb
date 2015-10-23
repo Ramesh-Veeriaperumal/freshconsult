@@ -4,10 +4,6 @@ require_relative '../test_helper'
 class TicketsControllerTest < ActionController::TestCase
   include Helpers::TicketsHelper
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 

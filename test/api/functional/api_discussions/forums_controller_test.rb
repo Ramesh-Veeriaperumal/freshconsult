@@ -4,11 +4,6 @@ module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
     include Helpers::DiscussionsHelper
 
-    def controller_params(params = {})
-      remove_wrap_params
-      request_params.merge(params)
-    end
-
     def f_obj
       Forum.first || create_test_forum(fc)
     end
