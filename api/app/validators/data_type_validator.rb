@@ -22,8 +22,6 @@ class DataTypeValidator < ActiveModel::EachValidator
     # Faster than is_a? check
     def valid_type?(type, value, record, attribute)
       case value
-      when NilClass
-        allow_nil?(record, attribute)
       when type
         true
       when TrueClass
@@ -37,14 +35,6 @@ class DataTypeValidator < ActiveModel::EachValidator
       else
         false
       end
-    end
-
-    def allow_nil?(record, attribute)
-      # 1. if value shoudn't be set nil or it might not be part of request param then allow_nil = false & allow_unset = true
-      # 2. if value can be set as nil irrespective of whether it is part of request param => allow_nil = true
-      # 3. if required attribute, options[:required] => true.
-      return false if options[:required]
-      options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}".to_sym)
     end
 
     def required_attribute_not_defined?(record, attribute, _value)

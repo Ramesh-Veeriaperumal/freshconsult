@@ -55,19 +55,6 @@ class ContactValidationTest < ActionView::TestCase
     errors = contact.errors.full_messages
     assert errors.include?('Avatar data_type_mismatch')
     assert errors.count == 1
-  end
-
-  def test_complex_fields_with_nil
-    Account.stubs(:current).returns(Account.new)
-    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
-    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-    controller_params = { 'name' => 'test', :email => Faker::Internet.email, tags: nil, custom_fields: nil }
-    item = nil
-    contact = ContactValidation.new(controller_params, item)
-    refute contact.valid?
-    errors = contact.errors.full_messages
-    assert errors.include?('Tag names data_type_mismatch')
-    assert errors.include?('Custom fields data_type_mismatch')
     Account.unstub(:current)
   end
 end

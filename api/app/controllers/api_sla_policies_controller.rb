@@ -32,8 +32,4 @@ class ApiSlaPoliciesController < ApiApplicationController
     def scoper
       current_account.sla_policies
     end
-
-    def complex_fields_has_nil?
-      json_request? && params[cname].present?
-    end
 end

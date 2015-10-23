@@ -10,6 +10,6 @@ module CompanyConstants
   DEFAULT_FIELD_VALIDATIONS =  {
     description:  { data_type: { rules: String } },
     note: { data_type: { rules: String } },
-    domains:  { data_type: { rules: Array, allow_nil: false, allow_unset: true }, array: { data_type: { rules: String } }, string_rejection: { excluded_chars: [','] } }
+    domains:  { data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String } }, string_rejection: { excluded_chars: [','] } }
   }
 end

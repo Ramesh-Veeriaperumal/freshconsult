@@ -141,10 +141,6 @@ class NotesController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
 
-    def complex_fields
-      (create? || reply? || update?) ? "NoteConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize : []
-    end
-
     def check_agent_note
       render_request_error(:access_denied, 403) if @item.user && @item.user.customer?
     end

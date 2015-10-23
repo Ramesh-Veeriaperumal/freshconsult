@@ -134,7 +134,7 @@ module ApiDiscussions
       forum_category = fc
       put :update, construct_params({ id: forum_category.id }, description: 'foo')
       match_json(forum_category_response_pattern(forum_category.name, 'foo'))
-      match_json(forum_category_pattern(forum_category))
+      match_json(forum_category_pattern(forum_category.reload))
       assert_response 200
       assert_equal 'foo', ForumCategory.find_by_id(forum_category.id).description
     end

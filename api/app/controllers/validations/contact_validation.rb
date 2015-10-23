@@ -21,7 +21,7 @@ class ContactValidation < ApiValidation
 
   validates :company_name, required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' }
 
-  validates :custom_fields, data_type: { rules: Hash, allow_nil: false, allow_unset: true  }, allow_nil: true
+  validates :custom_fields, data_type: { rules: Hash, allow_nil: true  }
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields },
     required_attribute: :required_for_agent,

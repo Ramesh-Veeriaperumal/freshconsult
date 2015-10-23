@@ -11,7 +11,6 @@ class ApiApplicationController < MetalApiController
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
   before_filter :validate_content_type
-  before_filter :handle_empty_array, if: :complex_fields_has_nil?
 
   include Concerns::ApplicationConcern
 
@@ -461,24 +460,8 @@ class ApiApplicationController < MetalApiController
       @multipart
     end
 
-    # Handling empty array only when params have array fields and it's value is nil.
-    def complex_fields_has_nil?
-      complex_fields.present? && params[cname].present? && json_request? && params[cname].any? { |key, value| complex_fields.include?(key.to_s) && value.nil? }
-    end
-
-    # https://github.com/rails/rails/blob/3-2-stable/actionpack/lib/action_dispatch/middleware/params_parser.rb#L46
-    # Doing the same thing as above but without deep munge as it has no effect on our API Write Calls.
-    def handle_empty_array
-      parsed_json = ActiveSupport::JSON.decode(request.body)
-      params[cname].merge!(parsed_json) if parsed_json.is_a?(Hash)
-    end
-
     def json_request?
       @json_request ||= request.content_mime_type.try(:ref) == :json
-    end
-
-    def complex_fields
-      []
     end
 
     def valid_content_type?

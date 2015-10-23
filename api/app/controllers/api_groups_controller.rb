@@ -62,10 +62,6 @@ class ApiGroupsController < ApiApplicationController
                                            params[cname])
     end
 
-    def complex_fields
-      GroupConstants::ARRAY_FIELDS
-    end
-
     def prepare_agents
       initialize_agents
       drop_existing_agents if update? && @agents

@@ -76,21 +76,4 @@ class ForumValidationsTest < ActionView::TestCase
     assert_equal ['Forum type invalid_field'], forum.errors.full_messages
   end
 
-  def test_company_ids_invalid
-    controller_params = { company_ids: nil }
-    item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
-    item.forum_category_id = 1
-    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
-    refute forum.valid?(:update)
-    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
-  end
-
-  def test_company_ids_data_type_mismatch
-    controller_params = { company_ids: nil }
-    item = Forum.new(forum_type: 1, forum_visibility: 4, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
-    item.forum_category_id = 1
-    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
-    refute forum.valid?(:update)
-    assert_equal ['Company ids data_type_mismatch'], forum.errors.full_messages
-  end
 end

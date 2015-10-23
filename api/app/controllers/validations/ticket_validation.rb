@@ -39,15 +39,15 @@ class TicketValidation < ApiValidation
 
   # Email related validations
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
-  validates :cc_emails, data_type: { rules: Array, allow_nil: false, allow_unset: true }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
+  validates :cc_emails, data_type: { rules: Array, allow_nil: true }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array,  allow_nil: false, allow_unset: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
+  validates :tags, data_type: { rules: Array,  allow_nil: true }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
   validates :tags, string_rejection: { excluded_chars: [','] }
 
   # Custom fields validations
-  validates :custom_fields, data_type: { rules: Hash, allow_nil: false, allow_unset: true }
+  validates :custom_fields, data_type: { rules: Hash, allow_nil: true }
   validates :custom_fields, custom_field: { custom_fields:
                               {
                                 validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },

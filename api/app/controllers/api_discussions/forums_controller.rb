@@ -39,11 +39,6 @@ module ApiDiscussions
         customers = params[cname]['company_ids']
         params[cname][:customer_forums_attributes] = { customer_id: customers } unless params[cname]['company_ids'].nil?
       end
-
-      def complex_fields
-        DiscussionConstants::FORUM_ARRAY_FIELDS
-      end
-
       def assign_protected
         @item.account_id ||= current_account.id
         @item.forum_category_id = params[cname]['forum_category_id'] if params[cname]['forum_category_id']

@@ -13,7 +13,7 @@ module ApiDiscussions
     validates :company_ids, custom_absence: { allow_nil: false, message: 'invalid_field' }, if: proc { |x| x.forum_visibility.to_i != DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN[:company_users] }
 
     # company_ids should be nil if forum has visibility other than 4.
-    validates :company_ids, data_type: { rules: Array, allow_nil: false, allow_unset: true }, if: proc { |x| x.forum_visibility.to_i == DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN[:company_users] }
+    validates :company_ids, data_type: { rules: Array, allow_nil: true }, if: proc { |x| x.forum_visibility.to_i == DiscussionConstants::FORUM_VISIBILITY_KEYS_BY_TOKEN[:company_users] }
     validates :company_ids,  array: { custom_numericality: { allow_nil: true } }
     validates :description, data_type: { rules: String, allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
 

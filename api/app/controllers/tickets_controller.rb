@@ -171,10 +171,6 @@ class TicketsController < ApiApplicationController
       render_custom_errors(ticket, true) unless ticket.valid?
     end
 
-    def complex_fields
-      ApiTicketConstants::COMPLEX_FIELDS
-    end
-
     def assign_protected
       @item.product ||= current_portal.product
       @item.account = current_account

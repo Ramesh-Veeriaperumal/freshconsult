@@ -35,7 +35,7 @@ class DefaultFieldValidator < ActiveModel::EachValidator
       next if record.errors[attribute].present?
 
       # merge required & allow_nil option if the field is required
-      options_hash = { required: required, attributes: attribute, allow_nil: !required }.merge(validator_options)
+      options_hash = validator_options.merge(required: required, attributes: attribute, allow_nil: !required)
 
       case validator
       when :custom_inclusion
