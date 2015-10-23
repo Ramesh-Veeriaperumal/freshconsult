@@ -146,14 +146,13 @@ module TicketsFilter
 
   ### Hack for dashboard/API summary count fetching from ES
   def self.es_filter_count(selector, unresolved=false, agent_filter=false)
-    custom_filter = Helpdesk::Filters::CustomTicketFilter.new
-    action_hash = custom_filter.default_filter(selector.to_s) || []
-
-    action_hash.push({ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',') }) if unresolved
+    custom_filter       = Helpdesk::Filters::CustomTicketFilter.new
+    action_hash         = custom_filter.default_filter(selector.to_s) || []
+    negative_conditions = (unresolved ? [{ "condition" => "status", "operator" => "is_not", "value" => "#{RESOLVED},#{CLOSED}" }] : [])
+    
     action_hash.push({ "condition" => "responder_id", "operator" => "is_in", "value" => "0" }) if agent_filter
 
-
-    Search::Filters::Docs.new(action_hash).count(Helpdesk::Ticket)
+    Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
   end
 
   ### ES Count query related hacks : END ###
