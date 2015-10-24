@@ -4,14 +4,19 @@ AWS.config(:logger => Logger.new($stdout),:log_level => :debug)
 
 # establishing connection with aws to run custom restart of nginx
 awscreds = {
-     :access_key_id    => node[:opsworks_access_keys][:access_key_id],
-     :secret_access_key => node[:opsworks_access_keys][:secret_access_key],
-     :region           => node[:opsworks_access_keys][:opsworks_region]
+#  :access_key_id    => node[:opsworks_access_keys][:access_key_id],
+#  :secret_access_key => node[:opsworks_access_keys][:secret_access_key],
+  :region           => node[:opsworks_access_keys][:region]
 }
 #TODO-RAILS3 once migrations is done we can remove setting from stack and bellow code.
-# awscreds.merge!({:access_key_id    => node[:opsworks_access_keys][:access_key_id],
-#                 :secret_access_key => node[:opsworks_access_keys][:secret_access_key]
-#                  }) unless node[:rails3][:use_iam_profile]
+awscreds.merge!({:access_key_id    => node[:opsworks_access_keys][:access_key_id],
+                :secret_access_key => node[:opsworks_access_keys][:secret_access_key]
+                 }) unless node[:rails3][:use_iam_profile]
+
+
+Chef::Log.info "release_path is #{node[:rel_path]}"
+Chef::Log.info "rela is #{release_path}"
+Chef::Log.info "chdir path is #{node[:newdir]}"
 
 config = YAML::load_file(::File.join(node[:rel_path], 'config', 'asset_sync.yml'))
 bucket_name = config[node[:opsworks][:environment]]["fog_directory"]
@@ -20,14 +25,17 @@ bucket_name = config[node[:opsworks][:environment]]["fog_directory"]
 Dir.chdir "#{node[:newdir]}"
 git_version_command = "git log --pretty=format:%H --max-count=1 --branches=HEAD -- ./public/"
 file_name = node.override[:git_version] = `#{git_version_command}` + ".zip"
+
+Chef::Log.info "file name is #{file_name}"
 node.override[:path] = "#{node[:path]}" + "#{file_name}"
+aws_config = AWS::S3.new(awscreds).buckets["#{bucket_name}"].objects["compiledfiles/#{file_name}"]
+
+
+node.override[:bucket_exist] =  aws_config.exists?
+
 Chef::Log.info "value of git version is #{node[:git_version]} and test value is #{node[:bucket_exist]} and bucket name is #{bucket_name}"
 
 if node[:opsworks]
-  if node[:opsworks][:instance][:hostname].include?("-app-")
-    aws_config = AWS::S3.new(awscreds).buckets["#{bucket_name}"].objects["compiledfiles/#{file_name}"]
-    node.override[:bucket_exist] =  aws_config.exists?
-  end
   master_node = node[:opsworks][:layers][:application][:instances].keys.sort.first  if node[:opsworks][:layers] && node[:opsworks][:layers][:application] && node[:opsworks][:layers][:application][:instances]
   asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
   current_host = node[:opsworks][:instance][:hostname] 
