@@ -9,13 +9,14 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
   include BusinessHoursCalculation
+  include Search::V2::EsCommitObserver
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']
 
   self.table_name =  "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id"
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text, 
@@ -289,19 +290,6 @@ class Helpdesk::Note < ActiveRecord::Base
   def liquidize_body
     all_attachments.empty? ? body_html : 
       "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(all_attachments)}\n"
-  end
-
-  def to_indexed_json
-    as_json({
-            :root => "helpdesk/note",
-            :tailored_json => true,
-            :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id,
-                          :notable_deleted, :notable_spam, :notable_requester_id ],
-            :only => [ :notable_id, :deleted, :private, :body, :account_id, :created_at, :updated_at ], 
-            :include => { 
-                          :attachments => { :only => [:content_file_name] }
-                        }
-            }).to_json
   end
   
   def fb_reply_allowed?

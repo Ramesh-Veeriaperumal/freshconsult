@@ -74,11 +74,14 @@ module Search
         [home_cluster, self.alias(type), type, '_bulk'].join('/')
       end
 
-      # To verify:
-      # Index request:
-      # home_cluster/alias/type/document_id - More than one request, but one type at a time
-      # Search request:
-      # home_cluster/aliases/_search - More than one type at a time
+      # The path to access aliases
+      # Eg., for ticket & users: http://localhost:9200/users_1,tickets_1
+      def aliases_path(types=[])
+        [
+          home_cluster,
+          types.collect { |type| self.alias(type) }.compact.join(',')
+          ].join('/')
+      end
 
       private
 
