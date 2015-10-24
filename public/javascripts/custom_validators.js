@@ -139,8 +139,8 @@
     });
  
     return _returnCondition
-
- },jQuery.validator.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
+    
+ },jQuery.validator.format('Please enter a valid requester details or <a href="#" id="add_requester_btn_proxy">add new requester.</a>'));
 
   $.validator.addClassRules("requester", { requester: true });
 

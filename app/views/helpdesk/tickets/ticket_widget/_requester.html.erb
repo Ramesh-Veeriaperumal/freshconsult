@@ -1,0 +1,79 @@
+<!-- This partial is for rendering search a reuester field with configurable Cc field -->
+
+
+<% content_for :onload_script do -%>
+
+jQuery('#add_cc_btn').bind("click", function(ev){
+		ev.preventDefault();
+		jQuery("#cc_emails_sec").toggle();
+		jQuery("#cc_emails").val("");
+		jQuery("#cc_emails").trigger("liszt:updated");
+	});
+ function lookup(searchString, callback) { 
+                    new Ajax.Request('<%= requesters_search_autocomplete_index_path %>?q='+encodeURIComponent(searchString), 
+                                                              { method : "GET",
+                                                              onSuccess: function(response) {
+                                                                var choices = $A();
+                                                                response.responseJSON.results.each(function(item){
+																  if(item.value == "") {
+				                                                    choices.push([item.details, item.details]);
+				                                                  } else {
+				                                                    choices.push([item.details , item.details ]);
+				                                                  } 
+                                                                });                                                
+                                                                callback(choices);
+                                                              } });
+                                                            }
+            var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
+            var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+<%- end %>
+
+<div class="requester-details">
+	<div class="requester-email">
+		<label><%= t('helpdesk.shared.requester_label') %><span class="required_star">*</span></label>
+		<div>
+		<%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:object_name => :helpdesk_ticket, 
+			:placeholder => t('helpdesk.shared.search_reqester'), :url => requesters_search_autocomplete_index_path }) %>
+	<div class="add-requester">
+		<span class="add-req-label <% if is_edit %>hide <% end %>"><%= search_req %></span>
+		<% if show_cc %>
+		<span data-action="show-cc" class="cc-label"><%= t('helpdesk.shared.cc_label') %></span>
+		<% end %>
+
+	</div>
+	</div>
+	</div>
+	<div class="cc-address hide">
+		<label class="cc-label" for="cc-email-address"><%= t('helpdesk.shared.cc_label') %></label>
+		<input type="text" class="required cc-email" id="cc_emails" name="cc_emails" />
+		<span data-action="hide-cc" class="hide-cc-label"><%= t('helpdesk.shared.hide_cc') %></span>
+	</div>
+</div>
+	<% if current_user.agent? %>
+		<% content_for :onload_script do -%>
+	        new Autocompleter.MultiValue("cc_emails", cachedLookup, 
+	        							  $A(),{frequency: 0.1, 
+	        							  allowSpaces: true,
+	        							  acceptNewValues: true,separatorRegEx:/;|,/});
+		<%- end %>
+	<% end %>
+
+<% content_for :onload_script do -%>
+	jQuery(document).ready(function(){
+		jQuery("[data-action='show-cc']").on('click', function(){
+			jQuery(this).addClass('muted');
+			jQuery('.cc-address').removeClass("hide");
+			
+		});
+		
+		jQuery("[data-action='hide-cc']").on('click', function(){
+			jQuery("[data-action='show-cc']").removeClass('muted');
+			jQuery('.cc-address').addClass("hide");
+		});
+
+
+	});
+<% end %>
+
+
+

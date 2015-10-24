@@ -87,14 +87,20 @@ include GoogleLoginHelper
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
       if @user_session.save
+        if is_native_mobile?
+          cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+          cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+        end
         flash.discard
         remove_old_filters  if @current_user.agent?
         redirect_back_or_default(params[:redirect_to] || '/')  if grant_day_pass  
       else
+        cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
         flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     else
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
     end  
@@ -223,7 +229,7 @@ include GoogleLoginHelper
    remove_logged_out_user_mobile_registrations if is_native_mobile?
 
     current_user_session.destroy unless current_user_session.nil?
-    if current_account.sso_enabled? and current_account.sso_logout_url.present?
+    if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
       sso_redirect_url = generate_sso_url(current_account.sso_logout_url)
       redirect_to sso_redirect_url and return
     end

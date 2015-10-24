@@ -18,8 +18,8 @@ class Helpdesk::Activity < ActiveRecord::Base
   before_create :set_short_descr
   before_create :set_migration_key, :if => :feature_present?
   
-  OLD_MIGRATION_KEYS = ["bi_reports"]
-  MIGRATION_KEYS     = ["bi_reports_1"]
+  OLD_MIGRATION_KEYS = ["bi_reports", "bi_reports_1"]
+  MIGRATION_KEYS     = ["bi_reports_2"]
   
   scope :freshest, lambda { |account|
     { :conditions => ["helpdesk_activities.account_id = ? and notable_type != ?", account, "Helpdesk::ArchiveTicket"], 

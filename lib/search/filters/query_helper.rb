@@ -22,7 +22,7 @@ module Search::Filters::QueryHelper
     # rest          : terms            #
     ####################################
 
-    def es_query(condition_arr)
+    def es_query(conditions, neg_conditions)
 
       condition_block = {
         :should   => [],
@@ -33,13 +33,8 @@ module Search::Filters::QueryHelper
       # Hack for handling permissible as used in tickets
       condition_block[:must].push(permissible_filter) if (User.current.agent? and User.current.restricted?)
 
-      condition_arr.each do |field|
-        # Doing gsub as flexifields are flat now.
-        cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
-
-        condition_block[:must].push(handle_field(cond_field, 
-                                    field['value'].to_s.split(','))) if cond_field.present?
-      end
+      construct_conditions(condition_block[:must], conditions)
+      construct_conditions(condition_block[:must_not], neg_conditions)
 
       filtered_query(nil, bool_filter(condition_block))
     end
@@ -53,6 +48,17 @@ module Search::Filters::QueryHelper
                                                         ]),
         :assigned_tickets   =>  term_filter('responder_id', [User.current.id.to_s])
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
+    end
+
+    # Loop and construct ES conditions from WF filter conditions
+    def construct_conditions(es_wrapper, wf_conditions)
+      wf_conditions.each do |field|
+        # Doing gsub as flexifields are flat now.
+        cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
+
+        es_wrapper.push(handle_field(cond_field, 
+                                        field['value'].to_s.split(','))) if cond_field.present?
+      end
     end
 
     # For handling responder with hacks

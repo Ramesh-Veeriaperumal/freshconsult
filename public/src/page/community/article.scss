@@ -59,7 +59,7 @@
 
   .article-sticky {
     .breadcrumb-btns {
-      width: 300px;
+      width: 360px;
     }
 
     .edit-container{
@@ -353,6 +353,9 @@
   }
   #solution-properties-seo {
     margin-top: 20px;
+    .controls .muted {
+      padding-top: 4px;
+    }
   }
   #solution-properties .controls label {
     display: inline;

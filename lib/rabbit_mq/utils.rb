@@ -64,6 +64,7 @@ module RabbitMq::Utils
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error",
                                                         :message => message.to_json }})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    rmq_logger.info "#{message}"
     sns_notification("RabbitMq Publish Error", message)
   end
 
@@ -89,6 +90,7 @@ module RabbitMq::Utils
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Manual Publish Error",
                                                        :message => message.to_json }})
     Rails.logger.error("RabbitMq Manual Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    rmq_logger.info "#{message}"
     sns_notification("RabbitMq Manual Publish Error", message)
   end
   
@@ -96,5 +98,15 @@ module RabbitMq::Utils
     notification_topic = topic || SNS["reports_notification_topic"]
     DevNotification.publish(notification_topic, subj, message.to_json)
   end
+  
+  def rmq_log_file
+    @@log_file_path ||= "#{Rails.root}/log/rmq_failed_msgs.log"
+  end 
 
+  def rmq_logger
+    @@rmq_logger ||= Logger.new(rmq_log_file)
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e, {:custom_params => {:description => "Exception while logging failed RMQ msgs"}})
+  end
+  
 end

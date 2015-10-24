@@ -14,7 +14,7 @@ window.App.Tickets = window.App.Tickets || {};
       this.setDefaultVals();
       this.bindSave();
       this.bindTypeChange();
-      jQuery.validator.messages.requester = "Please add a valid requester";
+      jQuery.validator.messages.requester = "Please add a valid contact";
       jQuery('#helpdesk_ticket_status').trigger("change");
     },
 

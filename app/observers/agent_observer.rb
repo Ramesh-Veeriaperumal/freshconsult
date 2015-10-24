@@ -63,7 +63,7 @@ class AgentObserver < ActiveRecord::Observer
       
     def update_crm(agent)
       if agent.account.full_time_agents.count > 1
-        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
       end
     end
 end

@@ -51,6 +51,19 @@
   </div>
 </div>
 <br/>
+
+<div class="row-fluid">
+  <div class="span10">
+    <h5 class="lead small-lead"><%= t('email_configs.enable_compose') %></h5>   
+    <p class="muted lead-desc"> 
+      <%= t('email_configs.enable_compose_info')%>
+    </p> 
+  </div>
+  <div class="span2 align-right">
+    <input rel="toggle" type="checkbox" id="enable_compose_email" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.compose_email_enabled? %>checked="true"<%end%> />
+  </div>
+</div>
+
 <div class="row-fluid">
   <div class="span10">
     <h5 class="lead small-lead"><%= t('email_configs.personalized_email_replies_title') %></h5>   
@@ -84,18 +97,6 @@
   </div>
   <div class="span2 align-right">
     <input rel="toggle" type="checkbox" id="disable_agent_forward_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%unless current_account.features_included?(:disable_agent_forward)%>checked="true"<%end%> />
-  </div>
-</div>
-
-<div class="row-fluid">
-  <div class="span10">
-    <h5 class="lead small-lead"><%= t('email_configs.enable_compose') %></h5>   
-    <p class="muted lead-desc"> 
-      <%= t('email_configs.enable_compose_info')%>
-    </p> 
-  </div>
-  <div class="span2 align-right">
-    <input rel="toggle" type="checkbox" id="enable_compose_email" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.compose_email_enabled? %>checked="true"<%end%> />
   </div>
 </div>
 

@@ -16,6 +16,7 @@ module Delayed
     before_save { self.run_at ||= self.class.db_time_now }
     MAX_ATTEMPTS = 25
     MAX_RUN_TIME = 4.hours
+    JOB_QUEUES = ["Premium" , "Free", "Trial" , "Active"]
 
     # By default failed jobs are destroyed after too many attempts.
     # If you want to keep them around (perhaps to inspect the reason
@@ -143,12 +144,29 @@ module Delayed
         smtp_mailboxes = Account.current.smtp_mailboxes
 
         Rails.logger.info "Adding job to POD: #{pod_info} for account: #{Account.current} with id #{account_id}."
+
+        job_queue = "spam" if Account.current.spam_email?
+        job_queue ||= "premium" if Account.current.premium_email?
+        job_queue ||= Account.current.subscription.state
+        job_queue.capitalize!
+
+        #queue everything else into the delayed_jobs table
+        job_queue = "Delayed" if ( !JOB_QUEUES.include?(job_queue) || Rails.env.development? || Rails.env.test? || !split_delayed_jobs_enabled? )
       end
 
       if smtp_mailboxes.any?
         Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
       else
-        self.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+        Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
+      end      
+    end
+
+    def self.split_delayed_jobs_enabled?
+      begin
+        $redis_others.exists("SPLIT_DELAYED_JOBS")              
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        false
       end      
     end
 

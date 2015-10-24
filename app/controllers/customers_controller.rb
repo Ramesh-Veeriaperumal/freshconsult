@@ -100,7 +100,7 @@ class CustomersController < ApplicationController # Will be Deprecated. Use Comp
       expects.json  { render :json => :deleted}
       expects.js { 
         process_destroy_message
-        after_destory_js 
+        after_destroy_js 
       }
       #until we impl query based retrieve we show only limited data on deletion.
       expects.xml{ render :xml => @items.to_xml(options.merge(:root => 'customers'))}
