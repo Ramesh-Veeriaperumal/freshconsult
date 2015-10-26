@@ -52,8 +52,8 @@ class ApiGroupsController < ApiApplicationController
       @agents = params[cname][:agent_ids]
     end
 
-    def load_objects(_items = scoper, _is_array = false)
-      super(scoper, true)
+    def load_objects
+      super(scoper.sort_by { |x| x.name.downcase })
     end
 
     def sanitize_params

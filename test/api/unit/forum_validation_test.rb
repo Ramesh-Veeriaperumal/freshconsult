@@ -66,4 +66,14 @@ class ForumValidationsTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new({}, item)
     assert forum.valid?
   end
+
+  def test_update_forum_type_invalid
+    controller_params = { forum_type: nil }
+    item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
+    item.forum_category_id = 1
+    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    refute forum.valid?(:update)
+    assert_equal ['Forum type invalid_field'], forum.errors.full_messages
+  end
+
 end

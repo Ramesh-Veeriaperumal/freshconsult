@@ -6,10 +6,11 @@ class ApiApplicationController < MetalApiController
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
+  rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
-  before_filter :validate_content_type 
+  before_filter :validate_content_type
 
   include Concerns::ApplicationConcern
 
@@ -90,8 +91,7 @@ class ApiApplicationController < MetalApiController
       match[:action] != 'route_not_found'
     end.map(&:upcase)
     if allows.present? # route is present, but method is not allowed.
-      @error = BaseError.new(:method_not_allowed, methods: allows.join(', '))
-      render '/base_error', status: 405
+      render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
       head :not_found
@@ -114,14 +114,20 @@ class ApiApplicationController < MetalApiController
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
+      notify_new_relic_agent(e, description: "Error occured while processing api request")
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      @error = BaseError.new(:internal_error)
-      render '/base_error', status: 500
+      render_base_error(:internal_error, 500)
+    end
+
+    def duplicate_value_error(e)
+      notify_new_relic_agent(e, description: "Duplicate Record Error.")
+      Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
+      render_request_error(:duplicate_value, 409)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
-      return if handle_invalid_multipart_form_data(exception.params)
-      Rails.logger.error("API Unpermitted Parameters Error. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
+      return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
+      Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
       render_errors invalid_fields
     end
@@ -129,6 +135,12 @@ class ApiApplicationController < MetalApiController
     def handle_invalid_multipart_form_data(exception_params)
       return false unless request.raw_post == exception_params.join && request.headers['CONTENT_TYPE'] =~ /multipart\/form-data/
       render_request_error :invalid_multipart, 400
+      true
+    end
+
+    def handle_invalid_parseable_json(exception_params)
+      return false unless exception_params.join == '_json'
+      render_request_error :invalid_json, 400
       true
     end
 
@@ -145,6 +157,11 @@ class ApiApplicationController < MetalApiController
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
       render '/request_error', status: status
+    end
+
+    def render_base_error(code, status, params_hash = {})
+      @error = BaseError.new(code, params_hash)
+      render '/base_error', status: status
     end
 
     def check_account_state
@@ -232,11 +249,13 @@ class ApiApplicationController < MetalApiController
       # the imput sent using strong params and custom validations.
     end
 
-    # will take scoper as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def load_objects(items = scoper, is_array = false)
+    # will take scoper as one argument.
+    def load_objects(items = scoper)
+      is_array = !items.respond_to?(:scoped) # check if it is array or AR
       @items = paginate_items(items, is_array)
     end
 
+    # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
     def paginate_items(item, is_array = false)
       paginated_items = item.paginate(paginate_options(is_array))
 
@@ -281,9 +300,21 @@ class ApiApplicationController < MetalApiController
 
     def render_custom_errors(item = @item, merge_item_error_options = false)
       options = set_custom_errors(item) # this will set @error_options if necessary.
+
+      # Remove raw errors from model if remove option specified
       Array.wrap(options.delete(:remove)).each { |field| item.errors[field].clear } if options
-      (options ||= {}).merge!(item.error_options) if merge_item_error_options && item.error_options
+
+      # Rename keys in error_options if error_options_mappings exists
+      if merge_item_error_options && item.error_options
+        ErrorHelper.rename_keys(error_options_mappings, item.error_options)
+        (options ||= {}).merge!(item.error_options)
+      end
       render_errors(item.errors, options)
+    end
+
+    # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
+    def error_options_mappings
+      {}
     end
 
     def render_errors(errors, meta = nil)
@@ -418,21 +449,34 @@ class ApiApplicationController < MetalApiController
       @destroy ||= current_action?('destroy')
     end
 
+    def index?
+      @index ||= current_action?('index')
+    end
+
     def current_action?(action)
       action_name.to_s == action
     end
 
-    def multipart_or_get_request?
-      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request?)
+    def string_request_params?
+      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request? || request.delete?)
       @multipart
+    end
+
+    def json_request?
+      @json_request ||= request.content_mime_type.try(:ref) == :json
     end
 
     def valid_content_type?
       return true if request.content_mime_type.nil?
-      request.content_mime_type.ref == :json
+      json_request?
     end
 
     def set_time_zone
       Time.zone = ApiConstants::UTC
+    end
+
+    def notify_new_relic_agent(exception, custom_params={})
+      options_hash =  custom_params.present? ? { custom_params: custom_params.merge(method: request.method, params: params) } : {}
+      NewRelic::Agent.notice_error(exception, {uri: request.original_url}.merge(options_hash))
     end
 end

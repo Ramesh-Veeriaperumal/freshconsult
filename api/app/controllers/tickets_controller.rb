@@ -8,7 +8,9 @@ class TicketsController < ApiApplicationController
 
   def create
     assign_protected
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    delegator_options = { ticket_fields: @ticket_fields,
+                          product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id) }
+    ticket_delegator = TicketDelegator.new(@item, delegator_options)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     else
@@ -24,11 +26,12 @@ class TicketsController < ApiApplicationController
 
   def update
     assign_protected
-
+    delegator_options = { ticket_fields: @ticket_fields,
+                          product_email_config_changed: params[cname].key?(:product_id) && params[cname].key?(:email_config_id) }
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields)
+    ticket_delegator = TicketDelegator.new(@item, delegator_options)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     elsif @item.update_ticket_attributes(params[cname])
@@ -60,8 +63,7 @@ class TicketsController < ApiApplicationController
   private
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ group: :group_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
-                                        product: :product_id }, item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS, item)
     end
 
     def load_objects
@@ -83,7 +85,7 @@ class TicketsController < ApiApplicationController
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
       # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments)
+      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end
 
     def paginate_options(is_array = false)
@@ -111,7 +113,7 @@ class TicketsController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @ticket_filter = TicketFilterValidation.new(params, nil, multipart_or_get_request?)
+      @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
@@ -138,12 +140,15 @@ class TicketsController < ApiApplicationController
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
-      assign_checkbox_value if params[cname][:custom_fields]
+      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @ticket_fields) if params[cname][:custom_fields]
+
+      params_to_be_deleted = [:cc_emails]
+      [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
+      ParamsHelper.clean_params(params_to_be_deleted, params[cname])
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
-      ParamsHelper.clean_params([:cc_emails], params[cname])
 
       @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(@tags) if @tags
@@ -162,8 +167,8 @@ class TicketsController < ApiApplicationController
       params[cname].permit(*(field))
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
-      ticket = TicketValidation.new(params_hash, @item, multipart_or_get_request?)
-      render_errors ticket.errors, ticket.error_options unless ticket.valid?
+      ticket = TicketValidation.new(params_hash, @item, string_request_params?)
+      render_custom_errors(ticket, true) unless ticket.valid?
     end
 
     def assign_protected
@@ -189,15 +194,6 @@ class TicketsController < ApiApplicationController
         end
       end
       true
-    end
-
-    # If false given, nil is getting saved in db as there is nil assignment if blank in flexifield. Hence assign 0
-    def assign_checkbox_value
-      check_box_names = Helpers::TicketsValidationHelper.check_box_type_custom_field_names(@ticket_fields)
-      params[cname][:custom_fields].each_pair do |key, value|
-        next unless check_box_names.include?(key.to_s)
-        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
-      end
     end
 
     def ticket_permission?
@@ -244,6 +240,10 @@ class TicketsController < ApiApplicationController
 
     def restore?
       @restore ||= current_action?('restore')
+    end
+
+    def error_options_mappings
+      ApiTicketConstants::FIELD_MAPPINGS
     end
 
     def valid_content_type?

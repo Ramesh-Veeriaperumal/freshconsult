@@ -96,7 +96,7 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
 
     # unfollow
     v2[:unfollow], v2[:api_unfollow], v2[:unfollow_queries] = count_api_queries do
-      delete("/api/discussions/forums/#{id1}/follow", nil, @write_headers)
+      delete("/api/discussions/forums/#{id1}/follow", nil, @headers)
       assert_response 204
     end
     v1[:unfollow] = count_queries do

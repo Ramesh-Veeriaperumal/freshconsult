@@ -4,11 +4,6 @@ module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
     include Helpers::DiscussionsHelper
 
-    def controller_params(params = {})
-      remove_wrap_params
-      request_params.merge(params)
-    end
-
     def f_obj
       Forum.first || create_test_forum(fc)
     end
@@ -422,7 +417,7 @@ module ApiDiscussions
     def test_before_filters_unfollow_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :unfollow, construct_params({ id: f_obj.id }, {})
+      delete :unfollow, controller_params(id: f_obj.id)
     end
 
     def test_before_filters_is_following_logged_in
@@ -437,14 +432,14 @@ module ApiDiscussions
     end
 
     def test_unfollow_invalid_forum_id
-      delete :unfollow, construct_params(id: 999)
+      delete :unfollow, controller_params(id: 999)
       assert_response :missing
     end
 
     def test_permit_toggle_params_valid
       Monitorship.where(monitorable_type: 'Forum', user_id: @agent.id,
                         monitorable_id: f_obj.id).first || monitor_forum(f_obj, @agent, 1)
-      delete :unfollow, construct_params({ id: f_obj.id }, user_id: other_user.id)
+      delete :unfollow, controller_params(id: f_obj.id, user_id: other_user.id)
       assert_response 204
       monitorship = Monitorship.where(monitorable_type: 'Forum', user_id: other_user.id, monitorable_id: f_obj.id).first
       refute monitorship.active
@@ -453,7 +448,7 @@ module ApiDiscussions
     def test_permit_toggle_params_deleted_user
       Monitorship.where(monitorable_type: 'Forum', user_id: deleted_user.id,
                         monitorable_id: f_obj.id).first || monitor_forum(f_obj, deleted_user, 1)
-      delete :unfollow, construct_params({ id: f_obj.id }, user_id: deleted_user.id)
+      delete :unfollow, controller_params(id: f_obj.id, user_id: deleted_user.id)
       assert_response 204
       deleted_user.update_column(:deleted, false)
     end
@@ -536,7 +531,7 @@ module ApiDiscussions
       fc_obj.forums.each do |f|
         result_pattern << forum_pattern(f)
       end
-      match_json(result_pattern)
+      match_json(result_pattern.ordered!)
     end
 
     def test_category_forums_invalid_id
@@ -577,6 +572,11 @@ module ApiDiscussions
       end
       get :category_forums, construct_params(id: fc.id,  per_page: 2)
       assert_response 200
+      pattern = []
+      fc.forums.limit(2).each do |f|
+        pattern << forum_pattern(f)
+      end
+      match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == 2
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories/#{fc.id}/forums?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
 

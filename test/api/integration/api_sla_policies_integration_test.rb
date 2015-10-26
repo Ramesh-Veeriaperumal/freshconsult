@@ -2,17 +2,16 @@ require_relative '../test_helper'
 
 class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
   include Helpers::SlaPoliciesHelper
-  
 
-  JSON_ROUTES = Rails.application.routes.routes.select { |r| 
-                        r.path.spec.to_s.starts_with("/api/sla_policies/") && 
-                        ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
-                      }.collect { |x| 
-                          [ 
-                            x.path.spec.to_s.gsub("(.:format)", ''),  
-                            x.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase 
-                          ]
-                      }.to_h
+  JSON_ROUTES = Rails.application.routes.routes.select do |r|
+    r.path.spec.to_s.starts_with('/api/sla_policies/') &&
+    ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
+  end.collect do |x|
+    [
+      x.path.spec.to_s.gsub('(.:format)', ''),
+      x.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase
+    ]
+  end.to_h
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -25,7 +24,6 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
-  
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -34,7 +32,7 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 7,
         api_index: 1,
 
-        update: 17,
+        update: 18,
         index: 11
       }
       agent = add_test_agent(@account)

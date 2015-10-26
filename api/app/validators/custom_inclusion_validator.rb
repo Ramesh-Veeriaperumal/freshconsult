@@ -13,7 +13,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
 
       # message should be different if the attribute is required but not defined.
       message = options[:message]
-      message ||= options[:required] && !attribute_defined?(record, attribute) ? 'required_and_inclusion' : 'not_included'
+      message ||= required_attribute_not_defined?(record, attribute, value) ? 'required_and_inclusion' : 'not_included'
       record.errors.add(attribute, :inclusion, options.merge(value: value, message: message))
       if record.methods.include?(:error_options) && !options[:exclude_list]
         (record.error_options ||= {}).merge!(attribute => { list: inclusion_list.map(&:to_s).uniq.join(',') })
@@ -21,7 +21,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
     end
   end
 
-  def attribute_defined?(record, attribute)
-    record.instance_variable_defined?("@#{attribute}".to_sym)
+  def required_attribute_not_defined?(record, attribute, _value)
+    options[:required] && !record.instance_variable_defined?("@#{attribute}".to_sym)
   end
 end

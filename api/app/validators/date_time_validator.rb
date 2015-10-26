@@ -6,14 +6,18 @@ class DateTimeValidator < ActiveModel::EachValidator
   ZONE_PLUS_PREFIX       = '+'
   ZONE_MINUS_PREFIX      = '-'
   ISO_TIME_DELIMITER     = ':'
-  FORMAT_EXCEPTION_MSG   = "invalid_format"
+  FORMAT_EXCEPTION_MSG   = 'invalid_format'
+  DATE_FORMAT            = 'yyyy-mm-dd'
+  DATE_TIME_FORMAT       = 'yyyy-mm-ddThh:mm:ss±hh:mm'
+  DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
+  DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
   def validate_each(record, attribute, values)
     return if record.errors[attribute].present?
     unless parse_time(values)
-      message = options[:message] || 'data_type_mismatch'
+      message = options[:message] || 'invalid_date'
       record.errors[attribute] << message
-      (record.error_options ||= {}).merge!(attribute => { data_type: 'date format' })
+      (record.error_options ||= {}).merge!(attribute => { format: get_format })
     end
   end
 
@@ -35,9 +39,17 @@ class DateTimeValidator < ActiveModel::EachValidator
 
   private
 
+    def get_format
+      options[:only_date] ? DATE_FORMAT : DATE_TIME_FORMAT
+    end
+
     def iso8601_format(value)
-      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ /^\d{4}-\d{2}-\d{2}/
-      return true
+      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ get_date_time_regex_for_value
+      true
+    end
+
+    def get_date_time_regex_for_value
+      options[:only_date] ? DATE_REGEX : DATE_TIME_REGEX
     end
 
     def get_time_and_zone(value)
@@ -45,7 +57,7 @@ class DateTimeValidator < ActiveModel::EachValidator
     end
 
     def time_info?(value)
-      value.include?(ISO_DATE_DELIMITER)
+      !options[:only_date] && value.include?(ISO_DATE_DELIMITER)
     end
 
     def parse_sec_hour_and_zone(tz_value) # time_and_zone_value

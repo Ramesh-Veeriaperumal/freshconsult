@@ -20,10 +20,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     company
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   # Show User
   def test_show_a_contact
@@ -208,7 +204,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_with_tags_avatar_and_custom_fields
     cf_dept = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name]
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg')
     comp = get_company
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -221,6 +217,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_department' => 'Sample Dept' })
     DataTypeValidator.any_instance.stubs(:valid_type?)
     match_json(deleted_contact_pattern(User.last))
+    assert User.last.avatar.content_content_type == 'image/jpeg'
     assert_response 201
   end
 
@@ -255,6 +252,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(User.last))
   end
 
+  def test_create_contact_with_invalid_custom_url_and_custom_date
+    create_contact_field(cf_params(type: 'url', field_type: 'custom_url', label: 'Sample URL', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Sample Date', editable_in_signup: 'true'))
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        custom_fields: { 'cf_sample_url' => 'aaaa', 'cf_sample_date' => '2015-09-09T08:00' })
+    assert_response 400
+    match_json([bad_request_error_pattern('cf_sample_date', 'invalid_date', format: 'yyyy-mm-dd'),
+                bad_request_error_pattern('cf_sample_url', 'Should be a valid format')])
+  end
+
   def test_create_contact_without_required_custom_fields
     cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
 
@@ -279,7 +287,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response 400
     match_json([bad_request_error_pattern('cf_check_me', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('cf_doj', 'data_type_mismatch', data_type: 'date format')])
+                bad_request_error_pattern('cf_doj', 'invalid_date', format: 'yyyy-mm-dd')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -503,9 +511,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(deleted: false)
     get :index, controller_params
     assert_response 200
-    users = @account.all_contacts
+    users = @account.all_contacts.order(:name)
     pattern = users.map { |user| index_contact_pattern(user) }
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_contact_filter
@@ -553,6 +561,16 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(email: nil)
     email = Faker::Internet.email
     @account.all_contacts.first.update_column(:email, email)
+    @account.all_contacts.first.primary_email.update_column(:email, email)
+    get :index, controller_params(email: email)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 1, response.size
+  end
+
+  def test_contact_filter_secondary_email
+    email = Faker::Internet.email
+    @account.all_contacts.first.user_emails.create(email: email)
     get :index, controller_params(email: email)
     assert_response 200
     response = parse_response @response.body
@@ -570,11 +588,11 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_combined_filter
-    email = @account.all_contacts.first.email || Faker::Internet.email
+    email = Faker::Internet.email
     comp = get_company
     @account.all_contacts.update_all(customer_id: nil)
     @account.all_contacts.first.update_column(:customer_id, comp.id)
-    @account.all_contacts.first.update_column(:email, email) if @account.all_contacts.first.email != email
+    @account.all_contacts.first.user_emails.create(email: email)
     @account.all_contacts.last.update_column(:customer_id, comp.id)
     get :index, controller_params(company_id: "#{comp.id}", email: email)
     assert_response 200
@@ -749,5 +767,82 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_user.id }, custom_fields: [1, 2])
     match_json([bad_request_error_pattern(:custom_fields, 'data_type_mismatch', data_type: 'key/value pair')])
     assert_response 400
+  end
+
+  def test_create_with_all_default_fields_required_invalid
+    default_non_required_fiels = ContactField.where(required_for_agent: false, column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    post :create, construct_params({},  name: Faker::Name.name)
+    assert_response 400
+    match_json([bad_request_error_pattern('email', 'missing'),
+                bad_request_error_pattern('job_title', 'required_and_data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('mobile', 'missing'),
+                bad_request_error_pattern('address', 'missing'),
+                bad_request_error_pattern('description', 'missing'),
+                bad_request_error_pattern('twitter_id', 'missing'),
+                bad_request_error_pattern('phone', 'missing'),
+                bad_request_error_pattern('tags', 'required_and_data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('company_id', 'missing'),
+                bad_request_error_pattern('language', 'required_and_inclusion',
+                                          list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern('time_zone', 'required_and_inclusion', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+  end
+
+  def test_create_with_all_default_fields_required_valid
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        client_manager: true,
+                                        company_id: Company.first.id,
+                                        language: 'en',
+                                        time_zone: 'Mountain Time (US & Canada)',
+                                        mobile: Faker::Lorem.characters(15),
+                                        phone: Faker::Lorem.characters(15),
+                                        job_title: Faker::Lorem.characters(15),
+                                        description: Faker::Lorem.characters(300),
+                                        tags: [Faker::Name.name, Faker::Name.name],
+                                        twitter_id: Faker::Name.name,
+                                        address: Faker::Lorem.characters(15)
+                                  )
+    assert_response 201
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+  end
+
+  def test_update_with_all_default_fields_required_invalid
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    sample_user = get_user
+    put :update, construct_params({ id: sample_user.id },  email: nil,
+                                                           client_manager: nil,
+                                                           company_id: nil,
+                                                           language: nil,
+                                                           time_zone: nil,
+                                                           mobile: nil,
+                                                           phone: nil,
+                                                           job_title: nil,
+                                                           description: nil,
+                                                           tags: nil,
+                                                           twitter_id: nil,
+                                                           address: nil
+                                 )
+    assert_response 400
+    match_json([bad_request_error_pattern('email', "can't be blank"),
+                bad_request_error_pattern('job_title', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('mobile', "can't be blank"),
+                bad_request_error_pattern('address', "can't be blank"),
+                bad_request_error_pattern('description', "can't be blank"),
+                bad_request_error_pattern('twitter_id', "can't be blank"),
+                bad_request_error_pattern('phone', "can't be blank"),
+                bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('company_id', "can't be blank"),
+                bad_request_error_pattern('language', 'not_included',
+                                          list: I18n.available_locales.map(&:to_s).join(',')),
+                bad_request_error_pattern('time_zone', 'not_included', list: ActiveSupport::TimeZone.all.map(&:name).join(','))])
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 end

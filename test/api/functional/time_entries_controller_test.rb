@@ -3,10 +3,6 @@ require_relative '../test_helper'
 class TimeEntriesControllerTest < ActionController::TestCase
   include Helpers::TimeEntriesHelper
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   def wrap_cname(params = {})
     { time_entry: params }
@@ -208,8 +204,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', 'data_type_mismatch', data_type: 'date format')
-    pattern << bad_request_error_pattern('executed_before', 'data_type_mismatch', data_type: 'date format')
+    pattern << bad_request_error_pattern('executed_after', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern << bad_request_error_pattern('executed_before', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
     assert_response 400
     match_json pattern
   end
@@ -623,8 +619,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'data_type_mismatch', data_type: 'date format'),
-                bad_request_error_pattern('executed_at', 'data_type_mismatch', data_type: 'date format')])
+    match_json([bad_request_error_pattern('start_time', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('executed_at', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_update_inclusion_invalid
@@ -1135,10 +1131,16 @@ class TimeEntriesControllerTest < ActionController::TestCase
     3.times do
       create_time_entry
     end
-    per_page = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 }).count - 1
+    total_time_entries = @account.time_sheets.where(helpdesk_tickets: { spam: 0, deleted: 0 })
+    per_page = total_time_entries.count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
+    result_pattern = []
+    total_time_entries.take(per_page).each do |n|
+      result_pattern << time_entry_pattern(n)
+    end
+    match_json(result_pattern.ordered!)
     assert_equal "<http://#{@request.host}/api/v2/time_entries?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
     get :index, controller_params(per_page: per_page, page: 2)
@@ -1211,16 +1213,34 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_running_timer_with_start_time_nil
     te = sample_time_entry
-    assert_not_nil te.time_spent
-    put :update, construct_params({ id: te.id }, start_time: nil)
-    assert_not_nil te.reload.time_spent
+    te.update_column(:start_time, Time.zone.now)
+    te.update_column(:executed_at, Time.zone.now)
+    time_spent = te.reload.time_spent
+    assert_not_nil time_spent
+    start_time = te.start_time
+    executed_at = te.executed_at
+    put :update, construct_params({ id: te.id }, start_time: nil, executed_at: nil)
+    assert_response 200
+    assert_equal time_spent, te.reload.time_spent
+    assert_equal start_time, te.start_time
+    assert_equal executed_at, te.executed_at
   end
 
   def test_update_time_spent_present_timer_with_timer_running_true
     te = sample_time_entry
     put :update, construct_params({ id: te.id }, time_spent: '05:00')
+    assert_response 200
     assert_equal 18_000, te.reload.time_spent
     put :update, construct_params({ id: te.id }, timer_running: true)
+    assert_response 200
     assert_equal 18_000, te.reload.time_spent
+  end
+
+  def test_toggle_timer_when_start_time_is_nil
+    te = sample_time_entry
+    te.update_column(:start_time, nil)
+    put :toggle_timer, construct_params({ id: te.id }, {})
+    assert_response 200
+    assert_not_nil te.time_spent
   end
 end

@@ -4,11 +4,6 @@ module ApiDiscussions
   class TopicsControllerTest < ActionController::TestCase
     include Helpers::DiscussionsHelper
 
-    def controller_params(params = {})
-      remove_wrap_params
-      request_params.merge(params)
-    end
-
     def forum_obj
       Forum.first
     end
@@ -123,13 +118,13 @@ module ApiDiscussions
     def test_before_filters_unfollow_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      delete :unfollow, construct_params({ id: first_topic.id }, {})
+      delete :unfollow, controller_params(id: first_topic.id)
     end
 
     def test_before_filters_is_following_logged_in
       @controller.expects(:check_privilege).once
       @controller.expects(:access_denied).never
-      get :is_following, construct_params({ id: first_topic.id }, {})
+      get :is_following, controller_params(id: first_topic.id)
     end
 
     def test_before_filters_followed_by_logged_in
@@ -144,12 +139,12 @@ module ApiDiscussions
     end
 
     def test_unfollow_invalid_topic_id
-      delete :unfollow, construct_params({ id: 999 }, {})
+      delete :unfollow, controller_params(id: 999)
       assert_response :missing
     end
 
     def test_is_following_invalid_topic_id
-      post :is_following, controller_params(id: 999)
+      get :is_following, controller_params(id: 999)
       assert_response :missing
     end
 
@@ -157,7 +152,7 @@ module ApiDiscussions
       user = other_user
       monitorship = Monitorship.where(monitorable_type: 'Topic', user_id: user.id,
                                       monitorable_id: first_topic.id).first || monitor_topic(first_topic, user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: user.id)
+      delete :unfollow, controller_params(id: first_topic.id, user_id: user.id)
       assert_response 204
       monitorship.reload
       refute monitorship.active
@@ -165,7 +160,7 @@ module ApiDiscussions
 
     def test_unfollow_user_id_invalid
       monitor_topic(first_topic, other_user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: 999)
+      delete :unfollow, controller_params(id: first_topic.id, user_id: 908_989)
       assert_response :missing
     end
 
@@ -174,14 +169,14 @@ module ApiDiscussions
       user = User.find_by_id(monitor.user_id)
       email = user.email
       user.update_column(:email, nil)
-      delete :unfollow, construct_params({ id: monitor.monitorable_id }, user_id: user.id)
+      delete :unfollow, controller_params(id: monitor.monitorable_id, user_id: user.id)
       assert_response 400
       user.update_column(:email, email)
     end
 
     def test_permit_toggle_params_deleted_user
       monitor_topic(first_topic, deleted_user, 1)
-      delete :unfollow, construct_params({ id: first_topic.id }, user_id: deleted_user.id)
+      delete :unfollow, controller_params(id: first_topic.id, user_id: deleted_user.id)
       assert_response 204
       deleted_user.update_column(:deleted, false)
     end
@@ -451,13 +446,16 @@ module ApiDiscussions
 
     def test_topics
       f = Forum.where('topics_count >= ?', 1).first || create_test_topic(Forum.first, User.first).forum
+      3.times do
+        create_test_topic(f, User.first)
+      end
       get :forum_topics, construct_params(id: f.id)
       result_pattern = []
-      f.topics.each do |t|
+      f.topics.newest.each do |t|
         result_pattern << topic_pattern(t)
       end
       assert_response 200
-      match_json(result_pattern)
+      match_json(result_pattern.ordered!)
     end
 
     def test_topics_with_pagination

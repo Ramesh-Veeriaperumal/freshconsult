@@ -1,2 +1,1 @@
-json.extract! @item, :id, :name, :description, :position
-json.partial! 'shared/utc_date_format', item: @item
+json.extract! @item, :id, :name, :description, :created_at, :updated_at

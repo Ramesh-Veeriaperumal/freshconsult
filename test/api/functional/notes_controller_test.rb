@@ -637,13 +637,16 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_notes
     parent_ticket = ticket
+    4.times do
+      create_note(user_id: @agent.id, ticket_id: parent_ticket.id, source: 2)
+    end
     get :ticket_notes, construct_params(id: parent_ticket.display_id)
     assert_response 200
     result_pattern = []
-    parent_ticket.notes.visible.exclude_source('meta').each do |n|
+    parent_ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
       result_pattern << note_pattern(n)
     end
-    match_json(result_pattern)
+    match_json(result_pattern.ordered!)
   end
 
   def test_notes_return_only_non_deleted_notes

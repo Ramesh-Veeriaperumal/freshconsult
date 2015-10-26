@@ -24,7 +24,7 @@ class ApiCompaniesController < ApiApplicationController
   private
 
     def load_objects
-      super scoper.includes(:flexifield)
+      super scoper.includes(:flexifield).order(:name)
     end
 
     def scoper
@@ -44,6 +44,7 @@ class ApiCompaniesController < ApiApplicationController
     def sanitize_params
       prepare_array_fields [:domains]
       params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
+      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @company_fields) if params[cname][:custom_fields]
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 end

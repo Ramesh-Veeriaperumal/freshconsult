@@ -3,43 +3,50 @@ require_relative '../unit_test_helper'
 class ContactValidationTest < ActionView::TestCase
   def tear_down
     Account.unstub(:current)
+    Account.any_instance.unstub(:contact_form)
+    ContactForm.unstub(:default_contact_fields)
     super
   end
 
   def test_tags_comma_invalid
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
     controller_params = { 'name' => 'test', :email => Faker::Internet.email, tags: ['comma,test'] }
     item = nil
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tags special_chars_present')
-    Account.unstub(:current)
+    assert errors.include?('Tag names special_chars_present')
   end
 
   def test_tags_comma_valid
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
     controller_params = { 'name' => 'test', :email => Faker::Internet.email, tags: ['comma', 'test'] }
     item = nil
     contact = ContactValidation.new(controller_params, item)
     assert contact.valid?
-    Account.unstub(:current)
   end
 
   def test_tags_multiple_errors
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
     controller_params = { 'name' => 'test', :email => Faker::Internet.email, tags: 'comma,test' }
     item = nil
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?
     errors = contact.errors.full_messages
-    assert errors.include?('Tags data_type_mismatch')
+    assert errors.include?('Tag names data_type_mismatch')
     assert errors.count == 1
-    Account.unstub(:current)
   end
 
   def test_avatar_multiple_errors
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
     String.any_instance.stubs(:size).returns(20_000_000)
     controller_params = { 'name' => 'test', :email => Faker::Internet.email, avatar: 'file.png' }
     item = nil

@@ -89,7 +89,7 @@ class TimeEntriesController < ApiApplicationController
 
     def validate_filter_params
       params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      timeentry_filter = TimeEntryFilterValidation.new(params, nil, multipart_or_get_request?)
+      timeentry_filter = TimeEntryFilterValidation.new(params, nil, string_request_params?)
       render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
@@ -102,12 +102,14 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def sanitize_params
-      params[cname][:timer_running] = @timer_running
-      set_time_spent(params)
-      params[cname][:agent_id] ||= api_current_user.id if create?
       current_time = Time.zone.now
-      params[cname][:executed_at] ||= current_time if create?
-      params[cname][:start_time] ||= current_time if create? || params[cname][:timer_running].to_s.to_bool
+      if create?
+        params[cname][:timer_running] = @timer_running
+        params[cname][:agent_id] ||= api_current_user.id
+      end
+      params[cname][:executed_at] ||= get_executed_at(current_time)
+      params[cname][:start_time] ||= get_start_time(current_time)
+      set_time_spent(params)
       ParamsHelper.assign_and_clean_params({ agent_id: :user_id },
                                            params[cname])
     end
@@ -116,9 +118,17 @@ class TimeEntriesController < ApiApplicationController
       @item.workable = @ticket
     end
 
+    def get_executed_at(current_time)
+      create? ? current_time : @item.executed_at
+    end
+
+    def get_start_time(current_time)
+      (create? || params[cname][:timer_running]) ? current_time : @item.start_time
+    end
+
     def set_time_spent(params)
       params[cname][:time_spent] = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      params[cname][:time_spent] ||= total_running_time if update? && !params[cname][:timer_running].to_s.to_bool
+      params[cname][:time_spent] ||= total_running_time if update? && params[cname][:timer_running] == false
     end
 
     def handle_existing_timer_running

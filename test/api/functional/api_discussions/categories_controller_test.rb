@@ -131,11 +131,12 @@ module ApiDiscussions
     end
 
     def test_update
-      put :update, construct_params({ id: fc.id }, description: 'foo')
-      match_json(forum_category_response_pattern(fc.name, 'foo'))
-      match_json(forum_category_pattern(fc))
+      forum_category = fc
+      put :update, construct_params({ id: forum_category.id }, description: 'foo')
+      match_json(forum_category_response_pattern(forum_category.name, 'foo'))
+      match_json(forum_category_pattern(forum_category.reload))
       assert_response 200
-      assert_equal 'foo', ForumCategory.find_by_id(fc.id).description
+      assert_equal 'foo', ForumCategory.find_by_id(forum_category.id).description
     end
 
     def test_destroy
@@ -289,6 +290,11 @@ module ApiDiscussions
       per_page = ForumCategory.count - 1
       get :index, construct_params(per_page: per_page)
       assert_response 200
+      pattern = []
+      Account.current.forum_categories.limit(per_page).reorder(:name).each do |fc|
+        pattern << forum_category_response_pattern(fc.name, fc.description)
+      end
+      match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 

@@ -47,6 +47,38 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.body, request_error_pattern(:invalid_multipart).to_json
   end
 
+  def test_invalid_field_handler_with_invalid_parseable_json
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.request.env['RAW_POST_DATA'] = 'test junk'
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    assert_nothing_raised do
+      @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(['_json']))
+    end
+    assert_equal response.status, 400
+    assert_equal response.body, request_error_pattern(:invalid_json).to_json
+  end
+
+  def test_record_not_unique_error
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.request.env['RAW_POST_DATA'] = 'test junk'
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    assert_nothing_raised do
+      error = ActiveRecord::RecordNotUnique.new('RecordNotUnique', 'Duplicate-Entry')
+      error.set_backtrace(['a', 'b'])
+      @controller.send(:duplicate_value_error, error)
+    end
+    assert_equal response.status, 409
+    assert_equal response.body, request_error_pattern(:duplicate_value).to_json
+  end
+
+  def test_notify_new_relic_agent
+    @controller.request.env['ORIGINAL_FULLPATH'] = "/api/tickets"
+    NewRelic::Agent.expects(:notice_error).with("Exception",  {uri: @controller.request.original_url}).once
+    @controller.send(:notify_new_relic_agent, "Exception")
+  end
+
   def test_route_not_found_with_method_not_allowed
     response = ActionDispatch::TestResponse.new
     @controller.response = response
@@ -135,7 +167,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert response.body.blank?
   end
 
-  def test_validate_content_type_with_non_json_post_request 
+  def test_validate_content_type_with_non_json_post_request
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     request = ActionDispatch::TestRequest.new

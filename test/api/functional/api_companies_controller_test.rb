@@ -209,13 +209,16 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index
+    3.times do
+      create_company
+    end
     get :index, request_params
     pattern = []
-    Account.current.companies.all.each do |company|
+    Account.current.companies.order(:name).all.each do |company|
       pattern << company_pattern(Company.find(company.id))
     end
     assert_response 200
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_company_with_pagination_enabled
@@ -267,12 +270,12 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_create_company_with_invalid_custom_field_values
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
-                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => 'test_date',
+                                       custom_fields: { 'cf_agt_count' => 'abc', 'cf_date' => '2015-09-09T08:00:00+0530',
                                                         'cf_show_all_ticket' => Faker::Number.number(5) })
 
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
@@ -290,9 +293,10 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'cf_agt_count' => 21, 'cf_date' => '2015-01-15',
-                                                        'cf_show_all_ticket' => true, 'cf_category' => 'Second' })
+                                                        'cf_show_all_ticket' => false, 'cf_category' => 'Second' })
 
     assert_response 201
+    assert Company.last.custom_field['cf_show_all_ticket'] == false
     match_json(company_pattern(Company.last))
   end
 
@@ -304,7 +308,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'data_type_mismatch', data_type: 'date format'),
+                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
@@ -367,6 +371,45 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_create_with_all_default_fields_required_invalid
+    default_non_required_fiels = CompanyField.where(required_for_agent: false, column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    post :create, construct_params({},  name: Faker::Name.name)
+    assert_response 400
+    match_json([bad_request_error_pattern('description', 'required_and_data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('domains', 'required_and_data_type_mismatch', data_type: 'Array'),
+                bad_request_error_pattern('note', 'required_and_data_type_mismatch', data_type: 'String')])
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+  end
+
+  def test_create_with_all_default_fields_required_valid
+    default_non_required_fiels = ContactField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        note: Faker::Lorem.characters(15),
+                                        description: Faker::Lorem.characters(300),
+                                        domains: [Faker::Name.name, Faker::Name.name]
+                                  )
+    assert_response 201
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+  end
+
+  def test_update_with_all_default_fields_required_invalid
+    default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
+    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
+    put :update, construct_params({ id: company.id },  domains: nil,
+                                        description: nil,
+                                        note: nil)
+    assert_response 400
+    match_json([bad_request_error_pattern('note', 'data_type_mismatch', {data_type: 'String'}),
+                bad_request_error_pattern('description', 'data_type_mismatch', {data_type: 'String'}),
+                bad_request_error_pattern('domains', 'data_type_mismatch', {data_type: 'Array'})])
+  ensure
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end
 
   def clear_contact_field_cache

@@ -36,7 +36,7 @@ class NotesController < ApiApplicationController
   end
 
   def ticket_notes
-    notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).includes(:schema_less_note, :note_old_body, :attachments)
+    notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).includes(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     @notes = paginate_items(notes)
   end
 
@@ -90,8 +90,7 @@ class NotesController < ApiApplicationController
     def can_update?
       # note without source type as 'note' should not be allowed to update
       unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
-        @error = BaseError.new(:method_not_allowed, methods: 'DELETE')
-        render '/base_error', status: 405
+        render_base_error(:method_not_allowed, 405, methods: 'DELETE')
         return false
       end
       true
@@ -118,7 +117,7 @@ class NotesController < ApiApplicationController
     def validate_params
       field = "NoteConstants::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*(field))
-      @note_validation = NoteValidation.new(params[cname], @item, multipart_or_get_request?)
+      @note_validation = NoteValidation.new(params[cname], @item, string_request_params?)
       valid = @note_validation.valid?
       render_errors @note_validation.errors, @note_validation.error_options unless valid
       valid

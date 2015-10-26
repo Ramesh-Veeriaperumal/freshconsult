@@ -5,10 +5,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     { api_contact_field: params }
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   # Contact Field Index
   def test_contact_field_index
@@ -16,7 +12,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     assert_response 200
     contact_fields = ContactField.all
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 
   def test_contact_field_index_with_all_custom_field_types

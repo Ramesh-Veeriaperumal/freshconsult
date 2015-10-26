@@ -3,7 +3,9 @@ json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, 
   json.set! :fwd_emails, @item.cc_email[:fwd_emails]
   json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
 
-  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject
+  json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :created_at, :updated_at, :due_by
+
+  json.set! :fr_due_by, @item.frDueBy
 
   json.set! :ticket_id, @item.display_id
   json.set! :type, @item.ticket_type
@@ -11,8 +13,6 @@ json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, 
   json.set! :product_id, @item.schema_less_ticket.try(:product_id)
 
   json.set! :deleted, @item.deleted if @item.deleted
-
-  json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
   json.set! :is_escalated, @item.isescalated
 
@@ -33,7 +33,7 @@ json.set! :attachments do
       json.set! :content_type, att.content_content_type
       json.set! :size, att.content_file_size
       json.set! :name, att.content_file_name
-      json.partial! 'shared/utc_date_format', item: att
+      json.extract att, :created_at, :updated_at
     end
     json.set! :attachment_url, att.attachment_url_for_api
   end

@@ -12,6 +12,6 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
       pattern << company_field_pattern(CompanyField.find(cf.id))
     end
     assert_response 200
-    match_json(pattern)
+    match_json(pattern.ordered!)
   end
 end

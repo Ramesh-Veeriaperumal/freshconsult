@@ -111,7 +111,7 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
     match_json [topic_pattern(topic)]
     get "/api/discussions/topics/#{topic.id}/follow?user_id=#{user.id}", nil, @headers
     assert_response 204
-    delete "/api/discussions/topics/#{topic.id}/follow", { user_id: user.id }.to_json, @write_headers
+    delete "/api/discussions/topics/#{topic.id}/follow?user_id=#{user.id}", nil, @headers
     assert_response 204
     get "/api/discussions/topics/followed_by?user_id=#{user.id}", nil, @headers
     assert_response 200

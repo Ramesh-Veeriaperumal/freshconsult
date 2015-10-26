@@ -95,4 +95,14 @@ class TicketValidationTest < ActionView::TestCase
     Helpers::TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
+
+  def test_fr_due_by_nil_and_due_by_nil_when_status_is_closed
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { 'requester_id' => 1, ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: nil, fr_due_by: nil }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    assert ticket.valid?(:create)
+    Account.unstub(:current)
+  end
+
 end

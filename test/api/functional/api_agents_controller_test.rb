@@ -4,17 +4,16 @@ class ApiAgentsControllerTest < ActionController::TestCase
     { api_agent: params }
   end
 
-  def controller_params(params = {})
-    remove_wrap_params
-    request_params.merge(params)
-  end
 
   def test_agent_index
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
     get :index, controller_params
     assert_response 200
-    agents = @account.all_agents
+    agents = @account.all_agents.order('users.name')
     pattern = agents.map { |agent| agent_pattern(agent) }
-    match_json(pattern)
+    match_json(pattern.ordered)
   end
 
   def test_agent_filter_state
@@ -34,6 +33,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     assert_equal 1, response.size
+  end
+
+  def test_agent_filter_with_invalid_email
+    get :index, controller_params(email: '!@#$%')
+    assert_response 400
+    match_json([bad_request_error_pattern('email', 'Should be a valid email address')])
   end
 
   def test_agent_filter_mobile
@@ -69,6 +74,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     get :index, controller_params(name: 'John')
     assert_response 400
     match_json([bad_request_error_pattern('name', 'invalid_field')])
+  end
+
+  def test_agent_filter_invalid_state
+    get :index, controller_params(state: 'active')
+    assert_response 400
+    match_json([bad_request_error_pattern('state', 'not_included', list: 'occasional,fulltime')])
   end
 
   def test_show_agent

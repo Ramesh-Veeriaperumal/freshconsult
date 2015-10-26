@@ -78,7 +78,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_multipart_valid_content_type
     skip_bullet do
-      headers, params = encode_multipart({ 'email' => 'test@abc.com', 'subject' => 'Test Subject' }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+      headers, params = encode_multipart({ 'email' => 'test@abc.com', 'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2' }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
       post '/api/tickets', params, @headers.merge(headers)
     end
     assert_response 201
@@ -115,11 +115,22 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal Array, parse_response(@response.body).class
   end
 
+  def test_record_not_unique_error
+    error = ActiveRecord::RecordNotUnique.new('RecordNotUnique', 'Duplicate-Entry')
+    error.set_backtrace(['a', 'b'])
+    User.any_instance.stubs(:create_contact!).raises(error)
+    skip_bullet do
+      post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
+    end
+    assert_response 409
+    response.body.must_match_json_expression(request_error_pattern('duplicate_value'))
+  end
+
   def test_multipart_data_with_valid_data_types
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
     field1, field2 = tkt_field1.name, tkt_field2.name
-    headers, params = encode_multipart({ 'subject' => 'Test Subject', 'requester_id' => "#{@agent.id}", 'custom_fields' => { "#{field1}" => '2.34', "#{field2}" => 'false' } }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
+    headers, params = encode_multipart({  'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2', 'requester_id' => "#{@agent.id}", 'custom_fields' => { "#{field1}" => '2.34', "#{field2}" => 'false' } }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
     end

@@ -3,17 +3,17 @@ class TimeEntryValidation < ApiValidation
 
   # do not change validation order
   # Common validations
-  validates :billable, :timer_running, data_type: { rules: 'Boolean', allow_blank: true }
+  validates :billable, :timer_running, data_type: { rules: 'Boolean', allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
   validates :time_spent, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent', allow_nil: true }
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
-  validates :start_time, inclusion: { in: [nil], message: 'timer_running_true' }, if: -> { item.timer_running }, on: :update
+  validates :start_time, custom_absence: { allow_nil: true, message: 'timer_running_true' }, if: -> { item.timer_running && @start_time_set }, on: :update
 
   # start_time param has no meaning when timer is off.
-  validates :start_time, inclusion: { in: [nil], message: 'timer_running_false' },
-                         unless: -> { errors[:start_time].any? || errors[:timer_running].any? || timer_running }
+  validates :start_time, custom_absence: { allow_nil: true, message: 'timer_running_false' },
+                         if: -> { @start_time_set && errors[:start_time].blank? && errors[:timer_running].blank? && !timer_running }
   validates :start_time, date_time: { allow_nil: true }
 
   # start_time should be lesser than current_time to avoid negative time_spent values.
@@ -25,7 +25,7 @@ class TimeEntryValidation < ApiValidation
 
   # User specific validations
   # agent_id can't be changed in update if timer is running for the user.
-  validates :agent_id, inclusion: { in: [nil], message: 'cant_update_user' },
+  validates :agent_id, custom_absence: { allow_nil: false, message: 'cant_update_user' },
                        if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
   validates :agent_id, custom_numericality: { allow_nil: true }
 
@@ -38,7 +38,6 @@ class TimeEntryValidation < ApiValidation
     @request_params = request_params
     @item = item
     @time_spent = request_params['time_spent']
-    @start_time = request_params['start_time']
     @timer_running = timer_running
   end
 

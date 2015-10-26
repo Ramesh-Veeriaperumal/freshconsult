@@ -76,8 +76,8 @@ class ApiContactsController < ApiApplicationController
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
 
-      contact = ContactValidation.new(params[cname], @item, multipart_or_get_request?)
-      render_errors contact.errors, contact.error_options unless contact.valid?(action_name.to_sym)
+      contact = ContactValidation.new(params[cname], @item, string_request_params?)
+      render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
 
     def sanitize_params
@@ -89,27 +89,31 @@ class ApiContactsController < ApiApplicationController
       # has to be initialised first for making a contact as a client_manager
       params_hash[:client_manager] = params_hash.delete(:client_manager) if params_hash.key?(:client_manager)
 
-      params_hash[:avatar_attributes] = { content: params_hash[:avatar] } if params_hash[:avatar]
+      if params_hash[:avatar]
+        extension = File.extname(params_hash[:avatar].original_filename).downcase
+        params_hash[:avatar].content_type = ContactConstants::AVATAR_CONTENT[extension]
+        params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
+      end
 
-      assign_checkbox_value if params_hash[:custom_fields]
+      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], @contact_fields) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end
 
     def validate_filter_params
       params.permit(*ContactConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @contact_filter = ContactFilterValidation.new(params, nil, multipart_or_get_request?)
+      @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
       render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
     end
 
     def load_objects
-      super contacts_filter(scoper).includes(:flexifield, :company)
+      super contacts_filter(scoper).includes(:flexifield, :company).order('users.name')
     end
 
     def contacts_filter(contacts)
       @contact_filter.conditions.each do |key|
         clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
-        contacts = contacts.where(clause[:conditions])
+        contacts = contacts.where(clause[:conditions]).joins(clause[:joins])
       end
       contacts
     end
@@ -119,7 +123,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields({ company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }, item)
+      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS, item)
+    end
+
+    def error_options_mappings
+      ContactConstants::FIELD_MAPPINGS
     end
 
     def assign_protected

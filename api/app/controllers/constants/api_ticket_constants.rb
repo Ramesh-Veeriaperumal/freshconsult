@@ -1,9 +1,11 @@
 module ApiTicketConstants
   # ControllerConstants
-  ARRAY_FIELDS = ['tags' => [],  'cc_emails' => [], 'attachments' => []]
+  ARRAY_FIELDS = %w(tags cc_emails attachments)
+  HASH_FIELDS = ['custom_fields']
+  COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority
               email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-              tags attachments custom_fields) | ARRAY_FIELDS
+              tags attachments) | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = ['notes', nil]
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s)
@@ -42,4 +44,7 @@ module ApiTicketConstants
     create: [:json, :multipart_form],
     update: [:json, :multipart_form]
   }
+
+  FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
+                     product: :product_id, ticket_type: :type }
 end

@@ -1,5 +1,5 @@
 module Helpers::TicketFieldsHelper
-  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal' }
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
 
   def create_custom_field(name, type)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")

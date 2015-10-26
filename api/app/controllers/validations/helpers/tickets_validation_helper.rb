@@ -22,10 +22,6 @@ class Helpers::TicketsValidationHelper
       end.to_h
     end
 
-    def check_box_type_custom_field_names(ticket_fields)
-      ticket_fields.select { |x| x.field_type == 'custom_checkbox' }.map(&:name)
-    end
-
     def nested_fields_choices_by_name
       nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
       {
