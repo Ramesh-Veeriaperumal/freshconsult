@@ -34,6 +34,12 @@ module HelpdeskReports::Helper::Ticket
     @date_lag_by_plan = DATE_LAG_CONSTRAINT[Account.current.subscription.subscription_plan.name] || 1
   end
   
+  def ensure_ticket_list
+    disabled_plans = ReportsAppConfig::DISABLE_TICKET_LIST[report_type] || []
+    @enable_ticket_list_by_plan = !disabled_plans.include?(Account.current.subscription.subscription_plan.name)
+  end
+
+
   def report_specific_constraints
     res = {report_type: report_type}
     case report_type.to_sym

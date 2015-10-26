@@ -7,7 +7,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   before_filter :check_feature
   
-  before_filter :ensure_report_type_or_redirect, :date_lag_constraint
+  before_filter :ensure_report_type_or_redirect, :date_lag_constraint, :ensure_ticket_list
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
   before_filter :normalize_params, :validate_params, :validate_scope, 
                 :only_ajax_request,                                     :except => [:index]
@@ -101,10 +101,11 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     begin
       tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
       archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
-    rescue
-      tickets, archive_tickets = [], []
+    rescue Exception => e
+      Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
     end
-    @data = tickets_data(tickets + archive_tickets)
+    @data = tickets_data((tickets || []) + (archive_tickets || []))
   end
   
   def ticket_list_columns

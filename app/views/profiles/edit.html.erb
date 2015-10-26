@@ -22,11 +22,12 @@
 				</li> 
 				<li> 
 					<label for="password"><%= t("profile.new_password") %></label> 
-					<input class="text" id="password" name="user[password]" size="30" type="password" value="" autocomplete="off"/> 
-				</li> 
+					<input class="text required" id="password" name="user[password]" size="30" type="password" value="" 
+						autocomplete="off" data-content="<%= password_policies_for_popover %>" title="Password must contain" /> 
+				</li>  
 				<li> 
 					<label for="password_confirmation"><%= t("profile.confirm_password") %></label> 
-					<input class="text" id="password_confirmation" name="user[password_confirmation]" size="30" type="password" value="" autocomplete="off" /> 
+					<input class="text required" id="password_confirmation" name="user[password_confirmation]" size="30" type="password" value="" autocomplete="off" /> 
 				</li>
   			</ul>
 			<div class="button-container">
@@ -49,3 +50,28 @@
 	  </div>	
 	<% end %>
 <% end%>
+
+<script type="text/javascript">
+jQuery(document).ready(function() { 
+
+  jQuery(function () { 
+    var popover_message = jQuery('#password').data('content');
+    if(popover_message){
+      jQuery("#password").popover({
+        html: true,
+        trigger: 'manual', 
+        placement: 'left',
+        reloadContent: false,
+        template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
+        content: function(){
+                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" +jQuery("#password").attr("data-content") + "</div>"
+                }
+      }).focus(function(){
+          jQuery(this).popover("show");
+      }).blur(function(){
+          jQuery(this).popover("hide");
+      }); 
+    }
+  }); 
+});
+</script>

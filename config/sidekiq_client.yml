@@ -43,6 +43,8 @@ defaults: &defaults
     - [archive_delete_ticket]
     - [update_ticket_states]
     - [ticket_observer]
+    - [password_expiry]
+    - [deactivate_monitorship]
 
 development:
   <<: *defaults

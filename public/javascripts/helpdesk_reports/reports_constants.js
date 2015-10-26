@@ -128,9 +128,7 @@ HelpdeskReports.Constants = {
             model                 : "TICKET",
             reference             : true,
             time_trend            : false,
-            time_trend_conditions : [],
-            time_spent            : false,
-            time_spent_conditions : []
+            time_trend_conditions : []
         }
     },
     TicketVolume: {
@@ -145,9 +143,7 @@ HelpdeskReports.Constants = {
             model                 : "TICKET",
             reference             : false,
             time_trend            : true, 
-            time_trend_conditions : ["h", "doy", "dow", "w", "mon", "y", "qtr"], 
-            time_spent            : false, 
-            time_spent_conditions : []
+            time_trend_conditions : ["h", "doy", "dow", "w", "mon", "y", "qtr"]
         }
     } ,
      AgentSummary: {
@@ -168,9 +164,7 @@ HelpdeskReports.Constants = {
             model                 : "TICKET",
             reference             : false,
             time_trend            : false, 
-            time_trend_conditions : [], 
-            time_spent            : false, 
-            time_spent_conditions : []
+            time_trend_conditions : []
         }
     },
     GroupSummary: {
@@ -191,9 +185,7 @@ HelpdeskReports.Constants = {
             model                 : "TICKET",
             reference             : false,
             time_trend            : false, 
-            time_trend_conditions : [], 
-            time_spent            : false, 
-            time_spent_conditions : []
+            time_trend_conditions : []
         }
     },
     PerformanceDistribution: {
@@ -209,9 +201,7 @@ HelpdeskReports.Constants = {
             model                 : "TICKET",
             reference             : false,
             time_trend            : false, 
-            time_trend_conditions : [],
-            time_spent            : false, 
-            time_spent_conditions : []
+            time_trend_conditions : []
         }
     },
     CustomerReport: {
@@ -226,12 +216,12 @@ HelpdeskReports.Constants = {
             },
             "RESPONSE_VIOLATED" : { 
                 title: "Response SLA Violations %",
-                description: "The percentage of tickets whose first responses were violated within SLA in the selected time period",
+                description: "The percentage of tickets were not responded within SLA in the selected time period",
                 ticket_list_metric: 'fr_escalated'
             },
             "RESOLUTION_VIOLATED" : { 
                 title: "Resolution SLA Violations %",
-                description: "The percentage of tickets that weren't resolved within SLA in the selected time period",
+                description: "The percentage of tickets were not resolved within SLA in the selected time period",
                 ticket_list_metric: 'is_escalated'
             },
             "CUSTOMER_INTERACTIONS" : { 
@@ -255,8 +245,6 @@ HelpdeskReports.Constants = {
             reference             : false,
             time_trend            : false, 
             time_trend_conditions : [],
-            time_spent            : false, 
-            time_spent_conditions : [],
             sorting               : true,             
         }
     }  

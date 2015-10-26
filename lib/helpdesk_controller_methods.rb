@@ -101,7 +101,7 @@ module HelpdeskControllerMethods
       expects.json  { render :json => :deleted}
       expects.js { 
         process_destroy_message
-        after_destory_js 
+        after_destroy_js 
       }
       #until we impl query based retrieve we show only limited data on deletion.
       expects.xml{ render :xml => @items.to_xml(options)}
@@ -266,7 +266,7 @@ protected
     :back
   end
   
-  def after_destory_js
+  def after_destroy_js
     render(:update) { |page| 
       @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
       if @cname == "note"
@@ -276,14 +276,14 @@ protected
         page << "}"
       elsif @cname == "attachment" || @cname == "cloud_file"
         attachment = @items.first
-        note_details = note_attachment_details(attachment)
-        if note_details
-          if note_details[:attachments_count] > 0
-            page.replace_html "attachments_title_#{note_details[:id]}", 
-                              pluralize(note_details[:attachments_count], 
+        attachment_details = ticket_page_attachment(attachment)
+        if attachment_details
+          if attachment_details[:attachments_count] > 0
+            page.replace_html "#{attachment_details[:type]}_attachments_title_#{attachment_details[:id]}", 
+                              pluralize(attachment_details[:attachments_count], 
                                         "Attachment")
           else
-            page.replace_html "note_attachments_container_#{note_details[:id]}", ""
+            page.replace_html "#{attachment_details[:type]}_attachments_container_#{attachment_details[:id]}", ""
           end
         end
 

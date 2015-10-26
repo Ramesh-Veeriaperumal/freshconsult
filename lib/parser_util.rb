@@ -185,10 +185,10 @@ include AccountConstants
     name =~ SPECIAL_CHARACTERS_REGEX ? name = "\"#{name.gsub(/\./, ' ').strip}\"" : name
   end
   
-alias_method :parse_email, :parse_email_new 
-alias_method :parse_email_text, :parse_email_new
-alias_method :parse_email_with_domain, :parse_email_new
-alias_method :get_email_array, :get_email_array_new
-alias_method :fetch_valid_emails, :fetch_valid_emails_new
+# alias_method :parse_email, :parse_email_new 
+# alias_method :parse_email_text, :parse_email_new
+# alias_method :parse_email_with_domain, :parse_email_new
+# alias_method :get_email_array, :get_email_array_new
+# alias_method :fetch_valid_emails, :fetch_valid_emails_new
 
 end

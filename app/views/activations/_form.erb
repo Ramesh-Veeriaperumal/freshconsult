@@ -10,7 +10,8 @@
 		<div class="control-group">
 			<%= form.label :password, t('create_password'), :class => "control-label required" %>
 			<div class="controls">
-				<%= form.password_field :password, :class => "required special password span6", :autofocus => true %>
+				<%= form.password_field :password, :class => "required special password span6 popover-enabled",
+						:data => {:content => password_policies_for_popover} %>
 			</div>
 		</div>
 		<div class="control-group">
@@ -35,5 +36,25 @@
 				}
 			})
 		}, 100)
+
+		jQuery(document).on("focus","input.popover-enabled",function(){
+		  var popover_message = jQuery(this).attr("data-content");
+		  if(popover_message){
+		    jQuery(this).popover({
+	  	  	html: true,
+	  	  	trigger: 'manual',
+	  	  	template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content"><p></p></div></div></div>',
+	  	  	content:function(){
+                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_must") %></h5>" 
+                  	+popover_message + "</div>"
+                }
+	  	  }).popover("show");
+		  }
+		});
+	
+		jQuery(".popover-enabled").blur(function(){
+	  		jQuery(this).popover("hide");
+		});
+	
 	})
 </script>

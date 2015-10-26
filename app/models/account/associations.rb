@@ -24,6 +24,10 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   delegate :supported_languages, :to => :account_additional_settings
   has_one  :whitelisted_ip
+  has_one :contact_password_policy, :class_name => 'PasswordPolicy',
+    :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy
+  has_one :agent_password_policy, :class_name => 'PasswordPolicy',
+    :conditions => {:user_type => PasswordPolicy::USER_TYPE[:agent]}, :dependent => :destroy
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
 
@@ -31,6 +35,8 @@ class Account < ActiveRecord::Base
   accepts_nested_attributes_for :main_portal
   accepts_nested_attributes_for :account_additional_settings
   accepts_nested_attributes_for :whitelisted_ip
+  accepts_nested_attributes_for :contact_password_policy
+  accepts_nested_attributes_for :agent_password_policy
 
   has_one  :subscription_plan, :through => :subscription
 

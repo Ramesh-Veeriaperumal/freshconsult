@@ -55,10 +55,11 @@
       <%= @ticket.description_html.html_safe %>
   </div>
 
+  <div id="ticket_attachments_container_<%= @ticket.id%>">
   <% unless @ticket.attachments.empty? and @ticket.cloud_files.empty? %>
     <span class="seperator"></span>
     <div class="attachments-wrap clearfix">
-      <h5><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
+      <h5 id="ticket_attachments_title_<%= @ticket.id %>"><strong><%= pluralize(@ticket.attachments.size + @ticket.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
       <ul class="attachment_list">
           <% @ticket.attachments.each do |attached| %> 
             <%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
@@ -70,5 +71,6 @@
       </ul>
     </div>
   <% end %>
+  </div>
 </div>
 </div>

@@ -12,6 +12,8 @@
       <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
       <div class="attachment_contents">
         <div id="<%= attach_id %>-attachments" class="attachments-wrap shared_attachment_list">
+
+        <% #original_attachments is to be used only for Forward forms %>
         <% if original_attachments.present? %>
           <% original_attachments[:regular].each do |attachment| %>
             <div class="item" rel="original_attachment" id="<%= dom_id(attachment) %>">

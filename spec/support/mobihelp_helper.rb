@@ -46,11 +46,11 @@ module MobihelpHelper
     @mh_ticket
   end
 
-  def create_mobihelp_ticket_extras(ticket_id, account_id)
-    @mh_ticket_extras = FactoryGirl.build(:mobihelp_ticket_extras)
-    @mh_ticket_extras.ticket_id = ticket_id
-    @mh_ticket_extras.account_id = account_id
-    @mh_ticket_extras.save
+  def create_mobihelp_info(ticket_id, account_id)
+    @mh_info = FactoryGirl.build(:mobihelp_info)
+    @mh_info.ticket_id = ticket_id
+    @mh_info.account_id = account_id
+    @mh_info.save
   end
 
   def create_mobihelp_app_solutions(params = {})

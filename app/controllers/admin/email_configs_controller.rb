@@ -5,6 +5,8 @@ require 'net/imap'
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
   include MailboxValidator
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :only => [:new] do |c|
     c.requires_feature :multiple_emails
@@ -117,6 +119,8 @@ class Admin::EmailConfigsController < Admin::AdminController
       current_account.features.compose_email.destroy
     else
       current_account.features.compose_email.create
+      #Handle delta case. Will remove this code once we remove redis feature check.
+      $redis_others.srem(COMPOSE_EMAIL_ENABLED,current_account.id)
     end
     post_process
   end

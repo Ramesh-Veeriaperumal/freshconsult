@@ -12,6 +12,8 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                 HelpdeskReports.CoreUtil.actions.closeFilterMenu();
                 metric     = jQuery(this).data('chart');
                 sort_order = jQuery(this).data('sorting');
+                sort_icon  = jQuery(this).find("i");
+                sort_icon.toggleClass("ficon-reports-sorting-desc ficon-reports-sorting-asc");
                 jQuery(this).data('sorting',_FD.TOGGLE_ORDER[sort_order]);
                 _FD.redraw(metric,sort_order);
             });
@@ -32,7 +34,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     jQuery("[data-chart='"+ metrics[i] +"']").hide();
                     HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                 }
-                else if (!jQuery.isEmptyObject(hash[metrics[i]])) {
+                else if (!jQuery.isEmptyObject(hash[metrics[i]]['company_id'])) {
                     _FD.constructChartSettings(hash, metrics[i]);
                 } else {
                     var msg = 'No data to display';
@@ -49,16 +51,31 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     color : REPORT_COLORS["plotBG"],
                     radius : 5,
                     lrRadius : null,
-                    maxValue : (constants.percentage_metrics.indexOf(metric) > -1) ? 100 : _.max(_.values(current_hash)),
+                    maxValue : (constants.percentage_metrics.indexOf(metric) > -1) ? 100 : _FD.calculateMaxValue(current_hash),
                     enableTooltip: false,
                     cursor: 'default',
                     suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
                 }   
             _FD.renderCommonChart(current_hash, options, metric);
         },
+        calculateMaxValue: function (hash) {
+            var modified_hash = _.values(hash); 
+            var values = []; 
+            for (var i = 0; i < modified_hash.length; i++) { 
+                values.push(modified_hash[i].value);
+            };
+
+            return _.max(values);
+        },
         renderCommonChart: function (current_hash, options, metric) {
             var constants = _FD.constants;
-            var values    = _.values(current_hash);
+            var current_value_array = [];
+            
+            _.each(_.values(current_hash), function(i) {
+                current_value_array.push(i.value);
+            });
+            
+            var values    = current_value_array; //_.values(current_hash);
             var labels    = _.keys(current_hash);
             var color     = constants.percentage_metrics.indexOf(metric) > -1 ? REPORT_COLORS["barChartPercent"] : REPORT_COLORS['barChartReal'];
             var height    = _FD.calculateChartheight(labels.length);
@@ -110,7 +127,13 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             var hash  = HelpdeskReports.locals.chart_hash[metric]
             if(!jQuery.isEmptyObject(hash)){
                 var current_hash = hash['company_id'][sort_order];
-                var values       = _.values(current_hash);
+                var current_value_array = [];
+                
+                _.each(_.values(current_hash), function(i) {
+                    current_value_array.push(i.value);
+                });
+                
+                var values = current_value_array;
 
                 chart.xAxis[0].update({
                     categories: _.keys(current_hash)

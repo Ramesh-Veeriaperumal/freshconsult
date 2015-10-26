@@ -1,0 +1,19 @@
+<div class="attachment-wrapper">
+	<%= render(:partial => "/helpdesk/tickets/show/attachment_form", :locals => { 
+		:attach_id => "ticket" , 
+		:nsc_param => "helpdesk_ticket"
+		}) %>
+
+</div>
+
+<div class="attachments-wrap clearfix">
+	<ul class="attachment_list">
+	    <% @ticket.attachments.each do |attached| %> 
+	    	<%= attachment_list(attached, privilege?(:edit_ticket_properties), "ticket",nil) %>
+	    <% end %>
+
+	    <% @ticket.cloud_files.each do |cloud_file| %> 
+			<%= attachment_list(cloud_file, privilege?(:edit_ticket_properties), "cloud_file",nil) %>
+		<% end %>
+	</ul>
+</div>

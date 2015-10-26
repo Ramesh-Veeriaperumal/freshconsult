@@ -73,7 +73,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
                        :content_file_size => attached.tempfile.size.to_i
                       }
         write_options = { :content_type => attached.content_type }
-        if attached.content_type.include?("image") && content_id
+        if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
           write_options.merge!({:acl => "public-read"})

@@ -538,7 +538,7 @@ $single_stackbar_chart_height: 120px;
 					width:100%;
 					@include float(left);
 					li{
-						@include span-columns(1);
+						width: 14.63415%;
 						@include margin-right(0.899%);
 						display:inline-block;
 			            @include float(none);

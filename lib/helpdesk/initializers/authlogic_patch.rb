@@ -10,3 +10,5 @@ Authlogic::Session::Base.class_eval do
     true
   end
 end
+
+require File.dirname(__FILE__) + "/../../fd_password_policy.rb"

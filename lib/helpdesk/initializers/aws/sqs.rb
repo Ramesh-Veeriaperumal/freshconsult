@@ -20,6 +20,9 @@ begin
   
   # Reports export queue
   $sqs_reports_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])
+  
+  # Reports etl msgs queue
+  $sqs_reports_etl = AWS::SQS.new.queues.named(SQS[:reports_etl_msg_queue])
 
 rescue => e
   puts "AWS::SQS connection establishment failed."

@@ -47,7 +47,7 @@ module Search::ElasticSearchIndex
         SearchSidekiq::TicketActions::DocumentAdd.perform_async({ 
                                                     :klass_name => self.class.name, 
                                                     :id => self.id,
-                                                    :version_value => self.updated_at.to_i
+                                                    :version_value => Search::Job.es_version
                                                   }) if Account.current.launched?(:es_count_writes)
       end
 

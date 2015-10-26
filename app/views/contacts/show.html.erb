@@ -21,6 +21,10 @@
 				<%= link_to t('assume_identity_button'), assume_identity_user_path(@user),{
 											:class => "btn"
 										} if is_allowed_to_assume?(@user) %>
+				
+				<% if privilege?(:admin_tasks) and @user.allow_password_update?%>
+			    <%= link_to(t('change_password').html_safe, change_password_contact_path(@user), {:class => "btn", :'data-pjax' => "#body-container"}) %>
+      	<% end %>	
 
 				<%= link_to t('contacts.info2'), '#', {
 											:class => "drop-toggle btn",
@@ -31,8 +35,8 @@
 											:class => "btn", 
 											:'data-pjax' => "#body-container"
 										}) if privilege?(:manage_contacts) and !@user.deleted? and !@user.spam? and !@user.blocked? %>
-
-
+				
+				
 				<% if privilege?(:manage_users) %>
 					<% if @user.has_email? and !@user.blocked?%>
 						<ul class="dropdown-menu pull-right" role="menu">
@@ -48,6 +52,7 @@
 				<% end %>
 
 				<%= link_to t('ticket.merge_btn'), new_contact_merge_path({:parent_user => @user.id }), :title => t('merge_contacts.merge_contact'), :class => "btn last", "data-width" => "800", :rel => "freshdialog", "data-target" => "#contact-mergebox", "data-template-footer" => "" unless (@merged_user or @user.deleted?) or !current_account.features?(:contact_merge_ui) %>
+	
 
 				<% if privilege?(:delete_contact) and @user != current_user and 
 											!@user.deleted? and !@user.spam? and !@user.blocked? %>

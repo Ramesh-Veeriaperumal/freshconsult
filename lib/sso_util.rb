@@ -71,6 +71,7 @@ module SsoUtil
     @current_user = current_account.user_emails.user_for_email(user_email_id)
 
     if @current_user && @current_user.deleted?
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.deleted_user')
       redirect_to login_normal_url and return
     end
@@ -91,6 +92,10 @@ module SsoUtil
 
     @user_session = @current_user.account.user_sessions.new(@current_user)
     if (!@current_user.new_record? && @user_session.save)
+      if is_native_mobile?
+        cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
+        cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
+      end
       remove_old_filters  if @current_user.agent?
       flash[:notice] = t(:'flash.login.success')
       if grant_day_pass
@@ -101,6 +106,7 @@ module SsoUtil
         end
       end
     else
+      cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
       flash[:notice] = t(:'flash.login.failed')
       redirect_to login_normal_url
     end

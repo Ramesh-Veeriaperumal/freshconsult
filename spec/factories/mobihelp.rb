@@ -19,7 +19,7 @@ if Rails.env.test?
       external_id "device_uuid"
     end
 
-    factory :mobihelp_ticket_extras, :class => Mobihelp::TicketInfo do
+    factory :mobihelp_info, :class => Mobihelp::TicketInfo do
       app_name "Application Name"
       app_version "1.0"
       os "Android"

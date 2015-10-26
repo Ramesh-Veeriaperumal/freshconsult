@@ -34,6 +34,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
+  before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
@@ -48,7 +49,7 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
 
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by]
   before_filter :load_ticket, :verify_permission,
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
@@ -74,6 +75,7 @@ class Helpdesk::TicketsController < ApplicationController
     :unless => lambda { |controller| 
       controller.request.format.xml? or controller.request.format.json? or controller.request.format.mobile? }
   before_filter :load_note_reply_cc, :only => [:reply_to_forward]
+  before_filter :show_password_expiry_warning, :only => [:index, :show]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
  
@@ -103,14 +105,14 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     tkt = current_account.tickets.permissible(current_user)  
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?
+    @items = fetch_tickets(tkt) unless is_native_mobile?
     respond_to do |format|  
       format.html  do
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if (@items.length < 1) && !params[:page].nil? && params[:page] != '1'
           params[:page] = '1'  
-          @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+          @items = fetch_tickets(tkt)
         end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false, :user_id => i.accessible.user_id} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -254,7 +256,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   def custom_search
     params[:html_format] = true
-    @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+    @items = fetch_tickets
     render :partial => "custom_search"
   end
   
@@ -586,12 +588,22 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def change_due_by
-    due_date = get_due_by_time    
+    due_date = get_due_by_time   
+    update_success = true 
     unless @item.update_attributes({:due_by => due_date, :manual_dueby => true})
+      update_success = false
       flash[:error] = @item.errors.messages[:base]
       @item.reload
     end
-    render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
+    respond_to do |format|
+      format.any(:html,:js) {
+        render :partial => "/helpdesk/tickets/show/due_by", :object => @item.due_by
+      }
+      format.nmobile {
+          render :json => {:success => update_success, :msg => @item.errors.full_messages }
+      }
+      
+    end
   end  
   
   def get_due_by_time
@@ -1131,6 +1143,8 @@ class Helpdesk::TicketsController < ApplicationController
           return false
         elsif request.xhr?
           params[:redirect] = "true"
+        elsif is_native_mobile?
+          render json: {access_denied: true}
         else
           redirect_to helpdesk_tickets_url
         end
@@ -1246,6 +1260,41 @@ class Helpdesk::TicketsController < ApplicationController
     else
       redirect_to helpdesk_archive_ticket_path(params[:id])
     end
+  end
+
+  ### Methods for loading tickets from ES ###
+  #
+  def es_tickets_enabled?
+    !params[:disable_es] and current_account.launched?(:es_tickets)
+  end
+
+  def load_filter_params
+    cached_filter_data = @cached_filter_data.deep_symbolize_keys
+    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(cached_filter_data)
+    params.merge!(cached_filter_data)
+    load_sort_order
+  end
+
+  def fetch_tickets(tkt=nil)
+    #_Note_: Fetching from ES based on feature and only for web
+    if es_tickets_enabled? and params[:html_format]
+      tickets_from_es(params)
+    else
+      if tkt.present?
+        tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      else
+        current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+      end
+    end
+  end
+
+  def tickets_from_es(params)
+    es_options = {
+      :page         => params[:page] || 1,
+      :order_entity => params[:wf_order],
+      :order_sort   => params[:wf_order_type]
+    }
+    Search::Filters::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
   end
  
 end

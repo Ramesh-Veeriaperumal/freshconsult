@@ -58,25 +58,14 @@ module RabbitMq::Utils
   def send_message(exchange, message, key)
     Rails.logger.debug "ROUTING KEY - #{key}"
     return unless key.include?("1")
-    self.class.trace_execution_scoped(['Custom/RabbitMQ/Send']) do
-      Timeout::timeout(CONNECTION_TIMEOUT) {
-        Rails.logger.debug " Inside send message to RMQ - #{Account.current.id} -- #{exchange}"
-        publish_message_to_xchg(Account.current.rabbit_mq_exchange(exchange), message, key)
-        Rails.logger.debug " Finished send message to RMQ - #{Account.current.id} -- #{exchange}"
-      }
-    end
-  rescue Timeout::Error => e 
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Timeout Error"}})
-    Rails.logger.error("RabbitMq Timeout Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
     job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
-    Rails.logger.debug "Sidekiq Job Id #{job_id} ---- #{Account.current.id} -- #{exchange}"
-    RabbitMq::Init.restart
+    Rails.logger.debug "Sidekiq Job Id #{job_id} " 
   rescue => e
-    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error - Auto-refresh"}})
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error",
+                                                        :message => message.to_json }})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-    job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
-    Rails.logger.debug "Sidekiq Job Id #{job_id} ----- #{Account.current.id} -- #{exchange}"
-    RabbitMq::Init.restart
+    rmq_logger.info "#{message}"
+    sns_notification("RabbitMq Publish Error", message)
   end
 
   def publish_message_to_xchg(exchange, message, key)
@@ -90,17 +79,34 @@ module RabbitMq::Utils
     )
   end
   
-  
   def manual_publish_to_xchg(exchange, message, key, sidekiq = false)
     # Decide we gonna publish message to exchange via sidekiq or diretly
     # Currently we directly push to exchange
     # If there is any performance, then we can push via sidekiq
     return unless Account.current.reports_enabled?
-    if sidekiq
-      RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
-    else
-      send_message(exchange, message, key)
-    end
+    job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
+    Rails.logger.debug "Sidekiq Job Id #{job_id} " 
+  rescue => e
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Manual Publish Error",
+                                                       :message => message.to_json }})
+    Rails.logger.error("RabbitMq Manual Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    rmq_logger.info "#{message}"
+    sns_notification("RabbitMq Manual Publish Error", message)
   end
+  
+  def sns_notification(subj, message, topic = nil)
+    notification_topic = topic || SNS["reports_notification_topic"]
+    DevNotification.publish(notification_topic, subj, message.to_json)
+  end
+  
+  def rmq_log_file
+    @@log_file_path ||= "#{Rails.root}/log/rmq_failed_msgs.log"
+  end 
 
+  def rmq_logger
+    @@rmq_logger ||= Logger.new(rmq_log_file)
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e, {:custom_params => {:description => "Exception while logging failed RMQ msgs"}})
+  end
+  
 end
