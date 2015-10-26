@@ -8,7 +8,7 @@ class Support::Solutions::FoldersController < SupportController
 		respond_to do |format|
 			format.html {
         (render_404 and return) if @folder.is_default?        
-				load_agent_actions(solution_category_folder_path(@category, @folder), :view_solutions)
+				load_agent_actions(solution_folder_path(@folder), :view_solutions)
 				load_page_meta
 				set_portal_page :article_list
 			}
@@ -19,7 +19,7 @@ class Support::Solutions::FoldersController < SupportController
 
 	private
 		def scoper
-			@folder = current_account.folders.find_by_id(params[:id])
+			@folder = current_account.solution_folders.find_by_id(params[:id])
 			(raise ActiveRecord::RecordNotFound and return) if @folder.nil?
 
 			@category = @folder.category
@@ -33,11 +33,15 @@ class Support::Solutions::FoldersController < SupportController
       }
     end
 
-		def check_folder_permission			
+		def check_folder_permission
 	    return redirect_to support_solutions_path if !@folder.nil? and !@folder.visible?(current_user)	    	
 	  end
 
     def folder_visible?
       @folder.visible_in?(current_portal)
+    end
+
+    def alternate_version_languages
+      @folder.solution_folder_meta.solution_folders.map { |f| f.language.code }
     end
 end

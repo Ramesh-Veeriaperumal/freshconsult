@@ -5,6 +5,8 @@ RSpec.describe Support::Solutions::ArticlesController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @account.launch(:meta_read)
+    @account.make_current
     @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "test category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
@@ -483,5 +485,17 @@ RSpec.describe Support::Solutions::ArticlesController do
     get 'show', :id => article
     response.status.should eql(404)
   end
-  
+
+  it "should add meta tags for alterante language versions" do 
+    get 'show', id: @public_article1.id, url_locale: 'en'
+    supported_languages = @public_article1.solution_article_meta.solution_articles.map { |c| c.language.code}
+    supported_languages.each do |lang|
+      version_url = alternate_version_url(lang,support_solutions_article_path(@public_article1),@account.main_portal)
+      response.body.should =~ /hreflang="#{lang}" href="#{version_url}"/
+    end
+  end
+
+  after(:all) do
+    @account.rollback(:meta_read)
+  end
 end

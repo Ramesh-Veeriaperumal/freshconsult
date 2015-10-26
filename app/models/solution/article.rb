@@ -63,6 +63,9 @@ class Solution::Article < ActiveRecord::Base
 
   scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
 
+  delegate :visible_in?, :to => :solution_folder_meta
+  delegate :visible?, :to => :solution_folder_meta
+
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
 
 
@@ -293,10 +296,6 @@ class Solution::Article < ActiveRecord::Base
   def publish!
     set_status(true)
     save
-  end
-  
-  def visible_in? portal
-    folder.visible_in?(portal)
   end
 
   def is_primary?

@@ -49,4 +49,9 @@ class Support::SolutionsController < SupportController
         :canonical => support_solution_url(@category, :host => current_portal.host)
       }
     end
+
+    def alternate_version_languages
+      return current_account.applicable_languages unless @category
+      @category.solution_category_meta.solution_categories.map { |c| c.language.code}
+    end
 end

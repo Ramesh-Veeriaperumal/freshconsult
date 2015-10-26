@@ -42,6 +42,17 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  end).with_indifferent_access
 	end
 
+	def visible?(user)
+	  return true if (user and user.privilege?(:view_solutions))
+	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
+	  return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
+	  return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
+	end
+
+	def visible_in? portal
+	  solution_category_meta.portal_ids.include?(portal.id)
+	end
+
 	private
 
 	def clear_cache

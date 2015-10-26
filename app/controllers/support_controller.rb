@@ -7,6 +7,7 @@ class SupportController < ApplicationController
   
   include Redis::RedisKeys
   include Redis::PortalRedis
+  include Portal::Helpers::SolutionsHelper
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
@@ -128,8 +129,17 @@ class SupportController < ApplicationController
                        :canonical => @page_canonical }
                        
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{@current_path}"
-                       
+      multilingual_meta(page_token)
+
       @meta = HashDrop.new( @page_meta )
+    end
+
+    def multilingual_meta page_token
+      return unless [ :solution_home, :solution_category, :article_list, :article_view ].include?(page_token)
+      @page_meta[:multilingual_meta] = alternate_version_languages.inject({}) do |result,lang_code|
+        result[lang_code] = alternate_version_url(lang_code,@current_path)
+        result
+      end
     end
 
     def process_page_liquid(page_token)      
@@ -237,5 +247,9 @@ class SupportController < ApplicationController
 
   def override_default_locale
     I18n.locale = Language.current.code.to_sym
+  end
+
+  def alternate_version_languages
+    []
   end
 end

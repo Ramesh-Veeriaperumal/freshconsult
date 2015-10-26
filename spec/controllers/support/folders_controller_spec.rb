@@ -5,6 +5,8 @@ describe Support::Solutions::FoldersController do
   self.use_transactional_fixtures = false
 
   before(:all) do
+    @account.launch(:meta_read)
+    @account.make_current
     @user = create_dummy_customer
     @now = (Time.now.to_f*1000).to_i
     @test_category = create_category( {:name => "category #{@now}", :description => "new category", :is_default => false} )
@@ -61,5 +63,18 @@ describe Support::Solutions::FoldersController do
     get 'show', :id => folder
     response.status.should eql(404)
   end
-  
+
+  it "should add meta tags for alterante language versions" do 
+    log_in(@user)
+    get 'show', id: @test_folder1.id, url_locale: 'en'
+    supported_languages = @test_folder1.solution_folder_meta.solution_folders.map { |c| c.language.code}
+    supported_languages.each do |lang|
+      version_url = alternate_version_url(lang,support_solutions_folder_path(@test_folder1),@account.main_portal)
+      response.body.should =~ /hreflang="#{lang}" href="#{version_url}"/
+    end
+  end
+
+  after(:all) do
+    @account.rollback(:meta_read)
+  end  
 end

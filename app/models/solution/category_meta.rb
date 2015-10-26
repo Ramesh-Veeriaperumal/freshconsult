@@ -35,6 +35,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
 
+	before_create :set_default_portal
+
 	after_create :clear_cache
 	after_destroy :clear_cache
 
@@ -48,5 +50,9 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	def clear_cache
 		account.clear_solution_categories_from_cache
+	end
+
+	def set_default_portal
+	  self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
 	end
 end

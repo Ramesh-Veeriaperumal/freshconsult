@@ -41,7 +41,10 @@ class Solution::Folder < ActiveRecord::Base
   attr_accessor :count_articles
   
   acts_as_list :scope => :category
-  
+
+  delegate :visible?, :to => :solution_folder_meta
+  delegate :visible_in?, :to => :solution_folder_meta
+
   include Solution::MetaMethods
   include Solution::LanguageMethods
   # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
@@ -62,13 +65,6 @@ class Solution::Folder < ActiveRecord::Base
     self.where({ :account_id => account })
   end
 
-  def visible?(user)    
-    return true if (user and user.privilege?(:manage_tickets) )
-    return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
-    return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
-    return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
-  end
-  
   def self.get_visibility_array(user)   
     vis_arr = Array.new
     if user && user.privilege?(:manage_tickets)
@@ -207,10 +203,6 @@ class Solution::Folder < ActiveRecord::Base
 
   def primary?
     (language_id == Language.for_current_account.id)
-  end
-
-  def visible_in? portal
-    category.portal_ids.include?(portal.id)
   end
 
   def companies_limit_check

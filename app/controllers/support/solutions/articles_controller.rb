@@ -64,7 +64,7 @@ class Support::Solutions::ArticlesController < SupportController
   private
     def load_and_check_permission
       @article = current_account.solution_articles.find(params[:id])
-      unless @article.folder.visible?(current_user)    
+      unless @article.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
           redirect_to login_url
@@ -80,12 +80,12 @@ class Support::Solutions::ArticlesController < SupportController
       draft_preview_agent_filter?
     end
     
-    def load_agent_actions
+    def load_agent_actions      
       @agent_actions = []
-      @agent_actions <<   { :url => edit_solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+      @agent_actions <<   { :url => solution_article_version_path(@article.parent_id, Language.current.code, :anchor => 'edit'),
                             :label => t('portal.preview.edit_article'),
                             :icon => "edit" } if privilege?(:manage_solutions)
-      @agent_actions <<   { :url => solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+      @agent_actions <<   { :url => solution_article_version_path(@article.parent_id, Language.current.code),
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
@@ -139,6 +139,10 @@ class Support::Solutions::ArticlesController < SupportController
     
     def no_error
       !@ticket.errors.any?
+    end
+
+    def alternate_version_languages
+      @article.solution_article_meta.solution_articles.map{ |a| a.language.code }
     end
 
 end

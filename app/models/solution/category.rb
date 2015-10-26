@@ -24,8 +24,6 @@ class Solution::Category < ActiveRecord::Base
 
   concerned_with :associations, :meta_associations
 
-  before_create :set_default_portal
-
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
   
   acts_as_list :scope => :account
@@ -90,11 +88,6 @@ class Solution::Category < ActiveRecord::Base
  
     def clear_cache(obj=nil)
       account.clear_solution_categories_from_cache
-    end
-
-    ### MULTILINGUAL SOLUTIONS - META WRITE HACK!!
-    def set_default_portal
-      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids_without_meta.blank?
     end
 
 end

@@ -6,6 +6,8 @@ module SupportHelper
   include Portal::Helpers::DiscussionsHelper
   include Portal::Helpers::DiscussionsVotingHelper
   include Portal::Helpers::Article
+  include Portal::Helpers::SolutionsHelper
+
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones 
@@ -62,7 +64,7 @@ module SupportHelper
       
     output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
     output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
-      
+    output << multilingual_meta_tags(meta['multilingual_meta']) if meta['multilingual_meta'].present?
     output.join('')
   end
   

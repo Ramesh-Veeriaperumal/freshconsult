@@ -1,32 +1,37 @@
 module SolutionsHelper
 
   def create_category(params = {})
-    test_category = FactoryGirl.build(:solution_categories, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :is_default => params[:is_default], 
-              :portal_ids => params[:portal_ids] || [] )
-    test_category.account_id = @account.id
-    test_category.save(validate: false)
+    category_params = { "solution_category_meta"=>{"primary_category"=>{"name" => params[:name] || Faker::Name.name, 
+                        "description"=> params[:description] || Faker::Lorem.sentence(3)}, "portal_ids"=> params[:portal_ids] || []},
+                        "language_id"=> params[:language_id] || "6" }
+    test_category = Solution::Builder.category(category_params)
     test_category
   end
 
   def create_folder(params = {})
-    test_folder = FactoryGirl.build(:solution_folders, :name => params[:name] || Faker::Name.name,
-              :description => params[:description], :visibility => params[:visibility],
-              :category_id => params[:category_id], :is_default => params[:is_default] || false)
-    test_folder.account_id = @account.id
-    test_folder.save(validate: false)
+    folder_params = { "solution_folder_meta"=>{"primary_folder"=>{"name"=>params[:name] || Faker::Name.name, 
+                      "description"=> params[:description] || Faker::Lorem.sentence(3)},
+                      "solution_category_meta_id"=> params[:category_meta_id] || params[:category_id],
+                      "visibility"=>  params[:visibility] || '1' }
+                    }
+    test_folder =  Solution::Builder.folder(folder_params)
     test_folder
   end
 
   def create_article(params = {})
-    test_article = FactoryGirl.build(:solution_articles, :title => params[:title], :description => params[:description],
-      :folder_id => params[:folder_id], :status => params[:status], :art_type => params[:art_type])
-    test_article.account_id = @account.id
+    title = params[:title] || Faker::Name.name
+    description = params[:description] || Faker::Lorem.sentence(3) 
+    article_params = {"solution_article"=>{"title"=> title, "description"=> description, "art_type"=> params[:art_type] || '1'}, 
+                      "solution_article_meta"=>{"solution_folder_meta_id"=>params[:folder_meta_id] || params[:folder_id],
+                      "primary_article"=>{'title' => title,"description"=> description, "art_type"=>  params[:art_type] || '1',
+                      "status"=> params[:status] || 2, "user_id" => params[:user_id] || @agent.id}}}
+    test_article =  Solution::Builder.article(article_params)
     if params[:attachments]
       test_article.attachments.build(:content => params[:attachments][:resource], 
                                     :description => params[:attachments][:description], 
                                     :account_id => test_article.account_id)
     end
+
     test_article.user_id = params[:user_id] || @agent.id
     test_article.save(validate: false)
     test_article
