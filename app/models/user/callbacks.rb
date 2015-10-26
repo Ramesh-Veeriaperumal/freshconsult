@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   before_validation :discard_blank_email, :unless => :email_available?
   before_validation :set_password, :if => [:active?, :email_available?, :no_password?]
   
-  before_create :set_company_name
+  before_create :set_company_name, :decode_name
   before_create :populate_privileges, :if => :helpdesk_agent?
 
   before_update :populate_privileges, :if => :roles_changed?
@@ -121,6 +121,15 @@ class User < ActiveRecord::Base
        comp = account.companies.domains_like(email_domain).first
        self.company_id = comp.id unless comp.nil?    
    end
+  end
+
+  def decode_name
+    self.name = Mail::Encodings.unquote_and_convert_to(self.name, "UTF-8") \
+      if ["=?UTF-8?B", "=?UTF-8?Q"].any? { |n| self.name.upcase.include?(n) }
+  rescue Exception => e
+    Rails.logger.debug "Exception while decoding contact name : #{self.name}, 
+                        Account ID : #{self.account_id},
+                        Error : #{e.message} #{e.backtrace}".squish
   end
 
   def delete_freshfone_user
