@@ -123,6 +123,7 @@ if Rails.env.test?
   ForumDynamoTests = [
     "spec/lib/community/*_spec.rb",
     "spec/lib/community/moderation/*_spec.rb",
+    "spec/lib/spam_counter_spec.rb",
     "spec/lib/forum_unpublished_spec.rb",
     "spec/lib/forum_spam_spec.rb",
     "spec/lib/dynamo_spec.rb",
