@@ -14,6 +14,8 @@ class Post < ActiveRecord::Base
   def self.per_page() 25 end
   validates_presence_of :user_id, :body_html, :topic
 
+  concerned_with :esv2_methods
+
   belongs_to_account
 
   belongs_to :forum

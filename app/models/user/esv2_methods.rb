@@ -14,13 +14,26 @@ class User < ActiveRecord::Base
     as_json({
               root: false,
               tailored_json: true,
-              only: [ :name, :email, :description, :job_title, :phone, :mobile,
-                         :twitter_id, :fb_profile_id, :account_id, :deleted,
-                         :helpdesk_agent, :created_at, :updated_at ], 
-              include: { customer: { only: [:name] },
-                            user_emails: { only: [:email] }, 
-                            flexifield: { only: esv2_contact_field_data_columns }}
-            }, true).to_json
+              only: [ :name, :created_at, :updated_at, :account_id, :active, 
+                      :company_id, :job_title, :phone, :mobile, :twitter_id, 
+                      :description, :time_zone, :deleted, :fb_profile_id, :language, 
+                      :blocked, :address, :helpdesk_agent ], 
+              methods: [ :company_name, :emails ]
+            }, true).merge(esv2_custom_attributes).to_json
+  end
+
+  # Flexifield denormalized
+  #
+  def esv2_custom_attributes
+    flexifield.as_json(root: false, only: esv2_contact_field_data_columns)
+  end
+
+  def company_name
+    company.name
+  end
+
+  def emails
+    user_emails.map(&:email)
   end
 
   ##########################

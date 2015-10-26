@@ -14,7 +14,7 @@ class Topic < ActiveRecord::Base
   validates_presence_of :forum, :user, :title
   validate :check_stamp_type
 
-  concerned_with :merge
+  concerned_with :merge, :esv2_methods
 
   belongs_to_account
   belongs_to :forum
@@ -364,21 +364,6 @@ class Topic < ActiveRecord::Base
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => ([:account_id,:import_id]+TOPIC_ATTR_TO_REMOVE))
-  end
-
-  def to_indexed_json
-    as_json(
-          :root => "topic",
-          :tailored_json => true,
-          :only => [ :title, :user_id, :forum_id, :account_id, :created_at, :updated_at ],
-          :include => { :posts => { :only => [:body],
-                                    :include => { :attachments => { :only => [:content_file_name] } }
-                                  },
-                        :forum => { :only => [:forum_category_id, :forum_visibility],
-                                    :include => { :customer_forums => { :only => [:customer_id] } }
-                                  }
-                      }
-       ).to_json
   end
 
   def as_json(options = {})

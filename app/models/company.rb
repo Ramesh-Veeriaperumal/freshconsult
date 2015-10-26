@@ -17,7 +17,7 @@ class Company < ActiveRecord::Base
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains
   
-  concerned_with :associations, :callbacks, :es_methods, :rabbitmq
+  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq
 
   scope :domains_like, lambda { |domain|
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
@@ -98,10 +98,6 @@ class Company < ActiveRecord::Base
 
   def to_liquid
     @company_drop ||= CompanyDrop.new self
-  end
-
-  def search_fields_updated?
-    (@model_changes.keys & es_columns).any?
   end
 
   def custom_form
