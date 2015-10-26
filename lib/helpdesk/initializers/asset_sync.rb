@@ -21,4 +21,3 @@ assetSyncConfig = YAML::load_file(File.join(Rails.root, 'config', 'asset_sync.ym
 
 $asset_sync_http_url = assetSyncConfig['asset_host_url_http']
 $asset_sync_https_url = assetSyncConfig['asset_host_url_https'] 
-$asset_sync_fog_directory = assetSyncConfig['fog_directory']
