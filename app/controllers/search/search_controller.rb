@@ -101,7 +101,8 @@ class Search::SearchController < ApplicationController
 			unless search_in.blank?
 				if search_in.include?(Solution::Article)
 					f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
-					f.filter :term,  { 'language_id' => Language.for_current_account.id }
+					f.filter :or, { :not => { :exists => { :field => :language_id } } },
+											{ :term => { :language_id => Language.for_current_account.id } }
 				end
 				f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if 
 																		params[:category_id] && search_in.include?(Topic)
