@@ -9,7 +9,7 @@ class ApiCompaniesDependencyTest < ActionDispatch::IntegrationTest
                         :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details, :remove_pjax_param,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token,
                         :load_multiple_items, :add_to_history, :set_selected_tab, :load_item, :build_item,
-                        :set_required_fields, :set_validatable_custom_fields]
+                        :set_required_fields, :set_validatable_custom_fields, :set_native_mobile]
     actual_filters = CompaniesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

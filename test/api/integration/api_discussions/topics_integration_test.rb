@@ -19,7 +19,7 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 46,
         show: 12,
-        update: 34,
+        update: 35,
         destroy: 29,
         follow: 14,
         unfollow: 21,
