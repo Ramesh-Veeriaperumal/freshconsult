@@ -40,12 +40,13 @@
 				  				<%= render_autocomplete({ 
 				  								:selected_values => nil, 
 				  								:type => :companies,
-				  								:dom_id => "change_folder_customers" }) %>
+				  								:dom_id => "change_folder_customers",
+				  								:max_limit => 250 }) %>
 				  			</div>
 							</div>
 
 							<div class="control-group row-fluid">
-								<div class="replace-existing span5">
+								<div class="replace-existing span6">
 									<%= radio_button :company, :add_to_existing, 1, :checked => true, :class => "add-to-existing" %>
 									<%= label_tag :add_to_existing, t('solutions.company.add_existing') %>
 								</div>

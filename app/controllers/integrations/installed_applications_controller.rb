@@ -186,6 +186,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def application_is_slack?
-     @installing_application.slack?
+    @installing_application.present? && @installing_application.slack?
   end
 end

@@ -11,7 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150713070533) do
+
+ActiveRecord::Schema.define(:version => 20151009095010) do
+
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -69,6 +71,23 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
 
   add_index "achieved_quests", ["quest_id", "account_id"], :name => "index_achieved_quests_on_quest_id_and_account_id"
   add_index "achieved_quests", ["user_id", "account_id", "quest_id"], :name => "index_achieved_quests_on_user_id_account_id_quest_id", :unique => true
+
+  create_table "active_account_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "pod_info",   :default => "poduseast1", :null => false
+  end
+
+  add_index "active_account_jobs", ["locked_by"], :name => "index_active_account_jobs_on_locked_by"
+  add_index "active_account_jobs", ["pod_info"], :name => "index_active_account_jobs_on_pod_info"
 
   create_table "addresses", :force => true do |t|
     t.string   "first_name"
@@ -320,6 +339,9 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "authorizations", ["account_id", "user_id"], :name => "index_authorizations_on_account_id_and_user_id"
+  add_index "authorizations", ["account_id", "uid", "provider"], :name => "index_authorizations_on_account_id_uid_and_provider"
 
   create_table "business_calendars", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -1301,6 +1323,23 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
   end
 
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
+
+  create_table "free_account_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "pod_info",   :default => 'poduseast1', :null => false
+  end
+
+  add_index "free_account_jobs", ["locked_by"], :name => "index_free_account_jobs_on_locked_by"
+  add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
 
   create_table "freshfone_accounts", :force => true do |t|
     t.integer  "account_id",              :limit => 8
@@ -2361,6 +2400,17 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
 
   add_index "oauth_applications", ["uid", "account_id"], :name => "index_oauth_applications_on_uid_and_account_id", :unique => true
 
+  create_table "password_policies" do |t|
+    t.integer "account_id", :limit => 8
+    t.integer "user_type",  :null => false
+    t.string "policies"
+    t.text "configs"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+  end
+
+  add_index "password_policies", ["account_id", "user_type"], :name => "index_password_polices_on_account_id_and_user_type", :unique => true
+
   create_table "password_resets", :force => true do |t|
     t.string   "email"
     t.integer  "user_id",    :limit => 8
@@ -2470,6 +2520,23 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
   add_index "posts", ["topic_id", "published"], :name => "index_posts_on_topic_id_and_published"
   add_index "posts", ["topic_id", "spam"], :name => "index_posts_on_topic_id_and_spam"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+
+  create_table "premium_account_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "pod_info",   :default => "poduseast1", :null => false
+  end
+
+  add_index "premium_account_jobs", ["locked_by"], :name => "index_premium_account_jobs_on_locked_by"
+  add_index "premium_account_jobs", ["pod_info"], :name => "index_premium_account_jobs_on_pod_info"
 
   create_table "products", :force => true do |t|
     t.string   "name"
@@ -3565,6 +3632,23 @@ ActiveRecord::Schema.define(:version => 20150713070533) do
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
+
+  create_table "trial_account_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "pod_info",   :default => 'poduseast1', :null => false
+  end
+
+  add_index "trial_account_jobs", ["locked_by"], :name => "index_trial_account_jobs_on_locked_by"
+  add_index "trial_account_jobs", ["pod_info"], :name => "index_trial_accout_jobs_on_pod_info"
 
   create_table "user_accesses", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8, :null => false

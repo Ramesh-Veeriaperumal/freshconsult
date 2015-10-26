@@ -151,7 +151,7 @@ module Freshfone::Endpoints
   end
 
   def round_robin_call_status_url(current_call, agent_id, fwd_call = false)
-    "#{client_status_url(current_call.id, agent_id)}&round_robin_call=true&#{'&forward_call=true' if fwd_call}"
+    "#{client_status_url(current_call.id, agent_id)}&round_robin_call=true#{'&forward_call=true' if fwd_call}"
   end
 
   def round_robin_agent_wait_url(current_call)

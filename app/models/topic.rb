@@ -25,7 +25,7 @@ class Topic < ActiveRecord::Base
   before_save :set_sticky
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
-  before_validation :assign_default_stamps, :if => :forum_id_changed?, :on => :update
+  before_validation :assign_default_stamps, :mark_post_as_unanswered, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
@@ -55,8 +55,8 @@ class Topic < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  delegate :problems?, :questions?, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
-  delegate :type_name, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
+  delegate :problems?, :questions?, :to => :forum
+  delegate :type_name, :to => :forum
 
   scope :newest, :order => 'replied_at DESC'
 
@@ -81,14 +81,6 @@ class Topic < ActiveRecord::Base
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
     }
   }
-
-  scope :followed_by, lambda { |user_id|
-    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
-                  and monitorships.monitorable_type = 'Topic' 
-                  and topics.account_id = monitorships.account_id),
-      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
-    }
-  } # Used by monitorship APIs
 
   scope :following, lambda { |ids|
     {
@@ -258,17 +250,15 @@ class Topic < ActiveRecord::Base
     
   FORUM_TO_STAMP_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
-    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil], # nil should always be last, if not, revisit check_stamp_type
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }
 
   def check_stamp_type
-    if forum
-      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
-      is_valid &&= check_answers if questions?
-      errors.add(:stamp_type, "is not valid") unless is_valid
-    end
+    is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+    is_valid &&= check_answers if questions?
+    errors.add(:stamp_type, "is not valid") unless is_valid
   end
 
   def check_answers
@@ -324,11 +314,11 @@ class Topic < ActiveRecord::Base
   end
 
   def set_unanswered_stamp
-    self.stamp_type ||= Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
+    self.stamp_type = Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
   end
 
   def set_unsolved_stamp
-    self.stamp_type ||= Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+    self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   end
 
   def last_page
@@ -446,9 +436,15 @@ class Topic < ActiveRecord::Base
   end
   
   def assign_default_stamps
-    if forum && !stamp_type_changed?
-      self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
-    end
+    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type] unless forum_was.forum_type == forum.forum_type
+  end
+
+  def mark_post_as_unanswered
+    posts.answered_posts.map(&:toggle_answer) if forum_was.questions? && !forum.questions?
+  end
+
+  def forum_was
+    @old_forum_cached ||= Forum.find(forum_id_was) if forum_id_was
   end
 
   def ticket

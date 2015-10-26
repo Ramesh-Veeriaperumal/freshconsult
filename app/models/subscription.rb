@@ -464,18 +464,18 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       if next_renewal_at_changed? and (trial? or suspended?)
-        Resque.enqueue(CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
       elsif free_customer?
-        Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
       end
 
       if state_changed?
-        Resque.enqueue(CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
+        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
       end
     end
 
-    def update_reseller_subscription 
-      if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed?
+    def update_reseller_subscription
+      if state_changed? or (active? and amount_changed?) or subscription_currency_id_changed? or next_renewal_at_changed?
         Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => account_id, 
           :event_type => :subscription_updated })
       end

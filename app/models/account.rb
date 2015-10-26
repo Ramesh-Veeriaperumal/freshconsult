@@ -110,7 +110,7 @@ class Account < ActiveRecord::Base
 
   #Temporary feature check methods - using redis keys - starts here
   def compose_email_enabled?
-    features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def dashboard_disabled?
@@ -128,11 +128,6 @@ class Account < ActiveRecord::Base
 
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
-  end
-
-  #Password restriction hardcode for certain customers
-  def password_restriction_enabled?
-    ismember?(PASSWORD_RESTRICTION_ENABLED, self.id)
   end
 
   def freshfone_active?
@@ -221,6 +216,14 @@ class Account < ActiveRecord::Base
   
   def active?
     !self.subscription.suspended?
+  end
+
+  def spam_email?
+    ismember?(SPAM_EMAIL_ACCOUNTS, self.id)
+  end
+
+  def premium_email?
+    ismember?(PREMIUM_EMAIL_ACCOUNTS, self.id)
   end
   
   def plan_name

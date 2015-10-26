@@ -13,8 +13,7 @@ module Freshfone
       Rails.logger.info "Freshfone notification worker"
       Rails.logger.info "JID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       Rails.logger.info "Start time :: #{Time.now.strftime('%H:%M:%S.%L')}"
-      Rails.logger.info "Type :: #{type}"
-      Rails.logger.info "#{params}"
+      Rails.logger.info "#{params.inspect}"
 
       begin
         self.current_account = ::Account.current
@@ -51,6 +50,7 @@ module Freshfone
     end
 
     def notify_browser_agents
+      Rails.logger.info "Notify Browser for User Id :: #{agent} Account Id :: #{current_account.id}"
       current_call = current_account.freshfone_calls.find_by_conference_sid(params[:ConferenceSid])
       return unless current_call.can_be_connected?
       call_params  = {
@@ -75,6 +75,7 @@ module Freshfone
     end
 
     def notify_mobile_agents
+      Rails.logger.info "Notify Mobile for User Id :: #{agent} Account Id :: #{current_account.id}"
       current_call = @current_account.freshfone_calls.find_by_conference_sid(params[:ConferenceSid])
       return unless current_call.can_be_connected?
       call_params  = {
@@ -100,6 +101,7 @@ module Freshfone
     end
 
     def notify_browser_transfer
+      Rails.logger.info "Notify Browser Transfer for User Id :: #{agent} Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected? || (params[:transfer] == 'true' && current_call.onhold?)
       self.current_number = current_call.freshfone_number
@@ -126,6 +128,7 @@ module Freshfone
     end
 
     def notify_mobile_transfer
+      Rails.logger.info "Notify Mobile Transfer for User Id :: #{agent} Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected? || ( params[:transfer] == 'true' && current_call.onhold?)
       freshfone_user = current_account.freshfone_users.find_by_user_id agent
@@ -151,6 +154,7 @@ module Freshfone
     end
 
     def notify_external_transfer
+      Rails.logger.info "Notify External Transfer to Extenal Number :: #{params[:external_number]} for Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected? || (params[:external_transfer] == 'true' && current_call.onhold?)
       self.current_number = current_call.freshfone_number
@@ -174,6 +178,7 @@ module Freshfone
     end
 
     def notify_round_robin_agent
+      Rails.logger.info "Notify Round Robin for User Id :: #{agent['id']} Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected?
       self.current_number = current_call.freshfone_number
@@ -195,11 +200,13 @@ module Freshfone
         call_actions.handle_failed_incoming_call(current_call, agent['id'])
         raise e
       end
+      update_and_validate_pinged_agents(current_call, agent_call)
       set_browser_sid(agent_call.sid, current_call.call_sid) if (browser_agent? && agent_call.present?)
     end
 
     def notify_direct_dial
       current_call   = current_account.freshfone_calls.find(params[:call_id])
+      Rails.logger.info "Notify Direct Dial for Number :: #{current_call.direct_dial_number} for Account Id :: #{current_account.id}"
       return unless current_call.can_be_connected?
       self.current_number = current_call.freshfone_number
       call_params    = {

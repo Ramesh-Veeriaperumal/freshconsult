@@ -35,18 +35,20 @@ class ApplicationController < ActionController::Base
   include ControllerLogger
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
+  include ActionView::Helpers::DateHelper
+
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
   skip_before_filter :verify_authenticity_token
-  before_filter :verify_authenticity_token, :if => :api_request?
+  before_filter :verify_authenticity_token, :if => :web_request?
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   #
-  
+
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
   end
@@ -97,6 +99,25 @@ class ApplicationController < ActionController::Base
   def set_default_locale
     I18n.locale = I18n.default_locale
   end
+  
+  # Check set_current_account method in api_applciation_controller if this method is modified.
+  def set_current_account
+    begin
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      handle_unverified_request
+    end    
+  end
+
+  def show_password_expiry_warning
+    if current_user and current_user.password_expiry and flash.blank? and web_request? and current_user.login_via_password?
+      #get the remaining time for expiry in minutes
+      time_to_expiry = (current_user.password_expiry - Time.now.utc).ceil
+      flash[:notice] = t('flash.password_expiry', :time_in_words => time_ago_in_words((time_to_expiry).seconds.from_now)) if time_to_expiry < 60.minutes && time_to_expiry > 0
+    end
+  end
 
   def render_404
      # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
@@ -120,6 +141,9 @@ class ApplicationController < ActionController::Base
         render :xml =>result.to_xml(:indent =>2,:root=> :errors),:status =>:not_found
       end
       format.json do 
+        render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
+      end
+      format.nmobile do 
         render :json => {:errors =>{:error =>"Record Not Found"}}.to_json,:status => :not_found
       end
       format.widget do 
@@ -166,15 +190,7 @@ class ApplicationController < ActionController::Base
     end
 
   private
-    # Check set_current_account method in api_applciation_controller if this method is modified.
-    def set_current_account
-      current_account.make_current
-      User.current = current_user
-    rescue ActiveRecord::RecordNotFound
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      handle_unverified_request
-    end
-
+    
     def freshdesk_form_builder
       ActionView::Base.default_form_builder = FormBuilders::FreshdeskBuilder
     end
@@ -221,7 +237,7 @@ class ApplicationController < ActionController::Base
     end
     #End here
 
-    def api_request?
+    def web_request?
       request.cookies["_helpkit_session"]
     end
 end

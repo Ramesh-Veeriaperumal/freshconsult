@@ -33,6 +33,9 @@
 					padding-top: 2px;
 				}
 			}
+			.data-refresh{
+				padding: 5px;
+			}
 			.selected-menu-logo{
 				text-align: center;
 				color: #5c5c5c;
@@ -763,6 +766,7 @@
 			}
 			&:not(.disable):hover{
 				color: #1272de;
+				text-decoration: underline; 
 			}
 		}
 		.odd td{
@@ -773,6 +777,7 @@
 			}
 			&:not(.disable):hover{
 				color: #1272de;
+				text-decoration: underline; 
 			}
 		}
 	}
@@ -977,6 +982,7 @@
 	    	font-size:13px;
 	    	font-weight:500;
 	    	color: #aeaeae;
+	    	cursor: default;
 	    }
 	}
 }

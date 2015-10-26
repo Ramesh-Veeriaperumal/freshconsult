@@ -96,6 +96,10 @@
 			<%= report_item({:label => t('adv_reports.agent_top_n_analysis'), :class => 'agent-top-n-analysis', :url => reports_agent_analysis_reports_url}) %>
 			<%= report_item({:label => t('adv_reports.group_top_n_analysis'), :class => 'group-top-n-analysis', :url => reports_group_analysis_reports_url}) %>
 			<%= report_item({:label => t('adv_reports.customer_top_n_analysis'), :class => 'customer-top-n-analysis', :url => reports_customers_analysis_reports_url}) %>
+			<% if bi_reports_ui_enabled? %>
+				<%= helpdesk_report_item({:label => t('helpdesk_reports.customer_report.title'), 
+					:class => 'customer-report', :url => '/reports/v2/customer_report'}) %>
+			<% end %>
 		</ul>
 		</div>
 	<%end%>

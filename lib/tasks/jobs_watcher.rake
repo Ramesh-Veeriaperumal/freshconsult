@@ -1,17 +1,10 @@
-FAILED_DELAYED_JOBS_THRESHOLD = Rails.env.production? ? 100 : 2
-TOTAL_DELAYED_JOBS_THRESHOULD = Rails.env.production? ? 800 : 50
-#pagerduty constants 
-TOTAL_DJ_PAGERDUTY_THRESHOULD = Rails.env.production? ? 5000 : 50
-FAILED_DJ_PAGERDUTY_THRESHOLD = Rails.env.production? ? 200 : 2
-PAGER_DUTY_FREQUENCY_SECS = Rails.env.production? ? 18000 : 900 #5 hours : # 15 mins
+DELAYED_JOB_QUEUES =  YAML::load(ERB.new(File.read("#{Rails.root}/config/delayed_job_watcher.yml")).result)[Rails.env]
+DELAYED_JOBS_MSG = "Queue's jobs needs your attention!"
 
+PAGER_DUTY_FREQUENCY_SECS = Rails.env.production? ? 18000 : 900 #5 hours : # 15 mins
 PAGERDUTY_QUEUES = [
     "observer_worker","update_ticket_states_queue"
 ]
-DELAYED_JOBS_MSG = "Delayed jobs needs your attention!"
-CUSTOM_MAILBOX_JOBS_MSG = "Custom Mailbox's delayed jobs needs your attention!"
-
-
 
 FAILED_RESQUE_JOBS_THRESHOLD = 500
 QUEUE_WATCHER_RULE = {
@@ -31,59 +24,50 @@ QUEUE_WATCHER_RULE = {
 namespace :delayedjobs_watcher do 
     desc 'To keep a tab on failed delayed jobs '
     task :failed_jobs => :environment do
-
-        failed_jobs_count =  Delayed::Job.count( 
-            :conditions => ["last_error is not null and attempts > 1"]
+      DELAYED_JOB_QUEUES.each do |queue, config|
+          
+        queue = queue.capitalize
+        failed_jobs_count = Object.const_get("#{queue}::Job").count(
+          :conditions => ["last_error is not null and attempts > 1"]
         )
 
-        FreshdeskErrorsMailer.error_email(nil, nil, nil,{  
-            :subject => "#{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
-        }) if failed_jobs_count >= FAILED_DELAYED_JOBS_THRESHOLD
-
-
-        failed_custom_mailbox_jobs = Mailbox::Job.count(
-            :conditions => ["last_error is not null and attempts > 1"]
-        )
         FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
-            :subject => "#{CUSTOM_MAILBOX_JOBS_MSG} #{failed_custom_mailbox_jobs} failed jobs" 
-        }) if failed_custom_mailbox_jobs >= FAILED_DELAYED_JOBS_THRESHOLD
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs" 
+        }) if failed_jobs_count >= config["failed"]
 
         #For every 5 hours we will init the alert
-        if FAILED_DJ_PAGERDUTY_THRESHOLD <= failed_jobs_count and 
-            $redis_others.get("FAILED_JOBS_ALERTED").blank?
+        if config["pg_duty_failed"] <= failed_jobs_count and 
+          $redis_others.get("#{queue.upcase}_FAILED_JOBS_ALERTED").blank?
 
-            Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
-                :description => "#{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs"
-            })
-            $redis_others.setex("FAILED_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
+          Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{failed_jobs_count} failed jobs"
+          })
+          $redis_others.setex("#{queue.upcase}_FAILED_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
-
+      end
     end
 
     desc "Monitoring growing queue of delayed jobs"
     task :total_jobs => :environment do
+      DELAYED_JOB_QUEUES.each do |queue|
 
-        total_jobs_count = Delayed::Job.count
+        queue = queue.capitalize
+        total_jobs_count = Object.const_get("#{queue}::Job").count
+    
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil, {
+          :subject => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
+        }) if total_jobs_count >= config["total"]
 
-        FreshdeskErrorsMailer.error_email(nil, nil, nil,{  
-            :subject => "#{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue" 
-        }) if total_jobs_count >= TOTAL_DELAYED_JOBS_THRESHOULD
-
-        total_mailbox_jobs_count = Mailbox::Job.count
-        FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,{  
-            :subject => "#{FAILED_JOBS_ALERTED} #{total_mailbox_jobs_count} jobs are in queue" 
-        }) if total_mailbox_jobs_count >= TOTAL_DELAYED_JOBS_THRESHOULD
-        
         #For every 5 hours we will init the alert
-        if TOTAL_DJ_PAGERDUTY_THRESHOULD <= total_jobs_count and
-            $redis_others.get("TOTAL_JOBS_ALERTED").blank?
+        if config["pg_duty_total"]  <= total_jobs_count and 
+          $redis_others.get("#{queue.upcase}_TOTAL_JOBS_ALERTED").blank?
 
-            Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
-                :description => "#{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue"
-            })
-            $redis_others.setex("TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
-
+          Monitoring::PagerDuty.trigger_incident("delayed_jobs/#{Time.now}",{
+            :description => "#{queue} #{DELAYED_JOBS_MSG} #{total_jobs_count} jobs are in queue"
+          })
+          $redis_others.setex("#{queue.upcase}_TOTAL_JOBS_ALERTED", PAGER_DUTY_FREQUENCY_SECS, true)
         end
+      end
     end
 end
 

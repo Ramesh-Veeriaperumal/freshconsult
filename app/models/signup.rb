@@ -6,7 +6,7 @@ class Signup < ActivePresenter::Base
   
   attr_accessor :contact_first_name, :contact_last_name
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
-    :build_subscription, :build_account_configuration, :set_time_zone
+    :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
 
   after_save :make_user_current, :populate_seed_data
 
@@ -78,6 +78,21 @@ class Signup < ActivePresenter::Base
     def set_time_zone
       account.time_zone = @time_zone 
     end
+
+    def build_password_policy
+     account.build_agent_password_policy(
+       :user_type =>2,
+       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       )
+
+      account.build_contact_password_policy(
+       :user_type =>1,
+       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
+       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+       )
+
+   end
 
     def default_preferences
       HashWithIndifferentAccess.new(

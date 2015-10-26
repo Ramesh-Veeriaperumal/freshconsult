@@ -1,59 +1,45 @@
-<div class="tkt-wrapper ticket_show" data-showing='notes'>
-	<%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" } do |f| %>
-	<div class="tkt-wrapper-inner compose_email clearfix">
-		<div id="tkt-inner" class="scollable_content clearfix" >
-      <ul>
-      <div class="tkt-sidebar" id="ticket_details_sidebar">
-        <h3 class="lead"><%= t('ticket.compose.properties') %></h3>
-        <div class="widget" id="TicketProperties">
-        <%= render :partial => '/helpdesk/tickets/show/ticket_field_elements', 
-                  :locals => {:form_builder => f, :ticket =>  @item} %>
-        </div>
-      </div>
-			<div class="leftcontent">
-        <div class='page-header-sticky' rel='sticky'>
-          <div class='sticky-header-wrapper'>
-            <h3 class='lead pull-left'> 
-              <%= t('ticket.compose.send_email') %>
-            </h3>
-            <div class="pull-right">
-                <%= render(:partial => "/helpdesk/tickets/compose_buttons") %>
-            </div>
-            <span class="pull-left muted sub-text">
+<% content_for :sidebar do -%>&nbsp;<%- end %>
+<div class="compose-new-email">
+<div class="alert notice" id="compose-notice">
+Agents can initiate conversations with customers by sending an outbound email. This feature can be disabled by the administrator in Admin > Email.
+<a class="close" href="#"></a>
+</div>
+  <%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" } do |f| %>
+     <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
+        <div class="muted">
               <%= t("ticket.compose.compose_email_info") %>
               <a href="https://support.freshdesk.com/support/solutions/articles/211974" target="_blank"><%= t("ticket.compose.learn_more") %></a>
-            </span>
-          </div>
+       </div>
+  <div class="address-details">
+    <div class="requester-email details-widget light-border">
+    <label class="inline-label" for="cc-email-address"><%= t('ticket.compose.from') %> </label>
+      <%= select_tag "helpdesk_ticket[email_config_id]", options_for_compose,  {:class => "required from_address_wrapper", :data => {:placeholder => t("ticket.compose.compose_choose_email")}}%>
+    <div>
+    </div>
+    </div>
+    <div class="to-address details-widget">
+      <label class="inline-label" for="cc-email-address"><%= t('ticket.compose.to') %></label>
+      <%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:placeholder => "Type a contact", :object_name => :helpdesk_ticket, :url => requesters_search_autocomplete_index_path }) %>
+      <span class="show-cc" data-action="show-cc"><%= t('helpdesk.shared.cc_label') %></span>
+    </div>
+
+      <div class="cc-address hide details-widget">
+      <label class="inline-label" for="cc-email-address"><%= t('helpdesk.cc') %>: </label>
+          <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_cc" %>
+          <span class="hide-cc" data-action="hide-cc"><%= t('helpdesk.shared.hide_cc') %></span>
+    </div>
+
+  </div>
+  <div class="ticket-details">
+        <%= ticket_body_form f %>
+    </div>
+        <div class="compose-new-ticket">
+        <h3 class="lead"><%= t('ticket.compose.properties') %></h3>
+        <%= render :partial => '/helpdesk/tickets/show/ticket_field_elements',  :locals => {:form_builder => f, :ticket =>  @item} %>
         </div>
-        <br/>
-        <div class="new_ticket_address new_ticket_body">
-        <li>
-          <div class="caption"><%= t('ticket.compose.from') %></div>
-          <%= select_tag "helpdesk_ticket[email_config_id]", options_for_compose, 
-                    {
-                      :class => "required from_address_wrapper", 
-                      :data => {
-                        :placeholder => t("ticket.compose.compose_choose_email")
-                      }
-                    }  %>
-        </li>
-        <li>
-          <div class="caption"><%= t('ticket.compose.to') %></div>
-          <%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:object_name => :helpdesk_ticket, :placeholder => true, :url => requesters_search_autocomplete_index_path }) %>
-        </li>
-        <%= render(:partial => "/helpdesk/tickets/components/cc_bcc_email", :locals => { :show_bcc => false}) %>
-        </div>
-        <div class="new_ticket_body">
-          <%= ticket_body_form f %>
-        </div>
-        <div class="pull-right pt20">
-            <%= render(:partial => "/helpdesk/tickets/compose_buttons") %>
-        </div>
-			</div>
-    </ul>
-	</div>
-	<% end %>
-</div>
+
+  <% end %>
+  </div>
 
 <% content_for :onload_script do -%> 
    
@@ -77,5 +63,21 @@
  jQuery('body').on('assetLoaded.fjax', function(){
   window.App.Tickets.Compose.original_requester_error_message = jQuery.validator.messages.requester;
  })
-<% end %>
+      jQuery("[data-action='show-cc']").on('click', function(){
+          jQuery('.show-cc').addClass('muted');
+          jQuery('.cc-address ').removeClass('hide');
+           jQuery('.to-address').addClass('light-border');
+      });
 
+      jQuery("[data-action='hide-cc']").on('click', function(){
+           jQuery('.show-cc').removeClass('muted');
+          jQuery('.cc-address ').addClass('hide');
+           jQuery('.to-address').removeClass('light-border');
+      });
+      var close_flash = jQuery("#compose-notice")
+      closeableFlash(close_flash);
+    //TODO - Change to a generic truncate function.
+  jQuery('.invalid_attachment a').livequery(function(ev){
+      jQuery(this).text(jQuery(this).text().substring(0,19)+"...");
+    });
+<% end %>

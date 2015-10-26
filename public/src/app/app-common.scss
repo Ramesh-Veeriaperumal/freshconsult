@@ -2234,12 +2234,121 @@ a.mobile_switchBtn {
 	@include margin-left(20px); 
 	@include padding-left(20px); 
 	@include border-left(2px solid #aaa);
-	li {
+	
+	ul:not(.password-policy-toggle-container) li {
 	    padding: 4px; 
 	    list-style: disc; 
 	    @include margin-left(20px);
 	}
 }
+
+.password-policy-section{
+    .info-data{
+        margin-top:-5px;
+    }
+}
+
+.password-policy-container{
+  .password-policies.default li{
+	  padding: 4px; 
+	  list-style: disc; 
+	  @include margin-left(20px);
+  }
+
+  .password-policies.advanced li{
+    margin: 0;
+    margin-top: 5px;
+    list-style: none;
+    padding: 0;
+
+    &:not(.checked){
+      @include opacity(.7);
+    }
+
+    .input-password-length{
+        width: 125px;
+
+    }
+
+    .input-password-history{
+        width: 110px;
+    }
+  }
+}
+
+.password-policy-section{
+	.info-date{
+	    margin-top:-5px;
+	}
+} 
+
+.password-policies{
+  .select2-container{
+    vertical-align: top;
+
+    &:not(.select2-dropdown-open) .select2-choice{
+		  border:none;
+		  background:transparent;
+		  border-bottom: 1px solid #ccc;
+		  border-radius: 0;
+
+		  .select2-arrow{
+		  	background:transparent;
+		  }
+		}
+	}
+
+  .select2-container-disabled .select2-choice{
+		border: none;
+		border-bottom: 1px solid #ccc;
+  }
+
+  .select2-choice{
+	  font-weight: 500;
+	  height: 16px;
+	  padding:0px;
+	  @include padding-left(5px);
+	  line-height: 15px;
+
+  	.select2-chosen{
+  		@include margin-right(18px);
+  	}
+
+  	.select2-arrow b::after{
+  		top: 5px;
+  	}
+  }
+
+	.select2-dropdown-open{
+		.select2-choice{
+			background-image: none;
+			background-color:#fff;
+			.select2-arrow b::after{
+				top: 2px;
+			}
+		}
+	}
+}
+
+.popover .password-wrapper{
+
+    .policy-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size:14px;
+    }
+
+    ul{
+        @include margin-left(5px);
+    }
+
+    li{
+    @include margin-left(10px);
+    list-style-type: disc;
+    line-height: 22px;
+  }
+}
+
 
 /* Security Notifications */
 

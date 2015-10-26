@@ -160,13 +160,18 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 color: options.color,
                 states: { hover: { brightness: 0 } },
                 borderRadius: 5,
-                cursor: options.cursor,
+                cursor: HelpdeskReports.locals.enable_ticket_list ? 'pointer' : null,
                 name: options.first_series,
+                clickable: HelpdeskReports.locals.enable_ticket_list,
                 point: {
                     events: {
-                        click: function () {
-                            var ev = this;
-                            _FD.clickEventForTicketList(ev);
+                        click: function (e) {
+                            if(e.point.series.options.clickable){
+                                var ev = this;
+                                _FD.clickEventForTicketList(ev);    
+                            }else{
+                                return false;
+                            }
                         }
                     }
                 }
@@ -178,13 +183,18 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     duration: 1000,
                     easing: 'easeInOutQuart'
                 },
-                cursor: 'pointer',
+                cursor: HelpdeskReports.locals.enable_ticket_list ? 'pointer' : null,
                 name: options.second_series,
+                clickable: HelpdeskReports.locals.enable_ticket_list,
                 point: {
                     events: {
-                        click: function () {
-                            var ev = this;
-                            _FD.clickEventForTicketList(ev);
+                        click: function (e) {
+                            if(e.point.series.options.clickable){
+                                var ev = this;
+                                _FD.clickEventForTicketList(ev);
+                            }else{
+                                return false;
+                            }
                         }
                     }
                 },
@@ -250,11 +260,17 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         data: _.values(hash[series[i]]).reverse(),
                         legendIndex: i,
                         id: series[i],
+                        cursor: HelpdeskReports.locals.enable_ticket_list ? 'pointer' : null,
+                        clickable: HelpdeskReports.locals.enable_ticket_list,
                         point: {
                             events: {
-                                click: function () {
-                                    var ev = this;
-                                    _FD.clickEventForBucketTicketList(ev);
+                                click: function (e) {
+                                    if(e.point.series.options.clickable){
+                                        var ev = this;
+                                        _FD.clickEventForBucketTicketList(ev);
+                                    }else{
+                                        return false;
+                                    }    
                                 }
                             }
                         }
@@ -391,7 +407,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
 
             if (HelpdeskReports && HelpdeskReports.locals && HelpdeskReports.locals.chart_hash) {
                 for (var key in hash[active_metric]) {
-                    if (group_by.indexOf(key) > -1) {
+                    if (group_by.indexOf(key) > -1 && !HelpdeskReports.locals.chart_hash[active_metric].hasOwnProperty(key)) {
                         HelpdeskReports.locals.chart_hash[active_metric][key] = hash[active_metric][key];
                     }
                 }
@@ -416,8 +432,10 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             _FD.contructCharts(hash);
 
         },
-        customFieldInit: function (hash) {
-            _FD.mergeCustomFieldDataHash(hash)
+        customFieldInit: function (hash, flag) {
+            if(flag === true) {
+                _FD.mergeCustomFieldDataHash(hash);
+            }
             _FD.customFields(hash);
         }
     };

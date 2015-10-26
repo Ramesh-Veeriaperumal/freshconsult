@@ -189,9 +189,9 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       if escalation[:time].seconds.since(ticket.send(due_by)) <= Time.zone.now
         assigned_agent_id = Helpdesk::SlaPolicy.custom_users_id_by_type[:assigned_agent]
         responder_id = ticket.responder_id
-        escalation[:agents_id].map! {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }
-        unless escalation[:agents_id].blank? ||
-        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
+        agent_ids = escalation[:agents_id].map {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }
+        unless agent_ids.blank? ||
+        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", agent_ids])).blank?
           SlaNotifier.send_email(ticket, agents, type)
         end
         return true

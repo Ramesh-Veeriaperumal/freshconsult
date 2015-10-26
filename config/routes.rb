@@ -272,6 +272,7 @@ Helpkit::Application.routes.draw do
       post :create_contact
       get :configure_export
       post :export_csv
+      get :contact_details_for_ticket
     end
 
     member do
@@ -283,6 +284,8 @@ Helpkit::Application.routes.draw do
       put :make_agent
       put :make_occasional_agent
       put :verify_email
+      get :change_password
+      put :update_password
       get :unblock
       post :create_contact
       put :update_contact
@@ -631,10 +634,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :remote_configurations do
-      get :open_id_complete, on: :collection
-      get :open_id, on: :collection
-    end
+    resources :remote_configurations
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -738,9 +738,25 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :quickbooks do
-      get :refresh_access_token
+      post :refresh_access_token
       get :render_success
       post :create_company
+    end
+
+    namespace :marketplace do
+      namespace :login do
+        get :login
+      end
+
+      namespace :quickbooks_sso do
+        get :open_id
+        get :open_id_complete
+      end
+
+      namespace :signup do
+        put :associate_account
+        put :create_account
+      end
     end
 
     resources :dynamics_crm do
@@ -787,6 +803,7 @@ Helpkit::Application.routes.draw do
         get :log_out
         post :uninstall
         get :index
+        get :refresh
         post :iframe_page
         post :search
         delete :delete_hootsuite_user
@@ -1515,7 +1532,7 @@ Helpkit::Application.routes.draw do
         post :custom_search
         post :export_csv
         post :latest_ticket_count
-        post :add_requester
+        match :add_requester
         get :filter_options
         get :full_paginate
         get :summary
@@ -1615,8 +1632,7 @@ Helpkit::Application.routes.draw do
       resources :tag_uses
       resources :reminders
       resources :time_sheets
-      resources :mobihelp_ticket_extras, :only => :index
-
+      resources :mobihelp_info, :only => :index
     end
     
     match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
@@ -2201,6 +2217,7 @@ Helpkit::Application.routes.draw do
         get :ticket_properties
         get :load_reply_emails
         get :get_filtered_tickets
+        get :get_solution_url
         get :mobile_filter_count
         match '/ticket_properties/:id' => 'tickets#ticket_properties', :via => :get
       end
@@ -2290,9 +2307,6 @@ Helpkit::Application.routes.draw do
     end
   end
   #  end
-  match '/marketplace/login', :controller => 'google_login', :action => 'marketplace_login'
-  match '/gadget/login', :controller => 'google_login', :action => 'google_gadget_login'
-  match '/google/login', :controller => 'google_login', :action => 'portal_login'
 
   constraints(lambda {|req| req.subdomain == AppConfig['billing_subdomain'] }) do
     # namespace :billing do
@@ -2514,7 +2528,7 @@ Helpkit::Application.routes.draw do
   end
 
   namespace :doorkeeper, :path => '' do
-    namespace :api do
+    namespace :api, :path => '' do
       namespace :marketplace do
         get :data
       end

@@ -14,6 +14,11 @@ describe Solution::FoldersController do
      :category_id => @test_category.id } )
     @test_folder2 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1,
      :category_id => @test_category.id } )
+    @companies_array = []
+    251.times do
+      company = create_company
+      @companies_array << company.id
+    end
   end
 
   before(:each) do
@@ -130,6 +135,15 @@ describe Solution::FoldersController do
     session["flash"][:notice].should eql I18n.t(:'folder_edit_not_allowed')
   end  
 
+  it "should show error message if folder update fails due to exceeding companies limit" do
+    put :update, :id => @test_folder.id, :category_id => @test_category.id,
+      :solution_folder => { 
+                            :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+                          },
+      :customers => @companies_array.join(',')
+    response.body.should include(I18n.t("solution.folders.visibility.companies_limit_exceeded"))
+  end
+
   it "should delete a solution categories folder" do
     delete :destroy, :id => @test_folder.id, :category_id => @test_category.id
     @account.folders.find_by_name("#{@test_folder.name}").should be_nil
@@ -143,7 +157,10 @@ describe Solution::FoldersController do
       @test_category2 = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
       @test_folder3 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
       @test_folder4 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @test_folder5 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+      @test_folder6 = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
       @folder_ids = [@test_folder3.id, @test_folder4.id]
+      @folder_ids_1 = [@test_folder5.id, @test_folder6.id]
     end
 
     # Start : Visible to
@@ -208,6 +225,34 @@ describe Solution::FoldersController do
             folder.visibility.should be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
             folder.customer_ids.should include(@company2.id, @company1.id)
           end
+        end
+
+        it "should not change the visibility when company limit exceeds: replace existing companies" do
+          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => @companies_array, :addToExisting => 0
+          expect(flash[:error]).to be_present
+          expect(flash[:notice]).to_not be_present
+          [@test_folder5, @test_folder6].each do |folder|
+            folder.reload
+            folder.visibility.should_not be_eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+            folder.customer_ids.should eql([])
+          end
+        end
+
+        it "should not change the visibility for folders where company limit exceeds: add to existing companies" do
+          put :update, :id => @test_folder6.id, :category_id => @test_category.id,
+                        :solution_folder => { 
+                                              :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+                                            },
+                        :customers => [@company1.id, @company2.id].join(',')
+          put :visible_to, :folderIds => @folder_ids_1, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users], :companies => @companies_array.first(250), :addToExisting => 1
+          expect(flash[:error]).to be_present
+          expect(flash[:notice]).to be_present
+          @test_folder5.reload
+          @test_folder5.visibility.should eql(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users])
+          @test_folder5.customer_ids.sort.should eql(@companies_array.first(250))
+          @test_folder6.reload
+          @test_folder6.customer_ids.should eql([@company1.id, @company2.id])
         end
 
       end

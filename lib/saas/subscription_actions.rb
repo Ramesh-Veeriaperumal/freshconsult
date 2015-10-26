@@ -11,7 +11,11 @@ class SAAS::SubscriptionActions
   
   def drop_feature_data(account)
     FEATURES.each do |feature_id|
-      send(%(drop_#{feature_id}_data), account) unless account.features?(feature_id)
+      begin
+        send(%(drop_#{feature_id}_data), account) unless account.features?(feature_id)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
     end
   end
   

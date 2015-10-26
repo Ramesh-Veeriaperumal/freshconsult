@@ -10,13 +10,18 @@ HelpdeskReports.CoreUtil = {
         metrics_url : "/fetch_metrics",
         tickets_url : "/fetch_ticket_list"
     },
-    disabled_filter: ['status'],
-    //Time-outs for ajax requests in milliseconds
+    reports_specific_disabled_filter:{
+        "customer_report":["agent_id","group_id","company_id"]
+    },
+    global_disabled_filter: ["status"],
+    /* Time-outs for ajax requests in milliseconds, 
+    ** set to 1 min for now. Will be handled at backend later on.
+    */
     timeouts: {
-        main_request: 45000,
-        glance_right_pane: 30000,
-        ticket_list: 15000,
-        custom_field: 15000
+        main_request: 60000,
+        glance_right_pane: 60000,
+        ticket_list: 60000,
+        custom_field: 60000
     },
     getFilterDisplayData: function () {
         var _this = this;
@@ -292,6 +297,14 @@ HelpdeskReports.CoreUtil = {
         jQuery(document).on('click.helpdesk_reports', '[data-action="hide-ticket-list"]', function () {
             _this.actions.hideTicketList();
         }); 
+        jQuery(document).on('mousemove.helpdesk_reports', '.ticket-list-wrapper', function(event) {
+            event.preventDefault();
+            jQuery('body').addClass('preventscroll');
+        });
+        jQuery(document).on('mouseleave.helpdesk_reports', '.ticket-list-wrapper', function(event) {
+            event.preventDefault();
+            jQuery('body').removeClass('preventscroll');
+        });
         jQuery('#reports_wrapper').on('keypress.helpdesk_reports keyup.helpdesk_reports keydown.helpdesk_reports', "#date_range", function (ev) {
             _this.actions.disableKeyPress(ev);
         });
@@ -509,7 +522,7 @@ HelpdeskReports.CoreUtil = {
         
         if (filter.length) {
             jQuery(filter).each(function (index, hash) {
-                if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.disabled_filter.indexOf(hash.condition) < 0) {
+                if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.global_disabled_filter.indexOf(hash.condition) < 0 && (_this.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(hash.condition) < 0) {
                     _this.constructReportField(hash.condition, hash.value);
                 }
             });

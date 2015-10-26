@@ -28,6 +28,13 @@
       return true;
     }
   }, "Oops! You have exceeded Twitter's character limit. You'll have to modify your response." );
+  
+  
+  $.validator.addMethod("password_confirmation", function(value, element){
+    return ($(element).val() == $("#password").val());
+  }, "The passwords don't match. Please try again.");
+
+  $.validator.addClassRules("password_confirmation", { password_confirmation : true });
 
   $.validator.addMethod("hours", function(value, element) {
      hours = normalizeHours(value);
@@ -132,8 +139,8 @@
     });
  
     return _returnCondition
-
- },jQuery.validator.format('We could not find any matching requester. Please check your query, or try adding a <a href="#" id="add_requester_btn_proxy">new requester.</a>'));
+    
+ },jQuery.validator.format('Please enter a valid requester details or <a href="#" id="add_requester_btn_proxy">add new requester.</a>'));
 
   $.validator.addClassRules("requester", { requester: true });
 

@@ -16,5 +16,9 @@ module Search::Job
     def remove_job_key key
       remove_others_redis_key key
     end
+
+    def es_version
+      (Time.zone.now.to_f * 1000000).ceil
+    end
   end
 end

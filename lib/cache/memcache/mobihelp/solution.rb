@@ -17,18 +17,18 @@ module Cache::Memcache::Mobihelp::Solution
     }
   end
 
-  def solutions_with_category(categories)
+  def solutions_with_category(category_ids)
     category_json_strings = []
-    categories.each do |category|
-      category_json_strings << solutions(category)
+    category_ids.each do |category_id|
+      category_json_strings << solutions(category_id)
     end
     "[#{category_json_strings.join(",")}]"
   end
 
-  def solutions_without_category(categories)
+  def solutions_without_category(category_ids)
     category_json_strings = []
-    categories.each do |category|
-      category_hash = ActiveSupport::JSON.decode(solutions(category))
+    category_ids.each do |category_id|
+      category_hash = ActiveSupport::JSON.decode(solutions(category_id))
       category_hash["category"]["public_folders"].each do |f|
         category_json_strings << {"folder" => f}.to_json
       end
@@ -40,18 +40,24 @@ module Cache::Memcache::Mobihelp::Solution
     MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => self.id }
   end
 
+  def mobihelp_solutions_key_with_category_id(category_id)
+    MOBIHELP_SOLUTIONS % { :account_id => account_id, :category_id => category_id }
+  end
+
   private
 
     def mobihelp_solution_updated_time_key(app_id)
       MOBIHELP_SOLUTION_UPDATED_TIME % { :account_id => account_id, :app_id => app_id }
     end
 
-    def solutions(category)
-      MemcacheKeys.fetch(category.mobihelp_solutions_key) {
+    def solutions(category_id)
+      MemcacheKeys.fetch(mobihelp_solutions_key_with_category_id(category_id)) {
         ### MULTILINGUAL SOLUTIONS - META READ HACK!!
         include_hash = (Account.current.launched?(:meta_read) ? 
                         {:public_folders_through_meta => {:published_articles_through_meta => [:tags]}} : 
                         {:public_folders => {:published_articles => [:tags]}}) 
+
+        category = Solution::Category.find_by_id(category_id)
 
         category.to_json(:except => :account_id, :include => {:public_folders => 
           {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 

@@ -16,7 +16,7 @@ module Helpdesk::TagMethods
     remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) },item) unless !remove_tags
     #Choosing the ones that are in the old list and not in the new ones.
 
-    update_ticket_in_es(item) if Account.current.launched?(:es_count_writes)
+    update_ticket_in_es(item) if (tag_list.present? and Account.current.launched?(:es_count_writes))
   end
 
   def add_ticket_tags(tags_to_be_added, item)
@@ -41,7 +41,7 @@ module Helpdesk::TagMethods
     SearchSidekiq::TicketActions::DocumentAdd.perform_async({ 
                                                   :klass_name => 'Helpdesk::Ticket', 
                                                   :id => ticket.id,
-                                                  :version_value => Time.now.to_i
+                                                  :version_value => Search::Job.es_version
                                                 })
   end
 

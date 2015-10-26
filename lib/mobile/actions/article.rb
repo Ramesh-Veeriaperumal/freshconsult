@@ -1,7 +1,7 @@
 module Mobile::Actions::Article
 
 	JSON_OPTIONS = { 
-		:only=> [ :id, :title, :desc_un_html,:description ],
+		:only=> [ :id, :title, :desc_un_html,:description , :status],
 		:tailored_json => true
   	}
 

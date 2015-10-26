@@ -17,7 +17,8 @@ Sidekiq.configure_client do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
-      "Ecommerce::EbayUserWorker"
+      "Ecommerce::EbayUserWorker",
+      "PasswordExpiryWorker"
     ]
   end
 end
@@ -39,7 +40,8 @@ Sidekiq.configure_server do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
-      "Ecommerce::EbayUserWorker"
+      "Ecommerce::EbayUserWorker",
+      "PasswordExpiryWorker"
     ]
   end
   config.client_middleware do |chain|
@@ -50,7 +52,8 @@ Sidekiq.configure_server do |config|
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
-      "Ecommerce::EbayUserWorker"
+      "Ecommerce::EbayUserWorker",
+      "PasswordExpiryWorker"
     ]
   end
 end

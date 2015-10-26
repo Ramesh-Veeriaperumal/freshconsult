@@ -134,6 +134,19 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def salesforce_failures(account, caller_details)
+    headers = {
+      :subject    => "Salesforce account not found - #{account.id}",
+      :to         => "support@signupreports.freshdesk.com",
+      :from       => 'admin@freshdesk.com',
+      :sent_on    => Time.now
+    }
+    @account = account
+    @caller_details = caller_details
+    mail(headers) do |part|
+      part.html { render "salesforce_details", :formats => [:html] }
+    end.deliver
+  end
   private
     def setup_email(to, subject, from = AppConfig['billing_email'])
       @headers = {

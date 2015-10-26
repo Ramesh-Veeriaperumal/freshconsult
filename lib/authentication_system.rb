@@ -120,11 +120,12 @@ module AuthenticationSystem
     end
   
     def require_user
+
       unless authorized?
         respond_to do |wants|
           wants.html do
             store_location
-            flash[:notice] = I18n.t(:'flash.general.need_login')
+            flash[:notice] = password_expired? ? I18n.t(:'flash.general.password_expired') :I18n.t(:'flash.general.need_login')
             redirect_to login_url
           end
           
