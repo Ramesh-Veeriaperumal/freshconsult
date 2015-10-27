@@ -4,6 +4,7 @@
 	 	 locationClass = { 1: "top", 2: "right", 3: "bottom", 4: "left", top: "top", right: "right", bottom: "bottom", left: "left"},
 		 urlWithScheme = /^[a-zA-Z]+:\/\//,
 		 version  	   = 2,
+		 body_overflow,
 		 options = {
 			widgetId:		0,
 			buttonText: 	"Support",
@@ -140,7 +141,7 @@
 				link.className 			   = "freshwidget-customimage";
 				text = document.createElement("img");
 				text.src = options.backgroundImage;
-				$(text).attr('alt',options.buttonText);
+				text.alt = options.buttonText;
 				text = useFilterforIE(text);
 			}
 
@@ -239,6 +240,7 @@
 	 	$widget_attr.container.style.display = 'block';
 
 		if(!options.responsive){
+			body_overflow = document.body.style.overflow;
 			document.body.style.overflow='hidden'
 		}
 	 	if(Browser.Version() > 8 && options.screenshot == ""){
@@ -268,7 +270,8 @@
 	 function close(){
 	 	$widget_attr.container.style.display = 'none';
 	 	if(!options.responsive){
-			document.body.style.overflow='auto'
+			document.body.style.overflow= body_overflow || "auto";
+
 		}
 	 	widgetFormUrl();
 	 }

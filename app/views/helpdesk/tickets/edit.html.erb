@@ -1,35 +1,8 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
-<%= content_tag(:h3, t("ticket.edit"), :class => "lead") %>
-<%= form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
-  <ul class="ui-form">  
+
+<%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :rel=>"validate" } do |f| %>
+ <%= render :partial => "helpdesk/tickets/ticket_widget/edit_ticket_title",  :locals => {:f => f } %>
+  <ul class="compose-new-ticket">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => true, :f => f } %>
-    <li>
-      <%= render( :partial => "/helpdesk/shared/attachment_form" ) %>
-    </li>
-
-  <% unless @item.attachments.empty? and @item.cloud_files.empty? %>
-    <li>
-      <div class="attachments-wrap clearfix">
-        <%= content_tag('h4', t("attachments"), :class => "title")%>
-        <ul class="attachment_list">
-            <% @item.attachments.each do |attached| %> 
-              <%= attachment_list(attached, true, "ticket",nil) %>
-            <% end %>
-            <% @item.cloud_files.each do |cloud_file| %> 
-            <%= attachment_list(cloud_file, true, "cloud_file",nil) %>
-          <% end %>
-        </ul>
-      </div>
-    </li>
-  <% end %>
-
-
   </ul>
-  <div class="button-container">
-    <%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
-    <% if privilege?(:delete_ticket) %>
-      <%= link_to t('delete'), @item, :method => :delete, :class => "btn pull-left" %>
-    <% end %>
-    <%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit" %>    
-  </div>
 <% end %>  

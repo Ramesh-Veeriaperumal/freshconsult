@@ -44,6 +44,7 @@ defaults: &defaults
     - [update_ticket_states]
     - [ticket_observer]
     - [password_expiry]
+    - [deactivate_monitorship]
     - [es_v2_shard1]
 
 development:

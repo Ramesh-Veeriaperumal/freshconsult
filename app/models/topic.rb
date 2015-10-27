@@ -25,7 +25,7 @@ class Topic < ActiveRecord::Base
   before_save :set_sticky
   before_validation :set_unanswered_stamp, :if => :questions?, :on => :create
   before_validation :set_unsolved_stamp, :if => :problems?, :on => :create
-  before_validation :assign_default_stamps, :if => :forum_id_changed?, :on => :update
+  before_validation :assign_default_stamps, :mark_post_as_unanswered, :if => :forum_id_changed?, :on => :update
 
   has_many :merged_topics, :class_name => "Topic", :foreign_key => 'merged_topic_id', :dependent => :nullify
   belongs_to :merged_into, :class_name => "Topic", :foreign_key => "merged_topic_id"
@@ -421,7 +421,15 @@ class Topic < ActiveRecord::Base
   end
   
   def assign_default_stamps
-    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[self.forum.reload.forum_type]
+    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type] unless forum_was.forum_type == forum.forum_type
+  end
+
+  def mark_post_as_unanswered
+    posts.answered_posts.map(&:toggle_answer) if forum_was.questions? && !forum.questions?
+  end
+
+  def forum_was
+    @old_forum_cached ||= Forum.find(forum_id_was) if forum_id_was
   end
 
   def ticket

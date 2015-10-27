@@ -756,6 +756,14 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:privileges)
     end
 
+    def deleted_updated?
+       @all_changes.has_key?(:deleted)
+    end
+
+    def blocked_updated?
+       @all_changes.has_key?(:blocked)
+    end
+
     def company_info_updated?
       company_id_updated? or privileges_updated?
     end

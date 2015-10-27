@@ -1,17 +1,12 @@
 require 'spec_helper'
+include Search::Filters::QueryHelper
 
 RSpec.describe Search::Filters::QueryHelper do
   self.use_transactional_fixtures = false
-
   before(:all) do
-    class QueryHelper
-      include Search::Filters::QueryHelper
-    end
-    
     @current_user = [User.current.id.to_s]
     @user_groups  = User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s)
   end
-
 
   class Wf_Param < Array
     def push_param(condition, operator, value, ff_name = nil)
@@ -20,11 +15,6 @@ RSpec.describe Search::Filters::QueryHelper do
       else
         self.push('condition' => condition, 'operator' => operator, 'ff_name' => ff_name.first, 'value' => value)
       end
-    end
-
-    def push_default
-      self.push_param('spam', 'is', false)
-      self.push_param('deleted', 'is', false)
     end
   end
 
@@ -40,24 +30,21 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('status', 'is_in', 2)
     wf_params.push_param('responder_id', 'is_in', '-1,0')
-    wf_params.push_default
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => { 'status' => ['2'], :_cache => false })
     outer_must.push(:bool => { :should => [{ :missing => { :field => 'responder_id' }},
                                            { :terms => { 'responder_id' => @current_user,
                                                          :_cache => false } }] })
-    outer_must.push(:terms => {'spam' => ['false'], :_cache => false})
-    outer_must.push(:terms => { 'deleted' => ['false'], :_cache => false })
 
     actual.should eql(expected_query(outer_must))
   end
 
   it 'should construct bool filter with should, must and must_not' do
     options = { :should => 'sh', :must => %w[a, b], :must_not => 'mn' }
-    actual = QueryHelper.bool_filter(options)
+    actual = bool_filter(options)
     expected = { :bool => { :should => 'sh', :must => %w[a, b], :must_not => 'mn' } }
 
     actual.should eql(expected)
@@ -65,14 +52,14 @@ RSpec.describe Search::Filters::QueryHelper do
 
   it 'should construct bool filter with must only' do
     options = { :must => 'a' }
-    actual = QueryHelper.bool_filter(options)
+    actual = bool_filter(options)
     expected = { :bool => { :must => 'a' } }
     actual.should eql(expected)
   end
 
   it 'should construct missing filter' do
     field_name = 'myfield'
-    actual = QueryHelper.missing_filter(field_name)
+    actual = missing_filter(field_name)
     expected = { :missing => { :field => field_name } }
     actual.should eql(expected)
   end
@@ -80,7 +67,7 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should construct range filter without caching' do
     field_name = 'myfield'
     range_options = { :gt => 7, :lt => 10 }
-    actual = QueryHelper.range_filter(field_name, range_options)
+    actual = range_filter(field_name, range_options)
     expected = { :range => { field_name => range_options, :_cache => false } }
     actual.should eql(expected)
   end
@@ -88,7 +75,7 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should construct terms filter without caching' do
     field_name = 'myfield'
     values = [1 ,2, 3]
-    actual = QueryHelper.terms_filter(field_name, values)
+    actual = terms_filter(field_name, values)
     expected = { :terms => { field_name => values, :_cache => false } }
     actual.should eql(expected)
   end
@@ -96,7 +83,7 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should construct term filter without caching' do
     field_name = 'myfield'
     value = 5
-    actual = QueryHelper.term_filter(field_name, value)
+    actual = term_filter(field_name, value)
     expected = { :term => { field_name => value, :_cache => false } }
     actual.should eql(expected)
   end
@@ -107,7 +94,7 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('responder_id', 'is_in', '0', 'default')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => {'responder_id' => @current_user , :_cache =>false })
@@ -124,7 +111,7 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('responder_id', 'is_in', '-1,1', 'default')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:bool => { :should => [{ :missing => { :field => 'responder_id' }},
@@ -138,7 +125,7 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('group_id', 'is_in', '0', 'default')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => {'group_id' => @user_groups, :_cache =>false })
@@ -150,7 +137,7 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('group_id', 'is_in', '0,-1', 'default')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:bool => { :should => [{ :missing => { :field => 'group_id' }},
@@ -165,7 +152,7 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('group_id', 'is_in', '-1', 'default')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:bool => { :should => [{ :missing => { :field => 'group_id' }},
@@ -186,9 +173,8 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params.push_param('priority', 'is_in', '1,2,3', 'default')
     wf_params.push_param('ticket_type', 'is_in', 'Incident,Problem,Feature Request', 'default')
     wf_params.push_param('source', 'is_in', '5,6', 'default')
-    wf_params.push_default
 
-    es_query = QueryHelper.es_query(wf_params)
+    es_query = es_query(wf_params)
 
     base_hash = es_query[:query][:filtered][:filter][:bool]
     base_must = base_hash[:must]
@@ -224,8 +210,8 @@ RSpec.describe Search::Filters::QueryHelper do
         # unique values taken
 
         responder_id_bool = { :bool => {:should => [ { :missing => { :field => 'responder_id'} },
-                                                                                                { :terms => {'responder_id' => @current_user , 
-                                                      :_cache => false } } ] }}
+                                                     { :terms => {'responder_id' => @current_user , 
+                                                                  :_cache => false } } ] }}
 
         base_must.should include(responder_id_bool)
       end
@@ -235,15 +221,11 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should handle open tickets in dashboard' do
     wf_params = Wf_Param.new
     wf_params.push_param('status', 'is_in', '2')
-    wf_params.push_default
     wf_params.push_param('status', 'is_in', '2,3,6,7')
-    
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => { 'status' => ['2'], :_cache => false })
-    outer_must.push(:terms => {'spam' => ['false'], :_cache => false})
-    outer_must.push(:terms => { 'deleted' => ['false'], :_cache => false })
     outer_must.push(:terms => { 'status' => ['2', '3', '6', '7'], :_cache => false })
 
     expected = expected_query(outer_must)
@@ -253,15 +235,11 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should handle onhold tickets in dashboard' do
     wf_params = Wf_Param.new
     wf_params.push_param('status', 'is_in', '3,6')
-    wf_params.push_default
     wf_params.push_param('status', 'is_in', '2,3,6,7')
-    
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => { 'status' => ['3', '6'], :_cache => false })
-    outer_must.push(:terms => {'spam' => ['false'], :_cache => false})
-    outer_must.push(:terms => { 'deleted' => ['false'], :_cache => false })
     outer_must.push(:terms => { 'status' => ['2', '3', '6', '7'], :_cache => false })
 
     expected = expected_query(outer_must)
@@ -271,10 +249,8 @@ RSpec.describe Search::Filters::QueryHelper do
   it 'should handle due today tickets in dashboard' do
     wf_params = Wf_Param.new
     wf_params.push_param('due_by', 'due_by_op', '2')
-    wf_params.push_default
     wf_params.push_param('status', 'is_in', '2,3,6,7')
-    
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:bool => { :should => [{ :range => { 'due_by' => { :gte => Time.zone.now.beginning_of_day.utc.iso8601,
@@ -284,8 +260,6 @@ RSpec.describe Search::Filters::QueryHelper do
                                                                      :_cache => false }},
                                                         { :term => { 'status_deleted' => false, 
                                                                      :_cache => false }}] })
-    outer_must.push(:terms => {'spam' => ['false'], :_cache => false})
-    outer_must.push(:terms => { 'deleted' => ['false'], :_cache => false })
     outer_must.push(:terms => { 'status' => ['2', '3', '6', '7'], :_cache => false })
 
     expected = expected_query(outer_must)
@@ -296,17 +270,14 @@ RSpec.describe Search::Filters::QueryHelper do
     wf_params = Wf_Param.new
     wf_params.push_param('status', 'is_in', '2')
     wf_params.push_param('responder_id', 'is_in', '-1')
-    wf_params.push_default
     wf_params.push_param('status', 'is_in', '2,3,6,7')
 
-    actual = QueryHelper.es_query(wf_params)
+    actual = es_query(wf_params)
 
     outer_must = []
     outer_must.push(:terms => { 'status' => ['2'], :_cache => false })
     outer_must.push(:bool => { :should => [{ :missing => { :field => 'responder_id' }},
                                            { :terms => {'responder_id' => [], :_cache => false }}] })
-    outer_must.push(:terms => { 'spam' => ['false'], :_cache => false})
-    outer_must.push(:terms => { 'deleted' => ['false'], :_cache => false })
     outer_must.push(:terms => { 'status' => ['2', '3', '6', '7'], :_cache => false })
 
     expected = expected_query(outer_must)

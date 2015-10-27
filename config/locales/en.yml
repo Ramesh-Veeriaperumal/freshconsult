@@ -2352,8 +2352,10 @@ en:
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
   f_request: Feature Request
   save_and_create: Save and Create Another
-  save_and_new: Save and <strong>New<strong>
+  save_and_new: Save and <strong>New</strong>
   save_and_close: Save and <strong>Close</strong>
+  submit_and_new: Submit and <strong>New</strong>
+  submit_and_close: Submit and <strong>Close</strong>
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
@@ -4357,11 +4359,11 @@ en:
     view_ticket: "View Ticket"
     insert: "Insert"
     compose:
-      choose_email: Pick a from address
+      choose_email: Pick a From Address
       properties: Properties
       learn_more: Learn more.
       send_email: Send an email
-      enter_subject: Enter Subject...
+      enter_subject: Type email subject
       to_address_placeholder: "Enter Customer's address"
       send: Send
       send_and_new: Send and <strong> New </strong>
@@ -4369,7 +4371,7 @@ en:
       from: "From:"
       cc: CC
       to: "To:"
-      compose_choose_email: Pick a from address
+      compose_choose_email: Select a from address
       compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
     switch_view:
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -4934,6 +4936,10 @@ en:
 
     shared:
       addcc: "Add cc"
+      cc_label: "Cc"
+      requester_label: "Requester"
+      search_reqester: "Search a requester"
+      hide_cc: "Hide Cc"
       cc: "cc"
       bcc: "bcc"
       response_added_alert: "Ticket has been updated with new replies. Please review them before sending."
@@ -6598,7 +6604,7 @@ en:
       info1: "The ticket form is the easiest way to capture all the data you need from the customer, even as they submit a ticket. For example, having the customer’s order ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Ticket Form in Freshdesk to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want."
       info_1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
-      info3: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Read more about dynamic fields</a>."
+      info4: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/212889-creating-your-dynamic-ticket-forms'>Read more about dynamic fields</a>."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"

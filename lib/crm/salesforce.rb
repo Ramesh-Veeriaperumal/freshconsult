@@ -29,6 +29,7 @@ class CRM::Salesforce < Resque::Job
   def add_paid_customer_to_crm(payment)
     #returned_value = sandbox(0){
       crm_ids = search_crm_record(payment.account_id)
+      return nil if crm_ids.nil?
       update_paid_account(crm_ids, payment)   
       
       return if business_type(payment).eql?(BUSINESS_TYPES[:existing])
@@ -40,16 +41,21 @@ class CRM::Salesforce < Resque::Job
   def add_free_customer_to_crm(subscription) 
     account = Account.current
     crm_ids = search_crm_record(account.id)
+    return nil if crm_ids.nil?
     update_account(crm_ids, account.full_domain, CUSTOMER_STATUS[:free])
   end
 
   def update_deleted_account_to_crm(account_id)
     crm_ids = search_crm_record(account_id)
+    return nil if crm_ids.nil?
+
     update_account(crm_ids, account_id, CUSTOMER_STATUS[:deleted])
   end
 
   def update_admin_info(config)
     crm_ids = search_crm_record(config.account.id)
+    return nil if crm_ids.nil?
+
     binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
         :FirstName => config.account.admin_last_name, :LastName => config.account.admin_first_name, 
         :Email => config.account.admin_email, :Phone => config.account.admin_phone })
@@ -74,6 +80,8 @@ class CRM::Salesforce < Resque::Job
   def update_trial_accounts(account_id)
     account = Account.current
     crm_ids = search_crm_record(account_id)
+    return nil if crm_ids.nil?
+
     next_renewal_date = account.subscription.next_renewal_at.to_s(:db)
     agent_count = account.full_time_agents.count.to_s
     
@@ -92,6 +100,7 @@ class CRM::Salesforce < Resque::Job
   def update_customer_status
     account = Account.current
     crm_ids = search_crm_record(account.id)
+    return nil if crm_ids.nil?
     state = account.subscription.state
     if state == 'suspended' and account.subscription.subscription_payments.count > 0
       record_attributes = { :Customer_Status__c => state }
@@ -127,7 +136,10 @@ class CRM::Salesforce < Resque::Job
       search_string = %(SELECT Id, AccountId FROM Contact WHERE Freshdesk_Account_Id__c = '#{account_id}')
       response = binding.query(:searchString => search_string).queryResponse
 
-      return create_new_crm_account(Account.current) if response.result[:size].eql?("0")
+      if response.result[:size].eql?("0")
+        SubscriptionNotifier.salesforce_failures(Account.current, caller[0..5])
+        return nil 
+      end
 
       record = (response.result.records.is_a?(Array))? response.result.records[0] : response.result.records
       

@@ -28,7 +28,7 @@ class ChatsController < ApplicationController
                       :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
                       :requester_name => params[:ticket][:name],
-                      :ticket_body_attributes => { :description_html => params[:ticket][:content] },
+                      :ticket_body_attributes => { :description_html => params[:ticket][:content], :description => Helpdesk::HTMLSanitizer.plain(params[:ticket][:content].gsub(/(\s{3,})/,"")).gsub(/\n\t/, "\n") },
                       :responder_id => params[:ticket][:agent_id]
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
@@ -218,7 +218,7 @@ class ChatsController < ApplicationController
                 :user_id => params[:userId],
                 :account_id => current_account.id,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-                :note_body_attributes => { :body_html => params[:note] }
+                :note_body_attributes => { :body_html => params[:note], :body => Helpdesk::HTMLSanitizer.plain(params[:note].gsub(/(\s{3,})/,"")).gsub(/\n\t/, "\n")}
             )
     @note.save_note
   end

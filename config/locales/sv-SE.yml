@@ -115,11 +115,13 @@ sv-SE:
     creditcard: "Ange ett giltigt kreditkortsnummer."
     equalTo: "Ange samma värde igen."
   confirm_delete_message: "Är du säker på att du vill ta bort %{human_name}?"
+  reload: "Läs in igen"
   any: "Vilken som helst"
   or: eller
   reorder_rules: "Ordna om aktiva regler"
   plain_yes: Ja
   plain_no: Nej
+  add_all: "Lägg till alla"
   unspam: "Avmarkera som skräppost"
   unblock: Vitlista
   enabled: Aktiverad
@@ -218,6 +220,7 @@ sv-SE:
   security_code: Säkerhetskod
   example: exempel
   pending: Väntande
+  outbound_email: "Utgående e-post"
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: Facebookanvändare
@@ -303,16 +306,22 @@ sv-SE:
     insert_field: "Drag- och släppfält"
     drag_drop_field_intro: "Drag och släpp valfri fälttyp i formuläret \"%{name}\" nedan för att lägga till ett nytt anpassat fält"
     number: Tal
+    empty_section_info: "Släpp fältet här"
     text: Enkelradstext
     paragraph: "Flerradig text"
     checkbox: Kryssruta
     dropdown: Rullgardinsmeny
+    decimal: Decimal
     dropdown_blank: Rullgardinsmeny
     phone_number: Telefonnummer
     url: URL
     date: Datum
+    delete: "Ta bort"
     regex: Regex
     email: E-postadress
+    nested_field: "Underordnat fält"
+    drag_and_drop_field: "Drag- och släppfält"
+    default_field_error: "Standardfält kan inte släppas i avsnittet"
   ticket_fields:
     fields:
       source: Källa
@@ -329,9 +338,11 @@ sv-SE:
       tags: Taggar
     saving_ticket: "Sparar ärendefält ..."
     untitled: "Titel saknas"
+    properties: Egenskaper
     first_choice: Förstahandsval
     second_choice: Andrahandsval
     confirm_delete: "Är du säker på att du vill ta bort detta fält?"
+    confirm_deletion: "Fältet tas bort genom den här åtgärden. Det försvinner permanent från databasen. Åtgärden kan inte ångras. Vill du fortsätta?"
     no_choice_message: "Minst ett giltigt val måste göras"
     index:
       number: Nummer
@@ -343,24 +354,31 @@ sv-SE:
       paragraph: Paragraftext
       checkbox: Kryssruta
       save: "Spara ärendefält"
+      save_ticket_fields: Spara
       drag_drop_intro: "Dra och släpp vilken fälttyp som helst i formuläret Nytt ärende nedan för att lägga till ett nytt anpassat fält"
       dropdown: Rullista
       nestedfield: "Underordnat fält"
+      drag_and_drop_field: "Drag- och släppfält"
     formfield_props:
       form_title: Fältegenskaper
       behavior: Beteende
       label: Fältetikett
-      nested_label: "Kapslade fältetiketter"
+      nested_label: "Underordnade fältetiketter"
+      level: Nivå
       level1: "Nivå 1"
       level2: "Nivå 2"
       level3: "Nivå 3"
       nestedfield_helptext: "Använd textrutan nedan för att lägga till objekt för rullistan. Tryck på Tabb-tangenten en eller två gånger för att göra indrag. Vi kommer att konvertera dessa till objekt i rullistan baserat på indragen, så var extra försiktig. <a target='_blank' href=%{learn_more}>Läs mer</a>"
+      nested_field_helptext: "Använd textrutan nedan till att lägga till objekt för rullistan. Tryck på Tabb-tangenten en eller två gånger för att göra indrag. Vi kommer att konvertera dessa till objekt i rullistan baserat på indragen. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Läs mer</a> "
       dropdown_items_edit: "Element i rullista – ändra vy"
+      drop_down_items_edit: "Objekt i rullista - Redigera"
       dropdown_items_preview: "Element i rullista – förhandsgranska"
       status_choices: Statusval
       display_to_customer: "Visa meddelande för kunden"
       sla_timer: "Timer för servicenivåavtal"
+      section_type_change: "Spara ärendeformuläret om du vill se de senaste ändringarna som du har gjort i typfältet."
       nestedfield_helptext_preview: "Detta är \"Förhandsgranskningen\" av rullistans exempelelement. Använd frihandstextfältet i \"Ändra vy\" för att ändra element"
+      nested_field_helptext_preview: "Det här är en förhandsvisning av exempelobjekt i rullistan. Klicka på \"Ändra\" om du vill ändra värdena för varje rullista."
       delete_field: "Ta bort fält"
       field_label_agents: "Fältetikett för representant"
       field_label_customer: "Fältetikett för kunder"
@@ -383,6 +401,36 @@ sv-SE:
       display_cc_field: "Visa fältet CC (kopia)"
       cc_company_contacts: "Kan endast CC:a företagskontakter"
       cc_any_email: "Kan CC:a vilken e-postadress som helst"
+      field_delete_disabled: "Du kan inte ta bort standardfält"
+      default_field_delete_disabled: "Standardfält kan inte raderas"
+      dropdown_choice_disabled: "Standardval kan inte tas bort"
+      nested_tree_validation: "Det behövs minst en kategori och en underkategori"
+      nested_unique_names: "Representantetiketten kan inte vara densamma som för de andra två nivåerna"
+      nested_3rd_level: "Etikett krävs för objekt på 3:e nivån"
+    section:
+      remove_type: "Avsnittet är kopplad till den här typen"
+      new_section: "Nytt avsnitt"
+      confirm_text: Bekräfta...
+      oops_btn: Hoppsan!
+      move_keep_copy: "Kopiera fält till målavsnitt"
+      delete_field_section: "Radera fältet från det här avsnittet"
+      would_you_like_to: "Vill du"
+      move_field_remove_section: "Flytta fältet till målavsnittet"
+      delete_permanent: "Ta bort fältet från alla avsnitt"
+      delete_from_section: "Vill du ta bort fältet från det här avsnittet?"
+      field_remove_all_section: "Om du flyttar ut fältet tas det bort från alla avsnitt"
+      delete_section: "Vill du ta bort det här avsnittet?"
+      section_has_fields: "Avsnittet har fält"
+      field_available: "Fältet finns redan i målavsnittet."
+      section_delete_btn: "Ta bort avsnitt"
+      ok_btn: OK
+      confirm_btn: Bekräfta
+      delete_btn: "Ta bort"
+      continue_btn: Fortsätt
+      section_prop: "Egenskaper för avsnitt"
+      sectino_label: Avsnittsrubrik
+      section_type_is: "Visa avsnittet när typen är"
+      section_name_unique: "Avsnittsnamnet används redan"
   folder:
     edit: "Redigera mapp"
     info1: "Är du säker på att du vill ta bort denna mapp?"
@@ -428,15 +476,20 @@ sv-SE:
   support:
     tickets:
       ticket_survey:
+        subject: "Testmeddelande för undersökning - %{title}"
+        survey_preview_ticket_message: "Detta är ett exempelärende som har skapats under förhandsvisningen av kundnöjdhetsundersökningen"
         title: Kundundersökning
         rating_sub_title: "Du har betygsatt oss"
         survey_title: "Betygsätt gärna vår support"
+        survey_question_title: "Betygsätt gärna vår support"
         feedback_title: "Beskriv din supportupplevelse (valfritt)"
         rated_on: "den %{rated_on}"
         change_of_mind: "Har du ändrat dig?"
         rate_again: "Betygsätt oss igen"
         submit: "Skicka in"
         cancel: Avbryt
+        back: Tillbaka
+        loading_feedback: "Läsa in feedback"
     login:
       form:
         email: E-post
@@ -465,25 +518,25 @@ sv-SE:
     surveys:
       thanks_for_feedback: "Vi har mottagit din feedback. Tack så mycket!"
       feedback_already_done: "Du har redan gett feedback för detta svar."
+      handle_expired: "Länken till undersökningen har upphört att gälla."
+      preview_feedback_error: "URL:en som har angivits är ogiltig."
+      no_survey_result_error: "Ogiltiga parametrar för att skapa feedback."
+      no_survey_active_error: "Undersökningen är inte aktiverad för att skapa feedback."
+      feedback_not_given: "Inga kommentarer"
       new:
         thanks_info: "Tack för att du tog dig tid att betygsätta vår support."
         feedback_info: "Din feedback är mycket uppskattad."
         feedback_optional: "Feedback är frivilligt"
+        send: Skicka
         submit: Verkställ
-        happy: Fantastiskt
-        neutral: "Bara OK"
-        unhappy: "Inte bra"
-        additional_info: "Dela dina åsikter om hur det har varit att arbeta med oss."
-        customer_satisfaction: Kundenöjdhetsbedömning
-        rating: "Din bedömning"
-      index:
-        thanks_info: "Tack för att du tar dig tid att bedöma supportupplevelsen."
-        thanks: "Tack för att du tar dig tid att betygsätta oss!"
-        sorry: "Vi beklagar obehaget."
-        happy_info: "Det har varit ett nöje att hjälpa dig. Vi är glada över att du är nöjd med tjänst."
-        neutral_info: "Vi vill gärna att du blir lite gladare."
+        additional_comments: "Ytterligare kommentarer"
+        thanks: "Tack för att du betygsätter oss!"
+        sorry: "Vi ber om ursäkt för besväret."
+        happy_info: "Det har varit ett sant nöje att hjälpa dig, och vi är glada att du är nöjd"
         neutral_information: "Vi vill gärna att du blir lite gladare."
-        unhappy_info: "Vi garanterar att vi ska ta extra hänsyn nästa gång."
+        neutral_info: "Vi önskar att du vore lite nöjdare."
+        unhappy_info: "Vi kommer se till att vara extra noggranna nästa gång."
+        additional_info: "Dela dina åsikter om hur det har varit att arbeta med oss."
   gamification:
     levels:
       beginner: Nybörjare
@@ -525,6 +578,7 @@ sv-SE:
       love_trophie_info_group: "Gruppen med högst kundnöjdhetspoäng denna månad"
   quests:
     delete: "Är du säker på att du vill ta bort denna målsättning?"
+    survey_disabled_event: "Undersökningar har inaktiverats. Händelser som är kopplade till undersökningen fungerar kanske inte som det är tänkt."
     inactive_quests: "Inaktiva målsättningar"
     date: Datum
     satisfaction: "Betyg på kundnöjdhet"
@@ -609,6 +663,7 @@ sv-SE:
     help_image_alt:
       helpdesk_arcarde: "Support Arcade"
       import_csv_file_pattern: "Importera CSV-filmönster"
+    survey_modified: "Undersökningen som är kopplad till den här regeln har ändrats. Konfigurera den igen."
     social:
       helpcard:
         title1: "Lägga till sociala konton"
@@ -709,7 +764,7 @@ sv-SE:
         form_title: Egenskaper
         behavior: Beteende
         label: Etikett
-        nested_label: "Nästlade fältetiketter"
+        nested_label: "Underordnade fältetiketter"
         level1: "Nivå 1"
         level2: "Nivå 2"
         level3: "Nivå 3"
@@ -722,7 +777,9 @@ sv-SE:
         nestedfield_helptext_preview: "Detta är \"Förhandsgranskningen\" av rullgardinselement. Använd fritextrutan i \"Ändra vy\" för att ändra element."
         delete_field: "Ta bort fält"
         field_label_agents: "Fältetikett för agenter"
+        field_label_agents_level2: "Nivå 2-etikett för representanter"
         field_label_customer: "Fältetikett för kunder"
+        field_label_customer_level2: "Nivå 2-etikett för kunder"
         add_new_choice: "Lägg till element"
         customer_mandatory: "Obligatoriskt när formuläret skickas in"
         customer_edit_signup: "Kunden kan se detta när hen registrerar sig"
@@ -778,7 +835,7 @@ sv-SE:
         form_title: Egenskaper
         behavior: Beteende
         label: Etikett
-        nested_label: "Nästlade fältetiketter"
+        nested_label: "Underordnade fältetiketter"
         level1: "Nivå 1"
         level2: "Nivå 2"
         level3: "Nivå 3"
@@ -790,8 +847,11 @@ sv-SE:
         sla_timer: SLA-timer
         nestedfield_helptext_preview: "Detta är \"Förhandsgranskningen\" av rullgardinselement. Använd fritextrutan i \"Ändra vy\" för att ändra element."
         delete_field: "Ta bort fält"
-        field_label_agents: "Fältetikett för agenter"
+        delete_section: "Ta bort avsnitt"
+        field_label_agents: "Fältetikett för representanter"
         field_label_customer: "Fältetikett för kunder"
+        field_label_agents_level2: "Nivå 2-etikett för representanter"
+        field_label_customer_level2: "Nivå 2-etikett för kunder"
         add_new_choice: "Lägg till element"
         customer_mandatory: "Obligatoriskt när formuläret skickas in"
         customer_edit_signup: "Kunden kan se detta när hen registrerar sig"
@@ -817,7 +877,12 @@ sv-SE:
         regexp_example_html: "Till exempel, för att matcha en sträng som innehåller endast bokstäver och siffror: <b> /^[a-zA-Z0-9]*$/ </b>. För att matcha en sträng som börjar med ordet \"fresh\": <b> %{regex} </b>."
         max_choices: "Maximalt antal element uppnått"
     portal:
-      index:
+      delete_confirm:
+        title: "Om du tar bort portalen tar du även bort"
+        info1: "Alla inställningarna i portalanpassningen"
+        info2: "Alla länkade lösnings- och forumkategorier"
+      settings:
+        title: Kundportaler
         portal_customizer_title: "Konfiguration av kundportal"
         signup_login: "Användarregistrering och -inloggning"
         allow_signup: "Tillåt användare att registrera sig via kundportalen"
@@ -827,6 +892,9 @@ sv-SE:
         facebook: Facebook
         user_permissions: "Användarrättigheter för portal"
         submit_ticket: "Vem kan skicka in ett nytt ärende i portalen"
+        portal_security: Portalsäkerhet
+        enable_public_urls: "Aktivera offentlig ärende-URL"
+        enable_public_urls_help: "Med en offentlig ärende-URL kan vem som helst se ärendet utan att logga in. Om du inaktiverar det kan användare inte komma åt offentliga ärendelänkar i e-postsvar och notiser."
         logged_in: "Inloggade användare"
         everyone: Alla
         none: Ingen
@@ -849,6 +917,13 @@ sv-SE:
         moderate_all_help: "Aktivera denna funktion om du ha sträng kontroll på varje inlägg som skapas i din gemenskap."
         moderate_none: "Moderera inte"
         moderate_none_help: "Aktivera denna funktion om du är säker på att din gemenskap inte drar till sig spammare."
+      helpnote:
+        title: "Ställa in dina portaler"
+        tour: "Hjälp mig konfigurera min portal"
+        info1: "Om du vill att dina kunder och supportrepresentanter ska kunna komma åt supportportalen på din egen domän, kan du peka support-URL:en ​<b>dittföretag.freshdesk.com​</b> till din egen domän , t.ex. ​<b>support.dittföretag.com​</b>"
+        info2: "Du kan också välja specifika lösnings- och forumskategorier som ska visas i huvudportalen och i de andra portalerna."
+        info3: "Dessutom kan du ändra utseendet på ditt hjälpcenter genom att ladda upp din logga och favicon, ge hjälpcentret ett namn och anpassa färgerna i portalen."
+        info4: "Om du vill ställa in användarrättigheter och anpassa inställningarna för moderering i forum klickar du på fliken ”Inställningar”. Det går inte att ha olika inställningar i olika portaler, utan inställningarna används för alla portaler som du har skapat."
     mobihelp:
       app_review:
         request_sent: "Begäran om översyn av app skickad"
@@ -876,7 +951,7 @@ sv-SE:
           solution_categories_info: "De lösningskategorier du väljer visas i App-support"
           app_store_id: "ID för App Store"
           app_store_id_info: "App Store-ID används för att skicka vidare användare till App Store för recensioner"
-          app_store_id_v12_info: "Obligatoriskt för Mobihelp SDK-versioner < 1.2. För version >= 1.2 bör du hänföra till integreringsvägledningen."
+          app_store_id_v12_info: "Obligatoriskt för Mobihelp SDK-versioner  < 1.2. For version >= 1.2 kan du läsa i integreringsguiden."
           should_be_unique: "måste vara unik"
           select_a_platform: "Välj en plattform"
           select_a_solution_category: "Välj en lösningskategori"
@@ -885,6 +960,7 @@ sv-SE:
           app_key: App-nyckel
           app_secret: App-lösenord
           integration_details: Integreringsinformation
+          saving: Sparar…
         index:
           title: Mobihelp-appar
           new_app: "Ny app"
@@ -949,7 +1025,7 @@ sv-SE:
         headingsColor: Rubrikfärg
         linkColor: Länktext
         linkColorHover: "Länktext för hovring"
-        inputFocusRingColor: "Rubrikdelare och glöd för inmatningsfokus"
+        inputFocusRingColor: "Rubrikdelare och ljusstyrka för inmatningsfokus"
     quests:
       index:
         title: Målsättning
@@ -957,25 +1033,25 @@ sv-SE:
         sideinfo2: "Info 2"
         quest_title: Målsättningar
         new_quest: "Ny målsättning"
-        quest_description: "Målsättningar utgör affärsspecifika mål som är avsedda att utmana dina representanter och få dem att prestera!"
+        quest_description: "Målsättningar är affärsspecifika mål avsedda för att utmana dina representanter och få dem att prestera!"
       quest_form:
         edit: "Redigera målsättning"
         quest_type: "Typ av målsättning"
         quest_objectives: Målsättningssyften
-        no_condition: "Inga villkor existerar"
+        no_condition: "Inga villkor finns"
         reward: Belöning
-        completion: "När en målsättning har uppnåtts, tilldela en utmärkelse och bonuspoäng"
+        completion: "Tilldela en utmärkelse och bonuspoäng när en målsättning har uppnåtts"
         badge: Utmärkelse
         bonus_points: Bonuspoäng
-        final: "Sist men inte minst"
+        final: "...och sist men inte minst"
         quest_name: "Ge din målsättning ett namn"
         brief: "Sammanfattning av målsättningen"
         save: "Spara målsättning"
         pick_badge: "Välj en utmärkelse"
         change: Ändra
-        ticket: "Löser <br /> <strong> Ärenden </strong>"
-        solution: "Publicerar <br /> <strong> Lösningar </strong>"
-        forum: "Engagerar <br /> <strong> Användargrupper </strong>"
+        ticket: "Lösa <br /> <strong> ärenden </strong>"
+        solution: "Publicera <br /> <strong> lösningar </strong>"
+        forum: "Engagera <br /> <strong> användargrupper </strong>"
     gamification:
       new_quest: "Ny målsättning"
       fresh_arcade: "Vad är Freshdesk Arcade?"
@@ -983,24 +1059,25 @@ sv-SE:
       points: Poäng
       successfully_updated: "Spelifieringsinställningarna har uppdaterats."
       error_updated: "Fel uppstod vid uppdatering av spelifieringsinställningarna."
+      survey_preview_error: "Den aktuella användaren är inte en representant. Fel vid förhandsvisning av undersökningen."
       help_text:
         why_game: "Poäng och nivåer"
         why_game_info1: "Poäng som ges till representanter baseras på hur snabbt de löser ärenden som de har blivit tilldelade. Det går även att få bonuspoäng för ärenden som löses vid första samtalet, samt ärenden då kunden är nöjd. Vidare tappar representanter poäng för försenade lösningar och missnöjda kunder."
         why_game_info2: "En representant kan avancera till en högre nivå i takt med att han/hon erhåller fler poäng. Poänggränserna anges av administratören."
         trophies_info1: "Representanten kan få fyra olika troféer som baseras på olika kriterier."
         quest: Målsättningar
-        quest_info1: "En målsättning motsvarar de prestationsmål som du sätter upp för representanterna. När en målsättning uppfylls erhåller representanten en utmärkelse."
+        quest_info1: "Målsättningar motsvarar de prestationsmål som du sätter upp för representanterna. När en målsättning uppfylls erhåller representanten en utmärkelse."
         quest_info2: "Samtliga målsättningar är AKTIVA som standard. Du kan välja att AVAKTIVERA de målsättningar som du inte vill använda. Om du vill lägga till eller skapa fler målsättningar som har anknytning till dina egna mål kan du klicka på \"Ny målsättning\" för att skapa helt nya målsättningar med dina egna villkor."
         quest_form_info1: "Välj den typ av målsättning som ska skapas för representanterna. Det kan vara en av tre <br /> a) lösa ärenden<br /> b) publicera lösningar och <br /> c) bidra i forum."
-        quest_form_info2: "Välj sedan kriterier för målsättningen (vad representanten måste göra) och lägg till de villkor som måste uppfyllas för att utmärkelsen ska erhållas."
-        quest_form_info3: "Ange antal poäng och den utmärkelse som representanten erhåller. Ange till sist ett namn på din målsättning, samt en kort beskrivning."
+        quest_form_info2: "Välj sedan kriterier för målsättningen (vad representanten måste göra) och lägg till de villkor som måste uppfyllas för att han eller hon ska få utmärkelsen."
+        quest_form_info3: "Ange antal poäng och den utmärkelse som representanten får. Ange till sist ett namn på din målsättning, samt en kort beskrivning."
         quest_form_info4: "Klicka på \"Spara målsättning\" för att spara dina inställningar."
-        creating_survey: "Skapar din nöjdhetsundersökning:"
+        creating_survey: "Skapa din nöjdhetsundersökning:"
         creating_survey_help: "Följande steg låter dig samla in feedback från dina kunder via en länk i dina svarsmeddelanden.<br> 1. Markera kryssrutan Aktivera kundnöjdhetsundersökningar.<br> 2. Ange länktexten för undersökningen. Standardtexten är ”Berätta gärna vad du tycker om vår support.”<br> <br> <b>Välj vilka e-postmeddelanden som ska innehålla undersökningslänken:</b><br> Du kan välja huruvida länken till nöjdhetsundersökningen ska inkluderas i alla e-postmeddelanden eller endast i det sista meddelandet efter att ärendet har lösts. <br><br> Du hittar mer information om nöjdhetsundersökningar på vår sida med lösningar. </p>"
       index:
-        title: Arkadinställningar
+        title: "Inställningar för Arcade"
         info1: "Nu är alla ärenden som kommer in en chans för representanter att samla poäng. Dessutom kan du dela ut bonuspoäng till dina supportteam baserat på vad som är viktigast för dig. Som t.ex. att svara jättesnabbt, hitta rätt lösning direkt och få jättebra betyg från kunderna."
-        info2: "Följ dina teams framsteg på resultattavlan i instrumentpanelen. Dela ut särskilda utmärkelser som t.ex. Speed Racer, Pickskytt, Kundsuccémästare, och bäst av allt, månadens Mest värdefulla spelare."
+        info2: "Följ dina teams framsteg på resultattavlan i instrumentpanelen. Dela ut särskilda utmärkelser, t.ex. Speed Racer, Pickskytt, Kundsuccémästare, och bäst av allt, månadens Mest värdefulla spelare."
         video: "Titta på videon"
         learn_arcade: "Läs mer om arkaden"
         enable_arcade: "Aktivera Freshdesk Arcade"
@@ -1024,16 +1101,114 @@ sv-SE:
         new_quest: "Ny målsättning"
         quest_title: Målsättningar
     surveys:
+      successfully_created: "Inställningarna för kundnöjdhet har skapats."
       successfully_updated: "Inställningar för kundnöjdhet har uppdaterats."
+      successfully_deleted: "Undersökningen har tagits bort."
       error_updated: "Ett fel uppstod när undersökningsinställningarna skulle uppdateras."
+      custom_helptext: |-
+          <p><b>Aktivera nöjdhetsundersökningar</b> <br>
+          Du kan lägga till en nöjdhetsundersökning i ärendesvaren från representanterna och se hur nöjda kunderna är med supporten, företaget eller produkten. Du kan välja att skicka med undersökningar i alla e-postmeddelanden eller bara när en fråga markeras som ”stängd” eller ”löst”. Du kan se svaren från kunderna om du går till <b> Rapporter > Kundnöjdhetsrapport </b> <br><br> <b>Undersökning om representant och uppföljningsundersökningar</b><br> Du kan ställa en undersökningsfråga om representanten och flera uppföljande undersökningsfrågor. Undersökningen om representanten visas i e-postmeddelandet, och när kunderna väljer ett undersökningsalternativ skickas de vidare till en sida med en uppföljningsundersökning. Reglerna för övervakaren och spelifieringspoängen baseras endast på poängen representanten får i undersökningen.<br> <br><br> <b>Poängskala</b><br>Du kan välja olika poängskalor för undersökningen om representanten och uppföljningsundersökningen. Det kan vara<br> 2 poäng (t.ex. Ja eller Nej)<br>3 poäng (t.ex. Instämmer, Vet inte, Instämmer ej)<br> 5 poäng (t.ex. Alltid till Aldrig)<br> 7 poäng (t.ex. Väldigt dålig till Utmärkt)<br><br>
+          När kunden deltar i undersökningen blir skalorna låsta så att de inte kan redigeras.</p>
       helptext: |-
           <p><b>Varför bör man aktivera kundnöjdhetsundersökningar?</b> <br>
           Kundnöjdhetsundersökningar låter dig lägga till en länk i svarsmeddelanden för att samla in feedback från dina kunder direkt. <br><br> <b>Skapa din nöjdhetsundersökning:</b><br> Följande steg låter dig samla in feedback från dina kunder via en länk i dina svarsmeddelanden.<br> 1. Markera kryssrutan Aktivera kundnöjdhetsundersökningar.<br> 2. Ange länktexten för undersökningen. Standardtexten är ”Berätta gärna vad du tycker om vår support.”<br> <br> <b>Välj vilka e-postmeddelanden som ska innehålla undersökningslänken:</b><br> Du kan välja huruvida länken till nöjdhetsundersökningen ska inkluderas i alla e-postmeddelanden eller endast i det sista meddelandet efter att ärendet har lösts. <br><br> Du hittar mer information om nöjdhetsundersökningar på vår sida med lösningar. </p>
+      limit_exceed_error: "Du kan lägga till högst %{count} undersökningar."
+      custom_helptext_v2: |-
+          <p><b>Aktivera nöjdhetsundersökning</b> <br>
+          Du kan lägga till en nöjdhetsundersökning i ärendesvaren från representanterna och se hur nöjda kunderna är med supporten, företaget eller produkten. Du kan välja att skicka med undersökningar i alla e-postmeddelanden eller bara när en fråga markeras som ”stängd” eller ”löst”. Du kan se svaren från kunderna om du går till <b> Rapporter > Kundnöjdhetsrapport </b> <br><br> <b>Undersökning om representant och uppföljningsundersökningar</b><br> Du kan ställa en undersökningsfråga om representanten och flera uppföljande undersökningsfrågor. Undersökningen om representanten visas i e-postmeddelandet, och när kunderna väljer ett undersökningsalternativ skickas de vidare till en sida med en uppföljningsundersökning. Reglerna för övervakaren och spelifieringspoängen baseras endast på poängen representanten får i undersökningen.<br> <br><br> <b>Poängskala</b><br>Du kan välja olika poängskalor för undersökningen om representanten och uppföljningsundersökningen. Det kan vara<br> 2 poäng (t.ex. Ja eller Nej)<br>3 poäng (t.ex. Instämmer, Vet inte, Instämmer ej)<br> 5 poäng (t.ex. Alltid till Aldrig)<br> 7 poäng (t.ex. Väldigt dålig till Utmärkt)<br><br>
+          När kunden deltar i undersökningen blir skalorna låsta så att de inte kan redigeras.</p>
+      questions:
+        limit_exceed_error: "Du kan lägga till högst %{count} frågor."
+      new_layout:
+        loading: Laddar...
+        default_survey: Standardundersökning
+        title: Rubrik
+        title_error_text: "Undersökningsnamnet används redan"
+        result_exist_msg: "Det går inte att ändra poängskalan och antalet frågor eftersom det redan har kommit in svar för den här undersökningen, men du kan redigera frågorna och svaren."
+      new_rating:
+        content_text: "Med den här frågan kan du få veta hur nöjd kunden är i det stora hela med svaret från representanten. Det visas nedanför din signatur längst ner i e-postmeddelandet som skickades till kunden. Det går inte att ändra skalan efter att svaren på den här frågan har kommit in."
+        content_text_v2: "Med den här frågan kan du få veta hur nöjd kunden är i det stora hela med svaret från representanten. Det visas nedanför din signatur längst ner i e-postmeddelandet som skickades till kunden."
+        survey_question: Undersökningsfråga
+        survey_question_v2: Undersökningsfråga
+        error_text: "Detta fält är obligatoriskt"
+        points_scale: poängskala
+        point_scale_v2: poängskala
+        scale_text: "Du har valt"
+        scale: poängskala
+      new_thanks:
+        survey_feedback: "Sida för feedback från undersökningen"
+        survey_feedback_v2: Tacksida
+        thanks_feedback: "Tack för din feedback. Den är värdefull."
+        thanks_feedback_v2: "Tack! Din feedback har skickats in."
+        additional_comments_feedback: "Samla in mer feedback"
+        comments_feedback: "Lägg till mer detaljer om kundupplevelsen."
+        thanks_message_feedback: "Tackmeddelande för feedbackundersökning"
+        thanks_message_feedback_v2: "Tackmeddelande för Ytterligare frågor"
+        default_question_text: "Är du nöjd med kontakten du har haft med vår kundsupport?"
+        thanks_label: "Meddelandet visas efter att feedbackundersökningen har skickats in"
+        thanks_label_v2: "Meddelandet visas efter att feedback på ytterligare frågor har skickats in"
+        feedback_response_text: "Tack! Din feedback har skickats in."
+        help_text: "Uppföljningsundersökningar visas på en ny sida efter att kunden har deltagit i undersökningen. Frågorna kan handla om produkten, företaget eller representanten."
+        help_text_v2: "Ytterligare undersökningsfrågor visas på en ny sida efter att kunden har deltagit i nöjdhetsundersökningen. Frågorna kan handla om produkten, företaget eller representanten."
+      new_questions_layout:
+        title_text: "Välj en poängskala för frågorna"
+        title_text_v2: "Välj poängskala för frågorna"
+        add_question: "Lägg till fråga"
+        questions: Frågor
       index:
+        custom_title: Undersökningar
         title: "Inställningar för kundnöjdhet"
+        new_survey: "Ny undersökning"
+        load_text: "Laddar listan med undersökningar..."
+        editing_survey: "Redigera undersökning"
+        deleting_survey: "Ta bort undersökning"
+        saving_survey: "Spara undersökning"
+        enabling_survey: "Aktivera undersökning"
+        disabling_survey: "Inaktivera undersökning"
+        feedback_survey_begin: "Skicka feedback från undersökningen till ditt e-post-ID"
+        feedback_survey_end: "Feedback från undersökningen skickas till ditt e-post-ID"
+        survey_feedback: "Skickar in feedback..."
+        portal_msg: "Omdirigera till ärendesidan"
+        update: uppdatering
+        new: Nytt
+        edit: Redigera
+        cancel: Avbryt
+        hide: "Ta bort"
+        preview: Test
+        enabled: Aktiverad
+        disabled: Inaktiverad
+        save_survey: Spara
+        default_survey: Standardundersökning
+        delete_survey: "Ta bort undersökning"
+        delete_msg: "Vill du ta bort denna undersökning?"
+        survey_help_msg: "Om du väljer ett betyg ovan avlänkas sidan nedan"
+        survey_help_msg_v2: "När ett betyg för nöjdhet har valts visas en tacksida."
+        ? "true"
+        : true
+        ? "false"
+        : false
+      choice_contents:
+        strongly_disagree: "Håller inte alls med"
+        some_what_disagree: "Håller inte helt med"
+        disagree: "Håller inte med"
+        neutral: "Ingen åsikt"
+        agree: "Håller med"
+        some_what_agree: "Håller med till viss del"
+        strongly_agree: "Håller fullständigt med"
+      thanks_contents:
+        title_text: "Tackmeddelande för kundnöjdhetsbedömningen"
+        title_text_v2: "Tackmeddelande för kundnöjdhetsundersökningen"
+        message_text: "Tack för din feedback. Den är värdefull."
+        label_text: "Lägg till en feedbackundersökning"
+        label_text_v2: "Ytterligare undersökningsfrågor"
+        question_error_text: "Frågan har redan angetts."
+        empty_text: "Frågevärdet kan inte vara tomt."
       satisfaction_settings:
         enable_label: Kundnöjdhetsundersökningar
+        enable_label_v2: Kundnöjdhetsundersökning
+        satisfaction_text: "Jag är nöjd med den service jag har fått av"
         link_text_label: "Länktext för nöjdhetsundersökning"
+        link_text_input_label: "Hur nöjd är du i det stora hela med lösningen från representanten?"
         link_text_input: "Berätta gärna vad du tycker om vår support."
         link_text_info: "Denna text visas under din signatur i slutet av e-postmeddelandet som skickas till kunden"
         send_while_option1: "Alla svar som har skickats till kunden."
@@ -1212,7 +1387,8 @@ sv-SE:
       clone_rule:
         title: "Handledare - klona regel"
     observer_rules:
-      info_help: "Observatörens regler låter dig utlösa specifika åtgärder för alla händelser inom ett ärende."
+      info_help_1: "Observatörens regler låter dig utlösa specifika åtgärder för alla händelser inom ett ärende."
+      survey_disabled_rule: "Undersökningar har inaktiverats. Regler som är kopplade till undersökningen fungerar kanske inte som det är tänkt."
       index:
         human_name: "Regel för Observatören"
         title: "Observatören – regler"
@@ -1373,7 +1549,9 @@ sv-SE:
         heading1: "Flera olika produkter"
         content1: "Du kan stödja flera produkter med separata profilerade portaler från ett enda Freshdesk-konto. Konfigurera separata e-postadresser för support för varje produkt och placera dem i specifika kö-grupper automatiskt."
         heading2: "Konfigurera en separat portal för produkter"
+        heading3: "Stöd för flera produkter"
         content2: "Om du väljer att konfigurera en separat profilerad portal för varje produkt kan du tillhandahålla unika forum och artiklar i kunskapsdatabaser för varje produkt."
+        content3: "Du kan konfigurera portaler för de här produkterna genom att klicka på Admin-fliken och sedan ”Portaler”"
       new:
         title: "Ny produkt"
         saving: "Sparar …"
@@ -1384,15 +1562,18 @@ sv-SE:
         select_solution_category: "Välj en lösningskategori ..."
         solution_categories_info: "Du kan associera flera lösningskategorier med den här produkten. Inga andra lösningar kommer att visas för kunden när lösningsfliken i den här produktportalen visas."
         forum_categories_info: "Du kan associera flera forumkategorier med den här produkten. Inga andra forum kommer att visas för kunden när forumfliken i den här produktportalen visas."
-        portal_settings: Portalinställningar
+        settings: Inställningar
         portal_name_info: "Namnet kommer att visas i din produktportal bredvid rubriklogotypen"
         portal_url: Portal-URL
         solution_categories: Lösningskategorier
         forum_categories: Forumkategorier
         portal_name: Portalnamn
         portal_language: Portalspråk
+        default_portal_language: Standardportalspråk
         portal_language_info: "Detta blir det förvalda språket när kunder besöker portalen"
         portal_customization: Portalanpassning
+        portal_settings: Portalinställningar
+        edit_portal: "Redigera portal"
         customize_portal: "Anpassa portalen"
         save_and_customize: "Spara och anpassa portalen"
         save_and_continue: "Du har ändringar som inte har sparats i formuläret. Vill du spara och fortsätta?"
@@ -1401,9 +1582,15 @@ sv-SE:
         last_published: "Din portal publicerades senast"
         contact_us: "Kontakta oss"
         logo_and_favicon: "Logotyp och favoritikon"
+        customer_portal: Kundportal
+        categories_visible: Portalkategorier
+        product_label: "Produkt: %{product_name}"
       edit:
         title: "Redigera produkt"
         updating: "Uppdaterar ..."
+      footer:
+        edit_portal: "Spara och redigera portal"
+        enable_portal: "Spara och aktivera portal"
       form:
         configure_seperate_portal: "Aktivera kundportal"
         enable_product_portal: "Aktivera produktportal"
@@ -1421,6 +1608,8 @@ sv-SE:
         edit_facebook_page: "Redigera Facebooksida %{page_name}"
         customize_portal: "Anpassa portalen"
         enable_portal: "Aktivera portal"
+        portal_disabled: "Portalen har inaktiverats"
+        disable_portal: "Inaktivera portal"
         email_not_verified: "Ej verifierad"
         view_portal: "Visa portal"
         delete: "Är du säker på att du vill ta bort denna produkt?"
@@ -1530,6 +1719,7 @@ sv-SE:
         survey-settings: Kundnöjdhet
         gamification-settings: Arkad
         rebranding: "Omprofilering av hjälpcenter"
+        helpdesk-settings: Hjälpcenter
         account-settings: Konto
         helpdesk-productivity: Helpdesk-produktivitet
         canned-response: Standardsvar
@@ -1567,6 +1757,7 @@ sv-SE:
         tags: Taggar
         mobihelp: Mobihelp
         customer-portal: Kundportal
+        portals: Portaler
       keywords:
         forum_moderation: Forummoderering
         configure_support_email: "Konfigurera epostadress för support"
@@ -1763,12 +1954,25 @@ sv-SE:
       tickets:
         create:
           success: "Ditt ärende har skapats."
+      create:
+        success: "Portalen har aktiverats för ”%{product_name}”"
+        failure: "Portalen kunde inte aktiveras"
+      update:
+        success: "Portalen har uppdaterats"
+        failure: "Portalen kunde inte uppdateras"
+      destroy:
+        success: "Portalen för ”%{product_name}” har inaktiverats"
+        failure: "Huvudportalen kan inte inaktiveras"
+      not_found:
+        portal: "Portalen kunde inte hittas. Den kan ha tagits bort eller så är URL:en felskriven."
+        product: "Produkten kunde inte hittas. Den kan ha tagits bort eller så är URL:en felskriven."
     g_app:
       user_deleted: "Användaren har tagits bort!"
       authentication_failed: "Autentiseringen misslyckades"
       authentication_success: "Autentiseringen klar"
       no_subdomain: "Det finns inte någon sådan underdomän. Prova igen."
       page_unavailable: "Den här sidan är tyvärr inte tillgänglig för dig. Kontakta din administratör för mer information."
+      domain_restriction: "Domänbegränsning finns. Denna e-post är inte tillåten."
     freshfone:
       credits:
         successful_purchase: "Köpte telefonkrediter."
@@ -1877,6 +2081,7 @@ sv-SE:
         stop: "Du övervakar inte längre detta ärende"
         start: "Du övervakar nu detta ärende"
       empty_trash:
+        delay_delete: "Vänta lite medan vi tar bort alla ärenden från papperskorgen."
         success: "Papperskorgen tömdes."
       delete_forever:
         success: "%{tickets} togs bort."
@@ -1901,6 +2106,8 @@ sv-SE:
       type:
         contact_fields_controller: Kontaktfält
         company_fields_controller: Företagsfält
+        surveys_controller: Undersökningar
+        custom_surveys_controller: Undersökningar
       success: "%{type} har uppdaterats."
       delete:
         failure: "borttagning misslyckades."
@@ -1979,6 +2186,7 @@ sv-SE:
       create:
         failure: "Det gick inte att spara %{human_name}"
         success: "%{human_name} har skapats."
+        compose_email_success: "E-postmeddelandet har skickats och ett nytt ärende har skapats."
       update:
         success: "%{human_name} har uppdaterats."
         failure: "%{human_name} kunde inte uppdateras."
@@ -2154,6 +2362,9 @@ sv-SE:
       new_ticket:
         short: "{{user_path}} skickade in ärendet"
         long: "{{user_path}} skickade in ett nytt ärende {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} skapade ett ärende"
+        long: "{{user_path}} skapade ett ärende {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} har skickat ett {{reply_path}}"
@@ -2268,8 +2479,12 @@ sv-SE:
     helpcard:
       title: "Styla om din supportportal"
       tour: "Hjälp mig omprofilera mitt hjälpcenter"
+      tour1: "Hjälp mig ställa in mitt hjälpcenter"
+      setup: "Ställa in ditt hjälpcenter"
       info1: "Du kan anpassa ditt hjälpcenter på Freshdesk för både kunder och representanter som loggar in på din självserviceportal. Omprofilera utseendet på ditt hjälpcenter med din logotyp och dina teman genom att ladda upp din logotyp och favoritikon, ge ditt hjälpcenter ett namn och anpassa dina färger i portalen."
       info2: "Det är bäst om dina kunder och supportrepresentanter kommer åt din supportportal i din egen domän. Du kan styra din support-URL yourcompany.freshdesk.com till din egen domän, t.ex. support.mycompany.com."
+      info3: "Du kan anpassa alla grundinställningar, t.ex. språk, tidszon och färgscheman, för ditt hjälpcenter här."
+      info4: "Med alternativet ”Redigera portal” kan du konfigurera portalen för produkten."
     cancel:
       cancel_account: "Avsluta ditt Freshdesk-konto"
       info_text: "Berätta gärna för oss varför du vill avsluta ditt konto. Vi kanske fortfarande kan hjälpa dig."
@@ -2428,6 +2643,7 @@ sv-SE:
   feedbackwidget_btcustomize: Knappanpassning
   chatwidget_agentsonline: "När representanter är online"
   solution_category:
+    all: "Alla kategorier"
     name: Namn
     new: "Ny lösningskategori"
     edit: "Redigera lösningskategori"
@@ -2438,6 +2654,7 @@ sv-SE:
     product_portal_visibility: "Synligt i"
     select_solution_category: "Välj en produktportal..."
     solution_categories_portal_info: "Denna kategori kommer att vara synlig i huvudproduktportalen samt i ovan valda produktportaler."
+    more_catogories: "Visa alla kategorier"
   forum_category:
     product_portal_visibility: "Synligt i"
     select_product: "Välj en produktportal..."
@@ -2464,6 +2681,7 @@ sv-SE:
     clone: "Avsändare - klona regel"
     new: "Avsändare – Ny regel"
     cascade_text: "För varje inkommande ärende, verkställ"
+    info_help: "Kör den första matchningsregeln för alla inkommande ärenden"
     cascade: "alla matchande regler"
     no_cascade: "den första matchande regeln"
     add_new_choice: "Lägg till nytt val"
@@ -2521,6 +2739,15 @@ sv-SE:
       placeholder: "Sök alla lösningar"
     search:
       placeholder: "Sök %{name}"
+    drafts:
+      empty: "Det finns inga utkast här."
+      discard: "Ta bort"
+      publish: Publicera
+    delete: "Ta bort"
+    edit: Redigera
+    company:
+      add_existing: "Lägg till i befintlig"
+      replace_existing: "Ersätt befintlig"
   auto_suggest_solutions:
     info: "<b>Vet du vad? Vi kanske redan har svaret på din fråga.</b><br/>Kontrollera om någon av de här stämmer."
   requester_reopens: "Beställaren öppnar ärendet på nytt"
@@ -2791,6 +3018,9 @@ sv-SE:
     select_an_agent: "Välj representant"
     select_business_calendar: "Välj öppettider"
     learn_more: "Läs mer"
+    settings_saved: "Inställningen har sparats."
+    disable_round_robin_info1: "Tillåt att representanter kan aktivera/inaktivera automatisk ärendetilldelning"
+    disable_round_robin_info2: "Om du inaktiverar detta står representanter alltid som ”tillgängliga”. Administratörer kan vid behov ändra tillgängligheten för en representant via instrumentpanelen."
     round_robin_desc: "När den här funktionen är PÅSLAGEN kommer ärenden som tilldelats den här gruppen att distribueras till representanter i sekventiell ordning. Om du vill tilldela ärenden manuellt eller skicka dem med hjälp av Avsändaren eller Övervakaren kan du STÄNGA AV den här funktionen."
     assigntime:
       half: "30 minuter"
@@ -3032,6 +3262,7 @@ sv-SE:
       verified: "Aktiva kontakter"
       unverified: "Kontakter med overifierade e-postadresser"
       deleted: "Borttagna kontakter"
+      blocked: "Blockerade kontakter"
       all: "Alla kontakter"
     verified:
       no_contacts: "Du har inga kontakter."
@@ -3048,6 +3279,7 @@ sv-SE:
   between: Mellan
   profile_settings: Profilinställningar
   portal_key: Portal
+  portals_key: Portaler
   add_new_forum: "lägg till ett nytt forum"
   no_forum_category: "Inga forum i denna kategori"
   sla_policy:
@@ -3101,6 +3333,11 @@ sv-SE:
     applicable_info: "Välj åtminstone ett utlösningsvillkor."
     disabled_old_policy: "Ställ in utlösningsvillkor för att aktivera den här SLA-policyn."
     default_policy: "SLA-policyn som är standard kan inte avaktiveras."
+    update_company_sla_api:
+      update_failed: "SLA-policy kunde inte uppdateras."
+      invalid_arguments_for_update: "Ogiltiga argument."
+      invalid_data_type: "Företags-ID:n bör vara ett kommaavgränsat värde."
+      default_policy_update: "Det går inte at uppdatera en förvald SLA-policy."
   left: Vänster
   subscription:
     error:
@@ -3307,13 +3544,103 @@ sv-SE:
   urgent: Brådskande
   import_groups: Grupper
   solution:
+    ? "true"
+    : på
+    orphan_category_info: "Den här kategorin är inte associerad med en portal"
+    sidebar:
+      orphan: "Fristående kategorier"
+      orphan_desc: "De här kategorierna är inte associerade i någon portal"
+      view_all: "Visa alla"
+      view_less: "Visa färre"
+      drafts:
+        title: Utkast
+        me: "Mina utkast"
+        all: "Alla utkast"
+        details: "Redigerad av %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+      feedbacks:
+        title: "Feedback på artikel"
+        me: "Din feedback"
+        all: "All feedback"
+        details: "Feedback från %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        status: "Status: %{status}"
+    anonymous_votes: "Anonym (%{count})"
+    home: "Lösningar – hem"
+    add_category: "Ny kategori"
+    orphan: Fristående
+    add_folder: "Ny mapp"
+    add_article: "Ny artikel"
+    view_feedback: "Visa all feedback"
+    change_author: "Ändra författare"
+    move_to: "Flytta till"
+    details: "Av %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    flash:
+      folders_move_to: "Mapparna har flyttats till den valda kategorin ”<b>%{category_name}</b>” %{undo}"
+      articles_move_to: "Artiklarna har flyttats till den valda mappen ”<b>%{folder_name}</b>” %{undo}"
+      articles_changed_author: "Författaren har ändrats"
+    general:
+      created_by: "Skapad av"
+      last_published: "Senast publicerad av"
+      article_prop: "Egenskaper för artikel"
+      feedback: Feedback
+      analytics: Analytics
+      unsaved_content: "Det finns innehåll på den här sidan som inte har sparats."
+      leave_page_que: "Vill du lämna den här sidan?"
+      something_wrong: "Något blev fel!"
     folders:
+      view_all: "Visa alla mappar..."
+      choose_folder: "Välj mapp"
+      choose_folder_warning: "Välj en mapp som du vill spara artikeln i"
       new:
         new_folder: "Lägg till mapp"
       folder_form:
         category: Kategori
         visible_to: "Synligt för"
+      visibility:
+        no_companies: "Du har inte valt några giltiga företag."
+        success: "Visningen har ändrats."
+        failure: "Det gick inte att ändra visningen för valda mappar."
+        extra_companies:
+          one: " och ett företag till."
+          other: " och %{count} företag till."
+      draft: "Alla e-postmeddelanden som skickas till kbase@%{domain_name} sparas som utkast här"
     articles:
+      search_all: "Sök i artiklar"
+      search_in: "Sök i %{search_scope}"
+      type: "Typ av artikel"
+      prop_tabs:
+        tag_fol: "Taggar och mappar"
+        meta: Meta
+      draft:
+        show:
+          edit: Redigera
+        show_page_msg: "Visa utkast som har redigerats av"
+        you: dig
+        unpublish:
+          msg: "Avpublicera artikeln i portalen"
+          with_draft: "Den publicerade artikeln tas bort permanent och innehållet i utkastet behålls under Utkast"
+          without_draft: "Den publicerade artikeln tas bort och innehållet sparas under Utkast"
+        save_error: "Artikeln kunde inte sparas."
+        portal_preview_msg: "Du förhandsvisar utkastet av den här artikeln."
+        discard_msg: "Utkastet har tagits bort."
+        discard_confirm: "Vill du ta bort det här utkastet?"
+        revert_msg: "Ändringar som gjordes i utkastet har återställts."
+      tag_max_len: "Maximal nyckellängd"
+      locked: Låst
+      cant_publish: "kan inte ändras till publicerad om artikeln är i standardmappen/-kategorin"
+      draft_published_label: "Det finns även en publicerad version."
+      unpublished_version: "Du ser en version av artikeln som inte har publicerats."
+      att_deleted: "En bilaga togs bort."
+      published_success: "Denna artikeln har publicerats.<a href= \"%{url}\" target = \"_blank\">Visa i portal</a>"
+      published_failure: "Denna artikel kunde inte publiceras."
+      view_draft: "Förhandsvisa utkast"
+      restrict_edit: "%{name} håller på att redigera artikeln."
+      edit: "Redigera artikel"
+      properties: Egenskaper
+      edit_properties: "Ändra egenskaper"
+      prop_updated_msg: "Egenskaperna för artikeln har uppdaterats."
+      save_and_publish: "Spara och publicera"
+      save_as_draft: "Spara som utkast"
+      publish: Publicera
       where: Var
       search_articles: "Söka i artiklar"
       guides: Guider
@@ -3328,6 +3655,8 @@ sv-SE:
       article_useful: "Bra att vi kunde hjälpa till. Tack för din feedback."
       article_not_useful: "Tack för din feedback. Vi kommer att förbättra den här artikeln."
       error_message: "Ett fel har uppstått %{error_msg}"
+      votes: Röster
+      views: Visningar
       reset_rating:
         link: Återställ
         dialog_title: "Återställ gillande och ogillande"
@@ -3335,11 +3664,28 @@ sv-SE:
         resetting: Återställer
         dialog_msg: "Är du säker på att du vill återställa artikelbetyg - gillande och ogillande till noll?"
         count: "%{no_of_likes} gillande och %{no_of_dislikes} ogillande återställs till noll."
-    info9: "Offentlig (kommer att publiceras i självservice)"
+        confirm_msg: "Vill du nollställa både ”%{no_of_likes} gillande” och ”%{no_of_dislikes} ogillande”?"
+    draft:
+      name: Utkast
+      all_drafts: "Alla utkast"
+      my_drafts: "Mina utkast"
+      kbase: "E-post för kunskapsbas"
+      portal:
+        all: Alla
+      autosave:
+        save_success: "Utkast har sparats "
+        somebody_editing: "%{name} håller på att redigera artikeln. "
+        content_changed_other: "%{name} har uppdaterat innehållet medan du var iväg. "
+        content_changed_you: "Du har uppdaterat innehållet från en annan plats. "
+        content_changed: "Innehållet har ändrats. "
+        other_problem: "Innehållet kunde inte sparas. "
+    no_articles_info: "Inga artiklar i den här mappen"
+    you: Dig
+    info9: "Om du använder flera produkter kan du göra så att <b>Kategorier</b> visas i respektive produktportal."
     edit: "Redigera lösning"
     view_on_portal: "Visa i portal"
     add: "Lägg till lösning"
-    info10: "Privat (endast synlig för representanter)"
+    info10: "Det finns fyra typer av mappvisning."
     add_new_solution: "Lägg till en lösning"
     title: Lösningar
     title_singular: Lösning
@@ -3354,6 +3700,17 @@ sv-SE:
     info7: "Inga lösningar i denna mapp"
     status: Lösningsstatus
     info8: "Är du säker på att du vill ta bort denna lösning?"
+    info11: "<b>Alla</b> - Den visas för alla som har tillgång till din självbetjäningsportal."
+    info12: "<b>Inloggade användare</b> - Den visas endast för de som har registrerat sig och loggat in med sina inloggningsuppgifter."
+    info13: "<b>Representanter</b> - De blir privata så att endast representanter i ditt hjälpcenter kan se dem. Det är användbart när kunskap ska delas internt."
+    info14: "<b>Välj företag</b> - Det visas endast för särskilda företag som du väljer ut bland dina kontakter"
+    info15: "Artiklar kan antingen sparas som <b>utkast</b> eller <b>publiceras</b> med en gång."
+    info16: "<b>Publicerade</b> artiklar visas i självbetjäningsportalen och i sökresultat. "
+    info17: "Artiklar som är <b>utkast</b> visas endast för representanterna och i representanternas sökresultat."
+    info18: "En publicerad artikel kan redigeras och sparas som ett utkast. Då visas den publicerade versionen på portalen samtidigt som det finns en extra version som är ett utkast som representanter kan redigera. Det är bra när du behöver uppdatera artiklar, då du slipper ta bort dem från portalen."
+    info19: "Artikeltypen kan vara antingen <b>permanent</b> eller <b>tillfällig</b>."
+    info20: "Du kan lägga till <b>taggar</b> i artiklarna. Det gör det lättare att kategorisera artiklar som innehåller liknande innehåll."
+    info21: "Representanter kan skicka in artiklar med lösningar till <b>kbase@defaultportal.com</b>, vilka sedan visas under avsnittet Utkast."
     folder: Mapp
     solution_meta: "Metataggar för sökmotorer"
     solution_meta_title: Rubriktagg
@@ -3368,6 +3725,12 @@ sv-SE:
     feedback_message_2: "Svårt att förstå"
     feedback_message_3: "Felaktigt/irrelevant innehåll"
     feedback_message_4: "Saknad/trasig länk"
+    properties: Egenskaper
+    solution_title: Rubrik
+    via: via
+    article_properties:
+      title_counter_message: "För bästa möjliga sökmotoroptimering (SEO) rekommenderas 50-60 tecken för rubriken."
+      description_counter_message: "För bästa möjliga sökmotoroptimering (SEO) rekommenderas 150-160 tecken för beskrivningen."
   import_updated: Uppdaterad
   feedbackwidget_intro: "Anpassa din Freshdesk-widget nedan och se en förhandsvisning i realtid."
   chatwidget_intro: "Anpassa din live-chatt-widget nedan och se en förhandsvisning i realtid."
@@ -3490,6 +3853,8 @@ sv-SE:
     welcome: Välkommen
     new_ticket: Nytt
     new_ticket_tip: "Nytt ärende"
+    new_phone_ticket: Ärende
+    compose_email: E-post
     search: Sök
     submit_a_ticket: "Skicka in ett ärende"
     login: "<b>Logga in</b>"
@@ -3511,6 +3876,9 @@ sv-SE:
       admin: Admin
       checkstatus: "Kontrollera din ärendestatus"
       solutions: Lösningar
+      new_solution: "Ny lösning"
+      new_folder: "Ny mapp"
+      new_solution_category: "Ny kategori"
       forums: Forum
       tickets: Ärenden
       home: Hem
@@ -3771,6 +4139,7 @@ sv-SE:
     include_quoted_text: "Inkludera tidigare svar"
     more_details: "Mer information ..."
     reported: rapporterat
+    outbound: "skickat via e-post"
     new_ticket: "Nytt ärende"
     new_tickets: "Nya ärenden"
     ticket_updated: "Ärendet uppdaterat"
@@ -3780,6 +4149,7 @@ sv-SE:
     reported_on: "Från: %{username}, Senast uppdaterad: %{date}"
     scenarios: Scenarier
     ticket_from: "Från: %{username}"
+    ticket_to: "Till: %{username}"
     ticket_list_status_closed_at: "Från: %{username}, Stängd: <span class='emphasize'>%{time_ago} sedan</span>"
     ticket_list_status_resolved_at: "Från: %{username}, Löst: <span class='emphasize'>%{time_ago} sedan</span>"
     ticket_list_status_agent_responded_at: "Från: %{username}, Representant svarade: <span class='emphasize'>%{time_ago} sedan</span>"
@@ -3829,6 +4199,7 @@ sv-SE:
     spam_btn_title: "Markera som skräppost"
     assigned_to: "Tilldelad till"
     assigned_agent: Representant
+    action: Åtgärd
     edit: "Redigera ärende"
     ham_btn_title: "Detta är inte skräppost"
     reported_from_source: "Rapporterat via %{source}"
@@ -3888,7 +4259,11 @@ sv-SE:
     pick_up: Hämtning
     unwatch: "Ta bort bevakning"
     submit_ticket_title: "Skicka in ett ärende"
+    learn_more: "Läs mer."
+    submit_ticket_new_title: "Skapa ett nytt ärende"
     create_ticket_title: "Skapa ett ärende"
+    compose_email_info: "E-postmeddelandet skickas till kunden och registreras som ett ärende utan att någon avisering skickas."
+    submit_a_ticket_info: "Beställaren får en e-postavisering om att ett nytt ärende har skapats. Detta kan inaktiveras under Admin > E-postaviseringar."
     convert_ticket_title: "Konvertera till ärende"
     reply_form:
       post_to_linked_forum: "Publicera i länkat forum"
@@ -4099,7 +4474,9 @@ sv-SE:
     non_us: DAG-MÅNAD-ÅR
     us: MÅNAD-DAG-ÅR
     helpdesk_name: "Namn på hjälpcenter/portal"
+    helpdesk_name_plain: "Namn på hjälpcenter"
     rebrand: "Omprofilera ditt hjälpcenter"
+    helpdesk: Hjälpcenter
     helpdesk_url: "URL till hjälpcenter/portal"
     language: Språk
     primary_language: "Primärt språk"
@@ -4130,7 +4507,7 @@ sv-SE:
     delete: "Är du säker på att du vill radera?"
     valid_time: "Ange en giltig tid"
     holiday_name: Helgdagsnamn
-    import_holiday: "Importera helgdagar"
+    holiday_calendar: Helgdagskalender
     title: Öppettider
     info1: "Genom att ställa in dina öppettider i Freshdesk får du bättre kontroll över dina SLA:er och kan se när ett ärende förfaller. Om ditt hjälpcenter exempelvis arbetar mellan 09.00–18.00 måndag-fredag och en kund skickar ett ärende med hög prioritet klockan 16.00 på tisdag med en SLA-mållösningstid på 4 timmar, så kommer ärendets förfallotid att bli klockan 11.00 på onsdag."
     info2: "Helgdagar fungerar på samma sätt som vardagar. Om ditt hjälpcenter exempelvis arbetar mellan 09.00–18.00 måndag-fredag och en kund skickar ett ärende med medelhög prioritet klockan 20.00 på fredag med en SLA-mållösningstid på 24 timmar, så kommer ärendets förfallotid att bli klockan 09.00 på tisdag (inte 20.00 på lördag)."
@@ -4173,6 +4550,17 @@ sv-SE:
   export_to_CSV: "Exportera till CSV"
   back_to_reports: "← Tillbaka till rapporter"
   helpdesk:
+    send_email: "Skicka ett e-postmeddelande"
+    send: Skicka
+    send_and_new: "Skicka och <strong>nytt</strong>"
+    enter_subject: "Ange ämne..."
+    from: "Från:"
+    to: "Till:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: "Lägg till beställare"
+    surveys:
+      invalid_rating: "Betygsvärdet ”%{rating}” är ogiltigt. Sätt ett betyg med rätt betygsvärde."
     ticket_notifier:
       reply:
         happy: Utmärkt
@@ -4240,6 +4628,7 @@ sv-SE:
         tags_merge: "En tagg med samma namn finns redan. Vill du slå samman dessa taggar?"
         remove_tags: "Ta bort taggassocieringen"
         remove_confirmation: "Är du säker på att du vill ta bort taggassocieringen?"
+        delete_confirmation: "Vill du ta bort valda taggar?"
       tag:
         ticket: Ärende
         tickets: Ärenden
@@ -4430,6 +4819,16 @@ sv-SE:
           addbcc: "Lägg till Bcc"
           removebcc: "Ta bort Bcc"
           not_sent: "Svaret vidarebefordrades inte!"
+        reply_to_forward:
+          title: Svara
+          cc: Cc
+          to: Till
+          addcc: "Lägg till Cc"
+          removecc: "Ta bort Cc"
+          bcc: Bcc
+          addbcc: "Lägg till Bcc"
+          removebcc: "Ta bort Bcc"
+          not_sent: "Svaret skickades inte!"
         tweet_form:
           title: "Svara på %{user}"
         facebook_form:
@@ -4495,6 +4894,8 @@ sv-SE:
         open_or_pending: "Öppna eller väntande"
         resolved_or_closed: "Lösta eller stängda"
         no_tickets: "Du har inga ärenden i den aktuella vyn"
+        article_feedback: "Feedback på artikel"
+        my_article_feedback: "Feedback på mina artiklar"
       note:
         posted_on: "%{user_name} på %{note_date}"
         created_on:
@@ -4509,6 +4910,7 @@ sv-SE:
           reply: "%{user_name} svarade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} vidarebefordrade <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} betygsatte det här ärendet <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} svarade på vidarebefordran <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: "Redigera anteckning"
         split_this_as_new_ticket: "Dela det här ärendet och skapa ett nytt"
         delete_note: "Ta bort detta från ärendekonversationen?"
@@ -4526,6 +4928,9 @@ sv-SE:
           not_added: "(Inte tillagd)"
           not_added_greater: "(> 15 mb Inte tillagd)"
           exceed_limit: "Överskrider storlek för bilagor"
+        survey_response: "Svar för undersökningen %{survey_name}"
+        survey_response_to: "till %{agent}"
+        survey_satisfaction: "Hur nöjd är du i det stora hela med lösningen från representanten?"
     merge:
       merge:
         merge_into: "Slå samman till?"
@@ -4705,6 +5110,7 @@ sv-SE:
       tags: Taggar
       survey_result: Undersökningsresultat
       product: Produkt
+      requester_phone: "Beställarens telefonnummer"
     call_history:
       info:
         success: "Vi har börjat exportera dina samtalsposter. Detta skickas till dig när de är klart."
@@ -5119,7 +5525,7 @@ sv-SE:
         sync_type: Synkroniseringstyp
         sync_type_info: "Hur vill du synkronisera kontakterna mellan Google och Freshdesk?"
         account_settings: ""
-        account_settings_info: ""
+        account_settings_info: "Du kan visa det konfigurerade Google-kontot, dess konfiguration och synkroniseringsstatus här."
         account_not_configured: "<br/>Inställningarna för Google-kontot har ännu inte konfigurerats. Klicka på %{action} för att konfigurera ett nytt konto med Google.<br/><br/>"
       update_action:
         success: "Google-kontot har lagts till."
@@ -5165,6 +5571,7 @@ sv-SE:
       send_reply_in_fd: "Meddela kund via e-post"
       add_comment_in_jira: "Lägg till en kommentar i JIRA"
       update_jira_status: "Uppdatera JIRA-status"
+      add_attachments_in_jira: "Uteslut bilagor till ärenden vid synkronisering"
     salesforce:
       label: Salesforce
       desc: "Du kan visa kontaktinformation från Salesforce CRM i Freshdesk."
@@ -5184,6 +5591,12 @@ sv-SE:
     quickbooks:
       label: "QuickBooks<span class='beta'>Förhandsgranska</span>"
       desc: "Visa QuickBooks-kundinformation och skapa/uppdatera tidsarksposter för kunder i ditt QuickBooks-konto."
+      connect_text: "Genom att ansluta till QuickBooks blir det enklare för dina representanter att komma åt och uppdatera infromation i det, direkt från ditt hjälpcenter."
+      remote_configurations:
+        signup: "<p>Du skickas nu vidare till en av Freshdesks sidor där du kan skapa ett konto. Vi rekommenderar varmt att du använder produktgenomgången (visas när du loggar in första gången) efter att du har skapat ett konto. Du kan också länka hjälpcentret till QuickBooks genom att gå till <b>Admin-->Integrationer</b>.</p><br><p>Kontakta gärna vårt supportteam på <b>support@freshdesk.com</b> om du stöter på problem under installationen eller när du använder hjälpcentret.</p>"
+        connect: "<p>Du skickas nu vidare till din integrationssida i Freshdesk. Här kan du länka ditt konto till QuickBooks.</p>"
+        disconnect: "<p>Du skickas nu vidare till din integrationssida i Freshdesk. Här kan du inaktivera ditt konto i QuickBooks.</p>"
+        launch: "<p>Du skickas nu vidare till din sida för instrumentpanelen i Freshdesk.</p>"
     zohocrm:
       label: "Zoho CRM"
       desc: "Du kan visa kontaktinformation från Zoho CRM i Freshdesk."
@@ -5569,6 +5982,32 @@ sv-SE:
       customer_champion: Kundmästare
       valuable_player: "Mest värdefulla spelare"
     survey_reports:
+      main:
+        all: Alla
+        time_period: Tidsperiod
+        group: Grupp
+        agent: Representant
+        overview: Översikt
+        responses: Svar
+        response_to: "Svar på"
+        rating: Betyg
+        question: F
+        positive: Positiv
+        neutral: "Ingen åsikt"
+        negative: Negativ
+        answered: Besvarad
+        unanswered: Obesvarad
+        total_responses: "Totalt antal svar"
+        filter_by: "Filtrera efter"
+        preparing_chart_for: "Förbereder diagram för"
+        loading_chart: Laddar...
+        no_remarks: "Inga tillgängliga svar"
+        loading_remarks: "Laddar anmärkningar"
+        fetching_responses: "Hämtar svar"
+        no_overview: "Inga tillgängliga data"
+        view_report_by: "Visa efter"
+        overall_rating: Betyg
+        all_responses: "Alla svar"
       index:
         agent_list_loading: "Hämtar lista med representanter"
       feedbacks:
@@ -5641,6 +6080,7 @@ sv-SE:
       info2: "E-postkommandon måste följa korrekt syntax och placeras inom den förkonfigurerade avgränsade texten. T.ex. kommandot ”@simonsays representant: John Roberts Status:Löst @simonsays” kommer att tilldela ärendet till representanten John Roberts och markera ärendet som löst."
       info3: "Resterande e-postinnehåll kommer att läggas till som en konversation i Freshdesk och skickas till beställaren via e-post."
       ticket_type_example: Fråga
+      note: Anteckning
   email_command_delimeter_label: "Avgränsare för e-postkommandon"
   email_command_preview_to_email: Till
   email_command_preview_to_email_value: support@acme.feshdesk.com
@@ -5652,8 +6092,11 @@ sv-SE:
       tour: "Hjälp mig förstå ärendefält"
       title1: Ärendefält
       title2: "Underordnade fält"
+      title3: "Dynamiska fält"
       info1: "Det enklaste sättet att samla in all information du behöver från kunden är att använda ärendeformuläret, även om kunden skickar in ett ärende. Att exempelvis ha kundens beställnings-ID i en inställning för e-handel tar fram rätt sammanhang för ärendet och skyndar på processen. Du kan anpassa ditt ärendeformulär i Freshdesk så att det innehåller de rätta ärendefälten för ditt företag. På så sätt kan dina representanter och kunder fylla i den information du behöver i det format du föredrar."
+      info_1: "Med hjälp av ärendeformuläret kan du samla in de data du behöver från kunden när de skickar in ett ärende. Du kan anpassa ärendeformuläret så att det innehåller passande ärendefält för ditt företag och så att kunderna och representanterna fyller i den information du behöver i det format du vill ha den i. Det är t.ex. väldigt användbart för en representant i ett näthandelsföretag att få en kunds beställningsnummer i ärendeformuläret när han eller hon ska lösa ärendet."
       info2: "Underordnade fält ger dig ett enkelt sätt att skapa mer detaljerade ärendekategorier och identifiera de problem som supporten tar hand om regelbundet. Med underordnade fält kan du organisera ärenden hierarkiskt i kategorier, underkategorier och påverkade objekt."
+      info3: "Om du har abonnemanget Estate eller högre kan du ha dynamiska fält som visas beroende på vilket alternativ som har valts i typfältet. Du kan skapa ett nytt avsnitt för varje alternativ i typfältet, och sedan lägga till fler ärendefält i varje asvnitt. Om det t.ex. handlar om näthandel kan ett avsnitt med ett fält som kallas ”Orsak” visas när typen ”Ersättning” väljs, så kan du få veta orsaken till varför kunden behöver en ersättning för objektet.<a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Läs mer om dynamiska fält</a>."
   contact_field:
     helpcard:
       title2: "Anpassa dina kontaktfält"
@@ -5695,6 +6138,8 @@ sv-SE:
     sorted_by: "Sorterat efter:"
     by: "efter:"
     in: i
+    created_by: "Skapad av"
+    edited_by: "Redigerad av"
     requested_by: "Begärt av,"
     agent: "Agent:"
     status: "Status:"
@@ -5734,6 +6179,7 @@ sv-SE:
   fwd_to: Vidarebefordra
   add_cc: "Lägg till Cc"
   add_a_cc: "Lägg till Cc"
+  reply_to_fwd: Svara
   add_new_requester: "Lägg till ny beställare"
   fwd_success_msg: "Ärendet har vidarebefordrats"
   validate_fwd_to_email_msg: "Ange en giltig e-postadress"
@@ -5768,6 +6214,7 @@ sv-SE:
   forwarded_to: "Vidarebefordrat till"
   replied_to: "Svarat till"
   notified_to: "Meddelat till"
+  reply_to_forward: "svarade på vidarebefordran"
   to: till
   cc_emails_key: ", cc : %{cc_emails}"
   bcc_emails_key: ", bcc : %{bcc_emails}"
@@ -5955,6 +6402,10 @@ sv-SE:
   last_month: "Senaste månaden"
   two_months: "De senaste 2 månaderna"
   six_months: "De senaste 6 månaderna"
+  last_seven_days: "Senaste 7 dagarna"
+  last_thirty_days: "Senaste 30 dagarna"
+  last_sixty_days: "Senaste 60 dagarna"
+  last_one_eighty_days: "Senaste 180 dagarna"
   set_date: "Välj tidsinterval"
   Source: Källa
   Subject: Ämne
@@ -6000,6 +6451,32 @@ sv-SE:
   activation_link: "Aktiveringslänk har skickats till %{email}"
   activation_link_no_email: "Registreringen lyckades"
   not_given: "Inte angiven."
+  helpdesk_reports:
+    time_period: "Select Time Period"
+    filter_by: "Filtrera efter"
+    edit_filter: Filtrera
+    ticket_volume:
+      title: Ärendevolym
+      time_trends:
+        day: Dag
+        week: Vecka
+        month: Månad
+        qtr: Kvartal
+        year: År
+        title: "Trend för mottagna och lösta ärenden"
+      day_trend:
+        title: "Trend för dag i veckan för mottagna och lösta ärenden"
+        subtitle: "Se under vilken tidpunkt på vilken dag som det kommer in flest ärenden och fördela personalen efter detta"
+    glance:
+      title: "Hjälpcenter – översikt"
+    performance:
+      title: Resultatfördelning
+    group_summary:
+      title: Gruppöversikt
+    agent_summary:
+      title: Representantöversikt
+    customer_report:
+      title: Kundrapport
   adv_reports:
     at_a_glance: Översikt
     select_an_option: "Välj ett alternativ"
@@ -6171,6 +6648,8 @@ sv-SE:
     not_enough_credit: "Inte tillräckligt med kredit."
     recharge: "Fyll på"
     ff_number: Telefonnummer
+    via_browser: "via webbläsare/app"
+    via_phone: "via telefon"
     subscription:
       auto_recharge_text: "Vi debiterar ditt konto när saldot är under 5 USD"
       current_balance: "Ditt aktuella saldo"
@@ -6181,6 +6660,7 @@ sv-SE:
       auto_recharge_amt: "Belopp för automatisk påfyllning"
       see_detailed_pricing: "Visa detaljerad prisinformation"
       followup: "värde telefonkediter"
+      followup_text: "värt telefonkredit"
     dialpad:
       not_valid_number: "Ange ett giltigt nummer"
       could_be_invalid_number: "Kan vara ett ogiltigt nummer."
@@ -6189,6 +6669,11 @@ sv-SE:
       restricted_country: "Begränsat land"
       already_in_call: "Utgående simultansamtal är begränsade"
       strange_number: "Kan inte ringa förbjudet nummer"
+      move_to_dialer: "Tillbaka till uppringare"
+      connect_call: Samtal
+    search:
+      work_phone: Arbete
+      mobile_phone: Mobil
     call_status:
       default: ""
       completed: Slutfört
@@ -6202,6 +6687,8 @@ sv-SE:
       voicemail: Röstbrevlåda
       restricted: Begränsat
       all_calls: "Alla samtal"
+      answered: Besvarade
+      on-hold: Parkerade
     general:
       suspended_account_msg: "Din telefonkanal har stängts avs. Aktivera telefonen för att ringa och ta emot samtal."
       suspended_on_low_balance_msg: "Din telefonkanal har stängts av på grund av för låg balans. Ladda för att aktivera."
@@ -6216,9 +6703,15 @@ sv-SE:
       accept: Acceptera
       end_call: "Avsluta samtal"
       mute: "Ljud av"
+      hold: Parkera
+      holding: |-
+          Tyvärr gick det inte att parkera...
+          Försök igen senare...
+      hold_success: "Samtalet har parkerats"
       transfer_call: "Överför samtal"
       dialpad: Knappsats
       call_notes: Samtalsanteckningar
+      phone_icon: Telefon
       on_phone: "Tillgänglig via telefon"
       on_browser: "Tillgänglig via webbläsare"
       invalid_phone_number: "Uppdatera ditt telefonnummer med '+'-prefix och landskod i profilinställningarna"
@@ -6251,6 +6744,20 @@ sv-SE:
       forward_number_alert: "Uppdatera ditt telefonnummer i profilinställningarna för att vidarebefordra samtal till din telefon"
       desktop_notification: "Sätt på skrivbordsmeddelande"
       network_error: "Kontrollera Internet-anslutningen"
+      transfer:
+        tranfer_via: "via "
+        to: "Till: "
+        transferring: Överför....
+        transfer_canceled: Ignorerade
+        tranfer_no_answer: "Ej tillgängligt"
+        tranfer_connected: Överfört
+        group_tranfer_no_answer: "Inga tillgängliga representanter"
+        group_tranfer_connected: "Anslöt till kunden"
+        close: Stäng
+        resume: Återuppta
+        cancel: Avbryt
+        cancelling: Avbryter...
+        resuming: Återupptar...
     call_history:
       title: Samtalshistorik
       sort_by: "Sortera efter:"
@@ -6313,6 +6820,8 @@ sv-SE:
       unknown: OKÄND
       anonymous: ANONYM
       empty: TOM
+      total_duration: Tid
+      minutes: Minuter
     ticket:
       recording: "Spela upp meddelande"
       ticket_desc_with_name: "Konversation med <b> %{customer_name} </b> (%{customer_number}), %{location}) och <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6350,7 +6859,7 @@ sv-SE:
         round_robin: "Ring ledig agent först"
       number_settings:
         title_text: "Hantera dina samtalscenter"
-        info_content: "<b>Tilldela telefonsamtal till agenter och grupper</b></br>Du kan installera ett interaktivt röstsvarsystem (IVR) och dirigera samtal till olika grupper eller agenter i ditt team. Du kan exempelvis låta kundernas samtal vidarebefordras till ditt supportteam när de trycker på 1, och till någon från säljavdelningen  de trycker på 2.<br/>Dessutom kan du anpassa meddelanden som ska spelas upp för dina kunder genom att spela in röst, överföra en fil eller använda text-till-tal-funktionen.<br><br><b>Anpassa ditt nummer</b><br>Du kan även konfigurera varje telefonnummer separat och låta det innehålla en egen uppsättning inställningar. Detta inkluderar grundinställningar, såsom maximalt antal personer i kön och maximalväntetid för kunder. När något av alternativen uppnåtts spelas ett meddelande om bristande tillgänglighet upp automatiskt för kunderna.<br/>När du aktiverar samtalsinspelning spelas alla telefonsamtal från supporten in och bifogas till dina biljetter, och inspelningen kan bli offentligt tillgänglig för kunder eller hållas privat. Du kan även begränsa telefonkanalen från att ta emot samtal under icke kontorstid. Du kan exempelvis upprätta två telefonlinjer, där en av dem är tillgänglig för samtal under arbetstid och den andra fungerar som en nödlinje dygnet runt, alla veckans dagar.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Läs mer om anpassning av ditt nummer</a>"
+        info_content: "<b>Tilldela telefonsamtal till representanter och grupper</b></br>Du kan installera ett interaktivt röstsvarsystem (IVR) och dirigera samtal till olika grupper eller representanter i ditt team. Du kan exempelvis låta kundernas samtal vidarebefordras till ditt supportteam när de trycker på 1, och till någon från säljavdelningen när de trycker på 2.<br/>Dessutom kan du anpassa de meddelanden som ska spelas upp för dina kunder genom att spela in ett röstmeddelande, överföra en fil eller använda text-till-tal-funktionen.<br><br><b>Anpassa ditt nummer</b><br>Du kan även konfigurera varje telefonnummer separat och låta det innehålla en egen uppsättning inställningar. Detta inkluderar grundinställningar, såsom maximalt antal personer i kön och maximalväntetid för kunder. När något av alternativen uppnåtts spelas ett meddelande om bristande tillgänglighet upp automatiskt för kunderna.<br/>När du aktiverar samtalsinspelning spelas alla telefonsamtal från supporten in och bifogas till dina biljetter, och inspelningen kan bli offentligt tillgänglig för kunder eller hållas privat. Du kan även begränsa telefonkanalen från att ta emot samtal under icke kontorstid. Du kan exempelvis upprätta två telefonlinjer, där en av dem är tillgänglig för samtal under arbetstid och den andra fungerar som en nödlinje dygnet runt, alla dagar i veckan.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Läs mer om anpassning av ditt nummer</a>"
         non_business_hours: "Acceptera samtal under..."
         business_calendar: "Välj öppettider"
         transcript_voice: "Transkribera röst"
@@ -6365,7 +6874,7 @@ sv-SE:
         max_queue_calls: "Maximalt antal samtal i kön"
         call_wait_time: "med en maximal väntetid på"
         call_wait_time_suffix: "per samtal"
-        wait_message: "Meddelande om väntetid"
+        queue_message: Kömeddelande
         non_availability_message: "Meddelande om otillgänglighet"
         voicemail_message: "Meddelande för röstbrevlåda"
         non_business_hours_message: "Meddelande efter kontorstid"
@@ -6380,7 +6889,8 @@ sv-SE:
         recorded_voice: "Inspelad röst"
         audio_upload: "Välj fil för överföring"
         greeting_message: "Ange ditt meddelande här"
-        attachment_help_info: "Accepterar ljudfiler &lt; 5 MB"
+        attachment_help_info: "Accepterar ljudfiler (mp3) &lt; 5 MB"
+        attachment_help_text: "Accepterar ljudfiler < 5 MB"
         recording_help_info: "Sätt på mikrofonen. Längd &lt; 5 min."
         cancel: Avbryt
         change: Ändra
@@ -6398,9 +6908,11 @@ sv-SE:
         recording_privacy_private: "Endast synligt för agenter"
         name_maxlength: "Namnet får inte innehålla fler än 255 tecken"
         number_accessible: "Åtkomlig via"
+        wait_music: Väntemusik
+        hold_music: Parkeringsmusik
       numbers:
         sidebar_title: "Inbyggd telefonkanal för Freshdesk"
-        sidebar_content: "Genom att använda telefonkanalen kan du ringa och ta emot samtal genom webbläsaren, mobiltelefonen eller använda telefonkanalen i de mobila apparna för Freshdesk. Den är tätt integrerad i biljettsystemet för Freshdesk. Du kan därför hålla kontroll på dina telefonsamtal genom att spela in dem och konvertera dem till biljetter vid behov. <br/><br/> <b>Konfigurera telefonen</b></br>För att börja använda telefonen behöver du först aktivera den och köpa ett supportnummer. Du kan köpa lokala nummer från länder som finns listade här och ring eller ta mot samtal från alla ställen i världen. Om dina kunder riner dig i USA, Storbritannien eller Kanada kan du även köpa avgiftsfria supportnummer (eller gratistelefon i Storbritannien). <br/><br/><b> Använda Smart IVRs</b><br/> Du kan skapa smarta integrerade röstsvarsystem (IVR) för att bättre kategorisera kunder när de ringer ditt supportnummer och kanalisera dem till rätt avdelning, grupp eller agent. </b><br/><br/> <a href='http://freshdesk.com/freshfone'>Läs mer om vad du kan göra med telefonen</a>."
+        sidebar_content: "Genom att använda telefonkanalen kan du ringa och ta emot samtal genom webbläsaren, mobiltelefonen eller använda telefonkanalen i de mobila apparna för Freshdesk. Den är tätt integrerad i ärendesystemet för Freshdesk. Du kan därför hålla kontroll på dina telefonsamtal genom att spela in dem och konvertera dem till ärenden vid behov. <br/><br/> <b>Konfigurera telefonen</b></br>För att börja använda telefonen behöver du först aktivera den och köpa ett supportnummer. Du kan köpa lokala nummer från <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>länder som finns listade här</a> och ringa eller ta emot samtal från alla ställen i världen. Om dina kunder ringer dig i USA, Storbritannien eller Kanada kan du även köpa avgiftsfria supportnummer (eller gratistelefon i Storbritannien). <br/><br/><b> Använda smarta IVR-system</b><br/> Du kan skapa smarta integrerade röstsvarsystem (IVR) för att bättre kategorisera kunder när de ringer ditt supportnummer och kanalisera dem till rätt avdelning, grupp eller representant. </b><br/><br/><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Läs mer om vad du kan göra med telefonen</a>."
         purchase_number: "Köp nummer"
         purchase_phone_number: "Köp nummer (%{number})"
         buy: "Köp nummer"
@@ -6425,7 +6937,7 @@ sv-SE:
           required_field: "Alla fält är obligatoriska"
         setup:
           title_text: "Konfigurera samtalscenter"
-          info_text: "För att börja använda telefonkanalen behöver du först köpa ett inringningsnummer för att erbjuda det till dina kunder. Du kan köpa ett lokalt nummer i valfritt land som är listat här. Om dina kunder ringer från USA, Storbritannien eller Kanada, kan du även erbjuda dem ett avgiftsfritt inringningsnummer.<br/><br/>Du kan köpa flera telefonnummer från olika länder och konfigurera avgiftsfria supportlinjer i Freshdesk utan att använda en tredjeparttjänst. Du kostnadsförs för standardtaxor för inkommande, utgående och vidarebefordrade samtal från supporten. Se <a href='http://freshdesk.com/freshfone/pricing'>samtalstaxora här</a>.<br/><br/> När du har köpt ett telefonnummer för supportlinjen kommer alla inkommande samtal att distribueras till agenter som är inloggade på supporten. Dessutom kan dina agenter välja att ta emot telefonsamtal inifrån webbläsaren eller låta dem vidarebefordras automatiskt till dras bordstelefon."
+          info_text: "För att börja använda telefonkanalen behöver du först köpa det inringningsnummer som du vill erbjuda till dina kunder. Du kan köpa ett lokalt nummer i valfritt <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>land som är listat här</a>. Om dina kunder ringer från USA, Storbritannien eller Kanada, kan du även erbjuda dem ett avgiftsfritt inringningsnummer.<br/><br/>Du kan köpa flera telefonnummer från olika länder och konfigurera avgiftsfria supportlinjer i Freshdesk utan att använda en tredjeparttjänst. Du betalar standardtaxor för inkommande, utgående och vidarebefordrade samtal från supporten. Se <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>samtalstaxora här</a>.<br/><br/> När du har köpt ett telefonnummer för supportlinjen kommer alla inkommande samtal att distribueras till agenter som är inloggade på supporten. Dessutom kan dina representanter välja att ta emot telefonsamtal inifrån webbläsaren eller låta dem vidarebefordras automatiskt till deras bordstelefon."
       invalid_attachment: "Bilagan %{name} är en ogiltig ljudfil eftersom den överstiger maxstorleken på 5 MB"
       ivr:
         simple_message_title: "Enkelt meddelande"
@@ -6532,7 +7044,6 @@ sv-SE:
     chat_availability: Chattillgänglighet
     show_chat_hours: "Visa chatt"
     show_chat_hours_msg: "Välj den tid då du kommer att vara online och tillgänglig för att acceptera chattar. "
-    show_chat_hours_info: "Obs: Chattfönstret visas endast när agenter finns tillgängliga."
     business_hours: "Under kontorstider"
     anytime: "Alltid (24/7)"
     business_calendar: "Välj kontorstider"
@@ -6678,7 +7189,6 @@ sv-SE:
     chatsettings_save: "Dina ändringar har inte sparats. Spara ändringar?"
     transfer_accepted_msg: "Överföring av besökare accepterad"
     transfer_request_timeout_msg: "Tidsgränsen för överföringsförfrågan löpte ut"
-    integrate_freshchat_info: "Obs! Chattfönstret visas endast när representanter är tillgängliga online."
     click_to_go_online: "Du är nu offline <br> Klicka för att gå online"
     click_to_go_offline: "Du är nu online <br> Klicka för att gå offline"
     fetching: "Var god vänta"
@@ -6744,6 +7254,7 @@ sv-SE:
     agent_initiated: "Agent initierad"
     agent_to_agent: "Agent till agent"
     missed_chat: Missade
+    spam_chat: Spam
     filter: Filtrera
     close: Stäng
     visitorId: Besökar-ID
@@ -6776,6 +7287,15 @@ sv-SE:
     missed_chat_info: "Chatten har missats!"
     change_livechat_tone: "Meddelandesignal för livechatt"
     message: Meddelande
+    unmark_spam: "Markera som Ej skräppost"
+    mark_spam: "Markera som skräppost"
+    convert: Konvertera
+    add_note: "Lägg till anteckning"
+    conversation: Konversation
+    and: och
+    via_widget: via
+    reported: rapporterat
+    view_ticket: "visa ärende"
   facebook_tab:
     remove_tab: "Ta bort sidflik"
     tab_not_removed: "Det gick inte att ta bort fliken"
@@ -6984,6 +7504,7 @@ sv-SE:
         hits:
           one: "1 visning"
           other: "%{count} visningar"
+        no_votes: "Inga röster"
         vote_info:
           ideas:
             one: "%{count} person gillar den här idén"
@@ -6995,8 +7516,8 @@ sv-SE:
             one: "%{count} person har detta problem"
             other: "%{count} personer har detta problem"
           howto:
-            one: "%{count} person har denna fråga"
-            other: "%{count} personer har denna fråga"
+            one: "%{count} person ställer denna fråga"
+            other: "%{count} personer ställer denna fråga"
     forums:
       helpnote:
         title: "Använda forum för att ange tonen"
@@ -7164,3 +7685,5 @@ sv-SE:
       code_mandatory: "Båda fälten är obligatoriska. Stenografi kan vara upp till 10 tecken och får inte innehålla några specialtecken, förutom '-'."
       code_duplicate: "Denna stenografi används redan."
   new_label: NYTT
+  api:
+    record_not_found: "Resursen hittades inte."
