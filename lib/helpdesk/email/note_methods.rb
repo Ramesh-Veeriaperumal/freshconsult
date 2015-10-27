@@ -70,7 +70,7 @@ module Helpdesk::Email::NoteMethods
   #   [
   #     Regexp.new("From:\s*" + address, Regexp::IGNORECASE),
   #     Regexp.new("<" + address + ">", Regexp::IGNORECASE),
-  #     Regexp.new(address + "\s+wrote:", Regexp::IGNORECASE),   
+  #     Regexp.new(address + "\s+wrote:", Regexp::IGNORECASE),
   #     Regexp.new("\\n.*.\d.*." + address ),
   #     Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
   #     Regexp.new("On.*?wrote:"),
@@ -82,13 +82,13 @@ module Helpdesk::Email::NoteMethods
   # def get_body_and_full_text text, index, plain
   #   original_msg = text[0, index]
   #   old_msg = text[index,text.size]
-    
+
   #   return  {:body => original_msg, :full_text => text } if plain
   #   #Sanitizing the original msg and old msg
 
   #   original_msg = sanitize_message(original_msg) unless original_msg.blank?
   #   old_msg = sanitize_message(old_msg) unless old_msg.blank?
-      
+
   #   full_text = get_full_text(original_msg, old_msg)
   #   {:body => full_text, :full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
   # end
@@ -101,7 +101,7 @@ module Helpdesk::Email::NoteMethods
   def sanitize_message msg
     sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
     remove_identifier_span(sanitized_msg)
-    sanitized_msg.inner_html unless sanitized_msg.blank? 
+    sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 
   def remove_identifier_span msg
@@ -116,7 +116,7 @@ module Helpdesk::Email::NoteMethods
   def update_ticket_cc
     cc_email = ticket.cc_email_hash || {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
     incoming_cc = email[:cc].reject { |cc| requester_email?(cc) }
-    add_to_reply_cc(incoming_cc, ticket, note, cc_email)
+    add_to_reply_cc(incoming_cc, ticket, note, cc_email) unless email[:in_reply_to].to_s.include? "notification.freshdesk.com>"
     cc_email[:cc_emails] = incoming_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
     ticket.cc_email = cc_email
   end
