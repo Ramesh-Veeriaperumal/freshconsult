@@ -3237,6 +3237,9 @@ $collision_delay: 1s;
 // Chat conversation ticket CSS
 #ticket_original_request div.conversation_wrap{
 	margin: 10px 0 20px 0;
+	table tr td:nth-child(3) {
+    opacity: 0;
+  }
 }
 // Chat Transcript UI in ticket detail page
 @import "chat-transcript";
