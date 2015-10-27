@@ -89,31 +89,39 @@ module TestCaseMethods
     ' ' * 300
   end
 
-  def get_others_redis_key(key)
+  def get_key(key)
     newrelic_begin_rescue { $redis_others.get(key) }
   end
 
-  def remove_others_redis_key(key)
+  def remove_key(key)
     newrelic_begin_rescue { $redis_others.del(key) }
   end
 
-  def set_others_redis_key(key, value, expires = 86_400)
+  def set_key(key, value, expires = 86_400)
     newrelic_begin_rescue do
       $redis_others.set(key, value)
       $redis_others.expire(key, expires) if expires
     end
   end
 
-  def key
+  def api_key
     API_THROTTLER % { host: 'localhost.freshpo.com' }
   end
 
-  def api_limit_key
-    FD_API_LIMIT % { host: 'localhost.freshpo.com' }
+  def v2_api_key
+    VERSIONED_API_THROTTLER % { host: 'localhost.freshpo.com' }
   end
 
-  def default_api_limit_key
+  def account_key
+    FD_ACCOUNT_API_LIMIT % { host: 'localhost.freshpo.com' }
+  end
+
+  def default_key
     'FD_DEFAULT_API_LIMIT'
+  end
+
+  def plan_key(id)
+    FD_PLAN_API_LIMIT % {plan_id: id.to_s}
   end
 
   EOL = "\015\012"  # "\r\n"

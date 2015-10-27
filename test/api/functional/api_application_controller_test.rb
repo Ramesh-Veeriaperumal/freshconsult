@@ -1,16 +1,6 @@
 require_relative '../test_helper'
 
 class ApiApplicationControllerTest < ActionController::TestCase
-  def test_latest_version
-    response = ActionDispatch::TestResponse.new
-    controller.response = response
-    params = ActionController::Parameters.new(version: 2)
-    controller.params = params
-    @controller.send(:response_headers)
-    version_header = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
-    assert_equal true, response.headers.include?('X-Freshdesk-API-Version')
-    assert_equal version_header, response.headers['X-Freshdesk-API-Version']
-  end
 
   def test_invalid_field_handler
     error_array = { 'name' => ['invalid_field'], 'test' => ['invalid_field'] }

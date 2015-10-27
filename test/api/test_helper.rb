@@ -11,8 +11,8 @@ class ActionController::TestCase
     @account.make_current
     create_session
     set_request_params
-    set_others_redis_key(api_limit_key, 1000, nil)
-    set_others_redis_key(default_api_limit_key, 100, nil)
+    set_key(account_key, 1000, nil)
+    set_key(default_key, 100, nil)
   end
 
   def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
@@ -43,8 +43,11 @@ class ActionDispatch::IntegrationTest
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')
-    set_others_redis_key(api_limit_key, 1000, nil)
-    set_others_redis_key(default_api_limit_key, 100, nil)
+    set_key(account_key, 500, nil)
+    set_key(default_key, 100, nil)
+    set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
+    set_key("#{v2_api_key}_expiry",1)
+    set_key("#{api_key}_expiry",1)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
   end

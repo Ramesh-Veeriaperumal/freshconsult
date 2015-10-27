@@ -11,6 +11,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
+  FD_API_LIMIT_CONSTANT = 1000
+  FD_DEFAULT_USED_LIMIT_CONSTANT = 1
 
   def initialize(app, options = {})
     super(app, options)
@@ -59,7 +61,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
-        increment_others_redis(key)
+        @api_resource ? increment_versioned_other_redis(key, get_used_limit.to_i) : increment_others_redis(key)
         value = get_others_redis_key(key).to_i
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
@@ -72,13 +74,14 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       @status, @headers,@response = [403, {'Retry-After' => retry_after,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
     end
-    
     # Setting API Limit headers for API
     if @api_resource && @api_limit
-      @headers.merge!("X-RateLimit-Limit" => @api_limit.to_s,
-                      "X-RateLimit-Remaining" => (@api_limit - get_others_redis_key(key).to_i).to_s)
+      @headers.merge!("X-RateLimit-Total" => @api_limit.to_s,
+                      "X-RateLimit-Remaining" => (@api_limit - get_others_redis_key(key).to_i).to_s,
+                      "X-RateLimit-Used" => get_used_limit.to_s)
+      version = get_api_version(env)
+      @headers.merge!('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
     end
-
      [@status, @headers, @response]
   end
 
@@ -100,11 +103,15 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def key
-    API_THROTTLER % {:host => @host}
+    @api_resource ? VERSIONED_API_THROTTLER % {:host => @host} : API_THROTTLER % {:host => @host}
   end
 
-  def api_limit_key
-    FD_API_LIMIT % {:host => @host}
+  def account_api_limit_key
+    FD_ACCOUNT_API_LIMIT % {:host => @host}
+  end
+
+  def plan_api_limit_key(plan_id)
+    FD_PLAN_API_LIMIT % {:plan_id => plan_id}
   end
 
   def default_api_limit_key
@@ -112,9 +119,22 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def get_api_limit(account)
-    api_limits = get_multiple_other_redis_keys(api_limit_key, default_api_limit_key)
-    (api_limits.first || api_limits.last).to_i 
+    api_limits = get_multiple_other_redis_keys(account_api_limit_key, default_api_limit_key)
+    (api_limits.first || get_plan_api_limit(account) || api_limits.last || FD_API_LIMIT_CONSTANT).to_i 
   end
 
+  def get_plan_api_limit(account)
+    # Can we cache subscription of an account?
+    plan_id = Subscription.where(account_id: account.id).first.subscription_plan_id
+    get_others_redis_key(plan_api_limit_key(plan_id)) 
+  end
+
+  def get_used_limit
+    @used = RequestStore.store[:api_credits] || FD_DEFAULT_USED_LIMIT_CONSTANT
+  end
+
+  def get_api_version(env)
+    env["action_dispatch.request.path_parameters"].try(:[], :version)
+  end
 end
 

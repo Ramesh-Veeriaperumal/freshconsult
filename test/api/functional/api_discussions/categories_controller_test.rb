@@ -49,13 +49,12 @@ module ApiDiscussions
 
     # verify_authenticity_token will not get called for get requests. So All GET actions here in exclude array.
     actions.select { |a| %w(index show forums).exclude?(a) }.each do |action|
-      define_method("test_#{action}_check_account_state_and_response_headers") do
+      define_method("test_#{action}_check_account_state") do
         subscription = @account.subscription
         subscription.update_column(:state, 'suspended')
         send(methods[action], action, construct_params(id: fc.id))
         match_json(request_error_pattern('account_suspended'))
         assert_response 403
-        assert_equal 'current=v2; requested=v2', @response.headers['X-Freshdesk-API-Version']
         subscription.update_column(:state, 'trial')
       end
     end

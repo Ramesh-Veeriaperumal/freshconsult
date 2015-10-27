@@ -1,5 +1,5 @@
 class ApiApplicationController < MetalApiController
-  prepend_before_filter :response_headers
+  prepend_before_filter :response_info
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception|
     render_500(exception)
@@ -108,8 +108,8 @@ class ApiApplicationController < MetalApiController
 
   private
 
-    def response_headers
-      response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
+    def response_info
+      RequestStore.store[:api_credits] = 1
     end
 
     def render_500(e)
