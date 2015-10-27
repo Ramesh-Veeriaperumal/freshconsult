@@ -12,7 +12,7 @@ json.array! @items do |tkt|
 
     json.set! :to_emails, tkt.schema_less_ticket.try(:to_emails)
     json.set! :product_id, tkt.schema_less_ticket.try(:product_id)
-    json.set! :ticket_id, tkt.display_id
+    json.set! :id, tkt.display_id
     json.set! :type, tkt.ticket_type
 
     json.set! :is_escalated, tkt.isescalated

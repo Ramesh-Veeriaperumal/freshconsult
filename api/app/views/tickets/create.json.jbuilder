@@ -8,7 +8,7 @@ json.set! :fr_due_by, @item.frDueBy
 
 json.set! :to_emails, @item.schema_less_ticket.to_emails
 json.set! :product_id, @item.schema_less_ticket.product_id
-json.set! :ticket_id, @item.display_id
+json.set! :id, @item.display_id
 json.set! :type, @item.ticket_type
 
 json.set! :is_escalated, @item.isescalated

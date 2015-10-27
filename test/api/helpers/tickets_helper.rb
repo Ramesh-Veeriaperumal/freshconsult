@@ -41,7 +41,7 @@ module Helpers::TicketsHelper
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email[:reply_cc],
       description:  expected_output[:description] || ticket.description,
       description_html: expected_output[:description_html] || ticket.description_html,
-      ticket_id: expected_output[:display_id] || ticket.display_id,
+      id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,

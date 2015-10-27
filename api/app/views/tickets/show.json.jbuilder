@@ -7,7 +7,7 @@ json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, 
 
   json.set! :fr_due_by, @item.frDueBy
 
-  json.set! :ticket_id, @item.display_id
+  json.set! :id, @item.display_id
   json.set! :type, @item.ticket_type
   json.set! :to_emails, @item.schema_less_ticket.try(:to_emails)
   json.set! :product_id, @item.schema_less_ticket.try(:product_id)

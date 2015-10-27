@@ -107,7 +107,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     result = parse_response(@response.body)
     assert_equal true, response.headers.include?('Location')
-    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['ticket_id']}", response.headers['Location']
+    assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
   end
 
   def test_create_with_email
