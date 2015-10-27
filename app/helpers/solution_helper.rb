@@ -371,7 +371,7 @@ module SolutionHelper
 	def solution_modal_footer object
 		output = %(<div class="modal-footer">)
 		output << %(<div class="pull-left">)
-		if object.is_a?(Solution::Folder)
+		if object.is_a?(Solution::FolderMeta)
 			output << folder_delete_btn(object)
 		else
 			output << category_delete_btn(object)

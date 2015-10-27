@@ -11,6 +11,18 @@
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :category, :sticky_class => "sol-sticky category-sticky",
 												:search_url => "/search/solutions?category_id=#{@category.id}&term=" } %>
 
+<%= render :partial => '/solution/shared/search_container' %>
+
+<div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
+	<%= form_for :solution_folder_meta, :url => reorder_solution_folders_path(:category_id => @category.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
+	  <input name="reorderlist" type="hidden" value="" />
+	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
+	  <ul class="row-fluid" rel="sortlist" id="folders_list">
+			<%= render(:partial => "folder", :collection => @category.solution_folder_meta) %>
+		</ul>
+	<% end %>
+</div>
+
 <% if @category.solution_folder_meta.blank? %>
 	<div class="no-data">
 		<%= t('solution_category.info2') %>
@@ -27,19 +39,7 @@
 							"data-submit-label" => t('save'))  %>
 			<% end %>
 		</div>
-	</div>
-
-<% else %>
-	<%= render :partial => '/solution/shared/search_container' %>
-	<div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
-		<%= form_for @category.solution_folder_meta, :url => reorder_solution_folders_path(:category_id => @category.id), :html => { :method => :put, :class => "form-reorder" } do |f| %>
-		  <input name="reorderlist" type="hidden" value="" />
-		  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
-		  <ul class="row-fluid" rel="sortlist" id="folders_list">
-				<%= render(:partial => "folder", :collection => @category.solution_folder_meta) %>
-			</ul>
-		<% end %>
-	</div>
+	</div>	
 <% end %>
 
 <script type="text/javascript">

@@ -176,7 +176,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category
-      @category = account_scoper.find_by_id!(params[:id])
+      @category = meta_scoper.find_by_id!(params[:id])
     end
 
     def load_meta

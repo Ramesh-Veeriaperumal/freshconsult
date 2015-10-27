@@ -64,6 +64,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder = Solution::Builder.folder(params) 
+    @category ||= @folder.solution_category_meta
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
@@ -102,8 +103,8 @@ class Solution::FoldersController < ApplicationController
   end
 
   def destroy
-    @folder = current_account.solution_folders.where( :id => params[:id]).readonly(false).first
-    redirect_to_url = solution_category_url(@folder.category_id)
+    @folder = meta_scoper.where(:id => params[:id]).first
+    redirect_to_url = solution_category_url(@folder.solution_category_meta_id)
     @folder.destroy unless @folder.is_default?
     respond_to do |format|
       format.html { redirect_to redirect_to_url }
@@ -210,7 +211,7 @@ class Solution::FoldersController < ApplicationController
 
     def visibility_validate?
       @visibility = params[:visibility].to_i if params[:visibility]
-      Solution::Folder::VISIBILITY.map { |v| v[2]}.include?(@visibility)
+      Solution::FolderMeta::VISIBILITY.map { |v| v[2]}.include?(@visibility)
     end
 
     def valid_customers(customer_ids)
@@ -218,8 +219,8 @@ class Solution::FoldersController < ApplicationController
     end
 
     def change_visibility
-      @folders = current_account.folders.where(:id => params[:folderIds]).readonly(false)
-      if @visibility == Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      @folders = meta_scoper.where(:id => params[:folderIds]).readonly(false)
+      if @visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         if valid_customers(params[:companies]).blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')
           return
@@ -236,20 +237,20 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @folders = current_account.folders.where(:id => params[:items]).readonly(false)
-      @folders.map { |f| f.update_attributes(:category_id => params[:parent_id]) }
+      @folders = meta_scoper.where(:id => params[:items]).readonly(false)
+      @folders.map { |f| f.update_attributes(:solution_category_meta_id => params[:parent_id]) }
       @new_category.reload
-      @updated_items = params[:items].map(&:to_i) & @new_category.folder_ids
+      @updated_items = params[:items].map(&:to_i) & @new_category.solution_folder_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items
     end
 
     def old_category
-      @category_id = current_account.folders.find(params[:items].first).category_id
-      @number_of_folders = current_account.solution_categories.find(@category_id).folders.size
+      @old_category = meta_scoper.find(params[:items].first).solution_category_meta
+      @number_of_folders = @old_category.solution_folder_meta.size
     end
 
     def check_new_category
-      @new_category = current_account.solution_categories.find_by_id params[:parent_id]
+      @new_category = current_account.solution_category_meta.find_by_id params[:parent_id]
       unless @new_category
         flash[:notice] = t("solution.flash.folders_move_to_fail")
         respond_to do |format|
@@ -263,12 +264,12 @@ class Solution::FoldersController < ApplicationController
       :inline => t("solution.flash.folders_move_to_success",
                       :count => @updated_items.count - 1,
                       :category_name => h(@new_category.name.truncate(30)),
-                      :folder_name => h(current_account.solution_folders.find(@updated_items.first).name.truncate(30)),
+                      :folder_name => h(meta_scoper.find(@updated_items.first).name.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'folders_undo_bulk',
                                     :data => { 
                                       :items => @updated_items, 
-                                      :parent_id => @category_id,
+                                      :parent_id => @old_category.id,
                                       :action_on => 'folders'
                                     })
                   )).html_safe
@@ -278,7 +279,7 @@ class Solution::FoldersController < ApplicationController
       t("solution.flash.folders_move_to_error",
                       :count => @other_items.count - 1,
                       :category_name => h(@new_category.name.truncate(30)),
-                      :folder_name => h(current_account.solution_folders.find(@other_items.first).name.truncate(30))
+                      :folder_name => h(meta_scoper.find(@other_items.first).name.truncate(30))
         ).html_safe
     end
 

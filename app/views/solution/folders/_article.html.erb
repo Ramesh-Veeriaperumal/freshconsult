@@ -46,13 +46,15 @@
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>
 				<div class="comm-item-title ellipsis tooltip" title="<%= article.title if article.title.length > 75 %>">
-					<%= pjax_link_to(h((article.draft || article).title), solution_article_path(article.id)) %>
+					<!-- Referring to primary article to avoid error in bulk actions. -->
+					<%= pjax_link_to(h((article.primary_article.draft || article).title), solution_article_path(article.id)) %>
 				</div>
 				<div class="comm-item-details muted">
+					<!-- Referring to primary article to avoid error in bulk actions. -->
 					<%= t('solution.details',
-					:user_name => article.user,
-					:created_time => article.created_at.to_i,
-					:time_ago => formated_date(article.created_at) ).html_safe %>
+						:user_name => article.primary_article.user,
+						:created_time => article.primary_article.created_at.to_i,
+						:time_ago => formated_date(article.primary_article.created_at) ).html_safe %> 
 				</div>
 			</div>
 		</div>

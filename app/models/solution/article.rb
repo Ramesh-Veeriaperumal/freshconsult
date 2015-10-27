@@ -315,7 +315,7 @@ class Solution::Article < ActiveRecord::Base
 
     def category_obj
       self.reload
-      Account.current.launched?(:meta_read) ? solution_folder_meta.solution_category_meta : solution_folder_meta.category
+      solution_folder_meta.solution_category_meta
     end
 
     def content_changed?

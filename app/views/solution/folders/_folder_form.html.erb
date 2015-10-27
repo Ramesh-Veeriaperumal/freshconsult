@@ -23,10 +23,15 @@
 	<li class="control-group">
 		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
-			<% if @folder_meta %>
+			<% if @folder_meta.present? && (@primary && @primary != @folder) %>
 				<%= dynamic_text_box(:category, @language) %>
 			<% else %>
-				<%= f.select :category_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, {}, { :class => "select2 required input-large", :name => "solution_folder_meta[solution_category_meta_id]" } %>
+				<%= f.select :category_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, 
+						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 
+						{ 
+							:class => "select2 required input-large", 
+							:name => "solution_folder_meta[solution_category_meta_id]"
+						}  %>
 			<% end %>
 	 	</div>
 	</li>
@@ -39,7 +44,7 @@
   			</div>
 			<% else %>
 				<div class="row-fluid">
-		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, {}, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]", :selected => @folder_meta && @folder_meta.visibility } %>
+		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]" } %>
 	    	</div>
 	    	<br>
 	    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
@@ -52,5 +57,5 @@
 			<% end %>
   	</div>
   </li>
-  <%= hidden_field_tag "solution_folder_meta[id]", @folder_meta.id if @folder_meta %>
+  <%= dynamic_hidden_fields(:folder) %>
 </ul>

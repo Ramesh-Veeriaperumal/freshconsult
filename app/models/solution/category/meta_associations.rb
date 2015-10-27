@@ -8,7 +8,6 @@ class Solution::Category < ActiveRecord::Base
 		:class_name =>'Solution::Folder' ,
 		:through => :solution_folder_meta,
 		:source => :solution_folders,
-		:dependent => :destroy, 
 		:readonly => false,
 		:order => :"solution_folder_meta.position",
 		:conditions => proc { "solution_folders.language_id = '#{Language.for_current_account.id}'" },

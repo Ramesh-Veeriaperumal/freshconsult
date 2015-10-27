@@ -8,11 +8,13 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
+	before_create :set_default_portal
+
 	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position, :dependent => :destroy
 
 	has_many :solution_folders, :through => :solution_folder_meta, :order => 'solution_folder_meta.position'
 
-	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true, :dependent => :destroy
+	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_category_meta, :dependent => :destroy
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :through => :solution_folder_meta
 
@@ -45,6 +47,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	    res.merge({ attribute => self.send(attribute) })
 	  end).with_indifferent_access
 	end
+
+	def set_default_portal
+      self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
+    end
 
 	private
 

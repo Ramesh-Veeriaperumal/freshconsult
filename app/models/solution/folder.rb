@@ -10,9 +10,7 @@ class Solution::Folder < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
 
-  validates_uniqueness_of :name, 
-    :scope => :category_id, 
-    :case_sensitive => false
+  validate :name_uniqueness_validation
 
   self.table_name =  "solution_folders"
   
@@ -212,6 +210,14 @@ class Solution::Folder < ActiveRecord::Base
     else
       return true
     end
+  end
+
+  def name_uniqueness_validation
+    if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:name).include?(self.name)
+      errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+      return false
+    end
+    return true
   end
 
   private

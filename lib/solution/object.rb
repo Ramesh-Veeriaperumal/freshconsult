@@ -31,7 +31,7 @@ class Solution::Object
 		build_meta
 		build_translations
 		@meta_obj.save
-		response
+		@meta_obj
 	end
 	
 	private

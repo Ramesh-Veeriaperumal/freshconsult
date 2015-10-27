@@ -40,7 +40,7 @@ module ConfirmDeleteHelper
 	end
 
 	def item_title(item, options)
-		options[:"item-title"] || item[:name] || item[:title] || ""
+		options[:"item-title"] || item[:name] || item[:title] || item.name || item.title || ""
 	end
 
 	def deletion_hint(item)

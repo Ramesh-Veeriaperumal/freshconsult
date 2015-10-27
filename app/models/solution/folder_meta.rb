@@ -10,9 +10,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   validates_inclusion_of :visibility, 
       :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
+  validate :name_uniqueness
+
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
-	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true, :dependent => :destroy
+	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_folder_meta, :dependent => :destroy
 
 	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
 
@@ -62,5 +64,30 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def clear_cache_with_condition
 		account.clear_solution_categories_from_cache unless (self.changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
+
+	def add_visibility(visibility, customer_ids, add_to_existing)
+    add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+    self.visibility = visibility
+    save
+  end
+
+  def add_companies(customer_ids, add_to_existing)
+    customer_folders.destroy_all unless add_to_existing
+    customer_ids.each do |cust_id|
+      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
+    end
+  end
+
+  def name_uniqueness
+  	err_flag = false
+  	self.solution_folders.each do |f|
+  		f.name_uniqueness_validation
+  		if f.errors[:name].any?
+  			err_flag = true
+  			break
+  		end
+  	end
+  	errors.add(:base, I18n.t("activerecord.errors.messages.taken")) if err_flag
+  end
 
 end

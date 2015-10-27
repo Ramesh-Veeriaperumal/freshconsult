@@ -37,7 +37,6 @@ class Solution::Folder < ActiveRecord::Base
     :class_name => 'Solution::CustomerFolder', 
     :through => :solution_folder_meta,
     :source => :customer_folders, 
-    :readonly => false, 
-    :dependent => :destroy,
+    :readonly => false,
     :extend => Solution::MultipleThroughSetters
 end

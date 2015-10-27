@@ -1,14 +1,13 @@
-@folder.reload
 if @folder.errors.empty?
+	@folder.reload
 	if params[:action].eql?('create')
 		page << "App.Solutions.AfterSave.hide('#new-fold');"
-		page << "if (App.Solutions.AfterSave.currentCategory === #{@folder.solution_folder_meta.solution_category_meta_id}) {
-						jQuery('#folders_list').append('#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder.solution_folder_meta})}');
-					}"
+		page << "App.Solutions.AfterSave.hide('#folder-new');"
 	else
-		page << "App.Solutions.AfterSave.hide('#version-#{@folder.parent_id}-l#{@folder.language_id}');"
-		page.replace "item_#{@folder.parent_id}", render(:partial => "solution/categories/folder", :locals => {:folder => @folder.solution_folder_meta})
+		page << "App.Solutions.AfterSave.hide('#version-#{@folder.id}-l#{params[:language_id]}');"
+		page << "App.Solutions.AfterSave.hide('#folder-edit');"
 	end
+	page << "App.Solutions.AfterSave.postFolderAction(#{@folder.solution_category_meta_id}, '#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder})}', #{@folder.id}, '#{params[:action]}', '#{escape_javascript( render :partial => '/solution/categories/edit_bar' ) if privilege?(:manage_solutions)}');"
 else
 	page.replace_html :error_messages, "#{error_messages_for :folder}"
 end

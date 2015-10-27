@@ -66,7 +66,8 @@ class Solution::ArticlesController < ApplicationController
 
   def create
     builder_params
-    @article = Solution::Builder.article(params)
+    @article_meta = Solution::Builder.article(params)
+    load_article_version
     @article.tags_changed = set_solution_tags
     @article.create_draft_from_article if save_as_draft?
     respond_to do |format|
@@ -75,7 +76,7 @@ class Solution::ArticlesController < ApplicationController
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article)).html_safe if publish?
           redirect_to solution_article_version_path(
-                          @article.solution_article_meta,
+                          @article_meta,
                           @article.language.code)
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
@@ -94,6 +95,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def update
+    load_article_version  
     unless (UPDATE_FLAGS & params.keys.map(&:to_sym)).any?
       update_article
       return 
@@ -179,6 +181,10 @@ class Solution::ArticlesController < ApplicationController
     
     def reorder_redirect_url
       solution_category_folder_url(params[:category_id], params[:folder_id])
+    end
+
+    def meta_scoper
+      current_account.solution_article_meta
     end
 
     def cname #possible dead code
@@ -383,19 +389,19 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def bulk_update_folder
-      @articles = current_account.solution_articles.where(:id => params[:items])
-      @articles.map { |a| a.update_attributes(:folder_id => params[:parent_id]) }
-      @updated_items = params[:items].map(&:to_i) & @new_folder.article_ids
+      @articles = meta_scoper.where(:id => params[:items])
+      @articles.map { |a| a.update_attributes(:solution_folder_meta_id => params[:parent_id]) }
+      @updated_items = params[:items].map(&:to_i) & @new_folder.solution_article_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items
     end
 
     def old_folder
-      @folder_id = current_account.solution_articles.find(params[:items].first).folder_id
-      @number_of_articles = current_account.folders.find(@folder_id).articles.size
+      @old_folder = meta_scoper.find(params[:items].first).solution_folder_meta
+      @number_of_articles = @old_folder.solution_article_meta.size
     end
 
     def check_new_folder
-      @new_folder = current_account.solution_folders.find_by_id params[:parent_id]
+      @new_folder = current_account.solution_folder_meta.find_by_id params[:parent_id]
       unless @new_folder
         flash[:notice] = t("solution.flash.articles_move_to_fail")
         respond_to do |format|
@@ -419,7 +425,7 @@ class Solution::ArticlesController < ApplicationController
       :inline => t("solution.flash.articles_move_to_success",
                       :count => @updated_items.count - 1,
                       :folder_name => h(@new_folder.name.truncate(30)),
-                      :article_name => h(current_account.solution_articles.find(@updated_items.first).title.truncate(30)),
+                      :article_name => h(meta_scoper.find(@updated_items.first).title.truncate(30)),
                       :undo => view_context.link_to(t('undo'), '#', 
                                     :id => 'articles_undo_bulk',
                                     :data => { 
@@ -434,7 +440,7 @@ class Solution::ArticlesController < ApplicationController
       t("solution.flash.articles_move_to_error",
                       :count => @other_items.count - 1,
                       :folder_name => h(@new_folder.name.truncate(30)),
-                      :article_name => h(current_account.solution_articles.find(@other_items.first).title.truncate(30))
+                      :article_name => h(meta_scoper.find(@other_items.first).title.truncate(30))
         ).html_safe
     end
 
@@ -467,7 +473,16 @@ class Solution::ArticlesController < ApplicationController
 
     def set_article_folder
       return if params[:folder_id].nil?
-      @article.folder_id = current_account.solution_folder_meta.find_by_id(params[:folder_id]).id
+      @article.solution_folder_meta = current_account.solution_folder_meta.find_by_id(params[:folder_id])
+    end
+
+    def language_code
+      lang = Language.find(params[:language_id])
+      lang.code == current_account.language ? "primary" : lang.code
+    end
+
+    def load_article_version
+      @article = @article_meta.send(language_code + "_article")
     end
 
 end
