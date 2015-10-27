@@ -15,7 +15,7 @@ class Support::ProfilesController < SupportController
   def update
     if @profile.update_attributes(params[:user])
       flash[:notice] = t(:'flash.profile.update.success')
-      redirect_to :action => :edit # should check with parsu for all redirect_to :back
+      redirect_to edit_support_profile_path(:url_locale => Language.for_current_user.code) # should check with parsu for all redirect_to :back
     else
       logger.debug "error while saving #{@profile.errors.inspect}"
       set_portal_page :profile_edit

@@ -14,10 +14,11 @@ module RoutingFilter
     end
 
     def around_generate(*args, &block)
+      url_locale = args.first.delete(:url_locale) || @url_locale
       yield.tap do |result|
         url = result.is_a?(Array) ? result.first : result
-        if url.starts_with?(*accepted_paths) && @url_locale.present?
-          url.sub!(%r(^(http.?://[^/]*)?(.*))){ "#{$1}/#{@url_locale}#{$2}" }
+        if url.starts_with?(*accepted_paths) && url_locale.present?
+          url.sub!(%r(^(http.?://[^/]*)?(.*))){ "#{$1}/#{url_locale}#{$2}" }
         end
       end
     end
