@@ -90,6 +90,8 @@ Authority::Authorization::PrivilegeList.build do
                                                     :full_paginate, :configure_export, :export_csv, 
                                                     :activities, :component, :prevnext]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
+
+    resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
 	end
 
   reply_ticket do
