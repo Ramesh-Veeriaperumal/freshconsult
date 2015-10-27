@@ -176,7 +176,7 @@ class Solution::ArticlesController < ApplicationController
     end
     
     def reorder_scoper
-      current_account.solution_articles.where({ :folder_id => params[:folder_id] })
+      current_account.solution_folder_meta.find(params[:folder_id]).solution_article_meta
     end
     
     def reorder_redirect_url

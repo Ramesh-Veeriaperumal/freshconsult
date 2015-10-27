@@ -64,8 +64,8 @@
           </div>
           <div class="pt20">
             <%= content_tag(:div, t('header.tabs.solutions'), :class => "pb5") %>
-            <input type="hidden" name="portal[solution_category_ids][]" value="" />
-            <%= f.collection_select :solution_category_ids, @solution_categories.reject(&:is_default?), 
+            <input type="hidden" name="portal[solution_category_metum_ids][]" value="" />
+            <%= f.collection_select :solution_category_metum_ids, @solution_categories.reject(&:is_default?), 
                       :id, :name, {} ,
                       :class => "select2 input-xlarge",
                       :id => "solution_categories",

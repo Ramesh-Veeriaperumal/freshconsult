@@ -27,6 +27,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 		:through => :solution_article_meta,
 		:order => :"solution_article_meta.position"
 
+	acts_as_list :scope => :solution_category_meta
+
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES  = ["is_default","name","id","article_count"]
 

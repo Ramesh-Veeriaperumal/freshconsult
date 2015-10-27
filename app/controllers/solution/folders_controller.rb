@@ -136,7 +136,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def reorder_scoper
-    current_account.solution_categories.find(params[:category_id]).folders
+    current_account.solution_category_meta.find(params[:category_id]).solution_folder_meta
   end
   
   def reorder_redirect_url

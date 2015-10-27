@@ -56,9 +56,6 @@ window.App.Solutions = window.App.Solutions || {};
         $('.view-more-cat').hide();
         $this.normalizeHeight(true);
       });
-      $("body").on('click.solutionCategory', '#categories_reorder_button, #categories_sort_cancel', function () {
-        $('#search-show').toggle();
-      });
       $("body").on('click.solutionCategory', '.orphan-view-all, .orphan-view-less', function () {
         $('.more-orphan-cat').toggle();
         $('.orphan-view-all').toggle();

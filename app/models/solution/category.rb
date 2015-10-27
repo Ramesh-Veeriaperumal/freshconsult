@@ -26,8 +26,6 @@ class Solution::Category < ActiveRecord::Base
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
   
-  acts_as_list :scope => :account
-
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   include Solution::LanguageMethods

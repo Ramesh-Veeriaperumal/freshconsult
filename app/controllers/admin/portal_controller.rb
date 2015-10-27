@@ -112,7 +112,7 @@ class Admin::PortalController < Admin::AdminController
     end
 
      def load_other_objects
-      @solution_categories = current_account.solution_categories
+      @solution_categories = current_account.solution_category_meta
       @forums_categories = current_account.forum_categories
     end
     

@@ -36,9 +36,6 @@ class Solution::Article < ActiveRecord::Base
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
     :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
-  
-  acts_as_list :scope => :folder
-  
 
   after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time

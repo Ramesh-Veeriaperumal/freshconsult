@@ -1,5 +1,5 @@
-<%= content_tag :li, :item_id => category.id,
-		  						:class => "comm-item", :id => "item_"+category.id.to_s do %>
+<%= content_tag :li, :item_id => @portal_solution_category_ids[category.id],
+		  						:class => "comm-item", :id => "item_"+@portal_solution_category_ids[category.id].to_s do %>
 	<div class="reorder-icon vertical-alignment">
 			<%= font_icon "rearrange", :size => 18, :id => "sortable-icon" %>
 	</div>

@@ -63,7 +63,8 @@ window.App.Solutions = window.App.Solutions || {};
 					data: {
 						reorderlist: $this.positionHash(),
 						category_id: $('#reorder_category_id').val(),
-						folder_id: $('#reorder_folder_id').val()
+						folder_id: $('#reorder_folder_id').val(),
+						portal_id: $('#reorder_portal_id').val()
 					},
 					success: function () {
 						$('.comm-items ul').data('list_item', $('.comm-items ul').html());

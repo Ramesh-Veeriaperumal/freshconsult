@@ -13,9 +13,10 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category, :only => [:destroy]
   before_filter :load_meta, :only => [:edit, :update]
   before_filter :load_category_with_folders, :only => [:show]
-  before_filter :find_portal, :only => [:all_categories, :new]
+  before_filter :find_portal, :only => [:all_categories, :new, :create]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
+  before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create]
 
   def index
     ### MULTILINGUAL SOLUTIONS - META READ HACK!!
@@ -77,7 +78,7 @@ class Solution::CategoriesController < ApplicationController
 
   def create
     @category = Solution::Builder.category(params)
-    
+
     respond_to do |format|
       if @category
         format.html { redirect_to solution_category_path(@category) }
@@ -134,7 +135,7 @@ class Solution::CategoriesController < ApplicationController
     end
     
     def reorder_scoper
-      current_portal.portal_solution_categories
+      (current_account.portals.find_by_id(params[:portal_id]) || current_portal).portal_solution_categories
     end
     
     def reorder_redirect_url
@@ -213,6 +214,10 @@ class Solution::CategoriesController < ApplicationController
     def all_drafts
       current_account.solution_articles.all_drafts.includes(
         {:folder_through_meta => {:category_through_meta => :portals_through_meta}})
+    end
+
+    def load_portal_solution_category_ids
+      @portal_solution_category_ids = Hash[@portal.portal_solution_categories.map{|psc| [psc.solution_category_meta_id , psc.id] }]
     end
 
     #META-READ-HACK!!

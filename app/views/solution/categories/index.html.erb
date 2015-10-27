@@ -8,8 +8,6 @@
 <% end %>
 <% content_for :sticky_right do %>
 		<div class="pull-right itil-hide">
-			<%= link_to t('reorder').html_safe,'#', 
-			    :id => "categories_reorder_button", :class => "btn" if (@categories.size > 2 && privilege?(:manage_solutions))%>
 			<%= new_solutions_button(:category) %>
 		</div>
 <% end %>

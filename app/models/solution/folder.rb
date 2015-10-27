@@ -37,8 +37,6 @@ class Solution::Folder < ActiveRecord::Base
 
   attr_accessible :name, :description, :category_id, :import_id, :visibility, :position, :is_default, :customer_folders_attributes
   attr_accessor :count_articles
-  
-  acts_as_list :scope => :category
 
   delegate :visible?, :to => :solution_folder_meta
   delegate :visible_in?, :to => :solution_folder_meta

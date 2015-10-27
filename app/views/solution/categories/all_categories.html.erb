@@ -31,6 +31,7 @@
 	<div class="comm-items solution-list" id="solution_sort" data-menu-hover-in='div.comm-item'>
 		<%= form_for @categories, :url => reorder_solution_categories_path, :html => { :method => :put, :class => "form-reorder" } do |f| %>
 		  <input name="reorderlist" type="hidden" value="" />
+		  <input name="portal_id" id="reorder_portal_id" type="hidden" value="<%= @portal.id %>" />
 		  <ul class="row-fluid" rel="sortlist" id="categories_list">
 				<%= render(:partial => "category", :collection => @categories) %>
 			</ul>
