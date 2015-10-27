@@ -10,8 +10,7 @@ class BadRequestErrorTest < ActionView::TestCase
       invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
       datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],
       invalid_field: ['invalid_field', "Can't update user when timer is running"],
-      invalid_size: ['invalid_size'],
-      invalid_date: ['invalid_date']
+      invalid_size: ['invalid_size']
     }
     assert_equal error_codes, BaseError::API_ERROR_CODES
   end

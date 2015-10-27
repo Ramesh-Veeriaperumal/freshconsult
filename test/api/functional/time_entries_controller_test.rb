@@ -204,8 +204,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
     pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
     pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
-    pattern << bad_request_error_pattern('executed_before', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern << bad_request_error_pattern('executed_after', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern << bad_request_error_pattern('executed_before', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
     assert_response 400
     match_json pattern
   end
@@ -619,8 +619,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('executed_at', 'invalid_date', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('start_time', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('executed_at', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_update_inclusion_invalid

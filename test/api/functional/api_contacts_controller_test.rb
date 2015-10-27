@@ -259,7 +259,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         custom_fields: { 'cf_sample_url' => 'aaaa', 'cf_sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('cf_sample_date', 'invalid_date', format: 'yyyy-mm-dd'),
+    match_json([bad_request_error_pattern('cf_sample_date', 'invalid_date'),
                 bad_request_error_pattern('cf_sample_url', 'Should be a valid format')])
   end
 
@@ -287,7 +287,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response 400
     match_json([bad_request_error_pattern('cf_check_me', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('cf_doj', 'invalid_date', format: 'yyyy-mm-dd')])
+                bad_request_error_pattern('cf_doj', 'invalid_date')])
   end
 
   def test_create_contact_with_invalid_dropdown_field

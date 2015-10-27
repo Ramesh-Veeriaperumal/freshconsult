@@ -275,7 +275,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
+                bad_request_error_pattern('cf_date', 'invalid_date'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
@@ -308,7 +308,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
+                bad_request_error_pattern('cf_date', 'invalid_date'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
