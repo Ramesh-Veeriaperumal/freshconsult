@@ -1,3 +1,5 @@
+Infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
+
 if Infra['API_LAYER']
   Helpkit::Application.configure do
 
@@ -40,7 +42,9 @@ if Infra['API_LAYER']
     config.middleware.delete HttpAcceptLanguage::Middleware
   end
 
-  ActionController::Metal.send(:include, AbstractController::Callbacks )
-  ActionController::Metal.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
-
 end
+
+# Metal changes has to be included irrespective of whether the layer is API or not. 
+# This is required as in some cases, API and web requests can be served from the same box.
+ActionController::Metal.send(:include, AbstractController::Callbacks )
+ActionController::Metal.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
