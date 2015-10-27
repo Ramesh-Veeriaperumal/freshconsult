@@ -260,18 +260,8 @@ class User < ActiveRecord::Base
 
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
-      updated_tag_names.strip! #strip! to avoid empty tag name error
-      updated_tag_names = updated_tag_names.split(",")
-      current_tags = account.tags_from_cache
-      new_tags = []
-      updated_tag_names.each do |updated_tag_name|
-        updated_tag_name.strip!
-        next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
-
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
-                      Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
-      end
-      self.tags = new_tags
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
 
