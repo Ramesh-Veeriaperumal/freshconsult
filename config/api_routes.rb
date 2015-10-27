@@ -77,7 +77,7 @@ Helpkit::Application.routes.draw do
     
   scope "/api", defaults: {version: "v2", format: "json"}, :constraints => {:format => /(json|$^)/} do
     scope "/v2" , &api_routes # "/api/v2/.."
-    constraints ApiConstraints.new(version: 1), &api_routes # "/api/.." with Accept Header
+    constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope "", &api_routes
     match "*route_not_found.:format", :to => "api_application#route_not_found"
     match "*route_not_found",         :to => "api_application#route_not_found"
