@@ -93,5 +93,8 @@ module Social::Constants
   MAX_FEEDS_THRESHOLD = 700
 
   URL_REGEX = /(([a-z]{3,6}:\/\/)|(^|))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-\:\#\+\|\*\!]*([^@\s]|$)/
+  
+  #Length+1 used in nobelcount.js for the manipulation of character count in UI
+  TWITTER_URL_LENGTH = " " * 23
 
 end
