@@ -4,7 +4,7 @@ helpdesk:
     - rails3_patches
     - authlogic_patch
     - helpdesk
-    - clean_api_middlewares
+    - api_initializer
     - jbuilder_cache_store
     - action_mailer_callbacks
     - action_mailer_no_tmail
