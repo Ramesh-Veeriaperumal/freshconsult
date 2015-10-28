@@ -1,6 +1,11 @@
 json.set! :notes, @notes do |note|
-  json.cache! CacheLib.compound_key(note, note.note_body, params) do
-    json.extract! note, :body, :body_html, :id, :user_id, :support_email, :created_at, :updated_at
+
+  # Not caching the body as it has a bigger impact for notes having huge body
+  json.set! :body, note.body
+  json.set! :body_html, note.body_html
+
+  json.cache! CacheLib.compound_key(note, params) do
+    json.extract! note, :id, :user_id, :support_email, :created_at, :updated_at
 
     json.set! :ticket_id, @item.display_id
 

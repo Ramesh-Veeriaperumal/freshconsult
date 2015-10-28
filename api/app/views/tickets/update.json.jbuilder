@@ -1,6 +1,6 @@
-json.set! :cc_emails, @item.cc_email[:cc_emails]
-json.set! :fwd_emails, @item.cc_email[:fwd_emails]
-json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
+json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
+json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
+json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
 json.extract! @item, :description, :description_html, :spam, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :created_at, :updated_at, :due_by
 json.set! :id, @item.display_id
 json.set! :type, @item.ticket_type

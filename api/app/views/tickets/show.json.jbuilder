@@ -1,7 +1,7 @@
 json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, params) do # ticket caching
-  json.set! :cc_emails, @item.cc_email[:cc_emails]
-  json.set! :fwd_emails, @item.cc_email[:fwd_emails]
-  json.set! :reply_cc_emails, @item.cc_email[:reply_cc]
+  json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
+  json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
+  json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
 
   json.extract! @item, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id,  :responder_id, :source, :spam, :status, :subject, :created_at, :updated_at, :due_by
 
