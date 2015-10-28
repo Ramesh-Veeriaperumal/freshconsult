@@ -18,24 +18,11 @@ include AccountConstants
     { :email => email, :name => name }
   end 
 
-  def parse_email_new(email)
-    parsed_hash = { :email => email, :name => nil, :domain => nil }
-    parsed_email = Mail::AddressList.new email
-    name_prefix = ""
-    parsed_email.addresses.each_with_index do |email,index|
-      if email.address =~ EMAIL_REGEX
-        parsed_hash[:email] = email.address
-        parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
-        parsed_hash[:domain] = email.domain
-        break
-      else
-        name_prefix << email.address.to_s << ','
-      end
-    end
-    parsed_hash
+  def parse_email_with_mail_parser(email)
+    mail_parser(email)
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{email} : #{e.message} : #{e.backtrace}"
-    parsed_hash
+    parse_email_without_mail_parser(email)
   end 
 
   def get_emails emails
@@ -60,6 +47,18 @@ include AccountConstants
     plain_emails
   end
 
+  def get_email_array_with_mail_parser emails
+    parsed_email = Mail::AddressList.new emails
+    plain_emails = parsed_email.addresses.collect do |e|
+      e.address if e.address =~ EMAIL_REGEX
+    end
+    plain_emails.compact.uniq
+  rescue Exception => e
+    Rails.logger.debug "Exception when validating email list : #{emails} : #{e.message} : #{e.backtrace}"
+    get_email_array_without_mail_parser(emails)
+  end
+
+
 	def parse_email_text(email_text)
 		if email_text =~ /"?(.+?)"?\s+<(.+?)>/
     	{:name => $1.tr('"',''), :email => $2}
@@ -70,16 +69,12 @@ include AccountConstants
   	end
 	end
 
-  def get_email_array_new emails
-    parsed_email = Mail::AddressList.new emails
-    plain_emails = parsed_email.addresses.collect do |e|
-      e.address if e.address =~ EMAIL_REGEX
-    end
-    plain_emails.compact.uniq
+  def parse_email_text_with_mail_parser(email)
+    mail_parser(email)
   rescue Exception => e
-    Rails.logger.debug "Exception when validating email list : #{emails} : #{e.message} : #{e.backtrace}"
-    []
-  end
+    Rails.logger.debug "Exception when validating email list : #{email} : #{e.message} : #{e.backtrace}"
+    parse_email_text_without_mail_parser(email)
+  end 
 
   def parse_email_with_domain(email_text)
     parsed_email = parse_email_text(email_text)   
@@ -92,6 +87,13 @@ include AccountConstants
     {:name => name, :email => email, :domain => domain}
   end
   
+  def parse_email_with_domain_with_mail_parser(email)
+    mail_parser(email)
+  rescue Exception => e
+    Rails.logger.debug "Exception when validating email list : #{email} : #{e.message} : #{e.backtrace}"
+    parse_email_with_domain_without_mail_parser(email)
+  end 
+
   def parse_to_comma_sep_emails(emails)
     emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
   end
@@ -133,11 +135,15 @@ include AccountConstants
     addresses.compact.uniq
   end
 
-  def fetch_valid_emails_new(addresses)
-    addresses = addresses.join(",")  if addresses.is_a? Array
-    parsed_emails = Mail::AddressList.new addresses
+  def fetch_valid_emails_with_mail_parser(addresses)
+    if addresses.is_a? Array
+      emails = addresses.join(",")
+    else
+      emails = addresses
+    end
+    parsed_emails = Mail::AddressList.new emails
      
-    addresses = parsed_emails.addresses.collect do |email|
+    valid_emails = parsed_emails.addresses.collect do |email|
       if email.address =~ EMAIL_REGEX
         if email.name.present?
           "#{format(email.name)} <#{email.address}>"
@@ -146,10 +152,10 @@ include AccountConstants
         end
       end
     end
-    addresses.compact.uniq
+    valid_emails.compact.uniq
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{addresses} : #{e.message} : #{e.backtrace}"
-    []
+    fetch_valid_emails_without_mail_parser(addresses)
   end
   
   # possibly dead code validate_emails, extract_email, valid_email?
@@ -184,11 +190,28 @@ include AccountConstants
   def format(name)
     name =~ SPECIAL_CHARACTERS_REGEX ? name = "\"#{name.gsub(/\./, ' ').strip}\"" : name
   end
+
+  def mail_parser(email)
+    parsed_hash = { :email => email, :name => nil, :domain => nil }
+    parsed_email = Mail::AddressList.new email
+    name_prefix = ""
+    parsed_email.addresses.each_with_index do |email,index|
+      if email.address =~ EMAIL_REGEX
+        parsed_hash[:email] = email.address
+        parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
+        parsed_hash[:domain] = email.domain
+        break
+      else
+        name_prefix << email.address.to_s << ','
+      end
+    end
+    parsed_hash
+  end
   
-# alias_method :parse_email, :parse_email_new 
-# alias_method :parse_email_text, :parse_email_new
-# alias_method :parse_email_with_domain, :parse_email_new
-# alias_method :get_email_array, :get_email_array_new
-# alias_method :fetch_valid_emails, :fetch_valid_emails_new
+  alias_method_chain :parse_email, :mail_parser
+  alias_method_chain :parse_email_text, :mail_parser
+  alias_method_chain :parse_email_with_domain, :mail_parser
+  alias_method_chain :get_email_array, :mail_parser
+  alias_method_chain :fetch_valid_emails, :mail_parser
 
 end

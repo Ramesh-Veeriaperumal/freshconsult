@@ -804,7 +804,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
   end   
 
-  #alias_method :parse_cc_email, :parse_cc_email_new
-  #alias_method :parse_to_emails, :parse_to_emails_new
+  alias_method :parse_cc_email, :parse_cc_email_new
+  alias_method :parse_to_emails, :parse_to_emails_new
 
 end
