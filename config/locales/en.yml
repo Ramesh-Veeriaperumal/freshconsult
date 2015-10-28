@@ -3020,6 +3020,10 @@ en:
           attributes:
             name:
               taken: "already exists in the selected category"
+        portal:
+          attributes:
+            language:
+              inclusion: "should be valid"
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -3542,7 +3546,6 @@ en:
     solutions_home: "Solution home"
     print_title: "Print this Article"
     attach_file: "Attach a <b>file</b>"
-    valid_language: "should be a valid language"
     header:
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     new_support_ticket: New support ticket
