@@ -281,7 +281,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal "latest=v2; requested=v2", response.headers['X-Freshdesk-API-Version']
+    response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
   def test_throttled_api_request_invalid_content_type
@@ -294,7 +294,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal "latest=v2; requested=v2", response.headers['X-Freshdesk-API-Version']
+    response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
   def test_not_throttled_web_request
@@ -318,7 +318,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal "latest=v2; requested=v2", response.headers['X-Freshdesk-API-Version']
+    response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
   def test_not_v2_throttled_v1_api_request
@@ -419,7 +419,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
-    assert_equal "latest=v2; requested=v2", response.headers['X-Freshdesk-API-Version']
+    response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
   def test_not_found_resource_throttled_version_in_header
@@ -436,7 +436,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     remaining_limit = 200 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
-    assert_equal "latest=v2; requested=v2", response.headers['X-Freshdesk-API-Version']
+    response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
   def test_not_found_path_throttled_without_passing_routes

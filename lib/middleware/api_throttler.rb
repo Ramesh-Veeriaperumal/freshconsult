@@ -76,11 +76,11 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     end
     # Setting API Limit headers for API
     if @api_resource && @api_limit
-      @headers.merge!("X-RateLimit-Total" => @api_limit.to_s,
+      @headers = @headers.dup.merge!("X-RateLimit-Total" => @api_limit.to_s,
                       "X-RateLimit-Remaining" => (@api_limit - get_others_redis_key(key).to_i).to_s,
                       "X-RateLimit-Used" => get_used_limit.to_s)
       version = get_api_version(env)
-      @headers.merge!('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
+      @headers = @headers.dup.merge!('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
     end
      [@status, @headers, @response]
   end
@@ -134,6 +134,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def get_api_version(env)
+    return if @status == 404
     env["action_dispatch.request.path_parameters"].try(:[], :version)
   end
 end
