@@ -2,6 +2,7 @@ class Topic < ActiveRecord::Base
   self.primary_key = :id
   include Search::ElasticSearchIndex
   include Mobile::Actions::Topic
+  include Search::V2::EsCommitObserver
   
   include Redis::RedisKeys
   include Redis::OthersRedis

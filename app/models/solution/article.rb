@@ -7,6 +7,7 @@ class Solution::Article < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
+  include Search::V2::EsCommitObserver
 
   include Solution::MetaMethods
 

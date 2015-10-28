@@ -13,9 +13,9 @@ class Company < ActiveRecord::Base
     as_json({
               root: false,
               tailored_json: true,
-              only: [ :id, :name, :account_id, :description, :created_at, :updated_at, :note ],
-              methods: [ :es_domains ]
-            }).merge(esv2_custom_attributes).to_json
+              only: [ :name, :account_id, :description, :created_at, :updated_at, :note ]
+            }).merge(esv2_custom_attributes)
+              .merge(domains: es_domains).to_json
   end
 
   # V2 columns to be observed for changes

@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   include Social::Ext::UserMethods
   include AccountConstants
   include PasswordPolicies::UserHelpers
-  # include Search::V2::EsCommitObserver - Haven't decided mappings for users.
+  include Search::V2::EsCommitObserver
   
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams

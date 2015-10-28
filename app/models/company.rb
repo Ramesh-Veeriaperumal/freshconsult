@@ -7,6 +7,7 @@ class Company < ActiveRecord::Base
   include Cache::Memcache::Company
   include Search::ElasticSearchIndex
   include Mobile::Actions::Company
+  include Search::V2::EsCommitObserver
   serialize :domains
 
   validates_presence_of :name,:account

@@ -37,23 +37,38 @@ module Search
             query: {
               multi_match: {
                 query: search_term,
-                fields: ['subject', 'description', 'to_emails', 'es_cc_emails', 'es_fwd_emails', 'attachment_names', 'body']
+                fields: [ 'ticket.subject', 'ticket.description', 'ticket.to_emails', 'ticket.es_cc_emails', 
+                          'ticket.es_fwd_emails', 'ticket.attachment_names', 'note.body', 'note.attachment_names',
+
+                          'company.name', 'company.note', 'company.description', 'company.domains',
+
+                          'user.name', 'user.emails', 'user.description', 'user.job_title', 'user.phone',
+                          'user.mobile', 'user.company_name', 'user.twitter_id', 'user.fb_profile_id',
+
+                          'topic.title', 'topic.posts.attachment_names', 'topic.posts.body',
+
+                          'article.title', 'article.desc_un_html', 'article.tag_names', 'article.attachment_names'
+                        ]
                 }
               },
               highlight: {
                 fields: {
-                  description: {
-                    fragment_size: 80,
-                    number_of_fragments: 4
-                  },
-                  subject: {
-                    fragment_size: 80,
-                    number_of_fragments: 4
-                  }
+                  name: {},
+                  subject: {},
+                  description: {},
+                  subject: {},
+                  description: {},
+                  title: {},
+                  desc_un_html: {},
+                  title: {},
+                  name: {},
+                  job_title: {}
                 },
                 pre_tags: ['<span class="match">'],
                 post_tags: ['</span>'],
-                encoder: 'html'
+                encoder: 'html',
+                fragment_size: 80,
+                number_of_fragments: 4
             }
           }.to_json
         end
