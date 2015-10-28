@@ -2,7 +2,7 @@
 require_relative '../test_helper'
 
 class TicketsControllerTest < ActionController::TestCase
-  include Helpers::TicketsHelper
+  include Helpers::TicketsTestHelper
 
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)

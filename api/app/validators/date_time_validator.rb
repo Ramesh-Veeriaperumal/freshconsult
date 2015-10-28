@@ -38,10 +38,6 @@ class DateTimeValidator < ActiveModel::EachValidator
 
   private
 
-    def get_format
-      options[:only_date] ? DATE_FORMAT : DATE_TIME_FORMAT
-    end
-
     def get_message
       options[:only_date] ? 'invalid_date' : 'invalid_date_time'
     end

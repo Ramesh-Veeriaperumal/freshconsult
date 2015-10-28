@@ -1,4 +1,4 @@
-module Helpers::CompaniesHelper
+module Helpers::CompaniesTestHelper
   include ContactFieldsHelper
   include CompanyHelper
   # Patterns

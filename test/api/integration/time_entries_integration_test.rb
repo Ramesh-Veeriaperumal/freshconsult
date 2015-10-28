@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::TimeEntriesHelper
+  include Helpers::TimeEntriesTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}

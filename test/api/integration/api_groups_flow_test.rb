@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiGroupsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::GroupsHelper
+  include Helpers::GroupsTestHelper
   JSON_ROUTES = Rails.application.routes.routes.select { |r| 
                         r.path.spec.to_s.starts_with("/api/groups/") && 
                         ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)

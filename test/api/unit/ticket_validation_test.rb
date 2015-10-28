@@ -85,7 +85,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_custom_fields_multiple_errors
     Account.stubs(:current).returns(Account.first)
-    Helpers::TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(Helpers::CustomFieldValidatorHelper.data_type_validatable_custom_fields)
+    Helpers::TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(Helpers::CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
     controller_params = { 'requester_id' => 1, ticket_fields: [], custom_fields: 'number1_1 = uioo' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)

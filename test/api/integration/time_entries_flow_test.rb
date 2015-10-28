@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TimeEntriesFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::TimeEntriesHelper
+  include Helpers::TimeEntriesTestHelper
   JSON_ROUTES = Rails.application.routes.routes.select do |r|
     r.path.spec.to_s.include?('time_entries') &&
     ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)

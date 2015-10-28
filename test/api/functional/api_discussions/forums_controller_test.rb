@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsHelper
+    include Helpers::DiscussionsTestHelper
 
     def f_obj
       Forum.first || create_test_forum(fc)

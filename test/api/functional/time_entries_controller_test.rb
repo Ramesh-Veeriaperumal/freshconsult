@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TimeEntriesControllerTest < ActionController::TestCase
-  include Helpers::TimeEntriesHelper
+  include Helpers::TimeEntriesTestHelper
 
 
   def wrap_cname(params = {})

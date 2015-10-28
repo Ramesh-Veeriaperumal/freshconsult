@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::SlaPoliciesHelper
+  include Helpers::SlaPoliciesTestHelper
 
   JSON_ROUTES = Rails.application.routes.routes.select do |r|
     r.path.spec.to_s.starts_with('/api/sla_policies/') &&

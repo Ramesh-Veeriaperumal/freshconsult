@@ -1,4 +1,4 @@
-module Helpers::GroupsHelper
+module Helpers::GroupsTestHelper
   include GroupHelper
   include AgentHelper
   # Patterns

@@ -1,8 +1,8 @@
 Dir["#{Rails.root}/test/api/helpers/ticket_fields_helper.rb"].each { |file| require file }
-module Helpers::TicketsHelper
+module Helpers::TicketsTestHelper
   include GroupHelper
-  include Helpers::NotesHelper
-  include Helpers::TicketFieldsHelper
+  include Helpers::NotesTestHelper
+  include Helpers::TicketFieldsTestHelper
   include EmailConfigsHelper
   include ProductsHelper
   include CompanyHelper

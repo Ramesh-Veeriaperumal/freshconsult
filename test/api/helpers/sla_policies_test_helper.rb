@@ -1,4 +1,4 @@
-module Helpers::SlaPoliciesHelper
+module Helpers::SlaPoliciesTestHelper
   include CompanyHelper
   include SlaPoliciesHelper
 

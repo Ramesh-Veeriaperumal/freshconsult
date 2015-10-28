@@ -1,4 +1,4 @@
-module Helpers::ProductsHelper
+module Helpers::ProductsTestHelper
   include ProductsHelper
   # Patterns
   def product_pattern(expected_output = {}, product)
