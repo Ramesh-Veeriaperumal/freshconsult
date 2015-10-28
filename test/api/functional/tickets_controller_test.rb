@@ -2062,15 +2062,17 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_deleted
     tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
-    if tkts.empty?
-      ticket.update_column(:deleted, true)
-      tkts << ticket.reload
-    end
+    t = ticket
+    t.update_column(:deleted, true)
+    t.update_column(:spam, true)
+    tkts << t.reload
     get :index, controller_params(filter: 'deleted')
     pattern = []
     tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
     match_json(pattern)
-    ticket.update_column(:deleted, false)
+
+    t.update_column(:deleted, false)
+    t.update_column(:spam, false)
     assert_response 200
   end
 
