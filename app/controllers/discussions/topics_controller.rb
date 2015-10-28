@@ -238,7 +238,7 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def find_topic
-			@topic = current_account.topics.find(params[:id], :include => [:user, :forum])
+			@topic = current_account.topics.find(params[:id]) 
 			@forum = @topic.forum
 			@category = @forum.forum_category
 		end
