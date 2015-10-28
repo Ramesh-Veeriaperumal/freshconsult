@@ -3542,6 +3542,7 @@ en:
     solutions_home: "Solution home"
     print_title: "Print this Article"
     attach_file: "Attach a <b>file</b>"
+    valid_language: "should be a valid language"
     header:
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     new_support_ticket: New support ticket

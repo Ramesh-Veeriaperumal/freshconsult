@@ -71,7 +71,7 @@ describe Admin::PortalController do
     post :create, :portal => {
                               :name => "Test portal",
                               :portal_url => portal_url,
-                              :language => "da",
+                              :language => "de",
                               :forum_category_ids => @forum_ids, 
                               :solution_category_ids => @solution_ids, 
                               :preferences => {
@@ -84,13 +84,15 @@ describe Admin::PortalController do
                             },
                   :product => @test_product.id
 
+    solution_category_ids = @solution_ids + [@account.solution_categories.find_by_is_default(true).id]
+
     new_portal = @test_product.portal
     new_portal.should_not be_nil
     new_portal.portal_url.should eql portal_url
     new_portal.name.should eql "Test portal"
     new_portal.template.should_not be_nil
-    new_portal.language.should eql "da"
-    new_portal.portal_solution_categories.map(&:solution_category_id).sort.should eql @solution_ids.sort
+    new_portal.language.should eql "de"
+    new_portal.portal_solution_categories.map(&:solution_category_id).sort.should eql solution_category_ids.sort
     new_portal.portal_forum_categories.map(&:forum_category_id).sort.should eql @forum_ids.sort
     session["flash"][:notice].should eql "Portal has been enabled for '#{@test_product.name}'"
     response.should redirect_to(admin_portal_index_path)
@@ -116,6 +118,16 @@ describe Admin::PortalController do
     portal_url = @product_wit_portal.portal.portal_url
 
     post :create, :portal => portal_params.merge({:portal_url => portal_url}),
+                  :product => @test_product_1.id
+
+    @test_product_1.portal.should be_nil
+    response.should render_template "admin/portal/enable"
+    response.should be_success
+  end
+
+  it "should not create a new portal for the product if language is not part of the available locales" do
+
+    post :create, :portal => portal_params.merge({:language => "test"}),
                   :product => @test_product_1.id
 
     @test_product_1.portal.should be_nil
@@ -152,7 +164,7 @@ describe Admin::PortalController do
   it "should not update portal for the product if portal url is not unique" do
     portal_url = @product_wit_portal_1.portal.portal_url
 
-    put :update, :id => @product_wit_portal_2.id,
+    put :update, :id => @product_wit_portal_2.portal.id,
                   :portal => portal_params({
                     :portal_url => portal_url,
                     :language => 'da',
@@ -163,6 +175,33 @@ describe Admin::PortalController do
     portal.portal_url.should_not eql portal_url
     portal.language.should eql 'en'
     response.body.should =~ /Portal url has already been taken/
+  end
+
+  it "should not update portal for the product if portal language is not part of the available locales" do
+    put :update, :id => @product_wit_portal_2.portal.id,
+                  :portal => portal_params({
+                    :language => 'test',
+                  })
+    portal = @product_wit_portal_2.portal
+    portal.should_not be_nil
+    portal.language.should_not eql 'test'
+    portal.language.should eql 'en'
+  end
+
+  it "should update portal's other changes if the existing language is invalid and not changed" do
+    portal = @product_wit_portal_1.portal
+    portal.update_column(:language, "test")
+
+    put :update, :id => portal.id,
+                  :portal => {
+                    :name => "New name",
+                    :id => portal.id
+                  }
+    portal.reload
+    portal.should_not be_nil
+    portal.language.should eql 'test'
+    portal.name.should eql "New name"
+    portal.update_column(:language, :en)
   end
 
   it "should delete the portal for the product" do
