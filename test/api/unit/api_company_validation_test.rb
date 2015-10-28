@@ -42,4 +42,18 @@ class ApiCompanyValidationTest < ActionView::TestCase
     assert errors.include?('Domains data_type_mismatch')
     assert errors.count == 1
   end
+
+  def test_complex_fields_with_nil
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
+    CompanyForm.any_instance.stubs(:custom_company_fields).returns([])
+    controller_params = { 'name' => 'test', domains: nil, custom_fields: nil }
+    item = nil
+    company = ApiCompanyValidation.new(controller_params, item)
+    refute company.valid?(:create)
+    errors = company.errors.full_messages
+    assert errors.include?('Domains data_type_mismatch')
+    assert errors.include?('Custom fields data_type_mismatch')
+    Account.unstub(:current)
+  end
 end

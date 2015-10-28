@@ -40,7 +40,7 @@ module ContactConstants
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
+    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
     phone: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     mobile: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },

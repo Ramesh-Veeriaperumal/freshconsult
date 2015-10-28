@@ -574,7 +574,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_empty_attachment
-    params = ticket_params_hash.merge('attachments' => nil)
+    params = ticket_params_hash.merge('attachments' => [])
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', "can't be blank")])
@@ -2271,7 +2271,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_array_fields_with_empty_array
     params_hash = update_ticket_params_hash
     t = create_ticket
-    put :update, construct_params({ id: t.display_id }, tags: nil, cc_emails: nil)
+    put :update, construct_params({ id: t.display_id }, tags: [], cc_emails: [])
     match_json(ticket_pattern({}, t.reload))
     assert_response 200
   end
@@ -2279,7 +2279,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_array_fields_with_invalid_tags_and_nil_custom_field
     params_hash = update_ticket_params_hash
     t = create_ticket
-    put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: nil)
+    put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: {})
     assert_response 400
     match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'String')])
   end

@@ -756,7 +756,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_nil_array_fields
-    params_hash = reply_note_params_hash.merge(cc_emails: nil, bcc_emails: nil, attachments: nil)
+    params_hash = reply_note_params_hash.merge(cc_emails: [], bcc_emails: [], attachments: [])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     match_json(reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(reply_note_pattern({}, Helpdesk::Note.last))
@@ -764,14 +764,14 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_nil_params_for_attachments
-    params_hash = { attachments: nil }
+    params_hash = { attachments: [] }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json(note_pattern({}, Helpdesk::Note.last))
     assert_response 201
   end
 
   def test_create_datatype_nil_array_fields
-    params_hash = { notify_emails: nil, attachments: nil }
+    params_hash = { notify_emails: [], attachments: [] }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json(note_pattern({}, Helpdesk::Note.last))
     assert_response 201

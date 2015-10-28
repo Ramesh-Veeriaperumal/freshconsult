@@ -701,7 +701,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_field_with_empty_array
     sample_user = get_user
-    put :update, construct_params({ id: sample_user.id }, tags: nil)
+    put :update, construct_params({ id: sample_user.id }, tags: [])
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   end
@@ -754,7 +754,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_nil_custom_fields
-    params = { custom_fields: nil }
+    params = { custom_fields: {} }
     sample_user = get_user
     sample_user.update_column(:deleted, false)
     put :update, construct_params({ id: sample_user.reload.id }, params)

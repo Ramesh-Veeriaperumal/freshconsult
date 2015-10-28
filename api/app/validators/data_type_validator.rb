@@ -22,6 +22,8 @@ class DataTypeValidator < ActiveModel::EachValidator
     # Faster than is_a? check
     def valid_type?(type, value, record, attribute)
       case value
+      when NilClass
+        allow_unset?(type) && !record.instance_variable_defined?("@#{attribute}".to_sym)
       when type
         true
       when TrueClass
@@ -43,5 +45,9 @@ class DataTypeValidator < ActiveModel::EachValidator
 
     def allow_string?(record)
       !options[:ignore_string].nil? && record.send(options[:ignore_string])
+    end
+
+    def allow_unset?(type)
+      !options[:required] && ([Hash, Array].include?(type) || options[:allow_unset])
     end
 end

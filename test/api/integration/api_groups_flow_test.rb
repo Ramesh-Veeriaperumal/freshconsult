@@ -22,4 +22,21 @@ class ApiGroupsFlowTest < ActionDispatch::IntegrationTest
       response.body.must_match_json_expression(un_supported_media_type_error_pattern)
     end
   end
+
+  def test_empty_agent_ids
+    skip_bullet do
+      params = v2_group_params
+      post '/api/groups', params.to_json, @write_headers
+      assert_response 201
+      group = Group.find_by_name(params[:name])
+      assert group.agent_groups.count == 2
+
+      put "/api/groups/#{group.id}", { agent_ids: nil }.to_json, @write_headers
+      match_json([bad_request_error_pattern('agent_ids', 'data_type_mismatch', data_type: 'Array')])
+
+      put "/api/groups/#{group.id}", { agent_ids: [] }.to_json, @write_headers
+      assert_response 200
+      assert group.reload.agent_groups.count == 0
+    end
+  end
 end

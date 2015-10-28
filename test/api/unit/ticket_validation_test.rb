@@ -105,4 +105,17 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_complex_fields_with_nil
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { 'requester_id' => 1, ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Tags data_type_mismatch')
+    assert errors.include?('Custom fields data_type_mismatch')
+    assert errors.include?('Cc emails data_type_mismatch')
+    assert errors.include?("Attachments can't be blank")
+    Account.unstub(:current)
+  end
 end
