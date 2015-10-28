@@ -1,5 +1,6 @@
 require 'spec_helper'
 load 'spec/support/freshfone_call_spec_helper.rb'
+load 'spec/support/freshfone_spec_helper.rb'
 
 RSpec.configure do |c|
   c.include FreshfoneCallSpecHelper
@@ -158,6 +159,42 @@ RSpec.describe Freshfone::ConferenceCallController do
     expect(@parent_call.children.first.call_status).to eq(Freshfone::Call::CALL_STATUS_HASH[:completed])
     expect(xml).to be_truthy
     expect(xml).to have_key(:Response)
+  end
+
+  it 'should save call notes when an agent transfers call to another agent' do
+    create_call_family
+    params = {:call_sid => @parent_call.children.first.call_sid, :call_notes => 'test'}
+    post :save_call_notes, params
+    expect(json).to be_truthy
+    expect(json[:notes_saved]).to be true
+  end
+
+  it 'should get the saved call notes when an agent receives the transferred call' do 
+    key = 'FRESHFONE:CALL_NOTE:1:CA1d4ae9fae956528fdf5e61a64084f191'
+    $redis_integrations.set(key,'test')
+    create_call_family
+    params = {:PhoneNumber => @parent_call.children.first.caller.number}
+    get :call_notes, params
+    nil_notes = $redis_integrations.get(key)
+    nil_notes.should be_nil
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_eql('test')
+  end
+
+  it 'should get empty notes when notes not saved' do 
+    create_call_family
+    params = {:PhoneNumber => @parent_call.children.first.caller.number}
+    get :call_notes, params
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_blank
+  end
+
+  it 'should be blank notes when call is not a transferred call' do 
+    create_freshfone_caller
+    params = {:PhoneNumber => @caller.number}
+    get :call_notes, params
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_blank
   end
 
 end
