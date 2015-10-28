@@ -1,7 +1,6 @@
 require_relative '../test_helper'
 
 class ApiApplicationControllerTest < ActionController::TestCase
-
   def test_invalid_field_handler
     error_array = { 'name' => ['invalid_field'], 'test' => ['invalid_field'] }
     @controller.expects(:render_errors).with(error_array).once
@@ -64,9 +63,9 @@ class ApiApplicationControllerTest < ActionController::TestCase
   end
 
   def test_notify_new_relic_agent
-    @controller.request.env['ORIGINAL_FULLPATH'] = "/api/tickets"
-    NewRelic::Agent.expects(:notice_error).with("Exception",  {uri: @controller.request.original_url}).once
-    @controller.send(:notify_new_relic_agent, "Exception")
+    @controller.request.env['ORIGINAL_FULLPATH'] = '/api/tickets'
+    NewRelic::Agent.expects(:notice_error).with('Exception',  uri: @controller.request.original_url).once
+    @controller.send(:notify_new_relic_agent, 'Exception')
   end
 
   def test_route_not_found_with_method_not_allowed

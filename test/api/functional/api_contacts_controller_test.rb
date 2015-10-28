@@ -20,7 +20,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     company
   end
 
-
   # Show User
   def test_show_a_contact
     sample_user = get_user

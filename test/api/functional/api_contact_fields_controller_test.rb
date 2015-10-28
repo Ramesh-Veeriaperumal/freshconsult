@@ -5,7 +5,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     { api_contact_field: params }
   end
 
-
   # Contact Field Index
   def test_contact_field_index
     get :index, controller_params

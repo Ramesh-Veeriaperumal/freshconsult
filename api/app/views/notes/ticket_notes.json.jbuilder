@@ -1,5 +1,4 @@
 json.array! @notes do |note|
-   
   # Not caching the body as it has a bigger impact for notes having huge body
   json.set! :body, note.body
   json.set! :body_html, note.body_html

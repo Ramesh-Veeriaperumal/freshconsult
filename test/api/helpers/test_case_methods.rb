@@ -76,7 +76,7 @@ module TestCaseMethods
     remove_wrap_params
 
     # Stringifying the values as controller params are going to be used as query params in only GET & PUT request.
-    params.each {|k, v| params[k] = "#{v}"} if query_string
+    params.each { |k, v| params[k] = "#{v}" } if query_string
     request_params.merge(params)
   end
 
@@ -121,7 +121,7 @@ module TestCaseMethods
   end
 
   def plan_key(id)
-    FD_PLAN_API_LIMIT % {plan_id: id.to_s}
+    FD_PLAN_API_LIMIT % { plan_id: id.to_s }
   end
 
   EOL = "\015\012"  # "\r\n"

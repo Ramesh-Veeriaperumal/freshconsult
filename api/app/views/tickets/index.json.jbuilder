@@ -21,8 +21,8 @@ json.array! @items do |tkt|
   # Not caching the body as it has a bigger impact for tickets having huge body
   json.set! :description, tkt.description
   json.set! :description_html, tkt.description_html
-  
-  # Not caching as decimal values are read as big decimal object 
+
+  # Not caching as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
   json.set! :custom_fields, tkt.custom_field
 end

@@ -4,7 +4,6 @@ require_relative '../test_helper'
 class TicketsControllerTest < ActionController::TestCase
   include Helpers::TicketsTestHelper
 
-
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text)
@@ -44,7 +43,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def before_all
     return if @@before_all_run
-    @@ticket_fields, @@custom_field_names = [], []
+    @@ticket_fields = []
+    @@custom_field_names = []
     @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
     @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
     @@choices_custom_field_names = @@ticket_fields.map(&:name)

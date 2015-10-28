@@ -114,13 +114,13 @@ class ApiApplicationController < MetalApiController
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
-      notify_new_relic_agent(e, description: "Error occured while processing api request")
+      notify_new_relic_agent(e, description: 'Error occured while processing api request')
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
-      notify_new_relic_agent(e, description: "Duplicate Record Error.")
+      notify_new_relic_agent(e, description: 'Duplicate Record Error.')
       Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_request_error(:duplicate_value, 409)
     end
@@ -382,6 +382,7 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
+      head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
     end
@@ -476,8 +477,8 @@ class ApiApplicationController < MetalApiController
       Time.zone = ApiConstants::UTC
     end
 
-    def notify_new_relic_agent(exception, custom_params={})
+    def notify_new_relic_agent(exception, custom_params = {})
       options_hash =  custom_params.present? ? { custom_params: custom_params.merge(method: request.method, params: params) } : {}
-      NewRelic::Agent.notice_error(exception, {uri: request.original_url}.merge(options_hash))
+      NewRelic::Agent.notice_error(exception, { uri: request.original_url }.merge(options_hash))
     end
 end

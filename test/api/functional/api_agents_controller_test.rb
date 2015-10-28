@@ -4,7 +4,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     { api_agent: params }
   end
 
-
   def test_agent_index
     3.times do
       add_test_agent(@account, role: Role.find_by_name('Agent').id)

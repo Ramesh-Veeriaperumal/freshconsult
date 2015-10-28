@@ -4,7 +4,7 @@ class DataTypeValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :array, :hash, :error_options, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error
+    attr_accessor :array, :hash, :error_options, :allow_unset_param, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error
 
     validates :multi_error, required: true
     validates :allow_unset_param, data_type: { rules: String, allow_unset: true }
@@ -58,10 +58,8 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.required_param = [1, 2, 3]
     test.allow_string_boolean = 'false'
     refute test.valid?
-    errors = test.errors.to_h.sort
-    error_options = test.error_options.to_h.sort
-    assert_equal({ allow_unset_param: 'data_type_mismatch'}, errors)
-    assert_equal({ allow_unset_param: { data_type: 'String'}}, error_options)
+    assert_equal({ allow_unset_param: 'data_type_mismatch' }, test.errors.to_h)
+    assert_equal({ allow_unset_param: { data_type: String } },  test.error_options.to_h)
   end
 
   def test_attributes_multiple_error

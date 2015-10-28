@@ -44,7 +44,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
                     due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
-    field1, field2 = tkt_field1.name, tkt_field2.name
+    field1 = tkt_field1.name
+    field2 = tkt_field2.name
     headers, params = encode_multipart(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => 'false' }), 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
