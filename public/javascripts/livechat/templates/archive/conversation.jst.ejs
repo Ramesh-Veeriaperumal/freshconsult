@@ -63,8 +63,9 @@
 							<div class="rsltuser"><%=messages[i].name%></div>
 							<div class="time">
 							<% 	var today = formattedTimestamp(new Date());
-									var timeFormat = (today.diff(time, 'days') === 0) ? "hh:mm A" : "MMM D";
-									var time = formattedTimestamp(messages[i].createdAt, timeFormat);
+									var messageCreatedAt = messages[i].createdAt;
+									var timeFormat = (today.diff(messageCreatedAt, 'days') === 0) ? "hh:mm A" : "MMM D";
+									var time = formattedTimestamp(messageCreatedAt, timeFormat);
 									print(time);
 							%>
 							</div>
