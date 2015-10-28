@@ -14,4 +14,9 @@ module LoadInitializer
     end
   end
 end
+
+# has to be initialized before other initialiazers
+Infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
+puts Infra
+
 LoadInitializer.load_files( "#{Rails.root}/lib", YAML.load_file(File.join(Rails.root, 'config', 'helpdesk_initializers.yml')) )
