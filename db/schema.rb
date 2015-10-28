@@ -1414,6 +1414,7 @@ ActiveRecord::Schema.define(:version => 20151009095010) do
     t.integer  "hold_duration",       :limit => 11     
     t.integer  "total_duration",      :limit => 11
     t.boolean  "business_hour_call",                    :default => false
+    t.integer  "abandon_state",          :limit => 8
   end
 
   add_index "freshfone_calls", ["account_id", "ancestry"], :name => "index_freshfone_calls_on_account_id_and_ancestry", :length => {"account_id"=>nil, "ancestry"=>12}

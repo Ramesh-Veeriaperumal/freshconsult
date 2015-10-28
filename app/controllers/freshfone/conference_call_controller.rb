@@ -19,6 +19,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :update_total_duration, :only => [:status]
   before_filter :update_agent, :only => [:in_call]
   before_filter :reset_outgoing_count, :only => [:status]
+  before_filter :set_abandon_state, :only => [:status]
 
   def status
     begin
@@ -116,6 +117,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       if current_call.present? && current_call.direct_dial_number   && current_call.dial_call_sid && current_call.ringing?
         agent_leg = current_account.freshfone_subaccount.calls.get(current_call.agent_sid)
         agent_leg.update(:status => "canceled")  
+        set_abandon_state("no-answer")
         empty_twiml
       end
     end
@@ -223,5 +225,13 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       else
         params[:DialCallStatus] = "no-answer" if current_call.default?
       end
+    end
+
+    def set_abandon_state(dial_call_status = params[:DialCallStatus])
+      return unless current_call.present?
+      call = current_call.get_abandon_call_leg
+      dial_call_status = 'no-answer' if (!call.is_root? && call.ringing?)
+      call_params =  params.merge({:DialCallStatus => dial_call_status}) # For handle_direct_dial 
+      call.set_abandon_call(call_params)
     end
 end

@@ -197,4 +197,38 @@ RSpec.describe Freshfone::ConferenceCallController do
     expect(json[:call_notes]).to be_blank
   end
 
+  it 'should update ringing abandon status on force termination' do
+    Freshfone::Number.any_instance.stubs(:working_hours?).returns(true)
+    status_call = create_freshfone_call
+    create_call_meta
+    params=conference_call_params.merge(:DialCallStatus => 'no-answer',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    post :status, params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    abandon_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+    freshfone_call.abandon_state.should be_eql(abandon_state)
+  end
+
+  it 'should update call IVR abandon status on customer hangup' do
+    Freshfone::Number.any_instance.stubs(:working_hours?).returns(true)
+    status_call = create_call_for_status_with_out_agent
+    create_call_meta
+    params=conference_call_params.merge(:DialCallStatus => 'no-answer',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    Freshfone::Number.any_instance.stubs(:ivr_enabled?).returns(true)
+    post :status, params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    abandon_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon]
+    freshfone_call.abandon_state.should be_eql(abandon_state)
+  end
+
+  it 'should not update call abandon status on customer hangup for answered call' do
+    status_call = create_freshfone_call
+    params=conference_call_params.merge(:DialCallStatus => 'completed',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    post :status, conference_call_params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    freshfone_call.abandon_state.should be_nil
+  end
+
 end

@@ -7269,6 +7269,9 @@ en:
       all_calls: "All Calls"
       answered: "Answered"
       on-hold: "On Hold"
+      ringing_abandon: "Abandon Call (Ringing)"
+      ivr_abandon: "Abandon Call (IVR)"
+      queue_abandon: "Abandon Call(Queue)"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
