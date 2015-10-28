@@ -101,7 +101,8 @@ module ForumHelper
 		ticket_topic = FactoryGirl.build(:ticket_topic,
 											:account_id => @account.id,
 											:topic_id => topic.id,
-											:ticket_id => ticket.id 
+											:ticketable_id => ticket.id,
+											:ticketable_type =>'Helpdesk::Ticket'
 										)
 		ticket_topic.save
 		ticket_topic

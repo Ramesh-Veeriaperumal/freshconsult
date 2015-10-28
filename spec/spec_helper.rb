@@ -145,6 +145,7 @@ Spork.prefork do
       RSpec.configuration.timings = []
       Sidekiq::Testing.disable!
       #begin_gc_defragment
+      User.acts_as_authentic_config[:maintain_sessions] = false
     end
 
     config.before(:each, :type => :controller) do

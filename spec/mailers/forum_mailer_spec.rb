@@ -2,6 +2,8 @@ require 'spec_helper'
 
 RSpec.describe ForumMailer do
 
+  self.use_transactional_fixtures = false
+
   before(:all) do
     @follower = add_test_agent(@account) 
     @forum_category = create_test_category
@@ -13,7 +15,7 @@ RSpec.describe ForumMailer do
     before(:each) do
       ActionMailer::Base.perform_deliveries = false
       @monitorship = monitor_forum(@forum,@follower,@account.main_portal.id)
-      @mail = ForumMailer.notify_new_follower(@forum,@follower,@monitorship.portal,@monitorship)
+      @mail = ForumMailer.notify_new_follower(@forum,@follower,@monitorship)
     end
 
     it 'renders the receiver email' do

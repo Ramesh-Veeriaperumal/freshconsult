@@ -533,10 +533,10 @@ describe Solution::ArticlesController do
     folder_meta = test_language_article.solution_folder_meta
     indexed_json = JSON.parse(test_language_article.to_indexed_json)
     indexed_json["solution/article"]["language_id"].should be_eql(test_language_article.language_id)
-    indexed_json["folder_id"].should be_eql(folder_meta.id)
-    indexed_json["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
-    indexed_json["folder"]["visibility"].should be_eql(folder_meta.visibility)
-    indexed_json["folder"]["customer_folders"].each_with_index do |cf,i|
+    indexed_json["solution/article"]["folder_id"].should be_eql(folder_meta.id)
+    indexed_json["solution/article"]["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
+    indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder_meta.visibility)
+    indexed_json["solution/article"]["folder"]["customer_folders"].each_with_index do |cf,i|
       cf["customer_id"].should be_eql(folder_meta.customer_folders[i].customer_id)
     end
   end

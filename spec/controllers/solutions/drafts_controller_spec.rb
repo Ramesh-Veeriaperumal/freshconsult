@@ -287,23 +287,29 @@ describe Solution::DraftsController do
 			
 			before(:each) do
 				log_in(@agent1)
-				@draft_article3 = create_article( {:title => "Article 3 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
+				@agent1.make_current
+				@account.solution_drafts.destroy_all
+				@draft_article4 = create_article( {:title => "Article 4 attachment delete agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
 	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-	  		@draft = @draft_article3.draft
-	  		@draft_article4 = create_article( {:title => "article4 agent2 #{@agent2.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
+	  		@draft = @draft_article4.draft
+	  		log_in(@agent2)
+	  		@agent2.make_current
+	  		@draft_article5 = create_article( {:title => "article5 agent2 #{@agent2.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
 	      :status => "1", :art_type => "1", :user_id => "#{@agent2.id}" } )
+	      log_in(@agent1)
+	      @agent1.make_current
 	  	end
 
 	  	#start: Drafts index/My drafts page
 			describe "drafts index page" do
 		  	it "should render my drafts page with only current authors drafts" do
 		  		get :index
-		  		response.body.should =~ /#{@draft_article3.draft.title.truncate(35)}/
+		  		response.body.should =~ /#{@draft_article4.draft.title.truncate(35)}/
 		  	end
 
 		  	it "should not render drafts of other agents" do
 		  		get :index
-		  		response.body.should_not =~ /#{@draft_article2.title.truncate(35)}/
+		  		response.body.should_not =~ /#{@draft_article5.draft.title.truncate(35)}/
 		  	end
 		  end
 		  #end: Drafts index/My drafts page
@@ -312,12 +318,12 @@ describe Solution::DraftsController do
 		  describe "all drafts page" do
 		  	it "should display current users own drafts" do
 		  		get :index, :type => :all
-		  		response.body.should =~ /#{@draft_article3.draft.title.truncate(35)}/
+		  		response.body.should =~ /#{@draft_article4.draft.title.truncate(35)}/
 		  	end
 
 		  	it "should display other users drafts also" do
 		  		get :index, :type => :all
-		  		response.body.should =~ /#{@draft_article2.user.name}/
+		  		response.body.should =~ /#{@draft_article5.draft.title.truncate(35)}/
 		  	end
 		  end
 		  #end: All drafts page

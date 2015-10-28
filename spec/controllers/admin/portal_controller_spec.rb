@@ -84,13 +84,15 @@ describe Admin::PortalController do
                             },
                   :product => @test_product.id
 
+    default_category = @test_product.account.solution_categories.find_by_is_default(true)
+    solution_ids = @solution_ids | [default_category.id] if default_category.present?
     new_portal = @test_product.portal
     new_portal.should_not be_nil
     new_portal.portal_url.should eql portal_url
     new_portal.name.should eql "Test portal"
     new_portal.template.should_not be_nil
     new_portal.language.should eql "da"
-    new_portal.portal_solution_categories.map(&:solution_category_id).sort.should eql @solution_ids.sort
+    new_portal.portal_solution_categories.map(&:solution_category_id).sort.should eql solution_ids.sort
     new_portal.portal_forum_categories.map(&:forum_category_id).sort.should eql @forum_ids.sort
     session["flash"][:notice].should eql "Portal has been enabled for '#{@test_product.name}'"
     response.should redirect_to(admin_portal_index_path)

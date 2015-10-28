@@ -2,6 +2,8 @@ require 'spec_helper'
 
 RSpec.describe Solution::MetaAssociationSwitcher do
 
+	self.use_transactional_fixtures = false
+	
 	before(:all) do
 		categories = []
 		3.times do
@@ -49,7 +51,6 @@ RSpec.describe Solution::MetaAssociationSwitcher do
 		@account.rollback(:meta_read)
 		indexed_json = JSON.parse(article.to_indexed_json)
 		Time.parse(indexed_json["solution/article"]["created_at"]).to_s.should == article.read_attribute(:created_at).to_s
-		indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder.read_attribute(:visibility))	
 		@account.launch(:meta_read)
 		@account.reload
 		@account.make_current

@@ -61,6 +61,7 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   before(:each) do
     @account.features.open_solutions.create
+    @account.reload
   end
 
   it "should redirect to support home if index is hit" do
@@ -134,7 +135,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     put :thumbs_down, :id => @public_article3.id, :format => "html" 
     @public_article3.reload
     @public_article3.thumbs_down.should eql(dislikes + 1)
-    response.body.should =~ /Your email/
+    response.should render_template("support/solutions/articles/_feedback_form")    
     response.code.should be_eql("200")
   end
 
@@ -238,7 +239,7 @@ RSpec.describe Support::Solutions::ArticlesController do
     
   it "should create ticket and update article_tickets while submitting feedback form for non logged in users" do
     agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-    test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
+    test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder.id, 
       :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
     description = Faker::Lorem.paragraph
     
@@ -260,12 +261,10 @@ RSpec.describe Support::Solutions::ArticlesController do
 
   it "should not create ticket while submitting feedback form for non logged in users with invalid email" do
 		agent = add_agent_to_account(@account, {:name => Faker::Name.name, :email => Faker::Internet.email, :active => 1, :role => 1 })
-		test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @test_folder1.id, 
-		 :status => "2", :art_type => "1" , :user_id => "#{agent.id}"} )
-		
+		test_article = create_article( {:title => "article #{Faker::Lorem.sentence(1)}", :description => "#{Faker::Lorem.paragraph}", :folder_id => @public_folder.id, 
+		 :status => "2", :art_type => "1" , :user_id => "#{agent.user_id}"} )
 		user_count = @account.users.count
     ticket_count = test_article.article_ticket.count
-
     post :create_ticket, :id => test_article.id,
       :helpdesk_ticket => { :email => 'example@example' },
       :helpdesk_ticket_description => Faker::Lorem.paragraph,
