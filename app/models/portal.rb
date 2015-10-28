@@ -14,7 +14,7 @@ class Portal < ActiveRecord::Base
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
   :allow_nil => true, :allow_blank => true
   validates_inclusion_of :language, :in => Language.all_codes, 
-    :message => I18n.t('portal.valid_language'), :if => :language_changed?
+    :message => I18n.t('.portal.valid_language'), :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
   after_commit :update_users_language, :update_solutions_language, on: :update, :if => :main_portal_language_changes?
