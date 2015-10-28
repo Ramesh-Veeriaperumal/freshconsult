@@ -150,7 +150,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :from                      => from_email,
       :bcc                       => bcc_email,
       "Reply-To"                 => "#{from_email}",
-      "Message-ID"               => "<#{Mail.random_tag}@notification.freshdesk.com>",
+      "Message-ID"               => "<#{Mail.random_tag}.#{::Socket.gethostname}@notification.freshdesk.com>",
       "Auto-Submitted"           => "auto-generated",
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
       "References"               => generate_email_references(params[:ticket]),

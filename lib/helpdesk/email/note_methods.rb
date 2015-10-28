@@ -116,7 +116,7 @@ module Helpdesk::Email::NoteMethods
   def update_ticket_cc
     cc_email = ticket.cc_email_hash || {:cc_emails => [], :fwd_emails => [], :reply_cc => []}
     incoming_cc = email[:cc].reject { |cc| requester_email?(cc) }
-    add_to_reply_cc(incoming_cc, ticket, note, cc_email) unless email[:in_reply_to].to_s.include? "notification.freshdesk.com>"
+    add_to_reply_cc(incoming_cc, ticket, note, cc_email) unless email[:in_reply_to].to_s.include? "notification.freshdesk.com"
     cc_email[:cc_emails] = incoming_cc | cc_email[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}.compact
     ticket.cc_email = cc_email
   end
