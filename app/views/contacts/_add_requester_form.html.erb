@@ -4,7 +4,7 @@
   </div>
   <div id="errorMessages" style="display:none;">
   </div>
-  <ul class="ui-form dont-validate">
+  <ul class="add-requester-form dont-validate">
     <li>
       <%= add_requester.label t('user.name') %>
       <%= add_requester.text_field :name, :class => "required"%>
@@ -30,8 +30,8 @@
     </li>
   </ul>
   <div class="button-container">
-    <%= add_requester.submit t('create'), :class => "btn primary" %>
     <%= link_to t('cancel'), "javascript:void(0);", :class => "btn", :id => "cancel_button" %>
+     <%= add_requester.submit t('create'), :class => "btn btn-primary", :"data-loading-text" => "Creating..." %>
   </div>
 <% end %>
 
@@ -54,8 +54,8 @@
   
   new Autocompleter.Json("user_customer", "user_customer_choices", cachedLookup, {});
 
-  jQuery('#cancel_button').click( function(){
-    active_dialog.dialog('close');
+  jQuery('#cancel_button').live('click', function(){
+    jQuery('#add_requester_form').modal('hide');
   });
 
   jQuery('#user_name').focus();

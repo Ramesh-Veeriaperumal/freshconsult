@@ -73,7 +73,7 @@ module Mobile::Actions::Ticket
                     :source_name, :is_closed, :to_emails, :to_cc_emails,:conversation_count, 
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook,
                     :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , 
-                    :ticket_notes, :ticket_sla_status, :call_details],
+                    :ticket_notes, :ticket_sla_status,:ticket_sla_status_type, :call_details,:public_url],
       :include => json_inlcude
     }
     as_json(options,false) 
@@ -82,7 +82,7 @@ module Mobile::Actions::Ticket
 	def to_mob_json_index
     options = { 
       :only => [ :id, :display_id, :subject, :priority, :status, :updated_at],
-      :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+      :methods => [ :ticket_subject_style,:ticket_sla_status,:ticket_sla_status_type, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :need_attention, :pretty_updated_date ,:ticket_current_state]
     }
     as_json(options,false) 
@@ -124,6 +124,10 @@ module Mobile::Actions::Ticket
     closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
     sla_status(self,closed_status);
   end
+
+  def ticket_sla_status_type
+      Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account).include?(self.status)
+  end
   
   def ticket_subject_style
     closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
@@ -143,5 +147,11 @@ module Mobile::Actions::Ticket
     return if self.freshfone_call.recording_audio.nil?
     AwsWrapper::S3Object.url_for(self.freshfone_call.recording_audio.content.path('original'), self.freshfone_call.recording_audio.content.bucket_name,
                                 :expires => 3600.seconds, :secure => true, :response_content_type => self.freshfone_call.recording_audio.content_content_type)
+  end
+
+  def public_url
+    return "" unless self.account.features_included?(:public_ticket_url)
+    access_token = self.access_token.blank? ? self.get_access_token : self.access_token
+    Rails.application.routes.url_helpers.public_ticket_url(access_token,:host => self.portal_host, :protocol=> self.url_protocol)
   end
 end

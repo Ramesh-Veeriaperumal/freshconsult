@@ -346,7 +346,7 @@ ol, ul, li{
 	@include float(left);
 	position: relative;
 	margin: 10px 0 0;
-	width: 210px;
+	width: 40%;
 
 	label {
 		@include float(left);
@@ -731,7 +731,7 @@ ol, ul, li{
     .btn-toolbar {
     	@include float(right);
     	@include clear(right);
-    	width: 400px;
+    	width: 60%;
     	@include text-align(right);
     	margin-bottom:0;
     	> span {

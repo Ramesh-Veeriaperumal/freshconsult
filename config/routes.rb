@@ -272,6 +272,7 @@ Helpkit::Application.routes.draw do
       post :create_contact
       get :configure_export
       post :export_csv
+      get :contact_details_for_ticket
     end
 
     member do
@@ -1531,7 +1532,7 @@ Helpkit::Application.routes.draw do
         post :custom_search
         post :export_csv
         post :latest_ticket_count
-        post :add_requester
+        match :add_requester
         get :filter_options
         get :full_paginate
         get :summary
@@ -2529,7 +2530,7 @@ Helpkit::Application.routes.draw do
   end
 
   namespace :doorkeeper, :path => '' do
-    namespace :api do
+    namespace :api, :path => '' do
       namespace :marketplace do
         get :data
       end

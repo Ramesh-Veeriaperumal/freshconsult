@@ -127,9 +127,11 @@
 
 .pricelist .btn{
 	display: block;
-	width: 100%;
+	width: 80%;
 	padding-left: 0;
 	padding-right: 0;
+	position: absolute;
+	bottom: 10px;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -335,7 +337,7 @@ input[type=text].input-agent-count{
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
-			margin-bottom: 20px;
+			margin-bottom: 25px;
 		}
 		.plan-brief{
 			font-size: 11px;
