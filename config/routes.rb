@@ -1154,6 +1154,22 @@ Helpkit::Application.routes.draw do
   match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
   namespace :search do
+
+    # Search v2 agent controller routes
+    #
+    namespace :v2 do
+      resources :spotlight, :only => [:all, :tickets, :customers] do
+        collection do
+          get :all
+          get :tickets
+          get :customers
+          get :forums
+          get :solutions
+        end
+      end
+      resources :suggest, :only => :index
+    end
+
     resources :home, :only => :index do
       collection do
         get :suggest
@@ -2072,6 +2088,17 @@ Helpkit::Application.routes.draw do
       end
       match '/topics/suggest', :action => 'suggest_topic'
       match '/articles/:article_id/related_articles', :action => 'related_articles'
+    end
+
+    # Search v2 portal controller routes
+    #
+    resources :search_v2, :only => [:all, :tickets, :solutions, :topics] do
+      collection do
+        get :all
+        get :tickets
+        get :solutions
+        get :topics
+      end
     end
 
     resources :discussions, :only => [:index, :show] do
