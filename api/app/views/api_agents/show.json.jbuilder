@@ -1,5 +1,5 @@
 json.cache! CacheLib.compound_key(@item, @item.user, params) do
-  json.extract! @item, :available, :occasional, :signature, :signature_html, :created_at, :updated_at
+  json.extract! @item, :available, :occasional, :signature_html, :created_at, :updated_at
   json.set! :id, @item.user_id
   json.set! :available_since, @item.active_since
   json.set! :ticket_scope, @item.ticket_permission

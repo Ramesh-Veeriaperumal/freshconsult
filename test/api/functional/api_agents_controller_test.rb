@@ -131,7 +131,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
       created_at: agent.created_at,
       id: Fixnum,
       occasional: expected_output[:occasional] || agent.occasional,
-      signature: expected_output[:signature] || agent.signature,
       signature_html: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: agent.updated_at,

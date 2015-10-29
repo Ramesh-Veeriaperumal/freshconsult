@@ -138,15 +138,6 @@ class ApiContactsController < ApiApplicationController
       current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
     end
 
-    # If false given, nil is getting saved in db as there is nil assignment if blank. Hence assign 0
-    def assign_checkbox_value
-      check_box_names = @contact_fields.select { |x| x.field_type == :custom_checkbox }.map(&:name)
-      params[cname][:custom_fields].each_pair do |key, value|
-        next unless check_box_names.include?(key.to_s)
-        params[cname][:custom_fields][key] = 0 if value.is_a?(FalseClass) || value == 'false'
-      end
-    end
-
     def valid_content_type?
       return true if super
       allowed_content_types = ContactConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
