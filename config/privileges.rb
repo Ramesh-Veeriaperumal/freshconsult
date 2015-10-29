@@ -74,8 +74,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/scenario_automation"
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest]
+    resource :"search/v2/suggest", :only => [:index]
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -150,6 +152,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:index, :show, :voted_users]
     resource :"search/home", :only => [:solutions]
     resource :"search/solution", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
   end
@@ -187,6 +190,7 @@ Authority::Authorization::PrivilegeList.build do
     # review code for monitorship?
     resource :"search/home", :only => [:topics]
     resource :"search/forum", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
@@ -235,6 +239,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+    resource :"search/v2/spotlight", :only => [:customers]
   end
 
   # add_or_edit_contact

@@ -40,7 +40,7 @@ module Search
               :account_id   => self.account_id,
               :document_id  => self.id,
               :klass_name   => self.class.to_s,
-              :version      => (Time.now.to_f * 1000000).ceil
+              :version      => Search::Utils.es_version
             })
           end
 
