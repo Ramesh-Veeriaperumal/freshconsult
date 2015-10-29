@@ -4,7 +4,7 @@
 	<div class="btn-toolbar pull-right">
 		<%= link_to t('cancel'), (@item.new_record? ? {:action => 'index'} : @item ), :class => "btn" %>
 		<span class="btn-group dropdown">
-			<button class="btn btn-primary" data-loading-text="Saving...">
+			<button class="btn btn-primary" data-loading-text="Sending...">
 				<%= t('ticket.compose.send') %>
 				<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 					<span class="caret"></span>
