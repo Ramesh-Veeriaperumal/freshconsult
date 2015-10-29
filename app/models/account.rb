@@ -257,7 +257,7 @@ class Account < ActiveRecord::Base
   
   #Will be used as :host in emails
   def host
-    main_portal.portal_url.blank? ? full_domain : main_portal.portal_url
+    main_portal_from_cache.portal_url.blank? ? full_domain : main_portal_from_cache.portal_url
   end
   
   def full_url
@@ -292,7 +292,7 @@ class Account < ActiveRecord::Base
   end
   
    def language
-      main_portal.language
+    main_portal_from_cache.language
    end
   
   #Sentient things start here, can move to lib some time later - Shan

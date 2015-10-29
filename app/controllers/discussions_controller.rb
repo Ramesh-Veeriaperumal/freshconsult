@@ -73,12 +73,17 @@ class DiscussionsController < ApplicationController
 	end
 
 	def categories
-		@forum_categories = portal_scoper.all(:include => :portals)
 		@topics_count = current_account.topics.count
     respond_to do |format|
-      format.html
-      format.xml  { render :xml => @forum_categories }
-      format.json  { render :json => @forum_categories }
+      format.html {
+      	@forum_categories = portal_scoper.all(:include => :portals)
+      }
+      format.any(:json, :xml)  { 
+      	# To remove unused eager loading in API request. Temp HACK
+      	@forum_categories = portal_scoper.all
+      	render request.format.to_sym => @forum_categories 
+      }
+      
     end
 	end
 

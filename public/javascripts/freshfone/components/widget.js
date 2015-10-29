@@ -212,6 +212,20 @@ var FreshfoneWidget;
 		ongoingControl: function(){
 			return freshfone.isConferenceMode ?
 			$("ul.ongoing  li:has(a:not(.transfer_call))") : $("ul.ongoing  li");
+		},
+		renderNotes: function(data){
+			var headerFromAgent = $('.note_from_agent');
+			headerFromAgent.text('... added by '+freshfoneUserInfo.requestObject.transferAgentName);
+			if(!$('#freshfone_add_notes').is(':visible')){
+				$('.add_notes').click();
+			}
+			this.callNote.focus().val(this.callNote.val()+data.call_notes);
+			this.callNote.on('keyup',function(){
+				headerFromAgent.text("");
+			});
+		},
+		resetNotesAgentHeader: function(){
+			$('.note_from_agent').text("");
 		}
 	};
 	
