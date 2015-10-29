@@ -329,16 +329,15 @@
 
 				if(chat.agent_id){
 					ticket.agent_id = chat.agent_id;
-					// The ticket creation time will be the calculated by subtracting the queue_time of the chat from the actual created time received. 
-					var createdTime = new Date(chat.created_at);
-					createdTime = createdTime.getTime();
-					//chat queue time won't available when agent convert the chat to ticket from archives 
-					createdTime = chat.queue_time ? createdTime - chat.queue_time: createdTime;
-					createdTime = new Date(createdTime).toISOString();
-					ticket.chat_created_at = createdTime;
-
 				}
-
+				// The ticket creation time will be the calculated by subtracting the queue_time of the chat from the actual created time received. 
+				var createdTime = new Date(data.initiatedTime);
+				createdTime = createdTime.getTime();
+				//chat queue time won't available when agent convert the chat to ticket from archives 
+				createdTime = chat.queue_time ? createdTime - chat.queue_time: createdTime;
+				createdTime = new Date(createdTime).toISOString();
+				ticket.chat_created_at = createdTime;
+				
 				if(this.chat.groups){
 					ticket.group_id = eval(this.chat.groups)[0];
 				}
