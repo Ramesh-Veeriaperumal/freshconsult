@@ -1,5 +1,5 @@
 json.array! @items do |api_company|
-  json.cache! CacheLib.compound_key(api_company, params) do
+  json.cache! CacheLib.key(api_company, params) do
     json.extract! api_company, :id, :name, :description, :note, :created_at, :updated_at
     json.domains CompanyDecorator.csv_to_array(api_company.domains)
   end

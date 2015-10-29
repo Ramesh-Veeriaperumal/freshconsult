@@ -12,8 +12,12 @@ module ApiDiscussions
         render_errors category.errors unless category.valid?
       end
 
+      def load_objects
+        super(scoper.reorder(:name))
+      end
+
       def scoper
-        index? ? current_account.forum_categories.reorder(:name) : current_account.forum_categories
+        current_account.forum_categories
       end
   end
 end

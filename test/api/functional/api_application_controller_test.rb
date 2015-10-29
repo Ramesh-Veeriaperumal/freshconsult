@@ -62,9 +62,23 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.body, request_error_pattern(:duplicate_value).to_json
   end
 
+  def test_statement_invalid_error
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.request.env['RAW_POST_DATA'] = 'test junk'
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    assert_nothing_raised do
+      error = ActiveRecord::StatementInvalid.new
+      error.set_backtrace(['a', 'b'])
+      @controller.send(:db_query_error, error)
+    end
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
+  end
+
   def test_notify_new_relic_agent
     @controller.request.env['ORIGINAL_FULLPATH'] = '/api/tickets'
-    NewRelic::Agent.expects(:notice_error).with('Exception',  uri: @controller.request.original_url).once
+    NewRelic::Agent.expects(:notice_error).with('Exception',  :uri => 'http://localhost.freshpo.com/api/tickets', :custom_params => {:method => 'GET', :params => {}}).once
     @controller.send(:notify_new_relic_agent, 'Exception')
   end
 

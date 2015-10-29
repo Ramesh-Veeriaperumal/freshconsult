@@ -241,6 +241,7 @@ class User < ActiveRecord::Base
         },
         email: {
           joins: :user_emails, 
+          # It is guranteed that all contacts in FD have atleast one entry in user_emails table. 
           conditions: { user_emails: { email: contact_filter.email }}
         },
         phone: {

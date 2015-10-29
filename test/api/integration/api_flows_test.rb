@@ -126,6 +126,17 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(request_error_pattern('duplicate_value'))
   end
 
+  def test_statement_invalid_error
+    error = ActiveRecord::StatementInvalid.new
+    error.set_backtrace(['a', 'b'])
+    User.any_instance.stubs(:create_contact!).raises(error)
+    skip_bullet do
+      post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
+    end
+    assert_response 500
+    response.body.must_match_json_expression(base_error_pattern('internal_error'))
+  end
+
   def test_multipart_data_with_valid_data_types
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
