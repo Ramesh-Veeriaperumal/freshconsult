@@ -1625,17 +1625,17 @@ en:
         notifications: "Notification will be sent when"
         agent_create_or_delete: "Agent is Added or Deleted"
         whitelisted_ip_modified: "IP Whitelisting is modified"
-        password_security: Password Security
+        password_policy: Password Policy
         for_agents: For Agents
         for_contacts: For Contacts
-        password_policy_info1: Changes you make to the password policy will be applicable within 8 hours. Your users will be prompted to update their passwords during this time. In case they fail to conform, they will be logged out of the support portal and be forced to change their passwords once they login back.
-        password_policy_info2: Note that once you enable password policy for your account (either default or advanced), you will not be able to disable it for your account.
+        password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
+        password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
         info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
         trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
-        info3: <b>Password Security</b><br>You can set up different levels of password security for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers.
+        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"> here</a>.
       password_security:
         default: Default
         advanced: Advanced
