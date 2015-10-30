@@ -4,6 +4,7 @@ json.array! @posts do |p|
   json.set! :body_html, p.body_html
 
   json.cache! CacheLib.key(p, params) do
-    json.extract! p, :id, :topic_id, :forum_id, :user_id, :answer, :published, :spam, :trash, :created_at, :updated_at
+    json.extract! p, :id, :topic_id, :forum_id, :user_id, :answer, :published, :spam, :trash
+    json.partial! 'shared/utc_date_format', item: p
   end
 end

@@ -6,14 +6,14 @@ json.array! @items do |tkt|
 
     json.set! :deleted, tkt.deleted if tkt.deleted
 
-    json.extract! tkt, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :created_at, :updated_at, :due_by
-
-    json.set! :fr_due_by, tkt.frDueBy
+    json.extract! tkt, :fr_escalated, :spam, :email_config_id, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject
 
     json.set! :to_emails, tkt.schema_less_ticket.try(:to_emails)
     json.set! :product_id, tkt.schema_less_ticket.try(:product_id)
     json.set! :id, tkt.display_id
     json.set! :type, tkt.ticket_type
+
+    json.partial! 'shared/utc_date_format', item: tkt, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
     json.set! :is_escalated, tkt.isescalated
   end

@@ -1,6 +1,7 @@
 json.array! @items do |contact|
   json.cache! CacheLib.key(contact, params) do
-    json.extract! contact, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :client_manager, :created_at, :updated_at
+    json.extract! contact, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :client_manager
+    json.partial! 'shared/utc_date_format', item: contact
   end
 
   # Not caching as decimal values are read as big decimal object
