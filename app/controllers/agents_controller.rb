@@ -199,7 +199,13 @@ class AgentsController < ApplicationController
   def convert_to_contact
       user = @agent.user
       if user.make_customer
-        flash[:notice] = t(:'flash.agents.to_contact')
+        #current_account subscription state changing from "active" to "Active" after 
+        #user.make_customer, so using downcase to check active customers
+        if current_account.subscription.state.downcase.eql?("active")
+          flash[:notice] = t(:'flash.agents.to_contact_active', :subscription_link => "/subscription").html_safe
+        else
+          flash[:notice] = t(:'flash.agents.to_contact')
+        end
         redirection_url(user)
       else
         flash[:notice] = t(:'flash.agents.to_contact_failed')

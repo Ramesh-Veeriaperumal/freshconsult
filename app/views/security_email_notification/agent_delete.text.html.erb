@@ -1,6 +1,10 @@
 Hi,<br><br>
 
-An agent, <%= @model.name %> was deleted by <%= @doer %> in your helpdesk at <%= @time %>. <%= @model.name %> will still exist in your helpdesk as a contact.
+An agent, <%= @model.name %> was deleted by <%= @doer %> in your helpdesk at <%= @time %>. 
+<%if @model.account.subscription.state.downcase.eql?('active')%>
+To reflect this change in your billing, please <a href = "<%= @model.account.full_url %>/subscription">update</a> the agent information in the billing page. 
+<%end%>
+Note that <%= @model.name %> will still exist in your helpdesk as a contact.
 <br><br>
 You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.<br><br>
 

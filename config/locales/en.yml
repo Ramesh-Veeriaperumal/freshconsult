@@ -2143,7 +2143,9 @@ en:
       update:
         success: Your account details have been updated.
     agents:
-      to_contact: The agent has been successfully converted to a Contact
+      to_contact: The agent has been successfully converted to a Contact.
+      to_contact_active: The agent has been successfully converted to a Contact. Please <a href = '%{subscription_link}'>update</a> billing information to reflect this change.
+
       to_contact_failed: The agent could not be converted to a Contact
       delete:
         not_allowed: You don't have access to delete it!
