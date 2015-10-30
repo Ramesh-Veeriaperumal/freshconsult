@@ -1,6 +1,5 @@
 module ApiConstants
-  METAL_CACHE_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'dalli_api.yml'))[Rails.env].symbolize_keys!
-  METAL_MEMCACHE_SERVER = METAL_CACHE_CONFIG.delete(:servers)
+
   # ControllerConstants
   API_CURRENT_VERSION = 'v2'
 

@@ -518,8 +518,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     set_key(v2_api_key, old_api_consumed_limit, nil)
     assert_response 429
     assert_equal 500, new_api_consumed_limit
-    assert_equal 500.to_s, response.headers['X-RateLimit-Total']
-    assert_equal '0', response.headers['X-RateLimit-Remaining']
+    assert response.headers.exclude?('X-RateLimit-Total')
+    assert response.headers.exclude?('X-RateLimit-Remaining')
     assert response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
