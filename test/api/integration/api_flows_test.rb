@@ -375,8 +375,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal '100', response.headers['X-RateLimit-Total']
-    remaining_limit = 100 - new_v2_api_consumed_limit.to_i
+    assert_equal '400', response.headers['X-RateLimit-Total']
+    remaining_limit = 400 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
@@ -594,5 +594,25 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     v2_api_consumed_limit = get_key(v2_api_key).to_i
     assert_equal old_v2_api_consumed_limit + 3, v2_api_consumed_limit
+  end
+
+  def test_cache_store_nil_jbuilder
+    ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
+    ApiDiscussions::CategoriesController.any_instance.stubs(:cache_store).returns(nil)
+    get "/api/discussions/categories.json", nil, @headers
+    ApiDiscussions::CategoriesController.any_instance.unstub(:cache_store)
+    ApiDiscussions::CategoriesController.any_instance.unstub(:perform_caching)
+    pattern = @account.forum_categories.map { |fc| forum_category_pattern(fc) }
+    match_json(pattern)
+    assert_response 200
+  end
+
+  def test_caching_enabled_memcache_down_jbuilder
+    ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
+    get "/api/discussions/categories.json", nil, @headers
+    ApiDiscussions::CategoriesController.any_instance.unstub(:perform_caching)
+    pattern = @account.forum_categories.map { |fc| forum_category_pattern(fc) }
+    match_json(pattern)
+    assert_response 200
   end
 end

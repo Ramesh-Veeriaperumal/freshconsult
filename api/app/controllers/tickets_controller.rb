@@ -54,7 +54,7 @@ class TicketsController < ApiApplicationController
   def show
     if params[:include] == 'notes'
       @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE)
-      RequestStore.store[:api_credits] += 1 # for embedded notes
+      increment_api_credit_by(1) # for embedded notes
     end
     super
   end

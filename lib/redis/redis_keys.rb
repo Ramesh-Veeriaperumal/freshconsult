@@ -29,7 +29,7 @@ module Redis::RedisKeys
     VERSIONED_API_THROTTLER = "VERSIONED_API_THROTTLER:%{host}"
     FD_ACCOUNT_API_LIMIT = "FD_ACCOUNT_API_LIMIT:%{host}"
     FD_DEFAULT_API_LIMIT = "FD_DEFAULT_API_LIMIT"
-    FD_PLAN_API_LIMIT = "FD_PLAN_API_LIMIT:{plan_id}"
+    FD_PLAN_API_LIMIT = "FD_PLAN_API_LIMIT:%{plan_id}"
 	WEBHOOK_THROTTLER = "WEBHOOK_THROTTLER:%{account_id}"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
 	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"

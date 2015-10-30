@@ -61,7 +61,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
-        @api_resource ? increment_versioned_other_redis(key, get_used_limit.to_i) : increment_others_redis(key)
+        # Except V1, other versions will have different credits associated with a single request, hence increment_other_redis_by_value is implemented.
+        @api_resource ? increment_other_redis_by_value(key, get_used_limit.to_i) : increment_others_redis(key)
         value = get_others_redis_key(key).to_i
         set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
@@ -76,13 +77,17 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     end
     # Setting API Limit headers for API
     if @api_resource && @api_limit
-      @headers = @headers.dup.merge!("X-RateLimit-Total" => @api_limit.to_s,
-                      "X-RateLimit-Remaining" => (@api_limit - get_others_redis_key(key).to_i).to_s,
-                      "X-RateLimit-Used" => get_used_limit.to_s)
-      version = get_api_version(env)
-      @headers = @headers.dup.merge!('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
+      set_rate_limit_version_headers(env)
     end
      [@status, @headers, @response]
+  end
+
+  def set_rate_limit_version_headers(env)
+    @headers = @headers.merge("X-RateLimit-Total" => @api_limit.to_s,
+                      "X-RateLimit-Remaining" => [(@api_limit - get_others_redis_key(key).to_i), 0].max.to_s,
+                      "X-RateLimit-Used" => get_used_limit.to_s)
+      version = get_api_version(env)
+      @headers = @headers.merge('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
   end
 
   def by_pass_throttle?

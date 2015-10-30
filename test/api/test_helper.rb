@@ -44,7 +44,7 @@ class ActionDispatch::IntegrationTest
     set_request_headers
     host!('localhost.freshpo.com')
     set_key(account_key, 500, nil)
-    set_key(default_key, 100, nil)
+    set_key(default_key, 400, nil)
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     set_key("#{v2_api_key}_expiry", 1)
     set_key("#{api_key}_expiry", 1)

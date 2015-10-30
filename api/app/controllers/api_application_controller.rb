@@ -490,4 +490,8 @@ class ApiApplicationController < MetalApiController
       options_hash =  { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params) }
       NewRelic::Agent.notice_error(exception, options_hash)
     end
+
+    def increment_api_credit_by(value)
+      RequestStore.store[:api_credits] += value
+    end
 end

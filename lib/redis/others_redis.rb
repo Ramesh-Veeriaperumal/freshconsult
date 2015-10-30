@@ -36,7 +36,7 @@ module Redis::OthersRedis
 		newrelic_begin_rescue { return $redis_others.INCR(key) }
 	end
 
-  def increment_versioned_other_redis(key, used)
+  def increment_other_redis_by_value(key, used)
     newrelic_begin_rescue { return $redis_others.INCRBY(key, used) }
   end
 
