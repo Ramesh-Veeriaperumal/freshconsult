@@ -936,6 +936,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Used by API v2
   def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
+      default: {
+        conditions: { spam: false }
+      },
       spam: {
         conditions: { spam: true }
       },

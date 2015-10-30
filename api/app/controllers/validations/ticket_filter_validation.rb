@@ -17,7 +17,8 @@ class TicketFilterValidation < ApiValidation
       request_params['requester_id'] = @requester.try(:id)
     end
     @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS)
-    @conditions = @conditions - ['filter'] + [request_params['filter']].compact
+    filter_name = request_params.fetch('filter', 'default')
+    @conditions = @conditions - ['filter'] + [filter_name].compact
     super(request_params, item, allow_string_param)
   end
 
