@@ -3234,6 +3234,8 @@ en:
     no_seats: No agent seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
+    last_logged: Last logged in
+    ago: %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_passes_available:
@@ -3241,6 +3243,7 @@ en:
       one: "1 Day pass available"
       other: "%{count} Day passes available"
     assign_role: Associate Roles
+    assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     assign: Assign
     role : Agent Role
@@ -3253,16 +3256,20 @@ en:
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
-      info1: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk.
       info2: Hover over an agent to edit their details, or click on Add New Agent to add a new agent.
       info3: Agents you add will receive an email with a confirmation link to activate their account after which they can be assigned, and respond to tickets.
       title1: Full-time vs Occasional Agents
-      info4: You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
       info5: Learn more about Day Passes
-      title2: Agent Scopes and Roles
-      info6: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions this agent should be able to perform within your helpdesk by choosing a Role.
-      info7: Note that you will not be able to modify your own roles, or delete yourself.
       info8: Learn more about Agent Roles
+      info9: Full time agents are those in your support team who will login to your help desk every day. 
+      info10: Occasional agents are those who would only need to login from time to time, such as your sales and marketing manager to take care of specific customer queries. You need not purchase an additional agent seat for a whole month for such agents.
+      title3: Groups
+      info11: You can organize agents into specific groups such as Sales and Product Management. Segmenting agents into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
+      info12: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk. Hover over an agent to edit details, or click on New Agent to add a new agent. Agents you add will receive an email with a confirmation link to activate their account after which they can access and respond to tickets.
+      info13: You can choose whether your agents will be accessing your support portal full-time, or be logging in only occasionally. Occasional agents will use up a Day Pass for each day they login to your support portal. You can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed for the number of full-time agents you add in the plans and billing section.
+      title4: Scopes and Roles
+      info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
+      info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -3272,7 +3279,10 @@ en:
     permissions: Permissions
     role_and_scope: Roles and Scope
     roles: Roles
+    remove_role: Remove role
     roles_description: Associate one or more roles with this agent.
+    groups_description: Associate one or more groups with this agent.
+    remove_group: Remove group
     ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
@@ -3291,6 +3301,8 @@ en:
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
+    group: Groups
+    member: Member of
   account_admin: Account admin
   right: Right
   footer:

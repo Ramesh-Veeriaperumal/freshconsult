@@ -33,7 +33,7 @@
 @import "cdn-ignored/sprites/chat/*.png";
 $chat-layout:horizontal;
 
-.icon_remove{
+.icon_remove, .group_icon_remove{
   cursor:pointer;
 	width: 15px;
 	height: 15px;
