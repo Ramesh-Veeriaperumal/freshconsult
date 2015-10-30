@@ -130,8 +130,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   def get_plan_api_limit(account)
     # Can we cache subscription of an account?
-    plan_id = Subscription.where(account_id: account.id).first.subscription_plan_id
-    get_others_redis_key(plan_api_limit_key(plan_id)) 
+    plan_id = account.subscription_from_cache.plan_id
+    get_others_redis_key(plan_api_limit_key(plan_id))
   end
 
   def get_used_limit

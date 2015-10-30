@@ -615,4 +615,28 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     match_json(pattern)
     assert_response 200
   end
+
+  def test_throttled_valid_request_with_plan_api_limit_changed
+    # system(start memcache)
+    old_plan = @account.subscription.subscription_plan
+    ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
+    subscription = @account.subscription
+    new_plan = SubscriptionPlan.find(3)
+    set_key(plan_key(3), 230, nil)
+    remove_key(account_key)
+    
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    assert_equal '200', response.headers['X-RateLimit-Total']
+    byebug
+    @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
+    @account.reload.subscription.reload.subscription_plan
+
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    assert_equal '230', response.headers['X-RateLimit-Total']
+    subscription.update_column(:subscription_plan_id, old_plan.id)
+
+    # system(stop memcache)
+  end
 end
