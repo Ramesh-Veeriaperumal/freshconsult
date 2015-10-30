@@ -107,10 +107,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def self.send_cc_email(ticket, comment=nil, options={})
     if comment
       cc_emails_string = ticket.cc_email[:reply_cc].join(",") if (ticket.cc_email.present? && ticket.cc_email[:reply_cc].present?)
-      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC) 
+      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
     else
       cc_emails_string = options[:cc_emails].join(",") if (options && options[:cc_emails])
-      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NEW_TICKET_CC) 
+      e_notification = ticket.account.email_notifications.find_by_notification_type(EmailNotification::NEW_TICKET_CC)
     end
     return if cc_emails_string.blank?
     cc_emails = get_email_array cc_emails_string
@@ -119,7 +119,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     non_db_user_ccs = cc_emails - db_users_email
     db_users.group_by(&:language).each do |language, users|
       i_receips = users.map(&:email).join(", ")
-      deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment)          
+      deliver_requester_notification(users.first, i_receips, e_notification, ticket, comment)
     end
     deliver_requester_notification(nil, non_db_user_ccs.join(", "), e_notification, ticket, comment, true) unless non_db_user_ccs.empty?
   end
@@ -134,11 +134,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       ticket.responder.email unless ticket.responder.nil?
     end
   end
-   
+
   def email_notification(params)
     ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
-      
-    bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]), 
+
+    bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
                                                                          params[:ticket])
     receips = validate_emails(params[:receips], params[:ticket])
     from_email = validate_emails(params[:ticket].friendly_reply_email, params[:ticket])
@@ -149,9 +149,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       :to                        => receips,
       :from                      => from_email,
       :bcc                       => bcc_email,
-      "Reply-To"                 => "#{from_email}", 
-      "Auto-Submitted"           => "auto-generated", 
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", 
+      "Reply-To"                 => "#{from_email}",
+      "Message-ID"               => "<#{Mail.random_tag}.#{::Socket.gethostname}@notification.freshdesk.com>",
+      "Auto-Submitted"           => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
       "References"               => generate_email_references(params[:ticket]),
       "In-Reply-To"              => in_reply_to(params[:ticket]),
       :sent_on                   => Time.now
@@ -160,7 +161,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
 
     inline_attachments   = []
-    @ticket              = params[:ticket] 
+    @ticket              = params[:ticket]
     @body                = params[:email_body_plain]
     @cloud_files           = params[:cloud_files]
     if(params[:notification_type] == EmailNotification::PREVIEW_EMAIL_VERIFICATION)
@@ -174,13 +175,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     else
       @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
     end
-    
+
     @surveymonkey_survey = Integrations::SurveyMonkey.survey_for_notification(
                             params[:notification_type], params[:ticket]
                           )
     @body_html           = generate_body_html(params[:email_body_html])
     @account             = params[:ticket].account
-    
+
     if attachments.present? && attachments.inline.present?
       handle_inline_attachments(attachments, params[:email_body_html], params[:ticket].account)
     end
@@ -189,7 +190,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       attachments[a.content_file_name] = {
         :mime_type => a.content_content_type,
         :content => File.read(a.content.to_file.path, :mode => "rb")
-      } 
+      }
     end if params[:attachments].present?
 
     mail(headers) do |part|

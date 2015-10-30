@@ -110,6 +110,17 @@ class Helpdesk::Tag < ActiveRecord::Base
     tickets.visible.size
   end
 
+  # Common handler for creating/removing tags
+  def self.assign_tags(tag_list=[])
+    return [] if tag_list.blank?
+
+    associated_tags = self.where(name: tag_list).all
+    missing_tags    = tag_list - associated_tags.map(&:name)
+    missing_tags.each { |tag_name| associated_tags.push(self.create(name: tag_name)) }
+
+    associated_tags
+  end
+
   def to_indexed_json
     as_json({
             :root => "helpdesk/tag",

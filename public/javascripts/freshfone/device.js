@@ -64,6 +64,7 @@
 				freshfonewidget.enablePreviewMode();
 			}
 			var dontUpdateCallCount = previewMode() || recordingMode();
+			freshfonecalls.getSavedCallNotes(conn.parameters.From);
 			freshfoneuser.publishLiveCall(dontUpdateCallCount);
 			freshfonecalls.onCallStopSound();
 		});
@@ -72,6 +73,7 @@
 			console.log("Call disconnected");
 			freshfoneNotification.resetJsonFix();
 			freshfoneDialpadEvents.hideContactDetails();
+			freshfonewidget.resetNotesAgentHeader();
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
 			if (freshfonecalls.tConn) {
 				var callSid = freshfonecalls.tConn.parameters.CallSid;

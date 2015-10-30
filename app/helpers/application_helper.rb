@@ -1468,11 +1468,15 @@ module ApplicationHelper
 		if call.blocked?
 			"blocked_call_icon"
 		elsif call.incoming?
-			(call.completed? || call.inprogress?) ? "incoming_call_icon" : "incoming_missed_call_icon"
+			(call.completed? || call.inprogress?) ? "incoming_call_icon" : abandon_or_missed_call_icon(call)
 		elsif call.outgoing?
 			(call.completed? || call.inprogress?) ? "outgoing_call_icon" : "outgoing_missed_call_icon"
 		end
 	end
+
+  def abandon_or_missed_call_icon(call)
+    call.abandon_state.present? ? "ficon-abandoned-call" : "incoming_missed_call_icon"
+  end
 # helpers for fresfone callable links -- ends
 
   def screenr_visible_in?(current_page, allowed_pages)

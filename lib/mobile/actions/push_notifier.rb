@@ -44,7 +44,7 @@ module Mobile::Actions::Push_Notifier
         notification_types = {NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]}
       elsif group_id
         begin
-          user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+          user_ids = self.account.agent_groups.where(group_id: group_id).pluck(:user_id)
           user_ids.delete(current_user_id)
           notification_types = {NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids} unless user_ids.empty?
         rescue Exception => e
@@ -57,7 +57,7 @@ module Mobile::Actions::Push_Notifier
       end
 		
     elsif action == :response then
-        user_ids = notable.subscriptions.map(&:user_id)
+        user_ids = notable.subscriptions.pluck(:user_id)
         unless incoming || self.to_emails.blank? || self.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] then
           notified_agent_emails =  self.to_emails.map { |email| parse_email_text(email)[:email] }
           user_ids = user_ids | account.users.find(:all, :select => :id , :conditions => {:email => notified_agent_emails}).map(&:id)
@@ -94,7 +94,7 @@ module Mobile::Actions::Push_Notifier
       notification_types.merge! NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]
     end
     if unassigned_ticket && @model_changes.key?(:group_id) && group_id then
-      user_ids = self.account.groups.find(group_id).agent_groups.map(&:user_id)
+      user_ids = self.account.agent_groups.where(group_id: group_id).pluck(:user_id)
       user_ids.delete(current_user_id)
       notification_types.merge! NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids unless user_ids.empty?
     end

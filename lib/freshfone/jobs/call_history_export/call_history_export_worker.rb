@@ -180,7 +180,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
       elsif call.voicemail?
         "Unanswered with Voicemail"
       elsif call.busy? || call.noanswer?
-        "Unanswered"
+        call.abandon_state.present? ? abandon_state(call) :  "Unanswered"
       else 
         call.dial_call_sid.present? ? "Answered" : "Unanswered"
       end
@@ -198,5 +198,9 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
           left.id <=> right.id
         end
       end
+    end
+
+    def abandon_state(call)
+      Freshfone::Call::CALL_ABANDON_TYPE_STR_HASH[call.abandon_state]
     end
 end

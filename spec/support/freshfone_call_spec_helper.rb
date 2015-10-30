@@ -34,6 +34,12 @@ module FreshfoneCallSpecHelper
                                       :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
   end
 
+  def create_call_for_status_with_out_agent
+    @freshfone_call = @account.freshfone_calls.create(  :freshfone_number_id => @number.id, 
+                                      :call_status => Freshfone::Call::CALL_STATUS_HASH[:default], :call_type => 1, :business_hour_call => true,
+                                      :params => { :CallSid => "CA2db76c748cb6f081853f80dace462a04" } )
+  end
+
   def in_call_params
     { "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "CallStatus"=>"in-progress", "CalledVia"=>"+12407433321", 
       "FromState"=>"CA", "Called"=>"client:1", "To"=>"client:1", "ParentCallSid"=>"CA2db76c748cb6f081853f80dace462a04", 

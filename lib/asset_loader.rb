@@ -11,6 +11,9 @@ class AssetLoader
 		:plugins => 'public/src/cdn/plugins'
 	}
 	
+	MANIFEST_FILE = "#{Rails.root}/public/assets/manifest.yml"
+	MANIFEST = (File.exists?(MANIFEST_FILE) ? YAML::load_file(MANIFEST_FILE) : nil)
+	
 	class << self
 	
 	def js_assets
@@ -38,14 +41,14 @@ class AssetLoader
 	
 	def js_app_assets(scope)
 		Hash[*((asset_list(JS[scope]) || []).map do |asset|
-			[asset.gsub('.js', '').to_s , Rails.application.assets.find_asset("cdn/#{scope}/#{asset}").digest_path]
+			[asset.gsub('.js', '').to_s , digest_path("cdn/#{scope}/#{asset}")]
 		end).flatten]
 	end
 	
 	
 	def css_app_assets(scope)
 		Hash[*((asset_list(CSS[scope]) || []).map do |asset|
-			[asset.gsub('.scss', '').to_s , Rails.application.assets.find_asset("cdn/#{scope}/#{asset}").digest_path]
+			[asset.gsub('.scss', '').to_s , digest_path("cdn/#{scope}/#{asset}")]
 		end).flatten]
 	end
 	
@@ -55,6 +58,10 @@ class AssetLoader
 			path.each_filename { |fn| filename = fn if accept?(fn) }
 			filename
 		end).compact
+	end
+	
+	def digest_path(asset)
+		MANIFEST.blank? ? Rails.application.assets.find_asset(asset).digest_path : MANIFEST[asset]
 	end
 	
 	def accept?(filename)

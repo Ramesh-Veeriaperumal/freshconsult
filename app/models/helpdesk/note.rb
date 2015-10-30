@@ -196,7 +196,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def support_email
-    hash = parse_email_text(self.from_email)
+    hash = parse_email_text(self.schema_less_note.try(:from_email))
     hash[:email]
   end
   

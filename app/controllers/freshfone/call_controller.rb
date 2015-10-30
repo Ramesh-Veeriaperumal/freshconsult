@@ -12,6 +12,7 @@ class Freshfone::CallController < FreshfoneBaseController
 	before_filter :load_user_by_phone, :only => [:caller_data]
 	before_filter :set_native_mobile, :only => [:caller_data]
 	before_filter :populate_call_details, :only => [:status]
+	before_filter :set_abandon_state, :only => [:status]
 	before_filter :force_termination, :only => [:status]
 	before_filter :clear_client_calls, :only => [:status]
 	before_filter :reset_outgoing_count, :only => [:status]
@@ -157,5 +158,10 @@ class Freshfone::CallController < FreshfoneBaseController
 
 		def in_progress?
 			params[:CallStatus] == 'in-progress'
+		end
+
+		def set_abandon_state
+			return unless current_call.present? 
+			current_call.set_abandon_call(params)
 		end
 end

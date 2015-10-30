@@ -23,7 +23,7 @@ module Social::Util
   
   def validate_tweet(tweet, twitter_id, is_reply = true)
     twt_text = (is_reply and !tweet.include?(twitter_id)) ? "#{twitter_id} #{tweet}" : tweet
-    tweet_length = twt_text.gsub(URL_REGEX, " "*22).length; 
+    tweet_length = twt_text.gsub(URL_REGEX, TWITTER_URL_LENGTH).length; 
     length = twitter_id.nil? ? Social::Tweet::DM_LENGTH : Social::Tweet::TWEET_LENGTH
     twitter_error_message = t('twitter.not_valid') if (tweet_length > length)
     [twitter_error_message, twt_text]

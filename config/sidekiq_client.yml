@@ -23,6 +23,7 @@ defaults: &defaults
     - [trial_twitter]
     - [custom_twitter]
     - [rabbitmq_publish]
+    - [plan_change]
     - [update_tickets_company]
     - [reports_no_activity]
     - [es_alias_queue]

@@ -4,7 +4,7 @@ class ExportAgents < BaseWorker
   include Rails.application.routes.url_helpers
   include Export::Util
 
-  sidekiq_options :queue => :export_agents, :retry => 0
+  sidekiq_options :queue => :export_agents, :retry => 0, :backtrace => true, :failures => :exhausted
 
   AGENT_TICKET_SCOPE = { 1 => 'agent.global', 2 => 'agent.group', 3 => 'agent.individual' }
 

@@ -70,6 +70,11 @@ class Freshfone::QueueController < FreshfoneBaseController
   private
     def update_call
       current_call.update_call(params) unless BRIDGE_STATUS.include?(params[:QueueResult])
+      set_abandon_state if (params[:QueueResult] == "hangup")
+    end
+
+    def set_abandon_state
+      current_call.update_abandon_state(Freshfone::Call::CALL_ABANDON_TYPE_HASH[:queue_abandon])
     end
 
     def trigger_queue_wait

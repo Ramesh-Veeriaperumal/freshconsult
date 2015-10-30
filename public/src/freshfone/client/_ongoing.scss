@@ -112,6 +112,16 @@
 		font-weight: 600;
 		@include padding(8px 0 0 10px);
 		color: $popup-content-header-text;
+		span.note_from_agent{
+			font-size: 12px;
+			font-weight: 400;
+			float: right;
+			padding-right: 15px;
+			padding-top: 3px;
+			text-transform: none;
+			color: #ccc;
+			text-overflow: ellipsis;
+		}
 	}
 	.ffone-add-notes { height: 200px; width: 350px; }
 	.ffone-end-call {

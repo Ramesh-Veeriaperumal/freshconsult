@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.find_by_email(self[:email], :conditions => [(self[:id] ? "id != #{self[:id]}" : "")])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
   end
 
   def only_primary_email
@@ -260,18 +260,8 @@ class User < ActiveRecord::Base
 
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
-      updated_tag_names.strip! #strip! to avoid empty tag name error
-      updated_tag_names = updated_tag_names.split(",")
-      current_tags = account.tags_from_cache
-      new_tags = []
-      updated_tag_names.each do |updated_tag_name|
-        updated_tag_name.strip!
-        next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
-
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
-                      Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
-      end
-      self.tags = new_tags
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
 
@@ -337,13 +327,9 @@ class User < ActiveRecord::Base
     return false unless save_without_session_maintenance
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
-      if self.language.nil?
-        args = [ portal,false, params[:email_config]]
-        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
-          nil, 5.minutes.from_now) 
-      else
-        deliver_activation_instructions!(portal,false, params[:email_config])
-      end
+      args = [ portal,false, params[:email_config]]
+      job_args = self.language ? [nil] : [nil, 5.minutes.from_now]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), *job_args) 
     end
     true
   end
@@ -481,10 +467,10 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    if account.main_portal.portal_url.blank? 
+    if account.main_portal_from_cache.portal_url.blank? 
       return account.ssl_enabled? ? 'https' : 'http'
     else 
-      return account.main_portal.ssl_enabled? ? 'https' : 'http'
+      return account.main_portal_from_cache.ssl_enabled? ? 'https' : 'http'
     end
   end
   
@@ -749,7 +735,6 @@ class User < ActiveRecord::Base
     self.customer_id
   end
 
-
   private
     def name_part(part)
       part = parsed_name[part].blank? ? "particle" : part unless parsed_name.blank? and part == "family"
@@ -823,8 +808,10 @@ class User < ActiveRecord::Base
         user = User.find_by_email(login)
         user if user.present? and user.active? and !user.blocked?
       else
-        user_email = UserEmail.find_by_email(login)
-        user_email.user if !user_email.nil? and user_email.user and user_email.user.active? and !user_email.user.blocked?
+        # Without using select will results in making the user object readonly.
+        # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
+        user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
+        user if user and user.active? and !user.blocked?
       end
     end
 
