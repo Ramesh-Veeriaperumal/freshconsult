@@ -61,6 +61,16 @@ module TestClassMethods
       f.write(JSON.pretty_generate v2 || {})
     end
   end
+
+  def turn_on_caching
+    system 'memcached &'
+    MetalApiController.perform_caching = true
+  end
+
+  def turn_off_caching
+    MetalApiController.perform_caching = false
+    system "ps -ef | grep memcached | grep -v 'grep' | awk '{print $2}' | xargs kill"
+  end
 end
 
 include TestClassMethods

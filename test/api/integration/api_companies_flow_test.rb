@@ -2,6 +2,9 @@ require_relative '../test_helper'
 
 class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
   include Helpers::CompaniesTestHelper
+  include CompanyHelper
+  include ContactFieldsHelper
+
   JSON_ROUTES = Rails.application.routes.routes.select do |r|
     r.path.spec.to_s.starts_with('/api/companies/') &&
     ['post', 'put'].include?(r.send(:verb).inspect.gsub(/[^0-9A-Za-z]/, '').downcase)
@@ -39,5 +42,20 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
       assert_response 200
       assert company.reload.domains.split(',').count == 0
     end
+
+  def test_caching_after_updating_custom_fields
+    create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Linetext1'))
+    create_company_field(company_params(type: 'paragraph', field_type: 'custom_paragraph', label: 'Testimony1'))
+    company = create_company
+    turn_on_caching
+    Account.stubs(:current).returns(@account)
+    get "/api/v2/companies/#{company.id}", nil, @write_headers
+    company.update_attributes(custom_field: { 'cf_linetext1' => 'test', 'cf_testimony1' => 'test testimony' })
+    custom_field = company.custom_field
+    get "/api/v2/companies/#{company.id}", nil, @write_headers
+    Account.unstub(:current)
+    turn_off_caching
+    assert_response 200
+    match_json(company_pattern({ custom_field: custom_field }, company))
   end
 end

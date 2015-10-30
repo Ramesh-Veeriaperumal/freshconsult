@@ -153,4 +153,20 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       assert contact.reload.tag_names.split(',').count == 0
     end
   end
+
+  def test_caching_after_updating_custom_fields
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Linetext', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'paragraph', field_type: 'custom_paragraph', label: 'Testimony', editable_in_signup: 'true'))
+    sample_user = get_user
+    turn_on_caching
+    Account.stubs(:current).returns(@account)
+    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+    sample_user.update_attributes(custom_field: { 'cf_linetext' => 'test', 'cf_testimony' => 'test testimony' })
+    custom_field = sample_user.custom_field
+    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+    Account.unstub(:current)
+    turn_off_caching
+    assert_response 200
+    match_json(contact_pattern({ custom_field: custom_field }, sample_user))
+  end
 end
