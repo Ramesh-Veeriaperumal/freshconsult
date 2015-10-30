@@ -14,6 +14,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   serialize :additional_settings, Hash
   serialize :resource_rlimit_conf, Hash
   validate :validate_bcc_emails
+  validate :validate_supported_languages
 
   def handle_email_notification_outdate
     if supported_languages_changed? 
@@ -52,6 +53,16 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def set_default_rlimit
     self.resource_rlimit_conf = self.resource_rlimit_conf.presence || DEFAULT_RLIMIT
+  end
+
+  def validate_supported_languages
+    self.supported_languages.each do |l|
+      unless Language.all_codes.include?(l)
+        errors.add(:supported_languages, I18n.t('accounts.multilingual_support.supported_languages_validity'))
+        return false
+      end
+    end
+    return true
   end
 
 end

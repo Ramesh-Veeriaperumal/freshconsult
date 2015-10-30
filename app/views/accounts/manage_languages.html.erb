@@ -1,0 +1,83 @@
+<% content_for :helpcard do %>
+	<%= render :partial => "helpnote" %>
+<% end %>
+<%= javascript_tag do %>
+	jQuery("#manage_languages_submit").bind('click', function(ev){
+		var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
+		if(language_flag != -1 ){
+			ev.preventDefault(); 
+			alert("<%= t('account.same_language_alert')%>");
+		}
+	});
+<% end %>
+
+<div class="manage-languages-header">
+	<span class="button-container itil-hide language-form-btns">
+		<%= pjax_link_to(t('cancel'), edit_account_path, :class => "btn" ) %>
+	  <%= submit_tag t('save'), :class => "btn btn-primary", :id => "manage_languages_submit", :form => "manage_languages_form" %>
+	</span>
+	<%= breadcrumbs %>
+</div>
+
+<% multilingual_flag = @account.features?(:enable_multilingual) %>
+
+<div class="manage-languages-body">
+	<%= error_messages_for :account %>
+	<span class="multilingual-warning mt5">
+		<i class="ficon-warning fsize-15 mr5"></i>
+		<b><%= t('accounts.multilingual_support.important') %></b>
+		<div class="mt5"><%= simple_format(t('accounts.multilingual_support.warning_msg')) %></div>
+	</span>
+	<div class="form-horizontal">
+		<%= form_for @account, :url => { :action => 'update_languages' }, :rel => "validate", :html => { :id => "manage_languages_form" } do |f| %>
+			<div class="row-fluid">
+				<%= f.fields_for :main_portal do |portal| %>
+					<div>
+							<div class="fields">
+								<div class="control-group">
+									<%= portal.label "", t('accounts.multilingual_support.title'), :class => "control-label"  %>
+									<div class="controls">
+										<%= check_box("","",{ :checked => true, 
+																		:rel => 'toggle',
+																		"data-checked-label" => t('plain_on'), 
+																		"data-unchecked-label" => t('plain_off'),
+																		:disabled => true
+							 	       		}) %>
+									</div>
+								</div>
+								<div class="control-group">
+									<%= portal.label :language, t('account.primary_language'), :class => "control-label"  %>
+									<div class="controls">
+										<% if multilingual_flag %>
+											<div class="mt5"><%= Language.find_by_code(@account.main_portal.language).name %></div>
+										<% else %>
+											<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
+										<% end %>
+									</div>
+								</div>
+								<%= f.fields_for :account_additional_settings do |settings| %>
+									<% if feature?(:dynamic_content) %>
+										<div class="control-group" id="supported_language_list">
+											<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
+											<div class="controls">
+												<div class="row-fluid">
+													<%= settings.select :supported_languages, 
+																options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, 
+																:selected => @account.reload.supported_languages), 
+																{}, 
+																{ 
+																	:multiple => true,
+																	:class => "select2 span7 clear-left-margin secondary-languages-field language_required",
+																	"data-placeholder"=>t('accounts.multilingual_support.add_languages')
+																} %>
+												</div>	
+											</div>					
+										</div>
+									<% end %>
+								<% end %>
+						</div>
+				<% end %>
+			</div>
+		<% end %>
+	</div>
+</div>

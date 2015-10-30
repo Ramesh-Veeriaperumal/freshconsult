@@ -81,6 +81,8 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  plain_on: "On"
+  plain_off: "Off"
   add_all: "Add all"
   unspam: "Unspam"
   unblock: "Whitelist"
@@ -1704,6 +1706,7 @@ en:
         portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
+        enable_multilingual: "Enable multilingual support"
       edit:
         title: Edit Product
         updating: Updating...
@@ -2676,6 +2679,16 @@ en:
       invoice_email_info : Send Invoices to
       invoice_emails : Email
       restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+    multilingual_support:
+      manage_languages: "Manage Languages"
+      title: "Multilingual Support"
+      add_languages: "Add languages"
+      important: "Important"
+      warning_msg: |
+                    Primary language CANNOT be changed
+                    when multilingual support is enabled
+      supported_languages_validity: "should be valid"
+      portal_language_inclusion: "Supported languages should not include the portal language"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -4741,6 +4754,7 @@ en:
     rebrand: Rebrand your Helpdesk
     helpdesk: Helpdesk
     helpdesk_url: Helpdesk/Portal URL
+    languages: Languages
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages

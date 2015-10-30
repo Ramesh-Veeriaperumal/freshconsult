@@ -2557,6 +2557,57 @@ a.mobile_switchBtn {
 	label{ margin-bottom:0; }
 	.linkback-url{ margin: 5px 0; }
 	.reset-color{ margin-top: 5px; }
+
+	.secondary-languages {
+		@include margin-left(0);
+	}
+
+	.multilingual-enabled {
+		@include border-right(1px solid #ddd);
+	}
+
+	.manage-link {
+		padding-top: 30px;
+	}
+}
+
+.manage-languages-header {
+	border-bottom: 1px solid #ddd;
+	padding: 10px 0px 30px 0px;
+
+	.manage_languages_breadcrumb {
+		li {
+			font-size: 14px;
+		}
+		li:after{
+			content: "\002F";
+			@include padding-left(8px);
+			@include padding-right(7px);
+		}
+		li:last-child:after{
+			content: none;
+		}
+	}
+
+	.language-form-btns {
+		float: right;
+		margin-top: -18px;
+	}
+}
+
+.manage-languages-body {
+	margin-top: 30px;
+
+	.toggle-button {
+		@include margin(5px 0 0 0);
+	}
+
+	.multilingual-warning {
+		float: right;
+		@include border-left(1px solid #EEE);
+		@include padding-left(10px);
+		color: #8E4D2B;
+	}
 }
 
 .error-text {

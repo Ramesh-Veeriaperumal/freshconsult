@@ -37,6 +37,10 @@ class Language
 			LANGUAGES
 		end
 
+		def all_codes
+			all.map(&:code)
+		end
+
 		def find(id)
 			all.select { |lang| lang.id == id.to_i}.first
 		end

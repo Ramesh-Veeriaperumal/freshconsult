@@ -54,27 +54,31 @@
 							</div>
 						</div>
 
+						<% multilingual_flag = @account.features?(:enable_multilingual) %>
+
 						<div class="control-group">
-							<%= portal.label :language, t('account.primary_language'), :class => "control-label"  %>
+							<%= portal.label :language, "#{multilingual_flag ? t('account.languages') : t('account.language')}", :class => "control-label"  %>
 							<div class="controls">
-								<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
+								<% if multilingual_flag %>
+									<div class="span4 multilingual-enabled">
+										<div class="muted"><%= t('account.primary_language') %></div>
+										<div class="mt5"><%= Language.find_by_code(@account.main_portal.language).name %></div>
+										<div class="muted mt5"><%= t('account.additional_languages') %></div>
+										<div class="mt5 secondary-languages span9"><%= secondary_languages %></div>
+									</div>
+									<div class="span3 manage-link">
+										<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>
+									</div>
+								<% else %>
+									<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
+									<span class="ml10">
+										<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path %>
+									</span>
+								<% end %>
 							</div>
 						</div>
 						
 						<%= f.fields_for :account_additional_settings do |settings| %>
-							<% if feature?(:dynamic_content) %>
-								<div class="control-group" id="supported_language_list">
-									<%= settings.label :supported_languages , t('account.additional_languages') , :class => "control-label caption" %>
-									<div class="controls">
-										<div class="row-fluid">
-											<%= settings.select :supported_languages, options_for_select( I18n.available_locales_with_name.reject { |lang, sym| sym == @account.main_portal.language.to_sym() }, :selected => @supported_languages_list ? @supported_languages_list.collect(&:to_sym) : []), {}, { :multiple => true, "data-placeholder"=>"select language", :class => "select2 span9 clear-left-margin" } %>
-										</div>
-										<div class="muted">
-											<%=t('account.info6')%>
-										</div>	
-									</div>					
-								</div>
-							<%end%>	
 							<div class="control-group">
 								<%= settings.label :date_format, t('account.date_format'), :class => "control-label"  %>
 								<div class="controls">

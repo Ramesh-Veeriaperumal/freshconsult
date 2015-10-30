@@ -14,7 +14,7 @@ class AccountsController < ApplicationController
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
   skip_before_filter :set_time_zone, :set_current_account,
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :update_languages]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
@@ -40,13 +40,13 @@ class AccountsController < ApplicationController
   before_filter :build_signup_contact, :only => [:new_signup_free]
   before_filter :check_supported_languages, :only =>[:update], :if => :dynamic_content_available?
   before_filter :set_native_mobile, :only => [:new_signup_free]
-
+  before_filter :update_language_attributes, :only => [:update_languages]
+  before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   
   def show
   end   
    
   def edit
-    @supported_languages_list = current_account.account_additional_settings.supported_languages 
     @ticket_display_id = current_account.get_max_display_id
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
@@ -219,11 +219,11 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if dynamic_content_available?
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
+    params[:account][:main_portal_attributes].delete(:language) if @account.features?(:enable_multilingual)
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
@@ -272,6 +272,20 @@ class AccountsController < ApplicationController
       format.html { redirect_to :back }
       format.js { render :text => "success" }
     end    
+  end
+
+  def manage_languages
+    @account = current_account
+  end
+
+  def update_languages
+    if @account.save
+      flash[:notice] = t(:'flash.account.update.success')
+      check_and_enable_multilingual_feature
+      redirect_to admin_home_index_path
+    else
+      render :action => 'manage_languages'
+    end
   end
 
   protected
@@ -533,6 +547,32 @@ class AccountsController < ApplicationController
         :user_count => current_account.contacts.count,
         :account_created_on => current_account.created_at 
       }
-    end         
+    end
+
+    def check_and_enable_multilingual_feature
+      return if @account.features?(:enable_multilingual)
+      if @account.supported_languages.present?
+        @account.features.enable_multilingual.create
+      end
+    end
+
+    def validate_portal_language_inclusion
+      return unless params[:account][:account_additional_settings_attributes][:supported_languages].present?
+      if params[:account][:account_additional_settings_attributes][:supported_languages].include?(main_portal_language)
+        flash[:error] = t('accounts.multilingual_support.portal_language_inclusion')
+        redirect_to manage_languages_path
+      end
+    end
+
+    def main_portal_language
+      return @account.language unless params[:account][:main_portal_attributes]
+      params[:account][:main_portal_attributes][:language] || @account.language
+    end
+
+    def update_language_attributes
+      @account = current_account
+      @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
+      @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
+    end
 
 end
