@@ -1,9 +1,5 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
 <div class="compose-new-email">
-<div class="alert notice" id="compose-notice">
-Agents can initiate conversations with customers by sending an outbound email. This feature can be disabled by the administrator in Admin > Email.
-<a class="close" href="#"></a>
-</div>
   <%= form_for @item, :html => {:multipart => true, :id => "ComposeTicket", :ignore => "", :rel => "validate" } do |f| %>
      <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
         <div class="muted">
