@@ -13,6 +13,7 @@ module ApiDiscussions
       end
 
       def load_objects
+        # Web follows order by position. As we don't give position in response, falling back to name which is indexed.
         super(scoper.reorder(:name))
       end
 

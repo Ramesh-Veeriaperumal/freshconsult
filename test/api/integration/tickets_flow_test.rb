@@ -364,20 +364,24 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert_equal @primary_email_config_2, last_ticket.email_config
   end
 
-  def test_empty_tags
+  def test_empty_tags_and_cc_emails
     skip_bullet do
-      params = v2_ticket_params.merge(tags: [Faker::Name.name])
+      params = v2_ticket_params.merge(tags: [Faker::Name.name], cc_emails: [Faker::Internet.email])
       post '/api/tickets', params.to_json, @write_headers
       ticket = Helpdesk::Ticket.find_by_subject(params[:subject])
       assert_response 201
       assert ticket.tags.count == 1
+      assert ticket.cc_email[:cc_emails].count == 1
 
-      put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
+      put "/api/tickets/#{ticket.id}", { tags: nil, cc_emails: nil }.to_json, @write_headers
+      match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                  bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array')])
+      assert_response 400
 
-      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
+      put "/api/tickets/#{ticket.id}", { tags: [], cc_emails: [] }.to_json, @write_headers
       assert_response 200
       assert ticket.reload.tags.count == 0
+      assert ticket.reload.cc_email.count == 0
     end
   end
 end
