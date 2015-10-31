@@ -22,7 +22,7 @@ git_version_command = "git log --pretty=format:%H --max-count=1 --branches=HEAD 
 file_name = node.override[:git_version] = `#{git_version_command}` + ".zip"
 node.override[:path] = "#{node[:path]}" + "#{file_name}"
 Chef::Log.info "value of git version is #{node[:git_version]} and test value is #{node[:bucket_exist]} and bucket name is #{bucket_name}"
-
+asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
 if node[:opsworks]
   if node[:opsworks][:instance][:hostname].include?("-app-")
     aws_config = AWS::S3.new(awscreds).buckets["#{bucket_name}"].objects["compiledfiles/#{file_name}"]
@@ -31,7 +31,7 @@ if node[:opsworks]
   master_node = node[:opsworks][:layers][:application][:instances].keys.sort.first  if node[:opsworks][:layers] && node[:opsworks][:layers][:application] && node[:opsworks][:layers][:application][:instances]
   asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
   current_host = node[:opsworks][:instance][:hostname] 
-  if master_node && (node[:opsworks][:instance][:hostname] == master_node) && ::File.exists?("#{node[:rel_path]}/config/database.yml")
+  if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) && ::File.exists?("#{node[:rel_path]}/config/database.yml")
     Chef::Log.info "inside master"
     if node[:custom_db_migrate]
       run "cd #{release_path} && RAILS_ENV=#{node[:opsworks][:environment]} bundle exec rake db:migrate"
@@ -65,7 +65,7 @@ if node[:opsworks]
     end
   end
 end
-if master_node && (node[:opsworks][:instance][:hostname] == master_node) 
+if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) 
 execute "zip the file" do 
       command "cd #{node[:rel_path]}/public/ ; zip -FSr #{node[:path]} assets/*"  
     end
