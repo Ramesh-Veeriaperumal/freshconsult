@@ -41,7 +41,12 @@ class Middleware::SearchV2Router
         '/support/search'           => { path: '/support/search_v2/all',          feature: :esv2_portal_spotlight },
         '/support/search/tickets'   => { path: '/support/search_v2/tickets',      feature: :esv2_portal_ticket },
         '/support/search/topics'    => { path: '/support/search_v2/topics',       feature: :esv2_portal_forum },
-        '/support/search/solutions' => { path: '/support/search_v2/solutions',    feature: :esv2_portal_solution }
+        '/support/search/solutions' => { path: '/support/search_v2/solutions',    feature: :esv2_portal_solution },
+                                  ### Agent side autocomplete paths ###
+        '/search/autocomplete/requesters' => { path: '/search/v2/autocomplete/requesters',  feature: :esv2_user_autocomplete },
+        '/search/autocomplete/agents'     => { path: '/search/v2/autocomplete/agents',      feature: :esv2_agent_autocomplete },
+        '/search/autocomplete/companies'  => { path: '/search/v2/autocomplete/companies',   feature: :esv2_company_autocomplete },
+        '/search/autocomplete/tags'       => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete }
       }
     end
 

@@ -11,6 +11,9 @@ class Support::SearchV2Controller < SupportController
   # To-do: Verify uses:
   # :results, :related_articles, :container, :longest_collection
 
+  # ESType - [model, associations] mapping
+  # Needed for loading records from DB
+  #
   @@esv2_spotlight_models = {
     "ticket"  => { model: "Helpdesk::Ticket",   associations: [ :ticket_old_body ] },
     "note"    => { model: "Helpdesk::Note",     associations: [ :note_old_body ] },

@@ -1168,6 +1168,14 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :suggest, :only => :index
+      resources :autocomplete, :only => [:agents, :requesters, :companies, :tags] do
+        collection do
+          get :agents
+          get :requesters
+          get :companies
+          get :tags
+        end
+      end
     end
 
     resources :home, :only => :index do

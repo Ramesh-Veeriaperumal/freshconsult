@@ -9,6 +9,9 @@ class Search::V2::SpotlightController < ApplicationController
 
   attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, :current_page
 
+  # ESType - [model, associations] mapping
+  # Needed for loading records from DB
+  #
   @@esv2_spotlight_models = {
     "company" => { model: "Company",            associations: [] }, 
     "topic"   => { model: "Topic",              associations: [{ forum: :forum_category }, :user ] }, 

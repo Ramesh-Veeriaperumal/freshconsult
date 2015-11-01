@@ -1,5 +1,10 @@
 class Search::V2::SuggestController < Search::V2::SpotlightController
 
+  attr_accessor :result_json, :search_key, :total_pages, :current_page, :search_results, :suggest
+
+  # ESType - [model, associations] mapping
+  # Needed for loading records from DB
+  #
   @@esv2_spotlight_models = {
     "company" => { model: "Company",            associations: [] }, 
     "topic"   => { model: "Topic",              associations: [ :forum ] }, 
