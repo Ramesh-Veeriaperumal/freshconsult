@@ -1,6 +1,11 @@
 # encoding: utf-8
 class Search::Utils
 
+  MAX_PER_PAGE        = 30
+  TEMPLATE_BY_CONTEXT = {
+    :portal_spotlight => 'portalSpotlight'
+  }
+
   # Load ActiveRecord objects
   #
   def self.load_records(es_results, model_and_assoc, current_account_id)

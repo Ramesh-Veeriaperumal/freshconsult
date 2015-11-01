@@ -40,7 +40,7 @@ module Search
           #
           def attach_callbacks(request)
             request.on_failure do |response_from_es|
-              es_response(response_from_es)
+              es_response(response_from_es) unless response_from_es.code.zero?
               handle_failure(response_from_es)
             end
 
@@ -57,6 +57,7 @@ module Search
             if response_from_es.timed_out?
               # Retry?
             elsif response_from_es.code == 0
+              # Server not up?
             elsif response_from_es.code == 400
               # Raise BadRequestError
             elsif response_from_es.code == 409

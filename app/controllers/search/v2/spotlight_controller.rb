@@ -64,7 +64,7 @@ class Search::V2::SpotlightController < ApplicationController
     # Need to add provision to pass params & context
     #
     def search
-      @es_results = Search::V2::SearchRequestHandler.new(searchable_types, current_account.id).fetch(@search_key)
+      @es_results = Search::V2::SearchRequestHandler.new(current_account.id, :agent_spotlight, searchable_types).fetch(search_term: @search_key)
       @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
 
       process_results
