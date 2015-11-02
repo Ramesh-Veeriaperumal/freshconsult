@@ -1176,6 +1176,12 @@ Helpkit::Application.routes.draw do
           get :tags
         end
       end
+      resources :tickets, :only => :index
+      resources :solutions, :only => [:related_solutions, :search_solutions]
+      resources :topics, :only => :index
+      
+      match '/related_solutions/ticket/:ticket' => 'solutions#related_solutions'
+      match '/search_solutions/ticket/:ticket'  => 'solutions#search_solutions'
     end
 
     resources :home, :only => :index do

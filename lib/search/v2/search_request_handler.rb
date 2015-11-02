@@ -12,7 +12,6 @@ module Search
       end
 
       # Search for hits in ES and send response
-      # To-do: Custom format required?
       #
       def fetch(search_params)
         Utils::EsClient.new(:get, 
@@ -37,9 +36,7 @@ module Search
           [@tenant.aliases_path(@types), '_search/template'].join('/')
         end
 
-        # Temporary for test
-        # Will be using search templates for actual usecase
-        # To-do: Remove after test
+        # Params (w) chosen template for request
         #
         def construct_payload(es_params)
           {
