@@ -130,7 +130,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_paginate_options_returns_default_options_if_per_page_exceeds_limit
     params = ActionController::Parameters.new(
       per_page: (ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] + 1),
-      page: Random.rand(11))
+      page: Random.rand(2..11))
     controller.params = params
     actual = controller.send(:paginate_options)
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] + 1, actual[:per_page]
@@ -140,7 +140,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
   def test_paginate_options_returns_per_page_options_if_limit_does_not_exceed
     params = ActionController::Parameters.new(
       per_page: (ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page] - 1),
-      page: Random.rand(11))
+      page: Random.rand(2..11))
     controller.params = params
     actual = controller.send(:paginate_options)
     assert_equal params[:per_page] + 1, actual[:per_page]
