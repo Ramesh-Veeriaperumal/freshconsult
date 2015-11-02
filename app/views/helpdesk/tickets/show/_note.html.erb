@@ -120,10 +120,10 @@ end
 														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
 			<% if current_account.features?(:custom_survey) %>
-	          <%= render :partial => '/helpdesk/tickets/show/custom_survey_note' , :locals => {:note => note , 
+	          <%= render :partial => '/helpdesk/tickets/show/custom_survey_note', :formats => [:html], :locals => {:note => note , 
                 :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
 	        <% else %>
-            <%= render :partial => '/helpdesk/tickets/show/survey_note' , :locals => {:note => note , 
+            <%= render :partial => '/helpdesk/tickets/show/survey_note', :formats => [:html], :locals => {:note => note , 
                 :notedetails => notedetails} %>
 			<%end%>
 
