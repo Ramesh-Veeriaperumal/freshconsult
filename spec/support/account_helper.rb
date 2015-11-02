@@ -122,5 +122,23 @@ module AccountHelper
     Resque.inline = false
     Billing::Subscription.any_instance.unstub(:create_subscription)
   end
+
+  def create_enable_multilingual_feature
+    @account.account_additional_settings.update_attributes({:supported_languages => pick_languages(@account.language, 3)})
+    @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
+  end
+
+  def destroy_enable_multilingual_feature
+    @account.account_additional_settings.update_attributes({:supported_languages => []})
+    @account.features.enable_multilingual.destroy if @account.features?(:enable_multilingual)
+  end
+
+  def pick_a_language
+    (Language.all_codes.reject{ |l| l == @account.language }).sample.dup
+  end
+
+  def pick_languages(primary_lang, n)
+    (Language.all_codes.map{ |lang| lang.dup }.reject{ |l| (l == @account.language || l == primary_lang) }).sample(n)
+  end
   
 end

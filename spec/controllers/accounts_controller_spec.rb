@@ -141,9 +141,10 @@ describe AccountsController do
 
   describe "Updating Languages when multilingual feature is enabled" do
     before(:each) do
-      @account.account_additional_settings.update_attributes({:supported_languages => ["da", "tr"]})
-      @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
+      create_enable_multilingual_feature
       @account.reload
+      @primary_language = pick_a_language
+      @secondary_languages = pick_languages(@primary_language, 3)
     end
 
     it "should not update the primary language" do
@@ -152,7 +153,7 @@ describe AccountsController do
         :account => {
           :main_portal_attributes => {
             :id => @account.main_portal.id,
-            :language => "es"
+            :language => @primary_language
           },
           :account_additional_settings_attributes => {
           },
@@ -161,21 +162,22 @@ describe AccountsController do
       }
       @account.reload
       @account.language.should eql(lang)
-      @account.language.should_not eql("es")
+      @account.language.should_not eql(@primary_language)
     end
 
     it "should not update the secondary languages if any one of the language is not valid" do
       lang_arr = @account.account_additional_settings.supported_languages
+      @secondary_languages << "test"
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages =>  ["test","cs","ca"]
+            :supported_languages => @secondary_languages
           },
           :id => @account.id
         }
       }
       @account.reload
-      @account.account_additional_settings.supported_languages.should_not eql(["test","cs","ca"])
+      @account.account_additional_settings.supported_languages.should_not eql(@secondary_languages)
       @account.account_additional_settings.supported_languages.should eql(lang_arr)
     end
 
@@ -183,47 +185,65 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages =>  ["cs","ca"]
+            :supported_languages => @secondary_languages
           },
           :id => @account.id
         }
       }
       @account.reload
-      @account.account_additional_settings.supported_languages.should eql(["cs", "ca"])
+      @account.account_additional_settings.supported_languages.should eql(@secondary_languages)
     end
   end
 
   describe "Updating Languages when multilingual feature is not enabled" do    
     before(:each) do
-      @account.account_additional_settings.update_attributes({:supported_languages => ["da", "tr"]})
-      @account.remove_feature(:enable_multilingual) if @account.features?(:enable_multilingual)
+      destroy_enable_multilingual_feature
       @account.reload
+      @primary_language = pick_a_language
+      @secondary_languages = pick_languages(@primary_language, 3)
     end
 
-    it "should update the primary language" do
+    it "should update the primary language if the language is a part of the available locales" do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
           },
           :main_portal_attributes => {
-            :language => "zh-CN",
+            :language => @primary_language,
             :id => @account.main_portal.id
           },
           :id => @account.id
         }
       }
       @account.reload
-      @account.language.should eql("zh-CN")
+      @account.language.should eql(@primary_language)
+    end
+
+    it "should update the primary language if the language is not a part of the available locales" do
+      put :update_languages, {
+        :account => {
+          :account_additional_settings_attributes => {
+          },
+          :main_portal_attributes => {
+            :language => "test-primary",
+            :id => @account.main_portal.id
+          },
+          :id => @account.id
+        }
+      }
+      @account.reload
+      @account.language.should_not eql(@primary_language)
+      response.should render_template(:manage_languages)
     end
 
     it "should enable the multilingual feature if supported languages are present" do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages =>  ["cs","ca"]
+            :supported_languages => @secondary_languages
           },
           :main_portal_attributes => {
-            :language => "en",
+            :language => @primary_language,
             :id => @account.main_portal.id
           },
           :id => @account.id
@@ -240,7 +260,7 @@ describe AccountsController do
             :supported_languages =>  []
           },
           :main_portal_attributes => {
-            :language => "en",
+            :language => @primary_language,
             :id => @account.main_portal.id
           },
           :id => @account.id
@@ -253,33 +273,35 @@ describe AccountsController do
     it "should not update the languages if supported languages include the main portal language" do
       lang = @account.language
       lang_arr = @account.supported_languages
+      @secondary_languages << @primary_language
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages => ["cs", "ca"]
+            :supported_languages => @secondary_languages
           },
           :main_portal_attributes => {
-            :language => "ca",
+            :language => @primary_language,
             :id => @account.main_portal.id
           },
           :id => @account.id
         }
       }
       @account.reload
-      @account.supported_languages.should_not eql(["cs", "ca"])
+      @account.supported_languages.should_not eql(@secondary_languages)
       @account.supported_languages.should eql(lang_arr)
-      @account.language.should_not eql("ca")
+      @account.language.should_not eql(@primary_language)
       @account.language.should eql(lang)
     end
   end
 
   describe "Account update" do
-    it "should update the primary language if multilingual feature is not enabled" do
-      @account.remove_feature(:enable_multilingual) if @account.features?(:enable_multilingual)
+    it "should update the primary language if the language is a part of the available locales and multilingual feature is not enabled" do
+      destroy_enable_multilingual_feature
+      primary_language = pick_a_language
       put :update, {
         :account => {
           :main_portal_attributes => {
-            :language => "ja-JP",
+            :language => primary_language,
             :id => @account.main_portal.id
           },
           :account_additional_settings_attributes => {
@@ -289,16 +311,36 @@ describe AccountsController do
         }
       }
       @account.reload
-      @account.language.should eql("ja-JP")
+      @account.language.should eql(primary_language)
+    end
+
+    it "should not update the primary language if the language is not a part of the available locales and multilingual feature is enabled" do
+      destroy_enable_multilingual_feature
+      put :update, {
+        :account => {
+          :main_portal_attributes => {
+            :language => "test-primary",
+            :id => @account.main_portal.id
+          },
+          :account_additional_settings_attributes => {
+          },
+          :id => @account.id,
+          :ticket_display_id => 2
+        }
+      }
+      @account.reload
+      @account.language.should_not eql("test-primary")
+      response.should render_template(:edit)
     end
 
     it "should not update the primary language if multilingual feature is enabled" do
-      @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
+      create_enable_multilingual_feature
       lang = @account.language
+      primary_language = pick_a_language
       put :update, {
         :account => {
           :main_portal_attributes => {
-            :language => "id",
+            :language => primary_language,
             :id => @account.main_portal.id
           },
           :account_additional_settings_attributes => {
@@ -308,7 +350,7 @@ describe AccountsController do
         }
       }
       @account.reload
-      @account.language.should_not eql("id")
+      @account.language.should_not eql(primary_language)
       @account.language.should eql(lang)
     end
   end
