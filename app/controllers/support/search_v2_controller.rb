@@ -24,7 +24,7 @@ class Support::SearchV2Controller < SupportController
   # Unscoped customer-side spotlight search
   #
   def all
-    @@searchable_klasses = esv2_klasses
+    @searchable_klasses = esv2_klasses
     @current_filter = :all
     search
   end
@@ -34,7 +34,7 @@ class Support::SearchV2Controller < SupportController
   def tickets
     require_user_login unless current_user
 
-    @@searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
+    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
     @current_filter = :tickets
     search
   end
@@ -44,7 +44,7 @@ class Support::SearchV2Controller < SupportController
   def topics
     require_user_login unless forums_enabled?
 
-    @@searchable_klasses = ['Topic']
+    @searchable_klasses = ['Topic']
     @current_filter = :topics
     search
   end
@@ -54,7 +54,7 @@ class Support::SearchV2Controller < SupportController
   def solutions
     require_user_login unless allowed_in_portal?(:open_solutions)
 
-    @@searchable_klasses = ['Solution::Article']
+    @searchable_klasses = ['Solution::Article']
     @current_filter = :solutions
     search
   end
@@ -63,7 +63,7 @@ class Support::SearchV2Controller < SupportController
   #
   def suggest_topic
     # @results = search_portal([Topic])
-    @@searchable_klasses = ['Topic']
+    @searchable_klasses = ['Topic']
     render :layout => false
   end
 
@@ -111,7 +111,7 @@ class Support::SearchV2Controller < SupportController
     # Types to be passed to service code to scan
     #
     def searchable_types
-      @@searchable_klasses.collect {
+      @searchable_klasses.collect {
         |klass| klass.demodulize.downcase
       }
     end
@@ -135,8 +135,8 @@ class Support::SearchV2Controller < SupportController
             es_params[:ticket_requester_id]   = current_user.id
           end
         end
-        es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id) if @@searchable_klasses.include?('Solution::Article')
-        es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id) if @@searchable_klasses.include?('Topic')
+        es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id) if @searchable_klasses.include?('Solution::Article')
+        es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id) if @searchable_klasses.include?('Topic')
 
         es_params[:size]                      = @size
         es_params[:from]                      = @offset

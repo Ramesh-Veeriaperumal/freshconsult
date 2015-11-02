@@ -24,41 +24,41 @@ class Search::V2::SpotlightController < ApplicationController
   # Unscoped spotlight search
   #
   def all
-    @@searchable_klasses = esv2_klasses
+    @searchable_klasses = esv2_klasses
     search
   end
 
   # Tickets scoped spotlight search
   #
   def tickets
-    @@searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
+    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
     search
   end
 
   # Customers scoped spotlight search
   #
   def customers
-    # redirect_to search_v2_spotlight_index_path unless privilege?(:view_contacts)
+     redirect_user unless privilege?(:view_contacts)
 
-    @@searchable_klasses = ['User', 'company']
+    @searchable_klasses = ['User', 'company']
     search
   end
 
   # Forums scoped spotlight search
   #
   def forums
-    # redirect_to search_v2_spotlight_index_path unless privilege?(:view_forums)
+    redirect_user unless privilege?(:view_forums)
 
-    @@searchable_klasses = ['Topic']
+    @searchable_klasses = ['Topic']
     search
   end
 
   # Solutions scoped spotlight search
   #
   def solutions
-    # redirect_to search_v2_spotlight_index_path unless privilege?(:view_solutions)
+    redirect_user unless privilege?(:view_solutions)
 
-    @@searchable_klasses = ['Solution::Article']
+    @searchable_klasses = ['Solution::Article']
     search
   end
 
@@ -67,7 +67,10 @@ class Search::V2::SpotlightController < ApplicationController
     # Need to add provision to pass params & context
     #
     def search
-      @es_results = Search::V2::SearchRequestHandler.new(current_account.id, :agent_spotlight, searchable_types).fetch(search_term: @search_key)
+      @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
+                                                          :agent_spotlight,
+                                                          searchable_types
+                                                        ).fetch(construct_es_params)
       @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
 
       process_results
@@ -83,7 +86,7 @@ class Search::V2::SpotlightController < ApplicationController
     end
 
     def searchable_klasses
-      @@searchable_klasses ||= esv2_klasses
+      @searchable_klasses ||= esv2_klasses
     end
 
     ###############################################
@@ -99,6 +102,40 @@ class Search::V2::SpotlightController < ApplicationController
         model_names.push('Solution::Article')   if privilege?(:view_solutions)
       end
     end
+    
+    # Params to send to ES
+    # => Defaults <=
+    # ticket.deleted: false
+    # ticket.spam: false
+    # user.helpdesk_agent: false
+    # user.deleted: false
+    #
+    def construct_es_params
+      Hash.new.tap do |es_params|
+        es_params[:search_term] = @search_key
+        es_params[:account_id]  = current_account.id
+
+        if current_user.restricted?
+          es_params[:restricted_responder_id] = current_user.id.to_i
+          es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+        end
+        
+        if params[:category_id].present?
+          es_params[:article_category_id] = params[:category_id].to_i if searchable_klasses.include('Solution::Article')
+          es_params[:topic_category_id]   = params[:category_id].to_i if searchable_klasses.include('Topic')
+        end
+        
+        es_params[:article_folder_id] = params[:folder_id].to_i if params[:folder_id].present?
+        
+        unless (@search_sort.to_s == 'relevance') or @suggest
+          es_params[:sort_by]         = @search_sort
+          es_params[:sort_direction]  = 'desc'
+        end
+        
+        es_params[:size]  = Search::Utils::MAX_PER_PAGE
+        es_params[:from]  = Search::Utils::MAX_PER_PAGE * (@current_page - 1)
+      end
+    end
 
     # Reconstructing ES results
     #
@@ -107,7 +144,7 @@ class Search::V2::SpotlightController < ApplicationController
         @result_json[:results] << send(%{#{result.class.model_name.singular}_json}, result) if result
       end
 
-      @total_pages    = @es_results['hits']['total'].to_i / 30
+      @total_pages    = @es_results['hits']['total'].to_i / Search::Utils::MAX_PER_PAGE
       @search_results = (@search_results.presence || []) + @result_set
     end
 
@@ -130,6 +167,10 @@ class Search::V2::SpotlightController < ApplicationController
           render :json => @result_json
         end
       end
+    end
+    
+    def redirect_user
+      redirect_to search_v2_spotlight_index_path
     end
 
     ######################

@@ -7,7 +7,8 @@ class Search::Utils
     :agent_autocomplete     => 'agentAutocomplete',
     :requester_autocomplete => 'requesterAutocomplete',
     :company_autocomplete   => 'companyAutocomplete',
-    :tag_autocomplete       => 'tagAutocomplete'
+    :tag_autocomplete       => 'tagAutocomplete',
+    :agent_spotlight        => 'agentSpotlight'
   }
 
   # Load ActiveRecord objects
