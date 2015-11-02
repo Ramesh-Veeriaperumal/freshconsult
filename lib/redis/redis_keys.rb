@@ -55,6 +55,7 @@ module Redis::RedisKeys
 	FRESHFONE_CALL = "FRESHFONE:CALL:%{account_id}:%{child_sid}"
 	ADMIN_FRESHFONE_FILTER = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}"
 	FRESHFONE_PINGED_AGENTS = "FRESHFONE:PINGED_AGENTS:%{account_id}:%{call_id}"
+	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
 
 	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
@@ -112,6 +113,8 @@ module Redis::RedisKeys
 
 	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
 	EBAY_ACCOUNT_THRESHOLD_COUNT = "EBAY:ACCOUNT:THRESHOLD:%{date}:%{account_id}:%{ebay_account_id}"
+
+	CARD_FAILURE_COUNT = "CREDIT_CARD_FAILURE_COUNT:%{account_id}"
 
 	def newrelic_begin_rescue
 	    begin

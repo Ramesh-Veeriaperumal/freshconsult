@@ -294,18 +294,8 @@ class User < ActiveRecord::Base
 
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
-      updated_tag_names.strip! #strip! to avoid empty tag name error
-      updated_tag_names = updated_tag_names.split(",")
-      current_tags = account.tags_from_cache
-      new_tags = []
-      updated_tag_names.each do |updated_tag_name|
-        updated_tag_name.strip!
-        next if new_tags.any?{ |new_tag| new_tag.name.casecmp(updated_tag_name)==0 }
-
-        new_tags.push(current_tags.find{ |current_tag| current_tag.name.casecmp(updated_tag_name) == 0 } ||
-                      Helpdesk::Tag.new(:name => updated_tag_name ,:account_id => self.account.id))
-      end
-      self.tags = new_tags
+      updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
 
@@ -886,8 +876,8 @@ class User < ActiveRecord::Base
       else
         # Without using select will results in making the user object readonly.
         # http://stackoverflow.com/questions/639171/what-is-causing-this-activerecordreadonlyrecord-error
-        user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(user_emails: {email: login}).first
-        user if !user.nil? and user.active? and !user.blocked?
+        user = User.select("`users`.*").joins("INNER JOIN `user_emails` ON `user_emails`.`user_id` = `users`.`id` AND `user_emails`.`account_id` = `users`.`account_id`").where(account_id: Account.current.id, user_emails: {email: login}).first
+        user if user and user.active? and !user.blocked?
       end
     end
 

@@ -51,7 +51,7 @@ class PasswordResetsController < SupportController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
-    if @user.password.present? && @user.save
+    if @user.password.present? && (@user.password == @user.password_confirmation) && @user.save
       flash[:notice] = t(:'flash.password_resets.update.success')
       redirect_to root_url
     else

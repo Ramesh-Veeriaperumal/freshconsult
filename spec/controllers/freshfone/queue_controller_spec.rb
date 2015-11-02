@@ -57,6 +57,7 @@ RSpec.describe Freshfone::QueueController do
 
   it 'should dequeue twiml on call dequeue' do
   	@account.features.freshfone_conference.delete if @account.features?(:freshfone_conference)
+    create_freshfone_call('CAb5ce7735068c8cd04a428ed9a57ef64e')
     set_twilio_signature("freshfone/queue/dequeue?client=#{@agent.id}", dequeue_params)
     create_online_freshfone_user
     post :dequeue, dequeue_params.merge({"client" => @agent.id})
@@ -124,5 +125,25 @@ RSpec.describe Freshfone::QueueController do
     assigns[:priority_call].should match("CGROUPHUNTEDCALL")
 
     controller.remove_key group_key
+  end
+
+  it 'should update call queue abandon status on customer hangup' do
+    set_twilio_signature('freshfone/queue/hangup', hangup_params)
+    freshfone_call = create_freshfone_call('CDEFAULTQUEUE')
+    post :hangup, hangup_params
+    freshfone_call = @account.freshfone_calls.find(freshfone_call)
+    abandon_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:queue_abandon]
+    freshfone_call.abandon_state.should be_eql(abandon_state)
+  end
+  
+  it 'should render dequeue twiml on queue to voicemail' do
+    set_twilio_signature('freshfone/queue/quit_queue_on_voicemail', dequeue_params)
+    freshfone_call = create_freshfone_call('CDEFAULTQUEUE')
+    Twilio::REST::Member.any_instance.stubs(:dequeue)
+    post :quit_queue_on_voicemail, dequeue_params
+    response.body.should be_eql("Dequeued Call CAb5ce7735068c8cd04a428ed9a57ef64e from QU629430fd5b8d41769b02abfe7bfbe3a9")
+    freshfone_call = @account.freshfone_calls.find(freshfone_call)
+    freshfone_call.should be_default
+    freshfone_call.abandon_state.should be_nil
   end
 end

@@ -40,6 +40,7 @@ class Search::SolutionsController < Search::SearchController
 			unless search_in.blank?
 				f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
 				f.filter :term,  { 'folder_id' => params[:folder_id] } if params[:folder_id]
+				f.filter :term,  { 'language_id' => Language.for_current_account.id }
 			end
 		end
 

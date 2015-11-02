@@ -81,7 +81,7 @@
             <div class="email_container">
               <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
               <%= javascript_tag do %>
-                new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= saved_draft["draft_cc"].map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true, separatorRegEx:/;|,/});
+                new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= saved_draft["draft_cc"].map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true, allowSpaces: true});
               <% end %>
             </div>
       </li>

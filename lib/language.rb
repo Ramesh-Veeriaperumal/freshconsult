@@ -29,16 +29,20 @@ class Language
 			LANGUAGES
 		end
 
+		def all_codes
+			all.map(&:code)
+		end
+
 		def find(id)
-			all.select { |lang| lang.id == id.to_i}.first
+			all.detect { |lang| lang.id == id.to_i}
 		end
 
 		def find_by_code(code)
-			all.select { |lang| lang.code == strip_bom(code).to_s}.first
+			all.detect { |lang| lang.code == strip_bom(code)}
 		end
 
 		def find_by_name(name)
-			all.select { |lang| lang.name == name.to_s}.first
+			all.detect { |lang| lang.name == name.to_s}
 		end
 
 		def current
@@ -55,13 +59,13 @@ class Language
 		end
 		
 		def default
-			find_by_code(:en)
+			find_by_code("en")
 		end
 
 		private
 
 		def strip_bom(code)
-			code.gsub("\xEF\xBB\xBF".force_encoding("UTF-8"), '')
+			code.to_s.gsub("\xEF\xBB\xBF".force_encoding("UTF-8"), '')
 		end
 	end
 end
