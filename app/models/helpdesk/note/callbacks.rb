@@ -246,7 +246,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     ##### ****** Methods related to reports starts here ******* #####
     def update_note_count_for_reports
-      return unless notable
+      return if notable.blank? || notable.frozen? # Added frozen check because when ticket is destoyed, note gets destroyed and notable will be frozen. So cant modify schema_less_ticket.
       action = model_transaction_action
       return if action == "update" # Dont reduce the count when the note is deleted from UI (Soft delete)
       return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive
