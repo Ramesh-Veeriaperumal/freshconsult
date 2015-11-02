@@ -90,7 +90,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def save_ticket_states
     self.ticket_states                = self.ticket_states || Helpdesk::TicketState.new
-    ticket_states.tickets = self
+    ticket_states.tickets             = self
     ticket_states.created_at          = ticket_states.created_at || created_at
     ticket_states.account_id          = account_id
     ticket_states.assigned_at         = Time.zone.now if responder_id

@@ -1,5 +1,6 @@
 class UserSession < Authlogic::Session::Base
-
+  
+  include AgentLoggerHelper
 
   @@sign_cookie = true
   #Custom login method in user.rb

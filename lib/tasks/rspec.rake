@@ -63,7 +63,6 @@ if Rails.env.test?
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
     "spec/models/mobihelp/app_spec.rb",
-    "spec/controllers/helpdesk/mobihelp_ticket_extras_controller_spec.rb",
     "spec/controllers/mobihelp/articles_controller_spec.rb"
   ]
 

@@ -27,16 +27,23 @@ module Helpdesk::ProcessByMessageId
 
   def set_ticket_id_with_message_id account, ticket_key, ticket
     latest_msg_id = zendesk_email || message_id
-    set_others_redis_key(message_key(account, ticket_key), 
-                         "#{ticket.display_id}:#{latest_msg_id}", 
+    set_others_redis_key(message_key(account, ticket_key),
+                         "#{ticket.display_id}:#{latest_msg_id}",
                          86400*7) unless ticket_key.nil?
+  end
+
+  def in_reply_to
+    headers = params[:headers]
+    if (headers =~ /in-reply-to: <([^>]+)/i)
+      result = $1
+    end
   end
 
   private
 
     def parent_ticket from_email, account
       reply_to = in_reply_to
-      all_keys = references 
+      all_keys = references
       all_keys << reply_to if reply_to
       return nil if all_keys.blank?
       all_keys.reverse.each do |ticket_key|
@@ -70,13 +77,6 @@ module Helpdesk::ProcessByMessageId
         end
       end
       nil
-    end
-
-    def in_reply_to
-      headers = params[:headers]
-      if (headers =~ /in-reply-to: <([^>]+)/i)
-        result = $1
-      end
     end
 
     def references

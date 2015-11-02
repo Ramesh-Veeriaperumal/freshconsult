@@ -42,6 +42,7 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
       assert_response 200
       assert company.reload.domains.split(',').count == 0
     end
+  end
 
   def test_caching_after_updating_custom_fields
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Linetext1'))

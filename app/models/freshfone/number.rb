@@ -245,6 +245,10 @@ class Freshfone::Number < ActiveRecord::Base
 		(number_groups&agent_groups).present?
 	end
 
+	def ivr_enabled?
+		ivr.ivr_message?
+	end
+
 	private
 
 		def set_renewal_date

@@ -94,7 +94,7 @@ module Mobile::Actions::Push_Notifier
       notification_types.merge! NOTIFCATION_TYPES[:TICKET_ASSIGNED] => [responder_id]
     end
     if unassigned_ticket && @model_changes.key?(:group_id) && group_id then
-      user_ids = self.account.groups_from_cache.detect{ |x| x.id == group_id }.agent_groups.map(&:user_id)
+      user_ids = self.account.agent_groups.where(group_id: group_id).pluck(:user_id)
       user_ids.delete(current_user_id)
       notification_types.merge! NOTIFCATION_TYPES[:GROUP_ASSIGNED] => user_ids unless user_ids.empty?
     end

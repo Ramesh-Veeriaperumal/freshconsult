@@ -39,6 +39,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 			this.recordingInstance = null;
 			this.group_id = null;
 			this.resetCallTransferTimer();
+			this.isIncomingTransfer = false;
 		},
 		resetFlags: function() {
 			this.errorcode = null;
@@ -138,6 +139,37 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		},
 		setCallSid: function (call_sid) {
 			this.callSid = call_sid;
+		},
+		setIsIncomingTransfer: function(flag){
+			this.isIncomingTransfer = flag;
+		},
+		saveCallNotes: function(){
+			var self = this;
+			if(freshfonewidget.callNote.val()!="" && (freshfone.isConferenceMode)){
+	            $.ajax({
+					type: 'POST',
+					dataType: "json",
+					url: '/freshfone/conference_call/save_call_notes',
+					data: { "call_sid": this.getCallSid(),
+						"call_notes": freshfonewidget.callNote.val() }
+				});
+			}
+		},
+		getSavedCallNotes: function(phoneNumber){
+			var self = this;
+			if(freshfone.isConferenceMode && freshfonecalls.isIncomingTransfer){
+				$.ajax({
+					type: 'GET',
+					dataTyp: "json",
+					url: '/freshfone/conference_call/call_notes',
+					data: {"PhoneNumber": phoneNumber },
+					success: function (data){
+						if(data && data.call_notes){
+							freshfonewidget.renderNotes(data);
+						}
+					}
+				});
+			}	
 		},
 		fetchCallerDetails: function (details) {
 			this.callerId = details.callerId;
@@ -334,6 +366,7 @@ callStatusReverse = { 0: "NONE", 1: "INCOMINGINIT", 2: "OUTGOINGINIT", 3: "ACTIV
 		transferCall: function (id, group_id, external_number) {
 			this.transfered = true;
 			this.freshfoneCallTransfer = new FreshfoneCallTransfer(this, id, group_id, external_number);
+            this.saveCallNotes();
 		},
 		isTransfering: function(){
 			var status = $(".transfer-status").children(":visible").data("status");

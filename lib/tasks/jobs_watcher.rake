@@ -49,7 +49,7 @@ namespace :delayedjobs_watcher do
 
     desc "Monitoring growing queue of delayed jobs"
     task :total_jobs => :environment do
-      DELAYED_JOB_QUEUES.each do |queue|
+      DELAYED_JOB_QUEUES.each do |queue,config|
 
         queue = queue.capitalize
         total_jobs_count = Object.const_get("#{queue}::Job").count
