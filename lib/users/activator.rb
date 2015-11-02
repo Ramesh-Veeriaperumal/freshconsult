@@ -41,7 +41,7 @@ module Users
     end
     
     def deliver_activation_instructions!(portal, force_notification, email_config = nil) #Need to refactor this.. Almost similar structure with the above one.
-      portal = Portal.current || account.main_portal
+      portal = Portal.current || account.main_portal_from_cache
       reply_email = email_config ? email_config.friendly_email : 
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 
@@ -111,7 +111,7 @@ module Users
     end
 
     def restrict_domain
-      if self.account.features?(:domain_restricted_access)
+      if self.account.features_included?(:domain_restricted_access)
         domain = (/@(.+)/).match(self.email).to_a[1]
         wl_domain  = account.account_additional_settings_from_cache.additional_settings[:whitelisted_domain]
         unless Array.wrap(wl_domain).include?(domain)

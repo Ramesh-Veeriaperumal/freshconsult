@@ -135,6 +135,20 @@ class UserNotifier < ActionMailer::Base
     mail(headers).deliver
   end
 
+  def failure_transaction_notifier(email_id, content = "")
+      headers = {
+      :subject    => "Payment failed for auto recharge of day passes",
+      :to         => email_id,
+      :from       => AppConfig["billing_email"],
+      :sent_on    => Time.now
+    }
+    @content = content
+    mail(headers) do |part|
+      part.text { render "failure_transaction_notifier.text.plain" }
+      part.html { render "failure_transaction_notifier.text.html" }
+    end.deliver
+  end
+
   private
 
     def send_the_mail(user_or_email, subject, email_body, reply_email =nil)

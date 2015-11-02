@@ -77,7 +77,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
       (inbound_count == 1 and !tickets.outbound_email?)
   end
 
-  def current_state
+  def current_state(outbound_email = nil)
 
     if (closed_at && status_updated_at && status_updated_at > closed_at) #inapportune case
         return TICKET_LIST_VIEW_STATES[:resolved_at] if(resolved_at && resolved_at > closed_at )
@@ -94,7 +94,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     
     return TICKET_LIST_VIEW_STATES[:resolved_at] if resolved_at
     
-    if self.tickets.outbound_email?
+    if outbound_email || (outbound_email.nil? and self.tickets.outbound_email?)
       return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded_for_outbound?
     else
       return TICKET_LIST_VIEW_STATES[:requester_responded_at] if customer_responded?

@@ -59,6 +59,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -90,6 +91,8 @@ Authority::Authorization::PrivilegeList.build do
                                                     :full_paginate, :configure_export, :export_csv, 
                                                     :activities, :component, :prevnext]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
+
+    resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
 	end
 
   reply_ticket do

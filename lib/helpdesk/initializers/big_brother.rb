@@ -11,7 +11,7 @@ module BigBrother
   end
   
   def logging_format
-    log_file_format = "shard_name=#{get_shard_name}, model_name = #{camel_to_table}, account_id=#{account_id}"
+    log_file_format = "shard_name=#{get_shard_name}, model_name=#{camel_to_table}, account_id=#{account_id}"
   end
 
   def get_shard_name

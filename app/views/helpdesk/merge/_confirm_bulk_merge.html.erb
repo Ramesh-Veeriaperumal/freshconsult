@@ -8,9 +8,9 @@
         <%= hidden_field_tag 'target[ticket_id]', @target_ticket.to_param %>
         <div class="info-data hideForList">
           <span>
-            <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state, 
+            <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state(@target_ticket.outbound_email?), 
             :username => "<span class = 'muted'>#{h(@target_ticket.requester.display_name)}</span>", 
-            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))).html_safe %>
+            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state(@target_ticket.outbound_email?)))).html_safe %>
           </span>
         </div>
       </div>

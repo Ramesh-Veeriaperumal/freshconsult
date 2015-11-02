@@ -82,6 +82,14 @@ class Freshfone::Call < ActiveRecord::Base
 
   EXPORT_RANGE_LIMIT_IN_MONTHS = 6
 
+  CALL_ABANDON_TYPE = [
+    [:ringing_abandon, 'Abandon (Ringing)', 0],
+    [:ivr_abandon, 'Abandon (IVR)', 1],
+    [:queue_abandon, 'Abandon (Queue)', 2]
+  ]
+  CALL_ABANDON_TYPE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[0], i[2]] }.flatten]
+  CALL_ABANDON_TYPE_REVERSE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[2], i[0]] }.flatten]
+  CALL_ABANDON_TYPE_STR_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[2], i[1].to_s] }.flatten]
   validates_presence_of :account_id, :freshfone_number_id
   validates_inclusion_of :call_status, :in => CALL_STATUS_HASH.values,
     :message => "%{value} is not a valid call status"
@@ -468,6 +476,22 @@ class Freshfone::Call < ActiveRecord::Base
     create_meta(:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:sip])
   end
 
+  def set_abandon_call(params)
+    return if not_abandon_call?
+    update_abandon_state(abandon_status) if (hangup_by_customer?(params) || hangup_in_ivr?(params))
+  end
+
+  def update_abandon_state(abandon_type)
+    self.abandon_state = abandon_type
+    save
+  end
+
+  def get_abandon_call_leg
+    return self unless (has_children? && onhold?)
+    child_call = children.last
+    child_call.canceled? ?  self : child_call
+  end
+
   private
     def called_agent(params)
       agent_scoper.find_by_id(params[:agent]) if 
@@ -610,4 +634,27 @@ class Freshfone::Call < ActiveRecord::Base
     def transfer_call?(params)
       params[:transfer_call].present? || params[:external_transfer].present?
     end
+
+  def not_abandon_call?
+    outgoing? || voicemail? || !business_hour_call || abandon_state.present?
+  end
+
+  def hangup_by_customer?(params)
+    (params[:CallStatus] == 'completed' && params[:DialCallStatus] == 'no-answer' )
+  end
+
+  def ivr_abandon?
+    freshfone_number.ivr_enabled? && user_id.blank? && group_id.blank? && direct_dial_number.blank?
+  end
+
+  def abandon_status
+    return Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon] if ivr_abandon?
+    Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+  end
+
+  def hangup_in_ivr?(params)
+      return false if account.features?(:freshfone_conference)
+      (params[:force_termination] &&  params[:CallStatus] == 'completed')
+    end
+
 end

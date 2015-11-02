@@ -109,7 +109,7 @@ class User < ActiveRecord::Base
 
   def create_user_email
     # for user email
-    build_primary_email({:email => self[:email], :primary_role => true, :verified => active, :account_id => account.id}) if self.user_emails.empty?
+    build_primary_email({:email => self[:email], :primary_role => true, :user => self, :verified => active, :account => self.account}) if self.user_emails.empty?
   end
 
   def update_user_email

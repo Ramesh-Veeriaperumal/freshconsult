@@ -455,6 +455,8 @@ Helpkit::Application.routes.draw do
         post :status
         post :in_call
         post :update_recording
+        post :save_call_notes
+        get :call_notes
       end
     end
 

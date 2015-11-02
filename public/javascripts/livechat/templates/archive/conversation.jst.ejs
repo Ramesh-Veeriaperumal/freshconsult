@@ -8,6 +8,12 @@
 			</ul>
 		</div>
 	</div>
+	<% 
+		function formattedTimestamp(timeStamp, format){
+			timeStamp = moment(timeStamp).utc().add(parseInt(CURRENT_USER.time_zone_offset),'s');
+			return format ? timeStamp.format(format) : timeStamp;
+		}
+	%>
 	<div class="row-fluid">
 		<div class="span8 pad-l">
 			<h3 class="lead"><span class="ficon-comments fsize-22"></span>
@@ -20,7 +26,7 @@
 							<%=  window.userCollection.getTitle(parseInt(chatData.agent_id)) %>
 							<%=(chatData.inConversation === true)? "- " + CHAT_I18n.in_conversation : ""	%>
 				<% }%>
-				<div class="lc-timestamp"> <%= moment(chatData.created_at).format("D MMM YYYY, h:mm a") %> | <%=CHAT_I18n.reported %> <%= moment(chatData.created_at).fromNow() %> 
+				<div class="lc-timestamp"> <%= formattedTimestamp(chatData.created_at, "D MMM YYYY, h:mm a") %> | <%=CHAT_I18n.reported %> <%= moment(chatData.created_at).fromNow() %> 
 				<% if (chatData.widget_id){%>
 							<%=CHAT_I18n.via_widget %> <%= window.liveChat.widgetList[chatData.widget_id] %> </div>
 				<% } %>
@@ -56,13 +62,10 @@
 						<div class="rsltmsg_wrap">
 							<div class="rsltuser"><%=messages[i].name%></div>
 							<div class="time">
-							<% 	var today = moment(new Date());
-									var time = moment(messages[i].createdAt);
-									if(today.diff(time, 'days') === 0){
-										time = moment(messages[i].createdAt).format("hh:mm A");
-									}else{
-										time = moment(messages[i].createdAt).format("MMM D");
-									} 
+							<% 	var today = formattedTimestamp(new Date());
+									var messageCreatedAt = messages[i].createdAt;
+									var timeFormat = (today.diff(messageCreatedAt, 'days') === 0) ? "hh:mm A" : "MMM D";
+									var time = formattedTimestamp(messageCreatedAt, timeFormat);
 									print(time);
 							%>
 							</div>

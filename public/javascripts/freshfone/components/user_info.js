@@ -52,6 +52,7 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
+						self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
 						self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
 					}
 					if (self.isOutgoing) {
@@ -63,7 +64,10 @@ var FreshfoneUserInfo;
 						if (data.call_meta){ 
 							freshfone.ringing_time = data.call_meta.ringing_time;
 							if (data.call_meta.transfer_agent) {
+								freshfonecalls.setIsIncomingTransfer(true);
 								self.fillTransferAgent(data.call_meta.transfer_agent);
+							}else{
+								freshfonecalls.setIsIncomingTransfer(false);
 							}
 						}
 					}

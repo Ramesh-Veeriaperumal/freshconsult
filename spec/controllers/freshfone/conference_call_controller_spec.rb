@@ -1,5 +1,6 @@
 require 'spec_helper'
 load 'spec/support/freshfone_call_spec_helper.rb'
+load 'spec/support/freshfone_spec_helper.rb'
 
 RSpec.configure do |c|
   c.include FreshfoneCallSpecHelper
@@ -158,6 +159,76 @@ RSpec.describe Freshfone::ConferenceCallController do
     expect(@parent_call.children.first.call_status).to eq(Freshfone::Call::CALL_STATUS_HASH[:completed])
     expect(xml).to be_truthy
     expect(xml).to have_key(:Response)
+  end
+
+  it 'should save call notes when an agent transfers call to another agent' do
+    create_call_family
+    params = {:call_sid => @parent_call.children.first.call_sid, :call_notes => 'test'}
+    post :save_call_notes, params
+    expect(json).to be_truthy
+    expect(json[:notes_saved]).to be true
+  end
+
+  it 'should get the saved call notes when an agent receives the transferred call' do 
+    key = 'FRESHFONE:CALL_NOTE:1:CA1d4ae9fae956528fdf5e61a64084f191'
+    $redis_integrations.set(key,'test')
+    create_call_family
+    params = {:PhoneNumber => @parent_call.children.first.caller.number}
+    get :call_notes, params
+    nil_notes = $redis_integrations.get(key)
+    nil_notes.should be_nil
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_eql('test')
+  end
+
+  it 'should get empty notes when notes not saved' do 
+    create_call_family
+    params = {:PhoneNumber => @parent_call.children.first.caller.number}
+    get :call_notes, params
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_blank
+  end
+
+  it 'should be blank notes when call is not a transferred call' do 
+    create_freshfone_caller
+    params = {:PhoneNumber => @caller.number}
+    get :call_notes, params
+    expect(json).to be_truthy
+    expect(json[:call_notes]).to be_blank
+  end
+
+  it 'should update ringing abandon status on force termination' do
+    Freshfone::Number.any_instance.stubs(:working_hours?).returns(true)
+    status_call = create_freshfone_call
+    create_call_meta
+    params=conference_call_params.merge(:DialCallStatus => 'no-answer',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    post :status, params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    abandon_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+    freshfone_call.abandon_state.should be_eql(abandon_state)
+  end
+
+  it 'should update call IVR abandon status on customer hangup' do
+    Freshfone::Number.any_instance.stubs(:working_hours?).returns(true)
+    status_call = create_call_for_status_with_out_agent
+    create_call_meta
+    params=conference_call_params.merge(:DialCallStatus => 'no-answer',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    Freshfone::Number.any_instance.stubs(:ivr_enabled?).returns(true)
+    post :status, params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    abandon_state = Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon]
+    freshfone_call.abandon_state.should be_eql(abandon_state)
+  end
+
+  it 'should not update call abandon status on customer hangup for answered call' do
+    status_call = create_freshfone_call
+    params=conference_call_params.merge(:DialCallStatus => 'completed',:CallStatus => 'completed')
+    set_twilio_signature('freshfone/conference_call/status', params)
+    post :status, conference_call_params
+    freshfone_call = @account.freshfone_calls.find(status_call)
+    freshfone_call.abandon_state.should be_nil
   end
 
 end
