@@ -110,7 +110,7 @@ module Social::DynamoHelper
   end
 
 
-  def self.update(table, item, schema, put_items=[])
+  def self.update(table, item, schema, put_items=[], delete_items= [])
     #Update the item
     hash_key  = schema[:hash][:attribute_name]
     range_key = schema[:range][:attribute_name]
@@ -132,11 +132,15 @@ module Social::DynamoHelper
     }
 
     item_copy.each do |key, value|
-      action  = put_items.include?(key) ? "PUT" : "ADD"
+      action = case 
+        when put_items.include?(key) then DYNAMO_ACTIONS[:put]
+        when delete_items.include?(key) then DYNAMO_ACTIONS[:delete]
+        else DYNAMO_ACTIONS[:add]
+      end
       update_hash = {
-        :value  => value,
         :action => action
       }
+      update_hash.merge!(:value => value) unless action == DYNAMO_ACTIONS[:delete]
       options[:attribute_updates][key] = update_hash
     end
     
