@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class ApiContactsFlowTest < ActionDispatch::IntegrationTest
   include ContactFieldsHelper
-  include Helpers::UsersHelper
+  include Helpers::UsersTestHelper
 
   def get_user
     @account.all_contacts.where(deleted: false).first
@@ -21,7 +21,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     old_value.make_current unless old_value.nil?
   end
 
-  JSON_ROUTES = {'/api/contacts/1/restore' => 'put'}
+  JSON_ROUTES = { '/api/contacts/1/restore' => 'put' }
 
   JSON_ROUTES.each do |path, verb|
     define_method("test_#{path}_#{verb}_with_multipart") do
@@ -134,5 +134,39 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       match_json(deleted_contact_pattern(params_hash, User.last))
       match_json(deleted_contact_pattern({}, User.last))
     end
+  end
+
+  def test_empty_tags
+    skip_bullet do
+      params = v2_contact_params.merge(tags: [Faker::Name.name])
+      post '/api/contacts', params.to_json, @write_headers
+      contact = User.find_by_email(params[:email])
+      assert_response 201
+      assert contact.tag_names.split(',').count == 1
+
+      put "/api/contacts/#{contact.id}", { tags: nil }.to_json, @write_headers
+      match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
+      assert_response 400
+
+      put "/api/contacts/#{contact.id}", { tags: [] }.to_json, @write_headers
+      assert_response 200
+      assert contact.reload.tag_names.split(',').count == 0
+    end
+  end
+
+  def test_caching_after_updating_custom_fields
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Linetext', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'paragraph', field_type: 'custom_paragraph', label: 'Testimony', editable_in_signup: 'true'))
+    sample_user = get_user
+    turn_on_caching
+    Account.stubs(:current).returns(@account)
+    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+    sample_user.update_attributes(custom_field: { 'cf_linetext' => 'test', 'cf_testimony' => 'test testimony' })
+    custom_field = sample_user.custom_field
+    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+    Account.unstub(:current)
+    turn_off_caching
+    assert_response 200
+    match_json(contact_pattern({ custom_field: custom_field }, sample_user))
   end
 end

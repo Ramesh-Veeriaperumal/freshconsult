@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class NotesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::NotesHelper
+  include Helpers::NotesTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}

@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 class ApiGroupsControllerTest < ActionController::TestCase
-  include Helpers::GroupsHelper
+  include Helpers::GroupsTestHelper
   def wrap_cname(params)
     { api_group: params }
   end
@@ -209,7 +209,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_destroy_all_agents_in_a_group
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_ids: [1, 2, 3])
-    put :update, construct_params({ id: group.id }, agent_ids: nil)
+    put :update, construct_params({ id: group.id }, agent_ids: [])
     assert_response 200
     match_json(group_pattern({ agent_ids: nil }, group.reload))
   end

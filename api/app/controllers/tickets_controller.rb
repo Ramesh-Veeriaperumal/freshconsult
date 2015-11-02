@@ -52,7 +52,10 @@ class TicketsController < ApiApplicationController
   end
 
   def show
-    @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE) if params[:include] == 'notes'
+    if params[:include] == 'notes'
+      @notes = ticket_notes.limit(NoteConstants::MAX_INCLUDE)
+      increment_api_credit_by(1) # for embedded notes
+    end
     super
   end
 
@@ -101,7 +104,7 @@ class TicketsController < ApiApplicationController
     end
 
     def tickets_filter
-      tickets = scoper.where(deleted: false, spam: false).permissible(api_current_user)
+      tickets = scoper.where(deleted: false).permissible(api_current_user)
       filter = Helpdesk::Ticket.filter_conditions(@ticket_filter, api_current_user)
       @ticket_filter.conditions.each do |key|
         clause = filter[key.to_sym] || {}

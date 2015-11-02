@@ -12,8 +12,13 @@ module ApiDiscussions
         render_errors category.errors unless category.valid?
       end
 
+      def load_objects
+        # Web follows order by position. As we don't give position in response, falling back to name which is indexed.
+        super(scoper.reorder(:name))
+      end
+
       def scoper
-        index? ? current_account.forum_categories.reorder(:name) : current_account.forum_categories
+        current_account.forum_categories
       end
   end
 end

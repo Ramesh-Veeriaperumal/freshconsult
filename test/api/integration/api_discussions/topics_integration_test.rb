@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class TopicsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsHelper
+  include Helpers::DiscussionsTestHelper
 
   def test_query_count
     skip_bullet do
@@ -19,7 +19,7 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 46,
         show: 12,
-        update: 34,
+        update: 35,
         destroy: 29,
         follow: 14,
         unfollow: 21,

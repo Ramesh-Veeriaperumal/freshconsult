@@ -934,6 +934,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Used by API v2
   def self.filter_conditions(ticket_filter = nil, current_user = nil)
     {
+      default: {
+        conditions: { spam: false }
+      },
       spam: {
         conditions: { spam: true }
       },
@@ -942,21 +945,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
         joins: :schema_less_ticket
       },
       new_and_my_open: {
-        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)] }
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)], spam: false }
       },
       watching: {
-          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}},
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}, spam: false},
           :joins => :subscriptions
       },
       requester_id: {
-        conditions: { requester_id: ticket_filter.try(:requester_id) }
+        conditions: { requester_id: ticket_filter.try(:requester_id), spam: false }
       },
       company_id: { 
-        conditions: { users: { customer_id: ticket_filter.try(:company_id) } },
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) }, spam: false },
         joins: :requester
       },
       updated_since: {
-        conditions: ['helpdesk_tickets.updated_at >= ?', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
+        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = false', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
       }
     }
   end

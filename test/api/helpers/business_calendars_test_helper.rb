@@ -1,4 +1,4 @@
-module Helpers::BusinessCalendarsHelper
+module Helpers::BusinessCalendarsTestHelper
   include BusinessCalendarsHelper
   # Patterns
   def business_calendar_pattern(expected_output = {}, business_calendar)

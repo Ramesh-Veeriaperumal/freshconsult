@@ -1,4 +1,4 @@
-module Helpers::TimeEntriesHelper
+module Helpers::TimeEntriesTestHelper
   include TicketHelper
   include CompanyHelper
   # Patterns
@@ -11,8 +11,8 @@ module Helpers::TimeEntriesHelper
       billable: (expected_output[:billable] || time_entry.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_entry.timer_running).to_s.to_bool,
       time_spent: expected_output[:time_spent] || TimeEntryDecorator.format_time_spent(time_entry.time_spent),
-      executed_at: expected_output[:executed_at] || time_entry.executed_at,
-      start_time: expected_output[:start_time] || time_entry.start_time,
+      executed_at: expected_output[:executed_at] || time_entry.executed_at.utc.iso8601,
+      start_time: expected_output[:start_time] || time_entry.start_time.utc.iso8601,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

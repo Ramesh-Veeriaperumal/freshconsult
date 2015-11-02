@@ -22,6 +22,7 @@ class MetalApiController < ActionController::Metal
   # For configuration(like perform_caching, allow_forgery_protection) to be loaded for action controller metal, there are methods originally in base needs to be declared.
   extend MetalCompatibility
 
+  MetalApiController.cache_store = :dalli_store, METAL_MEMCACHE_SERVER, METAL_CACHE_CONFIG
   # Lazy loading hooks for metal controller.
   ActiveSupport.run_load_hooks(:action_controller, self)
 
@@ -37,8 +38,3 @@ class MetalApiController < ActionController::Metal
     subclass.wrap_parameters(*wrap_params)
   end
 end
-
-cache_config = YAML.load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
-servers = cache_config.delete(:servers)
-MetalApiController.cache_store = :dalli_store, servers, cache_config
-Object.const_set('RAILS_CACHE', MetalApiController.cache_store)

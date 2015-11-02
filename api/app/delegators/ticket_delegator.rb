@@ -112,7 +112,7 @@ class TicketDelegator < SimpleDelegator
   def get_email_config(flag)
     if errors[:email_config_id].blank?
       assign_email_config_and_product_values unless flag
-      group_id = email_config.try(:group_id)
+      email_config.try(:group_id)
     end
   end
 

@@ -1,9 +1,9 @@
 require_relative '../test_helper'
 class ApiAgentsControllerTest < ActionController::TestCase
+  include Helpers::AgentsTestHelper
   def wrap_cname(params)
     { api_agent: params }
   end
-
 
   def test_agent_index
     3.times do
@@ -109,34 +109,5 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
-  end
-
-  def agent_pattern(expected_output = {}, agent)
-    user = {
-      active: agent.user.active,
-      created_at: agent.user.created_at,
-      email: agent.user.email,
-      job_title: agent.user.job_title,
-      language: agent.user.language,
-      last_login_at: agent.user.last_login_at,
-      mobile: agent.user.mobile,
-      name: agent.user.name,
-      phone: agent.user.phone,
-      time_zone: agent.user.time_zone,
-      updated_at: agent.user.updated_at
-    }
-
-    {
-      available_since: expected_output[:available_since] || agent.active_since,
-      available: expected_output[:available] || agent.available,
-      created_at: agent.created_at,
-      id: Fixnum,
-      occasional: expected_output[:occasional] || agent.occasional,
-      signature: expected_output[:signature] || agent.signature,
-      signature_html: expected_output[:signature_html] || agent.signature_html,
-      ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
-      updated_at: agent.updated_at,
-      user: expected_output[:user] || user
-    }
   end
 end

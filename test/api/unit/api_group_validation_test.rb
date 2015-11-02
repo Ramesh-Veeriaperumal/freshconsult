@@ -21,4 +21,11 @@ class ApiGroupValidationTest < ActionView::TestCase
     assert errors.include?('Description data_type_mismatch')
     assert errors.include?('Auto ticket assign data_type_mismatch')
   end
+
+  def test_array_nil
+    group = ApiGroupValidation.new({ name: Faker::Name.name, agent_ids: nil }, nil)
+    refute group.valid?
+    errors = group.errors.full_messages
+    assert errors.include?('Agent ids data_type_mismatch')
+  end
 end

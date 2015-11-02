@@ -1,3 +1,4 @@
 json.cache! CacheLib.key(@item, params) do
-  json.extract! @item, :id, :name, :description, :created_at, :updated_at
+  json.extract! @item, :id, :name, :description
+  json.partial! 'shared/utc_date_format', item: @item
 end

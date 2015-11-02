@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 class ApiCompaniesControllerTest < ActionController::TestCase
-  include Helpers::CompaniesHelper
+  include Helpers::CompaniesTestHelper
   def wrap_cname(params)
     { api_company: params }
   end
@@ -110,7 +110,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_company_with_nil_custom_field
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    put :update, construct_params({ id: company.id }, custom_fields: nil)
+    put :update, construct_params({ id: company.id }, custom_fields: {})
     match_json(company_pattern({}, company.reload))
     assert_response 200
   end
@@ -255,7 +255,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_create_companies_with_empty_domains
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
-                                       domains: nil, note: Faker::Lorem.characters(10))
+                                       domains: [], note: Faker::Lorem.characters(10))
     assert_response 201
     match_json(company_pattern(Company.last))
   end
@@ -275,7 +275,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
+                bad_request_error_pattern('cf_date', 'invalid_date'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean')])
   end
 
@@ -308,7 +308,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                                                        'cf_show_all_ticket' => Faker::Number.number(5), 'cf_file_url' =>  'test_url' })
     assert_response 400
     match_json([bad_request_error_pattern('cf_agt_count', 'data_type_mismatch', data_type: 'Integer'),
-                bad_request_error_pattern('cf_date', 'invalid_date', format: 'yyyy-mm-dd'),
+                bad_request_error_pattern('cf_date', 'invalid_date'),
                 bad_request_error_pattern('cf_show_all_ticket', 'data_type_mismatch', data_type: 'Boolean'),
                 bad_request_error_pattern('cf_file_url', 'invalid_format')])
   end
@@ -331,7 +331,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_delete_existing_domains
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
-    put :update, construct_params({ id: company.id }, domains: nil)
+    put :update, construct_params({ id: company.id }, domains: [])
     assert_response 200
     match_json(company_pattern(company.reload))
   end
@@ -400,14 +400,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
-    default_non_required_fiels.map{|x| x.toggle!(:required_for_agent)}
-    put :update, construct_params({ id: company.id },  domains: nil,
-                                        description: nil,
-                                        note: nil)
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    put :update, construct_params({ id: company.id },  domains: [],
+                                                       description: nil,
+                                                       note: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('note', 'data_type_mismatch', {data_type: 'String'}),
-                bad_request_error_pattern('description', 'data_type_mismatch', {data_type: 'String'}),
-                bad_request_error_pattern('domains', 'data_type_mismatch', {data_type: 'Array'})])
+    match_json([bad_request_error_pattern('note', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('description', 'data_type_mismatch', data_type: 'String'),
+                bad_request_error_pattern('domains', "can't be blank", data_type: 'Array')])
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
   end

@@ -1,11 +1,14 @@
 class ApiApplicationController < MetalApiController
-  prepend_before_filter :response_headers
+  prepend_before_filter :response_info
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError do |exception|
     render_500(exception)
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
+  rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
+
+  # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
 
   # Check if content-type is appropriate for specific endpoints.
@@ -108,21 +111,27 @@ class ApiApplicationController < MetalApiController
 
   private
 
-    def response_headers
-      response.headers['X-Freshdesk-API-Version'] = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
+    def response_info
+      RequestStore.store[:api_credits] = 1
     end
 
     def render_500(e)
       fail e if Rails.env.development? || Rails.env.test?
-      notify_new_relic_agent(e, description: "Error occured while processing api request")
+      notify_new_relic_agent(e, description: 'Error occured while processing api request')
       Rails.logger.error("API 500 error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
     end
 
     def duplicate_value_error(e)
-      notify_new_relic_agent(e, description: "Duplicate Record Error.")
+      notify_new_relic_agent(e, description: 'Duplicate Record Error.')
       Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_request_error(:duplicate_value, 409)
+    end
+
+    def db_query_error(e) 
+      notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
+      Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
+      render_base_error(:internal_error, 500)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -251,13 +260,13 @@ class ApiApplicationController < MetalApiController
 
     # will take scoper as one argument.
     def load_objects(items = scoper)
-      is_array = !items.respond_to?(:scoped) # check if it is array or AR
-      @items = paginate_items(items, is_array)
+      @items = paginate_items(items)
     end
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
-    def paginate_items(item, is_array = false)
-      paginated_items = item.paginate(paginate_options(is_array))
+    def paginate_items(items)
+      is_array = !items.respond_to?(:scoped) # check if it is array or AR
+      paginated_items = items.paginate(paginate_options(is_array))
 
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
@@ -382,6 +391,7 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
+      head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
     end
@@ -415,11 +425,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def get_page
-      (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
+      page = params[:page].to_i
+      page == 0 ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] : page
     end
 
     def get_per_page
-      if params[:per_page].blank?
+      if params[:per_page].to_i == 0
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
         [params[:per_page].to_i, ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
@@ -458,8 +469,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def string_request_params?
-      @multipart ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request? || request.delete?)
-      @multipart
+      @string_request_params ||= (request.content_type.try(:include?, 'multipart/form-data') || get_request? || request.delete?)
+      @string_request_params
     end
 
     def json_request?
@@ -475,8 +486,12 @@ class ApiApplicationController < MetalApiController
       Time.zone = ApiConstants::UTC
     end
 
-    def notify_new_relic_agent(exception, custom_params={})
-      options_hash =  custom_params.present? ? { custom_params: custom_params.merge(method: request.method, params: params) } : {}
-      NewRelic::Agent.notice_error(exception, {uri: request.original_url}.merge(options_hash))
+    def notify_new_relic_agent(exception, custom_params = {})
+      options_hash =  { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params) }
+      NewRelic::Agent.notice_error(exception, options_hash)
+    end
+
+    def increment_api_credit_by(value)
+      RequestStore.store[:api_credits] += value
     end
 end

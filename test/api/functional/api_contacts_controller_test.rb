@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 class ApiContactsControllerTest < ActionController::TestCase
   include ContactFieldsHelper
-  include Helpers::UsersHelper
+  include Helpers::UsersTestHelper
 
   def wrap_cname(params)
     { api_contact: params }
@@ -19,7 +19,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     company = Company.first || create_company
     company
   end
-
 
   # Show User
   def test_show_a_contact
@@ -259,7 +258,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email,
                                         custom_fields: { 'cf_sample_url' => 'aaaa', 'cf_sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('cf_sample_date', 'invalid_date', format: 'yyyy-mm-dd'),
+    match_json([bad_request_error_pattern('cf_sample_date', 'invalid_date'),
                 bad_request_error_pattern('cf_sample_url', 'Should be a valid format')])
   end
 
@@ -287,7 +286,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response 400
     match_json([bad_request_error_pattern('cf_check_me', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('cf_doj', 'invalid_date', format: 'yyyy-mm-dd')])
+                bad_request_error_pattern('cf_doj', 'invalid_date')])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -701,7 +700,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_array_field_with_empty_array
     sample_user = get_user
-    put :update, construct_params({ id: sample_user.id }, tags: nil)
+    put :update, construct_params({ id: sample_user.id }, tags: [])
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
   end
@@ -754,7 +753,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_update_contact_with_nil_custom_fields
-    params = { custom_fields: nil }
+    params = { custom_fields: {} }
     sample_user = get_user
     sample_user.update_column(:deleted, false)
     put :update, construct_params({ id: sample_user.reload.id }, params)

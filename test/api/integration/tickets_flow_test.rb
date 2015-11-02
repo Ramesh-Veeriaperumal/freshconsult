@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TicketsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::TicketsHelper
+  include Helpers::TicketsTestHelper
 
   JSON_ROUTES = { '/api/tickets/1/restore' => 'put' }
 
@@ -14,6 +14,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert_response 415
       response.body.must_match_json_expression(un_supported_media_type_error_pattern)
     end
+  end
+
+  def ticket
+      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+      ticket
   end
 
   def test_create_with_invalid_attachment_type
@@ -44,7 +49,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
                     due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
-    field1, field2 = tkt_field1.name, tkt_field2.name
+    field1 = tkt_field1.name
+    field2 = tkt_field2.name
     headers, params = encode_multipart(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => 'false' }), 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
@@ -361,5 +367,43 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert_equal @group_1, last_ticket.reload.group
     assert_equal @primary_email_config_2, last_ticket.email_config
+  end
+
+  def test_empty_tags_and_cc_emails
+    skip_bullet do
+      params = v2_ticket_params.merge(tags: [Faker::Name.name], cc_emails: [Faker::Internet.email])
+      post '/api/tickets', params.to_json, @write_headers
+      ticket = Helpdesk::Ticket.find_by_subject(params[:subject])
+      assert_response 201
+      assert ticket.tags.count == 1
+      assert ticket.cc_email[:cc_emails].count == 1
+
+      put "/api/tickets/#{ticket.id}", { tags: nil, cc_emails: nil }.to_json, @write_headers
+      match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array'),
+                  bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array')])
+      assert_response 400
+
+      put "/api/tickets/#{ticket.id}", { tags: [], cc_emails: [] }.to_json, @write_headers
+      assert_response 200
+      assert ticket.reload.tags.count == 0
+      assert ticket.reload.cc_email.count == 0
+    end
+  end
+
+  def test_caching_when_updating_note_body
+    skip_bullet do
+      note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      ticket.update_column(:deleted, false)
+      turn_on_caching
+      get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
+      note.note_body.body = 'Test update note body'
+      note.save
+      get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
+      turn_off_caching
+      parsed_response = JSON.parse(response.body)['notes']
+      notes = parsed_response.select { |n| n['id'] = note.id } if parsed_response
+      assert_response 200
+      assert_equal 'Test update note body', notes[0]['body']
+    end
   end
 end

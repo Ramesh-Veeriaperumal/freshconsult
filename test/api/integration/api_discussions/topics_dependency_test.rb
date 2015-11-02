@@ -8,7 +8,7 @@ class TopicsDependencyTest < ActionDispatch::IntegrationTest
                          :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :persist_user_agent,
                          :set_cache_buster, :logging_details, :remove_pjax_param, :remove_rails_2_flash_after, :set_affiliate_cookie,
                          :verify_authenticity_token, :require_user, :find_topic, :portal_check, :fetch_monitorship, :set_page,
-                         :after_destroy_path, :set_selected_tab, :verify_ticket_permission]
+                         :after_destroy_path, :set_selected_tab, :verify_ticket_permission, :redirect_for_ticket]
     actual_filters = Discussions::TopicsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

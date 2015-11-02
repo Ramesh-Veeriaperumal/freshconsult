@@ -1,4 +1,5 @@
 module ApiConstants
+
   # ControllerConstants
   API_CURRENT_VERSION = 'v2'
 

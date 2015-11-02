@@ -1,8 +1,8 @@
-Dir["#{Rails.root}/test/api/helpers/ticket_fields_helper.rb"].each { |file| require file }
-module Helpers::TicketsHelper
+['ticket_fields_test_helper.rb', 'notes_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+module Helpers::TicketsTestHelper
   include GroupHelper
-  include Helpers::NotesHelper
-  include Helpers::TicketFieldsHelper
+  include Helpers::NotesTestHelper
+  include Helpers::TicketFieldsTestHelper
   include EmailConfigsHelper
   include ProductsHelper
   include CompanyHelper
@@ -41,7 +41,7 @@ module Helpers::TicketsHelper
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email[:reply_cc],
       description:  expected_output[:description] || ticket.description,
       description_html: expected_output[:description_html] || ticket.description_html,
-      ticket_id: expected_output[:display_id] || ticket.display_id,
+      id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
@@ -61,8 +61,8 @@ module Helpers::TicketsHelper
       custom_fields:  expected_custom_field || ticket_custom_field,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      fr_due_by: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.utc.iso8601,
+      fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.utc.iso8601
     }
   end
 

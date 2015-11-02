@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsHelper
+    include Helpers::DiscussionsTestHelper
 
     def f_obj
       Forum.first || create_test_forum(fc)
@@ -561,7 +561,7 @@ module ApiDiscussions
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
       get :category_forums, construct_params(id: fc_obj.id, per_page: 4)
       assert_response 200
-      assert JSON.parse(response.body).count == 3
+      assert_equal 3, JSON.parse(response.body).count
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 

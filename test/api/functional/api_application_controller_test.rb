@@ -1,17 +1,6 @@
 require_relative '../test_helper'
 
 class ApiApplicationControllerTest < ActionController::TestCase
-  def test_latest_version
-    response = ActionDispatch::TestResponse.new
-    controller.response = response
-    params = ActionController::Parameters.new(version: 2)
-    controller.params = params
-    @controller.send(:response_headers)
-    version_header = "current=#{ApiConstants::API_CURRENT_VERSION}; requested=#{params[:version]}"
-    assert_equal true, response.headers.include?('X-Freshdesk-API-Version')
-    assert_equal version_header, response.headers['X-Freshdesk-API-Version']
-  end
-
   def test_invalid_field_handler
     error_array = { 'name' => ['invalid_field'], 'test' => ['invalid_field'] }
     @controller.expects(:render_errors).with(error_array).once
@@ -73,10 +62,24 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.body, request_error_pattern(:duplicate_value).to_json
   end
 
+  def test_statement_invalid_error
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    @controller.request.env['RAW_POST_DATA'] = 'test junk'
+    @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
+    assert_nothing_raised do
+      error = ActiveRecord::StatementInvalid.new
+      error.set_backtrace(['a', 'b'])
+      @controller.send(:db_query_error, error)
+    end
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
+  end
+
   def test_notify_new_relic_agent
-    @controller.request.env['ORIGINAL_FULLPATH'] = "/api/tickets"
-    NewRelic::Agent.expects(:notice_error).with("Exception",  {uri: @controller.request.original_url}).once
-    @controller.send(:notify_new_relic_agent, "Exception")
+    @controller.request.env['ORIGINAL_FULLPATH'] = '/api/tickets'
+    NewRelic::Agent.expects(:notice_error).with('Exception',  :uri => 'http://localhost.freshpo.com/api/tickets', :custom_params => {:method => 'GET', :params => {}}).once
+    @controller.send(:notify_new_relic_agent, 'Exception')
   end
 
   def test_route_not_found_with_method_not_allowed
@@ -108,6 +111,16 @@ class ApiApplicationControllerTest < ActionController::TestCase
 
   def test_paginate_options_returns_default_options
     params = ActionController::Parameters.new
+    controller.params = params
+    actual = controller.send(:paginate_options)
+    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
+    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
+  end
+
+  def test_paginate_options_with_invalid_options
+    params = ActionController::Parameters.new(
+      per_page: 'x',
+      page: 'x')
     controller.params = params
     actual = controller.send(:paginate_options)
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]

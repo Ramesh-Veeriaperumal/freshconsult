@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TicketsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::TicketsHelper
+  include Helpers::TicketsTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}
@@ -17,7 +17,7 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         create: 85,
         show: 18,
         update: 47,
-        index: 16,
+        index: 18,
         destroy: 32,
         restore: 32
       }

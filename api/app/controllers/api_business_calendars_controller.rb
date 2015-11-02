@@ -5,7 +5,11 @@ class ApiBusinessCalendarsController < ApiApplicationController
       FeatureConstants::BUSINESS_CALENDAR
     end
 
+    def load_objects
+      super(scoper.order(:name))
+    end
+
     def scoper
-      current_account.business_calendar.order(:name)
+      current_account.business_calendar
     end
 end

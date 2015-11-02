@@ -48,7 +48,8 @@ class Subscription < ActiveRecord::Base
   after_update :add_to_crm
   after_update :update_reseller_subscription
   after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
-
+  after_commit :clear_account_susbcription_cache, on: :update
+  after_commit :clear_account_susbcription_cache, on: :destroy
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -490,5 +491,10 @@ class Subscription < ActiveRecord::Base
 
     def to_currency(amount)
       (amount/100.0).round.to_f
+    end
+
+    def clear_subscription_from_cache
+      key = ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
+      MemcacheKeys.delete_from_cache key
     end
  end

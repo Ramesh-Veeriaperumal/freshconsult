@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::CompaniesHelper
+  include Helpers::CompaniesTestHelper
   def test_query_count
     skip_bullet do
       v2 = {}

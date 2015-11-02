@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
-  include Helpers::UsersHelper
+  include Helpers::UsersTestHelper
   def test_multipart_form_data
     skip_bullet do
       post('/api/v2/contacts', v2_multipart_payload, @write_headers.merge('CONTENT_TYPE' => 'multipart/form-data'))
@@ -22,7 +22,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_make_agent: 4,
 
         create: 34,
-        update: 28,
+        update: 29,
         show: 16,
         index: 17,
         destroy: 20,
