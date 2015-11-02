@@ -987,7 +987,7 @@ module ApplicationHelper
         unless is_edit or params[:format] == 'widget'
           show_cc = show_cc_field  field
         end
-            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
+            element = render(:partial => "/helpdesk/tickets/ticket_widget/requester", :formats => [:html], :locals => {:search_req => search_req , :placeholder => description, :show_cc => show_cc, :is_edit => is_edit})
             element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
@@ -1037,7 +1037,7 @@ module ApplicationHelper
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             redactor_wrapper = builder.text_area(field_name, :class => element_class, :value => field_value, :"data-wrap-font-family" => true )
         end
-            redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment")
+            redactor_wrapper += render(:partial => "/helpdesk/tickets/ticket_widget/new_ticket_attachment", :formats => [:html])
             element += content_tag(:div, redactor_wrapper, :class => "redactor_wrapper")
       when "date" then
         element = label + content_tag(:div, construct_date_field(field_value, 

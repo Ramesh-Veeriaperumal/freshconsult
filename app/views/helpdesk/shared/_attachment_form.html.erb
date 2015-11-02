@@ -26,7 +26,7 @@
             </a>
           </li>
           <% get_enabled_cloud_files_app.each do |c_f| %>
-            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id} %>
+            <%= render :partial => "integrations/applications/#{c_f}", :locals => {:attach_id => attach_id}, :formats => [:html] %>
           <% end %>
         </ul>      
       </div>
