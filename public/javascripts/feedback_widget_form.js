@@ -3,7 +3,7 @@
 	$(function () {
 
 		$("select").select2();
-
+		$('#errorExplanation').hide();
 		var $ticket_desc = $("#helpdesk_ticket_ticket_body_attributes_description_html"),
 			proxy_placeholders = jQuery(".form-placeholder").find("input[type=text], textarea");
 
@@ -23,10 +23,10 @@
 			})
 		})
 
-		
+
 		$ticket_desc.redactor({
-			convertDivs: false, 
-			autoresize: false, 
+			convertDivs: false,
+			autoresize: false,
 			mobile: false,
 			buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],
 			keyupCallback: function(e){
@@ -41,12 +41,16 @@
 			$(".form-widget").addClass("form-mobile");
 			$("#helpdesk_ticket_ticket_body_attributes_description_html").removeClass("required_redactor").addClass("required");
 		}
-		
+
 		var $placeholder_proxy = $ticket_desc.data("placeholder-proxy")
 
 		if($placeholder_proxy != undefined)
 			$placeholder_proxy.toggle(!jQuery(".redactor_editor").text());
-		
+
+		$.urlParam = function(name){
+			var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+			return results[1] || 0;
+		};
 
  		jQuery("#fd_feedback_widget").validate({
 			highlight: function(element, errorClass) {
@@ -63,32 +67,71 @@
      		ignore:"select.nested_field:empty, .portal_url:not(:visible)",
 			errorElement: "div", // Adding div as the error container to highlight it in red
 			submitHandler: function(form, btn) {
-				// Setting the submit button to a loading state
-				$("#helpdesk_ticket_submit").button("loading")
 
-				if (screenshot_flag==0) { 			
+				if (screenshot_flag==0) {
 					var img = img_data.replace("data:image/png;base64,","");
 					var time = new Date();
-					var name = String(time);		
+					var name = String(time);
 					name = "Screen Shot_" + name ;
 					name = name.replace(/:/g,"-");
 					postscreenshot("data",img);
 					postscreenshot("name",name);
 				}
 
-	  	    	// For all other form it will be a direct page submission			  	
-	  	    	form.submit()
+				hide_captcha_error();
+				var captcha_response = $('#recaptcha_response_field').val();
+				if(captcha_response.length === 0){
+					show_captcha_error("Captcha value is required.");
+					return false;
+				}
+
+				// Setting the submit button to a loading state
+				$("#helpdesk_ticket_submit").button("loading")
+
+	  	    	// For all other form it will be a direct page submission
+	  	    	//form.submit()
+						$.ajax({
+					    url:'/widgets/feedback_widget',
+					    type:'POST',
+							dataType:'json',
+					    data:$("#fd_feedback_widget").serialize(),
+					    success:function(resp){
+
+								if(resp.success === true){
+									// show thank you message
+									var thankyou_url = '/widgets/feedback_widget/thanks?widgetType=';
+									thankyou_url += $.urlParam('widgetType');
+									if($('#submit_message').val()) {
+										thankyou_url += "&submit_message=" + encodeURI($('#submit_message').val());
+									}
+
+									thankyou_url += "&retainParams=" + encodeURI($('#retainParams').val());
+									window.location = thankyou_url;
+
+								}else {
+									$('#errorExplanation').show();
+									$('#feedback_widget_error').html(resp.error);
+								}
+								$("#helpdesk_ticket_submit").button("reset")
+
+					    },
+					    error:function(err){
+					      console.log(err);
+								$("#helpdesk_ticket_submit").button("reset")
+					    }
+					  });
+
 			}
  		});
 
-	 	// USED in ticket form		    
+	 	// USED in ticket form
 		// Checking if the email is already present in the system
     	// If email is new requester then a "name" field will be shown to the user as an optional input in the request form
-	    $("#helpdesk_ticket_email").focusout(function(){	    	
+	    $("#helpdesk_ticket_email").focusout(function(){
 	    	var $this = $(this),
 				ticket_email = $this.val(),
 				email_path = $this.data("checkEmailPath"),
-				toggle_name = function(enable){ 
+				toggle_name = function(enable){
 					var _name_div = $("#name_field").find("input")
 										.attr("disabled", !enable).parent()
 					if(enable){
@@ -104,7 +147,7 @@
 
 			if(email_path == "") return
 
-			if(ticket_email.isValidEmail()){				
+			if(ticket_email.isValidEmail()){
 				$this.addClass("loading-right")
 
 				$.ajax({ url: email_path+"?v="+ticket_email,
@@ -124,8 +167,8 @@
 		 		jQuery("#ui-thanks-container").html(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").html());
 		 		jQuery("#ui-thanks-container").show();
 		 	}
-	 	});	 		
-		
+	 	});
+
 
 		jQuery('#takescreen-btn a').bind("click", function(ev){
 			console.log("Image loaded");
@@ -134,7 +177,7 @@
 			screenshot_flag=0;
 			jQuery('#takescreen-btn').hide();
 			jQuery('#screenshot-wrap').show();
-			
+
 			if(!jQuery.browser.msie && !jQuery.browser.opera)
 				jQuery('.flash').show();
 		});
@@ -158,12 +201,12 @@
 
 }(window.jQuery);
 
-var screenshot_flag=1;	
+var screenshot_flag=1;
 
 jQuery(window).bind("message", function(e) {
-    var data = e.originalEvent.data; 
+    var data = e.originalEvent.data;
     loadCanvas(data);
-});	
+});
 
 function remove_screenshot(){
 	screenshot_flag=1;
@@ -179,7 +222,7 @@ function postscreenshot(name,value){
 	fileref.setAttribute("value", value);
 	fileref.setAttribute("id", "uploadscreenshot");
 	document.getElementById("fd_feedback_widget").appendChild(fileref);
-}	
+}
 
 function loadCanvas(dataURL) {
     var canvas = document.getElementById("f-screenshot");
@@ -203,4 +246,16 @@ String.prototype.isValidEmail = function(){
 
 String.prototype.trim = function(){
     return this.replace(/^\s+|\s+$/g, '')
+}
+
+function show_captcha_error(msg){
+	jQuery('#helpdesk_ticket_captcha-error').removeClass('hide');
+	jQuery('#captcha_wrap').addClass('recaptcha-error');
+	jQuery('#helpdesk_ticket_captcha-error').html(msg);
+}
+
+function hide_captcha_error(){
+	jQuery('#helpdesk_ticket_captcha-error').addClass('hide');
+	jQuery('#captcha_wrap').removeClass('recaptcha-error');
+	jQuery('#helpdesk_ticket_captcha-error').html('');
 }

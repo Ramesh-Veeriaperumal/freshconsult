@@ -1,8 +1,8 @@
 <% responsive = widget_option(:responsive) %>
 <% disable_options = params[:disable]%>
-
+<% captcha = widget_option(:captcha) %>
 <% if(responsive != "no") %>
-   
+
 	<%= stylesheet_link_tag_with_rtl :'cdn/responsive_widget' %>
 <% end %>
 
@@ -21,7 +21,14 @@
 																				:formTitle => params[:formTitle],
 																				:widgetType => widget_type),
 		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
-  	<%= f.error_messages %>
+  	<%#= f.error_messages %>
+    <div class="errorExplanation" id="errorExplanation">
+      <h2>1 error prohibited this ticket from being saved</h2>
+      <p>There were problems with the following fields:</p>
+      <ul>
+        <li id="feedback_widget_error"></li>
+      </ul>
+    </div>
   	<% if widget_view %>
 	  	<div class="form-placeholder">
 		  	<% @ticket_fields_def_pos.each do |tf_field| %>
@@ -51,7 +58,7 @@
 	          picklist.section_ticket_fields.each do |section_tkt_field|
 	            if section_tkt_field.editable_in_portal
 	              %><div class="control-group ticket_section">
-	              <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field, 
+	              <%= (ticket_field_container f,:helpdesk_ticket, section_tkt_field,
 	              	                  widget_prefilled_value(field), picklist.id.to_s).gsub("</textarea>", "&lt/textarea&gt").html_safe %>
 	              </div><%
 	            end
@@ -60,11 +67,23 @@
         end
       end %>
 		<% end %>
-		<% if widget_type="popup" %>
-			<div class="extra-space"></div>
-		<% end %>
+
 	</div>
-	<% if widget_type == "popup" %>
+  <% if captcha == "yes" && !logged_in? %>
+    <div class="control-group">
+     <div class="controls recaptcha-control">
+  			<div id="captcha_wrap">
+        <%= recaptcha_tags :display => { :theme => "white" , :size => "compact"}, :ssl => true %>
+  			<div class="recaptcha-error-message hide" id="helpdesk_ticket_captcha-error">
+
+  	    </div>
+      </div><!-- end captch_wrap -->
+      <input type="hidden" name="check_captcha" value="true" />
+      <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
+    </div>
+  </div>
+  <% end %>
+	<% if widget_type="popup" %>
 		<div class="extra-space"></div>
 	<% end %>
 </div>
