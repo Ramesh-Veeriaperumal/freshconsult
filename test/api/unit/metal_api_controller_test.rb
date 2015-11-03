@@ -8,9 +8,8 @@ class MetalApiControllerTest < ActionView::TestCase
     ActionController::ImplicitRender, ActionController::StrongParameters, ActionController::Cookies,
     ActionController::HttpAuthentication::Basic::ControllerMethods, AbstractController::Callbacks,
     ActionController::Rescue, ActionController::ParamsWrapper, ActionController::Instrumentation,
-    NewRelic::Agent::Instrumentation::ControllerInstrumentation::Shim, NewRelic::Agent::Instrumentation::Rails3::Errors, 
-    NewRelic::Agent::Instrumentation::Rails3::ActionController, NewRelic::Agent::Instrumentation::ControllerInstrumentation]
-    
+    NewRelic::Agent::Instrumentation::Rails3::Errors, NewRelic::Agent::Instrumentation::Rails3::ActionController, 
+    NewRelic::Agent::Instrumentation::ControllerInstrumentation]
     assert (metal_modules - MetalApiController.included_modules).empty?
   end
 
