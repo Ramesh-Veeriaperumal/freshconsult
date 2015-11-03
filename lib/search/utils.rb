@@ -8,7 +8,10 @@ class Search::Utils
     :requester_autocomplete => 'requesterAutocomplete',
     :company_autocomplete   => 'companyAutocomplete',
     :tag_autocomplete       => 'tagAutocomplete',
-    :agent_spotlight        => 'agentSpotlight'
+    :agent_spotlight        => 'agentSpotlight',
+    :merge_display_id       => 'mergeDisplayId',
+    :merge_subject          => 'mergeSubject',
+    :merge_requester        => 'mergeRequester'
   }
 
   # Load ActiveRecord objects
@@ -19,10 +22,14 @@ class Search::Utils
     # Load each type's results via its model
     #
     es_results['hits']['hits'].group_by { |item| item['_type'] }.each do |type, items| 
-      records[type] = model_and_assoc[type][:model]
-                                      .constantize
-                                      .where(account_id: current_account_id, id: items.map { |h| h['_id'] })
-                                      .preload(model_and_assoc[type][:associations])
+      if items.empty?
+        records[type] = []
+      else
+        records[type] = model_and_assoc[type][:model]
+                                        .constantize
+                                        .where(account_id: current_account_id, id: items.map { |h| h['_id'] })
+                                        .preload(model_and_assoc[type][:associations])
+      end
     end
 
     # For sorting in the same order received by ES

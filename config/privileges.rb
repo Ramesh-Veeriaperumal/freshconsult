@@ -79,6 +79,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/v2/solution", :only => [:related_solutions, :search_solutions]
     resource :"search/ticket", :only => [:index]
+    resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
     resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups]
     resource :"helpdesk/survey"
@@ -194,6 +195,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/forum", :only => [:index]
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
+    resource :"search/v2/topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
   end

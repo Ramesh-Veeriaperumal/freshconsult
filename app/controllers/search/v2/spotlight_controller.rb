@@ -7,7 +7,8 @@ class Search::V2::SpotlightController < ApplicationController
   
   before_filter :set_search_sort_cookie, :initialize_search_parameters
 
-  attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, :current_page
+  attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, 
+                :current_page, :size, :offset, :sort_direction, :search_context
 
   # ESType - [model, associations] mapping
   # Needed for loading records from DB
@@ -68,7 +69,7 @@ class Search::V2::SpotlightController < ApplicationController
     #
     def search
       @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                          :agent_spotlight,
+                                                          @search_context,
                                                           searchable_types
                                                         ).fetch(construct_es_params)
       @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
@@ -129,11 +130,11 @@ class Search::V2::SpotlightController < ApplicationController
         
         unless (@search_sort.to_s == 'relevance') or @suggest
           es_params[:sort_by]         = @search_sort
-          es_params[:sort_direction]  = 'desc'
+          es_params[:sort_direction]  = @sort_direction
         end
         
-        es_params[:size]  = Search::Utils::MAX_PER_PAGE
-        es_params[:from]  = Search::Utils::MAX_PER_PAGE * (@current_page - 1)
+        es_params[:size]  = @size
+        es_params[:from]  = @offset
       end
     end
 
@@ -177,17 +178,19 @@ class Search::V2::SpotlightController < ApplicationController
     ### Before filters ###
     ######################
 
-    # To-do: Need to verify if needed
-    #
     def set_search_sort_cookie
       cookies[:search_sort] = params[:search_sort] if params[:search_sort]
     end
 
     def initialize_search_parameters
-      @search_key   = params[:term] || params[:search_key] || ''
-      @search_sort  = params[:search_sort] || cookies[:search_sort]
-      @result_json  = { :results => [], :current_page => 1 }
-      @es_results   = []
-      @current_page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+      @search_key     = params[:term] || params[:search_key] || ''
+      @search_sort    = params[:search_sort] || cookies[:search_sort]
+      @sort_direction = 'desc'
+      @size           = Search::Utils::MAX_PER_PAGE
+      @current_page   = params[:page].to_i.zero? ? 1 : params[:page].to_i
+      @offset         = @size * (@current_page - 1)
+      @result_json    = { :results => [], :current_page => 1 }
+      @es_results     = []
+      @search_context = :agent_spotlight
     end
 end

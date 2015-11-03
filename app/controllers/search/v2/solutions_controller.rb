@@ -6,6 +6,8 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
   before_filter :initialize_search_parameters
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
   
+  attr_accessor :search_key, :ticket, :suggest
+  
   # ESType - [model, associations] mapping
   # Needed for loading records from DB
   #

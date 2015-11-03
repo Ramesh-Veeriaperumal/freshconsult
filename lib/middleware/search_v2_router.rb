@@ -55,14 +55,17 @@ class Middleware::SearchV2Router
         '/search/autocomplete/requesters'   => { path: '/search/v2/autocomplete/requesters',  feature: :esv2_user_autocomplete },
         '/search/autocomplete/agents'       => { path: '/search/v2/autocomplete/agents',      feature: :esv2_agent_autocomplete },
         '/search/autocomplete/companies'    => { path: '/search/v2/autocomplete/companies',   feature: :esv2_company_autocomplete },
-        '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete }
+        '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete },
+                                      ### Merge topics search path ###
+        '/search/merge_topic'               => { path: '/search/v2/topics',                   feature: :esv2_merge_topic }
       }
     end
     
     def param_based_v2_paths
       @@param_paths ||= {
         '/search/related_solutions/ticket'  => { path: '/search/v2/related_solutions/ticket', feature: :esv2_related_solutions },
-        '/search/search_solutions/ticket'   => { path: '/search/v2/search_solutions/ticket',  feature: :esv2_search_solutions }
+        '/search/search_solutions/ticket'   => { path: '/search/v2/search_solutions/ticket',  feature: :esv2_search_solutions },
+        '/search/tickets/filter'            => { path: '/search/v2/tickets/filter',           feature: :esv2_merge_ticket }
       }
     end
 

@@ -1182,6 +1182,7 @@ Helpkit::Application.routes.draw do
       
       match '/related_solutions/ticket/:ticket' => 'solutions#related_solutions'
       match '/search_solutions/ticket/:ticket'  => 'solutions#search_solutions'
+      match '/tickets/filter/:search_field' => 'tickets#index'
     end
 
     resources :home, :only => :index do
