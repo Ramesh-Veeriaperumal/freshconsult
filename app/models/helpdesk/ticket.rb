@@ -525,7 +525,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticlet_cc
-    cc_email[:cc_emails]
+    cc_email.nil? ? [] : cc_email[:cc_emails]
   end
   
   def contact_name
