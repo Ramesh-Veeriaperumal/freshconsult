@@ -17,11 +17,10 @@ class Middleware::SearchV2Router
       es_v2             = LaunchParty.new.launched?(feature: v2_meta[:feature], account: account_id)
 
       env['PATH_INFO']  = v2_meta[:path] if es_v2
-    end
     
     # Dirty hack. Couldnt think of another way yet.
     #
-    if(v2_meta = param_based_v2_paths.detect { |path, values| env['PATH_INFO'].include?(path) })
+    elsif(v2_meta = param_based_v2_paths.detect { |path, values| env['PATH_INFO'].include?(path) })
       account_id        = ShardMapping.lookup_with_domain(env['HTTP_HOST']).try(:account_id).to_i
       es_v2             = LaunchParty.new.launched?(feature: v2_meta[1][:feature], account: account_id)
       
@@ -57,7 +56,7 @@ class Middleware::SearchV2Router
         '/search/autocomplete/companies'    => { path: '/search/v2/autocomplete/companies',   feature: :esv2_company_autocomplete },
         '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete },
                                       ### Merge topics search path ###
-        '/search/merge_topic'               => { path: '/search/v2/topics',                   feature: :esv2_merge_topic }
+        '/search/merge_topic'               => { path: '/search/v2/merge_topics/search_topics', feature: :esv2_merge_topic }
       }
     end
     

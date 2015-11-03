@@ -195,7 +195,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/forum", :only => [:index]
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
-    resource :"search/v2/topic", :only => [:index]
+    resource :"search/v2/merge_topic", :only => [:search_topics]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
   end
