@@ -11,8 +11,7 @@ class ArrayValidator < ActiveModel::EachValidator
         next if value.blank? && validator_options[:allow_blank]
 
         validator_class_name = "#{key.to_s.camelize}Validator"
-        validator_class = get_validator_class(validator_class_name)
-        validator = validator_class.new(validator_options)
+        validator = validator_class(validator_class_name).new(validator_options)
         validator.validate_each(record, attribute, value)
       end
     end
@@ -20,7 +19,7 @@ class ArrayValidator < ActiveModel::EachValidator
 
   private
 
-    def get_validator_class(validator_class_name)
+    def validator_class(validator_class_name)
       validator_class_name.constantize
     rescue NameError
       "ActiveModel::Validations::#{validator_class_name}".constantize

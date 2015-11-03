@@ -8,7 +8,7 @@ class SlaPolicyDelegator < SimpleDelegator
   def valid_companies?
     company_ids = conditions[:company_id]
     if company_ids
-      invalid_company_ids = company_ids - Account.current.companies_from_cache.map(&:id)
+      invalid_company_ids = company_ids - Account.current.companies.map(&:id)
       if invalid_company_ids.present?
         errors.add(:company_ids, 'list is invalid')
         @error_options = { company_ids: { list: "#{invalid_company_ids.join(', ')}" } }
