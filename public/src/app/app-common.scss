@@ -4160,3 +4160,25 @@ $adm-bdr:#F0F0F0;
 }
 
 // end
+
+.btn-collapse {
+	.collapse_on_default{
+		display: none;
+	}
+
+	.show_on_collapse { display: none; }
+
+	.collapsed {
+		.show_on_collapse { display: block; }
+		.hide_on_collapse { display: none; }
+	}
+
+	&.collapsed {
+		.show_on_collapse { display: block; }
+        .hide_on_collapse { display: none; }
+	}
+
+	.hide {
+		display: none;
+	}
+} 

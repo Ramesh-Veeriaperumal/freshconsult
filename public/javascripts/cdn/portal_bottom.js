@@ -16,4 +16,4 @@
 //= require portal/portal-app-actions.js
 //= require portal/portal-compatibility.js
 //= require util-dates.js
-//= require frameworks/plugins/jquery.unveil.js
+//= require frameworks/plugins/layzr.js

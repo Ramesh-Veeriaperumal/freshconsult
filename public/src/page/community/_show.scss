@@ -176,3 +176,10 @@
 		@include float(right);
 		margin-top: -25px;
 	}
+
+	.discussion-collapse-btn{
+		.dropdown-menu{
+			right: 0;
+			left: auto
+		}
+	}

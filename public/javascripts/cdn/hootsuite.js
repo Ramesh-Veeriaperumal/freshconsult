@@ -5,7 +5,7 @@
 //= require bootstrap/popover.js
 //= require frameworks/plugins/jquery.pageless.js
 //= require frameworks/plugins/jquery.livequery.js
-//= require frameworks/plugins/jquery.unveil.js
+//= require frameworks/plugins/layzr.js
 //= require integrations/hootsuite.js
 //= require integrations/hootsuite_init.js
 //= require prototype.js

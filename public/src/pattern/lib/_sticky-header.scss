@@ -73,15 +73,3 @@
 		@include box-shadow(none);
 	}
 }
-
-
-[rel=sticky], .sticky_panel {
-	.show_on_collapse { display: none; }
-
-	&.collapsed {
-		.show_on_collapse { display: block; }
-		.hide_on_collapse { display: none; }
-	}
-	
-}
-

@@ -76,7 +76,19 @@
 							data-destroy-on-close="true">
 							<%= t('agent.info4') %>
 						</a>
-            <%= link_to_function t('reset_password_title'), "confirm_password()" if @agent.user.active? %>
+
+            <% if(@agent.user.active?) %>
+            	 <a href="#reset_password_template"
+					rel="freshdialog"
+					title="<%= t('reset_password_title') %>"
+					data-submit-label="Yes"
+					data-width="400px"
+					data-template-footer="false"
+					data-close-label="No"
+					data-destroy-on-close="true">
+					<%= t('reset_password_title') %>
+				</a>
+            <% end %>
           <% end %>
 			  <%end%>
 		</div>
@@ -118,15 +130,6 @@ jQuery("#reset_password_button").click(function()
 {
 	jQuery(this).addClass("disabled");
 });
-
-
-function confirm_password()
-{
- 	jQuery("#reset_password_template").dialog({
-       position: "top",
-       title: '<%= t('reset_password_title') %>'
-    });
- }
 
 // need to convert this to util
 jQuery(document).ready(function(){

@@ -4580,9 +4580,11 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
+    spam_header: spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
+    assign_to: Assign
     select_to_agent: Select an Agent
     export: Export
     exporting: Exporting

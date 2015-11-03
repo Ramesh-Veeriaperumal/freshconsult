@@ -1558,7 +1558,7 @@ Helpkit::Application.routes.draw do
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save
-        post :assign_to_agent#TODO-RAILS3 new route
+        match :assign_to_agent#TODO-RAILS3 new route
         put :quick_assign #TODO-RAILS3 new route
       end
 

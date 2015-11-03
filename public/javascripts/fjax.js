@@ -25,6 +25,8 @@ window.Fjax = {
       }
       this._SocketCleanUp();
       this._FayeCleanUp();
+      this._deleteDetachedDOM();
+      
       $.xhrPool_Abort();
 
     	if(this._triggerUnload() === false) return false;
@@ -135,23 +137,22 @@ window.Fjax = {
 
     _beforeSendExtras: function(evnt, options) {
       var start_time = new Date();
-      var bHeight = $('#body-container').height(),
-          clkdLI = $(evnt.relatedTarget).parent();
+      var bHeight = $('#body-container').height();
+          // clkdLI = $(evnt.relatedTarget).parent();
       $('ul.header-tabs li.active').removeClass('active');
-      clkdLI.addClass('active');
+      // clkdLI.addClass('active');
       this._initParallelRequest($(evnt.relatedTarget),options.data)
     },
 
     callAfterRecieve: function(evnt,xhr,settings) {
       Fjax.callAfterReceive();
 
-      sticky.destroy();
-
       jQuery('#header_search').blur();
 
       if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
       window.pjaxPrevUnload = null;
       Fjax.callAtEnd();
+
       var options = jQuery(document).data();
       jQuery(document).data("requestDone",true);
       if(options.parallelData && $(evnt.relatedTarget).data()){
@@ -161,7 +162,6 @@ window.Fjax = {
       {
         $(settings.data.parallelPlaceholder).html(options.parallelData);
       }
-      window.sticky = new SetupSticky();
     },
 
     _beforeSendCleanup: function() {
@@ -207,6 +207,16 @@ window.Fjax = {
         window.FreshdeskNode.getValue('faye_realtime').faye_channels = [];
         window.FreshdeskNode.getValue('faye_realtime').fayeClient = null;
       }
+    },
+
+    _deleteDetachedDOM: function() {
+
+      delete $("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field").prevObject;
+      delete $('body.ticket_details [rel=tagger]').prevObject;
+      delete $('[data-hotkey]').prevObject;
+      delete $("a.page-btn.next_page.btn.tooltip").prevObject;
+      delete $("#body-container").prevObject;
+
     },
 
 
@@ -268,7 +278,7 @@ if (!$.browser.msie && !$.browser.edge) {
       timeout: -1,
       push : true,
       maxCacheLength: 0,
-      replace: false
+      replace: false 
     }).bind('pjax:beforeSend',function(evnt,xhr,settings,options){
       // BeforeSend
       return Fjax.callBeforeSend(evnt,xhr,settings,options);

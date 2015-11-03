@@ -8,7 +8,18 @@
             <%= ticket_label %> <span class="cnt-label"><%= count %></span>
           </a>
       <% end %>
-      <a href="#" class="removetag" ><i class="symbols-tag-remove tooltip" title = "<%= t('.remove_'+dom_type) %>" ></i></a>
+       <a href="#tag-remove-confirm" class="removetag"
+            rel="freshdialog"
+            data-target="#tag-remove-confirm"
+            data-title="<%= t('.remove_'+dom_type) %>"
+            data-width="300"
+            data-backdrop="static"
+            data-submit-label="<%= t('delete') %>"
+            data-close-label="<%= t('cancel') %>"
+            data-destroy-on-close="true"
+          >   
+          <i class="symbols-tag-remove tooltip" title = "<%= t('.remove_'+dom_type) %>" ></i>  
+        </a> 
   <% else %>
       <div class="tag-label"> <%= ticket_label  %> <span class="cnt-label"><%= count %></span>
       </div>
