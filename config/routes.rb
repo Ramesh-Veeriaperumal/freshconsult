@@ -182,6 +182,10 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
+  ["github"].each do |provider|
+    match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
+  end
+
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
@@ -629,6 +633,10 @@ Helpkit::Application.routes.draw do
   resource :account_configuration
 
   namespace :integrations do
+
+    match '/service_proxy/fetch',
+      :controller => 'service_proxy', :action => 'fetch', :via => :post
+
     resources :installed_applications do
       member do
         put :install
@@ -637,6 +645,14 @@ Helpkit::Application.routes.draw do
     end
 
     resources :remote_configurations
+
+    namespace :github do
+        put :update
+        get :edit
+        get :new
+        post :install
+        post :notify
+    end
     
     resources :applications, :only => [:index, :show] do
       collection do

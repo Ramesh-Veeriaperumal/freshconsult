@@ -1015,6 +1015,168 @@ span.beta {
 
 }
 
+//-------------------------------------------------------------------------------------------
+//                                  Github
+//-------------------------------------------------------------------------------------------
+.github_select_dropdown {
+    word-wrap: break-word;
+    border-color: #ccc;
+    margin-top: -3px;
+}
+#github_side_bar_widget {
+    @extend .integration_widget;
+    .content { width: inherit; }
+    /* Nav tab customization */
+    .nav-tabs {
+        >li.active>a, >li.active>a:hover, >li.active>a:focus {
+            color: #000;
+            background-color: #fff;
+            border: none;
+            border-bottom: 3px solid #888888;
+        }
+        >li>a {
+            border: none;
+            background-color: #fff;
+        }
+    }
+    /* Nav tab customization END*/
+    .tab-content {
+        @include padding-left(5px);
+    }
+    #github-create-link label {
+        font-weight: 500;
+    }
+
+    #github-issue-display {
+        font-size: 13px;
+        #github-issue-title {
+            @include float(left);
+            max-width: 75%;
+            padding-top: 5px;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+        #github-unlink {
+            font-weight: bold;
+            @include cursor(pointer);
+            border: 1px solid #d4d4d4;
+            @include padding(5px 12px 5px);
+            border-radius: 4px;
+            @include float(right);
+        }
+
+        ul {
+            @include clear(both);
+            padding-top: 5px;
+            li {
+                color: #7f7f7f;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                span {
+                    @include padding-left(5px);
+                }
+            }
+        }
+    }
+}
+#github-settings {
+    margin-top: 5px;
+    .seperator {
+        @include margin(10px 0px);
+    }
+
+    label {
+        display: inline-block;
+        @include padding(5px 10px 10px 0px);
+        width: 60%;
+        vertical-align: middle;
+    }
+
+    input[type="checkbox"] { 
+        vertical-align: text-top; 
+    }
+
+    input[type="checkbox"] + label { 
+        vertical-align: inherit; 
+    }
+
+    a.toggle-button {
+        vertical-align: text-bottom;
+        @include margin-left(0px);
+    }
+
+    h5 {
+        font-weight: 500;
+        padding-bottom: 10px;
+        font-size: 13px;
+    }
+    .select2-choices{
+        background:none;
+        @include border-radius(5px);
+        border: 1px solid #c9c9c9;
+        background: #fff;
+        .select2-search-field{
+            @include padding(4px);
+        }
+        .select2-search-choice-close{
+            @include float(right);
+            width:auto;
+            &:after{
+                content: "-";
+                background:#d30000;
+                @include border-radius(100%);
+                color: #fff;
+                position: absolute;
+                top: 3px;
+                @include right(7px);
+                @include padding(2px 10px 4px 7px);
+                font-size: 16px;
+                font-weight: bold;
+                line-height: 14px;
+                @include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
+                letter-spacing: -3px;
+
+            }
+        }
+        .select2-search-choice{
+            >div {
+                margin-right: 5px;
+            }
+            border: 0;
+            background: #f7f7f7;
+            @include padding(10px);
+            border-bottom:1px solid rgba(#ccc, 0.3);
+            margin:0;
+            width: 97%;
+        }
+
+    }
+    .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover::after{
+        color:#fff;
+    }
+    .int-select{
+        border:0;
+        @include border-radius(0);
+        width:75%;
+        &:after{
+            content: "+";
+            background:green;
+            @include border-radius(100%);
+            color: #fff;
+            position: absolute;
+            bottom: 8px;
+            @include right(7px);
+            @include padding(1px 5px 4px 5px);
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 14px;
+            @include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+            font-weight: bold;
+            @include margin-right(2px);
+        }
+    }
+
+}
 
 #xero{
 	.xero_ul_sidebar{

@@ -6,7 +6,7 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer, :triggered_event
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule
 
   ACTION_PRIVILEGE =
     {  
@@ -22,9 +22,10 @@ class Va::Action
       :delete_ticket           => :delete_ticket
     }
   
-  def initialize(act_hash)
+  def initialize(act_hash, va_rule = nil)
     @act_hash = act_hash
     @action_key = act_hash[:name]
+    @va_rule = va_rule
   end
   
   def value
@@ -46,6 +47,7 @@ class Va::Action
         clazz = @action_key.constantize
         obj = clazz.new
         if obj.respond_to?(value)
+          act_hash[:va_rule] = @va_rule if act_hash.delete(:include_va_rule)
           obj.send(value, act_on, act_hash)
           # add_activity(property_message act_on)  # TODO
           return

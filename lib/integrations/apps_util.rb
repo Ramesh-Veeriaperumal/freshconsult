@@ -21,6 +21,14 @@ module Integrations::AppsUtil
     end
   end
 
+  def execute_service(clazz_str, method_str, installed_app, args=[])
+    unless clazz_str.blank?
+      obj = clazz_str.constantize
+      obj = obj.new(installed_app, args)
+      obj.receive(method_str)
+    end
+  end
+
   def get_cached_values(ticket_id)
     cache_val = get_integ_redis_key("INTEGRATIONS_LOGMEIN:#{current_account.id}:#{ticket_id}")
     (cache_val.blank?) ? {} : JSON.parse(cache_val)

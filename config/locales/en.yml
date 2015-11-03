@@ -6004,6 +6004,19 @@ en:
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
+    github:
+      label: "GitHub"
+      desc: "Convert tickets into issues that can be tracked in GitHub."
+      helptext: "<h4>GitHub Integration Help</h4><p><br/>Please select all GitHub repositories under your Organization that will be used to track issues created by Freshdesk agents. This action should be done from an <b>organisation owner</b> account only.<br/><br/>If required please check the option that will set the GitHub issue label to match the Freshdesk ticket type whenever a new GitHub issue is created.<br/><br/>If required please check the option that allows the agent to select the milestone, when creating a GitHub issue.<br/><br/>You can set a desired status for the Freshdesk ticket whenever the corresponding GitHub issue is closed. This setting is applied to the primary Freshdesk ticket that is linked to the GitHub issue. A primary Freshdesk ticket is set whenever two or more tickets are linked to the same GitHub issue.<br/><br/>Select appropriate settings for sync buttons that control the syncing of messages between Freshdesk tickets and GitHub issues. Messages are synced between the primary freshdesk ticket and the linked GitHub issue.<br/><br/>Once enabled, all Freshdesk tickets will have the GitHub widget in the ticket details page that allows you to link tickets to GitHub issues.</p>"
+    github_settings:
+      sync_updates: Sync Updates
+      none: "Do nothing"
+      open: "Open"
+      resolved: "Resolved"
+      closed: "Closed"
+      add_comment_in_github: "Add a comment in Github issue"
+      add_private_note_in_fd: "Add a private note in Freshdesk."
+      add_public_note_in_fd: "Add a public note in Freshdesk."
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."

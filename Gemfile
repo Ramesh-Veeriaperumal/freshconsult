@@ -23,6 +23,7 @@ gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag =
 gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
+gem 'typhoeus', '0.7.3'
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
@@ -101,6 +102,7 @@ gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.9"
+gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.5.1"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.5"

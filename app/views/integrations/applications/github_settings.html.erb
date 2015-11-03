@@ -1,0 +1,68 @@
+<%
+inputs = @installed_app.configs[:inputs]
+
+status_sync_opts = [
+  [t("integrations.github_settings.none"), "none"],
+  [t("integrations.github_settings."), "Open"],
+  [t("integrations.github_settings.resolved"), "Resolved"],
+  [t("integrations.github_settings.closed"), "Closed"]
+]
+%>
+<% content_for :helpcard do %>
+  <div class="helpcard">
+    <%=t("integrations.#{application_name}.helptext").html_safe%>
+  </div>
+<% end
+%>
+<%= content_tag(:h3, "GitHub Settings", :class => "title") %>
+<%= form_for @installed_app, :url => { :controller=> "github", :action => @action }, :html => {:multipart => true, :id => "ConfigureApplication" } do |f| %>
+  <ul class="ui-form">
+	<li class="inline-field">
+	  <label class="caption">
+		<div class="logo application-logo-<%= application_name %>"></div>
+		<div class="logo info-data">
+      <%= t(description) %>
+		</div>
+	  </label>
+	  <div id="github-settings" class="fields">
+		<h5> Repositories </h5>
+        <div id="repositories" style="min-width:200px">
+		  <%= select_tag "configs[repositories]",
+		  options_for_select(@repositories, @selected_repositories), { :multiple => true, :class => 'required select2-fields int-select', :id => 'configs-repositories', "data-disable-field" =>  "", "multiple" => "multiple", "data-placeholder" => "Select Repositories", :rel => "select-choice"} %>
+		</div>
+        <span class="seperator"></span>
+
+        <div id = 'github_issue_type_settings'>
+          <%= check_box(:configs, 'map_type_to_label', :checked => (inputs["map_type_to_label"] || '').to_bool) %>
+          <label for="configs_map_type_to_label"> Map Freshdesk ticket types to GitHub issue labels</label>
+          <br/>
+          <%= check_box(:configs, 'can_set_milestone', :checked => (inputs["can_set_milestone"] || '').to_bool) %>
+          <label for="configs_can_set_milestone"> Allow GitHub issues to be assigned milestones</label>
+          <span class="seperator"></span>
+          <h5> Status Sync </h5>
+          <label> When a GitHub issue is closed set Freshdesk ticket status to </label>
+          <%= select(:configs, 'github_status_sync', status_sync_opts, { :selected => inputs['github_status_sync'] }) %>
+          <span class="seperator"></span>
+          <h5>Comment Sync</h5>
+          <label> Add a comment in the GitHub issue, when a response is added in Freshdesk</label>
+          <%= check_box(:configs, 'freshdesk_comment_sync', :checked => (inputs["freshdesk_comment_sync"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+          <label> Add a private note in the Freshdesk ticket, when a comment is added in GitHub</label>
+          <%= check_box(:configs, 'github_comment_sync', :checked => (inputs["github_comment_sync"] || '').to_bool, "rel" => "toggle",  "data-checked-label" => "ON", "data-unchecked-label" => "OFF" )  %>
+          <%# select(:configs, 'github_comment_sync', github_comment_sync_opts, { :selected => inputs['github_comment_sync'] } (inputs["freshdesk_comment_sync"] || '').to_bool) %>
+        </div>
+	</li>
+  </ul>
+  <div class="button-container">
+	<%= link_to t('back'), integrations_applications_path, :class => "floatl uiButton" if @selected_repositories.present? %>
+	<%= submit_tag @action.capitalize, :class => "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+ jQuery(document).ready(function(){
+   jQuery('#configs-repositories').select2({
+     maximumSelectionSize: 20,
+     dropdownCssClass: 'github_select_dropdown'
+   });
+ });
+</script>

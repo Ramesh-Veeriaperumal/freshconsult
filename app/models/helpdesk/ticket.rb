@@ -929,6 +929,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     header_info.present? && header_info[:message_ids].present?
   end
 
+  def linked_to_integration?(installed_app)
+    self.linked_applications.where(:id => installed_app.id).any?
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

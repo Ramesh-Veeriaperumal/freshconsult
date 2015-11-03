@@ -27,8 +27,8 @@ class VaRule < ActiveRecord::Base
 
   belongs_to :account
   
-  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
-
+  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
   scope :active, :conditions => { :active => true }
   scope :inactive, :conditions => { :active => false }
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
@@ -80,7 +80,7 @@ class VaRule < ActiveRecord::Base
   
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
-    Va::Action.new(act_hash)
+    Va::Action.new(act_hash, self)
   end
 
   def check_events doer, evaluate_on, current_events
