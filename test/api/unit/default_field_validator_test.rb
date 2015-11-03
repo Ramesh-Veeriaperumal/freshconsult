@@ -64,13 +64,13 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({
-      source: 'not_included', status: 'not_included', priority: 'not_included', type: 'not_included', group_id: 'data_type_mismatch',
-      responder_id: 'data_type_mismatch', product_id: 'data_type_mismatch', email: 'not_a_valid_email',
-      client_manager: 'data_type_mismatch', tags: 'data_type_mismatch', language: 'not_included', time_zone: 'not_included', domains: 'data_type_mismatch',
-      subject: 'is too long (maximum is 255 characters)', description: 'data_type_mismatch',
-      job_title: 'is too long (maximum is 255 characters)', twitter_id: 'is too long (maximum is 255 characters)',
-      phone: 'is too long (maximum is 255 characters)', mobile: 'is too long (maximum is 255 characters)',
-      address: 'is too long (maximum is 255 characters)', note: 'data_type_mismatch'
+      source: :not_included, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
+      responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: 'not_a_valid_email',
+      client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
+      subject: "is too long (maximum is 255 characters)", description: :data_type_mismatch,
+      job_title: "is too long (maximum is 255 characters)", twitter_id: "is too long (maximum is 255 characters)",
+      phone: "is too long (maximum is 255 characters)", mobile: "is too long (maximum is 255 characters)",
+      address: "is too long (maximum is 255 characters)", note: :data_type_mismatch
     }.sort,
                  errors
                 )
@@ -90,10 +90,10 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
     assert_equal({
-      source: 'required_and_inclusion', company_id: 'missing', status: 'required_and_inclusion', priority: 'required_and_inclusion', type: 'required_and_inclusion', group_id: 'required_and_data_type_mismatch',
-      responder_id: 'required_and_data_type_mismatch', product_id: 'required_and_data_type_mismatch', email: 'missing',
-      client_manager: 'required_and_data_type_mismatch', tags: 'required_and_data_type_mismatch', language: 'required_and_inclusion', time_zone: 'required_and_inclusion', domains: 'required_and_data_type_mismatch',
-      subject: 'missing', job_title: 'required_and_data_type_mismatch', description: 'required_and_data_type_mismatch', twitter_id: 'missing', phone: 'missing', mobile: 'missing', address: 'missing', note: 'required_and_data_type_mismatch'
+      source: :required_and_inclusion, company_id: :missing, status: :required_and_inclusion, priority: :required_and_inclusion, type: :required_and_inclusion, group_id: :required_and_data_type_mismatch,
+      responder_id: :required_and_data_type_mismatch, product_id: :required_and_data_type_mismatch, email: :missing,
+      client_manager: :required_and_data_type_mismatch, tags: :required_and_data_type_mismatch, language: :required_and_inclusion, time_zone: :required_and_inclusion, domains: :required_and_data_type_mismatch,
+      subject: :missing, job_title: :required_and_data_type_mismatch, description: :required_and_data_type_mismatch, twitter_id: :missing, phone: :missing, mobile: :missing, address: :missing, note: :required_and_data_type_mismatch
     }.sort,
                  errors
                 )
@@ -114,7 +114,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ tags: 'is too long (maximum is 255 characters)' }.sort, errors)
+    assert_equal({ tags: "is too long (maximum is 255 characters)" }.sort, errors)
   end
 
   def test_string_rejection_validator
@@ -125,7 +125,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ tags: 'special_chars_present', domains: 'special_chars_present' }.sort, errors)
+    assert_equal({ tags: :special_chars_present, domains: :special_chars_present }.sort, errors)
     assert_equal({ tags: { chars: ',' }, domains: { chars: ',' } }.sort, error_options)
   end
 
@@ -136,7 +136,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ email: 'is too long (maximum is 255 characters)' }.sort, errors)
+    assert_equal({ email: "is too long (maximum is 255 characters)" }.sort, errors)
   end
 
   def test_attribute_with_no_validation

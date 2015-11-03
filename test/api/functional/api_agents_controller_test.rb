@@ -38,7 +38,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_filter_with_invalid_email
     get :index, controller_params(email: '!@#$%')
     assert_response 400
-    match_json([bad_request_error_pattern('email', 'Should be a valid email address')])
+    match_json([bad_request_error_pattern('email', :not_a_valid_email)])
   end
 
   def test_agent_filter_mobile
@@ -73,13 +73,13 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_agent_index_with_invalid_filter
     get :index, controller_params(name: 'John')
     assert_response 400
-    match_json([bad_request_error_pattern('name', 'invalid_field')])
+    match_json([bad_request_error_pattern('name', :invalid_field)])
   end
 
   def test_agent_filter_invalid_state
     get :index, controller_params(state: 'active')
     assert_response 400
-    match_json([bad_request_error_pattern('state', 'not_included', list: 'occasional,fulltime')])
+    match_json([bad_request_error_pattern('state', :not_included, list: 'occasional,fulltime')])
   end
 
   def test_show_agent

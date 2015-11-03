@@ -10,13 +10,13 @@
 
      def valid_agent?
        invalid_user = get_invalid_user [] << escalate_to
-       errors.add(:escalate_to, :blank) if invalid_user.present?
+       errors[:escalate_to] << :blank if invalid_user.present?
      end
 
      def valid_agent
        invalid_users = get_invalid_user agent_groups.map(&:user_id)
        if invalid_users.present?
-         errors.add(:agent_ids, 'list is invalid')
+         errors[:agent_ids] << :invalid_list
          @error_options = { agent_ids: { list: "#{invalid_users.join(', ')}" }  }
        end
      end

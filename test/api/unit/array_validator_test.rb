@@ -29,7 +29,7 @@ class ArrayValidatorTest < ActionView::TestCase
     test.attributes = [1]
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ emails: 'not_a_valid_email', domains: 'data_type_mismatch' }, errors)
+    assert_equal({ emails: 'not_a_valid_email', domains: :data_type_mismatch }, errors)
   end
 
   def test_array_valid_values
@@ -46,7 +46,7 @@ class ArrayValidatorTest < ActionView::TestCase
     test.attributes = [nil]
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ attributes: 'is not a number' }, errors)
+    assert_equal({ attributes: "is not a number" }, errors)
   end
 
   def test_attribute_with_errors
@@ -54,7 +54,7 @@ class ArrayValidatorTest < ActionView::TestCase
     test.multi_error = 'Junk String'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ multi_error: 'data_type_mismatch' }, errors)
+    assert_equal({ multi_error: :data_type_mismatch }, errors)
     assert errors.count == 1
   end
 end

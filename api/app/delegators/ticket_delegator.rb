@@ -26,13 +26,13 @@ class TicketDelegator < SimpleDelegator
   end
 
   def active_email_config
-    errors.add(:email_config_id, 'invalid_email_config') unless email_config.try(:active)
+    errors[:email_config_id] << :invalid_email_config unless email_config.try(:active)
   end
 
   def product_presence
     product = Account.current.products_from_cache.detect { |x| get_product_id == x.id }
     if product.nil?
-      errors.add(:product_id, "can't be blank")
+      errors[:product_id] << :blank
     else
       schema_less_ticket.product = product
     end
@@ -71,8 +71,8 @@ class TicketDelegator < SimpleDelegator
 
   def product_email_config_match
     assign_email_config_and_product_values
-    errors.add(:product_id, 'product_mismatch') if get_product_id != @old_product_id
-    errors.add(:email_config_id, 'email_config_mismatch') if email_config_id != @old_email_config_id
+    errors[:product_id] << :product_mismatch if get_product_id != @old_product_id
+    errors[:email_config_id] << :email_config_mismatch if email_config_id != @old_email_config_id
   end
 
   def assign_email_config_and_product_values
@@ -104,8 +104,8 @@ class TicketDelegator < SimpleDelegator
     final_group_id = group_id || get_email_config(flag)
     valid = final_group_id.nil? || Account.current.agent_groups.exists?(group_id: final_group_id, user_id: responder_id)
     unless valid
-      error_message = group_id ? 'not_part_of_group' : 'not_part_of_email_config_group'
-      errors.add(:responder_id, error_message)
+      error_message = group_id ? :not_part_of_group : :not_part_of_email_config_group
+      errors[:responder_id] << error_message
     end
   end
 
@@ -119,7 +119,7 @@ class TicketDelegator < SimpleDelegator
   def group_presence # this is a custom validate method so that group cache can be used.
     group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
-      errors.add(:group, "can't be blank")
+      errors[:group] << :blank
     else
       self.group = group
     end
@@ -128,14 +128,14 @@ class TicketDelegator < SimpleDelegator
   def responder_presence #
     responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
     if responder.nil?
-      errors.add(:responder, "can't be blank")
+      errors[:responder] << :blank
     else
       self.responder = responder
     end
   end
 
   def user_blocked?
-    errors.add(:requester_id, 'user_blocked') if requester && requester.blocked?
+    errors[:requester_id] << :user_blocked if requester && requester.blocked?
   end
 
   def required_based_on_status?

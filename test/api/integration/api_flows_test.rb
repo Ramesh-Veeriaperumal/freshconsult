@@ -134,7 +134,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
     end
     assert_response 500
-    response.body.must_match_json_expression(base_error_pattern('internal_error'))
+    response.body.must_match_json_expression(base_error_pattern(:internal_error))
   end
 
   def test_multipart_data_with_valid_data_types
@@ -628,7 +628,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal '200', response.headers['X-RateLimit-Total']
-    byebug
     @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
     @account.reload.subscription.reload.subscription_plan
 

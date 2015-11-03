@@ -56,14 +56,14 @@ module ApiDiscussions
     def test_create_without_title
       post :create, construct_params({ id: forum_obj.id },
                                      message_html: 'test content')
-      match_json([bad_request_error_pattern('title', 'missing_field')])
+      match_json([bad_request_error_pattern('title', :missing_field)])
       assert_response 400
     end
 
     def test_create_without_message
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title')
-      match_json([bad_request_error_pattern('message_html', 'missing_field')])
+      match_json([bad_request_error_pattern('message_html', :missing_field)])
       assert_response 400
     end
 
@@ -75,29 +75,29 @@ module ApiDiscussions
 
     def test_create_invalid_user_field
       post :create, construct_params({ id: forum_obj.id }, title: 'test title', message_html: 'test content', user_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
+      match_json([bad_request_error_pattern('user_id', :invalid_field)])
       assert_response 400
     end
 
     def test_create_validate_numericality
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content', stamp_type: 'hj')
-      match_json([bad_request_error_pattern('stamp_type', 'data_type_mismatch', data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('stamp_type', :data_type_mismatch, data_type: 'Positive Integer')])
       assert_response 400
     end
 
     def test_create_validate_inclusion
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content',  sticky: 'junk', locked: 'junk2')
-      match_json([bad_request_error_pattern('locked', 'data_type_mismatch', data_type: 'Boolean'),
-                  bad_request_error_pattern('sticky', 'data_type_mismatch', data_type: 'Boolean')])
+      match_json([bad_request_error_pattern('locked', :data_type_mismatch, data_type: 'Boolean'),
+                  bad_request_error_pattern('sticky', :data_type_mismatch, data_type: 'Boolean')])
       assert_response 400
     end
 
     def test_create_validate_length
       post :create, construct_params({ id: forum_obj.id },
                                      title: Faker::Lorem.characters(300), message_html: 'test content')
-      match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
+      match_json([bad_request_error_pattern('title', :"is too long (maximum is 255 characters)")])
       assert_response 400
     end
 
@@ -184,7 +184,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', "can't be blank")]
+      match_json [bad_request_error_pattern('user', :"can't be blank")]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -200,7 +200,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', "can't be blank")]
+      match_json [bad_request_error_pattern('user', :"can't be blank")]
     end
 
     def test_show
@@ -222,7 +222,7 @@ module ApiDiscussions
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title', message_html: 'test content', sticky: true)
       assert_response 400
-      match_json([bad_request_error_pattern('sticky', 'invalid_field')])
+      match_json([bad_request_error_pattern('sticky', :invalid_field)])
     end
 
     def test_update_without_edit_topic_privilege
@@ -231,20 +231,20 @@ module ApiDiscussions
       controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
       assert_response 400
-      match_json([bad_request_error_pattern('sticky', 'invalid_field')])
+      match_json([bad_request_error_pattern('sticky', :invalid_field)])
     end
 
     def test_update_with_email
       topic = first_topic
       put :update, construct_params({ id: topic }, email: 'test@test.com')
       assert_response 400
-      match_json([bad_request_error_pattern('email', 'invalid_field')])
+      match_json([bad_request_error_pattern('email', :invalid_field)])
     end
 
     def test_update_with_no_params
       put :update, construct_params({ id: first_topic.id }, {})
       assert_response 400
-      match_json(request_error_pattern('missing_params'))
+      match_json(request_error_pattern(:missing_params))
     end
 
     def test_destroy
@@ -280,32 +280,32 @@ module ApiDiscussions
       allowed_string = allowed.join(',')
       allowed_string += 'nil' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
-      match_json([bad_request_error_pattern('stamp_type', 'allowed_stamp_type', list: allowed_string)])
+      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: allowed_string)])
       assert_response 400
     end
 
     def test_update_without_title
       put :update, construct_params({ id: first_topic.id }, title: '')
-      match_json([bad_request_error_pattern('title', "can't be blank")])
+      match_json([bad_request_error_pattern('title', :"can't be blank")])
       assert_response 400
     end
 
     def test_update_without_message
       put :update, construct_params({ id: first_topic.id }, forum_id: forum_obj.id,
                                                             message_html: '')
-      match_json([bad_request_error_pattern('message_html', "can't be blank")])
+      match_json([bad_request_error_pattern('message_html', :"can't be blank")])
       assert_response 400
     end
 
     def test_update_invalid_forum_id
       put :update, construct_params({ id: first_topic.id }, forum_id: (1000 + Random.rand(11)))
-      match_json([bad_request_error_pattern('forum_id', "can't be blank")])
+      match_json([bad_request_error_pattern('forum_id', :"can't be blank")])
       assert_response 400
     end
 
     def test_update_invalid_title_length
       put :update, construct_params({ id: first_topic.id }, title: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('title', 'is too long (maximum is 255 characters)')])
+      match_json([bad_request_error_pattern('title', :"is too long (maximum is 255 characters)")])
       assert_response 400
     end
 
@@ -321,9 +321,9 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', 'required_and_numericality'),
-                  bad_request_error_pattern('title', "can't be blank"),
-                  bad_request_error_pattern('message_html', "can't be blank")
+      match_json([bad_request_error_pattern('forum_id', :required_and_numericality),
+                  bad_request_error_pattern('title', :"can't be blank"),
+                  bad_request_error_pattern('message_html', :"can't be blank")
                  ])
       assert_response 400
     end
@@ -352,7 +352,7 @@ module ApiDiscussions
     def test_followed_by_non_numeric_id
       get :followed_by, controller_params(user_id: 'test')
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', 'is not a number')])
+      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
     end
 
     def test_followed_by_without_user_id
@@ -372,7 +372,7 @@ module ApiDiscussions
       monitor_topic(first_topic, user, 1)
       get :followed_by, controller_params(user_id: user.id)
       assert_response 403
-      match_json(request_error_pattern('access_denied', id: user.id))
+      match_json(request_error_pattern(:access_denied, id: user.id))
     end
 
     def test_followed_by_without_privilege_valid
@@ -408,7 +408,7 @@ module ApiDiscussions
       @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       get :is_following, controller_params(user_id: user.id, id: first_topic.id)
       assert_response 403
-      match_json(request_error_pattern('access_denied', id: user.id))
+      match_json(request_error_pattern(:access_denied, id: user.id))
       @controller.unstub(:privilege?)
     end
 
@@ -424,13 +424,13 @@ module ApiDiscussions
     def test_is_following_non_numeric_user_id
       get :is_following, controller_params(user_id: 'test', id: first_topic.id)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', 'is not a number')])
+      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
     end
 
     def test_is_following_unexpected_fields
       get :is_following, controller_params(junk: 'test', id: first_topic.id)
       assert_response 400
-      match_json([bad_request_error_pattern('junk', 'invalid_field')])
+      match_json([bad_request_error_pattern('junk', :invalid_field)])
     end
 
     def test_is_following_invalid_user_id

@@ -36,7 +36,7 @@ class DateTimeValidatorTest < ActionView::TestCase
     test.multi_error = 'thy'
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({ multi_error: 'data_type_mismatch' }, test.errors.to_h)
+    assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
   end
 
   def test_valid_allow_nil

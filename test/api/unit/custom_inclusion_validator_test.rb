@@ -29,7 +29,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'required_and_inclusion' }, errors)
+    assert_equal({ attribute2: :required_and_inclusion }, errors)
     assert_equal({ attribute2: { list: '1,2' } }, error_options)
   end
 
@@ -39,7 +39,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'not_included' }, errors)
+    assert_equal({ attribute2: :not_included }, errors)
     assert_equal({ attribute2: { list: '1,2' } }, error_options)
   end
 
@@ -50,7 +50,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'not_included' }, errors)
+    assert_equal({ attribute2: :not_included }, errors)
     assert_equal({}, error_options)
     test.unstub(:methods)
   end
@@ -62,7 +62,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute3: 'not_included' }, errors)
+    assert_equal({ attribute3: :not_included }, errors)
     assert_equal({}, error_options)
   end
 
@@ -72,7 +72,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'not_included' }, errors)
+    assert_equal({ attribute2: :not_included }, errors)
     assert_equal({ attribute2: { list: '1,2' } }, error_options)
   end
 
@@ -105,7 +105,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute1: 'attribute1_invalid', attribute2: 'required_and_inclusion', attribute4: 'not_included' }, errors)
+    assert_equal({ attribute1: 'attribute1_invalid', attribute2: :required_and_inclusion, attribute4: :not_included }, errors)
     assert_equal({ attribute1: { list: '1,2' }, attribute2: { list: '1,2' }, attribute4: { list: '1,2' } }, error_options)
   end
 
@@ -114,7 +114,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     test.attribute2 = 1
     test.multi_error = '78'
     refute test.valid?
-    assert test.errors.count == 1
-    assert_equal({ multi_error: 'data_type_mismatch' }, test.errors.to_h)
+    assert test.errors.to_h.keys.count == 1
+    assert_equal({ multi_error: :data_type_mismatch }, test.errors.to_h)
   end
 end

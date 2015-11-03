@@ -51,13 +51,13 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, 'required_integer')
+    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, :required_integer)
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, 'required_boolean')
+    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, :required_boolean)
     DataTypeValidator.new(boolean_options).validate(record)
   end
 
@@ -113,7 +113,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Date validator for date field
   def validate_custom_date(record, field_name)
-    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required, only_date: true }, 'required_date')
+    date_options = construct_options({ attributes: field_name, allow_nil: !@is_required, only_date: true }, :required_date)
     DateTimeValidator.new(date_options).validate(record)
   end
 
@@ -169,7 +169,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id) }
       children.each do |child|
         next if values[child.name].blank?
-        record.errors.add(field_name.to_sym, 'conditional_not_blank')
+        record.errors[field_name.to_sym] << :conditional_not_blank
         (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.name })
         return true
       end
@@ -191,7 +191,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # construct options hash for diff validators
-    def construct_options(custom_options, required_message = 'missing')
+    def construct_options(custom_options, required_message = :missing)
       options_hash = options.merge(custom_options)
 
       # custom message to be merged to give missing_field as code in error response if no field is defined & is required.

@@ -83,7 +83,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       sample_user = User.last
       params = { client_manager: true }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
-      match_json([bad_request_error_pattern('company_id', 'company_id_required')])
+      match_json([bad_request_error_pattern('company_id', :company_id_required)])
 
       company = get_company
       params = { client_manager: true, company_id: company.id }
@@ -145,8 +145,8 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       assert contact.tag_names.split(',').count == 1
 
       put "/api/contacts/#{contact.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', 'data_type_mismatch', data_type: 'Array')])
-      assert_response 400
+      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
+	    assert_response 400
 
       put "/api/contacts/#{contact.id}", { tags: [] }.to_json, @write_headers
       assert_response 200

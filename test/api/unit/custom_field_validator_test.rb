@@ -115,7 +115,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'country_1' => 'klk', 'dropdown2_1' => 'jkjk', 'dropdown_3' => 'efgh' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'not_included', dropdown2_1: 'not_included', dropdown_3: 'not_included' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :not_included, dropdown2_1: :not_included, dropdown_3: :not_included }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -125,9 +125,9 @@ class CustomFieldValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     assert_equal(
       {
-        check1_1: 'data_type_mismatch', check2_1: 'data_type_mismatch', decimal1_1: 'is not a number',
-        decimal2_1: 'is not a number', number1_1: 'data_type_mismatch',
-        number2_1: 'data_type_mismatch', url_1: 'invalid_format', url_2: 'invalid_format'
+        check1_1: :data_type_mismatch, check2_1: :data_type_mismatch, decimal1_1: "is not a number",
+        decimal2_1: "is not a number", number1_1: :data_type_mismatch,
+        number2_1: :data_type_mismatch, url_1: 'invalid_format', url_2: 'invalid_format'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
@@ -154,7 +154,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'country_1' => 'jkjk', 'state_1' => 'ww', 'city_1' => 'los ww' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'not_included' }, errors)
+    assert_equal({ country_1: :not_included }, errors)
     assert_equal({ country_1: { list: 'Usa,india' } }, test.error_options)
   end
 
@@ -162,7 +162,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'uiuiu', 'city_1' => 'ww angeles' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ state_1: 'not_included' }, errors)
+    assert_equal({ state_1: :not_included }, errors)
     assert_equal({ state_1: { list: 'california' } }, test.error_options)
   end
 
@@ -170,7 +170,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'california', 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ city_1: 'not_included' }, errors)
+    assert_equal({ city_1: :not_included }, errors)
     assert_equal({ city_1: { list: 'los angeles,san fransico,san diego' } }, test.error_options)
   end
 
@@ -178,7 +178,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'state_1' => 'california', 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'conditional_not_blank' }, errors)
+    assert_equal({ country_1: :conditional_not_blank }, errors)
     assert_equal({ country_1: { child: 'state_1' } }, test.error_options)
   end
 
@@ -186,7 +186,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'conditional_not_blank', state_1: 'conditional_not_blank' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :conditional_not_blank, state_1: :conditional_not_blank }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { child: 'city_1' }, state_1: { child: 'city_1' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -194,7 +194,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: 'Junk string 1', attribute2: 'junk string 2')
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ attribute1: 'data_type_mismatch', attribute2: 'data_type_mismatch' }, errors)
+    assert_equal({ attribute1: :data_type_mismatch, attribute2: :data_type_mismatch }, errors)
     assert errors.count == 2
   end
 
@@ -202,7 +202,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing', dropdown_3: 'required_and_inclusion', dropdown_4: 'required_and_inclusion', check_2: 'required_boolean', check_3: 'required_boolean', decimal_3: 'required_number', decimal_4: 'required_number', multi_2: 'missing', multi_3: 'missing', number_3: 'required_integer', number_4: 'required_integer', phone_1: 'missing', phone_2: 'missing', single_2: 'missing', single_3: 'missing', url_1: 'required_format', url_2: 'required_format', date_1: 'required_date'  }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: "required_number", decimal2_1: "required_number", number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown_3: :required_and_inclusion, dropdown_4: :required_and_inclusion, check_2: :required_boolean, check_3: :required_boolean, decimal_3: "required_number", decimal_4: "required_number", multi_2: :missing, multi_3: :missing, number_3: :required_integer, number_4: :required_integer, phone_1: :missing, phone_2: :missing, single_2: :missing, single_3: :missing, url_1: 'required_format', url_2: 'required_format', date_1: :required_date  }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
@@ -215,7 +215,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: 'required_and_inclusion', first_1: 'required_and_inclusion', check2_1: 'required_boolean', dropdown2_1: 'required_and_inclusion', dropdown1_1: 'required_and_inclusion', check1_1: 'required_boolean', decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: 'required_integer', number2_1: 'required_integer', single_1: 'missing', multi_1: 'missing', phone: 'missing', dropdown_3: 'required_and_inclusion', dropdown_4: 'required_and_inclusion', check_2: 'required_boolean', check_3: 'required_boolean', decimal_3: 'required_number', decimal_4: 'required_number', multi_2: 'missing', multi_3: 'missing', number_3: 'required_integer', number_4: 'required_integer', phone_1: 'missing', phone_2: 'missing', single_2: 'missing', single_3: 'missing', url_1: 'required_format', url_2: 'required_format', date_1: 'required_date' }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: "required_number", decimal2_1: "required_number", number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown_3: :required_and_inclusion, dropdown_4: :required_and_inclusion, check_2: :required_boolean, check_3: :required_boolean, decimal_3: "required_number", decimal_4: "required_number", multi_2: :missing, multi_3: :missing, number_3: :required_integer, number_4: :required_integer, phone_1: :missing, phone_2: :missing, single_2: :missing, single_3: :missing, url_1: 'required_format', url_2: 'required_format', date_1: :required_date }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },

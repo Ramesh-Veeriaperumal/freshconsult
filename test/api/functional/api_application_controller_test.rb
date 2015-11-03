@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class ApiApplicationControllerTest < ActionController::TestCase
   def test_invalid_field_handler
-    error_array = { 'name' => ['invalid_field'], 'test' => ['invalid_field'] }
+    error_array = { 'name' => :invalid_field, 'test' => :invalid_field }
     @controller.expects(:render_errors).with(error_array).once
     @controller.send(:invalid_field_handler, ActionController::UnpermittedParameters.new(['name', 'test']))
   end
@@ -78,7 +78,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
 
   def test_notify_new_relic_agent
     @controller.request.env['ORIGINAL_FULLPATH'] = '/api/tickets'
-    NewRelic::Agent.expects(:notice_error).with('Exception',  :uri => 'http://localhost.freshpo.com/api/tickets', :custom_params => {:method => 'GET', :params => {}}).once
+    NewRelic::Agent.expects(:notice_error).with('Exception', {:uri => 'http://localhost.freshpo.com/api/tickets', :custom_params => {:method => 'GET', :params => {}, :x_request_id => nil}}).once
     @controller.send(:notify_new_relic_agent, 'Exception')
   end
 

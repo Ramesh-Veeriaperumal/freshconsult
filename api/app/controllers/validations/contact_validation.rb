@@ -19,7 +19,7 @@ class ContactValidation < ApiValidation
   validate :contact_detail_missing
   validate :check_update_email, if: -> { email }, on: :update
 
-  validates :company_name, required: { allow_nil: false, message: 'company_id_required' }, if: -> { client_manager.to_s == 'true' }
+  validates :company_name, required: { allow_nil: false, message: :company_id_required }, if: -> { client_manager.to_s == 'true' }
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
@@ -47,18 +47,18 @@ class ContactValidation < ApiValidation
 
     def contact_detail_missing
       if [:email, :mobile, :phone, :twitter_id].all? { |x| send(x).blank? && errors[x].blank? }
-        errors.add(:email, 'fill_a_mandatory_field')
+        errors[:email] << :fill_a_mandatory_field
       end
     end
 
     def validate_avatar
       if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)
-        errors.add(:avatar, 'upload_jpg_or_png_file')
+        errors[:avatar] << :upload_jpg_or_png_file
       end
     end
 
     def check_update_email
-      errors.add(:email, 'email_cant_be_updated') if @email_update
+      errors[:email] << :email_cant_be_updated if @email_update
     end
 
     def attributes_to_be_stripped

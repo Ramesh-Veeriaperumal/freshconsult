@@ -2,7 +2,7 @@ class TicketFilterValidation < ApiValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :order_type, :conditions, :requester
 
-  validates :company_id, :requester_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: 'positive_number' }
+  validates :company_id, :requester_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: :positive_number }
   validate :check_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :check_company, if: -> { errors[:company_id].blank? && company_id }
   validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, allow_nil: true
@@ -25,11 +25,11 @@ class TicketFilterValidation < ApiValidation
   def check_requester
     # This validation will not query again if @email is set
     requester = @email ? @requester : Account.current.all_users.where(id: @requester_id).first
-    errors.add(:requester_id, "can't be blank") unless requester
+    errors[:requester_id] << :blank unless requester
   end
 
   def check_company
     company = Account.current.companies_from_cache.detect { |c| c.id == @company_id.to_i }
-    errors.add(:company_id, "can't be blank") unless company
+    errors[:company_id] << :blank unless company
   end
 end

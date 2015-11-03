@@ -22,6 +22,6 @@ class CategoryValidationsTest < ActionView::TestCase
     assert_equal false, category.valid?
     assert_equal 1, category.errors.count
     assert_equal 'name'.to_sym, category.errors.first.first
-    assert_equal "can't be blank", category.errors.first.last
+    assert_equal :blank, category.errors.first.last
   end
 end

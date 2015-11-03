@@ -21,7 +21,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute1: 'special_chars_present' }, errors)
+    assert_equal({ attribute1: :special_chars_present }, errors)
     assert_equal({ attribute1: { chars: ',' } }, error_options)
   end
 
@@ -30,7 +30,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'special_chars_present' }, errors)
+    assert_equal({ attribute2: :special_chars_present }, errors)
     assert_equal({ attribute2: { chars: [',', 'junk', '!', '$'].join('\',\'') } }, error_options)
   end
 
@@ -39,7 +39,7 @@ class StringRejectionValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: 'data_type_mismatch' }, errors)
+    assert_equal({ attribute2: :data_type_mismatch }, errors)
     assert errors.count == 1
   end
 

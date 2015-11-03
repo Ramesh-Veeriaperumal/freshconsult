@@ -179,13 +179,13 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter
     get :index, construct_params({ test: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('test', 'invalid_field')])
+    match_json([bad_request_error_pattern('test', :invalid_field)])
   end
 
   def test_index_with_invalid_filter_value
     get :index, construct_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', "can't be blank")])
+    match_json([bad_request_error_pattern('type', :"can't be blank")])
   end
 
   def test_index_with_valid_filter

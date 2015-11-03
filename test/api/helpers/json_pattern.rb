@@ -1,10 +1,10 @@
 module JsonPattern
   def bad_request_error_pattern(field, value, params_hash = {})
-    message = BaseError::ERROR_MESSAGES.key?(value.to_s) ? BaseError::ERROR_MESSAGES[value.to_s].to_s : value.to_s
+    message = ErrorConstants::ERROR_MESSAGES.key?(value.to_sym) ? ErrorConstants::ERROR_MESSAGES[value.to_sym].to_s : value.to_s
     {
       field: "#{field}",
       message: message % params_hash,
-      code: BaseError::API_ERROR_CODES_BY_VALUE[value] || BaseError::DEFAULT_CUSTOM_CODE
+      code: ErrorConstants::API_ERROR_CODES_BY_VALUE[value] || ErrorConstants::DEFAULT_CUSTOM_CODE
     }
   end
 
@@ -36,7 +36,7 @@ module JsonPattern
   end
 
   def request_error_pattern(code, params_hash = {})
-    message = BaseError::ERROR_MESSAGES.key?(code.to_s) ? BaseError::ERROR_MESSAGES[code.to_s].to_s : code.to_s
+    message = ErrorConstants::ERROR_MESSAGES.key?(code.to_sym) ? ErrorConstants::ERROR_MESSAGES[code.to_sym].to_s : code.to_s
     {
       code: code,
       message: message % params_hash
@@ -44,7 +44,7 @@ module JsonPattern
   end
 
   def base_error_pattern(code, params_hash = {})
-    message = BaseError::ERROR_MESSAGES.key?(code.to_s) ? BaseError::ERROR_MESSAGES[code.to_s].to_s : code.to_s
+    message = ErrorConstants::ERROR_MESSAGES.key?(code.to_sym) ? ErrorConstants::ERROR_MESSAGES[code.to_sym].to_s : code.to_s
     {
       message: message % params_hash
     }

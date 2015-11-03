@@ -7,10 +7,10 @@ class DataTypeValidator < ActiveModel::EachValidator
     return if record.errors[attribute].present?
 
     message = options[:message]
-    message ||= required_attribute_not_defined?(record, attribute, values) ? 'required_and_data_type_mismatch' : 'data_type_mismatch'
+    message ||= required_attribute_not_defined?(record, attribute, values) ? :required_and_data_type_mismatch : :data_type_mismatch
 
     unless valid_type?(options[:rules], values, record, attribute)
-      record.errors[attribute] = message
+      record.errors[attribute] << message
       data_type = DATA_TYPE_MAPPING.key?(options[:rules]) ? DATA_TYPE_MAPPING[options[:rules]] : options[:rules]
       (record.error_options ||= {}).merge!(attribute => { data_type: data_type })
     end

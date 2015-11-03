@@ -17,14 +17,14 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param  }
 
-  validates :requester_id, required: { allow_nil: false, message: 'requester_id_mandatory' }, if: :requester_id_mandatory? # No
-  validates :name, required: { allow_nil: false, message: 'phone_mandatory' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
+  validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
+  validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
 
   # Due by and First response due by validations
-  validates :fr_due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_fr_due_by?
-  validates :due_by, custom_absence: { allow_nil: true, message: 'invalid_field' }, if: :disallow_due_by?
-  validates :due_by, required: { message: 'due_by_validation' }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
-  validates :fr_due_by, required: { message: 'fr_due_by_validation' }, if: -> { due_by && errors[:due_by].blank? }
+  validates :fr_due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_due_by?
+  validates :due_by, required: { message: :due_by_validation }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
+  validates :fr_due_by, required: { message: :fr_due_by_validation }, if: -> { due_by && errors[:due_by].blank? }
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
   validate :due_by_validation, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
   validate :fr_due_by_validation, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
@@ -86,16 +86,16 @@ class TicketValidation < ApiValidation
   end
 
   def due_by_validation
-    errors.add(:due_by, 'gt_created_and_now') if due_by < (@item.try(:created_at) || Time.zone.now)
+    errors[:due_by] << :gt_created_and_now if due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
   def fr_due_by_validation
-    errors.add(:fr_due_by, 'gt_created_and_now') if fr_due_by < (@item.try(:created_at) || Time.zone.now)
+    errors[:fr_due_by] << :gt_created_and_now if fr_due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
   def cc_emails_max_count
     if cc_emails.count > TicketConstants::MAX_EMAIL_COUNT
-      errors.add(:cc_emails, 'max_count_exceeded')
+      errors[:cc_emails] << :max_count_exceeded
       (self.error_options ||= {}).merge!(cc_emails: { max_count: "#{TicketConstants::MAX_EMAIL_COUNT}" })
     end
   end

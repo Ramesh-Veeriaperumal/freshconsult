@@ -33,7 +33,7 @@ class FakeControllerTest < ActionController::TestCase
     User.any_instance.unstub(:can_view_all_tickets)
     ticket.schema_less_ticket.update_attribute(:trashed, false)
     assert_equal 403, response.status
-    assert_equal request_error_pattern('access_denied').to_json, response.body
+    assert_equal request_error_pattern(:access_denied).to_json, response.body
   end
 
   def test_verify_ticket_permission_invalid
@@ -47,7 +47,7 @@ class FakeControllerTest < ActionController::TestCase
     User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
     Helpdesk::Ticket.any_instance.unstub(:responder_id, :requester_id)
     assert_equal 403, response.status
-    assert_equal request_error_pattern('access_denied').to_json, response.body
+    assert_equal request_error_pattern(:access_denied).to_json, response.body
   end
 
   def test_verify_ticket_permission_has_ticket_permission_valid
@@ -73,7 +73,7 @@ class FakeControllerTest < ActionController::TestCase
     User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission, :agent_groups)
     Helpdesk::Ticket.unstub(:responder_id, :requester_id)
     assert_equal 403, response.status
-    assert_equal request_error_pattern('access_denied').to_json, response.body
+    assert_equal request_error_pattern(:access_denied).to_json, response.body
   end
 
   def test_verify_ticket_permission_with_responder_ticket_permission_valid

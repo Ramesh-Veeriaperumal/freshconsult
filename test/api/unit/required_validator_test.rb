@@ -6,14 +6,14 @@ class RequiredValidatorTest < ActionView::TestCase
 
     attr_accessor :name, :id, :title
     validates :name, :title, required: true
-    validates :id, required: { allow_nil: true, message: 'required_and_numericality' }
+    validates :id, required: { allow_nil: true, message: :required_and_numericality }
   end
 
   def test_attribute_not_defined
     test = TestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: 'missing', title: 'missing' }, errors)
+    assert_equal({ name: :missing, title: :missing }, errors)
   end
 
   def test_attribute_blank
@@ -21,7 +21,7 @@ class RequiredValidatorTest < ActionView::TestCase
     test.name = test.title = ''
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: "can't be blank", title: "can't be blank" }, errors)
+    assert_equal({ name: :blank, title: :blank }, errors)
   end
 
   def test_disallow_nil
@@ -30,7 +30,7 @@ class RequiredValidatorTest < ActionView::TestCase
     test.id = ''
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ id: 'required_and_numericality' }, errors)
+    assert_equal({ id: :required_and_numericality }, errors)
   end
 
   def test_valid_values
