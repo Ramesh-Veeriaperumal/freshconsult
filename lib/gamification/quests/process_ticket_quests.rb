@@ -8,7 +8,7 @@ module Gamification
 				args.symbolize_keys!
 				id, account_id = args[:id], args[:account_id]
 				ticket = Helpdesk::Ticket.find_by_id_and_account_id(id, account_id)
-				return if ticket.deleted or ticket.spam
+				return if ticket.blank? or ticket.deleted or ticket.spam
 				args.key?(:rollback) ? rollback_ticket_quests(ticket, args[:resolved_time_was]) : evaluate_ticket_quests(ticket)
 			end
 
