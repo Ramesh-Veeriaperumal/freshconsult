@@ -1,6 +1,10 @@
 class ApiProductsController < ApiApplicationController
   private
 
+    def feature_name
+      FeatureConstants::PRODUCTS
+    end
+
     def scoper
       current_account.products_from_cache
     end

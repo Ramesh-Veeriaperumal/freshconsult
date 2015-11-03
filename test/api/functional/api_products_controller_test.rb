@@ -28,6 +28,14 @@ class ApiProductsControllerTest < ActionController::TestCase
     assert_equal ' ', response.body
   end
 
+  def test_show_product_with_feature_disabled
+    product = create_product
+    @account.class.any_instance.stubs(:features_included?).returns(false)
+    get :show, construct_params(id: product.id)
+    @account.class.any_instance.unstub(:features_included?)
+    assert_response 403
+  end
+
   def test_handle_show_request_for_invalid_product_id
     get :show, construct_params(id: Faker::Name.name)
     assert_response 404
