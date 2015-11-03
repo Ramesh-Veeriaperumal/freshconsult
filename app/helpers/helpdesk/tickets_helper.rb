@@ -11,7 +11,6 @@ module Helpdesk::TicketsHelper
   include Helpdesk::TicketsHelperMethods
   include MetaHelperMethods
   include Helpdesk::TicketFilterMethods
-  include Faye::Token
   
   include HelpdeskAccessMethods
   
@@ -405,17 +404,6 @@ module Helpdesk::TicketsHelper
                 "data-remote-url" => options[:path]).html_safe
   end
 
-  def faye_auth_params
-    @data = @data || {
-      :userId      => current_user.id,
-      :name       => current_user.name,
-      :accountId   => current_account.id,
-      :domainName  => current_account.full_domain,
-      :auth        => generate_hmac_token(current_user),
-      :secure      => current_account.ssl_enabled? 
-    }.to_json.html_safe
-  end
-
   def socket_auth_params(connection)
     aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     aes.encrypt
@@ -438,24 +426,20 @@ module Helpdesk::TicketsHelper
     "#{request.protocol}#{NodeConfig["socket_autorefresh_host"]}"
   end
 
-  def auto_refresh_channel
-    Faye::AutoRefresh.channel(current_account)
-  end
-
   def agent_collision_index_channel
-    Faye::AgentCollision.channel(current_account);
+    AgentCollision.channel(current_account);
   end
 
   def agent_collision_ticket_view_channel(ticket_id)
-    Faye::AgentCollision.ticket_view_channel(current_account,ticket_id)
+    AgentCollision.ticket_view_channel(current_account,ticket_id)
   end
 
   def agent_collision_ticket_reply_channel(ticket_id)
-    Faye::AgentCollision.ticket_replying_channel(current_account,ticket_id)
+    AgentCollision.ticket_replying_channel(current_account,ticket_id)
   end
 
   def agent_collision_ticket_channel(ticket_id)
-    Faye::AgentCollision.ticket_channel(current_account,ticket_id)
+    AgentCollision.ticket_channel(current_account,ticket_id)
   end
 
 

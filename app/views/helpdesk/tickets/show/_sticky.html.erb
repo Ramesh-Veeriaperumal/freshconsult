@@ -151,8 +151,8 @@
 		<div class="source-badge-wrap">
 			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status} " + 
 				 		("spam" if @ticket.spam).to_s + 
-				 		("deleted" if @ticket.deleted).to_s %>' >
-				<span class="source_<%= @ticket.source %>"></span>
+				 		("deleted" if @ticket.deleted).to_s %>' id = "ar_notification" rel="ar-notice-popover">
+				<span class="source_<%= @ticket.source %>" ></span><div class="ar_notification_bubble hide">0</div>
 			</div>
 		</div>
 		<div id="agent_collision_placeholder"></div>

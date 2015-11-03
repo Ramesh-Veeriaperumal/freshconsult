@@ -4446,6 +4446,12 @@ en:
     outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
+    agent_reply: Agent Reply
+    agent_replies: Agent Replies
+    customer_reply: Customer Reply
+    customer_replies: Customer Replies
+    private_note: Private Note
+    private_notes: Private Notes
     ticket_updated: Ticket updated
     tickets_updated: Tickets updated
     reload_view: Reload View
