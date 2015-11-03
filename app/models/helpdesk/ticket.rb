@@ -540,8 +540,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.company_id if requester
   end
 
-  def last_interaction  
-    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.body
+  def last_interaction
+    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.try(:body).to_s
   end
 
   #To use liquid template...
