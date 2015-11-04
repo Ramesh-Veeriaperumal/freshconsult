@@ -98,6 +98,11 @@
 		width:100%;
 		@include clear(both);
 	}
+
+	ul.agent_group_list li {
+    	clear: both;
+    	min-height: 42px;
+	}
 }
 .agent-role{
 	margin-top:30px;

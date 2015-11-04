@@ -219,7 +219,7 @@
       <li class="control-group">
         <%= label(:agent, :groups, t('agent.member'), :class => "control-label") %>
         <div class="controls" id="selected-groups">
-          <ul class="unstyled">
+          <ul class="unstyled agent_group_list">
             <% @agent.groups.each do |group| %>
               <li id = <%= "group_#{group.id}" %> 
                 <%= label( :agent, :groups, 
