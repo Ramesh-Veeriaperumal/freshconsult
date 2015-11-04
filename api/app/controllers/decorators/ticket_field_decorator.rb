@@ -13,7 +13,7 @@ class TicketFieldDecorator < SimpleDelegator
     end
 
     def ticket_field_choices(tf)
-      case field_type
+      case tf.field_type
         when 'custom_dropdown'
           tf.picklist_values.map(&:value)
         when 'default_priority'
@@ -21,7 +21,7 @@ class TicketFieldDecorator < SimpleDelegator
         when 'default_source'
           Hash[TicketConstants.source_names]
         when 'nested_field'
-          formatted_nested_choices
+          tf.formatted_nested_choices
         when 'default_status'
           api_statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do|status|
             [

@@ -11,7 +11,7 @@ class ApiCompanyValidation < ApiValidation
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
-    validatable_custom_fields: proc { Helpers::CompaniesValidationHelper.custom_non_dropdown_fields },
+    validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent
   }
   }
