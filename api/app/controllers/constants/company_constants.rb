@@ -5,7 +5,7 @@ module CompanyConstants
 
   FIELDS = %w(name description domains note).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
 
-  FIELDS_TO_BE_STRIPPED = %w(name description note domains custom_fields).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(name description note domains custom_fields).freeze
 
   DEFAULT_FIELD_VALIDATIONS =  {
     description:  { data_type: { rules: String } },

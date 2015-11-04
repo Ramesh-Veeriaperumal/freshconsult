@@ -25,6 +25,6 @@ class NoteValidation < ApiValidation
   end
 
   def attributes_to_be_stripped
-    NoteConstants::FIELDS_TO_BE_STRIPPED
+    NoteConstants::ATTRIBUTES_TO_BE_STRIPPED
   end
 end

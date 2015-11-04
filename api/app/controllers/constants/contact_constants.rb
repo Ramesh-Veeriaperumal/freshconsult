@@ -27,7 +27,7 @@ module ContactConstants
 
   LANGUAGES = I18n.available_locales.map(&:to_s).freeze
 
-  FIELDS_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze

@@ -32,7 +32,7 @@ class ApiContactsController < ApiApplicationController
   def make_agent
     if @item.email.blank?
       render_request_error :inconsistent_state, 409
-    elsif !current_account.subscription.agent_limit.nil? && reached_agent_limit?
+    elsif !current_account.subscription.agent_limit.nil? && agent_limit_reached?
       render_request_error :max_agents_reached, 403
     else
       if @item.make_agent
@@ -95,7 +95,7 @@ class ApiContactsController < ApiApplicationController
         params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
       end
 
-      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], @contact_fields) if params_hash[:custom_fields]
+      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:name)) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
     end
@@ -135,7 +135,7 @@ class ApiContactsController < ApiApplicationController
       @item.deleted = true if @item.email.present? && @item.email =~ ContactConstants::MAILER_DAEMON_REGEX
     end
 
-    def reached_agent_limit?
+    def agent_limit_reached?
       current_account.agents_from_cache.find_all { |a| a.occasional == false && a.user.deleted == false }.count >= current_account.subscription.agent_limit
     end
 

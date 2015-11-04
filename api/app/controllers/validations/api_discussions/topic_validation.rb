@@ -16,7 +16,7 @@ module ApiDiscussions
     end
 
     def attributes_to_be_stripped
-      DiscussionConstants::TOPIC_FIELDS_TO_BE_STRIPPED
+      DiscussionConstants::TOPIC_ATTRIBUTES_TO_BE_STRIPPED
     end
   end
 end

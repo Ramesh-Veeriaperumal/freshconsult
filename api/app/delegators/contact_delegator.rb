@@ -5,9 +5,9 @@ class ContactDelegator < SimpleDelegator
 
   validates :company, presence: true, if: -> { company_id }
   validates :custom_field, custom_field: { custom_field: {
-    validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields_for_delegator },
-    drop_down_choices: proc { Helpers::ContactsValidationHelper.custom_contact_dropdown_fields },
+    validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
+    drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
     required_attribute: :required_for_agent
   }
-  }, if: -> { custom_field.is_a?(Hash) }
+  }
 end

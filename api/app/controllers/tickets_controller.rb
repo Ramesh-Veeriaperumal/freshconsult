@@ -139,7 +139,11 @@ class TicketsController < ApiApplicationController
 
       # Set manual due by to override sla worker triggerd updates.
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
-      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], @ticket_fields) if params[cname][:custom_fields]
+
+      if params[cname][:custom_fields]
+        checkbox_names = Helpers::TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
+        ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
+      end
 
       params_to_be_deleted = [:cc_emails]
       [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
@@ -159,7 +163,7 @@ class TicketsController < ApiApplicationController
 
     def validate_params
       @ticket_fields = Account.current.ticket_fields_from_cache
-      allowed_custom_fields = Helpers::TicketsValidationHelper.ticket_custom_field_keys(@ticket_fields)
+      allowed_custom_fields = Helpers::TicketsValidationHelper.custom_field_names(@ticket_fields)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = ApiTicketConstants::FIELDS | ['custom_fields' => custom_fields]

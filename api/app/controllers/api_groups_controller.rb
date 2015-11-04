@@ -49,7 +49,7 @@ class ApiGroupsController < ApiApplicationController
 
     def initialize_agents
       prepare_array_fields [:agent_ids]
-      @agents = params[cname][:agent_ids]
+      @agent_ids = params[cname][:agent_ids]
     end
 
     def load_objects
@@ -64,23 +64,23 @@ class ApiGroupsController < ApiApplicationController
 
     def prepare_agents
       initialize_agents
-      drop_existing_agents if update? && @agents
+      drop_existing_agents if update? && @agent_ids
       build_agents
     end
 
     def build_agents
-      @agents.each { |agent| @item.agent_groups.build(user_id: agent, account: Account.current, group: @item) } unless @agents.blank?
+      @agent_ids.each { |agent| @item.agent_groups.build(user_id: agent, account: Account.current, group: @item) } unless @agent_ids.blank?
     end
 
     def drop_existing_agents
       agent_groups = @item.agent_groups
-      if @agents.empty?
+      if @agent_ids.empty?
         agent_groups.destroy_all
       else
-        revised_agent_groups = agent_groups.select { |ag| @agents.exclude?(ag.user_id) }.map(&:destroy)
+        revised_agent_groups = agent_groups.select { |ag| @agent_ids.exclude?(ag.user_id) }.map(&:destroy)
         agent_groups -= revised_agent_groups
-        @agents -= agent_groups.map(&:user_id)
-        @item.agent_groups = agent_groups if @agents.empty? || agent_groups.empty?
+        @agent_ids -= agent_groups.map(&:user_id)
+        @item.agent_groups = agent_groups if @agent_ids.empty? || agent_groups.empty?
       end
     end
 end

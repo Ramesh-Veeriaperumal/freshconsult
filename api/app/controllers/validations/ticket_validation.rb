@@ -51,7 +51,7 @@ class TicketValidation < ApiValidation
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
+                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param
@@ -119,7 +119,7 @@ class TicketValidation < ApiValidation
   end
 
   def attributes_to_be_stripped
-    ApiTicketConstants::FIELDS_TO_BE_STRIPPED
+    ApiTicketConstants::ATTRIBUTES_TO_BE_STRIPPED
   end
 
   def required_default_fields

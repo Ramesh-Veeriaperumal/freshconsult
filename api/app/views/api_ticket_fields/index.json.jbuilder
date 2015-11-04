@@ -14,7 +14,7 @@ json.array! @items do |tf|
     json.partial! 'shared/utc_date_format', item: tf
   end
 
-  choices = TicketFieldDecorator.get_ticket_field_choices(tf)
+  choices = TicketFieldDecorator.ticket_field_choices(tf)
   json.set! :choices, choices if choices.present?
 
   if tf.field_type == 'nested_field'

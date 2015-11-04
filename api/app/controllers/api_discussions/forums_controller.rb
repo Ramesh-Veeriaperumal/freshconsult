@@ -36,12 +36,13 @@ module ApiDiscussions
 
       def sanitize_params
         prepare_array_fields [:company_ids]
-        params[cname][:customer_forums_attributes] = { customer_id:  params[cname].delete(:company_ids) } unless params[cname][:company_ids].nil?
+        customers = params[cname].delete(:company_ids)
+        params[cname][:customer_forums_attributes] = { customer_id: customers } unless customers.nil?
       end
 
       def assign_protected
         @item.account_id ||= current_account.id
-        @item.forum_category_id = params[cname][:forum_category_id] if params[cname][:forum_category_id]
+        @item.forum_category_id = params[cname].delete(:forum_category_id) if params[cname]['forum_category_id']
         @item.forum_category = @category if @category
       end
 

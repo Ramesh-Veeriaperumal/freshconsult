@@ -23,7 +23,7 @@ class ContactValidation < ApiValidation
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
-    validatable_custom_fields: proc { Helpers::ContactsValidationHelper.custom_contact_fields },
+    validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
   }
@@ -62,6 +62,6 @@ class ContactValidation < ApiValidation
     end
 
     def attributes_to_be_stripped
-      ContactConstants::FIELDS_TO_BE_STRIPPED
+      ContactConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
 end

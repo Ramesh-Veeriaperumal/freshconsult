@@ -16,7 +16,7 @@ module DiscussionConstants
   FORUM_TYPE = Forum::TYPE_KEYS_BY_TOKEN.values | Forum::TYPE_KEYS_BY_TOKEN.values.map(&:to_s)
   LOAD_OBJECT_EXCEPT = [:followed_by, :is_following, :category_forums, :forum_topics, :topic_posts].freeze
 
-  CATEGORY_FIELDS_TO_BE_STRIPPED = %w(name).freeze
-  FORUM_FIELDS_TO_BE_STRIPPED = %w(name description).freeze
-  TOPIC_FIELDS_TO_BE_STRIPPED = %w(title).freeze
+  CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w(name).freeze
+  FORUM_ATTRIBUTES_TO_BE_STRIPPED = %w(name description).freeze
+  TOPIC_ATTRIBUTES_TO_BE_STRIPPED = %w(title).freeze
 end.freeze
