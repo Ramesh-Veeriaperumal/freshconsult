@@ -7,7 +7,6 @@ class TicketDelegator < SimpleDelegator
   validate :responder_presence, if: -> { responder_id }
   validate :active_email_config, if: -> { email_config_id }
   validate :product_presence, if: -> { product_id }
-  validate :responder_belongs_to_group?, if: -> { group_id && responder_id && errors[:responder].blank? && errors[:group].blank? }
   validate :user_blocked?, if: -> { errors[:requester].blank? && requester_id }
   validates :custom_field,  custom_field: { custom_field:
                               {
@@ -62,10 +61,5 @@ class TicketDelegator < SimpleDelegator
 
   def required_based_on_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
-  end
-
-  def responder_belongs_to_group?
-    belongs_to_group = Account.current.agent_groups.exists?(group_id: group_id, user_id: responder_id)
-    errors.add(:responder_id, 'not_part_of_group') unless belongs_to_group
   end
 end

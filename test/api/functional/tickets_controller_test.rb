@@ -195,8 +195,9 @@ class TicketsControllerTest < ActionController::TestCase
     group = create_group(@account)
     params = { requester_id: requester.id, responder_id: @agent.id, group_id: group.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('responder_id', 'not_part_of_group')])
-    assert_response 400
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    assert_response 201
   end
 
   def test_create_with_product_id_and_email_config_id
@@ -1158,8 +1159,9 @@ end
     params = { responder_id: @agent.id, group_id: group.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    assert_response 400
-    match_json([bad_request_error_pattern('responder_id', 'not_part_of_group')])
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_response 200
   end
 
   def test_update_with_email_config_id

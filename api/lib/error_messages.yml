@@ -44,7 +44,6 @@ api_error_messages:
   "is not a valid email": "Should be a valid email address"
   not_a_valid_email: "Should be a valid email address"
   "Should be a valid Hash": "Should be a key/value pair"
-  not_part_of_group: "Should be part of a given group"
   max_count_exceeded: "List has exceeded maximum count of %{max_count}"
   user_blocked: "has been blocked. No more tickets are allowed to be created for this user"
   "Should be a valid ActionDispatch::Http::UploadedFile": "invalid_format"
