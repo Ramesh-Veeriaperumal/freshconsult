@@ -25,12 +25,10 @@
 
 <div class="tab-content" id="fw-tab-content">
   <div class="tab-pane active" id="popup">
-    <%#= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
-		<%= render :partial => "popup_widget", :locals => { :tab_color => $tab_color} %>
+    <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
   </div>
   <div class="tab-pane" id="embedded">
-    <%#= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
-		<%= render :partial => "embedded_widget" %>
+    <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
   </div>
 </div>
 
@@ -44,9 +42,6 @@
 
 		    $('.pseudoCheckbox').bind('change', function(ev) {
 		    	$(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
-			});
-			$('.captchapseudoCheckbox').bind('change', function(ev) {
-				$(this).siblings('[rel=pseudo]').val(this.checked ? 'yes' : '');
 			});
 
 			$('.codetextarea').on('click', function (ev) {

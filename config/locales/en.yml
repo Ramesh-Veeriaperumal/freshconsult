@@ -989,7 +989,7 @@ en:
       ebay_note_not_added: "Note not added to eBay. Connection unstable."
       inactive: inactive
       active: active
-      ebay_error:
+      ebay_error: 
         invalid_source: Invalid ticket source.
         invalid_reply: Reply not allowed for this ticket.
         note_not_added: Note not added.
@@ -1011,7 +1011,7 @@ en:
         account_name: Account Name
         ebay_site: eBay Site
         site_helptext: select the eBay site where you sell your products
-        duplicate_account: This eBay Account is already associated with a Freshdesk account
+        duplicate_account: This eBay Account is already associated with a Freshdesk account 
         max_limit: You have reached the maximum ecommerce account limit
         assign_group: Assign to Group
         assign_product: Assign to Product
@@ -1455,49 +1455,6 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
-      popup_widget:
-        feedbackwidget_button_type: Button type
-        feedbackwidget_text_button: Text button
-        feedbackwidget_image_button: Image button
-        feedbackwidget_button_text_placeholder: Support
-        feedbackwidget_height_placeholder: "500"
-        feedbackwidget_offset_placeholder: "235"
-        feedbackwidget_button_customization: Customize Button
-        feedbackwidget_form_customization: Customize Form
-        feedbackwidget_popup_code: Popup Widget code
-        feedbackwidget_widget_code: Widget code
-        feedbackwidget_embedded_form_code: Embedded form code
-        feedbackwidget_form_submit_message: "Form Submit Message"
-        feedbackwidget_form_height: "Form height"
-        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
-        feedbackwidget_px: "px"
-        thankyou_default: "Thank you for your feedback"
-        thankyou_info: "Message to be displayed after a user submits the ticket form"
-        feedbackwidget_users_can: "Form options"
-        feedbackwidget_attach_a_file: Attach a file
-        feedbackwidget_screenshot: Take Screenshot
-        feedbackwidget_screenr_recording: Screenr Recording
-        feedbackwidget_search_area: Search Articles
-        feedbackwidget_use_https: Use https
-        feedbackwidget_mobile_view: Enable mobile view
-        feedbackwidget_use_captcha: Enable CAPTCHA
-      embedded_widget:
-        feedbackwidget_height_placeholder: "500"
-        feedbackwidget_form_customization: Customize Form
-        feedbackwidget_embedded_code: Embedded Widget code
-        feedbackwidget_widget_code: Widget code
-        feedbackwidget_embedded_form_code: Embedded form code
-        feedbackwidget_form_submit_message: "Form Submit Message"
-        feedbackwidget_form_height: "Form height"
-        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
-        feedbackwidget_px: "px"
-        thankyou_default: "Thank you for your feedback"
-        thankyou_info: "Message to be displayed after a user submits the ticket form"
-        feedbackwidget_users_can: "Form options"
-        feedbackwidget_attach_a_file: Attach a file
-        feedbackwidget_search_area: Search Articles
-        feedbackwidget_use_https: "Use https"
-        feedbackwidget_use_captcha: Enable CAPTCHA
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
@@ -2753,7 +2710,6 @@ en:
   add_a_topic: Start a Topic
   bottom: Bottom
   feedbackwidget_help_title: Feedback widget
-  feedbackwidget_learn_more: Learn more
   name: Name
   import_user_org_text: All the Users & Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
@@ -2782,7 +2738,39 @@ en:
   automations:
     actions: Actions
     activity:
-      added_watcher(s): "Added Watcher(s)"
+      change: "Changed "
+      add: "Added "
+      assign: "Assigned "
+      set: "Set "
+      send: "Sent "
+      none: "None"
+      mark_spam: "Marked the ticket <b>%{ticket} </b> as spam"
+      delete_ticket: "Deleted the ticket <b>%{ticket} </b>"
+      bulk_change: "Changing"
+      bulk_add: "Adding"
+      bulk_assign: "Assigning"
+      bulk_set: "Setting"
+      bulk_send: "Sending"
+      bulk_mark_spam: "Marking the ticket(s) as spam"
+      bulk_delete_tickets: "Deleting the ticket(s)"
+      priority: "the priority to <b>%{priority}</b>"
+      status: "the status to <b>%{status}</b>"
+      ticket_type: "the ticket type to <b>%{ticket_type}</b>"
+      product: "product as <b>%{product_name}</b>"
+      group_success: "group as <b>%{group_name}</b>"
+      group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
+      agent_success: "agent as <b>%{agent_name}</b>"
+      agent_failure: "<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>"
+      private_note: "a <b>private note</b>"
+      note: "<b>note</b>"
+      add_watchers: "Watcher(s) - <b>%{watchers}</b>"
+      add_tags: "the tag(s) [<b>%{tags}</b>]"
+      email_to_requester: "an email to the requester"
+      email_to_group: "an email to the group <b>%{group_name}</b>"
+      email_to_agent: "an email to the agent <b>%{agent_name}</b>"
+      bulk_email_to_group: "an email to the group"
+      bulk_email_to_agent: "an email to the agent"
+      custom_fields: "%{action} as <b>%{value}</b>"
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -2800,6 +2788,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
@@ -3307,7 +3296,7 @@ en:
       title1: Full-time vs Occasional Agents
       info5: Learn more about Day Passes
       info8: Learn more about Agent Roles
-      info9: Full time agents are those in your support team who will login to your help desk every day.
+      info9: Full time agents are those in your support team who will login to your help desk every day. 
       info10: Occasional agents are those who would only need to login from time to time, such as your sales and marketing manager to take care of specific customer queries. You need not purchase an additional agent seat for a whole month for such agents.
       title3: Groups
       info11: You can organize agents into specific groups such as Sales and Product Management. Segmenting agents into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
@@ -3775,9 +3764,9 @@ en:
       view_less: "View less"
       drafts:
         title: "Drafts"
-        me: "My Drafts"
+        me: "My Drafts" 
         all: "All Drafts"
-        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>" 
       feedbacks:
         title: "Article Feedback"
         me: "Your Feedback"
@@ -3851,7 +3840,7 @@ en:
         success: Successfully changed the visibility.
         failure: Could not change the visibility of the selected folders.
         companies_limit_exceeded: Companies limit exceeded
-        extra_companies:
+        extra_companies:  
           one: " and one more company."
           other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
@@ -4599,6 +4588,7 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form:
@@ -4630,7 +4620,7 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
-    spam_header: spam
+    spam_header: Spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
@@ -5146,8 +5136,10 @@ en:
           view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
+        bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>" 
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
+        bulk_actions_perform: "Actions being performed on %{count} ticket(s)"
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
         view_ticket: View ticket
@@ -6339,7 +6331,7 @@ en:
       chooser_title: "Choose a file form OneDrive"
       label: "OneDrive"
       desc: "Attach and Share your data/files from onedrive."
-      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again."
+      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again." 
       error: "A problem has occured in opening your Onedrive files. Please try again."
     pivotal_tracker:
       label: "Pivotal Tracker"
@@ -7059,7 +7051,7 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume:
+    ticket_volume: 
       title: Ticket Volume
       time_trends:
         day: Day
@@ -7124,9 +7116,9 @@ en:
         res_sla: % of tickets resolved within SLA in the selected time period and assigned to the agent
         fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the agent
         private_note: Number of private notes added by the agent in the selected time period
-        responses: Number of responses sent by the agent in the selected time period
-        avg_first_res_time: Avg first response time for first responses sent by the agent in the selected time period
-        avg_res_time: Avg time for all the responses sent by the agent in the selected time period
+        responses: Number of responses sent by the agent in the selected time period 
+        avg_first_res_time: Avg first response time for first responses sent by the agent in the selected time period 
+        avg_res_time: Avg time for all the responses sent by the agent in the selected time period 
         avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the agent
     customer_report:
       title:  Customer Report
@@ -8039,6 +8031,7 @@ en:
       reply: "Reply"
       forward: "Forward"
       add_note: "Add note"
+      scenario: "Scenarios"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -8053,7 +8046,6 @@ en:
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
       openDialog: "Open dialog"
-      scenario: "Scenarios"
   mailbox:
     mail_server: "Mail Server:"
     use_default: "Default (Freshdesk)"
@@ -8384,7 +8376,7 @@ en:
       error:
         authorize_failure: You are not allowed to access this page
   password_policy:
-    alphanumeric: "Password must be alphanumeric"
+    alphanumeric: "Password must be alphanumeric"      
     special_characters: "Password must have special characters"
     mixed_case: "Password must have both uppercase and lowercase alphabets"
     username: "Password cannot contain username"
@@ -8395,3 +8387,4 @@ en:
     wrong_no_of_past_password: Please enter a valid number of past passwords.
     wrong_expiry_days: Please enter a valid number of expiry days.
     invalid_config: Please enter a valid configuration.
+    

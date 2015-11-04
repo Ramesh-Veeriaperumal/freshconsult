@@ -274,6 +274,11 @@
         addForumFollower = function (ev, key) {
             App.Discussions.Monitorship.toggleAddFollower();
         },
+        selectScenario = function (ev, key) {
+            if($('#scenario').attr('disabled') !== 'disabled'){
+                $('#scenario').children().trigger("click");
+            }
+        },
 
         KB = {
             global        : {
@@ -291,7 +296,8 @@
                 silent_close        : closeTicket,
                 reply               : selectedTicketReply,
                 forward             : selectedTicketReply,
-                add_note            : selectedTicketReply
+                add_note            : selectedTicketReply,
+                scenario            : selectScenario
             },
             ticket_detail : {
                 toggle_watcher      : toggleWatcher,

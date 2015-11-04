@@ -132,7 +132,7 @@ body, .feedback-wrapper{
 	.embedded-body {
 		max-height: 90%;
 		//Mozilla fix for hidden Embedded widget
-		.redactor_editor, .redactor_editor:focus{
+		.redactor_editor, .redactor_editor:focus{ 
 			min-height: 100px;
 			height:auto !important;
 			height: 100px;
@@ -208,7 +208,7 @@ body, .feedback-wrapper{
 }
 
 .form-widget{
-	.select2-container{ width:100%; vertical-align:baseline; margin-bottom:9px}
+	.select2-container{ width:100%; vertical-align:baseline; margin-bottom:9px} 
 	.custom_checkbox .controls{ @include margin-left(0); }
 }
 
@@ -465,17 +465,5 @@ input.date.datepicker_popover {
 	input[readonly]{
 		background: #fff;
 		cursor: pointer;
-	}
-}
-
-.recaptcha-error {
-    border: 1px solid #dd4b39;
-    padding: 5px;
-		width: 330px;
-}
-
-.recaptcha-error-message {
-    color: #dd4b39;
-    font-size: 12px;
-    padding: 4px 0;
+	}	
 }
