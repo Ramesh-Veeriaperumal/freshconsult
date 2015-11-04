@@ -148,4 +148,6 @@
 .typeahead {
   margin-top: 2px; // give it some space to breathe
   @include border-radius(4px);
+  max-height: 200px;
+  overflow: scroll;
 }

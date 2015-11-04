@@ -1174,7 +1174,7 @@ jQuery(document).ready(function(){
 		e = jQuery.Event('keyup');
 		e.which = e.code = 65;
 		jQuery(this).trigger(e);
-	}).disableSelection();
+	});
 
 
 	var date_today = new Date();
