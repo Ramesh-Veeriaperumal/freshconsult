@@ -10,7 +10,7 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   end
 
   def clear_cache_agent_group
-    key = user_filters_memcache_key(user,account=Account.current)
+    key = user_filters_memcache_key(user,Account.current)
     MemcacheKeys.delete_from_cache(key)
   end
 

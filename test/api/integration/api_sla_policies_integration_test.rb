@@ -29,7 +29,7 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_update: 7,
+        api_update: 8,
         api_index: 1,
 
         update: 18,

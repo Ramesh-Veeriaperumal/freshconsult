@@ -9,19 +9,19 @@
    private
 
      def valid_agent?
-       invalid_user = get_invalid_user [] << escalate_to
+       invalid_user = invalid_users [] << escalate_to
        errors[:escalate_to] << :blank if invalid_user.present?
      end
 
      def valid_agent
-       invalid_users = get_invalid_user agent_groups.map(&:user_id)
+       invalid_users = invalid_users agent_groups.map(&:user_id)
        if invalid_users.present?
          errors[:agent_ids] << :invalid_list
          @error_options = { agent_ids: { list: "#{invalid_users.join(', ')}" }  }
        end
      end
 
-     def get_invalid_user(agent_list)
+     def invalid_users(agent_list)
        (agent_list - Account.current.agents_from_cache.map(&:user_id))
      end
  end

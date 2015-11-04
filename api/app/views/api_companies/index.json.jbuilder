@@ -6,5 +6,5 @@ json.array! @items do |api_company|
   end
   # Not caching as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
-  json.custom_fields api_company.custom_field
+  json.custom_fields CustomFieldDecorator.utc_format(api_company.custom_field)
 end
