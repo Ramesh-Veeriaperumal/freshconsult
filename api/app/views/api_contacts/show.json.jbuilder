@@ -2,7 +2,7 @@ json.cache! CacheLib.compound_key(@item, @item.avatar, @item.custom_field, param
   json.extract! @item, :active, :address, :client_manager, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
   json.partial! 'shared/utc_date_format', item: @item
 
-  json.set! :custom_fields, @item.custom_field
+  json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field)
 
   json.set! :tags, @item.tags.map(&:name)
 

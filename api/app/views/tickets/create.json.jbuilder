@@ -13,7 +13,7 @@ json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frD
 
 json.set! :is_escalated, @item.isescalated
 
-json.set! :custom_fields, @item.custom_field
+json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field)
 
 json.set! :tags, @item.tag_names
 

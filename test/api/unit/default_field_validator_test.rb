@@ -125,7 +125,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ tags: 'special_chars_present', domains: 'special_chars_present' }.sort, errors)
+    assert_equal({ tags: 'special_chars_present', domains: 'special_chars_present', address: 'is too long (maximum is 255 characters)' }.sort, errors)
     assert_equal({ tags: { chars: ',' }, domains: { chars: ',' } }.sort, error_options)
   end
 

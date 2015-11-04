@@ -628,7 +628,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal '200', response.headers['X-RateLimit-Total']
-    byebug
     @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
     @account.reload.subscription.reload.subscription_plan
 
