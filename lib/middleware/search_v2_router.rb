@@ -55,8 +55,9 @@ class Middleware::SearchV2Router
         '/search/autocomplete/agents'       => { path: '/search/v2/autocomplete/agents',      feature: :esv2_agent_autocomplete },
         '/search/autocomplete/companies'    => { path: '/search/v2/autocomplete/companies',   feature: :esv2_company_autocomplete },
         '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete },
-                                      ### Merge topics search path ###
-        '/search/merge_topic'               => { path: '/search/v2/merge_topics/search_topics', feature: :esv2_merge_topic }
+                                        ### Other search paths ###
+        '/search/merge_topic'               => { path: '/search/v2/merge_topics/search_topics', feature: :esv2_merge_topic },
+        '/support/search/topics/suggest'    => { path: '/support/search_v2/suggest_topic',      feature: :esv2_portal_suggest_topic }
       }
     end
     

@@ -6,7 +6,8 @@ class Support::SearchV2Controller < SupportController
 
   before_filter :initialize_search_parameters
 
-  attr_accessor :size, :page, :current_filter, :es_results, :result_set, :search_results, :search, :pagination
+  attr_accessor :size, :page, :current_filter, :es_results, :result_set, 
+                :search_results, :search, :pagination, :results, :no_render
 
   # To-do: Verify uses:
   # :results, :related_articles, :container, :longest_collection
@@ -62,9 +63,11 @@ class Support::SearchV2Controller < SupportController
   # To-do: Establish usecases
   #
   def suggest_topic
-    # @results = search_portal([Topic])
+    @no_render = true
     @searchable_klasses = ['Topic']
-    render :layout => false
+    search
+    @results = @search_results
+    render template: '/support/search/suggest_topic', :layout => false
   end
 
   # To-do: Establish usecases
@@ -105,7 +108,7 @@ class Support::SearchV2Controller < SupportController
         NewRelic::Agent.notice_error(e)
       end
 
-      handle_rendering
+      handle_rendering unless @no_render
     end
 
     # Types to be passed to service code to scan

@@ -2117,6 +2117,7 @@ Helpkit::Application.routes.draw do
         get :tickets
         get :solutions
         get :topics
+        get :suggest_topic
       end
     end
 
