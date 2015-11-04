@@ -23,7 +23,7 @@ class Middleware::ApiRequestInterceptor
       begin
         @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
       rescue MultiJson::ParseError => error
-        Rails.logger.error("API MultiJson::ParseError: #{error.data.string} \n#{error.message}\n#{error.backtrace.join("\n")}")
+        Rails.logger.error("API MultiJson::ParseError: #{error.data.read} \n#{error.message}\n#{error.backtrace.join("\n")}")
         message =  { code: 'invalid_json', message: "Request body has invalid json format" }
         set_response(400, RESPONSE_HEADERS, message)
       rescue StandardError => error
