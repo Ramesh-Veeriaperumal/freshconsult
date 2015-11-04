@@ -6,7 +6,7 @@ module Integrations::AppsUtil
   include Redis::IntegrationsRedis
   
   def get_installed_apps
-    @installed_applications = Integrations::InstalledApplication.find(:all, :conditions => ["account_id = ?", current_account])
+    @installed_applications = Account.current.installed_applications.includes(:application).all
   end
 
   def execute(clazz_str, method_str, args=[])
