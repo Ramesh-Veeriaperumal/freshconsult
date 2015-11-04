@@ -2420,6 +2420,8 @@ Helpkit::Application.routes.draw do
       resources :freshfone_stats do
         collection do
           get :statistics
+          get :request_csv
+          get :request_csv_by_account
         end
       end
 
