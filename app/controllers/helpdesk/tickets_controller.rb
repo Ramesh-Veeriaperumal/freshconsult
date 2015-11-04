@@ -50,6 +50,8 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
 
   before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever,:change_due_by]
+  before_filter :verify_ticket_permission_by_id, :only => [:component]
+
   before_filter :load_ticket, :verify_permission,
     :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
       :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
@@ -1159,6 +1161,11 @@ class Helpdesk::TicketsController < ApplicationController
         end
       end
       true
+    end
+
+    def verify_ticket_permission_by_id
+      ticket = current_account.tickets.find_by_id(params[:id])
+      verify_ticket_permission(ticket, true)
     end
 
   def check_outbound_permission
