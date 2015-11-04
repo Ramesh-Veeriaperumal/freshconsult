@@ -23,7 +23,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.multi_error = [1, 2]
     refute test.valid?
     errors = [test.errors.to_h.sort, test.error_options.to_h.sort]
-    assert_equal([{ hash: 'data_type_mismatch', array: 'data_type_mismatch' }.sort, { hash: { data_type: 'key/value pair' }, array: { data_type: Array } }.sort], errors)
+    assert_equal([{ hash: :data_type_mismatch, array: :data_type_mismatch }.sort, { hash: { data_type: 'key/value pair' }, array: { data_type: Array } }.sort], errors)
   end
 
   def test_valid_values
@@ -58,7 +58,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.required_param = [1, 2, 3]
     test.allow_string_boolean = 'false'
     refute test.valid?
-    assert_equal({ allow_unset_param: 'data_type_mismatch' }, test.errors.to_h)
+    assert_equal({ allow_unset_param: :data_type_mismatch }, test.errors.to_h)
     assert_equal({ allow_unset_param: { data_type: String } },  test.error_options.to_h)
   end
 
@@ -68,7 +68,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     test.required_param = [1, 2, 3]
     refute test.valid?
     assert test.errors.count == 1
-    assert_equal({ multi_error: 'missing' }, test.errors.to_h)
+    assert_equal({ multi_error: :missing }, test.errors.to_h)
   end
 
   def test_valid_values_invalid
@@ -81,7 +81,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h.sort
     error_options = test.error_options.to_h.sort
-    assert_equal({ array: 'data_type_mismatch', hash: 'data_type_mismatch', boolean: 'data_type_mismatch', allow_string_boolean: 'data_type_mismatch', multi_error: 'missing', required_param: 'required_and_data_type_mismatch' }.sort, errors)
+    assert_equal({ array: :data_type_mismatch, hash: :data_type_mismatch, boolean: :data_type_mismatch, allow_string_boolean: :data_type_mismatch, multi_error: :missing, required_param: :required_and_data_type_mismatch }.sort, errors)
     assert_equal({ array: { data_type: Array }, hash:  { data_type: 'key/value pair' }, boolean:  { data_type: 'Boolean' }, allow_string_boolean:  { data_type: 'Boolean' }, required_param:  { data_type: Array } }.sort, error_options)
   end
 end

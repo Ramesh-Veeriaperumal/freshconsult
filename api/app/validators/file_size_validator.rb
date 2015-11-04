@@ -7,7 +7,7 @@ class FileSizeValidator < ActiveModel::EachValidator
     base_size = options[:base_size].respond_to?(:call) ? options[:base_size].call(record) : options[:base_size]
     size = new_size.to_i + base_size.to_i
     unless options[:min].to_i <= size && options[:max] >= size
-      record.errors[attribute] = 'invalid_size'
+      record.errors[attribute] << :invalid_size
       (record.error_options ||= {}).merge!(attribute => { max_size: number_to_human_size(options[:max]) })
     end
   end

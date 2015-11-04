@@ -3,7 +3,7 @@ class ContactFilterValidation < ApiValidation
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }, allow_nil: true
   validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, allow_nil: true
-  validates :company_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: 'positive_number' }
+  validates :company_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: :positive_number }
   validate :check_company, if: -> { company_id && errors[:company_id].blank? }
 
   def initialize(request_params, item, allow_string_param = true)
@@ -14,6 +14,6 @@ class ContactFilterValidation < ApiValidation
 
   def check_company
     company = Account.current.companies_from_cache.find { |x| x.id == @company_id.to_i }
-    errors.add(:company_id, "can't be blank") unless company
+    errors[:company_id] << :blank unless company
   end
 end

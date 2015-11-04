@@ -143,7 +143,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       post '/api/contacts',  { 'email' => Faker::Internet.email, 'name' => 'Test Subject' }.to_json, @write_headers
     end
     assert_response 500
-    response.body.must_match_json_expression(base_error_pattern('internal_error'))
+    response.body.must_match_json_expression(base_error_pattern(:internal_error))
   end
 
   def test_multipart_data_with_valid_data_types

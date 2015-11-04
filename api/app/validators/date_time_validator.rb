@@ -39,7 +39,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   private
 
     def get_message
-      options[:only_date] ? 'invalid_date' : 'invalid_date_time'
+      options[:only_date] ? :invalid_date : :invalid_date_time
     end
 
     def iso8601_format(value)

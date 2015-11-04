@@ -13,9 +13,10 @@ awscreds = {
 #                 :secret_access_key => node[:opsworks_access_keys][:secret_access_key]
 #                  }) unless node[:rails3][:use_iam_profile]
 
-config = YAML::load_file(::File.join(node[:rel_path], 'config', 'asset_sync.yml'))
-bucket_name = config[node[:opsworks][:environment]]["fog_directory"]
-
+if ::File.exists?("#{node[:rel_path]}/config/database.yml")
+  config = YAML::load_file(::File.join(node[:rel_path], 'config', 'asset_sync.yml'))
+  bucket_name = config[node[:opsworks][:environment]]["fog_directory"]
+end
 #for git version and bucket existence condition
 Dir.chdir "#{node[:newdir]}"
 git_version_command = "git log --pretty=format:%H --max-count=1 --branches=HEAD -- ./public/"
@@ -23,7 +24,7 @@ file_name = node.override[:git_version] = `#{git_version_command}` + ".zip"
 node.override[:path] = "#{node[:path]}" + "#{file_name}"
 Chef::Log.info "value of git version is #{node[:git_version]} and test value is #{node[:bucket_exist]} and bucket name is #{bucket_name}"
 asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
-if node[:opsworks]
+if node[:opsworks] && ::File.exists?("#{node[:rel_path]}/config/database.yml")
   if node[:opsworks][:instance][:hostname].include?("-app-")
     aws_config = AWS::S3.new(awscreds).buckets["#{bucket_name}"].objects["compiledfiles/#{file_name}"]
     node.override[:bucket_exist] =  aws_config.exists?
@@ -65,7 +66,7 @@ if node[:opsworks]
     end
   end
 end
-if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) 
+if asset_pipeline_host && (node[:opsworks][:instance][:hostname] == asset_pipeline_host) && ::File.exists?("#{node[:rel_path]}/config/database.yml")
 execute "zip the file" do 
       command "cd #{node[:rel_path]}/public/ ; zip -FSr #{node[:path]} assets/*"  
     end

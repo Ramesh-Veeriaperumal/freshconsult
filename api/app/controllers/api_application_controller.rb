@@ -1,9 +1,7 @@
 class ApiApplicationController < MetalApiController
   prepend_before_filter :response_info
   # do not change the exception order # standard error has to have least priority hence placing at the top.
-  rescue_from StandardError do |exception|
-    render_500(exception)
-  end
+  rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound do |e|
@@ -141,7 +139,7 @@ class ApiApplicationController < MetalApiController
     def invalid_field_handler(exception) # called if extra fields are present in params.
       return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
       Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      invalid_fields = Hash[exception.params.map { |v| [v, ['invalid_field']] }]
+      invalid_fields = Hash[exception.params.map { |v| [v, :invalid_field] }]
       render_errors invalid_fields
     end
 
@@ -491,7 +489,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def notify_new_relic_agent(exception, custom_params = {})
-      options_hash =  { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params) }
+      options_hash =  { uri: request.original_url, custom_params: custom_params.merge(method: request.method, params: params, x_request_id: request.uuid) }
       NewRelic::Agent.notice_error(exception, options_hash)
     end
 

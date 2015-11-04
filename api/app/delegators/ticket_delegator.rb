@@ -24,14 +24,14 @@ class TicketDelegator < SimpleDelegator
   end
 
   def active_email_config
-    errors.add(:email_config_id, 'invalid_email_config') unless email_config.try(:active)
+    errors[:email_config_id] << :invalid_email_config unless email_config.try(:active)
   end
 
   def product_presence
     ticket_product_id = schema_less_ticket.product_id
     product = Account.current.products_from_cache.detect { |x| ticket_product_id == x.id }
     if product.nil?
-      errors.add(:product, "can't be blank")
+      errors[:product_id] << :blank
     else
       schema_less_ticket.product = product
     end
@@ -40,7 +40,7 @@ class TicketDelegator < SimpleDelegator
   def group_presence # this is a custom validate method so that group cache can be used.
     group = Account.current.groups_from_cache.detect { |x| group_id == x.id }
     if group.nil?
-      errors.add(:group, "can't be blank")
+      errors[:group] << :blank
     else
       self.group = group
     end
@@ -49,14 +49,14 @@ class TicketDelegator < SimpleDelegator
   def responder_presence #
     responder = Account.current.agents_from_cache.detect { |x| x.user_id == responder_id }.try(:user)
     if responder.nil?
-      errors.add(:responder, "can't be blank")
+      errors[:responder] << :blank
     else
       self.responder = responder
     end
   end
 
   def user_blocked?
-    errors.add(:requester_id, 'user_blocked') if requester && requester.blocked?
+    errors[:requester_id] << :user_blocked if requester && requester.blocked?
   end
 
   def required_based_on_status?

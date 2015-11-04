@@ -19,14 +19,14 @@ module ApiDiscussions
         controller.class.any_instance.stubs(:allowed_to_access?).returns(false).once
         send(methods[action], action, construct_params(id: fc.id))
         assert_response 403
-        match_json(request_error_pattern('access_denied'))
+        match_json(request_error_pattern(:access_denied))
       end
 
       define_method("test_#{action}_without_login") do
         controller.class.any_instance.stubs(:api_current_user).returns(nil)
         send(methods[action], action, construct_params(id: fc.id))
         assert_response 401
-        match_json(request_error_pattern('invalid_credentials'))
+        match_json(request_error_pattern(:invalid_credentials))
         controller.class.any_instance.unstub(:api_current_user)
       end
 
@@ -35,14 +35,14 @@ module ApiDiscussions
         subscription = @account.subscription
         subscription.update_column(:state, 'active')
         send(methods[action], action, construct_params(id: fc.id))
-        match_json(request_error_pattern('access_denied'))
+        match_json(request_error_pattern(:access_denied))
         assert_response 403
       end
 
       define_method("test_#{action}_requires_feature_disabled") do
         @account.class.any_instance.stubs(:features_included?).returns(false).once
         send(methods[action], action, construct_params(id: fc.id))
-        match_json(request_error_pattern('require_feature', feature: 'Forums'))
+        match_json(request_error_pattern(:require_feature, feature: 'Forums'))
         assert_response 403
       end
     end
@@ -53,7 +53,7 @@ module ApiDiscussions
         subscription = @account.subscription
         subscription.update_column(:state, 'suspended')
         send(methods[action], action, construct_params(id: fc.id))
-        match_json(request_error_pattern('account_suspended'))
+        match_json(request_error_pattern(:account_suspended))
         assert_response 403
         subscription.update_column(:state, 'trial')
       end
@@ -76,7 +76,7 @@ module ApiDiscussions
     def test_create_length_invalid
       params_hash = { name: Faker::Lorem.characters(300) }
       post :create, construct_params({}, params_hash)
-      match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
       assert_response 400
     end
 
@@ -90,33 +90,33 @@ module ApiDiscussions
 
     def test_update_with_extra_params
       put :update, construct_params({ id: fc.id }, test: 'new')
-      match_json([bad_request_error_pattern('test', 'invalid_field')])
+      match_json([bad_request_error_pattern('test', :invalid_field)])
       assert_response 400
     end
 
     def test_update_with_missing_params
       put :update, construct_params({ id: fc.id }, {})
       assert_response 400
-      match_json(request_error_pattern('missing_params'))
+      match_json(request_error_pattern(:missing_params))
     end
 
     def test_update_with_blank_name
       put :update, construct_params({ id: fc.id }, name: '')
-      match_json([bad_request_error_pattern('name', "can't be blank")])
+      match_json([bad_request_error_pattern('name', :"can't be blank")])
       assert_response 400
     end
 
     def test_update_with_invalid_model
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: new_fc.name)
-      match_json([bad_request_error_pattern('name', 'has already been taken')])
+      match_json([bad_request_error_pattern('name', :"has already been taken")])
       assert_response 409
     end
 
     def test_update_length_invalid
       new_fc = create_test_category
       put :update, construct_params({ id: fc.id }, name: Faker::Lorem.characters(300))
-      match_json([bad_request_error_pattern('name', 'is too long (maximum is 255 characters)')])
+      match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)")])
       assert_response 400
     end
 
@@ -164,7 +164,7 @@ module ApiDiscussions
       User.any_instance.stubs(:privilege?).returns(false).once
       get :show, construct_params(id: fc.id)
       assert_response 403
-      match_json(request_error_pattern('access_denied'))
+      match_json(request_error_pattern(:access_denied))
     end
 
     def test_create
@@ -177,7 +177,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', 'missing_field')
+        bad_request_error_pattern('name', :missing_field)
       ]
       assert_response 400
       match_json(pattern)
@@ -186,7 +186,7 @@ module ApiDiscussions
     def test_create_unexpected_params
       post :create, construct_params({}, 'junk' => 'new')
       pattern = [
-        bad_request_error_pattern('junk', 'invalid_field')
+        bad_request_error_pattern('junk', :invalid_field)
       ]
       assert_response 400
       match_json(pattern)
@@ -195,7 +195,7 @@ module ApiDiscussions
     def test_create_blank_name
       post :create, construct_params({}, 'name' => '')
       pattern = [
-        bad_request_error_pattern('name', "can't be blank")
+        bad_request_error_pattern('name', :"can't be blank")
       ]
       assert_response 400
       match_json(pattern)
@@ -205,7 +205,7 @@ module ApiDiscussions
       fc = create_test_category
       post :create, construct_params({}, 'name' => fc.name)
       pattern = [
-        bad_request_error_pattern('name', 'has already been taken')
+        bad_request_error_pattern('name', :"has already been taken")
       ]
       assert_response 409
       match_json(pattern)
@@ -213,7 +213,7 @@ module ApiDiscussions
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
-      match_json([bad_request_error_pattern('name', "can't be blank")])
+      match_json([bad_request_error_pattern('name', :"can't be blank")])
       assert_response 400
     end
 
@@ -235,7 +235,7 @@ module ApiDiscussions
       Rails.env.unstub(:test?)
       @request.unstub(:ssl?)
       assert_response 500
-      match_json(base_error_pattern('internal_error'))
+      match_json(base_error_pattern(:internal_error))
     end
 
     def test_ensure_proper_protocol
@@ -243,7 +243,7 @@ module ApiDiscussions
       get :index, request_params
       Rails.env.unstub(:test?)
       assert_response 403
-      match_json(request_error_pattern('ssl_required'))
+      match_json(request_error_pattern(:ssl_required))
     end
 
     def test_create_returns_location_header

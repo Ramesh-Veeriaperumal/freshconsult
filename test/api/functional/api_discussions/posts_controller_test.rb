@@ -35,28 +35,28 @@ module ApiDiscussions
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: '')
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', "can't be blank")])
+      match_json([bad_request_error_pattern('body_html', :"can't be blank")])
     end
 
     def test_update_invalid_answer
       post = post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', 'data_type_mismatch', data_type: 'Boolean')])
+      match_json([bad_request_error_pattern('answer', :data_type_mismatch, data_type: 'Boolean')])
     end
 
     def test_update_with_user_id
       post =  post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', user_id: User.first)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
+      match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_update_with_topic_id
       post =  post_obj
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', topic_id: topic_obj)
       assert_response 400
-      match_json([bad_request_error_pattern('topic_id', 'invalid_field')])
+      match_json([bad_request_error_pattern('topic_id', :invalid_field)])
     end
 
     def test_update_with_extra_params
@@ -64,18 +64,18 @@ module ApiDiscussions
       put :update, construct_params({ id: post.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s,
                                                      updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
       assert_response 400
-      match_json([bad_request_error_pattern('topic_id', 'invalid_field'),
-                  bad_request_error_pattern('created_at', 'invalid_field'),
-                  bad_request_error_pattern('updated_at', 'invalid_field'),
-                  bad_request_error_pattern('email', 'invalid_field'),
-                  bad_request_error_pattern('user_id', 'invalid_field')])
+      match_json([bad_request_error_pattern('topic_id', :invalid_field),
+                  bad_request_error_pattern('created_at', :invalid_field),
+                  bad_request_error_pattern('updated_at', :invalid_field),
+                  bad_request_error_pattern('email', :invalid_field),
+                  bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_update_with_nil_values
       post =  post_obj
       put :update, construct_params({ id: post.id }, body_html: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', "can't be blank")])
+      match_json([bad_request_error_pattern('body_html', :"can't be blank")])
     end
 
     def test_destroy
@@ -95,7 +95,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', 'missing_field')]
+      match_json [bad_request_error_pattern('body_html', :missing_field)]
     end
 
     def test_create_mandatory_params
@@ -128,7 +128,7 @@ module ApiDiscussions
       post :create, construct_params({ id: topic_obj.id }, :body_html => 'test',
                                                            'user_id' => 999)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', 'invalid_field')])
+      match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_posts_invalid_id

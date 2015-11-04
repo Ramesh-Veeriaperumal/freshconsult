@@ -4,7 +4,7 @@ module ApiDiscussions
                   :stamp_type, :message_html
     validates :title, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
     validates :message_html, required: true
-    validates :forum_id, required: { allow_nil: false, message: 'required_and_numericality' }, on: :update
+    validates :forum_id, required: { allow_nil: false, message: :required_and_numericality }, on: :update
     validates :sticky, :locked, data_type: { rules: 'Boolean', allow_nil: true }
     validates :forum_id, custom_numericality: { allow_nil: true }, on: :update
     validates :stamp_type, custom_numericality: { allow_nil: true }

@@ -3,7 +3,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
     return if record.errors[attribute].present?
 
     message = options[:message]
-    message ||= required_attribute_not_defined?(record, attribute, value) ? 'required_and_data_type_mismatch' : 'data_type_mismatch'
+    message ||= required_attribute_not_defined?(record, attribute, value) ? :required_and_data_type_mismatch : :data_type_mismatch
 
     # if ignore_string is present and true, proceed with numericality validator.
     # else fall back to custom numericality which will not allow numbers in string representation say "1".
@@ -14,6 +14,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
     end
 
     if record.errors[attribute].present?
+      record.errors[attribute] = message
       (record.error_options ||= {}).merge!(attribute => { data_type: data_type(options[:allow_negative]) })
     end
   end

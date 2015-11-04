@@ -47,7 +47,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_create_without_ticket_privilege
@@ -56,7 +56,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_create
@@ -96,29 +96,29 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', 'data_type_mismatch', data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_create_inclusion_invalid
     params_hash = { private: 'x', incoming: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('incoming', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('private', 'data_type_mismatch', data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('incoming', :data_type_mismatch, data_type: 'Boolean'),
+                bad_request_error_pattern('private', :data_type_mismatch, data_type: 'Boolean')])
   end
 
   def test_create_datatype_invalid
     params_hash = { notify_emails: 'x', attachments: 'x' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', 'data_type_mismatch', data_type: 'Array'),
-                bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array')])
+    match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
     assert_response 400
   end
 
   def test_create_email_format_invalid
     params_hash = { notify_emails: ['tyt@'] }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json([bad_request_error_pattern('notify_emails', 'is not a valid email')])
+    match_json([bad_request_error_pattern('notify_emails', 'not_a_valid_email')])
     assert_response 400
   end
 
@@ -132,14 +132,14 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', user_id: 789_789_789 }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', "can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :"can't be blank")])
   end
 
   def test_create_extra_params
     params_hash = { body_html: 'test', junk: 'test' }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', 'invalid_field')])
+    match_json([bad_request_error_pattern('junk', :invalid_field)])
   end
 
   def test_create_missing_params
@@ -177,7 +177,7 @@ class NotesControllerTest < ActionController::TestCase
     params = create_note_params_hash.merge('attachments' => [1, 2])
     post :create, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
   end
 
   def test_attachment_invalid_size_create
@@ -188,7 +188,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'invalid_size', max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
   end
 
   def test_create_without_privilege
@@ -197,7 +197,7 @@ class NotesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_reply_with_ticket_trashed
@@ -206,7 +206,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_reply_without_ticket_privilege
@@ -215,7 +215,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_reply
@@ -330,24 +330,24 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { user_id: 'x' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', 'data_type_mismatch', data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_reply_datatype_invalid
     params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', 'data_type_mismatch', data_type: 'Array'),
-                bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'Array'),
-                bad_request_error_pattern('bcc_emails', 'data_type_mismatch', data_type: 'Array')])
+    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('bcc_emails', :data_type_mismatch, data_type: 'Array')])
   end
 
   def test_reply_email_format_invalid
     params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'] }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', 'is not a valid email'),
-                bad_request_error_pattern('bcc_emails', 'is not a valid email')])
+    match_json([bad_request_error_pattern('cc_emails', 'not_a_valid_email'),
+                bad_request_error_pattern('bcc_emails', 'not_a_valid_email')])
   end
 
   def test_reply_invalid_id
@@ -360,14 +360,14 @@ class NotesControllerTest < ActionController::TestCase
     params_hash = { body_html: 'test', user_id: 789_789_789 }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('user_id', "can't be blank")])
+    match_json([bad_request_error_pattern('user_id', :"can't be blank")])
   end
 
   def test_reply_extra_params
     params_hash = { body_html: 'test', junk: 'test' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('junk', 'invalid_field')])
+    match_json([bad_request_error_pattern('junk', :invalid_field)])
   end
 
   def test_reply_returns_location_header
@@ -403,14 +403,14 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'invalid_size', max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
   end
 
   def test_reply_with_invalid_attachment_params_format
     params = reply_note_params_hash.merge('attachments' => [1, 2])
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
   end
 
   def test_reply_without_privilege
@@ -419,7 +419,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update_with_ticket_trashed
@@ -429,7 +429,7 @@ class NotesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update_without_ticket_privilege
@@ -439,7 +439,7 @@ class NotesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update
@@ -465,14 +465,14 @@ class NotesControllerTest < ActionController::TestCase
     n = note
     put :update, construct_params({ id: n.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('notify_emails', 'invalid_field')])
+    match_json([bad_request_error_pattern('notify_emails', :invalid_field)])
   end
 
   def test_update_empty_params
     n = note
     put :update, construct_params({ id: n.id }, {})
     assert_response 400
-    match_json(request_error_pattern('missing_params'))
+    match_json(request_error_pattern(:missing_params))
   end
 
   def test_update_with_attachment
@@ -501,14 +501,14 @@ class NotesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'invalid_size', max_size: '15 MB')])
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: '15 MB')])
   end
 
   def test_update_with_invalid_attachment_params_format
     params = update_note_params_hash.merge('attachments' => [1, 2])
     put :update, construct_params({ id: note.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', 'data_type_mismatch', data_type: 'valid format')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'valid format')])
   end
 
   def test_update_without_privilege
@@ -519,7 +519,7 @@ class NotesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?, :owns_object?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update_with_owns_object_privilege
@@ -563,7 +563,7 @@ class NotesControllerTest < ActionController::TestCase
     params = update_note_params_hash
     put :update, construct_params({ id: n.id }, params)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy
@@ -598,7 +598,7 @@ class NotesControllerTest < ActionController::TestCase
     n = create_note(user_id: user.id, ticket_id: ticket.id, source: 0)
     delete :destroy, construct_params(id: n.id)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_delete_user_note
@@ -606,7 +606,7 @@ class NotesControllerTest < ActionController::TestCase
     n = create_note(user_id: user.id, ticket_id: ticket.id, source: 2)
     delete :destroy, construct_params(id: n.id)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_delete_without_privilege
@@ -614,7 +614,7 @@ class NotesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: Helpdesk::Note.first.id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy_with_ticket_trashed
@@ -623,7 +623,7 @@ class NotesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: n.id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy_without_ticket_privilege
@@ -632,7 +632,7 @@ class NotesControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: n.id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_notes
@@ -679,7 +679,7 @@ class NotesControllerTest < ActionController::TestCase
     get :ticket_notes, construct_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_notes_invalid_id
@@ -743,7 +743,7 @@ class NotesControllerTest < ActionController::TestCase
     get :ticket_notes, construct_params(id: parent_ticket.display_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_notes_without_ticket_privilege
@@ -752,7 +752,7 @@ class NotesControllerTest < ActionController::TestCase
     get :ticket_notes, construct_params(id: parent_ticket.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_reply_with_nil_array_fields

@@ -15,7 +15,7 @@ class StringRejectionValidator < ActiveModel::EachValidator
 
     def reject_special_chars(record, attribute, value, excluded_chars)
       if excluded_chars.any? { |x| value.include?(x) }
-        record.errors.add(attribute, 'special_chars_present')
+        record.errors[attribute] << :special_chars_present
         (record.error_options ||= {}).merge!(attribute => { chars: excluded_chars.join('\',\'') })
       end
     end

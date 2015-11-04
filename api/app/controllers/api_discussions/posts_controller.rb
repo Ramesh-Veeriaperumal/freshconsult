@@ -13,7 +13,6 @@ module ApiDiscussions
         super
         @item.user = api_current_user
         @item.portal = current_portal
-        @item.topic_id ||= params[cname]['topic_id']
         @item.topic = @topic
       end
 

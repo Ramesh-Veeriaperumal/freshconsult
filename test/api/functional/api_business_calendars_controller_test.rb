@@ -50,7 +50,7 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).returns(false).once
     get :show, construct_params(id: business_calendar.id)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_index_with_link_header

@@ -5,7 +5,7 @@ class TimeEntryFilterValidation < ApiValidation
   validates :billable, data_type: { rules: 'Boolean', allow_nil: true, ignore_string: :allow_string_param }
 
   validates :executed_after, :executed_before, date_time: { allow_nil: true }
-  validates :agent_id, :company_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: 'positive_number' }
+  validates :agent_id, :company_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param}
   validate :valid_user?, if: -> { agent_id && errors[:agent_id].blank? }
   validate :valid_company?, if: -> { company_id && errors[:company_id].blank? }
 
@@ -15,11 +15,11 @@ class TimeEntryFilterValidation < ApiValidation
 
   def valid_user?
     user = Account.current.agents_from_cache.detect { |x| x.user_id == @agent_id.to_i }
-    errors.add(:agent_id, "can't be blank") unless user
+    errors[:agent_id] << :blank unless user
   end
 
   def valid_company?
     user = Account.current.companies_from_cache.detect { |x| x.id == @company_id.to_i }
-    errors.add(:company_id, "can't be blank") unless user
+    errors[:company_id] << :blank unless user
   end
 end

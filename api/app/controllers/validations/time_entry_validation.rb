@@ -9,10 +9,10 @@ class TimeEntryValidation < ApiValidation
 
   # Start time specific validations*
   # start_time param has no meaning timer is already on in case of update.
-  validates :start_time, custom_absence: { allow_nil: true, message: 'timer_running_true' }, if: -> { item.timer_running && @start_time_set }, on: :update
+  validates :start_time, custom_absence: { allow_nil: true, message: :timer_running_true }, if: -> { item.timer_running && @start_time_set }, on: :update
 
   # start_time param has no meaning when timer is off.
-  validates :start_time, custom_absence: { allow_nil: true, message: 'timer_running_false' },
+  validates :start_time, custom_absence: { allow_nil: true, message: :timer_running_false },
                          if: -> { @start_time_set && errors[:start_time].blank? && errors[:timer_running].blank? && !timer_running }
   validates :start_time, date_time: { allow_nil: true }
 
@@ -25,7 +25,7 @@ class TimeEntryValidation < ApiValidation
 
   # User specific validations
   # agent_id can't be changed in update if timer is running for the user.
-  validates :agent_id, custom_absence: { allow_nil: false, message: 'cant_update_user' },
+  validates :agent_id, custom_absence: { allow_nil: false, message: :cant_update_user },
                        if: -> { item.timer_running && @agent_id_set && item.user_id != agent_id }, on: :update
   validates :agent_id, custom_numericality: { allow_nil: true }
 
@@ -45,15 +45,15 @@ class TimeEntryValidation < ApiValidation
 
     def valid_user?
       user = Account.current.agents_from_cache.find { |x| x.user_id == @agent_id } if @agent_id_set
-      errors.add(:agent_id, :blank) unless user
+      errors[:agent_id] << :blank unless user
     end
 
     def disallow_reset_timer_value
-      errors.add(:timer_running, 'timer_running_duplicate') if request_params[:timer_running].to_s.to_bool == item.timer_running.to_s.to_bool
+      errors[:timer_running] << :timer_running_duplicate if request_params[:timer_running].to_s.to_bool == item.timer_running.to_s.to_bool
     end
 
     def start_time_value
-      errors.add(:start_time, 'start_time_lt_now') if start_time.to_time.utc > Time.zone.now.utc
+      errors[:start_time] << :start_time_lt_now if start_time.to_time.utc > Time.zone.now.utc
     end
 
     def attributes_to_be_stripped

@@ -64,7 +64,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false).once
     delete :destroy, controller_params(id: ts_id)
     assert_response 403
-    match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
+    match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
   end
 
   def test_destroy_without_privilege
@@ -73,7 +73,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     delete :destroy, controller_params(id: ts_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy_with_ticket_trashed
@@ -82,7 +82,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     delete :destroy, controller_params(id: ts_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy_with_ticket_spam
@@ -108,7 +108,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     delete :destroy, controller_params(id: ts_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_destroy_with_ownership
@@ -126,7 +126,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @account.class.any_instance.stubs(:features_included?).returns(false)
     get :index, controller_params(billable: 0)
     @account.class.any_instance.unstub(:features_included?)
-    match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
+    match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
   end
 
@@ -161,7 +161,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :index, controller_params(billable: 0)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_index_with_extra_params
@@ -169,7 +169,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :index, controller_params(hash)
     assert_response 400
     pattern = []
-    hash.keys.each { |key| pattern << bad_request_error_pattern(key, 'invalid_field') }
+    hash.keys.each { |key| pattern << bad_request_error_pattern(key, :invalid_field) }
     match_json pattern
   end
 
@@ -200,19 +200,19 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_invalid_params
     get :index, controller_params(company_id: 't', agent_id: 'er', billable: '78', executed_after: '78/34', executed_before: '90/12')
-    pattern = [bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')]
-    pattern << bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('company_id', 'data_type_mismatch', data_type: 'Positive Integer')
-    pattern << bad_request_error_pattern('executed_after', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
-    pattern << bad_request_error_pattern('executed_before', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern = [bad_request_error_pattern('billable', :data_type_mismatch, data_type: 'Boolean')]
+    pattern << bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')
+    pattern << bad_request_error_pattern('executed_after', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
+    pattern << bad_request_error_pattern('executed_before', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')
     assert_response 400
     match_json pattern
   end
 
   def test_index_with_invalid_model_params
     get :index, controller_params(company_id: 8989, agent_id: 678_567_567, billable: 'true', executed_after: 23.days.ago.iso8601, executed_before: 2.days.ago.iso8601)
-    pattern = [bad_request_error_pattern('agent_id', "can't be blank")]
-    pattern << bad_request_error_pattern('company_id', "can't be blank")
+    pattern = [bad_request_error_pattern('agent_id', :"can't be blank")]
+    pattern << bad_request_error_pattern('company_id', :"can't be blank")
     assert_response 400
     match_json pattern
   end
@@ -393,7 +393,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_create_arbitrary_params
     post :create, construct_params({ id: ticket.display_id }, test: 'junk')
     assert_response 400
-    match_json [bad_request_error_pattern('test', 'invalid_field')]
+    match_json [bad_request_error_pattern('test', :invalid_field)]
   end
 
   def test_create_presence_invalid
@@ -422,7 +422,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     @controller.stubs(:privilege?).with(:all).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params_hash.merge(agent_id: 99))
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', 'invalid_field')])
+    match_json([bad_request_error_pattern('agent_id', :invalid_field)])
     @controller.unstub(:privilege?)
   end
 
@@ -431,7 +431,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                                 timer_running: false }.merge(params_hash))
     assert_response 400
     match_json [bad_request_error_pattern('start_time',
-                                          'Should be blank if timer_running is false')]
+                                          :timer_running_false)]
   end
 
   def test_create_with_no_params
@@ -549,7 +549,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, {})
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_create_with_ticket_spam
@@ -571,7 +571,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     post :create, construct_params({ id: ticket.display_id }, {})
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update
@@ -598,7 +598,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: 'yu')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_update_presence_invalid
@@ -609,7 +609,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: '7878')
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', 'data_type_mismatch', data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('agent_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_update_date_time_invalid
@@ -618,8 +618,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: '89/12',
                                                   note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
-                bad_request_error_pattern('executed_at', 'invalid_date_time', format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
+    match_json([bad_request_error_pattern('start_time', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm'),
+                bad_request_error_pattern('executed_at', :invalid_date_time, format: 'yyyy-mm-ddThh:mm:ss±hh:mm')])
   end
 
   def test_update_inclusion_invalid
@@ -630,8 +630,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: '89', executed_at: executed_at,
                                                   note: 'test note', billable: '12')
     assert_response 400
-    match_json([bad_request_error_pattern('timer_running', 'data_type_mismatch', data_type: 'Boolean'),
-                bad_request_error_pattern('billable', 'data_type_mismatch', data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('timer_running', :data_type_mismatch, data_type: 'Boolean'),
+                bad_request_error_pattern('billable', :data_type_mismatch, data_type: 'Boolean')])
   end
 
   def test_update_format_invalid
@@ -653,7 +653,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'Has to be lesser than current time')])
+    match_json([bad_request_error_pattern('start_time', :start_time_lt_now)])
   end
 
   def test_update_timer_running_false_again
@@ -664,8 +664,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: false, executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
-                bad_request_error_pattern('start_time', 'Should be blank if timer_running is false')])
+    match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
+                bad_request_error_pattern('start_time', :timer_running_false)])
   end
 
   def test_update_timer_running_true_again
@@ -676,8 +676,8 @@ class TimeEntriesControllerTest < ActionController::TestCase
                                                   timer_running: true, executed_at: executed_at, start_time: start_time,
                                                   note: 'test note', billable: true, agent_id: @agent.id)
     assert_response 400
-    match_json([bad_request_error_pattern('timer_running', "Can't set to the same value as before"),
-                bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
+    match_json([bad_request_error_pattern('timer_running', :timer_running_duplicate),
+                bad_request_error_pattern('start_time', :timer_running_true)])
   end
 
   def test_update_agent_id_when_timer_running
@@ -687,7 +687,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id },  time_spent: '09:00', executed_at: executed_at,
                                                   note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
   end
 
   def test_update_agent_id_when_timer_not_running
@@ -762,7 +762,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '01:00', timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true, agent_id: user.id)
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', "Can't update user when timer is running")])
+    match_json([bad_request_error_pattern('agent_id', :cant_update_user)])
   end
 
   def test_update_timer_running_false_for_all_other_timers_while_creating_time_entry
@@ -800,7 +800,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
   end
 
   def test_update_start_time_when_timer_is_not_running
@@ -810,7 +810,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running is false')])
+    match_json([bad_request_error_pattern('start_time', :timer_running_false)])
   end
 
   def test_update_start_time_when_timer_running_is_set_to_true
@@ -834,7 +834,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', start_time: start_time, timer_running: false,
                                                  executed_at: executed_at, note: 'test note', billable: true)
     assert_response 400
-    match_json([bad_request_error_pattern('start_time', 'Should be blank if timer_running was true already')])
+    match_json([bad_request_error_pattern('start_time', :timer_running_true)])
   end
 
   def test_update_with_timer_running_true_valid
@@ -902,7 +902,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
     controller.class.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
     controller.class.any_instance.unstub(:privilege?)
   end
 
@@ -910,7 +910,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     ts = create_time_entry(timer_running: true)
     @account.class.any_instance.stubs(:features_included?).returns(false).once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
-    match_json(request_error_pattern('require_feature', feature: 'Timesheets'))
+    match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
     User.any_instance.stubs(:feature?)
   end
@@ -920,7 +920,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_update_with_ticket_spam
@@ -944,7 +944,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: sample_time_entry.id }, note: 'test note', billable: true)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def toggle_with_invalid_id
@@ -955,7 +955,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_with_params
     put :toggle_timer, construct_params({ id: Helpdesk::TimeSheet.first }, test: 'junk')
     assert_response 400
-    match_json(request_error_pattern('no_content_required'))
+    match_json(request_error_pattern(:no_content_required))
   end
 
   def test_toggle_off_timer
@@ -982,11 +982,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_invalid_record
     ts = Helpdesk::TimeSheet.first
     Helpdesk::TimeSheet.any_instance.stubs(:update_attributes).returns(false)
-    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', "can't be blank"]])
+    Helpdesk::TimeSheet.any_instance.stubs(:errors).returns([['user', :"can't be blank"]])
     put :toggle_timer, construct_params({ id: ts.id }, {})
     Helpdesk::TimeSheet.any_instance.unstub(:update_attributes, :errors)
     assert_response 400
-    match_json([bad_request_error_pattern('user', "can't be blank")])
+    match_json([bad_request_error_pattern('user', :"can't be blank")])
   end
 
   def test_toggle_timer_with_ticket_trashed
@@ -994,7 +994,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_toggle_timer_with_ticket_spam
@@ -1018,7 +1018,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :toggle_timer, construct_params({ id: sample_time_entry.id }, {})
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_ticket_time_entries
@@ -1055,7 +1055,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :ticket_time_entries, construct_params(id: t.display_id)
     User.any_instance.unstub(:privilege?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_ticket_time_entries_invalid_id
@@ -1096,7 +1096,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :ticket_time_entries, construct_params(id: ticket.display_id)
     Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_ticket_time_entries_without_ticket_privilege
@@ -1106,7 +1106,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     get :ticket_time_entries, construct_params(id: time_sheet.workable.display_id)
     User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
-    match_json(request_error_pattern('access_denied'))
+    match_json(request_error_pattern(:access_denied))
   end
 
   def test_ticket_time_entries_with_link_header

@@ -6,7 +6,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
 
     attr_accessor :name, :id
     validates :name, custom_absence: true
-    validates :id, custom_absence: { allow_nil: true, message: 'required_and_numericality' }
+    validates :id, custom_absence: { allow_nil: true, message: :required_and_numericality }
   end
 
   def test_attribute_defined
@@ -14,7 +14,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
     test.name = 'hjhj'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: 'present' }, errors)
+    assert_equal({ name: :present }, errors)
   end
 
   def test_attribute_not_defined
@@ -35,7 +35,7 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
     test.name = nil
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ name: 'present' }, errors)
+    assert_equal({ name: :present }, errors)
   end
 
   def test_custom_message
@@ -43,6 +43,6 @@ class CustomAbsenceValidatorTest < ActionView::TestCase
     test.id = 'nnn'
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ id: 'required_and_numericality' }, errors)
+    assert_equal({ id: :required_and_numericality }, errors)
   end
 end

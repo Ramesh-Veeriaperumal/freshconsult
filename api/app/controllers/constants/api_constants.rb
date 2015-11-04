@@ -1,7 +1,7 @@
 module ApiConstants
 
   # ControllerConstants
-  API_CURRENT_VERSION = 'v2'
+  API_CURRENT_VERSION = 'v2'.freeze
 
   DEFAULT_PAGINATE_OPTIONS = {
     per_page: 50,
@@ -9,11 +9,11 @@ module ApiConstants
     page: 1
   }
 
-  DEFAULT_PARAMS = %w(version format k id)
-  DEFAULT_INDEX_FIELDS = %w(version format k id per_page page)
+  DEFAULT_PARAMS = %w(version format k id).freeze
+  DEFAULT_INDEX_FIELDS = %w(version format k id per_page page).freeze
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
-  TIME_UNITS = %w(hours minutes seconds) # do not change the order.
+  TIME_UNITS = %w(hours minutes seconds).freeze # do not change the order.
 
   DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
 
@@ -31,9 +31,9 @@ module ApiConstants
   MAX_LENGTH_STRING = 255
 
   # Wrap parameters args
-  WRAP_PARAMS = [exclude: [], format: :json]
+  WRAP_PARAMS = [exclude: [], format: :json].freeze
 
-  UTC = 'UTC'
+  UTC = 'UTC'.freeze
 
   URL_REGEX = /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
-end
+end.freeze
