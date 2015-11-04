@@ -28,7 +28,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :save_article_filter, :only => :index
   around_filter :run_on_db, :only => [:custom_search, :index, :full_paginate]
 
-  before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
+  before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close ,:execute_bulk_scenario]
   before_filter :normalize_params, :only => :index
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
@@ -42,7 +42,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   layout :choose_layout 
   
-  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever]  
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :execute_bulk_scenario]  
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
@@ -461,41 +461,50 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def execute_scenario 
-    va_rule = current_account.scn_automations.find(params[:scenario_id])
-    unless (va_rule.visible_to_me? and va_rule.trigger_actions(@item, current_user))
-      flash[:notice] = I18n.t("admin.automations.failure")
-      respond_to do |format|
-        format.html { 
-          redirect_to :back 
-        }
-        format.js
-        format.mobile {
-          render :json => { :failure => true,
-             :rule_name => I18n.t("admin.automations.failure") }.to_json 
-        }
+  def execute_bulk_scenario
+    va_rule = current_account.scn_automations.find_by_id(params[:scenario_id])
+    if va_rule.present? and va_rule.visible_to_me? and va_rule.check_user_privilege
+      Tickets::BulkScenario.perform_async({:ticket_ids => params[:ids], :scenario_id => params[:scenario_id]})
+      va_rule.fetch_actions_for_flash_notice(current_user)
+      actions_executed = Va::ScenarioFlashMessage.activities
+      Va::ScenarioFlashMessage.clear_activities
+      respond_to do |format|    
+        format.html {
+          flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
+                                        :locals => { :actions_executed => actions_executed, :rule_name => va_rule.name, :bulk_scenario => true, :count => params[:ids].length }).html_safe
+            redirect_to :back
+          }
       end
     else
+      scenario_failure_notification
+    end
+  end
+
+  def execute_scenario 
+    va_rule = current_account.scn_automations.find_by_id(params[:scenario_id])
+    if va_rule.present? and va_rule.visible_to_me? and va_rule.trigger_actions(@item, current_user)
       @item.save
-      @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
-        { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
+      @item.create_scenario_activity(va_rule.name)
       @va_rule_executed = va_rule
+      actions_executed = Va::ScenarioFlashMessage.activities
       respond_to do |format|
         format.html {
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
-                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name }).html_safe
+                                        :locals => { :actions_executed => actions_executed, :rule_name => va_rule.name }).html_safe
           redirect_to :back
         }
         format.xml { render :xml => @item }
         format.mobile {
-          render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json 
+          render :json => {:success => true, :id => @item.id, :actions_executed => actions_executed, :rule_name => va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json 
         }
         format.json { render :json => @item }  
         format.js { 
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name }).html_safe
+                                        :locals => { :actions_executed => actions_executed, :rule_name => va_rule.name }).html_safe
         }
       end
+    else
+      scenario_failure_notification  
     end
   end 
   
@@ -1297,4 +1306,17 @@ class Helpdesk::TicketsController < ApplicationController
     Search::Filters::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
   end
  
+  def scenario_failure_notification
+    flash[:notice] = I18n.t("admin.automations.failure")
+    respond_to do |format|
+      format.html { 
+        redirect_to :back 
+      }
+      format.js
+      format.mobile {
+        render :json => { :failure => true,
+           :rule_name => I18n.t("admin.automations.failure") }.to_json 
+      }
+    end
+  end
 end

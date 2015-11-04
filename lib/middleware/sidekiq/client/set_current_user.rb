@@ -1,17 +1,17 @@
 module Middleware
   module Sidekiq
     module Client
-      class BelongsToAccount
+      class SetCurrentUser
   
-        IGNORE = []
+        INCLUDE = []
 
         def initialize(options = {})
-          @ignore = options.fetch(:ignore, IGNORE)
+          @included = options.fetch(:required_classes, INCLUDE)
         end
 
         def call(worker, msg, queue,redis_pool)
-          if !@ignore.include?(worker.to_s)
-            msg['account_id'] = ::Account.current.id
+          if @included.include?(worker.to_s)
+            msg['current_user_id'] = ::User.current.id if ::User.current
           end
           yield
           # rescue Exception => e
