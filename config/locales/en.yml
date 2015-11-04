@@ -5047,9 +5047,14 @@ en:
         accepting: Accepting
         not_accepting: Not Accepting
         call_in_progress: Call in progress
+        in_busy_state: "Busy"
         agent_on_call: Agent on call
         no_agents: "- No Agents -"
         no_activity: "No Activity"
+        queued_calls: "In queue"
+        active_calls: "In conversation"
+        no_queue_calls: "No calls in queue"
+        no_active_calls: "No calls in progress"
       livechat:
         chat: Live Chat
         accepting: Accepting
@@ -7352,7 +7357,9 @@ en:
     dashboard:
       title: "Phone"
       in_conversation: "In-conversation"
+      in_queue: "In-queue"
       available_agents: "Available Agents"
+      unavailable_agents: "Busy Agents"
       freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
       admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
     widget:

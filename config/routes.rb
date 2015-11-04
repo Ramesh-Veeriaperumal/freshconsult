@@ -587,6 +587,15 @@ Helpkit::Application.routes.draw do
   match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search'
   match '/freshfone/call_history/children' => 'freshfone/call_history#children'
 
+  namespace :freshfone, :path => "phone" do 
+    resources :dashboard do
+      collection do
+        get :dashboard_stats
+        get :calls_limit_notificaiton
+      end
+    end
+  end
+  
   resources :users do
     collection do
       get :revert_identity

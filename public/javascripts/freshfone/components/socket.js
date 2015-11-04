@@ -9,7 +9,9 @@ var FreshfoneSocket;
 		this.className = "FreshfoneSocket";
 		this.$dashboard = $('.freshfone_dashboard');
 		this.$availableAgents = this.$dashboard.find('.live-available-agents');
-		this.$liveCalls = this.$dashboard.find('.live-calls');
+		this.$liveCalls = this.$dashboard.find('.live-active-calls');
+    this.$queuedCalls = this.$dashboard.find('.live-queued-calls');
+    this.$busyAgents = this.$dashboard.find('.live-busy-agents');
 		this.$dashboardTable = this.$dashboard.find('.freshfone_dash');
 		this.$contentContainer = $('.freshfone_content_container');
 		this.$freshfoneAvailableAgentsList = this.$contentContainer.find('.ffone_available_agents');
@@ -21,6 +23,10 @@ var FreshfoneSocket;
 		this.connectionCreatedAt = "";
 		this.connectionClosedAt = "";
 		this.connection = null;
+    this.available_agents= 0;
+    this.busyAgents = 0;
+    this.activeCalls = 0;
+    this.queuedCalls = 0;
 
 //  Intercept emit && listeners to print args
 //  self.freshfone_socket_channel_channel.emit = function () {
@@ -176,7 +182,7 @@ var FreshfoneSocket;
 			});
 
 			this.freshfone_socket_channel.on('get_calls_agents_status', function () {
-				if(self.$dashboard.length){
+				if(self.$dashboard.length || $('#freshfone_calls_dashboard').length){
 					self.getAvailableAgents();
 				}
 			});
@@ -186,14 +192,31 @@ var FreshfoneSocket;
 				switch (data.type) {
 				case 'total_agents_available':
 					self.totalAgents = data.members;
-					self.tryUpdateDashboard();
 					break;
 				case 'new_call':
+            self.incrementBusyAgentsCount();
+            break;
 				case 'completed_call':
-					self.activeCalls = data.members;
-					self.tryUpdateDashboard();
-					break;
+              self.decrementBusyAgentsCount();
+            break;
+        case 'queued_call':
+            self.incrementQueuedCallsCount();
+            $("#freshfone_dashboard_events").trigger(data.type, data);
+            break;
+        case 'dequeued_call':
+            self.decrementQueuedCallsCount();
+            $("#freshfone_dashboard_events").trigger(data.type, data);
+            break;
+        case 'new_active_call':
+            self.incrementActiveCallsCount();
+            $("#freshfone_dashboard_events").trigger(data.type, data);
+            break;
+        case 'active_call_end':
+            self.decrementActiveCallsCount();
+            $("#freshfone_dashboard_events").trigger(data.type, data);
+            break;
 				}
+        self.tryUpdateDashboard();
 			});
 
 			this.freshfone_socket_channel.on('connect_failed', function () {
@@ -247,16 +270,20 @@ var FreshfoneSocket;
 			$('body').on('pjaxDone', function() {
 				self.$dashboard = $('.freshfone_dashboard');
 				self.$availableAgents = self.$dashboard.find('.live-available-agents');
-				self.$liveCalls = self.$dashboard.find('.live-calls');
+				self.$liveCalls = self.$dashboard.find('.live-active-calls');
+        self.$queuedCalls = self.$dashboard.find('.live-queued-calls');
+        self.$busyAgents = self.$dashboard.find('.live-busy-agents');
 
 				self.tryUpdateDashboard();
 			});
 		},
 		tryUpdateDashboard: function () {
-			if ((this.$availableAgents || this.$liveCalls) === undefined) { return false; }
+			if ((this.$availableAgents || this.$liveCalls || this.$queuedCalls) === undefined) { return false; }
 
 			this.$availableAgents.text(this.totalAgents);
 			this.$liveCalls.text(this.activeCalls);
+      this.$queuedCalls.text(this.queuedCalls);
+      this.$busyAgents.text(this.busyAgents);
 		},
 		onlineUserCount: function () {
 			var offset = freshfoneuser.isOnline() ? -1 : 0;
@@ -266,10 +293,12 @@ var FreshfoneSocket;
       var self = this;
       $.ajax({
         dataType: "json",
-        url: '/freshfone/dashboard_stats',
+        url: '/phone/dashboard/dashboard_stats',
         success: function(data) {
           self.available_agents=data.available_agents;
-          self.activeCalls = data.active_calls;
+          self.busyAgents = data.busy_agents;
+          self.activeCalls = data.active_calls_count;
+          self.queuedCalls = data.queued_calls_count;
           self.populateAvailableAgentsCount();
           self.tryUpdateDashboard();
         }
@@ -650,7 +679,6 @@ var FreshfoneSocket;
 			}
 
 		},
-
 		successTransferCall: function (transfer_success) {
 			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
 		},
@@ -674,6 +702,18 @@ var FreshfoneSocket;
       if(!this.$externalNumbersList.is(':visible')){
         this.noAvailableAgentsToggle();
       }
+    },
+    incrementBusyAgentsCount: function () { this.busyAgents+=1; },
+    incrementQueuedCallsCount: function () { this.queuedCalls+=1; },
+    incrementActiveCallsCount: function () { this.activeCalls+=1; },
+    decrementBusyAgentsCount: function() { 
+      if(this.busyAgents>0) { this.busyAgents-=1; } 
+    },
+    decrementQueuedCallsCount: function() { 
+      if(this.queuedCalls>0) {  this.queuedCalls-=1; }
+    },
+    decrementActiveCallsCount: function() { 
+     if(this.activeCalls>0) {  this.activeCalls-=1; }
     }
 	};
 }(jQuery));

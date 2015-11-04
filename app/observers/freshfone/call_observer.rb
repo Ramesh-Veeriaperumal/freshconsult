@@ -1,6 +1,10 @@
 class Freshfone::CallObserver < ActiveRecord::Observer
 	observe Freshfone::Call
 
+  include Freshfone::NodeEvents
+  include Redis::RedisKeys
+  include Redis::IntegrationsRedis
+
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
 	end
@@ -11,6 +15,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 	end
 
   def after_update(freshfone_call)
+    publish_new_call_status(freshfone_call) if freshfone_call.call_status_changed?
     trigger_cost_job freshfone_call if freshfone_call.account.features? :freshfone_conference
   end    
 
@@ -94,6 +99,40 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     def trigger_cost_job(freshfone_call)
       return unless freshfone_call.call_status_changed? && freshfone_call.call_cost.blank?
       add_cost_job freshfone_call if call_ended? freshfone_call
+    end
+
+    def publish_new_call_status(freshfone_call)
+      account = freshfone_call.account
+      case freshfone_call.call_status
+        when Freshfone::Call::CALL_STATUS_HASH[:queued]
+          trigger_queued_call_publish(freshfone_call, account)
+        when Freshfone::Call::CALL_STATUS_HASH[:completed]
+          if (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:queued])
+            trigger_dequeued_call_publish(freshfone_call, account) 
+          else  
+            trigger_active_call_end_publish(freshfone_call, account)
+          end
+        when Freshfone::Call::CALL_STATUS_HASH[:'in-progress']
+          trigger_new_active_call_publish(freshfone_call, account) unless (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
+        else
+          trigger_dequeued_call_publish(freshfone_call, account) if (freshfone_call.call_status_was == Freshfone::Call::CALL_STATUS_HASH[:queued])
+      end
+    end
+
+    def trigger_queued_call_publish(freshfone_call, account)
+      publish_queued_call(freshfone_call, freshfone_call.account)
+    end
+
+    def trigger_dequeued_call_publish(freshfone_call, account)
+      publish_dequeued_call(freshfone_call, account)
+    end
+
+    def trigger_new_active_call_publish(freshfone_call, account)
+      publish_new_active_call(freshfone_call,account) 
+    end
+
+    def trigger_active_call_end_publish(freshfone_call, account)
+      publish_active_call_end(freshfone_call,account)
     end
 
 end

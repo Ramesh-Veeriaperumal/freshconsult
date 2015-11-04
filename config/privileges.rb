@@ -68,6 +68,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
+    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
@@ -385,6 +386,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
+    resource :"freshfone/dashboard", :only => [:index]
   end
 
   manage_account do
