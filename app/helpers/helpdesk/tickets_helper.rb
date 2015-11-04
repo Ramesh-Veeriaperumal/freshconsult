@@ -577,6 +577,6 @@ def to_event_data_scenario(va_rule)
     name: va_rule.name,
     description: va_rule.description,
     id: va_rule.id,
-    activities: Va::Action.activities
+    activities: Va::ScenarioFlashMessage.activities
   }.to_json
 end

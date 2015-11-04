@@ -1560,6 +1560,8 @@ Helpkit::Application.routes.draw do
         get :custom_view_save
         match :assign_to_agent#TODO-RAILS3 new route
         put :quick_assign #TODO-RAILS3 new route
+        get :bulk_scenario
+        put :execute_bulk_scenario
       end
 
       member do

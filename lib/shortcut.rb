@@ -40,7 +40,8 @@ class Shortcut
 			:undo				=> "z",
 			:reply				=> "r",
 			:forward			=> "f",
-			:add_note			=> "n"
+			:add_note			=> "n",
+			:scenario			=> "s"
 		},
 		:ticket_detail	=> {
 			:toggle_watcher		=> "w",

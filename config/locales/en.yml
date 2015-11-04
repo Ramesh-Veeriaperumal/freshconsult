@@ -2782,7 +2782,39 @@ en:
   automations:
     actions: Actions
     activity:
-      added_watcher(s): "Added Watcher(s)"
+      change: "Changed "
+      add: "Added "
+      assign: "Assigned "
+      set: "Set "
+      send: "Sent "
+      none: "None"
+      mark_spam: "Marked the ticket <b>%{ticket} </b> as spam"
+      delete_ticket: "Deleted the ticket <b>%{ticket} </b>"
+      bulk_change: "Changing"
+      bulk_add: "Adding"
+      bulk_assign: "Assigning"
+      bulk_set: "Setting"
+      bulk_send: "Sending"
+      bulk_mark_spam: "Marking the ticket(s) as spam"
+      bulk_delete_tickets: "Deleting the ticket(s)"
+      priority: "the priority to <b>%{priority}</b>"
+      status: "the status to <b>%{status}</b>"
+      ticket_type: "the ticket type to <b>%{ticket_type}</b>"
+      product: "product as <b>%{product_name}</b>"
+      group_success: "group as <b>%{group_name}</b>"
+      group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
+      agent_success: "agent as <b>%{agent_name}</b>"
+      agent_failure: "<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>"
+      private_note: "a <b>private note</b>"
+      note: "<b>note</b>"
+      add_watchers: "Watcher(s) - <b>%{watchers}</b>"
+      add_tags: "the tag(s) [<b>%{tags}</b>]"
+      email_to_requester: "an email to the requester"
+      email_to_group: "an email to the group <b>%{group_name}</b>"
+      email_to_agent: "an email to the agent <b>%{agent_name}</b>"
+      bulk_email_to_group: "an email to the group"
+      bulk_email_to_agent: "an email to the agent"
+      custom_fields: "%{action} as <b>%{value}</b>"
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -2800,6 +2832,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
@@ -4599,6 +4632,7 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form:
@@ -4630,7 +4664,7 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
-    spam_header: spam
+    spam_header: Spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
@@ -5146,8 +5180,10 @@ en:
           view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
+        bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>" 
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
+        bulk_actions_perform: "Actions being performed on %{count} ticket(s)"
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
         view_ticket: View ticket
@@ -8039,6 +8075,7 @@ en:
       reply: "Reply"
       forward: "Forward"
       add_note: "Add note"
+      scenario: "Scenarios"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -8053,7 +8090,6 @@ en:
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
       openDialog: "Open dialog"
-      scenario: "Scenarios"
   mailbox:
     mail_server: "Mail Server:"
     use_default: "Default (Freshdesk)"
