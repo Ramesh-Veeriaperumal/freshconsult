@@ -1,5 +1,5 @@
 # encoding: utf-8
-class Support::SearchV2Controller < SupportController
+class Support::SearchV2::SpotlightController < SupportController
 
   extend NewRelic::Agent::MethodTracer
   include ActionView::Helpers::TextHelper
@@ -7,10 +7,8 @@ class Support::SearchV2Controller < SupportController
   before_filter :initialize_search_parameters
 
   attr_accessor :size, :page, :current_filter, :es_results, :result_set, 
-                :search_results, :search, :pagination, :results, :no_render
-
-  # To-do: Verify uses:
-  # :results, :related_articles, :container, :longest_collection
+                :search_results, :search, :pagination, :results, :no_render,
+                :related_articles, :container, :search_context
 
   # ESType - [model, associations] mapping
   # Needed for loading records from DB
@@ -60,24 +58,13 @@ class Support::SearchV2Controller < SupportController
     search
   end
 
-  # To-do: Establish usecases
-  #
   def suggest_topic
-    @no_render = true
+    @no_render          = true
     @searchable_klasses = ['Topic']
     search
-    @results = @search_results
-    render template: '/support/search/suggest_topic', :layout => false
-  end
+    @results            = @search_results
 
-  # To-do: Establish usecases
-  # To-do: Need to do it here rather than model
-  #
-  def related_articles
-    # article = current_account.solution_articles.find(params[:article_id])
-    # @related_articles = article.related(current_portal, params[:limit])
-    # @container = params[:container]
-    # render :layout => false
+    render template: '/support/search/suggest_topic', :layout => false
   end
 
   private
@@ -87,7 +74,7 @@ class Support::SearchV2Controller < SupportController
     def search
       begin
         @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            :portal_spotlight,
+                                                            @search_context,
                                                             searchable_types
                                                           ).fetch(construct_es_params)
         @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
@@ -280,12 +267,13 @@ class Support::SearchV2Controller < SupportController
     ######################
 
     def initialize_search_parameters
-      @search_key   = params[:term] || params[:search_key] || ''
-      @es_results   = []
-      @size         = (params[:max_matches].to_i.zero? or
-                      params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
-      @page         = (params[:page].to_i.zero? ? 1 : params[:page].to_i)
-      @offset       = @size * (@page - 1)
+      @search_key     = params[:term] || params[:search_key] || ''
+      @es_results     = []
+      @size           = (params[:max_matches].to_i.zero? or
+                        params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
+      @page           = (params[:page].to_i.zero? ? 1 : params[:page].to_i)
+      @offset         = @size * (@page - 1)
+      @search_context = :portal_spotlight
     end
 
 end

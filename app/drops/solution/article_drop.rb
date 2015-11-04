@@ -74,6 +74,10 @@ class Solution::ArticleDrop < BaseDrop
     source.excerpts.desc_un_html
   end
 
+  # Note:
+  # Couldnt find any internal uses
+  # Will hit old search if used
+  #
   def related_articles
     source.related(@portal.source).compact
   end

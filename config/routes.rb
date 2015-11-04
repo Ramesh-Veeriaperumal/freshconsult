@@ -2111,14 +2111,22 @@ Helpkit::Application.routes.draw do
 
     # Search v2 portal controller routes
     #
-    resources :search_v2, :only => [:all, :tickets, :solutions, :topics] do
-      collection do
-        get :all
-        get :tickets
-        get :solutions
-        get :topics
-        get :suggest_topic
+    namespace :search_v2 do
+      resources :spotlight, :only => [:all, :tickets, :solutions, :topics, :suggest_topic] do
+        collection do
+          get :all
+          get :tickets
+          get :solutions
+          get :topics
+          get :suggest_topic
+        end
       end
+      resources :solutions, :only => [:related_articles] do
+        collection do
+          get :related_articles
+        end
+      end
+      match '/articles/:article_id/related_articles' => 'solutions#related_articles'
     end
 
     resources :discussions, :only => [:index, :show] do

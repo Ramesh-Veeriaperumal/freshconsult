@@ -38,26 +38,26 @@ class Middleware::SearchV2Router
     def v2_paths
       @@v2_paths ||= {
                                   ### Agent side spotlight search path ###        
-        '/search/home/suggest'              => { path: '/search/v2/suggest',                  feature: :esv2_agent_spotlight },
-        '/search/all'                       => { path: '/search/v2/spotlight/all',            feature: :esv2_agent_spotlight },
+        '/search/home/suggest'              => { path: '/search/v2/suggest',                      feature: :esv2_agent_spotlight },
+        '/search/all'                       => { path: '/search/v2/spotlight/all',                feature: :esv2_agent_spotlight },
                                   ### Agent side paned search paths ###
-        '/search/tickets'                   => { path: '/search/v2/spotlight/tickets',        feature: :esv2_agent_ticket },
-        '/search/customers'                 => { path: '/search/v2/spotlight/customers',      feature: :esv2_agent_customer },
-        '/search/forums'                    => { path: '/search/v2/spotlight/forums',         feature: :esv2_agent_forum },
-        '/search/solutions'                 => { path: '/search/v2/spotlight/solutions',      feature: :esv2_agent_solution },
+        '/search/tickets'                   => { path: '/search/v2/spotlight/tickets',            feature: :esv2_agent_ticket },
+        '/search/customers'                 => { path: '/search/v2/spotlight/customers',          feature: :esv2_agent_customer },
+        '/search/forums'                    => { path: '/search/v2/spotlight/forums',             feature: :esv2_agent_forum },
+        '/search/solutions'                 => { path: '/search/v2/spotlight/solutions',          feature: :esv2_agent_solution },
                                 ### Customer side spotlight search paths ###
-        '/support/search'                   => { path: '/support/search_v2/all',              feature: :esv2_portal_spotlight },
-        '/support/search/tickets'           => { path: '/support/search_v2/tickets',          feature: :esv2_portal_ticket },
-        '/support/search/topics'            => { path: '/support/search_v2/topics',           feature: :esv2_portal_forum },
-        '/support/search/solutions'         => { path: '/support/search_v2/solutions',        feature: :esv2_portal_solution },
+        '/support/search'                   => { path: '/support/search_v2/spotlight/all',        feature: :esv2_portal_spotlight },
+        '/support/search/tickets'           => { path: '/support/search_v2/spotlight/tickets',    feature: :esv2_portal_ticket },
+        '/support/search/topics'            => { path: '/support/search_v2/spotlight/topics',     feature: :esv2_portal_forum },
+        '/support/search/solutions'         => { path: '/support/search_v2/spotlight/solutions',  feature: :esv2_portal_solution },
                                   ### Agent side autocomplete paths ###
-        '/search/autocomplete/requesters'   => { path: '/search/v2/autocomplete/requesters',  feature: :esv2_user_autocomplete },
-        '/search/autocomplete/agents'       => { path: '/search/v2/autocomplete/agents',      feature: :esv2_agent_autocomplete },
-        '/search/autocomplete/companies'    => { path: '/search/v2/autocomplete/companies',   feature: :esv2_company_autocomplete },
-        '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',        feature: :esv2_tag_autocomplete },
+        '/search/autocomplete/requesters'   => { path: '/search/v2/autocomplete/requesters',      feature: :esv2_user_autocomplete },
+        '/search/autocomplete/agents'       => { path: '/search/v2/autocomplete/agents',          feature: :esv2_agent_autocomplete },
+        '/search/autocomplete/companies'    => { path: '/search/v2/autocomplete/companies',       feature: :esv2_company_autocomplete },
+        '/search/autocomplete/tags'         => { path: '/search/v2/autocomplete/tags',            feature: :esv2_tag_autocomplete },
                                         ### Other search paths ###
         '/search/merge_topic'               => { path: '/search/v2/merge_topics/search_topics', feature: :esv2_merge_topic },
-        '/support/search/topics/suggest'    => { path: '/support/search_v2/suggest_topic',      feature: :esv2_portal_suggest_topic }
+        '/support/search/topics/suggest'    => { path: '/support/search_v2/spotlight/suggest_topic',  feature: :esv2_portal_suggest_topic }
       }
     end
     
@@ -65,7 +65,8 @@ class Middleware::SearchV2Router
       @@param_paths ||= {
         '/search/related_solutions/ticket'  => { path: '/search/v2/related_solutions/ticket', feature: :esv2_related_solutions },
         '/search/search_solutions/ticket'   => { path: '/search/v2/search_solutions/ticket',  feature: :esv2_search_solutions },
-        '/search/tickets/filter'            => { path: '/search/v2/tickets/filter',           feature: :esv2_merge_ticket }
+        '/search/tickets/filter'            => { path: '/search/v2/tickets/filter',           feature: :esv2_merge_ticket },
+        '/support/search/articles'          => { path: '/support/search_v2/articles',         feature: :esv2_portal_search_article }
       }
     end
 
