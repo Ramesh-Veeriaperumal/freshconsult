@@ -28,6 +28,15 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal ' ', @response.body
   end
 
+  def test_invalid_account
+    get '/api/discussions/categories', nil, @headers.merge('HTTP_HOST' => 'junkaccount.freshpo.com' )
+    assert_response 404
+    assert_equal ' ', @response.body
+
+    get '/api/discussions/categories', nil, @headers
+    assert_response 200
+  end
+
   def test_method_not_allowed
     post '/api/discussions/categories/1', '{"name": "true"}', @write_headers
     assert_response 405

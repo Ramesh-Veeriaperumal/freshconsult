@@ -6,6 +6,10 @@ class ApiApplicationController < MetalApiController
   end
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}" )
+    head 404
+  end
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
