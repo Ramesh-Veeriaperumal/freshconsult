@@ -190,20 +190,12 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
-      if redis_key_exists?(UPDATE_TICKET_STATES_VIA_SIDEKIQ)
-        # moved from resque to sidekiq
-        user_id = User.current.id if User.current
-        Tickets::UpdateTicketStatesWorker.perform_async(
-              { :id => id, :model_changes => @model_changes,
-                :freshdesk_webhook => freshdesk_webhook?,
-                :current_user_id =>  user_id }
-              ) unless zendesk_import?
-      else
-        Resque.enqueue(Helpdesk::UpdateTicketStates,
-                      { :id => id, :model_changes => @model_changes,
-                        :freshdesk_webhook => freshdesk_webhook?
-                      }) unless zendesk_import?
-      end
+      user_id = User.current.id if User.current
+      Tickets::UpdateTicketStatesWorker.perform_async(
+            { :id => id, :model_changes => @model_changes,
+              :freshdesk_webhook => freshdesk_webhook?,
+              :current_user_id =>  user_id }
+            ) unless zendesk_import?
     end
 
 	def push_mobile_notification
