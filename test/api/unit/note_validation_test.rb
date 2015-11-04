@@ -2,7 +2,7 @@ require_relative '../unit_test_helper'
 
 class NoteValidationTest < ActionView::TestCase
   def test_numericality
-    controller_params = { 'user_id' => 1 }
+    controller_params = { 'user_id' => 1,  body: Faker::Lorem.paragraph }
     item = nil
     note = NoteValidation.new(controller_params, item)
     assert note.valid?(:create)
@@ -23,7 +23,7 @@ class NoteValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
     Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
-    controller_params = { 'user_id' => 1, attachments: ['file.png'] }
+    controller_params = { 'user_id' => 1, attachments: ['file.png'],  body: Faker::Lorem.paragraph }
     item = nil
     note = NoteValidation.new(controller_params, item)
     refute note.valid?

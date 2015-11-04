@@ -18,7 +18,7 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         api_posts: 2,
 
         create: 46,
-        show: 12,
+        show: 13,
         update: 35,
         destroy: 29,
         follow: 14,

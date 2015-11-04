@@ -14,7 +14,7 @@ json.array! @notes do |note|
   end
   json.set! :attachments do
     json.array! note.attachments do |att|
-      json.cache! CacheLib.key(att, params) do
+      json.cache! att do
         json.set! :id, att.id
         json.set! :content_type, att.content_content_type
         json.set! :size, att.content_file_size

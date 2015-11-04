@@ -15,9 +15,9 @@ class CategoriesIntegrationTest < ActionDispatch::IntegrationTest
       api_forums: 2,
 
       create: 21,
-      show: 12,
+      show: 13,
       update: 18,
-      index: 12,
+      index: 13,
       destroy: 21,
       forums: 14
     }

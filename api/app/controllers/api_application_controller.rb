@@ -4,10 +4,7 @@ class ApiApplicationController < MetalApiController
   rescue_from StandardError, with: :render_500
   rescue_from ActionController::UnpermittedParameters, with: :invalid_field_handler
   rescue_from DomainNotReady, with: :route_not_found
-  rescue_from ActiveRecord::RecordNotFound do |e|
-    Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}" )
-    head 404
-  end
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
@@ -26,7 +23,7 @@ class ApiApplicationController < MetalApiController
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
-  before_filter :check_account_state, except: [:show, :index]
+  before_filter :check_account_state
   before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
   before_filter :set_cache_buster
@@ -106,7 +103,7 @@ class ApiApplicationController < MetalApiController
   protected
 
     def requires_feature(f) # Should be from cache. Need to revisit.
-      return if current_account.features_included?(f)
+      return if Account.current.features?(f)
       @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
       render '/request_error', status: 403
     end
@@ -134,6 +131,12 @@ class ApiApplicationController < MetalApiController
       notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
       Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
+    end
+
+    def record_not_found(e)
+      notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
+      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}" )
+      head 404
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.

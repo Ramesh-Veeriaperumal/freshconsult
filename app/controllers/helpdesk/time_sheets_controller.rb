@@ -2,7 +2,7 @@
 class Helpdesk::TimeSheetsController < ApplicationController
 
   include CustomerDeprecationMethods::NormalizeParams
-  include Concerns::TimeSheetConcern
+
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
@@ -179,7 +179,7 @@ private
     total_time = hours.to_s()+"."+ minutes_as_percent.to_s()
     total_time
   end
-
+  
   #Following method will stop running timer for the user. at a time one user can have only one timer..
   def update_running_timer user_id
     @time_cleared = current_account.time_sheets.find_by_user_id_and_timer_running(user_id, true)
@@ -195,6 +195,15 @@ private
       Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_entry,current_user) unless @time_entry.blank?
       Integrations::TimeSheetsSync.send(app_name,installed_app.first,@time_cleared,current_user) unless @time_cleared.blank?
     end
+  end
+  
+  def calculate_time_spent time_entry
+    from_time = time_entry.start_time
+    to_time = Time.zone.now
+    from_time = from_time.to_time if from_time.respond_to?(:to_time)
+    to_time = to_time.to_time if to_time.respond_to?(:to_time)
+    running_time =  ((to_time - from_time).abs).round 
+    return (time_entry.time_spent + running_time)
   end
 
   def respond_to_format result,mobile_response = nil
@@ -304,4 +313,3 @@ private
   end
 
 end
-

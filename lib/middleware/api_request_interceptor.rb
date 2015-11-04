@@ -23,11 +23,11 @@ class Middleware::ApiRequestInterceptor
       begin
         @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
       rescue MultiJson::ParseError => error
-        Rails.logger.error("API MultiJson::ParseError: #{error.data.read} \n#{error.message}\n#{error.backtrace.join("\n")}")
+        Rails.logger.error("API MultiJson::ParseError: #{env["rack.input"].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
         message =  { code: 'invalid_json', message: "Request body has invalid json format" }
         set_response(400, RESPONSE_HEADERS, message)
       rescue StandardError => error
-        notify_new_relic_agent(error, env['REQUEST_URI'], env["action_dispatch.request_id"], { description: "Error occurred while processing API", request_method: env['REQUEST_METHOD'], request_body: env["rack.input"].string})
+        notify_new_relic_agent(error, env['REQUEST_URI'], env["action_dispatch.request_id"], { description: "Error occurred while processing API", request_method: env['REQUEST_METHOD'], request_body: env["rack.input"].gets})
         Rails.logger.error("API StandardError: #{error.message}\n#{error.backtrace.join("\n")}")
         message =  { code: 'internal_error', message: "We're sorry, but something went wrong." }
         set_response(500, RESPONSE_HEADERS, message)

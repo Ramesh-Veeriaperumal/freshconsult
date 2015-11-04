@@ -209,6 +209,16 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     subscription.update_column(:state, 'trial')
   end
 
+  def test_account_suspended_json_for_get_requests
+    subscription = @account.subscription
+    subscription.update_column(:state, 'suspended')
+    get '/api/discussions/categories', nil, @headers
+    response = parse_response(@response.body)
+    assert_equal({ 'code' => 'account_suspended', 'message' => 'Your account has been suspended.' }, response)
+    assert_response 403
+    subscription.update_column(:state, 'trial')
+  end
+
   def test_day_pass_expired_json
     Agent.any_instance.stubs(:occasional).returns(true).once
     subscription = @account.subscription

@@ -1,4 +1,4 @@
-json.cache! CacheLib.compound_key(@item, @item.avatar, @item.custom_field, params) do
+json.cache! CacheLib.compound_key(@item, @item.avatar.id, @item.custom_field, params) do
   json.extract! @item, :active, :address, :client_manager, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
   json.partial! 'shared/utc_date_format', item: @item
 

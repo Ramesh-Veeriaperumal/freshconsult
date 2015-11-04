@@ -9,7 +9,7 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :source, :ticket_type, :description, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -19,6 +19,7 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
+  validates :description, required: true
 
   # Due by and First response due by validations
   validates :fr_due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_fr_due_by?

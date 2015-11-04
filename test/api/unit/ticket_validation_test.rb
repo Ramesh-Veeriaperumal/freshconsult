@@ -8,7 +8,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_mandatory
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [] }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -17,7 +17,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_email_validation
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'email' => 'fggg,ss@fff.com', ticket_fields: []  }
+    controller_params = { 'email' => 'fggg,ss@fff.com',  ticket_fields: []  }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
@@ -50,7 +50,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_comma_valid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: ['comma', 'test'] }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: ['comma', 'test'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -61,7 +61,7 @@ class TicketValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
     Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
-    controller_params = { requester_id: 1, ticket_fields: [], attachments: ['file.png'] }
+    controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
@@ -74,7 +74,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_tags_multiple_errors
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], tags: 'comma,test' }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], tags: 'comma,test' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -86,7 +86,7 @@ class TicketValidationTest < ActionView::TestCase
   def test_custom_fields_multiple_errors
     Account.stubs(:current).returns(Account.first)
     Helpers::TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(Helpers::CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], custom_fields: 'number1_1 = uioo' }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], custom_fields: 'number1_1 = uioo' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -98,7 +98,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_nil_and_due_by_nil_when_status_is_closed
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: nil, fr_due_by: nil }
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: nil, fr_due_by: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     assert ticket.valid?(:create)
@@ -107,7 +107,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_complex_fields_with_nil
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1, ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }
+    controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)

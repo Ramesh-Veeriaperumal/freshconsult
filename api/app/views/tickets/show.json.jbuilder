@@ -28,7 +28,7 @@ json.partial! 'show_notes' if @notes
 
 json.set! :attachments do
   json.array! @item.attachments do |att|
-    json.cache! CacheLib.key(att, params) do # attachment caching
+    json.cache! att do # attachment caching
       json.set! :id, att.id
       json.set! :content_type, att.content_content_type
       json.set! :size, att.content_file_size

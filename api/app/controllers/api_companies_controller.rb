@@ -24,6 +24,7 @@ class ApiCompaniesController < ApiApplicationController
   private
 
     def load_objects
+      # includes(:flexifield) will avoid n + 1 query to company field data.
       super scoper.includes(:flexifield).order(:name)
     end
 
