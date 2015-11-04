@@ -6,7 +6,7 @@ class TicketDelegator < SimpleDelegator
   validate :group_presence, if: -> { group_id  }
   validate :responder_presence, if: -> { responder_id }
   validate :active_email_config, if: -> { email_config_id }
-  validate :product_presence, if: -> { product_conditions }
+  validate :product_presence, if: -> { product_id }
   validate :responder_belongs_to_group?, if: -> { group_id && responder_id && errors[:responder].blank? && errors[:group].blank? }
   validate :user_blocked?, if: -> { errors[:requester].blank? && requester_id }
   validates :custom_field,  custom_field: { custom_field:
@@ -26,14 +26,6 @@ class TicketDelegator < SimpleDelegator
 
   def active_email_config
     errors.add(:email_config_id, 'invalid_email_config') unless email_config.try(:active)
-  end
-
-  def product_conditions
-    if validation_context == :create # validation_context is a ActiveModel::Validations method
-      product_id && email_config_id.blank?
-    else # update
-      product_id
-    end
   end
 
   def product_presence
