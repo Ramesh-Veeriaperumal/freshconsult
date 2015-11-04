@@ -199,6 +199,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_with_product_id_and_email_config_id
+    product = create_product(email: Faker::Internet.email)
+    product_1 = create_product(email: Faker::Internet.email)
+    email_config = product_1.primary_email_config
+    email_config.update_column(:active, true)
+    params = { requester_id: requester.id, product_id: product.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    t = Helpdesk::Ticket.last
+    assert_equal t.product_id, product_1.id
+    assert_response 201
+  end
+
   def test_create_numericality_invalid
     params = ticket_params_hash.merge(requester_id: 'yu', responder_id: 'io', product_id: 'x', email_config_id: 'x', group_id: 'g')
     post :create, construct_params({}, params)
@@ -1168,6 +1180,19 @@ end
     assert_equal t.reload.email_config_id, product.primary_email_config.id
     match_json(ticket_pattern({}, t))
     assert_response 200
+  end
+
+  def test_update_with_product_id_and_diff_email_config_id
+    product = create_product(email: Faker::Internet.email)
+    product_1 = create_product(email: Faker::Internet.email)
+    email_config = product_1.primary_email_config
+    email_config.update_column(:active, true)
+    params_hash = { product_id: product.id, email_config_id: email_config.reload.id }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 200
+    assert_equal t.reload.email_config_id, product.primary_email_config.id
+    match_json(ticket_pattern({}, t.reload))
   end
 
   def test_update_with_product_id_and_same_email_config_id
