@@ -1159,7 +1159,7 @@ end
     params = { responder_id: @agent.id, group_id: group.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern(params, t.reload))
     match_json(ticket_pattern({}, t))
     assert_response 200
   end

@@ -7,16 +7,16 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 2,
+        api_create: 1,
         api_show: 3,
-        api_update: 6,
+        api_update: 5,
         api_index: 6,
         api_destroy: 5,
         api_restore: 6,
 
-        create: 85,
+        create: 82,
         show: 18,
-        update: 47,
+        update: 46,
         index: 18,
         destroy: 32,
         restore: 32
