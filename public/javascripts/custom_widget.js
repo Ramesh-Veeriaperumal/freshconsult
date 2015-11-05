@@ -376,7 +376,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	renderPrimary: function(){
-		jQuery('#' + this.app + "_widget").addClass('sloading loading-small');
 		if(this.app == "icontact" || this.app == "constantcontact"){
 			this.getUserInfo(); 
 		}

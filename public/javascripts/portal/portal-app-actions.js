@@ -146,7 +146,7 @@
 	        }
 
 			$.each(window['portal-search-boxes'], function(i, searchItem){
-				$(searchItem).data( "instance" )._renderItem = window['portal-search-render-ui']
+				$(searchItem).data( "ui-autocomplete" )._renderItem = window['portal-search-render-ui']
 			})
     	}
 
