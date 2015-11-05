@@ -61,7 +61,6 @@ class TicketValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
-    @cc_emails = item.cc_email[:cc_emails] if item
     super(request_params, item, allow_string_param)
     @description = request_params[:description_html] if should_set_description?(request_params)
     check_params_set(request_params, item)
