@@ -190,7 +190,7 @@ jQuery("document").ready(function(){
     // },500);
     
     jQuery("input[fileList]").livequery(function(){ 
-        $input_file = jQuery(this)
+        var $input_file = jQuery(this)
         Helpdesk.Multifile.load()
         Helpdesk.Multifile.addEventHandler(this)
         jQuery(this.form).off("reset.Multifile")

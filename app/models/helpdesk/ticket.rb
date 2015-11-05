@@ -525,7 +525,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticlet_cc
-    cc_email[:cc_emails]
+    cc_email.nil? ? [] : cc_email[:cc_emails]
   end
   
   def contact_name
@@ -540,8 +540,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.company_id if requester
   end
 
-  def last_interaction  
-    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.body
+  def last_interaction
+    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.try(:body).to_s
   end
 
   #To use liquid template...
@@ -927,6 +927,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def header_info_present?
     header_info.present? && header_info[:message_ids].present?
+  end
+
+  def linked_to_integration?(installed_app)
+    self.linked_applications.where(:id => installed_app.id).any?
   end
 
   private

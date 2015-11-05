@@ -212,6 +212,13 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 	color:#fff;
 }
 
+.ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+	background:#707070;
+	a{
+		color:#fff;
+	}
+}
+
 .contact-form, .input-date-field, .ui-form .conditionset fieldset {
 	.ui-datepicker-trigger {
 		@include left(-2px);
@@ -254,7 +261,7 @@ body .redactor_toolbar li a.redactor_btn_codeEditor 		{ background-position: -95
 .input-date-field, .support-date-field {
  	.ui-datepicker-trigger {
  		@include left(-1px);
- 		top: 3px;
+ 		top: 1px;
  		background: none;
  		border: 0;
  		position: absolute;

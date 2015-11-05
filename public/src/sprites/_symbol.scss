@@ -109,9 +109,6 @@
 .source-badge-wrap .source{
 	&.collision_refresh{
 		@include symbols-sprite(collision_refresh);
-		&.status_4, &.status_5 {
-			@include symbols-sprite(collision_refresh_closed);
-		}
 	}
 
 	span{

@@ -19,7 +19,6 @@ module RabbitMq::Init
           )
         end 
       end
-
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Connection Error"}})
       Rails.logger.error("RabbitMq Connection Error: \n#{e.message}\n#{e.backtrace.join("\n")}")

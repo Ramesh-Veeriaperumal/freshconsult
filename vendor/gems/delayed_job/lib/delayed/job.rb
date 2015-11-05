@@ -151,22 +151,13 @@ module Delayed
         job_queue.capitalize!
 
         #queue everything else into the delayed_jobs table
-        job_queue = "Delayed" if ( !JOB_QUEUES.include?(job_queue) || Rails.env.development? || Rails.env.test? || !split_delayed_jobs_enabled? )
+        job_queue = "Delayed" if ( !JOB_QUEUES.include?(job_queue) || Rails.env.development? || Rails.env.test? )
       end
 
       if smtp_mailboxes.any?
         Mailbox::Job.create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
       else
         Object.const_get("#{job_queue}::Job").create(:payload_object => object, :priority => priority.to_i, :run_at => run_at, :pod_info => pod_info)
-      end      
-    end
-
-    def self.split_delayed_jobs_enabled?
-      begin
-        $redis_others.exists("SPLIT_DELAYED_JOBS")              
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        false
       end      
     end
 

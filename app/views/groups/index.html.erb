@@ -11,7 +11,7 @@
       	<% @groups.each do |group| %>
         <tr>
           <td>
-             <%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %>
+             <%= link_to(h(group.name) + " (#{group.agents.count})", edit_group_path(group), :class => "item_info") %>
 			 <div class="muted"><%=h(group.description)%></div>
           </td>
           <td class="text-right">

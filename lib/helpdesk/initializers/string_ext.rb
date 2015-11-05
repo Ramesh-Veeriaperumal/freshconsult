@@ -8,6 +8,18 @@ class String
   def is_number?
     true if Float(self) rescue false
   end
+
+  def tokenize_emoji
+    EmojiParser.tokenize(self)
+  rescue
+    self
+  end
+
+  def detokenize_emoji
+    EmojiParser.detokenize(self)
+  rescue
+    self
+  end
 end
 
 # module StringExt

@@ -3,8 +3,9 @@ page << "jQuery('#errorMessages').hide();"
 #submit is success
 if @user.errors.empty?
   show_ajax_flash(page)
+
   page << "jQuery('#add_requester_form').modal('hide')"
-  page << "jQuery('#helpdesk_ticket_email-error').hide()";
+  page << "jQuery('#helpdesk_ticket_email-error').hide()"
   page << "jQuery('#helpdesk_ticket_email').focus()"
   page << "jQuery('#helpdesk_ticket_email').val('#{escape_javascript(@user.name_details)}')"
   page << "jQuery('#helpdesk_ticket_requester_id').val('#{@user.id}')"
@@ -21,7 +22,7 @@ else
                 jQuery('#helpdesk_ticket_email').val('#{escape_javascript(@existing_user.name_details)}');
                 jQuery('#helpdesk_ticket_requester_id').val('#{@existing_user.id}');
                 jQuery('#helpdesk_ticket_email').data('requesterCheck',true);
-                jQuery('#add_requester_form').modal('hide')
+                jQuery('#add_requester_form').modal('hide');
              });"
   #display validation error messages              
   else

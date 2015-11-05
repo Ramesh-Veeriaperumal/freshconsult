@@ -42,7 +42,8 @@ module SpamCounterMethods
 	end
 
 	def total
-		@attributes["0"]
+		total = @attributes["0"]
+		total < 0 ? 0 : total unless total.nil?
 	end
 
 	module ClassMethods

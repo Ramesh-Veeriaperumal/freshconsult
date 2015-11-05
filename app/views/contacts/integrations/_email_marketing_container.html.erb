@@ -10,12 +10,22 @@
 		displayAsModal = function(app) {
 			var contact_title = "<%= contact.name %>";
 			jQuery('#' + app + '_widget .parent-tmpl, #' + app + '_widget .email_marketing').removeClass('hide');
-		  jQuery('#' + app.toLowerCase() + '_widget').dialog({ 
-	      show: "slide",
-	      title: contact_title, 
-	      dialogClass: 'email_marketing_widget',
-	      width: '600px', height: 'auto', modal: true, resizable: false 
-	    });
+
+				var data = {
+                targetId: '#' + app.toLowerCase() + '_widget',
+                title: contact_title,
+                width: "500",
+                templateFooter: false,
+                destroyOnClose: true
+            }
+
+            jQuery.freshdialog(data);
 		}
+
+		jQuery(document).on('pjax:beforeSend', function () {
+			if(Fjax.current_page == "contacts") {
+				jQuery('#mailchimp_widget, #icontact_widget, #campaignmonitor_widget').remove();
+			}
+		});
 	<% end %>
 <% end %>

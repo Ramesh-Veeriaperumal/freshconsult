@@ -17,8 +17,12 @@ window.App.Freshfoneagents = window.App.Freshfoneagents || {};
       this.list_length = freshfone.agents.length;
       this.Status = {ONLINE:1, OFFLINE:0, BUSY:2};
       this.Preference = {TRUE:1, FALSE:0};
-      this.AvailableAgentList = new List('ffone-tab-1',{page:this.list_length});
-      this.UnavailableAgentList = new List('ffone-tab-2',{page:this.list_length});
+      this.AvailableAgentListValuesName = ["id", "data_id", "name", "available_avatar_image", "presence_time",
+                                            "presence_time_in_s", "on_device_img","busy_agent","toggle_button"];
+      this.UnavailableAgentListValuesName = [ "id", "data_id", "name", "presence_time" , "unavailable_avatar_image" , "presence_time_in_s" ,
+                                            "busy_agent", "toggle_button" ]
+      this.AvailableAgentList = new List('ffone-tab-1',{page:this.list_length, valueNames: this.AvailableAgentListValuesName });
+      this.UnavailableAgentList = new List('ffone-tab-2',{page:this.list_length, valueNames: this.UnavailableAgentListValuesName });
       this.busyState = { BUSY : "1", NOT_BUSY : "0" };
       this.sort_by = "name"
       this.sort_by_hash = {"name" : 1, "presence_time" :  -1, "busy_agent" : -1};

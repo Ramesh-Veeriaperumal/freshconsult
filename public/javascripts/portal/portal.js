@@ -239,11 +239,25 @@
 			})
 		})
 		
-		$(".image-lazy-load img").livequery(function(ev){
-          $(this).unveil(200, function() {
-              this.style.opacity = 1;
-          });
-     	});
+		var layzr;
+		$(".image-lazy-load img").livequery(
+			function(){
+				layzr = new Layzr({
+					container: null,
+					selector: '.image-lazy-load img',
+					attr: 'data-src',
+					retinaAttr: 'data-src-retina',
+					hiddenAttr: 'data-layzr-hidden',
+					threshold: 0,
+					callback: function(){
+						$(".image-lazy-load img").css('opacity' , 1);
+					}
+				});
+			},
+			function() {
+				layzr._destroy()
+			}
+		); 		
 		
 		// If there are some form changes that is unsaved, it prompts the user to save before leaving the page.
 		$(window).on('beforeunload', function(ev){

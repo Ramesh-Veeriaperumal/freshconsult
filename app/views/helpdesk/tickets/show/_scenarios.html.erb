@@ -1,80 +1,53 @@
+<% bulk_scenario ||=false %>
 <div class="execute_scenario">
 	<div class="scenario-search">
 		<input type="text" id="search_scenarios" class="hide" placeholder="<%= t('ticket.search_scenario') %>">
 		<i class="ficon-search muted"></i>
 	</div>
-	<div data-menu-hover-in='tr' data-menu-trigger="[type='submit']" class="dialog-well links menuselector">
+	<div data-menu-hover-in='tr' data-menu-trigger=".scenario-btn" class="dialog-well links menuselector">
 		<table class="table table-striped selected_to_yellow scenarios_table">
-			<% scn_accessible_elements.each do |scenario| %>
-		  <tr><td class='sa-item'>
-				<div class="actions">
-					<%= form_tag execute_scenario_helpdesk_ticket_path(ticket), :method => :post, 
-						:remote => true, :class => "execute_scenario_form",
-            :loading => "jQuery('.scenario-search').hide();",
-            :loaded => "toggleSearchBox()",
-            :after => "
-              jQuery('#execute_scenario .dialog-well').hide();
-              jQuery('#execute_scenario .modal-body .sloading').remove();
-              jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');" do %>
-					<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
-					<input type="submit" class="btn" value="Execute"  placement = "below"/>
+		<% elements = scn_accessible_elements %>
+			<%if elements.empty? %>
+			    <div class="list-noinfo">
+			    	<%=t('automations.no_scenario_to_execute').html_safe%>
+			    </div>
+		    <% else %>
+				<% elements.each do |scenario| %>
+				  <tr><td class='sa-item'>
+						<div class="actions">
+						<% if bulk_scenario %>
+							<button class ="bulk_scenario_btn btn scenario-btn" placement = "below" data-scenario-id = "<%= scenario.id%>"><%= t('ticket.execute')%></button>
+						<% else %>
+							<%= form_tag execute_scenario_helpdesk_ticket_path(ticket), :method => :post, 
+								:remote => true, :class => "execute_scenario_form",
+		            :loading => "jQuery('.scenario-search').hide();",
+		            :loaded => "toggleSearchBox()",
+		            :after => "
+		              jQuery('#execute_scenario .dialog-well').hide();
+		              jQuery('#execute_scenario .modal-body .sloading').remove();
+		              jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');" do %>
+							<input type="hidden" name="scenario_id" value="<%= scenario.id %>" />
+							<input type="submit" class="btn scenario-btn" value="<%= t('ticket.execute')%>"  placement = "below"/>
+							<% end %>
+						<% end %>
+						</div>
+						<div class='info-wrapper'>
+							<div>
+								<% font_class = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 
+										font_class('user', nil, 'visibility-icon tooltip') : 
+										font_class('shared', nil, 'visibility-icon tooltip') %>
+								<% tooltip_text = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 'Personal' : 'Shared' %>
+								<span class='<%= font_class %>' title='<%= tooltip_text %>'></span>
+								<strong> <%= h scenario.name %> </strong> 
+							</div>
+							<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
+						</div>
+				  </td></tr>
 				<% end %>
-				</div>
-				<div class='info-wrapper'>
-					<div>
-						<% font_class = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 
-								font_class('user', nil, 'visibility-icon tooltip') : 
-								font_class('shared', nil, 'visibility-icon tooltip') %>
-						<% tooltip_text = (Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == scenario.accessible.access_type) ? 'Personal' : 'Shared' %>
-						<span class='<%= font_class %>' title='<%= tooltip_text %>'></span>
-						<strong> <%= h scenario.name %> </strong> 
-					</div>
-					<div><span class="sub_title"> <%= h scenario.description %> </span> </div>
-				</div>
-		  </td></tr>
-		  <% end %>
+			<% end %>
 		</table>
 	</div>
 </div>
-<%= javascript_tag do%>
-
-	jQuery(document).ready(function(){
-		jQuery('#execute_scenario').on('shown', function() {
-        	jQuery('.dialog-well').focus();
-    	})
-    	jQuery('.execute_scenario_form').on('ajax:send', function(xhr, status, success) {
-		  	jQuery('#execute_scenario .dialog-well').hide();
-			jQuery('#execute_scenario .modal-body .sloading').remove();
-			jQuery('#execute_scenario .modal-body').append('<div class=\"sloading loading-block\" />');
-		});
-	});
-
-	jQuery('.scenario-search').hide();
-
-
-	function toggleSearchBox() {
-		if(jQuery(".selected_to_yellow .sa-item").length > 10){
-			jQuery('.scenario-search').show();
-			jQuery('#search_scenarios').focus();
-		}
-	}
-
-	function bindSearchEvents() {
-		if(jQuery(".selected_to_yellow .sa-item").length > 10){
-			var search_elements = jQuery(".scenarios_table .sa-item");
-			var search_elements_text = [];
-			search_elements.each(function(){
-				search_elements_text.push(jQuery(this).text().toLowerCase());
-			})
-			jQuery("#search_scenarios").on("keyup",function(){
-				var input_value = jQuery(this).val();
-				search_elements.each(function(index){
-					jQuery(this).toggle(window.lookups.scenario_execution_search(input_value,search_elements_text[index]))
-				});
-			});
-		}
-	}
-
-	toggleSearchBox();
-	bindSearchEvents();
+<%= javascript_tag do %>
+	App.Tickets.Scenario.init();
 <% end %>

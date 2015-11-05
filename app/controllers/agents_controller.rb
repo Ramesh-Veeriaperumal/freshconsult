@@ -15,7 +15,7 @@ class AgentsController < ApplicationController
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact, :reset_score, :api_key] 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
-  before_filter :load_roles, :only => [:new, :create, :edit, :update]
+  before_filter :load_roles, :load_groups, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
     :convert_to_contact, :reset_score, :reset_password ]
@@ -199,7 +199,13 @@ class AgentsController < ApplicationController
   def convert_to_contact
       user = @agent.user
       if user.make_customer
-        flash[:notice] = t(:'flash.agents.to_contact')
+        #current_account subscription state changing from "active" to "Active" after 
+        #user.make_customer, so using downcase to check active customers
+        if current_account.subscription.state.downcase.eql?("active")
+          flash[:notice] = t(:'flash.agents.to_contact_active', :subscription_link => "/subscription").html_safe
+        else
+          flash[:notice] = t(:'flash.agents.to_contact')
+        end
         redirection_url(user)
       else
         flash[:notice] = t(:'flash.agents.to_contact_failed')
@@ -330,6 +336,10 @@ class AgentsController < ApplicationController
     @roles = current_account.roles.all
   end
   
+  def load_groups
+    @groups = current_account.groups_from_cache
+  end
+
   def restrict_current_user
     unless can_edit?(@agent)
       error_responder(t(:'flash.agents.edit.not_allowed'), 'forbidden')
@@ -385,6 +395,15 @@ private
       params[:user][:role_ids] = role_ids
     end
   end
+  
+  def validate_groups
+    group_ids = params[:agent][:group_ids]
+    if group_ids.nil? or (group_ids.kind_of?(Array) and group_ids.all? &:blank?)
+      params[:agent][:group_ids] = []
+    else
+      params[:agent][:group_ids] = current_account.groups.where(:id => group_ids).map(&:id)
+    end
+  end
 
   def validate_ticket_permission
     #validating permissions
@@ -412,6 +431,7 @@ private
     format_api_params
     filter_params
     validate_roles
+    validate_groups
   end
 
   def can_edit_roles_and_permissions # Should be checked after validate_params as params hash is unified in validate_params

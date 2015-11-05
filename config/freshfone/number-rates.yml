@@ -183,8 +183,8 @@ PR:
   name: Puerto Rico
   beta: false
   address_required: false
-  national: 8.0
-  local: 8.0
+  national: 3.0
+  local: 3.0
 PT:
   name: Portugal
   beta: false

@@ -81,7 +81,7 @@ var FreshfoneEndCall;
 				quietMillis: 1000,
 				data: function (term) { 
 					return {
-						q: term
+						q: escapeHtml(term)
 					};
 				},
 				results: function (data, page, query) {
@@ -97,15 +97,15 @@ var FreshfoneEndCall;
 					if (!result.id) { userDetails = freshfone.new_requester;}
 				}
 
-				return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+				return "<b>"+ escapeHtml(result.value) + "</b><br><span class='select2_list_detail'>" + 
 								(userDetails) + "</span>"; 
 			},
 			formatSelection: function (result) {
 				self.$requesterEmailDom.toggle(!result.id);
 				self.$requesterEmail.val(result.email);
 				self.$requesterName.data("requester_id",result.id);
-				self.$requesterName.val(result.value);
-				return result.value;
+				self.$requesterName.val(escapeHtml(result.value));
+				return escapeHtml(result.value);
 			}
 		});
 	

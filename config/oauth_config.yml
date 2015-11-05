@@ -36,6 +36,9 @@ development:
  quickbooks:
   consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
   consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ github:
+  consumer_token: 93f887d3b15eee92cd76
+  consumer_secret: 542d73b9194cb31ce7e1d49d174cd71bf322a0bd
  google:
   consumer_token: 663183371165.apps.googleusercontent.com
   consumer_secret: Td7XaDzfHiNZzZChgmHjJUHy
@@ -150,6 +153,9 @@ staging:
  quickbooks:
   consumer_token: qyprdl501v3SKVbWrYDHdAlXxotIh4
   consumer_secret: 2C4hEa7pGCXWwwz1CmJEUU8q7aVsaohZtdqr8V4S
+ github:
+  consumer_token: 93f887d3b15eee92cd76
+  consumer_secret: 542d73b9194cb31ce7e1d49d174cd71bf322a0bd
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
@@ -213,6 +219,9 @@ production:
  quickbooks:
   consumer_token: qyprdspxhaEDF9y8hixSOacRuh4lYt
   consumer_secret: ifISBYQG8peHZZUbeUaVgjOpl0VN9UYTe4KoxEXw
+ github:
+  consumer_token: 9b721c6fe3d0437a8135
+  consumer_secret: 897f8d8d2198b1aacd77dc67112332fe0af48a5c
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF

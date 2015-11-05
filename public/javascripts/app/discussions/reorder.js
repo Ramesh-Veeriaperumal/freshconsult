@@ -96,7 +96,11 @@ window.App.Discussions = window.App.Discussions || {};
 		leave: function () {
 			this.submitUrl = '';
 			$('body').off('.discussions.reorder');
-			$('.comm-items ul').sortable("destroy");
+
+			if ($('.comm-items ul').data( "ui-sortable" ))
+			{
+				$('.comm-items ul').sortable("destroy");
+			}
 		}
 	};
 }(window.jQuery));

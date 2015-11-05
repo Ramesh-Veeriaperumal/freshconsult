@@ -406,6 +406,8 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster_pos(account_id)
+    # temperory commit until elasticsearch cluster determination is moved to table
+    return 0 if PodConfig['CURRENT_POD'] == "podeuwest1"
     case account_id.to_i
     when 110962           then 3 #Pinnacle sports is in Cluster-4
     when 1..55000         then 0

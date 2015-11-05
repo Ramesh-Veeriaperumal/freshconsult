@@ -1,10 +1,14 @@
 <% page ||= :home %>
 <% sticky_class ||= "" %>
-<div id="sticky_header" class="<%= sticky_class %>" 
-      rel="sticky" data-collapsed="true" 
+<div id="sticky_header" class="<%= sticky_class %> btn-collapse" 
+      rel="sticky"
       data-scroll-top="true" 
-      data-sticky-bottom="true">
-  <div class="sticky_panel" data-collapsible="true">
+      data-sticky-bottom="true"
+      data-class-for-btn-wrapper="inline-block discussion-collapse-btn"
+      data-calc-parent-width-on=".sticky_panel"
+      data-show-by-default="false"
+      data-button-text="<%= t("more") %>">
+  <div class="sticky_panel">
 	<%= sidebar_toggle %>
     <div class="sticky_left">
 	  <% if content_for?(:sticky_left)%>
@@ -13,7 +17,7 @@
     	<%= discussions_breadcrumb page %>
 	  <% end %>
     </div>
-	<div class="sticky_right">
+	<div class="sticky_right collapse-content">
       <% if content_for?(:sticky_right)%>
       	<%= yield :sticky_right %>
       <% else %>

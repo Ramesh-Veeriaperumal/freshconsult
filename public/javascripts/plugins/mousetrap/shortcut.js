@@ -201,7 +201,7 @@
             _highlightElement($el.data('watching', !watching));
         },
         ticketProperties = function () {
-            $('#TicketPropertiesFields select:first').data('select2').container.find('a').trigger('focus');
+            $('#TicketPropertiesFields select:first').select2('open');
         },
         closeTicket = function (ev, key) {
             _preventDefault(ev);
@@ -274,6 +274,11 @@
         addForumFollower = function (ev, key) {
             App.Discussions.Monitorship.toggleAddFollower();
         },
+        selectScenario = function (ev, key) {
+            if($('#scenario').attr('disabled') !== 'disabled'){
+                $('#scenario').children().trigger("click");
+            }
+        },
 
         KB = {
             global        : {
@@ -291,7 +296,8 @@
                 silent_close        : closeTicket,
                 reply               : selectedTicketReply,
                 forward             : selectedTicketReply,
-                add_note            : selectedTicketReply
+                add_note            : selectedTicketReply,
+                scenario            : selectScenario
             },
             ticket_detail : {
                 toggle_watcher      : toggleWatcher,
@@ -374,6 +380,8 @@
                 // Dispatch shortcut events of current page to the event binder (bindKeys)
                 // can also define event bind type (global/single)
                 dispatcher();
+
+                $('body').data('current-active-form', '');
 
                 // Bind event for elements which has attr ['data-keybinding']
                 $('[data-keybinding]').livequery(doKeyBindingfor);

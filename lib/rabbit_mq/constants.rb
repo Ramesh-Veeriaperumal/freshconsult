@@ -50,7 +50,7 @@ module RabbitMq::Constants
   AUTO_REFRESH_TICKET_KEYS = ["id", "display_id", "tag_names", "account_id", "user_id", "responder_id", "group_id", "status", 
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at"
   ]
-  
+
   REPORTS_TICKET_KEYS = ["display_id", "id", "account_id", "agent_id", "group_id", 
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
     "visible", "sla_policy_id", "is_escalated", "fr_escalated", "resolved_at", 
@@ -63,6 +63,8 @@ module RabbitMq::Constants
   ]
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
+
+  AUTO_REFRESH_NOTE_KEYS = ["kind", "private"]
 
   REPORTS_NOTE_KEYS = ["id", "source", "user_id", "agent", "category", "private", "incoming", "deleted", "account_id", "created_at", "archive"]
   
