@@ -36,6 +36,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
 
 	before_create :set_default_portal
+	before_save :validate_is_default
 
 	after_create :clear_cache
 	after_destroy :clear_cache
@@ -55,4 +56,12 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	def set_default_portal
 	  self.portal_ids = [Account.current.main_portal.id] if self.portal_ids.blank?
 	end
+
+  def validate_is_default
+    if changes[:is_default].present? || (new_record? && (is_default == true))
+      default_category = Account.current.solution_category_meta.where(:is_default => true).first
+      return true unless default_category.present?
+      self.is_default = default_category.id == id
+    end
+  end
 end

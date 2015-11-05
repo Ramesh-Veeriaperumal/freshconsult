@@ -57,6 +57,14 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  solution_category_meta.portal_ids.include?(portal.id)
 	end
 
+  def customer_folders_attributes=(cust_attr)
+    customer_folders.destroy_all
+    customers = cust_attr.kind_of?(Array) ? cust_attr : cust_attr[:customer_id]
+    customers.each do |cust_id|
+      customer_folders.build({:customer_id =>cust_id})
+    end
+  end
+
 	private
 
 	def clear_cache

@@ -4,7 +4,7 @@ class Solution::Object
 	
 	META_ATTRIBUTES = {
 		:solution_category => [:is_default, :portal_ids, :portals],
-		:solution_folder => [:visibility, :is_default, :companies], #Find the right attr for CustomerFolders
+		:solution_folder => [:visibility, :is_default, :customer_folders_attributes],
 		:solution_article => [:art_type]
 	}
 
@@ -19,26 +19,29 @@ class Solution::Object
 
 	attr_accessor :args, :obj, :params
 
-	def initialize(args, obj)
+	def initialize(args, obj, child = nil)
 		throw "Invalid Object Type" unless META_ATTRIBUTES.keys.include?(obj.to_sym)
-		@params = args["#{obj}_meta"]
 		@args = args
 		@obj = obj
+		@params = get_params
+		@child = child
 	end
 
 	def object
-		create_parent_translation
 		build_meta
 		build_translations
-		@meta_obj.save
+		create_parent_translation
+		if save_check?
+			@meta_obj.save
+		end 
 		@meta_obj
 	end
 	
 	private
 
 	def create_parent_translation
-		return if args["#{META_ASSOCIATIONS[obj]}_meta"].blank?
-		Solution::Object.new(args, META_ASSOCIATIONS[obj]).object
+		return if @params["#{META_ASSOCIATIONS[obj]}_meta"].blank?
+		Solution::Object.new(@params, META_ASSOCIATIONS[obj], @meta_obj).object
 	end
 	
 	def meta_params	
@@ -47,6 +50,10 @@ class Solution::Object
 	
 	def primary_params
 		params["primary_#{short_name}"] || params.reject { |k,v| META_ATTRIBUTES[obj].include?(k) }
+	end
+
+	def save_check?
+		@child.present? ? true : primary_version_check?
 	end
 	
 	def languages
@@ -67,24 +74,32 @@ class Solution::Object
 		@meta_obj = @params[:id].blank? ? new_meta : initialize_meta
 		assign_meta_attributes
 		assign_meta_associations
+		handle_parent_change
 	end
 	
 	def new_meta
+		return @child.send("build_#{obj}_meta") if @child.present?
 		Account.current.send("#{obj}_meta").new
 	end
 	
 	def initialize_meta
+		return @child.send("#{obj}_meta") || @child.send("build_#{obj}_meta", @params) if @child.present?
 		Account.current.send("#{obj}_meta").find_by_id(@params[:id]) || raise('Meta object not found')
 	end
 
 	def assign_meta_associations
 		return unless @meta_obj.new_record? && META_ASSOCIATIONS.keys.include?(obj)
+		return if new_parent?
 		@meta_obj.send("#{META_ASSOCIATIONS[obj]}_meta=", get_parent_association)
 	end
 
 	def get_parent_association
 		raise "#{META_ASSOCIATIONS[obj]} id not specified" unless @params["#{META_ASSOCIATIONS[obj]}_meta_id"].present?
 		Account.current.send("#{META_ASSOCIATIONS[obj]}_meta").find_by_id(@params["#{META_ASSOCIATIONS[obj]}_meta_id"])
+	end
+
+	def new_parent?
+		@params["#{META_ASSOCIATIONS[obj]}_meta_id"].blank? && (@params["#{META_ASSOCIATIONS[obj]}_meta"].present? && @params["#{META_ASSOCIATIONS[obj]}_meta"]["id"].blank?)
 	end	
 
 	def assign_meta_attributes
@@ -92,7 +107,14 @@ class Solution::Object
 			@meta_obj.send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present?
 		end
 		@meta_obj.account_id = Account.current.id
-		@meta_obj.is_default = false if @meta_obj.respond_to?(:is_default)
+	end
+
+	def handle_parent_change
+		attribute = "#{META_ASSOCIATIONS[obj]}_meta_id"
+		return unless @params[attribute].present?
+		parent = Account.current.send("#{META_ASSOCIATIONS[obj]}_meta").find_by_id(@params[attribute])
+		raise "#{META_ASSOCIATIONS[obj]} id not valid" if parent.blank?
+		@meta_obj.send("#{attribute}=", @params.delete(attribute))
 	end
 	
 	def build_translations
@@ -123,24 +145,39 @@ class Solution::Object
 			@params["#{lang}_#{short_name}"][:attachments], 
 			@params["#{lang}_#{short_name}"][:cloud_file_attachments] )
 	end
-	
-	def response
-		if @objects.size == 1
-			response = @objects.first
-			response.errors.add(@meta_obj.class.name.to_sym, @meta_obj.errors.messages) if @meta_obj.errors.messages.any?
-			response
-		else
-			errors = @objects.inject({}) do |res, o|
-				res[o.language_id] = o.errors.messages
-			end
-			errors[@meta_obj.class.name.to_sym] = @meta_obj.errors.messages if @meta_obj.errors.messages.any?
-			
-			errors.values.compact.blank? ? @objects : errors
-		end	
-	end
 
 	def handle_errors
 		@solution_obj.errors.add(@meta_obj.class.name.to_sym, @meta_obj.errors.messages)
+	end
+
+	def primary_version_check?
+		primary_check = true
+		if @meta_obj.new_record?
+			langs = languages
+			primary_check = langs.include?('primary') || langs.include?(Account.current.language)
+			@meta_obj.errors.add(@meta_obj.class.name.to_sym, {:primary_version => "attributes can't be blank"}) if primary_check
+		end
+		primary_check
+	end
+
+	def get_params
+		return @args["#{@obj}_meta"] if @args["#{@obj}_meta"].present?
+		#handling old param structure (From API)
+		modify_old_params
+	end
+
+	def modify_old_params
+		params = HashWithIndifferentAccess.new
+		if @args["#{@obj}"].present?
+			old_params = @args["#{@obj}"].dup
+			(META_ATTRIBUTES[@obj] + [:id]).each do |m_att|
+				params[m_att] = old_params.delete(m_att) if old_params.key?(m_att)
+			end
+			parent_attr = META_ASSOCIATIONS[@obj].to_s.gsub('solution_', '')
+			params["#{META_ASSOCIATIONS[@obj]}_meta_id"] = old_params.delete("#{parent_attr}_id") if old_params["#{parent_attr}_id"].present?
+			params.merge!({"primary_#{short_name}" => old_params})
+		end
+		params
 	end
 
 end

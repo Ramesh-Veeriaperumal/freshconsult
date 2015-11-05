@@ -322,7 +322,8 @@ class Solution::Article < ActiveRecord::Base
     end
 
     def status_in_default_folder
-      if status == STATUS_KEYS_BY_TOKEN[:published] and self.solution_folder_meta.is_default
+      parent = self.solution_folder_meta
+      if status == STATUS_KEYS_BY_TOKEN[:published] && (parent.present? && parent.is_default?)
         errors.add(:status, I18n.t('solution.articles.cant_publish'))
       end
     end

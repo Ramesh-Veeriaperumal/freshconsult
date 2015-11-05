@@ -148,7 +148,8 @@ if Rails.env.test?
     "spec/controllers/mobihelp/articles_controller_spec.rb",
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/solutions/drafts_controller_spec.rb",
-    "spec/lib/solution/cache_spec.rb"
+    "spec/lib/solution/cache_spec.rb",
+    "spec/lib/solution/builder_spec.rb"
   ]
 
   HelpdeskTests = [ 
