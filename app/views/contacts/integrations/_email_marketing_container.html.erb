@@ -24,7 +24,7 @@
 
 		jQuery(document).on('pjax:beforeSend', function () {
 			if(Fjax.current_page == "contacts") {
-				jQuery('#mailchimp_widget, #icontact_widget, #campaignmonitor_widget').remove();
+				jQuery('#mailchimp_widget, #icontact_widget, #campaignmonitor_widget, #constantcontact_widget').remove();
 			}
 		});
 	<% end %>
