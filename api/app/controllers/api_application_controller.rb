@@ -104,8 +104,7 @@ class ApiApplicationController < MetalApiController
 
     def requires_feature(f) # Should be from cache. Need to revisit.
       return if Account.current.features?(f)
-      @error = RequestError.new(:require_feature, feature: f.to_s.titleize)
-      render '/request_error', status: 403
+      render_request_error(:require_feature, 403, feature: f.to_s.titleize)
     end
 
   private
@@ -209,7 +208,7 @@ class ApiApplicationController < MetalApiController
     def load_object(items = scoper)
       @item = items.find_by_id(params[:id])
       unless @item
-        head :not_found # Do we need to put message inside response body for 404?
+        head 404 # Do we need to put message inside response body for 404?
       end
     end
 

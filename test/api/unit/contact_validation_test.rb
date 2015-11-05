@@ -91,7 +91,6 @@ class ContactValidationTest < ActionView::TestCase
     contact = ContactValidation.new(controller_params, item)
     refute contact.valid?(:update)
     errors = contact.errors.full_messages
-    byebug
     assert errors.include?('Email fill_a_mandatory_field')
     Account.unstub(:current)    
   end
