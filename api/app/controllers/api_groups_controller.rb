@@ -1,6 +1,5 @@
 class ApiGroupsController < ApiApplicationController
   before_filter :prepare_agents, only: [:create, :update]
-  before_filter :set_round_robin_enbled
 
   def create
     group_delegator = GroupDelegator.new(@item)
@@ -26,7 +25,7 @@ class ApiGroupsController < ApiApplicationController
   private
 
     def validate_params
-      group_params = current_account.features_included?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
+      group_params = Account.current.features?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*(group_params))
       group = ApiGroupValidation.new(params[cname], @item)
       render_errors group.errors, group.error_options unless group.valid?
@@ -41,10 +40,6 @@ class ApiGroupsController < ApiApplicationController
 
     def scoper
       create? ? current_account.groups : current_account.groups_from_cache
-    end
-
-    def set_round_robin_enbled
-      @round_robin_enabled = current_account.features_included? :round_robin
     end
 
     def initialize_agents

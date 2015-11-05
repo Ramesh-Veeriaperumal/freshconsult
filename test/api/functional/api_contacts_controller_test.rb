@@ -350,6 +350,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { phone: '', mobile: '', twitter_id: '' }
     sample_user = get_user
     email = sample_user.email
+    sample_user.update_attribute(:fb_profile_id, nil)
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
@@ -471,6 +472,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
     sample_user.update_attribute(:email, email)
+  end
+
+  def test_update_user_created_with_fb_id
+    sample_user = get_user
+    params_hash = { mobile: "", email: "", phone: "", twitter_id: "", fb_profile_id: "profile_id_1" }
+    sample_user.update_attributes(params_hash)
+    email = Faker::Internet.email
+    put :update, construct_params({ id: sample_user.id }, { name: "sample_user", email: email })
+    assert_response 200
+    assert sample_user.reload.email == email
+    assert sample_user.reload.name == 'sample_user'
   end
 
   # Delete user

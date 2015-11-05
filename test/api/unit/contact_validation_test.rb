@@ -70,4 +70,29 @@ class ContactValidationTest < ActionView::TestCase
     assert errors.include?('Custom fields data_type_mismatch')
     Account.unstub(:current)
   end
+
+  def test_update_contact_with_fb_profile_id
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = { 'name' => 'test', :fb_profile_id => Faker::Internet.email }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    assert contact.valid?(:update)
+    Account.unstub(:current)    
+  end
+
+  def test_update_contact_without_contact_detail
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = { 'name' => 'test' }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?(:update)
+    errors = contact.errors.full_messages
+    byebug
+    assert errors.include?('Email fill_a_mandatory_field')
+    Account.unstub(:current)    
+  end
 end
