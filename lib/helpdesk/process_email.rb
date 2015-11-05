@@ -307,7 +307,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :ticket_body_attributes => {:description => params[:text] || "", 
+        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
                           :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
@@ -481,8 +481,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :note_body_attributes => {:body => body || "",:body_html => body_html || "",
-                                  :full_text => full_text, :full_text_html => full_text_html} ,
+        :note_body_attributes => {
+          :body => tokenize_emojis(body) || "",
+          :body_html => body_html || "",
+          :full_text => tokenize_emojis(full_text),
+          :full_text_html => full_text_html
+          },
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
         :account_id => ticket.account_id,

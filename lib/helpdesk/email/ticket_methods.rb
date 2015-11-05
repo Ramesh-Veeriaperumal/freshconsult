@@ -40,7 +40,7 @@ module Helpdesk::Email::TicketMethods
         :account_id => account.id,
         :subject => email[:subject],
         :ticket_body_attributes => {
-                      :description => email[:text], 
+                      :description => tokenize_emojis(email[:text]),
                       :description_html => email[:description_html]
         },
         :requester => user,

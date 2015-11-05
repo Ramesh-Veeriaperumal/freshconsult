@@ -149,6 +149,7 @@ gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary
 gem "wicked_pdf", "~> 0.9.10"
 gem "pg"
 gem "routing-filter", "~> 0.3.1"
+gem "gemoji-parser", "~> 1.3.1"
 
 # TODO-RAILS3 need to change the assets to rails3 way
 # gem "cloudfront_asset_host", github: "freshdesk/cloudfront_asset_host", branch: :rails3upgrade
