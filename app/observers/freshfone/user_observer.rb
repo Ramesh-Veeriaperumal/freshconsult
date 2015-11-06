@@ -16,11 +16,14 @@ class Freshfone::UserObserver < ActiveRecord::Observer
 
     def publish_presence(freshfone_user, deleted = false)
       publish_freshfone_presence(freshfone_user.user, deleted)
-      publish_live_call({},freshfone_user.account, freshfone_user.user_id) if busy_state?(freshfone_user)
+      if busy_state?(freshfone_user)
+        publish_live_call({},freshfone_user.account, freshfone_user.user_id) 
+      elsif (freshfone_user.presence_was == Freshfone::User::PRESENCE[:busy] )
+        unpublish_live_call({},freshfone_user.account)
+      end
     end
 
     def busy_state?(freshfone_user)
-      freshfone_user.busy? ||
-      (freshfone_user.presence_was == Freshfone::User::PRESENCE[:busy]) # changed from/to busy?
+      freshfone_user.busy? 
     end
 end

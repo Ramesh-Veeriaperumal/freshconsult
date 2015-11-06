@@ -552,3 +552,12 @@ ul.ffone-minimal-swap li, ul.ticket-minimal-swap li{
   	}
   }
 }
+
+/*Min width for agent name in agents landing table*/
+.agent-list-page {
+  .text-info{
+    min-width: 75px;
+    width: auto;
+  }
+}
+

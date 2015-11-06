@@ -72,6 +72,10 @@ module Helpdesk::TicketActions
     render :partial => "assign_agent"
   end
   
+  def bulk_scenario
+    render :partial => "helpdesk/tickets/show/scenarios", :locals => {:bulk_scenario => true} 
+  end
+
   def update_multiple_tickets
     render :partial => "update_multiple" 
   end

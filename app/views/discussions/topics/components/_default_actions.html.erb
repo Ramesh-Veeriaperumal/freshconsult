@@ -40,39 +40,6 @@
 		data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
 <% end %>
 
-<% if privilege?(:edit_topic, @topic) ||  privilege?(:delete_topic) %>
-	<div class="btn-group">
-
-	  <a class="btn dropdown-toggle show_on_collapse" data-toggle="dropdown">
-	  	<%= t("more") %>
-	    <span class="caret"></span>
-	  </a>
-
-	  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
-		<%= pjax_link_to t('discussions.topics.edit_topic'), edit_discussions_topic_path(@topic) if privilege?(:edit_topic, @topic) %>
-
-		<%= link_to t('discussions.topics.mark_as_spam'), mark_as_spam_discussions_unpublished_path(@first_post), 
-					:method => :put, 
-					:"data-track" => 'Marked as Spam',
-					:confirm => t('discussions.topics.confirm_spam') if privilege?(:delete_topic) %>
-
-		<%= link_to t('discussions.topics.close_topic'), toggle_lock_discussions_topic_path(@topic), 
-					:method => :put if privilege?(:edit_topic, @topic) %>
-
-	<% unless (@topic.forum.forum_visibility == Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]) && !privilege?(:edit_topic) %>
-		<a href="#merge_topicdialog"
-			class="mergetopic"
-			id="mergetopic" rel="freshdialog"
-			data-target="#merge_topicdialog"
-			data-track="Topic Merge Initiated" 
-			data-title="<%= t('discussions.topic_merge.merge_title') %>" 
-			data-width="800" data-template-footer=""><%= t('discussions.topics.merge_topic') %></a>
-	<% end %>
-	
-	  </ul>
-	</div>
-<% end %>
-
 <div id="merge_topicdialog" class="hide">
 	<span class="loading-block sloading loading-small"></span>
 </div>

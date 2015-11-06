@@ -16,7 +16,7 @@ class SpamCounter < Dynamo
 	end
 
 	def self.topic_count(topic_id, counters)
-		counters.collect {|c| c.attributes[topic_id.to_s].to_i }.compact.inject(:+) || 0
+		counters.collect {|c| c.attributes[topic_id.to_s].to_i }.reject {|v| v.to_i < 1 }.compact.inject(:+) || 0
 	end
 
 	def self.elaborate_count(type)
@@ -25,7 +25,7 @@ class SpamCounter < Dynamo
 		total_count = topic_count(0, counters)
 		posts_count = (
 			counters.inject(0) do |m,c|
-				counter = c.attributes.delete_if { |k,v| excluded_keys.include?(k)}
+				counter = c.attributes.delete_if { |k,v| excluded_keys.include?(k)}.reject { |k,v| v.to_i < 1 }
 				m = m + counter.values.map(&:to_i).sum 
 			end
 		)

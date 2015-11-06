@@ -368,3 +368,18 @@
   id: 21
   description: integrations.xero.desc
   application_type: xero
+
+- options:
+    display_in_pages:
+    - helpdesk_tickets_show_page_side_bar
+  script: |-
+          <script type="text/javascript">
+            githubBundle={can_set_milestone:"{{github.can_set_milestone}}", application_id:"{{application.id}}", integrated_resource_id:"", remote_integratable_id:"", ticketId:"{{ticket.id}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | h}}", repositories:{{installed_app.configs_repositories}} };
+            Fjax.Assets.integration('github', function () {
+              new GithubWidget();
+            });
+          </script>
+  name: github_widget
+  id: 24
+  description: github.widgets.github_widget.description
+  application_type: github

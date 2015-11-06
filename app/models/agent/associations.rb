@@ -13,6 +13,9 @@ class Agent < ActiveRecord::Base
   has_many :agent_groups, :class_name => 'AgentGroup', 
           :foreign_key =>'user_id', :primary_key => "user_id", 
           :dependent => :delete_all 
+
+  has_many :groups, :through => :agent_groups
+  
   # ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection: Cannot modify association 
   # 'Agent#time_sheets' because the source reflection class 'Agent' is associated to 'User' via :has_one
   # Same issue as above for both create and delete

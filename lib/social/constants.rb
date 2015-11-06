@@ -34,6 +34,12 @@ module Social::Constants
     :custom => "custom_search"
   }
 
+  DYNAMO_ACTIONS = {
+    :add => "ADD",
+    :put => "PUT",
+    :delete => "DELETE"
+  }
+
   TABLES = {
     "feeds" => {
       :name => "fd_social_feeds",

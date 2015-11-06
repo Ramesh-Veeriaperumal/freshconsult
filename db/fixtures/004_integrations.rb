@@ -911,4 +911,22 @@ if Integrations::Application.count == 0
     s.options = { :direct_install => true, :user_specific_auth => true }   
     s.application_type = "onedrive" 
   end 
+
+  github_app =  Integrations::Application.seed(:name) do |s|
+    s.name = "github"
+    s.display_name = "integrations.github.label"
+    s.description = "integrations.github.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 36
+    s.options = {
+      :direct_install => true,
+      :oauth_url => "/auth/github?origin=id%3D{{account_id}}",
+      :edit_url => "/integrations/github/edit",
+      :after_commit_on_destroy => {
+        :method => "uninstall",
+        :clazz => "IntegrationServices::Services::GithubService",
+      },
+    }
+    s.application_type = "github"
+  end
 end

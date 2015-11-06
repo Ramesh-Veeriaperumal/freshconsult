@@ -24,7 +24,7 @@ file_name = node.override[:git_version] = `#{git_version_command}` + ".zip"
 node.override[:path] = "#{node[:path]}" + "#{file_name}"
 Chef::Log.info "value of git version is #{node[:git_version]} and test value is #{node[:bucket_exist]} and bucket name is #{bucket_name}"
 asset_pipeline_host = node[:rails3][:asset_pipeline_host] if node[:rails3] && node[:rails3][:asset_pipeline_host]
-if node[:opsworks]
+if node[:opsworks] && ::File.exists?("#{node[:rel_path]}/config/database.yml")
   if node[:opsworks][:instance][:hostname].include?("-app-")
     aws_config = AWS::S3.new(awscreds).buckets["#{bucket_name}"].objects["compiledfiles/#{file_name}"]
     node.override[:bucket_exist] =  aws_config.exists?

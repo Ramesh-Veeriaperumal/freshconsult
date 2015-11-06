@@ -43,18 +43,20 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
                 }
             });
         },
-          select: function (event, ui) {
-                $("#user_address").focus();
-              },
-          open: function () {
-              $(this).removeClass('ui-corner-all');
-          }
-        }).data("autocomplete")._renderItem = function (ul, item) {
-            return $("<li></li>")
-            .data("item.autocomplete", item)
-            .append("<a>" + item.label + "</a>")
-            .appendTo(ul);
-          };
+        minLength: 1,
+        select: function (event, ui) {
+          $("#user_address").focus();
+        },
+        open: function () {
+          $(".ui-menu").css({'display':'block', 'z-index': 10});
+          $(this).removeClass('ui-corner-all');
+        }
+      }).autocomplete("instance")._renderItem = function (ul, item) {
+        return $("<li></li>")
+        .data("autocomplete-item", item)
+        .append("<a>" + item.label + "</a>")
+        .appendTo(ul);
+      };
     },
 
     bindCompanySelect2: function () {

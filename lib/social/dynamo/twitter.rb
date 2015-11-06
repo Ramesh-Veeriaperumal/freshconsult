@@ -110,4 +110,15 @@ module Social::Dynamo::Twitter
     end
   end
 
+  def delete_fd_link(stream_id, feed_id)
+    table = "feeds"
+    item_hash = feeds_hash(stream_id, feed_id, "", 0, 0, "", SOURCE[:twitter])
+    item_hash.merge!("fd_link" => {})
+    times = [Time.now, Time.now + 7.days]
+    times.each do |time|
+      table_name = Social::DynamoHelper.select_table(table, time)
+      Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], [], ["fd_link"])
+    end
+  end
+
 end

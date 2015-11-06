@@ -130,6 +130,7 @@ module Helpkit
     require 'omniauth/strategies/twitter'
     require 'omniauth/strategies/nimble'
     require 'omniauth/strategies/slack'
+    require 'omniauth/strategies/github'
 
     # you will be able to access the above providers by the following url
     # /auth/providername for example /auth/twitter /auth/facebook
@@ -145,6 +146,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
+        next if ['github'].include?(oauth_provider)
       if oauth_provider == "shopify"
         provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
                  :scope => 'read_orders',
@@ -177,8 +179,11 @@ module Helpkit
       end
 
       provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
-    end
 
+      Auth::Authenticator.authenticators.values.each do |authenticator|
+        authenticator.new.register_middleware(self)
+      end
+    end
 
     config.filter_parameters += [:password, :password_confirmation, :creditcard]
 

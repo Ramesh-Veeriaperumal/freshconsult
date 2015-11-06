@@ -17,6 +17,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   after_filter :update_call, :only => :hangup
   
   def enqueue
+    current_call.queued!
     enqueue_caller
     trigger_queue_wait
   end
@@ -40,10 +41,12 @@ class Freshfone::QueueController < FreshfoneBaseController
   end
 
   def dequeue
+    current_call.default!
     render :xml => ( freshfone_conference? ? incoming_initiator.dequeue(params[:client])  : current_call_flow.dequeue(params[:client]) )
   end
 
   def hangup
+    current_call.default! if params[:QueueResult] == "hangup"
     queued_calls = get_key redis_queue_key
     members = queued_calls.nil? ? [] : JSON.parse(queued_calls)
     remove_call_from_queue(members, params[:hunt_id]) unless members.empty?

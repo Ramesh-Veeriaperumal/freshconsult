@@ -140,6 +140,8 @@
 			freshdialog = new Freshdialog(null, options),
 			$target;
 		$target = $(options.targetId);
+		$target.data('freshdialog', freshdialog);
+		$target.data("source", $target)
 		$target.modal(options);
 		return(freshdialog);
 	}

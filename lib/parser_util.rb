@@ -48,8 +48,9 @@ include AccountConstants
   end
 
   def get_email_array_with_mail_parser emails
-    parsed_email = Mail::AddressList.new emails
-    plain_emails = parsed_email.addresses.collect do |e|
+    parsed_email = Mail::ToField.new 
+    parsed_email.value = emails
+    plain_emails = parsed_email.addrs.collect do |e|
       e.address if e.address =~ EMAIL_REGEX
     end
     plain_emails.compact.uniq
@@ -141,9 +142,10 @@ include AccountConstants
     else
       emails = addresses
     end
-    parsed_emails = Mail::AddressList.new emails
+    parsed_emails = Mail::ToField.new 
+    parsed_emails.value = emails
      
-    valid_emails = parsed_emails.addresses.collect do |email|
+    valid_emails = parsed_emails.addrs.collect do |email|
       if email.address =~ EMAIL_REGEX
         if email.name.present?
           "#{format(email.name)} <#{email.address}>"
@@ -193,9 +195,10 @@ include AccountConstants
 
   def mail_parser(email)
     parsed_hash = { :email => email, :name => nil, :domain => nil }
-    parsed_email = Mail::AddressList.new email
+    parsed_email = Mail::ToField.new 
+    parsed_email.value = email
     name_prefix = ""
-    parsed_email.addresses.each_with_index do |email,index|
+    parsed_email.addrs.each_with_index do |email,index|
       if email.address =~ EMAIL_REGEX
         parsed_hash[:email] = email.address
         parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?

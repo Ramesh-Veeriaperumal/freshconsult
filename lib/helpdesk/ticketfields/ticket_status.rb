@@ -15,7 +15,7 @@ module Helpdesk::Ticketfields::TicketStatus
     index = -1
     ticket_statuses.each do |st|
       index = index+1
-      if(st.status_id == attr[:status_id])
+      if st.status_id && (st.status_id == attr[:status_id])
         t_s = st
         break
       elsif((st.name).casecmp(attr[:name]) == 0 and st.deleted?)

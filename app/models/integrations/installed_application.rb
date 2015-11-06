@@ -4,10 +4,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
-  belongs_to :account
+  belongs_to_account
   has_many :integrated_resources, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
-  has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :destroy  
+  has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :delete_all
+  has_many :app_business_rules, :class_name =>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_many :va_rules, through: :app_business_rules
   attr_protected :application_id
 
   before_destroy :before_destroy_customize
@@ -16,6 +18,9 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_create :before_create_customize
   after_create :after_create_customize
   after_save :after_save_customize
+  after_commit :after_commit_on_create_customize, :on => :create
+  after_commit :after_commit_on_update_customize, :on => :update
+  after_commit :after_commit_on_destroy_customize, :on => :destroy
   after_commit :after_commit_customize
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
@@ -122,6 +127,18 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       execute_custom_clazz(:after_destroy)
     end
 
+    def after_commit_on_create_customize
+      execute_custom_clazz(:after_commit_on_create)
+    end
+
+    def after_commit_on_update_customize
+      execute_custom_clazz(:after_commit_on_update)
+    end
+
+    def after_commit_on_destroy_customize
+      execute_custom_clazz(:after_commit_on_destroy)
+    end
+
     def after_commit_customize
       execute_custom_clazz(:after_commit)
     end
@@ -130,7 +147,11 @@ class Integrations::InstalledApplication < ActiveRecord::Base
       return if self.application.blank?
       as = self.application.options[action]
       unless as.blank?
-        execute(as[:clazz], as[:method], self)
+        if ["github"].include? self.application.name
+          execute_service(as.delete(:clazz), as.delete(:method), self, as)
+        else
+          execute(as[:clazz], as[:method], self)
+        end
       end
     end
 

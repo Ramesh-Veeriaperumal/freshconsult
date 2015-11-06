@@ -128,13 +128,16 @@
 						response( data )
 	                });
 	            },
+	            open: function(event, ui){
+	            	$(".ui-menu").css({'display':'block', 'z-index': 10});
+	            },
 	            focus: function( event, ui ) { event.preventDefault() }
 	        })
 	        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
 			
 			window['portal-search-render-ui'] = function( ul, item ) {
 	            return $( "<li>" )
-	                .data( "item.autocomplete", item )
+	                .data( "autocomplete-item", item )
 	                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
 	                .append('<span class="label label-small label-light">'+ item.group +'</span>')
 	                // .append('<div>'+ item.desc +'</div>')
@@ -143,7 +146,7 @@
 	        }
 
 			$.each(window['portal-search-boxes'], function(i, searchItem){
-				$(searchItem).data( "autocomplete" )._renderItem = window['portal-search-render-ui']
+				$(searchItem).data( "ui-autocomplete" )._renderItem = window['portal-search-render-ui']
 			})
     	}
 
