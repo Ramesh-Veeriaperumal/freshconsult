@@ -82,6 +82,33 @@ class Company < ActiveRecord::Base
   def search_fields_updated?
     (@model_changes.keys & es_columns).any?
   end
+  
+  # _Note_: Will be deprecated and remove in near future
+  #
+  def self.es_filter(account_id, letter,page, field_name, sort_order, per_page)
+    Search::EsIndexDefinition.es_cluster(account_id)
+    index_name = Search::EsIndexDefinition.searchable_aliases([Customer], account_id)
+    options = {:load => { Company => { :include => [:flexifield] }} , :page => page, :size => per_page, :preference => :_primary_first }
+    items = Tire.search(index_name, options) do |search|
+      search.query do |query|
+        query.filtered do |f|
+          if(letter)
+            f.query { |q| q.string SearchUtil.es_filter_key(letter) }
+          else
+            f.query { |q| q.string '*' }
+          end
+          f.filter :term, { :account_id => account_id }
+        end
+      end
+      search.from options[:size].to_i * (options[:page].to_i-1)
+      search.sort { by field_name, sort_order } 
+    end
+    search_results = []
+    items.results.each_with_hit do |result, hit|
+      search_results.push(result)
+    end
+    search_results
+  end
 
   # Remove alias and define if different for V2
   # Keeping it at last for defining after function defined
