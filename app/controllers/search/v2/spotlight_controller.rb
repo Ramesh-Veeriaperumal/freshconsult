@@ -145,8 +145,9 @@ class Search::V2::SpotlightController < ApplicationController
         @result_json[:results] << send(%{#{result.class.model_name.singular}_json}, result) if result
       end
 
-      @total_pages    = @es_results['hits']['total'].to_i / Search::Utils::MAX_PER_PAGE
-      @search_results = (@search_results.presence || []) + @result_set
+      @result_json[:current_page] = @current_page
+      @total_pages                = (@es_results['hits']['total'].to_f / @size).ceil
+      @search_results             = (@search_results.presence || []) + @result_set
     end
 
     # To-do: Add other necessary formats here
