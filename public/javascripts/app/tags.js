@@ -249,9 +249,9 @@ $(document).ready(function(){
                     var data = {
                         targetId: "#tag-dialog-confirm",
                         title: "Merge Tags",
-                        width: "300",
+                        width: "400",
                         backdrop: "static",
-                        submitLabel: "Delete",
+                        submitLabel: "Merge Tags",
                         closeLabel: "Cancel",
                         destroyOnClose: true
                     }
