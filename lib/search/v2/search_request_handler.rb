@@ -41,7 +41,7 @@ module Search
         def construct_payload(es_params)
           {
             template: {
-              file: @template_name
+              id: @template_name
             },
             params: es_params
           }.to_json
