@@ -62,8 +62,15 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       unless by_pass_throttle?
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         # Except V1, other versions will have different credits associated with a single request, hence increment_other_redis_by_value is implemented.
-        @value = @api_resource ? increment_other_redis_by_value(key, get_used_limit.to_i) : increment_others_redis(key)
-        set_others_redis_key(key+"_expiry",1,ONE_HOUR) if @value == 1
+        if @api_resource
+          used = get_used_limit.to_i
+          @value = increment_other_redis_by_value(key, used)
+        else
+          used = 1
+          @value = increment_others_redis(key)
+        end
+
+        set_others_redis_key(key+"_expiry",1,ONE_HOUR) if @value == used
       end
     elsif @api_resource
       error_output = "You have exceeded the limit of requests per hour"

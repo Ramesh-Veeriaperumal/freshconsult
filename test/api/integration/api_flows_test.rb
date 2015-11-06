@@ -657,4 +657,20 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     # system(stop memcache)
   end
+
+  def test_expiry_condition
+    # 10 API calls were executed in the previous hour
+    set_key(v2_api_key, "10")
+
+    # expiring the expiry key: one hour has passed
+    remove_key(v2_api_key+"_expiry")
+
+    id = (Helpdesk::Ticket.first || create_ticket).display_id
+    # first call after expiry
+    get "/api/v2/tickets/#{id}?include=notes", nil, @headers
+    assert_response 200
+
+    assert_equal 2, get_key(v2_api_key).to_i
+    assert_equal 1, get_key(v2_api_key+"_expiry").to_i
+  end
 end
