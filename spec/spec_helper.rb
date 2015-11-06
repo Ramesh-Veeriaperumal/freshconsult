@@ -103,6 +103,7 @@ Spork.prefork do
     config.include ForumHelper
     config.include ControllerHelper
     config.include UsersHelper
+    config.include SolutionBuilderHelper
     config.include SolutionsHelper
     config.include MobihelpHelper
     config.include CompanyHelper
