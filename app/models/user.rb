@@ -234,7 +234,7 @@ class User < ActiveRecord::Base
           conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
         all: {
-          conditions: { deleted: false }
+          conditions: { deleted: false, blocked: false }
         },
         company_id: {
           conditions: { customer_id: contact_filter.company_id }

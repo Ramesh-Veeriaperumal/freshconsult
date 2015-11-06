@@ -8,7 +8,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_user
-    @account.all_contacts.where(deleted: false).first
+    @account.all_contacts.where(deleted: false, blocked: false).first
   end
 
   def get_user_with_email
@@ -520,11 +520,24 @@ class ApiContactsControllerTest < ActionController::TestCase
   # User Index and Filters
   def test_contact_index
     @account.all_contacts.update_all(deleted: false)
+    @account.all_contacts.update_all(blocked: false)
+    sample_user = @account.all_contacts.first
+    sample_user.update_attribute(:blocked, true)
     get :index, controller_params
     assert_response 200
-    users = @account.all_contacts.order(:name)
+    users = @account.all_contacts.select { |x| x.deleted == false && x.blocked == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
+  end
+
+  def test_contact_index_all_blocked
+    @account.all_contacts.update_all(deleted: false)
+    @account.all_contacts.update_all(blocked: true)
+    get :index, controller_params
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 0, response.size
+    @account.all_contacts.update_all(blocked: false)
   end
 
   def test_contact_filter
