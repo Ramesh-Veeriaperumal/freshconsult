@@ -191,18 +191,18 @@ class ApiGroupsControllerTest < ActionController::TestCase
 
   def test_show_group_with_round_robin_disabled
     group = create_group(@account)
-    @account.class.any_instance.stubs(:features_included?).returns(false)
+    @account.class.any_instance.stubs(:features?).returns(false)
     get :show, construct_params(id: group.id)
-    @account.class.any_instance.unstub(:features_included?)
+    @account.class.any_instance.unstub(:features?)
     assert_response 200
     match_json(group_pattern_without_assingn_type(Group.find(group.id)))
   end
 
   def test_update_auto_ticket_assign_with_round_robin_disabled
     group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: [1, 2, 3])
-    @account.class.any_instance.stubs(:features_included?).returns(false)
+    @account.class.any_instance.stubs(:features?).returns(false)
     put :update, construct_params({ id: group.id }, auto_ticket_assign: true)
-    @account.class.any_instance.unstub(:features_included?)
+    @account.class.any_instance.unstub(:features?)
     assert_response 400
     match_json([bad_request_error_pattern('auto_ticket_assign', :invalid_field)])
   end
