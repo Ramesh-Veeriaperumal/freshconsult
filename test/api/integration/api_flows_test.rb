@@ -29,7 +29,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_invalid_account
-    get '/api/discussions/categories', nil, @headers.merge('HTTP_HOST' => 'junkaccount.freshpo.com' )
+    get '/api/discussions/categories', nil, @headers.merge('HTTP_HOST' => 'junkaccount.freshpo.com')
     assert_response 404
     assert_equal ' ', @response.body
 
@@ -618,7 +618,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_cache_store_nil_jbuilder
     ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
     ApiDiscussions::CategoriesController.any_instance.stubs(:cache_store).returns(nil)
-    get "/api/discussions/categories.json", nil, @headers
+    get '/api/discussions/categories.json', nil, @headers
     ApiDiscussions::CategoriesController.any_instance.unstub(:cache_store)
     ApiDiscussions::CategoriesController.any_instance.unstub(:perform_caching)
     pattern = @account.forum_categories.map { |fc| forum_category_pattern(fc) }
@@ -628,7 +628,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_caching_enabled_memcache_down_jbuilder
     ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
-    get "/api/discussions/categories.json", nil, @headers
+    get '/api/discussions/categories.json', nil, @headers
     ApiDiscussions::CategoriesController.any_instance.unstub(:perform_caching)
     pattern = @account.forum_categories.map { |fc| forum_category_pattern(fc) }
     match_json(pattern)
@@ -643,7 +643,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_plan = SubscriptionPlan.find(3)
     set_key(plan_key(3), 230, nil)
     remove_key(account_key)
-    
+
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal '200', response.headers['X-RateLimit-Total']
@@ -660,10 +660,10 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_expiry_condition
     # 10 API calls were executed in the previous hour
-    set_key(v2_api_key, "10")
+    set_key(v2_api_key, '10')
 
     # expiring the expiry key: one hour has passed
-    remove_key(v2_api_key+"_expiry")
+    remove_key(v2_api_key + '_expiry')
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
@@ -671,6 +671,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
-    assert_equal 1, get_key(v2_api_key+"_expiry").to_i
+    assert_equal 1, get_key(v2_api_key + '_expiry').to_i
   end
 end

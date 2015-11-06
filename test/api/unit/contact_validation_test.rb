@@ -79,7 +79,7 @@ class ContactValidationTest < ActionView::TestCase
     item = nil
     contact = ContactValidation.new(controller_params, item)
     assert contact.valid?(:update)
-    Account.unstub(:current)    
+    Account.unstub(:current)
   end
 
   def test_update_contact_without_contact_detail
@@ -92,6 +92,6 @@ class ContactValidationTest < ActionView::TestCase
     refute contact.valid?(:update)
     errors = contact.errors.full_messages
     assert errors.include?('Email fill_a_mandatory_field')
-    Account.unstub(:current)    
+    Account.unstub(:current)
   end
 end

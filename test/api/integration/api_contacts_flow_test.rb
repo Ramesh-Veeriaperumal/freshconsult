@@ -146,7 +146,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
 
       put "/api/contacts/#{contact.id}", { tags: nil }.to_json, @write_headers
       match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
-	    assert_response 400
+      assert_response 400
 
       put "/api/contacts/#{contact.id}", { tags: [] }.to_json, @write_headers
       assert_response 200

@@ -14,7 +14,7 @@ class ApiBusinessCalendarsController < ApiApplicationController
       if multiple_business_hours_enabled? && !default_business_calendar?
         super
       elsif !default_business_calendar?
-        render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize) 
+        render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
       end
     end
 
@@ -31,5 +31,4 @@ class ApiBusinessCalendarsController < ApiApplicationController
     def multiple_business_hours_enabled?
       Account.current.features?(:multiple_business_hours)
     end
-
 end

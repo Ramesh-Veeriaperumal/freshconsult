@@ -17,8 +17,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def ticket
-      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-      ticket
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    ticket
   end
 
   def test_create_with_invalid_attachment_type
@@ -128,11 +128,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_custom_date_utc_format
     t = ticket
-    time = Time.now.in_time_zone("Chennai")
-    Helpdesk::Ticket.any_instance.stubs(:custom_field).returns({:custom_date_1 => time})
+    time = Time.now.in_time_zone('Chennai')
+    Helpdesk::Ticket.any_instance.stubs(:custom_field).returns(custom_date_1: time)
 
     # without CustomFieldDecorator
-    CustomFieldDecorator.stubs(:utc_format).returns({:custom_date_1 => time})
+    CustomFieldDecorator.stubs(:utc_format).returns(custom_date_1: time)
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.iso8601, parsed_response['custom_date_1']

@@ -224,8 +224,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_inclusion_invalid
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
-    post :create, construct_params({}, params)    
-	  match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9')])

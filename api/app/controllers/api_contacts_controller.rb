@@ -107,7 +107,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def load_objects
-       # includes(:flexifield) will avoid n + 1 query to contact field data.
+      # includes(:flexifield) will avoid n + 1 query to contact field data.
       super contacts_filter(scoper).includes(:flexifield, :company).order('users.name')
     end
 

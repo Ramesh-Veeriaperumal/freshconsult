@@ -476,10 +476,10 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_user_created_with_fb_id
     sample_user = get_user
-    params_hash = { mobile: "", email: "", phone: "", twitter_id: "", fb_profile_id: "profile_id_1" }
+    params_hash = { mobile: '', email: '', phone: '', twitter_id: '', fb_profile_id: 'profile_id_1' }
     sample_user.update_attributes(params_hash)
     email = Faker::Internet.email
-    put :update, construct_params({ id: sample_user.id }, { name: "sample_user", email: email })
+    put :update, construct_params({ id: sample_user.id }, name: 'sample_user', email: email)
     assert_response 200
     assert sample_user.reload.email == email
     assert sample_user.reload.name == 'sample_user'

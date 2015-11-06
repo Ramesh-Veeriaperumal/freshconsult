@@ -10,7 +10,7 @@ class TimeEntriesController < ApiApplicationController
 
   def update
     user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
-    # Should stop other timers for the above user_stop_timer 
+    # Should stop other timers for the above user_stop_timer
     # if the timer is on for this time_entry in this update call
     # or this user_stop_timer is newly assigned to this time_entry in this update call
     update_running_timer user_stop_timer if should_stop_running_timer?

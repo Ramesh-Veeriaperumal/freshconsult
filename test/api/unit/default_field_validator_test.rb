@@ -67,10 +67,10 @@ class DefaultFieldValidatorTest < ActionView::TestCase
       source: :not_included, status: :not_included, priority: :not_included, type: :not_included, group_id: :data_type_mismatch,
       responder_id: :data_type_mismatch, product_id: :data_type_mismatch, email: 'not_a_valid_email',
       client_manager: :data_type_mismatch, tags: :data_type_mismatch, language: :not_included, time_zone: :not_included, domains: :data_type_mismatch,
-      subject: "is too long (maximum is 255 characters)", description: :data_type_mismatch,
-      job_title: "is too long (maximum is 255 characters)", twitter_id: "is too long (maximum is 255 characters)",
-      phone: "is too long (maximum is 255 characters)", mobile: "is too long (maximum is 255 characters)",
-      address: "is too long (maximum is 255 characters)", note: :data_type_mismatch
+      subject: 'is too long (maximum is 255 characters)', description: :data_type_mismatch,
+      job_title: 'is too long (maximum is 255 characters)', twitter_id: 'is too long (maximum is 255 characters)',
+      phone: 'is too long (maximum is 255 characters)', mobile: 'is too long (maximum is 255 characters)',
+      address: 'is too long (maximum is 255 characters)', note: :data_type_mismatch
     }.sort,
                  errors
                 )
@@ -114,7 +114,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ tags: "is too long (maximum is 255 characters)" }.sort, errors)
+    assert_equal({ tags: 'is too long (maximum is 255 characters)' }.sort, errors)
   end
 
   def test_string_rejection_validator
@@ -136,7 +136,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ email: "is too long (maximum is 255 characters)" }.sort, errors)
+    assert_equal({ email: 'is too long (maximum is 255 characters)' }.sort, errors)
   end
 
   def test_attribute_with_no_validation

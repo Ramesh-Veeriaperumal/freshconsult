@@ -121,7 +121,7 @@ module TestCaseMethods
   end
 
   def plan_key(id)
-    FD_PLAN_API_LIMIT % { :plan_id => id.to_s }
+    FD_PLAN_API_LIMIT % { plan_id: id.to_s }
   end
 
   EOL = "\015\012"  # "\r\n"

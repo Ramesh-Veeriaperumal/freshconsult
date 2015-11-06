@@ -108,7 +108,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x' , body: Faker::Lorem.paragraph}
+    params_hash = { notify_emails: 'x', attachments: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
                 bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
@@ -116,7 +116,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_email_format_invalid
-    params_hash = { notify_emails: ['tyt@'], body: Faker::Lorem.paragraph}
+    params_hash = { notify_emails: ['tyt@'], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', 'not_a_valid_email')])
     assert_response 400

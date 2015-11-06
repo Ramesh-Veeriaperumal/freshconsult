@@ -3,13 +3,13 @@ require_relative '../test_helper'
 class MetalApiControllerTest < ActionView::TestCase
   def test_included_modules
     metal_modules = [ActionController::Head, ActionController::Helpers, ActionController::Redirecting,
-    ActionController::Rendering, ActionController::RackDelegation, ActionController::Caching,
-    Rails.application.routes.url_helpers, ActiveSupport::Rescuable, ActionController::MimeResponds,
-    ActionController::ImplicitRender, ActionController::StrongParameters, ActionController::Cookies,
-    ActionController::HttpAuthentication::Basic::ControllerMethods, AbstractController::Callbacks,
-    ActionController::Rescue, ActionController::ParamsWrapper, ActionController::Instrumentation,
-    NewRelic::Agent::Instrumentation::Rails3::Errors, NewRelic::Agent::Instrumentation::Rails3::ActionController, 
-    NewRelic::Agent::Instrumentation::ControllerInstrumentation]
+                     ActionController::Rendering, ActionController::RackDelegation, ActionController::Caching,
+                     Rails.application.routes.url_helpers, ActiveSupport::Rescuable, ActionController::MimeResponds,
+                     ActionController::ImplicitRender, ActionController::StrongParameters, ActionController::Cookies,
+                     ActionController::HttpAuthentication::Basic::ControllerMethods, AbstractController::Callbacks,
+                     ActionController::Rescue, ActionController::ParamsWrapper, ActionController::Instrumentation,
+                     NewRelic::Agent::Instrumentation::Rails3::Errors, NewRelic::Agent::Instrumentation::Rails3::ActionController,
+                     NewRelic::Agent::Instrumentation::ControllerInstrumentation]
     assert (metal_modules - MetalApiController.included_modules).empty?
   end
 

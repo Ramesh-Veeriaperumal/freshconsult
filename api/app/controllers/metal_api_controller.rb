@@ -22,7 +22,7 @@ class MetalApiController < ActionController::Metal
   include ActionController::Rescue
   include ActionController::ParamsWrapper
   include ActionController::Instrumentation  # need this for active support instrumentation.
-  
+
   # Inorder to make NewRelic work for ActionController::Metal
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
   include NewRelic::Agent::Instrumentation::Rails3::ActionController

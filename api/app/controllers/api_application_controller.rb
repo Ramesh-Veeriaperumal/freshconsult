@@ -126,7 +126,7 @@ class ApiApplicationController < MetalApiController
       render_request_error(:duplicate_value, 409)
     end
 
-    def db_query_error(e) 
+    def db_query_error(e)
       notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
       Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
       render_base_error(:internal_error, 500)
@@ -134,7 +134,7 @@ class ApiApplicationController < MetalApiController
 
     def record_not_found(e)
       notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
-      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}" )
+      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
       head 404
     end
 

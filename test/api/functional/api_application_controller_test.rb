@@ -78,7 +78,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
 
   def test_notify_new_relic_agent
     @controller.request.env['ORIGINAL_FULLPATH'] = '/api/tickets'
-    NewRelic::Agent.expects(:notice_error).with('Exception', {:uri => 'http://localhost.freshpo.com/api/tickets', :custom_params => {:method => 'GET', :params => {}, :x_request_id => nil}}).once
+    NewRelic::Agent.expects(:notice_error).with('Exception', uri: 'http://localhost.freshpo.com/api/tickets', custom_params: { method: 'GET', params: {}, x_request_id: nil }).once
     @controller.send(:notify_new_relic_agent, 'Exception')
   end
 
