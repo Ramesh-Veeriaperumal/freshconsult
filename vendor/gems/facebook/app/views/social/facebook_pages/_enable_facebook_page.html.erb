@@ -3,11 +3,15 @@
 <%= form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
 <div class="list-page facebook-list">
   <div class="list-page-header row-fluid"> 
-  	<div class="span6">
+  	<div class="span10">
 	  	<p class="muted"><%=t('.associate')%></p>
 	  </div>
   </div>
-  <div class="list-page-body"> 
+  <div class="list-page-body" style="padding:5px"> 
+      <div class = "fb-select-all">
+        <input type="checkbox" id="fb-pages-select-all" checked />
+        <label id ="fb-pages-deselect-all-label" class="fb-select-all-label" for= "fb_pages-select-all"> <%=t('.select_all')%> </label> 
+      </div>
       <table class="table table-striped">
       	<% @new_fb_pages.each do |fb_page| %>
         <% source = fb_page.delete(:source) %>
@@ -43,6 +47,7 @@
  </div>
 <% end %>
 </div>
+
 <%= javascript_tag do %>
 jQuery(".fb_page_info input[type=checkbox]").change(function(){
   if(jQuery('.fb_page_info input[type=checkbox]:checked').length){
@@ -52,4 +57,13 @@ jQuery(".fb_page_info input[type=checkbox]").change(function(){
     jQuery('#pages_dialog-submit').attr('disabled', 'true');
   }
 });
+
+jQuery("#fb-pages-select-all").on("click", function(){
+  var select_fb_page;
+  
+  select_fb_page = this.checked ? true : false
+  
+  jQuery("input[name='enable[pages][]']").prop("checked", select_fb_page);
+});
+
 <% end %>
