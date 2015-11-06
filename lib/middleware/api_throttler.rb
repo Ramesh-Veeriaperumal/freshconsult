@@ -24,7 +24,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       Sharding.select_shard_of(@account_id) do 
         current_account = Account.find(@account_id)
         if @api_resource # Retrieve api_limit from redis
-          @api_limit = get_api_limit(current_account)
+          @api_limit = api_limit(current_account)
         else
           api_key = API_LIMIT% {:account_id => @account_id}
           @api_limit = MemcacheKeys.fetch(api_key) do
@@ -63,7 +63,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         # Except V1, other versions will have different credits associated with a single request, hence increment_other_redis_by_value is implemented.
         if @api_resource
-          used = get_used_limit.to_i
+          used = used_limit.to_i
           @value = increment_other_redis_by_value(key, used)
         else
           used = 1
@@ -89,12 +89,12 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def set_rate_limit_version_headers(env)
-    version = get_api_version(env)
+    version = api_version(env)
     @headers = @headers.merge('X-Freshdesk-API-Version' => "latest=#{ApiConstants::API_CURRENT_VERSION}; requested=#{version}") if version
     return if @status == 429 # Rate Limit headers are not set when status is 429
     @headers = @headers.merge("X-RateLimit-Total" => @api_limit.to_s,
                       "X-RateLimit-Remaining" => [(@api_limit - @value), 0].max.to_s,
-                      "X-RateLimit-Used" => get_used_limit.to_s)
+                      "X-RateLimit-Used" => used_limit.to_s)
   end
 
   def by_pass_throttle?
@@ -115,7 +115,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def key
-    @api_resource ? VERSIONED_API_THROTTLER % {:host => @host} : API_THROTTLER % {:host => @host}
+    @api_resource ? API_THROTTLER_V2 % {:host => @host} : API_THROTTLER % {:host => @host}
   end
 
   def account_api_limit_key
@@ -130,21 +130,21 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     FD_DEFAULT_API_LIMIT
   end
 
-  def get_api_limit(account)
+  def api_limit(account)
     api_limits = get_multiple_other_redis_keys(account_api_limit_key, default_api_limit_key)
-    (api_limits.first || get_plan_api_limit(account) || api_limits.last || FD_API_LIMIT).to_i 
+    (api_limits.first || plan_api_limit(account) || api_limits.last || FD_API_LIMIT).to_i 
   end
 
-  def get_plan_api_limit(account)
+  def plan_api_limit(account)
     plan_id = account.subscription_from_cache.plan_id
     get_others_redis_key(plan_api_limit_key(plan_id))
   end
 
-  def get_used_limit
+  def used_limit
     @used = RequestStore.store[:api_credits] || FD_DEFAULT_USED_LIMIT
   end
 
-  def get_api_version(env)
+  def api_version(env)
     return if @status == 404 # Version will not be present if status is 404
     env["action_dispatch.request.path_parameters"].try(:[], :version) # This parameter would come from api_routes
   end
