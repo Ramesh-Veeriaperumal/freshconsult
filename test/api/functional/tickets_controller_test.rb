@@ -450,10 +450,8 @@ class TicketsControllerTest < ActionController::TestCase
     fr_due_by = 31.days.since.utc.iso8601
     params = ticket_params_hash.merge(due_by: due_by, fr_due_by: fr_due_by)
     post :create, construct_params({}, params)
-    ticket = Helpdesk::Ticket.last
-    assert_equal due_by, ticket.due_by.iso8601
-    assert_equal fr_due_by, ticket.frDueBy.iso8601
-    assert_response 201
+    match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
+    assert_response 400
   end
 
   def test_create_invalid_model
@@ -1039,7 +1037,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_nil_due_by_with_fr_due_by
     t = ticket
-    fr_due_by = 12.days.since.utc.iso8601
+    fr_due_by = 2.days.since.utc.iso8601
     params = ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.display_id }, params)
     match_json(ticket_pattern(params, t.reload))
@@ -1102,16 +1100,34 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_due_by_greater_than_created_at_less_than_fr_due_by
+    # both in params
     t = ticket
     due_by = 30.days.since.utc.iso8601
     fr_due_by = 31.days.since.utc.iso8601
     params = ticket_params_hash.merge(due_by: due_by, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.id }, params)
-    match_json(ticket_pattern(params, t.reload))
-    match_json(ticket_pattern({}, t))
-    assert_response 200
-    assert_equal due_by, t.due_by.iso8601
-    assert_equal fr_due_by, t.frDueBy.iso8601
+    match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
+    assert_response 400
+
+    # fr_due_by in params
+    t = ticket
+    due_by = 30.days.since.utc.iso8601
+    t.update_column(:due_by, due_by)
+    fr_due_by = 31.days.since.utc.iso8601
+    params = ticket_params_hash.except(:due_by).merge(fr_due_by: fr_due_by)
+    put :update, construct_params({ id: t.id }, params)
+    match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
+    assert_response 400
+
+    # due_by in params
+    t = ticket
+    due_by = 30.days.since.utc.iso8601
+    fr_due_by = 31.days.since.utc.iso8601
+    t.update_column(:frDueBy, fr_due_by)
+    params = ticket_params_hash.except(:fr_due_by).merge(due_by: due_by)
+    put :update, construct_params({ id: t.id }, params)
+    match_json([bad_request_error_pattern('due_by', 'lt_due_by')])
+    assert_response 400
   end
 
   def test_update_without_due_by
@@ -1143,6 +1159,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     params = update_ticket_params_hash.except(:email).merge(custom_fields: { "test_custom_country_#{@account.id}" => 'rtt', "test_custom_dropdown_#{@account.id}" => 'ddd' }, group_id: 89_089, product_id: 9090, email_config_id: 89_789, responder_id: 8987, requester_id: user.id)
     t = ticket
+    t.update_column(:requester_id, nil)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('group_id', :"can't be blank"),
@@ -1152,6 +1169,19 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :"can't be blank"),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern("test_custom_dropdown_#{@account.id}", :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_update_inconsistency_already_in_model
+    user = add_new_user(@account)
+    user.update_attribute(:blocked, true)
+    params = {requester_id: user.id, email_config_id: 8888, responder_id: 8888, group_id: 8888}
+    t = ticket
+    Helpdesk::Ticket.update_all(params, {:id => t.id} )
+    t.schema_less_ticket.update_column(:product_id, 8888)
+    t.schema_less_ticket.reload
+    put :update, construct_params({ id: t.display_id }, params)
+    assert_response 200
+    match_json(ticket_pattern({}, t.reload))
   end
 
   def test_update_with_responder_id_not_in_group
