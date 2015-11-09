@@ -10,6 +10,8 @@
     Mousetrap.prototype.stopCallback = function(e, element, combo) {
         var self = this;
 
+        self.paused = (combo === Shortcuts.global.help || combo === Shortcuts.global.cancel ) ? false : self.paused;
+        
         if (self.paused) {
             return true;
         }

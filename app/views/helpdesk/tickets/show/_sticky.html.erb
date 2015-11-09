@@ -85,10 +85,11 @@
 				<% end %>
 				<% if privilege?(:merge_or_split_ticket) %>
 				<li class="ticket-btns hide_on_collapse">
-					<a href="#merge_freshdialog" class="btn merge_ticket btn-collapse" 
+					<a href="#merge_freshdialog" class="btn btn-collapse" 
 						data-width="800" 
 						data-ticket-display-id = "<%= @ticket.display_id %>"
 						rel="freshdialog"
+						data-action="merge"
 						data-title="<%=t('ticket.merge_title')%>" 
 						data-placement = "below"
 						data-template-footer="false"
@@ -103,9 +104,9 @@
 				</div>
 				<% end %>
 				<li class="ticket-btns hide_on_collapse">
-					<div class="tooltip keytitle btn-collapse" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
+					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn ', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
+					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
 					  				:title => t('ticket.execute_scenario')) %> 
 					</div>
 				</li>
@@ -160,7 +161,7 @@
 </div>
 <div class="clearfix"></div>
 <%= javascript_tag do -%>
-  jQuery(".merge_ticket").on("click", function(ev){
+  jQuery(document).on("click", '[data-action="merge"]', function(ev){
   	var display_id = jQuery(this).data('ticketDisplayId');
       jQuery.ajax({
         type:              'POST',
