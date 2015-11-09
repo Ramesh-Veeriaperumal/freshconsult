@@ -1,9 +1,9 @@
 
 bulkActionButtonsDisabled = function () {
 	if (jQuery('#ticket-list .check .selector:checked').length > 0 ) {
-		jQuery('#ticket-toolbar .bulk_action_buttons .btn').removeAttr('disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .btn').removeClass('disabled').prop('disabled', false).removeAttr('disabled');
 	} else {
-		jQuery('#ticket-toolbar .bulk_action_buttons .btn').attr('disabled','disabled');
+		jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
 	}
 }
 ticksymbol = "<span class='icon ticksymbol'></span>";
@@ -19,7 +19,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----
 	jQuery(".ticket-description-tip").livequery(function () {
-		_self = jQuery(this);        
+		var _self = jQuery(this);        
         var tipUrl = _self.data("tipUrl");
         var ticket_id = _self.parent().parent().parent().data('ticket');
         _self.qtip({
@@ -266,4 +266,8 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	jQuery('body').on('click.ticket_list', '.next_page, .prev_page', function () {
 		jQuery('#helpdesk-select-all').removeAttr('checked');
 	});
+
+	jQuery(window).on('resize.ticket_list', function(){
+		bulkActionButtonsDisabled();
+	}).trigger('resize');
 }

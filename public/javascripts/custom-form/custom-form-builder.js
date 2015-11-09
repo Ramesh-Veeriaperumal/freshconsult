@@ -105,7 +105,8 @@
 
       fieldContainer.empty()
                     .removeClass('field')
-                    .addClass('custom-field');
+                    .addClass('custom-field')
+                    .removeAttr('style');
 
       fieldContainer.attr("data-id", dataItem.id);
       fieldContainer.attr('data-drag-info', dataItem.label); //Information for dragging

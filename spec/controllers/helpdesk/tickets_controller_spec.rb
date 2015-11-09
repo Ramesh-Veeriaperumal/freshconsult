@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'sidekiq/testing'
 include Redis::TicketsRedis
 include Redis::RedisKeys
 include FacebookHelper
@@ -855,6 +856,25 @@ RSpec.describe Helpdesk::TicketsController do
     
     Resque.inline = false
   end
+  # test cases for bulk scenario automations starts here
+  it "should render scenarios page" do
+    get :bulk_scenario, :bulk_scenario => true
+    response.should render_template "helpdesk/tickets/show/_scenarios"
+    response.should be_success
+  end
 
-  
+  it "should execute a scenario for multiple tickets" do
+    Sidekiq::Testing.inline!
+    @request.env['HTTP_REFERER'] = 'sessions/new'
+    scenario_ticket1 = create_ticket({ :status => 2 }, @group)
+    scenario_ticket2 = create_ticket({ :status => 2 }, @group)
+    user = Account.current.users.find_by_id(1)
+    user.make_current
+    scenario = @account.scn_automations.find_by_name("Mark as Feature Request")
+    put :execute_bulk_scenario, :scenario_id => scenario.id, :ids => ["#{scenario_ticket1.display_id}","#{scenario_ticket2.display_id}"],:user_id => "1"
+    @account.tickets.find(scenario_ticket1.id).ticket_type.should be_eql("Feature Request")
+    @account.tickets.find(scenario_ticket2.id).ticket_type.should be_eql("Feature Request")
+    Sidekiq::Testing.disable!
+  end
+  # test cases for bulk scenario automations ends here
 end

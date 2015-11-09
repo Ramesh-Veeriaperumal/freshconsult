@@ -6,7 +6,7 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer, :triggered_event
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule
 
   ACTION_PRIVILEGE =
     {  
@@ -22,9 +22,10 @@ class Va::Action
       :delete_ticket           => :delete_ticket
     }
   
-  def initialize(act_hash)
+  def initialize(act_hash, va_rule = nil)
     @act_hash = act_hash
     @action_key = act_hash[:name]
+    @va_rule = va_rule
   end
   
   def value
@@ -36,16 +37,16 @@ class Va::Action
       Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
       @triggered_event = triggered_event
-      
       return send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
         act_on.send("#{action_key}=", value)
-        add_activity(property_message act_on)
+        record_action
         return
       else
         clazz = @action_key.constantize
         obj = clazz.new
         if obj.respond_to?(value)
+          act_hash[:va_rule] = @va_rule if act_hash.delete(:include_va_rule)
           obj.send(value, act_on, act_hash)
           # add_activity(property_message act_on)  # TODO
           return
@@ -58,51 +59,26 @@ class Va::Action
     end
   end
   
-  #POOR CODE - due to time constraint - by SHAN
-  def property_message(act_on)
-    case action_key
-    when 'priority'
-      "Changed the priority to <b>#{TicketConstants.priority_list[value.to_i]}</b>"
-    when 'status'
-      "Changed the status to <b>#{Helpdesk::TicketStatus.status_names_by_key(act_on.account)[value.to_i]}</b>"
-    when 'ticket_type'
-      "Changed the ticket type to <b>#{value}</b>"
-    else
-      "Set #{action_key.to_s.humanize()} as <b>#{value}</b>"
-    end
+  def record_action(params = nil)
+    return if !is_automation_rule?
+    performer = @doer
+    Va::ScenarioFlashMessage.new(act_hash, performer, false).record_activity(params)
   end
-  
-  ##Execution activities temporary storage hack starts here
-  def self.initialize_activities
-    Thread.current[:scenario_action_log] = []
+
+  def record_action_for_bulk(user)
+    return if !is_automation_rule?
+    performer = user
+    Va::ScenarioFlashMessage.new(act_hash, performer, true).record_activity
   end
-  
-  def add_activity(log_mesg)
-    Thread.current[:scenario_action_log] << log_mesg.html_safe
-  end
-  
-  def self.activities
-    Thread.current[:scenario_action_log]
-  end
-  
-  def self.clear_activities
-    Thread.current[:scenario_action_log] = nil
-  end
-  ##Execution activities temporary storage hack ends here
-    
+
   def group_id(act_on)
     g_id = value.to_i
     begin
       group = act_on.account.groups.find(g_id)
     rescue ActiveRecord::RecordNotFound
     end
-
-    if group || value.empty?
-      act_on.group = group
-      add_activity("Set group as <b>#{group.name}</b>") unless group.nil?
-    else
-      add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
-    end
+    act_on.group = group if group || value.empty?
+    record_action(group)
   end
 
   def responder_id(act_on)
@@ -111,13 +87,8 @@ class Va::Action
       responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
-
-    if responder || value.empty?
-      act_on.responder = responder
-      add_activity("Set agent as <b>#{responder.name}</b>") unless responder.nil?
-    else
-      add_activity("<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>")
-    end
+    act_on.responder = responder if responder || value.empty?
+    record_action(responder)
   end
 
   def add_comment(act_on)
@@ -130,8 +101,7 @@ class Va::Action
     note.incoming = false
     note.private = "true".eql?(act_hash[:private])
     note.save_note!
-    
-    add_activity(note.private ? "Added a <b>private note</b>" : "Added a <b>note</b>")
+    record_action
   end
   
   def add_watcher(act_on)
@@ -151,7 +121,7 @@ class Va::Action
         end
       end
     end
-    add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
+    record_action(watchers) if watchers.present?
   end
 
   def add_tag(act_on)
@@ -161,8 +131,7 @@ class Va::Action
           :name => tag_name, :account_id => act_on.account_id)
       act_on.tags << tag unless act_on.tags.include?(tag)
     end
-    
-    add_activity("Assigned the tag(s) [<b>#{value.split(',').join(', ')}</b>]")
+    record_action
   end
 
   def add_a_cc(act_on)
@@ -181,30 +150,13 @@ class Va::Action
     end
   end
 
-  def add_watcher(act_on)
-    watchers = Array.new
-    watcher_value = value.kind_of?(Array) ? value : value.to_a
-    watcher_value.each do |agent_id|
-      watcher = act_on.subscriptions.find_by_user_id(agent_id)
-      unless watcher.present?
-        subscription = act_on.subscriptions.create( {:user_id => agent_id} )
-        watchers.push subscription.user.name if subscription
-        Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
-                                             act_on, 
-                                             subscription, 
-                                             "automations rule")
-      end
-    end
-    add_activity("#{I18n.t('automations.activity.added_watcher(s)')} - <b>#{watchers.to_sentence}</b>") if watchers.present?
-  end
-
   def send_email_to_requester(act_on)
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
       Helpdesk::TicketNotifier.email_to_requester(act_on, 
         substitute_placeholders_for_requester(act_on, :email_body),
                       substitute_placeholders_for_requester(act_on, :email_subject)) 
-      add_activity("Sent an email to the requester") 
+      record_action
     end
   end
   
@@ -212,7 +164,7 @@ class Va::Action
     group = get_group(act_on)
     if group && !group.agent_emails.empty?
       send_internal_email(act_on, group.agent_emails)
-      add_activity("Sent an email to the group <b>#{group.name}</b>")
+      record_action(group)
     end
   end
 
@@ -220,18 +172,18 @@ class Va::Action
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)
-      add_activity("Sent an email to the agent <b>#{agent}</b>")
+      record_action(agent)
     end
   end
   
   def delete_ticket(act_on)
     act_on.deleted = true
-    add_activity("Deleted the ticket <b>#{act_on} </b>")
+    record_action(act_on)
   end
   
   def mark_as_spam(act_on)
     act_on.spam = true 
-    add_activity("Marked the ticket <b>#{act_on} </b> as spam")
+    record_action(act_on)
   end
 
   def skip_notification(act_on)
@@ -243,6 +195,7 @@ class Va::Action
     @act_hash[:nested_rules].each do |field|
       assign_custom_field act_on, field[:name], field[:value]
     end
+    record_action
   end
 
   private
@@ -291,5 +244,9 @@ class Va::Action
 
     def assign_custom_field act_on, field, value
       act_on.send "#{field}=", value if act_on.ff_aliases.include? field
+    end
+
+    def is_automation_rule?
+      @va_rule.present? ? @va_rule.automation_rule? : false      
     end
 end

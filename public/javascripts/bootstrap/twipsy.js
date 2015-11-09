@@ -118,7 +118,7 @@
             tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width - actualWidth  + this.options.offset}
             break
           case 'belowRight':
-            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width + this.options.offset}
+            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width/2  - actualWidth/5 + this.options.offset}
             break
         }
 

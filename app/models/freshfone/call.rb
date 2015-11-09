@@ -65,7 +65,8 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:default],
     CALL_STATUS_HASH[:'in-progress'],
     CALL_STATUS_HASH[:'on-hold'],
-    CALL_STATUS_HASH[:'connecting']
+    CALL_STATUS_HASH[:'connecting'],
+    CALL_STATUS_HASH[:queued]
   ]
   CALL_TYPE = [
     [ :incoming,  'incoming', 1 ],
@@ -97,11 +98,13 @@ class Freshfone::Call < ActiveRecord::Base
     :message => "%{value} is not a valid call type"
 
 
-  
-  scope :active_calls, :conditions => [
-    'call_status = ? AND updated_at >= ?', 
-    CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-  ]
+
+  scope :active_calls, lambda {
+    { :conditions => [ 'call_status = ? AND updated_at >= ?', 
+        CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
+      ], :order => "created_at DESC"
+    }
+  }
 
   scope :filter_by_call_sid, lambda { |call_sid|
     { :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
@@ -140,6 +143,11 @@ class Freshfone::Call < ActiveRecord::Base
   scope :created_at_inside, lambda { |start, stop|
     { :conditions => ["freshfone_calls.created_at >= ? and freshfone_calls.created_at <= ?", start, stop] }
   }
+
+  scope :queued_calls, :conditions => [
+    'call_status = ? AND updated_at >= ?', 
+    CALL_STATUS_HASH[:queued], 1.hours.ago.to_s(:db)
+  ]
 
   def self.filter_call(call_sid)
     call = filter_by_call_sid(call_sid).first

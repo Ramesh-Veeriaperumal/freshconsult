@@ -1,6 +1,11 @@
 module Integrations 
 	config = File.join(Rails.root, 'config', 'integrations_config.yml')
 	hash = (YAML::load_file config)
+
+  oauth_config = File.join(Rails.root, 'config', 'oauth_config.yml')
+  oauth_yaml_hash = (YAML::load_file oauth_config)
+  OAUTH_CONFIG_HASH = oauth_yaml_hash[Rails.env]
+  OAUTH_OPTIONS_HASH = oauth_yaml_hash['oauth_options']
 	#========================================================
 	xero_key_hash = hash["xero"]
 	XERO_CONSUMER_KEY = xero_key_hash["consumer_key"]

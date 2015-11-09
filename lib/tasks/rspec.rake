@@ -123,6 +123,7 @@ if Rails.env.test?
   ForumDynamoTests = [
     "spec/lib/community/*_spec.rb",
     "spec/lib/community/moderation/*_spec.rb",
+    "spec/lib/spam_counter_spec.rb",
     "spec/lib/forum_unpublished_spec.rb",
     "spec/lib/forum_spam_spec.rb",
     "spec/lib/dynamo_spec.rb",
@@ -149,7 +150,8 @@ if Rails.env.test?
     "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/controllers/solutions/drafts_controller_spec.rb",
     "spec/lib/solution/cache_spec.rb",
-    "spec/lib/solution/builder_spec.rb"
+    "spec/lib/solution/builder_spec.rb",
+    "spec/lib/solution/url_sterilize_spec.rb"
   ]
 
   HelpdeskTests = [ 
@@ -518,7 +520,7 @@ if Rails.env.test?
       end
 
       namespace :solution_tests do
-        desc "Running all community tests"
+        desc "Running all solution tests"
         Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]

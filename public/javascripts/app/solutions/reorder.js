@@ -120,7 +120,11 @@ window.App.Solutions = window.App.Solutions || {};
 		leave: function () {
 			this.submitUrl = '';
 			$('body').off('.solutions.reorder');
-			$('.comm-items ul').sortable("destroy");
+
+			if ($('.comm-items ul').data( "ui-sortable" ))
+			{
+				$('.comm-items ul').sortable("destroy");
+			}
 		}
 	};
 }(window.jQuery));

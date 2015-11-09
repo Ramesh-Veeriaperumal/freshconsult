@@ -5281,8 +5281,8 @@ tr:
         app_key: "Alanınız için kaydedilmiş uygulama anahatarı"
         app_key_info: "Create an App in the dropbox and provide the app key here."
     box:
-      chooser_title: "DropBox'tan bir dosya seçin."
-      label: DropBox
+      chooser_title: "Box'tan bir dosya seçin."
+      label: Box
       desc: "Box'taki dosya ve verilerinizi paylaşın"
       helptext: "<h4>Box integration help</h4><br/><p>The Box Integration lets agents and users browse for files from their Box folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p> Your Box Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."

@@ -118,7 +118,8 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def sidebar
-    @drafts = current_account.solution_drafts 
+    @drafts = current_account.solution_drafts.preload(:article)
+    @my_drafts = current_account.solution_drafts.by_user(current_user).preload(:article)
     @feedbacks = nil #current_account.tickets.all_article_tickets.unresolved
     @orphan_categories = orphan_categories
     render :partial => "/solution/categories/sidebar"

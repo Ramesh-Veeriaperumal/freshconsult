@@ -23,6 +23,7 @@ class Support::Solutions::ArticlesController < SupportController
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :adapt_attachments, :only => [:show]
+  before_filter :cleanup_params_for_title, :only => [:show]
 
 
   def handle_unknown
@@ -143,6 +144,10 @@ class Support::Solutions::ArticlesController < SupportController
 
     def alternate_version_languages
       @article.solution_article_meta.solution_articles.map{ |a| a.language.code }
+    end
+
+    def cleanup_params_for_title
+      params.slice!("id", "format", "controller", "action")
     end
 
 end

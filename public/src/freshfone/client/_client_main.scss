@@ -113,17 +113,30 @@
 
 		background-color: $dashboard-cells-background;
 		color: #666;
-		padding: 8px 9px 100%;
-		@include margin(0 1px -100% 0);
+		padding: 8px 9px 9px;
+		@include margin(0 1px 1px 0);
 
 		h4 { font-size: 15px; }
 		.dash-lbl{ font-size: 12px; }
-	}
-	.available_agents_cells {
+		&.available-agents { width: 100% }
 		&:hover{
 				background-color: #e7e7e7;
 			}
 	}
+	.available_agents_cells {
+		width: 99%;
+		.available_agents_count_cell {
+			display: inline-block;
+    		margin-right: 25px;
+		}
+		.busy_agents_count_cell {
+			display: inline-block;
+			padding-left: 13px;
+			height: 100%;
+			border-left: 1px #aaa solid;
+		}
+	}
+
 }
 .dashboard_call_history_link{
 	display: inline-block;

@@ -767,10 +767,6 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:customer_id)
     end
 
-    def privileges_updated?
-      @all_changes.has_key?(:privileges)
-    end
-
     def deleted_updated?
        @all_changes.has_key?(:deleted)
     end
@@ -780,7 +776,7 @@ class User < ActiveRecord::Base
     end
 
     def company_info_updated?
-      company_id_updated? or privileges_updated?
+      company_id_updated?
     end
 
     def clear_redis_for_agent

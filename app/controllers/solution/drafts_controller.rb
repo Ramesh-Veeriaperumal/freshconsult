@@ -24,7 +24,7 @@ class Solution::DraftsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to :back }
       format.json { render :json => { :success => true} , :status => 200 }
-      format.js   { 
+      format.js   {
         flash[:notice] = t('solution.articles.draft.revert_msg');
         render 'solution/articles/draft_reset'
       }

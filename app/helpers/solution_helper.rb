@@ -189,7 +189,7 @@ module SolutionHelper
 			<li>
         <div class="sidebar-list-item">
           #{pjax_link_to(h(a.title.truncate(27)),
-                          solution_article_path(a.article_id)
+                          solution_article_path(a.article)
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',

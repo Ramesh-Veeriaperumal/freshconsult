@@ -75,7 +75,7 @@ class GroupsController < Admin::AdminController
       if @group.update_attributes(filtered_params)
         format.html do
           update_agent_list
-          redirect_to(groups_url, :notice => 'Group was successfully updated.')
+          redirect_to(groups_url, :notice => t(:'flash.general.update.success', :human_name => 'Group'))
         end    
         format.xml do
           update_agents

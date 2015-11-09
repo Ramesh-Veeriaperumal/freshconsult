@@ -4189,6 +4189,55 @@ $adm-bdr:#F0F0F0;
 	word-break: break-all;
 }
 
+// End
+
+
+//Autorefresh In Ticket show Page
+
+
+.popover{
+	&.belowRight{
+    	.arrow {
+	      top: -2px;
+	      left: 20%;
+	      margin-left: -$popover-arrow-size;
+	      border-left: $popover-arrow-size solid transparent;
+	      border-right: $popover-arrow-size solid transparent;
+	      border-bottom: $popover-arrow-size solid $popoverStroke;
+	      border-bottom: $popover-arrow-size solid rgba($popoverStroke, 0.8);
+    	}
+  	}
+
+}
+
+.ar-hover{
+	.auto-refresh-show{
+		margin-top: 5px;
+	}
+
+	.ar-properties{
+		margin-left: 18px;
+	}
+}
+
+
+.ar_notification_bubble{
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  padding: 1px 3px;
+  background-color: #800;
+  color: white;
+  font-weight: bold;
+  font-size: 11px;
+  border-radius: 30px;
+  border: 1px solid white;
+  width: 12px;
+}
+
+
+//END
+
 /*Importing avatar scss*/
 @import "../avatar";
 
@@ -4211,3 +4260,25 @@ $adm-bdr:#F0F0F0;
 }
 
 // end
+
+.btn-collapse {
+	.collapse_on_default{
+		display: none;
+	}
+
+	.show_on_collapse { display: none; }
+
+	.collapsed {
+		.show_on_collapse { display: block; }
+		.hide_on_collapse { display: none; }
+	}
+
+	&.collapsed {
+		.show_on_collapse { display: block; }
+        .hide_on_collapse { display: none; }
+	}
+
+	.hide {
+		display: none;
+	}
+} 

@@ -23,6 +23,7 @@ class Solution::Article < ActiveRecord::Base
   include Community::HitMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Solution::UrlSterilize
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
@@ -110,7 +111,8 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
-    parent_id ? "#{parent_id}-#{title[0..100].downcase.gsub(/[^a-z0-9]+/i, '-')}" : nil
+    title_param = sterilize(title[0..100])
+    parent_id ? "#{parent_id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
   end
 
   def nickname

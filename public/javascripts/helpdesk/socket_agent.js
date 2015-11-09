@@ -3,10 +3,70 @@ window.ticket_view = true;
 var current_agents = {};
 var current_agents_replying = {};
 
+var customer_replies = 0;
+var agent_replies = 0;
+var private_notes = 0;
+var total_actions = 0;
+var ar_ticket_updated = 0;
+
 var ticket_status = {
   connected : false,
   ticket_draft: false
 };
+function UpdateARNotification(action, params, current_userid){
+  if(params["user_id"] != current_userid){
+    jQuery(".source-badge-wrap .source").addClass("collision_refresh");
+    count = 0;
+    var id = "";
+    switch (action) {
+      case "autorefresh_ticket_update":
+        id = "#ar_tickets_updated";
+        ar_ticket_updated = ar_ticket_updated + 1;
+        count = ar_ticket_updated;
+        break;
+      case "autorefresh_agent_reply":
+        id = "#ar_agent_reply";
+        agent_replies = agent_replies + 1;
+        count = agent_replies;
+        break;
+      case "autorefresh_customer_reply":
+        id = "#ar_customer_reply";
+        customer_replies = customer_replies + 1;
+        count = customer_replies;
+        break;
+      case "autorefresh_private_note":
+        id = "#ar_private_note";
+        private_notes = private_notes + 1;
+        count = private_notes;
+        break;
+    }
+    total_actions = customer_replies + agent_replies + private_notes;
+    if (count > 0) {
+      update_ar_counter(id, count);
+    }
+  }
+}
+
+var update_ar_counter = function (id, count) {
+    var element = jQuery(id);
+    if(count){
+      if(id === "#ar_tickets_updated"){
+        element.show();
+      } else {
+        jQuery(".ar_notification_bubble").text(total_actions).show();
+        element.text((count > 1) ? element.data("textOther") : element.data("textOne"))
+          .attr("data-count", count)   
+          .show();
+      }
+    }
+}
+
+var refresh_popup = function(){
+  update_ar_counter("#ar_agent_reply", agent_replies);
+  update_ar_counter("#ar_customer_reply", customer_replies);
+  update_ar_counter("#ar_private_note", private_notes);
+  update_ar_counter("#ar_tickets_updated", ar_ticket_updated);
+}
 
 function update_notification_ui_ticket (viewing,replying) {
     viewing = jQuery(viewing).not(replying).get();
@@ -127,6 +187,36 @@ var setEvents = function (hashed_params,current_username,current_userid) {
           });
         }
       });
+
+      jQuery("[rel=ar-notice-popover]").popover({
+        html: true,
+        trigger: "manual",
+        placement: 'belowRight',
+        content: function(){ 
+          var customer_reply_div = "<div id='ar_customer_reply' class='count-label auto-refresh-show hide' data-text-one='Customer Reply' data-text-other='Customer Replies'></div>";
+          var agent_reply_div = "<div id='ar_agent_reply' class='count-label auto-refresh-show hide' data-text-one='Agent Reply' data-text-other='Agent Replies'></div>"
+          var private_note_div = "<div id='ar_private_note' class='count-label auto-refresh-show hide' data-text-one='Private Note' data-text-other='Private Notes'></div>"
+          var properties_updated_div = "<div id='ar_tickets_updated' class='auto-refresh-show ar-properties hide'>Properties updated</div>"
+          return customer_reply_div+agent_reply_div+private_note_div+properties_updated_div;
+        },
+        template: '<div class="dbl_up arrow"></div><div class="hover_card ar-hover inner"><div class="content"><div></div></div></div>',
+      }).live({
+          mouseenter: function () {
+              if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
+                  jQuery(this).popover('show');
+                  refresh_popup(); 
+              }
+          },
+          mouseleave: function () {
+              jQuery(this).popover('hide');
+          },
+          click: function (){
+            if(jQuery(".source-badge-wrap .source").hasClass("collision_refresh")){
+              jQuery(".ticket_id").click();
+            }
+          }
+      });
+
       jQuery("[rel=notice-popover]").popover({
           html: true,
           trigger: "manual",
@@ -173,6 +263,7 @@ var setEvents = function (hashed_params,current_username,current_userid) {
               jQuery(this).popover('hide');
           }
       });
+
     });
 
 };
@@ -193,9 +284,6 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
       hashed_params['previous_clients'] =[];
       node_socket.emit('agent_collision_connect',hashed_params);
     }
-  });
-  node_socket.on('message', function(params){
-      // console.log('have message here',params);
   });
 
   node_socket.on('connection_complete',function(){
@@ -242,6 +330,24 @@ window.agentcollision = function(server,hashed_params,current_username,current_u
       params["reply"] = true;
       RemoveAgents(params);
     }
+  });
+
+  //Autorefresh Event Starts here 
+  
+  node_socket.on('autorefresh_ticket_update', function(params){
+    UpdateARNotification("autorefresh_ticket_update", params, current_userid);
+  });
+
+  node_socket.on('autorefresh_agent_reply', function(params){
+    UpdateARNotification("autorefresh_agent_reply", params, current_userid);
+  });
+
+  node_socket.on('autorefresh_customer_reply', function(params){
+    UpdateARNotification("autorefresh_customer_reply", params, current_userid);
+  });
+
+  node_socket.on('autorefresh_private_note', function(params){
+    UpdateARNotification("autorefresh_private_note", params, current_userid);
   });
 
   node_socket.on('disconnect', function(){  

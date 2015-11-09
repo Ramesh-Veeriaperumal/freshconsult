@@ -23,11 +23,12 @@
 			},
 			open: function(){
 				jQuery(this).removeClass('ui-corner-all');
+				jQuery(".ui-menu").css({'display':'block', 'z-index': 10});
 			}
-		}).data( "autocomplete" )
+		}).data( "instance" )
 			._renderItem = function( ul, item ) {
 									return jQuery( "<li></li>" )
-										.data( "item.autocomplete", item )
+										.data( "autocomplete-item", item )
 										.append( "<a>" + item.label + "</a>" )
 										.appendTo( ul );
 								};	

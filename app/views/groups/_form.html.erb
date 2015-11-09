@@ -25,12 +25,14 @@
 		 		</li>
 		 		<% end %>
 		 		<li class="row-fluid margin-bottom">
-
-		 			<label class="control-label span2"><b><%=t('group.info1').html_safe%></b></label>
-		 			<div class="span10"><input type="hidden" id="agent_list" name="group[agent_list]" class="span12"
-		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
-		 			<input type="hidden" id="added_list" name="group[added_list]"/>
-		 			<input type="hidden" id="removed_list" name="group[removed_list]"/>
+		 			<label class="control-label span2">
+		 				<b><%=t('group.info1').html_safe%> (<span id="agents_count"><%= @group.agents.count %></span>)</b>
+		 			</label>
+		 			<div class="span10">
+		 				<input type="hidden" id="agent_list" name="group[agent_list]" class="span12"
+		 				data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
+		 				<input type="hidden" id="added_list" name="group[added_list]"/>
+		 				<input type="hidden" id="removed_list" name="group[removed_list]"/>
 		 			</div>
 				</li>
 		 			 
@@ -123,6 +125,13 @@ jQuery('#agent_list').select2({
 });
 jQuery("#agent_list").select2("val",[]);
 old_list = jQuery("#agent_list").val().split(",");
+
+jQuery("#agent_list").on("change", function() {
+	var agent_count = 0;
+	agent_list = jQuery("#agent_list").val();
+	if (agent_list != '')  agent_count = agent_list.split(",").size();
+	jQuery("#agents_count").text(agent_count);
+});
 
 <%
 	technicians = []

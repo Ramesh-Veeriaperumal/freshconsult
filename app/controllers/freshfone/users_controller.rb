@@ -105,10 +105,7 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def reset_presence
-			previuos_state_is_busy = @freshfone_user.busy?
-			presence_updated = @freshfone_user.reset_presence.save
-			unpublish_live_call if previuos_state_is_busy && presence_updated
-			presence_updated
+			@freshfone_user.reset_presence.save
 		end
 		
 		def current_call_sid
