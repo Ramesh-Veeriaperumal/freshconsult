@@ -8,5 +8,4 @@
 //= require pattern/bootstrap-carousel.js
 //= require jquery.pageslide.js
 //= require pattern/sticky.js
-//= require pattern/stickyinit.js
 //= require pattern/delete-confirm.js

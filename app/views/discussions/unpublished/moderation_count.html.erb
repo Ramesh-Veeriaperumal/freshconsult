@@ -1,4 +1,4 @@
-<% unless (@counts[:spam] == 0 and @counts[:unpublished]== 0) %>
+<% if (@counts[:spam] > 0 or @counts[:unpublished] > 0) %>
     <h3 class="title"><%= t('discussions.unpublished.page_title') %></h3> 
     <div>
       <ul class="moderation-dashboard-link clearfix">

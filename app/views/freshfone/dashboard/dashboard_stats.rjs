@@ -1,3 +1,4 @@
 # page << "freshfonesocket.onloadUserarray = #{@freshfone_users.to_json};freshfonesocket.populateAvailableAgents();"
 page << "freshfonesocket.available_agents=#{@available_agents};freshfonesocket.populateAvailableAgentsCount();"
-page << "freshfonesocket.activeCalls = #{@active_calls};freshfonesocket.tryUpdateDashboard();"
+page << "freshfonesocket.activeCalls = #{@active_calls};freshfonesocket.queuedCalls = #{@queued_calls_count}; 
+		freshfone.busyAgentsCount = #{@busy_agents}; freshfonesocket.tryUpdateDashboard();"

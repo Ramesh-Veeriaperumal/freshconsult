@@ -3,7 +3,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
   belongs_to :installed_application, :class_name => 'Integrations::InstalledApplication'
   belongs_to :local_integratable, :polymorphic => true
   belongs_to_account
-
+  scope :first_integrated_resource, ->(remote_integratable_id) { where("remote_integratable_id = ?", remote_integratable_id).order(:created_at).limit(1) }
   before_create :set_integratable_type
 
   def self.createResource(params)
@@ -58,7 +58,7 @@ class Integrations::IntegratedResource < ActiveRecord::Base
 
   private
     def set_integratable_type
-      self.local_integratable_type = @@integratable_type_map[self.local_integratable_type]
+      self.local_integratable_type = @@integratable_type_map[self.local_integratable_type] if (@@integratable_type_map[self.local_integratable_type])
     end
 
     @@integratable_type_map = {

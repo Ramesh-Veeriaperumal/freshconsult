@@ -8,14 +8,35 @@ module Freshfone::NodeEvents
     Freshfone::NodeWorker.perform_async(message, channel, freshfone_node_session)
   end
 
-  def unpublish_live_call(params = nil)
+  def unpublish_live_call(params = nil, account = nil)
     # remove_value_from_set(live_calls_key, [called_entity])
-    notify_socket(call_channel("completed_call"), call_completed_message)
+    notify_socket(call_channel("completed_call", account), call_completed_message)
   end
 
   def publish_live_call(params, account = nil, user_id = nil)
     # add_to_set(live_calls_key, [called_entity])
     notify_socket(call_channel("new_call", account), new_call_message(account, user_id))
+  end
+
+  def publish_new_active_call(call, account = nil)
+    @account = account
+    notify_socket(call_channel("new_active_call", account), new_active_call_message(call, account))
+  end
+
+  def publish_active_call_end(call, account = nil)
+    @account = account
+    notify_socket(call_channel("active_call_end", account), active_call_end(call, account))
+
+  end
+
+  def publish_queued_call(call, account = nil)
+    @account = account
+    notify_socket(call_channel("queued_call", account), queued_call_message(call, account))
+  end
+
+  def publish_dequeued_call(call, account = nil, user_id = nil)
+    @account = account
+    notify_socket(call_channel("dequeued_call", account), dequeued_call_message(call, account))
   end
 
   def publish_freshfone_presence(user, deleted=false)
@@ -99,15 +120,13 @@ module Freshfone::NodeEvents
     end
 
     def call_completed_message
-      { :type => "completed_call", 
-        :calls => current_account.freshfone_users.busy_agents.count }
+      { :type => "completed_call" }
     end
 
     def new_call_message(account = nil, user_id = nil)
       account ||= current_account
       { :type => "new_call", 
-        :agent => user_id || called_entity, 
-        :calls => account.freshfone_users.busy_agents.count }
+        :agent => user_id || called_entity }
     end
 
     def success_transfer_message(success)
@@ -115,6 +134,47 @@ module Freshfone::NodeEvents
         :agent_id => @user.id,
         :success => success
       }
+    end
+
+    def call_detail_params(call)
+      {
+          :call_id => call.id,
+          :caller_name => call.customer.present? ?  user_link(call.customer) : call.caller_number,
+          :caller_avar => get_user_avatar(call.customer, true),
+          :user_location => call.location,
+          :agent_user_avatar => get_user_avatar(call.agent),
+          :agent_group_name => get_agent_or_group_name(call),
+          :helpdesk_number => call.direct_dial_number.present? ? call.direct_dial_number : call.freshfone_number.number,
+          :direction => call.incoming? ? "incoming_call_icon" : "outgoing_call_icon",
+          :call_created_at => call.created_at.to_i
+        }
+    end
+
+    def queued_call_message(call, account) 
+      { :call_details => call_detail_params(call) }
+    end
+
+    def get_agent_or_group_name(call)
+      if call.agent.present? 
+        user_link(call.agent)
+      elsif call.group.present?
+        call.group.name 
+      elsif external_transfer?(call)
+        I18n.t('freshfone.call_history.external')
+      else
+        I18n.t('freshfone.call_history.helpdesk') 
+      end
+    end
+
+    def get_user_avatar(user, is_customer = false)
+      helper = ApplicationController.helpers
+      avatar = "<div class='callhistory_helpdesk_avatar vertical-alignment ff-png-icon'></div>"
+      if user.present?
+        avatar = helper.user_avatar(user, :thumb, "preview_pic") 
+      elsif is_customer
+       avatar = helper.unknown_user_avatar
+      end
+      avatar
     end
 
     def agent_availability_key
@@ -156,4 +216,28 @@ module Freshfone::NodeEvents
       Digest::SHA512.hexdigest("#{FreshfoneConfig['secret_key']}::#{account.id}")
     end
     
+    def dequeued_call_message(call, account)
+      { :call_details => { :call_id => call.id } }
+    end
+
+    def new_active_call_message(call, account)
+      { :call_details => call_detail_params(call) }
+    end
+
+    def active_call_end(call, account)
+      { :call_details => { :call_id => call.id } }
+    end
+
+    def user_link(user)
+      "<a href=/users/#{user.id} data-contact-id=freshfone_#{user.id} data-pjax='#body-container' data-contact-url=#{hover_card_path(user)} rel='contact-hover'>#{user.name}</a>"
+    end
+    
+    def hover_card_path(user)
+      Rails.application.routes.url_helpers.hover_card_contact_path(user)
+    end
+
+    def external_transfer?(call)
+      return if call.meta.blank?
+      call.meta.device_type == Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
+  end
 end

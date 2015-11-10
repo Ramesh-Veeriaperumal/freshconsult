@@ -47,14 +47,16 @@ module RabbitMq::Subscribers::Tickets::Reports
   def valid_changes
     @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) ||  non_text_ff_fields.include?(k.to_s) }
   end
-  
+
   def valid_model?(model)
     ["ticket"].include?(model)
   end
+
   
   def action_in_bhrs?
     BusinessCalendar.execute(self) do
       action_occured_in_bhrs?(Time.zone.now, group)
     end
   end
+
 end

@@ -99,8 +99,11 @@ class Search::SearchController < ApplicationController
 											{ :term => { :notable_spam => false } }
 			end
 			unless search_in.blank?
-				f.filter :term,  { 'folder.category_id' => params[:category_id] } if 
-																		params[:category_id] && search_in.include?(Solution::Article)
+				if search_in.include?(Solution::Article)
+					f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id]
+					f.filter :or, { :not => { :exists => { :field => :language_id } } },
+											{ :term => { :language_id => Language.for_current_account.id } }
+				end
 				f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if 
 																		params[:category_id] && search_in.include?(Topic)
 			end

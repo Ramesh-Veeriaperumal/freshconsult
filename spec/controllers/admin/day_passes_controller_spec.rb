@@ -54,8 +54,9 @@ RSpec.describe Admin::DayPassesController do
 	it "should buy daypasses when subscription is active" do
 		billing = Billing::Subscription.new
 		address = SubscriptionAddress.new(address_details)
-		billing.store_card(active_merchant_card_object, address, @account.subscription)
-		billing.activate_subscription(@account.subscription)
+    data = billing_card_details.merge(billing_address(address))
+    Billing::ChargebeeWrapper.new.add_card(@account.id, data)
+		billing.activate_subscription(@account.subscription, address_details)
 		
 		purchase_quantity = 10
 		put "buy_now", :quantity => purchase_quantity

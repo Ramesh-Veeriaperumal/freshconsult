@@ -41,10 +41,11 @@
 //= require frameworks/plugins/jquery.tabby.js
 //= require base64.js
 //= require frameworks/plugins/nprogress.js
-//= require frameworks/plugins/jquery.unveil.js
+//= require frameworks/plugins/layzr.js
 //= require lookup.js
 //= require base64.js
 //= require frameworks/plugins/daterangepicker.js
 //= require frameworks/plugins/menuselector.js
 //= require frameworks/plugins/jquery.autosuggester.js
 //= require integrations/construct_rule.js
+//= require frameworks/plugins/collapseButton.js

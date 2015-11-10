@@ -1,14 +1,18 @@
 class DayPassConfig < ActiveRecord::Base
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   self.primary_key = :id
   belongs_to :account
   
   RECHARGE_THRESHOLD = 2
-  
+  MAX_FAILED_ATTEMPTS = 5
   attr_protected :account_id
   
   def grant_day_pass(user, params)
     #Need to revisit about the right place.
-    send_later(:try_auto_recharge) if available_passes <= RECHARGE_THRESHOLD
+    # When we move auto recharge to sidekiq, move transaction failure notification to delayed jobs
+    send_later(:try_auto_recharge) if max_attempts_reached? and available_passes <= RECHARGE_THRESHOLD
     
     if available_passes > 0
       #1. Decrement available passes in day_pass_configs.
@@ -57,6 +61,7 @@ class DayPassConfig < ActiveRecord::Base
   end
 
   def failed_purchase(quantity, error)
+    update_failure_count
     account.day_pass_purchases.create(
         :paid_with => DayPassPurchase::PAID_WITH[:credit_card],
         :status => DayPassPurchase::STATUS[:failure],
@@ -64,5 +69,21 @@ class DayPassConfig < ActiveRecord::Base
         :status_message => error.error_code
       )
   end
-  
+  private
+    def max_attempts_reached?
+      get_others_redis_key(credit_card_failure_key(account)).to_i < MAX_FAILED_ATTEMPTS
+    end
+
+    def update_failure_count
+      failed_count = increment_others_redis(credit_card_failure_key(account))
+      if failed_count == 1
+        UserNotifier.failure_transaction_notifier(account.admin_email, {:available_passes => available_passes, :domain => account.full_domain,
+         :admin_name => account.admin_first_name, :card_details => account.subscription.card_number})
+        set_others_redis_expiry(credit_card_failure_key(account), 1.day)
+      end
+    end
+
+    def credit_card_failure_key(account)
+      CARD_FAILURE_COUNT % {account_id: account.id}
+    end
 end

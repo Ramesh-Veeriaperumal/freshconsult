@@ -20,6 +20,9 @@ Sidekiq.configure_client do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker"
     ]
+    chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
+      "Tickets::BulkScenario"
+    ]
   end
 end
 
@@ -43,6 +46,9 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker"
     ]
+    chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
+      "Tickets::BulkScenario"
+    ]
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
@@ -54,6 +60,9 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker"
+    ]
+    chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
+      "Tickets::BulkScenario"
     ]
   end
 end

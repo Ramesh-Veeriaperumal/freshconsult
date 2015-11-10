@@ -4,8 +4,8 @@ module CommunityHelper
     return if category.present? && category.portal_ids.empty?
 
     path = relative_path
-    unless (category.nil? || category.portal_ids.empty?)
-      category_portal = category.portal_ids.include?(current_portal.id) ? current_portal : category.portals.last
+    unless (category.nil? || category.portal_ids.empty? || category.portal_ids.include?(current_portal.id))
+      category_portal = category.portals.last
       path = ["#{category_portal.url_protocol}://", category_portal.host, relative_path].join
     end
 

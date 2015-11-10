@@ -9,9 +9,10 @@ module Tickets
         evaluate_on = account.tickets.find_by_id args["ticket_id"]
         doer = account.users.find_by_id args["doer_id"]        
         current_events = args["current_events"].symbolize_keys
-        Thread.current[:observer_doer_id] = doer.id
+
 
         if evaluate_on.present? and doer.present?
+          Thread.current[:observer_doer_id] = doer.id
           account.observer_rules_from_cache.each do |vr|
             vr.check_events doer, evaluate_on, current_events
           end

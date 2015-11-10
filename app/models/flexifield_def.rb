@@ -55,6 +55,10 @@ class FlexifieldDef < ActiveRecord::Base
     flexifield_def_entries.nil? ? [] : non_text_fields.map(&:flexifield_name)
   end
   
+  def text_and_number_ff_fields
+    flexifield_def_entries.nil? ? [] : text_and_number_fields.map(&:flexifield_name)
+  end
+
   def unassigned_flexifield_names # Dead code, returns wrong result
     Flexifield.flexiblefield_names - ff_fields
   end
@@ -69,5 +73,9 @@ class FlexifieldDef < ActiveRecord::Base
   
   def non_text_fields
     flexifield_def_entries.select {|field| !TEXT_COL_TYPES.include?(field.flexifield_coltype)}
+  end
+
+  def text_and_number_fields
+    flexifield_def_entries.select {|field| (TEXT_COL_TYPES + NUM_COL_TYPES).include?(field.flexifield_coltype)}
   end
 end

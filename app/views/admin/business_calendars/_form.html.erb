@@ -150,7 +150,9 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 <% if feature?(:multiple_business_hours) && @business_calendar.is_default? %>
-	jQuery("#business_calenders_time_zone").data("select2").container.hide();
+	setTimeout(function(){
+		jQuery("#business_calenders_time_zone").data("select2").container.hide();
+	},1000);
 	var time_zone_element = "<p><b>" + "<%=@business_calendar.time_zone %>" + "</b></p>";
 	time_zone_element += "<p class='muted'> <%= t('business_hours.change_time_zone').html_safe %></p>";
 	jQuery("#business_calenders_time_zone").parent().append(time_zone_element);

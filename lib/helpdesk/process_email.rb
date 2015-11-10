@@ -307,7 +307,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :ticket_body_attributes => {:description => params[:text] || "", 
+        :ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
                           :description_html => cleansed_html || ""},
         :requester => user,
         :to_email => to_email[:email],
@@ -481,8 +481,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :note_body_attributes => {:body => body || "",:body_html => body_html || "",
-                                  :full_text => full_text, :full_text_html => full_text_html} ,
+        :note_body_attributes => {
+          :body => tokenize_emojis(body) || "",
+          :body_html => body_html || "",
+          :full_text => tokenize_emojis(full_text),
+          :full_text_html => full_text_html
+          },
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
@@ -635,25 +639,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         item.body_html << notification_text_html
       end
     end
-      
+
     def get_content_ids
         content_ids = {}
-        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")   
+        split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")
         split_content_ids.each do |content_id|
           split_content_id = content_id.split(":")
           content_ids[split_content_id[1]] = split_content_id[0]
         end
-        content_ids  
+        content_ids
     end
-  
+
     def show_quoted_text(text, address,plain=true)
-      
+
       return text if text.blank?
-      
+
       regex_arr = [
         Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
         Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
-        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
+        Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
         Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
         Regexp.new("On.*?wrote:"),
@@ -666,12 +670,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       index = regex_arr.inject(tl) do |min, regex|
           (text.index(regex) or tl) < min ? (text.index(regex) or tl) : min
       end
-      
+
       original_msg = text[0, index]
       old_msg = text[index,text.size]
-      
+
       return  {:body => original_msg, :full_text => text } if plain
-      #Sanitizing the original msg   
+      #Sanitizing the original msg
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
         unless sanitized_org_msg.blank?
@@ -679,15 +683,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           original_msg = sanitized_org_msg.inner_html
         end
       end
-      #Sanitizing the old msg   
+      #Sanitizing the old msg
       unless old_msg.blank?
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
-        unless sanitized_old_msg.blank? 
+        unless sanitized_old_msg.blank?
           remove_identifier_span(sanitized_old_msg)
-          old_msg = sanitized_old_msg.inner_html 
+          old_msg = sanitized_old_msg.inner_html
         end
       end
-        
+
       full_text = original_msg
       unless old_msg.blank?
 
@@ -695,7 +699,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "<div class='freshdesk_quote'>" +
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
-      end 
+      end
       {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
     end
 
@@ -708,8 +712,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       envelope = params[:envelope]
       envelope_to = envelope.nil? ? [] : (ActiveSupport::JSON.decode envelope)['to']
       envelope_to
-    end    
-    
+    end
+
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
       unless cc_email_hash_value.nil?
@@ -724,7 +728,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value)
+      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value) unless in_reply_to.to_s.include? "notification.freshdesk.com"
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
@@ -804,7 +808,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
   end   
 
-  #alias_method :parse_cc_email, :parse_cc_email_new
-  #alias_method :parse_to_emails, :parse_to_emails_new
+  alias_method :parse_cc_email, :parse_cc_email_new
+  alias_method :parse_to_emails, :parse_to_emails_new
 
 end

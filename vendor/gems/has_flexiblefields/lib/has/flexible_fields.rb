@@ -21,7 +21,7 @@ module Has #:nodoc:
           delegate :assign_ff_values, :retrieve_ff_values, :get_ff_value, 
                    :ff_def=, :ff_def, :to_ff_alias, :to_ff_field,
                    :ff_aliases, :non_text_ff_aliases,
-                   :ff_fields, :non_text_ff_fields, :to => :flexifield
+                   :ff_fields, :non_text_ff_fields,:text_and_number_ff_fields, :to => :flexifield
                   
           accepts_nested_attributes_for :flexifield
                     

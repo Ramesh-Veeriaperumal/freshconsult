@@ -65,7 +65,8 @@ class Freshfone::Call < ActiveRecord::Base
     CALL_STATUS_HASH[:default],
     CALL_STATUS_HASH[:'in-progress'],
     CALL_STATUS_HASH[:'on-hold'],
-    CALL_STATUS_HASH[:'connecting']
+    CALL_STATUS_HASH[:'connecting'],
+    CALL_STATUS_HASH[:queued]
   ]
   CALL_TYPE = [
     [ :incoming,  'incoming', 1 ],
@@ -82,6 +83,14 @@ class Freshfone::Call < ActiveRecord::Base
 
   EXPORT_RANGE_LIMIT_IN_MONTHS = 6
 
+  CALL_ABANDON_TYPE = [
+    [:ringing_abandon, 'Abandon (Ringing)', 0],
+    [:ivr_abandon, 'Abandon (IVR)', 1],
+    [:queue_abandon, 'Abandon (Queue)', 2]
+  ]
+  CALL_ABANDON_TYPE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[0], i[2]] }.flatten]
+  CALL_ABANDON_TYPE_REVERSE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[2], i[0]] }.flatten]
+  CALL_ABANDON_TYPE_STR_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[2], i[1].to_s] }.flatten]
   validates_presence_of :account_id, :freshfone_number_id
   validates_inclusion_of :call_status, :in => CALL_STATUS_HASH.values,
     :message => "%{value} is not a valid call status"
@@ -89,11 +98,13 @@ class Freshfone::Call < ActiveRecord::Base
     :message => "%{value} is not a valid call type"
 
 
-  
-  scope :active_calls, :conditions => [
-    'call_status = ? AND updated_at >= ?', 
-    CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-  ]
+
+  scope :active_calls, lambda {
+    { :conditions => [ 'call_status = ? AND updated_at >= ?', 
+        CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
+      ], :order => "created_at DESC"
+    }
+  }
 
   scope :filter_by_call_sid, lambda { |call_sid|
     { :conditions => ["call_sid = ?", call_sid], :order => 'created_at DESC', :limit => 1 }
@@ -132,6 +143,11 @@ class Freshfone::Call < ActiveRecord::Base
   scope :created_at_inside, lambda { |start, stop|
     { :conditions => ["freshfone_calls.created_at >= ? and freshfone_calls.created_at <= ?", start, stop] }
   }
+
+  scope :queued_calls, :conditions => [
+    'call_status = ? AND updated_at >= ?', 
+    CALL_STATUS_HASH[:queued], 1.hours.ago.to_s(:db)
+  ]
 
   def self.filter_call(call_sid)
     call = filter_by_call_sid(call_sid).first
@@ -468,6 +484,22 @@ class Freshfone::Call < ActiveRecord::Base
     create_meta(:device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:sip])
   end
 
+  def set_abandon_call(params)
+    return if not_abandon_call?
+    update_abandon_state(abandon_status) if (hangup_by_customer?(params) || hangup_in_ivr?(params))
+  end
+
+  def update_abandon_state(abandon_type)
+    self.abandon_state = abandon_type
+    save
+  end
+
+  def get_abandon_call_leg
+    return self unless (has_children? && onhold?)
+    child_call = children.last
+    child_call.canceled? ?  self : child_call
+  end
+
   private
     def called_agent(params)
       agent_scoper.find_by_id(params[:agent]) if 
@@ -610,4 +642,27 @@ class Freshfone::Call < ActiveRecord::Base
     def transfer_call?(params)
       params[:transfer_call].present? || params[:external_transfer].present?
     end
+
+  def not_abandon_call?
+    outgoing? || voicemail? || !business_hour_call || abandon_state.present?
+  end
+
+  def hangup_by_customer?(params)
+    (params[:CallStatus] == 'completed' && params[:DialCallStatus] == 'no-answer' )
+  end
+
+  def ivr_abandon?
+    freshfone_number.ivr_enabled? && user_id.blank? && group_id.blank? && direct_dial_number.blank?
+  end
+
+  def abandon_status
+    return Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ivr_abandon] if ivr_abandon?
+    Freshfone::Call::CALL_ABANDON_TYPE_HASH[:ringing_abandon]
+  end
+
+  def hangup_in_ivr?(params)
+      return false if account.features?(:freshfone_conference)
+      (params[:force_termination] &&  params[:CallStatus] == 'completed')
+    end
+
 end

@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.eot");
-  src: url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.woff") format("woff"),
-       url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.ttf") format("truetype"),
-       url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.eot");
+  src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.woff") format("woff"),
+       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.ttf") format("truetype"),
+       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,14 +130,15 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_3cbdb1c919e3b80ee8b6342f1ec95386.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.svg#glyphs") format("svg");
   }
 }
 
       [data-icon]:before { content: attr(data-icon); }
 
       [data-icon]:before,
-      .ficon-account:before,
+      .ficon-abandoned-call:before,
+.ficon-account:before,
 .ficon-agent:before,
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
@@ -376,7 +377,8 @@
   font-smoothing: antialiased;
       }
 
-      .ficon-account:before { content: "\f100"; }
+      .ficon-abandoned-call:before { content: "\f1e5"; }
+.ficon-account:before { content: "\f100"; }
 .ficon-agent:before { content: "\f101"; }
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
@@ -615,11 +617,20 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (225)</h1>
+      <h1>Font Icons (226)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
 
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-abandoned-call" class="ficon-abandoned-call"></i></span>
+        </div>
+        <div class="usage">
+          <span>abandoned-call</span>
+        </div>
+      </div>
       
       <div class="glyph">
         <div class="preview-glyphs">

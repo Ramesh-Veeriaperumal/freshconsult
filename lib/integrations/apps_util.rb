@@ -6,7 +6,7 @@ module Integrations::AppsUtil
   include Redis::IntegrationsRedis
   
   def get_installed_apps
-    @installed_applications = Integrations::InstalledApplication.find(:all, :conditions => ["account_id = ?", current_account])
+    @installed_applications = Account.current.installed_applications.includes(:application).all
   end
 
   def execute(clazz_str, method_str, args=[])
@@ -18,6 +18,14 @@ module Integrations::AppsUtil
       else
         raise "#{clazz_str} is not responding to #{method_str}."
       end
+    end
+  end
+
+  def execute_service(clazz_str, method_str, installed_app, args=[])
+    unless clazz_str.blank?
+      obj = clazz_str.constantize
+      obj = obj.new(installed_app, args)
+      obj.receive(method_str)
     end
   end
 

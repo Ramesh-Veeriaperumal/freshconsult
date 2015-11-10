@@ -10,22 +10,29 @@
 	</div>
 	
 	<div class="freshfone_realtime">
-		<div class="freshfone_dashboard_cells">
-			<h4> <span class="live-calls">0</span></h4>
-			<span class="dash-lbl"><%= t('freshfone.dashboard.in_conversation') %></span>
-		</div>
-	<% if (freshfone_active?) %>
-		<a class="available_agents_cells" href="/helpdesk/agent_status#phone">
-	<% else %>
-		<div class="freshfone_dashboard_cells">	
-	<% end %>	
-			<h4> <span class="live-available-agents">0</span></h4>
-				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %> </span>
-	<% if (freshfone_active?) %>
+		<a class="freshfone_dashboard_cells <%= "disabled" unless freshfone_active? %> " href="/phone/dashboard/#queued_calls">
+			<h4> <span class="live-queued-calls">0</span></h4>
+			<span class="dash-lbl">
+				<%=t('freshfone.dashboard.in_queue')%>
+			</span>
 		</a>
-	<% else %>
-		</div>
-	<% end %>		
+		<a class="freshfone_dashboard_cells <%= "disabled" unless freshfone_active? %>" href="/phone/dashboard/#active_calls">
+			<h4> <span class="live-active-calls">0</span></h4>
+			<span class="dash-lbl">
+				<%= t('freshfone.dashboard.in_conversation')%>
+			</span>
+		</a>
+
+		<a class="available_agents_cells <%= "disabled" unless freshfone_active? %> " href="/helpdesk/agent_status#phone">
+			<span class='available_agents_count_cell'>
+				<h4> <span class="live-available-agents">0</span></h4>
+				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %> </span>
+			</span>
+			<span class='busy_agents_count_cell'>
+				<h4> <span class="live-busy-agents">0</span></h4>
+				<span class="dash-lbl"><%= t('freshfone.dashboard.unavailable_agents') %> </span>
+			</span>
+		</a>
 	</div>
 	<!-- <div class="freshfone_dashboard_cells">
 		<h4 class="daily-burn"> $18.75 </h4>

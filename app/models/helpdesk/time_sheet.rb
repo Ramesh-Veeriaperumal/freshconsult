@@ -24,7 +24,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable'
-    
+
+  has_many :linked_applications, :through => :integrated_resources,
+           :source => :installed_application
+
   scope :timer_active , :conditions =>["timer_running=?" , true]
 
   scope :created_at_inside, lambda { |start, stop|

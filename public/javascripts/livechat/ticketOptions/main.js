@@ -330,11 +330,18 @@
 				if(chat.agent_id){
 					ticket.agent_id = chat.agent_id;
 				}
-
+				// The ticket creation time will be the calculated by subtracting the queue_time of the chat from the actual created time received. 
+				var createdTime = new Date(data.initiatedTime);
+				createdTime = createdTime.getTime();
+				//chat queue time won't available when agent convert the chat to ticket from archives 
+				createdTime = chat.queue_time ? createdTime - chat.queue_time: createdTime;
+				createdTime = new Date(createdTime).toISOString();
+				ticket.chat_created_at = createdTime;
+				
 				if(this.chat.groups){
 					ticket.group_id = eval(this.chat.groups)[0];
 				}
-				
+				// the request to add the data of the created time
 				$.ajax({
 					type: "POST",
 					url: "/livechat/create_ticket",
@@ -371,8 +378,7 @@
 					}
 					var photo = msgObj.photo? window.location.protocol+WEB_ROOT+msgObj.photo : window.location.protocol+WEB_ROOT+'/images/fillers/profile_blank_thumb.gif';
 					var descriptionTemplate = window.JST["livechat/templates/tickets/ticketDescription"];
-					resObj =  descriptionTemplate({msg:msgObj.msg, name:msgObj.name, date:moment(msgObj.createdAt).format("hh:mm A"), 
-								photo:photo, cls: msgclass});
+					resObj =  descriptionTemplate({msg:msgObj.msg, name:msgObj.name, photo:photo, cls: msgclass});
 					conversation += resObj;
 				}
 				return conversation;

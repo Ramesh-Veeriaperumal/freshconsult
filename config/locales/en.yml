@@ -1625,17 +1625,17 @@ en:
         notifications: "Notification will be sent when"
         agent_create_or_delete: "Agent is Added or Deleted"
         whitelisted_ip_modified: "IP Whitelisting is modified"
-        password_security: Password Security
+        password_policy: Password Policy
         for_agents: For Agents
         for_contacts: For Contacts
-        password_policy_info1: Changes you make to the password policy will be applicable within 8 hours. Your users will be prompted to update their passwords during this time. In case they fail to conform, they will be logged out of the support portal and be forced to change their passwords once they login back.
-        password_policy_info2: Note that once you enable password policy for your account (either default or advanced), you will not be able to disable it for your account.
+        password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
+        password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
         info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
         trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
-        info3: <b>Password Security</b><br>You can set up different levels of password security for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers.
+        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"> here</a>.
       password_security:
         default: Default
         advanced: Advanced
@@ -2143,7 +2143,9 @@ en:
       update:
         success: Your account details have been updated.
     agents:
-      to_contact: The agent has been successfully converted to a Contact
+      to_contact: The agent has been successfully converted to a Contact.
+      to_contact_active: The agent has been successfully converted to a Contact. Please <a href = '%{subscription_link}'>update</a> billing information to reflect this change.
+
       to_contact_failed: The agent could not be converted to a Contact
       delete:
         not_allowed: You don't have access to delete it!
@@ -2736,7 +2738,39 @@ en:
   automations:
     actions: Actions
     activity:
-      added_watcher(s): "Added Watcher(s)"
+      change: "Changed "
+      add: "Added "
+      assign: "Assigned "
+      set: "Set "
+      send: "Sent "
+      none: "None"
+      mark_spam: "Marked the ticket <b>%{ticket} </b> as spam"
+      delete_ticket: "Deleted the ticket <b>%{ticket} </b>"
+      bulk_change: "Changing"
+      bulk_add: "Adding"
+      bulk_assign: "Assigning"
+      bulk_set: "Setting"
+      bulk_send: "Sending"
+      bulk_mark_spam: "Marking the ticket(s) as spam"
+      bulk_delete_tickets: "Deleting the ticket(s)"
+      priority: "the priority to <b>%{priority}</b>"
+      status: "the status to <b>%{status}</b>"
+      ticket_type: "the ticket type to <b>%{ticket_type}</b>"
+      product: "product as <b>%{product_name}</b>"
+      group_success: "group as <b>%{group_name}</b>"
+      group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
+      agent_success: "agent as <b>%{agent_name}</b>"
+      agent_failure: "<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>"
+      private_note: "a <b>private note</b>"
+      note: "<b>note</b>"
+      add_watchers: "Watcher(s) - <b>%{watchers}</b>"
+      add_tags: "the tag(s) [<b>%{tags}</b>]"
+      email_to_requester: "an email to the requester"
+      email_to_group: "an email to the group <b>%{group_name}</b>"
+      email_to_agent: "an email to the agent <b>%{agent_name}</b>"
+      bulk_email_to_group: "an email to the group"
+      bulk_email_to_agent: "an email to the agent"
+      custom_fields: "%{action} as <b>%{value}</b>"
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -2754,6 +2788,7 @@ en:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    no_scenario_to_execute: "No Scenarios"
     duplicate_title: Duplicate scenario. Name already exists
     visibility:
       groups: Agents in group
@@ -3020,6 +3055,10 @@ en:
           attributes:
             name:
               taken: "already exists in the selected category"
+        portal:
+          attributes:
+            language:
+              inclusion: "should be valid"
       messages:
         contact_admin: There seems to be some problem with your account. Please contact your administrator.
         record_invalid: "Validation failed: %{errors}"
@@ -3230,6 +3269,8 @@ en:
     no_seats: No agent seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
+    last_logged: Last logged in
+    ago: %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_passes_available:
@@ -3237,6 +3278,7 @@ en:
       one: "1 Day pass available"
       other: "%{count} Day passes available"
     assign_role: Associate Roles
+    assign_group: Associate Groups
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     assign: Assign
     role : Agent Role
@@ -3249,16 +3291,20 @@ en:
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
-      info1: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk.
       info2: Hover over an agent to edit their details, or click on Add New Agent to add a new agent.
       info3: Agents you add will receive an email with a confirmation link to activate their account after which they can be assigned, and respond to tickets.
       title1: Full-time vs Occasional Agents
-      info4: You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
       info5: Learn more about Day Passes
-      title2: Agent Scopes and Roles
-      info6: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions this agent should be able to perform within your helpdesk by choosing a Role.
-      info7: Note that you will not be able to modify your own roles, or delete yourself.
       info8: Learn more about Agent Roles
+      info9: Full time agents are those in your support team who will login to your help desk every day. 
+      info10: Occasional agents are those who would only need to login from time to time, such as your sales and marketing manager to take care of specific customer queries. You need not purchase an additional agent seat for a whole month for such agents.
+      title3: Groups
+      info11: You can organize agents into specific groups such as Sales and Product Management. Segmenting agents into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
+      info12: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk. Hover over an agent to edit details, or click on New Agent to add a new agent. Agents you add will receive an email with a confirmation link to activate their account after which they can access and respond to tickets.
+      info13: You can choose whether your agents will be accessing your support portal full-time, or be logging in only occasionally. Occasional agents will use up a Day Pass for each day they login to your support portal. You can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed for the number of full-time agents you add in the plans and billing section.
+      title4: Scopes and Roles
+      info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
+      info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -3268,7 +3314,10 @@ en:
     permissions: Permissions
     role_and_scope: Roles and Scope
     roles: Roles
+    remove_role: Remove role
     roles_description: Associate one or more roles with this agent.
+    groups_description: Associate one or more groups with this agent.
+    remove_group: Remove group
     ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
@@ -3287,6 +3336,8 @@ en:
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
+    group: Groups
+    member: Member of
   account_admin: Account admin
   right: Right
   footer:
@@ -4384,6 +4435,12 @@ en:
     outbound: "emailed"
     new_ticket: New ticket
     new_tickets: New tickets
+    agent_reply: Agent Reply
+    agent_replies: Agent Replies
+    customer_reply: Customer Reply
+    customer_replies: Customer Replies
+    private_note: Private Note
+    private_notes: Private Notes
     ticket_updated: Ticket updated
     tickets_updated: Tickets updated
     reload_view: Reload View
@@ -4531,6 +4588,7 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    execute: Execute
     search_scenario: Search Scenarios
     conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form:
@@ -4562,9 +4620,11 @@ en:
       insert_ca_resp_tip: Insert this canned response
     split_ticket: Split as new Ticket
     flag_spam: Flag Spam
+    spam_header: Spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
     assign_to_agent: Assign to Agent
+    assign_to: Assign
     select_to_agent: Select an Agent
     export: Export
     exporting: Exporting
@@ -4987,9 +5047,14 @@ en:
         accepting: Accepting
         not_accepting: Not Accepting
         call_in_progress: Call in progress
+        in_busy_state: "Busy"
         agent_on_call: Agent on call
         no_agents: "- No Agents -"
         no_activity: "No Activity"
+        queued_calls: "In queue"
+        active_calls: "In conversation"
+        no_queue_calls: "No calls in queue"
+        no_active_calls: "No calls in progress"
       livechat:
         chat: Live Chat
         accepting: Accepting
@@ -5076,8 +5141,10 @@ en:
           view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
+        bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>" 
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
+        bulk_actions_perform: "Actions being performed on %{count} ticket(s)"
       close_notice:
         ticket_has_been_cloased: The ticket has been closed.
         view_ticket: View ticket
@@ -5986,6 +6053,19 @@ en:
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
+    github:
+      label: "GitHub"
+      desc: "Convert tickets into issues that can be tracked in GitHub."
+      helptext: "<h4>GitHub Integration Help</h4><p><br/>Please select all GitHub repositories under your Organization that will be used to track issues created by Freshdesk agents. This action should be done from an <b>organisation owner</b> account only.<br/><br/>If required please check the option that will set the GitHub issue label to match the Freshdesk ticket type whenever a new GitHub issue is created.<br/><br/>If required please check the option that allows the agent to select the milestone, when creating a GitHub issue.<br/><br/>You can set a desired status for the Freshdesk ticket whenever the corresponding GitHub issue is closed. This setting is applied to the primary Freshdesk ticket that is linked to the GitHub issue. A primary Freshdesk ticket is set whenever two or more tickets are linked to the same GitHub issue.<br/><br/>Select appropriate settings for sync buttons that control the syncing of messages between Freshdesk tickets and GitHub issues. Messages are synced between the primary freshdesk ticket and the linked GitHub issue.<br/><br/>Once enabled, all Freshdesk tickets will have the GitHub widget in the ticket details page that allows you to link tickets to GitHub issues.</p>"
+    github_settings:
+      sync_updates: Sync Updates
+      none: "Do nothing"
+      open: "Open"
+      resolved: "Resolved"
+      closed: "Closed"
+      add_comment_in_github: "Add a comment in Github issue"
+      add_private_note_in_fd: "Add a private note in Freshdesk."
+      add_public_note_in_fd: "Add a public note in Freshdesk."
     quickbooks:
       label: "QuickBooks<span class='beta'>Preview</span>"
       desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
@@ -7268,13 +7348,18 @@ en:
       all_calls: "All Calls"
       answered: "Answered"
       on-hold: "On Hold"
+      ringing_abandon: "Abandon Call (Ringing)"
+      ivr_abandon: "Abandon Call (IVR)"
+      queue_abandon: "Abandon Call(Queue)"
     general:
       suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
       suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
     dashboard:
       title: "Phone"
       in_conversation: "In-conversation"
+      in_queue: "In-queue"
       available_agents: "Available Agents"
+      unavailable_agents: "Busy Agents"
       freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
       admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
     widget:
@@ -7953,6 +8038,7 @@ en:
       reply: "Reply"
       forward: "Forward"
       add_note: "Add note"
+      scenario: "Scenarios"
     ticket_list:
       title: "Ticket List"
       move_cursor: "Jump cursor to next / previous ticket"
@@ -7967,7 +8053,6 @@ en:
       toggle_activity: "Toggle Activity"
       add_time: "Add time on ticket"
       openDialog: "Open dialog"
-      scenario: "Scenarios"
   mailbox:
     mail_server: "Mail Server:"
     use_default: "Default (Freshdesk)"

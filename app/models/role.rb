@@ -13,6 +13,13 @@ class Role < ActiveRecord::Base
   
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
+
+  #Role-Based scopes
+  scope :default_roles, -> { where(:default_role => true) }
+  scope :account_admin, -> { where(:name => 'Account Administrator') }
+  scope :admin,         -> { where(:name => 'Administrator') }
+  scope :supervisor,    -> { where(:name => 'Supervisor') }
+  scope :agent,         -> { where(:name => 'Agent') }
   
   API_OPTIONS = { 
     :except     => [:account_id, :privileges]

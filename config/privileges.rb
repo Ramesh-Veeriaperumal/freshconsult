@@ -18,7 +18,7 @@ Authority::Authorization::PrivilegeList.build do
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                                            :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
                                            :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary]
+                                           :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets, :summary, :bulk_scenario, :execute_bulk_scenario]
     resource :"helpdesk/subscription"
     resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -60,6 +60,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"
@@ -68,6 +69,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/queue", :only => [:bridge]
     resource :"freshfone/addres"
     resource :"freshfone/caller"
+    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton]
 
     resource :"helpdesk/conversation", :only => [:note, :full_text]
     resource :"helpdesk/canned_response"
@@ -95,6 +97,8 @@ Authority::Authorization::PrivilegeList.build do
                                                     :full_paginate, :configure_export, :export_csv, 
                                                     :activities, :component, :prevnext]
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
+
+    resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
 	end
 
   reply_ticket do
@@ -385,12 +389,14 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
+    resource :"integrations/github", :only => [:new, :install, :edit, :update ]
     resource :"admin/integrations/freshplug"
     resource :"admin/extension"
     resource :"admin/installed_extension"
     resource :"doorkeeper/authorization"
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
+    resource :"freshfone/dashboard", :only => [:index]
   end
 
   manage_account do

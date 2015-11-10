@@ -197,12 +197,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def agent_permission user
-      permissions = {:all_tickets => [] , 
-                   :group_tickets => ["group_id in (?) OR responder_id=? OR requester_id=?", 
-                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
-                   :assigned_tickets =>["responder_id=?", user.id]}
-                   
-      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+      when :assigned_tickets
+        ["responder_id=?", user.id]
+      when :group_tickets
+        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
+      when :all_tickets
+        []
+      end
     end
 
     def find_by_param(token, account)
@@ -297,7 +300,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def outbound_email?
-    Account.current.compose_email_enabled? and (source == SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?  
   end
 
   #This method will return the user who initiated the outbound email
@@ -523,7 +526,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticlet_cc
-    cc_email[:cc_emails]
+    cc_email.nil? ? [] : cc_email[:cc_emails]
   end
   
   def contact_name
@@ -538,8 +541,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     requester.company_id if requester
   end
 
-  def last_interaction  
-    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.body
+  def last_interaction
+    notes.visible.newest_first.exclude_source("feedback").exclude_source("meta").exclude_source("forward_email").first.try(:body).to_s
   end
 
   #To use liquid template...
@@ -596,6 +599,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false if [:empty?, :to_ary,:after_initialize_without_slave].include?(attribute.to_sym) || (attribute.to_s.include?("__initialize__") || attribute.to_s.include?("__callbacks"))
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
+    
+    # Should include methods like to_a, created_on, updated_on as record_time_stamps is calling these mthds before any write operation
+    # .blank? will call respond_to?(:empty)
+    return super(attribute, include_private) if [:to_a, :created_on, :updated_on, :empty?].include?(attribute)
     super(attribute, include_private) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
@@ -881,6 +888,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def header_info_present?
     header_info.present? && header_info[:message_ids].present?
+  end
+
+  def linked_to_integration?(installed_app)
+    self.linked_applications.where(:id => installed_app.id).any?
   end
 
   private

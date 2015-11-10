@@ -1,5 +1,6 @@
 class UserSession < Authlogic::Session::Base
-
+  
+  include AgentLoggerHelper
 
   @@sign_cookie = true
   #Custom login method in user.rb
@@ -10,7 +11,7 @@ class UserSession < Authlogic::Session::Base
   before_destroy :delete_node_session
   after_validation :set_missing_node_session
   generalize_credentials_error_messages true
-  consecutive_failed_logins_limit 10
+  consecutive_failed_logins_limit 20
 
   SECRET_KEY = "3f1fd135e84c2a13c212c11ff2f4b205725faf706345716f4b6996f9f8f2e6472f5784076c4fe102f4c6eae50da0fa59a9cc8cf79fb07ecc1eef62e9d370227f"
 

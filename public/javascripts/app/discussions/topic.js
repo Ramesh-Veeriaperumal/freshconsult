@@ -49,7 +49,6 @@ window.App.Discussions = window.App.Discussions || {};
 			$('body').on('click.topic_show', '[rel=topic-reply]', function (ev) {
 				ev.preventDefault();
 				$this.openReplyForm();
-				$(document.body).trigger("sticky_kit:recalc");
 			});
 		},
 
@@ -58,7 +57,6 @@ window.App.Discussions = window.App.Discussions || {};
 			$('body').on('click.topic_show', '[rel=topic-reply-cancel]', function (ev) {
 				ev.preventDefault();
 				$this.closeReplyForm();
-				$(document.body).trigger("sticky_kit:recalc");
 			});
 		},
 

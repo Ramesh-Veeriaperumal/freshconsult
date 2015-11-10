@@ -113,7 +113,7 @@ module AgentsHelper
   
   def last_login_tooltip(agent)
     if agent.user.last_login_at
-      "class='tooltip' title='#{formated_date(agent.user.last_login_at)}'"
+      "class='tooltip' title='#{t('agent.last_logged')} #{formated_date(agent.user.last_login_at)}'"
     end
   end
   

@@ -23,6 +23,7 @@ defaults: &defaults
     - [trial_twitter]
     - [custom_twitter]
     - [rabbitmq_publish]
+    - [plan_change]
     - [update_tickets_company]
     - [reports_no_activity]
     - [es_alias_queue]
@@ -46,6 +47,8 @@ defaults: &defaults
     - [password_expiry]
     - [deactivate_monitorship]
     - [es_v2_shard1]
+    - [bulk_scenario]
+    - [github]
 
 development:
   <<: *defaults
