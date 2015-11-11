@@ -135,6 +135,7 @@ protected
   if params[:user]
     params[:user].delete(:helpdesk_agent)
     params[:user].delete(:role_ids)
+    params[:user].delete(:email)
     validate_phone_field_params @user
   end
   if params[:agent]
