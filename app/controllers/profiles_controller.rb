@@ -1,12 +1,12 @@
 class ProfilesController < ApplicationController
-  
+
+  include ModelControllerMethods  
+  include UserHelperMethods  
    before_filter :require_user 
-   before_filter :load_user, :only => [:edit, :change_password]
-   before_filter :set_user, :filter_params, :only => [:update]
+   before_filter :load_profile, :only => [:edit, :change_password]
+   before_filter :set_profile, :filter_params, :only => [:update]
    before_filter :load_password_policy, :only => :edit
-   skip_before_filter :check_privilege
-   include ModelControllerMethods  
-   include UserHelperMethods
+   skip_before_filter :check_privilege, :except => [:edit, :update, :reset_api_key]
 
   def edit       
     respond_to do |format|
@@ -19,11 +19,7 @@ class ProfilesController < ApplicationController
   end
 
   def update 
-     if current_user.customer?
-       update_contact # Possible dead code. We have a support profiles controller to do this.
-     else
-       update_agent
-     end  
+    update_agent
   end
   
   def reset_api_key
@@ -40,35 +36,7 @@ class ProfilesController < ApplicationController
     redirect_to edit_profile_url(current_user.id)
   end
 
-def destroy
-end
-
-def update_contact
-    if @obj.update_attributes(params[cname])
-      flash[:notice] = t(:'flash.profile.update.success')
-      redirect_to :back
-    else
-      logger.debug "error while saving #{@obj.errors.inspect}"
-      redirect_to :action => 'edit'
-    end
-  
-end
-
-def update_agent
-    respond_to do |format|      
-      if @profile.update_attributes(params[:agent])                     
-          @user.update_attributes(params[:user])        
-          format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
-          format.xml  { head :ok }
-      else
-        format.html { redirect_to(edit_profile_url, :notice => 'oops!.. Unable to update your profile.') }
-        format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
-      end    
-    end    
-  
-end
-  
-def change_password    
+  def change_password    
     @check_session = current_account.user_sessions.new(:email => current_user.email, :password => params[:user][:current_password], :remember_me => false)
     if @check_session.save 
       if reset_password
@@ -83,9 +51,9 @@ def change_password
       flash[:error] = t(:'flash.profile.change_password.failure')
       change_password_fail
     end      
-end
+  end
 
-def reset_password
+  def reset_password
     return false if params[:user][:password] != params[:user][:password_confirmation] || params[:user][:password].blank?
 
     @user = current_user
@@ -95,54 +63,72 @@ def reset_password
     result = @user.save
     flash[:error] = @user.errors.full_messages.join("<br/>").html_safe if @user.errors.any?
     result
-end
-
-def change_password_fail
-  if current_user.customer?
-    redirect_to edit_support_profile_path 
-  else
-    redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
   end
-end
+  
+  def destroy
+  end
 
-def notification_read
+  def notification_read
     current_user.agent.update_attribute(:notification_timestamp, Time.new.utc)
     head 200
-end
+  end
 
 private
 
-  def load_user
+  def load_profile
     @profile = current_user.customer? ? current_user : current_user.agent    
   end
 
-  def set_user
-    @profile = current_user.agent
-    @user = current_account.users.find(@profile.user_id)  
+  def set_profile
+    @profile = current_user.agent  
   end
 
   def load_password_policy
     @password_policy = current_user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy 
   end
 
+  def update_agent
+    respond_to do |format|      
+      if @profile.update_attributes(params[:agent])                     
+          @user.update_attributes(params[:user])        
+          format.html { redirect_to(edit_profile_url, :notice => 'Your profile has been updated successfully.') }
+          format.xml  { head :ok }
+      else
+        format.html { redirect_to(edit_profile_url, :notice => 'oops!.. Unable to update your profile.') }
+        format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
+      end    
+    end    
+  end
+
+  def change_password_fail
+    if current_user.customer?
+      redirect_to edit_support_profile_path 
+    else
+      redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+    end
+  end
+
 protected
-
- def cname
-      @cname ='user'
- end
-
- def filter_params
-  if params[:user]
-    params[:user].delete(:helpdesk_agent)
-    params[:user].delete(:role_ids)
-    params[:user].delete(:email)
-    validate_phone_field_params @user
+  
+  def cname
+    @cname ='user'
   end
-  if params[:agent]
-    params[:agent].delete(:user_id)
-    params[:agent].delete(:occasional)
-    params[:agent].delete(:ticket_permission)
+  
+  def load_object
+    @user = current_user
   end
- end
 
+  def filter_params
+    if params[:user]
+      params[:user].delete(:helpdesk_agent)
+      params[:user].delete(:role_ids)
+      params[:user].delete(:email)
+      validate_phone_field_params @user
+    end
+    if params[:agent]
+      params[:agent].delete(:user_id)
+      params[:agent].delete(:occasional)
+      params[:agent].delete(:ticket_permission)
+    end
+  end
 end
