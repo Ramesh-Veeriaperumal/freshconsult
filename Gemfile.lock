@@ -1116,7 +1116,7 @@ DEPENDENCIES
   turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
   twitter (~> 5.5.1)
-  typhoeus (= 0.7.3)
+  typhoeus
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)
   useragent (~> 0.4.16)

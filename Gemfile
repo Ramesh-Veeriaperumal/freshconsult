@@ -23,7 +23,6 @@ gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag =
 gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
-gem 'typhoeus', '0.7.3'
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
@@ -273,5 +272,5 @@ end
 # Marketplace
 gem 'doorkeeper', '2.2.1'
 
-# search v2
+# Search v2
 gem 'typhoeus'
