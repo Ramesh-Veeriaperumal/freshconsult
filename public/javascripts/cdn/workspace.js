@@ -11,6 +11,7 @@
 //= require custom_validators.js
 //= require util-dates.js
 //= require globalinit.js
+//= require livequery_init.js
 //= require app/app.js
 //= require security.js
 //= require fjax.js

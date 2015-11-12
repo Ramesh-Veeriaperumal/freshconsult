@@ -11,7 +11,7 @@ module Freshfone
       Rails.logger.info "Freshfone call queue worker"
       Rails.logger.info "JID #{jid} - TID #{Thread.current.object_id.to_s(36)}"
       Rails.logger.info "Start time :: #{Time.now.strftime('%H:%M:%S.%L')}"
-      Rails.logger.info "#{params}"
+      Rails.logger.info "#{params.inspect}, agent :: #{agent}"
 
       begin
         params.symbolize_keys!
@@ -41,6 +41,7 @@ module Freshfone
 
     def notify_error(exception, params, agent)
       return if current_account.blank?
+      Rails.logger.info "Call queue worker account additional settings : #{params[:account_id]} : #{current_account.id} : #{current_account.account_additional_settings.present?}"
       FreshfoneNotifier.freshfone_email_template(current_account,{
           :recipients => FreshfoneConfig['ops_alert']['mail']['to'],
           :from       => FreshfoneConfig['ops_alert']['mail']['from'],

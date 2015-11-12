@@ -18,6 +18,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :set_current_folder, :only => [:create]
   before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
+  before_filter :cleanup_params_for_title, :only => [:show]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
@@ -252,10 +253,10 @@ class Solution::ArticlesController < ApplicationController
         if update_draft_attributes and @draft.publish!
           flash[:notice] = t('solution.articles.published_success',
                                :url => support_solutions_article_path(@article)).html_safe
-          redirect_to :action => "show"
+          redirect_to solution_article_path(@article)
         else
           flash[:error] = show_draft_errors || t('solution.articles.published_failure')
-          redirect_to solution_article_path(@article.id, :anchor => "edit")
+          redirect_to solution_article_path(@article, :anchor => "edit")
         end
         return
       end
@@ -291,11 +292,11 @@ class Solution::ArticlesController < ApplicationController
         unless update_draft_attributes
           show_draft_errors
           flash[:error] ||= t('solution.articles.draft.save_error')
-          redirect_to solution_article_path(@article.id, :anchor => "edit")
+          redirect_to solution_article_path(@article, :anchor => "edit")
           return
         end    
       end
-      redirect_to :action => "show"
+      redirect_to solution_article_path(@article)
     end
 
     def latest_content?
@@ -319,7 +320,7 @@ class Solution::ArticlesController < ApplicationController
           format.html { 
             flash[:notice] = t('solution.articles.published_success', 
               :url => support_solutions_article_path(@article)).html_safe if publish?
-            redirect_to :action => "show" 
+            redirect_to solution_article_path(@article)
           }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
           format.json  { render :json => @article, :status => :ok, :location => @article }
@@ -434,6 +435,10 @@ class Solution::ArticlesController < ApplicationController
       return if params[:folder_id].nil?
       current_folder = current_account.solution_folders.find(params[:folder_id])
       @article.folder_id = current_folder.id if current_folder.present?
+    end
+
+    def cleanup_params_for_title
+      params.slice!("id", "format", "controller", "action")
     end
 
 end

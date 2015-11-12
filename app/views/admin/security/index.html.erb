@@ -214,10 +214,10 @@
 
     <li class="password-policy-section <%= 'disabled faded' if @account.sso_enabled? %>">
       <div class="ml10">
-        <h3 class="rebrand-head-text top-space-none"><%= t('.password_security') %></h3>  
+        <h3 class="rebrand-head-text top-space-none"><%= t('.password_policy') %></h3>  
           <p class="info-data">
-            <%= t('.password_policy_info1') %>
-            <%= t('.password_policy_info2') if(@agent_policy.new_record? or @contact_policy.new_record?) %>
+            <%= t('.password_policy_info3') %>
+            <%= t('.password_policy_info4') if(@agent_policy.new_record? or @contact_policy.new_record?) %>
           </p>
         <div class="row-fluid">   
           <div class="span6 input-xlarge password-policy-container">

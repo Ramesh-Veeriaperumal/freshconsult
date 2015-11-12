@@ -2,6 +2,7 @@
 class Helpdesk::TimeSheetsController < ApplicationController
 
   include CustomerDeprecationMethods::NormalizeParams
+  include Helpdesk::Permissions
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
@@ -9,6 +10,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :create_permission, :only => :create 
   before_filter :validate_params, :only => [:create, :update]
   before_filter :timer_permission, :only => :toggle_timer
+  before_filter :verify_permission, :only => [:create, :index, :show, :edit, :update, :destroy, :toggle_timer ] 
   before_filter :check_agents_in_account, :only =>[:create]
   before_filter :set_mobile, :only =>[:index , :create , :update , :show]
   before_filter :set_native_mobile , :only => [:create , :index, :destroy]
@@ -312,4 +314,12 @@ private
     params[:time_entry].delete('executed_at') unless validate_time(params[:time_entry][:executed_at])
   end
 
+  def verify_permission
+    if @ticket || (@time_entry && @time_entry.workable.is_a?(Helpdesk::Ticket))
+      ticket = @ticket || @time_entry.workable
+      verify_ticket_permission(ticket)
+    end
+  end
+
 end
+

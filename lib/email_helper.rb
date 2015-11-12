@@ -65,4 +65,8 @@ module EmailHelper
   def cleanup_attachments model
     model.attachments.destroy_all if model.new_record?
   end
+
+  def tokenize_emojis(msg_text)
+    Account.current.features?(:tokenize_emoji) ? msg_text.tokenize_emoji : msg_text
+  end
 end

@@ -21,6 +21,8 @@
   <% end %>
 <% end %>
 
+<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}"), ticket, "data-pjax" => "#body-container", :class => "ticket_id hide" ) %>
+
 <script type="text/javascript">
   var data = <%= socket_auth_params("agentcollision") %>;
   var server = "<%= agentcollision_socket_host %>"

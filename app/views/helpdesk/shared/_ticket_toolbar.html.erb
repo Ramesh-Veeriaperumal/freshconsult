@@ -1,21 +1,28 @@
-  <table class="tickets" width="100%">
+  <table class="tickets btn-collapse" width="100%" data-show-by-default="false" data-class-for-btn-wrapper="inline-block" data-calc-parent-width-on=".bulk_action_buttons" data-button-text="<%= t("more") %>">
 	  <thead>
 	  	<tr>
         <th class="priority-border"></th>
 				<th class="check">
 					<input type="checkbox" id="helpdesk-select-all" data-keybinding="<%= shortcut('ticket_list.select_all') %>" />
 				</th>
-		    <th class="bulk_action_buttons"> 
+		    <th class="bulk_action_buttons collapse-content"> 
          <% if @current_view != "deleted" && @current_view != "spam" %>
           <input class="btn tooltip" title='<%= t('ticket.pick_up') %>' 
               onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" 
               value="<%=t('ticket.pick_up')%>" disabled="disabled" 
               data-keybinding="<%= shortcut('ticket_list.pickup') %>" data-highlight="true">
           <% if privilege?(:edit_ticket_properties) %>
-            <button class="btn dialog2" data-url="/helpdesk/tickets/assign_to_agent" 
-                data-width="360" title="<%=t('ticket.assign_to_agent')%>" 
-                disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
-
+          <a  href="/helpdesk/tickets/assign_to_agent" 
+            class="btn p0" 
+            rel="freshdialog"
+            data-title="<%=t('ticket.assign_to_agent')%>" 
+            disabled="disabled"
+            data-width = "360"
+            data-template-footer="false"
+            data-target="#assign_to_agent"
+            >
+            <div title="<%=t('ticket.assign_to_agent')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.assign_to')%></div>
+          </a>
             <input id="close_ticket_btn" class="btn tooltip" title="<%= t('ticket.close_without_notification') %>" 
                 onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" 
                 type="button" value="<%=t('close')%>" disabled="disabled">
@@ -24,14 +31,14 @@
           <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
             <a href="/helpdesk/tickets/update_multiple_tickets" 
                 data-target="#bulk" rel="freshdialog" data-width="709px" disabled="disabled" 
-                class="btn" title="<%=t('bulk_actions')%>" 
+                class="btn hide_on_collapse" title="<%=t('bulk_actions')%>" 
                 data-submit-label="<%= t('update') %>" data-submit-loading="<%= t('ticket.updating')%>..." 
                 data-close-label="<%= t('cancel') %>" ><%= t('bulk_actions') %></a>
           <% end %>
 
           <% if privilege?(:merge_or_split_ticket)%>    
             <a  href="#merge_freshdialog" id="merge_multiple" 
-                class="btn" 
+                class="btn hide_on_collapse" 
                 data-width="800" 
                 rel="freshdialog"
                 data-title="<%=t('ticket.merge_title')%>" 
@@ -45,7 +52,7 @@
 
           <input class="btn tooltip" title='<%= t('ticket.flag_spam') %>' 
               onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" 
-              value="<%=t('ticket.flag_spam')%>" disabled="disabled" 
+              value="<%=t('ticket.spam_header')%>" disabled="disabled" 
               data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true">
           
           <div id="merge_freshdialog" class="hide">
@@ -83,9 +90,19 @@
               onclick="helpdesk_submit('/helpdesk/tickets/multiple/unspam', 'put');" type="button" 
               value="<%=t('ticket.unflag_spam')%>" disabled="disabled" 
               data-keybinding="<%= shortcut('ticket_list.spam') %>" data-highlight="true"> 
-  			<% end %>     
-			
-    		 
+  			<% end %> 
+        <% if @current_view != "deleted" && @current_view != "spam" %>    
+          <a  href="/helpdesk/tickets/bulk_scenario" id="scenario" 
+            class="btn p0" 
+            rel="freshdialog"
+            data-title="<%=t('ticket.execute_scenario')%>" 
+            disabled="disabled" 
+            data-template-footer="false"
+            data-target="#execute_scenario"
+            >
+            <div data-hotkey='<%="#{shortcut('ticket_list.scenario')}"%>' title="<%=t('ticket.execute_scenario')%>" class="tooltip btn_with_freshdialog"><%=t('ticket.scenarios')%></div>
+          </a>
+        <% end %> 
         </th>
       	<th class="toolbar_right">
           <% if @current_view == "deleted" %>
@@ -155,6 +172,14 @@
     if(jQuery('#exportFilter').length > 0){
       setExportCreatedRange();
     }
+  });
+
+  jQuery(document).on('click','.tooltip', function(){
+    jQuery(this).twipsy('hide');
+  });
+
+  jQuery(document).ready(function(){
+    jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
   });
 <%- end %>
 

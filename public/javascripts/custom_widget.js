@@ -376,7 +376,6 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	renderPrimary: function(){
-		jQuery('#' + this.app + "_widget").addClass('sloading loading-small');
 		if(this.app == "icontact" || this.app == "constantcontact"){
 			this.getUserInfo(); 
 		}
@@ -388,19 +387,21 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	bindClicks: function(){
 		var obj = this;
-		jQuery('#' + this.options.widget_name).on('click','.lists-submit', (function(ev){
+		jQuery(document).off("email_marketing");
+
+		jQuery(document).on('click.email_marketing','#' + this.options.widget_name + ' .lists-submit', (function(ev){
 			ev.preventDefault(); obj.manageLists();
 		}));
-		jQuery('#' + this.options.widget_name).on('click', '.contact-submit', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.options.widget_name + ' .contact-submit', (function(ev){
 			ev.preventDefault(); obj.addUser();
 		}));
-		jQuery('#' + this.options.widget_name).on('click', '.newlists-submit', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.options.widget_name + ' .newlists-submit', (function(ev){
 			ev.preventDefault(); obj.newSubscribe();
 		}));
-		jQuery('#' + this.app + "_widget").on('click', '.list-tab', (function(ev){
+		jQuery(document).on('click.email_marketing', '#' + this.app + '_widget ' + '.list-tab', (function(ev){
 			ev.preventDefault(); obj.mailingLists();
 		}));
-		jQuery('#' + this.app + "_widget").on('click', '.campaign-tab', (function(ev){
+		jQuery(document).on('click.email_marketing', "#" + this.app + "_widget " + ".campaign-tab", (function(ev){
 			ev.preventDefault(); obj.campaignActivity();
 		}));
 	},
@@ -791,8 +792,16 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		contact = contact || {};
 		contact.name = this.options.reqName;
 		title = _.template(this.Title, {contact: contact, app: this.app});
-		if (jQuery('#' + this.options.widget_name).dialog( "isOpen" ) == true)
-			jQuery('#' + this.options.widget_name).dialog("option", "title", title)
+		
+		if(jQuery('#' + this.options.widget_name).data('modal') != undefined) {
+			if((jQuery('#' + this.options.widget_name).data('modal').isShown === true) && 
+				(!jQuery('#' + this.options.widget_name + '.modal').find('.email_marketing'))) {
+
+				jQuery('#' + this.options.widget_name + '.modal').children('.modal-header').children('h3').remove();
+				jQuery('#' + this.options.widget_name + '.modal').children('.modal-header').append(title);
+			}
+		}
+
 		cw.title[this.app] = title;
 	},
 
@@ -838,10 +847,10 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	Title: '<div class="email_marketing">'+
-						'<div class="contact_title">'+
-							'<div class="clearfix"> <h3 class="fname pull-left"><%=contact.name%></h3><div class="application-logo-<%=app%> pull-right"></div></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
-						'</div>'+
-					'</div>',
+				'<div class="contact_title">'+
+					'<div class="clearfix"> <h3 class="ellipsis modal-title pull-left"><%=contact.name%></h3><div class="application-logo-<%=app%> pull-right"></div></div><div class="cust-added"><%= (contact.since && contact.since != "") ? ("Customer since " + (new Date(contact.since.replace(/\-/g,"\/")).strftime("%a, %d %b %Y"))) : "" %></div>'+
+				'</div>'+
+			'</div>',
 
 	Parent: '<div class="parent-container">'+
 							'<div class="email_title"></div>'+
@@ -860,14 +869,15 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	Export: '<hr/>'+
 					'<div class="export-user">'+
 						'<span><%=name%>&lt;<%=email%>&gt; cannot be found in <%=appname%></span>'+
-						'<div class="contact-submit"><input type="submit" class="uiButton contact-add" value="Subscribe" /></div>'+
+						'<div class="button-container"><input type="submit" class="btn btn-primary contact-add contact-submit" value="Subscribe" /></div>'+
 					'</div>'+
 					'<div class="lists-load hide"></div>',
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+
-						'<div class="listsExportAll"><input type="submit" class="uiButton newlists-submit"  value="Save"></div>' +
-						'<div class="all-lists"><div class="lists threecol-form"><%=lists%></div></div>',
+						'<div class="all-lists"><div class="lists threecol-form"><%=lists%></div></div>' +
+						'<div class="listsExportAll mt10"><input type="submit" class="btn btn-primary newlists-submit"  value="Save"></div>',
+						
 
 
 	Campaigns: '<div class="campaigns">'+

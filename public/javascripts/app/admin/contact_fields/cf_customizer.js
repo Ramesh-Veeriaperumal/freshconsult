@@ -100,7 +100,8 @@
 
 			fieldContainer.empty()
 						.removeClass('field')
-						.addClass('custom-field');
+						.addClass('custom-field')
+						.removeAttr('style');
 
 			switch(dataItem.dom_type) {
 				case 'dropdown_blank':

@@ -1,4 +1,4 @@
-<div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky" data-collapsed="true" data-sticky-bottom="true">
+<div id="sticky_header"  rel="sticky" data-scroll-top = "true" class="tkt-details-sticky btn-collapse" data-sticky-bottom="true" data-class-for-btn-wrapper="ticket-btns" data-button-text="<%= t("more") %>">
 	<div class="sticky_right">
 		<div class="status_info">
 
@@ -22,7 +22,7 @@
 			<span class="visible">Yes</span><span>No</span>
 		</div>
 		<div class="ticket-actions">
-			<ul>
+			<ul class="collapse-content">
 				<% unless @ticket.deleted or @ticket.spam %>
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
@@ -49,7 +49,7 @@
 				<li class="ticket-btns">
 					<div class="btn-group">
 						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
-					  	<a class="btn tooltip" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
+					  	<a class="btn tooltip btn-collapse" title='<%= t('ticket.reply_to') %>' data-placement = "below" 
 					  		rel="note-button" data-note-type="reply" id="ReplyButton"  data-keybinding="<%= shortcut('ticket_detail.reply') %>" 
 					  		data-highlight="true" 
 					  		data-replyto-handle="<%= @ticket.is_twitter? ? default_twitter_body_val(@ticket) : "" %>" >
@@ -58,14 +58,14 @@
 				    	</a>
 						<% end %>
 						<% if privilege?(:forward_ticket) %>
-					  	<a href="#" id="FwdButton" class="btn tooltip" title='<%= t('fwd_to') %>' 
+					  	<a href="#" id="FwdButton" class="btn tooltip btn-collapse" title='<%= t('fwd_to') %>' 
 					  		data-placement = "below" rel="note-button" data-note-type="fwd" data-keybinding="<%= shortcut('ticket_detail.forward') %>" 
 					  		data-highlight="true" >
 					  		<span class="forward-inner"></span>
 				    		<%= t('fwd_to') %>
 				    	</a>
 				    	<% end %>
-					  	<a href="#" id="noteButton" rel="note-button" class="btn tooltip" title='<%= t('ticket.add_note') %>' 
+					  	<a href="#" id="noteButton" rel="note-button" class="btn tooltip btn-collapse" title='<%= t('ticket.add_note') %>' 
 					  		data-placement = "below" data-note-type="note" data-keybinding="<%= shortcut('ticket_detail.add_note') %>" 
 					  		data-highlight="true" >
 					  		<span class="note-inner"></span>
@@ -77,7 +77,7 @@
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to(t('ticket.close_btn'), "#", 
 							:title  => t('ticket.close_without_notification'), 
-							:class => "btn tooltip" , :id=>"close_ticket_btn" , 
+							:class => "btn tooltip btn-collapse" , :id=>"close_ticket_btn" , 
 							:rel => "close_ticket_btn", "data-placement" => "below",
 							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? 
 					%>
@@ -85,87 +85,56 @@
 				<% end %>
 				<% if privilege?(:merge_or_split_ticket) %>
 				<li class="ticket-btns hide_on_collapse">
-					<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 	
-						:id => "ticket_merge_btn", :title => t('ticket.merge_title'),"class" => "btn tooltip",
-						"data-placement" => "below", 
-							"data-ajax-dialog" => true, "data-width" => "727",
-							"data-highlight" => "true"
-					%>
+					<a href="#merge_freshdialog" class="btn btn-collapse" 
+						data-width="800" 
+						data-ticket-display-id = "<%= @ticket.display_id %>"
+						rel="freshdialog"
+						data-action="merge"
+						data-title="<%=t('ticket.merge_title')%>" 
+						data-placement = "below"
+						data-template-footer="false"
+						data-target="#merge_freshdialog"
+		                >
+		                <%=t('ticket.merge_btn')%>
+		            </a>
 				</li>
-
+				<div id="merge_freshdialog" class="hide">
+		            <span class="loading-block sloading loading-small">
+		            </span>
+				</div>
 				<% end %>
 				<li class="ticket-btns hide_on_collapse">
 					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn ', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
+					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
 					  				:title => t('ticket.execute_scenario')) %> 
 					</div>
 				</li>
-				<li class="ticket-btns">
-					<div class="btn-group">
-
-					  <a class="btn dropdown-toggle" data-toggle="dropdown">
-					  	<%= t("more") %>
-					    <span class="caret"></span>
-					  </a>
-
-					  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-					  	<% if privilege?(:edit_ticket_properties) %>
-					  	<li class="show_on_collapse">
-					  	<%= link_to(t('ticket.close_btn'), "#", 
-							:title  => t('ticket.close_btn_title'), :rel => "close_ticket_btn", 
-							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %>
-						</li>
-						<% end %>
-						<% if privilege?(:merge_or_split_ticket) %>
-						<li class="show_on_collapse">
-							<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
-							:id => "ticket_merge_btn", :title => t('ticket.merge_title'), 
-							"data-ajax-dialog" => true, "data-width" => "727"
-							%>
-						</li>
-						<% end %>
-
-						<li class="show_on_collapse">
-							<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", "data-template-footer" => "", :id => "ticket_scenario_btn" ,
-					  				:title => t('ticket.execute_scenario') ) %>
-						</li>
-					  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
-					  	<li>
-					  		<%= link_to t('ticket.add_time'), "#", :rel => "triggerAddTimer", "data-keybinding" => shortcut('ticket_detail.add_time') %>
-					  	</li>
-					  	<% end %>
-					  	
-					  	<% if (feature?(:forums) && privilege?(:create_topic) && @ticket.ticket_topic.nil? && @ticket.requester.active?) %>
-						  	<li>
-						  		<%= link_to t('ticket.convert_to_topic'),new_discussions_topic_path(:ticket_id => @ticket.display_id) %>
-						  	</li>
-					  	<% end%>
-
-					  	<% if privilege?(:edit_ticket_properties) and !@ticket.outbound_email?%>
-					  	<li>
-					  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
-					  	</li>
-					  	<% end %>
-					  	
-					  	<li>
-					  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
-					  	</li>
-
-					  	<li id="spamicon">
-					  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
-					  	</li>
-					  	<% if privilege?(:delete_ticket) %>
-					  	<li>
-					  		<%= link_to(t('ticket.delete_btn'), 
-					  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
-					  					:method => :delete, "data-keybinding" => shortcut('ticket_detail.delete')) %>
-		  				</li>
-		  				<% end %>
-					  </ul>
-					</div>
-				</li>
+			  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+			  	<li class = "collapse_on_default">
+			  		<%= link_to t('ticket.add_time'), "#", :rel => "triggerAddTimer", "data-keybinding" => shortcut('ticket_detail.add_time') %>
+			  	</li>
+			  	<% end %>
+			  	<% if privilege?(:edit_ticket_properties) and !@ticket.outbound_email?%>
+			  	<li class = "collapse_on_default">
+			  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
+			  	</li>
+			  	<% end %>
+			  	
+			  	<li class = "collapse_on_default">
+			  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+			  	</li>
+			  	<li class = "collapse_on_default">
+			  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
+			  	</li>
+			  	
+			  	<% if privilege?(:delete_ticket) %>
+			  	<li class = "collapse_on_default">
+			  		<%= link_to(t('ticket.delete_btn'), 
+			  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
+			  					:method => :delete, "data-keybinding" => shortcut('ticket_detail.delete')) %>
+  				</li>
+  				<% end %>
 			</ul>
 		</div>
 		<% end %>
@@ -182,8 +151,8 @@
 		<div class="source-badge-wrap">
 			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status} " + 
 				 		("spam" if @ticket.spam).to_s + 
-				 		("deleted" if @ticket.deleted).to_s %>' >
-				<span class="source_<%= @ticket.source %>"></span>
+				 		("deleted" if @ticket.deleted).to_s %>' id = "ar_notification" rel="ar-notice-popover">
+				<span class="source_<%= @ticket.source %>" ></span><div class="ar_notification_bubble hide">0</div>
 			</div>
 		</div>
 		<div id="agent_collision_placeholder"></div>
@@ -191,3 +160,16 @@
 	</div>
 </div>
 <div class="clearfix"></div>
+<%= javascript_tag do -%>
+  jQuery(document).on("click", '[data-action="merge"]', function(ev){
+  	var display_id = jQuery(this).data('ticketDisplayId');
+      jQuery.ajax({
+        type:              'POST',
+        url:               '/helpdesk/merge_tickets/bulk_merge',
+        data:              { source_tickets : display_id },
+        success:           function(data){
+                            jQuery('#merge_freshdialog-content').html(data);
+                           }
+     });
+  });
+<% end %>

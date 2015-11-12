@@ -46,6 +46,8 @@ defaults: &defaults
     - [ticket_observer]
     - [password_expiry]
     - [deactivate_monitorship]
+    - [bulk_scenario]
+    - [github]
 
 development:
   <<: *defaults

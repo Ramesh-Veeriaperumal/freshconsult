@@ -73,7 +73,9 @@ module Helpdesk::NotifierFormattingMethods
     return [] unless addresses
     msg = " #{model.class.name} : #{model.id} Account ID : #{model.account_id}"
     addresses = addresses.join(",") if addresses.is_a? Array
-    parsed_emails = Mail::AddressList.new(addresses).addresses
+    to_field = Mail::ToField.new
+    to_field.value =  addresses 
+    parsed_emails = to_field.addrs
     return [] if parsed_emails.blank?
     emails = []
     name = ""

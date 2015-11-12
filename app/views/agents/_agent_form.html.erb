@@ -170,7 +170,7 @@
                 <% @agent.user.roles.each do |role| %>
           				<li id = <%= "role_#{role.id}" %> 
                         <%= label( :agent, :ticket_permission, 
-                        "<div class='icon_remove tooltip' title='Remove role' id = 'remove_role_#{role.id}' rel='#{role.id}'><span></span>
+                        "<div class='icon_remove tooltip' title='#{t('agent.remove_role')}' id = 'remove_role_#{role.id}' rel='#{role.id}'><span></span>
         							   </div><b>#{h(role.name)}</b><span class='muted info_data ellipsis'>#{h(role.description)}</span>".html_safe) %>
                       <input type='hidden' name='user[role_ids][]' value= <%= "#{role.id}" %> />
           				</li>
@@ -185,7 +185,6 @@
               </div>
   					</div>
   				</li>
-     		</ul>
     <% else %>
     <%= content_tag( :span, t('agent.cannot_edit_roles'), :class => "muted lead-desc" ) %>
     <li class="control-group" id="agent_ticket_permission">
@@ -210,7 +209,42 @@
 				</ul>
 		</li>
     <% end %>
-    </div>
+    <% if(@groups.any?) %>
+      <li class="seperator"></li>
+      <li class="row-fluid">
+        <h5 class="lead">
+        <%=t('agent.group')%>
+        </h5>
+      </li>
+      <li class="control-group">
+        <%= label(:agent, :groups, t('agent.member'), :class => "control-label") %>
+        <div class="controls" id="selected-groups">
+          <ul class="unstyled agent_group_list">
+            <% @agent.groups.each do |group| %>
+              <li id = <%= "group_#{group.id}" %> 
+                <%= label( :agent, :groups, 
+                        "<div class='group_icon_remove tooltip' title='#{t('agent.remove_group')}' id = 'remove_group_#{group.id}' rel='#{group.id}'>
+                          <span></span>
+                         </div>
+                         <b>#{h(group.name)}</b>
+                         <span class='muted info_data ellipsis'>#{h(group.description)}</span>".html_safe) 
+                %>
+                <input type='hidden' name='agent[group_ids][]' value= <%= "#{group.id}" %> />
+              </li>
+            <% end %>             
+          </ul>
+          <div>
+            <a href="#agent-group-container" rel="freshdialog" data-width="400px" class="btn" id="add-group"
+               title="<%= t('agent.group') %>" data-submit-label="<%= t('agent.assign') %>" data-close-label="<%= t('cancel') %>"
+              data-close-on-submit="true">
+              <b> <%= t('agent.assign_group')%> </b>
+            </a>
+          </div>
+        </div>
+      </li>          
+     <% end %>
+    </ul>
+   </div>
   </div>
 <% end %>
 
@@ -218,11 +252,20 @@
   (function($) { 
     var roles = {};
     var role_details = {};
+    var groups = {};
+    var group_details = {};
+
     $(document).ready(function() {
       <% @roles.each do |role| %>
           roles[<%= role.id %>] = <%= @agent.user.roles.include?(role) %>;
           role_details[<%= role.id %>] = ["<%= role.name %>", "<%= escape_javascript(role.description)%>"];
       <% end %>
+
+      <% @groups.each do |group| %>
+          groups[<%= group.id %>] = <%= @agent.groups.include?(group) %>;
+          group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>"];
+      <% end %>
+
     });
     
     $('div.icon_remove').live("click", function(){
@@ -257,6 +300,40 @@
       });
       
       jQuery("#agent_form").valid();
+    });
+
+    $('div.group_icon_remove').live("click", function(){
+      $('#group_'+jQuery(this).attr('rel')).remove();
+      $('.twipsy').remove();
+      jQuery("#agent_form").valid();
+      groups[jQuery(this).attr('rel')] = false;
+    });
+
+    $('#agent_group ul li input').live("click", function(){
+      jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
+    });
+
+    $('#add-group').click(function(){
+      $("#agent_group ul").children().remove();
+      for(var key in groups){
+        if(!groups[key]){
+          $("#agent_group ul").append("<li id='group_dom_" + key + "' ><label class='check_box checkbox'><input id= 'group_check_" + key + "' rel='" + key + "' multiple='multiple' name='groups[]' type='checkbox' value='" +  key + "'><b>" + group_details[key][0] + "</b></label></li>");
+        }
+      }
+    });
+
+    $('#agent-group-container-submit').live("click", function(){
+      $('#agent_group input:checked').each(function(){
+        var group_id = jQuery(this).attr('rel');
+        groups[group_id] = true;
+        $("#selected-groups ul").append("<li id='group_" + group_id + "'><div class='group_icon_remove tooltip' title='Remove group' id='remove_group_" + group_id +"' rel='"+group_id+"'><span></span></div><label for='agent_group'><b>" + group_details[group_id][0] + "</b><span class='muted info_data ellipsis'>" + group_details[group_id][1] + "</span></label><input type='hidden' name='agent[group_ids][]' value='"+ group_id +"' /></li>");
+      });
+      
+      $('#agent_group input:unchecked').each(function(){
+        groups[jQuery(this).attr('rel')] = false;
+      });
+      
+      jQuery("#agent_form").valid();
     });    
         
     $('#agent_form').submit(function(ev) {
@@ -266,6 +343,14 @@
           $('<input>').attr({
             type: 'hidden',
             name: 'user[role_ids][]',
+          }).appendTo('#agent_form');
+      } 
+
+      if($("#selected-groups").length > 0 && !$("#selected-groups ul li").length > 0)
+      {
+          $('<input>').attr({
+            type: 'hidden',
+            name: 'agent[group_ids][]',
           }).appendTo('#agent_form');
       } 
     });
@@ -281,4 +366,11 @@
     <div id="agent_role" class="agent-role-modal">
       <ul class="unstyled"></ul>
 	  </div>
+</div>
+
+<div id="agent-group-container" class="hide">
+  <p class="margin-bottom"><%=t('agent.groups_description')%></p>
+  <div id="agent_group" class="agent-group-modal">
+    <ul class="unstyled"></ul>
+  </div>
 </div>

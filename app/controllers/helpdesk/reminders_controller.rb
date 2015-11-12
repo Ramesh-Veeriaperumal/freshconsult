@@ -6,6 +6,8 @@ class Helpdesk::RemindersController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :load_item, :only => [ :show, :edit, :update, :complete, :restore ]  
+  before_filter :verify_permission, :only => [ :create, :show, :edit, :update, :complete, :restore ]  
+  before_filter :verify_items_permission, :only => [:destroy]
   before_filter :reminder_partial
   
   def complete
@@ -51,6 +53,21 @@ protected
 
   def reminder_partial
     @reminder_partial = (params[:source] && params[:source] == 'ticket_view') ? '/helpdesk/tickets/show/reminders/reminder' : '/helpdesk/reminders/reminder'
+  end
+
+  def verify_permission(item = nil)
+    item = item || @item
+    if item.ticket_id
+      verify_ticket_permission(item.ticket)
+    else
+      verify_user_permission(item)
+    end
+  end
+
+  def verify_items_permission
+    @items.each do |item|
+      verify_permission(item)
+    end
   end
 
 end

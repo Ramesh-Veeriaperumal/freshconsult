@@ -11,7 +11,7 @@ class Solution::DraftsController < ApplicationController
 	before_filter :load_attachment, :only => [:attachments_delete]
 
 	def index
-		@drafts = drafts_scoper.as_list_view.paginate(:page => params[:page], :per_page => 10)
+		@drafts = drafts_scoper.as_list_view.preload(:article).paginate(:page => params[:page], :per_page => 10)
 	end
 
 	def destroy

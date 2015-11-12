@@ -4,7 +4,7 @@
 //= require frameworks/plugins/jquery.tmpl.js
 //= require hackz.js
 //= require portal/multifile.js
-//= require portal/jquery-ui-1.9.2.custom.js
+//= require portal/jquery-ui.js
 //= require portal/bootstrap.js
 //= require portal/bootstrap.dialog.js
 //= require frameworks/plugins/select2.js
@@ -16,4 +16,4 @@
 //= require portal/portal-app-actions.js
 //= require portal/portal-compatibility.js
 //= require util-dates.js
-//= require frameworks/plugins/jquery.unveil.js
+//= require frameworks/plugins/layzr.js

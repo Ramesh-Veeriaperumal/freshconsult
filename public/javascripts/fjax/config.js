@@ -34,6 +34,7 @@ window.Fjax = window.Fjax || {};
 			"/discussions": 'discussions',
 			"/admin": 'admin',
 			"/phone/call_history": 'freshfonecallhistory',
+			"/phone/dashboard": 'freshfonedashboard',
 			"/reports/phone/summary_reports": 'freshfonereports',
 			"/contacts": 'contacts',
 			"/users": 'contacts',

@@ -86,7 +86,6 @@ module Redis::RedisKeys
 	SPAM_MIGRATION = "SPAM_MIGRATION:%{account_id}"
 	SPAM_EMAIL_ACCOUNTS  = "SPAM_EMAIL_ACCOUNTS"
 	PREMIUM_EMAIL_ACCOUNTS = "PREMIUM_EMAIL_ACCOUNTS"
-	SPLIT_DELAYED_JOBS = "SPLIT_DELAYED_JOBS"
 	USER_EMAIL_MIGRATED = "user_email_migrated"
 
 	SOLUTION_HIT_TRACKER = "SOLUTION:HITS:%{account_id}:%{article_id}"
@@ -106,8 +105,6 @@ module Redis::RedisKeys
 	SLAVE_QUERIES = "SLAVE_QUERIES"
 	VALIDATE_REQUIRED_TICKET_FIELDS = "VALIDATE_REQUIRED_TICKET_FIELDS"
 
-	# run update_ticket_states using sidekiq instead of resque
-	UPDATE_TICKET_STATES_VIA_SIDEKIQ = "UPDATE_TICKET_STATES_VIA_SIDEKIQ"
 	# run observer queue using sidekiq instead of resque
 	SIDEKIQ_OBSERVER = "SIDEKIQ_OBSERVER"
 

@@ -1,7 +1,7 @@
 <%= link_to("#{image_tag(spacer_image_url, :width => "24px", :height => "24px")} <span>#{t('ticket.spam_btn_title')}</span>".html_safe, 
-	spam_helpdesk_ticket_path(ticket), :method => :put, :class => "custom-tip-bottom spam", 
+	spam_helpdesk_ticket_path(ticket), :method => :put, :class => "custom-tip-bottom spam spamicon", 
 	"data-keybinding" => shortcut('ticket_detail.spam')) unless ticket.spam %>
 
 <%= link_to("#{image_tag(spacer_image_url, :width => "24px", :height => "24px")} <span>#{t('ticket.ham_btn_title')}</span>".html_safe,
-	unspam_helpdesk_ticket_path(ticket), :method => :put, :class => "custom-tip-bottom spam_active", 
+	unspam_helpdesk_ticket_path(ticket), :method => :put, :class => "custom-tip-bottom spam_active spamicon", 
 	:"data-keybinding" => shortcut('ticket_detail.spam'), :remote => true) if ticket.spam %>
