@@ -3,16 +3,16 @@ class Search::Utils
 
   MAX_PER_PAGE        = 30
   TEMPLATE_BY_CONTEXT = {
-    :portal_spotlight       => 'portalSpotlight',
-    :portal_article_search  => 'portalArticleSearch',
-    :agent_autocomplete     => 'agentAutocomplete',
-    :requester_autocomplete => 'requesterAutocomplete',
-    :company_autocomplete   => 'companyAutocomplete',
-    :tag_autocomplete       => 'tagAutocomplete',
-    :agent_spotlight        => 'agentSpotlight',
-    :merge_display_id       => 'mergeDisplayId',
-    :merge_subject          => 'mergeSubject',
-    :merge_requester        => 'mergeRequester'
+    portal_spotlight:       'portalSpotlight',
+    portal_article_search:  'portalArticleSearch',
+    agent_autocomplete:     'agentAutocomplete',
+    requester_autocomplete: 'requesterAutocomplete',
+    company_autocomplete:   'companyAutocomplete',
+    tag_autocomplete:       'tagAutocomplete',
+    agent_spotlight:        'agentSpotlight',
+    merge_display_id:       'mergeDisplayId',
+    merge_subject:          'mergeSubject',
+    merge_requester:        'mergeRequester'
   }
 
   # Load ActiveRecord objects

@@ -8,7 +8,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
   attr_accessor :search_field
   
   @@esv2_spotlight_models = {
-    "ticket"  => { model: "Helpdesk::Ticket",   associations: [ :requester, :ticket_states, { :flexifield => :flexifield_def }] }
+    'ticket'  => { model: 'Helpdesk::Ticket',   associations: [ :requester, :ticket_states, { :flexifield => :flexifield_def }] }
   }
   
   def index

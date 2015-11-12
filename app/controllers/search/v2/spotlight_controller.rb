@@ -14,12 +14,12 @@ class Search::V2::SpotlightController < ApplicationController
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    "company" => { model: "Company",            associations: [] }, 
-    "topic"   => { model: "Topic",              associations: [{ forum: :forum_category }, :user ] }, 
-    "ticket"  => { model: "Helpdesk::Ticket",   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
-    "note"    => { model: "Helpdesk::Note",     associations: [ :note_old_body,{ notable: [ :ticket_status, :ticket_states, :responder, :group,{ requester: :avatar }]}] }, 
-    "article" => { model: "Solution::Article",  associations: [ :user, :folder ] }, 
-    "user"    => { model: "User",               associations: [ :avatar, :customer ] }
+    'company' => { model: 'Company',            associations: [] }, 
+    'topic'   => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
+    'ticket'  => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
+    'note'    => { model: 'Helpdesk::Note',     associations: [ :note_old_body,{ notable: [ :ticket_status, :ticket_states, :responder, :group,{ requester: :avatar }]}] }, 
+    'article' => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
+    'user'    => { model: 'User',               associations: [ :avatar, :customer ] }
   }
 
   # Unscoped spotlight search
@@ -39,7 +39,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Customers scoped spotlight search
   #
   def customers
-     redirect_user unless privilege?(:view_contacts)
+    redirect_user unless privilege?(:view_contacts)
 
     @searchable_klasses = ['User', 'company']
     search

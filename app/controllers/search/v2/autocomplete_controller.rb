@@ -10,9 +10,9 @@ class Search::V2::AutocompleteController < ApplicationController
   # Needed for loading records from DB
   #
   @@esv2_autocomplete_models = {
-    "user"    => { model: "User",           associations: [{ :account => :features }, :user_emails] },
-    "company" => { model: "Company",        associations: [] },
-    "tag"     => { model: "Helpdesk::Tag",  associations: [] }
+    'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
+    'company' => { model: 'Company',        associations: [] },
+    'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
   }
 
   def agents

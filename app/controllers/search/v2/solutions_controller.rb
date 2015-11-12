@@ -12,7 +12,7 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    "article" => { model: "Solution::Article",  associations: [ :folder, :article_body ] }
+    'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
   }
     
   # Find solutions for ticket

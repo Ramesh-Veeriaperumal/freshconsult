@@ -521,7 +521,7 @@ GEM
     encryptor (1.1.3)
     equalizer (0.0.9)
     erubis (2.7.0)
-    ethon (0.7.4)
+    ethon (0.8.0)
       ffi (>= 1.3.0)
     excon (0.31.0)
     execjs (2.0.2)
@@ -557,6 +557,9 @@ GEM
     fuubar (2.0.0)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
+    gemoji (2.1.0)
+    gemoji-parser (1.3.1)
+      gemoji (>= 2.1.0)
     global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
@@ -918,8 +921,8 @@ GEM
       json (~> 1.8)
       memoizable (~> 0.4.0)
       simple_oauth (~> 0.2.0)
-    typhoeus (0.7.3)
-      ethon (>= 0.7.4)
+    typhoeus (0.8.0)
+      ethon (>= 0.8.0)
     tzinfo (0.3.41)
     uglifier (2.1.2)
       execjs (>= 0.3.0)
@@ -1000,6 +1003,7 @@ DEPENDENCIES
   forgery (= 0.5.0)
   freshdesk_authority!
   fuubar
+  gemoji-parser (~> 1.3.1)
   global_phone
   gnip!
   gnip-rule (= 0.4.1)
