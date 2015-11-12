@@ -147,8 +147,6 @@ class Support::SearchV2::SpotlightController < SupportController
       end
     end
 
-    # Overriding for Support portal models
-    #
     def esv2_klasses
       Array.new.tap do |model_names|
         model_names.concat(['Helpdesk::Ticket', 'Helpdesk::Note'])  if current_user
@@ -157,8 +155,6 @@ class Support::SearchV2::SpotlightController < SupportController
       end
     end
 
-    # Overriding to handle support rendering
-    #
     def handle_rendering
       respond_to do |format|
         format.html{
@@ -192,8 +188,6 @@ class Support::SearchV2::SpotlightController < SupportController
         :pagination => @pagination }
     end
 
-    # Overriding to handle support result construction
-    #
     def process_results
       @search_results = []
       @result_set.each do |item|

@@ -30,8 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :tailored_json => true,
       :methods => [
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
-                    :status_deleted, :product_id, :trashed, :attachment_names,
-                    :es_cc_emails, :es_fwd_emails
+                    :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails
                   ],
       :only => [
                   :requester_id, :responder_id, :status, :source, :spam, :deleted, 
@@ -39,7 +38,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   :frDueBy, :priority, :ticket_type, :subject, :description, :resolved_at, 
                   :closed_at, :to_emails
                 ]
-    }, false).merge(esv2_custom_attributes).to_json
+    }, false).merge(esv2_custom_attributes)
+            .merge(attachments: es_v2_attachments).to_json
   end
 
   # Flexifield denormalized
@@ -50,8 +50,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # ES v2 specific methods
   #
-  def attachment_names
-    attachments.map(&:content_file_name)
+  def es_v2_attachments
+    attachments.pluck(:content_file_name).collect { |file_name| 
+      f_name = file_name.rpartition('.')
+      {
+        name: f_name.first,
+        type: f_name.last
+      }
+    }
   end
 
   #############################

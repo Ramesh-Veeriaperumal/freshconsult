@@ -4,13 +4,18 @@ class Post < ActiveRecord::Base
     as_json({
         root: false,
         tailored_json: true,
-        only: [ :body ],
-        methods: [ :attachment_names ]
-      })
+        only: [ :body ]
+      }).merge(attachments: es_v2_attachments)
   end
 
-  def attachment_names
-    attachments.map(&:content_file_name)
+  def es_v2_attachments
+    attachments.pluck(:content_file_name).collect { |file_name| 
+      f_name = file_name.rpartition('.')
+      {
+        name: f_name.first,
+        type: f_name.last
+      }
+    }
   end
 
 end

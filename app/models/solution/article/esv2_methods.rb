@@ -8,8 +8,9 @@ class Solution::Article < ActiveRecord::Base
                 :updated_at, :thumbs_up, :thumbs_down, :account_id, :modified_at, 
                 :hits, :language_id, :modified_by 
               ],
-        methods: [ :tag_names, :tag_ids, :attachment_names ]
-      }).merge(meta_referenced_attributes).to_json
+        methods: [ :tag_names, :tag_ids ]
+      }).merge(meta_referenced_attributes)
+        .merge(attachments: es_v2_attachments).to_json
   end
 
   def tag_names
@@ -20,8 +21,14 @@ class Solution::Article < ActiveRecord::Base
     tags.map(&:id)
   end
 
-  def attachment_names
-    attachments.map(&:content_file_name)
+  def es_v2_attachments
+    attachments.pluck(:content_file_name).collect { |file_name| 
+      f_name = file_name.rpartition('.')
+      {
+        name: f_name.first,
+        type: f_name.last
+      }
+    }
   end
 
   # _Note_: If these attributes will be delegated in future, 
