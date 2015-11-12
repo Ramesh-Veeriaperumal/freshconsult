@@ -13,9 +13,9 @@ module Search
 
       # Upsert individual records in ES
       #
-      def send_to_es(version, payload)
+      def send_to_es(version, parent_id, payload)
         path = @tenant.document_path(@type, @document_id)
-        path << add_versioning(version)
+        path << add_params(version, parent_id)
         
         Utils::EsClient.new(:put, path, payload).response
       end
@@ -40,9 +40,16 @@ module Search
       private
 
         # Pass external version to ES for OCC
+        # Pass parent ID to ES for children
         #
-        def add_versioning(version)
-          "?#{{ :version_type => 'external', :version => version }.to_query}"
+        def add_params(version, parent_id)
+          es_query_params = Hash.new.tap do |es_params|
+            es_params[:version_type]  = 'external'
+            es_params[:version]       = version
+            es_params[:parent]        = parent_id if parent_id
+          end
+          
+          "?#{es_query_params.to_query}"
         end
     end
 

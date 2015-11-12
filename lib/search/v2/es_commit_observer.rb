@@ -40,7 +40,8 @@ module Search
               :account_id   => self.account_id,
               :document_id  => self.id,
               :klass_name   => self.class.to_s,
-              :version      => Search::Utils.es_version
+              :version      => Search::Utils.es_version,
+              :parent_id    => (self.is_a?(Helpdesk::Note) ? self.notable_id : nil)
             })
           end
 
