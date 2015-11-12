@@ -31,13 +31,13 @@ class Mobile::SettingsController < ApplicationController
         sha_generated = OpenSSL::HMAC.hexdigest('sha512',MobileConfig['secret_key'],request_data['times'])
         
         if sha_generated == request_data['id'] 
-          domain_mapping = DomainMapping.full_domain(params[:cname]).first
+          domain_mapping = ShardMapping.lookup_with_domain(params[:cname])
           unless domain_mapping.nil? 
-            full_domain = domain_mapping.domain 
             Sharding.select_shard_of(domain_mapping.account_id) do
               Sharding.run_on_slave do
                 account = Account.find(domain_mapping.account_id)
                 unless account.nil?
+                  full_domain = account.full_domain
                   sso_enabled = account.sso_enabled? 
                   sso_logout_url = account.sso_logout_url
                 end
