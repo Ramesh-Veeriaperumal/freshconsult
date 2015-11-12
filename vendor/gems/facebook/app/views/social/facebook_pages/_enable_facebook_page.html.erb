@@ -50,12 +50,7 @@
 
 <%= javascript_tag do %>
 jQuery(".fb_page_info input[type=checkbox]").change(function(){
-  if(jQuery('.fb_page_info input[type=checkbox]:checked').length){
-    jQuery('#pages_dialog-submit').removeAttr('disabled');
-  }
-  else{
-    jQuery('#pages_dialog-submit').attr('disabled', 'true');
-  }
+  enableAssosiate();
 });
 
 jQuery("#fb-pages-select-all").on("click", function(){
@@ -64,6 +59,17 @@ jQuery("#fb-pages-select-all").on("click", function(){
   select_fb_page = this.checked ? true : false
   
   jQuery("input[name='enable[pages][]']").prop("checked", select_fb_page);
-});
+  
+  enableAssosiate();
+}); 
+
+function enableAssosiate(){
+  if(jQuery('.fb_page_info input[type=checkbox]:checked').length){
+    jQuery('#pages_dialog-submit').removeAttr('disabled');
+  }
+  else{
+    jQuery('#pages_dialog-submit').attr('disabled', 'true');
+  }
+}
 
 <% end %>
