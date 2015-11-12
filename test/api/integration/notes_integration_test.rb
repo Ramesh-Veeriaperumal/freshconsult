@@ -15,7 +15,7 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 57,
         reply: 59,
-        update: 23,
+        update: 24,
         destroy: 21,
         ticket_notes: 17
       }
