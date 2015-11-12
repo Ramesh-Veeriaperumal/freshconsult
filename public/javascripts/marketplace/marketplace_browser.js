@@ -109,7 +109,8 @@ var MarketplaceBrowser  = Class.create({
       type: "delete",
       success: function(response){
         if(response.status == 200){
-          jQuery("#noticeajax").html(response.name+ " " +that.customMessages.delete_success).show();
+          var name = escapeHtml(response.name);
+          jQuery("#noticeajax").html(name+ " " +that.customMessages.delete_success).show();
           if(response.classic_plug)
             jQuery("#ext-"+response.application_id).remove();
           else
@@ -117,7 +118,7 @@ var MarketplaceBrowser  = Class.create({
           that.toggleNoPlugsMessage();
         }
         else {
-          jQuery("#noticeajax").html(that.customMessages.delete_error + " " + response.name);
+          jQuery("#noticeajax").html(that.customMessages.delete_error + " " + name);
         }     
       }
     });

@@ -1,6 +1,8 @@
 <script type='text/javascript'>
   var page_type = 'ticket',
   dom_helper_data = <%= raw @item.to_json %>;
+  current_user = <%= raw current_user.to_json %>;
+  requester = <%= raw @ticket.requester.to_json %>;
 </script>
 
 <%= javascript_include_tag :'cdn/marketplace/freshapps_ticket_dom_helper' %>
