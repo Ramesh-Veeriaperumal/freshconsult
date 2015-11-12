@@ -17,7 +17,7 @@ class DomainMapping < ActiveRecord::Base
           {
             :joins => %(INNER JOIN domain_mappings as B on B.account_id = domain_mappings.account_id),
             :conditions => ["B.domain = ? and domain_mappings.portal_id IS ?",cname,nil],
-            :select => "domain_mappings.domain",
+            :select => "domain_mappings.domain,domain_mappings.account_id",
             :limit => 1 
           }
         }
