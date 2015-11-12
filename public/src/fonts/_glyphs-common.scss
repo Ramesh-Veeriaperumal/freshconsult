@@ -594,3 +594,11 @@ span.fb_add
 	}
 }
 
+// twitter like icon status
+.twt-fav{
+	&.is-active{
+		.#{$font-class-name}twitter-like{
+			color:#dd2e44;
+		}
+	}
+}

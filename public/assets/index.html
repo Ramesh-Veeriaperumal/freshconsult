@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.eot");
-  src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.woff") format("woff"),
-       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.ttf") format("truetype"),
-       url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.eot");
+  src: url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.woff") format("woff"),
+       url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.ttf") format("truetype"),
+       url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_964b194d76465f0471a59666b5e88a57.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.svg#glyphs") format("svg");
   }
 }
 
@@ -179,6 +179,7 @@
 .ficon-chat-bubble:before,
 .ficon-chat-disable:before,
 .ficon-chat-enable:before,
+.ficon-chat-source:before,
 .ficon-checkbox:before,
 .ficon-checkmark:before,
 .ficon-checkmark-round:before,
@@ -220,6 +221,7 @@
 .ficon-facebook:before,
 .ficon-facebook-lock:before,
 .ficon-facebook-setting:before,
+.ficon-facebook-source:before,
 .ficon-feedback:before,
 .ficon-feedback-new:before,
 .ficon-ff-add-note:before,
@@ -246,6 +248,7 @@
 .ficon-folder:before,
 .ficon-folder-o:before,
 .ficon-folder-open-o:before,
+.ficon-forum-source:before,
 .ficon-forward:before,
 .ficon-forward-tkt:before,
 .ficon-freshchat:before,
@@ -278,6 +281,7 @@
 .ficon-mac:before,
 .ficon-mail:before,
 .ficon-mail-filled:before,
+.ficon-mail-source:before,
 .ficon-mail-thin:before,
 .ficon-map-marker:before,
 .ficon-merge:before,
@@ -285,6 +289,8 @@
 .ficon-minus:before,
 .ficon-mobihelp:before,
 .ficon-mobile:before,
+.ficon-mobile-active-source:before,
+.ficon-mobile-source:before,
 .ficon-multi-product:before,
 .ficon-nested_field:before,
 .ficon-new-phone-ticket:before,
@@ -310,6 +316,7 @@
 .ficon-phone-disable-thin:before,
 .ficon-plus:before,
 .ficon-plus-circle:before,
+.ficon-portal-source:before,
 .ficon-portals:before,
 .ficon-post-edit:before,
 .ficon-pushpin:before,
@@ -317,6 +324,7 @@
 .ficon-rearrange:before,
 .ficon-rebranding:before,
 .ficon-refresh:before,
+.ficon-refresh-source:before,
 .ficon-reorder:before,
 .ficon-reorder-2:before,
 .ficon-reply:before,
@@ -354,14 +362,17 @@
 .ficon-trash-o:before,
 .ficon-trash-strike-thru:before,
 .ficon-twitter:before,
+.ficon-twitter-like:before,
 .ficon-twitter-lock:before,
 .ficon-twitter-o:before,
+.ficon-twitter-source:before,
 .ficon-unlock:before,
 .ficon-unverified:before,
 .ficon-user:before,
 .ficon-view-retweets:before,
 .ficon-warning:before,
 .ficon-web-page:before,
+.ficon-web-source:before,
 .ficon-windows:before {
         display: inline-block;
   font-family: "glyphs";
@@ -419,6 +430,7 @@
 .ficon-chat-bubble:before { content: "\f11c"; }
 .ficon-chat-disable:before { content: "\f11d"; }
 .ficon-chat-enable:before { content: "\f11e"; }
+.ficon-chat-source:before { content: "\f1e6"; }
 .ficon-checkbox:before { content: "\f11f"; }
 .ficon-checkmark:before { content: "\f120"; }
 .ficon-checkmark-round:before { content: "\f121"; }
@@ -460,6 +472,7 @@
 .ficon-facebook:before { content: "\f13d"; }
 .ficon-facebook-lock:before { content: "\f13e"; }
 .ficon-facebook-setting:before { content: "\f13f"; }
+.ficon-facebook-source:before { content: "\f1e7"; }
 .ficon-feedback:before { content: "\f140"; }
 .ficon-feedback-new:before { content: "\f1de"; }
 .ficon-ff-add-note:before { content: "\f141"; }
@@ -486,6 +499,7 @@
 .ficon-folder:before { content: "\f1df"; }
 .ficon-folder-o:before { content: "\f14d"; }
 .ficon-folder-open-o:before { content: "\f14e"; }
+.ficon-forum-source:before { content: "\f1e8"; }
 .ficon-forward:before { content: "\f14f"; }
 .ficon-forward-tkt:before { content: "\f1ac"; }
 .ficon-freshchat:before { content: "\f150"; }
@@ -518,6 +532,7 @@
 .ficon-mac:before { content: "\f165"; }
 .ficon-mail:before { content: "\f166"; }
 .ficon-mail-filled:before { content: "\f1aa"; }
+.ficon-mail-source:before { content: "\f1e9"; }
 .ficon-mail-thin:before { content: "\f168"; }
 .ficon-map-marker:before { content: "\f169"; }
 .ficon-merge:before { content: "\f16a"; }
@@ -525,6 +540,8 @@
 .ficon-minus:before { content: "\f16c"; }
 .ficon-mobihelp:before { content: "\f16d"; }
 .ficon-mobile:before { content: "\f16e"; }
+.ficon-mobile-active-source:before { content: "\f1ea"; }
+.ficon-mobile-source:before { content: "\f1eb"; }
 .ficon-multi-product:before { content: "\f16f"; }
 .ficon-nested_field:before { content: "\f1cc"; }
 .ficon-new-phone-ticket:before { content: "\f1cd"; }
@@ -550,6 +567,7 @@
 .ficon-phone-disable-thin:before { content: "\f1b5"; }
 .ficon-plus:before { content: "\f17e"; }
 .ficon-plus-circle:before { content: "\f1c5"; }
+.ficon-portal-source:before { content: "\f1ec"; }
 .ficon-portals:before { content: "\f1cf"; }
 .ficon-post-edit:before { content: "\f17f"; }
 .ficon-pushpin:before { content: "\f180"; }
@@ -557,6 +575,7 @@
 .ficon-rearrange:before { content: "\f181"; }
 .ficon-rebranding:before { content: "\f182"; }
 .ficon-refresh:before { content: "\f183"; }
+.ficon-refresh-source:before { content: "\f1ed"; }
 .ficon-reorder:before { content: "\f184"; }
 .ficon-reorder-2:before { content: "\f185"; }
 .ficon-reply:before { content: "\f186"; }
@@ -594,14 +613,17 @@
 .ficon-trash-o:before { content: "\f19e"; }
 .ficon-trash-strike-thru:before { content: "\f19f"; }
 .ficon-twitter:before { content: "\f1a0"; }
+.ficon-twitter-like:before { content: "\f1ee"; }
 .ficon-twitter-lock:before { content: "\f1a1"; }
 .ficon-twitter-o:before { content: "\f1a2"; }
+.ficon-twitter-source:before { content: "\f1ef"; }
 .ficon-unlock:before { content: "\f1a3"; }
 .ficon-unverified:before { content: "\f1a4"; }
 .ficon-user:before { content: "\f1a5"; }
 .ficon-view-retweets:before { content: "\f1a6"; }
 .ficon-warning:before { content: "\f1a7"; }
 .ficon-web-page:before { content: "\f1a8"; }
+.ficon-web-source:before { content: "\f1f0"; }
 .ficon-windows:before { content: "\f1a9"; }
     </style>
 
@@ -617,7 +639,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (226)</h1>
+      <h1>Font Icons (237)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -1003,6 +1025,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-chat-source" class="ficon-chat-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>chat-source</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-checkbox" class="ficon-checkbox"></i></span>
         </div>
         <div class="usage">
@@ -1372,6 +1403,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-facebook-source" class="ficon-facebook-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>facebook-source</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-feedback" class="ficon-feedback"></i></span>
         </div>
         <div class="usage">
@@ -1601,6 +1641,15 @@
         </div>
         <div class="usage">
           <span>folder-open-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-forum-source" class="ficon-forum-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>forum-source</span>
         </div>
       </div>
       
@@ -1894,6 +1943,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mail-source" class="ficon-mail-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>mail-source</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mail-thin" class="ficon-mail-thin"></i></span>
         </div>
         <div class="usage">
@@ -1952,6 +2010,24 @@
         </div>
         <div class="usage">
           <span>mobile</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mobile-active-source" class="ficon-mobile-active-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>mobile-active-source</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-mobile-source" class="ficon-mobile-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>mobile-source</span>
         </div>
       </div>
       
@@ -2182,6 +2258,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-portal-source" class="ficon-portal-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>portal-source</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-portals" class="ficon-portals"></i></span>
         </div>
         <div class="usage">
@@ -2240,6 +2325,15 @@
         </div>
         <div class="usage">
           <span>refresh</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-refresh-source" class="ficon-refresh-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>refresh-source</span>
         </div>
       </div>
       
@@ -2578,6 +2672,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-twitter-like" class="ficon-twitter-like"></i></span>
+        </div>
+        <div class="usage">
+          <span>twitter-like</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-twitter-lock" class="ficon-twitter-lock"></i></span>
         </div>
         <div class="usage">
@@ -2591,6 +2694,15 @@
         </div>
         <div class="usage">
           <span>twitter-o</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-twitter-source" class="ficon-twitter-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>twitter-source</span>
         </div>
       </div>
       
@@ -2645,6 +2757,15 @@
         </div>
         <div class="usage">
           <span>web-page</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-web-source" class="ficon-web-source"></i></span>
+        </div>
+        <div class="usage">
+          <span>web-source</span>
         </div>
       </div>
       
