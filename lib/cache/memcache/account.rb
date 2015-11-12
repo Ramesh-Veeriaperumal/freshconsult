@@ -43,11 +43,6 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { ticket_type_values.all }
   end
 
-  def subscription_from_cache
-    key = subscription_memcache_key
-    MemcacheKeys.fetch(key) { self.subscription }
-  end
-
   def agents_from_cache
     key = agents_memcache_key
     MemcacheKeys.fetch(key) { self.agents.find(:all, :include => :user) }
@@ -252,10 +247,6 @@ module Cache::Memcache::Account
 
     def agents_memcache_key
       ACCOUNT_AGENTS % { :account_id => self.id }
-    end
-
-    def subscription_memcache_key
-      ACCOUNT_SUBSCRIPTION % { :account_id => self.id }
     end
 
     def groups_memcache_key

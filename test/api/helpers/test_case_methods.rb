@@ -109,19 +109,19 @@ module TestCaseMethods
   end
 
   def v2_api_key
-    API_THROTTLER_V2 % { host: 'localhost.freshpo.com' }
+    API_THROTTLER_V2 % { account_id: @account.id }
   end
 
   def account_key
-    FD_ACCOUNT_API_LIMIT % { host: 'localhost.freshpo.com' }
+    ACCOUNT_API_LIMIT % { account_id: @account.id }
   end
 
   def default_key
-    'FD_DEFAULT_API_LIMIT'
+    'DEFAULT_API_LIMIT'
   end
 
   def plan_key(id)
-    FD_PLAN_API_LIMIT % { plan_id: id.to_s }
+    PLAN_API_LIMIT % { plan_id: id.to_s }
   end
 
   EOL = "\015\012"  # "\r\n"

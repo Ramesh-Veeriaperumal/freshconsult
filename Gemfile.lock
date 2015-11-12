@@ -1120,6 +1120,7 @@ DEPENDENCIES
   rate-limiting!
   recaptcha!
   redis (= 3.0.7)
+  request_store (~> 1.0)
   resque (~> 1.24.0)
   resque-scheduler
   resque-status (= 0.4.1)

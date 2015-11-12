@@ -48,8 +48,7 @@ class Subscription < ActiveRecord::Base
   after_update :add_to_crm
   after_update :update_reseller_subscription
   after_commit :update_social_subscription, :add_free_freshfone_credit, on: :update
-  after_commit :clear_account_susbcription_cache, on: :update
-  after_commit :clear_account_susbcription_cache, on: :destroy
+  after_commit :clear_account_susbcription_cache
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -117,6 +116,11 @@ class Subscription < ActiveRecord::Base
 
   def self.free_agent_count
     sum('free_agents', :conditions => [ "state in ('#{ACTIVE}', '#{FREE}')"]).to_i
+  end
+
+  def self.fetch_by_account_id(account_id)
+    key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => account_id }
+    MemcacheKeys.fetch(key) { Subscription.find_by_account_id(account_id) }
   end
 
   def cmrr
@@ -493,7 +497,7 @@ class Subscription < ActiveRecord::Base
       (amount/100.0).round.to_f
     end
 
-    def clear_subscription_from_cache
+    def clear_account_susbcription_cache
       key = ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache key
     end

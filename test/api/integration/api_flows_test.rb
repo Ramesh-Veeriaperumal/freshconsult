@@ -328,18 +328,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
-  def test_not_throttled_web_request
-    old_v2_api_consumed_limit = get_key(v2_api_key).to_i
-    old_v1_api_consumed_limit = get_key(api_key).to_i
-    get '/groups', nil, @headers
-    assert_response 302
-    new_v2_api_consumed_limit = get_key(v2_api_key).to_i
-    new_v1_api_consumed_limit = get_key(api_key).to_i
-    assert_equal old_v2_api_consumed_limit, new_v2_api_consumed_limit
-    assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    response.headers.exclude?('X-Freshdesk-API-Version')
-  end
-
   def test_throttled_invalid_accept_header_request
     old_v2_api_consumed_limit = get_key(v2_api_key).to_i
     old_v1_api_consumed_limit = get_key(api_key).to_i
@@ -349,18 +337,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    response.headers.exclude?('X-Freshdesk-API-Version')
-  end
-
-  def test_not_v2_throttled_v1_api_request
-    old_v2_api_consumed_limit = get_key(v2_api_key).to_i
-    old_v1_api_consumed_limit = get_key(api_key).to_i
-    get '/discussions/categories.json', nil, @write_headers
-    assert_response 200
-    new_v2_api_consumed_limit = get_key(v2_api_key).to_i
-    new_v1_api_consumed_limit = get_key(api_key).to_i
-    assert_equal old_v2_api_consumed_limit, new_v2_api_consumed_limit
-    assert_equal old_v1_api_consumed_limit + 1, new_v1_api_consumed_limit
     response.headers.exclude?('X-Freshdesk-API-Version')
   end
 
@@ -536,7 +512,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_api_consumed_limit = get_key(v2_api_key).to_i
     set_key(v2_api_key, old_api_consumed_limit, nil)
     assert_response 429
-    assert_equal 500, new_api_consumed_limit
+    assert_equal 501, new_api_consumed_limit
     assert response.headers.exclude?('X-RateLimit-Total')
     assert response.headers.exclude?('X-RateLimit-Remaining')
     assert response.headers.exclude?('X-Freshdesk-API-Version')
@@ -583,20 +559,6 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '2', response.headers['X-RateLimit-Used']
   end
 
-  def test_v1_incremented_api_limit
-    old_v2_api_consumed_limit = get_key(v2_api_key).to_i
-    old_api_consumed_limit = get_key(api_key).to_i
-    ticket = Helpdesk::Ticket.last || create_ticket(email: 'test@abc.com')
-    skip_bullet do
-      get "helpdesk/tickets/#{ticket.display_id}.json", nil, @write_headers
-    end
-
-    v2_api_consumed_limit = get_key(v2_api_key).to_i
-    api_consumed_limit = get_key(api_key).to_i
-    assert_equal old_v2_api_consumed_limit, v2_api_consumed_limit
-    assert_equal old_api_consumed_limit + 1, api_consumed_limit
-  end
-
   def test_v2_incremented_api_limit
     old_v2_api_consumed_limit = get_key(v2_api_key).to_i
     old_api_consumed_limit = get_key(api_key).to_i
@@ -636,9 +598,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_throttled_valid_request_with_plan_api_limit_changed
-    # system(start memcache)
+    turn_on_caching
     old_plan = @account.subscription.subscription_plan
-    ApiDiscussions::CategoriesController.any_instance.stubs(:perform_caching).returns(true)
     subscription = @account.subscription
     new_plan = SubscriptionPlan.find(3)
     set_key(plan_key(3), 230, nil)
@@ -654,16 +615,12 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert_equal '230', response.headers['X-RateLimit-Total']
     subscription.update_column(:subscription_plan_id, old_plan.id)
-
-    # system(stop memcache)
+    turn_off_caching
   end
 
   def test_expiry_condition
-    # 10 API calls were executed in the previous hour
-    set_key(v2_api_key, '10')
-
     # expiring the expiry key: one hour has passed
-    remove_key(v2_api_key + '_expiry')
+    remove_key(v2_api_key)
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
@@ -671,6 +628,33 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
-    assert_equal 1, get_key(v2_api_key + '_expiry').to_i
+  end
+
+  def test_skipped_subdomains
+    old_api_consumed_limit = get_key(api_key).to_i
+    get "/groups.json", nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
+    api_consumed_limit = get_key(api_key).to_i
+
+    assert_response 404
+    assert_equal old_api_consumed_limit, api_consumed_limit
+
+    old_api_v2_consumed_limit = get_key(v2_api_key).to_i
+    get "api/discussions/categories.json", nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
+    api_v2_consumed_limit = get_key(v2_api_key).to_i
+    assert_response 404
+    assert_equal old_api_v2_consumed_limit + 1, api_v2_consumed_limit
+
+    get "api/discussions/categories.json", nil, @headers.merge('HTTP_HOST' => 'billing.freshdesk.com')
+    new_api_v2_consumed_limit = get_key(v2_api_key).to_i
+    assert_response 404
+    assert_equal api_v2_consumed_limit, new_api_v2_consumed_limit
+  end
+
+  def test_shard_blocked_response
+    ShardMapping.any_instance.stubs(:not_found?).returns(true)
+    get "api/discussions/categories", nil, @headers
+    assert_response 404
+    assert_equal ' ', @response.body
+    ShardMapping.any_instance.unstub(:not_found?)
   end
 end

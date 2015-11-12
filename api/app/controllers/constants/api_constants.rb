@@ -1,7 +1,5 @@
 module ApiConstants
   # ControllerConstants
-  API_CURRENT_VERSION = 'v2'.freeze
-
   DEFAULT_PAGINATE_OPTIONS = {
     per_page: 50,
     max_per_page: 100,

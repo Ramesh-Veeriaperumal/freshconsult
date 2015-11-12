@@ -3,10 +3,6 @@ module Redis::OthersRedis
 		newrelic_begin_rescue { $redis_others.get(key) }
 	end
 
-  def get_multiple_other_redis_keys *keys
-    newrelic_begin_rescue { $redis_others.mget(*keys) }
-  end
-
 	def set_others_redis_key(key, value, expires = 86400)
 		newrelic_begin_rescue do
 			$redis_others.set(key, value)
@@ -35,10 +31,6 @@ module Redis::OthersRedis
 	def increment_others_redis(key)
 		newrelic_begin_rescue { return $redis_others.INCR(key) }
 	end
-
-  def increment_other_redis_by_value(key, used)
-    newrelic_begin_rescue { return $redis_others.INCRBY(key, used) }
-  end
 
 	def decrement_others_redis(key, value=1)
 		newrelic_begin_rescue do
