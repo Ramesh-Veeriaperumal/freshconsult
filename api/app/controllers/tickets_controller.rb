@@ -173,13 +173,13 @@ class TicketsController < ApiApplicationController
     end
 
     def assign_protected
-      @item.product ||= current_portal.product
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
         @item.inline_attachments = @item.inline_attachments
+        @item.product ||= current_portal.product unless params[cname].key?(:product_id)
       end
     end
 
