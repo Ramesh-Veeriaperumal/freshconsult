@@ -23,6 +23,7 @@ class Support::Solutions::ArticlesController < SupportController
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :adapt_attachments, :only => [:show]
+  before_filter :cleanup_params_for_title, :only => [:show]
 
 
   def handle_unknown
@@ -82,10 +83,10 @@ class Support::Solutions::ArticlesController < SupportController
     
     def load_agent_actions
       @agent_actions = []
-      @agent_actions <<   { :url => edit_solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+      @agent_actions <<   { :url => edit_solution_article_path(@article),
                             :label => t('portal.preview.edit_article'),
                             :icon => "edit" } if privilege?(:manage_solutions)
-      @agent_actions <<   { :url => solution_category_folder_article_path(@article.folder.category, @article.folder, @article),
+      @agent_actions <<   { :url => solution_article_path(@article),
                             :label => t('portal.preview.view_on_helpdesk'),
                             :icon => "preview" } if privilege?(:view_solutions)
       @agent_actions
@@ -139,6 +140,10 @@ class Support::Solutions::ArticlesController < SupportController
     
     def no_error
       !@ticket.errors.any?
+    end
+
+    def cleanup_params_for_title
+      params.slice!("id", "format", "controller", "action")
     end
 
 end

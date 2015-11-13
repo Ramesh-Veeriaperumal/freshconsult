@@ -5,5 +5,5 @@ module TimeEntryConstants
   UPDATE_FIELDS = { all: %w(billable agent_id executed_at note time_spent start_time timer_running) }.freeze # privilege for update is edit_time_entries.
   LOAD_OBJECT_EXCEPT = [:ticket_time_entries].freeze
 
-  FIELDS_TO_BE_STRIPPED = %w(note time_spent).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(note time_spent).freeze
 end.freeze

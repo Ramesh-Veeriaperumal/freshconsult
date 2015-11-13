@@ -3,9 +3,12 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  FIELDS = %w(cc_emails description description_html due_by email_config_id fr_due_by group_id priority
-              email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-              tags attachments).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
+  CREATE_FIELDS = %w(cc_emails, description description_html due_by email_config_id fr_due_by group_id priority
+                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
+                     tags attachments).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
+  UPDATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
+                     email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
+                     tags attachments).freeze | (ARRAY_FIELDS - ['cc_emails']).map { |x| Hash[x, [nil]] } | HASH_FIELDS
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = ['notes', nil]
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
@@ -14,7 +17,7 @@ module ApiTicketConstants
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
   DELEGATOR_ATTRIBUTES = [:group_id, :responder_id, :product_id, :email_config_id, :custom_field, :requester_id, :status].freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
-  SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:twitter, :forum, :facebook, :outbound_email, :ecommerce).values.freeze
+  SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, spam: false },
@@ -29,7 +32,7 @@ module ApiTicketConstants
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since).freeze
 
-  FIELDS_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(email phone name subject type tags cc_emails twitter_id custom_fields).freeze
 
   CLOSED = Helpdesk::Ticketfields::TicketStatus::CLOSED
   RESOLVED = Helpdesk::Ticketfields::TicketStatus::RESOLVED

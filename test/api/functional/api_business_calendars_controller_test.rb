@@ -39,9 +39,9 @@ class ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_show_business_calendar_with_feature_disabled
     business_calendar = create_business_calendar
-    @account.class.any_instance.stubs(:features_included?).returns(false)
+    @account.class.any_instance.stubs(:features?).returns(false)
     get :show, construct_params(id: business_calendar.id)
-    @account.class.any_instance.unstub(:features_included?)
+    @account.class.any_instance.unstub(:features?)
     assert_response 403
   end
 

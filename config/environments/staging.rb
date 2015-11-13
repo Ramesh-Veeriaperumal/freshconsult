@@ -45,7 +45,6 @@ Helpkit::Application.configure do
     Sass::Plugin.options[:never_update] = true
     ActiveMerchant::Billing::Base.gateway_mode = :test
   end   
-  config.middleware.use "Middleware::FdApiThrottler", :max =>  1000
   config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
     # during the ddos attack uncomment the below line
     # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )

@@ -234,7 +234,7 @@ class User < ActiveRecord::Base
           conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
         all: {
-          conditions: { deleted: false }
+          conditions: { deleted: false, blocked: false }
         },
         company_id: {
           conditions: { customer_id: contact_filter.company_id }
@@ -362,9 +362,13 @@ class User < ActiveRecord::Base
     return false unless save_without_session_maintenance
     portal.make_current if portal
     if (!deleted and !email.blank? and send_activation)
-      args = [ portal,false, params[:email_config]]
-      job_args = self.language ? [nil] : [nil, 5.minutes.from_now]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), *job_args) 
+      if self.language.nil?
+        args = [ portal,false, params[:email_config]]
+        Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), 
+          nil, 5.minutes.from_now) 
+      else
+        deliver_activation_instructions!(portal,false, params[:email_config])
+      end
     end
     true
   end
@@ -830,10 +834,6 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:customer_id)
     end
 
-    def privileges_updated?
-      @all_changes.has_key?(:privileges)
-    end
-
     def deleted_updated?
        @all_changes.has_key?(:deleted)
     end
@@ -843,7 +843,7 @@ class User < ActiveRecord::Base
     end
 
     def company_info_updated?
-      company_id_updated? or privileges_updated?
+      company_id_updated?
     end
 
     def clear_redis_for_agent

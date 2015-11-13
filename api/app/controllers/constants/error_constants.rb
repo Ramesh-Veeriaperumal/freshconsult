@@ -25,7 +25,7 @@ module ErrorConstants
   DEFAULT_HTTP_CODE = 400
 
   # http://stackoverflow.com/questions/16621073/when-to-use-symbols-instead-of-strings-in-ruby
-  # Deep Symbolizing keys as this is not dynamically generated data. 
+  # Deep Symbolizing keys as this is not dynamically generated data.
   # Moreover, construction is faster & comparison is faster.
   ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml')).deep_symbolize_keys![:api_error_messages].freeze
 end

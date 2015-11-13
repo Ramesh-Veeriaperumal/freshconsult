@@ -64,7 +64,7 @@ class Freshfone::Account < ActiveRecord::Base
 
 	def close
 		update_twilio_subaccount_state STATE_AS_STRING[:closed]
-		update_attributes(:deleted => true)
+		update_attributes(:state => STATE_HASH[:closed], :deleted => true)
 	end
 
 	def restore

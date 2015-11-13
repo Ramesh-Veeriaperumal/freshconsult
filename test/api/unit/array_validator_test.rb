@@ -46,7 +46,7 @@ class ArrayValidatorTest < ActionView::TestCase
     test.attributes = [nil]
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ attributes: "is not a number" }, errors)
+    assert_equal({ attributes: 'is not a number' }, errors)
   end
 
   def test_attribute_with_errors

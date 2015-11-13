@@ -27,8 +27,8 @@ class VaRule < ActiveRecord::Base
 
   belongs_to :account
   
-  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
-
+  has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
+  has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
   scope :active, :conditions => { :active => true }
   scope :inactive, :conditions => { :active => false }
   scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
@@ -80,7 +80,7 @@ class VaRule < ActiveRecord::Base
   
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
-    Va::Action.new(act_hash)
+    Va::Action.new(act_hash, self)
   end
 
   def check_events doer, evaluate_on, current_events
@@ -141,10 +141,15 @@ class VaRule < ActiveRecord::Base
   end
   
   def trigger_actions(evaluate_on, doer=nil)
-    Va::Action.initialize_activities
+    Va::ScenarioFlashMessage.initialize_activities if automation_rule?
     return false unless check_user_privilege
     @triggered_event ||= TICKET_CREATED_EVENT
     actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
+  end
+
+  def fetch_actions_for_flash_notice(doer)
+    Va::ScenarioFlashMessage.initialize_activities
+    actions.each { |a| a.record_action_for_bulk(doer) }
   end
   
   def filter_query
@@ -249,6 +254,19 @@ class VaRule < ActiveRecord::Base
     CASCADE_DISPATCHR_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
+  def check_user_privilege
+    return true unless automation_rule?
+    
+    actions.each do |action|
+      if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
+        return false unless
+          User.current.privilege?(Va::Action::ACTION_PRIVILEGE[action.action_key.to_sym])
+      end
+    end
+    true
+  end
+
+
   private
     def has_events?
       return unless observer_rule? || api_webhook_rule?
@@ -272,18 +290,6 @@ class VaRule < ActiveRecord::Base
       public_key = OpenSSL::PKey::RSA.new(File.read("config/cert/public.pem"))
       Base64.encode64(public_key.public_encrypt(data))
     end  
-
-    def check_user_privilege
-      return true unless automation_rule?
-      
-      actions.each do |action|
-        if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)
-          return false unless
-            User.current.privilege?(Va::Action::ACTION_PRIVILEGE[action.action_key.to_sym])
-        end
-      end
-      true
-    end
 
     def negatable_conditions
       conditions = []

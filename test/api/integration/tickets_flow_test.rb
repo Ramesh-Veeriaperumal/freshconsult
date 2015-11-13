@@ -17,8 +17,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
   end
 
   def ticket
-      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-      ticket
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    ticket
   end
 
   def test_create_with_invalid_attachment_type
@@ -99,17 +99,13 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.tags.count == 1
       assert ticket.cc_email[:cc_emails].count == 1
 
-      put "/api/tickets/#{ticket.id}", { tags: nil, cc_emails: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),
-                  bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array')])
+      put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
+      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
       assert_response 400
 
-      put "/api/tickets/#{ticket.id}", { tags: [], cc_emails: [] }.to_json, @write_headers
+      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
       assert_response 200
       assert ticket.reload.tags.count == 0
-      assert ticket.reload.cc_email[:cc_emails].empty?
-      assert ticket.reload.cc_email[:fwd_emails].empty?
-      assert ticket.reload.cc_email[:reply_cc].empty?
     end
   end
 
@@ -132,11 +128,11 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
   def test_custom_date_utc_format
     t = ticket
-    time = Time.now.in_time_zone("Chennai")
-    Helpdesk::Ticket.any_instance.stubs(:custom_field).returns({:custom_date_1 => time})
+    time = Time.now.in_time_zone('Chennai')
+    Helpdesk::Ticket.any_instance.stubs(:custom_field).returns(custom_date_1: time)
 
     # without CustomFieldDecorator
-    CustomFieldDecorator.stubs(:utc_format).returns({:custom_date_1 => time})
+    CustomFieldDecorator.stubs(:utc_format).returns(custom_date_1: time)
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.iso8601, parsed_response['custom_date_1']

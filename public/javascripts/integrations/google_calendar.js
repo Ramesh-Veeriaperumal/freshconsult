@@ -305,7 +305,8 @@ GoogleCalendar.prototype = {
 						jQuery("#google_calendar_add_event_modal").prev().find(".ui-dialog-titlebar-close").show();
 						gcal.preventDialogClose = false;
 						jQuery("#google_calendar_add_event_modal .gcal-custom-errors").hide();
-						jQuery("#google_calendar_add_event_modal").dialog("close");
+						destroyElement();
+						jQuery("#google_calendar_add_event_modal").modal("hide");
 						gcal.showEvent(addedEvent);
 						jQuery("#event_"+addedEvent.id).effect("highlight", {color: "yellow", easing: "easeOutQuart"}, 1500);
 					// Reset "add event" form, but just remember the lastly used calendar.
@@ -381,7 +382,8 @@ GoogleCalendar.prototype = {
 				jQuery("#gcal-submit-event-button").val("Update");
 				jQuery("#google_calendar_add_event_modal").prev().find(".ui-dialog-titlebar-close").show();
 				gcal.preventDialogClose = false;
-				jQuery("#google_calendar_add_event_modal").dialog("close");
+				destroyElement();
+				jQuery("#google_calendar_add_event_modal").modal("hide");
 				gcal.calEvents.splice(gcal.getEventIndexById(eventId), 1);
 				gcal.showEvent(updatedEvent);
 				jQuery("#event_"+eventId).effect("highlight", {color: "yellow", easing: "easeOutQuart"}, 1500);
@@ -768,6 +770,7 @@ GoogleCalendar.prototype = {
 
 	renderEditForm: function(eventId){
 		// Set "Edit Event" form's fields' values
+
 		ev = gcal.getEventById(eventId);
 		startDateTime = new Date();
 		startDateTime.setTime(Date.parseISO8601(ev.start.dateTime));
@@ -799,25 +802,21 @@ GoogleCalendar.prototype = {
 
 function confirmDelete(dTitle, dContent, y, n, callback, args){
 	jQuery("div.confirm-modal-content").html(dContent);
-	jQuery('#gcal-confirm-modal')
-	 	.removeClass("hide")
-	 	.dialog({ 
-	      title: dTitle, 
-	      buttons: [{text: y, 'class': "confirm-modal-yes-button hide btn btn-primary", click: function(){
-							jQuery(this).dialog('close');
-							callback.apply(args[0], args[1]);
-						}
-					},
-	      			{text: n, 'class': "confirm-modal-no-button hide btn", click: function(){jQuery("#gcal-confirm-modal").dialog('close');}}],
-	      show: {	effect: "fade", duration: 200, complete: function(){} },
-	      create: function(evt, ui){
-	      	jQuery(".confirm-modal-yes-button").blur();
-	      },
-	      width: '320px', height: '300px', modal: true, resizable: false 
-    });	
- 	jQuery("#gcal-confirm-modal").css({'min-height': '30px'});
-	jQuery(".confirm-modal-yes-button, .confirm-modal-no-button").show();
+
+	var data = {
+	        targetId: "#gcal-confirm-modal",
+	        title: dTitle,
+	        width: "320",
+	        submitLabel: y,
+	        closeLabel: n,
+	        backdrop: "static",
+	        destroyOnClose: true
+	    }
+
+    jQuery.freshdialog(data);
 }
+
+
 
 MONTH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 DAY = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -930,98 +929,141 @@ DEFAULT_EVENT_DURATION = 60; // Minutes;
 		else return h + ':00 ' + t[1];
 		// else return t.join(' ').replace( /:\d*/, ':00' )
 	}
-	function showAddEditDialog(eventId){
+
+
+	 jQuery('body').on('shown', '#google_calendar_add_event_modal', function (e) {
+	 	jQuery("#gcal-start-date-field").datepicker(datepicker_configs);
+
+	 	typeHeader();
+
+	 	validate();
+
+	 	if(gcal.updatingEvent_id) 
+	    	gcal.renderEditForm(gcal.updatingEvent_id);
+		else { 
+			gcal.renderAddForm();
+		};
+	 });
+
+	jQuery(document).on('click', '#gcal-add-update-modal-cancel-button', function(){
+		destroyElement();
+		jQuery('.modal').modal('hide');
+	})
+
+	function destroyElement(){
+		jQuery('#gcal-start-date-field').removeClass('hasDatepicker');
+
+		jQuery("#gcal-add-event-form").data('validator', null);
+		jQuery("#gcal-add-event-form").unbind('validate');
+	}
+
+	function typeHeader(){
 		var timeList=[	'12:00 am', '12:30 am', '1:00 am', '1:30 am', '2:00 am', '2:30 am', '3:00 am', '3:30 am', '4:00 am', '4:30 am', '5:00 am', '5:30 am',
-						'6:00 am', '6:30 am', '7:00 am', '7:30 am', '8:00 am', '8:30 am', '9:00 am', '9:30 am', '10:00 am', '10:30 am', '11:00 am', '11:30 am', 
-						'12:00 pm', '12:30 pm', '1:00 pm', '1:30 pm','2:00 pm', '2:30 pm','3:00 pm', '3:30 pm','4:00 pm', '4:30 pm','5:00 pm', '5:30 pm',
-						'6:00 pm', '6:30 pm','7:00 pm', '7:30 pm','8:00 pm', '8:30 pm','9:00 pm', '9:30 pm','10:00 pm', '10:30 pm','11:00 pm', '11:30 pm',
-					];
+				'6:00 am', '6:30 am', '7:00 am', '7:30 am', '8:00 am', '8:30 am', '9:00 am', '9:30 am', '10:00 am', '10:30 am', '11:00 am', '11:30 am', 
+				'12:00 pm', '12:30 pm', '1:00 pm', '1:30 pm','2:00 pm', '2:30 pm','3:00 pm', '3:30 pm','4:00 pm', '4:30 pm','5:00 pm', '5:30 pm',
+				'6:00 pm', '6:30 pm','7:00 pm', '7:30 pm','8:00 pm', '8:30 pm','9:00 pm', '9:30 pm','10:00 pm', '10:30 pm','11:00 pm', '11:30 pm',
+			];
+
+		jQuery("#gcal-start-time-field, #gcal-end-time-field").typeahead({
+			source: timeList,
+			render: timeList,
+			items: 48,
+			scrollable: true,
+			matcher: function(item){
+				if( /.*\d.*/ig.match(item) ) return true;
+				return false;
+			},
+			sorter: function(items){
+				items.sort(function(a, b){
+					a_arr = a.split(':');
+					hrs = parseInt(a_arr[0]);
+					mins = parseInt(a_arr[1]);
+					isAM = (a.indexOf("am")!=(-1));
+					if(hrs == 12) { if(isAM) hrs = 0; }
+					else if(!isAM)  hrs += 12;
+					x = hrs*60 + mins;
+					b_arr = b.split(':');									
+					hrs = parseInt(b_arr[0]);
+					mins = parseInt(b_arr[1]);
+					isAM = (b.indexOf("am")!=(-1));
+					if(hrs == 12){ if(isAM) hrs = 0; }
+					else if(!isAM) hrs += 12;
+					y = hrs*60 + mins;
+					return x-y;
+				});
+				return items;
+			},
+			highlighter: function(item){
+			    var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+			    return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+			        return '<span>' + match + '</span>';
+		      	});
+			},
+			onComplete: function(){
+				this.$menu.find("li.active").removeClass('active');
+				best_match = findNearestHalfHour(this.query, (this.$element.attr('id')=='gcal-end-time-field') );
+
+				gcal.menuItem = this.$menu;
+				if(best_match){
+
+					setTimeout(function(){
+						target = this.$menu.find('li[data-value="' + best_match + '"]').addClass('active');
+						target.parent().scrollTop(target.position().top+target.parent().scrollTop())
+
+					}.bind(this), 20);
+					// if(target) 
+					// jQuery(target.parentNode).scrollTop(jQuery(target.parentNode).scrollTop() + jQuery(target).offset().top);
+
+				} else {
+					this.hide();
+				}
+			}
+		});
+	}
+
+	function validate(){
+		jQuery("#gcal-add-event-form").validate({
+			submitHandler: function(){gcal.submitForm();},
+			onsubmit: true,
+			errorLabelContainer: "#gcal-validation-errors",
+			errorContainer: "#gcal-validation-errors ul",
+			wrapper: "li",
+			messages: {
+				'gcal-event-summary': {required: "Please specify title of the event."},
+				'gcal-start-time-field': {
+					required: "Event start time is required.",
+					'time-12': "Invalid start time."
+			    },
+			    'gcal-end-time-field': {
+					required: "Event end time is required.",
+					'time-12': "Invalid end time."
+			    },
+			    'gcal-calendar-list': {
+			    	required: "Invalid calendar. Please wait for list of calendars to load and select one."
+			    }
+		 	},
+		 	onfocusout: false
+		});
+
+	}
+
+	function showAddEditDialog(eventId){
+
 
 		gcal.updatingEvent_id = eventId;
 		bodyScrollTop = jQuery('body').scrollTop();
 		jQuery('#gcal-validation-errors').hide();
-		jQuery('#google_calendar_add_event_modal').dialog({ 
-	      show: {	effect: 'fade', complete: function(){
-	      				// jQuery('body').scrollTop(bodyScrollTop);
-	      				// jQuery('#google_calendar_add_event_modal').parent().position({top: 0});
-			      		jQuery("#gcal-start-time-field, #gcal-end-time-field").typeahead({
-							source: timeList,
-							items: 48,
-							scrollable: true,
-							matcher: function(item){
-								if( /.*\d.*/ig.match(item) ) return true;
-								return false;
-							},
-							sorter: function(items){
-								items.sort(function(a, b){
-									a_arr = a.split(':');
-									hrs = parseInt(a_arr[0]);
-									mins = parseInt(a_arr[1]);
-									isAM = (a.indexOf("am")!=(-1));
-									if(hrs == 12) { if(isAM) hrs = 0; }
-									else if(!isAM)  hrs += 12;
-									x = hrs*60 + mins;
-									b_arr = b.split(':');									
-									hrs = parseInt(b_arr[0]);
-									mins = parseInt(b_arr[1]);
-									isAM = (b.indexOf("am")!=(-1));
-									if(hrs == 12){ if(isAM) hrs = 0; }
-									else if(!isAM) hrs += 12;
-									y = hrs*60 + mins;
-									return x-y;
-								});
-								return items;
-							},
-							highlighter: function(item){
-							    var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
-							    return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
-							        return '<span>' + match + '</span>';
-						      	});
-							},
-							onComplete: function(){
-								this.$menu.find("li.active").removeClass('active');
-								best_match = findNearestHalfHour(this.query, (this.$element.attr('id')=='gcal-end-time-field') );
+	    
+		var data = {
+            targetId: "#google_calendar_add_event_modal",
+            title: eventId ? "Edit event" : "Add event",
+            width: "500",
+            backdrop: "static",
+            templateFooter: false,
+            destroyOnClose: true
+        }
 
-								gcal.menuItem = this.$menu;
-								if(best_match){
-
-									setTimeout(function(){
-										target = this.$menu.find('li[data-value="' + best_match + '"]').addClass('active');
-										target.parent().scrollTop(target.position().top+target.parent().scrollTop())
-
-									}.bind(this), 20);
-									// if(target) 
-									// jQuery(target.parentNode).scrollTop(jQuery(target.parentNode).scrollTop() + jQuery(target).offset().top);
-
-								} else {
-									this.hide();
-								}
-							}
-						});
-						jQuery('.typeahead').css({'z-index': '1010', 'overflow': 'scroll', 'max-height': '150px'});
-						jQuery('#gcal-event-summary').focus();
-						jQuery("#gcal-add-update-modal-cancel-button").click(function(){
-							jQuery("#google_calendar_add_event_modal").dialog("close");
-						}).disableSelection();
-			        }
-		  },
-	      title: eventId ? "Edit event" : "Add event", 
-	      width: '500px', height: 'auto',
-	      modal: true, resizable: false , position: 'top',
-	      beforeClose: function(evt, ui){
-	      	if(gcal.preventDialogClose) return false;
-	      	jQuery("#google_calendar_add_event_modal .gcal-custom-errors").hide();
-	      	jQuery("#gcal-start-date-field").datepicker('hide');
-	      	jQuery("#add_event_link").focus();
-	      	return true;
-	      }
-	    });
-
-	    if(eventId) 
-	    	gcal.renderEditForm(eventId);
-		else { 
-			gcal.renderAddForm();
-		};
+        jQuery.freshdialog(data);
 	}
 	function getMaxTimeToday(){
 		d = new Date();
@@ -1063,6 +1105,8 @@ jQuery(document).ready(function(){
 	});
 	// jQuery('#gcal-add-event-form').
 	
+
+
 	jQuery("#gcal-older-events-link, #gcal-older-events-arrow").click(function(e){
 		e.preventDefault();
 		animatingOldEvents = true;
@@ -1126,11 +1170,11 @@ jQuery(document).ready(function(){
 		}	
 	};
 	
-	jQuery("#gcal-start-time-field, #gcal-end-time-field").click(function(){
+	jQuery(document).on('click', "#gcal-start-time-field, #gcal-end-time-field", function(){
 		e = jQuery.Event('keyup');
 		e.which = e.code = 65;
 		jQuery(this).trigger(e);
-	}).disableSelection();
+	});
 
 
 	var date_today = new Date();
@@ -1148,10 +1192,9 @@ jQuery(document).ready(function(){
 		onSelect: function(){onStartDateTimeChanged(); jQuery('#gcal-start-time-field').focus().trigger(jQuery.Event('click'))}
 	};
 
-	var dates = jQuery("#gcal-start-date-field").datepicker(datepicker_configs);
 	gcal.duration = DEFAULT_EVENT_DURATION;
 
-	jQuery("#gcal-start-time-field, #gcal-end-time-field").change(function(){
+	jQuery(document).on('change', "#gcal-start-time-field, #gcal-end-time-field", function(){
 		var elemId = jQuery(this).attr('id');
 		var mObj = {};
 		var s = parseTimeString(jQuery(this).val(), mObj);
@@ -1186,29 +1229,6 @@ jQuery(document).ready(function(){
 		jQuery(this).trigger(e);
 	});
 
-	jQuery("#gcal-add-event-form").validate({
-		submitHandler: function(){gcal.submitForm();},
-		onsubmit: true,
-		errorLabelContainer: "#gcal-validation-errors",
-		errorContainer: "#gcal-validation-errors ul",
-		wrapper: "li",
-		messages: {
-			'gcal-event-summary': {required: "Please specify title of the event."},
-			'gcal-start-time-field': {
-				required: "Event start time is required.",
-				'time-12': "Invalid start time."
-		    },
-		    'gcal-end-time-field': {
-				required: "Event end time is required.",
-				'time-12': "Invalid end time."
-		    },
-		    'gcal-calendar-list': {
-		    	required: "Invalid calendar. Please wait for list of calendars to load and select one."
-		    }
-	 	},
-	 	onfocusout: false
-	 });
-
 
 });
 
@@ -1216,7 +1236,7 @@ if(google_calendar_options.oauth_token && google_calendar_options.oauth_token!='
 	jQuery("#gcal-email-container, #gcal-change-account-link").show();
 		
 
-jQuery("#gcal-change-account-link, #gcal-authorize-link").click(function(e){
+jQuery(document).on('click',"#gcal-change-account-link, #gcal-authorize-link", function(e){
 	jQuery.cookie('return_uri', document.location.href, {path: '/'});
 });
 /**

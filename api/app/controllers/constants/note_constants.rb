@@ -14,7 +14,7 @@ module NoteConstants
   }.freeze
   LOAD_OBJECT_EXCEPT = [:ticket_notes, :reply].freeze
 
-  FIELDS_TO_BE_STRIPPED = %w(notify_emails cc_emails bcc_emails).freeze
+  ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails cc_emails bcc_emails).freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:note, exclude: [], format: [:json, :multipart_form]].freeze

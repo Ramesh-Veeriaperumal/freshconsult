@@ -16,7 +16,7 @@ class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 22,
         update: 18,
-        index: 13,
+        index: 14,
         toggle_timer: 20,
         destroy: 18,
         ticket_time_entries: 15

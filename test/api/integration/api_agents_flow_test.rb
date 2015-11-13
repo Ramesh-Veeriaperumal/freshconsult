@@ -1,17 +1,17 @@
 require_relative '../test_helper'
 
 class ApiAgentsFlowTest < ActionDispatch::IntegrationTest
-	include Helpers::AgentsTestHelper
+  include Helpers::AgentsTestHelper
 
-	def sample_user
-		@account.all_agents.first
-	end
+  def sample_user
+    @account.all_agents.first
+  end
 
-	def request_params
-		{ id: sample_user.user.id }
-	end
+  def request_params
+    { id: sample_user.user.id }
+  end
 
-	def test_caching_user_attributes_show
+  def test_caching_user_attributes_show
     turn_on_caching
     sample_agent = sample_user
     get "/api/v2/agents/#{sample_user.user.id}", nil,  @write_headers

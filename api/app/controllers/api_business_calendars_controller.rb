@@ -6,14 +6,29 @@ class ApiBusinessCalendarsController < ApiApplicationController
     end
 
     def load_objects
-      (current_account.features_included?(:multiple_business_hours)) ? (super(scoper.order(:name))) : (Array.wrap default_business_calendar)
+      items = multiple_business_hours_enabled? ? scoper.order(:name) : [Group.default_business_calendar]
+      super(items)
     end
 
-    def default_business_calendar
-      current_account.business_calendar.default.first
+    def load_object
+      if multiple_business_hours_enabled? && !default_business_calendar?
+        super
+      elsif !default_business_calendar?
+        render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
+      end
     end
 
     def scoper
       current_account.business_calendar
+    end
+
+    def default_business_calendar?
+      return @item if defined?(@item)
+      bc = Group.default_business_calendar
+      @item = bc if params[:id] == bc.id.to_s
+    end
+
+    def multiple_business_hours_enabled?
+      Account.current.features?(:multiple_business_hours)
     end
 end

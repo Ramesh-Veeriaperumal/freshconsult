@@ -25,6 +25,7 @@ gem "activemerchant", :git => "git://github.com/Shopify/active_merchant", :tag =
 gem "acts_as_list", "0.1.4"
 gem "prototype-rails", '~> 3.2.0'
 gem "dynamic_form"
+gem 'typhoeus', '0.7.3'
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/sumakumardey/rack-ssl',:branch => 'ssl'
 gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
@@ -55,6 +56,7 @@ gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "~> 3.4.2"
+gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
 gem "omniauth-oauth"
@@ -107,6 +109,7 @@ gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.9.9.275"
 
 gem "faraday" , "0.9"
+gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.5.1"
 gem "gnip-rule", "0.4.1"
 gem "curb", "~> 0.8.5"
@@ -153,6 +156,7 @@ gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary
 gem "wicked_pdf", "~> 0.9.10"
 gem "pg"
 gem "routing-filter", "~> 0.3.1"
+gem "gemoji-parser", "~> 1.3.1"
 
 # TODO-RAILS3 need to change the assets to rails3 way
 # gem "cloudfront_asset_host", github: "freshdesk/cloudfront_asset_host", branch: :rails3upgrade

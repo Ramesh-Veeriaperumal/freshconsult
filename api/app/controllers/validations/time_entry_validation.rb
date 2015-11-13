@@ -57,6 +57,6 @@ class TimeEntryValidation < ApiValidation
     end
 
     def attributes_to_be_stripped
-      TimeEntryConstants::FIELDS_TO_BE_STRIPPED
+      TimeEntryConstants::ATTRIBUTES_TO_BE_STRIPPED
     end
 end

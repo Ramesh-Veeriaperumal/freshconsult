@@ -1,9 +1,11 @@
 class Helpdesk::SubscriptionsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
+  include Helpdesk::Permissions
 
-  before_filter :load_parent_ticket , :except => :unwatch_multiple
+  before_filter :load_parent_ticket, :verify_permission , :except => :unwatch_multiple
   before_filter :set_native_mobile, :only => [:create_watchers, :unwatch,:index]
+
   def index
     @ticket = @parent
     respond_to do |format|
@@ -78,5 +80,9 @@ class Helpdesk::SubscriptionsController < ApplicationController
     def load_parent_ticket
       @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
       raise ActiveRecord::RecordNotFound unless @parent
+    end
+
+    def verify_permission
+      verify_ticket_permission(@parent)
     end
 end

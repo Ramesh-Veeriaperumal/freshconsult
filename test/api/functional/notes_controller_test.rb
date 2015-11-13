@@ -93,14 +93,14 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_numericality_invalid
-    params_hash = { user_id: 'x' }
+    params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_create_inclusion_invalid
-    params_hash = { private: 'x', incoming: 'x' }
+    params_hash = { private: 'x', incoming: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('incoming', :data_type_mismatch, data_type: 'Boolean'),
@@ -108,7 +108,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x' }
+    params_hash = { notify_emails: 'x', attachments: 'x', body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
                 bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
@@ -116,7 +116,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_email_format_invalid
-    params_hash = { notify_emails: ['tyt@'] }
+    params_hash = { notify_emails: ['tyt@'], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', 'not_a_valid_email')])
     assert_response 400
@@ -144,8 +144,8 @@ class NotesControllerTest < ActionController::TestCase
 
   def test_create_missing_params
     post :create, construct_params({ id: ticket.display_id }, {})
-    assert_response 201
-    match_json(note_pattern({}, Helpdesk::Note.last))
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :missing_field)])
   end
 
   def test_create_returns_location_header
@@ -327,14 +327,14 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_numericality_invalid
-    params_hash = { user_id: 'x' }
+    params_hash = { user_id: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
   end
 
   def test_reply_datatype_invalid
-    params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x' }
+    params_hash = { cc_emails: 'x', attachments: 'x', bcc_emails: 'x', body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array'),
@@ -343,7 +343,7 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_reply_email_format_invalid
-    params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'] }
+    params_hash = { cc_emails: ['tyt@'], bcc_emails: ['hj#'], body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', 'not_a_valid_email'),
@@ -763,15 +763,8 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 201
   end
 
-  def test_update_with_nil_params_for_attachments
-    params_hash = { attachments: [] }
-    post :create, construct_params({ id: ticket.display_id }, params_hash)
-    match_json(note_pattern({}, Helpdesk::Note.last))
-    assert_response 201
-  end
-
   def test_create_datatype_nil_array_fields
-    params_hash = { notify_emails: [], attachments: [] }
+    params_hash = { notify_emails: [], attachments: [], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json(note_pattern({}, Helpdesk::Note.last))
     assert_response 201

@@ -3,6 +3,8 @@ Infra = YAML.load_file(File.join(Rails.root, 'config', 'infra_layer.yml'))
 if Infra['API_LAYER']
   Helpkit::Application.configure do
 
+    config.middleware.swap "Middleware::ApiThrottler", "Middleware::FdApiThrottler", :max => 1000
+
     # This middleware will attempt to return the contents of a file's body from disk in the response. 
     # If a file is not found on disk, the request will be delegated to the application stack. 
     # This middleware is commonly initialized to serve assets from a server's `public/` directory.

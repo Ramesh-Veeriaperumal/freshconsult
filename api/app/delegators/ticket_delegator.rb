@@ -10,9 +10,9 @@ class TicketDelegator < SimpleDelegator
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
   validates :custom_field,  custom_field: { custom_field:
                               {
-                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.choices_validatable_custom_fields(x) },
-                                drop_down_choices: proc { Helpers::TicketsValidationHelper.dropdown_choices_by_field_name },
-                                nested_field_choices: proc { Helpers::TicketsValidationHelper.nested_fields_choices_by_name },
+                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.custom_dropdown_fields(x) },
+                                drop_down_choices: proc { Helpers::TicketsValidationHelper.custom_dropdown_field_choices },
+                                nested_field_choices: proc { Helpers::TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required
                               }

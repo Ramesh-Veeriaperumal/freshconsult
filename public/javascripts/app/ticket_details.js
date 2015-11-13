@@ -1198,11 +1198,19 @@ var scrollToError = function(){
 		$("#send_and_set").prop('disabled', true);
 
 		if(postProcess) {
-			$('.ticket_details .source-badge-wrap .source')
+			var source_badge = $('.ticket_details .source-badge-wrap .source')
+			var is_refreshed = true;
+			if(source_badge.hasClass("collision_refresh")){
+				is_refreshed = false;
+			}
+			source_badge
 					.attr('class','')
 					.addClass('source ')
 					.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
 					.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
+			if(!is_refreshed){
+				source_badge.addClass('collision_refresh');
+			}
 
 			$('.ticket_details .source-badge-wrap .source span')
 					.attr('class','')

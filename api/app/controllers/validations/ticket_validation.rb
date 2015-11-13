@@ -9,7 +9,7 @@ class TicketValidation < ApiValidation
   alias_attribute :responder_id, :agent
 
   # Default fields validation
-  validates :source, :ticket_type, :description, :status, :subject, :priority, :product, :agent, :group, default_field:
+  validates :source, :ticket_type, :status, :subject, :priority, :product, :agent, :group, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -19,6 +19,7 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
+  validates :description, required: true
 
   # Due by and First response due by validations
   validates :fr_due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_fr_due_by?
@@ -50,7 +51,7 @@ class TicketValidation < ApiValidation
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.data_type_validatable_custom_fields(x) },
+                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param
@@ -60,7 +61,6 @@ class TicketValidation < ApiValidation
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
-    @cc_emails = item.cc_email[:cc_emails] if item
     super(request_params, item, allow_string_param)
     @description = request_params[:description_html] if should_set_description?(request_params)
     check_params_set(request_params, item)
@@ -127,7 +127,7 @@ class TicketValidation < ApiValidation
   end
 
   def attributes_to_be_stripped
-    ApiTicketConstants::FIELDS_TO_BE_STRIPPED
+    ApiTicketConstants::ATTRIBUTES_TO_BE_STRIPPED
   end
 
   def required_default_fields

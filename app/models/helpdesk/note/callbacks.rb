@@ -190,20 +190,12 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
-      if redis_key_exists?(UPDATE_TICKET_STATES_VIA_SIDEKIQ)
-        # moved from resque to sidekiq
-        user_id = User.current.id if User.current
-        Tickets::UpdateTicketStatesWorker.perform_async(
-              { :id => id, :model_changes => @model_changes,
-                :freshdesk_webhook => freshdesk_webhook?,
-                :current_user_id =>  user_id }
-              ) unless zendesk_import?
-      else
-        Resque.enqueue(Helpdesk::UpdateTicketStates,
-                      { :id => id, :model_changes => @model_changes,
-                        :freshdesk_webhook => freshdesk_webhook?
-                      }) unless zendesk_import?
-      end
+      user_id = User.current.id if User.current
+      Tickets::UpdateTicketStatesWorker.perform_async(
+            { :id => id, :model_changes => @model_changes,
+              :freshdesk_webhook => freshdesk_webhook?,
+              :current_user_id =>  user_id }
+            ) unless zendesk_import?
     end
 
 	def push_mobile_notification
@@ -246,7 +238,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     ##### ****** Methods related to reports starts here ******* #####
     def update_note_count_for_reports
-      return unless notable
+      return if notable.blank? || notable.frozen? # Added frozen check because when ticket is destoyed, note gets destroyed and notable will be frozen. So cant modify schema_less_ticket.
       action = model_transaction_action
       return if action == "update" # Dont reduce the count when the note is deleted from UI (Soft delete)
       return if action == "destroy" && notable.archive # Dont reduce the count if destroy happens because its moved to archive

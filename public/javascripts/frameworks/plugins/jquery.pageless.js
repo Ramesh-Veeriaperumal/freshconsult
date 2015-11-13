@@ -157,7 +157,6 @@
 
   //
   function loading(bool) {
-    $(document.body).trigger('sticky_kit:recalc');
     isLoading = bool;
     if (loader) {
       if (isLoading) {
@@ -248,8 +247,6 @@
             element.append(data);
           }
           loading(false);
-          // if there is a complete callback we call it
-          $(document.body).trigger('sticky_kit:recalc');
           if (settings.complete) {
             settings.complete.call();
           }

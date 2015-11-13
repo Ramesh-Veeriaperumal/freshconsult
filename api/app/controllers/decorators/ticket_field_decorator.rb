@@ -1,9 +1,5 @@
 class TicketFieldDecorator < SimpleDelegator
   class << self
-    def get_ticket_field_choices(tf)
-      @choices = tf.field_type == 'nested_field' ? tf.formatted_nested_choices : ticket_field_choices(tf)
-    end
-
     def default_requester_field(tf)
       tf.field_type == 'default_requester'
     end
@@ -16,16 +12,16 @@ class TicketFieldDecorator < SimpleDelegator
       tf.field_options.try(:[], 'portalcc_to')
     end
 
-    private
-
-      def ticket_field_choices(tf)
-        case tf.field_type
+    def ticket_field_choices(tf)
+      case tf.field_type
         when 'custom_dropdown'
           tf.picklist_values.map(&:value)
         when 'default_priority'
           Hash[TicketConstants.priority_names]
         when 'default_source'
           Hash[TicketConstants.source_names]
+        when 'nested_field'
+          tf.formatted_nested_choices
         when 'default_status'
           api_statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current).map do|status|
             [
@@ -44,7 +40,7 @@ class TicketFieldDecorator < SimpleDelegator
           Hash[Account.current.products_from_cache.map { |e| [CGI.escapeHTML(e.name), e.id] }]
         else
           []
-        end
       end
+    end
   end
 end

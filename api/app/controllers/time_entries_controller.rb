@@ -1,5 +1,4 @@
 class TimeEntriesController < ApiApplicationController
-  include Concerns::TimeSheetConcern
   include TicketConcern
 
   def create
@@ -11,7 +10,9 @@ class TimeEntriesController < ApiApplicationController
 
   def update
     user_stop_timer =  params[cname].key?(:user_id) ? params[cname][:user_id] : @item.user_id
-    # Should stop timer if the timer is on or if different agent_id is set as part of update
+    # Should stop other timers for the above user_stop_timer
+    # if the timer is on for this time_entry in this update call
+    # or this user_stop_timer is newly assigned to this time_entry in this update call
     update_running_timer user_stop_timer if should_stop_running_timer?
     super
   end
@@ -48,7 +49,7 @@ class TimeEntriesController < ApiApplicationController
 
     def fetch_changed_attributes(timer_running)
       if timer_running
-        { time_spent: calculate_time_spent(@item) }
+        { time_spent: @item.calculate_time_spent }
       else
         # If any validation is introduced in the TimeSheet model,
         # update_running_timer and @item.update_attributes should be wrapped in a transaction.
@@ -128,13 +129,12 @@ class TimeEntriesController < ApiApplicationController
 
     def set_time_spent(params)
       params[cname][:time_spent] = convert_duration(params[cname][:time_spent]) if create? || params[cname].key?(:time_spent)
-      params[cname][:time_spent] ||= total_running_time if update? && params[cname][:timer_running] == false
+      params[cname][:time_spent] ||= @item.calculate_time_spent if update? && params[cname][:timer_running] == false
     end
 
     def handle_existing_timer_running
       # Needed in validation to validate start_time based on timer_running attribute in update action.
       timer_running = params[cname].key?(:timer_running) ? params[cname][:timer_running] : @item.timer_running
-      timer_running
     end
 
     def handle_default_timer_running
@@ -151,18 +151,11 @@ class TimeEntriesController < ApiApplicationController
       return true if params[cname][:timer_running] && !@item.timer_running
     end
 
-    def total_running_time
-      time = @item.time_spent.to_i
-      time += (Time.zone.now - @item.start_time).abs.round if @item.start_time
-      time
-    end
-
     def convert_duration(time_spent)
       # Convert hh:mm string to seconds. Say 00:02 string to 120 seconds.
       # Preferring naive conversion because of performance.
       time_split = time_spent.to_s.split(':')
       time = (time_split.first.to_i.hours + time_split.last.to_i.minutes).to_i
-      time
     end
 
     def check_privilege
@@ -178,7 +171,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def update_running_timer(user_id)
-      @time_cleared = current_account.time_sheets.where('user_id= (?) AND timer_running= true', user_id)
-      @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: calculate_time_spent(tc)) }
+      @time_cleared = current_account.time_sheets.where(user_id: user_id, timer_running: true)
+      @time_cleared.each { |tc| tc.update_attributes(timer_running: false, time_spent: tc.calculate_time_spent) }
     end
 end

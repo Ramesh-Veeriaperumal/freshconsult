@@ -8,7 +8,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def get_user
-    @account.all_contacts.where(deleted: false).first
+    @account.all_contacts.where(deleted: false, blocked: false).first
   end
 
   def get_user_with_email
@@ -350,6 +350,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { phone: '', mobile: '', twitter_id: '' }
     sample_user = get_user
     email = sample_user.email
+    sample_user.update_attribute(:fb_profile_id, nil)
     sample_user.update_attribute(:email, nil)
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
@@ -483,6 +484,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, email)
   end
 
+  def test_update_user_created_with_fb_id
+    sample_user = get_user
+    params_hash = { mobile: '', email: '', phone: '', twitter_id: '', fb_profile_id: 'profile_id_1' }
+    sample_user.update_attributes(params_hash)
+    email = Faker::Internet.email
+    put :update, construct_params({ id: sample_user.id }, name: 'sample_user', email: email)
+    assert_response 200
+    assert sample_user.reload.email == email
+    assert sample_user.reload.name == 'sample_user'
+  end
+
   # Delete user
   def test_delete_contact
     sample_user = get_user
@@ -518,11 +530,24 @@ class ApiContactsControllerTest < ActionController::TestCase
   # User Index and Filters
   def test_contact_index
     @account.all_contacts.update_all(deleted: false)
+    @account.all_contacts.update_all(blocked: false)
+    sample_user = @account.all_contacts.first
+    sample_user.update_attribute(:blocked, true)
     get :index, controller_params
     assert_response 200
-    users = @account.all_contacts.order(:name)
+    users = @account.all_contacts.select { |x| x.deleted == false && x.blocked == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
+  end
+
+  def test_contact_index_all_blocked
+    @account.all_contacts.update_all(deleted: false)
+    @account.all_contacts.update_all(blocked: true)
+    get :index, controller_params
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 0, response.size
+    @account.all_contacts.update_all(blocked: false)
   end
 
   def test_contact_filter

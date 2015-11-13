@@ -35,7 +35,7 @@ class Workers::Community::DispatchSpamDigest
 		end
 
 		def reject_blank_values(counter)
-			counter.reject { |k,v| v.zero? }
+			counter.reject { |k,v| v <= 0 }
 		end
 
 		def counters_blank(moderation_digest)

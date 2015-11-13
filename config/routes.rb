@@ -182,6 +182,10 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
+  ["github"].each do |provider|
+    match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
+  end
+
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
@@ -583,6 +587,15 @@ Helpkit::Application.routes.draw do
   match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search'
   match '/freshfone/call_history/children' => 'freshfone/call_history#children'
 
+  namespace :freshfone, :path => "phone" do 
+    resources :dashboard do
+      collection do
+        get :dashboard_stats
+        get :calls_limit_notificaiton
+      end
+    end
+  end
+  
   resources :users do
     collection do
       get :revert_identity
@@ -629,6 +642,10 @@ Helpkit::Application.routes.draw do
   resource :account_configuration
 
   namespace :integrations do
+
+    match '/service_proxy/fetch',
+      :controller => 'service_proxy', :action => 'fetch', :via => :post
+
     resources :installed_applications do
       member do
         put :install
@@ -637,6 +654,14 @@ Helpkit::Application.routes.draw do
     end
 
     resources :remote_configurations
+
+    namespace :github do
+        put :update
+        get :edit
+        get :new
+        post :install
+        post :notify
+    end
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -1542,8 +1567,10 @@ Helpkit::Application.routes.draw do
         get :update_multiple_tickets
         get :configure_export
         get :custom_view_save
-        post :assign_to_agent#TODO-RAILS3 new route
+        match :assign_to_agent#TODO-RAILS3 new route
         put :quick_assign #TODO-RAILS3 new route
+        get :bulk_scenario
+        put :execute_bulk_scenario
       end
 
       member do
@@ -2402,6 +2429,8 @@ Helpkit::Application.routes.draw do
       resources :freshfone_stats do
         collection do
           get :statistics
+          get :request_csv
+          get :request_csv_by_account
         end
       end
 

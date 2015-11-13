@@ -1,4 +1,3 @@
-
 module RabbitMq::Subscribers::Notes::AutoRefresh
   
   include RabbitMq::Constants
@@ -9,12 +8,14 @@ module RabbitMq::Subscribers::Notes::AutoRefresh
   end
 
   def mq_auto_refresh_subscriber_properties(action)
-    {}
+    { 
+      :ticket_channel => AgentCollision.ticket_view_channel(Account.current, notable.display_id),
+      :agent => User.current ? User.current.agent? : ""
+    }  
   end
 
   def mq_auto_refresh_valid(action, model)
-    #destroy_action?(action) ? false : (valid_model?(model) && account.features?(:autorefresh_node))
-    false
+    create_action?(action) ? (valid_model?(model) && Account.current.features?(:collision)) : false
   end
 
   private
@@ -24,7 +25,7 @@ module RabbitMq::Subscribers::Notes::AutoRefresh
   end
 
   def valid_model?(model)
-    ["note"].include?(model)
+    ["note"].include?(model) && notable_type == "Helpdesk::Ticket"
   end
 
 end

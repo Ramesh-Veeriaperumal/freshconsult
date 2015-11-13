@@ -17,7 +17,7 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       api_topics: 2,
 
       create: 19,
-      show: 12,
+      show: 13,
       update: 20,
       destroy: 27,
       follow: 20,

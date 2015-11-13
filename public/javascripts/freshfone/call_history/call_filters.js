@@ -133,8 +133,8 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           var condition = (result.user_result == undefined) ? 'caller_number_id' : 'customer_id' 
           self.$callerId_ffitem.attr('condition', condition);
           self.$callerId_ffitem.attr('value',result.id);
-          self.$callerId_ffitem.data('value',result.value);
-          return result.value;
+          self.$callerId_ffitem.data('value', escapeHtml(result.value));
+          return escapeHtml(result.value);
       });
     },
     bindGroupSelect2: function () {
@@ -424,7 +424,7 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
           if(userDetails && (userDetails).trim() != "") {
             userDetails = "(" + userDetails + ")" ;
           }
-          return "<b>"+ result.value + "</b><br><span class='select2_list_detail'>" + 
+          return "<b>"+ escapeHtml(result.value) + "</b><br><span class='select2_list_detail'>" + 
                   (userDetails||'') + "</span>"; 
     },
     ajaxResults: function (data, page, query) {

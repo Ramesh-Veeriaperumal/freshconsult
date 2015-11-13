@@ -64,5 +64,6 @@ class ApiValidation
   end
 
   def attributes_to_be_stripped
+    []
   end
 end

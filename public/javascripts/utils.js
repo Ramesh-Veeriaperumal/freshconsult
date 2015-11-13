@@ -323,7 +323,7 @@ function setPostParam(form, name, value){
             }
             show_hide.bind("click", function(ev){
                ev.preventDefault();
-               child_quote.toggle();
+               jQuery(this).siblings("blockquote.freshdesk_quote").toggle();
             });
             jQuery(item).removeClass("request_mail");
             jQuery(item).attr("data-quoted", true);
@@ -332,91 +332,8 @@ function setPostParam(form, name, value){
 
 active_dialog = null;
 
-// JQuery plugin that customizes the dialog widget to load an ajax infomation
+// // JQuery plugin that customizes the dialog widget to load an ajax infomation
 (function( $ ){
-   var methods = {
-        init : function( options ) {
-          return this.each(function(i, item){
-            curItem = $(item);
-            var dialog = null;
-            curItem.click(function(e){
-              e.preventDefault();
-
-              var $this = $(this),
-                  dialog = $this.data("dialog2"),
-                  width = $this.data("width") || '750px',
-                  href = $this.data('url') || this.href,
-                  params = $this.data('parameters');
-
-              if(dialog == null){
-                  dialog = $("<div class='sloading' />")
-                              .html("<br />")
-                              .dialog({  modal:true, width: width, height:'auto', position:'top',
-                                         title: this.title, resizable: false,
-                                         close: function( event, ui ) {
-
-                                          if($this.data("destroyOnClose"))
-                                              $this.dialog2("destroy")
-                                         } });
-
-                  active_dialog = dialog.load(href, params || {}, function(responseText, textStatus, XMLHttpRequest) {
-                                                   dialog.removeClass("sloading");
-                                                   dialog.css({"height": "auto"});
-                                                });
-
-                  $this.data("dialog2", dialog)
-
-               }else{
-                  dialog.dialog("open");
-               }
-            });
-          });
-        },
-        destroy : function( ) {
-          return this.each(function(){
-            var $this = $(this),
-                dialog = $this.data('dialog2');
-
-            $(window).unbind('.dialog2');
-            $this.removeData('dialog2');
-            $el = dialog.dialog("destroy")
-            $el.remove()
-
-            dialog = null;
-          })
-        },
-        show : function( ) { },
-        hide : function( ) {
-          return this.each(function(){
-            console.log('Calling hide event');
-          });
-          // console.log('Calling the hide event');
-          // console.log('Data part is : ' + $(this).data('destroy-on-close'));
-          // if ($(this).data('destroy-on-close') === true ) {
-          //   $(this).dialog('destroy');
-          // }
-        },
-        update : function( content ) { },
-        close: function (ev, ui) {
-
-          return this.each(function(){
-            console.log('Calling close event');
-          });
-        }
-   };
-
-
-
-  $.fn.dialog2 = function( method ) {
-    // Method calling logic
-    if ( methods[method] ) {
-      return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-    } else if ( typeof method === 'object' || ! method ) {
-      return methods.init.apply( this, arguments );
-    } else {
-      $.error( 'Method ' +  method + ' does not exist on jQuery.dialog2' );
-    }
-  };
 
   // usage: $('p').autoLink()
   $.fn.autoLink = function() {
@@ -471,8 +388,8 @@ active_dialog = null;
 
        $(node).bind("click", function(ev){
            ev.preventDefault();
-           elementid = id || node.getAttribute("menuid");
-           element = $(elementid).show().css("visibility", "visible");
+           var elementid = id || node.getAttribute("menuid");
+           var element = $(elementid).show().css("visibility", "visible");
            $(document).data({ "active-menu": true, "active-menu-element": element, "active-menu-parent": this });
            $(element).find("a, li").data("menu-active", true);
            $(node).addClass("selected");
@@ -527,7 +444,7 @@ active_dialog = null;
           });
         }
 
-        menu = $('#' + $(node).data('menuid'));
+        var menu = $('#' + $(node).data('menuid'));
         menu.show().css('visibility','visible');
         $(document).data({ "active-menu": true, "active-menu-element": menu, "active-menu-parent": node });
 

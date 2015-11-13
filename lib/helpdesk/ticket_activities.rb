@@ -106,6 +106,11 @@ module Helpdesk::TicketActivities
           'activities.tickets.due_date_updated.short') if self.schema_less_ticket.manual_dueby && self.due_by
     end
 
+    def create_scenario_activity(scenario_name)
+      create_activity(User.current, 'activities.tickets.execute_scenario.long', 
+        { 'scenario_name' => scenario_name }, 'activities.tickets.execute_scenario.short') if scenario_name.present?
+    end
+
     def all_activities(page = 1, no_of_records = 50)
       first_page_count = 3
       if page.blank? or page.to_i == 1

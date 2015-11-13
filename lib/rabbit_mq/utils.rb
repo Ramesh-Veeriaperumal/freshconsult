@@ -25,10 +25,10 @@ module RabbitMq::Utils
   def publish_to_rabbitmq(exchange, model, action)
     if RABBIT_MQ_ENABLED
       message = { 
-        "object"                =>  model,
-        "action"                =>  action,
-        "action_epoch"          =>  Time.zone.now.to_i,
-        "#{model}_properties"   =>  {}, 
+        "object"                    =>  model,
+        "action"                    =>  action,
+        "action_epoch"              =>  Time.zone.now.to_i,
+        "#{model}_properties"    =>  {}, 
         "subscriber_properties" =>  {}        
       }
       key = ""

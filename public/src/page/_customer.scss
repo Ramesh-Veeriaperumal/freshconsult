@@ -98,6 +98,11 @@
 		width:100%;
 		@include clear(both);
 	}
+
+	ul.agent_group_list li {
+    	clear: both;
+    	min-height: 42px;
+	}
 }
 .agent-role{
 	margin-top:30px;
@@ -123,6 +128,45 @@
          &:nth-child(odd){
            background-color:#fffad8;
          }
+      }
+      &:first-child{
+         @include border-top-left-radius(6px);
+         @include border-top-right-radius(6px);         
+      }
+      &:last-child{
+        border:0;
+      }
+      &:nth-child(odd){
+        background-color: #fbfbfb;
+      }
+      .checkbox input[type="checkbox"]{
+        margin-top: 2px;
+      }
+      label {
+        cursor: pointer;
+      }
+    }
+    
+  }
+}
+
+.agent-group-modal {
+  ul {
+     border:1px solid #eee;
+     @include border-radius(6px);
+     overflow-y: auto;
+     max-height: 360px;
+    li{
+      padding: 10px 0px 3px 10px;
+      border-bottom: 1px solid #eee;
+      &.selected_to_yellow {
+        background-color:#fffad8;
+         &:nth-child(odd){
+           background-color:#fffad8;
+         }
+      }
+      &:hover{
+      	cursor: pointer;
       }
       &:first-child{
          @include border-top-left-radius(6px);

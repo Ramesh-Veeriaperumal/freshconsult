@@ -395,7 +395,7 @@ ol, ul, li{
 		@include float(left);
 		@include margin-right(6px);
 
-		#spamicon img{ display: none; }
+		.spamicon img{ display: none; }
 		& > .btn { @include margin-right(0); }
 		.btn { padding: 4px 12px; }
 	}
@@ -2069,6 +2069,10 @@ ol, ul, li{
 			.customSelect, select, .select2-container{
 				width: 310px;
 			}
+			label.error {
+				width: 310px;
+			}
+
 		}
 
 		.chzn-container-single .chzn-single {

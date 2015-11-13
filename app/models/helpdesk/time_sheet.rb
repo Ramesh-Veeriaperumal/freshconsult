@@ -14,6 +14,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to :user
   belongs_to_account
   
+  # if any validation is introduced, update_running_timer in api/time_entries_controller should also be changed accordingly.
   before_validation :set_default_values 
 
   after_create :create_new_activity
@@ -24,7 +25,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable'
-    
+
+  has_many :linked_applications, :through => :integrated_resources,
+           :source => :installed_application
+
   scope :timer_active , :conditions =>["timer_running=?" , true]
 
   scope :created_at_inside, lambda { |start, stop|
@@ -163,16 +167,17 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     }
   end
 
+  # Used by API v2
   def self.permissible_ticket_conditions(user)
     # Not spammed tickets only
-    ticket_conditions = ["`helpdesk_tickets`.spam =0"]
+    ticket_conditions = "`helpdesk_tickets`.spam =0"
 
     # get permissible tickets for the user.
-    conditions = Helpdesk::Ticket.agent_permission(user) if user.agent?
+    conditions =  user.agent? ? Helpdesk::Ticket.agent_permission(user) : [ "`helpdesk_tickets`.requester_id=?", user.id ]
 
-    # merge above two conditions to one.
-    ticket_conditions = [(ticket_conditions | conditions.take(1)).join(" AND ")].concat(conditions.drop(1)) if conditions.present?
-    ticket_conditions
+    # Merge above two conditions.
+    conditions[0] = conditions.present? ? "#{ticket_conditions} AND #{conditions[0]}"  : ticket_conditions 
+    conditions
   end
 
   def hours 
@@ -265,15 +270,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       xml.tag!(:contact_email,workable.requester.email)
     end
   end
+
+
+  def calculate_time_spent
+    time = time_spent.to_i
+    time += (Time.zone.now.to_time - start_time.to_time).abs.round if start_time
+    time
+  end
   
   private
-  
-   def calculate_time_spent
-    to_time = Time.zone.now.to_time
-    from_time = start_time.to_time 
-    running_time =  ((to_time - from_time).abs).round 
-    return (time_spent + running_time)
-   end
 
   def update_timer_activity
       if timer_running

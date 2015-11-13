@@ -36,6 +36,9 @@
 								item: ui.item.option
 							});
 						},
+						open: function(event, ui){
+			            	$(".ui-menu").css({'display':'block', 'z-index': 10});
+			            },
 						change: function( event, ui ) {
 							if ( !ui.item ) {
 								var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
@@ -58,9 +61,9 @@
 					})
 					.addClass( "ui-widget ui-widget-content ui-corner-left" );
 
-				input.data( "autocomplete" )._renderItem = function( ul, item ) {
+				input.data( "instance" )._renderItem = function( ul, item ) {
 					return $( "<li></li>" )
-						.data( "item.autocomplete", item )
+						.data( "autocomplete-item", item )
 						.append( "<a>" + item.label + "</a>" )
 						.appendTo( ul );
 				};
