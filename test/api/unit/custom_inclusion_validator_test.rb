@@ -22,7 +22,7 @@ class CustomInclusionValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ range_attr: :not_included }, errors)
-    assert_equal({ attribute1: { list: 'a,b,c,d' } }, error_options)
+    assert_equal({ range_attr: { list: 'a..d' } }, error_options)
   end
 
   def test_custom_message

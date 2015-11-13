@@ -560,6 +560,9 @@ GEM
     fuubar (2.0.0)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
+    gemoji (2.1.0)
+    gemoji-parser (1.3.1)
+      gemoji (>= 2.1.0)
     global_phone (1.0.1)
     gnip-rule (0.4.1)
       json (~> 1.8)
@@ -1041,6 +1044,7 @@ DEPENDENCIES
   forgery (= 0.5.0)
   freshdesk_authority!
   fuubar
+  gemoji-parser (~> 1.3.1)
   global_phone
   gnip!
   gnip-rule (= 0.4.1)

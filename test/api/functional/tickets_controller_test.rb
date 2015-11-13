@@ -1108,7 +1108,7 @@ class TicketsControllerTest < ActionController::TestCase
     due_by = 30.days.since.utc.iso8601
     t.update_column(:due_by, due_by)
     fr_due_by = 31.days.since.utc.iso8601
-    params = ticket_params_hash.except(:due_by).merge(fr_due_by: fr_due_by)
+    params = update_ticket_params_hash.except(:due_by).merge(fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.id }, params)
     match_json([bad_request_error_pattern('fr_due_by', 'lt_due_by')])
     assert_response 400
@@ -1118,7 +1118,7 @@ class TicketsControllerTest < ActionController::TestCase
     due_by = 30.days.since.utc.iso8601
     fr_due_by = 31.days.since.utc.iso8601
     t.update_column(:frDueBy, fr_due_by)
-    params = ticket_params_hash.except(:fr_due_by).merge(due_by: due_by)
+    params = update_ticket_params_hash.except(:fr_due_by).merge(due_by: due_by)
     put :update, construct_params({ id: t.id }, params)
     match_json([bad_request_error_pattern('due_by', 'lt_due_by')])
     assert_response 400

@@ -421,7 +421,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { company_id: 10_000 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     sample_user.update_attribute(:company_id, nil)
-    match_json(contact_pattern(sample_user.reload))
+    match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
     assert_equal 10_000, sample_user.reload.company_id
   end
