@@ -86,7 +86,8 @@ class Freshfone::Call < ActiveRecord::Base
   CALL_ABANDON_TYPE = [
     [:ringing_abandon, 'Abandon (Ringing)', 0],
     [:ivr_abandon, 'Abandon (IVR)', 1],
-    [:queue_abandon, 'Abandon (Queue)', 2]
+    [:queue_abandon, 'Abandon (Queue)', 2],
+    [:missed, 'Missed', 3]
   ]
   CALL_ABANDON_TYPE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[0], i[2]] }.flatten]
   CALL_ABANDON_TYPE_REVERSE_HASH = Hash[*CALL_ABANDON_TYPE.map { |i| [i[2], i[0]] }.flatten]
@@ -498,6 +499,14 @@ class Freshfone::Call < ActiveRecord::Base
     return self unless (has_children? && onhold?)
     child_call = children.last
     child_call.canceled? ?  self : child_call
+  end
+
+  def abandoned_call?
+    abandon_state.present? && (abandon_state != CALL_ABANDON_TYPE_HASH[:missed])
+  end
+
+  def update_missed_abandon_status
+    update_abandon_state(CALL_ABANDON_TYPE_HASH[:missed])
   end
 
   private

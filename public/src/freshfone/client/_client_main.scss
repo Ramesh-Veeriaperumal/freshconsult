@@ -105,7 +105,6 @@
 .freshfone_realtime {
 	overflow: hidden;
   	min-height: 51px;
-  	padding-bottom: 6px;
 	.freshfone_dashboard_cells, .available_agents_cells {
 		width: 128px;
 		@include box-sizing(border-box);
@@ -133,7 +132,7 @@
 			display: inline-block;
 			padding-left: 13px;
 			height: 100%;
-			border-left: 1px #aaa solid;
+			border-left: 1px rgba(255, 255, 255, 0.3) solid;
 		}
 	}
 
@@ -141,13 +140,10 @@
 .dashboard_call_history_link{
 	display: inline-block;
 	@include box-sizing(border-box);
-	height: 30px;
 	width: 257px;
-	padding: 7px 9px;
-
+	padding: 10px;
 	background-color: #E7E7E7;
 	color: $dashboard-cells-header;
-	margin-top: 1px;
 	&:after {
 		content:"";
 		@include triangle(right, $dashboard-right-arrow, 4px);

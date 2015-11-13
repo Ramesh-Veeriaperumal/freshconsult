@@ -115,7 +115,7 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def abandon_status_or_missed(call)
-		if call.abandon_state.present?
+		if call.abandoned_call?
 			status = Freshfone::Call::CALL_ABANDON_TYPE_REVERSE_HASH[call.abandon_state]
 			t("freshfone.call_status.#{status}") 
 		else
