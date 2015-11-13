@@ -1475,7 +1475,7 @@ module ApplicationHelper
 	end
 
   def abandon_or_missed_call_icon(call)
-    call.abandon_state.present? ? "ficon-abandoned-call" : "incoming_missed_call_icon"
+    call.abandoned_call? ? "ficon-abandoned-call" : "incoming_missed_call_icon"
   end
 # helpers for fresfone callable links -- ends
 

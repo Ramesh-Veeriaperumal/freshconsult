@@ -16,7 +16,12 @@
 </td>
 <td class="user-profile span3">
 	<div ><img src="<%=(window._.isEmpty(modelJson.agent_id) )? "/images/fillers/profile_blank_thumb.gif" : "/users/"+modelJson.agent_id+"/profile_image"%>"></div>
-	<% var widgetName = modelJson.widget_id ? window.liveChat.widgetList[modelJson.widget_id]: window.CURRENT_ACCOUNT.name %> 
+	<% 
+	  	var widgetName = window.CURRENT_ACCOUNT.name;
+	  	if(modelJson.widget_id && window.liveChat.widgetList[modelJson.widget_id]){
+	  		widgetName = window.liveChat.widgetList[modelJson.widget_id];
+	  	}
+  %> 
 	<%if(modelJson.missed === true ) { %>
 			<strong class="text-wrap tooltip" data-original-title="<%=(widgetName.length > 15) ? widgetName : '' %>" > <%=widgetName%></strong>
 	<% } else {%> 

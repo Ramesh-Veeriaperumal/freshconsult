@@ -26,7 +26,6 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
 
   def initiate_queue
-    return non_availability if queue_overloaded? or queue_disabled?
     telephony.enqueue(current_account.name, enqueue_url, quit_queue_url)
   end
 
@@ -226,12 +225,6 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
       sid  = call_sid || params[:CallSid]
       wait = incoming_wait == true ? "_wait" : ""
       "Room_#{current_account.id}_#{sid}#{wait}"
-    end
-
-    def queue_overloaded?
-      queue_sid = current_account.freshfone_account.queue
-      queue = current_account.freshfone_subaccount.queues.get(queue_sid)
-      queue.present? and (queue.current_size > max_queue_size)
     end
 
     def prepare_transfer_options(transfer_options) #For hold

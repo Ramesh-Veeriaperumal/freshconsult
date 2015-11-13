@@ -28,6 +28,23 @@ RSpec.describe Solution::ArticlesController do
     expected.should be(true)
     result["article"]["status"].should be_eql(2)
   end
+
+  it "should be able to create a solution article with default status and art_type values, when status is not passed in params" do
+    params =     {
+      "solution_article"=>
+        {
+          "title"=>Faker::Lorem.sentence(2), 
+          "description"=>Faker::Lorem.sentence(3), 
+          "folder_id"=> @solution_folder.id
+        }
+    }
+    post :create, params.merge!(:category_id=>@solution_category.id,:folder_id=>@solution_folder.id, 
+      :tags => {:name => "new"},:format => 'json'), :content_type => 'application/json'
+    result = parse_json(response)
+    result["article"]["status"].should be_eql(2)
+    result["article"]["art_type"].should be_eql(1)
+  end
+
   it "should be able to update a solution article" do
     params = article_api_params
     @test_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", 
