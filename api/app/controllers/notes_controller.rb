@@ -107,7 +107,7 @@ class NotesController < ApiApplicationController
     end
 
     def load_object
-      super scoper.visible
+      super scoper.visible.exclude_source('meta')
     end
 
     def scoper

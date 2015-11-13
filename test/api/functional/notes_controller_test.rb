@@ -580,16 +580,22 @@ class NotesControllerTest < ActionController::TestCase
     assert Helpdesk::Note.find(n.id).deleted == true
   end
 
+  def test_destroy_meta_note
+    n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 4)
+    delete :destroy, construct_params(id: n.id)
+    assert_response 404
+  end
+
   def test_destroy_invalid_id
     delete :destroy, construct_params(id: 'x')
-    assert_response :missing
+    assert_response 404
   end
 
   def test_detroy_deleted
     n = note
     n.update_column(:deleted, true)
     delete :destroy, construct_params(id: n.id)
-    assert_response :missing
+    assert_response 404
     n.update_column(:deleted, false)
   end
 
