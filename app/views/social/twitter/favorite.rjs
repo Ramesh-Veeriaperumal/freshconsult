@@ -14,7 +14,7 @@ if @social_error_msg.nil?
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('shr-fav-btn')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('unfav-twt')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').removeClass('fav-twt')"
-  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').addClass('is-active')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').addClass('is-active')"
 else
   page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.not-shr-fav-btn i').css('opacity','1')"

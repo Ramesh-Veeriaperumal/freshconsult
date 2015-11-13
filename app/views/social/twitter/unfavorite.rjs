@@ -15,7 +15,7 @@ if @social_error_msg.nil? or @social_error_msg == "#{I18n.t('social.streams.twit
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').addClass('fav')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').addClass('fav-twt')"
   page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').removeClass('unfav-twt')"
-  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.unfav-twt').removeClass('is-active')"
+  page << "jQuery('#conv_div_#{@feed_id} .icon-lst a.fav-twt').removeClass('is-active')"
 else
   page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn').removeClass('sloading loading-tiny loading-align')"
   page << "jQuery('#tweet_div_#{@feed_id}  a.shr-fav-btn i').css('opacity','1')"
