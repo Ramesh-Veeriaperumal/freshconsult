@@ -43,7 +43,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     tweet = account.tweets.find_by_tweet_id(self.feed_id)
     if tweet
       notable = tweet.tweetable
-      user  = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
       update_fd_link(self.stream_id, self.feed_id, notable, user)
       return notable
     end
@@ -51,7 +51,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     reply_tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless reply_tweet.blank?
       ticket  = reply_tweet.get_ticket
-      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+      user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
       if ticket
         notable  = add_as_note(feed_obj, handle, :mention, ticket, user, options)
       else 
@@ -61,7 +61,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
       
     else
       if options[:convert]
-        user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
         notable = add_as_ticket(feed_obj, handle, :mention, options) 
       end
     end
