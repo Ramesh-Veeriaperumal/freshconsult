@@ -624,35 +624,37 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    get "/api/v2/tickets/#{id}?include=notes", nil, @headers
+    skip_bullet {get "/api/v2/tickets/#{id}?include=notes", nil, @headers}
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
   end
 
   def test_skipped_subdomains
+    ShardMapping.any_instance.stubs(:account_id).returns(@account_id)
     old_api_consumed_limit = get_key(api_key).to_i
-    get "/groups.json", nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
+    get '/groups.json', nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
     api_consumed_limit = get_key(api_key).to_i
 
     assert_response 404
     assert_equal old_api_consumed_limit, api_consumed_limit
 
     old_api_v2_consumed_limit = get_key(v2_api_key).to_i
-    get "api/discussions/categories.json", nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
+    get 'api/discussions/categories.json', nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
     api_v2_consumed_limit = get_key(v2_api_key).to_i
     assert_response 404
     assert_equal old_api_v2_consumed_limit + 1, api_v2_consumed_limit
 
-    get "api/discussions/categories.json", nil, @headers.merge('HTTP_HOST' => 'billing.freshdesk.com')
+    get 'api/discussions/categories.json', nil, @headers.merge('HTTP_HOST' => 'billing.freshdesk.com')
     new_api_v2_consumed_limit = get_key(v2_api_key).to_i
     assert_response 404
     assert_equal api_v2_consumed_limit, new_api_v2_consumed_limit
+    ShardMapping.unstub(:account_id)
   end
 
   def test_shard_blocked_response
     ShardMapping.any_instance.stubs(:not_found?).returns(true)
-    get "api/discussions/categories", nil, @headers
+    get 'api/discussions/categories', nil, @headers
     assert_response 404
     assert_equal ' ', @response.body
     ShardMapping.any_instance.unstub(:not_found?)

@@ -19,28 +19,38 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_presence_item_valid
+    account = mock("account")
+    Account.stubs(:current).returns(account)
+    account.stubs(:features?).returns(true)
     item = Post.new(body_html: 'test')
     controller_params = {}
     post = ApiDiscussions::PostValidation.new(controller_params, item)
+    post.valid?
     error = post.errors.full_messages
     refute error.include?("Message html can't be blank")
+    Account.unstub(:current)
   end
 
   def test_numericality_item_valid
+    account = mock("account")
+    Account.stubs(:current).returns(account)
+    account.stubs(:features?).returns(true)
     controller_params = {}
     item = Post.new('user_id' => 2)
     item.topic_id = 'ewrer'
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
-    refute item.valid?(:update)
+    refute topic.valid?(:update)
     error = topic.errors.full_messages
     refute error.include?('Topic data_type_mismatch')
     refute error.include?('User is not a number')
+    Account.unstub(:current)
   end
 
   def test_inclusion_item_valid
     controller_params = {}
     item = Post.new('answer' => '1')
     topic = ApiDiscussions::PostValidation.new(controller_params, item)
+    topic.valid?
     error = topic.errors.full_messages
     refute error.include?('Answer data_type_mismatch')
   end
