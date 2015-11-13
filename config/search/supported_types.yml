@@ -1,51 +1,37 @@
----
-user:
-  :boost_list:
-  - name
-  - email
-  - job_title
-  - phone
-  - mobile
-  - twitter_id
-  - description
-  - address
-  - tags.name
-  - user_emails.email
+--- 
+ticket: 
+  :boost_list: 
+    :ticket: 1
+  :index_prefix: tickets_%{index_suffix}
+note: 
+  :boost_list: 
+    :note: 1
+  :index_prefix: notes_%{index_suffix}
+user: 
+  :boost_list: 
+    :user: 1
   :index_prefix: users_%{index_suffix}
-company:
-  :boost_list:
-  - name
-  - description
-  - note
-  - domains
-  :index_prefix: companies_%{index_suffix}
-solution_article:
-  :boost_list:
-  - title
-  - description
-  - desc_un_html
-  :index_prefix: solution_articles_%{index_suffix}
-topic:
-  :boost_list:
-  - title
-  - posts.body
-  - replied_by
+topic: 
+  :boost_list: 
+    :topic: 1
   :index_prefix: topics_%{index_suffix}
-helpdesk_tag:
-  :boost_list:
-  - name
-  :index_prefix: helpdesk_tags_%{index_suffix}
-freshfone_caller:
-  :boost_list:
-  - number
-  :index_prefix: freshfone_callers_%{index_suffix}
-admin_canned_response:
-  :boost_list:
-  - title
-  - content
-  :index_prefix: admin_canned_responses_%{index_suffix}
-scenario_automation:
-  :boost_list:
-  - name
-  - description
-  :index_prefix: scenario_automations_%{index_suffix}
+article: 
+  :boost_list: 
+    :article: 1
+  :index_prefix: articles_%{index_suffix}
+company: 
+  :boost_list: 
+    :company: 1
+  :index_prefix: companies_%{index_suffix}
+tag: 
+  :boost_list: 
+    :tag: 1
+  :index_prefix: tags_%{index_suffix}
+response: 
+  :boost_list: 
+    :response: 1
+  :index_prefix: responses_%{index_suffix}
+scenarioautomation: 
+  :boost_list: 
+    :scenarioautomation: 1
+  :index_prefix: scenarioautomations_%{index_suffix}
