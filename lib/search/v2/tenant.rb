@@ -38,15 +38,22 @@ module Search
         clear_cache
         Store::Data.instance.store_config(id)
         aliases = ES_SUPPORTED_TYPES.each_pair.map do |type, params|
-          { add: {
-            index: params[:index_prefix] % { index_suffix: 'v1' }, # To-do: Get version from store
-            alias: self.alias(type),
-            routing: id,
-            filter: { term: { account_id: id } }
-          }
+          {
+            add: (Hash.new.tap do |alias_props|
+              alias_props[:index]           = params[:index_prefix] % { index_suffix: 'v1' } # To-do: Get version from store
+              alias_props[:alias]           = self.alias(type)
+              alias_props[:search_routing]  = id unless params[:custom_routing]
+              alias_props[:filter]          = ({ bool: {
+                                                  must: [
+                                                    { type: { value: type }},
+                                                    { term: { account_id: id }}
+                                                  ]
+                                                }})
+            end)
           }
         end
-        Typhoeus.post([home_cluster, '_aliases'].join('/'), body: ({ actions: aliases }.to_json))
+
+        Utils::EsClient.new(:post, [home_cluster, '_aliases'].join('/'), ({ actions: aliases }.to_json)).response
       end
 
       def rollback
@@ -57,7 +64,9 @@ module Search
           }
           }
         end
-        Typhoeus.post([home_cluster, '_aliases'].join('/'), body: ({ actions: aliases }.to_json))
+        
+        Utils::EsClient.new(:post, [home_cluster, '_aliases'].join('/'), ({ actions: aliases }.to_json)).response
+        
         clear_cache
         Store::Data.instance.remove_config(id)
       end

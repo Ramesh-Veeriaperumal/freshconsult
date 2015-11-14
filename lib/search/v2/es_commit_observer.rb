@@ -36,13 +36,12 @@ module Search
           #
           def update_search
             SearchV2::IndexOperations::DocumentAdd.perform_async({
-              :type         => self.class.to_s.demodulize.downcase,
-              :account_id   => self.account_id,
-              :document_id  => self.id,
-              :klass_name   => self.class.to_s,
-              :version      => Search::Utils.es_version,
-              :parent_id    => (self.is_a?(Helpdesk::Note) ? self.notable_id : nil)
-            })
+              type:         self.class.to_s.demodulize.downcase,
+              account_id:   self.account_id,
+              document_id:  self.id,
+              klass_name:   self.class.to_s,
+              version:      Search::Utils.es_version,
+            }.merge(routing_values))
           end
 
           # Remove document from ES
@@ -50,10 +49,17 @@ module Search
           #
           def es_delete
             SearchV2::IndexOperations::DocumentRemove.perform_async({
-              :type         => self.class.to_s.demodulize.downcase,
-              :account_id   => self.account_id,
-              :document_id  => self.id
+              type:         self.class.to_s.demodulize.downcase,
+              account_id:   self.account_id,
+              document_id:  self.id
             })
+          end
+          
+          def routing_values
+            {
+              routing_id:   (self.is_a?(Helpdesk::Ticket) ? self.id : self.account_id),
+              parent_id:    (self.is_a?(Helpdesk::Note) ? self.notable_id : nil)
+            }
           end
       end
     end

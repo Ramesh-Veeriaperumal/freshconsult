@@ -13,9 +13,9 @@ module Search
 
       # Upsert individual records in ES
       #
-      def send_to_es(version, parent_id, payload)
+      def send_to_es(version, routing_id, parent_id, payload)
         path = @tenant.document_path(@type, @document_id)
-        path << add_params(version, parent_id)
+        path << add_params(version, routing_id, parent_id)
         
         Utils::EsClient.new(:put, path, payload).response
       end
@@ -41,12 +41,18 @@ module Search
 
         # Pass external version to ES for OCC
         # Pass parent ID to ES for children
+        # Parent ID takes precedence over routing key
         #
-        def add_params(version, parent_id)
+        def add_params(version, routing_id, parent_id)
           es_query_params = Hash.new.tap do |es_params|
             es_params[:version_type]  = 'external'
             es_params[:version]       = version
-            es_params[:parent]        = parent_id if parent_id
+            
+            if parent_id
+              es_params[:parent]        = parent_id
+            else
+              es_params[:routing]       = routing_id
+            end
           end
           
           "?#{es_query_params.to_query}"

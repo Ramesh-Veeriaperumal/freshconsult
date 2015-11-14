@@ -21,6 +21,7 @@ class SearchV2::IndexOperations
                                               args[:document_id]
                                             ).send_to_es(
                                                           args[:version],
+                                                          args[:routing_id],
                                                           args[:parent_id],
                                                           entity.to_esv2_json
                                                         ) if entity

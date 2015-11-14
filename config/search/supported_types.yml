@@ -3,35 +3,53 @@ ticket:
   :boost_list: 
     :ticket: 1
   :index_prefix: tickets_%{index_suffix}
+  :alias_prefix: tickets_%{alias_suffix}
+  :custom_routing: true
 note: 
   :boost_list: 
     :note: 1
-  :index_prefix: notes_%{index_suffix}
+  :index_prefix: tickets_%{index_suffix}
+  :alias_prefix: notes_%{alias_suffix}
+  :custom_routing: true
 user: 
   :boost_list: 
     :user: 1
   :index_prefix: users_%{index_suffix}
+  :alias_prefix: users_%{alias_suffix}
+  :custom_routing: false
 topic: 
   :boost_list: 
     :topic: 1
   :index_prefix: topics_%{index_suffix}
+  :alias_prefix: topics_%{alias_suffix}
+  :custom_routing: false
 article: 
   :boost_list: 
     :article: 1
   :index_prefix: articles_%{index_suffix}
+  :alias_prefix: articles_%{alias_suffix}
+  :custom_routing: false
 company: 
   :boost_list: 
     :company: 1
   :index_prefix: companies_%{index_suffix}
+  :alias_prefix: companies_%{alias_suffix}
+  :custom_routing: false
 tag: 
   :boost_list: 
     :tag: 1
   :index_prefix: tags_%{index_suffix}
+  :alias_prefix: tags_%{alias_suffix}
+  :custom_routing: false
 response: 
   :boost_list: 
     :response: 1
   :index_prefix: responses_%{index_suffix}
+  :alias_prefix: responses_%{alias_suffix}
+  :custom_routing: false
 scenarioautomation: 
   :boost_list: 
     :scenarioautomation: 1
   :index_prefix: scenarioautomations_%{index_suffix}
+  :alias_prefix: scenarioautomations_%{alias_suffix}
+  :custom_routing: false
