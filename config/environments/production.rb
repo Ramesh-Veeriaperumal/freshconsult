@@ -72,8 +72,10 @@ Helpkit::Application.configure do
   end
 
   # Need to set records for assets1..10.freshdesk.com
-  config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-    $asset_sync_https_url.sample
-  }
+  if defined?(PhusionPassenger)
+    config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
+      $asset_sync_https_url.sample
+    }
+  end
 
 end
