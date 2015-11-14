@@ -67,6 +67,6 @@ module EmailHelper
   end
 
   def tokenize_emojis(msg_text)
-    Account.current.features?(:tokenize_emoji) ? msg_text.tokenize_emoji : msg_text
+    (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
   end
 end
