@@ -28,13 +28,15 @@ module Search
         Utils::EsClient.new(:delete, path).response
       end
 
-      # To-Do: To add support for delete by query
       # Remove many records based on condition
+      # _Note_: Current query passed is a Hack!!
+      # To-Do: To add provision for query
       #
-      def remove_by_query(query)
-        path = # Alias path
+      def remove_by_query
+        path = [@tenant.aliases_path([@type]), '_query'].join('/')
+        path << "?q=account_id:#{@tenant.id}"
 
-        Utils::EsClient.new(:delete, path, query).response
+        Utils::EsClient.new(:delete, path).response
       end
 
       private

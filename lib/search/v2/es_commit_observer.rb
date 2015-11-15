@@ -13,9 +13,9 @@ module Search
       extend ActiveSupport::Concern
 
       included do
-        after_commit :es_create, on: :create
-        after_commit :es_update, on: :update
-        after_commit :es_delete, on: :destroy
+        after_commit :es_create, on: :create,   if: :esv2_enabled?
+        after_commit :es_update, on: :update,   if: :esv2_enabled?
+        after_commit :es_delete, on: :destroy,  if: :esv2_enabled?
 
         private
 
@@ -60,6 +60,10 @@ module Search
               routing_id:   (self.is_a?(Helpdesk::Ticket) ? self.id : self.account_id),
               parent_id:    (self.is_a?(Helpdesk::Note) ? self.notable_id : nil)
             }
+          end
+          
+          def esv2_enabled?
+            Account.current.features_included?(:es_v2_writes)
           end
       end
     end

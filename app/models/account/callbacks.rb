@@ -16,6 +16,9 @@ class Account < ActiveRecord::Base
 
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
+	
+	after_commit :enable_searchv2,	on: :create
+	after_commit :disable_searchv2,	on: :destroy
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -185,4 +188,16 @@ class Account < ActiveRecord::Base
         set_route_info(full_domain, id, full_domain)
       end
     end
+		
+		### Search v2 methods - start ###
+		
+		def enable_searchv2
+			SearchV2::Manager::EnableSearch.perform_async if self.features_included?(:es_v2_writes)
+		end
+		
+		def disable_searchv2
+			SearchV2::Manager::DisableSearch.perform_async({ account_id: self.id }) #if self.features_included?(:es_v2_writes) - commented as features will be destroyed on account destroy
+		end
+		
+		### Search v2 methods - end ###
 end

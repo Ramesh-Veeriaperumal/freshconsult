@@ -18,7 +18,8 @@ Sidekiq.configure_client do |config|
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
-      "PasswordExpiryWorker"
+      "PasswordExpiryWorker",
+      'SearchV2::Manager::DisableSearch'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario"
@@ -44,7 +45,8 @@ Sidekiq.configure_server do |config|
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
-      "PasswordExpiryWorker"
+      "PasswordExpiryWorker",
+      'SearchV2::Manager::DisableSearch'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario"
@@ -59,7 +61,8 @@ Sidekiq.configure_server do |config|
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
-      "PasswordExpiryWorker"
+      "PasswordExpiryWorker",
+      'SearchV2::Manager::DisableSearch'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario"

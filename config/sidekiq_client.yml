@@ -47,6 +47,7 @@ defaults: &defaults
     - [password_expiry]
     - [deactivate_monitorship]
     - [es_v2_shard1]
+    - [es_v2_toggle]
     - [bulk_scenario]
     - [github]
 
