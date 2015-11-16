@@ -214,7 +214,7 @@ module Freshfone
         :status_callback => direct_dial_complete(current_call.id),
         :timeout         => current_number.ringing_time,
         :to              => current_call.direct_dial_number,
-        :from            => current_call.number, #Showing freshfone number
+        :from            => get_caller_id(current_call),
         :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit
       }
       begin
@@ -276,5 +276,10 @@ module Freshfone
       end
     end
 
+    # Show Caller's Number if Caller Id Enabled, other wise show Helpdesk Number
+    def get_caller_id(call)
+      return call.caller_number if current_account.freshfone_account.caller_id_enabled?
+      call.number
+    end
   end
 end

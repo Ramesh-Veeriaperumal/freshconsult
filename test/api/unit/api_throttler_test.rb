@@ -11,7 +11,7 @@ class ApiThrottlerTest < ActionView::TestCase
     api_throttler.stubs(:allowed?).returns(false)
     api_throttler.instance_variable_set('@api_limit', 1000)
     status, headers, response = api_throttler.call env_for('http://localhost.freshpo.com/api/v2/discussions/categories',
-         
+
                                                            'HTTP_HOST' => 'localhost.freshpo.com')
     assert_equal 429, status
     assert_equal true, ['Retry-After', 'Content-Type'].all? { |key| headers.key? key }

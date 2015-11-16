@@ -466,9 +466,21 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('group_id', :"can't be blank"),
                 bad_request_error_pattern('responder_id', :"can't be blank"),
                 bad_request_error_pattern('email_config_id', :invalid_email_config),
+                bad_request_error_pattern('product_id', :"can't be blank"),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", :not_included, list: 'Australia,USA'),
                 bad_request_error_pattern("test_custom_dropdown_#{@account.id}", :not_included, list:  'Get Smart,Pursuit of Happiness,Armaggedon')])
+  end
+
+  def test_create_with_default_product_assignment_from_portal
+    portal = @account.main_portal
+    product = Product.first || create_product(email: Faker::Internet.email)
+    portal.update_column(:product_id, product.id)
+    post :create, construct_params({}, ticket_params_hash)
+    assert_response 201
+    match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+    assert_equal product.id, Helpdesk::Ticket.last.product_id
+    portal.update_column(:product_id, nil)
   end
 
   def test_create_invalid_user_id
@@ -975,16 +987,22 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update
+    portal = @account.main_portal
+    product = Product.first || create_product(email: Faker::Internet.email)
+    portal.update_column(:product_id, product.id)
     params_hash = update_ticket_params_hash.merge(custom_fields: {})
     CUSTOM_FIELDS.each do |custom_field|
       params_hash[:custom_fields]["test_custom_#{custom_field}_#{@account.id}"] = UPDATE_CUSTOM_FIELDS_VALUES[custom_field]
     end
     t = ticket
+    t.schema_less_ticket.update_column(:product_id, nil)
     put :update, construct_params({ id: t.display_id }, params_hash)
     params_hash[:custom_fields]['test_custom_date_1'] = params_hash[:custom_fields]['test_custom_date_1'].to_time.iso8601
     match_json(ticket_pattern(params_hash, t.reload))
     match_json(ticket_pattern({}, t.reload))
     assert_response 200
+    assert_nil t.product_id
+    portal.update_column(:product_id, nil)
   end
 
   def test_update_closed_with_nil_due_by_without_fr_due_by

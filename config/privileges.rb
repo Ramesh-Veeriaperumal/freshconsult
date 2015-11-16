@@ -94,6 +94,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/archive_note", :only => [:index, :full_text]
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
+    resource :"profile"
 
     # Used for API V2
     resource :"ticket", :only => [:show, :create, :index]

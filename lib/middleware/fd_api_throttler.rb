@@ -1,17 +1,16 @@
 require 'rack/throttle'
 
 class Middleware::FdApiThrottler < Rack::Throttle::Hourly
-
   include Redis::RedisKeys
 
   FRESHDESK_DOMAIN = 'freshdesk'
-  SKIPPED_SUBDOMAINS =  ["admin", "billing", "partner", "signup", "freshsignup", "email", "login", "emailparser", "mailboxparser", "freshops"] # check if this is valid
+  SKIPPED_SUBDOMAINS =  %w(admin billing partner signup freshsignup email login emailparser mailboxparser freshops) # check if this is valid
   THROTTLE_PERIOD    =  1.hour
   API_LIMIT = 1000
   DEFAULT_USED_LIMIT = 1
   API_CURRENT_VERSION = 'v2'
-  SHARD_NOT_FOUND_RESPONSE = [404, {'Content-Type' => 'application/json'}, [" "]]
-  LIMIT_EXCEEDED_MESSAGE = [{:message => "You have exceeded the limit of requests per hour"}.to_json]
+  NOT_FOUND_RESPONSE = [404, { 'Content-Type' => 'application/json' }, [' ']]
+  LIMIT_EXCEEDED_MESSAGE = [{ message: 'You have exceeded the limit of requests per hour' }.to_json]
 
   def initialize(app, options = {})
     super(app, options)
@@ -20,12 +19,12 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
   def call(env)
     @request      = Rack::Request.new(env)
-    @host         = env["HTTP_HOST"]
+    @host         = env['HTTP_HOST']
     @shard        = ShardMapping.lookup_with_domain(@host)
 
     if @shard.try(:not_found?)
       Rails.logger.debug "FdApiThrottler :: Domain Not Found :: #{@host}"
-      @status, @headers, @response = SHARD_NOT_FOUND_RESPONSE
+      @status, @headers, @response = NOT_FOUND_RESPONSE
     elsif throttle?
       @api_limit = api_limit
       increment_redis_key(DEFAULT_USED_LIMIT)
@@ -37,7 +36,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         set_rate_limit_headers if @count
         Rails.logger.debug("FdApiThrottler :: Throttled :: Host: #{@host}, Count: (#{@count})")
       else
-        @status, @headers, @response = [429, {'Retry-After' => retry_after, 'Content-Type' => 'application/json'}, 
+        @status, @headers, @response = [429, { 'Retry-After' => retry_after, 'Content-Type' => 'application/json' },
                                         LIMIT_EXCEEDED_MESSAGE]
         Rails.logger.error("API 429 Error :: Time: #{Time.now}, Host: #{@host}, Count: #{@count}}")
       end
@@ -56,20 +55,19 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def skipped_domain?
-      split_host = @host.split(".")
+      split_host = @host.split('.')
       subdomain = split_host[0]
       domain = split_host[1]
       SKIPPED_SUBDOMAINS.include?(subdomain) && domain == FRESHDESK_DOMAIN
     end
 
     def throttle?
-      Rails.logger.debug "SOURCE IP :: #{@request.env["HTTP_X_REAL_IP"]}, DOMAIN :: #{@host}"
+      Rails.logger.debug "SOURCE IP :: #{@request.env['HTTP_X_REAL_IP']}, DOMAIN :: #{@host}"
       !skipped_domain? && account_id
     end
 
     def increment_redis_key(used)
       @count = increment_redis(key, used)
-      #Notify dev-ops if request hits 1005?
       set_redis_expiry(key, THROTTLE_PERIOD) if @count == used_limit # Setting expiry for first time.
     end
 
@@ -86,18 +84,19 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def set_rate_limit_headers # Rate Limit headers are not set when status is 429
-        remaining = [(@api_limit - @count), 0].max.to_s
-        @headers = @headers.merge("X-RateLimit-Total" => @api_limit.to_s, "X-RateLimit-Remaining" => remaining,
-                    "X-RateLimit-Used" => used_limit.to_s)
+      remaining = [(@api_limit - @count), 0].max.to_s
+      @headers = @headers.merge('X-RateLimit-Total' => @api_limit.to_s, 
+                                'X-RateLimit-Remaining' => remaining,
+                                'X-RateLimit-Used' => used_limit.to_s)
     end
 
     def set_version_headers
-      version = api_version 
+      version = api_version
       @headers = @headers.merge('X-Freshdesk-API-Version' => "latest=#{API_CURRENT_VERSION}; requested=#{version}") if version
     end
 
     def account_api_limit_key
-      ACCOUNT_API_LIMIT % {:account_id => account_id}
+      ACCOUNT_API_LIMIT % { account_id: account_id }
     end
 
     def default_api_limit_key
@@ -111,19 +110,19 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def plan_api_limit
       if plan_id = fetch_plan_id
-        plan_api_limit_key = PLAN_API_LIMIT % {:plan_id => plan_id}
+        plan_api_limit_key = PLAN_API_LIMIT % { plan_id: plan_id }
         get_redis_key(plan_api_limit_key)
       end
     end
 
     def fetch_plan_id
-      Sharding.run_on_shard(@shard.shard_name) do 
+      Sharding.run_on_shard(@shard.shard_name) do
         Subscription.fetch_by_account_id(account_id).try(:plan_id)
       end
     rescue Exception => e
-      Rails.logger.debug "Exception on api throttler ::: #{e.message}"
-      NewRelic::Agent.notice_error(e, {:custom_params => { :description => "Freshdesk API Throttler Error", 
-                                       :domain => @host, :account_id => account_id }})
+      Rails.logger.error "Exception on FdApiThrottler ::: #{e.message}"
+      NewRelic::Agent.notice_error(e, custom_params: { description: 'Freshdesk API Throttler Error',
+                                                       domain: @host, account_id: account_id })
     end
 
     def increment_redis(key, used)
@@ -143,7 +142,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def key
-      API_THROTTLER_V2 % {:account_id => account_id}
+      API_THROTTLER_V2 % { account_id: account_id }
     end
 
     def used_limit
@@ -151,6 +150,6 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def api_version
-      @request.env["action_dispatch.request.path_parameters"].try(:[], :version) # This parameter would come from api_routes
+      @request.env['action_dispatch.request.path_parameters'].try(:[], :version) # This parameter would come from api_routes
     end
 end

@@ -90,17 +90,17 @@ module TestCaseMethods
   end
 
   def get_key(key)
-    newrelic_begin_rescue { $redis_others.get(key) }
+    newrelic_begin_rescue { $rate_limit.get(key) }
   end
 
   def remove_key(key)
-    newrelic_begin_rescue { $redis_others.del(key) }
+    newrelic_begin_rescue { $rate_limit.del(key) }
   end
 
   def set_key(key, value, expires = 86_400)
     newrelic_begin_rescue do
-      $redis_others.set(key, value)
-      $redis_others.expire(key, expires) if expires
+      $rate_limit.set(key, value)
+      $rate_limit.expire(key, expires) if expires
     end
   end
 

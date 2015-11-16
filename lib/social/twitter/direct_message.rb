@@ -31,7 +31,7 @@ class Social::Twitter::DirectMessage
   def create_fd_item(twt, twt_handle)
     @sender = twt.sender
     account = twt_handle.account
-    user   = get_twitter_user(@sender.screen_name.dup, @sender.profile_image_url.to_s)
+    user   = get_twitter_user(@sender.screen_name.dup, @sender.profile_image_url.to_s, @sender.name)
     user.make_current
     previous_ticket = user.tickets.twitter_dm_tickets(twt_handle.id).newest(1).readonly(false).first
     unless previous_ticket.blank?
