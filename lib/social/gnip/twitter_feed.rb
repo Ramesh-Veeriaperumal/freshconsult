@@ -19,6 +19,7 @@ class Social::Gnip::TwitterFeed
       unless @tweet_obj.nil?
         @matching_rules = @tweet_obj[:gnip]["matching_rules"] if @tweet_obj[:gnip]
         if @tweet_obj[:actor]
+          @name              = @tweet_obj[:actor]["displayName"]
           @sender            = @tweet_obj[:actor]["preferredUsername"]
           @profile_image_url = @tweet_obj[:actor]["image"]
           @twitter_user_id   = @tweet_obj[:actor]["id"].split(":").last.to_i if @tweet_obj[:actor]["id"]
@@ -109,7 +110,7 @@ class Social::Gnip::TwitterFeed
   end
 
   def set_user
-    user = get_twitter_user(@sender, @profile_image_url)
+    user = get_twitter_user(@sender, @profile_image_url,  @name)
     user.make_current
   end
 end

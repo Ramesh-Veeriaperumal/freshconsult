@@ -39,7 +39,7 @@ module Freshfone::Conference::EndCallActions
     end
 
     def single_leg_outgoing?
-      current_call.outgoing? && current_call.is_root? && current_call.descendants.blank?
+      current_call.present? && current_call.outgoing? && current_call.is_root? && current_call.descendants.blank?
     end
 
     def disconnect_ringing

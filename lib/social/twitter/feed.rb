@@ -51,7 +51,7 @@ class Social::Twitter::Feed
     tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
     unless tweet.blank?
       ticket  = tweet.get_ticket
-      user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+      user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
       if ticket
         notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
       else 
@@ -60,7 +60,7 @@ class Social::Twitter::Feed
       end
     else
       if action_data[:convert]
-        user = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"])
+        user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
         notable = add_as_ticket(feed_obj, handle, :mention, action_data) 
       end
     end

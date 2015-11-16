@@ -579,3 +579,26 @@ span.fb_add
 .#{$font-class-name}html_paragraph{
 	@extend .#{$font-class-name}paragraph;
 }
+
+// Contact info
+.contact_hover{
+	.contact-append{
+		.add-on{
+			.#{$font-class-name}twitter{
+				color:#a2a19f;
+			}
+			.#{$font-class-name}facebook-setting{
+				color:#a2a19f;
+			}
+		}
+	}
+}
+
+// twitter like icon status
+.twt-fav{
+	&.is-active{
+		.#{$font-class-name}twitter-like{
+			color:#dd2e44;
+		}
+	}
+}
