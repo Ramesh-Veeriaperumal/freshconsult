@@ -1049,7 +1049,7 @@ class Helpdesk::TicketsController < ApplicationController
           handle_unsaved_view
           @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
           @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
-          @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
+          # @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
           params.merge!(@cached_filter_data)
         end
       else 
