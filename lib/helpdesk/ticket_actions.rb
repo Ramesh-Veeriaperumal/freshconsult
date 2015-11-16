@@ -64,7 +64,7 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    update_split_activity
+    update_split_activities
     redirect_to @item
   end
   
@@ -110,10 +110,14 @@ module Helpdesk::TicketActions
     render :partial => "helpdesk/tickets/show/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
   end
   
-  def update_split_activity    
+  def update_split_activities
    @item.create_activity(current_user, 'activities.tickets.ticket_split.long',
             {'eval_args' => {'split_ticket_path' => ['split_ticket_path', 
             {'ticket_id' => @source_ticket.display_id, 'subject' => @source_ticket.subject}]}}, 'activities.tickets.ticket_split.short') 
+
+   @source_ticket.create_activity(current_user, 'activities.tickets.note_split.long',
+            {'eval_args' => {'split_ticket_path' => ['split_ticket_path',
+            {'ticket_id' => @item.display_id, 'subject' => @item.subject}]}}, 'activities.tickets.note_split.short')
                   
   end
   
@@ -171,7 +175,7 @@ module Helpdesk::TicketActions
     move_cloud_files
     if @item.save_ticket
       move_attachments
-      destroy_note_and_activity 
+      @note.destroy
       Resque.enqueue(Workers::FbSplitTickets, { :account_id => current_account.id,
                                                 :child_fb_post_ids => @child_fb_note_ids,
                                                 :comment_ticket_id => @item.id,
@@ -182,17 +186,7 @@ module Helpdesk::TicketActions
     end
     
   end
-  
-  def destroy_note_and_activity
-    unless @item.fb_post.nil?
-      activities = @source_ticket.activities.find(:all, :conditions => 
-      {:description => "activities.tickets.conversation.note.long"})
-      activity = activities.detect{ |x| x.note_id == @note.id }
-      activity.destroy unless activity.blank?
-    end
-    @note.destroy
-  end
-  
+
   
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   

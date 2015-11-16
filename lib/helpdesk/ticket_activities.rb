@@ -16,6 +16,11 @@ module Helpdesk::TicketActivities
         :activity_data => activity_data
       ) if user
     end
+
+    def destroy_activity(description, note_id)
+      activity = activities.where({'description' => description}).detect{ |a| a.note_id == note_id }
+      activity.destroy unless activity.blank?
+    end
   
     def create_initial_activity
       unless spam?

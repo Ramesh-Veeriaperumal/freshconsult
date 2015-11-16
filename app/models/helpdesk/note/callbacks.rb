@@ -21,6 +21,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
+  before_destroy :remove_activity
 
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
@@ -152,6 +153,19 @@ class Helpdesk::Note < ActiveRecord::Base
           {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path",
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
+      end
+    end
+
+    def remove_activity
+
+      if outbound_email?
+        unless private?
+          notable.destroy_activity('activities.tickets.conversation.out_email.long', id)
+        end
+      elsif inbound_email?
+        notable.destroy_activity('activities.tickets.conversation.in_email.long', id)
+      else
+        notable.destroy_activity("activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", id)
       end
     end
 

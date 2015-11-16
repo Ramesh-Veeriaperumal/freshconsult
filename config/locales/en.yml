@@ -2553,6 +2553,10 @@ en:
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         without_user: "The ticket was split from {{split_ticket_path}}"
+      note_split:
+        short: "{{user_path}} has split a response from ticket {{notable_path}} to {{split_ticket_path}}"
+        long: "{{user_path}} has split a response from ticket {{notable_path}} to {{split_ticket_path}}"
+        without_user: "split a response as a new ticket {{split_ticket_path}}"
       status_change:
         short: "{{user_path}} updated status to {{status_name}}"
         without_user: "updated status to <strong>{{status_name}}</strong>"
