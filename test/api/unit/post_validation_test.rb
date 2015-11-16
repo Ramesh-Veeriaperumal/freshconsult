@@ -19,9 +19,7 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_presence_item_valid
-    account = mock("account")
-    Account.stubs(:current).returns(account)
-    account.stubs(:features?).returns(true)
+    Account.stubs(:current).returns(Account.new)
     item = Post.new(body_html: 'test')
     controller_params = {}
     post = ApiDiscussions::PostValidation.new(controller_params, item)
@@ -32,9 +30,7 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_numericality_item_valid
-    account = mock("account")
-    Account.stubs(:current).returns(account)
-    account.stubs(:features?).returns(true)
+    Account.stubs(:current).returns(Account.new)
     controller_params = {}
     item = Post.new('user_id' => 2)
     item.topic_id = 'ewrer'
@@ -63,9 +59,11 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_post_validation_valid_item
+    Account.stubs(:current).returns(Account.new)
     item = Post.new(body_html: 'test')
     item.topic_id = 1
     topic = ApiDiscussions::PostValidation.new({}, item)
     assert topic.valid?
+    Account.unstub(:current)
   end
 end

@@ -21,12 +21,12 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 6,
         api_make_agent: 4,
 
-        create: 35,
+        create: 34,
         update: 30,
-        show: 17,
-        index: 18,
-        destroy: 21,
-        make_agent: 47
+        show: 16,
+        index: 17,
+        destroy: 20,
+        make_agent: 46
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -69,6 +69,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         get("/contacts/#{id2}.json", nil, @headers)
         assert_response 200
       end
+
+      v1[:show] += 1 # account suspended check is done in v2 alone.
 
       # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
       # These attributes are introduced in V2, hence subtracting it

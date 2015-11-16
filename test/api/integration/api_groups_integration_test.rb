@@ -13,11 +13,11 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         api_index: 0,
         api_destroy: 11,
 
-        create: 23,
-        show: 14,
-        update: 21,
-        index: 13,
-        destroy: 35
+        create: 22,
+        show: 13,
+        update: 20,
+        index: 12,
+        destroy: 34
       }
 
       v2_payload = v2_group_payload
@@ -42,6 +42,9 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         get("/groups/#{id2}.json", nil, @headers)
         assert_response 200
       end
+
+      v1[:show] += 1 # account suspended check is done in v2 alone.
+
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
         put("/api/v2/groups/#{id1}", v2_payload, @write_headers)

@@ -8,7 +8,7 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_contact_fields: 1,
 
-        contact_fields: 15
+        contact_fields: 14
       }
 
       # contact_fields
@@ -20,6 +20,8 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
         get('/admin/contact_fields.json', {}.to_json, @write_headers)
         assert_response 200
       end
+
+      v1[:contact_fields] += 1 # account suspended check is done in v2 alone.
 
       write_to_file(v1, v2)
 

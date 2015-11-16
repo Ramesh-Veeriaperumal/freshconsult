@@ -16,14 +16,14 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       api_is_following: 1,
       api_topics: 2,
 
-      create: 19,
-      show: 13,
-      update: 20,
-      destroy: 27,
-      follow: 20,
-      unfollow: 20,
-      is_following: 13,
-      topics: 14
+      create: 18,
+      show: 12,
+      update: 19,
+      destroy: 26,
+      follow: 19,
+      unfollow: 19,
+      is_following: 12,
+      topics: 13
     }
 
     category_id = ForumCategory.first.id

@@ -631,7 +631,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_skipped_subdomains
-    ShardMapping.any_instance.stubs(:account_id).returns(@account_id)
+    ShardMapping.any_instance.stubs(:account_id).returns(@account.id)
+    Middleware::FdApiThrottler.any_instance.stubs(:account_id).returns(@account.id)
     old_api_consumed_limit = get_key(api_key).to_i
     get '/groups.json', nil, @headers.merge('HTTP_HOST' => 'billing.junk.com')
     api_consumed_limit = get_key(api_key).to_i
@@ -649,7 +650,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_api_v2_consumed_limit = get_key(v2_api_key).to_i
     assert_response 404
     assert_equal api_v2_consumed_limit, new_api_v2_consumed_limit
+  ensure
     ShardMapping.unstub(:account_id)
+    Middleware::FdApiThrottler.any_instance.unstub(:account_id)
   end
 
   def test_shard_blocked_response
