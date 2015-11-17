@@ -114,7 +114,8 @@ class Search::V2::SpotlightController < ApplicationController
     def construct_es_params
       Hash.new.tap do |es_params|
         es_params[:search_term] = @search_key
-        es_params[:account_id]  = current_account.id
+        es_params[:account_id]  = current_account.id ##needed?
+        es_params[:topic_visibility] = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN) ##needed?
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
@@ -135,6 +136,45 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
+
+        es_params[:display_id_boost] = 1
+        es_params[:subject_boost] = 1
+        es_params[:description_boost] = 1
+        es_params[:attachment_boost] = 1
+        es_params[:sender_boost] = 1
+        es_params[:to_emails_boost] = 1
+        es_params[:es_cc_emails_boost] = 1
+        es_params[:es_fwd_emails_boost] = 1
+        es_params[:tag_names_boost] = 1
+        es_params[:ffs_*_boost] = 1
+        es_params[:ff_text_*_boost] = 1
+        es_params[:note_attachment_boost] = 1
+        es_params[:body_boost
+        es_params[:name_boost] = 1
+        es_params[:note_boost] = 1
+        es_params[:description_boost] = 1
+        es_params[:cf_text*_boost] = 1
+        es_params[:cf_str*_boost] = 1
+        es_params[:domains_boost] = 1
+        es_params[:name_boost] = 1
+        es_params[:emails_boost] = 1
+        es_params[:description_boost] = 1
+        es_params[:job_title_boost] = 1
+        es_params[:phone_boost] = 1
+        es_params[:mobile_boost] = 1
+        es_params[:company_name_boost] = 1
+        es_params[:twitter_id_boost] = 1
+        es_params[:fb_profile_id_boost] = 1
+        es_params[:cf_str*_boost] = 1
+        es_params[:cf_text*_boost] = 1
+        es_params[:topic_title_boost] = 1
+        es_params[:posts_body_boost] = 1
+        es_params[:posts_attachment_boost] = 1
+        es_params[:title_boost] = 1
+        es_params[:desc_un_html_boost] = 1
+        es_params[:tag_names_boost] = 1
+        es_params[:attachment_names_boost] = 1
+
       end
     end
 

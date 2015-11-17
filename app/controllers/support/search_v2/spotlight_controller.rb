@@ -112,7 +112,7 @@ class Support::SearchV2::SpotlightController < SupportController
     def construct_es_params
       Hash.new.tap do |es_params|
         es_params[:search_term]               = @search_key
-        es_params[:account_id]                = current_account.id
+        es_params[:account_id]                = current_account.id ##needed?
         es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
         es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
         es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
@@ -130,6 +130,36 @@ class Support::SearchV2::SpotlightController < SupportController
 
         es_params[:size]                      = @size
         es_params[:from]                      = @offset
+
+        es_params[:subject_boost] = 1
+        es_params[:description_boost] = 1
+        es_params[:attachment_boost] = 1
+        es_params[:to_emails_boost] = 1
+        es_params[:es_cc_boost] = 1
+        es_params[:es_fwd_emails_boost] = 1
+        es_params[:note_attachment_boost] = 1
+        es_params[:body_boost
+        es_params[:company_description_boost] = 1
+        es_params[:company_domains_boost] = 1
+        es_params[:company_name_boost] = 1
+        es_params[:user_name_boost] = 1
+        es_params[:user_emails_boost] = 1
+        es_params[:user_description_boost] = 1
+        es_params[:user_job_boost] = 1
+        es_params[:user_phone_boost] = 1
+        es_params[:user_mobile_boost] = 1
+        es_params[:user_company_boost] = 1
+        es_params[:twitter_boost] = 1
+        es_params[:fb_profile_boost] = 1
+        es_params[:topic_title_boost] = 1
+        es_params[:posts_attachment_boost] = 1
+        es_params[:posts_body_boost] = 1
+        es_params[:article_title_boost] = 1
+        es_params[:article_desc_boost] = 1
+        es_params[:article_tag_boost] = 1
+        es_params[:article_attachment_boost] = 1
+
+
       end
     end
 

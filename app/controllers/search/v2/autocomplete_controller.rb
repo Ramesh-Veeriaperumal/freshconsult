@@ -23,7 +23,11 @@ class Search::V2::AutocompleteController < ApplicationController
       is_deleted: false,
       sort_by: 'name',
       sort_direction: 'asc',
-      size: 100
+      size: 100,
+      name_boost: 1,
+      emails_boost: 1,
+      phone_boost: 1,
+      mobile_boost: 1
     }
 
     search.each do |document|
@@ -44,7 +48,11 @@ class Search::V2::AutocompleteController < ApplicationController
       is_deleted: false,
       sort_by: 'name',
       sort_direction: 'asc',
-      size: 100
+      size: 100,
+      name_boost: 1,
+      emails_boost: 1,
+      phone_boost: 1,
+      mobile_boost: 1
     }
 
     search.each do |document|
