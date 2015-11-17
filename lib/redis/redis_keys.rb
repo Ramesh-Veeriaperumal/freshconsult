@@ -101,9 +101,6 @@ module Redis::RedisKeys
 	SLAVE_QUERIES = "SLAVE_QUERIES"
 	VALIDATE_REQUIRED_TICKET_FIELDS = "VALIDATE_REQUIRED_TICKET_FIELDS"
 
-	# run observer queue using sidekiq instead of resque
-	SIDEKIQ_OBSERVER = "SIDEKIQ_OBSERVER"
-
 	UPDATE_PASSWORD_EXPIRY = "UPDATE_PASSWORD_EXPIRY:%{account_id}:%{user_type}"
 
 	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
