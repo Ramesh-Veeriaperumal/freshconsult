@@ -14,7 +14,7 @@ module TicketHelper
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
-                                         :cc_email => {:cc_emails => [], :fwd_emails => [], :reply_cc => []},
+                                         :cc_email => Helpdesk::Ticket.default_cc_hash,
                                          :created_at => params[:created_at],
                                          :account_id => account_id)
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)

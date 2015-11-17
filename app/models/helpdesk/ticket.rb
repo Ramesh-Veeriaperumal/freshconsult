@@ -262,6 +262,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def status_name
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
+  
+  def default_cc_hash
+    { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
+  end
 
   def requester_status_name
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
@@ -525,8 +529,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticlet_cc
-    cc_email.nil? ? [] : cc_email[:cc_emails]
+    cc_email.nil? ? [] : (cc_email[:tkt_cc] || cc_email[:cc_emails])
   end
+  alias_method :ticket_cc, :ticlet_cc
   
   def contact_name
     requester.name if requester
@@ -763,7 +768,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).compact.uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| parse_email(email)[:email]}.compact.uniq
 
     account.support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
