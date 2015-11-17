@@ -9,8 +9,8 @@ module Utils
           item.send(:write_attribute,element_html,
                                Helpdesk::HTMLSanitizer.clean(item.send(element_html)))
         end
-        populate_content_create(item,*elements) if new_record?
       end
+      populate_content_create(item, *elements) if new_record?
     end
 
     def sanitize_body_hash(attributes,nested_attribute, *elements)
