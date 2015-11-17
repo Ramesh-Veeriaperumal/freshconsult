@@ -31,7 +31,7 @@ class ChatsController < ApplicationController
                       :ticket_body_attributes => { :description_html => params[:ticket][:content], :description => Helpdesk::HTMLSanitizer.plain(params[:ticket][:content].gsub(/(\s{3,})/,"")).gsub(/\n\t/, "\n") },
                       :responder_id => params[:ticket][:agent_id],
                       :created_at => params[:ticket][:chat_created_at],
-                      :cc_email => { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
+                      :cc_email => Helpdesk::Ticket.default_cc_hash
                     }
     widget = current_account.chat_widgets.find_by_widget_id(params[:ticket][:widget_id])
     group = current_account.groups.find_by_id(params[:ticket][:group_id]) if params[:ticket][:group_id]

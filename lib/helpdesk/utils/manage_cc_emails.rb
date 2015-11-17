@@ -14,6 +14,11 @@ module Helpdesk::Utils::ManageCcEmails
 		end
 	end
 
-	# To emails in Cc code to come here...
-	# https://support.freshdesk.com/helpdesk/tickets/100762
+	def parse_all_cc_emails(kbase_email)
+		to_email  = parse_to_email[:email]
+   	to_emails = (params[:to] || "").split(',').collect {|n| (parse_email n)[:email]}
+   	cc_emails = to_emails.push(parse_cc_email).flatten.compact.uniq	
+   	cc_emails.reject{ |cc_email| (cc_email == kbase_email or cc_email == to_email) }
+	end
+	
 end
