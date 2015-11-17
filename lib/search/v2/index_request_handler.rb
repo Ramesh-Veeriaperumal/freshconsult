@@ -32,17 +32,16 @@ module Search
       # Eg: DELETE localhost:9200/users_1/_query?q=account_id=1&q=subject:test
       #
       def remove_by_query(query={})
+        return unless query.present?
         path = [@tenant.aliases_path([@type]), '_query'].join('/')
         
-        if query.present?
-          query_params = Array.new.tap do |q_params|
-            query.each do |field, value|
-              q_params.push("q=#{field}:#{value}")
-            end
-          end.join('&')
-          
-          path << "?#{query_params}"
-        end
+        query_params = Array.new.tap do |q_params|
+          query.each do |field, value|
+            q_params.push("q=#{field}:#{value}")
+          end
+        end.join('&')
+        
+        path << "?#{query_params}"
 
         Utils::EsClient.new(:delete, path).response
       end
