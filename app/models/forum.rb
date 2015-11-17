@@ -267,10 +267,14 @@ class Forum < ActiveRecord::Base
 
   def update_search_index
     SearchSidekiq::IndexUpdate::ForumTopics.perform_async({ :forum_id => id }) if ES_ENABLED
+    
+    SearchV2::TopicOperations::UpdateForum.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def remove_topics_from_es
     SearchSidekiq::RemoveFromIndex::ForumTopics.perform_async({ :deleted_topics => @deleted_topic_ids }) if ES_ENABLED
+    
+    SearchV2::TopicOperations::RemoveForumTopics.perform_async({ :forum_id => id }) if Account.current.features_included?(:es_v2_writes)
   end
 
   def backup_forum_topic_ids
