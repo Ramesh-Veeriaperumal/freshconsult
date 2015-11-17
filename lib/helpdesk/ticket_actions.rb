@@ -77,7 +77,11 @@ module Helpdesk::TicketActions
   end
 
   def update_multiple_tickets
-    render :partial => "update_multiple" 
+    render :partial => "update_multiple" , :locals => { :select_all => false } 
+  end
+
+  def update_all_tickets
+    render :partial => "update_multiple", :locals => { :select_all => true}  
   end
 
   def configure_export
@@ -311,6 +315,11 @@ module Helpdesk::TicketActions
                                     "value"=> params[:company_id] }]
       cache_filter_params
     end
+  end
+
+  def set_default_filter
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_and_my_open
   end
 
   private

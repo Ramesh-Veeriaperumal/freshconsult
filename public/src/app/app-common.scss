@@ -2398,6 +2398,36 @@ a.mobile_switchBtn {
 		@include float(right);
 	}	
 }
+
+.admin_select_all_text{
+	background-color: #fdfdf1;
+	border-bottom: 1px solid #eee;
+	padding: 14px 0;
+	@include box-shadow(inset 0 3px 7px rgba(100,100,100,0.1));
+	@include text-align(center);
+	color: #666;
+	font-weight: 500;
+	.toggle_select_all_container{
+		margin-left: 6px;
+	}
+	&:hover {
+		background-color : #fcfcd1;
+		@include transition(background-color 200ms linear);
+		.reload_icon{
+			background-color: #000;
+			@include transition(background-color 400ms linear);
+		}
+	}
+	
+	.sloading {
+		margin: 0 0 0 0px;
+		padding: 6px 5px 6px 10px;
+	} 
+	.admin_select_all_disabled {
+		color: #aaa;
+		font-weight: 500;
+	}
+}
 .ticket_highlight {
 	@include animation(ticket_blink 0.8s ease-out 1);
 }

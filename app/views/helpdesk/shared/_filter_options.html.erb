@@ -240,11 +240,24 @@
     jQuery('#all-views').html($J('#all-views-tmpl').html());
     jQuery('#all-views-tmpl').html('');
     });
-  
+
   jQuery("#FilterOptions").change(function(){
     for(var i=0;i<window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions.length;i++)
     {
       window.FreshdeskNode.getValue('faye_realtime').faye_subscriptions[i].cancel();
+    }
+    <%
+    # Select all should be persisted on pagination
+    # but not when filter get changed, which is handled in change event of 
+    # .filter_item in ticket_list.js
+    %>
+    if(!jQuery("#all-views").data("selectallMode")) {
+      jQuery("#helpdesk-select-all")
+        .prop("checked", false)
+        .trigger("change");
+    }
+    else {
+      jQuery("#select_all_alert").hide();
     }
     jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
     jQuery.ajax({
@@ -253,6 +266,16 @@
       dataType: "script",
       data: jQuery(this).serializeArray(),
       success: function(script){ 
+        var all_view_selector = jQuery("#all-views");
+        if(all_view_selector.data("selectallMode")) {
+          jQuery("#helpdesk-select-all")
+            .prop("checked", true)
+            .trigger("click")
+            .trigger("change");
+          jQuery("#select_all_alert").show();
+          all_view_selector.data("selectallMode", false);
+          jQuery("#toggle_select_all").trigger("click");           
+        }
         jQuery("#FilterOptions input[name=total_entries]").val(0);
 
         if (jQuery('#ticket-list table tr').not('.headings').length == 0) {

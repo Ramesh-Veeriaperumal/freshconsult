@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :create_initial_activity, :pass_thro_biz_rules, on: :create
   after_commit :send_outbound_email, on: :create, :if => :outbound_email?
 
-  after_commit :filter_observer_events, on: :update, :if => :user_present?
+  after_commit :filter_observer_events, on: :update, :if => :execute_observer?
   after_commit :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :push_update_notification, on: :update 
   after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data? 
@@ -630,5 +630,9 @@ private
   def start_recording_timestamps
     self.record_timestamps = true
     true
+  end
+
+  def execute_observer?
+    user_present? and !disable_observer_rule
   end
 end

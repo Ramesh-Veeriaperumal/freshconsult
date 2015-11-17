@@ -1565,6 +1565,7 @@ Helpkit::Application.routes.draw do
         get :summary
         get :compose_email
         get :update_multiple_tickets
+        get :update_all_tickets
         get :configure_export
         get :custom_view_save
         match :assign_to_agent#TODO-RAILS3 new route
@@ -1686,6 +1687,16 @@ Helpkit::Application.routes.draw do
     resources :bulk_ticket_actions do
       collection do
         post :update_multiple
+      end
+    end
+
+    resources :select_all_ticket_actions do
+      collection do
+        get :select_all_message_content
+        put :close_multiple
+        put :spam
+        put :delete
+        put :update_multiple
       end
     end
 

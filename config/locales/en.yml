@@ -4664,6 +4664,38 @@ en:
         tooltip: "View the associated JIRA Issue"
         add_new: "Link an issue"
         existing: "View issue"
+    admin_select_all:
+      select_all_page_text: "%{count} tickets on this page are selected."
+      select_all_view_text: "All %{count} tickets in this view are selected."
+      toggle_select_all: "Select all <span class='admin_select_all_ticket_count'></span> tickets in this view"
+      clear_selection: "Clear Selection"
+      close_tickets: "Close Tickets"
+      delete_tickets: "Delete Tickets"
+      close_confirmation: "Close Tickets"
+      spam_confirmation: "Spam"
+      delete_confirmation: "Delete"
+      please_note: "Please note:"
+      no_fields_selected: "No updates performed as a valid bulk action was not selected."
+      close_all_notification: 
+        text: "You are about to close all %{count} tickets in this view." 
+        list1: Related observer rules, if any, will not be triggered
+        list2: "'Ticket Closed' Notification emails will not be sent to the customer."
+        list3: This action cannot be undone.
+        are_you_sure: Are you sure you want to proceed?
+      bulk_all_notification: 
+        text: "You are about to execute bulk actions on all %{count} tickets in this view."
+        list1: Related observer rules, if any, will not be triggered
+        list2: "'Ticket Closed' Notification emails (if applicable) will not be sent to the customer."
+        list3: This action cannot be undone.
+        are_you_sure: Are you sure you want to proceed?
+      spam_all_confirmation: "You are about to flag all %{count} tickets in this view as spam. Please note that this action cannot be undone. Are you sure you want to proceed?"
+      delete_all_confirmation: "You are about to move all %{count} tickets in this view to trash. Please note that this action cannot be undone. Are you sure you want to proceed?"
+      select_all_already_running: "A bulk update started by %{user_name} is already in progress. Please try again later."
+      select_all_already_running_you: "A bulk update started by you is already in progress. Please try again later."
+      select_all_enqueued: "Your request is currently in progress and will be completed in some time."
+      in_progress_text: "A bulk update started by %{user_name} is in progress."
+      in_progress_text_you: "A bulk update started by you is in progress."
+      bulk_action_submit_label: "Confirm and update"
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.

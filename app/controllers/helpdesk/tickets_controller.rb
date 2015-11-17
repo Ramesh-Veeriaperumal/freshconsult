@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
+  helper Helpdesk::SelectAllHelper
   include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  
@@ -30,10 +31,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close ,:execute_bulk_scenario]
   before_filter :normalize_params, :only => :index
+  before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
-  before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
@@ -102,7 +103,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
-  
+
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
@@ -259,6 +260,7 @@ class Helpdesk::TicketsController < ApplicationController
   def custom_search
     params[:html_format] = true
     @items = fetch_tickets
+    @current_view = view_context.current_filter
     render :partial => "custom_search"
   end
   
@@ -1201,11 +1203,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def handle_send_and_set
     @item.send_and_set = params[:send_and_set].present?
-  end
-
-  def set_default_filter
-    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_and_my_open
   end
 
   def empty_trash_key
