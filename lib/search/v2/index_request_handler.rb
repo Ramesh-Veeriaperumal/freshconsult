@@ -28,13 +28,21 @@ module Search
         Utils::EsClient.new(:delete, path).response
       end
 
-      # Remove many records based on condition
-      # _Note_: Current query passed is a Hack!!
-      # To-Do: To add provision for query
+      # Remove many records based on conditions
+      # Eg: DELETE localhost:9200/users_1/_query?q=account_id=1&q=subject:test
       #
-      def remove_by_query
+      def remove_by_query(query={})
         path = [@tenant.aliases_path([@type]), '_query'].join('/')
-        path << "?q=account_id:#{@tenant.id}"
+        
+        if query.present?
+          query_params = Array.new.tap do |q_params|
+            query.each do |field, value|
+              q_params.push("q=#{field}:#{value}")
+            end
+          end.join('&')
+          
+          path << "?#{query_params}"
+        end
 
         Utils::EsClient.new(:delete, path).response
       end

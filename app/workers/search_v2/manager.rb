@@ -50,10 +50,8 @@ class SearchV2::Manager
     def perform(args)
       args.symbolize_keys!
       
-      # To-do: See if it can be revised
-      #
       ES_SUPPORTED_TYPES.keys.each do |es_type|
-        Search::V2::IndexRequestHandler.new(es_type, args[:account_id], nil).remove_by_query
+        Search::V2::IndexRequestHandler.new(es_type, args[:account_id], nil).remove_by_query({ account_id: args[:account_id] })
       end
       
       Search::V2::Tenant.new(args[:account_id]).rollback
