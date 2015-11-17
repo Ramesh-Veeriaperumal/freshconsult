@@ -139,7 +139,7 @@ class Account < ActiveRecord::Base
   end
   
   def reports_enabled?
-    features_included?(:bi_reports) || launched?(:bi_reports)
+    true
   end
 
   class << self # class methods
