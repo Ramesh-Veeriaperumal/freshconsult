@@ -147,7 +147,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action")
+      params.slice!("id", "format", "controller", "action", "status")
     end
 
 end

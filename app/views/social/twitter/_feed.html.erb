@@ -85,14 +85,14 @@
                   <% favorited_class   = feed.favorited ? "" : "hide" %>
                   
                   <span class="not-shr-fav-btn <%= unfavorited_class %>">
-                    <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" stream-id="<%= feed.stream_id %>" data-clicked="no" class="more-links tooltip not-shr-fav-btn favorite_twt" data-original-title="Favorite" twipsy-content-set="true">
-                      <%= font_icon "star-o", :size => 16 %>
+                    <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" stream-id="<%= feed.stream_id %>" data-clicked="no" class="twt-fav more-links tooltip not-shr-fav-btn favorite_twt" data-original-title="Like" twipsy-content-set="true">
+                      <%= font_icon "twitter-like", :size => 16 %>
                     </a>
                   </span>
                   
                   <span class="shr-fav-btn <%= favorited_class %>">
-                    <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" stream-id="<%= feed.stream_id %>" data-clicked="no" class="more-links shr-fav-btn tooltip unfavorite_twt" data-original-title="Favorited" twipsy-content-set="true">
-                      <%= font_icon "star", :size => 16 %>
+                    <a href="javascript:void(0);" data-feed-id="<%= feed.feed_id %>" stream-id="<%= feed.stream_id %>" data-clicked="no" class="twt-fav more-links shr-fav-btn tooltip unfavorite_twt is-active" data-original-title="Undo Like" twipsy-content-set="true">
+                      <%= font_icon "twitter-like", :size => 16 %>
                     </a>
                   </span>
                 </li>

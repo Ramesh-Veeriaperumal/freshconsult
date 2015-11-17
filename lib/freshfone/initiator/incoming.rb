@@ -4,6 +4,7 @@ class Freshfone::Initiator::Incoming
   include Freshfone::Endpoints
   include Freshfone::AgentsLoader
   include Freshfone::CallsRedisMethods
+  include Freshfone::NumberMethods
 
   def self.match?(params)
     params[:type] == "incoming"
@@ -59,10 +60,12 @@ class Freshfone::Initiator::Incoming
   def initiate_queue
     # self.current_call.queued! # SpreadsheetL 45
     current_call = current_account.freshfone_calls.find_by_call_sid params[:CallSid]
-    @telephony.initiate_queue
+    queue_disabled_or_overloaded? ? return_non_availability : @telephony.initiate_queue
   end
 
   def return_non_availability
+    current_call ||= current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
+    current_call.update_missed_abandon_status unless (current_call.present? && current_number.voicemail_active)
     @telephony.return_non_availability
   end
 
@@ -151,4 +154,10 @@ class Freshfone::Initiator::Incoming
       call_meta.pinged_agents
     end
 
+    def queue_disabled_or_overloaded?
+      return true if queue_disabled?
+      queue_sid = current_account.freshfone_account.queue
+      queue = current_account.freshfone_subaccount.queues.get(queue_sid)
+      queue.present? and (queue.current_size >= max_queue_size)
+    end
 end

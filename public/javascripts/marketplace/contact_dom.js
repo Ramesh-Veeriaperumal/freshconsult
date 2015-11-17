@@ -1,29 +1,65 @@
-var contactDom = contactDom || {};
+var ContactDom = Class.create({
+  initialize: function() {
+    jQuery(window).on("message.extn", this.receiveFAMessage.bindAsEventListener(this));
+  },
 
-(function(cd){
-
-  // Declare required dom manipulations for contact page.
-
-  // convert to agent
-  cd.convertToAgent = function(options){
-    if(options.agent_type){
-      var id = options.agent_type;
-      var valid = jQuery.inArray(id, ['fulltime','occasional']);
-      (valid >= 0) && jQuery('a#'+id).trigger('click');
+  // contact page dom related
+  getContactInfo: function(opt){
+    if(opt){
+      var msg_for_extn = {
+        dom_helper_data: dom_helper_data,
+        type: "FA_FROM_HK"
+      }
+      window.postMessage(msg_for_extn, "*");
     }
-  }
+    else{
+      return dom_helper_data;
+    }
+  },
+  
+  receiveFAMessage: function(event){
+    var data = event.originalEvent.data;
+    if(page_type == "contact"){
+      if(data.type == "FA_DOM_EVENTS") {
+        method = data.action;
+        this[method](data.txt);
+      } 
+      else if(data.type == "FA_TO_HK"){
+        this.getContactInfo(data.txt);
+      }
+    }
+  },
 
-  //set background info
-  cd.setBackgroundInfo = function(options){
-    if(options.text){
-      jQuery('textarea#user_description').val(options.text);
+  convertToAgent: function(options){
+    if(options){
+      var id = options;
+      var valid = jQuery.inArray(id, ['fulltime','occasional']);
+      var el = jQuery("ul.dropdown-menu.pull-right");
+      if(valid == 0){
+        jQuery(el).find("li:first a").trigger("click");
+      }
+      else if(valid == 1){
+       jQuery(el).find("li:last a").trigger("click");
+      }
+    }
+  },
+
+  setBackgroundInfo: function(options){
+    if(options){
+      jQuery('textarea#user_description').val(options);
       jQuery('input#user_submit').trigger('click');
     }
-  }
+  },
 
-  // append to contacts page sidebar
-  cd.appendToContactSidebar = function(options){
-    options.markup && jQuery('div#Sidebar').append(options.markup);
-  }
+  appendToContactSidebar: function(options){
+    if(options){
+      jQuery('div.contact-sidebar-content').append(options);
+    }
+  },
 
-})(contactDom);
+  destroy: function(){
+    dom_helper_data = {};
+    //need to clear all sorts of data manipulations when navigating away.
+  }
+});
+var contactDom = new ContactDom();

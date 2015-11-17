@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20151009095010) do
+ActiveRecord::Schema.define(:version => 20151104064849) do
 
 
   create_table "account_additional_settings", :force => true do |t|
@@ -1357,6 +1357,7 @@ ActiveRecord::Schema.define(:version => 20151009095010) do
     t.string   "twilio_client_version",   :limit => 10, :default => "1.2"
     t.boolean  "security_whitelist",                         :default => false
     t.text     "triggers"
+    t.boolean  "caller_id_enabled",                     :default => false
   end
 
   add_index "freshfone_accounts", ["account_id", "state", "expires_on"], :name => "index_freshfone_accounts_on_account_id_and_state_and_expires_on"

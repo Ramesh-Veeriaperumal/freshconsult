@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "964b194d76465f0471a59666b5e88a571f8278ee703933ca042b86d663fa405d",
-    "current": "964b194d76465f0471a59666b5e88a571f8278ee703933ca042b86d663fa405d"
+    "previous": "f53dfc6b3211cc692af24ecc150c1bb7ed66ebccafa1a068dcd0a3371eb24fe0",
+    "current": "f53dfc6b3211cc692af24ecc150c1bb7ed66ebccafa1a068dcd0a3371eb24fe0"
   },
   "fonts": [
-    "public/assets/glyphs_964b194d76465f0471a59666b5e88a57.ttf",
-    "public/assets/glyphs_964b194d76465f0471a59666b5e88a57.svg",
-    "public/assets/glyphs_964b194d76465f0471a59666b5e88a57.woff",
-    "public/assets/glyphs_964b194d76465f0471a59666b5e88a57.eot"
+    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.ttf",
+    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.svg",
+    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.woff",
+    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -178,6 +178,10 @@
       "codepoint": 61726,
       "source": "public/glyphs/vectors/chat-enable.svg"
     },
+    "chat-source": {
+      "codepoint": 61926,
+      "source": "public/glyphs/vectors/chat-source.svg"
+    },
     "checkbox": {
       "codepoint": 61727,
       "source": "public/glyphs/vectors/checkbox.svg"
@@ -342,6 +346,10 @@
       "codepoint": 61759,
       "source": "public/glyphs/vectors/facebook-setting.svg"
     },
+    "facebook-source": {
+      "codepoint": 61927,
+      "source": "public/glyphs/vectors/facebook-source.svg"
+    },
     "feedback": {
       "codepoint": 61760,
       "source": "public/glyphs/vectors/feedback.svg"
@@ -445,6 +453,10 @@
     "folder-open-o": {
       "codepoint": 61774,
       "source": "public/glyphs/vectors/folder-open-o.svg"
+    },
+    "forum-source": {
+      "codepoint": 61928,
+      "source": "public/glyphs/vectors/forum-source.svg"
     },
     "forward": {
       "codepoint": 61775,
@@ -574,6 +586,10 @@
       "codepoint": 61866,
       "source": "public/glyphs/vectors/mail-filled.svg"
     },
+    "mail-source": {
+      "codepoint": 61929,
+      "source": "public/glyphs/vectors/mail-source.svg"
+    },
     "mail-thin": {
       "codepoint": 61800,
       "source": "public/glyphs/vectors/mail-thin.svg"
@@ -601,6 +617,14 @@
     "mobile": {
       "codepoint": 61806,
       "source": "public/glyphs/vectors/mobile.svg"
+    },
+    "mobile-active-source": {
+      "codepoint": 61930,
+      "source": "public/glyphs/vectors/mobile-active-source.svg"
+    },
+    "mobile-source": {
+      "codepoint": 61931,
+      "source": "public/glyphs/vectors/mobile-source.svg"
     },
     "multi-product": {
       "codepoint": 61807,
@@ -702,6 +726,10 @@
       "codepoint": 61893,
       "source": "public/glyphs/vectors/plus-circle.svg"
     },
+    "portal-source": {
+      "codepoint": 61932,
+      "source": "public/glyphs/vectors/portal-source.svg"
+    },
     "portals": {
       "codepoint": 61903,
       "source": "public/glyphs/vectors/portals.svg"
@@ -729,6 +757,10 @@
     "refresh": {
       "codepoint": 61827,
       "source": "public/glyphs/vectors/refresh.svg"
+    },
+    "refresh-source": {
+      "codepoint": 61933,
+      "source": "public/glyphs/vectors/refresh-source.svg"
     },
     "reorder": {
       "codepoint": 61828,
@@ -878,6 +910,10 @@
       "codepoint": 61856,
       "source": "public/glyphs/vectors/twitter.svg"
     },
+    "twitter-like": {
+      "codepoint": 61934,
+      "source": "public/glyphs/vectors/twitter-like.svg"
+    },
     "twitter-lock": {
       "codepoint": 61857,
       "source": "public/glyphs/vectors/twitter-lock.svg"
@@ -885,6 +921,10 @@
     "twitter-o": {
       "codepoint": 61858,
       "source": "public/glyphs/vectors/twitter-o.svg"
+    },
+    "twitter-source": {
+      "codepoint": 61935,
+      "source": "public/glyphs/vectors/twitter-source.svg"
     },
     "unlock": {
       "codepoint": 61859,
@@ -909,6 +949,10 @@
     "web-page": {
       "codepoint": 61864,
       "source": "public/glyphs/vectors/web-page.svg"
+    },
+    "web-source": {
+      "codepoint": 61936,
+      "source": "public/glyphs/vectors/web-source.svg"
     },
     "windows": {
       "codepoint": 61865,

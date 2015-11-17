@@ -32,6 +32,10 @@
             margin-top:10px;
           }
         }
+        
+        .fb-select-all-label{
+          display:inline;
+        }
 
         .list-page-table-header{
             padding:4px 12px 12px;
@@ -203,7 +207,7 @@
         }
 
         td.fb_list_pic{
-                @include padding(1px);
+                @include padding(5px);
         }
     }
 }

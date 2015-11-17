@@ -2364,7 +2364,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :delayed_jobs, only: [:index,:show] do
+      resources :jobs, only: [:index,:show] do
         collection do
           put 'requeue'
           put 'requeue_selected'
