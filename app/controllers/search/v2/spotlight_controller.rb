@@ -2,9 +2,6 @@
 #
 class Search::V2::SpotlightController < ApplicationController
 
-  BOOST_VALUES = YAML::load_file(File.join(Rails.root, 'config/search',
-                                                  'boost_values.yml'))
-
   include Search::SearchResultJson
   helper Search::SearchHelper
   
@@ -118,7 +115,6 @@ class Search::V2::SpotlightController < ApplicationController
       Hash.new.tap do |es_params|
         es_params[:search_term] = @search_key
         es_params[:account_id]  = current_account.id ##needed?
-        es_params[:topic_visibility] = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN) ##needed?
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
@@ -139,44 +135,7 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
-        es_params[:display_id_boost] = BOOST_VALUES['agent_spotlight'][:display_id_boost]]
-        es_params[:subject_boost] = BOOST_VALUES['agent_spotlight'][:subject_boost]
-        es_params[:description_boost] = BOOST_VALUES['agent_spotlight'][:description_boost]
-        es_params[:attachment_boost] = BOOST_VALUES['agent_spotlight'][:attachment_boost]
-        es_params[:sender_boost] = BOOST_VALUES['agent_spotlight'][:sender_boost]
-        es_params[:to_emails_boost] = BOOST_VALUES['agent_spotlight'][:to_emails_boost]
-        es_params[:es_cc_emails_boost] = BOOST_VALUES['agent_spotlight'][:es_cc_emails_boost]
-        es_params[:es_fwd_emails_boost] = BOOST_VALUES['agent_spotlight'][:es_fwd_emails_boost]
-        es_params[:tag_names_boost] = BOOST_VALUES['agent_spotlight'][:tag_names_boost]
-        es_params[:ffs_boost] = BOOST_VALUES['agent_spotlight'][:ffs_boost]
-        es_params[:ff_text_boost] = BOOST_VALUES['agent_spotlight'][:ff_text_boost]
-        es_params[:note_attachment_boost] = BOOST_VALUES['agent_spotlight'][:note_attachment_boost]
-        es_params[:body_boost] = BOOST_VALUES['agent_spotlight'][:body_boost]
-        es_params[:name_boost] = BOOST_VALUES['agent_spotlight'][:name_boost]
-        es_params[:note_boost] = BOOST_VALUES['agent_spotlight'][:note_boost]
-        es_params[:description_boost] = BOOST_VALUES['agent_spotlight'][:description_boost]
-        es_params[:cf_text_boost] = BOOST_VALUES['agent_spotlight'][:cf_text_boost]
-        es_params[:cf_str_boost] = BOOST_VALUES['agent_spotlight'][:cf_str_boost]
-        es_params[:domains_boost] = BOOST_VALUES['agent_spotlight'][:domains_boost]
-        es_params[:name_boost] = BOOST_VALUES['agent_spotlight'][:name_boost]
-        es_params[:emails_boost] = BOOST_VALUES['agent_spotlight'][:emails_boost]
-        es_params[:description_boost] = BOOST_VALUES['agent_spotlight'][:description_boost]
-        es_params[:job_title_boost] = BOOST_VALUES['agent_spotlight'][:job_title_boost]
-        es_params[:phone_boost] = BOOST_VALUES['agent_spotlight'][:phone_boost]
-        es_params[:mobile_boost] = BOOST_VALUES['agent_spotlight'][:mobile_boost]
-        es_params[:company_name_boost] = BOOST_VALUES['agent_spotlight'][:company_name_boost]]
-        es_params[:twitter_id_boost] = BOOST_VALUES['agent_spotlight'][:twitter_id_boost]
-        es_params[:fb_profile_id_boost] = BOOST_VALUES['agent_spotlight'][:fb_profile_id_boost]
-        es_params[:cf_str_boost] = BOOST_VALUES['agent_spotlight'][:cf_str_boost]
-        es_params[:cf_text_boost] = BOOST_VALUES['agent_spotlight'][:cf_text_boost]
-        es_params[:topic_title_boost] = BOOST_VALUES['agent_spotlight'][:topic_title_boost]
-        es_params[:posts_body_boost] = BOOST_VALUES['agent_spotlight'][:posts_body_boost]
-        es_params[:posts_attachment_boost] = BOOST_VALUES['agent_spotlight'][:posts_attachment_boost]
-        es_params[:title_boost] = BOOST_VALUES['agent_spotlight'][:title_boost]
-        es_params[:desc_un_html_boost] = BOOST_VALUES['agent_spotlight'][:desc_un_html_boost]
-        es_params[:tag_names_boost] = BOOST_VALUES['agent_spotlight'][:tag_names_boost]
-        es_params[:attachment_names_boost] = BOOST_VALUES['agent_spotlight'][:attachment_names_boost]
-      end
+      end.merge(ES_BOOST_VALUES[:agent_spotlight])
     end
 
     # Reconstructing ES results

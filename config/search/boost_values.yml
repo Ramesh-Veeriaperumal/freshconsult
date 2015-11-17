@@ -1,15 +1,15 @@
 --- 
-agent_autocomplete: 
+:agent_autocomplete: 
   :name_boost: 1
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
-requester_autocomplete: 
+:requester_autocomplete: 
   :name_boost: 1
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
-agent_spotlight:
+:agent_spotlight: 
   :display_id_boost: 1
   :subject_boost: 1
   :ticket_description_boost: 1
@@ -38,8 +38,6 @@ agent_spotlight:
   :user_company_name_boost: 1
   :twitter_id_boost: 1
   :fb_profile_id_boost: 1
-  :cf_str_boost: 1
-  :cf_text_boost: 1
   :topic_title_boost: 1
   :posts_body_boost: 1
   :posts_attachment_boost: 1
@@ -47,7 +45,7 @@ agent_spotlight:
   :desc_un_html_boost: 1
   :article_tag_names_boost: 1
   :attachment_names_boost: 1
-portal_spotlight: 
+:portal_spotlight: 
   :subject_boost: 1
   :description_boost: 1
   :to_emails_boost: 1
@@ -76,6 +74,3 @@ portal_spotlight:
   :article_desc_boost: 1
   :article_tag_boost: 1
   :article_attachment_boost: 1
-
-
-

@@ -2,9 +2,6 @@
 #
 class Search::V2::AutocompleteController < ApplicationController
 
-  BOOST_VALUES = YAML::load_file(File.join(Rails.root, 'config/search',
-                                                  'boost_values.yml'))
-
   before_filter :initialize_search_parameters
 
   attr_accessor :search_key, :search_context, :searchable_klass, :records_from_db, :search_results
@@ -26,12 +23,8 @@ class Search::V2::AutocompleteController < ApplicationController
       is_deleted: false,
       sort_by: 'name',
       sort_direction: 'asc',
-      size: 100,
-      name_boost: BOOST_VALUES['agent_autocomplete'][:name_boost],
-      emails_boost: BOOST_VALUES['agent_autocomplete'][:emails_boost],
-      phone_boost: BOOST_VALUES['agent_autocomplete'][:phone_boost],
-      mobile_boost: BOOST_VALUES['agent_autocomplete'][:mobile_boost]
-    }
+      size: 100
+    }.merge(ES_BOOST_VALUES[:agent_autocomplete])
 
     search.each do |document|
       @search_results[:results].push(*[{
@@ -51,12 +44,8 @@ class Search::V2::AutocompleteController < ApplicationController
       is_deleted: false,
       sort_by: 'name',
       sort_direction: 'asc',
-      size: 100,
-      name_boost: BOOST_VALUES['agent_autocomplete'][:name_boost],
-      emails_boost: BOOST_VALUES['agent_autocomplete'][:emails_boost],
-      phone_boost: BOOST_VALUES['agent_autocomplete'][:phone_boost],
-      mobile_boost: BOOST_VALUES['agent_autocomplete'][:mobile_boost]
-    }
+      size: 100
+    }.merge(ES_BOOST_VALUES[:requester_autocomplete])
 
     search.each do |document|
       @search_results[:results].push(*document.search_data)

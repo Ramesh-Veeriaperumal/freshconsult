@@ -1,9 +1,6 @@
 # encoding: utf-8
 class Support::SearchV2::SpotlightController < SupportController
 
-  BOOST_VALUES = YAML::load_file(File.join(Rails.root, 'config/search',
-                                                  'boost_values.yml'))
-
   extend NewRelic::Agent::MethodTracer
   include ActionView::Helpers::TextHelper
 
@@ -133,37 +130,7 @@ class Support::SearchV2::SpotlightController < SupportController
 
         es_params[:size]                      = @size
         es_params[:from]                      = @offset
-
-        es_params[:subject_boost]             = BOOST_VALUES['portal_spotlight'][:subject_boost]]
-        es_params[:description_boost]         = BOOST_VALUES['portal_spotlight'][:description_boost]]
-        es_params[:attachment_boost]          = BOOST_VALUES['portal_spotlight'][:attachment_boost]]
-        es_params[:to_emails_boost]           = BOOST_VALUES['portal_spotlight'][:to_emails_boost]] 
-        es_params[:es_cc_boost]               = BOOST_VALUES['portal_spotlight'][:es_cc_boost]]
-        es_params[:es_fwd_emails_boost]       = BOOST_VALUES['portal_spotlight'][:es_fwd_emails_boost]]
-        es_params[:note_attachment_boost]     = BOOST_VALUES['portal_spotlight'][:note_attachment_boost]] 
-        es_params[:body_boost]                = BOOST_VALUES['portal_spotlight'][:body_boost]] 
-        es_params[:company_description_boost] = BOOST_VALUES['portal_spotlight'][:company_description_boost]] 
-        es_params[:company_domains_boost]     = BOOST_VALUES['portal_spotlight'][:company_domains_boost]]
-        es_params[:company_name_boost]        = BOOST_VALUES['portal_spotlight'][:company_name_boost]]
-        es_params[:user_name_boost]           = BOOST_VALUES['portal_spotlight'][:user_name_boost]] 
-        es_params[:user_emails_boost]         = BOOST_VALUES['portal_spotlight'][:user_emails_boost]] 
-        es_params[:user_description_boost]    = BOOST_VALUES['portal_spotlight'][:user_description_boost]] 
-        es_params[:user_job_boost]            = BOOST_VALUES['portal_spotlight'][:user_job_boost]] 
-        es_params[:user_phone_boost]          = BOOST_VALUES['portal_spotlight'][:user_phone_boost]] 
-        es_params[:user_mobile_boost]         = BOOST_VALUES['portal_spotlight'][:user_mobile_boost]] 
-        es_params[:user_company_boost]        = BOOST_VALUES['portal_spotlight'][:user_company_boost]] 
-        es_params[:twitter_boost]             = BOOST_VALUES['portal_spotlight'][:twitter_boost]]
-        es_params[:fb_profile_boost]          = BOOST_VALUES['portal_spotlight'][:fb_profile_boost]] 
-        es_params[:topic_title_boost]         = BOOST_VALUES['portal_spotlight'][:topic_title_boost]] 
-        es_params[:posts_attachment_boost]    = BOOST_VALUES['portal_spotlight'][:posts_attachment_boost]] 
-        es_params[:posts_body_boost]          = BOOST_VALUES['portal_spotlight'][:posts_body_boost]] 
-        es_params[:article_title_boost]       = BOOST_VALUES['portal_spotlight'][:article_title_boost]] 
-        es_params[:article_desc_boost]        = BOOST_VALUES['portal_spotlight'][:article_desc_boost]] 
-        es_params[:article_tag_boost]         = BOOST_VALUES['portal_spotlight'][:article_tag_boost]]
-        es_params[:article_attachment_boost]  = BOOST_VALUES['portal_spotlight'][:article_attachment_boost]] 
-
-
-      end
+      end.merge(ES_BOOST_VALUES[:portal_spotlight])
     end
 
     # To-do: Check if already exists
