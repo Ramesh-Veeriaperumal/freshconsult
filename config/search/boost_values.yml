@@ -19,15 +19,15 @@ agent_spotlight:
   :es_cc_emails_boost: 1
   :es_fwd_emails_boost: 1
   :ticket_tag_names_boost: 1
-  :ffs_*_boost: 1
-  :ff_text_*_boost: 1
+  :ffs_boost: 1
+  :ff_text_boost: 1
   :note_attachment_boost: 1
   :note_body_boost: 1
   :company_name_boost: 1
   :note_boost: 1
   :company_description_boost: 1
-  :cf_text*_boost: 1
-  :cf_str*_boost: 1
+  :cf_text_boost: 1
+  :cf_str_boost: 1
   :domains_boost: 1
   :user_name_boost: 1
   :emails_boost: 1
@@ -38,8 +38,8 @@ agent_spotlight:
   :user_company_name_boost: 1
   :twitter_id_boost: 1
   :fb_profile_id_boost: 1
-  :cf_str*_boost: 1
-  :cf_text*_boost: 1
+  :cf_str_boost: 1
+  :cf_text_boost: 1
   :topic_title_boost: 1
   :posts_body_boost: 1
   :posts_attachment_boost: 1
