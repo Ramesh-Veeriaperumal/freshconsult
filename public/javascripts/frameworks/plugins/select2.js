@@ -3108,7 +3108,6 @@ the specific language governing permissions and limitations under the Apache Lic
                 data,
                 index;
             selected = selected.closest(".select2-search-choice");
-
             if (selected.length === 0) {
                 throw "Invalid argument: " + selected + ". Must be .select2-search-choice";
             }
@@ -3225,7 +3224,12 @@ the specific language governing permissions and limitations under the Apache Lic
                 return val === null ? [] : val;
             } else {
                 val = this.opts.element.val();
-                return splitVal(val, this.opts.separator);
+                if(this.opts.matchFlag){
+                    return val.match(/(?:"[^"]*"|[^,])+/g);
+                }
+                else{
+                    return splitVal(val, this.opts.separator);
+                }
             }
         },
 
@@ -3458,6 +3462,7 @@ the specific language governing permissions and limitations under the Apache Lic
             return stripDiacritics(''+text).toUpperCase().indexOf(stripDiacritics(''+term).toUpperCase()) >= 0;
         },
         separator: ",",
+        mathcFlag: false,
         tokenSeparators: [],
         tokenizer: defaultTokenizer,
         escapeMarkup: defaultEscapeMarkup,
