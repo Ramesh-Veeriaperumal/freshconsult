@@ -4337,6 +4337,7 @@ en:
     personalized_email_replies_title: Use agent names in ticket replies and outbound emails?
     personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
+    blacklisted_domain_message: The domain you have entered is blocked. Please enter another domain.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
