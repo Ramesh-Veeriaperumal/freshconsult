@@ -1180,6 +1180,34 @@ Helpkit::Application.routes.draw do
 
   match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
 
+  # Constraint based routing to V2 paths
+  #
+  constraints Search::V1Path.new do
+    match '/search/home/suggest',              to: 'search/v2/suggest#index',                    via: :get
+    match '/search/all',                       to: 'search/v2/spotlight#all',                    via: :get
+    match '/search/tickets',                   to: 'search/v2/spotlight#tickets',                via: :get
+    match '/search/customers',                 to: 'search/v2/spotlight#customers',              via: :get
+    match '/search/forums',                    to: 'search/v2/spotlight#forums',                 via: :get
+    match '/search/solutions',                 to: 'search/v2/spotlight#solutions',              via: :get
+    match '/search/autocomplete/requesters',   to: 'search/v2/autocomplete#requesters',          via: :get
+    match '/search/autocomplete/agents',       to: 'search/v2/autocomplete#agents',              via: :get
+    match '/search/autocomplete/companies',    to: 'search/v2/autocomplete#companies',           via: :get
+    match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
+    match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post    
+    
+    match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get
+    match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get
+    match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
+
+    match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
+    match '/support/search/tickets',           to: 'support/search_v2/spotlight#tickets',           via: :get
+    match '/support/search/topics',            to: 'support/search_v2/spotlight#topics',            via: :get
+    match '/support/search/solutions',         to: 'support/search_v2/spotlight#solutions',         via: :get
+    match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
+    
+    match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
+  end
+  
   namespace :search do
 
     # Search v2 agent controller routes
@@ -1210,10 +1238,6 @@ Helpkit::Application.routes.draw do
           post :search_topics
         end
       end
-      
-      match '/related_solutions/ticket/:ticket' => 'solutions#related_solutions'
-      match '/search_solutions/ticket/:ticket'  => 'solutions#search_solutions'
-      match '/tickets/filter/:search_field' => 'tickets#index'
     end
 
     resources :home, :only => :index do
@@ -2127,17 +2151,7 @@ Helpkit::Application.routes.draw do
     match '/signup' => 'signups#new'
 
     resource :profile, :only => [:edit, :update]
-    resource :search, :controller => "search", :only => :show do
-      member do
-        get :solutions
-        get :topics
-        get :tickets
-        get :suggest_topic
-      end
-      match '/topics/suggest', :action => 'suggest_topic'
-      match '/articles/:article_id/related_articles', :action => 'related_articles'
-    end
-
+    
     # Search v2 portal controller routes
     #
     namespace :search_v2 do
@@ -2155,7 +2169,17 @@ Helpkit::Application.routes.draw do
           get :related_articles
         end
       end
-      match '/articles/:article_id/related_articles' => 'solutions#related_articles'
+    end
+
+    resource :search, :controller => "search", :only => :show do
+      member do
+        get :solutions
+        get :topics
+        get :tickets
+        get :suggest_topic
+      end
+      match '/topics/suggest', :action => 'suggest_topic'
+      match '/articles/:article_id/related_articles', :action => 'related_articles'
     end
 
     resources :discussions, :only => [:index, :show] do

@@ -85,7 +85,6 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
-    config.middleware.insert_after 'Middleware::TrustedIp', 'Middleware::SearchV2Router'
     # config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
     #   # during the ddos attack uncomment the below line
     #   # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
