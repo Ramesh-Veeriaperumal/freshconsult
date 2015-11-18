@@ -778,9 +778,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       to_html = text_to_html(body)
       body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
-      white_list(body_html)
-    end    
-
+      html = white_list(body_html)
+      html.gsub!("&amp;amp;", "&amp;")
+      html
+    end
     
   def add_ticket_tags(tags_to_be_added, ticket)
     tags_to_be_added.each do |tag|
