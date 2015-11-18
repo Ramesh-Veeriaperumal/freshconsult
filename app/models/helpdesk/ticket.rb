@@ -223,6 +223,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def search_display(ticket)
       "#{ticket.subject} (##{ticket.display_id})"
     end
+    
+    def default_cc_hash
+      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
+    end
 
   end
  
@@ -261,10 +265,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def status_name
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
-  end
-  
-  def default_cc_hash
-    { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
   end
 
   def requester_status_name
