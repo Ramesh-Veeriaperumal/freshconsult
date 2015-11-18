@@ -7,6 +7,10 @@ module Facebook::KoalaWrapper::ExceptionHandler
 
   #need to refactor this code and handle the exception properly
   module ClassMethods
+    
+    include Redis::RedisKeys
+    include Facebook::RedisMethods
+    
     AUTH_ERROR               = 190
     AUTH_SUB_CODES           = [458, 459, 460, 463, 464, 467]
     HTTP_STATUS_CLIENT_ERROR = [400, 499]
@@ -35,9 +39,12 @@ module Facebook::KoalaWrapper::ExceptionHandler
         elsif !exception.http_status.blank? and exception.http_status.between?(HTTP_STATUS_CLIENT_ERROR.first,  HTTP_STATUS_CLIENT_ERROR.last)
           
           #Too Many Requests (Ratelimit exception)
-          if exception.fb_error_code == APP_RATE_LIMIT or exception.fb_error_code == USER_RATE_LIMIT
+          if exception.fb_error_code == APP_RATE_LIMIT
+            throttle_fb_feed_processing
+            requeue_and_notify(error_params)
+            raise_newrelic_error(exception)
+          elsif exception.fb_error_code == USER_RATE_LIMIT
             update_error_and_notify(error_params)
-            $sqs_facebook.requeue(@feed.feed) if @intial_feed
           elsif exception.fb_error_code.between?(PERMISSION_ERROR.first,  PERMISSION_ERROR.last)
             IGNORED_ERRORS.include?(exception.fb_error_code) ? raise_sns_notification(error_params[:error_msg][0..50], error_params) : update_error_and_notify(error_params) 
           end
@@ -97,7 +104,14 @@ module Facebook::KoalaWrapper::ExceptionHandler
         :error_updated => error_updated
       })
       raise_sns_notification(error_params[:error_msg][0..50], error_params)
-      Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed) if @intial_feed
+      if @intial_feed && @fan_page.company_or_visitor?
+        Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, (Time.now.to_f*1000).to_i, @intial_feed) 
+      end
+    end
+    
+    def requeue_and_notify(error_params)
+      $sqs_facebook.requeue(@feed.feed) if @intial_feed
+      raise_sns_notification(error_params[:error_msg][0..50], error_params)
     end
     
     def raise_sns_notification(subject, message)
