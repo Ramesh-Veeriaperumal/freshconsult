@@ -5,6 +5,8 @@ require 'net/imap'
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
   include MailboxValidator
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :only => [:new] do |c|
     c.requires_feature :multiple_emails
@@ -203,5 +205,5 @@ class Admin::EmailConfigsController < Admin::AdminController
     def update_error
       @products = current_account.products
       @groups = current_account.groups
-    end
+    end    
 end
