@@ -76,7 +76,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def retry_after
-      newrelic_begin_rescue { return $spam_watcher.ttl(key) }
+      newrelic_begin_rescue { return $rate_limit.ttl(key) }
     end
 
     def extra_credits
@@ -126,19 +126,19 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def increment_redis(key, used)
-      newrelic_begin_rescue { return $spam_watcher.INCRBY(key, used) }
+      newrelic_begin_rescue { return $rate_limit.INCRBY(key, used) }
     end
 
     def set_redis_expiry(key, expires)
-      newrelic_begin_rescue { $spam_watcher.expire(key, expires) }
+      newrelic_begin_rescue { $rate_limit.expire(key, expires) }
     end
 
     def get_redis_key(key)
-      newrelic_begin_rescue { $spam_watcher.get(key) }
+      newrelic_begin_rescue { $rate_limit.get(key) }
     end
 
     def get_multiple_redis_keys(*keys)
-      newrelic_begin_rescue { $spam_watcher.mget(*keys) }
+      newrelic_begin_rescue { $rate_limit.mget(*keys) }
     end
 
     def key
