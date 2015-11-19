@@ -4728,7 +4728,7 @@ en:
     admin_select_all:
       select_all_page_text: "%{count} tickets on this page are selected."
       select_all_view_text: "All %{count} tickets in this view are selected."
-      toggle_select_all: "Select all <span class='admin_select_all_ticket_count'></span> tickets in this view"
+      toggle_select_all: "Select all %{count} tickets in this view"
       clear_selection: "Clear Selection"
       close_tickets: "Close Tickets"
       delete_tickets: "Delete Tickets"

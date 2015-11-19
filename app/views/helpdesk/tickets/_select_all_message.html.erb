@@ -15,7 +15,8 @@
 <% if current_select_all_job.empty? %>
     <div id="toggle_select_all" class="toggle_select_all_container inline-block">
         <a href="javascript:void(0)" id="toggle_select_all_default"> 
-            <%= t('ticket.admin_select_all.toggle_select_all').html_safe %>
+        <%= t('ticket.admin_select_all.toggle_select_all', 
+            :count => "<span class='admin_select_all_ticket_count'></span>").html_safe %>
         </a>
         <a href="javascript:void(0)" id="toggle_select_all_clear" class="hide">
             <%= t('ticket.admin_select_all.clear_selection').html_safe %>
@@ -24,7 +25,8 @@
 <% else %>
     <div id="select_all_disabled" class="toggle_select_all_container inline-block">
         <span id="toggle_select_all_default" class="admin_select_all_disabled">
-            <%= t('ticket.admin_select_all.toggle_select_all').html_safe %>
+            <%= t('ticket.admin_select_all.toggle_select_all', 
+                :count => "<span class='admin_select_all_ticket_count'></span>").html_safe %>
         </span>
     </div>
     <div class="inline-block tooltip" 

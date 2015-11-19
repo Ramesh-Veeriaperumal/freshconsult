@@ -242,6 +242,14 @@
 
 #bulkcontent{
     overflow: hidden;
+    .button-container{
+        float: right;
+        width: 100%;
+        #bulk_back{
+            @include float(left);
+            @include margin-left(5px);
+        }
+    }
 }
 
 #canned_show{
@@ -259,7 +267,4 @@
     text-decoration: none;
 }
 
-#bulk_back{
-    @include float(left);
-    @include margin-left(5px);
-}
+
