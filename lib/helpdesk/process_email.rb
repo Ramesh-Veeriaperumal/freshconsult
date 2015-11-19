@@ -304,7 +304,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
-      global_cc = parse_all_cc_emails(account.kbase_email)
+      global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
@@ -726,7 +726,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def ticket_cc_emails_hash(ticket, note)
       cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
-      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email)
+      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
       add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value) unless in_reply_to.to_s.include? "notification.freshdesk.com"
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
