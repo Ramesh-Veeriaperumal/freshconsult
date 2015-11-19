@@ -180,7 +180,7 @@ var UnresolvedTickets = (function () {
 		},
 		saveFilterData: function(data){
 			if (typeof (Storage) !== "undefined") {
-				window.localStorage.setItem('unresolved-tickets-filters', JSON.stringify(data));
+				window.localStorage.setItem('unresolved-tickets-filters', Browser.stringify(data));
 			}
 		},
 		tableDrawCallback: function(dataLength){
