@@ -8492,3 +8492,17 @@ en:
     wrong_no_of_past_password: Please enter a valid number of past passwords.
     wrong_expiry_days: Please enter a valid number of expiry days.
     invalid_config: Please enter a valid configuration.
+  unresolved_tickets:
+    title: "Unresolved Tickets"
+    dashboard_link: "Back to Dashboard"
+    no_data: "No data to display"
+    connection_error: "We have encountered an error. Please try again in some time."
+    agent_label: "Agent"
+    group_label: "Group"
+    filtered_by_label: "Filtered by"
+    filter_by_label: "Filter by"
+    filter_label: "Filter"
+    search: "Search"
+    search_group: "Search by group"
+    search_agent: "Search by agent"
+    loading_label: "Loading"

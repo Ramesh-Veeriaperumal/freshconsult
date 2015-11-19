@@ -115,6 +115,11 @@
 
 <% end %>
 
+<% if chat_active? || round_robin? %>
+  <script type="text/javascript">
+  App.Dashboard.bindToggle();
+  </script>
+<% end %>
 
 <% if chat_active? %>
 <script type="text/javascript">

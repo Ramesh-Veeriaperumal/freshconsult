@@ -113,6 +113,8 @@ module Redis::RedisKeys
 	
 	EMAIL_CONFIG_BLACKLISTED_DOMAINS = "email_config_blacklisted_domains"
 
+	DASHBOARD_TABLE_FILTER_KEY = "DASHBOARD_TABLE_FILTER_KEY:%{account_id}:%{user_id}"
+
 	def newrelic_begin_rescue
 	    begin
 	      yield

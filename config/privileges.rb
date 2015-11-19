@@ -377,7 +377,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"solution/article", :only => [:change_author]
-    resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
+    resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group, :unresolved_tickets, :unresolved_tickets_data ]
     resource :"helpdesk/ticket", :only => [:update_all_tickets]
     resource :"helpdesk/select_all_ticket_action"
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
