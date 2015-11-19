@@ -6,26 +6,36 @@
 	<span class='rounded-minus-icon delete'></span>
 </td>
 <td class='escalations-time-holder'> 
+ 
 	<label for='select_<%= options[:type] %>_time_<%= index %>' class='inline_text'>
-		<%= t('sla_policy.escalate_after').html_safe %>
-	</label> 
+		<% if options[:type] == "response"  || options[:type] == "resolution"%>
+			<%= t('sla_policy.escalate_after').html_safe %>
+		<% else %>
+			<%= t('sla_policy.reminder_after').html_safe %>
+		<% end %>
+	</label>
+	
 	<%= i.select 'time', options[:time_options] || {}, {}, 
 			{:rel => "#{options[:type]}_time", 
 			'data-level' => index, 
 			:id => "select_#{options[:type]}_time_#{index}",
 			:name => "time",
-			:'data-name' => "time",} %>
+			:'data-name' => "time",:class => 'select2',
+			:selected => "#{options[:value]}",
+			'data-dropdown-css-class' => "select2-search-hide" } %>
 </td>
+
 <td>
 	<%= i.text_field 'agents_id', 
 			{ 'data-level' => index, 
 				'data-type' => options[:type], 
 				'data-value' => options[:value], 
+				'data-placeholder' => options[:placeholder],
 			  :value => options[:value] ? " " : nil, 
 			  :name => "agents_id_#{index}",
 			  :'data-name' => "agents_id",
 			  :id => options[:id],
-			  :class => 'agents_id'
+			  :class => "agents_id"
 			 } 
 	%>
 </td>

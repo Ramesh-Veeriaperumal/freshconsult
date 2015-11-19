@@ -72,22 +72,6 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       :agent_template => '<p>Hi {{ticket.agent.name}},<br /><br />The customer has responded to the ticket.<br /><br />{{ticket.subject}}<br /><br />Ticket comment<br />{{comment.body}}<br /><br />{{ticket.url}}</p>',
     :agent_subject_template => "New Reply Received - {{ticket.subject}}"
 },
-  {
-    :notification_type => EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, 
-    :account_id => account.id, 
-    :requester_notification => false, 
-    :agent_notification => true,
-    :agent_template => '<p>Hi,<br /><br />There has been no response from the helpdesk for a ticket. The first response was due by {{ticket.fr_due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}<br />{{ticket.url}}</p>',
-    :agent_subject_template => "Response time SLA violated - {{ticket.subject}}"
-  },
-  {
-    :notification_type => EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, 
-    :account_id => account.id, 
-    :requester_notification => false, 
-    :agent_notification => true,
-    :agent_template => '<p>Hi,<br /><br />Ticket has not been resolved within the SLA time period. The ticket was due by {{ticket.due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}<br />{{ticket.url}}</p>',
-    :agent_subject_template => "Resolution time SLA violated - {{ticket.subject}}"
-  },
   { :notification_type => EmailNotification::TICKET_RESOLVED, 
       :account_id => account.id, :requester_notification => true, :agent_notification => false,
       :requester_template => '<p>Dear {{ticket.requester.name}},<br /><br />Our Support Rep has indicated that your ticket has been Resolved. <br /><br />If you believe that the ticket has not been resolved, please reply to this email to automatically reopen the ticket.<br />If there is no response from you, we will assume that the ticket has been resolved and the ticket will be automatically closed after 48 hours.<br /><br />Sincerely,<br />{{helpdesk_name}}Support Team<br />{{ticket.url}}</p>',
@@ -146,5 +130,47 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, :requester_notification => false, :agent_notification => true,
     :agent_template => '<p>Hi agent,<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>',
     :agent_subject_template => '{{ticket.subject}}'
+},
+{
+    :notification_type => EmailNotification::RESPONSE_SLA_REMINDER, 
+    :account_id => account.id, 
+    :requester_notification => false, 
+    :agent_notification => true,
+    :agent_template => '<p> Hi,<br><br>Response is due for ticket #{{ticket.id}}.<br><br>Ticket Details: <br><br>
+                        Subject - {{ticket.subject}}<br><br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - 
+                        {{ticket.url}}<br><br>This is an reminder email from {{helpdesk_name}}</p>',
+    :agent_subject_template => 'Response due for {{ticket.subject}}'
+},
+{
+    :notification_type => EmailNotification::RESOLUTION_SLA_REMINDER, 
+    :account_id => account.id, 
+    :requester_notification => false, 
+    :agent_notification => true,
+    :agent_template => '<p>Hi,<br><br>Resolution time for ticket #{{ticket.id}} is fast approaching. 
+                        The ticket is due by {{ticket.due_by_hrs}}.<br><br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
+                        <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is an escalation 
+                        reminder email from {{helpdesk_name}}</p>',
+    :agent_subject_template => 'Resolution expected - {{ticket.subject}}'
+},
+{
+    :notification_type => EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, 
+    :account_id => account.id, 
+    :requester_notification => false, 
+    :agent_notification => true,
+    :agent_template => '<p> Hi,<br><br>Response is due for ticket #{{ticket.id}}.<br><br>Ticket Details: <br><br>
+                        Subject - {{ticket.subject}}<br><br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - 
+                        {{ticket.url}}<br><br>This is an reminder email from {{helpdesk_name}}</p>',
+    :agent_subject_template => "Response due for {{ticket.subject}}"
+},
+{
+    :notification_type => EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, 
+    :account_id => account.id, 
+    :requester_notification => false, 
+    :agent_notification => true,
+    :agent_template => '<p>Hi,<br><br>Resolution time for ticket #{{ticket.id}} is fast approaching. 
+                        The ticket is due by {{ticket.due_by_hrs}}.<br><br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
+                        <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is an escalation 
+                        reminder email from {{helpdesk_name}}</p>',
+    :agent_subject_template => "Resolution expected for  {{ticket.subject}}"
 }
 ])

@@ -1123,3 +1123,4 @@ DEPENDENCIES
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!
+  

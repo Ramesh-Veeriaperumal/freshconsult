@@ -227,6 +227,11 @@ en:
   after_oneweek: After 1 Week
   after_twoweek: After 2 Weeks
   after_onemonth: After 1 Month
+  before_eight: Before 8 Hours
+  before_four: Before 4 Hours
+  before_two: Before 2 Hours
+  before_one: Before 1 Hour
+  before_half: Before 30 Minutes
   add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
   many: many
@@ -2752,6 +2757,8 @@ en:
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
   first_response_sla: First Response SLA Violation
+  response_reminder_sla: First Response SLA Reminder
+  resolution_reminder_sla: Resolution Time SLA Reminder
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
   utf_8_format: The file has to be in UTF-8 format.
@@ -3545,7 +3552,8 @@ en:
     assigned_agent:
       text: Assigned Agent
       description: Ticket's agent
-    sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
+    sla_rule_info1: <b>Important:</b> <br> 1. Response and resolution time should be within <b>15 min to 12 months</b>.
+    sla_rule_info2: 2. Reminder and escalation emails should be configured and enabled in Admin > Email notifications 
     human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
@@ -3582,6 +3590,7 @@ en:
     add_new: Add new
     add_level: Add level
     escalate_after: Escalate
+    reminder_after: Remind
     add_response_esc:  Add rule
     add_resolution_esc: rule
     company_placeholder: "Enter Company names"
@@ -3590,6 +3599,7 @@ en:
     source_placeholder: "Enter Source names"
     ticket_type_placeholder: "Enter Type names"
     agent_placeholder: Pick Agents to escalate to...
+    reminder_placeholder: Pick Agents to send reminder mail to...
     applicable_info: Select at least one trigger condition.
     disabled_old_policy: Set a trigger condition to enable this SLA policy.
     default_policy: Default SLA Policy cannot be turned off.
@@ -3598,6 +3608,10 @@ en:
       invalid_arguments_for_update: Invalid arguments.
       invalid_data_type: Company ids should be a comma separated value.
       default_policy_update: Cannot update default SLA policy.
+    reminder: What happens when this SLA due time approaches?
+    reminder_label: Set SLA due time reminder
+    reminder_response_text: Set Reminder Rule when a ticket <b>response time</b> approaches
+    reminder_resolution_text: Set Reminder Rule when a ticket is not <b>resolved</b> on time
   left: Left
   subscription:
     error:

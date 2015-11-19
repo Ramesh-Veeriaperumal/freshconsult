@@ -30,7 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
-                            "reports_hash"]
+                            "reports_hash","sla_response_reminded","sla_resolution_reminded"]
   OBSERVER_ATTR = []
 
   self.table_name =  "helpdesk_tickets"
@@ -184,6 +184,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :order => order_param
     }
   }
+  
+  scope :response_sla, lambda { |account,due_by| {
+          :select => "helpdesk_tickets.*",
+          :joins =>  "inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
+          :conditions => ["frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
+                            helpdesk_ticket_states.first_response_time IS ? AND source != ?",
+                            due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
+                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+  }}
+
+  scope :response_reminder,lambda { |sla_rule_ids| {
+          :select => "helpdesk_tickets.*",
+          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND  
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
+          :conditions => ["helpdesk_schema_less_tickets.boolean_tc04=? AND helpdesk_schema_less_tickets.long_tc01 in (?) ",
+                            false,sla_rule_ids]
+  }}
+
+  scope :resolution_sla, lambda { |account,due_by| {
+          :select => "helpdesk_tickets.*",
+          :conditions => ['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
+                            due_by,false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
+                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+  }}
+
+  scope :resolution_reminder, lambda {|sla_rule_ids|{
+          :select => "helpdesk_tickets.*",
+          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND  
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
+          :conditions => ['helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
+                            false, sla_rule_ids]
+  }}
   
   class << self # Class Methods
 
