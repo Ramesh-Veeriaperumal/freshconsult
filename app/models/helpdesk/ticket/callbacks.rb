@@ -22,6 +22,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
+  
+  before_save :round_robin_on_ticket_update, :unless => :skip_rr_on_update?
 
   after_update :start_recording_timestamps, :unless => :model_changes?
 
@@ -219,15 +221,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def assign_tickets_to_agents
     #Ticket already has an agent assigned to it or doesn't have a group
     return if group.nil? || self.responder_id
-    schedule_round_robin_for_agents if group.round_robin_enabled?
+    if group.round_robin_enabled?
+      schedule_round_robin_for_agents 
+      self.save
+    end
   end 
+
+  #user changes will be passed when observer worker calls the function
+  def round_robin_on_ticket_update(user_changes={})
+    return if group_id.nil? #ticket has no group
+    return if !group.round_robin_enabled? || !Account.current.features?(:round_robin_on_update)
+    
+    ticket_changes = self.changes
+    ticket_changes  = merge_to_observer_changes(user_changes,self.changes) if user_changes.present?
+    
+    #return if no change was made to the group
+    return if !ticket_changes.has_key?(:group_id)
+    #skip if agent is assigned in the transaction
+    return if ticket_changes.has_key?(:responder_id) && self.responder_id.present?
+    #skip if the existing agent also belongs to the new group
+    return if self.responder_id.present? && Account.current.agent_groups.exists?(:user_id => self.responder_id, :group_id => group_id) 
+
+    schedule_round_robin_for_agents
+  end
+
 
   def schedule_round_robin_for_agents
     next_agent = group.next_available_agent
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
-    self.save
   end
 
   def check_rules current_user
@@ -363,6 +386,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 private 
+
+  def skip_rr_on_update?
+    #Option to toggle round robin off in L2 script
+    return true if Thread.current[:skip_round_robin].present?
+
+    #Don't trigger in case this update is a user action and it will trigger observer
+    return true if user_present? && !filter_observer_events(false).blank?
+
+    #Don't trigger during an observer save, as we call RR explicitly in the worker
+    return true if Thread.current[:observer_doer_id].present?
+
+    #Trigger RR if the update is from supervisor 
+    false    
+  end
+ 
   def push_create_notification
 	push_mobile_notification(:new)
   end 
