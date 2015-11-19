@@ -24,6 +24,9 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   after_commit :create_ticket_stats, on: :create, :if => :ent_reports_enabled?
   after_commit :update_search_index,  on: :update
   
+  delegate :update_searchv2, to: :tickets, allow_nil: true
+  after_commit ->(obj) { obj.update_searchv2 }, on: :update, :if => :esv2_fields_updated?
+  
   def reset_tkt_states
     @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
@@ -148,6 +151,16 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   def update_search_index
     tickets.update_es_index if (@ticket_state_changes.keys & TICKET_STATE_SEARCH_FIELDS).any?
+  end
+  
+  def esv2_fields_updated?
+    (@ticket_state_changes.keys & esv2_columns).any?
+  end
+  
+  # To-do: Update with v2 columns
+  #
+  def esv2_columns
+    @@esv2_columns ||= [:resolved_at, :closed_at, :agent_responded_at, :requester_responded_at, :status_updated_at]
   end
 
   # populating data in monthly stats table for created and update cases

@@ -6,7 +6,7 @@ class SearchV2::TicketOperations < SearchV2::IndexOperations
       user = Account.current.all_users.find(args[:user_id])
       user_tickets = user.tickets
       user_tickets.each do |ticket|
-        ticket.send(:update_search)
+        ticket.send(:update_searchv2)
       end unless user_tickets.blank?
     end
   end

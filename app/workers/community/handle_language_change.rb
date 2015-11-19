@@ -12,7 +12,12 @@ class Community::HandleLanguageChange < BaseWorker
 				klass.constantize.where(
 					:id => objects.map(&:id), :account_id => Account.current.id).update_all(:language_id => language_id)
 
-				objects.map(&:update_es_index) if klass == "Solution::Article"
+				if klass == "Solution::Article"
+					objects.map(&:update_es_index)
+					
+					# For ES-v2
+					objects.each { |obj| obj.send(:update_searchv2) }
+				end
 			end
 		end
 	end

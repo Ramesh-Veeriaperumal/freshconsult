@@ -52,6 +52,8 @@ class Post < ActiveRecord::Base
   has_many_cloud_files
   
   delegate :update_es_index, :to => :topic, :allow_nil => true
+  delegate :update_searchv2, to: :topic, allow_nil: true
+  
   delegate :questions?, :problems?, :to => :forum
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
   #format_attribute :body

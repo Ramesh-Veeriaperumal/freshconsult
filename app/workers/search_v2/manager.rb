@@ -39,7 +39,7 @@ class SearchV2::Manager
     private
       
       def update_in_es(items)
-        items.each { |item| item.send(:es_create) }
+        items.each { |item| item.send(:update_searchv2) }
       end
   end
   

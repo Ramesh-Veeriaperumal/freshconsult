@@ -22,19 +22,19 @@ module Search
           # Create document in ES
           #
           def es_create
-            update_search
+            update_searchv2
           end
 
           # Update document in ES
           # To-Do: Update notes in ES if ticket updated if notes is not stored in parent-child format
           #
           def es_update
-            update_search if (self.respond_to?(:esv2_fields_updated?) ? self.esv2_fields_updated? : true)
+            update_searchv2 if (self.respond_to?(:esv2_fields_updated?) ? self.esv2_fields_updated? : true)
           end
 
           # Common operation for create/update
           #
-          def update_search
+          def update_searchv2
             SearchV2::IndexOperations::DocumentAdd.perform_async({
               type:         self.class.to_s.demodulize.downcase,
               account_id:   self.account_id,

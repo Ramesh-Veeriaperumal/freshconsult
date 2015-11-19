@@ -35,6 +35,11 @@ class UserEmail < ActiveRecord::Base
   # Drop all authorizations, if the email is changed
   after_update :drop_authorization, :if => [:email_changed?, :multiple_email_feature]
   after_commit :send_activation_on_update, on: :update, :if => [:check_for_email_change?, :multiple_email_feature]
+  
+  # Search V2 callbacks
+  delegate :update_searchv2, to: :user, allow_nil: true
+  after_commit ->(obj) { obj.update_searchv2 }, on: :create
+  after_commit ->(obj) { obj.update_searchv2 }, on: :update
 
   before_destroy :drop_authorization, :if => :multiple_email_feature
 
