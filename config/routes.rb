@@ -1224,6 +1224,8 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
   match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
   match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
+  match "/reports/v2/:report_type/configure_export",  :controller => 'reports/v2/tickets/reports', :action => 'configure_export', :method => :get 
+  match "/reports/v2/:report_type/export_csv",        :controller => 'reports/v2/tickets/reports', :action => 'export_csv', :method => :post
   # END
   
   
@@ -1357,7 +1359,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :reports
+  resources :reports do
+    collection do
+      get :old
+    end
+  end
+  
   match 'reports/report_filters/destroy/:id(.:format)' => "reports/report_filters#destroy", :method => :post
 
 

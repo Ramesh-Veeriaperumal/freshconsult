@@ -7,51 +7,93 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                     'data':  data,
                     'report' : 'group'
                 });
-                var agentData = JST["helpdesk_reports/templates/metrics_name"]({
-                    'data':  data,
-                    'report' : 'group'
-                });
                 jQuery("[data-table='ticket-data']").html(metricsData);
-                jQuery("[data-table='agent-name']").html(agentData);
         },
-        bindevents: function(){
-            jQuery('#reports_wrapper').on('click.helpdesk_reports.group', "[data-action='data-tab-nav']", function (event) {
-                _FD.actions.toggleTable(event);
-            });
-        },
-        actions: {
-            toggleTable: function (event) {
-                var el = event.target || event.srcElement || event.currentTarget;
-                var dataToLoad = (jQuery(el).attr('id') === 'agent-details-next' || jQuery(el).parent().attr('id') === 'agent-details-next') ? 'next' : 'prev';
+        calculateAverage : function(data){
+            var metrics_list = HelpdeskReports.Constants.GroupSummary.metrics;
+            var average = {};
+            var column_data_count = {}; //No of Non Zero Entries in columns
 
-                jQuery("[data-action='data-tab-nav']").removeClass('disabled');
-                jQuery("#agent-details-"+dataToLoad).addClass('disabled');
-                // Todo : Remove when changing table to datatable
-                if(dataToLoad === 'next'){
-                    jQuery('.footer').removeClass('shadow');
-                    jQuery('.header').addClass('shadow');
-                     if (jQuery('html').attr('dir') === 'rtl'){
-                        jQuery("[data-table='wrapper']").animate({'right':'-100%'});
-                     }else{
-                        jQuery("[data-table='wrapper']").animate({'left':'-100%'});
-                     }
-                }else{
-                     jQuery('.header').removeClass('shadow');
-                    jQuery('.footer').addClass('shadow');
-                    if (jQuery('html').attr('dir') === 'rtl'){
-                        jQuery("[data-table='wrapper']").animate({'right':'0'});
-                     }else{
-                        jQuery("[data-table='wrapper']").animate({'left':'0'});
-                     }
+            for (i = 0; i < metrics_list.length; i++) { 
+                average[metrics_list[i]] = 0;
+                column_data_count[metrics_list[i]] = 0;
+            }
+            for( row = 0; row < data.length ; row ++ ){
+                var row_data = data[row];
+                for (i = 0; i < metrics_list.length; i++) { 
+                    var value = row_data[metrics_list[i]];
+                    if( value != 0 && value != '-'){
+                        average[metrics_list[i]] += value;
+                        column_data_count[metrics_list[i]] += 1 
+                    } 
                 }
             }
+            for (i = 0; i < metrics_list.length; i++) { 
+                if(column_data_count[metrics_list[i]] != 0){
+                    average[metrics_list[i]] = Math.round(average[metrics_list[i]] / column_data_count[metrics_list[i]]);
+                }
+            }
+            //Populate Average Data Template
+            var averageData = JST["helpdesk_reports/templates/average_tmpl"]({
+                'average':  average,
+                'report' : "group"
+            });
+            jQuery(".metric-average-header").html(averageData);
+        },
+        initDataTable : function(row_count){
+
+                var config  = {
+                    "dom" : 'frtSp',
+                    "bSortCellsTop": true,
+                    "bAutoWidth": false,
+                    "sScrollX": "100%",   
+                    "sScrollXInner": "200%",
+                    "bFilter" : false, 
+                    "bLengthChange" : false,
+                    "scrollDistance" : 850,
+                    "aoColumns": [
+                        { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "80px"  ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "160px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]}
+                      ],
+                      "fixedColumns":   true,
+                      "oLanguage": {
+                        "oPaginate": {
+                        "sNext": ">",
+                        "sPrevious": "<"
+                        
+                        },
+                        "sSearch": '<i class="ficon-search"></i>',
+                        "sSearchPlaceholder": "Search"
+                     },
+                     "fnDrawCallback": function(oSettings) {
+                            if (row_count < 11) {
+                                jQuery('.dataTables_paginate').hide();
+                            }
+                      }
+                };
+                var oTable = jQuery("#group-summary").dataTable(config);
+                if (jQuery.browser.safari) { 
+                    setTimeout(function(){
+                     oTable.fnAdjustColumnSizing(); 
+                    }, 0 ); 
+                }
         }
-        
     };
     return  {
         init: function(data){
             _FD.populatetemplate(data);
-            _FD.bindevents();
+            //_FD.calculateAverage(data);
+            _FD.initDataTable(data.length);
         }
     }
 })();

@@ -7,6 +7,26 @@
 
 <div class="reports-wrapper hide" id="reports_wrapper">
 	<div class="reports-main">
+		<div class="top-links">
+				<div class="pull-right solution-link">
+					<% if @report_type == 'ticket_volume'%>
+						<a target="_blank" href="https://support.freshdesk.com/solution/articles/213203-ticket-volume-report"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'performance_distribution'%>
+						<a target="_blank" href="https://support.freshdesk.com/solution/articles/213226-performance-distribution"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'agent_summary'%>
+						<a target="_blank" href="https://support.freshdesk.com/solution/articles/213169-agent-summary-report"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'group_summary'%>
+						<a target="_blank" href="https://support.freshdesk.com/solution/articles/213172-group-summary-report"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+					<% if @report_type == 'customer_report'%>
+						<a target="_blank" href="https://support.freshdesk.com/solution/articles/214629"><%=t('helpdesk_reports.solution_article_text') %></a>
+					<% end %>
+				</div>
+				<div class="clear"></div>
+		</div>
 	 	<div class="reports-header row-fluid">
 		 	<%= render :partial => "reports/v2/tickets/reports/shared/reports_header" %>	
 		</div>
@@ -45,5 +65,7 @@ jQuery(document).ready(function(){
 	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
 	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list_by_plan %>;
 	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
+	HelpdeskReports.locals.base_task_list_title = "<%=t('helpdesk_reports.tickets') %>";
+	HelpdeskReports.locals.is_non_sprout_plan = '<%= current_account.subscription.non_sprout_plan? %>';
 });
 </script>

@@ -5533,6 +5533,7 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    view_all_tickets : Export as CSV to view all tickets
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
@@ -7146,6 +7147,9 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    view_old_reports: View old reports
+    view_new_reports: View new reports
+    solution_article_text: How to read this report ?
     loading_text: Generating Report...
     filter_limit_exceeded: You can select maximum of %{count} filters
     time_period: Select Time Period
@@ -7156,25 +7160,31 @@ en:
     more: More...
     ticket_volume:
       title: Ticket Volume
+      total_received_tickets : Total Received Tickets
+      average_received_tickets : Average Received Tickets
+      total_resolved_tickets : Total Resolved Tickets
+      average_resolved_tickets : Average Resolved Tickets
+      busiest_hour_received_tickets : Busiest hours for Received Tickets
+      busiest_hour_resolved_tickets : Busiest hours for Resolved Tickets
       time_trends:
         day: Day
         week: Week
         month: Month
         qtr: Quarter
         year: Year
-        title: Trend of Tickets Received and Resolved
+        title: trend of tickets received and resolved
       day_trend:
-        title: Day of the Week Trend of Tickets Received and Resolved
+        title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
     performance_distribution:
       title: Performance Distribution
-      first_response_bar: First Response Time
-      response_bar: Avg Response Time
-      resolution_bar: Resolution Time
-      first_response_and_response_trend: Avg First Response And Response Time Trend
-      resolution_trend: Avg Resolution Time Trend
+      first_response_bar: First response time
+      response_bar: Avg response time
+      resolution_bar: Resolution time
+      first_response_and_response_trend: Avg first response and response time trend
+      resolution_trend: Avg resolution time trend
       description:
         avg_res_time: Tickets responded to in the selected time period split based on the average response time range
         first_response: Tickets whose first responses were sent in the selected time period split based on the first response time range
@@ -7184,53 +7194,29 @@ en:
     group_summary:
       title: Group Summary
       group: Group
-      description:
-        ticket_resolved: Tickets resolved in the selected time period and assigned to the group
-        tickets_reopened: Tickets reopened in the selected time period when assigned to the group
-        ticket_reasigned: Tickets reassigned from this group to other groups in the selected time period
-        reports_sla: % of tickets whose first responses were sent within SLA in the selected time period when assigned to the group
-        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the group
-        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the group
-        private_note: Number of private notes added in the selected time period when the tickets were assigned to the group
-        responses: Number of agent responses sent in the selected time period when the tickets were assigned to the group
-        avg_first_res_time: Avg first response time for first responses made in the selected time period when the tickets were assigned to the group
-        avg_res_time: Avg time for all the responses made in the selected time period when the tickets were assigned to the group
-        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the group
     agent_summary:
       title: Agent Summary
-      ticket_assigned: Tickets Assigned
-      ticket_resolved: Tickets Resolved
-      tickets_reopened: Tickets Reopened
-      ticket_reasigned: Tickets Reassigned
-      reports_sla: First Response SLA %
+      ticket_assigned: Tickets assigned
+      ticket_resolved: Tickets resolved
+      tickets_reopened: Tickets reopened
+      ticket_reasigned: Tickets reassigned
+      reports_sla: First response SLA %
       res_sla: Resolution SLA %
       fcr: FCR %
-      private_note: Private Notes
+      private_note: Private notes
       responses: Responses
-      avg_first_res_time: Average 1st Response Time
-      avg_res_time: Average Response Time
-      avg_resolution_time: Average Resolution Time
+      avg_first_res_time: Average 1st response time
+      avg_res_time: Average response time
+      avg_resolution_time: Average resolution time
       agent: Agent
-      description:
-        ticket_resolved: Tickets resolved in the selected time period and assigned to the agent
-        tickets_reopened: Tickets reopened in the selected time period when assigned to the agent
-        ticket_reasigned: Tickets reassigned from this agent to other agents in the selected time period
-        reports_sla: % of tickets whose first responses were sent by the agent within SLA in the selected time period
-        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the agent
-        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the agent
-        private_note: Number of private notes added by the agent in the selected time period
-        responses: Number of responses sent by the agent in the selected time period
-        avg_first_res_time: Avg first response time for first responses sent by the agent in the selected time period
-        avg_res_time: Avg time for all the responses sent by the agent in the selected time period
-        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the agent
     customer_report:
       title:  Customer Report
-      received_tickets: Tickets Submitted
-      resolved_tickets: Tickets Resolved
-      response_violated: Response SLA Violations %
-      resolution_violated: Resolution SLA Violations %
-      customer_interactions: Customer Responses
-      agent_interactions: Agent Responses
+      received_tickets: Tickets submitted
+      resolved_tickets: Tickets resolved
+      response_violated: Response SLA violations %
+      resolution_violated: Resolution SLA violations %
+      customer_interactions: Customer responses
+      agent_interactions: Agent responses
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
