@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github"].each do |provider|
+  ["github","salesforce"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -651,6 +651,13 @@ Helpkit::Application.routes.draw do
         put :install
         get :uninstall
       end
+    end
+
+    namespace :salesforce do
+        put :update
+        get :edit
+        get :new
+        post :install
     end
 
     resources :remote_configurations

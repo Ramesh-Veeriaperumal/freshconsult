@@ -135,6 +135,22 @@
 		}
 	}
 }
+
+.salesforce-tooltip{
+  width: 66%;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.sf-tooltip-span{
+  float: none;
+  vertical-align: middle;
+  display: inline-block;
+}
+
 .salesforce-widget{
 	@include clear(both);
 	div{

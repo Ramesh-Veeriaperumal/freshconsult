@@ -42,7 +42,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
     resource :"integrations/oauth_util"
-    resource :"integrations/salesforce"
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
@@ -383,6 +382,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/select_all_ticket_action"
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update ]
+    resource :"integrations/salesforce"
     resource :"admin/integrations/freshplug"
     resource :"admin/extension"
     resource :"admin/installed_extension"

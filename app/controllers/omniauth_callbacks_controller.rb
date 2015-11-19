@@ -61,7 +61,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def origin_account
-    @origin_account ||= @account_id ? Account.find_by_id(@account_id) : current_account
+    @origin_account ||= @account_id ? Account.find(@account_id) : current_account
   end
 
   def app
