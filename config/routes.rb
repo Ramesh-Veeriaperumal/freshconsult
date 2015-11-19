@@ -1770,6 +1770,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+    match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter
     
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
@@ -1777,6 +1778,8 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
     match '/sales_manager' => 'dashboard#sales_manager'
+    match '/unresolved_tickets' => 'dashboard#unresolved_tickets'
+    match '/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
     match '/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.

@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "f53dfc6b3211cc692af24ecc150c1bb7ed66ebccafa1a068dcd0a3371eb24fe0",
-    "current": "f53dfc6b3211cc692af24ecc150c1bb7ed66ebccafa1a068dcd0a3371eb24fe0"
+    "previous": "a4e784760184a93ab6ec9192dd69dbfed8f22dfabefc37209c9dc563ced63da2",
+    "current": "a4e784760184a93ab6ec9192dd69dbfed8f22dfabefc37209c9dc563ced63da2"
   },
   "fonts": [
-    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.ttf",
-    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.svg",
-    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.woff",
-    "public/assets/glyphs_f53dfc6b3211cc692af24ecc150c1bb7.eot"
+    "public/assets/glyphs_a4e784760184a93ab6ec9192dd69dbfe.ttf",
+    "public/assets/glyphs_a4e784760184a93ab6ec9192dd69dbfe.svg",
+    "public/assets/glyphs_a4e784760184a93ab6ec9192dd69dbfe.woff",
+    "public/assets/glyphs_a4e784760184a93ab6ec9192dd69dbfe.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -650,6 +650,10 @@
       "codepoint": 61809,
       "source": "public/glyphs/vectors/no-arrow-right.svg"
     },
+    "no-data": {
+      "codepoint": 61940,
+      "source": "public/glyphs/vectors/no-data.svg"
+    },
     "no-data-graph": {
       "codepoint": 61894,
       "source": "public/glyphs/vectors/no-data-graph.svg"
@@ -834,6 +838,18 @@
       "codepoint": 61841,
       "source": "public/glyphs/vectors/sla.svg"
     },
+    "sorting-asc": {
+      "codepoint": 61937,
+      "source": "public/glyphs/vectors/sorting-asc.svg"
+    },
+    "sorting-default": {
+      "codepoint": 61938,
+      "source": "public/glyphs/vectors/sorting-default.svg"
+    },
+    "sorting-dsc": {
+      "codepoint": 61939,
+      "source": "public/glyphs/vectors/sorting-dsc.svg"
+    },
     "split": {
       "codepoint": 61842,
       "source": "public/glyphs/vectors/split.svg"
@@ -953,6 +969,10 @@
     "web-source": {
       "codepoint": 61936,
       "source": "public/glyphs/vectors/web-source.svg"
+    },
+    "went-wrong": {
+      "codepoint": 61941,
+      "source": "public/glyphs/vectors/went-wrong.svg"
     },
     "windows": {
       "codepoint": 61865,

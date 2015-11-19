@@ -1,0 +1,54 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/unresolved_tickets' %>
+<div class="supervisor-dashboard">
+	<div class="loading-box full-loader hide" id="full-loader"> 
+		<div class="sloading loading-small loading-left" >
+			<%=t('unresolved_tickets.loading_label') %>...
+		</div> 
+	</div>
+	<div class="breadcrumb hide">
+		<i class="ficon-arrow-left fsize-18"></i> 
+		<a href="/helpdesk" data-pjax="#body-container"> 
+			<%=t('unresolved_tickets.dashboard_link') %>
+		</a>
+	</div>
+	<%= render :partial => "helpdesk/dashboard/shared/header" %>
+	<div class="unresolved-data-tab hide">
+	<ul class="nav nav-tabs sleek-tab" id="unresolved-tab">
+	  		<li data-groupby = "group_id" data-redirect="group" class="active"><a href="javascript:void(0)" value="g" ><%=t('unresolved_tickets.group_label') %></a></li>
+	  		<li data-groupby = "responder_id" data-redirect="agent" class=""><a href="javascript:void(0)" value="a" ><%=t('unresolved_tickets.agent_label') %></a></li>
+	</ul>
+	<div class="unresolved-tickets-wrapper">
+	<table id="unresolved-tickets" class="data-table"> </table>
+	</div>
+	<div class="no-data-section text-center hide">
+		<i class="ficon-no-data fsize-90" style="font-size: 100px"></i>
+		<h4 class="text-center"> <%=t('unresolved_tickets.no_data') %></h4>
+	</div>
+	<div class="sloading loading-small hide in-loader" id="in-loader"></div>
+	</div>
+	<%= render :partial => "helpdesk/dashboard/shared/filter" %>
+</div>	
+
+<script type="text/template" id="filter-data-template">
+	<li class="muted"><%=t('unresolved_tickets.filtered_by_label') %>:</li>
+	<li>
+		<%=t('unresolved_tickets.group_label') %> : <strong> {{= Array.prototype.join.call(groupfilter, ",")}} </strong>
+	</li>
+	<li>
+		<%=t('unresolved_tickets.agent_label') %> : <strong> {{= Array.prototype.join.call(agentfilter, ",")}} </strong>
+	</li>
+</script>
+<%= javascript_tag do %>
+		var connection_error = "<%=t('unresolved_tickets.connection_error') %>";
+		var no_data = "<%=t('unresolved_tickets.no_data') %>";
+		var CLOSED_ID = <%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>;
+		var RESOLVED_ID = <%= Helpdesk::Ticketfields::TicketStatus::RESOLVED %>;
+		var status_array =  <%= raw @status.to_json %>;
+		var status_filtered_array = status_array.filter(function(i) {
+			return i[0] !== CLOSED_ID && i[0] !== RESOLVED_ID; 
+		});
+		status_filtered_array.push(["Total" , "Total"]);
+		status_filtered_array.push(["" , ""]);
+		status_filtered_array.unshift(["Agent" , "Agent"]);
+<% end %>
+<%= javascript_include_tag :'cdn/unresolved_tickets' %>
