@@ -29,7 +29,7 @@ module Search
               type_hash[type] = (params[:alias_prefix] % { alias_suffix: tenant_id }); type_hash
             end.merge(
               'tenant_id' => tenant_id,
-              'home_cluster' => 'http://localhost:9200' # To-Do: get_lru_cluster
+              'home_cluster' => 'http://localhost:9201' # To-Do: get_lru_cluster
             )
           end
       end

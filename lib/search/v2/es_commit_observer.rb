@@ -35,6 +35,8 @@ module Search
           # Common operation for create/update
           #
           def update_searchv2
+            return true unless esv2_valid?
+
             SearchV2::IndexOperations::DocumentAdd.perform_async({
               type:         self.class.to_s.demodulize.downcase,
               account_id:   self.account_id,
@@ -48,6 +50,8 @@ module Search
           # To-Do: Need to handle archive if not separate index
           #
           def es_delete
+            return true unless esv2_valid?
+
             SearchV2::IndexOperations::DocumentRemove.perform_async({
               type:         self.class.to_s.demodulize.downcase,
               account_id:   self.account_id,
@@ -64,6 +68,13 @@ module Search
           
           def esv2_enabled?
             Account.current.features_included?(:es_v2_writes)
+          end
+          
+          # For conditional updates/deletes
+          # Define in models if required
+          #
+          def esv2_valid?
+            (self.respond_to?(:es_v2_valid?) ? self.es_v2_valid? : true)
           end
       end
     end
