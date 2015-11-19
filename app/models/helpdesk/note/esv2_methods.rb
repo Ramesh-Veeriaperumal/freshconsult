@@ -1,12 +1,6 @@
 # encoding: utf-8
 class Helpdesk::Note < ActiveRecord::Base
 
-  # Trigger push to ES only if ES fields updated
-  #
-  def esv2_fields_updated?
-    human_note_for_ticket?
-  end
-  
   # Custom json used by ES v2
   #
   def to_esv2_json
@@ -27,6 +21,12 @@ class Helpdesk::Note < ActiveRecord::Base
         type: f_name.last
       }
     }
+  end
+  
+  # Used for validating updates/deletes
+  #
+  def es_v2_valid?
+    human_note_for_ticket?
   end
 
   ##########################
