@@ -50,3 +50,4 @@
 //= require integrations/construct_rule.js
 //= require frameworks/plugins/collapseButton.js
 //= require frameworks/plugins/jquery.dataTables.js
+//= require frameworks/plugins/dataTable.fixedColumns.js
