@@ -246,7 +246,7 @@ module IntegrationServices::Services
 
     def assign_contact_det fd_comp_name, fd_user
       fd_contact = {}
-      fd_det = ["email", "phone", "mobile", "twitter_id", "fb_profile_id", "external_id"]
+      fd_det = ["email", "mobile", "phone", "twitter_id", "fb_profile_id", "external_id"]
       user_det = Hash[CONTACT_FIELDS.zip fd_det]
       user_det.each do |k, v|
         fd_contact[k] = (["phone", "mobile"].include? v)? format_phone(fd_user.send(v)) : fd_user.send(v) if fd_user.send(v).present? 
