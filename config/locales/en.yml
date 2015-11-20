@@ -3566,11 +3566,13 @@ en:
       title: SLA Policy
       tour: Help me create a new SLA policy
       info_1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
-      title_1: 'Using Multiple SLA Policies'
-      sla_info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
-<p><strong>The order of your SLA policies is important.</strong> The first SLA Policy that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
-      title_2: 'Enforcing Escalation Rules'
-      info_3: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
+      sla_title_1: 'Using Multiple SLA Policies'
+      sla_info_1: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p> <p><b>The order of your SLA policies is important.</b></p> <p> The first SLA Policy that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
+      sla_title_2: 'SLA reminders'
+      sla_info_2: '<p>You can set up reminders to make sure that agents are notified about the approaching due by time for tickets. The reminders can be for ticket response and resolution.<p> <p> The reminder email can contain contextual information like the URL of the ticket and ticket priority and can be configured in Admin > Email Notifications.</p>'
+      sla_title_3: 'SLA violation notifications'
+      sla_info_3: '<p>You can also set up escalation rules that notify agents or managers when SLAs have been violated. You can set up multiple levels of escalation for resolution SLA. </p> <p> The violation emails can be configured in Admin > Email Notifications.</p>'
+
     override: Override
     title1: SLA Policies
     response_time: Response time
