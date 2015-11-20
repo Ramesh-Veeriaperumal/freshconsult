@@ -3108,6 +3108,10 @@ the specific language governing permissions and limitations under the Apache Lic
                 data,
                 index;
             selected = selected.closest(".select2-search-choice");
+            if(this.opts.matchFlag){
+                    val = val.join(',');
+                    val = val.match(/(?:"[^"]*"|[^,])+/g);
+            }
             if (selected.length === 0) {
                 throw "Invalid argument: " + selected + ". Must be .select2-search-choice";
             }
@@ -3224,12 +3228,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 return val === null ? [] : val;
             } else {
                 val = this.opts.element.val();
-                if(this.opts.matchFlag){
-                    return val.match(/(?:"[^"]*"|[^,])+/g);
-                }
-                else{
-                    return splitVal(val, this.opts.separator);
-                }
+                return splitVal(val, this.opts.separator);
             }
         },
 
