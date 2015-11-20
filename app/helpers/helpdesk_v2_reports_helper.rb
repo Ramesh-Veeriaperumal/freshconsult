@@ -6,7 +6,7 @@ module HelpdeskV2ReportsHelper
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ],
 			["/reports/v2/group_summary", 			 "group_summary",            "group-summary" ],
 			["/reports/v2/agent_summary", 			 "agent_summary", 	         "agent-summary" ],
-			["/reports/v2/customer_report",          "customer_report",          "customer-report"]
+			["/reports/v2/customer_report",          "customer_report",          "customer_reports"]
 		]
 
 	METRIC_HASH = Hash[*REPORT_MAPPING.map{ |i| [i[1], i[2]]}.flatten]
@@ -42,7 +42,8 @@ HTML
 	end
 
 	def default_date_range lag
-		return [(DEFAULT_DATE_RANGE + lag).days.ago, lag.days.ago]
+		current_account_time = Time.now.utc.in_time_zone(current_account.time_zone)
+		return [current_account_time - (DEFAULT_DATE_RANGE + lag).days, current_account_time - lag.days]
 	end
 
 	def fetch_dump_time

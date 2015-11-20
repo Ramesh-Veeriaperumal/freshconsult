@@ -54,6 +54,18 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
+  def remove_activity
+    if outbound_email?
+      unless private?
+        notable.destroy_activity('activities.tickets.conversation.out_email.long', id)
+      end
+    elsif inbound_email?
+      notable.destroy_activity('activities.tickets.conversation.in_email.long', id)
+    else
+      notable.destroy_activity("activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", id)
+    end
+  end
+
   protected
 
   	def validate_schema_less_note

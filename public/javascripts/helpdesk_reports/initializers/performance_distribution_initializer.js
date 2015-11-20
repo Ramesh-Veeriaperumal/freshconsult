@@ -13,10 +13,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             'response'   : ["AVG_FIRST_RESPONSE_TIME","AVG_RESPONSE_TIME"],
             'resolution' : ["AVG_RESOLUTION_TIME"]
         },
-        setMetricDeactive: function(){
-            jQuery('#first_response').addClass('active');
-            jQuery('#response_time_bar_chart').hide();
-        },
         TICK_INTERVAL_MAPPING: {
             'doy' : 24 * 3600 * 1000,
             'w'   : 7 * 24 * 3600 * 1000,
@@ -70,6 +66,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     chartData: data_array,
                     dataLabels: current_data,
                     sharedTooltip: true,
+                    performanceDistTooltip : true,
                     enableTooltip: true,
                     timeFormat: false,
                 }
@@ -91,6 +88,8 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             data.metric = jQuery(chart).closest('.chart-wrapper').data('metric-name');
             data.value = hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][0];
             data.operator =  hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][1];
+            data.y = ev.y;
+            data.category = label;
 
             trigger_event("perf_ticket_list.helpdesk_reports", data);
         },
@@ -132,7 +131,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 HelpdeskReports.locals.response = plot_type;
     
                 time_trend_data.push({
-                    name: 'Avg First Response Time',
+                    name: 'Avg first response time',
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['first_response_time'],
@@ -140,7 +139,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     marker: markerValue,
                     pointInterval: this.TICK_INTERVAL_MAPPING[current_trend]
                 },{
-                    name: 'Avg Response Time',
+                    name: 'Avg response time',
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['response_time'],
@@ -187,7 +186,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 HelpdeskReports.locals.resolution = plot_type;
                     
                 time_trend_data.push({
-                    name: 'Avg Resolution Time',
+                    name: 'Avg resolution time',
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['resolution_time'],
@@ -232,11 +231,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 jQuery('[data-chart="'+charttype+'"]').removeClass('active');
                 jQuery('span[data-format="' + HelpdeskReports.locals.trend + '"][data-chart="'+charttype+'"]').addClass('active');
                 _FD.redrawTimeBased(HelpdeskReports.locals.trend, charttype);
-            });
-
-            jQuery('#reports_wrapper').on('click.helpdesk_reports.perf', '#response:not(".active"), #first_response:not(".active")', function (event) {
-                jQuery('#response, #first_response').toggleClass('active');
-                jQuery('#first_response_time_bar_chart, #response_time_bar_chart').toggle();
             });
         },
         redrawTimeBased: function (trend,charttype) {
@@ -283,7 +277,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             _FD.responseTimeTrend(hash);
             _FD.resolutionTimeTrend(hash);
 
-            _FD.setMetricDeactive();
             _FD.bindChartEvents();
         },
         fillArray: function(value, length) {

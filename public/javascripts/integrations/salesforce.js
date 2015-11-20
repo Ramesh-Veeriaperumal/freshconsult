@@ -4,12 +4,11 @@ SalesforceWidget.prototype= {
 	initialize:function(salesforceBundle){
 		jQuery("#salesforce_contacts_widget").addClass('loading-fb');
 		salesforceWidget = this;
-		salesforceBundle.app_name = "Salesforce";
+		salesforceBundle.app_name = "salesforce";
 		salesforceBundle.integratable_type = "crm";
-		salesforceBundle.auth_type = "OAuth";
+		salesforceBundle.auth_type = "NoAuth";
 		salesforceBundle.widget_name = "salesforce_contacts_widget";
 		salesforceBundle.handleRender = true;
-		salesforceBundle.oauth_token = salesforceBundle.token;
 		this.salesforceBundle = salesforceBundle;
 		this.contactFields = ["Name"];
 		this.leadFields=["Name"];
@@ -34,89 +33,33 @@ SalesforceWidget.prototype= {
 	},
 
 	get_contact_request: function() {
-		var contactfields = "Name";
-		var leadfields = "Name";
-		var accountfields = "Name";
-		if(this.salesforceBundle.contactFields!=undefined)
-		{
-			contactfields = this.salesforceBundle.contactFields.split(",");
-			for (var i=0;i<contactfields.length;i++){
-				//fetching details for address fields
-				if(contactfields[i] == "Address") {
-					contactfields.splice(i, 1);
-					var addr_arr= ["MailingStreet","MailingCity","MailingState","MailingCountry","MailingPostalCode"];
-					for(j=0;j<addr_arr.length;j++){
-						contactfields.splice(i, 0,addr_arr[j]);
-					}
-				}
-			}
-		}
-		if(this.salesforceBundle.leadFields!=undefined)
-		{
-			leadfields = this.salesforceBundle.leadFields.split(",");
-			for (var i=0;i<leadfields.length;i++){
-				//fetching details for address fields
-				if(leadfields[i] == "Address") {
-					leadfields.splice(i, 1);
-					var addr_arr= ["Street","City","State","Country","PostalCode"];
-					for(j=0;j<addr_arr.length;j++){
-						leadfields.splice(i, 0,addr_arr[j]);
-					}
-				}
-			}
-		}
-		if(this.salesforceBundle.accountFields!=undefined)
-		{
-			accountfields = this.salesforceBundle.accountFields.split(",");
-			for (var i=0;i<accountfields.length;i++){
-				//fetching details for address fields
-				if(accountfields[i] == "Address") {
-					accountfields.splice(i, 1);
-					var addr_arr= ["Street","City","State","Country","PostalCode"];
-					for(j=0;j<addr_arr.length;j++){
-						accountfields.splice(i, 0,addr_arr[j]);
-					}
-				}
-			}
-		}
-
-		contactfields = this.removeDuplicate(contactfields);
-		leadfields = this.removeDuplicate(leadfields);
-		accountfields = this.removeDuplicate(accountfields);
-
 		var requestUrls = [];
-
 		var custEmail = escape(this.salesforceBundle.reqEmail);
-		var sosl_contact = "FIND {" + custEmail.replace(/\-/g,'\\-') + "} IN EMAIL FIELDS RETURNING Contact(" + contactfields + "), Lead(" + leadfields + ")";
-
-		requestUrls.push( { rest_url: "services/data/v20.0/search?q="+sosl_contact } )
+		custEmail = custEmail.replace(/\-/g,'\\-')
+		requestUrls.push( { type:"contact", value:custEmail } )
+		requestUrls.push( { type:"lead", value:custEmail } )
 		var custCompany = this.salesforceBundle.reqCompany;
 		if( this.salesforceBundle.accountFields && this.salesforceBundle.accountFields.length > 0 ) { //accountFields is configured
 			if ( custCompany  && custCompany.length > 0 ) { // make sure company is present 
 				custCompany = custCompany.replace(/\W/g,' ').replace(/\s+/g, ' ');
-				var sosl_account = "FIND {" + custCompany + "} IN NAME FIELDS RETURNING Account(" + accountfields + ")";
-				requestUrls.push( { rest_url: "services/data/v20.0/search?q="+sosl_account } )
+				requestUrls.push( { type:"account", value:{company:custCompany} } )
 			}
 			else{
-				var soql_account = "SELECT " + accountfields +"  FROM Account WHERE Id IN ( SELECT AccountId FROM Contact WHERE Email = '" + custEmail +"' ) ";
-				requestUrls.push( { rest_url: "services/data/v20.0/query?q="+soql_account } )
+				requestUrls.push( { type:"account", value:{email:custEmail} } )
 			}
+		}
+		for(var i=0;i<requestUrls.length;i++){
+			requestUrls[i] = {	event:"fetch_user_selected_fields", 
+							   	source_url:"/integrations/service_proxy/fetch",
+							   	app_name:"salesforce",
+							   	payload: JSON.stringify(requestUrls[i]) 
+							 }
 		}
 		this.searchCount = requestUrls.length;
 		this.searchResultsCount = 0;
 		return requestUrls; 
 	},
-	removeDuplicate: function(data_arr){
-		var data_hash={"Id":"Id"};//Id added by default for url construction.
-		for(var i=0;i<data_arr.length;i++){
-			data_hash[data_arr[i]]=data_arr[i];
-		}
-		return_arr = new Array();
-		for(key in data_hash){
-			return_arr.push(key);
-		}
-		return return_arr;
-	},
+
 	parse_contact: function(resJson){
 		var contacts =[];
 		if(resJson.records)
@@ -134,7 +77,7 @@ SalesforceWidget.prototype= {
 							sfcontact[contactfields[i]]=this.salesforceWidget.getAddress(contact.MailingStreet,contact.MailingState,contact.MailingCity,contact.MailingCountry);
 						}
 						else{
-							sfcontact[contactfields[i]] = escapeHtml(contact[contactfields[i]]);
+							sfcontact[contactfields[i]] = escapeHtml(this.salesforceWidget.eliminateNullValues(contact[contactfields[i]]));
 						}
 					}
 				}
@@ -147,7 +90,7 @@ SalesforceWidget.prototype= {
 							sfcontact[leadfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
 						}
 						else{
-							sfcontact[leadfields[i]] = escapeHtml(contact[leadfields[i]]);
+							sfcontact[leadfields[i]] = escapeHtml(this.salesforceWidget.eliminateNullValues(contact[leadfields[i]]));
 						}
 					}
 				}
@@ -157,10 +100,10 @@ SalesforceWidget.prototype= {
 					accountfields = this.salesforceBundle.accountFields.split(",");
 					for (var i=0;i<accountfields.length;i++){
 						if(accountfields[i]=="Address"){
-							sfcontact[accountfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
+							sfcontact[accountfields[i]]=this.salesforceWidget.getAddress(contact.BillingStreet,contact.BillingState,contact.BillingCity,contact.BillingCountry);
 						}
 						else{
-							sfcontact[accountfields[i]] = escapeHtml(contact[accountfields[i]]);
+							sfcontact[accountfields[i]] = escapeHtml(this.salesforceWidget.eliminateNullValues(contact[accountfields[i]]));
 						}
 					}
 				}
@@ -178,7 +121,7 @@ SalesforceWidget.prototype= {
 		country = (country) ? (city + ", " + country)  : city;
 		address = street + state + country;
 		address = (address == "") ? null : address
-		return escapeHtml(address);
+		return escapeHtml(address || "NA");
 	},
 	getTemplate:function(eval_params,crmWidget){
 		var contactTemplate ="";
@@ -253,7 +196,7 @@ SalesforceWidget.prototype= {
 	renderSearchResults:function(crmWidget){
 		var crmResults="";
 		for(var i=0; i<crmWidget.contacts.length; i++){
-			crmResults += '<li><a class="multiple-contacts" href="#" data-contact="' + i + '">'+crmWidget.contacts[i].Name+'</a><span class="contact-search-result-type pull-right">'+crmWidget.contacts[i].type+'</span></li>';
+			crmResults += '<li><a class="multiple-contacts salesforce-tooltip" title="'+crmWidget.contacts[i].Name+'" href="#" data-contact="' + i + '">'+crmWidget.contacts[i].Name+'</a><span class="contact-search-result-type">'+crmWidget.contacts[i].type+'</span></li>';
 		}
 		var results_number = {resLength: crmWidget.contacts.length, requester: crmWidget.options.reqEmail, resultsData: crmResults};
 		this.renderSearchResultsWidget(results_number,crmWidget);
@@ -272,13 +215,17 @@ SalesforceWidget.prototype= {
 	allResponsesReceived:function(){
 		return (this.searchCount <= ++this.searchResultsCount );
 	},
+	eliminateNullValues:function(input){
+		input = (input == null)? "NA":input
+		return input;
+	},
 	VIEW_CONTACT:
 		'<div class="title <%=widget_name%>_bg">' +
 			'<div class="row-fluid">' +
 				'<div id="contact-name" class="span8">'+
 				'<a id="search-back" href="#"><div class="search-back <%=(count>1 ? "": "hide")%>"> <i class="arrow-left"></i> </div></a>'+
-				'<a title="<%=Name%>" target="_blank" href="<%=url%>" class="sales-title"><%=Name%></a></div>' +
-				'<div class="span4"><span class="contact-search-result-type pull-right"><%=(type || "")%></span></div>'+
+				'<a title="<%=Name%>" target="_blank" href="<%=url%>" class="sales-title salesforce-tooltip"><%=Name%></a></div>' +
+				'<div class="span4 pt3"><span class="contact-search-result-type"><%=(type || "")%></span></div>'+
 			'</div>' + 
 		'</div>',
 	CONTACT_SEARCH_RESULTS:
@@ -287,6 +234,4 @@ SalesforceWidget.prototype= {
 			'<div id="search-results"><ul id="contacts-search-results"><%=resultsData%></ul></div>'+
 		'</div>',
 }
-
-salesforceWidget = new SalesforceWidget(salesforceBundle);
 //update widgets inner join applications on applications.id = widgets.application_id set script=replace(script, " token:", "oauth_token:") where applications.name="salesforce";

@@ -11,11 +11,21 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
                 if (flag == false) {
                     if (data.sub_metric && data.date && HelpdeskReports.locals.trend) {
                         HelpdeskReports.locals.ticket_list_flag = true;
-                        _FD.core.actions.showTicketList();
+                        _FD.getTicketListTitle(data);
                         _FD.constructTicketListParams(data.sub_metric, data.date, HelpdeskReports.locals.trend);
                     }
                 }
             });
+        },
+        getTicketListTitle : function(data){
+                var title = "";
+                if( data.sub_metric == "RECEIVED_TICKETS"){
+                    title = "Tickets Received" ;
+                }else{
+                    title = "Tickets Resolved" ;
+                }
+                var value = data.date + " : " + data.value;
+                _FD.core.actions.showTicketList(title,value);
         },
         actions: {
             submitReports: function () {
@@ -76,7 +86,9 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.TicketVolume);
             HelpdeskReports.locals.metric = _FD.constants.metric;
             _FD.bindEvents();
+            _FD.core.ATTACH_DEFAULT_FILTER = true;
             _FD.setDefaultValues();
+            
         }
     };
 })();

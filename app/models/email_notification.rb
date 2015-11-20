@@ -47,7 +47,9 @@ class EmailNotification < ActiveRecord::Base
 
 
   DEFAULT_REPLY_TEMPLATE = 15
-  
+  RESPONSE_SLA_REMINDER = 22
+  RESOLUTION_SLA_REMINDER = 23
+
   EMAIL_SUBJECTS = {
     NEW_TICKET                    => "Ticket Received - {{ticket.encoded_id}} {{ticket.subject}}",
     TICKET_ASSIGNED_TO_GROUP      => "Assigned to Group - {{ticket.encoded_id}} {{ticket.subject}}",
@@ -95,8 +97,10 @@ class EmailNotification < ActiveRecord::Base
     [:tkt_assigned_to_agent,  TICKET_ASSIGNED_TO_AGENT,       VISIBILITY[:AGENT_ONLY]            ],
     [:agent_adds_comment,     COMMENTED_BY_AGENT,             VISIBILITY[:REQUESTER_ONLY]        ],
     [:first_response_sla,     FIRST_RESPONSE_SLA_VIOLATION,   VISIBILITY[:AGENT_ONLY]            ],
+    [:response_reminder_sla,    RESPONSE_SLA_REMINDER,  VISIBILITY[:AGENT_ONLY]            ],
     [:requester_replies,      REPLIED_BY_REQUESTER,           VISIBILITY[:AGENT_ONLY]            ],
     [:resolution_time_sla,    RESOLUTION_TIME_SLA_VIOLATION,  VISIBILITY[:AGENT_ONLY]            ],
+    [:resolution_reminder_sla,    RESOLUTION_SLA_REMINDER,  VISIBILITY[:AGENT_ONLY]            ],
     [:agent_solves_tkt,       TICKET_RESOLVED,                VISIBILITY[:REQUESTER_ONLY]        ],
     [:agent_closes_tkt,       TICKET_CLOSED,                  VISIBILITY[:REQUESTER_ONLY]        ],
     [:default_reply_template, DEFAULT_REPLY_TEMPLATE,         VISIBILITY[:REPLY_TEMPLATE]        ],
@@ -116,6 +120,9 @@ class EmailNotification < ActiveRecord::Base
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
 
   BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC]
+
+  scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
+  scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
 
   def token
     TOKEN_BY_KEY[self.notification_type]

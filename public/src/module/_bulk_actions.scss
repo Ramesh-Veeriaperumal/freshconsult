@@ -5,6 +5,18 @@
         max-height: 460px;
         padding: 10px 20px;
     }
+    .admin_bulk_actions_notification{
+        @include margin(5px 4px 0 0);
+        @include border-radius(5px);
+        line-height: 21px;
+        .admin_select_all_notification_list {
+            @include margin(0 0 8px 30px);
+            li{
+                line-height: 21px;
+            }
+        }
+
+    }
 }
 
 #update-fields{    
@@ -102,7 +114,9 @@
     #replymultiple{
         margin-bottom: 0;
     }
+
 }
+
 #cnt-reply-multiple{
     .request_form_options { 
         z-index:1000; 
@@ -228,6 +242,14 @@
 
 #bulkcontent{
     overflow: hidden;
+    .button-container{
+        float: right;
+        width: 100%;
+        #bulk_back{
+            @include float(left);
+            @include margin-left(5px);
+        }
+    }
 }
 
 #canned_show{
@@ -244,3 +266,5 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+

@@ -22,10 +22,28 @@
 			</span>
 		</div>
 	</div>
+	<div class="stats">
+			<div class="stat">
+				<div class="stat_title"><%=t('helpdesk_reports.ticket_volume.average_received_tickets').html_safe %></div>
+				<div class="value_average"></div>
+			</div>
+			<div class="stat">
+				<div class="stat_title"><%=t('helpdesk_reports.ticket_volume.total_received_tickets').html_safe %></div>
+				<div class="value_total"></div>
+			</div>
+			<div class="stat">
+				<div class="stat_title"><%=t('helpdesk_reports.ticket_volume.average_resolved_tickets').html_safe %></div>
+				<div class="value_average"></div>
+			</div>
+			<div class="stat">
+				<div class="stat_title"><%=t('helpdesk_reports.ticket_volume.total_resolved_tickets').html_safe %> </div>
+				<div class="value_total"></div>
+			</div>
+	</div>
 </div>
 
 <div class="charts_container" id="time_trend_chart"></div>
-
+	
 <div class='comparision-chart-title'>
 	<%=t('helpdesk_reports.ticket_volume.day_trend.title').html_safe %>
 </div>
@@ -33,6 +51,16 @@
 	<%=t('helpdesk_reports.ticket_volume.day_trend.subtitle').html_safe %>
 </div>
 <div class="charts_container">
+	<div class="busy_period">
+		<div class="stat received_tickets">
+			<div><%=t('helpdesk_reports.ticket_volume.busiest_hour_received_tickets').html_safe %></div>
+			<div class="value"></div>
+		</div>
+		<div class="stat resolved_tickets">
+			<div><%=t('helpdesk_reports.ticket_volume.busiest_hour_resolved_tickets').html_safe %></div>
+			<div class="value"></div>
+		</div>
+	</div>
 	<div class="mini-chart-wrapper clearfix" id="mini_chart_wrapper"></div>
 	<div id="day_trend_chart"></div>
 </div>
@@ -46,19 +74,23 @@
 	    if (err) {
             var div = ['day_trend_chart', 'time_trend_chart'];
             HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
-	        jQuery('#trend_type, #mini_chart_wrapper').hide();
+	        jQuery('#trend_type, #mini_chart_wrapper, .busy_period,.stats').hide();
 	    } else if (!jQuery.isEmptyObject(locals.chart_hash["error"]) || !jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
 	        var div = ['day_trend_chart', 'time_trend_chart'];
 	        var msg = 'Something went wrong, please try again';
             HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-	        jQuery('#trend_type, #mini_chart_wrapper').hide();
+	        jQuery('#trend_type, #mini_chart_wrapper, .busy_period, .stats').hide();
 	    } else if (jQuery.isEmptyObject(locals.chart_hash[locals.metric])) {
 	    	var div = ['day_trend_chart', 'time_trend_chart'];
 	        var msg = 'No data to display';
             HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-	        jQuery('#trend_type, #mini_chart_wrapper').hide();
+	        jQuery('#trend_type, #mini_chart_wrapper,.busy_period, .stats').hide();
 	    } else if (!jQuery.isEmptyObject(locals.chart_hash[locals.metric]) && jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
 	        HelpdeskReports.ChartsInitializer.TicketVolume.init(locals.chart_hash);
+
+	        //Populate Busiest Day & Hours
+	        // jQuery(".busy_period .received_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RECEIVED_TICKETS.busiest_day_and_hours);
+	        // jQuery(".busy_period .resolved_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RESOLVED_TICKETS.busiest_day_and_hours);
 	    } 
 	});
 </script>

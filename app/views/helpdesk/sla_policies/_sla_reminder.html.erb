@@ -1,0 +1,87 @@
+
+<% reminder_configured = Helpdesk::SlaPolicy::REMINDER_TYPES.any? {|k| esc_conditions.key?(k.to_s)} %>	
+
+	<li> 
+		<div class="sla_reminder_text <%= reminder_configured ? 'hide' : '' %>">
+		<a href="javascript:void(0)" class="sla_remainder" id="sla_remainder">
+			<i class="sla-noitfy-icon mr5 ficon-bell fsize-16 " size="16"></i>  
+			<%= t('sla_policy.reminder_label').html_safe %>
+		</a>
+		</div>
+	</li >
+	<li class="sla_remainder_wrapper <%= reminder_configured ? '' : 'hide' %>" >
+		<%= f.label :conditions, "#{t('sla_policy.reminder').html_safe}", :class => "large" %>
+		<div class="escalate_to ">
+			<label><%= t('sla_policy.reminder_response_text').html_safe %></label>
+			<div class="grid">
+				<table data-max-level=1 data-type="reminder_response" class="sla_policies">
+					<%= select_tag('reminder_response_time', 
+									options_for_select(reminder_time_options), 
+									{:class => "hide"}) %>
+				 	<%= f.fields_for :reminders do |e| %>
+				 		<%= e.fields_for "reminder_response" do |reminder_response|%>	
+				 			<%= reminder_response.fields_for "1"  do |i| %>
+								<tr data-level = "1" data-type = "reminder_response" rel = "reconstruct" 
+										class='<%= (@esc_agents || {})['reminder_response_1'] ? "" : "hide" %> escalations response' 
+										id="reminder_response_level_1">
+									<%= render :partial => 'sla_matrix', 
+														 :locals => {
+														 		:index => "0", :i => i, 
+										 						 :options => 
+																	{:type => "reminder_response", 
+																	 :value => (@esc_agents || {})['reminder_response_1'],
+																	 :id => "agents_0",
+																	 :placeholder => "#{t('sla_policy.reminder_placeholder')}".html_safe,
+																	 :time_options => options_for_select(
+																	 	reminder_time_options, 
+				 													 :selected => (@time || {"reminder_response_1"=>"-7200"})['reminder_response_1']) }} %>
+								</tr>
+							<% end %>
+						<% end %>
+						<tr class='add_next_level hide'>
+							<td colspan="5">
+								<%= content_tag :div, "<span class='symbols-add'></span> 
+																			#{t('sla_policy.add_response_esc')}".html_safe, 
+								:class => "icon-detail add_next" %>
+							</td>
+						</tr>
+				</table>
+			</div>
+			<label><%= t('sla_policy.reminder_resolution_text').html_safe %></label>
+			<div class="grid">
+				<table data-max-level=1  class="sla_policies">
+					<%= select_tag('reminder_resolution_time', 
+							options_for_select(reminder_time_options), 
+							{:class => "hide"}) %>						
+			 		<%= e.fields_for "reminder_resolution" do |reminder_resolution|%>	
+			 			<%= reminder_resolution.fields_for "1"  do |i| %>
+							<tr data-level = "1" data-type = "reminder_resolution" rel = "reconstruct" 
+									class='<%= (@esc_agents || {})['reminder_resolution_1'] ? "" : "hide" %> escalations response' 
+									id="reminder_resolution_1">
+								<%= render :partial => 'sla_matrix', 
+													 :locals => {
+													 		:index => "0", :i => i, 
+									 						 :options => 
+																{:type => "reminder_resolution", 
+																 :value => (@esc_agents || {})['reminder_resolution_1'],
+																 :id => "agents_0" ,
+																 :placeholder => "#{t('sla_policy.reminder_placeholder')}".html_safe,
+																 :time_options => options_for_select(
+																 	reminder_time_options, 
+			 													 :selected => (@time || {"reminder_resolution_1"=>"-7200"})['reminder_resolution_1']) }}
+																  %>
+							</tr>
+						<% end %>
+					<% end %> 			
+				  	<tr class="add_next_level hide" >
+				  		<td colspan="5">
+				  			<%= content_tag :div, "<span class='symbols-add'></span> 
+																			#{t('sla_policy.add_response_esc')}".html_safe, 
+								:class => "icon-detail add_next" %>
+				  		</td>
+				  	</tr>
+					<% end %>
+				</table>
+		  	</div>
+		</div>
+	</li>

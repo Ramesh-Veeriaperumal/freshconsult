@@ -42,15 +42,17 @@ module Freshfone
     def notify_error(exception, params, agent)
       return if current_account.blank?
       Rails.logger.info "Call queue worker account additional settings : #{params[:account_id]} : #{current_account.id} : #{current_account.account_additional_settings.present?}"
-      FreshfoneNotifier.freshfone_email_template(current_account,{
-          :recipients => FreshfoneConfig['ops_alert']['mail']['to'],
-          :from       => FreshfoneConfig['ops_alert']['mail']['from'],
-          :subject    => "Call Queue Worker failure",
-          :message    => "Account :: #{params[:account_id]} <br>
-          User Id :: #{agent}<br>
-          Params :: #{params}<br><br>
-          Exception Message : #{exception.message}<br><br>
-          Stacktrace :: #{exception.backtrace.join("\n\t")}<br>" })
+      if current_account.account_additional_settings.present?
+        FreshfoneNotifier.freshfone_email_template(current_account,{
+            :recipients => FreshfoneConfig['ops_alert']['mail']['to'],
+            :from       => FreshfoneConfig['ops_alert']['mail']['from'],
+            :subject    => "Call Queue Worker failure",
+            :message    => "Account :: #{params[:account_id]} <br>
+            User Id :: #{agent}<br>
+            Params :: #{params.inspect}<br><br>
+            Exception Message : #{exception.message}<br><br>
+            Stacktrace :: #{exception.backtrace.join("\n\t")}<br>" })
+      end
     end
 
   end

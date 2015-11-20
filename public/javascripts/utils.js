@@ -266,7 +266,32 @@ function reply_multiple_submit( url, method, params){
   form.submit();
 }
 
+function helpdesk_generic_submit(form_id, url, method, params){
+  var form = $(form_id);
+  if(method && typeof(form.down('input[name=_method]')) !== "undefined"){
+    form.down('input[name=_method]').value = method;
+  }
+  else if (method){
+    var method_field = new Element('input', {
+                     type: 'hidden'
+                   });
+    method_field.name = "_method"
+    method_field.value = method;
+    form.appendChild(method_field);
+  }
 
+  (params || []).each(function(item){
+    item = $(item);
+    var field = new Element('input', {
+                     type: 'hidden'
+                   });
+    field.name = item.name;
+    field.value = item.value;
+    form.appendChild(field);
+  });
+  form.action = url;
+  form.submit();
+}
 
 function setSelRange(inputEl, selStart, selEnd) {
    if (inputEl.setSelectionRange) {

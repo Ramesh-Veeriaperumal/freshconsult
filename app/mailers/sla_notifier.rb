@@ -32,11 +32,11 @@ class SlaNotifier < ActionMailer::Base
 		e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
 		return unless e_notification.agent_notification?
 		agents.each do |agent|
-			begin			
-				agent_template = e_notification.get_agent_template(agent)
-				email_subject = Liquid::Template.parse(agent_template.first).render(
+			begin
+				subject_template, message_template = e_notification.get_agent_template(agent)			
+				email_subject = Liquid::Template.parse(subject_template).render(
 				                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-				email_body = Liquid::Template.parse(agent_template.last).render(
+				email_body = Liquid::Template.parse(message_template).render(
 				                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
 			ensure
 				Time.zone = time_zone
