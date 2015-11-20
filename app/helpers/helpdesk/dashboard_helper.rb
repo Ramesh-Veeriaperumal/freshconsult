@@ -38,7 +38,7 @@ module Helpdesk::DashboardHelper
 	
 		demo_content.concat(content_tag(:p,
 			content_tag(:b, link_to( t('schedule_a_complimentary_session').html_safe, 
-				"http://resources.freshdesk.com/demoRequest.html?utm_source=freshdeskapp&utm_medium=inapp&utm_campaign=complimentarydemo",
+				"https://freshdesk.com/demo-request",
 				:onclick => "window.open(this.href);return false;", :target => "_blank" ) )
 			))
 	end
