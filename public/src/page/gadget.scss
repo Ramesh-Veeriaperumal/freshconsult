@@ -136,6 +136,15 @@ body#gcgadget {
 			width : 100%;
 		}
 	}
+
+	.new_helpdesk_ticket {
+		.field {
+			select {
+				width: 99%;
+			}
+		}
+	}
+
 }
 
 body.minimized {
