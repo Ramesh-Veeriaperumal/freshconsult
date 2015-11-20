@@ -49,7 +49,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   def unlink_shared
     if can_unlink?
       @note = @item.shared_attachable
-      @note_attachment_count = @note.all_attachments.size - 1
+      @note_attachment_count = @note.all_attachments.size + @note.cloud_files.size - 1
       @item.destroy
       flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
     else

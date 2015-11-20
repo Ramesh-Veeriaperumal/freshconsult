@@ -1,0 +1,160 @@
+<%= form_for :widget_config, :html => { :class => "form-horizontal", :rel => "validate",
+		:name => "widget_config_popup", :id => "WidgetConfigpopup" } do |f| %>
+
+<div class="row-fluid">
+  <input data-set-query-string="true" id="widgetType" name="widgetType" type="hidden" value="popup"/>
+
+	<h5 class="lead top-space-none"><%= t('.feedbackwidget_button_customization') %></h5>
+  <div class="control-group">
+		<label class="control-label"><%= t('.feedbackwidget_button_type') %></label>
+
+    <div class="controls">
+      <label class="radio inline">
+        <input checked="checked" id="text_button" name="buttonType" type="radio" value="text"/>
+        <%= t(".feedbackwidget_text_button") %>
+      </label>
+      <label class="radio inline">
+        <input id="image_button" name="buttonType" type="radio" value="image"/>
+        <%= t(".feedbackwidget_image_button") %>
+        <input id="image_url" name="image_url" type="hidden"/>
+      </label>
+      <p class="info-data"></p>
+      <!-- Using this for top-space -->
+      <div class="row-fluid image-button hide">
+        <p><%= t('feedbackwidget_image_button') %></p>
+        <input class="textInput span8" id="backgroundImage" name="backgroundImage" size="35" type="text" value=""/>
+      </div>
+      <div class="row-fluid text-button">
+        <div class=" span6">
+          <%= t("feedbackwidget_button_text") %>
+          <input class="text span12" name="buttonText" placeholder="<%=t('.feedbackwidget_button_text_placeholder')%>" size="18" type="text" value=""/>
+        </div>
+        <div class="color span6">
+          <div><%= t("feedbackwidget_background") %></div>
+          <%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"buttonBg" , :value => "#{tab_color}" , :maxlength => "7" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t('feedbackwidget_position') %></label>
+    <div class="controls">
+      <div class="span3">
+        <select class="select2 span12" data-minimum-results-for-search='25' id="select_id" name="alignment">
+          <option selected="selected" value="4"><%=t('left')%></option>
+          <option value="2"><%=t('right')%></option>
+          <option value="1"><%=t('top')%></option>
+          <option value="3"><%=t('bottom')%></option>
+        </select>
+      </div>
+      <div class="input-prepend span1">
+        <span class="add-on">Offset:</span>
+        <input class="number" id="offset" name="offset" placeholder="<%=t('.feedbackwidget_offset_placeholder')%>" size="4" type="text" value="">
+        <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+      </div>
+      <p class="info-data span12 clear-left-margin"><%= t('feedbackwidget_offset_info') %></p>
+    </div>
+  </div>
+
+	<h5 class="lead top-space-none"><%= t('.feedbackwidget_form_customization') %></h5>
+
+
+  <div class="control-group">
+		<label class="control-label"><%= t('feedbackwidget_form_heading') %></label>
+    <div class="controls">
+      <input class="text" data-set-query-string="true" data-skip-options='true' id="formTitle" name="formTitle" placeholder="<%= t('feedbackwidget_defaulttitle').html_safe %>" size="35" type="text" value=""/>
+    </div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t(".feedbackwidget_form_submit_message") %></label>
+    <div class="controls">
+      <textarea class="paragraph auto-height" data-set-query-string="true" id="submitThanks" name="submitThanks" placeholder="<%= t('.thankyou_default') %>" rows="2" value=""></textarea>
+      <div class="info-data">
+        <%= t(".thankyou_info") %>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t('.feedbackwidget_form_height') %></label>
+    <div class="controls">
+      <input class="text span2 number" id="formHeight" name="formHeight" placeholder="<%= t('.feedbackwidget_height_placeholder') %>" size="4" type="text" value=""/>
+      <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+      <div class="info-data">
+        <%= t(".feedbackwidget_form_height_message") %>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t(".feedbackwidget_users_can") %></label>
+    <div class="controls widget_options">
+      <div class="row-fluid">
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_screenshot") %></label>
+          <div class="controls">
+            <input data-set-query-string="true" id="screenshot" name="screenshot" rel='pseudo' type="hidden" value="" value=''/>
+            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+          </div>
+        </div>
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_use_https") %></label>
+          <div class="controls">
+            <input class="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" id="httpsHttp" rel="toggle" type="checkbox" type="checkbox"/>
+          </div>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_attach_a_file") %></label>
+          <div class="controls">
+            <input data-set-query-string="true" data-skip-options='true' id="attachFile" name="attachFile" rel='pseudo' type="hidden" value="" value=''/>
+            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+          </div>
+        </div>
+        <div class="span6 widget_option">
+            <label class="control-label"><%= t(".feedbackwidget_use_captcha") %></label>
+            <div class="controls">
+              <input data-set-query-string="true" name="captcha" rel="pseudo" type="hidden" value=""/>
+              <input class="captchapseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox"/>
+            </div>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_search_area") %></label>
+          <div class="controls">
+            <input data-set-query-string="true" data-skip-options='true' id="searchArea" name="searchArea" rel='pseudo' type="hidden" value=''/>
+            <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+          </div>
+        </div>
+        <div class="span6 widget_option">
+            <label class="control-label"><%= t(".feedbackwidget_mobile_view") %></label>
+            <div class="controls">
+              <input data-set-query-string="true" name="responsive" rel="pseudo" type="hidden" value=""/>
+              <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox"/>
+            </div>
+        </div>
+      </div>
+      <% if is_application_installed?("screenr")%>
+        <div class="row-fluid">
+          <div class="span6 widget_option">
+            <label class="control-label"><%= t(".feedbackwidget_screenr_recording") %></label>
+            <div class="controls">
+              <input id="screenr_recording" name="screenr_recording" rel='pseudo' type="hidden" value="" value=''/>
+              <input checked="checked" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" rel="toggle" type="checkbox" type="checkbox">
+            </div>
+          </div>
+          <div class="span6 widget_option">
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <ul class="ui-form">
+    <li class="code-view">
+			<h3 id="feedbackwidget_popup_code" class="title span12"><%= t('.feedbackwidget_popup_code') %></h3>
+      <p class="intro"><%= t('feedbackwidget_embed_code_intro').html_safe  %></p>
+      <textarea class="codetextarea" id="popupCode"></textarea>
+    </li>
+  </ul>
+</div>
+<% end %>

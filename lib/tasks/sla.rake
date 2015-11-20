@@ -54,10 +54,11 @@ def execute_sla(task_name)
     rake_logger.info "rake=#{task_name} SLA" unless rake_logger.nil?
     current_time = Time.now.utc
     queue_name = SLA_TASK[task_name][:queue_name]
+    puts "queue_name === #{queue_name}"
     if sla_should_run?(queue_name)
       accounts_queued = 0
       Sharding.execute_on_all_shards do
-        Account.current_pod.send(SLA_TASK[task_name][:account_method]).each do |account|        
+        Account.current_pod.send(SLA_TASK[task_name][:account_method]).each do |account|    
           Resque.enqueue(SLA_TASK[task_name][:class_name].constantize, { :account_id => account.id})
           accounts_queued += 1
         end

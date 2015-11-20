@@ -45,7 +45,7 @@
 	}
 	select {
 		width:auto;
-		height: 25px;
+		height: 30px;
 		line-height: 25px;
 	}
 	label {
@@ -91,6 +91,24 @@
 	.ui-form {
 		background-color: white;
 	}
+	
+	.sla_remainder{
+		font-size: 13px;
+	    font-weight: 500;
+	    color: #06c;
+	    margin: 10px 0;
+	    cursor: pointer;
+
+	    .sla-noitfy-icon{
+	    	vertical-align: middle;
+    		color: #06C;
+	    }
+    }
+
+    .sla_reminder_text {
+    	padding: 20px 0px
+    }
+
 	.escalate_to {
 		padding: 4px 8px 10px;
 		border: 1px solid #CCC;
@@ -158,6 +176,7 @@
 
 						.select2-container {
 							width: 99%;
+							margin-bottom: 8px;
 						}
 						&.level-holder{
 							width:30px;
@@ -167,6 +186,15 @@
 						}
 						&.escalations-time-holder {
 							width:210px;
+
+							.select2-container {
+								width: 150px;
+
+							}
+
+							.select2-choice{
+								padding-bottom: 2px;
+							}
 						}
 						ul {
 							@include border-radius(4px);
@@ -208,6 +236,7 @@
 		}
 	}
 
+
 	li.select2-search-choice, li.select2-search-field {
 		width: auto !important;
 	}
@@ -248,7 +277,6 @@
 	.sla_policy_conditions_container {
 		border:1px solid #CFCFCF;
 		@include margin-right(3px);
-		margin-top: 15px;
 		@include border-radius(4px);
 		.condition {
 			background-color:#F6F6F6;
@@ -390,6 +418,10 @@
 }
 /* end of SLA policy */
 
+.select2-search-hide .select2-search {
+    display: none !important;
+}
+
 
 //------------------------------------------------------------------------------------
 //								sla policy page start
@@ -398,6 +430,9 @@
 	th, td{
 		border:0;
 		&:first-child{@include padding-left(0);}
+	}
+	label {
+		padding: 6px 0px 6px 0;
 	}
 	.sla-time-col{
 		position:relative;

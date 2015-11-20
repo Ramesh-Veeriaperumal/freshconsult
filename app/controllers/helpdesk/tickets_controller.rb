@@ -16,6 +16,7 @@ class Helpdesk::TicketsController < ApplicationController
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
+  helper Helpdesk::SelectAllHelper
   include Helpdesk::TagMethods
 
   before_filter :redirect_to_mobile_url  
@@ -30,10 +31,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close ,:execute_bulk_scenario]
   before_filter :normalize_params, :only => :index
+  before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
-  before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
@@ -102,7 +103,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
-  
+
   def index
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
@@ -259,6 +260,7 @@ class Helpdesk::TicketsController < ApplicationController
   def custom_search
     params[:html_format] = true
     @items = fetch_tickets
+    @current_view = view_context.current_filter
     render :partial => "custom_search"
   end
   
@@ -1047,14 +1049,48 @@ class Helpdesk::TicketsController < ApplicationController
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
           handle_unsaved_view
-          @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
-          @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
-          # @ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
+          initialize_ticket_filter
           params.merge!(@cached_filter_data)
         end
+      elsif dashboard_filter?
+          dash_filter_value = get_others_redis_key(dashboard_filter_redis_key)
+          filter_params = {"unsaved_view" => true}
+          action_hash = [{ "condition" => "status", "operator" => "is_in", "value" => params[:filter_key].to_s }]
+          action_hash.push({ "condition" => TicketConstants::DASHBOARD_FILTER_MAPPING[params[:unassigned].to_sym], "operator" => "is_in", "value" => "-1"}) if params[:unassigned].present?
+          TicketConstants::DASHBOARD_FILTER_MAPPING.each do |key,val|
+            action_hash.push({ "condition" => val, "operator" => "is_in", "value" => params[key].to_s}) if params[key].present?
+          end
+          if dash_filter_value
+            filter_hash = JSON.parse(dash_filter_value)
+            filter_hash.each do |k,v|
+              action_hash.push({ "condition" => k.to_s, "operator" => "is_in", "value" => v })
+            end
+          end
+          filter_params.merge!("data_hash" => action_hash.to_json)
+          set_tickets_redis_key(redis_key,filter_params.to_json,86400)
+          @cached_filter_data = get_cached_filters
+          @cached_filter_data.symbolize_keys!
+          handle_unsaved_view
+          initialize_ticket_filter
+          params.merge!(@cached_filter_data)
       else 
         remove_tickets_redis_key(redis_key)
       end
+    end
+
+    def initialize_ticket_filter
+       @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME)
+       @ticket_filter = @ticket_filter.deserialize_from_params(@cached_filter_data)
+       #@ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
+    end
+
+    def dashboard_filter_redis_key
+      key = { 
+              :account_id => current_account.id,
+              :user_id => current_user.id,
+              :session_id => request.session_options[:id]
+            }
+      DASHBOARD_TABLE_FILTER_KEY % key
     end
 
     def load_article_filter
@@ -1087,6 +1123,10 @@ class Helpdesk::TicketsController < ApplicationController
 
     def report_filter?
       !params[:report_type].blank?
+    end
+
+    def dashboard_filter?
+      (params[:filter_type] == "status") and params[:filter_key].present?
     end
 
     def is_custom_filter_ticket?
@@ -1201,11 +1241,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   def handle_send_and_set
     @item.send_and_set = params[:send_and_set].present?
-  end
-
-  def set_default_filter
-    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
-    # When there is no data hash sent selecting all_tickets instead of new_and_my_open
   end
 
   def empty_trash_key

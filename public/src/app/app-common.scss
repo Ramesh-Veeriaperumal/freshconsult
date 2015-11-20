@@ -7,8 +7,8 @@
     direction:rtl;
   }
 }
-body { 
-	min-width:1140px; 
+body {
+	min-width:1140px;
 	-webkit-font-smoothing: antialiased;
 }
 .margin-bottom{ margin-bottom:10px; }
@@ -51,23 +51,23 @@ ul.activityfeed, ul.summary{
 	padding:0;
 }
 ul.summary{
-	@include border-radius(6px);    
-	background:#fafafa; 
+	@include border-radius(6px);
+	background:#fafafa;
 	/* @include background-with-css2-fallback(linear-gradient(white, #fafafa)); */
-	border:1px solid #efefef; 
-	margin-bottom:10px; 
-	li{ 
+	border:1px solid #efefef;
+	margin-bottom:10px;
+	li{
 		@include float(left);
 		@include text-align(left);
 		width:20%;
 		margin:0;
-		a{ 
-			text-decoration:none; 
-			color:$default_txt_color; 
+		a{
+			text-decoration:none;
+			color:$default_txt_color;
 			@include text-align(left);
 			padding-top: 10px;
 			padding-bottom: 5px;
-			@include border-right(1px solid #e8e8e8); 
+			@include border-right(1px solid #e8e8e8);
 			display: inline-block;
 			width:100%;
 			@include box-sizing(border-box);
@@ -78,10 +78,10 @@ ul.summary{
 			span, h4{
 				display:block;
 				@include padding-left(15px);
-				color:$default_txt_color; 
+				color:$default_txt_color;
 			}
-			h4{			 
-				font-size:36px; 
+			h4{
+				font-size:36px;
 				font-weight:300;
 			}
 			&.overdue{
@@ -91,57 +91,57 @@ ul.summary{
 		&.last a{
 			border:0;
 		}
-	}		 
-}  
+	}
+}
 
-ul.activityfeed li{ 
+ul.activityfeed li{
 	border-bottom:1px solid #f7f7f7;
 	@include padding(10px 20px 8px 56px);
-	display:block; 
+	display:block;
 	color:#666666;
 	font-size:1.1em; line-height:1.6;
 	.preview_pic{
 		@include margin-left(-52px);
 		@include margin-right(0px);
-		
+
 	}
 	.username{
 	   font-weight:bold;
 	   text-transform:capitalize;
-	}                 
-	a{ 
+	}
+	a{
 		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
-   		text-decoration:none; 
+   		text-decoration:none;
 	}
 	.activity_time{ color:#a6a6a6; padding-top:3px; text-transform:lowercase;}
 	div.preview_pic img{ &.preview_pic{margin-left: 0;}width:40px; height:40px;@include border-radius(50%); }
 }
 
 // ----------------------------------------------------------------------------
-//									 SIDEBAR CONTAINERS 
+//									 SIDEBAR CONTAINERS
 // ----------------------------------------------------------------------------
 
 .no-helpdesk{
 	margin:50px auto;
 	@include padding(18px 20px 30px 20px);
 	@include text-align(center);
-	max-width:700px; 
+	max-width:700px;
 }
 
 .no-helpdesk p{
-	font-size:15px; 
-	line-height:1.5em; 
+	font-size:15px;
+	line-height:1.5em;
 	margin:0;
 	@include text-align(center);
-} 
+}
 
-.ui-list_with_icon{	
+.ui-list_with_icon{
 	padding-top:5px;
 	list-style:none;
 	margin:0;
-	padding:0; 
-	li{ 
-		@include padding(4px 0 4px 18px); 
+	padding:0;
+	li{
+		@include padding(4px 0 4px 18px);
 		color:#41658a;
 		position:relative;
 	}
@@ -171,11 +171,11 @@ ul.activityfeed li{
 	display: inline; // double-margin bug in IE5/6
 	@include margin-right(10px);
 	position:relative;
-	img{			
+	img{
 		background:#ffffff;
 		width:50px;
 		height:50px;
-		@include border-radius(6px); 
+		@include border-radius(6px);
 	}
 }
 
@@ -186,17 +186,17 @@ div.profile_pic img{
 
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
-		
+
 h3.content_title, h2.content_title{
 		color:$default_txt_color;
-		font-size:1.50em; 
-		@include padding(14px 0 2px 0);			
-		margin:0; 
+		font-size:1.50em;
+		@include padding(14px 0 2px 0);
+		margin:0;
 		img{
 			@include float(left);
 			position:relative;
 			top:-8px;
-		 @include left(-2px);			
+		 @include left(-2px);
 		}
 }
 
@@ -204,24 +204,24 @@ h3.content_title.withPadding{
 	@include margin(2px 0 4px 25px);
 }
 
-h2.content_title{	
+h2.content_title{
 		font-size:1.9em;
 		margin-top:6px;
 }
-			
+
 .pageContent{
 	h2{
 		color:#555;
-	}	 
+	}
 	.subtitle{
 		font-style:italic;
 		color:$default_txt_color;
-		font-size:0.8em; 
+		font-size:0.8em;
 	}
 }
 
 // ----------------------------------------------------------------------------
-//									 Page Style 
+//									 Page Style
  // ----------------------------------------------------------------------------
 
 ul.secondary-actions{
@@ -231,7 +231,7 @@ ul.secondary-actions{
 		border-bottom:0;
 		margin:8px 3px;
 	}
-}  
+}
 
 div.checkbox{
 	@include clearfix;
@@ -245,43 +245,43 @@ div.leader-left{
 }
 
 div.leader-right{
-    @include float(right); 
-    font-weight: normal; 
+    @include float(right);
+    font-weight: normal;
     margin-top: 3px;
 
 }
-           
+
 .status-pointer, .priority-pointer{
 	font-size:9px;
 	color:#fff;
-	text-transform:uppercase; 
+	text-transform:uppercase;
 	@include text-align(center);
 	@include padding(9px 3px 0 6px);
 	line-height:0;
 	height:9px;
-	@include min-width(48px); 
- @include left(-4px);	
+	@include min-width(48px);
+ @include left(-4px);
 }
-.status-pointer{  
-	@include float(right);  
+.status-pointer{
+	@include float(right);
 	@include border-radius(3px);
-}			                     
+}
 .priority-pointer{
-	top:9px; 	
+	top:9px;
 	position:absolute;
- 	@include pointer-title;     
-}          
+ 	@include pointer-title;
+}
 
 .request-title{
-	background-color:#f6f6f6; 
+	background-color:#f6f6f6;
 	@include padding(7px 20px 8px 70px);
 	border-bottom:1px solid #e9e9e9;
 	color:#000000;
 	font-size:13px;
 	position:relative;
-	font-weight:bold;           
+	font-weight:bold;
 	.subject{ line-height:20px; }
-	.ticket-id{	color:#999999; }        	
+	.ticket-id{	color:#999999; }
 	.low{ background-color: $COL_PRI_LOW; }
 	.low:before{ @include border-left-color($COL_PRI_LOW); }
 	.medium{ background-color: $COL_PRI_MEDIUM; }
@@ -308,32 +308,32 @@ h4.title{
 	margin:(-$common-padding) (-$common-padding) 20px (-$common-padding);
 	.ticket_actions{
 		position:absolute;
-	 	@include right(18px); 
+	 	@include right(18px);
 		top:10px;
-		.action_buttons{ margin-top:0; } 
+		.action_buttons{ margin-top:0; }
 		.item-right-actions{
 		   margin-top:8px;
 		   @include margin-left(6px);
 		}
-	} 
+	}
 	.tabs{   /* Overwriting app-bootstrap class*/
 		@include margin-left(0);
 		@include margin-right(0);
 	}
 	.bookmark{
 		display:none;
-	}	
-	.requestCnt{             
+	}
+	.requestCnt{
 		position:relative;
 		h4.title{
 			font-size:1.1em;
 			font-weight:bold;
-		}                       
-		position:relative; 		
+		}
+		position:relative;
 	}
-	
-	a.user_name{ @include link-colors($default_txt_color, #527EAA ); } 
-	
+
+	a.user_name{ @include link-colors($default_txt_color, #527EAA ); }
+
 	.request-cnt-first{
 		div.description{
 			.app-link{
@@ -348,7 +348,7 @@ h4.title{
 				.info{
 					margin-top:3px;
 					@include margin-left(46px);
-				}    
+				}
 				.light{
 					font-style:italic;
 					color:#afafaf;
@@ -356,15 +356,15 @@ h4.title{
 			}
 		}
 	}
-	
+
 	.facebook_post{
 		@include clearfix;
-		.thumbnail{ @include float(left); @include margin-right(10px); } 
+		.thumbnail{ @include float(left); @include margin-right(10px); }
 	}
-	
+
 	.actions{
 		@include clearfix;
-		@include float(right); 
+		@include float(right);
 		@include margin-right(0);
 		margin-top:-4px;
 		visibility:hidden;
@@ -373,25 +373,25 @@ h4.title{
 			@include margin-right(5px);
 		}
 	}
-	
+
 	.description:hover, .timeentry:hover{
 		.actions{
-			visibility:visible;	
+			visibility:visible;
 		}
-	} 
-	
+	}
+
 	.request-wrapper{
 		@include margin(0 20px 20px 70px);
 		.seperator{
 			margin:10px 0;
 		}
 	}
-	
+
 	.preview_pic img{ width:36px; height:36px; }
 
-	div.description{  
-			position: relative; 
-			.details{ 
+	div.description{
+			position: relative;
+			.details{
 				.ticket-details-twitter{
 					margin-top: 30px;
 					display: inline-block;
@@ -407,7 +407,7 @@ h4.title{
 				line-height:18px;
 				table, table td, table th { border: 0; padding:0; }
 				p{
-				   @include margin-right(2em); 
+				   @include margin-right(2em);
 				}
 				.ui-form{
 					@include border-radius(0);
@@ -419,7 +419,7 @@ h4.title{
 					label{
 						font-size:13px;
 					}
-					li{ 
+					li{
 						border:0;
 					}
 					.button-container{
@@ -437,11 +437,11 @@ h4.title{
 			}
 			.min_height{
 				@include min-height(100px);
-			}		
+			}
 		}
-	
+
 	.request-conversation{
-		padding:0; 
+		padding:0;
 		margin-top:10px;
 		.description, .timeentry{
 			@include pie-clearfix;
@@ -460,29 +460,29 @@ h4.title{
 				padding-bottom:6px;
 				a{	font-style:normal;	}
 			}
-		} 
+		}
 	}
-		
-	.request_desp { 
+
+	.request_desp {
 		@include margin(0 10px 0 10px);
-		@include clearfix;		
+		@include clearfix;
 		.sub_title{
-			color:#454545; 
+			color:#454545;
 			display:block;
 			font-weight:bold;
-			text-transform:capitalize;	
+			text-transform:capitalize;
 			font-size:14px;
-		}		
+		}
 	}
-	
+
 	.subtitle{
 			margin:0;
 			padding:8px 0;
 			font-size:14px;
 			font-weight:bold;
 			color:$default_txt_color;
-	} 
-	
+	}
+
 }
 .seperator{
 	border-bottom: 1px solid #efefef;
@@ -496,7 +496,7 @@ h4.title{
 	color:#999999;
 	font-size:11px;
 }
- 
+
 .ticket-panel{
 	@include border-radius(0 12px 12px 0);
 	background-color:#3f3f3f;
@@ -512,11 +512,11 @@ h4.title{
 	@include border-radius(3px);
 }
 .no_info_text, .no-info-text{
-	font-weight:normal;	
+	font-weight:normal;
 	color:#aaaaaa;
 	font-size:12px;
 	@include padding(2px 0 6px 0);
-	a{ 
+	a{
 		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 		text-decoration:none;
 		font-size:12px;
@@ -526,7 +526,7 @@ h4.title{
 .field-important{
  	color: red;
  }
- 
+
 .big-info{
 	@include text-align(center);
 	padding:12px 8px;
@@ -536,13 +536,13 @@ h4.title{
 	}
 }
 
-.alpha_sort_list{ 
+.alpha_sort_list{
 	@include pie-clearfix;
 	display:block;
 	list-style:none;
-	display:block;	
+	display:block;
 	background: #fff;
-	@include float(right);	
+	@include float(right);
 	li{
 		@include float(left);
 		a{
@@ -553,7 +553,7 @@ h4.title{
 			@include margin-left(2px);
 		}
 	}
-	li.active a, li a:hover{ 
+	li.active a, li a:hover{
 		color:#fff;
 		background: #888;
 		@include border-radius(3px);
@@ -563,17 +563,17 @@ h4.title{
 	color:#333;
 
 	}
-} 
+}
 .sortable{
 	background:#f5f5f5;
 	border:1px solid #cfcfcf;
 	border-width:1px 0;
 	@include padding(2px 20px 10px 20px);
-	margin:0 (-$common-padding);	
+	margin:0 (-$common-padding);
 }
 
 .sort-list{
-	margin:0 -16px;	
+	margin:0 -16px;
 	.sort_handle{
 		@include margin(0 31px 0 0);
 		position: relative;
@@ -591,7 +591,7 @@ h4.title{
 	li.ui-sortable-placeholder{
 		border-color:#efefef;
 		background-color:#efefef !important;
-	}	
+	}
 }
 
 .company{
@@ -605,21 +605,21 @@ h4.title{
 .contact{
 	@include margin(12px 19px 12px 170px);
 	.profile_pic{
-		position:absolute; 
+		position:absolute;
 	 @include left(-150px);
 	}
 }
 
-ul.active{	
-	a{			
-		color:#336699;		
+ul.active{
+	a{
+		color:#336699;
 	}
 }
 
 ul.inactive{
 	a{
-		@include opacity(0.6);		
-		color:$default_txt_color;	
+		@include opacity(0.6);
+		color:$default_txt_color;
 	}
 	a:hover{
 		@include opacity(1);
@@ -632,7 +632,7 @@ ul.inactive{
 
 
 // ------------------------------------------------------------------------------------------------------------
-//													 Search form generic styling 
+//													 Search form generic styling
 // ------------------------------------------------------------------------------------------------------------
 div.search{
 	padding:8px 0;
@@ -640,16 +640,16 @@ div.search{
 	width:60%;
 	@include clearfix;
 	label{
-		display:block;		
+		display:block;
 	}
-	input.search{	
+	input.search{
 		width:90%;
-		padding:3px;		
+		padding:3px;
 		margin:3px 0;
 	}
 	label, input.search{
 		font-size:14px;
-		color:333;		
+		color:333;
 	}
 }
 
@@ -673,7 +673,7 @@ h4.border_title{
 
 .sticky{	background:#ffffff; }
 
-.category-title{ 
+.category-title{
 	font-size:14px;
 	background-color:#f6f6f6;
 	border-top:1px solid #e2e2e2;
@@ -689,7 +689,7 @@ h4.border_title{
 	padding:0;
 	.left_col, .right_col{
 		@include float(left);
-		padding-top:12px;	 
+		padding-top:12px;
 	}
 	.left_col{
 		width:47%;
@@ -703,23 +703,23 @@ h4.border_title{
 		@include border-left(1px solid #efefef);
 		position:relative;
 	 @include left(-1px);
-	}	
+	}
 }
 
 .ssp_category_list{
 	@include clearfix;
 	@include margin(0 0 8px 0);
-	padding:0; 
-	div.odd, div.even{ 
-		@include margin(0 2% 6px 0); 
-		padding:1% 0;  
-		a{			 
-			font-size:16px; 
+	padding:0;
+	div.odd, div.even{
+		@include margin(0 2% 6px 0);
+		padding:1% 0;
+		a{
+			font-size:16px;
 			@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 			font-weight:bold;
 			text-decoration:none;
 			padding-bottom:4px;
-		} 
+		}
 		li{
 			a{
 				font-size:12px;
@@ -730,7 +730,7 @@ h4.border_title{
 		}
 		a, span{
 			display:block;
-		} 
+		}
 	}
 }
 
@@ -783,7 +783,7 @@ h4.border_title{
 
 div.survey_check{
 	padding:0 10px;
-	@include text-align(right);	
+	@include text-align(right);
 }
 
 
@@ -830,7 +830,7 @@ a.page_title{
 	@include text-align(center);
 	@include padding(1px 5px 2px 5px);
 	@include border-radius(6px);
-	font-size:9px; 
+	font-size:9px;
 }
 
 .meta_icon{
@@ -852,7 +852,7 @@ a.page_title{
 .highlight{
 	color:#0078BD;
 }
-.user-info{ 
+.user-info{
 	padding-top:8px;
 	border-top:1px solid #f1f1f1;
 	div{
@@ -889,18 +889,18 @@ a.page_title{
 				font-size:13px;
 				margin:0;
 				@include padding(0 0 3px 0);
-			} 
-			
+			}
+
 			a{
 				@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
 				text-decoration:none;
 			}
-			 
+
 			.preview_pic{
-				border-color:#d2d2d2;  
+				border-color:#d2d2d2;
 				img{ width:36px; height:36px; padding:0; border:0; }
 			}
-		} 
+		}
 	}
 
 .max_width{
@@ -917,7 +917,7 @@ a.page_title{
 }
 
 .match{
-	font-weight:bold; 
+	font-weight:bold;
 }
 
 .big_results{
@@ -931,7 +931,7 @@ a.page_title{
 .solution_list{
 	margin: 10px 0 0;
 	list-style:none;
-	li{  
+	li{
 		font-size: 13px;
 	    line-height: 1.8em;
 	    margin: 0 0 7px;
@@ -940,7 +940,7 @@ a.page_title{
 			text-decoration:none;
 		}
 		span{
-			color: #888888; 
+			color: #888888;
 		}
 	}
 }
@@ -963,12 +963,12 @@ a.page_title{
 	font-weight: lighter;
 }
 .lock{
-	background-image:url("/images/private_lock.gif"); 
+	background-image:url("/images/private_lock.gif");
 	background-position:3px 0;
 	background-repeat: no-repeat;
 	@include padding-left(20px !important);
-} 
-	
+}
+
 .status_text{
 	background-color:#888888;
 	@include border-radius(6px);
@@ -1006,12 +1006,12 @@ a.page_title{
 				width: 185px;
 			}
 		}
-	}	
+	}
 }
 .tag_list{
 	@include clearfix;
 	position:relative;
-	padding:0;	
+	padding:0;
 	div.item{
 		@include float(left);
 		@include border-radius(5px);
@@ -1024,12 +1024,12 @@ a.page_title{
 			@include float(right);
 			visibility:hidden;
 		}
-	}	
+	}
 	div.item.contact-tag {
 		padding:3px 8px;
 		height: auto;
 		margin:4px;
-	}	
+	}
 	div.item:hover{
 		.tag_delete{
 			visibility:visible;
@@ -1063,7 +1063,7 @@ a.page_title{
 	}
 }
 
-.conversation-sprite{ 
+.conversation-sprite{
 	position:relative;
 	display:inline;
 	margin-top:-8px;
@@ -1071,10 +1071,10 @@ a.page_title{
 	@include float(right);
 	.image {
 		@include float(right);
-	    content: ""; 
+	    content: "";
 	    width: 32px;
 	    height: 32px;
-	    margin: 0; 
+	    margin: 0;
 	}
 }
 
@@ -1095,7 +1095,7 @@ a.page_title{
 		@include float(left);
 		@include margin-left(-150px);
 		width:127px;
-		margin-top:5px; 
+		margin-top:5px;
 		img{
 		   max-width:130px;
 		   min-width: 90px;
@@ -1156,13 +1156,13 @@ a.page_title{
 .info-highlight-deleted{
 	@include padding(15px 18px 18px 18px);
 	font-size:15px;
-} 
-
-.text-red{
-	color:#993333;	
 }
 
-.sort{   
+.text-red{
+	color:#993333;
+}
+
+.sort{
    position:relative;
 	@include padding(0 35px 0 0);
 	.label{
@@ -1186,11 +1186,11 @@ a.page_title{
 	border-width: 1px 0;
 	padding:0 0;
 	margin:5px (-$common-padding) 0;
-	li{	
+	li{
 		@include pie-clearfix;
 		padding:8px 20px;
 		background: #FAFAFA;
-		border-bottom:1px solid #efefef; 
+		border-bottom:1px solid #efefef;
 		color:#656565;
 		position:relative;
 		.customers_selector{
@@ -1230,7 +1230,7 @@ a.page_title{
 			.email-apps  .fd-menu{
 				visibility: hidden !important;
 			}
-		}		
+		}
 
 		&:hover {
 			div.item_actions{
@@ -1274,7 +1274,7 @@ a.page_title{
 		 	position:absolute;
 		  @include left(8px);
 		 	top:10px;
-		 }		 
+		 }
 	}
 	li:hover{
 		div.item_actions{
@@ -1283,8 +1283,8 @@ a.page_title{
 		background-color:#e6f3f9;
 		box-shadow: inset 0px 3px 3px 0px rgba(190,190,190,0.5);
 		border-bottom:1px solid #dfdfdf;
-	} 
-	
+	}
+
 	.application {
 	   @include padding(10px 10px 10px 130px);
 	   .logo{
@@ -1299,13 +1299,13 @@ a.page_title{
 		.application-logo-custom_app {
 			height:53px;
 		}
-		
+
 	   .item_info{
 	      font-size:18px;
 	      font-weight:bold;
 	   }
 	   h2{
-        font-size:18px; 
+        font-size:18px;
         font-weight:bold;
 	   }
 	   .info-data{
@@ -1313,7 +1313,7 @@ a.page_title{
 	      font-size:13px;
 	   }
 	   .col-center{
-	      width:380px; 
+	      width:380px;
 	   }
 	   .actions{
 	      @include float-right;
@@ -1359,7 +1359,7 @@ a.page_title{
 		@include float(left);
 	}
 	#select-all{
-		@include margin-right(10px); 
+		@include margin-right(10px);
 		margin-top: 7px;
 	}
 	#filters{
@@ -1367,7 +1367,7 @@ a.page_title{
 		margin-top: 6px;
 	}
 	#select-all{
-		margin-right: 10px; 
+		margin-right: 10px;
 		margin-top: 7px;
 	}
 	#filters{
@@ -1422,7 +1422,7 @@ p.info-text{
 .arrow {
 	width:0;
 	height:0;
-	&.up {	
+	&.up {
 		@include border-left(5px solid transparent);
 		@include border-right(5px solid transparent);
 		border-bottom: 5px solid black;
@@ -1442,12 +1442,12 @@ p.info-text{
 
 	&.left {
 		border-top: 5px solid transparent;
-		border-bottom: 5px solid transparent; 
+		border-bottom: 5px solid transparent;
 		@include border-right(5px solid blue);
 	}
 }
 .list_with_icon{
-	padding-top:3px;	
+	padding-top:3px;
 	li, div.list-item{
 		@include margin(0 0 8px 0);
 		@include padding-left(24px);
@@ -1464,7 +1464,7 @@ p.info-text{
 			font-weight:normal;
 			padding-bottom:4px;
 			font-size:13px;
-			position:relative;			
+			position:relative;
 		}
 	}
 	div.list-item{
@@ -1499,16 +1499,16 @@ p.info-text{
 	}
 }
 
-.admin_icon_image{ 
+.admin_icon_image{
 	margin:-$common-padding;
 	@include padding(20px 0 35px 0);
 	border-bottom: 1px solid $common-border-color;
 	.content{
 	   margin:0 40px 0 $common-padding;
-	} 
+	}
 	h2{ font-size:2em; }
 	h3{ font-weight:normal; color: #336699; }
-} 
+}
 
 .adminTitle{
    font-size:20px;
@@ -1517,7 +1517,7 @@ p.info-text{
    font-weight:bold;
 }
 
-.customSelect{ width:100%; } 
+.customSelect{ width:100%; }
 
 .greyImage{ background-color:#F1F1F1; }
 
@@ -1550,7 +1550,7 @@ p.info-text{
 
 .hasRightCol{
    @include margin-left(231px);
-} 
+}
 
 .page_info{
    @include float(right);
@@ -1626,20 +1626,20 @@ p.info-text{
       color:$default_txt_color;
       text-decoration:none;
       position:relative;
-      &.active { font-weight:bold; }      
+      &.active { font-weight:bold; }
       .icon{
          position:absolute;
          @include left(5px);
          top:2px;
          width:16px;
          height:16px;
-      }      
+      }
    }
    a.hide{ display:none; }
    a:hover, a.selected{
       color:#FFF;
       background: #999;
-	  @include text-shadow(none);      
+	  @include text-shadow(none);
    }
 
    h4.title{
@@ -1687,8 +1687,8 @@ p.info-text{
 		.no_results {
 			@include text-align(center);
 			font-style:italic;
-		}		
-		
+		}
+
 		&.hasSearch{
 			padding: 0;
 			&.loading{
@@ -1733,9 +1733,9 @@ p.info-text{
 			position:absolute;
 			border-style:solid;
 		    border-color:#AAA transparent;
-		    display:block; 
+		    display:block;
 		    width:0;
-		    top:-6px; 
+		    top:-6px;
 			bottom:auto;
 		 @include left(auto);
 		 @include right(98px);
@@ -1749,7 +1749,7 @@ p.info-text{
 			border-style:solid;
 			border-color:#EEE transparent;
 
-		    display:block; 
+		    display:block;
 		    width:0;
 		    top:-5px;
 			bottom:auto;
@@ -1764,7 +1764,7 @@ p.info-text{
 			border-style:solid;
 			border-color:#FFF transparent;
 
-		    display:block; 
+		    display:block;
 		    width:0;
 		    top:-5px;
 			bottom:auto;
@@ -1792,7 +1792,7 @@ p.info-text{
 	}
 }
 .list-noinfo{
-	padding:60px 0; 
+	padding:60px 0;
 	font-size:1.4em;
 	@include text-align(center);
 	color:#666666;
@@ -1811,7 +1811,7 @@ p.info-text{
 		}
 		li {
 			padding: 0;
-		} 
+		}
 	}
 }
 
@@ -1833,7 +1833,7 @@ p.info-text{
 	}
 }
 
-.single_click_link{ cursor: pointer; }     
+.single_click_link{ cursor: pointer; }
 
 #tickets-expanded{
 	.email-apps, .email_marketing_apps{
@@ -1912,7 +1912,7 @@ p.info-text{
 				font-size: 13px;
 				@include padding-left(5px);
 			}
-		} 
+		}
 	}
 }
 
@@ -1960,10 +1960,10 @@ p.info-text{
 a.submit_link{
   text-decoration:underline;
   font-weight:normal;
-}       
+}
 
-a.submit_link:hover{ 
-  text-decoration:none;  
+a.submit_link:hover{
+  text-decoration:none;
 }
 
 .or-icon{
@@ -1973,9 +1973,9 @@ a.submit_link:hover{
   font-weight:normal;
   font-size:12px;
   text-transform:uppercase;
-  padding:5px;               
+  padding:5px;
   font-style:italic;
-}      
+}
 #report_list .table-list li div{
     color: #000;
 	font-size:1em;
@@ -1998,12 +1998,12 @@ a.submit_link:hover{
  	.smalltext{
 		color: #999;
 		font-size: 12px;
-		margin-bottom: 2px;	
+		margin-bottom: 2px;
 	}
 	div{
 		font-size: 12px;
-		margin-bottom: 2px;	
-	}		
+		margin-bottom: 2px;
+	}
 }
 
 .email-settings-header{
@@ -2098,7 +2098,7 @@ a.submit_link:hover{
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//							 Export link in the Ticket list of Self Service Portal 
+//							 Export link in the Ticket list of Self Service Portal
 // ------------------------------------------------------------------------------------------------------------
 .ssp_export {
 	position:absolute;
@@ -2157,13 +2157,13 @@ a.mobile_switchBtn {
     margin-top: 10px;
     @include padding(5px 3px 0 5px);
     line-height: 20px;
-} 
+}
 
 .requestCnt .description .user_details .loading-center {
 	height: 50px;
 }
 // ------------------------------------------------------------------------------------------------------------
-//														 Custom SSL 
+//														 Custom SSL
 // ------------------------------------------------------------------------------------------------------------
 .security-form{
 	@include margin-left(-10px);
@@ -2231,13 +2231,13 @@ a.mobile_switchBtn {
 // ------------------------------------------------------------------------------------------------------------
 
 .notify-divider{
-	@include margin-left(20px); 
-	@include padding-left(20px); 
+	@include margin-left(20px);
+	@include padding-left(20px);
 	@include border-left(2px solid #aaa);
-	
+
 	ul:not(.password-policy-toggle-container) li {
-	    padding: 4px; 
-	    list-style: disc; 
+	    padding: 4px;
+	    list-style: disc;
 	    @include margin-left(20px);
 	}
 }
@@ -2250,8 +2250,8 @@ a.mobile_switchBtn {
 
 .password-policy-container{
   .password-policies.default li{
-	  padding: 4px; 
-	  list-style: disc; 
+	  padding: 4px;
+	  list-style: disc;
 	  @include margin-left(20px);
   }
 
@@ -2280,7 +2280,7 @@ a.mobile_switchBtn {
 	.info-date{
 	    margin-top:-5px;
 	}
-} 
+}
 
 .password-policies{
   .select2-container{
@@ -2353,7 +2353,7 @@ a.mobile_switchBtn {
 /* Security Notifications */
 
 // ------------------------------------------------------------------------------------------------------------
-// 												Ticket Auto-refresh 
+// 												Ticket Auto-refresh
 // ------------------------------------------------------------------------------------------------------------
 .count-label{
 	position: relative;
@@ -2396,7 +2396,37 @@ a.mobile_switchBtn {
 		font-weight: bold;
 		@include padding-right(10px);
 		@include float(right);
-	}	
+	}
+}
+
+.admin_select_all_text{
+	background-color: #fdfdf1;
+	border-bottom: 1px solid #eee;
+	padding: 14px 0;
+	@include box-shadow(inset 0 3px 7px rgba(100,100,100,0.1));
+	@include text-align(center);
+	color: #666;
+	font-weight: 500;
+	.toggle_select_all_container{
+		margin-left: 6px;
+	}
+	&:hover {
+		background-color : #fcfcd1;
+		@include transition(background-color 200ms linear);
+		.reload_icon{
+			background-color: #000;
+			@include transition(background-color 400ms linear);
+		}
+	}
+	
+	.sloading {
+		margin: 0 0 0 0px;
+		padding: 6px 5px 6px 10px;
+	} 
+	.admin_select_all_disabled {
+		color: #aaa;
+		font-weight: 500;
+	}
 }
 .ticket_highlight {
 	@include animation(ticket_blink 0.8s ease-out 1);
@@ -2448,7 +2478,7 @@ a.mobile_switchBtn {
 			}
 		}
 	}
-} 
+}
 
 .contact_tickets{
 	.detailed_view{
@@ -2515,7 +2545,7 @@ a.mobile_switchBtn {
 		width: auto;
 	}
 }
-//overriding class check box in ticket show page sidebar 
+//overriding class check box in ticket show page sidebar
 #TicketProperties{
 	.edit_helpdesk_ticket{
 		.checkbox input[type="checkbox"]{
@@ -2571,7 +2601,7 @@ a.mobile_switchBtn {
 	}
 }
 // ------------------------------------------------------------------------------------------------------------
-//														 Gamification 
+//														 Gamification
 // ------------------------------------------------------------------------------------------------------------
 .gamecriteria{
 	#questDOM .select2-container{width: 140px;}
@@ -2625,7 +2655,7 @@ a.mobile_switchBtn {
 .error-text {
 	color: #D00;
 }
- 
+
 // Pjax Debug related styles
 #benchmarkresult{
 	width: 25%;
@@ -2706,11 +2736,22 @@ a.mobile_switchBtn {
 
 .widget_options {
 	margin-top: 8px;
-	div{
-		@include border-left(1px solid #E4E4E4);
-		padding: 5px 10px;
-	}
+	// div{
+	// 	@include border-left(1px solid #E4E4E4);
+	// 	padding: 5px 10px;
+	// }
+  .widget_option {
+  		@include border-left(1px solid #E4E4E4);
+  		padding: 5px 10px;
+
+      label{
+        width:200px;
+        padding:0;
+        font-weight: normal;
+      }
+  }
 }
+
 
 .code_area_highlight {
 	background-color: #E4E4E4;
@@ -2851,7 +2892,7 @@ label.small{
 			position:relative;
 		 	@include left(8px); top:-1px;
 		}
-	} 
+	}
 }
 span.pill, a.pill{
 	@include border-radius(8px);
@@ -2869,14 +2910,14 @@ span.pill, a.pill{
 	background-color:#5880ac;
 }
 a.pill.help{
-	background-color:#669933;	
+	background-color:#669933;
 	font-size:13px;
-} 
-.clock{ 
+}
+.clock{
 	top:0;
  	@include right(0);
 	position:absolute;
-	z-index:3;	
+	z-index:3;
 	cursor: pointer;
 	width:26px;
 	height:26px;
@@ -2892,7 +2933,7 @@ a.pill.help{
 }
 .time{
 	font-size:1.46em;
-	@include padding-left(10px);  
+	@include padding-left(10px);
 	.small{
 		font-size:0.80em;
 		color:#888;
@@ -2915,7 +2956,7 @@ a.pill.help{
 
 .ui-form, .timeentry{ .agent, .timespent, .user_details, .note{	@include float(left); position:relative; } }
 
-.ui-form{ 
+.ui-form{
 	.agent{ width: 25%;  @include margin-right(4%);}
 	.timespent{ width: 20%; }
 	.note{ width:50%; @include float(right); }
@@ -2925,7 +2966,7 @@ a.pill.help{
 	display:none;
 }
 
-.active_edit{ 
+.active_edit{
 	.timeentry{ display:none; }
 	.timeentry_edit{ display:block; }
 }
@@ -2936,13 +2977,13 @@ a.pill.help{
 		font-style:italic;
 		@include text-align(right);
 		margin-top:2px;
-	}	
+	}
 	.actions{ margin-top:3px; }
-	.user_details{	width:24%; @include margin-right(2%);	}	
+	.user_details{	width:24%; @include margin-right(2%);	}
 	.user_name{ padding-bottom:3px;  display:block; }
 	.timespent{	width:16%; @include text-align(right); @include margin-right(2%); }
 	.note{ width:40%; @include padding-left(4%); em{ color:#336666; font-style:italic; } }
-	.billable{		
+	.billable{
 		position:absolute;
 	 @include left(0);
 		top:1px;
@@ -2968,32 +3009,32 @@ a.pill.help{
 }
 
 .ticket-notifications{
-  position:fixed;   
+  position:fixed;
   @include margin-left(-54px);
-  margin-top:23px;    
+  margin-top:23px;
   li{
     width:33px; height:30px;
     background-color:#626262;
-    margin-bottom:1px;      
+    margin-bottom:1px;
     position:relative;
     @include border-radius(4px 0 0 4px);
     @include opacity(0.1);
   }
   li.active{
     @include opacity(1);
-  }                     
+  }
   li.active span.pill{
     display:block;
   }
   li.active a{ cursor:pointer; }
-  a{ 
+  a{
     cursor: default;
     @include inline-block;
-    width:24px;height:24px;  
+    width:24px;height:24px;
     @include margin-left(5px);
     margin-top:3px;
     position: absolute;
-  }          
+  }
   span.pill{
     background-color:#bf0000;
     @include border-radius(25px);
@@ -3002,10 +3043,10 @@ a.pill.help{
     padding:1px 4px;
     border:2px solid #fff;
     position:absolute;
-    top:6px;    
-    @include left(-8px);      
+    top:6px;
+    @include left(-8px);
     line-height:12px;
-    height:12px;       
+    height:12px;
     display:none;
     -webkit-animation-delay: 0.2s;
        -moz-animation-delay: 0.2s;
@@ -3016,7 +3057,7 @@ a.pill.help{
         -ms-animation: blink 2s ease infinite;
             animation: blink 2s ease infinite;
   }
-}  
+}
 
 .index-collision {
   /*display: inline-block;*/
@@ -3033,7 +3074,7 @@ a.pill.help{
     display: inline-block;
     top:2px;
   }
-  
+
   .view_collision, .reply_collision  {
     height: 18px;
     width: 18px;
@@ -3049,19 +3090,19 @@ a.pill.help{
 
 .popover .ticket-notice-popover{
   background:#5f5f5f;
-  display: inline-block;                                                                    
+  display: inline-block;
   @include min-width(160px);
   max-width: 320px;
   @include border-radius(5px);
-  .title, .content{ background:none; font-size:13px; font-weight:normal; @include text-align(left); border:0; 
-    @include text-shadow(#3d3d3d -1px 0 1px); 
-   }  
+  .title, .content{ background:none; font-size:13px; font-weight:normal; @include text-align(left); border:0;
+    @include text-shadow(#3d3d3d -1px 0 1px);
+   }
   .title{ color:#aeaeae; padding:7px 10px 1px;  }
   .content{ color:#ffffff; padding:1px 10px 7px; }
-}                                               
+}
 
 .popover.right .notice-arrow{
-  @include border-right-color(#5f5f5f);  
+  @include border-right-color(#5f5f5f);
   &:after{
     @include border-right-color(#5f5f5f);
   }
@@ -3114,27 +3155,27 @@ a.pill.help{
 			padding:3px 0px;
 		}
 	}
-	
+
 	.rtDetails_forum{
 		@include border-radius(6px);
 		@include padding(14px 14px 6px 14px);
 		h4.title{
-			font-size:13px; 
+			font-size:13px;
 			color:#afafaf;
 		}
 		@include min-height(230px);
 		.mark_action{
 			margin-bottom:14px;
 		}
-	} 
-	
-	.rtDetails{         
-		@include min-height(550px);       
+	}
+
+	.rtDetails{
+		@include min-height(550px);
 		@include pie-clearfix;
 	  	@include box-shadow(0 0 40px rgba(0, 0, 0, 0.05) inset);
-		@include margin(0px 78px 0px 0px);  
-		padding-top:5px; 
-		z-index:99; 
+		@include margin(0px 78px 0px 0px);
+		padding-top:5px;
+		z-index:99;
 		background-color:#ffffff;
 		border:1px solid #cfcfcf;
 		position:relative;
@@ -3177,7 +3218,7 @@ a.pill.help{
 				select{
 					font-size:11px;
 					max-width:100%;
-				} 
+				}
 				textarea{
 					height: 100px;
 					width:180px;
@@ -3187,8 +3228,8 @@ a.pill.help{
 				border-bottom:0px;
 			}
 		}
-	}	
-	
+	}
+
 	.rtPanel{
 		@include float(right);
 		width:75px;
@@ -3204,9 +3245,9 @@ a.pill.help{
 			color:#9aa2a9;
 			padding:34px 2px 6px;
 			margin-bottom:10px;
-			@include text-align(center); 
-			position:relative; 
-			span{                                         
+			@include text-align(center);
+			position:relative;
+			span{
 				width:44px;
 				height:32px;
 				position:absolute;
@@ -3229,12 +3270,12 @@ a.pill.help{
 
 
 //------------------------------------------------------------------------------------------
-								//Deleted Agent and Contact Info 
+								//Deleted Agent and Contact Info
 //------------------------------------------------------------------------------------------
 .agents-list,.deleted_user_info{
-	.ticket_details .open-box .deleted-info{		
+	.ticket_details .open-box .deleted-info{
 		padding: 8px 16px;
-		color: #555;	
+		color: #555;
 	}
 }
 */
@@ -3305,14 +3346,14 @@ a.pill.help{
 		width:100%;
 		cursor:pointer;
 	}
-	.attach-link-file{ 
+	.attach-link-file{
 		width: 20px;
 		left: 0px;
 	}
 }
 
 .box-loading-big{
-	div{height: 100%;}	
+	div{height: 100%;}
 }
 
 .empty-folder{
@@ -3340,7 +3381,7 @@ body.box-chooser-body{
 	div.ui-widget-overlay{display: none;}
 	div.ui-dialog-titlebar{display: none;}
 	#box-confirm-modal, #box-error-modal{font-size: 110%;}
-	
+
 }
 div.box-header{
 	width: 100%;
@@ -3384,7 +3425,7 @@ div.box-header{
 			cursor: pointer;
 		}
 	}
-}	
+}
 
 #box-navbar > div > span[data-item-id='na'] { cursor: default; }
 
@@ -3396,7 +3437,7 @@ li.box-item{
 	margin: 10px 0px 0px 10px;
 	display: inline-block;
 	@include border-radius(6px);
-	cursor: pointer;	
+	cursor: pointer;
 	a{
 		position: relative;
 		text-overflow: ellipsis;
@@ -3429,7 +3470,7 @@ li.box-item[data-item-type="file"] {
 	&:hover{
 		a{color: #333333;}
 		background: white url("/images/box-chooser/box-fileicon-hover.png") no-repeat 10px center;
-		@include box-shadow(#cfcccc 0px 0px 1px 1px);	
+		@include box-shadow(#cfcccc 0px 0px 1px 1px);
 	}
 }
 li.box-item[data-item-type="folder"] {
@@ -3460,7 +3501,7 @@ li.box-item[data-item-type="folder"] {
 		padding-left: 7px;
 	}
 }
-.box-account-holder, .change-account-link{ 
+.box-account-holder, .change-account-link{
 	color: #333;
 	text-decoration: underline;
 	float: right;
@@ -3877,7 +3918,7 @@ $adm-bdr:#F0F0F0;
 		margin-top: 15px;
 		li{
 			margin:6px 0;
-		} 
+		}
 		.pdt-select{
 			clear:both;
 		}
@@ -4051,14 +4092,14 @@ $adm-bdr:#F0F0F0;
 					@include margin-left(0);
 				}
 				&:last-child{
-					@include margin-left(2.12766%);	
+					@include margin-left(2.12766%);
 				}
 			}
 		}
 		#dm-option {
 			.control-group,
 			.control-group:last-child{
-				@include margin-left(0);	
+				@include margin-left(0);
 			}
 		}
 		.head{
@@ -4230,4 +4271,4 @@ $adm-bdr:#F0F0F0;
 	.hide {
 		display: none;
 	}
-} 
+}

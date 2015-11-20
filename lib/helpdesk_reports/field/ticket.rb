@@ -119,7 +119,15 @@ module HelpdeskReports::Field::Ticket
     container_klass.operators.first
   end
 
+  #Adding None as extra options.
   def default_choices(field)
+    none_choice = [:priority,:status,:source].include?(field) ? "" : [-1,"-None-"]
+    choice_hash = get_default_choices(field)
+    choice_hash.unshift(none_choice) if !choice_hash.empty? && !none_choice.empty?
+    choice_hash
+  end
+
+  def get_default_choices(field)  
     case field.to_sym
     when :status
       Helpdesk::TicketStatus.status_names_from_cache(Account.current)

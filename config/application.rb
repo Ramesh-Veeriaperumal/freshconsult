@@ -146,7 +146,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github'].include?(oauth_provider)
+        next if ['github', 'salesforce'].include?(oauth_provider)
       if oauth_provider == "shopify"
         provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
                  :scope => 'read_orders',

@@ -113,6 +113,8 @@ en:
     your_name: "Your Name"
     select_contacts: "Select contacts from %{contact_name}"
   captcha_verify_message: "Captcha verification failed, try again!"
+  recaptcha_verify_message: "CAPTCHA verification failed, try again!"
+  recaptcha_require_message: "CAPTCHA verification is required."
   your_email: "Your email"
   your_feedback: "Your feedback"
   please_wait: Please wait...
@@ -225,6 +227,11 @@ en:
   after_oneweek: After 1 Week
   after_twoweek: After 2 Weeks
   after_onemonth: After 1 Month
+  before_eight: Before 8 Hours
+  before_four: Before 4 Hours
+  before_two: Before 2 Hours
+  before_one: Before 1 Hour
+  before_half: Before 30 Minutes
   add_more_lang: Add supported languages to your helpdesk.
   support_multi_languge: Supporting customers across more than one language?
   many: many
@@ -989,7 +996,7 @@ en:
       ebay_note_not_added: "Note not added to eBay. Connection unstable."
       inactive: inactive
       active: active
-      ebay_error: 
+      ebay_error:
         invalid_source: Invalid ticket source.
         invalid_reply: Reply not allowed for this ticket.
         note_not_added: Note not added.
@@ -1011,7 +1018,7 @@ en:
         account_name: Account Name
         ebay_site: eBay Site
         site_helptext: select the eBay site where you sell your products
-        duplicate_account: This eBay Account is already associated with a Freshdesk account 
+        duplicate_account: This eBay Account is already associated with a Freshdesk account
         max_limit: You have reached the maximum ecommerce account limit
         assign_group: Assign to Group
         assign_product: Assign to Product
@@ -1455,6 +1462,49 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
         feedbackwidget_mobile_view: Mobile View
+      popup_widget:
+        feedbackwidget_button_type: Button type
+        feedbackwidget_text_button: Text button
+        feedbackwidget_image_button: Image button
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
+        feedbackwidget_button_customization: Customize Button
+        feedbackwidget_form_customization: Customize Form
+        feedbackwidget_popup_code: Popup Widget code
+        feedbackwidget_widget_code: Widget code
+        feedbackwidget_embedded_form_code: Embedded form code
+        feedbackwidget_form_submit_message: "Form Submit Message"
+        feedbackwidget_form_height: "Form height"
+        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackwidget_px: "px"
+        thankyou_default: "Thank you for your feedback"
+        thankyou_info: "Message to be displayed after a user submits the ticket form"
+        feedbackwidget_users_can: "Form options"
+        feedbackwidget_attach_a_file: Attach a file
+        feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_screenr_recording: Screenr Recording
+        feedbackwidget_search_area: Search Articles
+        feedbackwidget_use_https: Use https
+        feedbackwidget_mobile_view: Enable mobile view
+        feedbackwidget_use_captcha: Enable CAPTCHA
+      embedded_widget:
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_form_customization: Customize Form
+        feedbackwidget_embedded_code: Embedded Widget code
+        feedbackwidget_widget_code: Widget code
+        feedbackwidget_embedded_form_code: Embedded form code
+        feedbackwidget_form_submit_message: "Form Submit Message"
+        feedbackwidget_form_height: "Form height"
+        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackwidget_px: "px"
+        thankyou_default: "Thank you for your feedback"
+        thankyou_info: "Message to be displayed after a user submits the ticket form"
+        feedbackwidget_users_can: "Form options"
+        feedbackwidget_attach_a_file: Attach a file
+        feedbackwidget_search_area: Search Articles
+        feedbackwidget_use_https: "Use https"
+        feedbackwidget_use_captcha: Enable CAPTCHA
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
       index:
@@ -2707,6 +2757,8 @@ en:
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
   first_response_sla: First Response SLA Violation
+  response_reminder_sla: First Response SLA Reminder
+  resolution_reminder_sla: Resolution Time SLA Reminder
   add_holiday: Add Holiday
   import_note_info: Please ensure that the first row has the header information (eg. name, email etc.). The fields in your CSV file, though, can be in any order.
   utf_8_format: The file has to be in UTF-8 format.
@@ -2714,6 +2766,7 @@ en:
   add_a_topic: Start a Topic
   bottom: Bottom
   feedbackwidget_help_title: Feedback widget
+  feedbackwidget_learn_more: Learn more
   name: Name
   import_user_org_text: All the Users & Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
   portal_customizer_open_solutions: Anybody can view public solutions
@@ -3300,7 +3353,7 @@ en:
       title1: Full-time vs Occasional Agents
       info5: Learn more about Day Passes
       info8: Learn more about Agent Roles
-      info9: Full time agents are those in your support team who will login to your help desk every day. 
+      info9: Full time agents are those in your support team who will login to your help desk every day.
       info10: Occasional agents are those who would only need to login from time to time, such as your sales and marketing manager to take care of specific customer queries. You need not purchase an additional agent seat for a whole month for such agents.
       title3: Groups
       info11: You can organize agents into specific groups such as Sales and Product Management. Segmenting agents into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that an agent can be a member of multiple groups.
@@ -3499,7 +3552,8 @@ en:
     assigned_agent:
       text: Assigned Agent
       description: Ticket's agent
-    sla_rule: <b>Important:</b> Response and resolution time should be within <b>15 min to 12 months</b>.
+    sla_rule_info1: <b>Important:</b> <br> 1. Response and resolution time should be within <b>15 min to 12 months</b>.
+    sla_rule_info2: 2. Reminder and escalation emails should be configured and enabled in Admin > Email notifications 
     human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
@@ -3536,6 +3590,7 @@ en:
     add_new: Add new
     add_level: Add level
     escalate_after: Escalate
+    reminder_after: Remind
     add_response_esc:  Add rule
     add_resolution_esc: rule
     company_placeholder: "Enter Company names"
@@ -3544,6 +3599,7 @@ en:
     source_placeholder: "Enter Source names"
     ticket_type_placeholder: "Enter Type names"
     agent_placeholder: Pick Agents to escalate to...
+    reminder_placeholder: Pick Agents to send reminder mail to...
     applicable_info: Select at least one trigger condition.
     disabled_old_policy: Set a trigger condition to enable this SLA policy.
     default_policy: Default SLA Policy cannot be turned off.
@@ -3552,6 +3608,10 @@ en:
       invalid_arguments_for_update: Invalid arguments.
       invalid_data_type: Company ids should be a comma separated value.
       default_policy_update: Cannot update default SLA policy.
+    reminder: What happens when this SLA due time approaches?
+    reminder_label: Set SLA due time reminder
+    reminder_response_text: Set Reminder Rule when a ticket <b>response time</b> approaches
+    reminder_resolution_text: Set Reminder Rule when a ticket is not <b>resolved</b> on time
   left: Left
   subscription:
     error:
@@ -3768,9 +3828,9 @@ en:
       view_less: "View less"
       drafts:
         title: "Drafts"
-        me: "My Drafts" 
+        me: "My Drafts"
         all: "All Drafts"
-        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>" 
+        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
       feedbacks:
         title: "Article Feedback"
         me: "Your Feedback"
@@ -3844,7 +3904,7 @@ en:
         success: Successfully changed the visibility.
         failure: Could not change the visibility of the selected folders.
         companies_limit_exceeded: Companies limit exceeded
-        extra_companies:  
+        extra_companies:
           one: " and one more company."
           other: " and %{count} more companies."
       draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
@@ -4337,6 +4397,7 @@ en:
     personalized_email_replies_title: Use agent names in ticket replies and outbound emails?
     personalized_email_replies_info: If yes, then agents will be allowed to choose their own name as the sender name in ticket replies and outbound emails. Sender email will still remain the support email address (like '%{current_user_name} &lt;%{current_account_domain}&gt;').
     config_saved_message: Your setting is succesfully saved.
+    blacklisted_domain_message: The domain you have entered is blocked. Please enter another domain.
     reply_to_tickets: Use "Reply-to" email address to create requestor contacts
     reply_to_tickets_info: "Note: If disabled, requestor will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
@@ -4664,6 +4725,38 @@ en:
         tooltip: "View the associated JIRA Issue"
         add_new: "Link an issue"
         existing: "View issue"
+    admin_select_all:
+      select_all_page_text: "%{count} tickets on this page are selected."
+      select_all_view_text: "All %{count} tickets in this view are selected."
+      toggle_select_all: "Select all %{count} tickets in this view"
+      clear_selection: "Clear Selection"
+      close_tickets: "Close Tickets"
+      delete_tickets: "Delete Tickets"
+      close_confirmation: "Close Tickets"
+      spam_confirmation: "Spam"
+      delete_confirmation: "Delete"
+      please_note: "Please note:"
+      no_fields_selected: "No updates performed as a valid bulk action was not selected."
+      close_all_notification: 
+        text: "You are about to close all %{count} tickets in this view." 
+        list1: Related observer rules, if any, will not be triggered
+        list2: "'Ticket Closed' Notification emails will not be sent to the customer."
+        list3: This action cannot be undone.
+        are_you_sure: Are you sure you want to proceed?
+      bulk_all_notification: 
+        text: "You are about to execute bulk actions on all %{count} tickets in this view."
+        list1: Related observer rules, if any, will not be triggered
+        list2: "'Ticket Closed' Notification emails (if applicable) will not be sent to the customer."
+        list3: This action cannot be undone.
+        are_you_sure: Are you sure you want to proceed?
+      spam_all_confirmation: "You are about to flag all %{count} tickets in this view as spam. Please note that this action cannot be undone. Are you sure you want to proceed?"
+      delete_all_confirmation: "You are about to move all %{count} tickets in this view to trash. Please note that this action cannot be undone. Are you sure you want to proceed?"
+      select_all_already_running: "A bulk update started by %{user_name} is already in progress. Please try again later."
+      select_all_already_running_you: "A bulk update started by you is already in progress. Please try again later."
+      select_all_enqueued: "Your request is currently in progress and will be completed in some time."
+      in_progress_text: "A bulk update started by %{user_name} is in progress."
+      in_progress_text_you: "A bulk update started by you is in progress."
+      bulk_action_submit_label: "Confirm and update"
   archive_ticket:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
@@ -5145,7 +5238,7 @@ en:
           view_visibility: Visible to
       execute_scenario_notice:
         view_details: view details
-        bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>" 
+        bulk_execute_scenario: "Executing the scenario <b>%{rule_name}</b>"
         execute_the_scenario: "Executed the scenario <b>%{rule_name}</b>"
         actions_performed: Actions performed
         bulk_actions_perform: "Actions being performed on %{count} ticket(s)"
@@ -5440,6 +5533,7 @@ en:
     archived_at: "Archived"
     from: From
     to: To
+    view_all_tickets : Export as CSV to view all tickets
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
@@ -6341,7 +6435,7 @@ en:
       chooser_title: "Choose a file form OneDrive"
       label: "OneDrive"
       desc: "Attach and Share your data/files from onedrive."
-      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again." 
+      denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again."
       error: "A problem has occured in opening your Onedrive files. Please try again."
     pivotal_tracker:
       label: "Pivotal Tracker"
@@ -7053,6 +7147,9 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    view_old_reports: View old reports
+    view_new_reports: View new reports
+    solution_article_text: How to read this report ?
     loading_text: Generating Report...
     filter_limit_exceeded: You can select maximum of %{count} filters
     time_period: Select Time Period
@@ -7061,27 +7158,33 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume
+      total_received_tickets : Total Received Tickets
+      average_received_tickets : Average Received Tickets
+      total_resolved_tickets : Total Resolved Tickets
+      average_resolved_tickets : Average Resolved Tickets
+      busiest_hour_received_tickets : Busiest hours for Received Tickets
+      busiest_hour_resolved_tickets : Busiest hours for Resolved Tickets
       time_trends:
         day: Day
         week: Week
         month: Month
         qtr: Quarter
         year: Year
-        title: Trend of Tickets Received and Resolved
+        title: trend of tickets received and resolved
       day_trend:
-        title: Day of the Week Trend of Tickets Received and Resolved
+        title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
       title: Helpdesk At A Glance
     performance_distribution:
       title: Performance Distribution
-      first_response_bar: First Response Time
-      response_bar: Avg Response Time
-      resolution_bar: Resolution Time
-      first_response_and_response_trend: Avg First Response And Response Time Trend
-      resolution_trend: Avg Resolution Time Trend
+      first_response_bar: First response time
+      response_bar: Avg response time
+      resolution_bar: Resolution time
+      first_response_and_response_trend: Avg first response and response time trend
+      resolution_trend: Avg resolution time trend
       description:
         avg_res_time: Tickets responded to in the selected time period split based on the average response time range
         first_response: Tickets whose first responses were sent in the selected time period split based on the first response time range
@@ -7091,53 +7194,29 @@ en:
     group_summary:
       title: Group Summary
       group: Group
-      description:
-        ticket_resolved: Tickets resolved in the selected time period and assigned to the group
-        tickets_reopened: Tickets reopened in the selected time period when assigned to the group
-        ticket_reasigned: Tickets reassigned from this group to other groups in the selected time period
-        reports_sla: % of tickets whose first responses were sent within SLA in the selected time period when assigned to the group
-        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the group
-        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the group
-        private_note: Number of private notes added in the selected time period when the tickets were assigned to the group
-        responses: Number of agent responses sent in the selected time period when the tickets were assigned to the group
-        avg_first_res_time: Avg first response time for first responses made in the selected time period when the tickets were assigned to the group
-        avg_res_time: Avg time for all the responses made in the selected time period when the tickets were assigned to the group
-        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the group
     agent_summary:
       title: Agent Summary
-      ticket_assigned: Tickets Assigned
-      ticket_resolved: Tickets Resolved
-      tickets_reopened: Tickets Reopened
-      ticket_reasigned: Tickets Reassigned
-      reports_sla: First Response SLA %
+      ticket_assigned: Tickets assigned
+      ticket_resolved: Tickets resolved
+      tickets_reopened: Tickets reopened
+      ticket_reasigned: Tickets reassigned
+      reports_sla: First response SLA %
       res_sla: Resolution SLA %
       fcr: FCR %
-      private_note: Private Notes
+      private_note: Private notes
       responses: Responses
-      avg_first_res_time: Average 1st Response Time
-      avg_res_time: Average Response Time
-      avg_resolution_time: Average Resolution Time
+      avg_first_res_time: Average 1st response time
+      avg_res_time: Average response time
+      avg_resolution_time: Average resolution time
       agent: Agent
-      description:
-        ticket_resolved: Tickets resolved in the selected time period and assigned to the agent
-        tickets_reopened: Tickets reopened in the selected time period when assigned to the agent
-        ticket_reasigned: Tickets reassigned from this agent to other agents in the selected time period
-        reports_sla: % of tickets whose first responses were sent by the agent within SLA in the selected time period
-        res_sla: % of tickets resolved within SLA in the selected time period and assigned to the agent
-        fcr: % of tickets resolved after a single contact made by the customer in the selected time period and assigned to the agent
-        private_note: Number of private notes added by the agent in the selected time period
-        responses: Number of responses sent by the agent in the selected time period 
-        avg_first_res_time: Avg first response time for first responses sent by the agent in the selected time period 
-        avg_res_time: Avg time for all the responses sent by the agent in the selected time period 
-        avg_resolution_time: Avg resolution time of tickets resolved in the selected time period and assigned to the agent
     customer_report:
       title:  Customer Report
-      received_tickets: Tickets Submitted
-      resolved_tickets: Tickets Resolved
-      response_violated: Response SLA Violations %
-      resolution_violated: Resolution SLA Violations %
-      customer_interactions: Customer Responses
-      agent_interactions: Agent Responses
+      received_tickets: Tickets submitted
+      resolved_tickets: Tickets resolved
+      response_violated: Response SLA violations %
+      resolution_violated: Resolution SLA violations %
+      customer_interactions: Customer responses
+      agent_interactions: Agent responses
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -8388,7 +8467,7 @@ en:
       error:
         authorize_failure: You are not allowed to access this page
   password_policy:
-    alphanumeric: "Password must be alphanumeric"      
+    alphanumeric: "Password must be alphanumeric"
     special_characters: "Password must have special characters"
     mixed_case: "Password must have both uppercase and lowercase alphabets"
     username: "Password cannot contain username"
@@ -8399,4 +8478,17 @@ en:
     wrong_no_of_past_password: Please enter a valid number of past passwords.
     wrong_expiry_days: Please enter a valid number of expiry days.
     invalid_config: Please enter a valid configuration.
-    
+  unresolved_tickets:
+    title: "Unresolved Tickets"
+    dashboard_link: "Back to Dashboard"
+    no_data: "No data to display"
+    connection_error: "We have encountered an error. Please try again in some time."
+    agent_label: "Agent"
+    group_label: "Group"
+    filtered_by_label: "Filtered by"
+    filter_by_label: "Filter by"
+    filter_label: "Filter"
+    search: "Search"
+    search_group: "Search by group"
+    search_agent: "Search by agent"
+    loading_label: "Loading"

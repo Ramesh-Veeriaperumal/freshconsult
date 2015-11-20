@@ -1,0 +1,28 @@
+<div class="fd-filter-container animated hide">
+	<div class="filter-header">
+		<h3>
+		<%=t('unresolved_tickets.filter_by_label') %>
+		<span class="close" data-action="close-filter-menu"> <%= font_icon "cross", :size => 20 %> </span>
+		</h3>
+	</div>
+
+	<div id="responder-box" class="filter-metric-widget">
+		<label><%=t('unresolved_tickets.agent_label') %></label>
+		<%= select_tag "unresolved_tickets[responder]", options_for_select(@agents), :multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "responder_id"%>
+	</div>
+	<div id="group-box" class="filter-metric-widget">
+		<label><%=t('unresolved_tickets.group_label') %></label>
+		<%= select_tag "unresolved_tickets[group]", 
+		options_for_select(@groups), 
+		:multiple => true, :class => 'select2 reset-select2', "data-placeholder" => '', 'data-filterkey' => "group_id"%>	
+	</div>
+	<div class="filter-metric-widget hide">
+		<label>Select status to show</label>
+		<%= select_tag "unresolved_tickets[status]", 
+		options_for_select(current_account.ticket_statuses.map { |status| [status.name, status.status_id] }), 
+		:multiple => true, :class => 'select2', "data-placeholder" => 'All status', 'data-filterkey' => "group_id"%>	
+	</div>
+	<div class="filter-metric-widget">
+	<a class="btn btn-primary" href="javascript:void(0)" data-action="unresolved-submit"><%=t('helpdesk_reports.generate') %></a>
+	</div>
+</div>

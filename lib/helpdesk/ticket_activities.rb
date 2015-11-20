@@ -23,6 +23,7 @@ module Helpdesk::TicketActivities
     end
   
     def create_initial_activity
+      return if self.disable_activities
       unless spam?
         if outbound_email?
           base_text =  'new_outbound' 
@@ -36,6 +37,7 @@ module Helpdesk::TicketActivities
     end
 
 	  def update_activity
+      return if self.disable_activities
       @model_changes.each_key do |attr|
         send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
       end

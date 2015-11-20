@@ -8,12 +8,16 @@ HelpdeskReports.CoreUtil = {
     CONST: {
         base_url    : "/reports/v2/",
         metrics_url : "/fetch_metrics",
-        tickets_url : "/fetch_ticket_list"
+        tickets_url : "/fetch_ticket_list",
+        configure_export_url : "/configure_export",
+        export_url : "/export_csv",
     },
     reports_specific_disabled_filter:{
         "customer_report":["agent_id","group_id","company_id"]
     },
     global_disabled_filter: ["status"],
+    default_available_filter : [ "agent_id","group_id","company_id" ],
+    ATTACH_DEFAULT_FILTER : false,
     /* Time-outs for ajax requests in milliseconds, 
     ** set to 1 min for now. Will be handled at backend later on.
     */
@@ -50,10 +54,16 @@ HelpdeskReports.CoreUtil = {
         _this.setFilterDisplayData();
     },
     setFilterDisplayData: function () {
-        var tmpl = JST["helpdesk_reports/templates/filter_data_template"]({ 
-            data: HelpdeskReports.locals.select_hash 
-        });
-        jQuery("#filter_text").html(tmpl);
+        //Incase of sprout plan populte the seperate label in header
+         if(HelpdeskReports.locals.is_non_sprout_plan == 'true'){
+            var tmpl = JST["helpdesk_reports/templates/filter_data_template"]({ 
+                data: HelpdeskReports.locals.select_hash 
+            });
+            jQuery("#filter_text").html(tmpl);
+        } else{
+            jQuery(".date-value").html(jQuery("#date_range").val());
+        }
+
     },
     setFilterData: function () {
         var _this = this;
@@ -83,19 +93,22 @@ HelpdeskReports.CoreUtil = {
                 var hash = _this.getLocalHash(condition, container, operator, value);
                 locals.local_hash.push(hash);
             } else {
-                //Removing fields with no values in filters by triggering click.
-                var active = jQuery('#div_ff_' + condition);
-                if (active.attr('data-type') && active.attr('data-type') === "filter-field") {
-                    _this.actions.removeField(active);
+                //Removing fields with no values in filters by triggering click.(only for non default fields)
+                if(HelpdeskReports.CoreUtil.default_available_filter.indexOf(condition) < 0){
+                    var active = jQuery('#div_ff_' + condition);
+                    if (active.attr('data-type') && active.attr('data-type') === "filter-field") {
+                        _this.actions.removeField(active);
+                    }    
                 }
+                
             }
         });
         
     },
     afterFilterValidation: function () {
-        var _this = this;
+        var _this  = this;
         var locals = HelpdeskReports.locals;
-
+        
         jQuery.each(locals.params, function (index) {
             locals.params[index]['filter'] = locals.query_hash;
         });
@@ -142,12 +155,12 @@ HelpdeskReports.CoreUtil = {
     glanceGroupByFieldsInit: function () {
         var locals = HelpdeskReports.locals;
         if (!jQuery.isEmptyObject(locals.custom_field_hash)) {
-            this.getCumtomFieldsInFilters();
+            this.getCustomFieldsInFilters();
         } else {
             this.GroupByNonCustomFieldAcnt();
         }
     },
-    getCumtomFieldsInFilters: function () {
+    getCustomFieldsInFilters: function () {
         var custom_fields = jQuery('div[type="custom"]').map(function(){ 
             if(jQuery(this).children('select').val().length){
                 return jQuery(this).attr('condition');
@@ -216,16 +229,38 @@ HelpdeskReports.CoreUtil = {
         } else {
             groupby = constants.group_by_without_status.slice();
         }
+        //Adding extra options - Product if product is present
+        if(!jQuery.isEmptyObject(HelpdeskReports.locals.report_options_hash['product_id'])){
+            groupby.push(constants.group_by_extra_options);
+        }
         return groupby;
     },
     // GlanceReport -  groupby fields ends
     dateChanged: function () {
-        var locals = HelpdeskReports.locals;
-        var date = jQuery('#date_range').val();
+        var locals    = HelpdeskReports.locals;
+        var date      = jQuery('#date_range').val();
+        var preRanges = locals.presetRangesSelected;
         locals.date_range = date;
+        
         jQuery.each(locals.params, function (index) {
             locals.params[index]['date_range'] = date;
         });
+       
+        if (typeof (Storage) !== "undefined") {
+            switch(preRanges){
+                case true:
+                    window.localStorage.setItem('reports-date-diff',this.dateRangeDiff().toJSON());
+                    window.localStorage.setItem('reports-presetRangesSelected',true);
+                    window.localStorage.removeItem('reports-date-range');
+                    break;
+                case false:
+                    window.localStorage.setItem('reports-date-range',locals.date_range.toJSON());    
+                    window.localStorage.setItem('reports-presetRangesSelected',false);
+                    window.localStorage.removeItem('reports-date-diff');
+                    break;
+            }
+        }
+        HelpdeskReports.locals.presetRangesSelected = false;
     },
     refreshReports: function () {
         var _this = this;
@@ -289,6 +324,7 @@ HelpdeskReports.CoreUtil = {
             _this.actions.hideReportTypeMenu();
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="open-filter-menu"]', function () {
+            //Each Report Util will set whether to attach default filters to the active menu on init function
             _this.actions.openFilterMenu();
         });
         jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-action="close-filter-menu"]', function () {
@@ -296,6 +332,12 @@ HelpdeskReports.CoreUtil = {
         });
         jQuery(document).on('click.helpdesk_reports', '[data-action="hide-ticket-list"]', function () {
             _this.actions.hideTicketList();
+        });
+        jQuery(document).keyup(function(e) {
+             if (e.keyCode == 27) { 
+                // escape key maps to keycode `27`
+                _this.actions.hideTicketList();
+            }
         }); 
         jQuery(document).on('mousemove.helpdesk_reports', '.ticket-list-wrapper', function(event) {
             event.preventDefault();
@@ -307,6 +349,9 @@ HelpdeskReports.CoreUtil = {
         });
         jQuery('#reports_wrapper').on('keypress.helpdesk_reports keyup.helpdesk_reports keydown.helpdesk_reports', "#date_range", function (ev) {
             _this.actions.disableKeyPress(ev);
+        });
+        jQuery('#reports_wrapper').on("presetRangesSelected", function(event) {
+            HelpdeskReports.locals.presetRangesSelected = true;
         });
         jQuery('#reports_wrapper').on('mousemove.helpdesk_reports', '.report-filters-container', function(event) {
             event.preventDefault();
@@ -320,6 +365,28 @@ HelpdeskReports.CoreUtil = {
             event.preventDefault();
             jQuery('body').removeClass('preventscroll');
         });
+
+        jQuery('.ticket-list-wrapper').on('click.helpdesk_reports', "[data-action='toggle-ticketlist']", function () {
+                //Toggle sla Links & Labels
+                 var el = this;
+                 var link = jQuery(el).data('link');
+                 jQuery(el).addClass('hide');
+                 jQuery(el).siblings().removeClass('hide');
+                 if( link == 'violated'){
+                    jQuery('.compliant .title').addClass('hide');
+                    jQuery('.compliant .toggle').removeClass('hide');
+                    _this.actions.toggleTicketList(true);
+                 } else{
+                    jQuery('.violated .title').addClass('hide');
+                    jQuery('.violated .toggle').removeClass('hide');
+                    _this.actions.toggleTicketList(false);
+                 }
+        });
+        /* Export Section */
+        jQuery(".export_title a, .placeholder #export_cancel").on('click',function(){   
+                _this.toggleExportSection();
+        });
+        
         _this.addIndexToFields();
         _this.generateReportFiltersMenu();
         _this.customFieldHash();
@@ -344,13 +411,21 @@ HelpdeskReports.CoreUtil = {
             this.hideTicketList();
             this.hideViewMore();
         },
-        showTicketList: function () {
+        showTicketList: function (title,value) {
+            //Construct Title
+            var base_title = HelpdeskReports.locals.base_task_list_title;
+            //Refresh the export section for every ticket list.
+            this.flushExportSection();
+            jQuery(".list-title .metric_title").empty().html(title);
+            jQuery(".list-title .metric_value").empty().html(value);
             jQuery("#ticket_list").html("").addClass('sloading loading-small');
             jQuery('#ticket_list_wrapper').addClass('active');
         },
         hideTicketList: function () {
             if(jQuery('#ticket_list_wrapper').hasClass('active')) {
                 jQuery('#ticket_list_wrapper').removeClass('active');
+                //Always hide the sla tabs & based on active metric it will be unhidden
+                jQuery(".sla-toggle-tab").addClass('hide');
             }
         },
         hideViewMore: function() {
@@ -395,6 +470,48 @@ HelpdeskReports.CoreUtil = {
         },
         setTicketListFlag: function () {
             HelpdeskReports.locals.ticket_list_flag = false;
+        },
+        flushExportSection : function() {
+
+             jQuery(".fields").removeAttr("style"); //Inline Style added by JQuery SlideToogle
+             jQuery(".export_title .title").addClass('hide');
+             jQuery(".export_title .link").removeClass('hide');
+
+             //Reset the Export Button
+             jQuery("#export_submit").removeAttr('disabled').removeClass('disabled').html("Export");
+             jQuery(".success_message").removeAttr('style').addClass('hide');
+        },
+        constructSlaTabs : function(el){
+            //Unhide the SLA Toggle in Ticket list
+            var _this = HelpdeskReports.CoreUtil;
+            jQuery(".sla-toggle-tab").removeClass('hide');
+            var metric_value = jQuery(el).html();
+            //populate the tab title's
+            var compliant_title =  metric_value + " Compliant tickets";
+            jQuery(".sla-toggle-tab .compliant .title").html(compliant_title);
+            jQuery(".sla-toggle-tab .compliant a").html(compliant_title);
+
+            //populate the tab title's
+            var violated_title =  _this.addsuffix(100 - parseInt(metric_value)) + " Violated tickets";
+            jQuery(".sla-toggle-tab .violated .title").html(violated_title);
+            jQuery(".sla-toggle-tab .violated a").html(violated_title);
+        },
+        resetSlaLinks : function(){
+            jQuery('.compliant .title').removeClass('hide');
+            jQuery('.compliant .toggle').addClass('hide');
+            jQuery('.violated .title').addClass('hide');
+            jQuery('.violated .toggle').removeClass('hide');
+        },
+        toggleTicketList : function(value){
+             var _this = HelpdeskReports.CoreUtil;
+             var list_params = HelpdeskReports.locals.list_params;
+             //Update supplement condition
+             var supplement_condition = list_params[0].list_conditions[1];
+             if(supplement_condition != undefined ){
+                supplement_condition.value = value; 
+             }
+             jQuery("#ticket_list").html("").addClass('sloading loading-small');
+             _this.fetchTickets(list_params);
         }
     },
     addIndexToFields: function () {
@@ -515,11 +632,60 @@ HelpdeskReports.CoreUtil = {
     setReportFilters: function () {
         var _this = this;
         var filter = [];
-        
+        var dateDiff = 29;
+        var daterange;
+
         if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-filters') !== null) {
             filter = JSON.parse(localStorage.getItem('reports-filters'));
         }
-        
+        if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-presetRangesSelected') !== null) {
+            if(JSON.parse(localStorage.getItem('reports-presetRangesSelected'))){
+                if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-date-diff') !== null) {
+                    dateDiff  = JSON.parse(localStorage.getItem('reports-date-diff'));
+                    daterange = this.convertDateDiffToDate(dateDiff);
+                }
+            }else{
+                if (typeof (Storage) !== "undefined" && localStorage.getItem('reports-date-range') !== null) {
+                    daterange = JSON.parse(localStorage.getItem('reports-date-range'));
+                }    
+            }
+        }else{
+            daterange = this.convertDateDiffToDate(dateDiff);   
+        }
+
+        //Each report will decide, whether to add default filters or not to active menu ( agent,group,customer)
+        if(_this.ATTACH_DEFAULT_FILTER) {
+
+            _this.ATTACH_DEFAULT_FILTER = false;
+
+            //Add default filter fields to list
+            var defaultFilters = HelpdeskReports.CoreUtil.default_available_filter;
+            _.each(defaultFilters,function(el,idx){
+                //check if the default filter was used,
+                //if so populate the report field with value else popoulate field with empty
+                var filter_contains_default = false;
+                var filter_value = "";
+                if (filter.length) {
+                    jQuery(filter).each(function (index, hash) {
+                        if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.global_disabled_filter.indexOf(hash.condition) < 0 && (_this.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(hash.condition) < 0) {
+                            if(el == hash.condition){
+                               //Filter has been applied to default field
+                               filter_contains_default  = true;
+                               filter_value = hash.value;
+                               return false; //break the loop
+                            }
+                            
+                        }
+                    });
+                }
+                if(filter_contains_default){
+                    _this.constructReportField(el,filter_value);
+                } else {
+                     _this.constructReportField(el);
+                }
+            });    
+        }
+        //Duplicates will not be inserted, Condition checking in constructReportField function
         if (filter.length) {
             jQuery(filter).each(function (index, hash) {
                 if (HelpdeskReports.locals.report_field_hash.hasOwnProperty(hash.condition) && _this.global_disabled_filter.indexOf(hash.condition) < 0 && (_this.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(hash.condition) < 0) {
@@ -527,12 +693,26 @@ HelpdeskReports.CoreUtil = {
                 }
             });
         }
-
+        
+        jQuery('#date_range').val(daterange);
         var date = jQuery('#date_range').val();
         _this.constructDateRangePicker();
 
         return date;
     },
+    convertDateDiffToDate: function (dateDiff) {
+        var dateFormat = getDateFormat('mediumDate')   
+        var date_lag   = HelpdeskReports.locals.date_lag;
+        var today      = new Date();
+        var endDate    = new Date(today.setDate(today.getDate()-date_lag));
+        var startDate  = new Date(today.setDate(today.getDate()-(dateDiff+date_lag) ));
+        if (dateDiff == 0){
+            return endDate.toString(dateFormat);
+        }
+        else {
+            return startDate.toString(dateFormat) + " - " + endDate.toString(dateFormat);
+        }
+    },   
     calculateDateLag: function () {
         var date_lag = HelpdeskReports.locals.date_lag;
         var date = {};
@@ -551,32 +731,53 @@ HelpdeskReports.CoreUtil = {
         return date;
     },
     constructDateRangePicker: function () {
-        var date = this.calculateDateLag();
 
-        jQuery("#date_range").daterangepicker({
-            earliestDate: Date.parse('04/01/2013'),
-            latestDate: Date.parse(date.endDate),
-            presetRanges: [{
-                text: 'Last 7 Days',
-                dateStart: date[7],
-                dateEnd: date.endDate
-            }, {
-                text: 'Last 30 Days',
-                dateStart: date[30],
-                dateEnd: date.endDate
-            }, {
-                text: 'Last 90 Days',
-                dateStart: date[90],
-                dateEnd: date.endDate
-            }],
-            presets: {
-                dateRange: 'Date Range'
-            },
-            rangeStartTitle: 'Start Date',
-            rangeEndTitle: 'End Date',
-            dateFormat: getDateFormat('datepicker'),
-            closeOnSelect: true,
-        });
+        var date = this.calculateDateLag();
+        var previous_value = jQuery("#date_range").val(); //saved filter
+        var config = {
+                earliestDate: Date.parse('04/01/2013'),
+                latestDate: Date.parse(date.endDate),
+                presetRanges: [{
+                    text: 'Last 7 Days',
+                    dateStart: date[7],
+                    dateEnd: date.endDate
+                }, {
+                    text: 'Last 30 Days',
+                    dateStart: date[30],
+                    dateEnd: date.endDate
+                }, {
+                    text: 'Last 90 Days',
+                    dateStart: date[90],
+                    dateEnd: date.endDate
+                }],
+                presets: {
+                    dateRange: 'Date Range'
+                },
+                rangeStartTitle: 'Start Date',
+                rangeEndTitle: 'End Date',
+                presetRangesCallback: true, 
+                dateFormat: getDateFormat('datepicker'),
+                closeOnSelect: true,
+            };
+
+        //Different date pickers for sprout plan & others
+        if(HelpdeskReports.locals.is_non_sprout_plan == 'true'){
+            jQuery("#date_range").daterangepicker(config);
+        } else{
+            //Hide the appliced filter details as there is only date for sprout plan
+            jQuery("#filter_text").addClass('hide');
+
+            config.onClose = function(){
+                    //populate the input field with val
+                    var selected_value = jQuery(picker).val();
+                    if( selected_value != '' && selected_value != previous_value){
+                        jQuery("#date_range").val(selected_value);
+                        previous_value = selected_value;
+                        jQuery("[data-action='reports-submit']").trigger('click.helpdesk_reports');
+                    }
+            };
+            var picker = jQuery("#sprout-datepicker").daterangepicker(config);
+        }
     },
     generateCharts: function (params) {
         var _this = this;
@@ -620,6 +821,12 @@ HelpdeskReports.CoreUtil = {
             success: function (data) {
                 _this.appendTicketList(data);
                 _this.actions.setTicketListFlag();
+                //Show Export Section
+                if( data && data.length > 0){
+                    jQuery(".placeholder").removeClass('hide');
+                } else{
+                    jQuery(".placeholder").addClass('hide');
+                }
             },
             error: function (data) {
                 _this.appendTicketListError();
@@ -642,6 +849,135 @@ HelpdeskReports.CoreUtil = {
         jQuery("#ticket_list").removeClass('sloading loading-small');
         _this.populateEmptyChart(div, msg);
     },
+                     /* Start of Export Code*/
+    fetchExportFields : function (data) {
+        var _this = this;
+
+        if( data && data.length > 0){
+            _this.appendExportFields(data);    
+        } else {
+            var opts = {
+                url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.configure_export_url,
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                timeout: _this.timeouts.ticket_list,
+                success: function (data) {
+                   HelpdeskReports.locals.export_fields = data;
+                   _this.appendExportFields(data);
+                },
+                error: function (data) {
+                    _this.appendExportError();
+                }
+            }
+            _this.makeAjaxRequest(opts);
+        }
+    },
+    appendExportFields : function (data) {
+        var _this = this;
+
+        var tmpl = JST["helpdesk_reports/templates/export_fields_tmpl"]({
+            'data': data
+        });
+        jQuery("#ticket_fields").removeClass('sloading loading-small');
+        jQuery('#ticket_fields').html(tmpl);
+        this.bindExportFieldEvents();
+    },
+    appendExportError: function () {
+        var _this = this;
+        var div = ['ticket_fields'];
+        var msg = "Something went wrong, please try again";
+        jQuery("#ticket_fields").removeClass('sloading loading-small');
+    },
+    exportCSV : function() {
+        var _this = this;
+
+        //Data for Ajax request
+        var export_options = {};
+        export_options.query_hash = HelpdeskReports.locals.list_params;
+        export_options.export_field = [];
+        //Push all the checked input fields in export list
+        jQuery("#ticket_fields input:checked").each(function(idx,el){
+                export_options.export_field.push(jQuery(el).val());
+        });
+
+        var opts = {
+                url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.export_url,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data : Browser.stringify(export_options),
+                success: function (data) {
+                    _this.actions.flushExportSection();                   
+                   jQuery(".success_message").removeClass("hide");
+                            setTimeout(function() {
+                                jQuery('.success_message').fadeOut('slow');
+                    }, 2500);
+                       
+                },
+                error: function (data) {
+                    //_this.appendExportError();
+                     _this.actions.flushExportSection();
+                    jQuery(".success_message").removeClass("hide");
+                    setTimeout(function() {
+                        jQuery('.success_message').fadeOut('slow');
+                    }, 2500); 
+                }
+            }
+            _this.makeAjaxRequest(opts);
+    },
+    bindExportFieldEvents : function() {
+
+        var _this = this;
+
+        var export_fields = jQuery("#ticket_fields input[type='checkbox']");
+        jQuery('#toggle_checks').on('change', function () {
+                jQuery(export_fields).prop('checked', jQuery(this).is(":checked"));
+        });
+
+        //For toggling select all/none checkbox when toggling fields -->
+        jQuery(export_fields).on('change', function () {
+            var count = 0;
+            jQuery(export_fields).each(function(i,ele){ if(ele.checked) count++; });
+            jQuery('#toggle_checks').prop('checked', (jQuery(export_fields).length == count));
+        });
+
+        jQuery("#export_submit").click(function () {  
+
+            if (jQuery('#ticket_fields :checked').length == 0) {
+                jQuery('#err_no_fields_selected').removeClass('hide');
+                return false;
+            } else {
+                jQuery('#err_no_fields_selected').addClass('hide');
+                
+                jQuery("#export_submit").prop('disabled', 'disabled').addClass("disabled").html("Exporting...");
+                //
+                _this.exportCSV();
+            }
+        });
+    },
+    toggleExportSection : function(){
+            var _this = this;
+            
+            jQuery(".fields").slideToggle("slow",function(){
+                    var is_opened = jQuery(this).is(":visible"); 
+                    if(is_opened){
+                        jQuery(".export_title .title").removeClass('hide');
+                        jQuery(".export_title .link").addClass('hide');
+
+                        //Fetch Ticket Fields if not done previously
+                        if(HelpdeskReports.locals.export_fields == undefined ){
+                            jQuery('#ticket_fields').addClass('sloading loading-small');
+                            _this.fetchExportFields();
+                        } 
+                    }else{
+                        jQuery(".export_title .title").addClass('hide');
+                        jQuery(".export_title .link").removeClass('hide');
+                    }
+                });
+    },
+    
+                    /* End of Export Section */
     flushLocals: function () {
         HelpdeskReports.locals = {};
     },
@@ -718,9 +1054,11 @@ HelpdeskReports.CoreUtil = {
         }
     },
     dateRangeDiff: function () {
+        var diff = 0;
         var date_range = HelpdeskReports.locals.date_range.split('-');
-        var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
-
+        if (date_range.length == 2){
+            diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
+        }
         return diff;
     }
 };

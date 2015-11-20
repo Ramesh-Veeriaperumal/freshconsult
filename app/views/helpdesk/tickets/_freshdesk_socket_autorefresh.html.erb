@@ -35,8 +35,14 @@
     jQuery("#index_refresh_alert").slideUp(100);
     jQuery("#index_refresh_alert").data("updated", {});
     jQuery("#index_refresh_alert").data("created", {});
-    jQuery("#new_ticket_message").removeAttr("data-count").hide();
-    jQuery("#update_message").removeAttr("data-count").hide();
+    jQuery("#new_ticket_message").data("count", 0).hide();
+    jQuery("#update_message").data("count", 0).hide();
+  }
+
+  function show_autorefresh(){
+    if (jQuery("#update_message").attr("data-count") ||  jQuery("#new_ticket_message").attr("data-count")) {
+      return true
+    }
   }
 
 </script>

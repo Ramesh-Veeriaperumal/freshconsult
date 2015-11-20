@@ -114,7 +114,7 @@ module Mobile::Actions::User
   def user_recent_tickets
     self.account.tickets.permissible(self).
         requester_active(self).visible.newest(10).find(:all, 
-          :select => [:id,:display_id,:subject,:status,:priority,:created_at,:requester_id,:source,:spam,:deleted])
+          :select => [:id,:display_id,:subject,:status,:priority,:created_at,:requester_id,:source,:spam,:deleted,:responder_id])
   end
 
   def contact_fields

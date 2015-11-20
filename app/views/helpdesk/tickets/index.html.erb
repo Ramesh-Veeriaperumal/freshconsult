@@ -1,6 +1,6 @@
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
-  $J("#helpdesk-select-all").on("click", function(ev){
+  $J("#helpdesk-select-all").bind('toggleState click', function(ev){
     $J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
     $J("#tickets-expanded input[type=checkbox]").trigger('change');
   }); 
@@ -44,7 +44,7 @@
     <%end%>
   </div>
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">
-    <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items } , :inline => true %>
+    <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items, :current_view => @current_view } , :inline => true %>
   </div>
 <% content_for :pagefixed do %>
   <%= javascript_tag do %>

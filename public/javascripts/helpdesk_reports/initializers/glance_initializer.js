@@ -168,7 +168,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         click: function (e) {
                             if(e.point.series.options.clickable){
                                 var ev = this;
-                                _FD.clickEventForTicketList(ev);    
+                                _FD.clickEventForTicketList(ev,e.point);
                             }else{
                                 return false;
                             }
@@ -191,7 +191,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         click: function (e) {
                             if(e.point.series.options.clickable){
                                 var ev = this;
-                                _FD.clickEventForTicketList(ev);
+                                _FD.clickEventForTicketList(ev,e.point);
                             }else{
                                 return false;
                             }
@@ -215,10 +215,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var groupByCharts = new barChart(settings);
             groupByCharts.barChartGraph();
         },
-        clickEventForTicketList: function (el) {
-
-            var active_metric = HelpdeskReports.locals.active_metric
-
+        clickEventForTicketList: function (el,point) {
+            var active_metric = HelpdeskReports.locals.active_metric;
             if (!(HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(active_metric) < 0 && el.series.name == 'dummy')) {
                 var container = el.series.chart.container;
                 var group_by = jQuery(container).closest('[data-report="glance-container"]').attr('data-group');
@@ -228,6 +226,22 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 data.series = el.series.name;
                 data.group_by = group_by;
                 data.metric = active_metric;
+
+                if(HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(active_metric) > -1){
+
+                    var series = el.series.index;
+                    if (series == 1) {
+                        data.value = el.y;
+                    } else {
+                        var index = el.series.data.indexOf(point);
+                        var point = parseInt(100 - el.series.chart.series[1].data[index].y);
+                        data.value = point;
+                    }
+
+                } else{
+                    data.value = el.y;
+                }
+
                 data.id = HelpdeskReports.locals.chart_hash[active_metric][group_by][el.category].id;
 
                 trigger_event("glance_ticket_list.helpdesk_reports", data);
@@ -238,12 +252,22 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var key = metric + '_BUCKET';
             var bucket_data = HelpdeskReports.Constants.Glance.bucket_data;
             var meta = bucket_data[bucket].meta_data;
+            var active_metric = HelpdeskReports.locals.active_metric;
             if (hash[key] !== undefined) {
-                var tmpl = JST["helpdesk_reports/templates/bucket_conditions_div"]({
-                    id: meta.dom_element,
-                    title: meta.title,
-                    bucket: bucket
-                });
+                if(meta.dom_element == "interactions" ) {
+                    var tmpl = JST["helpdesk_reports/templates/bucket_conditions_div"]({
+                        id: meta.dom_element,
+                        title: meta.title + HelpdeskReports.Constants.Glance.metrics[active_metric].title.toLowerCase(),
+                        bucket: bucket
+                    });    
+                } else{
+                    var tmpl = JST["helpdesk_reports/templates/bucket_conditions_div"]({
+                        id: meta.dom_element,
+                        title: meta.title,
+                        bucket: bucket
+                    });
+                }
+                
                 jQuery('#glance_main').append(tmpl);
 
                 var current_series = bucket_data[bucket].series;
@@ -312,11 +336,13 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var bucket_name = HelpdeskReports.Constants.Glance.bucket_data[bucket_type].name_series[series];
 
             var hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric + '_BUCKET'].value_map;
-
             var data = {
                 condition: bucket_name,
                 operator: hash[bucket_name][ev.category][1],
-                value: hash[bucket_name][ev.category][0]
+                value: hash[bucket_name][ev.category][0],
+                series : series,
+                x : ev.category,
+                y : ev.y
             };
 
             trigger_event("glance_bucket_ticket_list.helpdesk_reports", data);         
