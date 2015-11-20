@@ -7,7 +7,7 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports', :media => "screen, print, projection"  %>
 <%= stylesheet_link_tag_with_rtl :'cdn/reports_print', :media => "print, projection" %>
 <span class="floatr">
-	<%= link_to("#{t('reports.summary_report.back_to_reports')}".html_safe, old_reports_url, :class => "btn") %>
+	<%= link_to("#{t('reports.summary_report.back_to_reports')}".html_safe, reports_url, :class => "btn") %>
 </span>
 <h3 class="title">
 	<%= @current_report[:label] %>
