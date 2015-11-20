@@ -229,9 +229,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #user changes will be passed when observer worker calls the function
   def round_robin_on_ticket_update(user_changes={})
-    return if group_id.nil? #ticket has no group
-    return if !group.round_robin_enabled? || !Account.current.features?(:round_robin_on_update)
-    
     ticket_changes = self.changes
     ticket_changes  = merge_to_observer_changes(user_changes,self.changes) if user_changes.present?
     
@@ -251,6 +248,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     return if next_agent.nil? #There is no agent available to assign ticket.
     self.responder_id = next_agent.user_id
+  end
+
+  def rr_allowed_on_update?
+    group and (group.round_robin_enabled? || Account.current.features?(:round_robin_on_update))
   end
 
   def check_rules current_user
@@ -389,6 +390,7 @@ private
 
   def skip_rr_on_update?
     #Option to toggle round robin off in L2 script
+    return true unless rr_allowed_on_update?
     return true if Thread.current[:skip_round_robin].present?
 
     #Don't trigger in case this update is a user action and it will trigger observer

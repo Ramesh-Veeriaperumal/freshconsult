@@ -8,6 +8,7 @@ class Tickets::SelectAll::TicketsWorker
 
   def perform(ticket_ids, user_id, params)
     @account = Account.current
+    Thread.current[:skip_round_robin] = true
     user = @account.all_users.find_by_id(user_id)
     user.make_current 
     disable_notification(@account)
@@ -19,6 +20,7 @@ class Tickets::SelectAll::TicketsWorker
     }});
   ensure
     enable_notification(@account)
+    Thread.current[:skip_round_robin] = nil
     User.reset_current_user
 
   end
