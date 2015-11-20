@@ -429,12 +429,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def get_page
-      page = params[:page].to_i
+      page = params[:page].respond_to?(:to_i) ? params[:page].to_i : 0
       page == 0 ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] : page
     end
 
     def get_per_page
-      if params[:per_page].to_i == 0
+      if !params[:per_page].respond_to?(:to_i) || params[:per_page].to_i == 0
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
         [params[:per_page].to_i, ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min

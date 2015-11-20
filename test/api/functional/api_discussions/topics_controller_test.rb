@@ -184,7 +184,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -200,7 +200,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_show

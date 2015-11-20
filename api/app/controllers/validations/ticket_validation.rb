@@ -110,7 +110,7 @@ class TicketValidation < ApiValidation
   end
 
   def required_based_on_status?
-    [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
+    status.respond_to?(:to_i) && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
   # due_by and fr_due_by should not be allowed if status is closed or resolved for consistency with Web.
@@ -123,7 +123,7 @@ class TicketValidation < ApiValidation
   end
 
   def disallowed_status?
-    [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
+    errors[:status].blank? && [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(status.to_i)
   end
 
   def attributes_to_be_stripped
