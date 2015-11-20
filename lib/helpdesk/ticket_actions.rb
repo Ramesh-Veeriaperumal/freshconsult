@@ -175,6 +175,7 @@ module Helpdesk::TicketActions
     move_cloud_files
     if @item.save_ticket
       move_attachments
+      @note.remove_activity
       @note.destroy
       Resque.enqueue(Workers::FbSplitTickets, { :account_id => current_account.id,
                                                 :child_fb_post_ids => @child_fb_note_ids,
