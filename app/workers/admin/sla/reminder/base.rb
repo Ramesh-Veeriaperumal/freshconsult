@@ -8,6 +8,7 @@ module Admin::Sla::Reminder
       total_tickets = 0
       account = Account.current
 
+      return if account.nil?
       user_based_sla = execute_on_db { account.sla_policies.active }
 
       response_reminder_rules = user_based_sla.reject{|e| e.escalations[:reminder_response].nil? }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end
