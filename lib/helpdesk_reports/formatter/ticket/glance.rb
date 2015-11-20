@@ -19,7 +19,7 @@ class HelpdeskReports::Formatter::Ticket::Glance
       next if res[:error].present? || bucket_metric?(metric)     
       res.each do |gp_by, values|
         if gp_by == :general
-          values[:metric_result] == 0 if values[:metric_result] == NA_PLACEHOLDER_GLANCE 
+          values[:metric_result] = 0 if values[:metric_result] == NA_PLACEHOLDER_GLANCE 
         else
           values = values.to_a
           not_numeric = values.collect{|i| i unless i.second[:value].is_a? Numeric}.compact
