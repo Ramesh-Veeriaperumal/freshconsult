@@ -1,4 +1,5 @@
 @import "../settings/settings";
+@import "../../fonts/glyphs";
 
 .top-links{
 	margin: 0px 0 12px 0;
@@ -879,33 +880,30 @@
 		th.sorting,th.sorting_asc,th.sorting_desc{
 			cursor : pointer;
 		}
-
-		th.sorting::after{
-			content: "\f1e7";
-		    font-family: glyphs;
+		.sort_icons{
+			font-family: glyphs;
 		    font-size: 17px;
 		    position: relative;
+		}
+		th.sorting::after{
+			content: $font-glyphs-sorting-default;
+		    @extend .sort_icons;
 		    right: -10px;
-		    top: 10px;
+		    top: 2px;
 		    opacity: 0.3;
 		}
 
 		th.sorting_asc::after{
-			content: "\f1e6";
-		    font-family: glyphs;
-		    font-size: 17px;
-		    position: relative;
+			content: $font-glyphs-sorting-asc;
+		    @extend .sort_icons;
 		    right: -10px;
-		    top: 12px;
+		    top: 5px;
 		}
 
 		th.sorting_desc::after{
-			content: "\f1e8";
-		    font-family: glyphs;
-		    font-size: 17px;
-		    position: relative;
+			content: $font-glyphs-sorting-dsc;
+		    @extend .sort_icons;
 		    right: -10px;
-		    top: 8px;
 		}
 	}
 	.DTFC_LeftHeadWrapper{
