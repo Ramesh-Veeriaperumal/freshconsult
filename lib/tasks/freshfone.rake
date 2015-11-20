@@ -88,15 +88,28 @@ namespace :freshfone do
 	task :close_accounts => :environment do
 		Sharding.execute_on_all_shards do
 			Freshfone::Account.current_pod.find_due(1.month.ago).each do |ff_account|
-				account = ff_account.account
-				account.make_current
-
-				last_call = account.freshfone_calls.last
-		  	ff_account.close if last_call.created_at < 45.days.ago
-		  	Account.reset_current_account
-
-		  	FreshfoneNotifier.deliver_freshfone_account_closure(account)
-		  end	
+				begin
+					account = ff_account.account
+					account.make_current
+					last_call = account.freshfone_calls.last
+					if last_call.blank? || last_call.created_at < 45.days.ago
+						ff_account.close
+						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
+							:message => "Freshfone Account Closed For Account :: #{ff_account.account_id}")
+					else
+						ff_account.update_column(:expires_on, ff_account.expires_on + 15.days) # allowing 15 days grace period.
+						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
+							:message => "Freshfone Account Expiry Date Extended By 15 Days For Account :: #{ff_account.account_id}")
+					end
+				rescue => e
+					FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
+						{:subject => "Error On Closing Freshfone Account For Account :: #{ff_account.account_id}",
+						:message => "Account :: #{ff_account.account_id}<br>Exception Message :: #{e.message}<br>
+						Exception Stacktrace :: #{e.backtrace.join('\n\t')}"})
+				ensure
+					::Account.reset_current_account
+				end
+			end
 		end
 	end
 
