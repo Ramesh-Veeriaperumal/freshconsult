@@ -445,7 +445,7 @@ Helpkit.AnalysisReport = (function(){
       });
 
       jQuery('#dialog-select-cancel').live('click',function(event){
-        window.location.replace('/reports/old');
+        window.location.replace('/reports');
         event.stopPropagation();
       });
     },
@@ -606,7 +606,7 @@ Helpkit.ComparisonReport = (function(){
       });
 
       jQuery('#dialog-select-cancel').live('click',function(event){
-        window.location.replace('/reports/old');
+        window.location.replace('/reports');
         event.stopPropagation();
       });
     },

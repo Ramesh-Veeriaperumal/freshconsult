@@ -46,6 +46,10 @@ module Freshfone::Jobs
 						return
 					end
 					fetch_twilio_recording
+					if @skip_attempt.present? #preventing the job for recordings which are not found
+						Rails.logger.debug "Recording Not Found For Account :: #{@account.id}, Call :: #{@call.call_sid}"
+						return
+					end
 					#Ignoring recordings of duration less than 5 seconds
 					if @recording_duration.to_i < 5
 					 	@call.recording_url = nil
@@ -86,13 +90,20 @@ module Freshfone::Jobs
 				@recording_sid = File.basename(@call.recording_url)
 				@recording = @call.account.freshfone_subaccount.recordings.get(File.basename(@recording_sid))
 				@recording_duration = @recording.duration
+			rescue => e
+				if e.respond_to?(:code) && e.code == 20404
+					@skip_attempt = true
+				else
+					 raise e
+				end
 			end
 
 			def self.download_data
 				begin
 					@data = RemoteFile.new(@file_url,'','',@file_name)
 				rescue OpenURI::HTTPError => e
-					Rails.logger.error "Error in in Call Recording attachment Job\n Account Id: #{@account.id}\n Call id: #{@call.id}\n Exception: #{e.message}\n Stacktrace: #{e.backtrace.join('\n\t')}"
+					Rails.logger.error "Error in in Call Recording attachment Job Account Id: #{@account.id} Call id: #{@call.id}\n Exception: #{e.message}\n Stacktrace: #{e.backtrace.join('\n\t')}"
+					raise e if e.io.status.present? && e.io.status[0] != '404' # preventing retry of recordings which are not found
 				end
 				NewRelic::Agent.notice_error( 
 						StandardError.new("Freshfone Call Recording Attachment size => #{ @data.size} exceeds 40MB 
@@ -100,7 +111,7 @@ module Freshfone::Jobs
 			end
 
 			def self.build_recording_audio
-				@call.build_recording_audio(:content => @data).save
+				@call.build_recording_audio(:content => @data).save if @data.present?
 			end
 
 			def self.set_status_voicemail     

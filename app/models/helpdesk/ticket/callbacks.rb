@@ -251,7 +251,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def rr_allowed_on_update?
-    group and (group.round_robin_enabled? || Account.current.features?(:round_robin_on_update))
+    group and (group.round_robin_enabled? and Account.current.features?(:round_robin_on_update))
   end
 
   def check_rules current_user
