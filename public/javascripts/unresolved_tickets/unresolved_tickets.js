@@ -423,14 +423,3 @@ var UnresolvedTickets = (function () {
 		}
 	};
 })();
-
-jQuery(document).ready(function() {
-	UnresolvedTickets.showLoader("full-loader");
-	if(window.localStorage.getItem('unresolved-tickets-filters')){
-		UnresolvedTickets.hasLocalData();
-	}else{
-		var defaultParam = {group_by: "group_id"};
-		UnresolvedTickets.init(defaultParam);
-	}
-});
-
