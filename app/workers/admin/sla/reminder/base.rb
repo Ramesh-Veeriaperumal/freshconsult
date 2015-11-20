@@ -82,7 +82,7 @@ module Admin::Sla::Reminder
       end 
       
       def logging_format(account, total_tickets, response_reminder_time_taken, reminder_ticket_time_taken)
-        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, total_tickets=#{total_tickets}, response_reminder_time_taken=#{response_reminder_time_taken},  reminder_resolution_time_taken=#{reminder_ticket_time_taken}, total_time_taken=#{response_reminder_time_taken + reminder_ticket_time_taken} , host_name=#{Socket.gethostname} "    
+        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, total_tickets=#{total_tickets}, response_reminder_time_taken=#{response_reminder_time_taken.to_i},  reminder_resolution_time_taken=#{reminder_ticket_time_taken.to_i}, total_time_taken=#{response_reminder_time_taken.to_i + reminder_ticket_time_taken.to_i} , host_name=#{Socket.gethostname} " 
       end 
           
   end
