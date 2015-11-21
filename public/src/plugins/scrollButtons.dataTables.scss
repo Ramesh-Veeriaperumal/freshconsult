@@ -1,0 +1,101 @@
+/* 
+*  
+*  @css : Jquery scroll Buttons css
+*  @Datatable_version_supported : 1.10.9
+*/
+
+@import "../settings/settings";
+
+
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+.dataTables_wrapper {
+    width: 94%;
+}
+.scrollers {
+    position: absolute;
+    right: 0px;
+    background: #f9f9f9;
+    width: 6%;
+    text-align: center;
+    border: 1px solid #e5e4e4;
+    z-index : 3;
+    border-radius: 8px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    overflow: hidden;
+
+    .controls {
+        height: 49px;
+        background: #f0f0f0;
+        padding: 15px 0;
+        border-bottom: 1px solid #e5e4e4;
+        box-sizing: border-box;
+    }
+
+    .emptyColumn {
+        border: 1px solid #e5e4e4;
+    }
+    .show-metrics {
+        vertical-align: middle;
+        display: inline-block;
+        text-align: center;
+        background: #909090;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        color: #fff;
+        box-sizing: border-box;
+        cursor: pointer;
+        &.disable {
+            background: #d8d8d8;
+        }
+    }
+    .details-next {
+        margin-right: 2px;
+        i {
+            padding-left: 2px;
+        }
+    }
+    .details-prev {
+        margin-left: 2px;
+        i {
+            padding-right: 2px;
+        }
+    }
+}
+
+
+/* Border for first fixed column */
+.DTFC_LeftHeadWrapper,.DTFC_LeftBodyWrapper{
+    border-right : 1px solid #e5e4e4;
+}
+
+/* shadows */
+
+.right-shadow{
+    @include box-shadow(3px 0px 10px rgb(229,228,228));
+    @include box-shadow(3px 0px 10px rgba(229,228,228,0.5));
+    @include transition(all .20s linear);
+}
+
+.left-shadow{
+    @include box-shadow(-3px 0px 10px rgb(229,228,228));
+    @include box-shadow(-3px 0px 10px rgba(229,228,228,0.5)); 
+    @include transition(all .20s linear);  
+}
+
+html[dir="rtl"]{
+    .scrollers {
+            right : auto;
+            left : 0px;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+    }
+}

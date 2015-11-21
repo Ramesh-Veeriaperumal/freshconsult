@@ -65,6 +65,7 @@
 		var _static_cc_emails_opts = {
 			data: [],
 			multiple: true,
+			matchFlag: true,
 			tokenSeparators: [",", " "],
 			formatNoMatches: function () { return "Add multiple cc emails separated by \",\""; },
 			createSearchChoice: function(term, data) {
@@ -74,8 +75,8 @@
 									} 
 								},
 		    initSelection: 	function (element, callback) {
-						        var data = [];	        
-						        $(element.val().split(",")).each(function(i, term) {
+						        var data = [];	
+						        $(element.val().match(/(?:"[^"]*"|[^,])+/g)).each(function(i, term) {
 						            data.push({id: term, text: term});
 						        });
 						        callback(data);

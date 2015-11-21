@@ -6,6 +6,9 @@ class Helpdesk::DashboardController < ApplicationController
   include Cache::Memcache::Account
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::Ticketfields::TicketStatus
+  include Dashboard::ElasticSearchMethods
+  include Dashboard::UtilMethods
 
   skip_before_filter :check_account_state
   before_filter :check_account_state, :only => [:index]
@@ -17,6 +20,9 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :only => [:agent_status]
   before_filter :load_ffone_agents_by_group, :only => [:agent_status]
+  around_filter :run_on_slave, :only => [:unresolved_tickets_data]
+  before_filter :load_filter_params, :only => [:unresolved_tickets_data]
+
   def index
     if request.xhr? and !request.headers['X-PJAX']
       load_items
@@ -39,7 +45,35 @@ class Helpdesk::DashboardController < ApplicationController
         NewRelic::Agent.notice_error(e,{:description => "Error occoured in la"})
     end
   end
-  
+
+  def unresolved_tickets_data
+    if current_account.launched?(:es_count_reads)
+      begin
+        response = fetch_tickets_from_es(true)
+      rescue Exception => e
+        Rails.logger.info "Exception in Fetching tickets from ES for Dashboard --, #{e.message}, #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+        #Fallback to DB if ES fails
+        response = fetch_tickets_from_db
+      end
+    else
+      response = fetch_tickets_from_db
+    end
+    header_array = (@group_by == "responder_id") ? ["Agent"] : ["Group"]
+    header_array << [status_list_from_cache.values, "Total"]
+    header_array.flatten!
+    unresolved_hash = {:data => header_array, :content => response }
+
+    render :json => {:tickets_data => unresolved_hash}.to_json
+  end
+
+  def unresolved_tickets
+    @status = Helpdesk::TicketStatus.status_names_from_cache(current_account)
+    @groups = current_account.groups_from_cache.map { |group| [group.name, group.id] }
+    @groups.insert(0,["My Groups",0])
+    @agents = current_account.agents_from_cache.map {|ag| [ag.user.name, ag.user_id]}
+  end
+
   def latest_summary
     render :partial => "summary"
   end
@@ -93,6 +127,35 @@ class Helpdesk::DashboardController < ApplicationController
     end
 
   private
+
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end 
+
+  def load_filter_params
+    @group_by = params[:group_by].presence || "group_id"
+    @filter_condition = {}
+    @user_agent_groups = user_agent_groups
+    dashboard_redis_filter = {}
+    [:group_id, :responder_id, :status].each do |filter|
+      next unless params[filter].present?
+      filter_value = params[filter].split(",")
+      if filter_value.include?("0")
+        filter_value.delete("0")
+        filter_value.concat(@user_agent_groups)
+        filter_value.uniq!
+      end
+      self.instance_variable_set('@' + filter.to_s, filter_value)
+      @filter_condition.merge!({filter => filter_value}) if filter_value.present?
+      dashboard_redis_filter.merge!(filter => params[filter])
+    end
+    if @filter_condition.present?
+      set_others_redis_key(dashboard_redis_key, dashboard_redis_filter.to_json)
+    else
+      remove_others_redis_key(dashboard_redis_key)
+    end
+  end
+
     def load_ticket_assignment
       all_agents = {}
 
@@ -167,4 +230,22 @@ class Helpdesk::DashboardController < ApplicationController
       ADMIN_FRESHFONE_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
     end
 
+  def fetch_tickets_from_db
+    begin
+      ticket_response = current_account.tickets.permissible(current_user).unresolved.where(spam:false, deleted:false).where(@filter_condition).group(@group_by).group(:status).count
+      map_id_to_names(ticket_response)
+    rescue Exception => ex
+      NewRelic::Agent.notice_error(ex)
+      Rails.logger.info "Exception in Fetching tickets from DB for Dashboard, #{ex.message}, #{ex.backtrace}"
+      return {}
+    end
+  end
+
+  def dashboard_redis_key
+    key = { 
+              :account_id => current_account.id,
+              :user_id => current_user.id
+            }
+    DASHBOARD_TABLE_FILTER_KEY % key
+  end
 end

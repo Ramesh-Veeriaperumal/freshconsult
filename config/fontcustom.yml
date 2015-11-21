@@ -41,6 +41,6 @@ output:
 # --------------------------------------------------------------------------- #
 
 templates:
- - scss
+ - _glyphs.scss
  # - preview
  - index.html

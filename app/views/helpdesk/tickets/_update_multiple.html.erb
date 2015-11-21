@@ -28,20 +28,22 @@
                 %>
                 </div>
               </textarea>
-            <% end
+            <%  end
           end
       %>
 
 	  <%end%>
-    <div class="field-item">
-      <label for="helpdesk_ticket_tags_label" rel="inputcheckbox"><input class="update-check-for-fields" id="helpdesk_ticket_tags_label" name="helpdesk_ticket_tags_label" type="checkbox" value=""><%= t('ticket_fields.fields.tags') %></label>
-      <input type="text" id="helpdesk_tags" name="helpdesk[tags]" rel="inputtextbox" />
-    </div>
+    <% unless select_all%>
+      <div class="field-item">
+        <label for="helpdesk_ticket_tags_label" rel="inputcheckbox"><input class="update-check-for-fields" id="helpdesk_ticket_tags_label" name="helpdesk_ticket_tags_label" type="checkbox" value=""><%= t('ticket_fields.fields.tags') %></label>
+        <input type="text" id="helpdesk_tags" name="helpdesk[tags]" rel="inputtextbox" />
+      </div>
+    <% end %>
   </div>
 </div>
 <% end %>
 <%= form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
-<% if privilege?(:reply_ticket) %>
+<% if privilege?(:reply_ticket) && !select_all%>
   <div id="reply-fields">
     <div id="content-bulk" class="content clearfix">
       <div class="field-item" id="bulkreplycheck">
@@ -56,12 +58,39 @@
   </div> 
 <% end %>
 </div>
+
 <div id="bulk-response-group" class="hide">
   <a id="no-response">&laquo; <%= t('canned_folders.back_to_bulk') %></a>
   <div id="bulk_canned_response_holder"> 
   </div> 
 </div>
+<% if select_all %>
+  <div class="admin_bulk_actions_notification hide">
+    <%= t('ticket.admin_select_all.bulk_all_notification.text', 
+            :count => "<span class='admin_select_all_ticket_count'></span>"
+        ).html_safe 
+    %><br/>
+    <%= t('ticket.admin_select_all.please_note') %>
+    <ol class="admin_select_all_notification_list">
+      <li><%= t('ticket.admin_select_all.bulk_all_notification.list1') %></li>
+      <li><%= t('ticket.admin_select_all.bulk_all_notification.list2') %></li>
+      <li><%= t('ticket.admin_select_all.bulk_all_notification.list3') %></li>
+    </ol>
+    <%= t('ticket.admin_select_all.bulk_all_notification.are_you_sure') %>
+  </div>
+<% end %>
 </div>
+<% if select_all %>
+  <div class="button-container">
+    <a href="javascript:void(0)" class="btn hide" id="bulk_back"><%= t('back') %></a>
+    <a href="javascript:void(0)" class="btn" id="bulk_cancel" data-dismiss="modal"><%= t('cancel') %></a>
+    <a href="javascript:void(0)" class="btn btn-primary" id="bulk_toggle"><%= t('confirm') %></a>
+    <%= submit_tag t('update'),:class => "btn btn-primary hide", 
+      "data-submit" => "modal", :id => "bulk_submit", 
+      "data-loading-text" => t('please_wait') 
+    %>
+  </div>
+<% end %>
 </div>
 <% end %>
 <%= javascript_tag do %> 
@@ -73,12 +102,40 @@
 
   jQuery("#reply-multiple-cnt-reply-multiple-body").val("");
   jQuery("#reply-multiple-cnt-reply-multiple-body").attr('disabled', true);
+  <% if select_all %>
+    updateNotificationTicketCount();
+    function updateNotificationTicketCount() {
+      var tkt_count = parseInt(jQuery("#ticket_list_count").text());
+      if (!isNaN(tkt_count) && jQuery(".admin_select_all_ticket_count").length > 0){
+        jQuery(".admin_select_all_ticket_count").text(tkt_count);
+      }
+    }
+    var switchBulkActionTab = function(){
+      jQuery("#bulk_toggle").toggleClass("hide");
+      jQuery("#bulk_back").toggleClass("hide");
+      jQuery("#bulk_submit").toggleClass("hide");
+      jQuery("#bulktickets").toggleClass("hide");
+      jQuery(".admin_bulk_actions_notification").toggleClass("hide");
+    }
+    jQuery("#bulk_toggle, #bulk_back").bind("click", function(ev){
+      switchBulkActionTab();
+    });
 
+    jQuery("#bulk_cancel").bind("click", function(ev){
+      if(jQuery("#bulk_toggle").hasClass("hide")){
+        switchBulkActionTab();
+      }
+    })
+  <% end %>
   jQuery('#no-response').hide();
   function submitBulkUpdate(){
     if( !($('addbulkreply') && $('addbulkreply').checked) ||
       jQuery("#reply-multiple-cnt-reply-multiple-body").valid()) {
-      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get() )".html_safe %>
+      <% unless select_all %>
+        <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get() )".html_safe %>
+      <% else %>
+        <%= "helpdesk_generic_submit('replymultiple', '#{update_multiple_helpdesk_select_all_ticket_actions_path}', 'put', (jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select, input:text').get()).concat(jQuery('#FilterOptions').serializeArray()))".html_safe %>
+      <% end %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').addClass("sloading loading-small loading-align");      
     }

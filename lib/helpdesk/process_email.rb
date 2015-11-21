@@ -304,6 +304,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = get_user(account, e_email , email_config) unless e_email.blank?
       end
      
+      global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
@@ -312,7 +313,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
-        :cc_email => {:cc_emails => parse_cc_email, :fwd_emails => [], :reply_cc => parse_cc_email},
+        :cc_email => {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
@@ -724,9 +725,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_cc_emails_hash(ticket, note)
-      cc_email_hash_value = ticket.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => [], :reply_cc => []} : ticket.cc_email_hash
-      cc_emails_val =  parse_cc_email
-      cc_emails_val.delete(ticket.account.kbase_email)
+      cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+      cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
       add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value) unless in_reply_to.to_s.include? "notification.freshdesk.com"
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
@@ -778,9 +778,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       to_html = text_to_html(body)
       body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
-      white_list(body_html)
-    end    
-
+      html = white_list(body_html)
+      html.gsub!("&amp;amp;", "&amp;")
+      html
+    end
     
   def add_ticket_tags(tags_to_be_added, ticket)
     tags_to_be_added.each do |tag|

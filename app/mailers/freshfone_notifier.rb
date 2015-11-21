@@ -178,6 +178,13 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def freshfone_ops_notifier(account, params)
+    params[:subject] ||= params[:message]
+    params[:recipients]  =  FreshfoneConfig['ops_alert']['mail']['to']
+    params[:from]        =  FreshfoneConfig['ops_alert']['mail']['from']
+    freshfone_email_template(account, params)
+  end
+
   def freshfone_request_template(account, user, params)
     headers = {
       :subject => params[:subject],

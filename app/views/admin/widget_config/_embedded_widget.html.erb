@@ -1,0 +1,76 @@
+<%= form_for :widget_config, :html => { :class => "form-horizontal", :rel => "validate",
+		:name => "widget_config_embedded", :id => "WidgetConfigembedded" } do |f| %>
+<div class="row-fluid">
+<input type="hidden" name="widgetType" id="widgetType" value="embedded"  data-set-query-string="true" />
+<h5 class="lead top-space-none"><%= t('.feedbackwidget_form_customization') %></h5>
+  <div class="control-group">
+		<label class="control-label"><%= t('feedbackwidget_form_heading') %></label>
+		<div class="controls">
+		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle"
+	 				value="" placeholder= "<%= t('feedbackwidget_defaulttitle').html_safe %>"
+	 				data-set-query-string="true" data-skip-options='true' />
+		</div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t(".feedbackwidget_form_submit_message") %></label>
+		<div class="controls">
+		 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks" data-set-query-string="true" value="" placeholder= "<%= t('.thankyou_default') %>"></textarea>
+			<div class="info-data"> <%= t(".thankyou_info") %> </div>
+		</div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t('.feedbackwidget_form_height') %></label>
+		<div class="controls">
+		 	<input type="text" class="text span2 number" size="4" name="formHeight" id="formHeight" value="" placeholder= "<%= t('.feedbackwidget_height_placeholder') %>"/>
+		 	<span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+		 	<div class="info-data">
+        <%= t(".feedbackwidget_form_height_message") %>
+      </div>
+		</div>
+  </div>
+  <div class="control-group">
+		<label class="control-label"><%= t(".feedbackwidget_users_can") %></label>
+  	<div class="controls widget_options">
+		  <input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' data-set-query-string="true" data-skip-options='true' />
+	  	<div class="row-fluid">
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_attach_a_file") %></label>
+    			<div class="controls">
+    				<input type="hidden" name="attachFile" id="attachFile" value="" rel='pseudo' value='' data-set-query-string="true" data-skip-options='true' />
+    				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+    			</div>
+        </div>
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_use_https") %></label>
+  				<div class="controls">
+  					<input type="checkbox" rel="toggle" type="checkbox" id="httpsHttp" class="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
+  				</div>
+        </div>
+	  	</div>
+	  	<div class="row-fluid">
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_search_area") %></label>
+    			<div class="controls">
+  	  			<input type="hidden" name="searchArea" id="searchArea" rel='pseudo' value='' data-set-query-string="true" data-skip-options='true' />
+  	  			<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+  	  		</div>
+        </div>
+        <div class="span6 widget_option">
+          <label class="control-label"><%= t(".feedbackwidget_use_captcha") %> </label>
+  				<div class="controls">
+  					<input type="hidden" name="captcha" rel="pseudo" value="" data-set-query-string="true"/>
+  					<input type="checkbox" rel="toggle" type="checkbox" class="captchapseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No"/>
+  				</div>
+        </div>
+  		</div>
+    </div>
+  </div>
+<ul class="ui-form">
+  <li class="code-view">
+		<h3 id="feedbackwidget_embedded_code" class="title span12"><%= t('.feedbackwidget_embedded_code') %></h3>
+		<p class="intro"><%= t('feedbackwidget_embed_code_intro').html_safe  %></p>
+    <textarea id="embeddedCode" class="codetextarea"></textarea>
+  </li>
+ </ul>
+</div>
+<% end %>

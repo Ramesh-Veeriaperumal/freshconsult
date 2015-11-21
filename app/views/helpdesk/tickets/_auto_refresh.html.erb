@@ -155,7 +155,7 @@
   function update_counter(id, count){
     $this = jQuery(id);
     $this.text((count > 1) ? $this.data("textOther") : $this.data("textOne"))
-        .attr("data-count", count)
+        .data("count", count)
         .show();
   }
 

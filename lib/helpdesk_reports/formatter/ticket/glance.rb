@@ -18,11 +18,14 @@ class HelpdeskReports::Formatter::Ticket::Glance
       res.symbolize_keys!
       next if res[:error].present? || bucket_metric?(metric)     
       res.each do |gp_by, values|
-        next if gp_by == :general
-        values = values.to_a
-        not_numeric = values.collect{|i| i unless i.second[:value].is_a? Numeric}.compact
-        values = (values - not_numeric).sort_by{|i| i.second[:value]}.reverse!
-        res[gp_by] = (values|not_numeric).to_h
+        if gp_by == :general
+          values[:metric_result] = 0 if values[:metric_result] == NA_PLACEHOLDER_GLANCE 
+        else
+          values = values.to_a
+          not_numeric = values.collect{|i| i unless i.second[:value].is_a? Numeric}.compact
+          values = (values - not_numeric).sort_by{|i| i.second[:value]}.reverse!
+          res[gp_by] = (values|not_numeric).to_h
+        end
       end
     end
   end

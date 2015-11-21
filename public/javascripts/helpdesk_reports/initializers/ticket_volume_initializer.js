@@ -92,6 +92,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             timeBased.columnGraph();
             jQuery('span[data-format="' + current_trend + '"]').addClass('active');
             jQuery("[data-title='trend']").text(this.trend_subtitle[current_trend]);
+            // _FD.populateAvgAndTotalTicketsLabel();
         },
         dayTrend: function (hash) {
             var defaults = this.findDefaultDay();
@@ -113,7 +114,6 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 renderTo: this.day_trend_chart + '_chart',
                 xAxisLabel: _.keys(this.hash_received[this.week_trend][default_day]),
                 chartData: day_trend_data,
-                yMax: max,
                 xAxisType: 'number',
                 xAxis_label: 'Hour of the day'
             }
@@ -179,6 +179,13 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                     yMax: max,
                     titleColor: titleColor
                 }
+
+                if (defaults.disabled.indexOf(_FD.WEEKDAY_MAPPING[i]) > -1) {
+                    settings.chartData = [];
+                }else{
+                    settings.chartData = data_array;
+                }
+
                 var trend = new miniLineChart(settings);
                 trend.miniLineChartGraph();
 
@@ -280,6 +287,8 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 HelpdeskReports.locals.trend = jQuery(this).data('format');
                 jQuery("[data-title='trend']").text(_FD.trend_subtitle[HelpdeskReports.locals.trend]);
                 _FD.redrawTimeBased(HelpdeskReports.locals.trend);
+                //Populate the Total & Average Labels
+                _FD.populateAvgAndTotalTicketsLabel();
             });
         },
         redrawDayTrend: function (dow, prev_active, present) {
@@ -327,16 +336,53 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
 
             for (var j = 0; j < mini.length; j++) {
 
-                var mini_chart = jQuery('#' + mini[j] + '_chart').highcharts();
+                var mini_chart = jQuery('#' + mini[j] + '_chart' + ':not(.disable)').highcharts();
 
-                if(toggle == 'show') {
+                if( mini_chart !== undefined ){
+                    if(toggle == 'show') {
                     mini_chart.series[index].show();
-                } else if(toggle == 'hide') {
-                    mini_chart.series[index].hide();
+                    } else if(toggle == 'hide') {
+                        mini_chart.series[index].hide();
+                    }
                 }
-
+                
             };
 
+        },
+        populateAvgAndTotalTicketsLabel : function(){
+            
+            var trend = HelpdeskReports.locals.trend;
+            var avg_received = jQuery(".stats .value_average");
+            var tot_received = jQuery(".stats .value_total");
+            var avg_resolved = jQuery(".stats .value_average");
+            var tot_resolved = jQuery(".stats .value_total");
+            
+            if( trend == 'doy'){
+                avg_received.html(_FD.hash_received.doy_avg);
+                tot_received.html(_FD.hash_received.doy_total);
+                avg_resolved.html(_FD.hash_resolved.doy_avg);
+                tot_resolved.html(_FD.hash_resolved.doy_total);
+            } else if( trend == 'w') {
+                avg_received.html(_FD.hash_received.w_avg);
+                tot_received.html(_FD.hash_received.w_total);
+                avg_resolved.html(_FD.hash_resolved.w_avg);
+                tot_resolved.html(_FD.hash_resolved.w_total);
+            } else if( trend == 'mon') {
+                avg_received.html(_FD.hash_received.mon_avg);
+                tot_received.html(_FD.hash_received.mon_total);
+                avg_resolved.html(_FD.hash_resolved.mon_avg);
+                tot_resolved.html(_FD.hash_resolved.mon_total);
+            } else if( trend == 'qtr') {
+                avg_received.html(_FD.hash_received.qtr_avg);
+                tot_received.html(_FD.hash_received.qtr_total);
+                avg_resolved.html(_FD.hash_resolved.qtr_avg);
+                tot_resolved.html(_FD.hash_resolved.qtr_total);
+            } else if( trend == 'y') {
+                avg_received.html(_FD.hash_received.y_avg);
+                tot_received.html(_FD.hash_received.y_total);
+                avg_resolved.html(_FD.hash_resolved.y_avg);
+                tot_resolved.html(_FD.hash_resolved.y_total);
+            }
         }
     };
     return {
