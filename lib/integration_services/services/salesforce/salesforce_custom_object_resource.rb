@@ -3,7 +3,7 @@ module IntegrationServices::Services
     class SalesforceCustomObjectResource < SalesforceResource
       FD_TICKET = "freshdesk__Freshdesk_Ticket_Object__c"
       def find ticket_id
-        soql_contact = "SELECT Id FROM #{FD_TICKET} WHERE freshdesk__TicketID__c = #{ticket_id}"
+        soql_contact = "SELECT Id FROM #{FD_TICKET} WHERE freshdesk__TicketID__c = #{ticket_id}.0"
         request_url = "#{salesforce_rest_url}/query?q=#{soql_contact}"
         url  = URI.encode(request_url.strip)
         response = http_get url
