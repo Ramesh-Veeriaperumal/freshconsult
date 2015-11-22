@@ -60,10 +60,14 @@ module Search
           end
           
           def routing_values
-            {
-              routing_id:   (self.is_a?(Helpdesk::Ticket) ? self.id : self.account_id),
-              parent_id:    (self.is_a?(Helpdesk::Note) ? self.notable_id : nil)
-            }
+            parent_id = Search::Utils::PARENT_BASED_ROUTING[self.class.name]
+
+            Hash.new.tap do |routing_params|
+              if parent_id
+                routing_params[:parent_id]  = self.send(parent_id)
+                routing_params[:routing_id] = self.account_id
+              end
+            end
           end
           
           def esv2_enabled?

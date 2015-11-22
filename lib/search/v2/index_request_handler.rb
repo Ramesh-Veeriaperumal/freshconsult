@@ -57,9 +57,11 @@ module Search
             es_params[:version_type]  = 'external'
             es_params[:version]       = version
             
+            # Need both parent and routing as otherwise
+            # exception is raised in ES due to alias
+            #
             if parent_id
               es_params[:parent]        = parent_id
-            else
               es_params[:routing]       = routing_id
             end
           end

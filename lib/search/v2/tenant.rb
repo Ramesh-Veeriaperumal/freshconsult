@@ -42,7 +42,7 @@ module Search
             add: (Hash.new.tap do |alias_props|
               alias_props[:index]           = params[:index_prefix] % { index_suffix: 'v1' } # To-do: Get version from store
               alias_props[:alias]           = self.alias(type)
-              alias_props[:search_routing]  = id unless params[:custom_routing]
+              alias_props[:routing]         = id
               alias_props[:filter]          = ({ bool: {
                                                   must: [
                                                     { type: { value: type }},

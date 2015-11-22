@@ -1,8 +1,8 @@
 # encoding: utf-8
 class Search::Utils
 
-  MAX_PER_PAGE        = 30
-  TEMPLATE_BY_CONTEXT = {
+  MAX_PER_PAGE          = 30
+  TEMPLATE_BY_CONTEXT   = {
     portal_spotlight:       'portalSpotlight',
     portal_article_search:  'portalArticleSearch',
     agent_autocomplete:     'agentAutocomplete',
@@ -13,6 +13,10 @@ class Search::Utils
     merge_display_id:       'mergeDisplayId',
     merge_subject:          'mergeSubject',
     merge_requester:        'mergeRequester'
+  }
+  PARENT_BASED_ROUTING  = {
+    'Helpdesk::Note'  => :notable_id
+    # 'Post'            => :topic_id
   }
 
   # Load ActiveRecord objects
