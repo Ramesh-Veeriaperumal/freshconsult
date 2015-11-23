@@ -1,5 +1,6 @@
 //= require report/daterangepicker.jQuery
 //= require helpdesk_reports/highcharts/highcharts-4.1.6
+//= require frameworks/plugins/dataTables.scrollButtons.js
 //= require helpdesk_reports/highcharts/tooltip_issue
 //= require helpdesk_reports/highcharts/border_radius_plugin
 //= require_tree ../../helpdesk_reports/templates

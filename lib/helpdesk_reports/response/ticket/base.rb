@@ -19,6 +19,11 @@ class HelpdeskReports::Response::Ticket::Base
     processed_result
   end
 
+  #Already preprocessed in the reports service!
+  def process_metric
+    @processed_result = @raw_result
+  end
+
   private
 
   def map_flexifield_to_label
@@ -178,18 +183,21 @@ class HelpdeskReports::Response::Ticket::Base
   def week_to_date week, year, date_range, month
     dates      = date_range.split("-")
     start_date = Date.parse(dates.first)
+    end_date   = dates.last ? Date.parse(dates.last) : Date.parse(dates.first)
     res_date   = date_from_week week, month, year #Date.commercial(year, week)
     if REPORT_TYPE_BY_KEY[report_type] == 104
-      res_date
+      res_date[0]
     else
-      res_date < start_date ? start_date.strftime('%d %b, %Y') : res_date.strftime('%d %b, %Y')
+      start_week = res_date[0] < start_date ? start_date.strftime('%d %b, %Y') : res_date[0].strftime('%d %b, %Y')
+      end_week = res_date[1] > end_date ? end_date.strftime('%d %b, %Y') : res_date[1].strftime('%d %b, %Y')
+      start_week + " - " + end_week
     end
     
   end
   
   def date_from_week week, month, year
     year += 1 if month and week == 1 and month == 12
-    Date.commercial(year, week)
+    [Date.commercial(year, week),Date.commercial(year, week, 7)]
   end
 
 end

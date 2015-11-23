@@ -2,7 +2,7 @@ class ReportsController < ApplicationController
 
   include ReadsToSlave
 
-  before_filter :report_list,:set_selected_tab, :only => [ :index, :show ]
+  before_filter :report_list,:set_selected_tab, :only => [ :index, :show, :old ]
 
   include Reports::ConstructReport
   include Reports::ReportTimes

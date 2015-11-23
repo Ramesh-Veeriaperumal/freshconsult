@@ -59,9 +59,11 @@ class PostValidationTest < ActionView::TestCase
   end
 
   def test_post_validation_valid_item
+    Account.stubs(:current).returns(Account.new)
     item = Post.new(body_html: 'test')
     item.topic_id = 1
     topic = ApiDiscussions::PostValidation.new({}, item)
     assert topic.valid?
+    Account.unstub(:current)
   end
 end

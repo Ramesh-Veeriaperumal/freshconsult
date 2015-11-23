@@ -54,7 +54,8 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
   def build_list_condition
     trend = req_params[:list_conditions].first["condition"]
     unless trend == "y"
-      date = Date.parse(req_params[:list_conditions].first["value"])
+      selected_date = trend == "w" ? req_params[:list_conditions].first["value"].split("-").first : req_params[:list_conditions].first["value"] 
+      date  = Date.parse(selected_date)
       year_condition = {
         condition:  "y",
         operator:   "is_in",

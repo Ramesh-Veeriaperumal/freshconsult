@@ -172,6 +172,14 @@ module TicketConstants
     :agent_resolved     => :"helpdesk_ticket_states.resolved_at",
     :customer_resolved  => :"helpdesk_ticket_states.resolved_at"
   }
+
+  DASHBOARD_FILTER_MAPPING = {
+    :agent => "responder_id",
+    :group => "group_id",
+    :priority => "priority",
+    :type => "ticket_type",
+    :source => "source"
+  }
   # CC emails count
   MAX_EMAIL_COUNT = 50
 

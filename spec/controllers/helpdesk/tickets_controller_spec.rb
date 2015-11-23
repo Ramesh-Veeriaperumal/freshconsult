@@ -711,16 +711,18 @@ RSpec.describe Helpdesk::TicketsController do
     
     # Ticket actions
     it "should split the note and as ticket" do
-      tkt = create_ticket({ :status => 2})
+      tkt = create_ticket({ :status => 2, :source => 0})
       @account.reload
       tickets_count = @account.tickets.count
       note_body = Faker::Lorem.sentence
       note = tkt.notes.build({ :note_body_attributes => {:body => note_body} , :user_id => tkt.requester_id, 
-                               :incoming => true, :private => false})
+                               :incoming => true, :private => false, :source => 0})
       note.save_note
+      activity = tkt.activities.where({'description' => "activities.tickets.conversation.in_email.long"}).detect{ |a| a.note_id == note.id }
       post :split_the_ticket, { :id => tkt.display_id,
           :note_id => note.id
       }
+      tkt.activities.find_by_id(activity.id).should be_nil
       tkt.notes.find_by_id(note.id).should be_nil
       ticket_incremented? tickets_count
       @account.tickets.last.ticket_body.description_html.should =~ /#{note_body}/

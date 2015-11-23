@@ -30,7 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", "parent_ticket",
-                            "reports_hash"]
+                            "reports_hash","sla_response_reminded","sla_resolution_reminded"]
   OBSERVER_ATTR = []
 
   self.table_name =  "helpdesk_tickets"
@@ -43,8 +43,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   spam_watcher_callbacks :user_column => "requester_id"
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, :phone,
-    :facebook_id, :send_and_set, :archive, :required_fields
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description, 
+    :phone , :facebook_id, :send_and_set, :archive, :required_fields, :disable_observer_rule, :disable_activities
 
 #  attr_protected :attachments #by Shan - need to check..
 
@@ -185,6 +185,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   }
   
+  scope :response_sla, lambda { |account,due_by| {
+          :select => "helpdesk_tickets.*",
+          :joins =>  "inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
+          :conditions => ["frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
+                            helpdesk_ticket_states.first_response_time IS ? AND source != ?",
+                            due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
+                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+  }}
+
+  scope :response_reminder,lambda { |sla_rule_ids| {
+          :select => "helpdesk_tickets.*",
+          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND  
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
+          :conditions => ["helpdesk_schema_less_tickets.boolean_tc04=? AND helpdesk_schema_less_tickets.long_tc01 in (?) ",
+                            false,sla_rule_ids]
+  }}
+
+  scope :resolution_sla, lambda { |account,due_by| {
+          :select => "helpdesk_tickets.*",
+          :conditions => ['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
+                            due_by,false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
+                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+  }}
+
+  scope :resolution_reminder, lambda {|sla_rule_ids|{
+          :select => "helpdesk_tickets.*",
+          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND  
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
+          :conditions => ['helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
+                            false, sla_rule_ids]
+  }}
+  
   class << self # Class Methods
 
     def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
@@ -222,6 +255,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def search_display(ticket)
       "#{ticket.subject} (##{ticket.display_id})"
+    end
+    
+    def default_cc_hash
+      { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
     end
 
   end
@@ -525,8 +562,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticlet_cc
-    cc_email.nil? ? [] : cc_email[:cc_emails]
+    cc_email.nil? ? [] : (cc_email[:tkt_cc] || cc_email[:cc_emails])
   end
+  alias_method :ticket_cc, :ticlet_cc
   
   def contact_name
     requester.name if requester
@@ -763,7 +801,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).compact.uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| parse_email(email)[:email]}.compact.uniq
 
     account.support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (

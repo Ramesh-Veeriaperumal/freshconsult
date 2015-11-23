@@ -108,8 +108,8 @@ module TestCaseMethods
     API_THROTTLER % { host: 'localhost.freshpo.com' }
   end
 
-  def v2_api_key
-    API_THROTTLER_V2 % { account_id: @account.id }
+  def v2_api_key(account_id = @account.id)
+    API_THROTTLER_V2 % { account_id: account_id }
   end
 
   def account_key

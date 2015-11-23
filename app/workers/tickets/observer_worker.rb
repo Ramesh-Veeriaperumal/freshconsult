@@ -16,6 +16,7 @@ module Tickets
           account.observer_rules_from_cache.each do |vr|
             vr.check_events doer, evaluate_on, current_events
           end
+          evaluate_on.round_robin_on_ticket_update(current_events) if evaluate_on.rr_allowed_on_update?
           evaluate_on.save!
         else
           puts "Skipping observer worker for : Account id:: #{Account.current.id}, Ticket id:: #{args['ticket_id']}, User id:: #{args['doer_id']}"            

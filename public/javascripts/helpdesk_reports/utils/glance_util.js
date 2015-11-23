@@ -31,7 +31,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 var flag = HelpdeskReports.locals.ticket_list_flag;
                 if (flag == false) {
                     HelpdeskReports.locals.ticket_list_flag = true;
-                    _FD.core.actions.showTicketList();
+                    _FD.getTicketListTitle(data);
                     _FD.actions.ticketListEvent(data);
                 }
             });
@@ -40,7 +40,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 var flag = HelpdeskReports.locals.ticket_list_flag;
                 if (flag == false) {
                     HelpdeskReports.locals.ticket_list_flag = true;
-                    _FD.core.actions.showTicketList();
+                     _FD.getBucketTicketListTitle(data);
                     _FD.actions.bucketTicketListEvent(data);
                 }
             });
@@ -48,6 +48,34 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             _FD.actions.setAjaxContainer();
             _FD.actions.setCustomFieldFlag();
         },
+        
+        getTicketListTitle : function(data){
+                var fields_hash = HelpdeskReports.locals.field_name_mapping;
+                var active_metric = HelpdeskReports.locals.active_metric;
+                var ticketListTitle = HelpdeskReports.Constants.Glance.metrics[active_metric].title;
+                var group_by = data['group_by'];
+               
+                var val = data['value'];
+                
+                if(_FD.constants.time_metrics.indexOf(active_metric) > -1){
+                    val = _FD.core.timeMetricConversion(val);
+                }
+                if(_FD.constants.percentage_metrics.indexOf(active_metric) > -1){
+                    val = _FD.core.addsuffix(val);
+                    ticketListTitle += " by " +  fields_hash[group_by].toLowerCase();
+                }else{
+                    ticketListTitle += " split by " +  fields_hash[group_by].toLowerCase();
+                }
+                var value = data['label'] + ' : ' + val;
+                _FD.core.actions.showTicketList(ticketListTitle,value);
+        },
+
+        getBucketTicketListTitle : function(data){
+                var title = "";
+                title = data.y  + ' Tickets with ' + data.x + ' ' + data.series;
+                _FD.core.actions.showTicketList(title);
+        },
+
         actions: {
             submitReports: function () {
                 var metric = HelpdeskReports.locals.active_metric;
@@ -97,7 +125,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 } else {
                     _FD.constructRightPaneParams(active_metric, group_by);
                 }
-
+                _FD.actions.setSolutionLinkUrl(active_metric);
+            },
+            setSolutionLinkUrl : function(active_metric){
+                //Set the solution url for the active metric
+                jQuery(".glance-chart #solution_link").attr('href',_FD.constants.metrics[active_metric].solution_url);
             },
             setDefaultOnFail: function (metric) {
                 _FD.setActiveMetric(metric);
@@ -129,7 +161,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             viewAllTickets: function (el) {
                 var metric = HelpdeskReports.locals.active_metric;
                 var conditions = [];
-
+                var ticket_count = jQuery("li[data-metric='" + metric + "'] .ticket-count").html();
                 if (_FD.constants.percentage_metrics.indexOf(metric) > -1) {
 
                     var value = jQuery(el).data('sla');
@@ -139,10 +171,22 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                         value: value
                     }
                     conditions.push(hash);
-
+                    if(jQuery(el).hasClass('compliant')){
+                         _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_complaint_title,ticket_count);
+                    }else if(jQuery(el).hasClass('violated')){
+                        //Calculate violated percentage
+                        var calc = ticket_count.substring(0,ticket_count.length-1);
+                        var percent = calc != undefined ? 100 - parseInt(calc) : calc; 
+                         _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_violated_title,_FD.core.addsuffix(percent));
+                    }
+                }else{
+                    _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_title,ticket_count);
                 }
+                
+
                 var bucket_flag = false;
-                _FD.core.actions.showTicketList();
+
+                
                 _FD.constructTicketListParams(conditions, metric, bucket_flag);
             },
             ticketListEvent: function (data) {
@@ -355,7 +399,9 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             _FD.core = HelpdeskReports.CoreUtil;
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.Glance);
             _FD.bindEvents();
+            _FD.core.ATTACH_DEFAULT_FILTER = true;
             _FD.setDefaultValues();
+            
         }
     };
 })();

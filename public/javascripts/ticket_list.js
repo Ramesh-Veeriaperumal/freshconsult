@@ -1,6 +1,6 @@
 
 bulkActionButtonsDisabled = function () {
-	if (jQuery('#ticket-list .check .selector:checked').length > 0 ) {
+	if (jQuery('#ticket-list .check .selector:checked').length > 0 && !jQuery("#all-views").data("selectallMode")) {
 		jQuery('#ticket-toolbar .bulk_action_buttons .btn').removeClass('disabled').prop('disabled', false).removeAttr('disabled');
 	} else {
 		jQuery('#ticket-toolbar .bulk_action_buttons .btn').addClass('disabled').prop('disabled', true).attr("disabled","disabled");
@@ -184,15 +184,19 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 	// 	}
 	// });
 
-		jQuery('.tickets tbody tr .check :checkbox').die();
+    jQuery('.tickets tbody tr .check :checkbox').die();
     jQuery('.tickets tbody tr .check :checkbox').live('change', function() {
         if (jQuery(this).prop('checked')) {
           jQuery(this).parent().parent().addClass('active');
         } else {
           jQuery(this).parent().parent().removeClass('active');
         }
-
-        jQuery("#helpdesk-select-all").prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == jQuery('.tickets tbody tr .check :checkbox').length);
+        var select_all_checkbox = jQuery("#helpdesk-select-all");
+        var select_all_previous_state = select_all_checkbox.prop('checked');
+        select_all_checkbox.prop('checked', jQuery('.tickets tbody tr .check :checkbox:checked').length == jQuery('.tickets tbody tr .check :checkbox').length);
+        if (select_all_previous_state !== select_all_checkbox.prop('checked')){
+            select_all_checkbox.trigger("change");
+        }
         bulkActionButtonsDisabled();
     });
 
@@ -261,11 +265,120 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		setCookie('wf_order','created_at');
 		setCookie('wf_order_type','desc');
 	});
+  jQuery('#toggle_select_all').die();
+	jQuery('#toggle_select_all').live('click', function(ev) {
+      ev.preventDefault();
+      var all_view_selector = jQuery("#all-views");
+      updateBulkActionTicketCount();
+      var select_all_mode = all_view_selector.data("selectallMode");
+      if(!select_all_mode) {
+        all_view_selector.data("selectallMode", true);
+        bulkActionButtonsDisabled();
+        jQuery("#toggle_select_all_default").hide();
+        jQuery("#toggle_select_all_clear").show();
+        jQuery("#toggle_select_all_page").hide();
+        jQuery("#toggle_select_all_view").show();
+        jQuery('.dynamic-menu').addClass('disabled').prop('disabled', true);
+        freezeTicketListView(true);
+        toggleTicketToolbar(true);
+	  }
+      else {
+        all_view_selector.data("selectallMode", false);
+        bulkActionButtonsDisabled();
+        jQuery("#toggle_select_all_default").show();
+        jQuery("#toggle_select_all_clear").hide();
+        jQuery("#toggle_select_all_view").hide();
+        jQuery("#toggle_select_all_page").show();
+        jQuery('.dynamic-menu').removeClass('disabled').prop('disabled', false);
+        freezeTicketListView(false);
+        toggleTicketToolbar(false);
+        jQuery("#helpdesk-select-all").removeAttr("checked").trigger("toggleState").trigger('change');
+      }
+	});
+
+  jQuery("#helpdesk-select-all").bind("change", function(ev){
+    if(!selectAllBarAvailable()) {
+      return;
+    }
+
+    if(jQuery("#select_all_disabled").length > 0 && jQuery("#helpdesk-select-all").prop('checked')) {
+      jQuery.ajax({
+        url: "/helpdesk/select_all_ticket_actions/select_all_message_content",
+        type: "GET",
+        success: function(){
+          updateBulkActionTicketCount();
+        }            
+      });
+    }
+    var select_all_bar = $J("#select_all_alert");
+    updateBulkActionTicketCount();
+    if($J(this).prop("checked")){
+      disableAutoRefresh();
+      select_all_bar.show();
+    }
+    else {
+      enableAutoRefresh();
+      select_all_bar.hide();
+    }
+  });
+
+  var toggleTicketToolbar = function(select_all_mode){
+
+  	if(select_all_mode){
+        jQuery("#ticket-toolbar .bulk_action_buttons").hide();
+        jQuery("#ticket-toolbar .admin_bulk_actions").show();
+  	}
+  	else {
+        jQuery("#ticket-toolbar .admin_bulk_actions").hide();
+        jQuery("#ticket-toolbar .bulk_action_buttons").show();
+  	}
+  }
+
+  var updateBulkActionTicketCount = function() {
+    var tkt_count = parseInt(jQuery("#ticket_list_count").text());
+    if (!isNaN(tkt_count)) {
+      jQuery(".admin_select_all_ticket_count").text(tkt_count);
+    }
+    var num_tickets_in_page = jQuery("#tickets-expanded input[type=checkbox]").length
+    jQuery(".admin_select_all_ticket_count_page").text(num_tickets_in_page);
+  }
+  var selectAllBarAvailable = function() {
+      return !(jQuery("#select_all_alert").length < 1 || jQuery(".toolbar_pagination_full").length < 1);
+  };
+
+  var freezeTicketListView = function(select_all_view){
+     var select_all_checkbox = jQuery("#helpdesk-select-all");
+     if(select_all_view === true){
+      jQuery("#tickets-expanded input[type=checkbox]").attr("disabled", "disabled");
+      select_all_checkbox.attr("disabled", "disabled");
+     }
+     else {
+      jQuery("#tickets-expanded input[type=checkbox]").removeAttr("disabled");
+      select_all_checkbox.removeAttr("disabled");       
+     }
+  };
+
+  jQuery(".filter_item").bind("change", function(){
+      if(!selectAllBarAvailable()){
+          return;
+      }
+      if(jQuery("#all-views").data("selectallMode")){
+        jQuery("#toggle_select_all").trigger("click");
+      }
+      var select_all_checkbox = jQuery("#helpdesk-select-all");
+      select_all_checkbox.prop("checked", false);
+      select_all_checkbox.removeAttr("disabled"); 
+      select_all_checkbox.trigger("change"); 
+  });
 
 	// Uncheck select all checkbox before navigate to next & prev page (in pagination)
 	jQuery('body').on('click.ticket_list', '.next_page, .prev_page', function () {
 		jQuery('#helpdesk-select-all').removeAttr('checked');
 	});
+
+  jQuery('body').on('click','a[data-target="#bulk"]', function () {
+    jQuery("#bulk").remove();
+  });
 
 	jQuery(window).on('resize.ticket_list', function(){
 		bulkActionButtonsDisabled();

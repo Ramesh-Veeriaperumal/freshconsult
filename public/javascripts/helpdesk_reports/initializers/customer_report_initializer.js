@@ -23,26 +23,39 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             HelpdeskReports.CoreUtil.flushCharts();
             jQuery('#customer_report_main').html('');            
 
-            for (i = 0; i < metrics.length; i++) {
-                var tmpl = JST["helpdesk_reports/templates/customer_report_chart"]({
-                    metric: metrics[i]
-                });
-                jQuery('#customer_report_main').append(tmpl);
-                if(!jQuery.isEmptyObject(hash[metrics[i]]['error'])){
-                    var msg = 'Something went wrong, please try again';
-                    var div = [metrics[i] + '_container'];
-                    jQuery("[data-chart='"+ metrics[i] +"']").hide();
-                    HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+            //Redundant Check Reason : Handling straight fwd & templates type queries
+            if(jQuery.isEmptyObject(hash)){  
+                var msg = 'No data to display';
+                var div = ["customer_report_main"];
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+            }else if(!jQuery.isEmptyObject(hash['error'])){
+                var msg = 'Something went wrong, please try again';
+                var div = ["customer_report_main"];
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+            }else  {
+                for (i = 0; i < metrics.length; i++) {
+                    var tmpl = JST["helpdesk_reports/templates/customer_report_chart"]({
+                        metric: metrics[i]
+                    });
+                    jQuery('#customer_report_main').append(tmpl);
+                    if(jQuery.isEmptyObject(hash[metrics[i]])){
+                        var msg = 'No data to display';
+                        var div = [metrics[i] + '_container'];
+                        jQuery("[data-chart='"+ metrics[i] +"']").hide();
+                        HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                    }else if(!jQuery.isEmptyObject(hash[metrics[i]]['error'])){
+                        var msg = 'Something went wrong, please try again';
+                        var div = [metrics[i] + '_container'];
+                        jQuery("[data-chart='"+ metrics[i] +"']").hide();
+                        HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+                    }
+                    else{
+                        _FD.constructChartSettings(hash, metrics[i]);
+                    }
                 }
-                else if (!jQuery.isEmptyObject(hash[metrics[i]]['company_id'])) {
-                    _FD.constructChartSettings(hash, metrics[i]);
-                } else {
-                    var msg = 'No data to display';
-                    var div = [metrics[i] + '_container'];
-                    jQuery("[data-chart='"+ metrics[i] +"']").hide();
-                    HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
-                }
-            }    
+            } 
+                    
+            
         },
         constructChartSettings: function (hash_active, metric) {
             var constants    = _FD.constants; 
@@ -54,6 +67,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     maxValue : (constants.percentage_metrics.indexOf(metric) > -1) ? 100 : _FD.calculateMaxValue(current_hash),
                     enableTooltip: false,
                     cursor: 'default',
+                    minPoint: true,
                     suffix: (constants.percentage_metrics.indexOf(metric) > -1) ? '{value}%' : null,
                 }   
             _FD.renderCommonChart(current_hash, options, metric);
@@ -117,6 +131,7 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
         clickEventForTicketList: function (el) {
                 var data = {};
                 data.label = el.category;
+                data.y = el.y;
                 var container = el.series.chart.container;
                 data.metric = jQuery(container).closest('[data-report="customer-report-container"]').data('metric');
                             

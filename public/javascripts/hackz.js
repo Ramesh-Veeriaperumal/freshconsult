@@ -98,4 +98,15 @@ var Browser = {
         });        
         return content;
     }
-}
+};
+
+// Get scroll bar heigth and width in IE
+var measureScrollbar = function(){
+    var $c = jQuery("<div style='position:absolute; top:-10000px; left:-10000px; width:100px; height:100px; overflow:scroll;'></div>").appendTo("body");
+    var dim = {
+        width: $c.width() - $c[0].clientWidth,
+        height: $c.height() - $c[0].clientHeight
+    };
+    $c.remove();
+    return dim;
+};

@@ -3,6 +3,9 @@ class EmailConfig < ActiveRecord::Base
 
   belongs_to_account
   include AccountConstants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
 
@@ -17,8 +20,11 @@ class EmailConfig < ActiveRecord::Base
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
-  validates_format_of :reply_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
-  validates_format_of :to_email, :with => AccountConstants::EMAIL_SCANNER, :message => I18n.t('activerecord.errors.messages.invalid')
+  validates_format_of :reply_email, :with => AccountConstants::AUTHLOGIC_EMAIL_REGEX, 
+                                    :message => I18n.t('activerecord.errors.messages.invalid')
+  validates_format_of :to_email, :with => AccountConstants::AUTHLOGIC_EMAIL_REGEX, 
+                                 :message => I18n.t('activerecord.errors.messages.invalid')
+  validate :blacklisted_domain?
   
   xss_sanitize  :only => [:to_email,:reply_email], :plain_sanitizer => [:to_email,:reply_email]
   
@@ -46,6 +52,13 @@ class EmailConfig < ActiveRecord::Base
     old_config = EmailConfig.find id
     set_activator_token unless old_config.reply_email == reply_email
   end
+
+  protected
+    def blacklisted_domain?
+      domain = self.reply_email.split("@").last.strip
+      self.errors.add(:base, I18n.t('email_configs.blacklisted_domain_message')) \
+        if ismember?(EMAIL_CONFIG_BLACKLISTED_DOMAINS, domain)
+    end
 
   private
     # Wrap name with double quotes if it has a special character and not already wrapped

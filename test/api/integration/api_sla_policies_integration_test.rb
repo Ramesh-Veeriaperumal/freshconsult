@@ -32,8 +32,8 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 8,
         api_index: 1,
 
-        update: 18,
-        index: 12
+        update: 17,
+        index: 11
       }
       agent = add_test_agent(@account)
       sp1 = create_sla_policy(agent)
@@ -55,6 +55,9 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         get('/helpdesk/sla_policies.json', nil, @headers)
         assert_response 200
       end
+
+      v1[:index] += 1 # account not suspended check is done only in version2.
+
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/sla_policies', nil, @headers)
         assert_response 200

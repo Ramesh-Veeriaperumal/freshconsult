@@ -59,7 +59,6 @@
 			return result.value;
 		}
 		$('.agents_id').select2({
-			placeholder: placeholder['agent'],
 			minimumInputLength: 1,
 			multiple: true,
 			ajax: {
@@ -160,7 +159,7 @@
 			$(current_ele).html("");
 			var max_value = $("#" + type + "_time :last-child").val();
 			$("#" + type + "_time").children().each(function(){
-				if(parseInt($(this).val()) > val || parseInt($(this).val()) == max_value )
+				if(parseInt(Math.abs($(this).val())) > val || parseInt(Math.abs($(this).val())) == max_value)
 					$(current_ele).append($(this).clone());
 			});
 

@@ -264,7 +264,8 @@ if Integrations::Application.count == 0
     s.description = "integrations.salesforce.desc" 
     s.account_id = 0
     s.listing_order = 9
-    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin=id%3D{{account_id}}"}
+    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin=id%3D{{account_id}}", 
+      :edit_url => "/integrations/salesforce/edit"}
     s.application_type = "salesforce"
   end
 

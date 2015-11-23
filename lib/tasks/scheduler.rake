@@ -20,20 +20,47 @@ namespace :scheduler do
     }
   }
 
-  SLA_TASKS = {
+  SLA_REMINDER_TASKS = {
     "trial" => {
       :account_method => "trial_accounts", 
-      :class_name => "Admin::TrialSlaWorker"
+      :class_name => "Admin::Sla::Reminder::Trial"
     },
 
     "paid" => {
       :account_method => "paid_accounts", 
-      :class_name => "Admin::SlaWorker"
+      :class_name => "Admin::Sla::Reminder::Base"
     },
 
     "free" => {
       :account_method => "free_accounts", 
-      :class_name => "Admin::FreeSlaWorker"
+      :class_name => "Admin::Sla::Reminder::Free"
+    },
+
+    "premium" => {
+      :account_method => "active_accounts",
+      :class_name => "Admin::Sla::Reminder::Premium"
+    }
+  }  
+
+  SLA_TASKS = {
+    "trial" => {
+      :account_method => "trial_accounts", 
+      :class_name => "Admin::Sla::Escalation::Trial"
+    },
+
+    "paid" => {
+      :account_method => "paid_accounts", 
+      :class_name => "Admin::Sla::Escalation::Base"
+    },
+
+    "free" => {
+      :account_method => "free_accounts", 
+      :class_name => "Admin::Sla::Escalation::Free"
+    },
+
+    "premium" => {
+      :account_method => "active_accounts",
+      :class_name => "Admin::Sla::Escalation::Premium"
     }
   }
 
@@ -84,22 +111,45 @@ namespace :scheduler do
   def empty_queue?(queue_name)
     queue_length = Sidekiq::Queue.new(queue_name).size
     puts "#{queue_name} queue length is #{queue_length}"
-    queue_length === 0 and !Rails.env.staging?
+    #queue_length === 0 and !Rails.env.staging?
+    if queue_length < 1 and !Rails.env.staging?
+      true
+    else
+      subject = "Scheduler skipped for #{queue_name} at #{Time.now.utc.to_s} in #{Rails.env}"
+      message = "Queue Name = #{queue_name}\nQueue Length = #{queue_length}"
+      DevNotification.publish(SNS["dev_ops_notification_topic"], subject, message)
+      false
+    end
   end
 
-  def enqueue_supevisor(task_name, premium_constant = "non_premium_accounts")
-    class_constant = SUPERVISOR_TASKS[task_name][:class_name].constantize
+  def enqueue_automation(name, task_name, premium_constant = "non_premium_accounts")
+    automation = case name
+      when "supervisor" 
+         SUPERVISOR_TASKS
+      when "sla_reminder"
+        SLA_REMINDER_TASKS
+      when "sla_escalation"
+        SLA_TASKS
+    end
+    return if automation.nil?
+
+    class_constant = automation[task_name][:class_name].constantize
     queue_name = class_constant.get_sidekiq_options["queue"]
     puts "::::queue_name:::#{queue_name}"
     premium_constant = "premium_accounts" if task_name.eql?("premium")
+    
     if empty_queue?(queue_name)
-      rake_logger.info "rake=#{task_name} Supervisor" unless rake_logger.nil?
+      rake_logger.info "rake=#{task_name} #{name}" unless rake_logger.nil?
       accounts_queued = 0
       Sharding.run_on_all_slaves do
-        Account.send(SUPERVISOR_TASKS[task_name][:account_method]).current_pod.send(premium_constant).each do |account|
+        Account.send(automation[task_name][:account_method]).current_pod.send(premium_constant).each do |account|
           begin
             account.make_current
-            class_constant.perform_async if account.supervisor_rules.count > 0
+            if name.eql?("Supervisor") 
+              class_constant.perform_async if account.supervisor_rules.count > 0
+            else
+              class_constant.perform_async 
+            end
             accounts_queued +=1
           rescue Exception => e
             NewRelic::Agent.notice_error(e)
@@ -110,7 +160,6 @@ namespace :scheduler do
       end
     end
   end
-  
   
   def enqueue_facebook(task_name)
     class_constant = FACEBOOK_TASKS[task_name][:class_name].constantize
@@ -161,10 +210,25 @@ namespace :scheduler do
   task :supervisor, [:type] => :environment do |t,args|
     account_type = args.type || "paid"
     puts "Running #{account_type} supervisor initiated at #{Time.zone.now}"
-    enqueue_supevisor(account_type)
+    enqueue_automation("supervisor", account_type)
     puts "Running #{account_type} supervisor completed at #{Time.zone.now}"
   end
+
+  task :sla, [:type] => :environment do |t,args|
+    account_type = args.type || "paid"
+    puts "SLA escalation initiated at #{Time.zone.now}"
+    enqueue_automation("sla_escalation", account_type)
+    puts "SLA rule check completed at #{Time.zone.now}."
+  end
   
+  task :sla_reminder, [:type] => :environment do |t,args|
+    account_type = args.type || "paid"
+    puts "SLA Reminder escalation initiated at #{Time.zone.now}"
+    enqueue_automation("sla_reminder", account_type)
+    puts "SLA Reminder rule check completed at #{Time.zone.now}."
+  end
+
+
   desc 'Fetch facebook feeds and direct messages'
   task :facebook, [:type] => :environment do |t,args|
     account_type = args.type || "paid"
@@ -180,32 +244,6 @@ namespace :scheduler do
     enqueue_twitter(account_type)
     puts "Running #{account_type} twitter worker completed at #{Time.zone.now}"
   end
-
-  
-  task :sla, [:type] => :environment do |t,args|
-    account_type = args.type || "paid"
-    class_constant = SLA_TASKS[account_type][:class_name].constantize
-    queue_name = class_constant.get_sidekiq_options["queue"]
-    puts "::::queue_name:::#{queue_name}"
-    puts "SLA escalation initiated at #{Time.zone.now}"
-    rake_logger.info "rake= #{account_type} SLA" unless rake_logger.nil?
-    current_time = Time.now.utc
-    if empty_queue?(queue_name)
-      accounts_queued = 0
-      Sharding.run_on_all_slaves do
-        Account.send(SLA_TASKS[account_type][:account_method]).each do |account| 
-          Account.reset_current_account
-          account.make_current       
-          class_constant.perform_async({ 
-            :account_id => account.id
-          })
-          accounts_queued += 1
-        end
-      end
-    end
-    puts "SLA rule check completed at #{Time.zone.now}."
-  end
-
   
   desc 'Fetch facebook feeds and direct messages for premium accounts'
   task :premium_facebook => :environment do
