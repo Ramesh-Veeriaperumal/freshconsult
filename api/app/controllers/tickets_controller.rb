@@ -180,7 +180,7 @@ class TicketsController < ApiApplicationController
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
         @item.inline_attachments = @item.inline_attachments
-        @item.product = current_portal.product unless @item.schema_less_ticket.try(:product_id)
+        @item.product ||= current_portal.product unless params[cname].key?(:product_id)
       end
     end
 
@@ -253,6 +253,11 @@ class TicketsController < ApiApplicationController
       return true if super
       allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    def append_account_id_for_ticket_fields
+      custom_fields_hash = params[cname][:custom_field]
+      custom_fields_hash.keys.each { | key | params[cname][:custom_field]["#{key}_#{Account.current.id}"] = params[cname][:custom_field].delete key } if custom_fields_hash.is_a? Hash
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
