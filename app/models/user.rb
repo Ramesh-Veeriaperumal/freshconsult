@@ -672,6 +672,7 @@ class User < ActiveRecord::Base
   
   def make_customer
     return true if customer?
+    set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
       agent.destroy
