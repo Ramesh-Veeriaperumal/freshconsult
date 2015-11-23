@@ -8,7 +8,7 @@ RSpec.describe Solution::Builder do
   describe "Solution::Builder" do
 
     before(:all) do
-      @lang_list = Language.all.map(&:to_key).sample(15) - [@account.language]
+      @lang_list = Language.all.map(&:to_key).sample(25) - [@account.language]
       @initial_lang_list = @account.account_additional_settings.supported_languages
       @account.account_additional_settings.supported_languages = @lang_list
       @account.save
@@ -72,6 +72,8 @@ RSpec.describe Solution::Builder do
         category_meta = Solution::Builder.category(params)
         solution_check_updates(update_lang_vers, category_meta, params)
 
+        old_ver_id = category_meta.send("#{update_lang_vers[1]}_category").id
+
         update_params = { :solution_category_meta => { :id => category_meta.id } }
         (update_lang_vers).each do |lang|
           update_params[:solution_category_meta].merge!({
@@ -82,6 +84,8 @@ RSpec.describe Solution::Builder do
         end
         category_meta = Solution::Builder.category(update_params)
         solution_check_updates((update_lang_vers - [:primary]), category_meta, update_params, :category)
+        new_ver_id = category_meta.send("#{update_lang_vers[1]}_category").id
+        expect(old_ver_id).to be_eql(new_ver_id)
         category_meta.destroy
       end
 
@@ -106,6 +110,7 @@ RSpec.describe Solution::Builder do
         p_ids.each do |p_id|
           expect(visible_portals).to include(p_id)
         end
+        category_meta.destroy
       end
 
       it "should be created which is associated to default portal if no portal ids given" do
@@ -114,12 +119,13 @@ RSpec.describe Solution::Builder do
         expect(category_meta.id).to be_present
         expect(category_meta.portal_ids.count).to be_eql(1)
         expect(category_meta.portal_ids).to include(@account.main_portal.id)
+        category_meta.destroy
       end
 
     end
 
     describe "folder" do
-      before(:all) do
+      before(:example) do
         @folder_lang_ver = @lang_list.sample(10)
         params = create_solution_category_alone(solution_default_params(:category).merge({
           :lang_codes => @folder_lang_ver + [:primary]
@@ -257,7 +263,7 @@ RSpec.describe Solution::Builder do
         folder_meta.solution_category_meta.destroy
       end
 
-      it "should change the visibility to company and make necc assoc" do\
+      it "should change the visibility to company and make necc assoc" do
         c_ids = []
         rand(2..7).times do 
           company = Company.new(:name => Faker::Name.name)
@@ -275,14 +281,15 @@ RSpec.describe Solution::Builder do
         expect(folder_meta.customer_ids).to include(*c_ids)
       end
 
-      after(:all) do
+      after(:example) do
         @category_meta.destroy
+        @category_meta2.destroy
       end
     end
 
     describe "article" do
 
-      before(:all) do       
+      before(:example) do       
         @article_lang_ver = @lang_list.sample(10)
         params = create_solution_category_alone(solution_default_params(:category).merge({
           :lang_codes => @article_lang_ver + [:primary]
@@ -319,7 +326,7 @@ RSpec.describe Solution::Builder do
         update_params = {
           :solution_article_meta => {
             :id => article_meta.id,
-            :folder_id => @folder_meta,
+            :folder_id => @folder_meta.id,
             :primary_article => {
               :title => "New Article #{Faker::Name.name}"
             } 
@@ -382,8 +389,7 @@ RSpec.describe Solution::Builder do
         article_meta = Solution::Builder.article(params)
         expect(article_meta.id).not_to be_present
         expect(article_meta.primary_article).not_to be_present
-
-        # Can we check for the error that we are expecting in all such cases
+        expect(article_meta.errors.full_messages.join('')).to include("Primary version attributes can\'t be blank")
       end
 
       it "should create normal attachments" do
@@ -418,6 +424,7 @@ RSpec.describe Solution::Builder do
           :lang_codes => new_ver_lang,
           :id => @folder_meta.id
           }))
+        folder_params[:solution_folder_meta].except!(:solution_category_meta_id)
         params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :lang_codes => new_ver_lang + [:primary],
           :folder_id => @folder_meta.id
@@ -443,7 +450,6 @@ RSpec.describe Solution::Builder do
         expect(article_meta.id).to be_present
         solution_check_updates(new_ver_lang, article_meta, params, :article)
         solution_check_updates(new_ver_lang, article_meta.solution_folder_meta, folder_params, :folder)
-        article_meta.solution_folder_meta.destroy
       end
 
       it "should be created with folder & category versions" do
@@ -458,6 +464,7 @@ RSpec.describe Solution::Builder do
           :category_id => @category_meta.id
           }))
         folder_params[:solution_folder_meta].merge!(category_params)
+        folder_params[:solution_folder_meta].except!(:solution_category_meta_id)
         params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :lang_codes => new_ver_lang + [:primary],
           :folder_id => @folder_meta.id
@@ -490,6 +497,11 @@ RSpec.describe Solution::Builder do
         solution_check_updates(new_ver_lang, article_meta.solution_folder_meta.solution_category_meta, category_params, :category)
         article_meta.solution_folder_meta.solution_category_meta.destroy
       end
+
+      after(:example) do
+        @category_meta.destroy
+      end
+
     end
 
   end
@@ -505,6 +517,7 @@ RSpec.describe Solution::Builder do
         expect(category_meta.primary_category).to be_present
         expect(category_meta.primary_category.name).to be_eql(c_params[:solution_category][:name])
         expect(category_meta.is_default).to be_eql(false)
+        category_meta.destroy
       end
 
       it "should be updated" do
@@ -515,13 +528,14 @@ RSpec.describe Solution::Builder do
         category_meta = Solution::Builder.category(params)
         expect(category_meta.primary_category.name).to be_eql(params[:solution_category][:name])
         expect(category_meta.portal_ids).to include(@account.main_portal.id)
+        category_meta.destroy
       end
 
     end
 
     describe "folder" do
       
-      before(:all) do
+      before(:example) do
         @category_meta = Solution::Builder.category(solution_api_category)
         @category_meta2 = Solution::Builder.category(solution_api_category)
       end
@@ -580,11 +594,16 @@ RSpec.describe Solution::Builder do
         expect(folder_meta.customer_ids).to include(*c_ids)
       end
 
+      after(:example) do
+        @category_meta.destroy
+        @category_meta2.destroy
+      end
+
     end
 
     describe "article" do
       
-      before(:all) do
+      before(:example) do
         @category_meta = Solution::Builder.category(solution_api_category)
         params = solution_api_folder
         params[:solution_folder].merge!(:category_id => @category_meta.id)
@@ -623,6 +642,15 @@ RSpec.describe Solution::Builder do
         expect(article_meta.primary_article.status).to be_eql(2)
       end
 
+      after(:example) do
+        @category_meta.destroy
+      end
+
+    end
+
+    after(:all) do
+      @account.account_additional_settings.supported_languages = @initial_lang_list
+      @account.save
     end
 
   end

@@ -10,7 +10,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   validates_inclusion_of :visibility, 
       :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
-  validate :name_uniqueness
+  validate :name_uniqueness, :if => "new_record? || changes[:solution_category_meta_id]" 
 
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
 
