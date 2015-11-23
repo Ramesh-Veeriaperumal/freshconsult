@@ -16,6 +16,7 @@ module Helpdesk::TagMethods
     remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) },item) unless !remove_tags
     #Choosing the ones that are in the old list and not in the new ones.
 
+    item.send(:update_searchv2) # To-do: Only if tag changes are there.
     update_ticket_in_es(item) if (tag_list.present? and Account.current.launched?(:es_count_writes))
   end
 

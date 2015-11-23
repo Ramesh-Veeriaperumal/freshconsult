@@ -17,6 +17,11 @@ class Helpdesk::Subscription < ActiveRecord::Base
 
   # Added to handle sending data to count cluster
   after_commit :es_update_parent, :if => :es_count_enabled?
+  
+  # For search v2
+  #
+  delegate :update_searchv2, to: :ticket, allow_nil: :true
+  after_commit :update_searchv2
 
   private
     def set_account_id
