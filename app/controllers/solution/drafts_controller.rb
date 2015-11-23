@@ -45,7 +45,7 @@ class Solution::DraftsController < ApplicationController
 
 	def autosave
 		@draft = current_account.solution_drafts.find_or_initialize_by_article_id(params[:id])
-		@draft.category_meta_id ||= @draft.article.solution_folder_meta.solution_category_meta_id
+		@draft.category_meta_id ||= (@draft.article && @draft.article.solution_folder_meta.solution_category_meta_id)
 		render :json => autosave_validate.to_json, :formats => [:js], :status => 200
 	end
 
@@ -87,6 +87,7 @@ class Solution::DraftsController < ApplicationController
 		end
 
 		def autosave_validate
+			return { :success => false, :deleted => true } if @draft.article.blank?
 			return autosave_content_validate if editable?
 			autosave_response(:somebody_editing, {:name => @draft.user.name})
 		end
