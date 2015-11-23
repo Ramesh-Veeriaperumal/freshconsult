@@ -4,6 +4,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
+  include Search::V2::EsCommitObserver
 
   after_commit :clear_cache
 
@@ -127,5 +128,13 @@ class Helpdesk::Tag < ActiveRecord::Base
             :tailored_json => true,
             :only => [ :name, :tag_uses_count, :account_id ]
             }).to_json
+  end
+  
+  def to_esv2_json
+    as_json({
+        root: false,
+        tailored_json: true,
+        only: [ :name, :tag_uses_count, :account_id ]
+      }).to_json
   end
 end
