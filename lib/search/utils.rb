@@ -15,8 +15,9 @@ class Search::Utils
     merge_requester:        'mergeRequester'
   }
   PARENT_BASED_ROUTING  = {
-    'Helpdesk::Note'  => :notable_id
-    # 'Post'            => :topic_id
+    'Helpdesk::Note'        => :notable_id,
+    'Helpdesk::ArchiveNote' => :notable_id
+    # 'Post'                  => :topic_id
   }
 
   # Load ActiveRecord objects

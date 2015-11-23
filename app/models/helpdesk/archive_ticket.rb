@@ -6,6 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
+  include Search::V2::EsCommitObserver
   
   self.primary_key = :id
   belongs_to_account
@@ -64,7 +65,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state
   accepts_nested_attributes_for :archive_ticket_association, allow_destroy: true
 
-  concerned_with :rabbitmq
+  concerned_with :rabbitmq, :esv2_methods
 
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
@@ -75,7 +76,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     :sla_policy_id => "long_tc01",
     :merge_ticket => "long_tc02",
     :reports_hash => "text_tc02",
-    :sender_email => "string_tc03"
+    :sender_email => "string_tc03",
+    :trashed      => 'boolean_tc02',
+    :product_id   => 'product_id'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
@@ -288,8 +291,17 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     return nil unless ff_entry
 
     field_name = ff_entry.flexifield_name
-    ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    ticket_association["flexifield"][field_name] if ticket_association
+    # ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
+    # ticket_association["flexifield"][field_name] if ticket_association
+    flexifield_data[field_name] if helpdesk_tickets_association
+  end
+  
+  def flexifield_data
+    helpdesk_tickets_association['flexifield']
+  end
+  
+  def subscription_data
+    helpdesk_tickets_association['subscriptions']
   end
 
   def ticket_states
@@ -353,7 +365,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     (account.features_included?(:contact_merge_ui) and self.sender_email.present?) ? self.sender_email : requester.email
   end
 
-  [:due_by, :frDueBy, :fr_escalated, :isescalated].each do |attribute|
+  [:due_by, :frDueBy, :fr_escalated, :isescalated, :spam].each do |attribute|
     define_method "#{attribute}" do
       archive_ticket_association.association_data["helpdesk_tickets"][attribute]
     end

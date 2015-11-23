@@ -3,6 +3,7 @@ require 'digest/md5'
 
 class Helpdesk::ArchiveNote < ActiveRecord::Base
   include ParserUtil
+  include Search::V2::EsCommitObserver
 
   self.primary_key = :id
   belongs_to_account
@@ -35,6 +36,8 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
  
   attr_protected :account_id
   accepts_nested_attributes_for :archive_note_association, :allow_destroy => true
+  
+  concerned_with :esv2_methods
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review}
 
