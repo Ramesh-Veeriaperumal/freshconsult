@@ -3932,6 +3932,7 @@ en:
         discard_confirm: Do you want to discard this draft?
         revert_msg: "The current session of auto-save has been discarded."
       tag_max_len: Maximum key length
+      article_deleted: "This article has been deleted."
       locked: Locked
       cant_publish: can't be changed to published of an article in default folder/category
       draft_published_label: There is also a published version.
