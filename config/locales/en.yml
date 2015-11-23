@@ -4267,6 +4267,12 @@ en:
       agent_template_21:
         topic: Note added to ticket
         info1: "This notification will be sent out to the agents mentioned in “notify agents” when a note is added to the ticket by an agent  This email could contain the ticket url {{ticket.url}} to make it easy for the agents to check the ticket."
+      agent_template_22:
+        topic: "First Response SLA Reminder"
+        info1: "This notification is sent out to an agent when the first response time of a ticket is nearing violation. This email could contain the ticket URL and the due by time of the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      agent_template_23:
+        topic: Resolution Time SLA Reminder
+        info1: "This notification is sent out to an agent when the resolution due by time of a ticket is nearing violation. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
       cc_notification_19:
         topic: New Ticket cc
         info1: "This notification will be sent out to the cc-ed persons if the Requester has included email addresses under cc while submitting a ticket to your helpdesk. This email should ideally contain the Requester’s name {{ticket.requester.name}} and ticket description {{ticket.description}}."

@@ -8,7 +8,7 @@ module Dashboard::ElasticSearchMethods
     es_res_hash = parse_es_response(es_response)
 
     #Logic for constructing missing fields starts here...
-    action_hash.push({"condition" => "responder_id","operator" => "is_in", "value" => "-1" })
+    action_hash.push({"condition" => @group_by,"operator" => "is_in", "value" => "-1" })
     missing_es_response = Search::Dashboard::Docs.new(action_hash,negation_conditions,["status"]).missing(Helpdesk::Ticket, @group_by)
     missing_es_res_hash = missing_es_response.inject({}) do |res_hash, response|
       res_hash.merge([nil,response["key"]] => response["doc_count"])

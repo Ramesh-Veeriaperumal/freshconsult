@@ -35,7 +35,6 @@ SalesforceWidget.prototype= {
 	get_contact_request: function() {
 		var requestUrls = [];
 		var custEmail = escape(this.salesforceBundle.reqEmail);
-		custEmail = custEmail.replace(/\-/g,'\\-')
 		requestUrls.push( { type:"contact", value:custEmail } )
 		requestUrls.push( { type:"lead", value:custEmail } )
 		var custCompany = this.salesforceBundle.reqCompany;
