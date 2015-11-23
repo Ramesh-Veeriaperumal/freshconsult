@@ -16,9 +16,8 @@ window.App = window.App || {};
 				UnresolvedTickets.init(defaultParam);
 			}
 		},
-
 		onLeave: function (data) {
-			
+			UnresolvedTickets.unbindEvents();
 		}
 	};
 }(window.jQuery));
