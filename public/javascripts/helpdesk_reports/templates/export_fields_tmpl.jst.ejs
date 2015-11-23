@@ -1,0 +1,17 @@
+<% if (data && data.length>0) { %>
+	<div>
+		<% for (i = 0; i < data.length; i++) { %>
+			<div class="item">
+				<label class="checkbox prime"> 
+				<input type="checkbox" value="<%=data[i]['value']%>" 
+					<% if (data[i].selected) { %>
+							checked = "checked"
+					<% } %>
+				/>
+				<%= data[i]['label'] %>
+			</div>
+		<% } %>
+	</div>
+<% } else { %>
+	<h4>Some Error.Try Again</h4>
+<% } %>

@@ -1,0 +1,30 @@
+<div class="placeholder hide">
+	<div class="export_title">
+		<a class="link" href="javascript:void(0);" ><%= t('export_data.view_all_tickets') %></a>
+		<span class="title hide"><%= t('export_data.view_all_tickets') %></span> 
+	</div>
+	<div class="fields">
+			<ul class="configure_export">
+					<li class="control-group">
+						<label class="control-label select_all">
+							<%= check_box_tag :toggle_checks, '', false, :class => 'tooltip', :"data-placement" => 'below',
+											  :title => t('export_data.check_uncheck_title') %>
+							<strong><%= t('export_data.select_header') %></strong>
+						</label>
+							<div class="info-highlight error hide" id="err_no_fields_selected"><%= t('export_data.no_fields_selected') %> </div>
+
+							<div class="twocol-form" id="ticket_fields">
+					 			
+							</div>
+					</li>
+					<li class="control-group">
+						<a href="javascript:void(0)" class="btn btn-primary" id="export_submit"><%= t('export_data.export') %></a>
+						<a href="javascript:void(0)" class="btn" id="export_cancel">Cancel</a>
+					</li>
+			</ul>
+	</div>
+</div>
+<div class="success_message hide">
+	<strong><%= t('export_data.ticket_export.info') %></strong>
+</div>
+

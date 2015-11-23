@@ -94,7 +94,7 @@ class Support::TicketsController < SupportController
   end
 
   def add_people
-    cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
+    cc_params = fetch_valid_emails(params[:helpdesk_ticket][:cc_email][:cc_emails])
     if cc_params.length <= TicketConstants::MAX_EMAIL_COUNT
       @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
       update_reply_cc @ticket.cc_email, @old_cc_hash
@@ -115,7 +115,7 @@ class Support::TicketsController < SupportController
     def load_item
       @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       # Using .dup as otherwise it references the same address quoting same values.
-      @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : { :cc_emails => [], :fwd_emails => [], :reply_cc => [] }
+      @old_cc_hash = (@ticket and @ticket.cc_email_hash) ? @ticket.cc_email_hash.dup : Helpdesk::Ticket.default_cc_hash
       
       load_archive_ticket unless @ticket 
     end

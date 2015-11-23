@@ -14,10 +14,21 @@ module Va::Observer::Util
 			return observer_condition
 		end
 
-		def filter_observer_events
+		def filter_observer_events(queue_events=true)
 			observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 																						filter_event filtered, change_key, change_value  end
-			send_events(observer_changes) unless observer_changes.blank? 
+			return observer_changes unless queue_events
+			send_events(observer_changes) if !observer_changes.blank?
+		end
+
+		def merge_to_observer_changes(prev_changes,current_changes)
+			changelist = current_changes.symbolize_keys
+
+			#if observer rules changed the ticket group, Round Robin should be based on those changes
+			prev_changes.delete(:responder_id) if changelist.has_key?(:group_id)
+			changelist.merge!(prev_changes) { |key, v1, v2| v1 }
+
+			changelist.symbolize_keys
 		end
 
 		def filter_event filtered, change_key, change_value
@@ -31,18 +42,10 @@ module Va::Observer::Util
 			observer_changes.merge! ticket_event observer_changes
 			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
 			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-			if redis_key_exists?(SIDEKIQ_OBSERVER)
-				Tickets::ObserverWorker.perform_async({ 	
-					:doer_id => doer_id, 
-					:ticket_id => evaluate_on_id, 
-					:current_events => observer_changes })
-			else
-				Resque.enqueue(Workers::Observer,{ 	
-					:doer_id => doer_id, 
-					:ticket_id => evaluate_on_id, 
-					:current_events => observer_changes })
-
-			end
+			Tickets::ObserverWorker.perform_async({
+				:doer_id => doer_id,
+				:ticket_id => evaluate_on_id,
+				:current_events => observer_changes })
 		end
 
 		def ticket_event current_events

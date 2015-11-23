@@ -6,6 +6,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::Ticketfields::TicketStatus
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::OthersRedis
   include Helpdesk::NoteActions
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
@@ -563,7 +564,7 @@ module Helpdesk::TicketsHelper
   def default_hidden_fields
     ["default_source"]
   end
-
+  
   # ITIL Related Methods ends here
 
   def is_invoice_disabled?(installed_app)

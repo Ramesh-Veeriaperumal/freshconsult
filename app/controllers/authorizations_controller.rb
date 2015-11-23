@@ -111,8 +111,6 @@ class AuthorizationsController < ApplicationController
     }
 
     case provider
-      when "salesforce"
-        config_params['instance_url'] = "#{access_token.params['instance_url']}"
       when "shopify"
         config_params['shop_name'] = params[:shop]
       when "box"
@@ -134,7 +132,7 @@ class AuthorizationsController < ApplicationController
     config_params = config_params[provider].gsub("'","\"")
 
     
-    #Redis::KeyValueStore is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the 
+    #Redis::KeyValueStore is used to store nimble configurations since we redirect from login.freshdesk.com to the 
     #user's account and install the application from inside the user's account.
     key_options = { :account_id => @account_id, :provider => provider}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
@@ -298,7 +296,7 @@ class AuthorizationsController < ApplicationController
     end
 
   OAUTH1_PROVIDERS = ["quickbooks"]
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
+  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
   OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]
 end

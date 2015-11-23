@@ -1,3 +1,7 @@
+<% 
+  date_by_plan = default_date_range(@date_lag_by_plan)
+  date_range = date_range_val(date_by_plan[0], date_by_plan[1])
+%>
 <div class="reports-title span12">
 	<span class="report-icon">
 		<%= graph_icon(@report_type) %>
@@ -8,15 +12,33 @@
 		</span>
 		<span class="grey-arrow-down title-dropdown"></span>
 	</span>
-<!-- 	<span class="pull-right data-refresh">
+
+	<!-- <span class="pull-right data-refresh">
 		<%= fetch_dump_time %>
 	</span> -->
+
 </div>
 <div class="reports-filter span12">
-	<div class="edit-filter span1">
-		<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter') %></button>
-	</div>
-	<div class="filter-type span11">
+		<% if current_account.subscription.non_sprout_plan? %>
+			<div class="edit-filter span1">
+				<button class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter') %></button> 
+			</div>
+		<% else %>
+			<div class="edit-filter span5 inline-filter">
+				<div id="FilterOptions" method="post" action='#' target="_blank" class="filter-form">
+		     	   <div class="row-fluid">
+			     	   <div class="report-fields-widget">
+							<div id="time-duration">
+								<span class="date-label"><%= t('helpdesk_reports.time_period') %> : </span>
+								<span class="date-value"></span>
+								<a id="sprout-datepicker">Change</a>
+							</div>
+						</div>
+		        	</div>
+				</div>
+			</div>
+		<% end %>
+	<div class="filter-type <%= current_account.subscription.non_sprout_plan? ? 'span11' : 'span7' %>">
 		<ul id="filter_text"></ul>
 	</div>
 	<div class="reports-menu hide" id="reports_type_menu">

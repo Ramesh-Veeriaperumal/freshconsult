@@ -1,6 +1,6 @@
 module HelpdeskReports::Constants::Ticket
   
-  TICEKT_FIELD_NAMES       = [:source, :priority, :status, :ticket_type, :group_id, :agent_id, :product_id, :company_id]
+  TICKET_FIELD_NAMES       = [:source, :priority, :status, :ticket_type, :group_id, :agent_id, :product_id, :company_id]
   
   METRIC_AND_QUERY = [
     [:RECEIVED_TICKETS,            "Count"],
@@ -23,11 +23,19 @@ module HelpdeskReports::Constants::Ticket
     [:RESPONSE_SLA,                "Percentage"],
     [:RESOLUTION_SLA,              "Percentage"],
     [:FCR_TICKETS,                 "Percentage"],
-    [:RECEIVED_RESOLVED_TICKETS,   "TicketVolume"]
   ]
   
-  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s }
-  METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten]
+  TEMPLATE_METRICS_AND_QUERY = [
+    [:RECEIVED_RESOLVED_TICKETS,   "TicketVolume"],
+    [:AGENT_SUMMARY_HISTORIC,      "Base"], #Already preprocessed in reports service
+    [:AGENT_SUMMARY_CURRENT,       "Base"],
+    [:GROUP_SUMMARY_HISTORIC,      "Base"],
+    [:GROUP_SUMMARY_CURRENT,       "Base"],
+    [:CUSTOMER_CURRENT_HISTORIC,   "Base"]
+  ]
+
+  METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map { |i| i[0].to_s }
+  METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten].merge!(Hash[*TEMPLATE_METRICS_AND_QUERY.map { |i| [i[0], i[1]] }.flatten])
   METRIC_TO_QUERY_TYPE.merge!({:list => "TicketList", :bucket => "Bucket" })
 
   #Mappings between redshift columns and what we use in parsing
@@ -80,15 +88,6 @@ module HelpdeskReports::Constants::Ticket
   DEFAULT_REPORTS     = ["agent_summary", "group_summary"]
   ADVANCED_REPORTS    = DEFAULT_REPORTS + ["glance"]
   ENTERPRISE_REPORTS  = ADVANCED_REPORTS + ["ticket_volume", "performance_distribution","customer_report"] 
-
-  REPORT_ARTICAL_LINKS = {
-    :HELPDESK_GLANCE           => '',
-    :TICKET_VOLUME             => '',
-    :PERFORMANCE               => '',
-    :PERFORMANCE_DISTRIBUTION  => '',
-    :AGENT_SUMMARY             => '',
-    :GROUP_SUMMARY             => '',
-  }
 
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
@@ -149,14 +148,30 @@ module HelpdeskReports::Constants::Ticket
     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate] => 0,
     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest] => 0
   }
+  
+  TICKET_EXPORT_FIELDS = [
+    "display_id",
+    "subject",
+    "description",
+    "status_name",
+    "priority_name",
+    "source_name",
+    "ticket_type",
+    "company_name",
+    "requester_name",
+    "requester_info",
+    "requester_phone",
+    "ticket_tags",
+    "ticket_survey_results"
+  ]
 
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
 
-  NOT_APPICABLE = "NA"
+  NOT_APPICABLE = "None"
   
   NA_PLACEHOLDER_SUMMARY = "-"
   
-  NA_PLACEHOLDER_GLANCE = 0
+  NA_PLACEHOLDER_GLANCE = "NA"
   
   TICKET_FILTER_LIMIT = 5
   

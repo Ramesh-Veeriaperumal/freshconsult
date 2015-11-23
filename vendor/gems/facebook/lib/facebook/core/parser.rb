@@ -1,9 +1,9 @@
 class Facebook::Core::Parser
 
-  include Facebook::KoalaWrapper::ExceptionHandler
   include Social::Constants
   include Facebook::Core::Util
   include Facebook::Constants
+  include Facebook::KoalaWrapper::ExceptionHandler
   
   
   attr_accessor :fan_page, :feed, :intial_feed
@@ -32,9 +32,10 @@ class Facebook::Core::Parser
               @fan_page = Social::FacebookPage.find_by_page_id(@feed.page_id)
               if @fan_page && @fan_page.account.features?(:facebook_realtime)
                 if @fan_page.reauth_required?
-              #find the page using the global facebookmapping table check this code
+                  #find the page using the global facebookmapping table check this code
                   range_key = (Time.now.to_f*1000).to_i
-                  return Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, range_key, @intial_feed)
+                  Facebook::Core::Util.add_to_dynamo_db(@fan_page.page_id, range_key, @intial_feed) if @fan_page.company_or_visitor?
+                  return true
                 end
                 
                 unless feed_converted?(@feed.feed_id)
@@ -54,5 +55,5 @@ class Facebook::Core::Parser
       end if account_id
     end
   end
-
+  
 end

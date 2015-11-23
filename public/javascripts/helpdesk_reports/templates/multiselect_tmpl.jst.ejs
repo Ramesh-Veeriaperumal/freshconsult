@@ -5,5 +5,7 @@
 	    	<option value="<%=options[i][0]%>"><%=options[i][1]%></option>
 	 	<% } %>
 	</select>
-	<i class="ficon-cross fsize-14 " size="14" data-action="remove-field"></i>
+	<% if(HelpdeskReports.CoreUtil.default_available_filter.indexOf(condition) < 0){ %>
+		<i class="ficon-cross fsize-14 " size="14" data-action="remove-field"></i>
+	<% } %>
 </div>

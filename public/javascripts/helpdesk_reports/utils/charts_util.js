@@ -71,9 +71,9 @@ helpdeskReports.prototype = {
     },
     columnChartTooltip: function () {
         if (this.point.series.index == 0) {
-            return '<div class="tooltip"> <p style="margin:0;color:#63b3f5;font-size: 13px;font-weight: 500">' + 'Total Tickets ' + this.series.name + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
+            return '<div class="tooltip"> <p style="margin:0;color:#63b3f5;font-size: 13px;font-weight: 500">' + 'Total tickets ' + this.series.name.toLowerCase() + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
         } else {
-            return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + 'Total Tickets ' + this.series.name + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
+            return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + 'Total tickets ' + this.series.name.toLowerCase() + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
         }
     },
     perfXAxisTrendLabel: function(timestamp){
@@ -150,10 +150,10 @@ helpdeskReports.prototype = {
         var x = "<div class='tooltip'>";
         jQuery.each(this.points, function (i, point) {
             var y = (point.y) % 1 === 0 ? (this.y) : (this.point.y).toFixed(2);
-            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">Average Tickets ' + point.series.name + ' : ' + y + '</p><br/>';
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">Average tickets ' + point.series.name.toLowerCase() + ' : ' + y + '</p><br/>';
         });
         if(active_day){
-            x += "(Avg of all " + active_day + ")"; 
+            x += "<p>(Avg of all " + active_day.toLowerCase() + ")</p>"; 
         }
         x += "</div>";
         return x;
@@ -189,6 +189,15 @@ helpdeskReports.prototype = {
             return '<div class="tooltip"><p style="margin:0;color:#f48f6c;"> Violated: ' + point + '%</p></div>';
         }
     },
+    performanceDistributionBarChartTooltip : function(){
+        var value = this.points[1].y;
+        if (value == 0 ) return false;
+        var dataSum = this.points[1].series.options.total;
+        var pcnt = (value / dataSum) * 100;
+        var color = this.points[1].series.color;
+        var tooltip_name = this.points[1].series.options.tooltip_name;
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '% tickets</p></div>';
+    },
     barChartTooltip: function(){
         var value = this.points[1].y;
         if (value == 0 ) return false;
@@ -199,9 +208,9 @@ helpdeskReports.prototype = {
     },
     barChartSeriesTooltip: function () {
         if (this.point.series.index == 0) {
-            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
+            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y  + ' tickets with ' + this.x + ' ' + this.series.name.toLowerCase() + '<br/></p></div>';
         } else {
-            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ this.y  + ' Tickets with ' + this.x + ' ' + this.series.name + '<br/></p></div>';
+            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ this.y  + ' tickets with ' + this.x + ' ' + this.series.name.toLowerCase() + '<br/></p></div>';
         }
     },
     numberLabelFormatter: function(number){
@@ -276,7 +285,7 @@ function columnChart(opts) {
             min: 0,
             allowDecimals: false,
             title: {
-                text: (typeof opts['yAxis_label'] === 'undefined') ? 'No. of Tickets' : opts['yAxis_label'],
+                text: (typeof opts['yAxis_label'] === 'undefined') ? 'No. of tickets' : opts['yAxis_label'],
                 align: 'middle',
                 style: {
                     fontSize: '12px',
@@ -313,7 +322,8 @@ function columnChart(opts) {
                         click: function () {
                             trigger_event("timetrend_point_click.helpdesk_reports", {
                                 sub_metric: COLUMN_SERIES[this.series.name],
-                                date: this.category
+                                date: this.category,
+                                value : (this.y).toFixed(0)
                             });
                         }
                     }
@@ -413,7 +423,7 @@ function lineChart(opts) {
             allowDecimals: false,
             max: (typeof opts['yMax'] !== 'undefined') ? opts['yMax'] : null,
             title: {
-                text: (typeof opts['yAxis_label'] === 'undefined') ? 'Avg no. of Tickets' : opts['yAxis_label'],
+                text: (typeof opts['yAxis_label'] === 'undefined') ? 'Avg no. of tickets' : opts['yAxis_label'],
                 align: 'middle',
                 style: {
                     fontSize: '13px',
@@ -668,7 +678,7 @@ function barChart(opts) {
         tooltip: {
             useHTML: true,
             shared: opts['sharedTooltip'],
-            formatter: opts['sharedTooltip'] == true ? this.barChartTooltip : this.barChartSLATooltip,
+            formatter: opts['sharedTooltip'] == true ? ( opts['performanceDistTooltip'] ? this.performanceDistributionBarChartTooltip : this.barChartTooltip) : this.barChartSLATooltip,
             followPointer: true,
             enabled: opts['enableTooltip'] == true ? true : false,
             backgroundColor: REPORT_COLORS['tooltip_bg'],

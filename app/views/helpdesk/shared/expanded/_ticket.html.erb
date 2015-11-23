@@ -74,20 +74,20 @@
 
 	  			<label><%=t('ticket.assigned_agent')%>: </label>
 				<% if ticket.freshness == :new %>
-					<span class="result"><%=t('ticket.assigned_none')%></span>
+					<a href="javascript:void(0)" class="result"><%=t('ticket.assigned_none')%></a>
 				<% else %>
-					<span class="result"><%=h(ticket.responder.display_name)%></span>
+					<a href="javascript:void(0)" class="result"><%=h(ticket.responder.display_name)%></a>
 				<% end %>
 			</li>
 	  		<li class="<%= quick_action unless modal %>" title="<%= 'Change Status' unless modal %>"  
 	  			data-object='ticket' data-object-id="<%= ticket.display_id %>"  data-type="status" data-options="#ticket_statuses">
 				<label><%=t('ticket.status')%>: </label>
-				<span class="result"><%= h(ticket.status_name.html_safe) %></span>
+				<a href="javascript:void(0)" class="result"><%= h(ticket.status_name.html_safe) %></a>
 			</li>
 			<li class="<%= quick_action unless modal %>" title="<%= 'Change Priority' unless modal %>"  
 				data-object='ticket' data-object-id="<%= ticket.display_id %>" data-type="priority" data-options="#ticket_priorities">
 				<label><%=t('ticket.priority')%>: </label>
-				<span class="result"><%= h(ticket.priority_name) %></span>
+				<a href="javascript:void(0)" class="result"><%= h(ticket.priority_name) %></a>
 			</li>
 		</ul>
   </td>

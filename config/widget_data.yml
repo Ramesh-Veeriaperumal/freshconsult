@@ -99,8 +99,10 @@
 
   script: |-
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | escape_html}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name}}" } ;
-            CustomWidget.include_js("/javascripts/integrations/salesforce.js");
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | escape_html}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name}}" } ;
+            Fjax.Assets.integration('salesforce', function () {
+              new SalesforceWidget(salesforceBundle);
+            });
           </script>
   name: salesforce_widget
   id: 7

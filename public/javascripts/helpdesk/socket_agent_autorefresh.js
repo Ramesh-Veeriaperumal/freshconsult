@@ -26,14 +26,37 @@ var ignoreTicketChange = function(ticket_id){
   return false
 }
 
+var disableAutoRefresh = function(){
+  jQuery("#all-views").attr("data-disable-autorefresh", true);
+  hideAutoRefreshBar();
+}
+
+var hideAutoRefreshBar = function(){
+  jQuery("#index_refresh_alert").hide();
+}
+
+var showAutoRefreshBar = function(){
+  if(jQuery("#update_message").data("count") || jQuery("#new_ticket_message").data("count")){
+    jQuery("#index_refresh_alert").show();
+  }
+}
+
+var enableAutoRefresh = function(){
+  jQuery("#all-views").data("disableAutorefresh", false);
+  showAutoRefreshBar();
+}
+
 var show_refresh_alert = function (message, div_to_refresh, updated_tickets) {
+    var disable_autorefresh = jQuery("#all-views").data("disableAutorefresh")
     if(ignoreTicketChange(message.display_id)){
       return false
     }
     addToSet(updated_tickets, message.id);
     update_counter(div_to_refresh, Object.keys(updated_tickets).length);
-    jQuery("#index_refresh_alert").slideDown(100);
-    flash_ticket(message.display_id);
+    if(!disable_autorefresh) {
+      jQuery("#index_refresh_alert").slideDown(100);
+      flash_ticket(message.display_id);
+    }
 };
 
 var update_counter = function (id, count) {

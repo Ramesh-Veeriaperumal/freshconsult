@@ -5,8 +5,8 @@
 <%- end %>
 
 	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-
-  <%= form_tag("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
+  <% method_type = (@action == "install") ? "post" : "put" %>
+  <%= form_tag("/integrations/salesforce/#{@action}", :method => method_type)  do %>
 
    <% default_fields = ["Name"]%>
     <ul class="ui-form">
@@ -109,6 +109,17 @@
           	</span>
       		</div>
         </div>
+        <% if current_account.features?(:salesforce_sync) %>
+        <div>
+          <% sync_checked = true%>
+          <%unless @installed_app.blank? %>
+            <% installed_sync_checked = @installed_app.configs_salesforce_sync_option %>
+            <% sync_checked = installed_sync_checked.to_bool if installed_sync_checked.present? %>
+          <%end%>
+          <%= check_box(:salesforce_sync_option, "value", :checked => sync_checked) %>
+          <%= content_tag(:span, "Sync tickets to salesforce", :class => 'checkbox_label') %>
+        </div>  
+        <% end%>
       </div>
     </li>
     </ul>
@@ -118,7 +129,6 @@
     </div>
 
   <%end%>
-
 
 
 <script type="text/javascript">

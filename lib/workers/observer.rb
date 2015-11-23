@@ -14,6 +14,7 @@ class Workers::Observer
         account.observer_rules_from_cache.each do |vr|
           vr.check_events doer, evaluate_on, current_events
         end
+        evaluate_on.round_robin_on_ticket_update(current_events)
         evaluate_on.save!
       else
         Rails.logger.debug "Observer Rules are not executed for account id :: #{Account.current.id}, Ticket id :: #{args[:ticket_id]}, Doer id :: #{args[:doer_id]}"

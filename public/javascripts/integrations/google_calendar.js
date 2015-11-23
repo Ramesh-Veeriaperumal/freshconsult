@@ -814,6 +814,12 @@ function confirmDelete(dTitle, dContent, y, n, callback, args){
 	    }
 
     jQuery.freshdialog(data);
+
+    jQuery(document).off('click.delete_event');
+    jQuery(document).on('click.delete_event', "#gcal-confirm-modal-submit", function() {
+    	jQuery('.modal').modal('hide');
+		  callback.apply(args[0], args[1]);
+	  });
 }
 
 

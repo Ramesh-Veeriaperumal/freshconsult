@@ -54,7 +54,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/rate-limiting.git
-  revision: d5c5c60d09e3ff1d9881dbea5dc737dbebbd2a6c
+  revision: b09a31a31cbfb74190799bc143d4e6445ac5bf98
   specs:
     rate-limiting (1.0.4)
       json
@@ -524,8 +524,6 @@ GEM
     encryptor (1.1.3)
     equalizer (0.0.9)
     erubis (2.7.0)
-    ethon (0.7.4)
-      ffi (>= 1.3.0)
     excon (0.31.0)
     execjs (2.0.2)
     extlib (0.9.16)
@@ -538,8 +536,6 @@ GEM
       i18n (~> 0.5)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.10.0)
-      faraday (>= 0.7.4, < 0.10)
     ffi (1.9.0)
     fog (1.19.0)
       builder
@@ -959,8 +955,6 @@ GEM
       json (~> 1.8)
       memoizable (~> 0.4.0)
       simple_oauth (~> 0.2.0)
-    typhoeus (0.7.3)
-      ethon (>= 0.7.4)
     tzinfo (0.3.41)
     uglifier (2.1.2)
       execjs (>= 0.3.0)
@@ -1034,7 +1028,6 @@ DEPENDENCIES
   factory_girl_rails (= 4.4.0)
   faker (~> 1.4.3)
   faraday (= 0.9)
-  faraday_middleware (~> 0.10.0)
   fd_rate_limiter!
   features!
   fontcustom (= 1.3.3)
@@ -1168,7 +1161,6 @@ DEPENDENCIES
   turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
   twitter (~> 5.5.1)
-  typhoeus (= 0.7.3)
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)
   useragent (~> 0.4.16)
@@ -1183,3 +1175,4 @@ DEPENDENCIES
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!
+  

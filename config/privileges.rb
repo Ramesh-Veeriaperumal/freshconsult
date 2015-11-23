@@ -42,7 +42,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
     resource :"integrations/oauth_util"
-    resource :"integrations/salesforce"
     resource :"integrations/user_credential"
     resource :"integrations/pivotal_tracker"
     resource :"integrations/cti/customer_detail"
@@ -348,6 +347,7 @@ Authority::Authorization::PrivilegeList.build do
    	  resource :"reports/timesheet_report"
       resource :"reports/report_filter"
       resource :"reports/v2/tickets/report"
+      resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
   end
 
   # ************** ADMIN **************************
@@ -439,9 +439,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"admin/mobihelp/app"
     resource :"solution/article", :only => [:change_author]
+    resource :"helpdesk/ticket", :only => [:update_all_tickets]
+    resource :"helpdesk/select_all_ticket_action"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update ]
+    resource :"integrations/salesforce"
     resource :"admin/integrations/freshplug"
     resource :"admin/extension"
     resource :"admin/installed_extension"

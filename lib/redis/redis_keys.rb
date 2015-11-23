@@ -58,6 +58,7 @@ module Redis::RedisKeys
 	ADMIN_FRESHFONE_FILTER = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}"
 	FRESHFONE_PINGED_AGENTS = "FRESHFONE:PINGED_AGENTS:%{account_id}:%{call_id}"
 	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
+	FACEBOOK_APP_RATE_LIMIT = "FACEBOOK_APP_RATE_LIMIT"
 
 	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
@@ -92,6 +93,8 @@ module Redis::RedisKeys
 	SOLUTION_META_HIT_TRACKER = "SOLUTION_META:HITS:%{account_id}:%{article_meta_id}"
 	TOPIC_HIT_TRACKER = "TOPIC:HITS:%{account_id}:%{topic_id}"
 	PROCESS_EMAIL_PROGRESS = "PROCESS_EMAIL:%{account_id}:%{unique_key}"
+	
+	SELECT_ALL = "SELECT_ALL:%{account_id}"
 
 	SOLUTION_DRAFTS_SCOPE = "SOLUTION:DRAFTS:%{account_id}:%{user_id}"
 	ARTICLE_FEEDBACK_FILTER = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}"
@@ -105,15 +108,16 @@ module Redis::RedisKeys
 	SLAVE_QUERIES = "SLAVE_QUERIES"
 	VALIDATE_REQUIRED_TICKET_FIELDS = "VALIDATE_REQUIRED_TICKET_FIELDS"
 
-	# run observer queue using sidekiq instead of resque
-	SIDEKIQ_OBSERVER = "SIDEKIQ_OBSERVER"
-
 	UPDATE_PASSWORD_EXPIRY = "UPDATE_PASSWORD_EXPIRY:%{account_id}:%{user_type}"
 
 	EBAY_APP_THRESHOLD_COUNT = "EBAY:APP:THRESHOLD:%{date}:%{app_id}"
 	EBAY_ACCOUNT_THRESHOLD_COUNT = "EBAY:ACCOUNT:THRESHOLD:%{date}:%{account_id}:%{ebay_account_id}"
 
 	CARD_FAILURE_COUNT = "CREDIT_CARD_FAILURE_COUNT:%{account_id}"
+	
+	EMAIL_CONFIG_BLACKLISTED_DOMAINS = "email_config_blacklisted_domains"
+
+	DASHBOARD_TABLE_FILTER_KEY = "DASHBOARD_TABLE_FILTER_KEY:%{account_id}:%{user_id}"
 
 	def newrelic_begin_rescue
 	    begin
