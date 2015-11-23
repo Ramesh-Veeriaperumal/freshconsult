@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github"].each do |provider|
+  ["github","salesforce"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -651,6 +651,13 @@ Helpkit::Application.routes.draw do
         put :install
         get :uninstall
       end
+    end
+
+    namespace :salesforce do
+        put :update
+        get :edit
+        get :new
+        post :install
     end
 
     resources :remote_configurations
@@ -1276,6 +1283,8 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/fetch_active_metric", :controller => 'reports/v2/tickets/reports', :action => 'fetch_active_metric', :method => :post
   match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
   match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
+  match "/reports/v2/:report_type/configure_export",  :controller => 'reports/v2/tickets/reports', :action => 'configure_export', :method => :get 
+  match "/reports/v2/:report_type/export_csv",        :controller => 'reports/v2/tickets/reports', :action => 'export_csv', :method => :post
   # END
   
   
@@ -1409,7 +1418,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :reports
+  resources :reports do
+    collection do
+      get :old
+    end
+  end
+  
   match 'reports/report_filters/destroy/:id(.:format)' => "reports/report_filters#destroy", :method => :post
 
 
@@ -1624,6 +1638,7 @@ Helpkit::Application.routes.draw do
         get :summary
         get :compose_email
         get :update_multiple_tickets
+        get :update_all_tickets
         get :configure_export
         get :custom_view_save
         match :assign_to_agent#TODO-RAILS3 new route
@@ -1748,6 +1763,16 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :select_all_ticket_actions do
+      collection do
+        get :select_all_message_content
+        put :close_multiple
+        put :spam
+        put :delete
+        put :update_multiple
+      end
+    end
+
     resources :merge_tickets do
       collection do
         post :complete_merge
@@ -1811,6 +1836,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
     match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
     match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
+    match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter
     
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
     match '/dashboard/activity_list' => 'dashboard#activity_list'
@@ -1818,6 +1844,8 @@ Helpkit::Application.routes.draw do
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
     match '' => 'dashboard#index', :as => :dashboard
     match '/sales_manager' => 'dashboard#sales_manager'
+    match '/unresolved_tickets' => 'dashboard#unresolved_tickets'
+    match '/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
     match '/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.
@@ -2437,7 +2465,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :delayed_jobs, only: [:index,:show] do
+      resources :jobs, only: [:index,:show] do
         collection do
           put 'requeue'
           put 'requeue_selected'

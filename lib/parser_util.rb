@@ -199,13 +199,24 @@ include AccountConstants
     parsed_email.value = email
     name_prefix = ""
     parsed_email.addrs.each_with_index do |email,index|
-      if email.address =~ EMAIL_REGEX
-        parsed_hash[:email] = email.address
-        parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
-        parsed_hash[:domain] = email.domain
+      address = email.address
+      address = Mail::Encodings.unquote_and_convert_to(address, "UTF-8") if address.include?("=?")
+      position = address =~ EMAIL_REGEX
+      if position
+        parsed_hash[:email] = $1
+        if email.domain.present?
+          parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
+          parsed_hash[:domain] = email.domain
+        else
+          name = name_prefix << address[0..position-1]
+          name.gsub!("<", "")
+          name.gsub!(">", "")
+          parsed_hash[:name] = format(name)
+          parsed_hash[:domain] = parsed_hash[:email].split("@")[1]
+        end
         break
       else
-        name_prefix << email.address.to_s << ','
+        name_prefix << address.to_s << ','
       end
     end
     parsed_hash

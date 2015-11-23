@@ -10,6 +10,12 @@ $pie_chart_size: 400px;
 $gauge_chart_size: 120px;
 $timeline_chart_height: 250px;
 $single_stackbar_chart_height: 120px;
+
+$helpdesk_color:#8399b2;
+$helpdesk_hover_color:#5279a6;
+$HelpdeskProductivity_color:#82A3A9;
+$HelpdeskProductivity_hover_color:#4e8683;
+
 [class^="reports-icon-"], [class*="reports-icon-"] {
 	display: inline-block;
 	vertical-align: text-top;
@@ -994,3 +1000,162 @@ $animation_timing: .1s;
 		margin-bottom : 0px;
 	}
 }
+
+
+/* New Landing Page Styles */
+
+.report-head{
+	.report-link-block{
+		margin-bottom: 15px;
+		.report-link{
+			font-size: 15px;
+			color : #0B56A7;
+			.view-all-arrow{
+				border-top: 4px solid transparent;
+			    border-bottom: 4px solid transparent;
+			    border-left-width: 8px;
+			    border-left-style: solid;
+			    font-size: 0;
+			    line-height: 0;
+			    display: inline-block;
+			    margin-left: 6px;
+			    cursor: pointer;
+			}	
+		}
+	}
+}
+
+.report_category{
+	@include padding(0 0 5px 0);
+	&.blur {
+		@include opacity (.2);
+	}
+
+	h3{
+		&.title{
+			margin-bottom:16px;
+			font-size: 20px;
+			font-weight: 200;
+			color:#666;
+			padding:0;
+		}
+		span{
+			display:inline-block;
+			padding-top:2px;
+		}
+	}
+	ul{
+		@include margin-left(-32px);
+	}
+	.report_icon{	
+			@include clearfix;
+			list-style:none;
+			li{
+				@include float(left);
+				padding: 0 18px;
+				position:relative;
+				@include min-height(130px);
+				a{
+					position:relative;
+					display:block;
+					@include padding(8px 0 2px 0);
+					@include text-align(center); 
+					text-decoration:none;
+					color:#666;
+					width:100px;
+					.img-outer{
+						height: 60px;
+						width: 60px;
+						margin: 0 auto;
+						padding:1px;
+						@include border-radius(50%);
+						margin-bottom:5px; 
+
+					}
+					i{ 
+						@include border-radius(50%); 
+						@include transition(all 0.1s ease);
+						display:block;
+						color:#fff;
+						@include text-shadow(0px 1px 0px rgba(0,0,0,0.2));
+						padding: 12px;
+						min-height: 36px;
+						min-width: 36px;
+						&::before{
+							transform: translateY(-3px);
+						}
+					}
+					div.report-icon-text{
+						@include wrap;
+						font-size:13px;
+						line-height:16px;
+						margin:0 0;
+						padding:1px 3px;
+						position:relative;
+					}
+				}
+			}	
+	}
+	&.ataglance, &.summary{
+		h3.title{
+			border-top:1px solid;
+			span{
+				border-top:3px solid;
+			}
+		}
+	}
+	&.ataglance{
+	    ul.report_icon{
+			li a 
+			{
+				i{
+					background-color: $helpdesk_color;
+				}
+				&:hover{
+					color:darken($helpdesk_hover_color, 10%);
+					.img-outer{
+						background-color: $helpdesk_hover_color;
+					}
+					i{
+						background-color: $helpdesk_hover_color;
+						@include animation(helpdesk_beat $animation_timing);
+						@include box-shadow( $hover_boxshadow_final $helpdesk_hover_color);
+					}
+				}
+			}
+		}
+		h3.title{
+			border-color: $helpdesk_color;
+			span{
+				border-color:$helpdesk_color;
+			}
+		}
+	}
+	&.summary{
+		ul.report_icon{
+			li a{ 
+				i{
+					background-color: $HelpdeskProductivity_color;
+				}
+				&:hover{
+					color:darken($HelpdeskProductivity_hover_color,10%);
+					.img-outer{
+						background-color: $HelpdeskProductivity_hover_color;
+					}
+					i{
+						background-color: $HelpdeskProductivity_hover_color;
+						@include animation(HelpdeskProductivity_beat $animation_timing); 
+						@include box-shadow($hover_boxshadow_final $HelpdeskProductivity_hover_color);
+					}
+				}
+			}
+		}
+		h3.title{
+			border-color: $HelpdeskProductivity_color;
+			span{
+				border-color:$HelpdeskProductivity_color;
+			}
+		}
+	}
+
+} 

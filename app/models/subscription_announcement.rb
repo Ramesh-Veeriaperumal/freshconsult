@@ -41,7 +41,9 @@ class SubscriptionAnnouncement < ActiveRecord::Base
 
 	private
 	def clear_notifications_content
-      	MemcacheKeys.delete_from_cache PRODUCT_NOTIFICATION
+		Language.all_codes.each do |lang|
+      		MemcacheKeys.delete_from_cache PRODUCT_NOTIFICATION % {:language => lang}
+      	end
 	end
 
 end

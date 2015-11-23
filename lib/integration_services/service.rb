@@ -118,6 +118,14 @@ module IntegrationServices
       integrated_resource.present? ? integrated_resource.attributes : {}
     end
 
+    def update_configs(options = [{}])
+      options.each do |opt|
+        @installed_app.configs[:inputs][opt[:key]] = opt[:value]
+        @configs[opt[:key]] = opt[:value]
+      end
+      @installed_app.save!
+    end
+
     class << self
       # The official title of this Service.
       def title

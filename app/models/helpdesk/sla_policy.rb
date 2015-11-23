@@ -74,7 +74,18 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
                                                                       a[1] <=> b[1] } 
 
   ESCALATION_TYPES = [:resolution, :response]
+  REMINDER_TYPES = [:reminder_response,:reminder_resolution]
 
+  REMINDER_TIME = [
+    [ :eight, I18n.t('before_eight'),  -28800],
+    [ :four, I18n.t('before_four'),  -14400],
+    [ :two, I18n.t('before_two'),  -7200],
+    [ :one, I18n.t('before_one'),  -3600],
+    [ :half, I18n.t('before_half'),  -1800]
+  ]
+
+  REMINDER_TIME_OPTIONS = REMINDER_TIME.map { |i| [i[1], i[2]] }
+  SLA_WORKER_INTERVAL = 840 #Rake task interval (14 Minutes)
 
   CUSTOM_USERS = [
     [:assigned_agent, -1]
@@ -88,6 +99,26 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   def matches?(evaluate_on)
     return false if va_conditions.empty?
     va_conditions.all? { |c| c.matches(evaluate_on) }
+  end
+
+#sla_resolution_reminder / sla_response_reminder
+
+  def escalate_response_reminder ticket
+    response_reminder = escalations[:reminder_response]["1"]
+
+    if response_reminder && escalate_to_agents(ticket, response_reminder, EmailNotification::RESPONSE_SLA_REMINDER, :frDueBy)
+      ticket.update_attribute(:sla_response_reminded ,true)
+    end
+
+  end
+
+  def escalate_resolution_reminder ticket
+    resolution_reminder = escalations[:reminder_resolution]["1"]
+
+    if resolution_reminder && escalate_to_agents(ticket, resolution_reminder, EmailNotification::RESOLUTION_SLA_REMINDER, :due_by)
+      ticket.update_attribute(:sla_resolution_reminded, true)
+    end
+
   end
 
   def escalate_resolution_overdue(ticket)
@@ -168,6 +199,11 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   private
 
+    # def is_the_condition_valid? ticket, reminder_time
+    #   return reminder_time[:time].seconds.since(ticket.due_by) >= ticket.created_at
+    # end
+
+
     def va_conditions
       @va_conditions ||= deserialize_conditions
     end
@@ -186,7 +222,14 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     end
 
     def escalate_to_agents(ticket, escalation, type, due_by)
-      if escalation[:time].seconds.since(ticket.send(due_by)) <= Time.zone.now
+      notify_time_interval = escalation[:time].seconds.since(ticket.send(due_by))
+
+      if type == EmailNotification::RESPONSE_SLA_REMINDER || EmailNotification::RESOLUTION_SLA_REMINDER 
+        return false if notify_time_interval <= ticket.created_at
+        notify_time_interval -= SLA_WORKER_INTERVAL
+      end
+
+      if notify_time_interval <= Time.zone.now
         assigned_agent_id = Helpdesk::SlaPolicy.custom_users_id_by_type[:assigned_agent]
         responder_id = ticket.responder_id
         agent_ids = escalation[:agents_id].map {|x| (x == assigned_agent_id && responder_id) ? responder_id : x }

@@ -208,6 +208,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
   alias :cc_email :cc_email_hash
+  
+  def ticket_cc
+    cc_email.nil? ? [] : (cc_email[:tkt_cc] || cc_email[:cc_emails])
+  end
 
   def helpdesk_tickets_association
     archive_ticket_association.association_data["helpdesk_tickets_association"]

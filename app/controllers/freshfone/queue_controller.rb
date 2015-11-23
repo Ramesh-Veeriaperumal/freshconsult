@@ -29,6 +29,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   def trigger_non_availability
     call_initiator.queued = true #Makes sure welcome message is prevented
     if freshfone_conference?
+      current_call.update_missed_abandon_status unless (current_call.present? && current_number.voicemail_active)
       render :xml => telephony.return_non_availability(false)
     else
       render :xml => call_initiator.return_non_availability

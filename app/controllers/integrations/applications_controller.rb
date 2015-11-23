@@ -1,7 +1,6 @@
 class Integrations::ApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
-  include Integrations::SalesforceUtil
   include Integrations::OauthHelper
   include Marketplace::ApiHelper
   
@@ -35,22 +34,6 @@ class Integrations::ApplicationsController < Admin::AdminController
   			app_name = config_hash["app_name"]
   			config_hash.delete("app_name")	    
         app_name = params['id'] if app_name.blank?
-        if params['id'] == 'salesforce' 
-          if params[:install].blank?
-            @salesforce_config=Hash.new
-            @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            @salesforce_config['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            @salesforce_config['account_fields'] = fetch_sf_account_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-            render :template => "integrations/applications/salesforce_fields", :layout => ( request.headers['X-PJAX'] ? 'maincontent' : 'application' ) and return
-          else
-            config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
-            config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
-            config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
-            config_hash['contact_labels'] = params['contact_labels']
-            config_hash['lead_labels'] = params['lead_labels']
-            config_hash['account_labels'] = params['account_labels']
-          end
-        end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
 		    flash[:notice] = t(:'flash.application.install.success') if installed_application
 		    kv_store.remove_key

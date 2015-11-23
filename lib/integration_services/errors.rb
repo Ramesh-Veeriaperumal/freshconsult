@@ -37,6 +37,9 @@ module IntegrationServices
     # Raised when an invalid webhook URL is used.
     class InvalidUrlError < Error
     end
+
+    class TimeoutError < Timeout::Error
+    end
     
   end
 end

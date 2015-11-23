@@ -25,6 +25,7 @@ class ContactsController < ApplicationController
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore,:update]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
+   before_filter :restrict_user_primary_email_delete, :only => :update_contact
   
   def index
     respond_to do |format|
@@ -445,5 +446,13 @@ protected
     
     def can_change_password?
       redirect_to helpdesk_dashboard_url unless @user.allow_password_update?
+    end
+
+    def restrict_user_primary_email_delete
+      params[:user][:user_emails_attributes].each do |key, value|
+        if params[:user][:user_emails_attributes][key]["primary_role"]== "1"
+          params[:user][:user_emails_attributes][key]["_destroy"] = false
+        end
+      end
     end
 end

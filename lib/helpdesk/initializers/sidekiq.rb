@@ -11,9 +11,9 @@ Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(:size => 1, :timeoout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
-      "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
@@ -38,9 +38,9 @@ Sidekiq.configure_server do |config|
   AWS.eager_autoload!
   config.server_middleware do |chain|
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
-      "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",
@@ -54,9 +54,9 @@ Sidekiq.configure_server do |config|
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
-      "SlaScheduler",
       "Social::TwitterReplyStreamWorker",
       "RabbitmqWorker",
+      "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
       "Freshfone::CallQueueWorker",
       "Ecommerce::EbayWorker",

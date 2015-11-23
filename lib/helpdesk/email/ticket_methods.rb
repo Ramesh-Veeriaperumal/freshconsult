@@ -61,7 +61,7 @@ module Helpdesk::Email::TicketMethods
 
   def hash_cc_emails
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    {:cc_emails => email[:cc], :fwd_emails => [], :reply_cc => email[:cc].dup}
+    {:cc_emails => global_cc, :fwd_emails => [], :reply_cc => global_cc, :tkt_cc =>  email[:cc].dup}
   end
 
   def check_valid_ticket
@@ -130,4 +130,11 @@ module Helpdesk::Email::TicketMethods
   def create_redis_key_for_ticket ticket_message_id
     header_processor.set_ticket_id_with_message_id account, ticket_message_id, ticket
   end
+  
+  private 
+  #All recipients are moved to global Cc to have them part of the entire ticket conversation 
+  def global_cc
+    @global_cc ||= email[:to_emails].reject{|mail| email[:to][:email].include?(mail)}.push(email[:cc]).flatten.compact.uniq 
+  end
+  
 end

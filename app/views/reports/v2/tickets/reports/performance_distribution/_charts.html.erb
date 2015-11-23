@@ -4,26 +4,25 @@
 	<div class="row-fluid">	
 		<div class="chart-container">
 		
-			<span id="first_response" class="pointer">
+			<span id="first_response" class="pointer active">
 				<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
 			</span>
 			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
                 <i class="ficon-help-icon fsize-14" size="14"></i>
             </span>
-			<span class="sep">|</span>
-			<span id="response" class="pointer">
+
+			<div id="first_response_time_bar_chart" class="chart-wrapper" data-bucket-name="first_response_time" data-metric-name="AVG_FIRST_RESPONSE_TIME"></div>
+		</div>
+		<div class="chart-container">
+			
+			<span id="response" class="pointer active">
 				<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
 			</span>
 			<span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
                 <i class="ficon-help-icon fsize-14" size="14"></i>
             </span>
-
-			<div id="first_response_time_bar_chart" class="chart-wrapper" data-bucket-name="first_response_time" data-metric-name="AVG_FIRST_RESPONSE_TIME"></div>
-			
 			<div id="response_time_bar_chart" class="chart-wrapper" data-bucket-name="response_time" data-metric-name="AVG_RESPONSE_TIME"></div>
-
 		</div>
-
 		<div class="chart-container">
 
 			<span class='title'>
@@ -119,5 +118,12 @@
         } else {
 	    	HelpdeskReports.ChartsInitializer.PerformanceDistribution.init(locals.chart_hash);
 	    }
+
+	    //Add labels to locals
+	    locals.first_response_time_label = '<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>';
+
+	    locals.avg_response_time_label = '<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>';
+
+	    locals.resolution_bar_label = '<%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>';
 	});
 </script>

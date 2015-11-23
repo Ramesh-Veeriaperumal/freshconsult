@@ -11,10 +11,21 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
                 var flag = HelpdeskReports.locals.ticket_list_flag;
                 if (flag == false) {
                     HelpdeskReports.locals.ticket_list_flag = true;
-                    _FD.core.actions.showTicketList();
+                    _FD.getTicketListTitle(data);
                     _FD.constructTicketListParams(data);
                 }
             });
+        },
+        getTicketListTitle : function(data){
+            var metric = HelpdeskReports.Constants.CustomerReport.metrics[data.metric];
+            var value = data.label + " : ";
+
+            if(data.metric == "RESPONSE_VIOLATED" || data.metric == "RESOLUTION_VIOLATED"){
+                value += _FD.core.addsuffix(data.y);
+            }else{
+                value += data.y;
+            }
+            _FD.core.actions.showTicketList(metric.title,value);
         },
         actions: {
             submitReports: function () {
@@ -81,7 +92,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
         setDefaultValues: function () {
             var current_params = [];
             var date = _FD.core.setReportFilters();
-            jQuery.each(_.keys(_FD.constants.metrics), function (index, value) {
+            jQuery.each(_FD.constants.template_metrics, function (index, value) {
                 var merge_hash = {
                     metric: value,
                     filter:[],
@@ -103,6 +114,7 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             _FD.core = HelpdeskReports.CoreUtil;    
             _FD.constants = jQuery.extend({}, HelpdeskReports.Constants.CustomerReport);
             _FD.bindEvents();
+            _FD.core.ATTACH_DEFAULT_FILTER = false;
             _FD.setDefaultValues();
         }
     };

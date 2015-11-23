@@ -46,22 +46,20 @@ Helpkit::Application.configure do
     ActiveMerchant::Billing::Base.gateway_mode = :test
   end   
   config.middleware.use "Middleware::FdApiThrottler", :max =>  1000
-  config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
-    # during the ddos attack uncomment the below line
-    # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
-    r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-    r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-    r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
-    r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
-    r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true)
-    store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
-    r.set_cache(store) if store.present?
-  end
+  # config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
+  #   # during the ddos attack uncomment the below line
+  #   # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
+  #   r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
+  #   r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
+  #   r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 100,:per_ip => true ,:per_url => true )
+  #   r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
+  #   r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 10,:per_ip => true)
+  #   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"], :network_timeout => 0.5)
+  #   r.set_cache(store) if store.present?
+  # end
   if defined?(PhusionPassenger)
     config.action_controller.asset_host = Proc.new { |source, request= nil, *_|
-      asset_host_url = $asset_sync_https_url
-      asset_host_url = $asset_sync_http_url % (rand(9)+1) if request && !request.ssl?
-      asset_host_url
+      $asset_sync_https_url.sample
     }
   end
 end

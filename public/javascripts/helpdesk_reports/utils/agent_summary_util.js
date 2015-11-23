@@ -11,10 +11,22 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
                 if (flag == false) {
                     HelpdeskReports.locals.ticket_list_flag = true;
                     var el = this;
-                    _FD.core.actions.showTicketList();
+                    _FD.getTicketListTitle(el);
                     _FD.constructTicketListParams(el);
                 }
             });
+        },
+        getTicketListTitle : function(el){
+
+            var metric_name = jQuery(el).data("metric-name");
+            var metric_value = jQuery(el).html();
+            var metric_title = jQuery(".summary-table .title [data-metric-title='" + metric_name +"']").html();
+            var group_id = jQuery(el).data("agent-id");
+            var group_name = jQuery("[data-agent-id='" + group_id + "']" ).html(); 
+
+            var title = metric_title;
+            var value = group_name + ' : ' + metric_value;
+            _FD.core.actions.showTicketList(title,value);
         },
         actions: {
             submitReports: function () {
@@ -50,12 +62,19 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
 
             var index = _FD.constants.percentage_metrics.indexOf(metric);
             if (index > -1) {
+                //Reset sla the toggle links
+                _FD.core.actions.resetSlaLinks();
                 var supplement_condition = {
-                    condition : _FD.constants.ticket_list_metric[index],
+                    condition : _FD.constants.ticket_list_metrics[index],
                     operator : 'is',
                     value : false 
                 };
                 list_hash.list_conditions.push(supplement_condition);
+                _FD.core.actions.constructSlaTabs(el);
+                
+            } else{
+                //Hide the sla tabs
+                 jQuery(".sla-toggle-tab").addClass('hide');
             }
 
 
@@ -67,12 +86,13 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
         setDefaultValues: function () {
             var current_params = [];
             var date = _FD.core.setReportFilters();
-            jQuery.each(_FD.constants.metrics, function (index, value) {
+            jQuery.each(_FD.constants.template_metrics, function (index, value) {
                 var merge_hash = {
                     metric: value,
                     filter: [],
                     date_range: date,
-                    group_by: []
+                    group_by: [],
+                    template: true
                 }
                 merge_hash.group_by.push(_FD.constants.group_by);
                 var param = jQuery.extend({}, _FD.constants.params, merge_hash);
@@ -90,6 +110,7 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
                 _FD.core = HelpdeskReports.CoreUtil;
                 _FD.constants = HelpdeskReports.Constants.AgentSummary;
                 _FD.bindEvents();
+                _FD.core.ATTACH_DEFAULT_FILTER = true;
                 _FD.setDefaultValues();
         }
     };

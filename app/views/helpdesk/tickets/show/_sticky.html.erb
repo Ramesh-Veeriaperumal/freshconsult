@@ -110,17 +110,25 @@
 					  				:title => t('ticket.execute_scenario')) %> 
 					</div>
 				</li>
+
 			  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 			  	<li class = "collapse_on_default">
 			  		<%= link_to t('ticket.add_time'), "#", :rel => "triggerAddTimer", "data-keybinding" => shortcut('ticket_detail.add_time') %>
 			  	</li>
 			  	<% end %>
+
+			  	<% if (feature?(:forums) && privilege?(:create_topic) && @ticket.ticket_topic.nil? && @ticket.requester.active?) %>		
+			  	<li class = "collapse_on_default">		
+			  		<%= link_to t('ticket.convert_to_topic'),new_discussions_topic_path(:ticket_id => @ticket.display_id) %>		
+			  	</li>		
+			  	<% end%>
+
 			  	<% if privilege?(:edit_ticket_properties) and !@ticket.outbound_email?%>
 			  	<li class = "collapse_on_default">
 			  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 			  	</li>
 			  	<% end %>
-			  	
+
 			  	<li class = "collapse_on_default">
 			  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
 			  	</li>

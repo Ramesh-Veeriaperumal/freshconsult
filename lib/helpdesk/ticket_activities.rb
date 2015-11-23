@@ -16,8 +16,14 @@ module Helpdesk::TicketActivities
         :activity_data => activity_data
       ) if user
     end
+
+    def destroy_activity(description, note_id)
+      activity = activities.where({'description' => description}).detect{ |a| a.note_id == note_id }
+      activity.destroy unless activity.blank?
+    end
   
     def create_initial_activity
+      return if self.disable_activities
       unless spam?
         if outbound_email?
           base_text =  'new_outbound' 
@@ -31,6 +37,7 @@ module Helpdesk::TicketActivities
     end
 
 	  def update_activity
+      return if self.disable_activities
       @model_changes.each_key do |attr|
         send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
       end

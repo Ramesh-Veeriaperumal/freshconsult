@@ -254,6 +254,17 @@
 		padding: 4px 10px;
 	}
 }
+
+.admin_select_all_notification{
+	line-height: 21px;
+	.admin_select_all_notification_list {
+		@include margin(0 0 8px 30px);
+		li {
+			line-height: 21px;
+		}
+	}
+}
+
 .ticket_overlay_content {
 	width:500px;
 	display:inline-block;

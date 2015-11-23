@@ -11,5 +11,6 @@
 //= require portal/portal_custom_validators.js
 //= require frameworks/plugins/jquery.nested_select_tag.js
 //= require frameworks/plugins/select2.js
+//= require frameworks/plugins/jquery.form.js
 //= require feedback_widget_form.js
 //= require security.js

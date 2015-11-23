@@ -1,115 +1,73 @@
-<div class="summary-table" id="data_table">
-    <div class="header">
-        <table>
-            <thead>
-                <tr class="title">
-                    <th>
-                        <%=t( 'helpdesk_reports.agent_summary.agent') %>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="dynamic-agent-name" data-table="agent-name"></tbody>
-        </table>
-    </div>
-    <div class="content-wrapper">
-        <div class="data-wrapper" data-table="wrapper">
-            <table>
+<div class="summary-table">
+        <div class="data-wrapper" id="data_table">
+            <table id="agent-summary">
                 <thead>
                     <tr class="title">
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.ticket_resolved') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.ticket_resolved')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        <th>
+                            <span data-metric-title="AGENT_NAME">
+                                <%=t( 'helpdesk_reports.agent_summary.agent') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.tickets_reopened') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.tickets_reopened')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESOLVED_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.ticket_resolved') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.ticket_reasigned') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.ticket_reasigned')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>  
+                        </th>
+                        <th>
+                            <span data-metric-title="REOPENED_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.tickets_reopened') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.reports_sla')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="AGENT_REASSIGNED_TICKETS">
+                                 <%=t( 'helpdesk_reports.agent_summary.ticket_reasigned') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.res_sla')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESPONSE_SLA">
+                                <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.fcr') %>
-                            <span class="reports-help-icon tooltip" data-placement="left" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.fcr')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESOLUTION_SLA">
+                                <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.fcr') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.fcr')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="FCR_TICKETS">
+                                <%=t( 'helpdesk_reports.agent_summary.fcr') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.private_note') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.private_note')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="PRIVATE_NOTES">
+                                 <%=t( 'helpdesk_reports.agent_summary.private_note') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.responses') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.responses')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="RESPONSES">
+                                <%=t( 'helpdesk_reports.agent_summary.responses') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.avg_first_res_time') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.avg_first_res_time')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_FIRST_RESPONSE_TIME">
+                                <%=t( 'helpdesk_reports.agent_summary.avg_first_res_time') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.avg_res_time') %>
-                            <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.avg_res_time')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_RESPONSE_TIME">
+                                <%=t( 'helpdesk_reports.agent_summary.avg_res_time') %>
                             </span>
-                        </td>
-                        <td>
-                            <%=t( 'helpdesk_reports.agent_summary.avg_resolution_time') %>
-                            <span class="reports-help-icon tooltip" data-placement="left" data-original-title="<%=t( 'helpdesk_reports.agent_summary.description.avg_resolution_time')%>"> 
-                                <i class="ficon-help-icon fsize-14" size="14"></i>
+                        </th>
+                        <th>
+                            <span data-metric-title="AVG_RESOLUTION_TIME"> 
+                                <%=t( 'helpdesk_reports.agent_summary.avg_resolution_time') %>
                             </span>
-                        </td>
+                        </th>
                     </tr>
+                    <!--<tr class="metric-average-header title"></tr>-->
                 </thead>
                 <tbody class="dynamic-ticket-datas" data-table="ticket-data"></tbody>
             </table>
-        </div>
-    </div>
-    <div class="footer shadow">
-        <table>
-            <thead>
-                <tr class="title">
-                    <th> 
-                        <span id="agent-details-prev" data-action='data-tab-nav' class="agent-details-prev show-metrics disabled">
-                            <%= font_icon "arrow-left", :size => 14 %>
-                        </span>
-                        <span id="agent-details-next" data-action='data-tab-nav' class="agent-details-next show-metrics">
-                            <%= font_icon "arrow-right", :size => 14  %>
-                        </span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="dynamic-agent-name" data-table="agent-name"></tbody>
-        </table>
     </div>
 </div>
 <script type="text/javascript">

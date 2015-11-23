@@ -29,7 +29,7 @@ module Integrations
           github_service = IntegrationServices::Services::GithubService.new(installed_app, options)
           github_service.receive(operation)
         end
-      rescue Timeout::TimeoutError => timeouterr
+      rescue IntegrationServices::Errors::TimeoutError => timeouterr
         Rails.logger.debug "Timeout error on github updates - #{timeouterr}"
         NewRelic::Agent.notice_error(timeouterr)
       rescue Exception => error

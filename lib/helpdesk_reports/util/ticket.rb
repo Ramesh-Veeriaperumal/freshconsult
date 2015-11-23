@@ -7,7 +7,7 @@ module HelpdeskReports::Util::Ticket
   end
   
   def valid_field_name? field
-    field.to_s.starts_with?("ffs") || TICEKT_FIELD_NAMES.include?(field.to_sym)
+    field.to_s.starts_with?("ffs") || TICKET_FIELD_NAMES.include?(field.to_sym) if !field.is_a?(Hash)
   end
 
   def field_id_to_name_mapping(field_type)

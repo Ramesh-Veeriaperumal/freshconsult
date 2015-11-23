@@ -2,6 +2,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   include HelpdeskReports::Helper::Ticket
   include ApplicationHelper
+  include ExportCsvUtil
   helper HelpdeskV2ReportsHelper
   helper_method :has_scope?
   
@@ -10,7 +11,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :ensure_report_type_or_redirect, :date_lag_constraint, :ensure_ticket_list
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
   before_filter :normalize_params, :validate_params, :validate_scope, 
-                :only_ajax_request,                                     :except => [:index]
+                :only_ajax_request,                                     :except => [:index, :configure_export]
   skip_before_filter :verify_authenticity_token,                        :except => [:index]
   
   attr_accessor :report_type
@@ -38,6 +39,19 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     parse_result
     format_result
     send_json_result
+  end
+  
+  def configure_export
+    respond_to do |format|
+      format.json do
+        render :json => report_export_fields
+      end
+    end
+  end
+  
+  def export_csv
+    # Enqueue in SQS
+    render status: 200
   end
 
   private

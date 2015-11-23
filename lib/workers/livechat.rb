@@ -36,7 +36,7 @@ class Workers::Livechat
 		end
 
 		def update_widget(args)
-			response = HTTParty.post(@url+"/widgets/update",:body => args)
+			response = HTTParty.post(@url+"/widgets/update",:body => args.to_json,:headers => { 'Content-Type' => 'application/json' })
 		end
 
 		def delete_widget(args)

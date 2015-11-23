@@ -1,5 +1,5 @@
 <% for (var i in data) { %>
-	<% if (HelpdeskReports.CoreUtil.global_disabled_filter.indexOf(data[i].condition) < 0 && (HelpdeskReports.CoreUtil.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(data[i].condition) < 0) { %>
+	<% if (HelpdeskReports.CoreUtil.global_disabled_filter.indexOf(data[i].condition) < 0 && HelpdeskReports.CoreUtil.default_available_filter.indexOf(data[i].condition) < 0 && (HelpdeskReports.CoreUtil.reports_specific_disabled_filter[HelpdeskReports.locals.report_type] || []).indexOf(data[i].condition) < 0) { %>
     	<li data-position='<%= data[i].position %>' data-action='pop-field' data-menu='<%= data[i].condition %>'> <%= escapeHtml(data[i].name) %> </li>
     <% } %>
 <% } %>
