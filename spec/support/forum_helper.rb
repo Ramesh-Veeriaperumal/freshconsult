@@ -19,13 +19,14 @@ module ForumHelper
 		forum_category
 	end
 
-	def create_test_forum(forum_category,type = 1)
+	def create_test_forum(forum_category,type = 1, visibility=nil)
 		forum = FactoryGirl.build(
 							:forum, 
 							:account_id => @account.id, 
 							:forum_category_id => forum_category.id,
 							:forum_type => type
 							)
+		forum.forum_visibility = visibility if visibility
 		forum.save(validate: false)
 		forum
 	end

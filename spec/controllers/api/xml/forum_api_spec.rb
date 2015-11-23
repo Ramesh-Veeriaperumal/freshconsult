@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ForumsController do
+RSpec.describe ::ForumsController do
 
   self.use_transactional_fixtures = false
 

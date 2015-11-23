@@ -94,6 +94,10 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
     resource :"profile"
+
+    # Used for API V2
+    resource :"ticket", :only => [:show, :create, :index]
+    resource :"note", only: [:create, :ticket_notes]
 	end
 
   reply_ticket do
@@ -107,6 +111,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
+    
+    # Used for API V2
+    resource :"note", :only => [:reply]
   end
 
   forward_ticket do
@@ -123,27 +130,46 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                            :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
+    
+    # Used for API V2
+    resource :"ticket", :only => [:update, :assign]
   end
 
   edit_conversation do
     resource :"helpdesk/note", :only => [:destroy, :restore]
+
+    # Used for API V2
+    resource :note, only: [:destroy]
   end
 
   edit_note do
     resource :"helpdesk/note", :only => [:edit, :update], :owned_by => { :scoper => :notes }
+    
+    # Used for API V2
+    resource :"note", only: [:update], :owned_by => { :scoper => :notes }
   end
 
   view_time_entries do
     resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer , :show]
+
+    # Used for API V2
+    resource :"time_entry", :only => [:index, :create, :ticket_time_entries]
   end
 
   edit_time_entries do
     resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by =>
       { :scoper => :time_sheets }
+    
+    # Used for API V2
+    resource :"time_entry", :only => [:update, :destroy, :toggle_timer], :owned_by =>
+      { :scoper => :time_sheets }
   end
 
   delete_ticket do
     resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
+    
+    # Used for API V2
+    resource :"ticket", :only => [:restore, :destroy]
   end
 
   # ************** SOLUTIONS **************************
@@ -194,6 +220,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/merge_topic", :only => [:index]
     resource :forums_uploaded_image, :only => [:create]
     resource :monitorship, :only => [:followers]
+
+    # Used for API V2
+    resource :"api_discussions/category", :only => [:index, :show]
+    resource :"api_discussions/forum", :only => [:show, :category_forums, :follow, :unfollow, :is_following]
+    resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by]
+    resource :"api_discussions/post", :only => [:create, :topic_posts]
   end
 
   # create_edit_forum_category
@@ -202,6 +234,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :discussion, :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"discussions/forum", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
+
+    # Used for API V2
+    resource :"api_discussions/category", :only => [:create, :update, :destroy]
+    resource :"api_discussions/forum", :only => [:create, :update, :destroy]
   end
 
   # create_forum_topic
@@ -209,6 +245,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/topic", :only => [:new, :create ]
     resource :topic, :only => [:new, :create ]
     resource :forums_uploaded_image, :only => [:create]
+    # Used for API V2
+    resource :"api_discussions/topic", :only => [:create]
   end
 
   # edit_forum_topic
@@ -220,6 +258,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/post", :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
+    # Used for API V2
+    resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
+    resource :"api_discussions/post", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic
@@ -228,6 +269,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :topic, :only => [:destroy, :destroy_multiple], :owned_by => { :scoper => :topics }
     resource :"discussions/moderation"
     resource :"discussions/unpublished"
+    # Used for API V2
+    resource :"api_discussions/topic", :only => [:destroy], :owned_by => { :scoper => :topics }
   end
 
   # ************** CONTACTS **************************
@@ -239,6 +282,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:index, :show]
+    resource :"api_company", :only => [:index, :show]
+    resource :"api_agent", :only => [:show]
   end
 
   # add_or_edit_contact
@@ -256,6 +304,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"segment/group"
     # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:create, :update]
+    resource :"api_company", :only => [:create, :update]
   end
 
   delete_contact do
@@ -264,6 +316,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :company, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:destroy, :restore]
+    resource :"api_company", :only => [:destroy]
   end
 
   # ************** REPORTS **************************
@@ -311,6 +367,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]
+
+    # Used by V2 API
+    resource :"api_contact", :only => [:make_agent]
+    resource :"api_agent", :only => [:show, :index]
   end
 
   manage_canned_responses do
@@ -332,6 +392,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/dynamic_notification_template"
     resource :"admin/email_commands_setting"
     resource :"admin/account_additional_setting"
+    resource :"api_email_config", :only => [:index, :show]
   end
 
   # **************** super admin *******************
@@ -391,6 +452,15 @@ Authority::Authorization::PrivilegeList.build do
   	resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
     resource :"freshfone/dashboard", :only => [:index]
+
+    # Used by API V2
+    resource :api_ticket_field, :only => [:index]
+    resource :"api_contact_field", :only => [:index]
+    resource :"api_company_field", :only => [:index]
+    resource :"api_business_calendar", :only => [:index, :show]
+    resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
+    resource :"api_sla_policy", :only => [:index, :update]
+    resource :"api_product", :only => [:index, :show]
   end
 
   manage_account do

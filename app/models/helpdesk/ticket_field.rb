@@ -157,6 +157,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type == "nested_field"
   end
 
+  # Used by API V2
+  def formatted_nested_choices
+    picklist_values.collect { |c| 
+      [c.value, c.sub_picklist_values.collect{ |c| 
+        [c.value, c.sub_picklist_values.collect{ |c| 
+          c.value
+        }]
+      }.to_h]
+    }.to_h
+  end
+
   def choices(ticket = nil, admin_pg = false)
      case field_type
        when "custom_dropdown" then

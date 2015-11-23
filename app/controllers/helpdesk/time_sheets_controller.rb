@@ -235,7 +235,7 @@ private
   def get_time_sheets
     normalize_params
     # start date is set to the zero if nothing is specified similarly End date is set to current time.
-    start_date = validate_time(params[:start_date]) ? Time.zone.parse(params[:start_date]): Helpdesk::TimeSheet::FILTER_OPTIONS[:start_date] 
+    start_date = validate_time(params[:start_date]) ? Time.zone.parse(params[:start_date]): Helpdesk::TimeSheet::FILTER_OPTIONS[:executed_after] 
     end_date =  validate_time(params[:end_date]) ? Time.zone.parse(params[:end_date]): Time.zone.now.to_time 
     
     #agent/email name 

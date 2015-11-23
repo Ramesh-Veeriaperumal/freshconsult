@@ -14,6 +14,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   belongs_to :user
   belongs_to_account
   
+  # if any validation is introduced, update_running_timer in api/time_entries_controller should also be changed accordingly.
   before_validation :set_default_values 
 
   after_create :create_new_activity
@@ -101,9 +102,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   #************************** Archive scope ends here *****************************#
 
-  PAGINATE_OPTIONS = {:per_page => 30, :page => 1}
-
-  FILTER_OPTIONS = { :contact_email => [], :company_ids => [], :agent_id => [], :billable => true, :start_date => 0}
+  FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true, 
@@ -131,33 +130,54 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       :product_name => I18n.t('helpdesk.time_sheets.product'), 
       :group_name => I18n.t('helpdesk.time_sheets.group') }    
   end                    
-
-  def self.filter(paginate_options=PAGINATE_OPTIONS, filter_options=FILTER_OPTIONS)
-    filter_options[:end_date] ||= Time.zone.now.to_time
-    associations = [:user, :workable => {:requester => :company}]
-    begin
-      unless filter_options[:contact_email].blank? && filter_options[:company_ids].blank?
-        paginate(paginate_options).where(filter_conditions(filter_options)).joins(join_conditions).preload(associations)
-      else
-        paginate(paginate_options).where(filter_conditions(filter_options)).preload(associations)
-      end  
-    rescue Exception => e
-      error =  {:message => "Should be a valid filter"}
-      Rails.logger.debug("API 500 error: \n#{e.message}\n#{e.backtrace.join("\n")}")
-      return error
+  
+  # Used by API v2
+  def self.filter(filter_options=FILTER_OPTIONS, user=User.current)
+    relation = scoped.where(permissible_ticket_conditions(user))
+    filter_options.each_pair do |key, value|
+      clause = filter_conditions(filter_options)[key.to_sym] || {}
+      relation = relation.where(clause[:conditions]).joins(clause[:joins]) # where & join chaining
     end
+    relation
   end
 
-  def self.filter_conditions filter_options
-    condition = {:executed_at => filter_options[:start_date]..filter_options[:end_date], :billable => filter_options[:billable]}
-    condition[:users] = {:email => filter_options[:contact_email]} unless filter_options[:contact_email].blank?
-    condition[:users] = {:customer_id => filter_options[:company_ids]} unless filter_options[:company_ids].blank?
-    condition[:user_id] = filter_options[:agent_id] unless  filter_options[:agent_id].blank?
-    condition
+  # Used by API v2
+  def self.filter_conditions(filter_options=FILTER_OPTIONS)
+    {
+      billable: {
+        conditions: { billable: filter_options[:billable].to_s.to_bool }
+      },
+
+      executed_after: {
+        conditions: ['`helpdesk_time_sheets`.`executed_at` >= ?', filter_options[:executed_after].try(:to_time).try(:utc) ]
+      },
+
+      executed_before: {
+        conditions: ['`helpdesk_time_sheets`.`executed_at` <= ?', filter_options[:executed_before].try(:to_time).try(:utc) ]
+      },
+
+      agent_id: {
+        conditions: {user_id: filter_options[:agent_id]}
+      },
+      
+      company_id: {
+        joins: ["INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"],
+        conditions: {:users => {:customer_id => filter_options[:company_id]}}
+      }
+    }
   end
 
-  def self.join_conditions
-    [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id AND `helpdesk_tickets`.account_id = `users`.account_id"]
+  # Used by API v2
+  def self.permissible_ticket_conditions(user)
+    # Not spammed tickets only
+    ticket_conditions = "`helpdesk_tickets`.spam =0"
+
+    # get permissible tickets for the user.
+    conditions =  user.agent? ? Helpdesk::Ticket.agent_permission(user) : [ "`helpdesk_tickets`.requester_id=?", user.id ]
+
+    # Merge above two conditions.
+    conditions[0] = conditions.present? ? "#{ticket_conditions} AND #{conditions[0]}"  : ticket_conditions 
+    conditions
   end
 
   def hours 
@@ -250,15 +270,15 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       xml.tag!(:contact_email,workable.requester.email)
     end
   end
+
+
+  def calculate_time_spent
+    time = time_spent.to_i
+    time += (Time.zone.now.to_time - start_time.to_time).abs.round if start_time
+    time
+  end
   
   private
-  
-   def calculate_time_spent
-    to_time = Time.zone.now.to_time
-    from_time = start_time.to_time 
-    running_time =  ((to_time - from_time).abs).round 
-    return (time_spent + running_time)
-   end
 
   def update_timer_activity
       if timer_running
