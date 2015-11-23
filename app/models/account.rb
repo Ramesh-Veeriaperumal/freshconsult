@@ -7,6 +7,7 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Account
   include Redis::RedisKeys
   include Redis::TicketsRedis
+  include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
   include Redis::RoutesRedis
@@ -139,7 +140,7 @@ class Account < ActiveRecord::Base
   end
   
   def reports_enabled?
-    features_included?(:bi_reports) || launched?(:bi_reports)
+    true
   end
 
   class << self # class methods
@@ -355,6 +356,9 @@ class Account < ActiveRecord::Base
 
   def pass_through_enabled?
     pass_through_enabled
+  end
+  def select_all_enabled?
+    launched?(:select_all)
   end
 
   def google_account?

@@ -10,7 +10,7 @@ module SupportHelper
 
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
-  # HACK Need to scope down liquid helpers and include only the required ones 
+  # HACK Need to scope down liquid helpers and include only the required ones
   # and ignore all rails helpers in portal_view
   include Liquid::StandardFilters
 
@@ -52,22 +52,22 @@ module SupportHelper
 	    end
 	    final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
 	end
-  
+
   def default_meta meta
     output = []
-    output << %( 
+    output << %(
       <meta charset="utf-8" />
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
       <meta name="description" content="#{ meta['description'] }" />
       <meta name="author" content="#{ meta['author'] }" /> )
-      
+
     output << %( <meta name="keywords" content="#{ meta['keywords'] }" /> ) if meta['keywords'].present?
     output << %( <link rel="canonical" href="#{ meta['canonical'] }" /> ) if meta['canonical'].present?
     output << multilingual_meta_tags(meta['multilingual_meta']) if meta['multilingual_meta'].present?
     output.join('')
   end
-  
+
   def default_responsive_settings portal
     if( portal['settings']['nonResponsive'] != "true" )
       %(<link rel="apple-touch-icon" href="/assets/touch/touch-icon-iphone.png" />
@@ -116,15 +116,15 @@ module SupportHelper
 						</div>)
 		else
 			if portal['can_signup_feature']
-				output << content_tag(:div, 
-															I18n.t('portal.login_signup_to_submit_ticket', 
-																			:login_url => portal['login_url'], 
-																			:signup_url => portal['signup_url']).html_safe, 
+				output << content_tag(:div,
+															I18n.t('portal.login_signup_to_submit_ticket',
+																			:login_url => portal['login_url'],
+																			:signup_url => portal['signup_url']).html_safe,
 															:class => "hide-in-mobile")
 			else
-				output << content_tag(:div, 
-															I18n.t('portal.login_to_submit_ticket', 
-																			:login_url => portal['login_url']).html_safe, 
+				output << content_tag(:div,
+															I18n.t('portal.login_to_submit_ticket',
+																			:login_url => portal['login_url']).html_safe,
 															:class => "hide-in-mobile")
 			end
 		end
@@ -206,7 +206,7 @@ module SupportHelper
 		output = []
 		output << %( 	<div class="user-pic-thumb image-lazy-load #{more_classes}"> )
 		if user['profile_url']
-			output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> ) 
+			output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
 		else
 			username = user['name'].lstrip
 
@@ -313,7 +313,12 @@ module SupportHelper
 	end
 
 	def widget_prefilled_value field
-		format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		#format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		if @feeback_widget_error
+			helpdesk_ticket_values field, @params
+		else
+			format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+		end
 	end
 
 	def prefilled_value field
@@ -352,7 +357,7 @@ module SupportHelper
 			else
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls #{"nested_field" if field.dom_type=="nested_field"} #{"support-date-field" if field.dom_type=="date"}">
-		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value, 
+		   				#{ ticket_form_element form_builder, :helpdesk_ticket, field, field_value,
 		   																						 { :pl_value_id => pl_value_id } }
 		   			</div> ).html_safe
 		end
@@ -656,7 +661,7 @@ module SupportHelper
 
 			can_delete = (ticket.requester and (ticket.requester.id == User.current.id))
 			can_delete = false if ticket.is_a?(Helpdesk::ArchiveTicketDrop)
-			
+
 			(ticket.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
@@ -677,7 +682,7 @@ module SupportHelper
 
 			can_delete = (comment.user and comment.user.id == User.current.id)
 			can_delete = false if comment.is_a?(Helpdesk::ArchiveNoteDrop)
-			
+
 			(comment.attachments || []).each do |a|
 				output << attachment_item(a.to_liquid, can_delete)
 			end
@@ -702,7 +707,7 @@ module SupportHelper
 
 		output << %(<div class="attach_content">)
 		output << %(<div class="ellipsis">)
-		output << %(<a href="#{attachment.url}" class="filename" target="_blank" #{tooltip} 
+		output << %(<a href="#{attachment.url}" class="filename" target="_blank" #{tooltip}
 		            >#{ attachment.filename.truncate(15) } </a>)
 		output << %(</div>)
 		output << %(<div>(#{  attachment.size  }) </div>)

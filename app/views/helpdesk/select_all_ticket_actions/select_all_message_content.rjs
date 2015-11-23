@@ -1,0 +1,4 @@
+running_bulk_action_job = select_all_running_job
+if running_bulk_action_job.empty?
+  page.replace_html 'select_all_alert', :partial => '/helpdesk/tickets/select_all_message'
+end

@@ -165,7 +165,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       @agents_id = []
       @esc_agents = {}
       @time = {}
-      Helpdesk::SlaPolicy::ESCALATION_TYPES.each do |type|   
+      sla_types = Helpdesk::SlaPolicy::ESCALATION_TYPES + Helpdesk::SlaPolicy::REMINDER_TYPES
+      sla_types.each do |type|   
         next if @sla_policy.escalations[type].blank?
 
         @sla_policy.escalations[type].each_pair do |k,v|

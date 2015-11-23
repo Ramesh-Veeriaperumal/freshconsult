@@ -16,7 +16,7 @@ module Helpdesk::TicketFilterMethods
 
     if selected_item.blank?
       selected_from_default = (selected.blank? ? nil : SELECTORS.select { |v| v.first == selected.to_sym })
-      unless params[:report_type].blank?
+      if !params[:report_type].blank? || !params[:filter_type].blank?
         selected_from_default = SELECTORS.select { |v| v.first == :untitled_view }
       end
       selected_item = selected_from_default.blank? ? 

@@ -1,86 +1,82 @@
 class HelpdeskReports::Formatter::Ticket::AgentSummary
-  
+
   include HelpdeskReports::Util::Ticket
-  
+
   attr_accessor :result
+
+  METRICS = ["AGENT_REASSIGNED_TICKETS", "AVG_FIRST_RESPONSE_TIME", "AVG_RESOLUTION_TIME",
+             "AVG_RESPONSE_TIME", "FCR_TICKETS", "PRIVATE_NOTES", "REOPENED_TICKETS",
+             "RESOLUTION_SLA", "RESOLVED_TICKETS", "RESPONSE_SLA", "RESPONSES"]
 
   def initialize data, args = {}
     @result = data
     @args = args
+    @current = @result['AGENT_SUMMARY_CURRENT']
+    @historic = @result['AGENT_SUMMARY_HISTORIC']
   end
-  
+
   def perform
-    id_metric_hash = agent_ids_and_metrics
-    @summary = build_summary id_metric_hash
+    merging_current_historic_data
+    removing_unscoped_and_deleted_agent
     populate_result_in_summary
-    @summary.sort_by{|a| a[:agent_name]}
   end
-  
-  def agent_ids_and_metrics
-    ids, metrics = [], []
-    result.each do |metric, res|
-      res.symbolize_keys!
-      metrics << metric
-      agents = res[:agent_id] || res[:actor_id] || res[:previous_object_id]
-      ids << agents.keys.collect{|id| id ? id.to_i : nil} if agents
+
+  def merging_current_historic_data
+    @current  = [] if (@current.is_a?(Hash) && @current["error"])   || @current.empty? #Handling the edge cases
+    @historic = [] if (@historic.is_a?(Hash) && @historic["error"]) || @historic.empty?
+    @result = (@current + @historic).group_by{|h| h["agent_id"]}.map{ |k,v| v.reduce(:merge)}
+  end
+
+  def removing_unscoped_and_deleted_agent
+    @ids = []
+    #Fetching result's agent ids
+    @result.each { |row| @ids << row["agent_id"].to_i }
+
+    @ids = @ids.flatten.uniq.compact
+    scope_agents_with_agent_and_group_filter
+
+    @agent_hash = agent_id_name_hash @ids
+    @ids &= @agent_hash.keys # Not showing result for deleted agents
+  end
+
+  def scope_agents_with_agent_and_group_filter
+    if @args[:agent_ids].present?
+      @ids &= @args[:agent_ids]
     end
-    ids = ids.flatten.uniq.compact
     if @args[:group_ids].present?
-      scoped_ids = scope_agents_with_group_filter
-      ids &= scoped_ids
+      scoped_ids = list_of_group_agents
+      @ids &= scoped_ids
     end
-    { ids: ids, metrics: metrics}
   end
-  
-  def scope_agents_with_group_filter
+
+  def list_of_group_agents
     acc_groups = Account.current.groups_from_cache.select{|g| (@args[:group_ids] || []).include? g.id}
     acc_groups.inject([]) do |agents, group|
       agents |= group.agents.collect{|a| a.id}
     end
   end
-  
-  def build_summary id_metric_hash
-    ids = id_metric_hash[:ids]
-    agent_hash = agent_id_name_hash ids
-    metrics = id_metric_hash[:metrics]
-    metric_hash = build_metric_hash metrics
-    ids &= agent_hash.keys # Not showing result for deleted agents
-    (ids || []).inject([]) do |summary, id|
-      summary << metric_hash.merge(agent_id: id, agent_name: agent_hash[id])
-      summary
-    end
-  end
-  
+
   def agent_id_name_hash ids
-    Account.current.users.where(helpdesk_agent: true).
-                          find_all_by_id(ids, :select => "id, name").
-                          collect{ |a| [a.id, a.name]}.to_h
+    Account.current.users.where(helpdesk_agent: true).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
   end
-  
-  def build_metric_hash metrics
-    (metrics || []).inject({}) do |hash, metric|
-      hash[metric] = nil
-      hash
-    end
-  end
-  
+
   def populate_result_in_summary
-    @summary.each do |agent|
-      id = agent[:agent_id]
-      agent.keys.each do |metric|
-        next if metric == :agent_id || metric == :agent_name
-        met = metric.upcase
-        tmp = result[met][:agent_id] || result[met][:actor_id] || result[met][:previous_object_id]
-        # If particular QUERY failed(query error, system error, timedout) for a metric, its result is shown as NOT_APPLICABLE
-        if result[met][:error]
-          agent[metric] = NA_PLACEHOLDER_SUMMARY
-        elsif tmp and tmp[id.to_s]
-          agent[metric] = tmp[id.to_s]
-        else
-          agent[metric] = default_value(met)
+    @summary = @result.select do |row|
+      id = row["agent_id"].to_i
+      if @ids.include?(id)
+        row.merge!("agent_name"=>@agent_hash[id])
+        METRICS.each do |key|
+          value = row[key.downcase]
+          if value
+            row[key] = value.to_i
+          else
+            row[key] = default_value(key)
+          end
+          row.delete(key.downcase)
         end
       end
     end
+    @summary.sort_by{|a| a["agent_name"]}
   end
 
   def default_value metric

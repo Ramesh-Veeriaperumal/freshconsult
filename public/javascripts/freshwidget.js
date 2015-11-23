@@ -20,7 +20,8 @@
 			formHeight: 	"500px",
 			responsive: 	"",
 			widgetType: 	"popup",
-			buttonType:     "text"
+			buttonType:     "text",
+			captcha: ""
 		},
 		widgetHeadHTML, widgetBodyHTML = null;
 		$widget_attr = {
@@ -33,8 +34,8 @@
 			"closeButton"   : null,
 			"mobileCloseButton" : null
 		}
-		
-	 // Utility methods for FreshWidget	
+
+	 // Utility methods for FreshWidget
 	 function catchException(fn) {
 		try {
 			return fn();

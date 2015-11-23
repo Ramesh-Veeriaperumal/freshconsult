@@ -86,17 +86,17 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
-    # config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
-    #   # during the ddos attack uncomment the below line
-    #   # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
-    #   r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
-    #   r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
-    #   r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
-    #   r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
-    #   r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 30,:per_ip => true)
-    #   store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"])
-    #   r.set_cache(store) if store.present?
-    # end
+    config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
+      # during the ddos attack uncomment the below line
+      # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
+      r.define_rule( :match => "^/(mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
+      r.define_rule( :match => "^/(support\/mobihelp)/.*", :type => :fixed, :metric => :rph, :limit => 300,:per_ip => true ,:per_url => true )
+      r.define_rule( :match => "^/(support(?!\/(theme)))/.*", :type => :fixed, :metric => :rph, :limit => 1800,:per_ip => true ,:per_url => true )
+      r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
+      r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rph, :limit => 30,:per_ip => true)
+      store = Redis.new(:host => RateLimitConfig["host"], :port => RateLimitConfig["port"],:timeout => 0.5)
+      r.set_cache(store) if store.present?
+    end
 
     # Plugins custom path and order
     config.plugin_paths =["#{Rails.root}/lib/plugins"]
@@ -147,7 +147,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github'].include?(oauth_provider)
+        next if ['github', 'salesforce'].include?(oauth_provider)
       if oauth_provider == "shopify"
         provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
                  :scope => 'read_orders',

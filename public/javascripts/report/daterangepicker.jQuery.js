@@ -56,6 +56,7 @@ jQuery.fn.daterangepicker = function(settings){
 		onOpen: function(){},
 		onChange: function(){},
 		rangeDurationMonths: null,
+		presetRangesCallback: false,
 		datepickerOptions: null //object containing native UI datepicker API options
 	}, settings);
 	
@@ -268,6 +269,12 @@ jQuery.fn.daterangepicker = function(settings){
 			var dateEnd = (typeof el.data('dateEnd') == 'string') ? Date.parse(el.data('dateEnd')) : el.data('dateEnd')();
 			rp.find('.range-start').datepicker('setDate', dateStart).find('.ui-datepicker-current-day').trigger('click');
 			rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
+			// Reports Hack: To persist relative date Range
+			if (options.presetRangesCallback){
+				jQuery('#reports_wrapper').trigger("presetRangesSelected"); 
+			}
+				
+
 		}
 		
 		return false;

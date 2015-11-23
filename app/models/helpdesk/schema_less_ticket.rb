@@ -30,6 +30,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :manual_dueby, :boolean_tc03
 	alias_attribute :parent_ticket, :long_tc02
 	alias_attribute :reports_hash, :text_tc02
+	alias_attribute :sla_response_reminded, :boolean_tc04
+	alias_attribute :sla_resolution_reminded, :boolean_tc05
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10

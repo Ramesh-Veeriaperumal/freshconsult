@@ -14,7 +14,7 @@ module Helpdesk::TicketActions
     cc_emails = fetch_valid_emails(params[:cc_emails])
 
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
-    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup})
+    ticket_params = params[:helpdesk_ticket].merge(:cc_email => {:cc_emails => cc_emails , :fwd_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup})
     
     @ticket = current_account.tickets.build(ticket_params)
     set_default_values
@@ -64,7 +64,7 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    update_split_activity
+    update_split_activities
     redirect_to @item
   end
   
@@ -77,7 +77,11 @@ module Helpdesk::TicketActions
   end
 
   def update_multiple_tickets
-    render :partial => "update_multiple" 
+    render :partial => "update_multiple" , :locals => { :select_all => false } 
+  end
+
+  def update_all_tickets
+    render :partial => "update_multiple", :locals => { :select_all => true}  
   end
 
   def configure_export
@@ -110,10 +114,14 @@ module Helpdesk::TicketActions
     render :partial => "helpdesk/tickets/show/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
   end
   
-  def update_split_activity    
+  def update_split_activities
    @item.create_activity(current_user, 'activities.tickets.ticket_split.long',
             {'eval_args' => {'split_ticket_path' => ['split_ticket_path', 
             {'ticket_id' => @source_ticket.display_id, 'subject' => @source_ticket.subject}]}}, 'activities.tickets.ticket_split.short') 
+
+   @source_ticket.create_activity(current_user, 'activities.tickets.note_split.long',
+            {'eval_args' => {'split_ticket_path' => ['split_ticket_path',
+            {'ticket_id' => @item.display_id, 'subject' => @item.subject}]}}, 'activities.tickets.note_split.short')
                   
   end
   
@@ -171,7 +179,8 @@ module Helpdesk::TicketActions
     move_cloud_files
     if @item.save_ticket
       move_attachments
-      destroy_note_and_activity 
+      @note.remove_activity
+      @note.destroy
       Resque.enqueue(Workers::FbSplitTickets, { :account_id => current_account.id,
                                                 :child_fb_post_ids => @child_fb_note_ids,
                                                 :comment_ticket_id => @item.id,
@@ -182,17 +191,7 @@ module Helpdesk::TicketActions
     end
     
   end
-  
-  def destroy_note_and_activity
-    unless @item.fb_post.nil?
-      activities = @source_ticket.activities.find(:all, :conditions => 
-      {:description => "activities.tickets.conversation.note.long"})
-      activity = activities.detect{ |x| x.note_id == @note.id }
-      activity.destroy unless activity.blank?
-    end
-    @note.destroy
-  end
-  
+
   
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
@@ -317,6 +316,11 @@ module Helpdesk::TicketActions
                                     "value"=> params[:company_id] }]
       cache_filter_params
     end
+  end
+
+  def set_default_filter
+    params[:filter_name] = "all_tickets" if params[:filter_name].blank? && params[:filter_key].blank? && params[:data_hash].blank?
+    # When there is no data hash sent selecting all_tickets instead of new_and_my_open
   end
 
   private
