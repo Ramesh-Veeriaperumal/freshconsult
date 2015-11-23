@@ -23,6 +23,7 @@ class TicketsController < ApiApplicationController
   end
 
   def update
+    append_account_id_for_ticket_fields
     assign_protected
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
@@ -179,7 +180,7 @@ class TicketsController < ApiApplicationController
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
         @item.inline_attachments = @item.inline_attachments
-        @item.product ||= current_portal.product unless params[cname].key?(:product_id)
+        @item.product = current_portal.product unless @item.schema_less_ticket.try(:product_id)
       end
     end
 
@@ -225,6 +226,10 @@ class TicketsController < ApiApplicationController
     def load_object
       @item = scoper.find_by_display_id(params[:id])
       head(:not_found) unless @item
+    end
+
+    def before_build_object
+      append_account_id_for_ticket_fields
     end
 
     def load_ticket_status

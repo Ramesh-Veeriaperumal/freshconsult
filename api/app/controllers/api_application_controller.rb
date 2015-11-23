@@ -498,4 +498,14 @@ class ApiApplicationController < MetalApiController
     def increment_api_credit_by(value)
       RequestStore.store[:extra_credits] += value
     end
+
+    def prepend_with_cf_for_custom_fields
+      custom_fields_hash = params[cname][:custom_field]
+      custom_fields_hash.keys.each { | key | params[cname][:custom_field]["cf_#{key}"] = params[cname][:custom_field].delete key } if custom_fields_hash.is_a? Hash
+    end
+
+    def append_account_id_for_ticket_fields
+      custom_fields_hash = params[cname][:custom_field]
+      custom_fields_hash.keys.each { | key | params[cname][:custom_field]["#{key}_#{Account.current.id}"] = params[cname][:custom_field].delete key } if custom_fields_hash.is_a? Hash
+    end
 end

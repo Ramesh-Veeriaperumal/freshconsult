@@ -24,5 +24,5 @@ json.array! @items do |tkt|
 
   # Not caching as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
-  json.set! :custom_fields, CustomFieldDecorator.utc_format(tkt.custom_field)
+  json.set! :custom_fields, CustomFieldDecorator.utc_format(CustomFieldDecorator.remove_prepended_text_from_custom_fields(tkt.custom_field, 0, (-Account.current.id.to_s.length-2)))
 end

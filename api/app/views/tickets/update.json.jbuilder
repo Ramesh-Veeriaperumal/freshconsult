@@ -20,6 +20,6 @@ end
 
 json.set! :is_escalated, @item.isescalated
 json.set! :tags, @item.tag_names
-json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field)
+json.set! :custom_fields, CustomFieldDecorator.utc_format(CustomFieldDecorator.remove_prepended_text_from_custom_fields(@item.custom_field, 0, (-Account.current.id.to_s.length-2)))
 
 json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }

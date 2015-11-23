@@ -12,7 +12,7 @@ module Helpers::CompaniesTestHelper
       description: company.description,
       domains: domains,
       note: company.note,
-      custom_fields: expected_output['custom_field'] || company.custom_field,
+      custom_fields: CustomFieldDecorator.remove_prepended_text_from_custom_fields(expected_output['custom_field'] || company.custom_field, 3, -1),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -27,7 +27,7 @@ module Helpers::CompaniesTestHelper
   def company_field_response_pattern(company_field)
     {
       id: Fixnum,
-      name: company_field.name,
+      name: company_field.api_name,
       default: company_field.default_field?,
       label: company_field.label,
       type: company_field.field_type,

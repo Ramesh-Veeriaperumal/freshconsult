@@ -7,6 +7,7 @@ class ContactDelegator < SimpleDelegator
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
+    restrict_api_field_name: true,
     required_attribute: :required_for_agent
   }
   }

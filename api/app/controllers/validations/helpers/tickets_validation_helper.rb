@@ -5,7 +5,7 @@ class Helpers::TicketsValidationHelper
     end
 
     def custom_field_names(ticket_fields)
-      ticket_fields.select { |x| !x.default }.collect(&:name)
+      ticket_fields.select { |x| !x.default }.collect(&:api_name)
     end
 
     def custom_dropdown_fields(delegator)
@@ -18,12 +18,12 @@ class Helpers::TicketsValidationHelper
 
     def custom_dropdown_field_choices
       Account.current.custom_dropdown_fields_from_cache.collect do |x|
-        [x.name.to_sym, x.choices.flatten.uniq]
+        [x.api_name.to_sym, x.choices.flatten.uniq]
       end.to_h
     end
 
     def custom_nested_field_choices
-      nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.name, x.formatted_nested_choices] }.to_h
+      nested_fields = Account.current.nested_fields_from_cache.collect { |x| [x.api_name, x.formatted_nested_choices] }.to_h
       {
         first_level_choices: nested_fields.map { |x| [x.first, x.last.keys] }.to_h,
         second_level_choices: nested_fields.map { |x| [x.first, x.last.map { |t| [t.first, t.last.keys] }.to_h] }.to_h,
@@ -37,7 +37,7 @@ class Helpers::TicketsValidationHelper
     end
 
     def custom_checkbox_names(ticket_fields)
-      ticket_fields.select { |x| x.field_type.to_sym == :custom_checkbox }.map(&:name)
+      ticket_fields.select { |x| x.field_type.to_sym == :custom_checkbox }.map(&:api_name)
     end
   end
 end

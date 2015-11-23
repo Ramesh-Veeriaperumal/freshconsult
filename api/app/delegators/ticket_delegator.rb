@@ -14,6 +14,7 @@ class TicketDelegator < SimpleDelegator
                                 drop_down_choices: proc { Helpers::TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { Helpers::TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
+                                restrict_api_field_name: true,
                                 required_attribute: :required
                               }
                             }

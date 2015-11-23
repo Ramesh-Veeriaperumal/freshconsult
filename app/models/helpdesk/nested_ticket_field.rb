@@ -50,6 +50,11 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   	self.label_in_portal = label if label_in_portal.blank?
   end
 
+  def api_name
+    #(-Account.current.id.to_s.length-2) will omit "_accountId" from name
+    is_default_field? ? name : name[0..(-Account.current.id.to_s.length-2)]
+  end
+
   protected
 
     def save_form_field_mapping

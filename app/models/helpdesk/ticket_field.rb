@@ -405,6 +405,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
     #   return false
     # end
   end
+
+  #Used by API For getting only the name of the field omitting the _accountId
+  def api_name
+    #(-Account.current.id.to_s.length-2) will omit "_accountId" from name
+    is_default_field? ? name : name[0..(-Account.current.id.to_s.length-2)]
+  end
   
   protected
 
