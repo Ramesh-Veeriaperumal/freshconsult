@@ -118,7 +118,7 @@ class User < ActiveRecord::Base
   def set_company_name
    if (self.company_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       comp = account.companies_from_cache.detect{|x| x.domains.to_s.include?(email_domain)}
+       comp = account.companies.domains_like(email_domain).first
        self.company_id = comp.id unless comp.nil?    
    end
   end

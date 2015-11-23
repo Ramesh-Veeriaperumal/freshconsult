@@ -134,17 +134,17 @@ class Helpdesk::NotesController < ApplicationController
 
   protected
 
-    def build_note_body_attributes    
-      if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]    
-        unless params[:helpdesk_note].has_key?(:note_body_attributes)    
-          note_body_hash = {:note_body_attributes => { :body => params[:helpdesk_note][:body],    
-                                  :body_html => params[:helpdesk_note][:body_html] }}     
-          params[:helpdesk_note].merge!(note_body_hash).tap do |t|           
-            t.delete(:body) if t[:body]    
-            t.delete(:body_html) if t[:body_html]    
-          end     
-        end     
-      end    
+    def build_note_body_attributes
+      if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]
+        unless params[:helpdesk_note].has_key?(:note_body_attributes)
+          note_body_hash = {:note_body_attributes => { :body => params[:helpdesk_note][:body],
+                                  :body_html => params[:helpdesk_note][:body_html] }} 
+          params[:helpdesk_note].merge!(note_body_hash).tap do |t| 
+            t.delete(:body) if t[:body]
+            t.delete(:body_html) if t[:body_html]
+          end 
+        end 
+      end
     end
 
     def scoper
