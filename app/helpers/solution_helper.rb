@@ -301,7 +301,8 @@ module SolutionHelper
 		v.present? ? v.respond_to?(:outdated) && v.outdated ? 'outdated' : 'active' : ''
 	end
 
-	def primary_preview(primary, identifier)
+	def primary_preview(primary, identifier, current_obj = nil)
+		return unless primary.present? && primary != current_obj
 		"<b>#{Language.for_current_account.name}:</b>
 		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
 	end

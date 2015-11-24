@@ -3,7 +3,7 @@
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<%= content_tag :h3, t(".new_folder"), :class => "lead itil-hide" %>
 <% end %>
-<%= form_for (@folder), :url => solution_folders_path,
+<%= form_for :solution_folder_meta, :url => solution_folders_path,
 						:html => {
 							:remote => true,
 							:method => :post,
@@ -12,7 +12,7 @@
 							:class => "validate_form version_form", 
 							:rel => :validate
 						} do |f| %>
-	<%= render :partial => "folder_form" , :locals => { :f => f, :name => "solution_folder_meta[primary_folder]" }%>
+	<%= render :partial => "folder_form" , :locals => { :f => f, :association => :primary_folder }%>
 	<% unless @modal %>
 		<div class="button-container align-right itil-hide">
 			<%= link_to(t('cancel'), solution_categories_path, :class => "btn" ) %>

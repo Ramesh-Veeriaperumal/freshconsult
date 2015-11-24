@@ -50,7 +50,7 @@ window.App = window.App || {};
     },
 
     bindHandlers: function () {
-      $('body').on('change.solutionHome', '#solution_folder_visibility', App.Solutions.Folder.setCompanyVisibility);
+      $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
     },
 
     unBindHandlers: function () {

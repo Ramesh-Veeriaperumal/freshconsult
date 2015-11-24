@@ -1,24 +1,26 @@
 <div class="form-horizontal">
 	<div id="error_messages"><%= f.error_messages %></div>
 	<div class="control-group">
-		<%= f.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
-		<div class="controls">
-			<%= f.text_field :name, 
-											:class => "text required",
-											:autocomplete => "off",
-											:autofocus => true,
-											:value => @category.name,
-											:name => "#{name}[name]" %>
-			<%= primary_preview(@primary, :name) if @primary && @primary != @category %>
+
+		<%= f.fields_for(association, @category) do |associated_category| %>
+			<%= associated_category.label(:name, "#{t('solution_category.name')} <span class='required_star'>*</span>".html_safe, {:class =>'control-label'}) %>
+			<div class="controls">
+				<%= associated_category.text_field :name, 
+												:class => "text required",
+												:autocomplete => "off",
+												:autofocus => true,
+												:value => @category.name %>
+				<%= primary_preview(@primary, :name, @category) %>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<%= f.label(:description, t('description'), {:class =>'control-label'}) %>
-		<div class="controls">
-			<%= f.text_area :description, :rows => 7, :value => @category.description, :name => "#{name}[description]" %>
-			<%= primary_preview(@primary, :description) if @primary && @primary != @category %>
+		<div class="control-group">
+			<%= associated_category.label(:description, t('description'), {:class =>'control-label'}) %>
+			<div class="controls">
+				<%= associated_category.text_area :description, :rows => 7, :value => @category.description %>
+				<%= primary_preview(@primary, :description, @category) %>
+			</div>
 		</div>
-	</div>
+	<% end %>
 	<% if current_account.portals.count > 1 %>
 	<div class="control-group">
 		<label class="control-label"><%= t("solution_category.product_portal_visibility").html_safe %></label>
@@ -31,11 +33,10 @@
 				<%= f.collection_select :portal_ids, current_account.portals, 
 																:id, :portal_name, 
 																{
-																	:selected => @category.new_record? ? @portal.id : @category.portals.map(&:id)
+																	:selected => @category.new_record? ? @portal.id : @category_meta.portals.map(&:id)
 																}, 
 																:class => "select2 input-xlarge portal_visibility_required", :multiple => true, 
-																:placeholder => t("solution_category.select_solution_category").html_safe,
-																:name => "solution_category_meta[portal_ids][]" %>
+																:placeholder => t("solution_category.select_solution_category").html_safe %>
 			<% end %>
 		</div>
 	</div>

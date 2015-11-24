@@ -9,10 +9,10 @@ class Solution::FoldersController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
   before_filter :set_selected_tab, :page_title
-  before_filter :load_category, :only => [:new, :show, :edit, :destroy, :create]
+  before_filter :load_category, :only => [:new, :show, :edit, :create]
   before_filter :load_meta, :only => [:edit, :update]
   # to be done!
-  # before_filter :set_customer_folder_params, :validate_customers, :only => [:create]
+  before_filter :validate_and_set_customers, :only => [:create, :update]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :old_category, :only => [:move_to]
   before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
@@ -38,8 +38,9 @@ class Solution::FoldersController < ApplicationController
 
   def new
     @page_title = t("header.tabs.new_folder")
-    @folder = current_account.folders.new
-    @folder.category = @category if params[:category_id]
+    @folder_meta = current_account.solution_folder_meta.new
+    @folder = @folder_meta.solution_folders.new
+    @folder_meta.solution_category_meta_id = @category.id if params[:category_id]
     respond_to do |format|
       format.html { render :layout => false if @modal }
       format.xml  { render :xml => @folder }
@@ -183,7 +184,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def load_category
-      @category = current_account.solution_categories.find_by_id!(params[:category_id]) if params[:category_id]
+      @category = current_account.solution_category_meta.find_by_id!(params[:category_id]) if params[:category_id]
     end
 
     def fetch_new_category
@@ -193,16 +194,11 @@ class Solution::FoldersController < ApplicationController
       @new_category ||= @category
     end
 
-    def set_customer_folder_params
-      return unless params[nscname][:customer_folders_attributes].blank?
-      params[nscname][:customer_folders_attributes] = {}
-      params[nscname][:customer_folders_attributes][:customer_id] = params[:customers]  
-    end
-
-    def validate_customers
-      customer_ids = params[nscname][:customer_folders_attributes][:customer_id] || []
-      customer_ids = valid_customers(customer_ids) unless customer_ids.blank?
-      params[nscname][:customer_folders_attributes][:customer_id] = customer_ids.blank? ? [] : customer_ids
+    def validate_and_set_customers
+      (return unless params[nscname][:customer_folders_attributes].blank?) if params[nscname].present?
+      customer_ids = valid_customers(params[:customers]) || []
+      params[:solution_folder_meta][:customer_folders_attributes] = {}
+      params[:solution_folder_meta][:customer_folders_attributes] = customer_ids
     end
 
     def set_modal

@@ -13,10 +13,10 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_category, :only => [:destroy]
   before_filter :load_meta, :only => [:edit, :update]
   before_filter :load_category_with_folders, :only => [:show]
-  before_filter :find_portal, :only => [:all_categories, :new, :create]
+  before_filter :find_portal, :only => [:all_categories, :new, :create, :edit, :update]
   before_filter :set_modal, :only => [:new, :edit]
   before_filter :set_default_order, :only => :reorder
-  before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create]
+  before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create, :update]
 
   def index
     ### MULTILINGUAL SOLUTIONS - META READ HACK!!
@@ -53,8 +53,8 @@ class Solution::CategoriesController < ApplicationController
   
   def new
     @page_title = t("header.tabs.new_solution_category")
-    @category = current_account.solution_categories.new
-
+    @category_meta = current_account.solution_category_meta.new
+    @category = @category_meta.solution_categories.new
     respond_to do |format|
       format.html { render :layout => false if @modal }
       format.xml  { render :xml => @category }

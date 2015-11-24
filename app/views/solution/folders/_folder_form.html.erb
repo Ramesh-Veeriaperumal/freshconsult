@@ -1,32 +1,33 @@
 <ul id="folder-form-container" class="form-horizontal">  
   <div id="error_messages"><%= f.error_messages %></div>
+
+  <%= f.fields_for(association, @folder) do |associated_folder| %>
+		<li class="control-group">
+	    	<%= associated_folder.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
+	    	<div class="controls">
+	    		<%= associated_folder.text_field :name,
+	                         :class => "required",
+	                         :autocomplete => "off",
+	                         :autofocus => true %>
+					<%= primary_preview(@primary, :name, @folder) %>
+	    	</div>
+		</li>
+		<li class="control-group">
+			<%= associated_folder.label(:description, t('description'), { :class => 'control-label'}) %>
+			<div class="controls">
+		 		<%= associated_folder.text_area :description, :class => "smallpara" %>
+		 		<%= primary_preview(@primary, :description, @folder) %>
+		 	</div>
+		</li>  
+	<% end %>
+	
 	<li class="control-group">
-    	<%= f.label(:name, "#{t('name')} <span class='required_star'>*</span>".html_safe,{:class => 'control-label'}) %>
-    	<div class="controls">
-    		<%= f.text_field :name,
-                         :class => "required",
-                         :autocomplete => "off",
-                         :autofocus => true,
-                         :name => "#{name}[name]" %>
-				<%= primary_preview(@primary, :name) if @primary && @primary != @folder %>
-    	</div>
-	</li>
-	<li class="control-group">
-		<%= f.label(:description, t('description'), { :class => 'control-label'}) %>
-		<div class="controls">
-	 		<%= f.text_area :description, 
-	 										:class => "smallpara",
-	 										:name => "#{name}[description]" %>
-	 		<%= primary_preview(@primary, :description) if @primary && @primary != @folder %>
-	 	</div>
-	</li>  
-	<li class="control-group">
-		<%= f.label(:category_id, t('.category'), { :class => 'control-label'}) %>
+		<%= f.label(:solution_category_meta_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
 			<% if @folder_meta.present? && (@primary && @primary != @folder) %>
 				<%= dynamic_text_box(:category, @language) %>
 			<% else %>
-				<%= f.select :category_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, 
+				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, 
 						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 
 						{ 
 							:class => "select2 required input-large", 
@@ -44,7 +45,7 @@
   			</div>
 			<% else %>
 				<div class="row-fluid">
-		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large", :name => "solution_folder_meta[visibility]" } %>
+		    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, { :selected => @folder_meta && @folder_meta.visibility }, { :class => "select select2 input-large" } %>
 	    	</div>
 	    	<br>
 	    	<div class="row-fluid company_folders <%= 'hide' if @folder.visibility != 4 %>">
