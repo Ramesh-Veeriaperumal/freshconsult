@@ -3583,8 +3583,8 @@ en:
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
-    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
+    escalation_rule_response_text: Set escalation rule when a ticket is not <b>responded to </b> on time
+    escalation_rule_resolution_text: Set escalation hierarchy when a ticket is not <b>resolved </b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -3612,8 +3612,8 @@ en:
       default_policy_update: Cannot update default SLA policy.
     reminder: What happens when this SLA due time approaches?
     reminder_label: Set SLA due time reminder
-    reminder_response_text: Set Reminder Rule when a ticket <b>response time</b> approaches
-    reminder_resolution_text: Set Reminder Rule when a ticket is not <b>resolved</b> on time
+    reminder_response_text: Set reminder rule when a ticket <b>rresponse time </b> approaches
+    reminder_resolution_text: Set reminder rule when a ticket <b>resolution time </b> approaches
   left: Left
   subscription:
     error:
