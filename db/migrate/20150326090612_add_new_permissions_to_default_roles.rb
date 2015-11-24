@@ -20,6 +20,7 @@ class AddNewPermissionsToDefaultRoles < ActiveRecord::Migration
             next if account.nil?
             account.make_current
             account.roles.where(:default_role=>true).each do |role|
+              next if role.name == "Restricted Agent"
               role.privilege_list=DEFAULT_ROLE_PRIVILEGES.fetch(role.name)
               role.save
             end
