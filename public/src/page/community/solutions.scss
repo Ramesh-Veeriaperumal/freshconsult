@@ -259,6 +259,9 @@ body.community #sticky_header.category-sticky.is_stuck {
   .sidepanel {
     .solutions-widget {
       .sidebar-dropdown {
+        .dropdown-toggle.normal-text {
+          cursor: auto;
+        }
         .dropdown-toggle {
           cursor: pointer;
         }

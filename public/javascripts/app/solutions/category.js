@@ -43,7 +43,7 @@ window.App.Solutions = window.App.Solutions || {};
     },
 
     changeMyFilterSettings: function (e,container) {
-      $(container+'title').text($(e.target).text());
+      $(container+'-title').text($(e.target).text());
       $(container+'-me').parent().addClass('active');
       $(container+'-all').parent().removeClass('active');
     },
