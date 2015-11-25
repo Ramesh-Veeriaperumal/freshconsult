@@ -1,16 +1,6 @@
 <% content_for :helpcard do %>
 	<%= render :partial => "helpnote" %>
 <% end %>
-<%= javascript_tag do %>
-	jQuery("#manage_languages_submit").bind('click', function(ev){
-		var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
-		if(language_flag != -1 ){
-			ev.preventDefault(); 
-			alert("<%= t('account.same_language_alert')%>");
-		}
-	});
-<% end %>
-
 <div class="manage-languages-header">
 	<span class="button-container itil-hide language-form-btns">
 		<%= pjax_link_to(t('cancel'), edit_account_path, :class => "btn" ) %>
@@ -67,12 +57,29 @@
 																{}, 
 																{ 
 																	:multiple => true,
-																	:class => "select2 span7 clear-left-margin secondary-languages-field language_required",
-																	"data-placeholder"=>t('accounts.multilingual_support.add_languages')
+																	:class => "span7 clear-left-margin secondary-languages-field language_required",
+																	"data-placeholder"=>t('accounts.multilingual_support.add_languages'),
+																	:id => "account_supported_languages"
 																} %>
 												</div>	
 											</div>					
 										</div>
+
+										<div class="control-group" id="portal_language_list">
+											<%= settings.label :supported_languages , t('account.portal_languages') , :class => "control-label caption" %>
+											<div class="controls">
+												<div class="row-fluid">
+													<%= settings.fields_for :additional_settings do |additional_settings| %>
+														<%= additional_settings.hidden_field :portal_languages,
+														    :class => "span7 clear-left-margin secondary-languages-field language_required", 
+														    :id => "portal_supported_languages",
+														    :"data-placeholder" => t('accounts.multilingual_support.add_languages'),
+														    :"data-portal-languages" => "#{@account.portal_languages.to_json.html_safe}" %>
+													<% end %>
+												</div>	
+											</div>					
+										</div>
+
 									<% end %>
 								<% end %>
 						</div>
@@ -81,3 +88,8 @@
 		<% end %>
 	</div>
 </div>
+<script type="text/javascript">
+	jQuery('body').one('assetLoaded.fjax', function() {
+		App.Admin.LanguageSettings.INVALID_LANGUAGE_ALERT =  "<%= t('account.same_language_alert')%>";
+	});
+</script>

@@ -33,6 +33,10 @@ window.App = window.App || {};
 			case 'admin/portal/settings':
 				this.current_module = 'PortalSettings';
 				break;
+				
+			case 'accounts/manage_languages':
+				this.current_module = 'LanguageSettings';
+				break;
 			}
 		},
 

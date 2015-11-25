@@ -4923,6 +4923,7 @@ en:
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
+    portal_languages: Supported Portal Languages
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"

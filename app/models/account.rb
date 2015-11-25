@@ -409,6 +409,10 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def portal_languages
+    account_additional_settings.additional_settings[:portal_languages]
+  end
+
   protected
   
     def external_url_is_valid?(url) 

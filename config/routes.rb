@@ -1493,7 +1493,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/helpdesk/manage_languages' => 'accounts#manage_languages', :as => :manage_languages
+  match '/admin/manage_languages' => 'accounts#manage_languages', :as => :manage_languages
 
   resource :accounts do
     collection do

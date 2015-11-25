@@ -573,6 +573,6 @@ class AccountsController < ApplicationController
       @account = current_account
       @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
       @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
+      @account.account_additional_settings.additional_settings[:portal_languages] =params[:account][:account_additional_settings_attributes][:additional_settings][:portal_languages].split(',')
     end
-
 end
