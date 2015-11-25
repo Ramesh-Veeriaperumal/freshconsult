@@ -53,7 +53,8 @@ module Archive
           :archive_created_at => current_time,
           :archive_updated_at => current_time,
           :progress => true,
-          :access_token => ticket.access_token
+          :access_token => ticket.access_token,
+          :owner_id => ticket.owner_id # ticket's company_id
         )
       end
 
