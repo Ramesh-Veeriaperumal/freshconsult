@@ -5,7 +5,7 @@ module ApiDiscussions
 
     def create
       @item.user = api_current_user
-      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::POST_FIELDS.include?(x) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::COMMENT_FIELDS.include?(x) })
       post.user = api_current_user
       assign_parent post, :topic, @item
       super

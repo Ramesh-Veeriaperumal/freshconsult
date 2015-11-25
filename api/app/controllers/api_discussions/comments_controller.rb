@@ -1,10 +1,10 @@
 module ApiDiscussions
-  class PostsController < ApiApplicationController
-    before_filter :topic_exists?, only: [:topic_posts]
+  class CommentsController < ApiApplicationController
+    before_filter :topic_exists?, only: [:topic_comments]
 
-    def topic_posts
-      @posts = paginate_items(@item.posts)
-      render '/api_discussions/posts/post_list'
+    def topic_comments
+      @comments = paginate_items(@item.posts)
+      render '/api_discussions/comments/comment_list'
     end
 
     private
@@ -32,9 +32,9 @@ module ApiDiscussions
 
       def validate_params
         return false if create? && !load_topic
-        params[cname].permit(*(DiscussionConstants::POST_FIELDS))
-        post = ApiDiscussions::PostValidation.new(params[cname], @item)
-        render_errors post.errors, post.error_options unless post.valid?
+        params[cname].permit(*(DiscussionConstants::COMMENT_FIELDS))
+        comment = ApiDiscussions::CommentValidation.new(params[cname], @item)
+        render_errors comment.errors, comment.error_options unless comment.valid?
       end
 
       def scoper

@@ -1,5 +1,5 @@
 module ApiDiscussions
-  class PostValidation < ApiValidation
+  class CommentValidation < ApiValidation
     attr_accessor :body_html, :answer
     validates :body_html, required: true
     validates :answer, data_type: { rules: 'Boolean', allow_nil: true }

@@ -1,14 +1,14 @@
 require_relative '../../test_helper'
 
 module ApiDiscussions
-  class PostsControllerTest < ActionController::TestCase
+  class CommentsControllerTest < ActionController::TestCase
     include Helpers::DiscussionsTestHelper
 
     def wrap_cname(params)
-      { post: params }
+      { comment: params }
     end
 
-    def post_obj
+    def comment_obj
       Post.first
     end
 
@@ -25,43 +25,43 @@ module ApiDiscussions
     end
 
     def test_update
-      post = quick_create_post
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
+      comment = quick_create_post
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
       assert_response 200
-      match_json(post_pattern({ body_html: 'test reply 2', answer: true }, post.reload))
+      match_json(comment_pattern({ body_html: 'test reply 2', answer: true }, comment.reload))
     end
 
     def test_update_blank_message
-      post = post_obj
-      put :update, construct_params({ id: post.id }, body_html: '')
+      comment = comment_obj
+      put :update, construct_params({ id: comment.id }, body_html: '')
       assert_response 400
       match_json([bad_request_error_pattern('body_html', :"can't be blank")])
     end
 
     def test_update_invalid_answer
-      post = post_obj
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: 90)
+      comment = comment_obj
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: 90)
       assert_response 400
       match_json([bad_request_error_pattern('answer', :data_type_mismatch, data_type: 'Boolean')])
     end
 
     def test_update_with_user_id
-      post =  post_obj
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', user_id: User.first)
+      comment =  comment_obj
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', user_id: User.first)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_update_with_topic_id
-      post =  post_obj
-      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', topic_id: topic_obj)
+      comment =  comment_obj
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', topic_id: topic_obj)
       assert_response 400
       match_json([bad_request_error_pattern('topic_id', :invalid_field)])
     end
 
     def test_update_with_extra_params
-      post =  post_obj
-      put :update, construct_params({ id: post.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s,
+      comment =  comment_obj
+      put :update, construct_params({ id: comment.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s,
                                                      updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
       assert_response 400
       match_json([bad_request_error_pattern('topic_id', :invalid_field),
@@ -72,18 +72,18 @@ module ApiDiscussions
     end
 
     def test_update_with_nil_values
-      post =  post_obj
-      put :update, construct_params({ id: post.id }, body_html: nil)
+      comment =  comment_obj
+      put :update, construct_params({ id: comment.id }, body_html: nil)
       assert_response 400
       match_json([bad_request_error_pattern('body_html', :"can't be blank")])
     end
 
     def test_destroy
-      post = quick_create_post
-      delete :destroy, construct_params(id: post.id)
+      comment = quick_create_post
+      delete :destroy, construct_params(id: comment.id)
       assert_equal ' ', @response.body
       assert_response 204
-      assert_nil Post.find_by_id(post.id)
+      assert_nil Post.find_by_id(comment.id)
     end
 
     def test_destroy_invalid_id
@@ -102,8 +102,8 @@ module ApiDiscussions
       topic = topic_obj
       post :create, construct_params({ id: topic.id }, body_html: 'test')
       assert_response 201
-      match_json(post_pattern(Post.last))
-      match_json(post_pattern({ body_html: 'test', topic_id: topic.id,
+      match_json(comment_pattern(Post.last))
+      match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
                                 user_id: @agent.id }, Post.last))
     end
 
@@ -111,12 +111,12 @@ module ApiDiscussions
       topic = topic_obj
       post :create, construct_params({ id: topic.id }, body_html: 'test')
       assert_response 201
-      match_json(post_pattern(Post.last))
-      match_json(post_pattern({ body_html: 'test', topic_id: topic.id,
+      match_json(comment_pattern(Post.last))
+      match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
                                 user_id: @agent.id }, Post.last))
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
-      assert_equal "http://#{@request.host}/api/v2/discussions/posts/#{result['id']}", response.headers['Location']
+      assert_equal "http://#{@request.host}/api/v2/discussions/comments/#{result['id']}", response.headers['Location']
     end
 
     def test_create_invalid_model
@@ -131,37 +131,37 @@ module ApiDiscussions
       match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
-    def test_posts_invalid_id
-      get :topic_posts, construct_params(id: (1000 + Random.rand(11)))
+    def test_comments_invalid_id
+      get :topic_comments, construct_params(id: (1000 + Random.rand(11)))
       assert_response :missing
       assert_equal ' ', @response.body
     end
 
-    def test_posts
-      t = Topic.where('posts_count > ?', 1).first || create_test_post(Topic.first, User.first).topic
-      get :topic_posts, construct_params(id: t.id)
+    def test_comments
+      t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
+      get :topic_comments, construct_params(id: t.id)
       result_pattern = []
       t.posts.each do |p|
-        result_pattern << post_pattern(p)
+        result_pattern << comment_pattern(p)
       end
       assert_response 200
       match_json(result_pattern)
     end
 
-    def test_posts_with_pagination
+    def test_comments_with_pagination
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       3.times do
         create_test_post(t, User.first)
       end
-      get :topic_posts, construct_params(id: t.id, per_page: 1)
+      get :topic_comments, construct_params(id: t.id, per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :topic_posts, construct_params(id: t.id, per_page: 1, page: 2)
+      get :topic_comments, construct_params(id: t.id, per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
-    def test_posts_with_pagination_exceeds_limit
+    def test_comments_with_pagination_exceeds_limit
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
@@ -169,29 +169,29 @@ module ApiDiscussions
       4.times do
         create_test_post(t, User.first)
       end
-      get :topic_posts, construct_params(id: t.id, per_page: 4)
+      get :topic_comments, construct_params(id: t.id, per_page: 4)
       assert_response 200
       assert JSON.parse(response.body).count == 3
       ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
     end
 
-    def test_posts_with_link_header
+    def test_comments_with_link_header
       t = create_test_post(topic_obj, User.first).topic
       3.times do
         create_test_post(t, User.first)
       end
       per_page = t.posts.count - 1
-      get :topic_posts, construct_params(id: t.id, per_page: per_page)
+      get :topic_comments, construct_params(id: t.id, per_page: per_page)
       assert_response 200
       pattern = []
       t.posts.limit(per_page).each do |f|
-        pattern << post_pattern(f)
+        pattern << comment_pattern(f)
       end
       match_json(pattern.ordered!)
       assert JSON.parse(response.body).count == per_page
-      assert_equal "<http://#{@request.host}/api/v2/discussions/topics/#{t.id}/posts?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
+      assert_equal "<http://#{@request.host}/api/v2/discussions/topics/#{t.id}/comments?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :topic_posts, construct_params(id: t.id, per_page: per_page, page: 2)
+      get :topic_comments, construct_params(id: t.id, per_page: per_page, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']
