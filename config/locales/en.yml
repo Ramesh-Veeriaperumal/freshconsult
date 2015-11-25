@@ -3611,8 +3611,8 @@ en:
       invalid_data_type: Company ids should be a comma separated value.
       default_policy_update: Cannot update default SLA policy.
     reminder: What happens when this SLA due time approaches?
-    reminder_label: Set SLA due time reminder
-    reminder_response_text: Set reminder rule when a ticket <b>rresponse time </b> approaches
+    reminder_label: Set SLA reminders
+    reminder_response_text: Set reminder rule when a ticket <b>response time </b> approaches
     reminder_resolution_text: Set reminder rule when a ticket <b>resolution time </b> approaches
   left: Left
   subscription:
