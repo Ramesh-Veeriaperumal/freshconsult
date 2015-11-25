@@ -27,10 +27,10 @@ class Users::UpdateCompanyId < BaseWorker
       user_ids = execute_on_db { users.pluck(:id) }
       if user_ids.present?
         last_user_id = user_ids.last
+        updated_users = users.update_all(:customer_id => company_id)
         user_ids.each_slice(TICKET_UPDATE_LIMIT) do |ids|
           Tickets::UpdateCompanyId.perform_async({ :user_ids => ids, :company_id => company_id })
         end
-        updated_users = users.update_all(:customer_id => company_id)
       end
     end while updated_users == USER_FETCH_LIMIT
   end
