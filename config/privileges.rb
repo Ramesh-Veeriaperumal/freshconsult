@@ -457,7 +457,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_ticket_field, :only => [:index]
     resource :"api_contact_field", :only => [:index]
     resource :"api_company_field", :only => [:index]
-    resource :"api_business_calendar", :only => [:index, :show]
+    resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]

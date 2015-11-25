@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 
-class ApiBusinessCalendarsDependencyTest < ActionDispatch::IntegrationTest
+class ApiBusinessHoursDependencyTest < ActionDispatch::IntegrationTest
   def test_before_filters_application_controller
     expected_filters = [:determine_pod, :activate_authlogic, :clean_temp_files, :select_shard,
                         :unset_current_account, :unset_current_portal, :set_current_account, :set_default_locale,
@@ -13,7 +13,7 @@ class ApiBusinessCalendarsDependencyTest < ActionDispatch::IntegrationTest
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
 
-  def test_validations_business_calendar
+  def test_validations_business_hour
     actual = BusinessCalendar.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [[ActiveModel::Validations::PresenceValidator, [:time_zone, :name], {}]]
     assert_equal expected, actual

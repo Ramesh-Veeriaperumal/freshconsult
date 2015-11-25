@@ -66,7 +66,7 @@ Helpkit::Application.routes.draw do
 
     resources :email_configs, :controller => "api_email_configs", :only => [:index, :show]
 
-    resources :business_calendars, :controller => "api_business_calendars", :only => [:index, :show]
+    resources :business_hours, :controller => "api_business_hours", :only => [:index, :show]
 
     resources :companies, as: "api_companies", :controller => "api_companies", :except => [:new, :edit]
 
