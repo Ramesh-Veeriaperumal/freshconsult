@@ -14,7 +14,6 @@ class ApiContactsController < ApiApplicationController
   end
 
   def update
-    prepend_with_cf_for_custom_fields
     assign_protected
     @item.assign_attributes(params[cname].except('tag_names'))
     contact_delegator = ContactDelegator.new(@item)
@@ -99,6 +98,8 @@ class ApiContactsController < ApiApplicationController
       ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:api_name)) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
+
+      ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_field]
     end
 
     def validate_filter_params
@@ -110,10 +111,6 @@ class ApiContactsController < ApiApplicationController
     def load_objects
       # includes(:flexifield) will avoid n + 1 query to contact field data.
       super contacts_filter(scoper).includes(:flexifield, :company).order('users.name')
-    end
-
-    def before_build_object
-      prepend_with_cf_for_custom_fields
     end
 
     def contacts_filter(contacts)

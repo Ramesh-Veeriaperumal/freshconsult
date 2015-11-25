@@ -51,8 +51,8 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   end
 
   def api_name
-    #(-Account.current.id.to_s.length-2) will omit "_accountId" from name
-    is_default_field? ? name : name[0..(-Account.current.id.to_s.length-2)]
+    #(-Account.current.id_length-2) will omit "_accountId" from name
+    is_default_field? ? name : (TicketConstants::TICKET_FIELD_INVALID_START_CHAR.index(label[0]) ? name[3..(-Account.current.id_length-2)] : name[0..(-Account.current.id_length-2)])
   end
 
   protected

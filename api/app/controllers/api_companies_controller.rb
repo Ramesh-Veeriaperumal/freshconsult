@@ -11,7 +11,6 @@ class ApiCompaniesController < ApiApplicationController
   end
 
   def update
-    prepend_with_cf_for_custom_fields
     @item.assign_attributes(params[cname])
     @item.custom_field = @item.custom_field # assign custom_field so that it will not be queried again in model callbacks
     company_delegator = CompanyDelegator.new(@item)
@@ -33,10 +32,6 @@ class ApiCompaniesController < ApiApplicationController
       current_account.companies
     end
 
-    def before_build_object
-      prepend_with_cf_for_custom_fields
-    end
-
     def validate_params
       @company_fields = current_account.company_form.custom_company_fields
       allowed_custom_fields = @company_fields.map(&:api_name)
@@ -52,5 +47,6 @@ class ApiCompaniesController < ApiApplicationController
       params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
       ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], current_account.company_form.custom_checkbox_fields.map(&:api_name)) if params[cname][:custom_fields]
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
+      ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_field]
     end
 end

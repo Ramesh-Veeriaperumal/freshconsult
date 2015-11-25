@@ -23,7 +23,6 @@ class TicketsController < ApiApplicationController
   end
 
   def update
-    append_account_id_for_ticket_fields
     assign_protected
     # Assign attributes required as the ticket delegator needs it.
     @item.assign_attributes(params[cname].slice(*ApiTicketConstants::DELEGATOR_ATTRIBUTES))
@@ -158,6 +157,8 @@ class TicketsController < ApiApplicationController
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
+
+      append_account_id_for_ticket_fields
     end
 
     def validate_params
@@ -226,10 +227,6 @@ class TicketsController < ApiApplicationController
     def load_object
       @item = scoper.find_by_display_id(params[:id])
       head(:not_found) unless @item
-    end
-
-    def before_build_object
-      append_account_id_for_ticket_fields
     end
 
     def load_ticket_status
