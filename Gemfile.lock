@@ -159,6 +159,13 @@ GIT
     statsd-ruby (1.0.0)
 
 GIT
+  remote: git://github.com/thanashyam/binarize.git
+  revision: 8f4879e129b086ada4b549dbfb975d3939df5844
+  specs:
+    binarize (0.1.1)
+      activerecord (>= 3)
+
+GIT
   remote: git://github.com/thedarkone/rails-dev-boost.git
   revision: 4445c2ec97debf49fc0d3753549e55e3e8178279
   specs:
@@ -952,6 +959,7 @@ DEPENDENCIES
   aws-sdk (~> 1.11.3)
   aws-sdk-resources (~> 2)
   better_errors (~> 1.1.0)
+  binarize!
   binding_of_caller
   braintree (= 2.10.0)
   bullet

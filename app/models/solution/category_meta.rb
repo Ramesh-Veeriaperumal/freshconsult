@@ -8,6 +8,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	belongs_to_account
 
+	include Binarize
+
+	binarize :available, :flags => Language.all_keys
+
 	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position, :dependent => :destroy
 
 	has_many :solution_folders, :through => :solution_folder_meta, :order => 'solution_folder_meta.position'

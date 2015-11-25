@@ -10,6 +10,13 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	include Solution::LanguageAssociations
 
+	include Binarize
+
+	binarize :available, :flags => Language.all_keys
+	binarize :outdated, :flags => Language.all_keys
+	binarize :draft, :flags => Language.all_keys
+	binarize :published, :flags => Language.all_keys
+
 	delegate :draft, :status, :user, :to => :primary_article
 
 	has_many :solution_articles, :class_name => "Solution::Article", :foreign_key => :parent_id, :autosave => true, :inverse_of => :solution_article_meta, :dependent => :destroy

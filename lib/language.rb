@@ -41,6 +41,10 @@ class Language
 			all.map(&:code)
 		end
 
+		def all_keys
+			all.map(&:to_key)
+		end
+
 		def find(id)
 			all.detect { |lang| lang.id == id.to_i}
 		end

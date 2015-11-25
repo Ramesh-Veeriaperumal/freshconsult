@@ -169,6 +169,7 @@ gem "premailer", "~> 1.8.0"
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'launchparty', "0.1.1", :git => 'git@github.com:freshdesk/launch-party.git', :branch => 'master'
 
+gem "binarize", :git => "git://github.com/thanashyam/binarize.git"
 
 gem "bunny", "1.7.0"
 
