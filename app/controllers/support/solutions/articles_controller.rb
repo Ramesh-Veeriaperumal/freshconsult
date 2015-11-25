@@ -36,7 +36,7 @@ class Support::Solutions::ArticlesController < SupportController
   
   def show
     wrong_portal and return unless(main_portal? || 
-        (current_portal.has_solution_category?(@article.folder.category_id)))
+        (current_portal.has_solution_category?(@article_meta.solution_folder_meta.solution_category_meta_id)))
 
     respond_to do |format|
       format.html { 
@@ -64,7 +64,8 @@ class Support::Solutions::ArticlesController < SupportController
 
   private
     def load_and_check_permission
-      @article = current_account.solution_articles.find(params[:id])
+      @article_meta = current_account.solution_article_meta.find(params[:id])
+      @article = @article_meta.send("#{params[:url_locale]}_article")
       unless @article.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
@@ -147,7 +148,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action", "status")
+      params.slice!("id", "format", "controller", "action", "status", "url_locale")
     end
 
 end

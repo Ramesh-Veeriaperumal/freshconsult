@@ -298,7 +298,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def is_primary?
-    self.id == self.solution_article_meta.primary_article.id
+    language_id == Language.for_current_account
   end
 
   private

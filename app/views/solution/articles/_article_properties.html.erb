@@ -1,7 +1,7 @@
 <div class="control-group row-fluid pt2">
 	<div class="controls span12">
 		<div class="span4">
-			<%= fields_for :tags  do |tag| %>
+			<%= article_version.fields_for :tags  do |tag| %>
 				<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 				<%= tag.text_field :name, 
 													 :class => "article-tags span12",
@@ -9,31 +9,32 @@
 													  %>
 			<% end %>
 		</div>
-		<% unless @article_meta %>
-		<div class="span4">
-			<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
-			<%= f.select :folder_id , 
-						option_groups_from_collection_for_select(
-								current_account.solution_category_meta.reject(&:is_default), 
-								:solution_folder_meta, :name, :id, :name, 
-								(@article.solution_folder_meta || {})[:id]
-						), 
-						{ :include_blank => true },
-						:class => "select2 span12 required",
-						:name => "solution_article_meta[solution_folder_meta_id]",
-						:placeholder => t('solution.folders.choose_folder')
-			%>
-		</div>
-		<% end %>
-		<div class="span4">
-			<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
-			<div class="span12 pt3">
-				<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-					<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
-					<%= f.label :art_type, t(type), :value => val %>
-				<% end %>
+		<% if @article_meta.new_record? %>
+			<div class="span4">
+				<%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
+				<%= f.select :solution_folder_meta_id, 
+							option_groups_from_collection_for_select(
+									current_account.solution_category_meta.reject(&:is_default), 
+									:solution_folder_meta, :name, :id, :name, 
+									(@article.solution_folder_meta || {})[:id]
+							), 
+							{ :include_blank => true },
+							:class => "select2 span12 required",
+							:placeholder => t('solution.folders.choose_folder')
+				%>
 			</div>
-		</div>
+		<% end %>
+		<% if @article_meta.new_record? %>
+			<div class="span4">
+				<%= f.label :art_type, t('solution.articles.type'),:class =>"control-label" %>
+				<div class="span12 pt3">
+					<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
+						<%= f.radio_button :art_type, val, :checked => (val == (@article_meta.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+						<%= f.label :art_type, t(type), :value => val %>
+					<% end %>
+				</div>
+			</div>
+		<% end %>
 	</div>
 </div>
 
@@ -42,7 +43,7 @@
   <a><%= t('solution.solution_meta') %></a>
 </div>
 <div id="solution-properties-seo" class="hide">
-	<%= f.fields_for :seo_data  do |s| %>
+	<%= article_version.fields_for :seo_data  do |s| %>
 						
 		<div class="control-group">
 			<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
@@ -62,7 +63,7 @@
 	    	<%= s.text_area  :meta_description, :rel => "charcounter", 
 					'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
 					:value => (@article.seo_data || {})[:meta_description], 
-					:class => "solution-properties-description" %>
+					:class => "solution-properties-description", :id => :solution_article_seo_data_meta_description %>
 				<div class="muted">
 		    		<%= t('solution.article_properties.description_counter_message') %>
 	  		</div>

@@ -1,25 +1,30 @@
-<%= form_for @article, 
-			:url => solution_article_path(@article.id) , 
+<%= form_for :solution_article_meta, 
+			:url => solution_article_path(@article_meta.id, :language_id => @language.id), 
+			:method => :put,
 			:html => {:id => "article-form", :class => "form-horizontal"}, 
 			:remote => true do |f| %>
 		<div id="solution-properties-container">
 			<div id="solution-properties">
-				<%= render :partial => "article_properties_form", :locals => { :f => f} %>
-				
-				<% if @article.published? %>
-					<div class="publish-settings">
-						<label class="checkbox">
-							<div class="span">
-								<%= f.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
-							</div>
-							<div class="span notification-msg">
-								<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
-								<p class="muted">
-									<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
-								</p>
-							</div>
-						</label>	
-					</div>
+
+				<%= f.fields_for(@language_scoper, @article) do |version| %>
+					<%= render :partial => "article_properties_form", 
+											:locals => { :f => f, :article_version => version} %>
+					
+					<% if @article.published? %>
+						<div class="publish-settings">
+							<label class="checkbox">
+								<div class="span">
+									<%= version.check_box(:status, {checked: false}, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], @article.status ) %>
+								</div>
+								<div class="span notification-msg">
+									<p class="unpublish-label"> <%= t('solution.articles.draft.unpublish.msg') %></p>
+									<p class="muted">
+										<%= t('solution.articles.draft.unpublish.' + (@article.draft.present? ? "with_draft" : "without_draft") ) %>
+									</p>
+								</div>
+							</label>	
+						</div>
+					<% end %>
 				<% end %>
 
 				<input type="hidden" name="update_properties" value="1">

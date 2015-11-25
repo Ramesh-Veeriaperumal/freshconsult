@@ -3,24 +3,25 @@
 		
 		<% tab.create('tags', t('solution.articles.prop_tabs.tag_fol')) do %>
 			
-			<%= fields_for :tags  do |tag| %>
+			<%= article_version.fields_for :tags  do |tag| %>
 				<div class="control-group row-fluid">
 					<%= tag.label(:name, t('tag.title'),:class =>"control-label") %>
 					<div class="controls">
 						<%= tag.text_field :name , 
 															 :value => @article.tags.collect{|tag| tag.name}.join(','), 
-															 :class => "span12 article-tags " %>
+															 :class => "span12 article-tags",
+															 :id => "tags_name" %>
 					</div>
 				</div>
 			<%end%>
 
 			<div class="control-group">
-				<%= f.label :folder_id, t('solution.folder'), :class => "control-label" %>
+				<%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
 				<div class="controls">
 					<% unless @article.is_primary? %>
 						<div class="mt7"> <%= @folder_meta.send("#{@language.to_key}_folder").name %> </div>
 					<% else %>
-						<%= f.select :folder_id , 
+						<%= f.select :solution_folder_meta_id , 
 									option_groups_from_collection_for_select(
 											current_account.solution_category_meta.reject(&:is_default), 
 											:solution_folder_meta, :name, :id, :name, 
@@ -35,13 +36,13 @@
 			</div>
 
 			<div class="control-group row-fluid">
-				<%= f.label :name, t('solution.articles.type'),:class =>"control-label" %>
+				<%= f.label :art_type, t('solution.articles.type'),:class =>"control-label" %>
 				<div class="controls mt7">
 					<% unless @article.is_primary? %>
-						<%= t(@article.type_name) %>
+						<%= t(@article_meta.type_name) %>
 					<% else %>
 						<% Solution::Article::TYPE_NAMES_BY_KEY.each do |val, type| %>
-							<%= f.radio_button :art_type, val, :checked => (val == (@article.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
+							<%= f.radio_button :art_type, val, :checked => (val == (@article_meta.art_type || Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent])) %>
 							<%= f.label :art_type, t(type), :value => val %>
 						<% end %>
 					<% end %>
@@ -50,9 +51,9 @@
 
 			<% if privilege?(:admin_tasks) %>
 				<div class="control-group row-fluid">
-					<%= f.label :name, t('solution.change_author'),:class =>"control-label" %>
+					<%= article_version.label :user_id, t('solution.change_author'),:class =>"control-label" %>
 					<div class="controls">
-						<%= f.select_tag "solution_article[user_id]",
+						<%= article_version.select :user_id,
 		          options_for_select(current_account.technicians.collect{|t|[t.name, t.id]}, @article.user_id), 
 		          { :id => "change_author",
 		            :include_blank => true,
@@ -68,7 +69,7 @@
 
 		<% tab.create('meta', t('solution.articles.prop_tabs.meta')) do %>
 			
-			<%= f.fields_for :seo_data  do |s| %>
+			<%= article_version.fields_for :seo_data  do |s| %>
 								
 				<div class="control-group">
 					<%= s.label(:meta_title, t('solution.solution_meta_title'), :class => 'control-label') %>
@@ -89,7 +90,8 @@
 			    	<%= s.text_area  :meta_description, :rel => "charcounter", 
 							'data-counter' => "DescriptionCounter", 'data-limit' => 150, 
 							:value => (@article.seo_data || {})[:meta_description], 
-							:class => "solution-properties-description" %>
+							:class => "solution-properties-description",
+							:id => :solution_article_seo_data_meta_description %>
 						<div class="muted">
 				    		<%= t('solution.article_properties.description_counter_message') %>
 			  		</div>

@@ -52,7 +52,7 @@ module Solution::ArticlesHelper
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
       :"default-folder" => @article.solution_folder_meta.is_default,
       :"draft-discard-url" => solution_draft_delete_path(@article.parent_id, @article.language_id),
-      :"preview-path" => support_draft_preview_path(@article, 'preview'),
+      :"preview-path" => support_draft_preview_path(@article, 'preview', :url_locale => @language.code),
       :"preview-text" =>  t('solution.articles.view_draft'),
       :"article-id" => @article.id
     }

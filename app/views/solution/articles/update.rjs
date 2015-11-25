@@ -1,12 +1,12 @@
 draft_status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-if params[:solution_article][:status] == draft_status.to_s && @article.status == draft_status
+if params[:solution_article_meta][@language_scoper][:status] == draft_status.to_s && @article.status == draft_status
 	page << "window.location.reload();"
 else
 	show_ajax_flash(page)
 	page << "jQuery('#article-prop-#{@article.id}').modal('hide');"
-	page << "jQuery('#solution_article_folder_id').select2(\"val\", \"#{@article.solution_folder_meta.id}\");"
+	page << "jQuery('#solution_article_folder_id').select2(\"val\", \"#{@article_meta.solution_folder_meta_id}\");"
 	page.replace_html "sidebar-prop", render(:partial => "sidebar_properties", :locals => {:@article => @article}).html_safe
 	page.replace_html "sol_breadcrumb", render(:inline => "#{solutions_breadcrumb(:article)}").html_safe
 end
-page << "App.Solutions.NavMenu.setActiveFolderAs(#{@article.solution_folder_meta.id});"
+page << "App.Solutions.NavMenu.setActiveFolderAs(#{@article_meta.solution_folder_meta_id});"
 page << "App.Solutions.NavMenu.reload();"

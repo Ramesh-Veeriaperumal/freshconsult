@@ -122,7 +122,7 @@ class Solution::CategoriesController < ApplicationController
     @my_drafts = current_account.solution_drafts.by_user(current_user).preload(:article)
     @feedbacks = nil #current_account.tickets.all_article_tickets.unresolved
     @orphan_categories = orphan_categories
-    render :partial => "/solution/categories/sidebar"
+    render :partial => "/solution/categories/sidebar", :formats => [:html]
   end
 
   protected

@@ -23,7 +23,7 @@ class Solution::Object
 		throw "Invalid Object Type" unless META_ATTRIBUTES.keys.include?(obj.to_sym)
 		@args = args
 		@obj = obj
-		@params = @args["#{@obj}_meta"] || @args["#{obj}"]
+		@params = @args["#{obj}_meta"] || @args[obj]
 		@child = child
 	end
 
@@ -33,7 +33,7 @@ class Solution::Object
 		create_parent_translation
 		if save_check?
 			@meta_obj.save
-		end 
+		end
 		@meta_obj
 	end
 	
@@ -41,7 +41,7 @@ class Solution::Object
 
 	def create_parent_translation
 		return if @params["#{parent_of(obj)}_meta"].blank?
-		Solution::Object.new(@params, parent_of(obj), @meta_obj).object
+		@meta_obj.send("#{parent_of(obj)}_meta=", Solution::Object.new(@params, parent_of(obj), @meta_obj).object)
 	end
 
 	def save_check?
@@ -108,7 +108,7 @@ class Solution::Object
 	
 	def build_for(lang)
 		object = @meta_obj.send("#{lang}_#{short_name}") || @meta_obj.send("build_#{lang}_#{short_name}") 
-		params_for(lang).except(:id).each do |k,v|
+		params_for(lang).except(:id, :tags).each do |k,v|
 			object.send("#{k}=", v)
 		end
 		build_associations(object, lang)

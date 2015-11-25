@@ -16,7 +16,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
   validate :name_uniqueness, :if => "new_record? || changes[:solution_category_meta_id]" 
 
-	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
+	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :autosave => true
 
 	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_folder_meta, :dependent => :destroy
 

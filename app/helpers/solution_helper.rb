@@ -307,19 +307,20 @@ module SolutionHelper
 		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
 	end
 
-	def dynamic_text_box(f, language)
+	def dynamic_text_box(f, language, form)
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
-		if parent_meta.send("#{language.to_key}_#{f}").present?
+		obj_version = parent_meta.send("#{language.to_key}_#{f}")
+		if obj_version.present?
 			op << "<div class='pt5'>"
-			op << parent_meta.send("#{language.to_key}_#{f}").name
+			op << obj_version.name
 			op << "</div>"
 		else
-			op << text_field_tag("solution_#{f}_meta[#{language.to_key}_#{f}][name]",	nil,
+			op << text_field_tag("#{form.object_name}[#{language.to_key}_#{f}][name]", nil,
 	                         :class => "required",
 	                         :autocomplete => "off",
 	                         :autofocus => true)
-	    op << hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id)
+	    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
 	    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
 	  end
     op.html_safe

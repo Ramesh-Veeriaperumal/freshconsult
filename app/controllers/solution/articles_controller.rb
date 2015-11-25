@@ -21,6 +21,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
+  before_filter :language_scoper, :only => [:new]
   
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
@@ -44,9 +45,9 @@ class Solution::ArticlesController < ApplicationController
 
   def new
     @page_title = t("header.tabs.new_solution")
-    @article = current_account.solution_articles.new
+    @article_meta ||= current_account.solution_article_meta.find_or_initialize_by_id(params[:id])
+    @article = @article_meta.solution_articles.new
     set_article_folder
-    @article.set_status(false)
     respond_to do |format|
       format.html {
         render "new"
@@ -66,7 +67,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def create
-    builder_params
+    set_common_attributes
     @article_meta = Solution::Builder.article(params)
     load_article_version
     @article.tags_changed = set_solution_tags
@@ -75,10 +76,8 @@ class Solution::ArticlesController < ApplicationController
       if @article
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
-                            :url => support_solutions_article_path(@article)).html_safe if publish?
-          redirect_to solution_article_version_path(
-                          @article_meta,
-                          @article.language.code)
+                            :url => support_solutions_article_path(@article, :url_locale => @language.code)).html_safe if publish?
+          redirect_to solution_article_version_path(@article_meta, @article.language.code)
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
         format.json  { render :json => @article, :status => :created, :location => @article }
@@ -137,6 +136,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def properties
+    language_scoper
     render :layout => false
   end
 
@@ -205,17 +205,13 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def get_meta_id
-      id = params[:solution_article_meta][:id] if params[:solution_article_meta].present?
-      id ||= params[:id] || params[:article_id]
+      params[:id] || params[:article_id] || (params[:solution_article_meta] || {})[:id]
     end
     
+    # possible dead code
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account
-    end
-
-    def set_user
-      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
     end
 
     def set_selected_tab
@@ -224,14 +220,6 @@ class Solution::ArticlesController < ApplicationController
     
     def page_title
       @page_title = t("header.tabs.solutions")    
-    end
-
-    def builder_params
-      params[:solution_article_meta][language_scoper.to_sym] = {}
-      params[:solution_article_meta][language_scoper.to_sym].merge!(params[nscname])
-      params[:solution_article_meta][language_scoper.to_sym][:cloud_file_attachments] = params[:cloud_file_attachments]
-      set_user
-      set_status
     end
 
     def set_solution_tags
@@ -250,11 +238,16 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def tags_present?
-      params[:tags] && (params[:tags].is_a?(Hash) && !params[:tags][:name].nil?)
+      tags = get_tags
+      tags && (tags.is_a?(Hash) && !tags[:name].nil?)
+    end
+
+    def get_tags
+      params[:tags] || params[:solution_article_meta][language_scoper.to_sym][:tags]
     end
 
     def set_tags_input
-      @tags_input = params[:tags][:name].split(',').map(&:strip).uniq   
+      @tags_input = get_tags[:name].split(',').map(&:strip).uniq   
     end
 
     def tags_changed?
@@ -289,7 +282,7 @@ class Solution::ArticlesController < ApplicationController
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
           flash[:notice] = t('solution.articles.published_success',
-                               :url => support_solutions_article_path(@article)).html_safe
+                               :url => support_solutions_article_path(@article, :url_locale => @language.code)).html_safe
           redirect_to solution_article_path(@article)
         else
           flash[:error] = show_draft_errors || t('solution.articles.published_failure')
@@ -297,7 +290,7 @@ class Solution::ArticlesController < ApplicationController
         end
         return
       end
-      @article.set_status(true)
+      set_status
       update_article
     end
 
@@ -341,22 +334,26 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def update_draft_attributes
-      attachment_builder(@draft, params[:solution_article][:attachments], params[:cloud_file_attachments])
+      attachment_builder(@draft, article_params[:attachments], params[:cloud_file_attachments])
       @draft.unlock
-      @draft.article.update_attributes(params[:solution_article].slice(:folder_id)) if params[:solution_article][:folder_id].present?
-      @draft.update_attributes(params[:solution_article].slice(:title, :description))
+      @draft.article.solution_article_meta.update_attributes(params[:solution_article_meta].slice(:solution_folder_meta_id)) if params[:solution_article_meta][:solution_folder_meta_id].present?
+      @draft.update_attributes(article_params.slice(:title, :description))
+    end
+
+    def article_params
+      params[:solution_article_meta][@language_scoper]
     end
 
     def update_article
-      build_attachments unless update_properties?
+      set_common_attributes
       @article.tags_changed = set_solution_tags
-      update_params = update_properties? ? params[nscname].except(:title, :description) : params[nscname]
+      @article_meta = Solution::Builder.article(params)
       respond_to do |format|    
-        if @article.update_attributes(update_params)
-          @article.reload 
+        if @article_meta.errors.empty?
+          @article = @article.reload
           format.html { 
             flash[:notice] = t('solution.articles.published_success', 
-              :url => support_solutions_article_path(@article)).html_safe if publish?
+              :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
             redirect_to solution_article_path(@article)
           }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
@@ -377,10 +374,11 @@ class Solution::ArticlesController < ApplicationController
 
     def validate_author
       return unless update_properties?
-      new_author_id = params[:solution_article][:user_id]
+      new_params = params[:solution_article] || article_params
+      new_author_id = new_params[:user_id]
       if new_author_id.present? && @article.user_id != new_author_id
         new_author = current_account.users.find_by_id(new_author_id)
-        params[:solution_article] = params[:solution_article].except(:user_id) unless new_author && new_author.agent?
+        new_params.delete(:user_id) unless new_author && new_author.agent?
       end
     end
 
@@ -445,36 +443,11 @@ class Solution::ArticlesController < ApplicationController
         ).html_safe
     end
 
-    def set_current_folder
-      begin
-        folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
-        @current_folder = current_account.solution_folders.find(folder_id)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-        @current_folder = current_account.solution_folders.first
-      end
-    end
-
     def show_draft_errors
       draft = @article.draft || @draft
       if draft.present? && draft.errors.present?
         flash[:error] = draft.errors.full_messages.join("<br />\n").html_safe
       end
-    end
-
-    def set_status
-      params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
-    end
-
-    def get_status
-      status = params[nscname][:status]
-      return status.to_i == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] if status.present?
-      !save_as_draft?
-    end
-
-    def set_article_folder
-      return if params[:folder_id].nil?
-      @article.solution_folder_meta = current_account.solution_folder_meta.find_by_id(params[:folder_id])
     end
 
     def language_code
@@ -488,6 +461,46 @@ class Solution::ArticlesController < ApplicationController
 
     def cleanup_params_for_title
       params.slice!("id", "format", "controller", "action")
+    end
+
+    def set_common_attributes
+      set_user
+      set_status
+      merge_cloud_file_attachments
+    end
+
+    def set_user
+      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
+    end
+
+    def set_status
+      params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
+    end
+
+    def get_status
+      status = (params[nscname] || {})[:status]
+      status_keys = Solution::Article::STATUS_KEYS_BY_TOKEN
+      return status_keys[:draft] if save_as_draft? || (status.present? && status_keys[:draft] == status.to_i)
+      status_keys[:published]
+    end
+
+    def set_article_folder
+      return if params[:folder_id].nil?
+      @article_meta.solution_folder_meta_id = (current_account.solution_folder_meta.find_by_id(params[:folder_id]) || {})[:id]
+    end
+
+    def merge_cloud_file_attachments
+      params[:solution_article_meta][language_scoper.to_sym].merge!({:cloud_file_attachments => params[:cloud_file_attachments]})
+    end
+
+    def set_current_folder
+      begin
+        folder_id = params[:solution_article][:folder_id] || current_account.solution_folders.find_by_is_default(true).id
+        @current_folder = current_account.solution_folders.find(folder_id)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        @current_folder = current_account.solution_folders.first
+      end
     end
 
 end

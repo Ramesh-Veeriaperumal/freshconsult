@@ -7,7 +7,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	include Redis::RedisKeys
 	include Redis::OthersRedis
 	include Community::HitMethods
-	
+	include Solution::Constants
 	include Solution::LanguageAssociations
 
 	include Binarize
@@ -23,7 +23,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	belongs_to :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 
-		:foreign_key => :solution_folder_meta_id
+		:foreign_key => :solution_folder_meta_id, :autosave => true
 
 	has_one :solution_category_meta,
 		:class_name => "Solution::CategoryMeta",
@@ -49,6 +49,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
     base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase
     (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| {:"#{s}_#{base_name}" => :draft}}
   end
+
+    def type_name
+        TYPE_NAMES_BY_KEY[art_type]
+    end
 
 	private
 

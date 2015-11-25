@@ -25,7 +25,9 @@
 		<%= f.label(:solution_category_meta_id, t('.category'), { :class => 'control-label'}) %>
 		<div class="controls">
 			<% if @folder_meta.present? && (@primary && @primary != @folder) %>
-				<%= dynamic_text_box(:category, @language) %>
+				<%= f.fields_for(:solution_category_meta, @category) do |category_fields| %>
+					<%= dynamic_text_box(:category, @language, category_fields) %>
+				<% end %>
 			<% else %>
 				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, 
 						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 

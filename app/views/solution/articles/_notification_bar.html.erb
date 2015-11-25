@@ -6,7 +6,7 @@
     <p class="pull-right">
       <%= link_to( 
               t('solution.articles.view_draft'), 
-              support_draft_preview_path(@article, "preview"), 
+              support_draft_preview_path(@article, "preview", :url_locale => @language.code), 
               :class => "pull-right preview-draft-link", 
               :target => "draft-#{@article.id}") %>
     </p>

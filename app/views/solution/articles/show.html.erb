@@ -14,7 +14,7 @@
 		</div>
 	<% end %>
 	<% content_for :sticky_right do %>
-	  <%= preview_portal(support_solutions_article_path(@article.id), @article.solution_folder_meta.solution_category_meta) if @article.published? %>
+	  <%= preview_portal(support_solutions_article_path(@article, :url_locale => @language.code), @article.solution_folder_meta.solution_category_meta) if @article.published? %>
 	  <% if privilege?(:publish_solution) %>
       <% unless @article.draft.present? && @article.draft.locked? %>
     	  <div class="pagination-right edit-container">
