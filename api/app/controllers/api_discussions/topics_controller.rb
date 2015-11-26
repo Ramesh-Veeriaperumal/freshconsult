@@ -45,13 +45,21 @@ module ApiDiscussions
 
       def set_custom_errors(_item = @item)
         if @item.errors[:stamp_type].present?
-          allowed = Topic::FORUM_TO_STAMP_TYPE[@item.forum.forum_type]
-          allowed_string = allowed.join(',')
-          allowed_string += 'nil' if allowed.include?(nil)
+          allowed_string = get_allowed_stamp_types.join(',')
           @item.errors[:stamp_type] = ErrorConstants::ERROR_MESSAGES[:allowed_stamp_type] % { list: allowed_string }
         end
         ErrorHelper.rename_error_fields({ forum: :forum_id }, @item)
         @error_options = { remove: :posts }
+      end
+
+      def get_allowed_stamp_types
+        if @item.forum.forum_type == DiscussionConstants::QUESTION_FORUM_TYPE
+          # if forum is of question type, the error may be because stamp_type is not included in the list 'answered, unanswered' (or)
+          # 'answered' stamp_type could have been set for a topic with no answers or vice versa.
+          DiscussionConstants::FORUM_TO_STAMP_TYPE[@item.forum.forum_type][@item.stamp_type] || DiscussionConstants::QUESTION_STAMPS
+        else
+          DiscussionConstants::FORUM_TO_STAMP_TYPE[@item.forum.forum_type]
+        end
       end
 
       def sanitize_params

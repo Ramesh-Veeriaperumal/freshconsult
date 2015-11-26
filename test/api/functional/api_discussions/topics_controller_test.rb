@@ -278,9 +278,27 @@ module ApiDiscussions
       forum.update_column(:forum_type, 2)
       allowed = Topic::FORUM_TO_STAMP_TYPE[forum.forum_type]
       allowed_string = allowed.join(',')
-      allowed_string += 'nil' if allowed.include?(nil)
+      allowed_string += 'null' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
       match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: allowed_string)])
+      assert_response 400
+    end
+
+    def test_update_with_invalid_question_stamp_type
+      topic = first_topic
+      forum = topic.forum
+      forum.update_column(:forum_type, 1)
+      unless topic.answer
+        post = create_test_post(topic, @agent)
+        post.update_column(:answer, true)
+      end
+      put :update, construct_params({ id: topic.id }, stamp_type: 7)
+      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '6')])
+      assert_response 400
+
+      topic.posts.update_all(answer: false)
+      put :update, construct_params({ id: topic.id }, stamp_type: 6)
+      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '7')])
       assert_response 400
     end
 

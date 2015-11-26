@@ -6,7 +6,17 @@ module DiscussionConstants
   UPDATE_FORUM_FIELDS = CREATE_FORUM_FIELDS << 'forum_category_id'
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }.freeze
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'] }.freeze
+  QUESTION_FORUM_TYPE = Forum::TYPE_KEYS_BY_TOKEN[:howto]
   QUESTION_STAMPS = Topic::QUESTIONS_STAMPS_BY_KEY.keys
+  FORUM_TO_STAMP_TYPE = {
+    Forum::TYPE_KEYS_BY_TOKEN[:announce] => ['null'],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => Topic::IDEAS_STAMPS_BY_KEY.keys + ['null'], # nil should always be last, if not, revisit check_stamp_type
+    Forum::TYPE_KEYS_BY_TOKEN[:problem] => Topic::PROBLEMS_STAMPS_BY_KEY.keys,
+    Forum::TYPE_KEYS_BY_TOKEN[:howto] => {
+      QUESTION_STAMPS.first => [QUESTION_STAMPS.last],
+      QUESTION_STAMPS.last => [QUESTION_STAMPS.first]
+    }
+  }
   UPDATE_COMMENT_FIELDS = %w(body_html answer).freeze
   COMMENT_FIELDS = %w(body_html)
   IS_FOLLOWING_FIELDS = ['user_id', 'id'].freeze
