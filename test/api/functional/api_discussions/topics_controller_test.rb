@@ -342,6 +342,20 @@ module ApiDiscussions
       match_json result_pattern
     end
 
+    def test_followed_by_pagination
+      user = user_without_monitorships
+      monitor_topic(create_test_topic(forum_obj), user, 1)
+      @controller.stubs(:privilege?).with(:manage_forums).returns(true)
+      get :followed_by, controller_params(user_id: user.id, page: 1, per_page: 1)
+      assert_response 200
+      result_pattern = []
+      Topic.followed_by(user.id).each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      assert result_pattern.count == 1
+      match_json result_pattern
+    end
+
     def test_followed_by_invalid_id
       get :followed_by, controller_params(user_id: (1000 + Random.rand(11)))
       assert_response 200

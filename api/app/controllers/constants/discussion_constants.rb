@@ -8,7 +8,8 @@ module DiscussionConstants
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'] }.freeze
   COMMENT_FIELDS = %w(body_html answer).freeze
   IS_FOLLOWING_FIELDS = ['user_id', 'id'].freeze
-  FOLLOWED_BY_FIELDS = FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
+  FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
+  FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS
 
   # ValidationConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN
