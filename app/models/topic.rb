@@ -317,6 +317,7 @@ class Topic < ActiveRecord::Base
 
   def set_locked
     self.locked = false if self.locked.nil?
+    true
   end
 
   def set_sticky

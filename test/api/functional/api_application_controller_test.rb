@@ -201,4 +201,14 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_equal response.status, 415
     assert_equal response.body, request_error_pattern(:invalid_content_type).to_json
   end
+
+  def test_render_errors_with_errors_empty
+    assert_nothing_raised { @controller.send(:render_errors, []) }
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
+
+    assert_nothing_raised { @controller.send(:render_custom_errors, Topic.new) }
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
+  end
 end

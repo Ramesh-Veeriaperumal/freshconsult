@@ -331,8 +331,15 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_errors(errors, meta = nil)
-      @errors = ErrorHelper.format_error(errors, meta)
-      render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+      if errors.present?
+        @errors = ErrorHelper.format_error(errors, meta)
+        render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+      else
+        # before_callbacks may return false without populating the errors hash.
+        Rails.logger.error("API Error Hash empty :: Params: #{params.inspect}")
+        notify_new_relic_agent(StandardError, {description: 'API Error Hash empty', params: params})
+        render_base_error(:internal_error, 500)
+      end
     end
 
     def cname
