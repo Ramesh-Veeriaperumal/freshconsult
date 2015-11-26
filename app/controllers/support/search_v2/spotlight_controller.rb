@@ -77,15 +77,15 @@ class Support::SearchV2::SpotlightController < SupportController
                                                             @search_context,
                                                             searchable_types
                                                           ).fetch(construct_es_params)
-        @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
-
-        # Trying out with pagination hack
-        # To-do: Bring under common wrapper
-        @result_set = Search::Filters::Docs::Results.new(@result_set, {
-                                                          page: @page,
-                                                          from: @offset,
-                                                          total_entries: @es_results['hits']['total']
-                                                        })
+        @result_set = Search::Utils.load_records(
+                                                  @es_results, 
+                                                  @@esv2_spotlight_models.dclone, 
+                                                  {
+                                                    current_account_id: current_account.id,
+                                                    page: @page,
+                                                    from: @offset
+                                                  }
+                                                )
 
         process_results
       rescue Exception => e

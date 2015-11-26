@@ -22,7 +22,7 @@ class Search::Utils
 
   # Load ActiveRecord objects
   #
-  def self.load_records(es_results, model_and_assoc, current_account_id)
+  def self.load_records(es_results, model_and_assoc, args={})
     records = {}
     
     # Load each type's results via its model
@@ -33,7 +33,7 @@ class Search::Utils
       else
         records[type] = model_and_assoc[type][:model]
                                         .constantize
-                                        .where(account_id: current_account_id, id: items.map { |h| h['_id'] })
+                                        .where(account_id: args[:current_account_id], id: items.map { |h| h['_id'] })
                                         .preload(model_and_assoc[type][:associations])
       end
     end
@@ -42,7 +42,7 @@ class Search::Utils
     # For highlighting also
     # Need to think better logic if needed
     #
-    es_results['hits']['hits'].map do |item|
+    result_set = es_results['hits']['hits'].map do |item|
       detected = records[item['_type']].detect do |record|
         record.id.to_s == item['_id'].to_s
       end
@@ -53,6 +53,8 @@ class Search::Utils
 
       detected
     end
+
+    wrap_paginate(result_set, args[:page].to_i, args[:es_offset], es_results['hits']['total'].to_i)
   end
 
   # Used for setting the version parameter sent to ES
@@ -61,5 +63,64 @@ class Search::Utils
   def self.es_version
     (Time.zone.now.to_f * 1000000).ceil
   end
+  
+  private
+    
+    def self.wrap_paginate(result_set, page_number, es_offset, total_entries)
+      PaginationWrapper.new(result_set, { page: page_number,
+                                          from: es_offset,
+                                          total_entries: total_entries })
+    end
 
+    #_Note_: Not sure if array is the right superclass. But works for now.
+    class PaginationWrapper < Array
+
+      attr_accessor :total, :options, :records
+
+      def initialize(result_set, es_options={})
+        @total    = es_options[:total_entries]
+        @options  = {
+          :page   => es_options[:page] || 1,
+          :from   => es_options[:from] || 0
+        }
+        super(result_set)
+      end
+
+      #=> Will Paginate Support(taken from Tire) <=#
+      def total_entries
+        @total
+      end
+
+      def per_page
+        MAX_PER_PAGE.to_i
+      end
+
+      def total_pages
+        ( @total.to_f / per_page ).ceil
+      end
+
+      def current_page
+        if @options[:page]
+          @options[:page].to_i
+        else
+          (per_page + @options[:from].to_i) / per_page
+        end
+      end
+
+      def previous_page
+        current_page > 1 ? (current_page - 1) : nil
+      end
+
+      def next_page
+        current_page < total_pages ? (current_page + 1) : nil
+      end
+
+      def offset
+        per_page * (current_page - 1)
+      end
+
+      def out_of_bounds?
+        current_page > total_pages
+      end
+    end
 end
