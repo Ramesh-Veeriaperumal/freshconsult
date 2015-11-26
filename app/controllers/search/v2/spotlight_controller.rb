@@ -14,12 +14,12 @@ class Search::V2::SpotlightController < ApplicationController
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    'company' => { model: 'Company',            associations: [] }, 
-    'topic'   => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
-    'ticket'  => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
-    'note'    => { model: 'Helpdesk::Note',     associations: [ :note_old_body,{ notable: [ :ticket_status, :ticket_states, :responder, :group,{ requester: :avatar }]}] }, 
-    'article' => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
-    'user'    => { model: 'User',               associations: [ :avatar, :customer ] }
+    'company'       => { model: 'Company',            associations: [] }, 
+    'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
+    'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
+    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',     associations: [] }, 
+    'article'       => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
+    'user'          => { model: 'User',               associations: [ :avatar, :customer ] }
   }
 
   # Unscoped spotlight search
@@ -32,7 +32,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Tickets scoped spotlight search
   #
   def tickets
-    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
+    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
     search
   end
 
@@ -68,13 +68,29 @@ class Search::V2::SpotlightController < ApplicationController
     # Need to add provision to pass params & context
     #
     def search
-      @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                          @search_context,
-                                                          searchable_types
-                                                        ).fetch(construct_es_params)
-      @result_set = Search::Utils.load_records(@es_results, @@esv2_spotlight_models.dclone, current_account.id)
+      begin
+        @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
+                                                            @search_context,
+                                                            searchable_types
+                                                          ).fetch(construct_es_params)
+        @result_set = Search::Utils.load_records(
+                                                  @es_results, 
+                                                  @@esv2_spotlight_models.dclone, 
+                                                  {
+                                                    current_account_id: current_account.id,
+                                                    page: @current_page,
+                                                    offset: @offset
+                                                  }
+                                                )
 
-      process_results
+        process_results
+      rescue => e
+        @search_results = []
+        @result_set = []
+
+        NewRelic::Agent.notice_error(e)
+      end
+
       handle_rendering
     end
 
@@ -96,7 +112,7 @@ class Search::V2::SpotlightController < ApplicationController
 
     def esv2_klasses
       Array.new.tap do |model_names|
-        model_names.concat(['Helpdesk::Ticket', 'Helpdesk::Note'])
+        model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'])
 
         model_names.concat(['User', 'Company']) if privilege?(:view_contacts)
         model_names.push('Topic')               if privilege?(:view_forums)

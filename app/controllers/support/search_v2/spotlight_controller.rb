@@ -14,10 +14,10 @@ class Support::SearchV2::SpotlightController < SupportController
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    "ticket"  => { model: "Helpdesk::Ticket",   associations: [ :ticket_old_body ] },
-    "note"    => { model: "Helpdesk::Note",     associations: [ :note_old_body ] },
-    "topic"   => { model: "Topic",              associations: [] },
-    "article" => { model: "Solution::Article",  associations: [ :folder, :article_body ] }
+    'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body ] },
+    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
+    'topic'         => { model: 'Topic',                    associations: [] },
+    'article'       => { model: 'Solution::Article',        associations: [ :folder, :article_body ] }
   }
 
   # Unscoped customer-side spotlight search
@@ -33,7 +33,7 @@ class Support::SearchV2::SpotlightController < SupportController
   def tickets
     require_user_login unless current_user
 
-    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::Note']
+    @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
     @current_filter = :tickets
     search
   end
@@ -149,9 +149,9 @@ class Support::SearchV2::SpotlightController < SupportController
 
     def esv2_klasses
       Array.new.tap do |model_names|
-        model_names.concat(['Helpdesk::Ticket', 'Helpdesk::Note'])  if current_user
-        model_names.push('Topic')                                   if forums_enabled?
-        model_names.push('Solution::Article')                       if allowed_in_portal?(:open_solutions)
+        model_names.concat(['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']) if current_user
+        model_names.push('Topic')                                           if forums_enabled?
+        model_names.push('Solution::Article')                               if allowed_in_portal?(:open_solutions)
       end
     end
 
@@ -207,8 +207,8 @@ class Support::SearchV2::SpotlightController < SupportController
           topic_result(item)
         when 'Helpdesk::Ticket'
           ticket_result(item)
-        when 'Helpdesk::Note'
-          note_result(item)
+        when 'Helpdesk::ArchiveTicket'
+          archive_ticket_result(item)
       end
     end
 
@@ -240,13 +240,13 @@ class Support::SearchV2::SpotlightController < SupportController
         'url' => support_ticket_path(ticket) }
     end
 
-    def note_result note
-      { 'title' => h(note.notable.subject),
-        'group' => "Note",
-        'desc' => truncate(h(note.body), :length => truncate_length),
-        'type' => "NOTE",
-        'url' => support_ticket_path(note.notable) }
-    end
+    # def archive_ticket_result ticket
+    #   { 'title' => ticket.es_highlight('subject').html_safe,
+    #     'group' => "Ticket",
+    #     'desc' => truncate(ticket.es_highlight('description').html_safe, :length => truncate_length),
+    #     'type' => "TICKET",
+    #     'url' => support_ticket_path(ticket) }
+    # end
 
     def truncate_length
       request.xhr? ? 160 : 220

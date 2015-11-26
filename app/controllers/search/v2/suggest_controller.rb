@@ -6,12 +6,12 @@ class Search::V2::SuggestController < Search::V2::SpotlightController
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    'company' => { model: 'Company',            associations: [] }, 
-    'topic'   => { model: 'Topic',              associations: [ :forum ] }, 
-    'ticket'  => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def }, :ticket_states ] }, 
-    'note'    => { model: 'Helpdesk::Note',     associations: [ :notable ] }, 
-    'article' => { model: 'Solution::Article',  associations: [] }, 
-    'user'    => { model: 'User',               associations: [] }
+    'company'       => { model: 'Company',                  associations: [] }, 
+    'topic'         => { model: 'Topic',                    associations: [ :forum ] }, 
+    'ticket'        => { model: 'Helpdesk::Ticket',         associations: [{ flexifield: :flexifield_def }, :ticket_states ] }, 
+    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] }, 
+    'article'       => { model: 'Solution::Article',        associations: [] }, 
+    'user'          => { model: 'User',                     associations: [] }
   }
 
   def index
