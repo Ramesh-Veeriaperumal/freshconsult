@@ -5494,6 +5494,7 @@ en:
       priority: Priority
       status: Status
       requester_responded_at: Customer Response
+      agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order
