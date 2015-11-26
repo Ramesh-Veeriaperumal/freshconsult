@@ -24,7 +24,7 @@ module Social::Twitter::Common
         :twitter_user_id  => user.id,
         :prof_img_url     => profile_image_url
       }
-      Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args)
+      Social::UploadAvatar.perform_async(args) unless Rails.env.test?
     end
     user
   end

@@ -18,7 +18,7 @@ module DevNotification
       :subject => subject,
       :message => message
     }
-    Resque.enqueue(Workers::DevNotification, args)
+    DevNotificationWorker.perform_async(args)
   end
 
   #Delete topic
