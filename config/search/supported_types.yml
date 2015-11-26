@@ -11,6 +11,9 @@ user:
 topic: 
   :index_prefix: topics_%{index_suffix}
   :alias_prefix: topics_%{alias_suffix}
+post: 
+  :index_prefix: topics_%{index_suffix}
+  :alias_prefix: posts_%{alias_suffix}
 article: 
   :index_prefix: articles_%{index_suffix}
   :alias_prefix: articles_%{alias_suffix}

@@ -1,6 +1,7 @@
 class Post < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
+  include Search::V2::EsCommitObserver
 
   SORT_ORDER = {
     :date => 'id ASC',
@@ -52,7 +53,7 @@ class Post < ActiveRecord::Base
   has_many_cloud_files
   
   delegate :update_es_index, :to => :topic, :allow_nil => true
-  delegate :update_searchv2, to: :topic, allow_nil: true
+  # delegate :update_searchv2, to: :topic, allow_nil: true #=> Uncomment if not using as parent-child
   
   delegate :questions?, :problems?, :to => :forum
   xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]

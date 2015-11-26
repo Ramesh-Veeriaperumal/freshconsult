@@ -8,7 +8,7 @@ class Topic < ActiveRecord::Base
                 :updated_at, :hits, :locked, :account_id, 
                 :stamp_type, :user_votes, :published ],
         methods: [ :forum_category_id, :forum_visibility, :company_ids ]
-      }).merge(posts: esv2_post_attributes).to_json
+      }).to_json
   end
 
   def forum_category_id
@@ -21,14 +21,6 @@ class Topic < ActiveRecord::Base
 
   def company_ids
     forum.customer_forums.map(&:customer_id)
-  end
-
-  def esv2_post_attributes
-    Array.new.tap do |es_posts|
-      posts.preload(:attachments).find_in_batches(batch_size: 300) do |items|
-        es_posts.concat(items.map(&:to_esv2_json))
-      end
-    end
   end
 
   ##########################

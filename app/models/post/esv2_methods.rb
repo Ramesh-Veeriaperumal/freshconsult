@@ -5,7 +5,7 @@ class Post < ActiveRecord::Base
         root: false,
         tailored_json: true,
         only: [ :body ]
-      }).merge(attachments: es_v2_attachments)
+      }).merge(attachments: es_v2_attachments).to_json
   end
 
   def es_v2_attachments

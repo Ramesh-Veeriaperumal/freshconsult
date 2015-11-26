@@ -16,8 +16,8 @@ class Search::Utils
   }
   PARENT_BASED_ROUTING  = {
     'Helpdesk::Note'        => :notable_id,
-    'Helpdesk::ArchiveNote' => :notable_id
-    # 'Post'                  => :topic_id
+    'Helpdesk::ArchiveNote' => :notable_id,
+    'Post'                  => :topic_id
   }
 
   # Load ActiveRecord objects
