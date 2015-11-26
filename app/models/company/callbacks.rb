@@ -46,11 +46,7 @@ class Company < ActiveRecord::Base
     end
 
     def nullify_contact_mapping
-      if self.domains.present?
-        domain_list = self.domains.split(",").collect(&:strip)
-        Users::UpdateCompanyId.perform_async({ :domains => domain_list, 
-                                               :company_id => nil,
-                                               :current_company_id => self.id })
-      end
+      Users::UpdateCompanyId.perform_async({ :company_id => nil,
+                                             :current_company_id => self.id })
     end
 end

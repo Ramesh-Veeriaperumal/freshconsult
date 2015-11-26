@@ -20,9 +20,9 @@ class Users::UpdateCompanyId < BaseWorker
       # Not using find_in_batches `cause of inability to update_all an array
       batch_op = last_user_id ? "AND id > #{last_user_id}" : ""
       condition = "#{cust_id_cdn} and helpdesk_agent = 0 #{batch_op}"
-      users = account.all_users.where(["SUBSTRING_INDEX(email, '@', -1) IN (?) and  #{condition}", 
-                                      get_domain(domains)]).limit(USER_FETCH_LIMIT)
-
+      users = domains.present? ? account.all_users.where(["SUBSTRING_INDEX(email, '@', -1) IN (?) and  #{condition}", 
+                                      get_domain(domains)]).limit(USER_FETCH_LIMIT) :
+                                 account.all_users.where(condition)
 
       user_ids = execute_on_db { users.pluck(:id) }
       if user_ids.present?
