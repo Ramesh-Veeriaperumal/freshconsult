@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20151102062315) do
+ActiveRecord::Schema.define(:version => 20151125092132) do
 
 
   create_table "account_additional_settings", :force => true do |t|
@@ -2833,6 +2833,10 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "account_id",              :limit => 8,                :null => false
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
+    t.string   "available"
+    t.string   "draft"
+    t.string   "published"
+    t.string   "outdated"
   end
 
   add_index "solution_article_meta", ["account_id", "solution_folder_meta_id", "created_at"], :name => "index_article_meta_on_account_id_folder_meta_and_created_at"
@@ -2900,6 +2904,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "account_id", :limit => 8
     t.datetime "created_at",                                 :null => false
     t.datetime "updated_at",                                 :null => false
+    t.string   "available"
   end
 
   add_index "solution_category_meta", ["account_id"], :name => "index_solution_category_meta_on_account_id"
@@ -2952,6 +2957,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "account_id",                :limit => 8,                    :null => false
     t.datetime "created_at",                                                :null => false
     t.datetime "updated_at",                                                :null => false
+    t.string   "available"
   end
 
   add_index "solution_folder_meta", ["account_id", "solution_category_meta_id", "position"], :name => "index_folder_meta_on_account_id_category_meta_and_position"

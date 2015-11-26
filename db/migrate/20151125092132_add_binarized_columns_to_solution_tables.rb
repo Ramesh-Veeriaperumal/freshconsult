@@ -2,7 +2,11 @@ class AddBinarizedColumnsToSolutionTables < ActiveRecord::Migration
 
 	shard :all
 
-	def self.up
+	def migrate(direction)
+		self.send(direction)
+	end
+
+	def up
 		Lhm.change_table :solution_article_meta, :atomic_switch => true do |m|
 			m.add_column :available, "varchar(255)"
 			m.add_column :draft, "varchar(255)"
@@ -20,7 +24,7 @@ class AddBinarizedColumnsToSolutionTables < ActiveRecord::Migration
 	end
 
 
-	def self.down
+	def down
 		Lhm.change_table :solution_category_meta, :atomic_switch => true do |m|
 			m.remove_column :available
 		end
