@@ -240,13 +240,15 @@ class Support::SearchV2::SpotlightController < SupportController
         'url' => support_ticket_path(ticket) }
     end
 
-    # def archive_ticket_result ticket
-    #   { 'title' => ticket.es_highlight('subject').html_safe,
-    #     'group' => "Ticket",
-    #     'desc' => truncate(ticket.es_highlight('description').html_safe, :length => truncate_length),
-    #     'type' => "TICKET",
-    #     'url' => support_ticket_path(ticket) }
-    # end
+    # To-do: Need to verify group and type
+    #
+    def archive_ticket_result ticket
+      { 'title' => ticket.es_highlight('subject').html_safe,
+        'group' => 'Archived Ticket',
+        'desc' => truncate(ticket.es_highlight('description').html_safe, :length => truncate_length),
+        'type' => 'ARCHIVED TICKET',
+        'url' => support_archive_ticket_path(ticket.display_id) }
+    end
 
     def truncate_length
       request.xhr? ? 160 : 220
