@@ -6,7 +6,9 @@ module DiscussionConstants
   UPDATE_FORUM_FIELDS = CREATE_FORUM_FIELDS << 'forum_category_id'
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'], manage_forums: ['forum_id'] }.freeze
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type), edit_topic: ['sticky', 'locked'] }.freeze
-  COMMENT_FIELDS = %w(body_html answer).freeze
+  QUESTION_STAMPS = Topic::QUESTIONS_STAMPS_BY_KEY.keys
+  UPDATE_COMMENT_FIELDS = %w(body_html answer).freeze
+  COMMENT_FIELDS = %w(body_html)
   IS_FOLLOWING_FIELDS = ['user_id', 'id'].freeze
   FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
   FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS

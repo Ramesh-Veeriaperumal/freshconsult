@@ -31,6 +31,37 @@ module ApiDiscussions
       match_json(comment_pattern({ body_html: 'test reply 2', answer: true }, comment.reload))
     end
 
+    def test_update_answer_non_question
+      post = quick_create_post
+      post.topic.update_column(:stamp_type, nil)
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
+      assert_response 400
+      match_json([bad_request_error_pattern('answer', :invalid_field)])
+      post.topic.update_column(:stamp_type, 6)
+    end
+    def test_update_post_answer
+      post = quick_create_post
+      assert_equal 7, post.topic.stamp_type
+      put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
+      match_json(post_pattern({answer: true }, post.reload))
+      assert_response 200
+      assert_equal 6, post.topic.reload.stamp_type
+      assert post.reload.answer
+
+      other_post = post.topic.posts.create(user_id: @agent.id, body_html: "test", forum_id: post.topic.forum_id)
+      put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: true)
+      assert_response 200
+      match_json(post_pattern({answer: true }, other_post.reload))
+      refute post.reload.answer
+      assert other_post.reload.answer
+
+      put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: false)
+      match_json(post_pattern({answer: false }, other_post.reload))
+      assert_response 200
+      assert_equal 7, post.topic.reload.stamp_type
+      refute other_post.reload.answer
+    end
+
     def test_update_blank_message
       comment = comment_obj
       put :update, construct_params({ id: comment.id }, body_html: '')
@@ -126,9 +157,10 @@ module ApiDiscussions
 
     def test_create_invalid_user_field
       post :create, construct_params({ id: topic_obj.id }, :body_html => 'test',
-                                                           'user_id' => 999)
+                                                           'user_id' => 999, 'answer' => true)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :invalid_field)])
+      match_json([bad_request_error_pattern('user_id', :invalid_field),
+                  bad_request_error_pattern('answer', :invalid_field)])
     end
 
     def test_comments_invalid_id

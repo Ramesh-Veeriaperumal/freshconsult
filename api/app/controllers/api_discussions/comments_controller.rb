@@ -32,9 +32,17 @@ module ApiDiscussions
 
       def validate_params
         return false if create? && !load_topic
-        params[cname].permit(*(DiscussionConstants::COMMENT_FIELDS))
+        params[cname].permit(*get_fields)
         comment = ApiDiscussions::CommentValidation.new(params[cname], @item)
         render_errors comment.errors, comment.error_options unless comment.valid?
+      end
+
+      def get_fields
+        if create? || DiscussionConstants::QUESTION_STAMPS.exclude?(@item.topic.stamp_type)
+          DiscussionConstants::COMMENT_FIELDS
+        else
+          DiscussionConstants::UPDATE_COMMENT_FIELDS
+        end
       end
 
       def scoper
