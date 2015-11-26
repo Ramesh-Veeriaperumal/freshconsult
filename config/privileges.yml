@@ -108,4 +108,5 @@
   :untitled_forum_agent_2: 107
   :untitled_forum_agent_3: 108
   :manage_ticket_templates: 109
-:max_value: 109
+  :spam_ticket: 110
+:max_value: 110
