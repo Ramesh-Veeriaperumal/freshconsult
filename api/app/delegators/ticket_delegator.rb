@@ -5,7 +5,7 @@ class TicketDelegator < SimpleDelegator
   attr_accessor :error_options, :ticket_fields
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :responder_presence, if: -> { responder_id && attr_changed?('responder_id') }
-  validate :active_email_config, if: -> { email_config_id && attr_changed?('email_config_id') }
+  validates :email_config, :presence => true, if: -> { email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id', schema_less_ticket) }
   validate :user_blocked?, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
   validates :custom_field,  custom_field: { custom_field:
@@ -26,10 +26,6 @@ class TicketDelegator < SimpleDelegator
 
   def attr_changed?(att, record = self)
     record.changed.include?(att)
-  end
-
-  def active_email_config
-    errors[:email_config_id] << :invalid_email_config unless email_config.try(:active)
   end
 
   def product_presence
