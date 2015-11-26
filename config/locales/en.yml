@@ -2350,6 +2350,14 @@ en:
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
+      credentials_incorrect: "The email and password you entered does not match"
+      failed_login_warning_line_1:
+        one: "1  login attempt left"
+        other: "%{count} login attempts left."
+        zero: "No more login attempts left"
+      failed_login_warning_line_2: "The email and password does not match"
+      failed_login_warning_line_3: "As a safety measure, your account may get locked temporarily. It is recommended that you use forgot password."
+      account_locked_warning: "Due to consecutive failed login attempts, your account has been temporarily locked. Please try again in some time."
     email_notifications:
       update:
         success: Email notification has been updated.
