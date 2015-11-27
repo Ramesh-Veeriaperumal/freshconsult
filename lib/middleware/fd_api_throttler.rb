@@ -36,7 +36,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         set_rate_limit_headers if @count
         Rails.logger.debug("FdApiThrottler :: Throttled :: Host: #{@host}, Count: (#{@count})")
       else
-        @status, @headers, @response = [429, { 'Retry-After' => retry_after, 'Content-Type' => 'application/json' },
+        @status, @headers, @response = [429, { 'Retry-After' => retry_after.to_s, 'Content-Type' => 'application/json' },
                                         LIMIT_EXCEEDED_MESSAGE]
         Rails.logger.error("API 429 Error :: Time: #{Time.now}, Host: #{@host}, Count: #{@count}}")
       end
