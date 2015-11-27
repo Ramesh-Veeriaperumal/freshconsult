@@ -3215,6 +3215,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
   end
 
   add_index "survey_remarks", ["id"], :name => "survey_remarks_id"
+  add_index "survey_remarks", ["account_id", "survey_result_id"], :name => "index_survey_remarks_on_account_id_and_survey_result_id"
+  add_index "survey_remarks", ["account_id", "note_id"], :name => "index_survey_remarks_on_account_id_and_note_id"
 
   create_table "survey_result_data", :force => true do |t|
     t.integer  "id",               :limit => 8,                :null => false
