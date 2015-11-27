@@ -98,6 +98,9 @@ window.App = window.App || {};
           });
           $('.confirm-delete').attr('disabled', !$flag);
         },
+        disableViewOnPortal: function (flag) {
+          $('.portal-preview-icon a, .portal-preview-icon a i').toggleClass('disabled', flag);
+        },
         previewDrafts: function () {
           var data = $('#article-form').data();
           if(data) {
@@ -110,7 +113,7 @@ window.App = window.App || {};
         },
         manipulate: function (response, success) {
           var content = "";
-          var deleted = response.deleted;
+          var deleted = response.deleted || false;
           response = response || { msg: $this.STRINGS.somethingWrong};
           if (deleted){ response = { msg: $this.STRINGS.articleDeleted }; }
           if (response.msg) {
@@ -123,6 +126,7 @@ window.App = window.App || {};
             this.lastUpdatedAt(response);
             this.toggleButtons(success);
             $('#sticky_redactor_toolbar').addClass('has-notification');
+            this.disableViewOnPortal(deleted);
           }
         }
 
