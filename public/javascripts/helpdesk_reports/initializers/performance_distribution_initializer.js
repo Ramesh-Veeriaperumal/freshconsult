@@ -95,8 +95,15 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         },
         responseTimeTrend: function (hash) {
             var time_trend_data = [];
-            var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
-            HelpdeskReports.locals.trend = current_trend; 
+            if(HelpdeskReports.locals.pdf !== undefined){
+                var current_trend = HelpdeskReports.locals.response_trend || HelpdeskReports.locals.trend;
+            } else {
+                var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
+            }
+            
+            HelpdeskReports.locals.trend = current_trend;
+            HelpdeskReports.locals.response_trend =  current_trend;
+            
             var chart_data = hash["AVG_RESPONSE_TIME"];
             
             if (!jQuery.isEmptyObject(hash["error"]) || !jQuery.isEmptyObject(chart_data["error"])) {
@@ -153,8 +160,15 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         },
         resolutionTimeTrend: function (hash) {
             var time_trend_data = [];
-            var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
+            if(HelpdeskReports.locals.pdf !== undefined){
+                var current_trend = HelpdeskReports.locals.resolution_trend || HelpdeskReports.locals.trend;
+            } else {
+                var current_trend = HelpdeskReports.CoreUtil.dateRangeDiff() >= 6 ? this.DEFAULT_TREND_WEEK : this.DEFAULT_TREND_DAYS;
+            }
+            
             HelpdeskReports.locals.trend = current_trend;
+            HelpdeskReports.locals.resolution_trend =  current_trend;
+            
             var chart_data = hash["AVG_RESOLUTION_TIME"];
             
             if (!jQuery.isEmptyObject(hash["error"]) || !jQuery.isEmptyObject(chart_data["error"])) {
@@ -228,6 +242,11 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports.perf', '[data-chart="resolution"]:not(".deactive"), [data-chart="response"]:not(".deactive")', function () {
                 HelpdeskReports.locals.trend = jQuery(this).data('format');
                 var charttype = jQuery(this).data('chart');
+                if(charttype === 'resolution'){
+                    HelpdeskReports.locals.resolution_trend =  HelpdeskReports.locals.trend;
+                } else {
+                    HelpdeskReports.locals.response_trend =  HelpdeskReports.locals.trend;
+                }
                 jQuery('[data-chart="'+charttype+'"]').removeClass('active');
                 jQuery('span[data-format="' + HelpdeskReports.locals.trend + '"][data-chart="'+charttype+'"]').addClass('active');
                 _FD.redrawTimeBased(HelpdeskReports.locals.trend, charttype);
@@ -279,6 +298,21 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
 
             _FD.bindChartEvents();
         },
+        contructChartsForPdf: function (hash) {
+            _FD.constants   = HelpdeskReports.Constants.PerformanceDistribution;
+            var metrics     = _FD.constants.metrics
+            var bucket_name = _FD.constants.bucket_conditions
+
+            jQuery.each(metrics, function (index, value) {
+                _FD.barTrend(hash[value+'_BUCKET'],bucket_name[index])
+            });
+            
+            _FD.responseTimeTrend(hash);
+            _FD.resolutionTimeTrend(hash);
+            
+            jQuery('#first_response').addClass('active');
+            jQuery('#response').addClass('active');
+        },
         fillArray: function(value, length) {
             var arr = [];
             for (var i = 0; i < length; i++) {
@@ -319,6 +353,9 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
    return {
         init: function (hash) {
             _FD.contructCharts(hash);
+        },
+        pdf: function (hash) {
+            _FD.contructChartsForPdf(hash);
         }
     };
 })();

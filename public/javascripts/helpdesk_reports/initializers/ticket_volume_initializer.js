@@ -65,8 +65,14 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var dateRange = this.dateRangeLimit();
             var current_trend = dateRange.default_trend;
             // If current trend is doy, then making current trend as w!
-            current_trend = (current_trend == "doy" && HelpdeskReports.CoreUtil.dateRangeDiff() >= 6) ? 'w' : current_trend;
-
+            if (HelpdeskReports.locals.pdf !== undefined){
+                // Explicity set before for PDF rendering
+                current_trend = HelpdeskReports.locals.trend
+            } else {
+                current_trend = (current_trend == "doy" && HelpdeskReports.CoreUtil.dateRangeDiff() >= 6) ? 'w' : current_trend;
+            }
+            
+            
             if (dateRange.deactive.length) {
                 jQuery.each(dateRange.deactive, function (i) {
                     jQuery('[data-format="' + dateRange.deactive[i] + '"]').addClass('deactive').attr('title', 'Disabled for this date range');
@@ -119,6 +125,41 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }
             var day_trend = new lineChart(settings);
             day_trend.lineChartGraph();
+        },
+        pdfDayTrend: function (hash) {
+            var defaults = this.findDefaultDay();
+            var days =  [];
+            _.each(defaults.enabled, function(i){
+                days.push(_FD.DAY_MAPPING[i]);
+            });
+            _FD.constructPdfTmpl(days);
+            _.each(defaults.enabled, function(i){
+                var day_trend_data = [];
+                var max = _FD.maxValue();
+                day_trend_data.push({
+                    name: _FD.received_name,
+                    data: _.values(_FD.hash_received[_FD.week_trend][i]),
+                }, {
+                    name: _FD.resolved_name,
+                    data: _.values(_FD.hash_resolved[_FD.week_trend][i]),
+                });
+                var settings = {
+                    renderTo: _FD.DAY_MAPPING[i] + '_chart',
+                    xAxisLabel: _.keys(_FD.hash_received[_FD.week_trend][i]),
+                    chartData: day_trend_data,
+                    yMax: max,
+                    xAxisType: 'number',
+                    xAxis_label: 'Hour of the day'
+                }
+                var day_trend = new lineChart(settings);
+                day_trend.lineChartGraph();
+            });
+        },
+        constructPdfTmpl: function (days) {
+            var tmpl = JST["helpdesk_reports/templates/pdf_day_trend_tmpl"]({
+                data: days
+            });
+            jQuery('#pdf_day_trend').html(tmpl);
         },
         legendClickEvent: function () {
             var click_event = {
@@ -202,22 +243,21 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var doy = _.values(_FD.WEEKDAY_MAPPING);
             var date_range = HelpdeskReports.locals.date_range.split('-');
             var diff = (Date.parse(date_range[1]) - Date.parse(date_range[0])) / (36e5 * 24);
-            var default_day, default_hash = {}, disabled_days = [];
+            var default_day, default_hash = {}, disabled_days = [], doy_active = [];
 
             if (date_range.length > 1 && diff >= 6) {
 
                 default_day = _FD.WEEKDAY_MAPPING['monday'];
+                doy_active = _.values(_FD.WEEKDAY_MAPPING);
 
             } else if (date_range.length > 1 && diff < 6) {
 
-                var doy_active = this.defaultDayInsideWeek(date_range);
                 default_day = (doy_active[0] === 0 && doy_active.length > 1) ? doy_active[1] : doy_active[0];
-
+                doy_active = this.defaultDayInsideWeek(date_range);
                 disabled_days = _.difference(doy, doy_active);
 
             } else {
-
-                var doy_active = [];
+                
                 default_day = Date.parse(date_range[0]).getDay();
                 doy_active.push(default_day);
                 disabled_days = _.difference(doy, doy_active);
@@ -226,7 +266,8 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
 
             default_hash = {
                 active: default_day,
-                disabled: disabled_days
+                disabled: disabled_days,
+                enabled: doy_active
             }
 
             return default_hash;
@@ -393,6 +434,12 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             _FD.dayTrend(hash);
             _FD.miniDayTrends(hash);
             _FD.bindChartEvents();
+        },
+        pdf: function (hash) {
+            _FD.hash_received = hash[HelpdeskReports.locals.metric][_FD.series[0]];
+            _FD.hash_resolved = hash[HelpdeskReports.locals.metric][_FD.series[1]];
+            _FD.timeTrend(hash);
+            _FD.pdfDayTrend(hash);
         }
     };
 })();

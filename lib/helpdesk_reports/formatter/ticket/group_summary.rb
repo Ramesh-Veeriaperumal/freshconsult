@@ -77,7 +77,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
         end
       end
     end
-    @summary.sort_by{|a| a["group_name"]}
+    @summary.sort_by{|a| a["group_name"].downcase}
   end
 
   def default_value metric

@@ -17,13 +17,16 @@ begin
 
   # custom mailbox sqs queue
   $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
-  
-  # Reports export queue
-  $sqs_reports_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])
-  
+    
   # Reports etl msgs queue
   $sqs_reports_etl = AWS::SQS.new.queues.named(SQS[:reports_etl_msg_queue])
 
+  # Reports Service Export
+  $sqs_reports_service_export = AWS::SQS.new.queues.named(SQS[:reports_service_export_queue])
+
+  # Reports helpkit Export
+  $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
+  
 rescue => e
   puts "AWS::SQS connection establishment failed."
 end

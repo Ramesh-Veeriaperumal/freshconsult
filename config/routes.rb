@@ -1226,7 +1226,10 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/fetch_ticket_list",  :controller => 'reports/v2/tickets/reports', :action => 'fetch_ticket_list', :method => :post
   match "/reports/v2/:report_type",                    :controller => 'reports/v2/tickets/reports', :action => 'index', :method => :get
   match "/reports/v2/:report_type/configure_export",  :controller => 'reports/v2/tickets/reports', :action => 'configure_export', :method => :get 
-  match "/reports/v2/:report_type/export_csv",        :controller => 'reports/v2/tickets/reports', :action => 'export_csv', :method => :post
+  match "/reports/v2/:report_type/export_tickets",    :controller => 'reports/v2/tickets/reports', :action => 'export_tickets', :method => :post
+  match "/reports/v2/:report_type/export_report",     :controller => 'reports/v2/tickets/reports', :action => 'export_report', :method => :post
+  match "/reports/v2/:report_type/email_reports",     :controller => 'reports/v2/tickets/reports', :action => 'email_reports', :method => :post
+  match "/reports/v2/download_file/:export_type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
   # END
   
   

@@ -1,11 +1,7 @@
 class HelpdeskReports::Response::Ticket::TicketList < HelpdeskReports::Response::Ticket::Base
-
-  def initialize result, date_range, report_type
-    super(result, date_range, report_type)
-    @processed_result = {}
-  end
   
   def process
+    @processed_result = {}
     parse_list_result
     processed_result
   end

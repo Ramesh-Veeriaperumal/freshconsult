@@ -1,0 +1,21 @@
+<% if ["agent_summary", "group_summary"].include?(@report_type) 
+    anchor_lable = "helpdesk_reports.export.export_report_csv"
+  else
+    target_blank = true
+    anchor_lable = "helpdesk_reports.export.export_report_pdf"
+  end
+ %>
+<%if @real_time_export == true %>
+    <div class = "pull-right">
+      <form id="pdf_form" method="post" action="<%="#{@report_type}/export_report"%>" 
+        <% if target_blank.present? %>
+          target="_blank"
+        <%end%>
+      >
+        <input type="hidden" name="pdf_args" class="serialize" id="pdf_args" value="" />
+        <%= submit_tag I18n.translate(anchor_lable), :id => "generate-pdf", :class => "generate-pdf-button" %>
+      </form>
+    </div>
+<% else %>
+  <%= button_tag I18n.translate(anchor_lable), :id => "generate_pdf_async", :class => "generate-pdf-button"%>
+<% end %>

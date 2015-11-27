@@ -22,6 +22,10 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
     build_list_condition if time_trend_query? and list_query? 
   end
 
+  def fetch_req_params
+    req_params
+  end
+
   private
 
   def set_query_type
