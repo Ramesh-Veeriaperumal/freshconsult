@@ -396,6 +396,7 @@ Helpkit::Application.routes.draw do
         get :caller_data
         post :external_transfer_success
         post :call_transfer_success
+        get :caller_recent_tickets
       end
     end
 

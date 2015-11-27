@@ -1,6 +1,16 @@
-<div class="add_call_note">
-	<div class="header">
-		<h1 class="header_text title"><%= t('freshfone.widget.notes') %> <span class="note_from_agent"></span></h1>
-	</div>
-	<textarea id="call_notes" class="call_notes" placeholder="<%= t('freshfone.widget.note_placeholder') %>"></textarea>
+<div class="add_call_note context_toggle">
+	<div class= "add-notes-header">
+	<div class="header_text closed">
+		<div class="triangle">
+			<%= font_icon "caret-right", :size => 6, :class => "ff-icon caret-right" %>
+			<%= font_icon "caret-down", :size => 6, :class => "ff-icon caret-down" %>
+		</div>
+		<div class="context_header"> 
+				<div class="add_note_text hide"><%= t('freshfone.widget.add_note_text') %></div>
+				<div class="edit_note_text hide"><%= t('freshfone.widget.edit_note') %></div>
+		</div>
+		<span class="note_from_agent"></span>
+	</div>	
+	</div>	
+	<textarea id="call_notes" class="call_notes hide context_slide" rows="4" placeholder=""></textarea>
 </div>

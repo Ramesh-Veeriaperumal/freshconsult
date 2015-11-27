@@ -20,6 +20,7 @@ var FreshfoneUserInfo;
 		$callMetaTemplate: $('#freshfone-call-meta-template'),
 		$callWasAnsweredTemplate: $("#freshfone-call-picked-template"),
 		$transferMetaTemplate: $("#freshfone-call-transfer-template"),
+		$callContext: $('#freshfone-call-context'),
 		setRequestObject: function (requestObject) {
 			this.requestObject = requestObject;
 		},
@@ -54,8 +55,9 @@ var FreshfoneUserInfo;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
 						self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
 						self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
+						self.setOngoingCallContext(data.call_meta.caller_location);
 					}
-					if (self.isOutgoing) {
+					if (self.isOutgoing) {						
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
 					} else {
 						params.callerName = self.requestObject.callerName;
@@ -101,10 +103,22 @@ var FreshfoneUserInfo;
 			});
 		},
 		setOngoingStatusAvatar: function (avatar) {
-			if (freshfonewidget.ongoingCallWidget.find('#incall_user_info')) {
-				freshfonewidget.ongoingCallWidget.find('#incall_user_info').html($(avatar).clone());
+			if ($('#incall_user_info')) {
+				$('#incall_user_info').html($(avatar).clone());
 				this.unknownUserFiller();
 			}
+		},
+		setOngoingCallContext: function(location){
+			var callerName = this.requestObject.callerName==this.customerNumber? "ANONYMOUS" : this.requestObject.callerName;
+			var callerId = this.requestObject.callerId;
+			var params = {callerName: callerName, 
+							callerNumber: this.formattedNumber(), 
+							callerLocation: location,
+							callerId: callerId
+						};
+			var template = this.$callContext.clone();
+			freshfonewidget.callerUserId = callerId;
+			$('.caller-context-details').html(template.tmpl(params));
 		},
 		formattedNumber: function () {
 			return formatInternational(this.callerLocation(), this.customerNumber)

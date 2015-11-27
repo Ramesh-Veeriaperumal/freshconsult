@@ -47,9 +47,9 @@ module Freshfone::CallHistoryHelper
 	end
 
 	def agents_list
-		agents_list = []
-		agents_list.concat(Account.current.agents_from_cache.map { |au| [ au.user.name, au.user.id] })
-		agents_list
+		agents = []
+		agents.concat(Account.current.agents_from_cache.map { |au| [ au.user.name, au.user.id] })
+		agents
 	end
 
 	def groups_options
@@ -188,4 +188,45 @@ module Freshfone::CallHistoryHelper
     return if call.meta.blank?
     call.meta.device_type == Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer]
   end
+
+  def call_filter_cache
+   call_filter.to_json.html_safe
+  end
+
+  def call_filter_hash
+    filter_cache = {}
+    if @cached_filters['data_hash'].present?
+        filters = ActiveSupport::JSON.decode @cached_filters['data_hash']
+        filters.each do |filter| 
+          case filter['condition']
+            when 'created_at'
+              filter_cache['date_value'] = filter['value']
+            when 'call_type'
+              filter_cache['call_type_value'] = filter['value']
+            when 'user_id'
+              filter_cache['users'] = filter['value'].split(",")
+            when 'group_id'
+              filter_cache['group_value'] = filter['value']
+            when 'customer_id'
+              customer = current_account.users.find_by_id(filter['value'])
+              filter_cache['customer_name'] = customer.name unless customer.nil? 
+              filter_cache['customer_id'] = filter['value']
+            when 'caller_number_id'
+              caller = current_account.freshfone_callers.find_by_id(filter['value'])
+              filter_cache['caller_number'] = caller.number unless caller.nil?
+              filter_cache['caller_number_id'] = filter['value']
+            when 'business_hour_call'
+              filter_cache['business_hour_type'] = filter['value'] 
+          end
+    end      
+    filter_cache['number_id'] = @cached_filters['number_id'] 
+   end
+    filter_cache
+  end
+
+  def call_filter
+    return {} if @cached_filters.blank?
+    return call_filter_hash
+  end
+
 end

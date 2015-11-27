@@ -95,6 +95,8 @@ var FreshfoneCallTransfer
 
     successTransferCall: function (transfer_success) {
       if (transfer_success == 'true') { 
+        freshfonewidget.closeRecentTickets();
+        freshfonewidget.closeNotesTextArea();
         if(this.resumeFallback){
           clearTimeout(this.resumeFallback);
         }
@@ -104,6 +106,7 @@ var FreshfoneCallTransfer
         freshfoneuser.updatePresence();
         setTimeout(function(){ freshfonewidget.resetToDefaultState();}, 3000);
         this.updateTransferStatus("connected","close");
+        this.restoreAllControlles();
         $(".ongoing .transfer_call").removeClass("transferring_state");
       } else {
         if (!freshfone.isConferenceMode) {
@@ -193,9 +196,18 @@ var FreshfoneCallTransfer
       this.restoreAllControlles(); // should be reset the widget once reconnected to caller
     },
     disableAllOtherControlles: function () {
+      var self = this;
+      $(document).on('click', self.bindClickEventForTransfer);
       freshfonewidget.ongoingControl().addClass('disabled inactive');
     },
+    bindClickEventForTransfer: function(){
+      $('.freshfone_content_container').show();
+      $('#freshfone_available_agents').show();
+      $('.freshfone-context-container').hide();
+    },
     restoreAllControlles: function () {
+      var self = this;
+      $(document).off('click', self.bindClickEventForTransfer);
       freshfonewidget.ongoingControl().removeClass('disabled inactive');
     },
     bindAbortTransfer: function () {
