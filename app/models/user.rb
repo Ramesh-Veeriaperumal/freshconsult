@@ -676,6 +676,10 @@ class User < ActiveRecord::Base
     self.tags
   end
 
+  def language_object
+    Language.find_by_code(language.to_s)
+  end
+
   def language_name
     Language.find_by_code(self.language.to_s).try(:name)
   end

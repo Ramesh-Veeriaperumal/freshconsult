@@ -17,6 +17,7 @@ window.App = window.App || {};
 
       this.dummyActionButtonTriggers();
       this.modalBindings();
+      this.outdateOrUpdate();
     },
 
     modalBindings: function () {
@@ -156,6 +157,72 @@ window.App = window.App || {};
             Fjax.resetLoading();
             return false;
           }
+        }
+      });
+    },
+
+    outdateOrUpdate: function () {
+      var $this = this;
+      $('body').on('click.articles', '#outdate, #uptodate', function () {
+        var el = $(this);
+        $(this).button('loading');
+        $.ajax({
+          url: el.data('url'),
+          type: 'PUT',
+          dataType: 'json',
+          data: {
+            item_id: el.data('itemId'),
+            language_id: el.data('languageId')
+          },
+          success: function () {
+            el.button('complete');
+            setTimeout($this.postOutdateUpdate(el), 2000);
+          }
+        });
+      });
+    },
+
+    postOutdateUpdate: function (el) {
+      el.parent().addClass('hide');
+      $('.uptodate-section').removeClass('hide');
+      if(el.attr('id') === 'outdate') {
+        $('.lang-tab:not(".selected") .language_symbol.active').removeClass('active').addClass('outdated');
+      } else {
+        $('.lang-tab.selected .language_symbol').removeClass('outdated').addClass('active');
+      }
+    },
+
+    formatTranslationDropdown: function () {
+      $('#version_selection').select2({
+        formatResult: this.format,
+        formatSelection: this.format,
+        escapeMarkup: function(m) { return m; },
+        dropdownAutoWidth: 'true',
+        containerCssClass: 'add-translation-link',
+        dropdownCssClass: 'add-translation-dropdown'
+      });
+    },
+
+    format: function (state) {
+      var originalOption = state.element, outdated;
+      return "<span class='language_symbol " + $(originalOption).data('state') + "'>" + "<span class='language_name'>" + $(originalOption).data('code') + "</span></span>" + "<span class='language_label'>" + state.text + "</span>";
+    },
+
+    showVersionDropdown: function () {
+      $('body').on('click.articles', '.version_select_container', function () {
+        $('#version_selection').select2('open');
+      });
+    },
+
+    versionSelection: function () {
+      $('body').on('change.articles', '#version_selection', function () {
+        var el = $('#version_selection option[value=' + this.value + ']');
+        var lang = this.value;
+        $('#version_selection').select2('val', '');
+        if (el.data('state') === "") {
+          window.pjaxify("/solution/articles/new/" + $(this).data('articleId') + "/" + lang);
+        } else {
+          window.pjaxify("/solution/articles/" + $(this).data('articleId') + "/" + lang);
         }
       });
     },

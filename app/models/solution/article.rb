@@ -36,7 +36,7 @@ class Solution::Article < ActiveRecord::Base
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
 
   attr_accessible :title, :description, :user_id, :folder_id, :status, :art_type, 
-    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position
+    :thumbs_up, :thumbs_down, :delta, :desc_un_html, :import_id, :seo_data, :position, :outdated
 
   after_save      :set_mobihelp_solution_updated_time, :if => :content_changed?
   before_destroy  :set_mobihelp_solution_updated_time

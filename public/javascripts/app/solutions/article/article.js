@@ -23,6 +23,9 @@ window.App = window.App || {};
       } else {
         this.eventsForShowPage();
       }
+      this.formatTranslationDropdown();
+      this.showVersionDropdown();
+      this.versionSelection();
     },
     
     onLeave: function (data) {

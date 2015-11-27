@@ -31,6 +31,10 @@ class Language
 		Thread.current[:language] = self
 	end
 
+	def short_code
+		code[0..1]
+	end
+
 	class << self
 
 		def all

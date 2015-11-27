@@ -21,6 +21,29 @@
     		<%= @article.published? ? t('solutions.status.published') : t('solutions.status.draft') %> 
     	</span>
     </div>
+
+    <% if privilege?(:publish_solution) && @article.published? %>
+    	<% #BinaryRewrite! - Rewrite after finishing Binary columns. %>
+	    <% if @article.is_primary? && (@article_meta.solution_articles.select { |a| !a.is_primary? && a.outdated == false }).present? %>
+		    <div class="outdate-section">
+					<button type="button" class="btn btn-link" id="outdate" data-item-id="<%= @article_meta.id %>" data-loading-text="<%= t('solution.general.outdating') %>" data-complete-text="<%= t('solution.general.outdate_complete') %>" data-url="/solution/articles/mark_as_outdated">
+						<%= t('solution.general.mark_as_outdated') %>
+					</button>
+				</div>
+			<% end %>
+
+			<% unless @article.is_primary? %>
+				<div class="update-section <%= 'hide' unless @article.outdated %>">
+					<button type="button" class="btn btn-link" id="uptodate" data-language-id="<%= @article.language_id %>" data-item-id="<%= @article_meta.id %>" data-loading-text="<%= t('solution.general.updating') %>" data-url="/solution/articles/mark_as_uptodate">
+						<%= t('solution.general.mark_as_uptodate') %>
+					</button>
+				</div>
+				<div class="uptodate-section <%= 'hide' if @article.outdated %>">
+					<i class="ficon-checkmark-round-o fsize-20 mr5"></i>
+					<%= t('solution.general.uptodate') %>
+				</div>
+			<% end %>
+		<% end %>
 	</div>
 
 	<div class="sidebar-section">

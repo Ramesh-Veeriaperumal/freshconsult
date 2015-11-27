@@ -1,6 +1,7 @@
 module Solution::ArticlesHelper
 
   include ActionView::Helpers::NumberHelper
+  include Solution::LanguageTabsHelper
   
   def language_tabs
     %{<div class="tab">
@@ -134,11 +135,8 @@ module Solution::ArticlesHelper
       </span>).html_safe
   end
 
-  def drafts_present? article
-    articles_array = Solution::ArticleMeta.translation_associations.map do |association|
-      article.send(association)
-    end
-    drafts_array = articles_array.compact.select do |a|
+  def drafts_present? article_meta
+    drafts_array = article_meta.versions.select do |a|
       a.draft.present? || a.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
     end
     @language_ids = drafts_array.map(&:language_id)
@@ -147,27 +145,6 @@ module Solution::ArticlesHelper
 
   def formatted_value number
     number_to_human(number, :units => {:thousand => "K", :million => "M", :billion => "B"}).delete(' ')
-  end
-
-  def add_new_lang_article(lang_ids)
-    return if lang_ids.blank?
-    content = []
-    lang_ids.each do |lang_id|
-      lang = Language.find(lang_id)
-      next if lang.blank?
-      content << %(<li>)
-      content << pjax_link_to( "<span class=\"language_icon\">#{lang.code}</span> #{lang.name}".html_safe, 
-                  solution_new_article_version_path(@article_meta.id, lang.code)).html_safe
-      content << %(</li>)
-    end
-    %(<span class="add-new-trans pull-right">
-        <div class="drop-right nav-trigger" disabled href="#" menuid="#new-translation">
-          #{t('solution.articles.add_translation')}
-        </div>
-        <div class="fd-menu" id="new-translation">
-          <ul> #{content.join('')}</ul>
-        </div>
-      </span>).html_safe
   end
   
 end

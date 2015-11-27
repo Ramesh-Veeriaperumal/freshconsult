@@ -1,7 +1,19 @@
-<% @article_meta.solution_articles.each do |sa| %>
-	<%= language_tab(Language.find(sa.language_id), sa.outdated) unless sa.new_record? %>
+<% if @article_meta.new_record? %>
+	<%= new_article_tab %>
+	<span class="tooltip" title="<%= t('solution.articles.add_primary_info') %>" data-placement="below" data-html=true>
+		<%= t('solution.articles.more_languages', :count => Account.current.supported_languages.count) %>
+		<i class="ficon-caret-down fsize-14 ml5" size="14"></i>
+	</span>
+<% else %>
+	<%= article_language_tabs %>
+	<%= extra_tab if @lang_objs.length == 1 %>
+	<% if @lang_objs.present? %>
+		<div class="inline-block">
+			<div class="version_select_container tooltip">
+				<%= t('solution.articles.more_languages', :count => @lang_objs.size) %>
+				<i class="ficon-caret-down fsize-14 ml5" size="14"></i>
+			</div>
+			<%= article_versions_dropdown %>
+		</div>
+	<% end %>
 <% end %>
-
-<%= add_new_lang_article(current_account.applicable_language_ids - @article_meta.solution_articles.map(&:language_id))%>
-
-<%= language_tab(@language) if @article.new_record? %>

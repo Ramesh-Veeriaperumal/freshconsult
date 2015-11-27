@@ -525,6 +525,27 @@
           border-radius: 4px;
         }
       }
+      .outdate-section, .update-section {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        text-align: center;
+
+        .btn-link {
+          text-decoration: none;
+        }
+
+        .spinner {
+          top: -7px;
+          left: 14px;
+        }
+      }
+
+      .uptodate-section {
+        i {
+          color: #A3D04B;
+        }
+      }
     }
     p{
       margin: 0;

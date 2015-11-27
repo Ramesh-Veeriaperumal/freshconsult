@@ -162,6 +162,24 @@ class Solution::ArticlesController < ApplicationController
     flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
   end
 
+  def mark_as_uptodate
+    meta_scoper.find(params[:item_id]).send(Language.find(params[:language_id]).code + "_article").update_attributes(:outdated => false)
+    respond_to do |format|
+      format.json { render :json => { :success => true } }
+    end
+  end
+
+  def mark_as_outdated
+    @article_meta = meta_scoper.find(params[:item_id])
+    @article_meta.solution_articles.each do |a|
+      next if a.is_primary?
+      a.update_attributes(:outdated => true)
+    end
+    respond_to do |format|
+      format.json { render :json => { :success => true } }
+    end
+  end
+
   protected
 
     def load_article
@@ -456,7 +474,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def load_article_version
-      @article = @article_meta.send(language_code + "_article")
+      @article = @article_meta.send(language_code.underscore + "_article")
     end
 
     def cleanup_params_for_title

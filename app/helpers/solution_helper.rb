@@ -19,8 +19,8 @@ module SolutionHelper
 					_output << category_link(@folder, page)
 					_output << truncate(h(@folder.name), :length => 50)
 				when :article
-					_output << category_link(@article.solution_folder_meta, page)
-					_output << folder_link(@article.solution_folder_meta)
+					_output << category_link(@article_meta.solution_folder_meta, page)
+					_output << folder_link(@article_meta.solution_folder_meta)
 				else
 			end
 		end
@@ -28,7 +28,7 @@ module SolutionHelper
 	end
 
 	def new_article_check?
-		@article.present? ? @article.new_record? : false
+		@article_meta.present? ? @article_meta.new_record? : true
 	end
 
 	def search_placeholder(page)
@@ -280,7 +280,7 @@ module SolutionHelper
 			"submit-label" => t('save')
 		}}) unless category.eql?('article')
 		options.merge!({:"data-pjax" => "#body-container"}) if category.eql?('article')
-		link_to( "<span class='language_name'>#{language.name[0..1].capitalize}</span>
+		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
 							version.present? ? solution_article_version_path(solution_meta.id, language.code) :
@@ -326,22 +326,6 @@ module SolutionHelper
     op.html_safe
 	end
 
-	def language_tab l, outdated = false
-		op = ""
-		op << "<div class='lang-tab #{'selected' if l == @language}'>"
-		op << pjax_link_to("<span class='language_symbol #{outdated ? 'outdated' : 'active'}'>
-													<span class='language_name'>
-														#{l.name[0..1].capitalize}
-													</span>
-												</span>
-												<span class='language_label'>
-													#{l.name}
-												</span>".html_safe, 
-							solution_article_version_path(@article_meta.id, l.code))
-		op << "</div>"
-		op.html_safe
-	end
-
 	def new_article_btn article
 	  output = %(<div class="btn-group">)
 	  output << pjax_link_to(article[0],article[1],
@@ -355,7 +339,7 @@ module SolutionHelper
 		lang_ids.each do |i|
 			lang = Language.find(i)
 			op << "<div class='language-item'>"
-			op << "<span class='popover-language-icon'>#{lang.name[0..1].capitalize}</span>"
+			op << "<span class='popover-language-icon'>#{lang.short_code.capitalize}</span>"
 			op << lang.name
 			op << "</div>"
 		end

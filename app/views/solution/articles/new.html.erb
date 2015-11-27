@@ -4,7 +4,7 @@
 <% end %>
 
 <% content_for :sticky_title do %>
-    <%= render :partial => "language_tabs" unless @article_meta.new_record? %>
+    <%= render :partial => "language_tabs" %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', 
            :locals => { :page => :article, :sticky_class => 'article-sticky', :toolbar => true} %>

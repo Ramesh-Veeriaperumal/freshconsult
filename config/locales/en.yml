@@ -3915,6 +3915,12 @@ en:
       article_prop: Article Properties
       feedback: Feedback
       analytics: Analytics
+      mark_as_outdated: "Mark other languages as outdated"
+      outdating: <span class="sloading loading-small"></span>Outdating other translations
+      outdate_complete: <span class="muted"><i class="ficon-checkmark-round-o fsize-20 mr5"></i>Completed</span>
+      mark_as_uptodate: "Mark as uptodate"
+      updating: <span class="sloading loading-small"></span>Updating
+      uptodate: "Uptodate"
       unsaved_content: You have unsaved content in this page.
       leave_page_que: Do you want to leave this page?
       something_wrong: Something went wrong!
@@ -4000,6 +4006,8 @@ en:
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
         confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
       add_translation: Add Translation
+      add_primary_info: Create article in your primary language<br/>to select other language translations.
+      more_languages: "%{count} more"
       show_all_analytics: See analytics for all languages
     draft:
       name: Drafts

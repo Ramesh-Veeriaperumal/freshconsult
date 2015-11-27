@@ -170,7 +170,23 @@
     font-size: 12px;
   }
 
-  .language_icon, .lang-tab .language_symbol{
+  .version_select_container {
+    padding-top: 7px;
+    @include float(left);
+  }
+
+  .add-translation-link {
+    visibility: hidden;
+    display: block;
+  }
+
+  .add-translation-dropdown {
+    border-radius: 5px;
+    border: 1px solid rgba(0,0,0,0.3);
+    margin-top: 5px;
+  }
+
+  .language_icon, .language_symbol{
     border: 1px solid;
     border-radius: 50%;
     width: 20px;
@@ -185,6 +201,7 @@
       font-weight: 600;
       top: 1px;
       position: relative;
+      text-transform:capitalize;
     }
     .ficon-pencil{
       color: #FFF;
@@ -232,15 +249,15 @@
     text-align: center;
     margin-right: 10px;
   }
+  .language_label{
+    position: relative;
+    top: 3px;
+    padding-left: 2px;
+  }
   .lang-tab{
     display: inline-block;
     margin-right: 15px;
     padding-bottom: 8px;
-    .language_label{
-      position: relative;
-      top: 3px;
-      padding-left: 2px;
-    }
     &.selected{
       border-bottom: 2px solid #CCC;
       .language_label{
