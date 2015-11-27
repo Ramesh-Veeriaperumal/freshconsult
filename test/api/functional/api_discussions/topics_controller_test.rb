@@ -217,21 +217,12 @@ module ApiDiscussions
       assert_equal ' ', @response.body
     end
 
-    def test_create_without_edit_topic_privilege
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      post :create, construct_params({ id: forum_obj.id },
-                                     title: 'test title', message_html: 'test content', sticky: true)
-      assert_response 400
-      match_json([bad_request_error_pattern('sticky', :invalid_field)])
-    end
-
     def test_update_without_edit_topic_privilege
       topic = first_topic
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
+      @controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
-      assert_response 400
-      match_json([bad_request_error_pattern('sticky', :invalid_field)])
+      assert_response 403
     end
 
     def test_update_with_email
@@ -404,7 +395,6 @@ module ApiDiscussions
       monitor_topic(first_topic, user, 1)
       get :followed_by, controller_params(user_id: user.id)
       assert_response 403
-      match_json(request_error_pattern(:access_denied, id: user.id))
     end
 
     def test_followed_by_without_privilege_valid

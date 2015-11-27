@@ -870,6 +870,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('mobile', :"can't be blank"),
                 bad_request_error_pattern('address', :"can't be blank"),
                 bad_request_error_pattern('description', :"can't be blank"),
+                bad_request_error_pattern('client_manager', :data_type_mismatch, data_type: 'Boolean'),
                 bad_request_error_pattern('twitter_id', :"can't be blank"),
                 bad_request_error_pattern('phone', :"can't be blank"),
                 bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),

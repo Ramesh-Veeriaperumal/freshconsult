@@ -450,6 +450,10 @@ class ApiApplicationController < MetalApiController
 
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
+      get_fields_from_constant(constant)
+    end
+
+    def get_fields_from_constant(constant)
       fields = constant[:all]
       constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
       fields

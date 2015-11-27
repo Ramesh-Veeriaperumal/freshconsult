@@ -80,8 +80,15 @@ module ApiDiscussions
       end
 
       def validate_params
-        return false if create? && !load_forum
-        fields = get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")
+        if create?
+          if !load_forum
+            return false
+          else
+            fields = DiscussionConstants::CREATE_TOPIC_FIELDS
+          end
+        else
+          fields = get_fields_from_constant(DiscussionConstants::UPDATE_TOPIC_FIELDS)
+        end
         params[cname].permit(*(fields))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_errors topic.errors, topic.error_options unless topic.valid?(action_name.to_sym)

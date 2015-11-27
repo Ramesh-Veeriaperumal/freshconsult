@@ -43,7 +43,7 @@ module ApiDiscussions
       post = quick_create_post
       assert_equal 7, post.topic.stamp_type
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
-      match_json(post_pattern({answer: true }, post.reload))
+      match_json(comment_pattern({answer: true }, post.reload))
       assert_response 200
       assert_equal 6, post.topic.reload.stamp_type
       assert post.reload.answer
@@ -51,12 +51,12 @@ module ApiDiscussions
       other_post = post.topic.posts.create(user_id: @agent.id, body_html: "test", forum_id: post.topic.forum_id)
       put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: true)
       assert_response 200
-      match_json(post_pattern({answer: true }, other_post.reload))
+      match_json(comment_pattern({answer: true }, other_post.reload))
       refute post.reload.answer
       assert other_post.reload.answer
 
       put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: false)
-      match_json(post_pattern({answer: false }, other_post.reload))
+      match_json(comment_pattern({answer: false }, other_post.reload))
       assert_response 200
       assert_equal 7, post.topic.reload.stamp_type
       refute other_post.reload.answer
@@ -71,7 +71,9 @@ module ApiDiscussions
 
     def test_update_invalid_answer
       comment = comment_obj
+      Topic.any_instance.stubs(:stamp_type).returns(6)
       put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: 90)
+      Topic.any_instance.unstub(:stamp_type)
       assert_response 400
       match_json([bad_request_error_pattern('answer', :data_type_mismatch, data_type: 'Boolean')])
     end
