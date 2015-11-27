@@ -2483,6 +2483,39 @@ en:
       new_solution:
         short: "{{user_path}} created a new solution"
         long: "{{user_path}} created a new solution {{notable_path}}"
+      new_article:
+        short: "{{user_path}} created a new article"
+        long: "{{user_path}} created a new article '{{notable_path}}'"
+      published_article:
+        short: "{{user_path}}'s article has been published"
+        long: "{{user_path}} published an article'{{notable_path}}'"
+      unpublished_article:
+        short: "{{user_path}}'s article has been unpublished"
+        long: "{{user_path}}' unpublished an article '{{notable_path}}'"
+      delete_article:
+        short: "{{user_path}} has deleted an article"
+        long: "{{user_path}} has deleted an article '{{notable_path}}'"
+      new_solution_category:
+        short: "{{user_path}} created a new solution category"
+        long: "{{user_path}} created a new solution category '{{notable_path}}'"
+      delete_solution_category:
+        short: "{{user_path}} has deleted a solution category"
+        long: "{{user_path}} has deleted the solution category '{{notable_path}}'"
+      new_folder:
+        short: "{{user_path}} created a new folder"
+        long: "{{user_path}} created a new folder '{{notable_path}}'"
+      delete_folder:
+        short: "{{user_path}} has deleted a folder"
+        long: "{{user_path}} has deleted the folder '{{notable_path}}'"
+      new_draft:
+        short: "{{user_path}} created a draft for an article"
+        long: "{{user_path}} created a draft for article '{{notable_path}}'"
+      published_draft:
+        short: "{{user_path}} published the draft of an article"
+        long: "{{user_path}} published the draft of article '{{notable_path}}'"
+      delete_draft:
+        short: "{{user_path}} has discarded the draft of an article"
+        long: "{{user_path}} has discarded the draft of article '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"
@@ -2503,16 +2536,16 @@ en:
         short: "{{user_path}}'s post has been published"
         long: "{{user_path}}'s post in '{{notable_path}}' has been published"
       delete_forum_category:
-        short: "{{user_path}} deleted a forum category"
-        long: "{{user_path}} deleted the forum category '{{notable_path}}'"
+        short: "{{user_path}} has deleted a forum category"
+        long: "{{user_path}} has deleted the forum category '{{notable_path}}'"
       delete_forum:
-        short: "{{user_path}} deleted a forum"
-        long: "{{user_path}} deleted the forum '{{notable_path}}' under '{{category_name}}'"
+        short: "{{user_path}} has deleted a forum"
+        long: "{{user_path}} has deleted the forum '{{notable_path}}' under '{{category_name}}'"
       delete_topic:
         short: "{{user_path}} deleted a topic"
-        long: "{{user_path}} deleted the topic '{{notable_path}}' in '{{forum_name}}'"
+        long: "{{user_path}} deleted the topic '{{notable_path}}' from '{{forum_name}}'"
       delete_post:
-        short: "{{user_path}} deleted a new post"
+        short: "{{user_path}} has deleted a new post"
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
       topic_stamp_1:
         short: "{{user_path}} has marked the forum topic as 'Planned'"

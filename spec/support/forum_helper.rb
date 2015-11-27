@@ -50,6 +50,8 @@ module ForumHelper
 							:user_votes => 0
 							)
 		post.save!
+		topic.last_post_id = post.id
+		topic.save
 		publish_post(post)
 		topic.reload
 	end
@@ -83,12 +85,13 @@ module ForumHelper
 		topic.reload
 	end
 
-	def create_test_post(topic, user = @customer)
+	def create_test_post(topic, published = false, user = @customer)
 		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
 							:user_id => user.id,
-							:user_votes => 0
+							:user_votes => 0,
+							:published => published
 							)
 		post.save
 		post			
