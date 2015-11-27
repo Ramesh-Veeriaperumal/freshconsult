@@ -883,7 +883,7 @@ var scrollToError = function(){
 				var propertiesForm = $("#custom_ticket_form");
 				if(propertiesForm.valid()) {
 
-					if($.browser.msie) {
+					if($.browser.msie || $.browser.edge) {
 						if(eligibleForReply(_form)){
 							handleIEReply(_form);
 							submitTicketProperties();
@@ -902,7 +902,7 @@ var scrollToError = function(){
 					scrollToError();
 				}
 			} else {
-				if($.browser.msie) {
+				if($.browser.msie || $.browser.edge) {
 					if(eligibleForReply(_form)){
 						handleIEReply(_form);
 						return true;

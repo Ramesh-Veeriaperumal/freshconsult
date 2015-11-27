@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require './app/controllers/posts_controller'
 RSpec.describe PostsController do
 
   self.use_transactional_fixtures = false

@@ -49,7 +49,7 @@
   :phone_make_call: 48
   :phone_export_call_history: 49
   :manage_dashboard: 50
-  :create_and_edit_new_dashboard: 51
+  :untitled_core_supervisor_6: 51
   :compose_email: 52
   :manage_customer_list: 53
   :livechat_admin_tasks: 54
@@ -107,4 +107,6 @@
   :untitled_forum_agent_1: 106
   :untitled_forum_agent_2: 107
   :untitled_forum_agent_3: 108
-:max_value: 108
+  :manage_ticket_templates: 109
+  :spam_ticket: 110
+:max_value: 110

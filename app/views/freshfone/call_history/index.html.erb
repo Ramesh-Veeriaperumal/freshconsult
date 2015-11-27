@@ -36,6 +36,7 @@
 	freshfone.group_list = <%= groups_options.html_safe %>;
 	freshfone.business_hours_list = <%= filtered_by_business_hours_options.html_safe %>;
 	freshfone.customer_autocomplete_path = '<%= customer_phone_number_freshfone_autocomplete_index_path %>';
+	freshfone.calls_filter_cache = <%= call_filter_cache.blank? ? "" : call_filter_cache %>
 	jQuery(window).on("load", function () {
 		App.Phone.Metrics.recordSource("CALL_HISTORY_LOAD");
     App.Phone.Metrics.push_event();

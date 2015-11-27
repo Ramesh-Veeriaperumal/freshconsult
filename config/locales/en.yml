@@ -2345,11 +2345,19 @@ en:
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso:
-        expected_params: "Expected params are name, email and hash, which are not present "
+        expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
+      credentials_incorrect: "The email and password you entered does not match"
+      failed_login_warning_line_1:
+        one: "1  login attempt left"
+        other: "%{count} login attempts left."
+        zero: "No more login attempts left"
+      failed_login_warning_line_2: "The email and password does not match"
+      failed_login_warning_line_3: "As a safety measure, your account may get locked temporarily. It is recommended that you use forgot password."
+      account_locked_warning: "Due to consecutive failed login attempts, your account has been temporarily locked. Please try again in some time."
     email_notifications:
       update:
         success: Email notification has been updated.
@@ -2475,6 +2483,39 @@ en:
       new_solution:
         short: "{{user_path}} created a new solution"
         long: "{{user_path}} created a new solution {{notable_path}}"
+      new_article:
+        short: "{{user_path}} created a new article"
+        long: "{{user_path}} created a new article '{{notable_path}}'"
+      published_article:
+        short: "{{user_path}}'s article has been published"
+        long: "{{user_path}} published an article'{{notable_path}}'"
+      unpublished_article:
+        short: "{{user_path}}'s article has been unpublished"
+        long: "{{user_path}}' unpublished an article '{{notable_path}}'"
+      delete_article:
+        short: "{{user_path}} has deleted an article"
+        long: "{{user_path}} has deleted an article '{{notable_path}}'"
+      new_solution_category:
+        short: "{{user_path}} created a new solution category"
+        long: "{{user_path}} created a new solution category '{{notable_path}}'"
+      delete_solution_category:
+        short: "{{user_path}} has deleted a solution category"
+        long: "{{user_path}} has deleted the solution category '{{notable_path}}'"
+      new_folder:
+        short: "{{user_path}} created a new folder"
+        long: "{{user_path}} created a new folder '{{notable_path}}'"
+      delete_folder:
+        short: "{{user_path}} has deleted a folder"
+        long: "{{user_path}} has deleted the folder '{{notable_path}}'"
+      new_draft:
+        short: "{{user_path}} created a draft for an article"
+        long: "{{user_path}} created a draft for article '{{notable_path}}'"
+      published_draft:
+        short: "{{user_path}} published the draft of an article"
+        long: "{{user_path}} published the draft of article '{{notable_path}}'"
+      delete_draft:
+        short: "{{user_path}} has discarded the draft of an article"
+        long: "{{user_path}} has discarded the draft of article '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"
@@ -2495,16 +2536,16 @@ en:
         short: "{{user_path}}'s post has been published"
         long: "{{user_path}}'s post in '{{notable_path}}' has been published"
       delete_forum_category:
-        short: "{{user_path}} deleted a forum category"
-        long: "{{user_path}} deleted the forum category '{{notable_path}}'"
+        short: "{{user_path}} has deleted a forum category"
+        long: "{{user_path}} has deleted the forum category '{{notable_path}}'"
       delete_forum:
-        short: "{{user_path}} deleted a forum"
-        long: "{{user_path}} deleted the forum '{{notable_path}}' under '{{category_name}}'"
+        short: "{{user_path}} has deleted a forum"
+        long: "{{user_path}} has deleted the forum '{{notable_path}}' under '{{category_name}}'"
       delete_topic:
         short: "{{user_path}} deleted a topic"
-        long: "{{user_path}} deleted the topic '{{notable_path}}' in '{{forum_name}}'"
+        long: "{{user_path}} deleted the topic '{{notable_path}}' from '{{forum_name}}'"
       delete_post:
-        short: "{{user_path}} deleted a new post"
+        short: "{{user_path}} has deleted a new post"
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
       topic_stamp_1:
         short: "{{user_path}} has marked the forum topic as 'Planned'"
@@ -3583,8 +3624,8 @@ en:
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
-    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
+    escalation_rule_response_text: Set escalation rule when a ticket is not <b>responded to </b> on time
+    escalation_rule_resolution_text: Set escalation hierarchy when a ticket is not <b>resolved </b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -3611,9 +3652,9 @@ en:
       invalid_data_type: Company ids should be a comma separated value.
       default_policy_update: Cannot update default SLA policy.
     reminder: What happens when this SLA due time approaches?
-    reminder_label: Set SLA due time reminder
-    reminder_response_text: Set Reminder Rule when a ticket <b>response time</b> approaches
-    reminder_resolution_text: Set Reminder Rule when a ticket is not <b>resolved</b> on time
+    reminder_label: Set SLA reminders
+    reminder_response_text: Set reminder rule when a ticket <b>response time </b> approaches
+    reminder_resolution_text: Set reminder rule when a ticket <b>resolution time </b> approaches
   left: Left
   subscription:
     error:
@@ -3932,6 +3973,7 @@ en:
         discard_confirm: Do you want to discard this draft?
         revert_msg: "The current session of auto-save has been discarded."
       tag_max_len: Maximum key length
+      article_deleted: "This article has been deleted."
       locked: Locked
       cant_publish: can't be changed to published of an article in default folder/category
       draft_published_label: There is also a published version.
@@ -5485,6 +5527,7 @@ en:
       priority: Priority
       status: Status
       requester_responded_at: Customer Response
+      agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order
@@ -7464,6 +7507,7 @@ en:
       hold_success: "Now call on hold"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
+      cancel: "Cancel"
       call_notes: "Call Notes"
       phone_icon: "Phone"
       on_phone: "Available on Phone"
@@ -7494,6 +7538,11 @@ en:
       save: "Save"
       saving: "Saving..."
       notes: "Notes"
+      add_note_text: "Add Note"
+      edit_note_text: "Edit Note"
+      recent_tickets: "Recent Tickets"
+      no_recent_tickets: "No recent tickets"
+      view_all: "View all"
       new_requester: "New requester"
       low_credit: "Low on phone credit. Please contact your account admin."
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
@@ -7506,7 +7555,7 @@ en:
         transfer_canceled: "Ignored"
         tranfer_no_answer: "Not available"
         tranfer_connected: "Transferred"
-        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_no_answer: "No agents available"
         group_tranfer_connected: "Connected with customer"
         close: "Close"
         resume: "Resume"

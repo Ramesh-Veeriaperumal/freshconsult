@@ -2,8 +2,10 @@ module GoogleOauth
 	include Redis::RedisKeys
   include Redis::OthersRedis
 
-	def create_user(account, name, email)
+  def create_user(account, name, email)
     user = account.users.new(:name => name, :email => email, :active => true)
+    portal = account.portals.find_by_portal_url(requested_portal_url)
+    user.language = portal.present? ? portal.language : account.language
     user.save!
     user
   end

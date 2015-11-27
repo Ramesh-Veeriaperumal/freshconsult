@@ -18,6 +18,7 @@ window.App.Freshfone = window.App.Freshfone || {};
     start: function () {
       this.bindHandlers();
       this.allNumberId=0;
+      this.initializeSelect2Values();
     },
     summaryReports: function (url) {
       jQuery('#loading-box').hide();
@@ -106,7 +107,6 @@ window.App.Freshfone = window.App.Freshfone || {};
           return formatedResult;
           },
           formatSelection: function (result) {
-          
            if(result.id==self.allNumberId){
               return result.value;
             }
@@ -136,6 +136,10 @@ window.App.Freshfone = window.App.Freshfone || {};
           }
         });
     },
+    initializeSelect2Values: function(){
+      jQuery("#group_id").select2("val",freshfoneReports.group_cache);
+      jQuery("#ff_business_hours").select2("val",freshfoneReports.business_hours_cache);
+    }, 
     leave: function(){
       $('body').off('.freshfone_reports');
     }

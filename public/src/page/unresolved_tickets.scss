@@ -1,5 +1,4 @@
 @import "../settings/settings";
-@import "../../fonts/glyphs";
 
 .dataTables_wrapper{
 	@include box-sizing( border-box );
@@ -231,38 +230,11 @@
 			}
 		}
 }
-/*Sort icon*/
-.standard-table, .dataTables_scrollHead, .DTFC_LeftHeadWrapper{ 
-	table.dataTable thead th.sorting:after,
-	table.dataTable thead th.sorting_asc:after,
-	table.dataTable thead th.sorting_desc:after {
-	    position: relative;
-	    display: block;
-	    font-family: "glyphs";
-	    @include float( right );
-	}
-	table.dataTable thead th.sorting:after {
-	    content: $font-glyphs-sorting-default;
-	    color: #999;
-	    font-size: 20px;
-	}
-	table.dataTable thead th.sorting_asc:after {
-		font-size: 20px;
-		color: #333;
-	    content: $font-glyphs-sorting-asc;
-	}
-	table.dataTable thead th.sorting_desc:after {
-		color: #333;
-		font-size: 20px;
-	    content: $font-glyphs-sorting-dsc;
-	}
-}
 
 /*Datatable filter*/
 .dataTables_filter{
 	    label{
-			border: 1px solid #999;
-			@include border-width (0 0 1px 0);
+	    	border: none;
 			overflow: hidden;
 			height: 25px;
 			@include padding (0);

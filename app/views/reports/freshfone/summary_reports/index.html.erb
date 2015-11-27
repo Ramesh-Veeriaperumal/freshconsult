@@ -71,5 +71,8 @@
     App.Freshfonereports.groupOptions(<%= filter_group_options.html_safe %>,'<%=t("reports.freshfone.options.all_groups")%>');
     App.Freshfonereports.numberOptions(<%= filter_number_options.html_safe %> , <%=filter_default_number.html_safe %>);
     App.Freshfonereports.businessHoursOptions(<%= filter_by_business_hours_options.html_safe %>, '<%=t("reports.freshfone.filter_option_all_calls")%>');
+    if (typeof freshfoneReports === "undefined") { freshfoneReports = {}; }
+    freshfoneReports.group_cache = <%= group_cache.blank? ? 0 : group_cache %>
+    freshfoneReports.business_hours_cache = <%= business_hours_cache.blank? ? 0 : business_hours_cache %>
    });
 <%end%>

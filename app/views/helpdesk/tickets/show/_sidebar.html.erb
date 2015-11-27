@@ -30,6 +30,6 @@
 			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>
 		
-		<%= render :partial => "helpdesk/tickets/show/integrations" unless @ticket.ecommerce? %> 
+		<%= render :partial => "helpdesk/tickets/show/integrations" %> 
 	<% end %>
 </div>

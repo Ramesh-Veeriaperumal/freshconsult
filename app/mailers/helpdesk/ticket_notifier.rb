@@ -67,7 +67,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_html => html_version,
              :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe,
              :survey_id => survey_id,
-             :disable_bcc_notification => e_notification.bcc_disabled?
+             :disable_bcc_notification => e_notification.bcc_disabled?,
+             :private_comment => comment ? comment.private : false
           }) unless receips.nil?
   end
 
@@ -144,13 +145,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     from_email = validate_emails(params[:ticket].friendly_reply_email, params[:ticket])
     return if receips.empty? || from_email.empty?
 
+    private_tag = params[:private_comment] ? "private-" : ""
+
     headers = {
       :subject                   => params[:subject],
       :to                        => receips,
       :from                      => from_email,
       :bcc                       => bcc_email,
       "Reply-To"                 => "#{from_email}",
-      "Message-ID"               => "<#{Mail.random_tag}.#{::Socket.gethostname}@notification.freshdesk.com>",
+      "Message-ID"               => "<#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com>",
       "Auto-Submitted"           => "auto-generated",
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
       "References"               => generate_email_references(params[:ticket]),

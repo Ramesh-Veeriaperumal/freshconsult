@@ -35,7 +35,7 @@ class ForumCategory < ActiveRecord::Base
   # Why have we added position and portal_ids as attr_accessible???
   attr_accessible :name,:description , :import_id, :position, :portal_ids
   
-  belongs_to :account
+  belongs_to_account
 
   acts_as_list :scope => :account
 

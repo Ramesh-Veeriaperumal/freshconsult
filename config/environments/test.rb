@@ -41,6 +41,7 @@ Helpkit::Application.configure do
     Bullet.bullet_logger  = true
     Bullet.rails_logger   = true
     Bullet.raise          = true # raise an error if n+1 query occurs
+    Bullet.unused_eager_loading_enable = false
     # Other options can be found here: https://github.com/flyerhzm/bullet#configuration
   end
 end

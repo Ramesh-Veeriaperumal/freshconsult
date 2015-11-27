@@ -1,0 +1,106 @@
+	Todo:
+ - API Layer middleware Removal using YAML settings file.
+ - tests for checking privileges for a action.
+ - Compare all UI functionality with API(Eg. forum type)
+ - Integration tests
+ - 3 documentations(Breaking from V!, Changes from V1, Internal Beta)
+ - customers in forum response
+
+Breaking changes in existing APIs:
+ - day pass required
+ - Post validation
+ - customer forum validation
+ - Monitorship validation
+ - Stamp type validation
+ - validate presence of user in Agent Groups
+
+Deferred:
+ - Tickets API - required_fields for user should be moved to model. (currently set in controller) So that we can remove name in our validation
+ - include meta info( created_by ) of a ticket in response on demand and needly basis
+ - Allow attachments as part of discussions/post API call? Not supported in V1 
+ - Adding attachments in tickets/notes as part of update. Not replacing them. Should we have to replace or provide a separate api to remove attachments - not now
+ - introduce spam, unspam &  delete_forever for ticket via api
+ - "Social API to expose twitter handle id, fb stream id for ticket creation via api"
+ - display_id and ticket states to be supported in bulk import / bulk create
+ - extra before filter load_note_reply_cc in web tickets controller (should track actions in before filters too)
+ - Handle global unpermitted params for wrong datatype errors.
+ - Default content_type should be application/json in request header if not set?
+ - caching(db also)
+ - update (override or incremental) -  override
+ - Should we need to use existing gem for date validations in model?
+ - revisit all before filters and the order is a problem
+ - api limit in response header
+ - side loading associations(include as a param in GET requests)
+ - paginate associations ???
+ - need to revisit api_throttler (Should not allow requests which has content type as "application/json; charset=UTF- 8")
+ - Should we need to introduce credits/merits for each usage of endpoint?
+ - "Validate picklist values for custom drop down & dependent fields in ticket"
+
+Completed:
+ - ticket_field status should make use of all_statuses_from_cache.
+ - Differentiate between missing and invalid value - improve specificity of codes.
+ - followed_by restrict params
+ - move error messages from en.yml file. Should not involve internatinalization.
+ - Rack::MethodOverride middleware should be allowed as PHP has this kind of implementation to fire PUT require request.
+ - Content type for get ticket index.
+ - handle xss, customer_forum numericality, ticket scopes
+ - "Application controller before filters(controller logger, cache buster) to be added"
+ - ticket custom fields test
+ - multipart form data handle
+ - Investigate rails-api
+ - Paginate fires extra queries?
+ - Multijson parse error handling
+ - pagination in index actions
+ - 405 handling
+ - need to add test to keep an eye on controllers filters(test should be written in such a way that it should break if new filters are added)
+ - Do we need to have dependency test for lib/helper methods overriden in our helpers/libs
+ - have to investigate open_forums
+ - location header in create response 
+ - 204 for delete?
+ - Rescue 500
+ - Enforce ssl
+ - inherit instead of concern?
+ - api limit in response header and allowed methods
+ - need to add test to keep an eye on AR validations(test should be written in such a way that it should break if new validations are added)
+ - 429 for api limit
+ - tests for middleware
+ - APiApplication controller and test_helper refactoring
+ - change tests -  remove strings and use json expressions
+ - forum category show
+ - Allow header for 405
+ - Nomenclature for concerns -  prefix with "concern"
+ - attr_accessible wrap params -  self- - >inherited method
+ - remove desc html from forum and write complete fields test
+ - created_at and updated_at only for create
+ - forums customers parameter validation
+ - should handle post or put api request without/invalid content- type header with 415 error
+ - post create
+ - monitor
+ - Corrected All rubocop info warnings
+ - should handle unaccepted type in ACCEPT header with 406 error. # not needed as rails itself considers params[:format] 
+ - should handle xml parse error excpetion in new version if content_type is application/xml
+ - only visibility 4 has to allow customer params
+ - caching in view
+ - Metal
+ - move concerns to web
+ - revisit concerns. Avoid using concerns.
+ - array should be datatype for list
+ - Middlewares which is not needed for API
+ - "Expose email config and product index"
+ - handle xss, customer_forum numericality, ticket scopes
+ - Content type for get ticket index.
+ - base as attribute name in model errors for multiple attributes. - should change that
+ - remove @cname from controller.
+ - Embed notes in Tickets
+ - Groups, companies, categories index and update from cache.
+
+Not_necessary:
+ - boolean values in validation should be converted to mysql readable format.
+ - revisit cc_email in v2 api tickets create.
+ - AMS for ticket repsonse
+ - Clean up old discussions controller *****
+ - Forum is not a number
+ - rubocop customization to remove info severity
+ - Have to take a call whether to include custom_code in base error class based on forthcoming error classess
+ - combine all discussion methods into one and example requires feature before filter
+

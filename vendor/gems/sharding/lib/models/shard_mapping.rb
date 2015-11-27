@@ -53,6 +53,10 @@ class ShardMapping < ActiveRecord::Base
   status == STATUS_CODE[:blocked]
  end
 
+ def not_found?
+   status == STATUS_CODE[:not_found]
+ end
+
  def clear_cache
     domains.each {|d| d.clear_cache }
     key = MemcacheKeys::SHARD_BY_ACCOUNT_ID % { :account_id => account_id }
