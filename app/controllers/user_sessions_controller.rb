@@ -77,7 +77,7 @@ include GoogleLoginHelper
         @current_user = create_user(params[:email],current_account,nil,sso_user_options)
         @current_user.active = true
         saved = @current_user.save
-      elsif current_account.sso_enabled?
+      else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
         @current_user.customer_id = current_account.customers.find_or_create_by_name(params[:company]).id unless params[:company].blank?
