@@ -2345,7 +2345,7 @@ en:
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso:
-        expected_params: "Expected params are name, email and hash, which are not present "
+        expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
