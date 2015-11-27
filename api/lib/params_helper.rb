@@ -24,7 +24,15 @@ class ParamsHelper
     end
 
     def prepend_with_cf_for_custom_fields(custom_field_hash)
-      custom_field_hash.keys.each { | key | custom_field_hash["cf_#{key}"] = custom_field_hash.delete key } if custom_field_hash.is_a? Hash
+      rename_fields_hash = {}
+      if custom_field_hash.is_a? Hash
+        custom_field_hash.keys.each do | key | 
+          new_key = "cf_#{key}"
+          custom_field_hash[new_key] = custom_field_hash.delete key 
+          rename_fields_hash[new_key.to_sym] = key.to_sym
+        end
+      end
+      rename_fields_hash
     end
   end
 end

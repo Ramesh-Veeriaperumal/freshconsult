@@ -1,7 +1,5 @@
-# IMPORTANT READ THROUGH THIS. 
-# http://www.blrice.net/blog/2013/11/07/rails-validator-classes-and-instance-vars/
 class CustomFieldValidator < ActiveModel::EachValidator
-  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields, :restrict_api_field_name]
+  ATTRS = [:current_field, :parent, :is_required, :required_attribute, :closure_status, :custom_fields, :current_field_defined, :nested_fields]
   attr_accessor(*ATTRS)
 
   def validate(record)
@@ -18,16 +16,16 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @custom_fields = proc_to_object(@validatable_custom_fields, record)
       @custom_fields.each do |custom_field|
         @current_field = custom_field
-        api_field_name = custom_field.api_name # assign field name
-        field_name = @restrict_api_field_name ? custom_field.name : api_field_name
-        value = values.try(:[], field_name)  # assign value (used conditional statement to handle the case for Boolean value false)
+        field_name = custom_field.name # assign field name
+        value = values.try(:[], custom_field.name) # assign value
         @parent =  nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
         @is_required = required_field? # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
-        record.class.send(:attr_accessor, api_field_name)
-        record.instance_variable_set("@#{api_field_name}", value) if @current_field_defined
-        validate_each(record, api_field_name, value)
+        record.rename_fields_hash.merge!({ field_name.to_sym => @current_field.api_name.to_sym }) if @is_required && value.nil? && record.respond_to?(:rename_fields_hash)
+        record.class.send(:attr_accessor, field_name)
+        record.instance_variable_set("@#{field_name}", value) if @current_field_defined
+        validate_each(record, field_name, value)
       end
     end
   end
@@ -128,9 +126,9 @@ class CustomFieldValidator < ActiveModel::EachValidator
       @drop_down_choices = options[attribute][:drop_down_choices] || {}
       @required_based_on_status = options[attribute][:required_based_on_status]
       @required_attribute = options[attribute][:required_attribute]
-      @restrict_api_field_name = options[attribute][:restrict_api_field_name]
     end
 
+    # http://www.blrice.net/blog/2013/11/07/rails-validator-classes-and-instance-vars/
     # Resetting attr_accessors since Validator class being instantiated only once.
     def reset_attr_accessors
       ATTRS.each { |var| instance_variable_set("@#{var}", nil) }
@@ -144,7 +142,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def get_parent(values)
       ancestor = @custom_fields.detect { |x| x.id == @current_field.parent_id }
       parent = @current_field.level == 2 ? ancestor : @custom_fields.detect { |x| x.parent_id == @current_field.parent_id && x.level == 2 }
-      parent && ancestor ? { name: ancestor.api_name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @closure_status)) } : {}
+      parent && ancestor ? { name: ancestor.name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @closure_status)) } : {}
     end
 
     # required based on ticket field attribute or combination of status & ticket field attribute.

@@ -144,7 +144,8 @@ class Account < ActiveRecord::Base
   end
 
   def id_length
-    self.id.to_s.length
+    @id_length = self.id.to_s.length unless @id_length
+    @id_length
   end
 
   class << self # class methods

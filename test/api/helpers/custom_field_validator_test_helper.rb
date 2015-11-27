@@ -1,10 +1,10 @@
 class Helpers::CustomFieldValidatorTestHelper
-  attr_accessor :id, :nested_fields_choices_by_name, :account_id, :api_name, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
+  attr_accessor :id, :nested_fields_choices_by_name, :account_id, :name, :api_name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
 
   NESTED_CHOICES = {
-    first_level_choices: { 'country' => ['Usa', 'india'], 'first' => ['category 1', 'category 2'] },
-    second_level_choices: { 'country' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
-    third_level_choices: { 'country' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
+    first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
+    second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
+    third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
   }
 
   def initialize(params = {})
@@ -50,7 +50,7 @@ class Helpers::CustomFieldValidatorTestHelper
         Helpers::CustomFieldValidatorTestHelper.new(id: 40, account_id: 1, api_name: 'multi3', name: 'multi3_1', label: 'multi_3', label_in_portal: 'multi_3', field_type: 'custom_paragraph', position: 40, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1),
         Helpers::CustomFieldValidatorTestHelper.new(id: 27, account_id: 1, api_name: 'phone1', name: 'phone1_1', label: 'phone', label_in_portal: 'phone', description: '', active: true, field_type: 'custom_phone_number', position: 27, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 1, created_at: '2015-08-10 09:19:26', updated_at: '2015-08-11 05:40:01', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil),
         Helpers::CustomFieldValidatorTestHelper.new(id: 41, account_id: 1, api_name: 'phone2', name: 'phone2_1', label: 'phone_1', field_type: 'custom_phone_number', position: 41, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, company_form_id: 1, required_for_agent: false),
-        Helpers::CustomFieldValidatorTestHelper.new(id: 42, account_id: 1, api_name: 'phone3', name: 'phone3_2', label: 'phone_2', label_in_portal: 'phone_2', field_type: 'custom_phone_number', position: 42, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1),
+        Helpers::CustomFieldValidatorTestHelper.new(id: 42, account_id: 1, api_name: 'phone3', name: 'phone3_1', label: 'phone_2', label_in_portal: 'phone_2', field_type: 'custom_phone_number', position: 42, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1),
         Helpers::CustomFieldValidatorTestHelper.new(id: 43, account_id: 1, api_name: 'url1', name: 'url1_1', label: 'url_1', field_type: 'custom_url', position: 43, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, company_form_id: 1, required_for_agent: false),
         Helpers::CustomFieldValidatorTestHelper.new(id: 44, account_id: 1, api_name: 'url2', name: 'url2_1', label: 'url_2', label_in_portal: 'url_2', field_type: 'custom_url', position: 44, required_for_agent: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, created_at: '2015-08-10 09:24:39', updated_at: '2015-08-11 05:40:01', field_options: {}, contact_form_id: 1),
         Helpers::CustomFieldValidatorTestHelper.new(id: 28, account_id: 1, api_name: 'date1', name: 'date1_1', label: 'date', label_in_portal: 'date', description: '', active: true, field_type: 'custom_date', position: 29, required: false, visible_in_portal: true, editable_in_portal: true, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 1, created_at: '2015-08-10 09:19:26', updated_at: '2015-08-11 05:40:01', field_options: {}, default: false, level: nil, parent_id: nil, prefered_ff_col: nil, import_id: nil)
@@ -74,7 +74,7 @@ class Helpers::CustomFieldValidatorTestHelper
     end
 
     def dropdown_choices_by_field_name
-      { dropdown2: %w(first11 second22 third33 four44), dropdown1: ['1st', '2nd'], dropdown3: ['first', 'second'], dropdown4: ['third', 'fourth'] }
+      { dropdown2_1: %w(first11 second22 third33 four44), dropdown1_1: ['1st', '2nd'], dropdown3_1: ['first', 'second'], dropdown4_1: ['third', 'fourth'] }
     end
 
     def nested_fields_choices_by_name=(custom_nested_choices)

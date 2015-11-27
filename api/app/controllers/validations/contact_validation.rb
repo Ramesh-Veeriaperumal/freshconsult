@@ -1,6 +1,6 @@
 class ContactValidation < ApiValidation
   attr_accessor :avatar, :client_manager, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
-                :language, :mobile, :name, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
+                :language, :mobile, :name, :phone, :tag_names, :time_zone, :twitter_id, :address, :description, :rename_fields_hash
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -42,6 +42,7 @@ class ContactValidation < ApiValidation
     super(request_params, item, allow_string_param)
     @email_update = true if item && !item.email.nil? && !request_params[:email].nil?
     @tag_names = item.tag_names.split(',') if item && !request_params.key?(:tags)
+    @rename_fields_hash = {}
   end
 
   def required_default_fields

@@ -2,7 +2,7 @@ class ApiCompaniesController < ApiApplicationController
   def create
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
-      render_errors(company_delegator.errors, company_delegator.error_options)
+      render_custom_errors(company_delegator, true)
     elsif @item.save
       render_201_with_location(item_id: @item.id)
     else
@@ -15,7 +15,7 @@ class ApiCompaniesController < ApiApplicationController
     @item.custom_field = @item.custom_field # assign custom_field so that it will not be queried again in model callbacks
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
-      render_errors(company_delegator.errors, company_delegator.error_options)
+      render_custom_errors(company_delegator, true)
     elsif !@item.update_attributes(params[cname])
       render_errors(@item.errors)
     end
@@ -38,15 +38,24 @@ class ApiCompaniesController < ApiApplicationController
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
+      @rename_fields_hash = ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_fields]
       company = ApiCompanyValidation.new(params[cname], @item)
-      render_errors company.errors, company.error_options unless company.valid?
+      render_custom_errors(company, true) unless company.valid?
     end
 
     def sanitize_params
       prepare_array_fields [:domains]
       params[cname][:domains] = params[cname][:domains].join(',') unless params[cname][:domains].nil?
-      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], current_account.company_form.custom_checkbox_fields.map(&:api_name)) if params[cname][:custom_fields]
+      ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], current_account.company_form.custom_checkbox_fields.map(&:name)) if params[cname][:custom_fields]
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
-      ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_field]
+    end
+
+    def set_custom_errors(item = @item)
+      @rename_fields_hash.merge!(item.rename_fields_hash) if item.respond_to?(:rename_fields_hash)
+      ErrorHelper.rename_error_fields(@rename_fields_hash, item)
+    end
+
+    def error_options_mappings
+      @rename_fields_hash
     end
 end

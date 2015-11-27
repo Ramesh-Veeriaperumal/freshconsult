@@ -72,10 +72,9 @@ class ApiContactsController < ApiApplicationController
       @contact_fields = current_account.contact_form.custom_contact_fields
       allowed_custom_fields = @contact_fields.map(&:api_name)
       custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
-
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-
+      @rename_fields_hash = ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_fields]
       contact = ContactValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
@@ -95,11 +94,9 @@ class ApiContactsController < ApiApplicationController
         params_hash[:avatar_attributes] = { content: params_hash.delete(:avatar) }
       end
 
-      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:api_name)) if params_hash[:custom_fields]
+      ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:name)) if params_hash[:custom_fields]
 
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
-
-      ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_field]
     end
 
     def validate_filter_params
@@ -126,11 +123,12 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS, item)
+      @rename_fields_hash.merge!(item.rename_fields_hash) if item.respond_to?(:rename_fields_hash)
+      ErrorHelper.rename_error_fields(@rename_fields_hash.merge(ContactConstants::FIELD_MAPPINGS), item)
     end
 
     def error_options_mappings
-      ContactConstants::FIELD_MAPPINGS
+      @rename_fields_hash.merge(ContactConstants::FIELD_MAPPINGS)
     end
 
     def assign_protected
