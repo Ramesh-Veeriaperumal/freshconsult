@@ -105,6 +105,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "updated_at"
   end
 
+  add_index "addresses", ["addressable_id"], :name => "index_addresses_on_addressable_id"
+
   create_table "admin_canned_responses", :force => true do |t|
     t.string   "title"
     t.text     "content",      :limit => 2147483647
@@ -864,6 +866,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "referrer_type"
   end
 
+  add_index "conversion_metrics", ["account_id"], :name => "index_conversion_metrics_on_account_id"
+
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8
     t.integer  "forum_id",    :limit => 8
@@ -913,6 +917,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "day_pass_configs", ["account_id"], :name => "index_day_pass_configs_on_account_id"
 
   create_table "day_pass_purchases", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -986,6 +992,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "dynamic_notification_templates", ["account_id", "email_notification_id", "category"], :name => "index_dynamic_notn_on_acc_and_notification_id_and_category"
 
   create_table "ebay_questions", :force => true do |t|
     t.string   "user_id",     :limit => 8
@@ -1300,6 +1308,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
   end
 
   add_index "forum_categories", ["account_id", "name"], :name => "index_forum_categories_on_account_id_and_name", :unique => true
+  add_index "forum_categories", ["account_id", "position"], :name => "index_forum_categories_on_account_id_and_position"
 
   create_table "forum_moderators", :force => true do |t|
     t.integer "account_id",   :limit => 8
@@ -1322,6 +1331,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer "forum_visibility"
   end
 
+  add_index "forums", ["account_id", "forum_category_id", "position"], :name => "index_forums_on_account_id_and_forum_category_id_and_position"
   add_index "forums", ["forum_category_id", "name"], :name => "index_forums_on_forum_category_id", :unique => true
 
   create_table "free_account_jobs", :force => true do |t|
@@ -1627,6 +1637,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "google_accounts", ["account_id"], :name => "index_google_accounts_on_account_id"
 
   create_table "google_contacts", :force => true do |t|
     t.integer "user_id",           :limit => 8
@@ -2516,11 +2528,9 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
   end
 
   add_index "posts", ["account_id", "created_at"], :name => "index_posts_on_account_id_and_created_at"
+  add_index "posts", ["account_id", "forum_id"], :name => "index_posts_on_account_id_and_forum_id"
+  add_index "posts", ["account_id", "topic_id", "created_at"], :name => "index_posts_on_account_id_and_topic_id_and_created_at"
   add_index "posts", ["account_id", "trash"], :name => "index_posts_on_account_id_and_trash"
-  add_index "posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
-  add_index "posts", ["topic_id", "created_at"], :name => "index_posts_on_topic_id"
-  add_index "posts", ["topic_id", "published"], :name => "index_posts_on_topic_id_and_published"
-  add_index "posts", ["topic_id", "spam"], :name => "index_posts_on_topic_id_and_spam"
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
 
   create_table "premium_account_jobs", :force => true do |t|
@@ -2619,6 +2629,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "scoreboard_ratings", ["account_id", "resolution_speed"], :name => "index_scoreboard_ratings_on_account_id_and_resolution_speed"
 
   create_table "section_picklist_value_mappings", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -2875,7 +2887,6 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
   add_index "solution_articles", ["account_id", "parent_id", "language_id"], :name => "index_articles_on_account_id_parent_id_and_language"
   add_index "solution_articles", ["folder_id"], :name => "index_solution_articles_on_folder_id"
 
-
   create_table "solution_categories", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -3064,6 +3075,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+  
+  add_index "subscription_events", ["created_at"], :name => "index_subscription_events_on_created_at"
 
   create_table "subscription_payments", :force => true do |t|
     t.integer  "account_id",                :limit => 8
@@ -3628,8 +3641,9 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.text     "text_tc02"
   end
 
-  add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
+  add_index "topics", ["account_id", "forum_id", "replied_at"], :name => "index_topics_on_account_id_and_forum_id_and_replied_at"
   add_index "topics", ["account_id", "merged_topic_id"], :name => "index_topics_on_account_id_and_merged_topic_id"
+  add_index "topics", ["account_id", "published", "replied_at"], :name => "index_topics_on_account_id_and_published_and_replied_at"
   add_index "topics", ["forum_id", "published"], :name => "index_topics_on_forum_id_and_published"
   add_index "topics", ["forum_id", "replied_at"], :name => "index_topics_on_forum_id_and_replied_at"
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
@@ -3661,7 +3675,6 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
   add_index "user_accesses", ["access_id"], :name => "index_user_accesses_on_access_id"
   add_index "user_accesses", ["account_id"], :name => "index_user_accesses_on_account_id"
   add_index "user_accesses", ["user_id"], :name => "index_user_accesses_on_user_id"
-  
 
   create_table "user_emails", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
@@ -3783,6 +3796,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "account_id",    :limit => 8
   end
 
+  add_index "votes", ["account_id", "voteable_type", "voteable_id"], :name => "index_votes_on_account_id_and_voteable_type_and_voteable_id"
   add_index "votes", ["user_id"], :name => "fk_votes_user"
 
   create_table "wf_filters", :force => true do |t|
@@ -3796,6 +3810,7 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.integer  "account_id",       :limit => 8
   end
 
+  add_index "wf_filters", ["account_id", "type"], :name => "index_wf_filters_on_acc_id_and_type"
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
 
   create_table "whitelisted_ips", :force => true do |t|
@@ -3806,6 +3821,8 @@ ActiveRecord::Schema.define(:version => 20151102062315) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "whitelisted_ips", ["account_id"], :name => "index_whitelisted_ips_on_account_id"
 
   create_table "widgets", :force => true do |t|
     t.string  "name"
