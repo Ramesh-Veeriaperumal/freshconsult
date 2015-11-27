@@ -11,10 +11,12 @@ class ApiBusinessHoursController < ApiApplicationController
     end
 
     def load_object
-      if multiple_business_hours_enabled? && !default_business_hour?
-        super
-      elsif !default_business_hour?
-        render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
+      if !default_business_hour?
+        if multiple_business_hours_enabled? 
+          super
+        else
+         render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
+        end
       end
     end
 
