@@ -5584,7 +5584,7 @@ en:
     archived_at: "Archived"
     from: From
     to: To
-    view_all_tickets : Export as CSV to view all tickets
+    view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
@@ -7198,6 +7198,13 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    helpdesk_analysis : Helpdesk Analysis
+    productivity : Productivity
+    customer_happiness : Customer Happiness
+    welcome_message :
+      header : Welcome to the brand new reports!
+      intro : We have made the reports cleaner, deeper and more insightful. You will be able to locate problems more easily and act on them immediately by drilling down into the tickets that contribute to each metric. Overall we have made the experience smoother and easier. Hope you like it.
+      link_title : Read more about all the changes.
     view_old_reports: View old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
@@ -7209,8 +7216,11 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume:
-      title: Ticket Volume
+    no_data_to_display_msg: No data to display
+    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
+    export_tickets_success_msg: Your ticket data will be sent to your email shortly!
+    ticket_volume: 
+      title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
       total_resolved_tickets : Total Resolved Tickets
@@ -7228,7 +7238,7 @@ en:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
-      title: Helpdesk At A Glance
+      title: Helpdesk In-depth
     performance_distribution:
       title: Performance Distribution
       first_response_bar: First response time
@@ -7243,10 +7253,10 @@ en:
         avg_res_time_trend: All tickets responded to in the selected time period are plotted in this graph based on the avg first response time and avg response time
         resolution_time_trend: All tickets resolved in the selected time period are plotted in this graph based on the avg resolution time
     group_summary:
-      title: Group Summary
+      title: Group Performance
       group: Group
     agent_summary:
-      title: Agent Summary
+      title: Agent Performance
       ticket_assigned: Tickets assigned
       ticket_resolved: Tickets resolved
       tickets_reopened: Tickets reopened
@@ -7261,13 +7271,22 @@ en:
       avg_resolution_time: Average resolution time
       agent: Agent
     customer_report:
-      title:  Customer Report
+      title:  Top Customer Analysis
+      received_tickets: Tickets Submitted
+      resolved_tickets: Tickets Resolved
+      response_violated: Response SLA Violations %
+      resolution_violated: Resolution SLA Violations %
+      customer_interactions: Customer Responses
+      agent_interactions: Agent Responses
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
       agent_interactions: Agent responses
+    export:
+      export_report_pdf: "Export as PDF"
+      export_report_csv: "Export as CSV"
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"

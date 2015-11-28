@@ -2,7 +2,6 @@
 @import "../../fonts/glyphs-variables";
 
 .top-links{
-	margin: 0px 0 12px 0;
 	.solution-link{
 		padding: 0 8px;
 	}
@@ -33,7 +32,7 @@
 			.report-title-block{
 				margin-top: 7px;
 				display: inline-block;
-				cursor: pointer;
+				cursor: auto;
 				vertical-align: top;
 				#report-title{
 					font-size: 20px;
@@ -54,6 +53,24 @@
 				.ficon{
 					margin-top: 10px;
 				}
+			}
+			.generate-pdf-button{
+				float: right;
+				color: #06c;
+				background:none!important;
+				border:none; 
+				font: inherit;
+				cursor: pointer;
+				margin-right: 8px;
+				margin-top: 7px;
+
+				&:hover{
+					color : #004080;
+				}
+			}
+			.pdf-export-info{
+				padding-right: 10px;
+				font-size: 14px;
 			}
 		}
 		.reports-filter{
@@ -191,6 +208,9 @@
 	.no-data{
 		padding-top: 7%;
 	}
+	.days-name-pdf{
+		font-weight: bold;
+	}
 }
 
 .ticket-list-wrapper{
@@ -210,7 +230,6 @@
 	#ticket_list{
 		height: 87%;
 		overflow-y: scroll;
-		/* margin-top: 42px; */ 
 	}
 	.sloading{
 		position: relative;
@@ -253,7 +272,7 @@
 		}
 
 		.cross {
-			width: 44px;
+			width: 29px;
 			float: right;
 			cursor: pointer;
 			margin : 20px 0;	
@@ -310,16 +329,25 @@
 	.sla-toggle-tab{
 		text-align: center;
 		margin: 12px;
-
-		.compliant{
+		
+		.link1{
 			padding : 0px 12px;
 			border-right: 1px solid #333;
 			display: inline-block;
 		}
 
-		.violated{
+		.link2{
 			padding: 0px 12px;
 			display: inline-block;
+		}
+		
+		span.toggle{
+			color: #0066CC;
+		   	cursor: pointer;
+		   	&.active{
+		   		color: #333;
+		   		cursor: default;
+		   	}
 		}
 	}
 }
@@ -447,6 +475,9 @@
 		padding-top : 16px;
   		width: 100%;
 	}
+}
+.charts-container-pdf{
+	margin: 10px 0;
 }
 
 /* Statistics Section */
@@ -665,6 +696,9 @@
 				    display: inline-block;
 				    &.compliant{
 				    	color: #06c;
+						&:hover{
+							color : #004080;
+						}
 				    }	
 				    &.violated{
 				    	color: #CFA495;
@@ -715,8 +749,53 @@
 				   	}
 				}
 			}
+			.pdf-page{
+				page-break-after: always;
+			}
+			&:last-child .pdf-page{
+				page-break-after: auto;
+			 }
 		}
 	}
+	
+	.pdf-metric-lablel{
+		float: left;
+		width: 98%;
+		background-color: #efefef;
+		padding: 10px;
+		text-align: left;
+		margin-bottom: 30px;
+		border-radius: 5px;
+		.pdf-metric-name{
+			float: left;
+			font-size: 15px;
+		}
+		.pdf-metric-result{
+			float: left;
+			font-size: 15px;
+			font-weight: bold;
+			margin-left: 5px;
+		}
+		.pdf-diff-percentage{
+			float: left;
+			font-size: 12px;
+			font-weight: bold;
+			margin-left: 10px;
+			span{
+				float: left;
+			}
+			.pdf-symbol{
+				float: left;
+				padding-top: 4px;
+			}
+		}
+	}
+}
+
+// Class to override backgroud color property on helpkit-glance glance in PDFs, 
+// to avoid webkit memory spike issue: https://github.com/wkhtmltopdf/wkhtmltopdf/issues/1510
+.glance-pdf{
+		background-color: transparent; 
 }
 
 .distribution-chart{
@@ -724,7 +803,7 @@
 	margin: 20px 0;
 	position: relative;
 	.chart-container{
-		width: 32%;
+		width: 31.8%;
 		margin: 0 9px;
 		display: inline-block;
 		border-top: solid 2px #B7B7B7;
@@ -759,6 +838,9 @@
 		.trend-type{
 			margin: 20px 0 0;
 		}
+	}
+	.chart-container-pdf{
+			width: 32%;
 	}
 	.full-chart-container{
 		margin: 30px 0;
@@ -1011,6 +1093,11 @@
 	td.sorting_1 {
     	background-color: #f9f9f9 !important;
 	}
+
+	.dataTables_length{
+		@include float(left);
+		margin-top: 15px;
+	}
 } /* end of summary table */
 
 .no-data-section {
@@ -1230,7 +1317,6 @@
 	border: 1px solid #F0F0F0;
 	position: relative;
 	overflow: hidden;
-	background-color: #f8f8f8;
 	.customer-chart-wrapper{
 		position: relative;
 		background-color: #fff;
@@ -1290,13 +1376,22 @@
 
 
 /* Export csv styles */
+.export_title{
+	padding: 30px 15px 0 0;
+	.title{
+		font-weight : bold;
+		font-size: 12px
+	}
+	.link{
+	    font-weight : bold;
+		font-size: 12px
+	}
+}
 
-
-.placeholder{
-
+.fields{
 	position: absolute;
     width: 100%;
-    top: 45px;
+    top: 60px;
     height: auto;
     background-color: #ffffff;
     z-index: 10;
@@ -1304,26 +1399,7 @@
     border: 1px solid #f0f0f0;
     border-right : 0px;
     border-left : 0px;
-    @include box-shadow (0 0 1px 0 #f7f7f7);
-    display : none;
-
-	.export_title{
-
-		text-align: center;
-		padding: 4px;
-		
-		a{
-			font-weight : bold;
-			font-size: 12px
-		}
-
-		.title{
-			font-weight : bold;
-			font-size: 12px
-		}
-	}
-
-	
+    @include box-shadow (0px 0px 5px 0px #f1f1f1);
 
 	.select_all{
 		margin : 8px 0 16px 5px;
@@ -1334,35 +1410,41 @@
 	}
 
 	.twocol-form{
-
 		width : 98%;
 		margin : 0 auto;
-
 		.item{
-			display : inline-block;
-			width : 48%;
-		}
-	}
-
-	.fields{
-		display : none;
-		.btn{
-			margin-right : 16px;
-			float : right;
-		}
-
-		.btn:after , span:after{
 			display : block;
-			clear : both;
-			content : '';
+			margin : 2px 0;
+			width : 48%;
+			.level{
+				@include margin-left(11px);
+			}
+			&:nth-child(odd){
+				float : left;
+			}
+			&:nth-child(even){
+				float: right;
+			}
 		}
 	}
+
+	.btn{
+		margin-right : 16px;
+		float : right;
+	}
+
+	.btn:after , span:after{
+		display : block;
+		clear : both;
+		content : '';
+	}
+	
 }
 
 .success_message{
 	position: absolute;
     width: 100%;
-    top: 45px;
+    top: 60px;
     height: auto;
 	color: #59A50A;
     text-align: center;
@@ -1372,8 +1454,22 @@
     border: 1px solid #f0f0f0;
     border-right : 0px;
     border-left : 0px;
-    @include box-shadow (0 0 1px 0 #f7f7f7);
-
+    @include box-shadow (0 0 1px 0 #f1f1f1);
+}
+.error_message{
+	position: absolute;
+    width: 100%;
+    top: 60px;
+    height: auto;
+	color: #F96F6A;
+    text-align: center;
+    background: #FAF7E9;
+    z-index: 12;
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    border-right : 0px;
+    border-left : 0px;
+    @include box-shadow (0 0 1px 0 #f1f1f1);
 }
 
 /* RTL Fix */

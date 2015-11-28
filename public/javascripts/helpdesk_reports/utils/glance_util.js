@@ -104,7 +104,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 var active_metric = jQuery(active).data('metric');
                 _FD.setActiveMetric(active_metric);
 
-                var group_by = _FD.core.setDefaultGroupByOptions();
+                var group_by = _FD.core.setDefaultGroupByOptions(active_metric);
                 if (HelpdeskReports.locals.custom_fields_group_by.length) {
                     group_by.push(HelpdeskReports.locals.custom_fields_group_by[0]);
                 }

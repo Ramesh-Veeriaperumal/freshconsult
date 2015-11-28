@@ -70,7 +70,7 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
                     value : false 
                 };
                 list_hash.list_conditions.push(supplement_condition);
-                 _FD.core.actions.constructSlaTabs(el);
+                 _FD.core.actions.constructSlaTabs(jQuery(el).data('order'));
             } else{
                 //Hide the sla tabs
                  jQuery(".sla-toggle-tab").addClass('hide');
