@@ -213,14 +213,17 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             }
         },
         renderCommonChart: function(hash, trend, length, plot_type, start_value,end_value,charttype){
-            var responseTimeStamp   = _.keys(HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'])[0];
-            var resolutionTimeStamp = _.keys(HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'])[0];
-            HelpdeskReports.locals.startTimestamp = (typeof responseTimeStamp === 'undefined') ? ((typeof resolutionTimeStamp === 'undefined') ? null : resolutionTimeStamp ) : responseTimeStamp
+            var responseObj   = HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'];
+            var resolutionObj = HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'];
+            
+            if(responseObj){
+                HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
+            } else if (resolutionObj){
+                HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
+            }
 
-            HelpdeskReports.locals.response       = plot_type;
-                
             var stepValue = Math.ceil(length/11);                
-                stepValue = stepValue <= 0 ? 1 : stepValue;
+            stepValue = stepValue <= 0 ? 1 : stepValue;
 
             var settings = {
                     renderTo: charttype+'_time_trend_chart',
