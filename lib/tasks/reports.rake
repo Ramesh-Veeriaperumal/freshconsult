@@ -24,25 +24,28 @@ namespace :reports do
   
   desc "Poll the sqs to get the params for reports export"
   task :poll_sqs => :environment do
-    $sqs_reports_export.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
+    $sqs_reports_helpkit_export.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
 
       puts "** Got ** #{sqs_msg.body} **"
-      message = JSON.parse(sqs_msg.body)
+      message    = JSON.parse(sqs_msg.body)
       account_id = message["account_id"]
-
+      export_id  = message["export_id"]
       Sharding.select_shard_of(account_id) do
         Sharding.run_on_slave do
           begin
             account = Account.find_by_id(account_id)
             if account && account.make_current
-              filter_params = message["filter_params"]
-              export_args =  {} # Fill in the args
-              HelpdeskReports::Export::Csv.new(export_args).trigger
+              current_export = account.data_exports.find(export_id)
+              if (current_export && current_export.status == 1)
+                current_export.update_attributes(:status => DataExport::EXPORT_STATUS[:file_created])
+                HelpdeskReports::Export::TicketList.new(message).trigger
+              end
             end
           rescue => e
             NewRelic::Agent.notice_error(e, :custom_params => {:export_params => message.to_json})
             subj_txt = "Reports Export exception for #{Account.current.id}"
             message  = "#{e.inspect}\n #{e.backtrace.join("\n")}"
+            puts message
             DevNotification.publish(SNS["reports_notification_topic"], subj_txt, message)
           end
         end

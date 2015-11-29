@@ -8,10 +8,14 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   before_filter :check_feature
   
-  before_filter :ensure_report_type_or_redirect, :date_lag_constraint, :ensure_ticket_list
-  before_filter :filter_data, :set_selected_tab,                        :only   => [:index]
+  before_filter :ensure_report_type_or_redirect, :date_lag_constraint, 
+                :ensure_ticket_list,                                    :except => [:download_file]              
+  before_filter :pdf_export_config,                                     :only   => [:index, :fetch_metrics]
+  before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
-                :only_ajax_request,                                     :except => [:index, :configure_export]
+                :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file]
+  before_filter :pdf_params,                                            :only   => [:export_report]
+  before_filter :export_tickets_params,                                 :only   => [:export_tickets]
   skip_before_filter :verify_authenticity_token,                        :except => [:index]
   
   attr_accessor :report_type
@@ -20,24 +24,19 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def fetch_metrics
-    build_and_execute
-    parse_result
-    format_result
+    generate_data
     render_charts
   end
 
   def fetch_ticket_list
-    build_and_execute
-    parse_list_result
+    generate_data
     send_json_result
   end
   
   # Action to fetch active metric with all group by in glance report. Separate action to send 
   # result as json and avoid rendering view on each new request (user changing active metric).
   def fetch_active_metric
-    build_and_execute
-    parse_result
-    format_result
+    generate_data
     send_json_result
   end
   
@@ -49,12 +48,53 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
   end
   
-  def export_csv
-    # Enqueue in SQS
-    render status: 200
+  def export_tickets
+    request_object = HelpdeskReports::Request::Ticket.new(@query_params[:query_hash])
+    request_object.build_request
+    @query_params[:user_id]     = current_user.id
+    @query_params[:account_id]  = current_account.id
+    @query_params[:report_type] = report_type
+    @query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
+    @query_params[:query_hash]  = request_object.fetch_req_params
+    
+    if generate_data_exports_id
+      status_code = :ok
+      $sqs_reports_service_export.send_message(@query_params.to_json)
+    else
+      status_code = :unprocessable_entity
+    end
+    
+    render json: nil, status: status_code
+  end
+  
+  def export_report
+    if ["agent_summary", "group_summary"].include?(report_type)
+      export_report_csv
+    else
+      generate_pdf
+    end
+  end
+  
+  def email_reports
+    email_report_params
+    HelpdeskReports::Workers::Export.perform_async(params)
+    @data = true
+    send_json_result
+  end
+  
+  def download_file
+    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{download_file_format(params[:file_name])}"
+    redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
+    redirect_to redir_url
   end
 
   private
+  
+  def generate_data
+    build_and_execute
+    parse_result
+    format_result
+  end
 
   def render_charts
     # Temporary Hack to enable QA to see json result of reports
@@ -78,7 +118,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       request_object = HelpdeskReports::Request::Ticket.new(param)
       request_object.build_request
       response = request_object.request
-      result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type, report_type)
+      result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type, report_type, @pdf_export.present?)
       @results << result_object
     end
   end
@@ -88,19 +128,50 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def parse_result
-    @processed_result = {}
-    @results.each do |res_obj|
-      key = res_obj.query_type == :bucket ? "#{res_obj.metric}_BUCKET" : res_obj.metric
-      @processed_result[key] = res_obj.parse_result
+    if ticket_list_query?
+      parse_list_result
+    else
+      @processed_result = {}
+      @results.each do |res_obj|
+        key = res_obj.query_type == :bucket ? "#{res_obj.metric}_BUCKET" : res_obj.metric
+        @processed_result[key] = res_obj.parse_result
+      end
     end
   end
   
   def format_result
-    if FORMATTING_REQUIRED.include? report_type.to_sym
+    if formatting_required?
       @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints).format
     else
       @data = @processed_result
     end
+  end
+  
+  def formatting_required?
+    FORMATTING_REQUIRED.include?(report_type.to_sym) && !ticket_list_query?
+  end
+  
+  def generate_pdf
+    validate_params
+    generate_data
+    render :pdf => @report_type,
+      :layout => "report/v2/#{report_type}_pdf.html",
+      :locals => pdf_locals,
+      :show_as_html => false, # renders html version if you set true
+      :template => 'sections/generate_report_pdf.pdf.erb',
+      :page_size => "A3",
+      :javascript_delay => 1000
+  end
+  
+  def export_report_csv
+    validate_params
+    generate_data
+    csv_result = @data.present? ? export_summary_report : t('helpdesk_reports.no_data_to_display_msg')
+    send_csv csv_result
+  end
+  
+  def ticket_list_query?
+    @results.first.query_type == :list
   end
 
   def parse_list_result
@@ -110,16 +181,20 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   # TODO -> Ticket from Archive
   def ticket_from_db id_list
-    tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
-    archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
-    begin
-      tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
-      archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
-    rescue Exception => e
-      Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
-      NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
+    Sharding.select_shard_of(current_account.id) do
+      Sharding.run_on_slave do
+        tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
+        archive_tkt = current_account.archive_tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
+        begin
+          tickets = tkt.find_all_by_id(id_list[:non_archive], :select => ticket_list_columns)
+          archive_tickets = archive_tkt.find_all_by_id(id_list[:archive], :select => ticket_list_columns)
+        rescue Exception => e
+          Rails.logger.error "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets. \n#{e.inspect}\n#{e.message}\n#{e.backtrace.join("\n\t")}"
+          NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in Business Intelligence Reports while fetching tickets"}) 
+        end
+        @processed_result = tickets_data(tickets + archive_tickets)
+      end
     end
-    @data = tickets_data((tickets || []) + (archive_tickets || []))
   end
   
   def ticket_list_columns
@@ -177,19 +252,25 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       DEFAULT_REPORTS.include?(report_type)
     end 
   end
+
+  def generate_data_exports_id
+    set_time_zone
+    latest_data_export = current_user.data_exports.reports_export.last
+    if !latest_data_export || (latest_data_export.status == 4 || latest_data_export.updated_at < (Time.now - 30.minutes))
+      @data_export = current_account.data_exports.new(
+                                  :source => DataExport::EXPORT_TYPE[:reports], 
+                                  :user => current_user,
+                                  :status => DataExport::EXPORT_STATUS[:started]
+                                )
+      @data_export.save
+      @query_params[:export_id] = @data_export.id
+
+      acc_export = current_user.data_exports.send("reports_export")
+      acc_export.first.destroy if acc_export.count >= TICKET_EXPORT_LIMIT
+      return true
+    else
+      return false
+    end
+  end
   
-  # def generate_pdf
-  #   glance_report_data
-  #   @report_title = t('adv_reports.helpdesk_at_a_glance')
-  #   render :pdf => @report_title,
-  #     :layout => 'report/glance_report_pdf.html', # uses views/layouts/pdf.haml
-  #     :show_as_html => params[:debug].present?, # renders html version if you set debug=true in URL
-  #     :template => 'sections/generate_report_pdf.pdf.erb',
-  #     :page_size => "A3"
-  # end
-
-
-  # def pass_solution_artical_link
-  #   @solution_artical_link = REPORT_ARTICAL_LINKS[:helpdesk_glance_report]
-  # end
 end

@@ -25,6 +25,18 @@ module Helpdesk
           sanitize_body_and_unhtml_it(note_body,"body","full_text")
         end
       end
+
+      # Used by API v2
+      def assign_element_html(note_body_attributes, *elements)
+        elements.each do |element|
+          element_html = "#{element}_html".to_sym
+          if note_body_attributes[element] && note_body_attributes[element_html].blank?
+            formatted_text = body_html_with_formatting(CGI.escapeHTML(note_body_attributes[element])) 
+            note_body_attributes[element_html] = body_html_with_tags_renamed(formatted_text)
+          end
+        end
+      end
+
     end
   end
 end

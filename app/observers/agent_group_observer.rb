@@ -32,7 +32,7 @@ class AgentGroupObserver < ActiveRecord::Observer
   private
 
     def set_account_id(agent_group)
-      agent_group.account_id = agent_group.user.account_id
+      agent_group.account_id = agent_group.user.account_id unless agent_group.user.blank?
     end
 
     def auto_refresh_key(agent_group)

@@ -73,7 +73,7 @@ class Discussions::UnpublishedController < ApplicationController
 		end
 
 		def spam_scope
-			Post::SPAM_SCOPES_DYNAMO.values.include?(params[:scope].constantize) ? 
+			Post::SPAM_SCOPES_DYNAMO.values.map(&:to_s).include?(params[:scope]) ? 
 				params[:scope].constantize : Post::SPAM_SCOPES_DYNAMO.values.first
 		end
 

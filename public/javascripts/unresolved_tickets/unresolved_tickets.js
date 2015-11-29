@@ -10,15 +10,15 @@ var UnresolvedTickets = (function () {
 	CONST.calculatedWidth = (!jQuery.browser.msie) ? CONST.dynamicWidth : CONST.dynamicWidth - 15;
 	var _FD = {
 		events: function(){
-			jQuery("#generate-datatable").on('click', function(){
-				_FD.triggerAjax(_FD.constructParams());
+			var $supervisorDashboard = jQuery("#supervisor-dashboard");
+			// Listener for open filter
+			$supervisorDashboard.on('click.unresolved', '[data-action="open-filter-menu"]',  function(){
+					jQuery("#inner").addClass('openedit');
+					jQuery(".fd-filter-container").show();
+					
 			});
-			jQuery('input[name="metric-input"]').on('change', function(){
-				_FD.resetfilterselect2();
-				jQuery(".filter_key_selector").hide();
-				jQuery("#"+jQuery(this).attr('id')+"-box").show();
-			});
-			jQuery('[data-action="close-filter-menu"]').on('click', function(){
+			// Listener for close filter
+			$supervisorDashboard.on('click.unresolved', '[data-action="close-filter-menu"]', function(){
 					if(jQuery('#inner').hasClass('openedit')){
 						jQuery('#inner').removeClass('openedit');
 						setTimeout(function(){
@@ -26,36 +26,33 @@ var UnresolvedTickets = (function () {
 						}, 100);
        			    }
 			});
-			jQuery('[data-action="open-filter-menu"]').on('click', function(){
-					jQuery("#inner").addClass('openedit');
-					jQuery(".fd-filter-container").show();
-					
-			});
-			// Listener for Generate 
-			jQuery('[data-action="unresolved-submit"]').on('click', function(){
+			// Listener for Generate
+			$supervisorDashboard.on('click.unresolved', '[data-action="unresolved-submit"]', function(){
 					 jQuery(".fd-filter-container").hide();
 					_FD.triggerAjax(_FD.constructParams());
 			});
 			// Listener for tab click
-			jQuery("#unresolved-tab").on('click', "li", function(e){
+			$supervisorDashboard.on('click.unresolved', "#unresolved-tab li", function(e){
 				_FD.switchTab(e);
-				
 			});
-			// Ticklist redirect listner
-			jQuery("body").on('click', '#unresolved-tickets tbody a', function(e){
+			// Listener for showtickets link
+			$supervisorDashboard.on('click.unresolved', '#unresolved-tickets tbody a', function(e){
 				_FD.showTickets(e);
 			});	
-
 			// Filter transition
-			jQuery("body").on('focus', '.dataTables_filter input', function(){
+			$supervisorDashboard.on('focus.unresolved', '.dataTables_filter input', function(){
 				var placeholder_txt = (jQuery("#unresolved-tab li.active").data('groupby') === "group_id" ) ? "Search by group" : "Search by agent";
 				jQuery(this).addClass('widelength').attr('placeholder', placeholder_txt);
 				jQuery(this).parent().addClass('widelength');
 			});
-			jQuery("body").on('blur', '.dataTables_filter input', function(){
+			// Filter transition
+			$supervisorDashboard.on('blur.unresolved', '.dataTables_filter input', function(){
 				jQuery(this).removeClass('widelength').attr('placeholder', "Search");
 				jQuery(this).parent().removeClass('widelength');
 			});
+		},
+		unbindEvents: function(){
+			jQuery("#supervisor-dashboard").off('.unresolved');
 		},
 		showTickets: function(evt){
 			var _currentData = jQuery(evt.currentTarget).data(),
@@ -279,7 +276,6 @@ var UnresolvedTickets = (function () {
 					'sWidth': '60px',
 					'sTitle': arrowtemplate,
 					'sClass': "center"
-
 			});
 			var columnDefs_des = data.tickets_data.data.map(function(val, i){
 				return {
@@ -399,12 +395,6 @@ var UnresolvedTickets = (function () {
 		hasLocalData: function(){
 			_FD.events();
 			var localStorage_obj = JSON.parse(window.localStorage.getItem('unresolved-tickets-filters'));
-			var local_agent_keys = jQuery.map(localStorage_obj, function(item, key) {
-				return key;
-			});
-			var local_group_keys = jQuery.map(localStorage_obj, function(item, key) {
-				return key;
-			});
 			jQuery("#unresolved-tab li").removeClass('active');
 			jQuery("[data-groupby = '"+localStorage_obj.group_by+"']").addClass('active');
 
@@ -420,6 +410,9 @@ var UnresolvedTickets = (function () {
 		},
 		showLoader: function(loaderType){
 			_FD.showLoader(loaderType);
+		},
+		unbindEvents: function(){
+			_FD.unbindEvents();
 		}
 	};
 })();

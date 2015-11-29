@@ -55,8 +55,8 @@ class Topic < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
-  delegate :problems?, :questions?, :to => :forum
-  delegate :type_name, :to => :forum
+  delegate :problems?, :questions?, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
+  delegate :type_name, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
 
   scope :newest, :order => 'replied_at DESC'
 
@@ -81,6 +81,14 @@ class Topic < ActiveRecord::Base
       :conditions => ["forums.forum_category_id = ?", forum_category_id],
     }
   }
+
+  scope :followed_by, lambda { |user_id|
+    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
+                  and monitorships.monitorable_type = 'Topic' 
+                  and topics.account_id = monitorships.account_id),
+      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
+    }
+  } # Used by monitorship APIs
 
   scope :following, lambda { |ids|
     {
@@ -250,15 +258,17 @@ class Topic < ActiveRecord::Base
     
   FORUM_TO_STAMP_TYPE = {
     Forum::TYPE_KEYS_BY_TOKEN[:announce] => [nil],
-    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil],
+    Forum::TYPE_KEYS_BY_TOKEN[:ideas] => IDEAS_STAMPS_BY_KEY.keys + [nil], # nil should always be last, if not, revisit check_stamp_type
     Forum::TYPE_KEYS_BY_TOKEN[:problem] => PROBLEMS_STAMPS_BY_KEY.keys,
     Forum::TYPE_KEYS_BY_TOKEN[:howto] => QUESTIONS_STAMPS_BY_KEY.keys
   }
 
   def check_stamp_type
-    is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
-    is_valid &&= check_answers if questions?
-    errors.add(:stamp_type, "is not valid") unless is_valid
+    if forum
+      is_valid = FORUM_TO_STAMP_TYPE[forum.forum_type].include?(stamp_type)
+      is_valid &&= check_answers if questions?
+      errors.add(:stamp_type, "is not valid") unless is_valid
+    end
   end
 
   def check_answers
@@ -314,11 +324,11 @@ class Topic < ActiveRecord::Base
   end
 
   def set_unanswered_stamp
-    self.stamp_type = Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
+    self.stamp_type ||= Topic::QUESTIONS_STAMPS_BY_TOKEN[:unanswered]
   end
 
   def set_unsolved_stamp
-    self.stamp_type = Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
+    self.stamp_type ||= Topic::PROBLEMS_STAMPS_BY_TOKEN[:unsolved]
   end
 
   def last_page
@@ -436,7 +446,9 @@ class Topic < ActiveRecord::Base
   end
   
   def assign_default_stamps
-    self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type] unless forum_was.forum_type == forum.forum_type
+    if forum && !stamp_type_changed? && forum_was.forum_type != forum.forum_type
+      self.stamp_type = Topic::DEFAULT_STAMPS_BY_FORUM_TYPE[forum.forum_type]
+    end
   end
 
   def mark_post_as_unanswered

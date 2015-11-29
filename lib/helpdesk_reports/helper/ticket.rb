@@ -2,6 +2,7 @@ module HelpdeskReports::Helper::Ticket
 
   include Redis::RedisKeys
   include Redis::ReportsRedis
+  include ExportCsvUtil
   include HelpdeskReports::Field::Ticket
   include HelpdeskReports::Constants::Ticket
   include HelpdeskReports::Util::Ticket
@@ -30,7 +31,7 @@ module HelpdeskReports::Helper::Ticket
   end
   
   def required_in_reports? field
-    field[:type] == "nested_field" || TICKET_EXPORT_FIELDS.include?(field[:value])
+    field[:type] == "nested_field" || field[:type] == "custom_dropdown" || TICKET_EXPORT_FIELDS.include?(field[:value])
   end
 
   def set_selected_tab
@@ -47,6 +48,14 @@ module HelpdeskReports::Helper::Ticket
     @enable_ticket_list_by_plan = !disabled_plans.include?(Account.current.subscription.subscription_plan.name)
   end
 
+  def report_file_format
+    ["agent_summary", "group_summary"].include?(report_type) ? "csv" : "pdf"
+  end
+  
+  def download_file_format file_name
+    @report_type = file_name.split("-").first
+    "#{file_name}.#{report_file_format}"
+  end
 
   def report_specific_constraints
     res = {report_type: report_type}
@@ -54,15 +63,98 @@ module HelpdeskReports::Helper::Ticket
     if [:agent_summary,:group_summary].include?(report_type.to_sym)
         group_ids, agent_ids = []
         param = @query_params[0]
-        param[:filter].each do |f| 
-          group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
-          agent_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "agent_id"
+        param[:filter].each do |f|
+          if report_type == :agent_summary 
+            agent_ids = f["value"].split(",") if f["condition"] == "agent_id"
+            group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
+          else
+            group_ids = f["value"].split(",") if f["condition"] == "group_id"
+            agent_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "agent_id"
+          end
         end
         res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
     end
     
     res   
+  end
+  
+  def export_tickets_params
+    @query_params = params[:export_params]
+  end
+
+  def pdf_params
+    args = JSON.parse(params[:pdf_args]).symbolize_keys!
+    @query_params = args[:query_hash].each{|k| k.symbolize_keys!}
+    @custom_fields_group_by = args[:custom_field]
+    @date_range = @query_params.first[:date_range] 
+    @filters = args[:select_hash]
+    @trend = args[:trend].symbolize_keys
+    @pdf_export = true
+    @pdf_cf = pdf_custom_field || "none" if report_type == "glance"
+  end
+  
+  def pdf_custom_field
+    @query_params.first[:group_by].find{|gp_by| gp_by.start_with?("ffs")} if @query_params.first[:group_by].present?
+  end
+  
+  def email_report_params
+    params.merge!({
+      account_id: current_account.id,
+      user_id: current_user.id,
+      portal_url: current_account.host,
+      date_lag_by_plan: @date_lag_by_plan
+      })
+    
+    params.merge!({show_options: @show_options,label_hash: @label_hash,nf_hash: @nf_hash}) if report_type == "glance"
+  end
+  
+  def pdf_locals
+    locals = {
+      report_type: report_type,
+      data: @data,
+      date_range: @date_range,
+      date_lag_by_plan: @date_lag_by_plan,
+      show_options: @show_options,
+      label_hash: @label_hash,
+      nf_hash: @nf_hash,
+      filters: @filters,
+      pdf_cf: @pdf_cf
+    }
+    
+    case report_type
+      when "ticket_volume"
+        locals.merge!(trend: @trend[:trend])
+      when "performance_distribution"
+        locals.merge!(trend: @trend[:trend],resolution_trend: @trend[:resolution_trend],response_trend: @trend[:response_trend])
+    end
+    locals
+  end
+  
+  def export_summary_report
+    csv_string = CSVBridge.generate do |csv|
+      metric_order = summary_report_metric_order
+      csv << metric_order.collect{|i| METRIC_DISPLAY_NAME[i] || i.capitalize.gsub("_", " ")} # CSV Headers
+      @data.each do |row|
+        res = []
+        metric_order.each { |i| res << (row[i] == NA_PLACEHOLDER_SUMMARY ? nil : presentable_format(row[i], i))}
+        csv << res
+      end
+    end
+    csv_string
+  end
+  
+  def send_csv csv
+    send_data csv,
+            :type => 'text/csv; charset=utf-8; header=present',
+            :disposition => "attachment; filename=#{report_type}.csv"
+  end
+  
+  def summary_report_metric_order
+    metrics = @data.first.keys
+    metric_order = ["#{report_type.split("_").first}_name"]
+    METRIC_DISPLAY_NAME.keys.each{|m| metric_order << m if metrics.include?(m)}
+    metric_order
   end
 
   # VALIDATION of all params before triggering any QUERY
@@ -240,6 +332,10 @@ module HelpdeskReports::Helper::Ticket
 
   def explain
     puts JSON.pretty_generate @data
+  end
+  
+  def pdf_export_config
+    @real_time_export = REAL_TIME_REPORTS_EXPORT
   end
 
 =begin

@@ -1,7 +1,7 @@
 module HelpdeskV2ReportsHelper
 
 	REPORT_MAPPING = [
-			["/reports/v2/glance", 					 "glance", 				     "helpdesk" ],
+			["/reports/v2/glance", 					 "glance", 				     "helpdesk_at_glance" ],
 			["/reports/v2/ticket_volume", 			 "ticket_volume", 	         "ticket-volume" ],
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ],
 			["/reports/v2/group_summary", 			 "group_summary",            "group-summary" ],
@@ -54,5 +54,15 @@ HTML
 			"Next data refresh will be on #{Time.parse(next_dump_time.to_s).in_time_zone(current_account.time_zone).strftime('%d %b,%l:%M %p %Z')}" 
 	    end 
 	end
+	
+	def has_scope?(report_type)
+    if current_account.features_included?(:enterprise_reporting)
+      ENTERPRISE_REPORTS.include?(report_type)
+    elsif current_account.features_included?(:advanced_reporting)
+      ADVANCED_REPORTS.include?(report_type)
+    else
+      DEFAULT_REPORTS.include?(report_type)
+    end 
+  end
 
 end

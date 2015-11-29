@@ -69,7 +69,7 @@ module Reports::FreshfoneReport
     end
 
     def group_condition
-      query = "and freshfone_calls.group_id = ? " unless @group_id.blank?
+      query = "and freshfone_calls.group_id = ? " unless group_unavailable?
       query = "and freshfone_calls.group_id IS NULL"  if @group_id == UNASSIGNED_GROUP
       query
     end
@@ -79,7 +79,13 @@ module Reports::FreshfoneReport
     end
 
     def all_or_unassigned?
-      @group_id.blank? || @group_id == UNASSIGNED_GROUP
+      group_unavailable? || @group_id == UNASSIGNED_GROUP
+    end
+
+    def group_unavailable?
+      return true if @group_id.blank?
+      group = current_account.groups.find_by_id(@group_id)
+      group.nil?
     end
     
     def set_default_date_range

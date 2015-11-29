@@ -1,6 +1,6 @@
 require 'spec_helper'
-
-describe ForumsController do
+require './app/controllers/forums_controller'
+describe ::ForumsController do
   	setup :activate_authlogic
   	self.use_transactional_fixtures = false
 

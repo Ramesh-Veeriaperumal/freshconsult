@@ -4,6 +4,8 @@ helpdesk:
     - rails3_patches
     - authlogic_patch
     - helpdesk
+    - api_initializer
+    - jbuilder_cache_store
     - action_mailer_callbacks
     - action_mailer_no_tmail
     - activerecord_log
@@ -26,7 +28,6 @@ helpdesk:
     - facebook_config
     - global_phone
     - gnip_config
-    - helpdesk_reports/reports_app_config
     - i18n
     - inflections
     - klout_config
@@ -67,5 +68,6 @@ helpdesk:
     - marketplace_config
     - doorkeeper
     - ebay_config
+    - helpdesk_reports/reports_app_config
 
 

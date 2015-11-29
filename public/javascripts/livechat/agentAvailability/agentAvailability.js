@@ -17,6 +17,7 @@
         this.resetCollection();
         this.listenToCollection();
         this.listenToEvents();
+        this.applyCachedFilters();
         if(this.autoRefreshAgentList){
           this.autoRefreshAgentList.stop();
         }
@@ -34,24 +35,26 @@
       },
       listenToEvents: function(){
         var that = this;
-        jQuery('#fc-group-filter').off('click').on('click', "a" , function(event){
+        jQuery('#lc-group-filter').off('click').on('click', "a" , function(event){
           event.preventDefault();
           var $parentElem = jQuery(event.target.parentElement);
           if($parentElem.length > 0 && $parentElem.data('id') != "disabled"){
-            jQuery("#fc-group-name").html(event.target.innerHTML); 
+            jQuery("#lc-group-name").html(event.target.innerHTML); 
             that.getGroups($parentElem.data('id'));
+            window.localStorage.setItem('lc_av_group_filter', $parentElem.data('id'));
           }
         });
-        jQuery('#fc-sort-filter').off('click').on('click', "a", function(event){
+        jQuery('#lc-sort-filter').off('click').on('click', "a", function(event){
           event.preventDefault();
-          jQuery("#sort_by").html(event.target.innerHTML); 
+          jQuery("#lc-sort-by").html(event.target.innerHTML); 
           var $targetElem = jQuery(event.target.parentElement);
-          if($targetElem.data('id') == "sort_presence"){
+          if($targetElem.data('id') == "sort-presence"){
             that.filterBy = "last_activity_at";
           }else{
             that.filterBy = "name";
           }
           that.resetCollection();
+          window.localStorage.setItem('lc_av_sort_filter', $targetElem.data('id'));
         });
       },
       render: function(){
@@ -68,6 +71,18 @@
             showCount: false
         }));
         this.setTabCount();
+      },
+      applyCachedFilters: function(){
+        var lc_av_group_filter = window.localStorage.getItem('lc_av_group_filter');
+        var lc_av_sort_filter = window.localStorage.getItem('lc_av_sort_filter');
+
+        if(lc_av_group_filter){
+          this.$el.find("#lc-group-filter li[data-id="+lc_av_group_filter+"] a").trigger('click');
+        }
+
+        if(lc_av_sort_filter){
+          this.$el.find("#lc-sort-filter li[data-id="+lc_av_sort_filter+"] a").trigger('click');
+        }
       },
       setTabCount: function(){
         jQuery("#lc-availability #accepting_count").html(this.availableAgents.length).show();

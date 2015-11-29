@@ -1463,7 +1463,11 @@ module ApplicationHelper
   presence_class + " ff-busy" unless current_user.freshfone_user_online?
   return presence_class
  end
- 
+
+  def freshfone_non_conference_class
+    current_account.features?(:freshfone_conference) ? "" : "non-conference"
+  end  
+
  def call_direction_class(call)
 		if call.blocked?
 			"blocked_call_icon"

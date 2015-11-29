@@ -3,15 +3,31 @@
 		<% for (i = 0; i < data.length; i++) { %>
 			<div class="item">
 				<label class="checkbox prime"> 
-				<input type="checkbox" value="<%=data[i]['value']%>" 
+				<input type="checkbox" data-label = "<%= data[i]['label'] %>" value="<%=data[i]['value']%>" 
 					<% if (data[i].selected) { %>
 							checked = "checked"
 					<% } %>
 				/>
 				<%= data[i]['label'] %>
+				</label>
+				<% if(data[i].levels && data[i].levels.length > 0){ %>
+					<div class="treeline">
+						<% for (j = 0; j < data[i].levels.length; j++) { %>
+							<label class="checkbox level"> 
+								<input type="checkbox" data-label = "<%= data[i].levels[j]['label'] %>" value="<%=data[i].levels[j]['name']%>" 
+									<% if (data[i].levels[j].selected) { %>
+											checked = "checked"
+									<% } %>
+								/>
+								<%= data[i].levels[j]['label'] %>
+							</label>
+						<% } %>
+					</div>
+				<% } %>
 			</div>
 		<% } %>
 	</div>
+	<div class="clear"></div>
 <% } else { %>
 	<h4>Some Error.Try Again</h4>
 <% } %>

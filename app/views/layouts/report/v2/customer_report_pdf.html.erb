@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<%= render :partial => "layouts/report/v2/shared/pdf_files", :formats => [:html], :locals => {} %>
+<div class="reports-main">
+  <div class="reports-header row-fluid">
+     <%= render :partial => "layouts/report/v2/shared/header", :formats => [:html], :locals => {report_type: report_type}  %> 
+  </div>
+  <div class="customer-report"> 
+    <div class="customer-chart-wrapper" id="customer_report_chart_wrapper">
+      <div class="customer-chart" id="customer_report_main"></div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+    
+    window.HelpdeskReports = window.HelpdeskReports || {};
+    HelpdeskReports.locals = HelpdeskReports.locals || {};
+    HelpdeskReports.locals.report_type = "<%= report_type %>";
+    HelpdeskReports.locals.select_hash  = <%= filters.to_json.html_safe%> 
+    HelpdeskReports.locals.date_lag = <%= date_lag_by_plan %>;
+    HelpdeskReports.locals.date_range = "<%= date_range %>";
+    HelpdeskReports.locals.chart_hash = <%= data.to_json.html_safe %>;
+    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? %>';
+    
+    var locals = HelpdeskReports.locals;
+    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+
+    if (err) {
+      var div = ["reports_container"];
+        HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+    } else {
+      HelpdeskReports.ChartsInitializer.CustomerReport.pdf(locals.chart_hash);
+    }
+    
+    HelpdeskReports.CoreUtil.setFilterDisplayData();
+  });
+</script>

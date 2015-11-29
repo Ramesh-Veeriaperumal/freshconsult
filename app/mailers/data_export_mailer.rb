@@ -83,7 +83,6 @@ class DataExportMailer < ActionMailer::Base
     end.deliver
   end
 
-
   def agent_export options={}
     headers = {
       :subject => "Agents List Export",

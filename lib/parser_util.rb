@@ -1,9 +1,10 @@
 # encoding: utf-8
 module ParserUtil
 
-require 'mail'
+  require 'mail'
 
-include AccountConstants
+  include AccountConstants
+  include EmailParser
 
   def parse_email(email)
     if email =~ /(.+) <(.+?)>/
@@ -48,12 +49,7 @@ include AccountConstants
   end
 
   def get_email_array_with_mail_parser emails
-    parsed_email = Mail::ToField.new 
-    parsed_email.value = emails
-    plain_emails = parsed_email.addrs.collect do |e|
-      e.address if e.address =~ EMAIL_REGEX
-    end
-    plain_emails.compact.uniq
+    parse_addresses(addresses)[:plain_emails]
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{emails} : #{e.message} : #{e.backtrace}"
     get_email_array_without_mail_parser(emails)
@@ -137,24 +133,7 @@ include AccountConstants
   end
 
   def fetch_valid_emails_with_mail_parser(addresses)
-    if addresses.is_a? Array
-      emails = addresses.join(",")
-    else
-      emails = addresses
-    end
-    parsed_emails = Mail::ToField.new 
-    parsed_emails.value = emails
-     
-    valid_emails = parsed_emails.addrs.collect do |email|
-      if email.address =~ EMAIL_REGEX
-        if email.name.present?
-          "#{format(email.name)} <#{email.address}>"
-        else
-          email.address
-        end
-      end
-    end
-    valid_emails.compact.uniq
+    parse_addresses(addresses)[:emails]
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{addresses} : #{e.message} : #{e.backtrace}"
     fetch_valid_emails_without_mail_parser(addresses)
@@ -189,7 +168,7 @@ include AccountConstants
     email.sub(/\+.*@/,"@")
   end
 
-  def format(name)
+  def format_name(name)
     name =~ SPECIAL_CHARACTERS_REGEX ? name = "\"#{name.gsub(/\./, ' ').strip}\"" : name
   end
 
@@ -211,7 +190,7 @@ include AccountConstants
           name = name_prefix << address[0..position-1]
           name.gsub!("<", "")
           name.gsub!(">", "")
-          parsed_hash[:name] = format(name)
+          parsed_hash[:name] = format_name(name)
           parsed_hash[:domain] = parsed_hash[:email].split("@")[1]
         end
         break

@@ -53,16 +53,24 @@ $dashboard-cells-header: #666;
 
 // ongoing related components start
 	$ongoing-border:#ccc;
-	$ongoing-background:#FFF;
-	$ongoing-tabs-background:#fefef6;
-	$ongoing-active-tabs-background:#ddd;
+	$ongoing-background:#BBB;
+	$ongoing-tabs-background:#AAA;
+	$ongoing-active-tabs-background:#444;
+	$ongoing-hover-tabs-background:#888;
 	$ongoing-tabs-shadow:#fff;
-	$ongoing-end-call-background:#9A311F;
+	$ongoing-end-call-background:#9E3624;
+	$ongoing-context-border:1px solid #AAA;
+	$ongoing-caller-context-bottom-border:#EEE;
+	$ongoing-call-notes-background: #FFFFE4;
+	$ongoing-popup-right:14px;
+	$ongoing-popup-width:325px;
+	$ongoing-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.1);
+	$ongoing-popup-z-index: 999;
 	
 	$end-call-text:#FFF;
 	
-	$call-details-text:#333;
-	$call-details-background:#f2f2c4;
+	$call-details-text:#fff;
+	$call-details-background:#9E3624;
 	
 	$call-duration-background:#F0F0F0;
 	

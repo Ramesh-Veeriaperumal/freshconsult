@@ -19,13 +19,14 @@ module ForumHelper
 		forum_category
 	end
 
-	def create_test_forum(forum_category,type = 1)
+	def create_test_forum(forum_category,type = 1, visibility=nil)
 		forum = FactoryGirl.build(
 							:forum, 
 							:account_id => @account.id, 
 							:forum_category_id => forum_category.id,
 							:forum_type => type
 							)
+		forum.forum_visibility = visibility if visibility
 		forum.save(validate: false)
 		forum
 	end
@@ -49,6 +50,8 @@ module ForumHelper
 							:user_votes => 0
 							)
 		post.save!
+		topic.last_post_id = post.id
+		topic.save
 		publish_post(post)
 		topic.reload
 	end
@@ -82,12 +85,13 @@ module ForumHelper
 		topic.reload
 	end
 
-	def create_test_post(topic, user = @customer)
+	def create_test_post(topic, published = false, user = @customer)
 		post = FactoryGirl.build(:post, 
 							:account_id => @account.id, 
 							:topic_id => topic.id,
 							:user_id => user.id,
-							:user_votes => 0
+							:user_votes => 0,
+							:published => published
 							)
 		post.save
 		post			

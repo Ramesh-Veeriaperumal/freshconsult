@@ -15,56 +15,58 @@
 }
 
 .ongoing {
-	border: 1px solid $ongoing-border;
-	margin: 6px 0;
-	height: 26px;
+	margin: 1px 1px;
+	height: 32px;
+	padding-left: 36px;
 	@include border-radius(6px);
 	background-color: $ongoing-background;
 	direction: ltr;
 	[class*="#{$font-class}"]{
-		color: #333;
+		color: #fff;
 	}
 	li {
 		a {
+			height: 32px;
 			background-color:$ongoing-tabs-background;
 			&.active {
 				background-color: $ongoing-active-tabs-background;
 			}
 			&:hover{
-				background-color: $ongoing-active-tabs-background;
+				background-color: $ongoing-hover-tabs-background;
 			}
 		}
 	}
 	.end_call {
 		background-color:$ongoing-end-call-background;
-		font-size: 20px;
+		font-size: 25px;
 		color: $end-call-text;
 		position: absolute;
-		left: -34px;
-		top: 6px;
-		width: 39px;
-		height: 28px;
+		left: 0px;
+		width: 37px;
+		height: 32px;
 		border: 1px solid #{$ongoing-end-call-background};
+		padding-left: 7px;
 		i.#{$font-class}cross{
 			color: #fff;
-			line-height: 28px;
+			line-height: 32px;
 		}
 		&:hover{
 			background-color:$ongoing-end-call-background;
 		}
 	}
 	.call_details {
-		width: 104px;
-		height: 26px;
+		width: 60px;
+		height: 32px;
 		a {
 			color: $call-details-text;
 			width: 100%;
 			background-color: $call-details-background;
-			font-weight: 500;
+			font-weight: 400;
 			text-align: center;
-			line-height: 26px;
+			line-height: 34px;
+			height: inherit;
 			&:hover{
-				background-color: $call-details-background;
+				background-color:$ongoing-end-call-background;
 			}
 		}
 	}
@@ -85,7 +87,15 @@
 	.call_duration {
 		background-color: $call-duration-background;
 	}
-
+	.transfer_call, .mute, .hold, .ongoingDialpad {
+		width: 57px;
+	}
+	.transfer_call.non-conference, .mute.non-conference, .ongoingDialpad.non-conference{
+		width: 76px;
+	}
+	.transfer_call, .mute, .hold{
+		margin-right: 1px;
+	}
 	.transfer_call.transferring_state, .mute.active, .hold.active{
 		background-color: #ff9105;
 		@include animation(glow 1s infinite);
@@ -112,16 +122,6 @@
 		font-weight: 600;
 		@include padding(8px 0 0 10px);
 		color: $popup-content-header-text;
-		span.note_from_agent{
-			font-size: 12px;
-			font-weight: 400;
-			float: right;
-			padding-right: 15px;
-			padding-top: 3px;
-			text-transform: none;
-			color: #ccc;
-			text-overflow: ellipsis;
-		}
 	}
 	.ffone-add-notes { height: 200px; width: 350px; }
 	.ffone-end-call {
@@ -134,10 +134,15 @@
 	.ffone_available_agents { 
 		max-height: 380px;
 		min-height: 75px;
-		width: 260px;
-		width: 290px;
+		width: $ongoing-popup-width;
+		right: $ongoing-popup-right;
+		position: fixed;
+		bottom: 41px;
 		border-radius: 4px;
+		border: $ongoing-context-border;
 		background-color: $transfer-call-background;
+		box-shadow: $ongoing-box-shadow;
+		z-index: $ongoing-popup-z-index;
 		.list-component{
 			height: 260px;
 		}
@@ -187,6 +192,7 @@
 			padding: 7px;
 			@include box-sizing(border-box);
 			cursor:pointer;
+			background: rgba(255,255,255,0.2);
 		}
 		li.transfer-active{
 			background-color: darken($transfer-call-background, 5%);
@@ -233,7 +239,7 @@
 		.agents_count{
 			float: right;
 			font-weight: normal;
-			margin-right: -35px;
+			margin-right: -65px;
 		}
 	}
 
@@ -743,9 +749,9 @@
 		}
 		.ff-loader {
 			display: inline;
-			top: 13px;
-	  	position: relative;
-	  	left: 20px;
+			top: 16px;
+	  		position: relative;
+	  		left: 30px;
 		}
 	}
 }

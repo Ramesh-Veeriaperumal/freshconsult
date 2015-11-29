@@ -11,6 +11,7 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 	def after_create(freshfone_account)
 		set_usage_trigger(freshfone_account)
+		freshfone_account.enable_conference
 	end
 
 	def after_update(freshfone_account)

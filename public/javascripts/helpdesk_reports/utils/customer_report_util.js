@@ -57,12 +57,18 @@ HelpdeskReports.ReportUtil.CustomerReport = (function () {
             }
 
             if (_FD.constants.percentage_metrics.indexOf(data.metric) > -1) {
+                //Reset sla the toggle links
+                _FD.core.actions.resetSlaLinks();
                 var supplement_condition = {
                     condition : _FD.constants.metrics[data.metric].ticket_list_metric,
                     operator : 'is',
-                    value : true 
+                    value : true
                 };
                 list_hash.list_conditions.push(supplement_condition);
+                _FD.core.actions.constructSlaTabs(data.y);
+            }else{
+                //Hide the sla tabs
+                 jQuery(".sla-toggle-tab").addClass('hide');
             }
 
             var hash = jQuery.extend({},_FD.constants.params, list_hash);

@@ -69,4 +69,8 @@ module EmailHelper
   def tokenize_emojis(msg_text)
     (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
   end
+
+  def reply_to_private_note?(in_reply_to)
+    in_reply_to.to_s.include? "private-notification.freshdesk.com"
+  end
 end
