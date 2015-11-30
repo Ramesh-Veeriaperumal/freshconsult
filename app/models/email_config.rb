@@ -1,11 +1,11 @@
 class EmailConfig < ActiveRecord::Base
   self.primary_key = :id
 
+  belongs_to_account
   include AccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  belongs_to :account
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
 

@@ -22,9 +22,7 @@
 		}
 
 		var tmpl =  "<td data-group-id=" + data[i]['group_id'] + " class='" + td_class + "' data-metric-name=" + group_metrics[j];
-		if (consts.time_metrics.indexOf(group_metrics[j]) > -1) { 
-			tmpl += " data-order = '" + current_data + "'";
-		}
+		tmpl += " data-order = '" + current_data + "'";
 		tmpl += ">" + metric_data + "</td>";
 		return tmpl;
 	};

@@ -6,7 +6,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
     @helper_hash = {}
     calculate_general_percentage_data
     
-    return if processed_result[:general][:metric_result] == NA_PLACEHOLDER_GLANCE
+    return if processed_result[:general][:metric_result] == NOT_APPICABLE # NA_PLACEHOLDER_GLANCE
     
     raw_result.each do |row|
       next if  row[COLUMN_MAP[:benchmark]] == "f"
@@ -61,7 +61,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
       sla_percentage_previous = calculate_sla_percentage(previous_data[:not_violated], previous_data[:violated])
       diff_percentage = calculate_difference_percentage(sla_percentage_previous, sla_percentage_current)
       processed_result[:general] = {
-        :metric_result    =>  sla_percentage_current == NOT_APPICABLE ? NA_PLACEHOLDER_GLANCE : sla_percentage_current,
+        :metric_result    =>  sla_percentage_current, #== NOT_APPICABLE ? NA_PLACEHOLDER_GLANCE : sla_percentage_current,
         :diff_percentage  =>  diff_percentage
       }
     else
@@ -77,7 +77,7 @@ class HelpdeskReports::Response::Ticket::Percentage < HelpdeskReports::Response:
       end
       sla_percentage_final = calculate_sla_percentage final_data[:not_violated], final_data[:violated]
       processed_result[:general] = {
-        :metric_result => sla_percentage_final == NOT_APPICABLE ? NA_PLACEHOLDER_GLANCE : sla_percentage_final
+        :metric_result => sla_percentage_final #== NOT_APPICABLE ? NA_PLACEHOLDER_GLANCE : sla_percentage_final
       }
     end
   end

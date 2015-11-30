@@ -7,10 +7,15 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   #Added for export csv, call to methods using send
   include Reports::Freshfone::SummaryReportsHelper
   include ReportsHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   before_filter :access_denied, :unless => :freshfone_reports?
+  before_filter :load_cached_filters, :only => [:index]
+  before_filter :set_cached_filters, :only => [:generate]
   before_filter :set_selected_tab, :build_criteria
   before_filter :set_filter ,:only => [:index, :generate]
+
 
   def index
     #Render default index erb
@@ -72,6 +77,28 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
 
     def date_time_fields
       [:call_handle_time, :avg_handle_time]
+    end
+
+    def reports_filter_key
+      ADMIN_FRESHFONE_REPORTS_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
+    end
+
+    def set_cached_filters
+      set_others_redis_hash(reports_filter_key, cached_params)
+      set_others_redis_expiry(reports_filter_key, 86400*7)
+    end
+
+    def load_cached_filters
+      @cached_filter = get_others_redis_hash(reports_filter_key)
+      params.merge!(@cached_filter)
+    end
+
+    def cached_params
+      {'date_range' => params[:date_range],
+       'freshfone_number' => params[:freshfone_number],
+       'group_id' => params[:group_id],
+       'call_type' => params[:call_type],
+       'business_hours' => params[:business_hours]}
     end
 
 end

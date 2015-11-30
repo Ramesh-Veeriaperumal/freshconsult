@@ -175,6 +175,10 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
             _FD.constants = HelpdeskReports.Constants.CustomerReport;
             _FD.bindevents();
             _FD.contructCharts(hash);
+        },
+        pdf: function (hash) {
+            _FD.constants = HelpdeskReports.Constants.CustomerReport;
+            _FD.contructCharts(hash);
         }
     };
 })();

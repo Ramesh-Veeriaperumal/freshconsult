@@ -6,17 +6,17 @@
 	<span class="report-icon">
 		<%= graph_icon(@report_type) %>
 	</span>
-	<span class="report-title-block" data-action="pop-report-type-menu">
+	<span class="report-title-block"><!--data-action="pop-report-type-menu" -->
 		<span id="report-title">
 			<%=t("helpdesk_reports.#{@report_type}.title").html_safe %>
 		</span>
-		<span class="grey-arrow-down title-dropdown"></span>
+		<!-- <span class="grey-arrow-down title-dropdown"></span> -->
 	</span>
 
 	<!-- <span class="pull-right data-refresh">
 		<%= fetch_dump_time %>
 	</span> -->
-
+	<%= render :partial => "reports/v2/tickets/reports/shared/generate_pdf" %>
 </div>
 <div class="reports-filter span12">
 		<% if current_account.subscription.non_sprout_plan? %>
@@ -47,3 +47,10 @@
 		</ul>
 	</div>
 </div>
+
+<script>
+jQuery("#pdf_form").submit(function(event) {
+  var pdf_args = HelpdeskReports.CoreUtil.pdfParams();
+	jQuery('#pdf_args').val(Browser.stringify(pdf_args));	
+});
+</script>

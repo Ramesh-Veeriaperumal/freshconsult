@@ -49,13 +49,18 @@ include Freshfone::CallHistoryHelper
   end
 
   def filter_by_business_hours_options
+   business_hours_type.to_json
+  end
+
+  def business_hours_type
     business_hours_options = []
     business_hours_options =  business_hours_hash.each_with_index.map { |(k,v),index| 
       { :id => index, :value => v, :business_hour_call=> k}
-    }.to_json
+    }
   end
 
   def filter_default_number
+    return {:id => 0, :value => t('reports.freshfone.all_numbers') }.to_json if @freshfone_number == "0"
     selected_number = freshfone_numbers.find(@freshfone_number)
     {:id => selected_number.id, :value => "#{selected_number.name} (#{selected_number.number})" }.to_json
   end
@@ -136,6 +141,16 @@ include Freshfone::CallHistoryHelper
   #Used in filter_options
   def call_types
     Freshfone::Call::CALL_TYPE_HASH.map { |k,v| [t("reports.freshfone.options.#{k}"), v]}
+  end
+
+  def group_cache
+    @cached_filter['group_id']
+  end
+
+  def business_hours_cache
+    return business_hours_type[1][:id] if @cached_filter['business_hours'] == "1"
+    return business_hours_type[2][:id] if @cached_filter['business_hours'] == "0"
+    @cached_filter['business_hours']
   end
 
 end

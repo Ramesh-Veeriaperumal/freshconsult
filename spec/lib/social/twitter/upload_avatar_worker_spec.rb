@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe Social::Workers::Twitter::UploadAvatar do
+describe Social::UploadAvatar do
   self.use_transactional_fixtures = false
   
   before(:all) do
@@ -24,7 +24,7 @@ describe Social::Workers::Twitter::UploadAvatar do
       handle_data = sample_twitter_user(sender1)
       Twitter::REST::Client.any_instance.stubs(:user).returns(handle_data)
       Twitter::User.any_instance.stubs(:profile_image_url).returns(@img_url)
-      Social::Workers::Twitter::UploadAvatar.perform({:account_id => @account.id, :twitter_handle_id => @handle.id})
+      Social::UploadAvatar.perform_async({:account_id => @account.id, :twitter_handle_id => @handle.id})
       @handle.avatar.should_not be_nil
     end
   end
@@ -36,7 +36,7 @@ describe Social::Workers::Twitter::UploadAvatar do
         :twitter_user_id  => @twitter_user.id,
         :prof_img_url     => @img_url
       }
-      Social::Workers::Twitter::UploadAvatar.perform(args)
+      Social::UploadAvatar.perform_async(args)
       @twitter_user.avatar.should_not be_nil
     end
   end

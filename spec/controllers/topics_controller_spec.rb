@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require './app/controllers/topics_controller'
 describe TopicsController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false

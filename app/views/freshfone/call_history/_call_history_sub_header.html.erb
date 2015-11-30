@@ -9,7 +9,7 @@
 	<label><%= t('freshfone.call_history.filter_by_time') %></label>
 </div>
 <div class="filter_tool_select2">
-	<% default_date_range = date_range_val(7.days.ago, Date.today) %>
+	<% default_date_range = call_filter['date_value'].present? ? call_filter['date_value'] : date_range_val(7.days.ago, Date.today) %>
 	<input class="ff_item date_range" id="date_range" type="text" condition="created_at" operator="is_in_the_range" 
 		data-filtername="<%= t('freshfone.call_history.filter_by_time') %>"
 		data-value="<%=default_date_range%>" value="<%=default_date_range%>"

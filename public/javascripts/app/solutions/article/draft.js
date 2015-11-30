@@ -71,6 +71,10 @@ window.App = window.App || {};
           return $('<span />').attr('onclick', 'window.location.reload();').
             html($this.STRINGS.reload).attr('class', 'btn btn-small reload-btn');
         },
+        backButton: function () {
+          return $('<a>').attr('href', "/solution/categories").
+            html($this.STRINGS.back).attr('class', 'btn btn-small back-btn').attr("data-pjax", "#body-container");
+        },
         message: function (msg, success) {
           return $('<span />').html(msg).attr('class', (success ? "" : "delete-confirm-warning-icon"));
         },
@@ -94,6 +98,9 @@ window.App = window.App || {};
           });
           $('.confirm-delete').attr('disabled', !$flag);
         },
+        disableViewOnPortal: function (flag) {
+          $('.portal-preview-icon a, .portal-preview-icon a i').toggleClass('disabled', flag);
+        },
         previewDrafts: function () {
           var data = $('#article-form').data();
           if(data) {
@@ -106,17 +113,20 @@ window.App = window.App || {};
         },
         manipulate: function (response, success) {
           var content = "";
+          var deleted = response.deleted || false;
           response = response || { msg: $this.STRINGS.somethingWrong};
+          if (deleted){ response = { msg: $this.STRINGS.articleDeleted }; }
           if (response.msg) {
             content = this.htmlToStr(this.message(response.msg, success));
-            content += this.htmlToStr(success ? this.liveTimeStamp() : this.reloadButton());
-            content += this.htmlToStr(this.previewDrafts());
+            content += this.htmlToStr(success ? this.liveTimeStamp() : deleted ? this.backButton() : this.reloadButton());
+            content += deleted ? "" : this.htmlToStr(this.previewDrafts());
             this.msgElement.html(content).filter(':hidden').show();
             $('.article-view-edit:visible').hide();
             this.themeChange(!success);
             this.lastUpdatedAt(response);
             this.toggleButtons(success);
             $('#sticky_redactor_toolbar').addClass('has-notification');
+            this.disableViewOnPortal(deleted);
           }
         }
 

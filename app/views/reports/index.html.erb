@@ -1,105 +1,112 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
-  <% if feature?(:advanced_reporting) %>
-  <div class="report-separation ataglance">
-      <div class="report-home-header">
-        <h3 class="title">
-          <b><%=t('adv_reports.at_a_glance')%></b>
-          <div><%=t('adv_reports.reports')%></div>
-        </h3>
-        <div class="reports-icon-at-a-glance pull-right"></div>
+  <div class="admin-header report-head welcome" data-scroll-top="true">
+    <div class="pull-left welcome-message">
+      <div class="content">
+          <span class="head"><%= t('helpdesk_reports.welcome_message.header')%></span>
+          <%= t('helpdesk_reports.welcome_message.intro')%>
       </div>
-      <ul class="report_icons">
-        <%= report_item({:label => t('adv_reports.helpdesk_at_a_glance'), :class => 'helpdesk-glance', :url => reports_helpdesk_glance_reports_url}) %>
-        <%= report_item({:label => t('adv_reports.customer_at_a_glance'), :class => 'customer-at-a-glance', :url => reports_customer_glance_reports_url}) %>
-        <% if feature?(:enterprise_reporting) %>
-        <%= report_item({:label => t('adv_reports.agent_at_a_glance'), :class => 'agent-at-a-glance', :url => reports_agent_glance_reports_url}) %>
-        <%= report_item({:label => t('adv_reports.group_at_a_glance'), :class => 'group-at-a-glance', :url => reports_group_glance_reports_url}) %>
-        <%end%>
-        <% if bi_reports_ui_enabled? %>
-          <%= helpdesk_report_item({:label => t('helpdesk_reports.glance.title'), :class => 'glance', :url => "/reports/v2/glance"}) %>
-        <% end %>
-      </ul>
+      <a href="https://support.freshdesk.com/solution/folders/270450" target="_blank"><%= t('helpdesk_reports.welcome_message.link_title')%></a>
+    </div>
+    <div class="seperator pull-left"></div>
+    <div class="report-link-block pull-right">
+      <a class="report-link" href="<%=old_reports_url%>"><%= t('helpdesk_reports.view_old_reports')%> <span class="view-all-arrow"></span></a>
+    </div>
+    <div class="clear"></div>
   </div>
-  <%end%>
-  <div class="report-separation summary">
-      <div class="report-home-header">
-      <h3 class="title">
-        <b><%=t('adv_reports.summary')%></b>
-        <div><%=t('adv_reports.reports')%></div>
-      </h3>
-      <div class="reports-icon-summary  pull-right"></div>
+  <% if feature?(:advanced_reporting) || feature?(:enterprise_reporting) %>
+    <div class="report_category odd ataglance ">
+       <h3 class="title"><span><%= t('helpdesk_reports.helpdesk_analysis') %></span></h3>
+           <ul class="report_icon">
+              <% if feature?(:advanced_reporting) %>
+                <li>
+                     <a href="/reports/v2/glance" data-pjax="#body-container" >
+                        <div class="img-outer"><i class="fsize-36 ficon-helpdesk_at_glance"></i></div>
+                        <div class="report-icon-text">Helpdesk<br/>In-depth</div>
+                     </a>
+                </li>
+              <% end %>
+              <% if feature?(:enterprise_reporting) %>
+                  <li>
+                     <a href="/reports/v2/ticket_volume" data-pjax="#body-container">
+                        <div class="img-outer"><i class="fsize-36 ficon-ticket-volume"></i></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.ticket_volume.title') %></div>
+                     </a>
+                  </li>
+              <% end %>
+              <% if freshfone_reports? %>
+                <li>
+                  <a href="<%= reports_freshfone_summary_reports_url %>">
+                        <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
+                        <div class="report-icon-text"><%= t('reports.freshfone.ff_report_title') %></div>
+                   </a>
+                </li>
+              <%end%>
+              <% if chat_activated? %>
+                <li>
+                  <a href="<%= reports_freshchat_summary_reports_url %>">
+                        <div class="img-outer"><i class="fsize-36 ficon-live_chat"></i></div>
+                        <div class="report-icon-text"><%= t('reports.freshchat.report_title') %></div>
+                   </a>
+                </li>
+              <%end%>
+           </ul>
     </div>
-    <ul class="report_icons">
-      <% @t_reports.each_with_index do |report, index| %>
-        <%= report_item({:label => report[:label], :class => "summary-#{index+1}", :url => report_path(index+1)}) %>
-      <% end %>
-      <% if feature?(:timesheets) && privilege?(:view_time_entries) %>
-        <%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'time-sheet-report', :url => timesheet_reports_url}) %>
-      <%end%>
-      <% if feature?(:surveys) %>
-        <%= report_item({:label => t('reports.surveys_title_nav'), :class => 'customer-satisfaction-report', :url => survey_activity_url})%>
-      <%end%>
-      <% if freshfone_reports? %>
-        <%= report_item({:label => t('reports.freshfone.ff_report_title'), :class => 'summary-report-icon', :url => reports_freshfone_summary_reports_url}) %>
-      <%end%>
-      <% if chat_activated? %>
-        <%= report_item({:label => t('reports.freshchat.report_title'), :class => 'chat-summary', :url => reports_freshchat_summary_reports_url}) %>
-      <%end%>
-      <% if bi_reports_ui_enabled? %>
-        <%= helpdesk_report_item({:label => t('helpdesk_reports.agent_summary.title'), :class => 'summary-1', :url => "/reports/v2/agent_summary"}) %>
-        <%= helpdesk_report_item({:label => t('helpdesk_reports.group_summary.title'), :class => 'summary-2', :url => "/reports/v2/group_summary"}) %>
-      <% end %>
-    </ul>
+  <% end %>
+  <div class="report_category odd summary ">
+       <h3 class="title"><span><%= t('helpdesk_reports.productivity') %></span></h3>
+           <ul class="report_icon">
+              <li>
+               <a href="/reports/v2/agent_summary" data-pjax="#body-container">
+                  <div class="img-outer"><i class="fsize-36 ficon-summary-1"></i></div>
+                  <div class="report-icon-text"><%= t('helpdesk_reports.agent_summary.title')%></div>
+               </a>
+            </li>
+            <li>
+               <a href="/reports/v2/group_summary" data-pjax="#body-container">
+                  <div class="img-outer"><i class="fsize-36 ficon-summary-2"></i></div>
+                  <div class="report-icon-text"><%= t('helpdesk_reports.group_summary.title') %></div>
+               </a>
+            </li>
+             <%if feature?(:enterprise_reporting) %>
+                <li>
+                   <a href="/reports/v2/performance_distribution" data-pjax="#body-container">
+                      <div class="img-outer"><i class="fsize-36 ficon-performance-distribution"></i></div>
+                      <div class="report-icon-text"><%= t('helpdesk_reports.performance_distribution.title') %></div>
+                   </a>
+                </li>
+              <% end %>
+              <% if feature?(:timesheets) && privilege?(:view_time_entries) %>
+                <li>
+                  <a href="<%= timesheet_reports_url %>">
+                        <div class="img-outer"><i class="fsize-36 ficon-time_sheet"></i></div>
+                        <div class="report-icon-text"><%= t('reports.timesheet_reports.index.title') %></div>
+                   </a>
+                </li>
+              <%end%>
+           </ul>
   </div>
-  <% if feature?(:enterprise_reporting) %>
-  <div class="report-separation load">
-      <div class="report-home-header">
-      <h3 class="title">
-        <b><%=t('adv_reports.load_analysis')%></b>
-        <div><%=t('adv_reports.reports')%></div>
-      </h3>
-      <div class="reports-icon-load-analysis  pull-right"></div>
+  <% if feature?(:enterprise_reporting) || feature?(:surveys) %>
+    <div class="report_category odd customer ">
+         <h3 class="title"><span><%= t('helpdesk_reports.customer_happiness') %></span></h3>
+             <ul class="report_icon">
+               <% if feature?(:enterprise_reporting) %>
+                  <li>
+                     <a href="/reports/v2/customer_report" data-pjax="#body-container">
+                        <div class="img-outer"><i class="fsize-36 ficon-customer_reports"></i></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.customer_report.title') %></div>
+                     </a>
+                  </li>
+                <% end %>
+                <% if feature?(:surveys) %>
+                  <li>
+                     <a href="<%= survey_activity_url %>">
+                          <div class="img-outer"><i class="fsize-36 ficon-customer_satisfaction"></i></div>
+                          <div class="report-icon-text"><%= t('reports.surveys_title_nav') %></div>
+                     </a>
+                  </li>
+                <%end%>
+             </ul>
     </div>
-    <ul class="report_icons">
-      <%= report_item({:label => t('adv_reports.helpdesk_load_analysis'), :class => 'helpdesk-load-analysis', :url => reports_analysis_reports_url}) %>
-      <%= report_item({:label => t('adv_reports.helpdesk_performance_analysis'), :class => 'helpdesk-performance-analysis', :url => reports_performance_analysis_reports_url}) %>
-      <% if bi_reports_ui_enabled? %>
-        <%= helpdesk_report_item({:label => t('helpdesk_reports.ticket_volume.title'), :class => 'ticket-volume', :url => '/reports/v2/ticket_volume'}) %>
-        <%= helpdesk_report_item({:label => t('helpdesk_reports.performance_distribution.title'), :class => 'performance', :url => '/reports/v2/performance_distribution'}) %>
-      <% end %>
-    </ul>
-    </div>
-  <div class="report-separation comparison">
-      <div class="report-home-header">
-      <h3 class="title">
-        <b><%=t('adv_reports.comparison')%></b>
-        <div><%=t('adv_reports.reports')%></div>
-      </h3>
-      <div class="reports-icon-comparison  pull-right"></div>
-    </div>
-    <ul class="report_icons">
-      <%= report_item({:label => t('adv_reports.agent_comparison'), :class => 'agent-comparison', :url => reports_agents_comparison_reports_url}) %>
-      <%= report_item({:label => t('adv_reports.group_comparison'), :class => 'group-comparison', :url => reports_groups_comparison_reports_url}) %>
-    </ul>
-    </div>
-    <div class="report-separation topn">
-      <div class="report-home-header">
-      <h3 class="title">
-        <b><%=t('adv_reports.top_n_analysis')%></b>
-        <div><%=t('adv_reports.reports')%></div>
-      </h3>
-      <div class="reports-icon-top-n-analysis  pull-right"></div>
-    </div>
-    <ul class="report_icons">
-      <%= report_item({:label => t('adv_reports.agent_top_n_analysis'), :class => 'agent-top-n-analysis', :url => reports_agent_analysis_reports_url}) %>
-      <%= report_item({:label => t('adv_reports.group_top_n_analysis'), :class => 'group-top-n-analysis', :url => reports_group_analysis_reports_url}) %>
-      <%= report_item({:label => t('adv_reports.customer_top_n_analysis'), :class => 'customer-top-n-analysis', :url => reports_customers_analysis_reports_url}) %>
-      <% if bi_reports_ui_enabled? %>
-        <%= helpdesk_report_item({:label => t('helpdesk_reports.customer_report.title'), 
-          :class => 'customer-report', :url => '/reports/v2/customer_report'}) %>
-      <% end %>
-    </ul>
-    </div>
-  <%end%>
+  <% end %>
 </div>

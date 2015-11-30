@@ -3,7 +3,6 @@ class ArticleObserver < ActiveRecord::Observer
 	observe Solution::Article
 	require 'nokogiri'
 
-
 	def before_save(article)
 		remove_script_tags(article)
 		set_un_html_content(article)
@@ -14,8 +13,12 @@ class ArticleObserver < ActiveRecord::Observer
 		article.seo_data ||= {}
 	end
 
+	def before_destroy(article)
+	    create_activity(article, 'delete_article')
+	end
+
 	def after_create(article) 
-		create_activity(article)
+		create_activity(article, 'new_article')
 		article.account.clear_solution_categories_from_cache
 	end
 	
@@ -25,19 +28,28 @@ class ArticleObserver < ActiveRecord::Observer
 
 	def after_update(article)
 		article.account.clear_solution_categories_from_cache if article.folder_id_changed?
+		create_activity(article, 'published_article') if article.published? and article.status_changed?
+		create_activity(article, 'unpublished_article') if !article.published? and article.status_changed?
 	end
 
 private
 
-	def create_activity(article)
-      article.activities.create(
-        :description => 'activities.solutions.new_solution.long',
-        :short_descr => 'activities.solutions.new_solution.short',
-        :account => article.account,
-        :user => article.user,
-        :activity_data => {}
-      )
-  	end
+ 	def create_activity(article, type)
+		article.activities.create(
+			:description => "activities.solutions.#{type}.long",
+			:short_descr => "activities.solutions.#{type}.short",
+			:account 		=> article.account,
+			:user 			=> User.current,
+			:activity_data 	=> {
+									:path => Rails.application.routes.url_helpers.solution_article_path(article.id),
+								 	:url_params => {
+												 		:id => article.id,
+												 		:path_generator => 'solution_article_path'
+													},
+								 	:title => article.to_s
+								}
+		)
+	end
 
 	def remove_tag response, tag
 	    doc = Nokogiri::HTML.parse(response)

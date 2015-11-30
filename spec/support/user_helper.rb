@@ -100,6 +100,56 @@ module UsersHelper
     new_user.reload
   end
 
+  def add_new_user_with_fb_id(account,options={})
+    if options[:fb_profile_id]
+      user = User.find_by_fb_profile_id(options[:fb_profile_id])
+      return user if user
+    end
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :fb_profile_id => options[:fb_profile_id] || Faker::Name.name,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
+                                    :language => "en")
+    new_user.save
+    new_user.reload
+  end
+
+  def add_new_user_with_twitter_id(account,options={})
+    if options[:twitter_id]
+      user = User.find_by_fb_profile_id(options[:twitter_id])
+      return user if user
+    end
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :twitter_id => options[:twitter_id] || "@#{Faker::Name.name}",
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :customer_id => options[:customer_id] || nil,
+                                    :language => "en")
+    new_user.save
+    new_user.reload
+  end
+  
+  # Helpers
+  def other_user
+    u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
+    u.update_column(:email, Faker::Internet.email)
+    u.reload
+  end
+
+  def deleted_user
+    user = User.find { |x| x.id != @agent.id } || create_dummy_customer
+    user.update_column(:deleted, true)
+    user.update_column(:email, Faker::Internet.email)
+    user.reload
+  end
+
   def get_default_user
     User.first_or_create do |user|
       user.name = Faker::Name.name

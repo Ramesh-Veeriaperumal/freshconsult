@@ -192,7 +192,7 @@ var FreshfoneDialpadEvents
 		}, 
 
 		showDialpadElem: function(){
-			this.$number.val('').focus();
+			this.$number.focus();
 			this.$searchContainer.hide();	
 			this.$contactDetails.hide();	
 		},

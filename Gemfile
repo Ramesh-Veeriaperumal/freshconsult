@@ -10,6 +10,8 @@ gem 'rack-cors', '~> 0.3.1'
 gem "syck", :platform => [:mri_20, :mri_21]
 
 gem "json", "~> 1.8"
+gem 'jbuilder', "2.2.13"
+gem 'strong_parameters', "0.2.3" # Used for API params validation
 
 gem "mysql2", "~> 0.3.0"
 
@@ -49,6 +51,7 @@ gem "mail"
 gem "i18n", "~> 0.6.0"
 gem "RedCloth", "4.2.9"
 gem "authlogic", "~> 3.4.2"
+gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.2.2"
 gem "omniauth-oauth"
@@ -238,7 +241,13 @@ group :test do
   gem "database_cleaner"
   gem "fuubar"
   gem "json-compare", "0.1.8"
-  gem "minitest-rails", "~> 1.0" # Used by API and Search
+  gem "rspec_junit_formatter" # Used by API
+  gem "simplecov-rcov" 
+  gem "rubocop-checkstyle_formatter" # Used by API
+  gem "minitest-rails", "~> 1.0" # Used by API
+  gem "minitest-reporters" # Used by API
+  gem 'json_expressions' # Used by API
+  gem "timecop" # Used by API
 end
 
 # group :development, :assets do

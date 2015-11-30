@@ -8,6 +8,7 @@ class Middleware::TrustedIp
 
   def call(env)
     env['CLIENT_IP'] ||= Rack::Request.new(env).ip()
+    req_path = env['PATH_INFO']
     @status, @headers, @response = @app.call(env)
     return [@status, @headers, @response] if SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0])
     shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
@@ -19,8 +20,8 @@ class Middleware::TrustedIp
       unless env['rack.session']['user_credentials_id'].nil?
         if trusted_ips_enabled?
           unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'])
-            @status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
-                                        ['Your IPAddress is blocked by the administrator']]
+            @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
+                                                        'Your IPAddress is blocked by the administrator')
             return [@status, @headers, @response]
           end
         end
@@ -28,8 +29,8 @@ class Middleware::TrustedIp
     end
     [@status, @headers, @response]
     rescue DomainNotReady => ex
-      @status, @headers, @response = [302, {"Location" => "/DomainNotReady.html"},
-                                          ['Your data is getting moved to a new datacenter.'] ]
+      @status, @headers, @response = set_response(req_path, 404, "/DomainNotReady.html", 
+                                                  'Your data is getting moved to a new datacenter.')
       return [@status, @headers, @response]
     ensure
       Thread.current[:account] = nil
@@ -60,6 +61,14 @@ class Middleware::TrustedIp
     current_ip_version = current_ip.ipv4? ? "ipv4?" : "ipv6?"
     if start_ip.send(current_ip_version) && end_ip.send(current_ip_version)
       return true if current_ip >= start_ip && current_ip <= end_ip
+    end
+  end
+
+  def set_response(req_path, api_status, location_header, message)
+    if req_path.starts_with?('/api/')
+      return [api_status, {"Content-type" => "application/json"}, [{message: message}.to_json]]
+    else
+      return [302, {"Location" => location}, [message]]
     end
   end
 

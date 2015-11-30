@@ -1,5 +1,5 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/unresolved_tickets' %>
-<div class="supervisor-dashboard">
+<div class="supervisor-dashboard" id="supervisor-dashboard">
 	<div class="loading-box full-loader hide" id="full-loader"> 
 		<div class="sloading loading-small loading-left" >
 			<%=t('unresolved_tickets.loading_label') %>...
@@ -32,10 +32,10 @@
 <script type="text/template" id="filter-data-template">
 	<li class="muted"><%=t('unresolved_tickets.filtered_by_label') %>:</li>
 	<li>
-		<%=t('unresolved_tickets.group_label') %> : <strong> {{= Array.prototype.join.call(groupfilter, ",")}} </strong>
+		<%=t('unresolved_tickets.group_label') %> : <strong> {{= Array.prototype.join.call(groupfilter, ", ")}} </strong>
 	</li>
 	<li>
-		<%=t('unresolved_tickets.agent_label') %> : <strong> {{= Array.prototype.join.call(agentfilter, ",")}} </strong>
+		<%=t('unresolved_tickets.agent_label') %> : <strong> {{= Array.prototype.join.call(agentfilter, ", ")}} </strong>
 	</li>
 </script>
 <%= javascript_tag do %>

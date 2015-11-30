@@ -232,9 +232,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def agent_permission user
       case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
       when :assigned_tickets
-        ["responder_id=?", user.id]
+        ["`helpdesk_tickets`.responder_id=?", user.id]
       when :group_tickets
-        ["group_id in (?) OR responder_id=? OR requester_id=?", 
+        ["`helpdesk_tickets`.group_id in (?) OR `helpdesk_tickets`.responder_id=? OR `helpdesk_tickets`.requester_id=?", 
                     user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
       when :all_tickets
         []
@@ -242,7 +242,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def find_by_param(token, account)
-      find_by_display_id_and_account_id(token, account.id)
+      where(display_id: token, account_id: account.id).first
     end
 
     def find_all_by_param(token)
@@ -853,6 +853,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # To keep flexifield & @custom_field in sync
 
   def custom_field
+    # throws error in retrieve_ff_values if flexifield is nil and custom_field is not set. Hence the check
+    return nil unless @custom_field || flexifield
     @custom_field ||= retrieve_ff_values
   end
 
@@ -930,6 +932,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def linked_to_integration?(installed_app)
     self.linked_applications.where(:id => installed_app.id).any?
+  end
+
+  # Used by API v2
+  def self.filter_conditions(ticket_filter = nil, current_user = nil)
+    {
+      default: {
+        conditions: { spam: false }
+      },
+      spam: {
+        conditions: { spam: true }
+      },
+      deleted: {
+        conditions: { deleted: true, helpdesk_schema_less_tickets: { boolean_tc02: false } },
+        joins: :schema_less_ticket
+      },
+      new_and_my_open: {
+        conditions: { status: OPEN,  responder_id: [nil, current_user.try(:id)], spam: false }
+      },
+      watching: {
+          :conditions => {helpdesk_subscriptions: {user_id: current_user.id}, spam: false},
+          :joins => :subscriptions
+      },
+      requester_id: {
+        conditions: { requester_id: ticket_filter.try(:requester_id), spam: false }
+      },
+      company_id: { 
+        conditions: { users: { customer_id: ticket_filter.try(:company_id) }, spam: false },
+        joins: :requester
+      },
+      updated_since: {
+        conditions: ['helpdesk_tickets.updated_at >= ? AND helpdesk_tickets.spam = false', ticket_filter.try(:updated_since).try(:to_time).try(:utc)]
+      }
+    }
   end
 
   private

@@ -10,7 +10,8 @@ HelpdeskReports.CoreUtil = {
         metrics_url : "/fetch_metrics",
         tickets_url : "/fetch_ticket_list",
         configure_export_url : "/configure_export",
-        export_url : "/export_csv",
+        export_url : "/export_tickets",
+        email_reports: "/email_reports"
     },
     reports_specific_disabled_filter:{
         "customer_report":["agent_id","group_id","company_id"]
@@ -208,7 +209,7 @@ HelpdeskReports.CoreUtil = {
     setCurrentGroupBy: function () {
         var locals = HelpdeskReports.locals;
         
-        var current_group = this.setDefaultGroupByOptions();
+        var current_group = this.setDefaultGroupByOptions(HelpdeskReports.locals.active_metric);
         
         if (locals.custom_fields_group_by.length) {
             current_group.push(locals.custom_fields_group_by[0]);
@@ -218,13 +219,13 @@ HelpdeskReports.CoreUtil = {
     GroupByNonCustomFieldAcnt: function () {
         var locals = HelpdeskReports.locals;
         locals.custom_fields_group_by = [];
-        locals.current_group_by = this.setDefaultGroupByOptions();
+        locals.current_group_by = this.setDefaultGroupByOptions(HelpdeskReports.locals.active_metric);
     },
-    setDefaultGroupByOptions: function () {
+    setDefaultGroupByOptions: function (active_metric) {
         var groupby = [];
         var constants = jQuery.extend({}, HelpdeskReports.Constants.Glance);
 
-        if (constants.status_metrics.indexOf(HelpdeskReports.locals.active_metric) > -1) {
+        if (constants.status_metrics.indexOf(active_metric) > -1) {
             groupby = constants.group_by_with_status.slice();
         } else {
             groupby = constants.group_by_without_status.slice();
@@ -365,26 +366,33 @@ HelpdeskReports.CoreUtil = {
             event.preventDefault();
             jQuery('body').removeClass('preventscroll');
         });
-
         jQuery('.ticket-list-wrapper').on('click.helpdesk_reports', "[data-action='toggle-ticketlist']", function () {
                 //Toggle sla Links & Labels
                  var el = this;
-                 var link = jQuery(el).data('link');
-                 jQuery(el).addClass('hide');
-                 jQuery(el).siblings().removeClass('hide');
+                 var link = jQuery(el).attr('data-link');
+                 var value_of_metric = jQuery(el).data('metric-value');
+                 jQuery(el).addClass('active');
                  if( link == 'violated'){
-                    jQuery('.compliant .title').addClass('hide');
-                    jQuery('.compliant .toggle').removeClass('hide');
-                    _this.actions.toggleTicketList(true);
+                    jQuery('[data-link="compliant"]').removeClass('active');
+                    _this.actions.toggleTicketList(true,value_of_metric);
                  } else{
-                    jQuery('.violated .title').addClass('hide');
-                    jQuery('.violated .toggle').removeClass('hide');
-                    _this.actions.toggleTicketList(false);
+                    jQuery('[data-link="violated"]').removeClass('active');
+                    _this.actions.toggleTicketList(false,value_of_metric);
                  }
         });
         /* Export Section */
-        jQuery(".export_title a, .placeholder #export_cancel").on('click',function(){   
+        jQuery(".export_title a, #export_cancel").on('click',function(){   
                 _this.toggleExportSection();
+        });
+         
+        jQuery('#reports_wrapper').on('click.helpdesk_reports', '#generate_pdf_async', function(){
+            _this.generatePdfAsync();
+            var timeOutSeconds = 5
+            var btn = jQuery(this);
+            btn.prop('disabled', true);
+            setTimeout(function(){
+                btn.prop('disabled', false);
+            }, timeOutSeconds*1000);
         });
         
         _this.addIndexToFields();
@@ -424,6 +432,8 @@ HelpdeskReports.CoreUtil = {
         hideTicketList: function () {
             if(jQuery('#ticket_list_wrapper').hasClass('active')) {
                 jQuery('#ticket_list_wrapper').removeClass('active');
+                //Always hide the export section & based on availability of tickets unhide
+                jQuery(".export_title").addClass('hide');
                 //Always hide the sla tabs & based on active metric it will be unhidden
                 jQuery(".sla-toggle-tab").addClass('hide');
             }
@@ -480,29 +490,54 @@ HelpdeskReports.CoreUtil = {
              //Reset the Export Button
              jQuery("#export_submit").removeAttr('disabled').removeClass('disabled').html("Export");
              jQuery(".success_message").removeAttr('style').addClass('hide');
+             jQuery(".error_message").removeAttr('style').addClass('hide');
         },
-        constructSlaTabs : function(el){
+        constructSlaTabs : function(metric_value){
             //Unhide the SLA Toggle in Ticket list
             var _this = HelpdeskReports.CoreUtil;
             jQuery(".sla-toggle-tab").removeClass('hide');
-            var metric_value = jQuery(el).html();
-            //populate the tab title's
-            var compliant_title =  metric_value + " Compliant tickets";
-            jQuery(".sla-toggle-tab .compliant .title").html(compliant_title);
-            jQuery(".sla-toggle-tab .compliant a").html(compliant_title);
+            var report_type = HelpdeskReports.locals.report_type;
 
-            //populate the tab title's
-            var violated_title =  _this.addsuffix(100 - parseInt(metric_value)) + " Violated tickets";
-            jQuery(".sla-toggle-tab .violated .title").html(violated_title);
-            jQuery(".sla-toggle-tab .violated a").html(violated_title);
+            if(report_type == "customer_report"){
+                //populate the tab title's
+                var violated_title =  _this.addsuffix(metric_value) + " Violated tickets";
+                jQuery(".sla-toggle-tab .link1 .toggle").html(violated_title);
+                jQuery(".sla-toggle-tab .link1 .toggle").attr('data-link','violated');
+
+                //populate the tab title's
+                var complaint_val = 100 - parseInt(metric_value);
+                var complaint_title =  _this.addsuffix(complaint_val) + " Compliant tickets";
+                jQuery(".sla-toggle-tab .link2 .toggle").html(complaint_title);
+                jQuery(".sla-toggle-tab .link2 .toggle").attr('data-link','compliant');
+                
+                //add value attribute to links
+                jQuery(".sla-toggle-tab .link1 .toggle").data('metric-value',metric_value);
+                jQuery(".sla-toggle-tab .link2 .toggle").data('metric-value',complaint_val);
+            } 
+
+            if(report_type == "agent_summary" || report_type == "group_summary"){
+                //populate the tab title's
+                var compliant_title =  _this.addsuffix(metric_value) + " Compliant tickets";
+                jQuery(".sla-toggle-tab .link1 .toggle").html(compliant_title);
+                jQuery(".sla-toggle-tab .link1 .toggle").attr('data-link','compliant');
+
+                //populate the tab title's
+                var violated_val = 100 - parseInt(metric_value);
+                var violated_title =  _this.addsuffix(violated_val) + " Violated tickets";
+                jQuery(".sla-toggle-tab .link2 .toggle").html(violated_title);
+                jQuery(".sla-toggle-tab .link2 .toggle").attr('data-link','violated');
+                
+                //add value attribute to links
+                jQuery(".sla-toggle-tab .link1 .toggle").data('metric-value',metric_value);
+                jQuery(".sla-toggle-tab .link2 .toggle").data('metric-value',violated_val);
+            }
+            
         },
         resetSlaLinks : function(){
-            jQuery('.compliant .title').removeClass('hide');
-            jQuery('.compliant .toggle').addClass('hide');
-            jQuery('.violated .title').addClass('hide');
-            jQuery('.violated .toggle').removeClass('hide');
+            jQuery('.link1 .toggle').addClass('active');
+            jQuery('.link2 .toggle').removeClass('active');
         },
-        toggleTicketList : function(value){
+        toggleTicketList : function(value,metric_value){
              var _this = HelpdeskReports.CoreUtil;
              var list_params = HelpdeskReports.locals.list_params;
              //Update supplement condition
@@ -511,7 +546,16 @@ HelpdeskReports.CoreUtil = {
                 supplement_condition.value = value; 
              }
              jQuery("#ticket_list").html("").addClass('sloading loading-small');
-             _this.fetchTickets(list_params);
+             //Don't make service call if metric value is zero.There will be no data eventually.
+             if(metric_value && metric_value != 0){
+                _this.fetchTickets(list_params);   
+             }else{
+                var empty = [];
+                //Hide the export button for empty data
+                 jQuery(".export_title").addClass('hide');
+                _this.appendTicketList(empty);  
+             }
+             
         }
     },
     addIndexToFields: function () {
@@ -735,7 +779,7 @@ HelpdeskReports.CoreUtil = {
         var date = this.calculateDateLag();
         var previous_value = jQuery("#date_range").val(); //saved filter
         var config = {
-                earliestDate: Date.parse('04/01/2013'),
+                earliestDate: Date.parse('04/01/2010'),
                 latestDate: Date.parse(date.endDate),
                 presetRanges: [{
                     text: 'Last 7 Days',
@@ -823,9 +867,9 @@ HelpdeskReports.CoreUtil = {
                 _this.actions.setTicketListFlag();
                 //Show Export Section
                 if( data && data.length > 0){
-                    jQuery(".placeholder").removeClass('hide');
-                } else{
-                    jQuery(".placeholder").addClass('hide');
+                    jQuery(".export_title").removeClass('hide');
+                }else{
+                    jQuery(".export_title").addClass('hide');
                 }
             },
             error: function (data) {
@@ -894,19 +938,27 @@ HelpdeskReports.CoreUtil = {
 
         //Data for Ajax request
         var export_options = {};
-        export_options.query_hash = HelpdeskReports.locals.list_params;
-        export_options.export_field = [];
+        export_options.query_hash = HelpdeskReports.locals.list_params[0];
+        export_options.export_fields = {};
+        export_options.select_hash = HelpdeskReports.locals.select_hash;
+        //Add the metric title and value to the request payload
+        export_options.metric_title = jQuery(".title_wrapper .metric_title").html().trim();
+        export_options.metric_value = jQuery(".title_wrapper .metric_value").html().trim();
         //Push all the checked input fields in export list
         jQuery("#ticket_fields input:checked").each(function(idx,el){
-                export_options.export_field.push(jQuery(el).val());
+                export_options.export_fields[jQuery(el).val()] = jQuery(el).data('label');
         });
+
+        var params = {
+            export_params: export_options
+        };
 
         var opts = {
                 url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.export_url,
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data : Browser.stringify(export_options),
+                data : Browser.stringify(params),
                 success: function (data) {
                     _this.actions.flushExportSection();                   
                    jQuery(".success_message").removeClass("hide");
@@ -917,10 +969,10 @@ HelpdeskReports.CoreUtil = {
                 },
                 error: function (data) {
                     //_this.appendExportError();
-                     _this.actions.flushExportSection();
-                    jQuery(".success_message").removeClass("hide");
+                    _this.actions.flushExportSection();
+                    jQuery(".error_message").removeClass("hide");
                     setTimeout(function() {
-                        jQuery('.success_message').fadeOut('slow');
+                        jQuery('.error_message').fadeOut('slow');
                     }, 2500); 
                 }
             }
@@ -959,7 +1011,7 @@ HelpdeskReports.CoreUtil = {
     toggleExportSection : function(){
             var _this = this;
             
-            jQuery(".fields").slideToggle("slow",function(){
+            jQuery(".fields").slideToggle("fast",function(){
                     var is_opened = jQuery(this).is(":visible"); 
                     if(is_opened){
                         jQuery(".export_title .title").removeClass('hide');
@@ -977,7 +1029,94 @@ HelpdeskReports.CoreUtil = {
                 });
     },
     
-                    /* End of Export Section */
+                    /* End of Export Section */              
+    generatePdfAsync: function (){
+        var _this = this;
+        var params = _this.pdfParams();
+        var opts = {
+            url: _this.CONST.base_url + HelpdeskReports.locals.report_type + _this.CONST.email_reports,
+            type: 'POST',
+            dataType: 'html',
+            contentType: 'application/json',
+            data: Browser.stringify(params),
+            timeout: _this.timeouts.main_request,
+            success: function (data) {
+                var text = "<span id='email_reports_msg'>Reports will be sent to your email shortly!</span>";
+                _this.showResponseMessage(text);     
+            },
+            error: function (data) {
+                var text = "<span id='email_reports_msg'>Something went wrong, please try again after some time.</span>";
+                _this.showResponseMessage(text);
+            }
+        }
+        _this.makeAjaxRequest(opts);
+    },
+    pdfParams: function () {
+        var _this = this;
+        var pdf_params;
+        if(HelpdeskReports.locals.report_type === "glance"){
+            pdf_params = HelpdeskReports.locals.default_params;
+            var bucket_query=[];
+            for (var i = 0; i < pdf_params.length; i++) {
+                var group_by = this.setDefaultGroupByOptions(pdf_params[i].metric);
+                
+                var custom_grp_by = HelpdeskReports.locals.active_custom_field || HelpdeskReports.locals.custom_fields_group_by[0]
+                if(custom_grp_by){
+                    group_by.push(custom_grp_by)
+                }
+                    
+                pdf_params[i].group_by = group_by;
+                if (HelpdeskReports.Constants.Glance.bucket_condition_metrics.indexOf(pdf_params[i].metric) > -1) {
+                    var bucket_conditions = HelpdeskReports.Constants.Glance.metrics[pdf_params[i].metric].bucket;
+                    var bucket_param = {};
+                    var bucket_hash = {};
+                    bucket_hash = {
+                        metric : pdf_params[i].metric,
+                        bucket : true,
+                        bucket_conditions : bucket_conditions,
+                        reference : false,
+                        group_by : []
+                    }
+                    bucket_param = jQuery.extend({},pdf_params[0], bucket_hash);
+                    bucket_query.push(bucket_param);
+                 }
+            }
+            pdf_params = pdf_params.concat(bucket_query);
+        } else {
+            pdf_params = HelpdeskReports.locals.params;
+        }
+        var trend_args = _this.getTrendArgs();
+        var pdf_args = {
+            query_hash: pdf_params,
+            select_hash:  HelpdeskReports.locals.select_hash,
+            custom_field: HelpdeskReports.locals.custom_fields_group_by,
+            trend: trend_args
+        }; 
+        return pdf_args; 
+    },
+    showResponseMessage: function(message){
+        jQuery("#email_reports_msg").remove();
+        var msg_dom = jQuery("#noticeajax");
+        msg_dom.prepend(message);
+        msg_dom.show();
+        jQuery("<a />").addClass("close").attr("href", "#").appendTo(msg_dom).on('click.helpdesk_reports', function(){
+            msg_dom.fadeOut(600);
+            return false;
+        });
+        setTimeout(function() {    
+            jQuery("#noticeajax a").trigger( "click" );  
+            msg_dom.find("a").remove();
+        }, 20700);
+        
+    },
+    getTrendArgs: function(){
+        var trend_args = {
+            trend: HelpdeskReports.locals.trend,
+            response_trend: HelpdeskReports.locals.response_trend,
+            resolution_trend: HelpdeskReports.locals.resolution_trend
+        }
+        return trend_args;
+    },
     flushLocals: function () {
         HelpdeskReports.locals = {};
     },

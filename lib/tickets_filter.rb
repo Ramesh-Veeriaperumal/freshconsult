@@ -90,7 +90,8 @@ module TicketsFilter
     sort_fields = SORT_FIELDS.clone
     if Account.current && Account.current.features_included?(:sort_by_customer_response)
       sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
-    end      
+      sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
+    end
     sort_fields.map { |i| [I18n.t(i[1]), i[0]] }
   end
 

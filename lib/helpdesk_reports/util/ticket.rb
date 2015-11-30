@@ -80,4 +80,16 @@ module HelpdeskReports::Util::Ticket
     end
   end
   
+  def presentable_format value, metric
+    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Avg" ? time_format(value) : value
+  end
+  
+  def time_format seconds
+    minutes = (seconds/60)%60
+    minutes = minutes > 9 ? "#{minutes}" : "0#{minutes}"
+    hours = seconds/(60*60)
+    hours = hours > 9 ? "#{hours}" : "0#{hours}"
+    "#{hours}:#{minutes}"
+  end
+  
 end

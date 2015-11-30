@@ -20,7 +20,10 @@ defaults: &defaults
     - [free_supervisor]
     - [facebook]
     - [premium_facebook]
+    - [fb_split_tickets]
     - [facebook_comments]
+    - [dev_notification_worker]
+    - [upload_avatar_worker]
     - [twitter]
     - [premium_twitter]
     - [trial_facebook]
@@ -58,6 +61,9 @@ defaults: &defaults
     - [es_v2_toggle]
     - [bulk_scenario]
     - [github]
+    - [report_export_queue]
+    - [update_users_company_id]
+    - [update_tickets_company_id]
 
 development:
   <<: *defaults

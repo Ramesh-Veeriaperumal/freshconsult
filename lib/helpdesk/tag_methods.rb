@@ -46,4 +46,20 @@ module Helpdesk::TagMethods
                                                 })
   end
 
+  # Used by API v2
+  def construct_tags(tags_to_be_added)
+    tag_list = []
+    # add tags to the item which already exists
+    # not using cache as the tags can be added more often. Hence using cache will result in full array. 
+    existing_tags = current_account.tags.where(:name => tags_to_be_added)
+    tag_list.push(*existing_tags)
+    # Collect new tags to be added
+    new_tags = tags_to_be_added - existing_tags.collect(&:name)
+    new_tags.each do |tag_string|
+      # create new tag and add to the item
+      tag_list << current_account.tags.new(:name => tag_string)
+    end
+    tag_list
+  end
+
 end

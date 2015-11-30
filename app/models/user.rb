@@ -219,6 +219,41 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
+    # Used by API V2
+    def contact_filter(contact_filter)
+      {
+        deleted: {
+          conditions: { deleted: true }
+        },
+        verified: {
+          conditions: { deleted: false, active: true }
+        },
+        unverified: {
+          conditions: { deleted: false, active: false }
+        },
+        blocked: {
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
+        },
+        all: {
+          conditions: { deleted: false, blocked: false }
+        },
+        company_id: {
+          conditions: { customer_id: contact_filter.company_id }
+        },
+        email: {
+          joins: :user_emails, 
+          # It is guranteed that all contacts in FD have atleast one entry in user_emails table. 
+          conditions: { user_emails: { email: contact_filter.email }}
+        },
+        phone: {
+          conditions: { phone: contact_filter.phone }
+        },
+        mobile: {
+          conditions: { mobile: contact_filter.mobile }
+        }
+      }
+    end
+
     # protected :find_by_email_or_name, :find_by_an_unique_id
   end
 
@@ -335,6 +370,19 @@ class User < ActiveRecord::Base
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
+    end
+    true
+  end
+
+  # Used by API V2
+  def create_contact!
+    self.avatar = self.avatar
+    return false unless save_without_session_maintenance
+    if (!self.deleted and !self.email.blank?)
+      portal = nil
+      force_notification = false
+      args = [ portal, force_notification ]
+      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end
@@ -602,6 +650,7 @@ class User < ActiveRecord::Base
   
   def make_customer
     return true if customer?
+    set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
       agent.destroy
@@ -713,6 +762,25 @@ class User < ActiveRecord::Base
 
   def company_id
     self.customer_id
+  end
+
+  # failed_login_count increases for each consecutive failed login.
+  # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
+  def update_failed_login_count(valid_pwd, user_name = nil, ip = nil)
+    if valid_pwd
+      # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
+      if self.failed_login_count != 0
+        self.failed_login_count = 0 
+        self.save
+      end
+      self
+    else
+      self.failed_login_count ||= 0
+      self.failed_login_count += 1
+      self.save
+      Rails.logger.error "API Unauthorized Error: Failed login attempt '#{self.failed_login_count}' for '#{user_name}' from #{ip} at #{Time.now.utc}"
+      nil
+    end
   end
 
   private
