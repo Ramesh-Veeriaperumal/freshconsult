@@ -28,7 +28,7 @@ module SolutionHelper
 	end
 
 	def new_article_check?
-		@article_meta.present? ? @article_meta.new_record? : true
+		@article_meta.present? && @article_meta.new_record?
 	end
 
 	def search_placeholder(page)
