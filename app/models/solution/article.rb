@@ -298,7 +298,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def is_primary?
-    language_id == Language.for_current_account
+    language == Language.for_current_account
   end
 
   private
