@@ -174,10 +174,11 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: f28908d6b32bf6d52448b771f0b882f782e64e63
+  revision: ad0b4c9db935036be7df6ae5a3e8c6eaccf30122
   branch: master
   specs:
     launchparty (0.1.1)
+      newrelic_rpm (~> 3.9.9.275)
       redis (>= 3)
       redis-namespace (>= 1)
 
