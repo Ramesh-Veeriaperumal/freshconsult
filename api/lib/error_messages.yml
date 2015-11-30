@@ -75,3 +75,4 @@ api_error_messages:
   upload_jpg_or_png_file: "Invalid file type. Please upload a jpg or png file"
   email_cant_be_updated: "Email cannot be updated"
   fill_a_mandatory_field: "Please fill at least 1 of email, mobile, phone, twitter_id fields."
+  validation_failure: "Validation failed"
