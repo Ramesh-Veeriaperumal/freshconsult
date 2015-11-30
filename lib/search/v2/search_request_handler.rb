@@ -16,7 +16,8 @@ module Search
       def fetch(search_params)
         Utils::EsClient.new(:get, 
                             (@template_name? template_query_path : search_path), 
-                            construct_payload(search_params)
+                            construct_payload(search_params),
+                            Search::Utils::SEARCH_LOGGING[:request]
                           ).response
       end
 

@@ -53,7 +53,11 @@ module Search
           }
         end
 
-        Utils::EsClient.new(:post, [home_cluster, '_aliases'].join('/'), ({ actions: aliases }.to_json)).response
+        Utils::EsClient.new(:post, 
+                            [home_cluster, '_aliases'].join('/'), 
+                            ({ actions: aliases }.to_json),
+                            Search::Utils::SEARCH_LOGGING[:all]
+                          ).response
       end
 
       def rollback
@@ -65,7 +69,11 @@ module Search
           }
         end
         
-        Utils::EsClient.new(:post, [home_cluster, '_aliases'].join('/'), ({ actions: aliases }.to_json)).response
+        Utils::EsClient.new(:post, 
+                            [home_cluster, '_aliases'].join('/'), 
+                            ({ actions: aliases }.to_json),
+                            Search::Utils::SEARCH_LOGGING[:all]
+                          ).response
         
         clear_cache
         Store::Data.instance.remove_config(id)

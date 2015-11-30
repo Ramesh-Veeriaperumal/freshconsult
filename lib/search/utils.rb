@@ -19,6 +19,11 @@ class Search::Utils
     'Helpdesk::ArchiveNote' => :notable_id,
     'Post'                  => :topic_id
   }
+  SEARCH_LOGGING        = {
+    all:      1,
+    request:  2,
+    response: 3
+  }
 
   # Load ActiveRecord objects
   #

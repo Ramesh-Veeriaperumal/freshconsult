@@ -17,7 +17,7 @@ module Search
         path = @tenant.document_path(@type, @document_id)
         path << add_params(version, routing_id, parent_id)
         
-        Utils::EsClient.new(:put, path, payload).response
+        Utils::EsClient.new(:put, path, payload, Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       # Delete individual records from ES
@@ -25,7 +25,7 @@ module Search
       def remove_from_es
         path = @tenant.document_path(@type, @document_id)
         
-        Utils::EsClient.new(:delete, path).response
+        Utils::EsClient.new(:delete, path, nil, Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       # Remove many records based on conditions
@@ -43,7 +43,7 @@ module Search
         
         path << "?#{query_params}"
 
-        Utils::EsClient.new(:delete, path).response
+        Utils::EsClient.new(:delete, path, nil, Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       private

@@ -8,13 +8,14 @@ module Search
 
       class EsClient
 
-        attr_accessor :method, :path, :payload, :logger, :response
+        attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
-        def initialize(method, path, payload=nil)
-          @method   = method.to_sym
-          @path     = path
-          @payload  = payload
-          @logger   = EsLogger.new
+        def initialize(method, path, payload=nil, log_data=nil)
+          @method    = method.to_sym
+          @path      = path
+          @payload   = payload
+          @logger    = EsLogger.new
+          @log_data  = log_data
           
           es_request
         end
@@ -31,7 +32,7 @@ module Search
             logger.log_request(
                                 request_to_es.url, 
                                 request_to_es.original_options[:method],
-                                (log_payload? ? request_to_es.original_options[:body] : nil)
+                                (log_request_payload? ? request_to_es.original_options[:body] : nil)
                               )
             request_to_es.run
           end
@@ -78,16 +79,23 @@ module Search
                                 response_from_es.code, 
                                 @response["took"], 
                                 @response["error"],
-                                (log_payload? ? response_from_es.body : nil)
+                                (log_response_payload? ? response_from_es.body : nil)
                               )
           end
 
           # Log payload in development and in other 
           # environments based on feature check
-          # To-do: Need to verify
           #
           def log_payload?
-            Rails.env.development? #|| Account.current.try(:launched?, :es_payload_log)
+            Account.current.try(:launched?, :es_payload_log) || (@log_data == Search::Utils::SEARCH_LOGGING[:all])
+          end
+          
+          def log_request_payload?
+            log_payload? || (@log_data == Search::Utils::SEARCH_LOGGING[:request])
+          end
+          
+          def log_response_payload?
+            log_payload? || (@log_data == Search::Utils::SEARCH_LOGGING[:response])
           end
       end
 
