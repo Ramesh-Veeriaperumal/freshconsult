@@ -33,11 +33,12 @@ class ApiCompaniesController < ApiApplicationController
 
     def validate_params
       @company_fields = current_account.company_form.custom_company_fields
-      allowed_custom_fields = @company_fields.map(&:api_name)
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
+      allowed_custom_fields = @company_fields.collect{ |x| [x.name.to_sym, x.api_name.to_sym] }.to_h
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields.values
       fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(fields))
-      @rename_fields_hash = ParamsHelper.prepend_with_cf_for_custom_fields params[cname][:custom_fields]
+      @custom_fields_api_name_mapping = allowed_custom_fields
+      ParamsHelper.prepend_with_cf_for_custom_fields(params[cname][:custom_fields], @custom_fields_api_name_mapping)
       company = ApiCompanyValidation.new(params[cname], @item)
       render_custom_errors(company, true) unless company.valid?
     end
@@ -50,11 +51,10 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      @rename_fields_hash.merge!(item.rename_fields_hash) if item.respond_to?(:rename_fields_hash)
-      ErrorHelper.rename_error_fields(@rename_fields_hash, item)
+      ErrorHelper.rename_error_fields(@custom_fields_api_name_mapping, item)
     end
 
     def error_options_mappings
-      @rename_fields_hash
+      @custom_fields_api_name_mapping
     end
 end

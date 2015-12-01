@@ -1,7 +1,7 @@
 class ContactDelegator < SimpleDelegator
   include ActiveModel::Validations
 
-  attr_accessor :error_options, :rename_fields_hash
+  attr_accessor :error_options
 
   validates :company, presence: true, if: -> { company_id && self.changed.include?('customer_id')}
   validates :custom_field, custom_field: { custom_field: {
@@ -10,9 +10,4 @@ class ContactDelegator < SimpleDelegator
     required_attribute: :required_for_agent
   }
   }
-
-  def initialize(record)
-    @rename_fields_hash = {}
-    super record
-  end
 end

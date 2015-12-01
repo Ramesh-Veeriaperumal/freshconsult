@@ -19,7 +19,7 @@ json.cache! CacheLib.compound_key(@item, @item.ticket_body, @item.custom_field, 
   json.set! :description, @item.description
   json.set! :description_html, @item.description_html
 
-  json.set! :custom_fields, CustomFieldDecorator.utc_format(CustomFieldDecorator.remove_appended_text_from_ticket_fields(@item.custom_field)) # revisit caching.
+  json.set! :custom_fields, TicketDecorator.remove_appended_text_from_ticket_fields(@item.custom_field) # revisit caching.
 end
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching

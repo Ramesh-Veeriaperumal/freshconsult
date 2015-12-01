@@ -51,8 +51,7 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   end
 
   def api_name
-    #(-Account.current.id_length-2) will omit "_accountId" from name
-    is_default_field? ? name : (TicketConstants::TICKET_FIELD_INVALID_START_CHAR.index(label[0]) ? name[3..(-Account.current.id_length-2)] : name[0..(-Account.current.id_length-2)])
+    is_default_field? ? name : chomped_custom_field_name
   end
 
   protected
@@ -63,5 +62,13 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
 
     def remove_form_field_mapping
       remove_form_nested_field(self)
+    end
+
+  private
+  
+    #Defined as a method only to modularize. Please use api_name to get the chomped_custom_field_name i.e without "cf..._accountId"
+    def chomped_custom_field_name
+       #(-Account.current.id_length-2) will omit "_accountId" from name
+      (TicketConstants::TICKET_FIELD_INVALID_START_CHAR.index(label[0]) ? name[3..(-Account.current.id_length-2)] : name[0..(-Account.current.id_length-2)])
     end
 end

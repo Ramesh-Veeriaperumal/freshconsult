@@ -12,7 +12,7 @@ module Helpers::CompaniesTestHelper
       description: company.description,
       domains: domains,
       note: company.note,
-      custom_fields: expected_output['custom_field'] || CustomFieldDecorator.remove_prepended_text_from_custom_fields(company.custom_field),
+      custom_fields: expected_output['custom_field'] || CompanyDecorator.remove_prepended_text_from_company_fields(company.custom_field),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

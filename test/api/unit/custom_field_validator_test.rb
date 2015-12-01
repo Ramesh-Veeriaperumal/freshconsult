@@ -178,16 +178,16 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = TestValidation.new(attribute1: { 'state_1' => 'california', 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country: :conditional_not_blank }, errors)
-    assert_equal({ country: { child: 'state' } }, test.error_options)
+    assert_equal({ country_1: :conditional_not_blank }, errors)
+    assert_equal({ country_1: { child: 'state' } }, test.error_options)
   end
 
   def test_nested_fields_without_parent_field_third
     test = TestValidation.new(attribute1: { 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country: :conditional_not_blank, state: :conditional_not_blank }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country: { child: 'city' }, state: { child: 'city' } }.sort.to_h, test.error_options.sort.to_h)
+    assert_equal({ country_1: :conditional_not_blank, state_1: :conditional_not_blank }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: { child: 'city' }, state_1: { child: 'city' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_attribute_with_errors

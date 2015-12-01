@@ -22,7 +22,6 @@ class CustomFieldValidator < ActiveModel::EachValidator
         @is_required = required_field? # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
-        record.rename_fields_hash.merge!({ field_name.to_sym => @current_field.api_name.to_sym }) if @is_required && value.nil? && record.respond_to?(:rename_fields_hash)
         record.class.send(:attr_accessor, field_name)
         record.instance_variable_set("@#{field_name}", value) if @current_field_defined
         validate_each(record, field_name, value)
@@ -170,8 +169,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id) }
       children.each do |child|
         next if values[child.name].blank?
-        record.errors[@current_field.api_name.to_sym] << :conditional_not_blank
-        (record.error_options ||= {}).merge!(@current_field.api_name.to_sym => { child: child.api_name })
+        record.errors[field_name.to_sym] << :conditional_not_blank
+        (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.api_name })
         return true
       end
       true

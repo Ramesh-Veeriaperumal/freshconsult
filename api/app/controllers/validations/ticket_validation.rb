@@ -1,7 +1,7 @@
 class TicketValidation < ApiValidation
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
-                :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields, :rename_fields_hash
+                :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -67,7 +67,6 @@ class TicketValidation < ApiValidation
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @item = item
-    @rename_fields_hash = {}
   end
 
   def should_set_description?(request_params)

@@ -1,5 +1,5 @@
 class ApiCompanyValidation < ApiValidation
-  attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types, :rename_fields_hash
+  attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types
   validates :description, :domains, :note, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
@@ -19,7 +19,6 @@ class ApiCompanyValidation < ApiValidation
   def initialize(request_params, item)
     super(request_params, item)
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
-    @rename_fields_hash = {}
   end
 
   def attributes_to_be_stripped
