@@ -5,34 +5,35 @@ RSpec.describe Solution::CategoryMeta do
   	@lang_list = Language.all.map(&:to_key).sample(25) - [@account.language]
   end
 
-  it "should update the availability column based on its versions" do
-  	lang_vers = @lang_list.sample(5) + [:primary]
+  it "should update the available column based on its versions" do
+  	lang_vers = @lang_list.sample(5)
   	remaining_lang = @lang_list - lang_vers
     params = create_solution_category_alone(solution_default_params(:category).merge({
-      :lang_codes => lang_vers
+      :lang_codes => lang_vers + [:primary]
       }))
     category_meta = Solution::Builder.category(params)
     lang_vers.each do |lan|
-    	expect(category_meta.send("#{lan}_availability")).to be_true
+    	expect(category_meta.send("#{lan}_available?")).to be_true
     end
     remaining_lang.each do |lan|
-    	expect(category_meta.send("#{lan}_availability")).to be_false
+    	expect(category_meta.send("#{lan}_available?")).to be_false
     end
   end
 
-  it "should update the availability column accordingly when its version is deleted" do
-  	lang_vers = @lang_list.sample(5) + [:primary]
+  it "should update the available column accordingly when its version is deleted" do
+  	lang_vers = @lang_list.sample(5)
   	remaining_lang = @lang_list - lang_vers
     params = create_solution_category_alone(solution_default_params(:category).merge({
-      :lang_codes => lang_vers
+      :lang_codes => lang_vers + [:primary]
       }))
     category_meta = Solution::Builder.category(params)
     lang_vers.each do |lan|
-    	expect(category_meta.send("#{lan}_availability")).to be_true
+    	expect(category_meta.send("#{lan}_available?")).to be_true
     end
     lang_vers[0..2].each do |lan|
     	category_meta.send("#{lan}_category").destroy
-    	expect(category_meta.send("#{lan}_availability")).to be_false
+    	category_meta.reload
+    	expect(category_meta.send("#{lan}_available?")).to be_false
     end
   end
 
@@ -50,40 +51,41 @@ RSpec.describe Solution::FolderMeta do
     @category_meta = Solution::Builder.category(params)
   end
 
-  it "should update the availability column based on its versions" do
-  	lang_vers = @folder_lang_ver.sample(5) + [:primary]
+  it "should update the available column based on its versions" do
+  	lang_vers = @folder_lang_ver.sample(5)
   	remaining_lang = @folder_lang_ver - lang_vers
     params = create_solution_folder_alone(solution_default_params(:folder).merge(
           {   
             :category_id => @category_meta.id,
             :visibility => 2,
-            :lang_codes => @folder_lang_ver + [:primary]
+            :lang_codes => lang_vers + [:primary]
           }))
     folder_meta = Solution::Builder.folder(params)
     lang_vers.each do |lan|
-    	expect(folder_meta.send("#{lan}_availability")).to be_true
+    	expect(folder_meta.send("#{lan}_available?")).to be_true
     end
     remaining_lang.each do |lan|
-    	expect(folder_meta.send("#{lan}_availability")).to be_false
+    	expect(folder_meta.send("#{lan}_available?")).to be_false
     end
   end
 
-  it "should update the availability column accordingly when its version is deleted" do
-  	lang_vers = @folder_lang_ver.sample(5) + [:primary]
+  it "should update the available column accordingly when its version is deleted" do
+  	lang_vers = @folder_lang_ver.sample(5)
   	remaining_lang = @folder_lang_ver - lang_vers
     params = create_solution_folder_alone(solution_default_params(:folder).merge(
           {   
             :category_id => @category_meta.id,
             :visibility => 2,
-            :lang_codes => @folder_lang_ver + [:primary]
+            :lang_codes => lang_vers + [:primary]
           }))
     folder_meta = Solution::Builder.folder(params)
     lang_vers.each do |lan|
-    	expect(folder_meta.send("#{lan}_availability")).to be_true
+    	expect(folder_meta.send("#{lan}_available?")).to be_true
     end
     lang_vers[0..2].each do |lan|
     	folder_meta.send("#{lan}_folder").destroy
-    	expect(folder_meta.send("#{lan}_availability")).to be_false
+    	folder_meta.reload
+    	expect(folder_meta.send("#{lan}_available?")).to be_false
     end
   end
 
@@ -108,10 +110,10 @@ RSpec.describe Solution::ArticleMeta do
     @folder_meta = Solution::Builder.folder(f_params)
   end
 
-  # ---- Availability ----
+  # ---- available ----
 
-  it "should update the availability column based on its versions" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  it "should update the available column based on its versions" do
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -119,15 +121,15 @@ RSpec.describe Solution::ArticleMeta do
           }))
     article_meta = Solution::Builder.article(params)
     lang_vers.each do |lan|
-    	expect(article_meta.send("#{lan}_availability")).to be_true
+    	expect(article_meta.send("#{lan}_available?")).to be_true
     end
     remaining_lang.each do |lan|
-    	expect(article_meta.send("#{lan}_availability")).to be_false
+    	expect(article_meta.send("#{lan}_available?")).to be_false
     end
   end
 
-  it "should update the availability column accordingly when its version is deleted" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  it "should update the available column accordingly when its version is deleted" do
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -135,18 +137,19 @@ RSpec.describe Solution::ArticleMeta do
           }))
     article_meta = Solution::Builder.article(params)
     lang_vers.each do |lan|
-    	expect(article_meta.send("#{lan}_availability")).to be_true
+    	expect(article_meta.send("#{lan}_available?")).to be_true
     end
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").destroy
-    	expect(article_meta.send("#{lan}_availability")).to be_false
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_available?")).to be_false
     end
   end
 
   # ---- Outdated ----
 
   it "should update the outdated column for a version as false on creation" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -154,12 +157,12 @@ RSpec.describe Solution::ArticleMeta do
           }))
     article_meta = Solution::Builder.article(params)
     lang_vers.each do |lan|
-    	expect(article_meta.send("#{lan}_outdated")).to be_false
+    	expect(article_meta.send("#{lan}_outdated?")).to be_false
     end
   end
 
   it "should update the outdated column for a version as true when marked as outdated" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -168,12 +171,13 @@ RSpec.describe Solution::ArticleMeta do
     article_meta = Solution::Builder.article(params)
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:outdated, true)
-    	expect(article_meta.send("#{lan}_outdated")).to be_true
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_outdated?")).to be_true
     end
   end
 
   it "should update the outdated column for a version as false when marked as up-to-date" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -183,16 +187,18 @@ RSpec.describe Solution::ArticleMeta do
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:outdated, true)
     end
+    article_meta.reload
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:outdated, false)
-    	expect(article_meta.send("#{lan}_outdated")).to be_false
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_outdated?")).to be_false
     end
   end
 
   # ---- Published ----
 
   it "should update the published column for a version as true on creation" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -200,12 +206,12 @@ RSpec.describe Solution::ArticleMeta do
           }))
     article_meta = Solution::Builder.article(params)
     lang_vers.each do |lan|
-    	expect(article_meta.send("#{lan}_published")).to be_true
+    	expect(article_meta.send("#{lan}_published?")).to be_true
     end
   end
 
   it "should update the published column for a version as false when marked as unpublished" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -214,12 +220,13 @@ RSpec.describe Solution::ArticleMeta do
     article_meta = Solution::Builder.article(params)
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:status, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
-    	expect(article_meta.send("#{lan}_published")).to be_false
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_published?")).to be_false
     end
   end
 
   it "should update the published column for a version as false when marked as published" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -229,16 +236,18 @@ RSpec.describe Solution::ArticleMeta do
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:status, Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
     end
+    article_meta.reload
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").update_attribute(:status, Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
-    	expect(article_meta.send("#{lan}_published")).to be_true
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_published?")).to be_true
     end
   end
 
   # ---- Draft ----
 
   it "should update the draft column for a version as false on creation" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -246,12 +255,12 @@ RSpec.describe Solution::ArticleMeta do
           }))
     article_meta = Solution::Builder.article(params)
     lang_vers.each do |lan|
-    	expect(article_meta.send("#{lan}_draft")).to be_false
+    	expect(article_meta.send("#{lan}_draft?")).to be_false
     end
   end
 
   it "should update the draft column for a version as true when draft is created" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -260,12 +269,13 @@ RSpec.describe Solution::ArticleMeta do
     article_meta = Solution::Builder.article(params)
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").create_draft_from_article
-    	expect(article_meta.send("#{lan}_draft")).to be_true
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_draft?")).to be_true
     end
   end
 
   it "should update the draft column for a version as false when marked draft is discarded" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -275,14 +285,16 @@ RSpec.describe Solution::ArticleMeta do
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").create_draft_from_article
     end
+    article_meta.reload
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").draft.destroy
-    	expect(article_meta.send("#{lan}_draft")).to be_false
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_draft?")).to be_false
     end
   end
 
   it "should update the draft column for a version as false when marked draft is published" do
-  	lang_vers = @article_lang_ver.sample(5) + [:primary]
+  	lang_vers = @article_lang_ver.sample(5)
   	remaining_lang = @article_lang_ver - lang_vers
     params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id,
@@ -292,9 +304,11 @@ RSpec.describe Solution::ArticleMeta do
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").create_draft_from_article
     end
+    article_meta.reload
     lang_vers[0..2].each do |lan|
     	article_meta.send("#{lan}_article").draft.publish!
-    	expect(article_meta.send("#{lan}_draft")).to be_false
+    	article_meta.reload
+    	expect(article_meta.send("#{lan}_draft?")).to be_false
     end
   end
 

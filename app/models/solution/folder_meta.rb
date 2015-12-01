@@ -3,13 +3,12 @@ class Solution::FolderMeta < ActiveRecord::Base
 	self.primary_key = :id
   
 	self.table_name = "solution_folder_meta"
+
+	BINARIZE_COLUMNS = [:available]
+	
   include Solution::Constants
 	include Solution::LanguageAssociations
 	belongs_to_account
-
-	include Binarize
-	
-	binarize :available, :flags => Language.all_keys
 
   validates_inclusion_of :visibility, 
       :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max

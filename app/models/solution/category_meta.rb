@@ -3,14 +3,12 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	self.primary_key = :id
 	self.table_name = 'solution_category_meta'
 
+	BINARIZE_COLUMNS = [:available]
+
 	include Mobihelp::AppSolutionsUtils
 	include Solution::LanguageAssociations
 
 	belongs_to_account
-
-	include Binarize
-
-	binarize :available, :flags => Language.all_keys
 
 	has_many :solution_folder_meta, :class_name => "Solution::FolderMeta", :foreign_key => :solution_category_meta_id, :order => :position, :dependent => :destroy
 

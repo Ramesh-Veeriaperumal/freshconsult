@@ -4,18 +4,13 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	belongs_to_account
 	self.table_name = "solution_article_meta"
 	
+	BINARIZE_COLUMNS = [:available, :outdated, :draft, :published]
+	
 	include Redis::RedisKeys
 	include Redis::OthersRedis
 	include Community::HitMethods
 	include Solution::Constants
 	include Solution::LanguageAssociations
-
-	include Binarize
-
-	binarize :available, :flags => Language.all_keys
-	binarize :outdated, :flags => Language.all_keys
-	binarize :draft, :flags => Language.all_keys
-	binarize :published, :flags => Language.all_keys
 
 	delegate :draft, :status, :user, :to => :primary_article
 

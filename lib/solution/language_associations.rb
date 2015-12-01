@@ -2,6 +2,10 @@ module Solution::LanguageAssociations
   extend ActiveSupport::Concern
   
   included do |base|
+    base.include Binarize
+    base::BINARIZE_COLUMNS.each do |col|
+      base.binarize col, :flags => Language.all_keys
+    end
     base_class = base.name.chomp('Meta')
     base_name = base_class.gsub("Solution::", '').downcase
     base_class_table_name = base_class.constantize.table_name
@@ -43,6 +47,23 @@ module Solution::LanguageAssociations
     scope :include_translations, lambda {
       includes(translation_associations)
     }
+
+    base::BINARIZE_COLUMNS.each do |col|
+      define_method "any_supported_#{col}?" do
+        Account.current.applicable_languages.each do |lan|
+          return true if self.send("#{lan}_#{col}?")
+        end
+        return false
+      end
+
+      define_method "#{col}_languages" do
+        languages = []
+        Account.current.supported_languages.each do |lan|
+          languages << Language.find_by_code(lan) if self.send("#{lan.gsub('-','_').downcase}_#{col}?")
+        end
+        languages
+      end
+    end
   end
   
 end
