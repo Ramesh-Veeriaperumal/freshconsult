@@ -3,7 +3,7 @@
 <li>
 	<%= f.label :conditions, "#{t('sla_policy.escalate').html_safe}", :class => "large" %>
 		<div class="escalate_to">
-			<label><%= t('sla_policy.escalation_response_text').html_safe %></label>
+			<label><%= t('sla_policy.escalation_rule_response_text').html_safe %></label>
 			<div class="grid">
 				<table data-max-level=1 data-type="response" class="sla_policies">
 					<%= select_tag('response_time', 
@@ -38,7 +38,7 @@
 						</tr>
 				</table>
 			</div>
-			<label><%= t('sla_policy.escalation_resolution_text').html_safe %></label>
+			<label><%= t('sla_policy.escalation_rule_resolution_text').html_safe %></label>
 			<div class="grid resolution_container">
 				<table data-max-level = <%= Helpdesk::SlaPolicy::ESCALATION_LEVELS_MAX %> 
 							 class="sla_policies">

@@ -1,5 +1,5 @@
 Authlogic::Session::Base.class_eval do
-
+  
   private
 
   def secure

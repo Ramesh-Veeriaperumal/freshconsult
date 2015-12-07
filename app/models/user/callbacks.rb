@@ -3,7 +3,8 @@ class User < ActiveRecord::Base
   before_validation :discard_blank_email, :unless => :email_available?
   before_validation :set_password, :if => [:active?, :email_available?, :no_password?]
   
-  before_create :set_company_name, :decode_name
+  before_create :set_company_name, :unless => :helpdesk_agent?
+  before_create :decode_name
   before_create :populate_privileges, :if => :helpdesk_agent?
 
   before_update :populate_privileges, :if => :roles_changed?
@@ -20,7 +21,7 @@ class User < ActiveRecord::Base
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
-  after_commit :update_company_id_for_tickets, on: :update, :if => :company_id_updated?
+  after_commit :update_tickets_company_id, on: :update, :if => :company_id_updated?
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
@@ -76,16 +77,11 @@ class User < ActiveRecord::Base
   def discard_contact_field_data
     self.flexifield.destroy
   end
-  
-  # This is used for updating the ticket's company in reports
-  def update_company_id_for_tickets
-    args = {
-      :user_id    => id,
-      :changes    => { 
-        "company_id" => @all_changes[:customer_id] 
-      }
-    }
-    Reports::UpdateTicketsCompany.perform_async(args)
+
+  # This will also update the ticket's company in reports
+  def update_tickets_company_id
+    Tickets::UpdateCompanyId.perform_async({ :user_ids => id,
+                                             :company_id => @all_changes[:customer_id][1] })
   end
 
   protected
@@ -118,7 +114,7 @@ class User < ActiveRecord::Base
   def set_company_name
    if (self.company_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
-       comp = account.companies_from_cache.detect{|x| x.domains.to_s.include?(email_domain)}
+       comp = account.companies.domains_like(email_domain).first
        self.company_id = comp.id unless comp.nil?    
    end
   end

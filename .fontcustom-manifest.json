@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "9ecc898a6ac3805abafe0ff602c036ad4fc7df0aa8f93cff84c5ba82f166ca46",
-    "current": "9ecc898a6ac3805abafe0ff602c036ad4fc7df0aa8f93cff84c5ba82f166ca46"
+    "previous": "30b2cdced1cabb7ee78677ba85c35a7fb9d90ea2016c52aff907eff67b08117c",
+    "current": "30b2cdced1cabb7ee78677ba85c35a7fb9d90ea2016c52aff907eff67b08117c"
   },
   "fonts": [
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.ttf",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.svg",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.woff",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.eot"
+    "public/assets/glyphs_30b2cdced1cabb7ee78677ba85c35a7f.ttf",
+    "public/assets/glyphs_30b2cdced1cabb7ee78677ba85c35a7f.svg",
+    "public/assets/glyphs_30b2cdced1cabb7ee78677ba85c35a7f.woff",
+    "public/assets/glyphs_30b2cdced1cabb7ee78677ba85c35a7f.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -1039,12 +1039,14 @@
     "preprocessor_path": "",
     "quiet": false,
     "templates": [
-      "_glyphs.scss",
+      "scss",
+      "_glyphs-variables.scss",
       "index.html"
     ]
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
+    "public/src/fonts/_glyphs-variables.scss",
     "public/assets/index.html"
   ]
 }

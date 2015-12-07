@@ -77,7 +77,7 @@ include GoogleLoginHelper
         @current_user = create_user(params[:email],current_account,nil,sso_user_options)
         @current_user.active = true
         saved = @current_user.save
-      elsif current_account.sso_enabled?
+      else
         @current_user.name =  params[:name]
         @current_user.phone = params[:phone] unless params[:phone].blank?
         @current_user.customer_id = current_account.customers.find_or_create_by_name(params[:company]).id unless params[:company].blank?
@@ -86,7 +86,7 @@ include GoogleLoginHelper
       end
       
       @user_session = @current_user.account.user_sessions.new(@current_user)
-      if @user_session.save
+      if saved && @user_session.save
         if is_native_mobile?
           cookies["mobile_access_token"] = { :value => @current_user.helpdesk_agent ? @current_user.single_access_token : 'customer', :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
@@ -398,7 +398,7 @@ include GoogleLoginHelper
 
     def check_sso_params
       time_in_utc = get_time_in_utc
-      if ![:name, :email, :hash].all? {|s| params.key? s} 
+      if ![:name, :email, :hash].all? {|key| params[key].present?}
         flash[:notice] = t(:'flash.login.sso.expected_params')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))

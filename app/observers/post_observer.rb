@@ -65,7 +65,7 @@ class PostObserver < ActiveRecord::Observer
   	end
 
 	def create_activity(post, type, user = post.user)
-		post.activities.create(
+		post.topic.activities.create(
 			:description => "activities.forums.#{type}.long",
 			:short_descr => "activities.forums.#{type}.short",
 			:account 		=> post.account,

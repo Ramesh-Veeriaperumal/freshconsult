@@ -233,7 +233,7 @@ helpdeskReports.prototype = {
         var breakCount = 0;
         for (var i = 0; i < s.length; i++) {
             if (s.charAt(i) == ' ') lastSpace = i;
-            if (i - lastAppended > 11) {
+            if (i - lastAppended > 8) {
                 if (lastSpace == -1) 
                     lastSpace = i;
                 r += s.substring(lastAppended, lastSpace);
@@ -621,7 +621,7 @@ function barChart(opts) {
                     fontSize: '12px',
                     textAlign: 'right',
                 },
-                formatter: this.barLabelFormatter,
+                formatter: opts['performanceDistTooltip'] ? null : this.barLabelFormatter,
                 useHTML: true
             },
             title:{

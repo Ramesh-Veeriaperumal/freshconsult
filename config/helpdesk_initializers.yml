@@ -28,7 +28,6 @@ helpdesk:
     - facebook_config
     - global_phone
     - gnip_config
-    - helpdesk_reports/reports_app_config
     - i18n
     - inflections
     - klout_config
@@ -66,9 +65,9 @@ helpdesk:
     - big_brother
     - integrations
     - autopilot_config
-    - launch_profiler
     - marketplace_config
     - doorkeeper
     - ebay_config
+    - helpdesk_reports/reports_app_config
 
 

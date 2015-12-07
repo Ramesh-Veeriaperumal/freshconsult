@@ -12,7 +12,7 @@ module IntegrationServices::Services
         return { "totalSize" => 0, "done" => true, "records" => [] } if email.blank?
         address_fields = ["Street","City","State","Country","PostalCode"]
         fields = format_selected_fields fields, address_fields
-        soql = "SELECT #{fields} FROM Lead WHERE Email = '#{email}'"
+        soql = "SELECT #{fields} FROM Lead WHERE Email = '#{email}' AND IsConverted = false"
         request_url = "#{salesforce_old_rest_url}/query?q=#{soql}"
         url  = URI.encode(request_url.strip)
         response = http_get url

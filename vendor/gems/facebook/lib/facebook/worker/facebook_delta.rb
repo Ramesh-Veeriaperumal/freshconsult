@@ -13,6 +13,7 @@ class Facebook::Worker::FacebookDelta
   def self.add_feeds_to_sqs(page_id, discard_feed)
     begin
       dynamo_db_facebook = AwsWrapper::DynamoDb.new(SQS[:facebook_realtime_queue])
+      fb_page = Account.current.facebook_pages.find_by_page_id(page_id)
       query_options = {
         :select => "ALL_ATTRIBUTES",
         :consistent_read => true,
@@ -33,6 +34,9 @@ class Facebook::Worker::FacebookDelta
           dynamo_db_facebook.query_delete_facebook(data["page_id"][:n],data["timestamp"][:n])
         end
         break unless response[:last_evaluated_key]
+        sleep(10)
+        fb_page.reload
+        break unless fb_page.valid_page
         query_options = query_options.merge({ :exclusive_start_key => response[:last_evaluated_key]})
       end
     rescue Exception => e

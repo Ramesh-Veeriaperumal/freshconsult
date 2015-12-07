@@ -4,10 +4,10 @@ class Company < ActiveRecord::Base
   
   has_custom_fields :class_name => 'CompanyFieldData', :discard_blank => false # coz of schema_less_company_columns
   
-  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify,
+  has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false},
            :order => :name, :foreign_key => 'customer_id'
   
-  has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name,
+  has_many :all_users , :class_name =>'User', :order => :name,
            :foreign_key => 'customer_id'
 
   has_many :all_tickets ,:class_name => 'Helpdesk::Ticket', :through => :all_users , 

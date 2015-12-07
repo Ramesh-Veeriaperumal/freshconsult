@@ -4,4 +4,4 @@
         <li> <%= escapeHtml(data[i].name) %> : <strong> <%= escapeHtml(data[i].value) %> </strong></li>
     <% } %>
 <%  } %>
-<li>Time Period : <strong> <%= jQuery("#date_range").val() %> </strong></li>
+<li>Time Period : <strong> <%= jQuery("#date_range").val() || HelpdeskReports.locals.date_range %> </strong></li>

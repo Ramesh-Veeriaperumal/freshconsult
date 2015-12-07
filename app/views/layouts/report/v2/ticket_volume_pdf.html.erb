@@ -1,0 +1,74 @@
+<%= render :partial => "layouts/report/v2/shared/pdf_files.html.erb", :formats => [:html], :locals => {} %>
+<div class="reports-wrapper" id="reports_wrapper">
+  <div class="reports-main">
+    <div class="reports-header row-fluid">
+     <%= render :partial => "layouts/report/v2/shared/header.html.erb", :formats => [:html], :locals => {report_type: report_type}  %> 
+    </div>
+    <div class="reports-container" id="reports_container">
+      <div class="row-fluid volume-header">
+        <div class="span5 chart-title">
+          <span class="trend-subtitle" data-title="trend"></span>
+          <%=t('helpdesk_reports.ticket_volume.time_trends.title').html_safe %>
+        </div>
+        
+      </div>
+
+      <div class="charts_container" id="time_trend_chart"></div>
+      
+      <div class='comparision-chart-title'>
+        <%=t('helpdesk_reports.ticket_volume.day_trend.title').html_safe %>
+      </div>
+      <div class="comparision-chart-subtitle">
+        <%=t('helpdesk_reports.ticket_volume.day_trend.subtitle').html_safe %>
+      </div>
+      
+      <div class="charts_container charts-container-pdf">
+          <div id="pdf_day_trend"></div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    
+    window.HelpdeskReports = window.HelpdeskReports || {};
+    HelpdeskReports.locals = HelpdeskReports.locals || {};
+    HelpdeskReports.locals.report_type = "<%= report_type %>";
+    HelpdeskReports.locals.date_lag = <%= date_lag_by_plan %>;
+    HelpdeskReports.locals.date_range = "<%= date_range %>";
+    HelpdeskReports.locals.select_hash  = <%= filters.to_json.html_safe%> 
+    HelpdeskReports.locals.chart_hash = <%= data.to_json.html_safe %>;
+    HelpdeskReports.locals.metric = HelpdeskReports.Constants.TicketVolume.metric
+    HelpdeskReports.locals.trend = "<%= trend %>";
+    HelpdeskReports.locals.pdf = true;
+    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? %>';
+    
+    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+    var locals = HelpdeskReports.locals;
+   
+    if (err) {
+          var div = ['day_trend_chart', 'time_trend_chart'];
+          HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+        jQuery('#trend_type, #mini_chart_wrapper, .busy_period,.stats').hide();
+    } else if (!jQuery.isEmptyObject(locals.chart_hash["error"]) || !jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
+        var div = ['day_trend_chart', 'time_trend_chart'];
+        var msg = 'Something went wrong, please try again';
+          HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+        jQuery('#trend_type, #mini_chart_wrapper, .busy_period, .stats').hide();
+    } else if (jQuery.isEmptyObject(locals.chart_hash[locals.metric])) {
+      var div = ['day_trend_chart', 'time_trend_chart'];
+        var msg = 'No data to display';
+          HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+        jQuery('#trend_type, #mini_chart_wrapper,.busy_period, .stats').hide();
+    } else if (!jQuery.isEmptyObject(locals.chart_hash[locals.metric]) && jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
+        HelpdeskReports.ChartsInitializer.TicketVolume.pdf(locals.chart_hash);
+        
+        jQuery(".busy_period .received_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RECEIVED_TICKETS.busiest_day_and_hours);
+        jQuery(".busy_period .resolved_tickets .value").html(locals.chart_hash.RECEIVED_RESOLVED_TICKETS.RESOLVED_TICKETS.busiest_day_and_hours);
+    }
+    HelpdeskReports.CoreUtil.setFilterDisplayData(); 
+  });
+</script>
+
+

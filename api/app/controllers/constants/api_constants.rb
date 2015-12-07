@@ -1,7 +1,7 @@
 module ApiConstants
   # ControllerConstants
   DEFAULT_PAGINATE_OPTIONS = {
-    per_page: 50,
+    per_page: 30,
     max_per_page: 100,
     page: 1
   }

@@ -75,11 +75,11 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-  def set_time_zone    
-    TimeZone.set_time_zone    
+  
+  def set_time_zone
+    TimeZone.set_time_zone
   end
- 
+  
   def activerecord_error_list(errors)
     error_list = '<ul class="error_list">'
     error_list << errors.collect do |e, m|
@@ -198,8 +198,8 @@ class ApplicationController < ActionController::Base
     def handle_unverified_request
       super
       Rails.logger.error "CSRF TOKEN NOT SET #{params.inspect}"
-      cookies.delete 'user_credentials'
-      current_user_session.destroy unless current_user_session.nil?
+      cookies.delete 'user_credentials'     
+      current_user_session.destroy unless current_user_session.nil? 
       @current_user_session = @current_user = nil
       portal_redirect_url = root_url
       if params[:portal_type] == "facebook"

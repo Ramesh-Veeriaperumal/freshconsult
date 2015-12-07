@@ -13,4 +13,6 @@ class Solution::Folder < ActiveRecord::Base
 
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
 
+  has_many :activities, :class_name => 'Helpdesk::Activity', :as => 'notable'
+
 end

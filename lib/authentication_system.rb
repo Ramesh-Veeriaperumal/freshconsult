@@ -176,7 +176,7 @@ module AuthenticationSystem
         store_location
         log_out!
         respond_to do |format|
-          format.json { day_pass_expired_json }
+          format.json { day_pass_expired_json } # defined in application_concern.
           format.all do 
             flash[:notice] = I18n.t('agent.day_pass_expired')
             redirect_to login_url

@@ -27,7 +27,7 @@ class Group < ActiveRecord::Base
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    belongs_to :business_calendar
-
+   
    has_and_belongs_to_many :accesses, 
     :class_name => 'Helpdesk::Access',
     :join_table => 'group_accesses',
@@ -238,4 +238,5 @@ class Group < ActiveRecord::Base
   def nullify_tickets
     Helpdesk::ResetGroup.perform_async({:group_id => self.id })
   end
+
 end

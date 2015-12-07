@@ -24,10 +24,11 @@ class Solution::Draft < ActiveRecord::Base
 
   before_validation :populate_defaults
   before_save :change_modified_at
-  before_destroy :discard_notification
+  before_destroy :discard_notification, :add_activity_delete
+  after_create :add_activity_new
 
   attr_protected :account_id, :status, :user_id
-  attr_accessor :discarding
+  attr_accessor :discarding, :publishing
 
   alias_attribute :modified_by, :user_id
 
@@ -109,14 +110,19 @@ class Solution::Draft < ActiveRecord::Base
 
     move_attachments
     article.modified_by = user_id
+    self.publishing = true if article.published?
     self.article.publish!
+    add_activity_publish 
     self.reload
     self.destroy
   end
 
+  def to_s
+    article.to_s
+  end
+
   def discard_notification
     return unless discarding && (User.current.id != self.user_id && self.user.email.present?)
-
     portal = Portal.current || Account.current.main_portal
     DraftMailer.send_later(
       :discard_notification, 
@@ -134,6 +140,18 @@ class Solution::Draft < ActiveRecord::Base
     (meta[:deleted_attachments] || {})[type] || []
   end
 
+  def add_activity_publish
+    create_activity('published_draft') if publishing.present?
+  end
+
+  def add_activity_delete
+    create_activity('delete_draft') if discarding.present?
+  end
+
+  def add_activity_new
+    create_activity('new_draft') if article.published?
+  end
+
   private
 
     def move_attachments
@@ -143,5 +161,22 @@ class Solution::Draft < ActiveRecord::Base
           item.update_attributes(item.object_type => article)
         end
       end
+    end
+
+    def create_activity(type)
+      article.activities.create(
+        :description => "activities.solutions.#{type}.long",
+        :short_descr => "activities.solutions.#{type}.short",
+        :account    => account,
+        :user       => User.current,
+        :activity_data  => {
+                    :path => Rails.application.routes.url_helpers.solution_article_path(article_id),
+                    :url_params => {
+                              :id => article_id,
+                              :path_generator => 'solution_article_path'
+                            },
+                    :title => article.to_s
+                  }
+      )
     end
 end
