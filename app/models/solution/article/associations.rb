@@ -16,8 +16,7 @@ class Solution::Article < ActiveRecord::Base
 
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
-    :as => 'notable',
-    :dependent => :destroy
+    :as => 'notable'
 
   has_many :tag_uses,
     :as => :taggable,

@@ -3,12 +3,13 @@ class HelpdeskReports::Response::Ticket
   
   attr_accessor :result, :metric, :query_type, :date_range
   
-  def initialize result, params, query_type, report_type
+  def initialize result, params, query_type, report_type, pdf_export
     @result     = result
     @metric     = params[:metric]
     @query_type = query_type
     @date_range = params[:date_range]
     @report_type = report_type
+    @pdf_export = pdf_export
   end
   
   def parse_result
@@ -22,7 +23,7 @@ class HelpdeskReports::Response::Ticket
   end
   
   def query_result
-    klass(parser_type).new(result["result"], date_range, @report_type).process
+    klass(parser_type).new(result["result"], date_range, @report_type, query_type, @pdf_export).process
   end
   
   def parser_type

@@ -8,7 +8,7 @@
 <div class="freshfone_widget">
 	<div class="ff_desktop_notification hide tooltip" 
 		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
-		<div class="desktopNotifier"><%= font_icon "bell", :size => 16 %></div>
+		<div class="desktopNotifier"><%= font_icon "bell", :size => 22 %></div>
 	</div>
 	<div id="failed_hold" class='hide failed_hold'>
   	<div class='ffone_hold_message popupbox-content'>
@@ -17,6 +17,9 @@
   	</div>
 	</div>
 	<%= render 'layouts/shared/freshfone/freshfone_popup_tabs' %>
+</div>
+<div class="freshfone-context-container hide" >
+	<%=render 'layouts/shared/freshfone/freshfone_context_container' %>
 </div>
 <div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
 <div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
@@ -48,6 +51,11 @@
 	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number').html_safe%>";
 	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";
 	freshfone.new_requester = "<%= t('freshfone.widget.new_requester') %>";
+	freshfone.add_note_text = "<%= t('freshfone.widget.add_note_text') %>";
+	freshfone.edit_note_text = "<%= t('freshfone.widget.edit_note_text') %>";
+	freshfone.transfer_call = "<%= t('freshfone.widget.transfer_call')%>";
+	freshfone.dialpad = "<%= t('freshfone.widget.dialpad')%>";
+	freshfone.cancel = "<%= t('freshfone.widget.cancel')%>";
 	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'] %>";
 	freshfone.full_domain = '<%= current_account.full_domain %>';
 	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';

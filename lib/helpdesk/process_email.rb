@@ -480,7 +480,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients and user.customer?) ? true : false ,
+        :private => (from_fwd_recipients or reply_to_private_note?(in_reply_to)),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",

@@ -5,16 +5,19 @@
 			<div class="metric_value"></div>
 		</div>
 		<div class="cross" data-action="hide-ticket-list"><%= font_icon "cross", :size => 20 %></div>
+		<div class="export_title pull-right hide">
+			<a class="link" href="javascript:void(0);" ><%= t('export_data.view_all_tickets') %></a>
+			<span class="title hide"><%= t('export_data.view_all_tickets') %></span> 
+		</div>
+		<div class="clear"></div>
 	</div>
 	<%= render :partial => "reports/v2/tickets/reports/shared/export" %> 
 	<div class="sla-toggle-tab hide">
-		<div class="compliant">
-			<a class="toggle hide" href="javascript:void(0);" data-link="compliant" data-action="toggle-ticketlist" ></a>
-			<span class="title"></span> 
+		<div class="link1">
+			<span class="toggle active" data-action="toggle-ticketlist" ></span>
 		</div>
-		<div class="violated">
-			<a class="toggle" href="javascript:void(0);" data-link="violated" data-action="toggle-ticketlist" > Violated Tickets</a>
-			<span class="title hide"></span> 
+		<div class="link2">
+			<span class="toggle" data-action="toggle-ticketlist" ></span>
 		</div>
 	</div>
 	<div id="ticket_list"></div>

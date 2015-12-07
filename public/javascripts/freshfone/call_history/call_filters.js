@@ -9,15 +9,15 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.bindChangeEvents();
       this.bindSortingMenu();
       this.settingsForDatePicker();
-      this.initSelect2Values();
       this.bindSubmitButton();
       this.bindExport();
       this.bindFormSumbit();
       this.bindPagination();
+      $("#responder").select2();
+      this.initSelect2Values();
       this.setFilterData();
       this.setFilterDetails();
       $("#sliding").slide();
-      $("#responder").select2();
     },
     initializeElements: function () {
       this.$freshfoneCallHistory = $('.fresfone-call-history');
@@ -327,17 +327,45 @@ window.App.Freshfonecallhistory = window.App.Freshfonecallhistory || {};
       this.$filterDetails.html(this.filterString);
     },
     initSelect2Values: function() {
-      var cached_ffone_number = getCookie('fone_number_id'), number_object;
-      if (cached_ffone_number != undefined){
-        number_object = $.grep(freshfone.freshfone_number_list, function (ele) { 
-          return ele.id == cached_ffone_number; 
-        })[0];
-      }
-      number_object = number_object || freshfone.freshfone_number_list[0];
-      this.$fNumberSelect2.select2('data',number_object);
-      this.$fCallStatusSelect2.select2('data',freshfone.call_status_list[0]);
-      this.$fBusinessHoursSelect2.select2('data',freshfone.business_hours_list[0]);
-      // this.$responder.select2('data',freshfone.agents_list[0]);
+      var filter = freshfone.calls_filter_cache;
+      this.initializeNumbersSelect2(filter);
+      this.initializeCallTypeSelect2(filter);
+      this.initializeGroupSelect2(filter);
+      this.initializeBusinessHoursSelect2(filter);
+      this.initializeAgentsSelect2(filter);
+      this.initializeRequestersSelect2(filter);
+    },
+    initializeNumbersSelect2: function(filter){
+        var number_object = this.get_filter_object(freshfone.freshfone_number_list,"id",filter["number_id"])
+        this.$fNumberSelect2.select2('data',number_object || freshfone.freshfone_number_list[0]);
+    },
+    initializeCallTypeSelect2: function(filter){
+         var call_type = this.get_filter_object(freshfone.call_status_list,"call_type",filter["call_type_value"]);
+         this.$fCallStatusSelect2.select2('data', call_type || freshfone.call_status_list[0]);
+    },
+    initializeGroupSelect2: function(filter){
+        this.$groupName.select2('val',filter['group_value'] || "0" );
+    },
+    initializeBusinessHoursSelect2: function(filter){
+        var business_hours_type = this.get_filter_object(freshfone.business_hours_list,"business_hour_call",filter['business_hour_type']);
+        this.$fBusinessHoursSelect2.select2('data', business_hours_type || freshfone.business_hours_list[0]);
+    },
+    initializeAgentsSelect2: function(filter){
+        this.$responder.select2('val',filter['users'] || "0" );
+        this.$responder.trigger("change");
+    },
+    initializeRequestersSelect2: function(filter){
+        if(filter['customer_name'] || filter['caller_number']){
+          this.$callerName.select2('data',{'value' : filter['customer_name'] || filter['caller_number'] });
+          this.$callerId_ffitem.attr('condition', filter['customer_id'] ? "customer_id" : "caller_number_id" );
+          this.$callerId_ffitem.attr('value',filter['customer_id'] || filter['caller_number_id']);
+          this.$callerId_ffitem.data('value', filter['customer_name'] || filter['caller_number']);
+        }
+    },
+    get_filter_object: function(list,value,condition){
+      return list.find(function(index){ 
+            return index[value] == condition
+      }); 
     },
     settingsForDatePicker: function () {
       var datePickerLabels = freshfone.date_picker_labels[0];

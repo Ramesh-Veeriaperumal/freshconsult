@@ -2345,11 +2345,19 @@ en:
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
       sso:
-        expected_params: "Expected params are name, email and hash, which are not present "
+        expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
       success: Login successful!
       failed: Login was unsuccessful!
       deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
+      credentials_incorrect: "The email and password you entered does not match"
+      failed_login_warning_line_1:
+        one: "1  login attempt left"
+        other: "%{count} login attempts left."
+        zero: "No more login attempts left"
+      failed_login_warning_line_2: "The email and password does not match"
+      failed_login_warning_line_3: "As a safety measure, your account may get locked temporarily. It is recommended that you use forgot password."
+      account_locked_warning: "Due to consecutive failed login attempts, your account has been temporarily locked. Please try again in some time."
     email_notifications:
       update:
         success: Email notification has been updated.
@@ -2475,6 +2483,39 @@ en:
       new_solution:
         short: "{{user_path}} created a new solution"
         long: "{{user_path}} created a new solution {{notable_path}}"
+      new_article:
+        short: "{{user_path}} created a new article"
+        long: "{{user_path}} created a new article '{{notable_path}}'"
+      published_article:
+        short: "{{user_path}}'s article has been published"
+        long: "{{user_path}} published an article'{{notable_path}}'"
+      unpublished_article:
+        short: "{{user_path}}'s article has been unpublished"
+        long: "{{user_path}}' unpublished an article '{{notable_path}}'"
+      delete_article:
+        short: "{{user_path}} has deleted an article"
+        long: "{{user_path}} has deleted an article '{{notable_path}}'"
+      new_solution_category:
+        short: "{{user_path}} created a new solution category"
+        long: "{{user_path}} created a new solution category '{{notable_path}}'"
+      delete_solution_category:
+        short: "{{user_path}} has deleted a solution category"
+        long: "{{user_path}} has deleted the solution category '{{notable_path}}'"
+      new_folder:
+        short: "{{user_path}} created a new folder"
+        long: "{{user_path}} created a new folder '{{notable_path}}'"
+      delete_folder:
+        short: "{{user_path}} has deleted a folder"
+        long: "{{user_path}} has deleted the folder '{{notable_path}}'"
+      new_draft:
+        short: "{{user_path}} created a draft for an article"
+        long: "{{user_path}} created a draft for article '{{notable_path}}'"
+      published_draft:
+        short: "{{user_path}} published the draft of an article"
+        long: "{{user_path}} published the draft of article '{{notable_path}}'"
+      delete_draft:
+        short: "{{user_path}} has discarded the draft of an article"
+        long: "{{user_path}} has discarded the draft of article '{{notable_path}}'"
     forums:
       new_forum_category:
         short: "{{user_path}} created a new forum category"
@@ -2495,16 +2536,16 @@ en:
         short: "{{user_path}}'s post has been published"
         long: "{{user_path}}'s post in '{{notable_path}}' has been published"
       delete_forum_category:
-        short: "{{user_path}} deleted a forum category"
-        long: "{{user_path}} deleted the forum category '{{notable_path}}'"
+        short: "{{user_path}} has deleted a forum category"
+        long: "{{user_path}} has deleted the forum category '{{notable_path}}'"
       delete_forum:
-        short: "{{user_path}} deleted a forum"
-        long: "{{user_path}} deleted the forum '{{notable_path}}' under '{{category_name}}'"
+        short: "{{user_path}} has deleted a forum"
+        long: "{{user_path}} has deleted the forum '{{notable_path}}' under '{{category_name}}'"
       delete_topic:
         short: "{{user_path}} deleted a topic"
-        long: "{{user_path}} deleted the topic '{{notable_path}}' in '{{forum_name}}'"
+        long: "{{user_path}} deleted the topic '{{notable_path}}' from '{{forum_name}}'"
       delete_post:
-        short: "{{user_path}} deleted a new post"
+        short: "{{user_path}} has deleted a new post"
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
       topic_stamp_1:
         short: "{{user_path}} has marked the forum topic as 'Planned'"
@@ -3583,8 +3624,8 @@ en:
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
-    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
+    escalation_rule_response_text: Set escalation rule when a ticket is not <b>responded to </b> on time
+    escalation_rule_resolution_text: Set escalation hierarchy when a ticket is not <b>resolved </b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -3611,9 +3652,9 @@ en:
       invalid_data_type: Company ids should be a comma separated value.
       default_policy_update: Cannot update default SLA policy.
     reminder: What happens when this SLA due time approaches?
-    reminder_label: Set SLA due time reminder
-    reminder_response_text: Set Reminder Rule when a ticket <b>response time</b> approaches
-    reminder_resolution_text: Set Reminder Rule when a ticket is not <b>resolved</b> on time
+    reminder_label: Set SLA reminders
+    reminder_response_text: Set reminder rule when a ticket <b>response time </b> approaches
+    reminder_resolution_text: Set reminder rule when a ticket <b>resolution time </b> approaches
   left: Left
   subscription:
     error:
@@ -4770,7 +4811,7 @@ en:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
   recent_activity: Recent Activity
-  recent_activities: Recent Activites
+  recent_activities: Recent Activities
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
@@ -5486,6 +5527,7 @@ en:
       priority: Priority
       status: Status
       requester_responded_at: Customer Response
+      agent_responded_at: Agent Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order
@@ -5542,7 +5584,7 @@ en:
     archived_at: "Archived"
     from: From
     to: To
-    view_all_tickets : Export as CSV to view all tickets
+    view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
@@ -7156,6 +7198,13 @@ en:
   activation_link_no_email: Successfully registered
   not_given: "Not given."
   helpdesk_reports:
+    helpdesk_analysis : Helpdesk Analysis
+    productivity : Productivity
+    customer_happiness : Customer Happiness
+    welcome_message :
+      header : Welcome to the brand new reports!
+      intro : We have made the reports cleaner, deeper and more insightful. You will be able to locate problems more easily and act on them immediately by drilling down into the tickets that contribute to each metric. Overall we have made the experience smoother and easier. Hope you like it.
+      link_title : Read more about all the changes.
     view_old_reports: View old reports
     view_new_reports: View new reports
     solution_article_text: How to read this report ?
@@ -7167,8 +7216,11 @@ en:
     tickets: List of Tickets
     generate: Generate
     more: More...
-    ticket_volume:
-      title: Ticket Volume
+    no_data_to_display_msg: No data to display
+    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
+    export_tickets_success_msg: Your ticket data will be sent to your email shortly!
+    ticket_volume: 
+      title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets
       total_resolved_tickets : Total Resolved Tickets
@@ -7186,7 +7238,7 @@ en:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
-      title: Helpdesk At A Glance
+      title: Helpdesk In-depth
     performance_distribution:
       title: Performance Distribution
       first_response_bar: First response time
@@ -7201,10 +7253,10 @@ en:
         avg_res_time_trend: All tickets responded to in the selected time period are plotted in this graph based on the avg first response time and avg response time
         resolution_time_trend: All tickets resolved in the selected time period are plotted in this graph based on the avg resolution time
     group_summary:
-      title: Group Summary
+      title: Group Performance
       group: Group
     agent_summary:
-      title: Agent Summary
+      title: Agent Performance
       ticket_assigned: Tickets assigned
       ticket_resolved: Tickets resolved
       tickets_reopened: Tickets reopened
@@ -7219,13 +7271,22 @@ en:
       avg_resolution_time: Average resolution time
       agent: Agent
     customer_report:
-      title:  Customer Report
+      title:  Top Customer Analysis
+      received_tickets: Tickets Submitted
+      resolved_tickets: Tickets Resolved
+      response_violated: Response SLA Violations %
+      resolution_violated: Resolution SLA Violations %
+      customer_interactions: Customer Responses
+      agent_interactions: Agent Responses
       received_tickets: Tickets submitted
       resolved_tickets: Tickets resolved
       response_violated: Response SLA violations %
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
       agent_interactions: Agent responses
+    export:
+      export_report_pdf: "Export as PDF"
+      export_report_csv: "Export as CSV"
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -7465,6 +7526,7 @@ en:
       hold_success: "Now call on hold"
       transfer_call: "Transfer Call"
       dialpad: "Dialpad"
+      cancel: "Cancel"
       call_notes: "Call Notes"
       phone_icon: "Phone"
       on_phone: "Available on Phone"
@@ -7495,6 +7557,11 @@ en:
       save: "Save"
       saving: "Saving..."
       notes: "Notes"
+      add_note_text: "Add Note"
+      edit_note_text: "Edit Note"
+      recent_tickets: "Recent Tickets"
+      no_recent_tickets: "No recent tickets"
+      view_all: "View all"
       new_requester: "New requester"
       low_credit: "Low on phone credit. Please contact your account admin."
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
@@ -7507,7 +7574,7 @@ en:
         transfer_canceled: "Ignored"
         tranfer_no_answer: "Not available"
         tranfer_connected: "Transferred"
-        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_no_answer: "No agents available"
         group_tranfer_connected: "Connected with customer"
         close: "Close"
         resume: "Resume"

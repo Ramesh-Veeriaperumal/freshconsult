@@ -1,0 +1,15 @@
+<div class="reports-title span12">
+  <span class="report-icon">
+    <%= graph_icon(report_type) %>
+  </span>
+  <span class="report-title-block" data-action="pop-report-type-menu">
+    <span id="report-title">
+      <%=t("helpdesk_reports.#{report_type}.title").html_safe %>
+    </span>
+  </span>
+</div>
+<div class="reports-filter span12">
+  <div class="filter-type span11">
+    <ul id="filter_text"></ul>
+  </div>
+</div>

@@ -20,8 +20,8 @@
                   <% end %>
 
                   <% if chat_active? %>
-                     <li>
-                         <a  class="lc-availability-tab" id="lc-availability-tab" href="#lc-availability" ><%= t('helpdesk.dashboard.livechat.chat') %></a>
+                     <li class="tab-chat">
+                         <a class="lc-availability-tab" id="lc-availability-tab" href="#lc-availability" ><%= t('helpdesk.dashboard.livechat.chat') %></a>
                      </li>
                    <% end %>
             </ul>
@@ -52,12 +52,12 @@
                                   </li>
                               </ul>
                               <ul class="agents-filter pull-left">
-                                 <li class="m10 ml20 group dropdown pull-left">
+                                 <li class="m10 ml20 dropdown pull-left">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <b ><span class="filter-name" id="fc-group-name" ><%= t('helpdesk.dashboard.round_robin.all_agents') %></span></b>
+                                        <b ><span class="lc-filter-name" id="lc-group-name" ><%= t('helpdesk.dashboard.round_robin.all_agents') %></span></b>
                                         <b class="caret"></b>
                                     </a>
-                                    <ul class="dropdown-menu" id="fc-group-filter">
+                                    <ul class="dropdown-menu" id="lc-group-filter">
                                        <li class="all-agents" data-id="0"><a href="#"><%= t('helpdesk.dashboard.round_robin.all_agents') %></a></li>
                                         <li class="divider"></li>
                                           <% @groupOptions.each do |group| %>
@@ -65,16 +65,16 @@
                                           <% end %>
                                     </ul>
                                   </li>
-                                  <li class="m10 ml20 sort dropdown pull-left">
+                                  <li class="m10 ml20 dropdown pull-left">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= t('helpdesk.dashboard.livechat.sort_by') %>
-                                        <b ><span class="sort-filter" id="sort_by" ><%= t('helpdesk.dashboard.livechat.name') %></span></b>
+                                        <b ><span class="sort-filter" id="lc-sort-by" ><%= t('helpdesk.dashboard.livechat.name') %></span></b>
                                         <b class="caret"></b>
                                     </a>
-                                    <ul class="dropdown-menu" id="fc-sort-filter">
-                                       <li class="sort_name" data-id="sort_name">
+                                    <ul class="dropdown-menu" id="lc-sort-filter">
+                                       <li class="sort-name" data-id="sort-name">
                                         <a href="#"><%= t('helpdesk.dashboard.livechat.name') %></a>
                                        </li>
-                                       <li class="sort_presence" data-id="sort_presence">
+                                       <li class="sort-presence" data-id="sort-presence">
                                         <a href="#"><%= t('helpdesk.dashboard.livechat.last_modified') %></a>
                                        </li>
                                     </ul>

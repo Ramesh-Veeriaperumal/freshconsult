@@ -5,15 +5,18 @@ class HelpdeskReports::Response::Ticket::Base
 
   attr_accessor :raw_result, :processed_result, :date_range, :report_type
 
-  def initialize result, date_range, report_type
+  def initialize result, date_range, report_type, query_type, pdf_export
     @raw_result       = result
     @date_range       = date_range
     @report_type      = report_type.upcase.to_sym
     @processed_result = {}
+    @query_type       = query_type
+    @pdf_export       = pdf_export
   end
 
   def process
     process_metric if raw_result.present? # return empty hash if ZERO sql rows
+    sort_group_by_values
     map_field_ids_to_values
     #map_flexifield_to_label # TODO: remove this action. Not required anymore.
     processed_result
@@ -58,6 +61,7 @@ class HelpdeskReports::Response::Ticket::Base
   def convert_id_to_names(column_name, value, mapping_hash)
     avg_count, percentage_count = 0 , 0
     value.keys.each do |k| 
+      next if k == PDF_GROUP_BY_LIMITING_KEY
       new_key = mapping_hash[k.to_i] || NOT_APPICABLE 
       value[new_key] ||= {value: 0, id: nil}
       
@@ -73,6 +77,41 @@ class HelpdeskReports::Response::Ticket::Base
       
       value[new_key] = {value: val, id: new_key == NOT_APPICABLE ? nil : k}
       value.delete(k)
+    end
+  end
+  
+  def sort_group_by_values
+    return unless sorting_required?
+    processed_result.each do |gp_by, values|
+      values = values.to_a
+      next if gp_by == :general 
+      not_numeric = values.collect{|i| i unless i.second.is_a? Numeric}.compact
+      values = (values - not_numeric).sort_by{|i| i.second}.reverse!
+      processed_result[gp_by] = (values|not_numeric).to_h
+      club_keys_for_export_pdf(gp_by, processed_result[gp_by]) if (@pdf_export && @query_type!=:bucket)
+    end
+  end
+  
+  def sorting_required?
+    report_type == :GLANCE && @query_type != :bucket
+  end
+  
+  def club_keys_for_export_pdf(column_name, value)
+    avg_count, percentage_count = 0 , 0
+    arr = value.keys
+    arr.slice(PDF_GROUP_BY_LIMIT-1,arr.length).each do |k| 
+      new_key = PDF_GROUP_BY_LIMITING_KEY
+      value[new_key] ||= {value: 0, id: nil}
+      if self.class == HelpdeskReports::Response::Ticket::Count     
+        val = value[new_key][:value].to_i + value[k] #incase we have multiple NA values
+      elsif self.class == HelpdeskReports::Response::Ticket::Avg
+        val = aggregate_avg(@helper_hash[column_name.to_s][k],{"avg"=>value[new_key][:value].to_i, "count"=>avg_count})
+        avg_count += @helper_hash[column_name.to_s][k][:count]
+      elsif self.class == HelpdeskReports::Response::Ticket::Percentage
+        percentage_count += 1 if percentage_count < 2
+        val = (value[new_key][:value].to_i + sla_percentage(column_name, k))/percentage_count
+      end
+      value[new_key] = {value: val, id: nil}
     end
   end
 

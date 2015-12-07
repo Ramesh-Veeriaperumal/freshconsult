@@ -1,6 +1,7 @@
 class Company < ActiveRecord::Base
   
   after_commit :map_contacts_to_company, on: :create
+  after_commit :nullify_contact_mapping, on: :destroy
   after_commit :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
   
@@ -23,16 +24,19 @@ class Company < ActiveRecord::Base
   private
   
     def map_contacts_on_update
-      domain_changes = self.changes["domains"].compact
-      domain_changes[0].split(",").map { |domain| 
-                    domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') } if domain_changes[1]
-      map_contacts_to_company(domain_changes[1].blank? ? domain_changes[0] : domain_changes[1])
+      domain_changes = @model_changes[:domains].compact
+      old_list = (domain_changes[0] || "").split(",").collect(&:strip)
+      new_list = (domain_changes[1] || "").split(",").collect(&:strip)
+      new_domains = new_list - old_list
+      old_domains = old_list - new_list
+      map_contacts_to_company(new_domains) if new_domains.present?
+      Users::UpdateCompanyId.perform_async({ :domains => old_domains, 
+                                             :company_id => nil,
+                                             :current_company_id => self.id }) if old_domains.present?
     end
     
     def map_contacts_to_company(domains = self.domains)
-      User.update_all("customer_id = #{self.id}", 
-        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and account_id = ?', 
-        get_domain(domains), self.account_id]) unless domains.blank?
+      Users::UpdateCompanyId.perform_async({ :domains => domains, :company_id => self.id }) unless domains.blank?
     end
     
     def backup_company_changes
@@ -40,9 +44,9 @@ class Company < ActiveRecord::Base
       @model_changes.merge!(flexifield.changes)
       @model_changes.symbolize_keys!
     end
-    
-    def get_domain(domains)
-      domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+
+    def nullify_contact_mapping
+      Users::UpdateCompanyId.perform_async({ :company_id => nil,
+                                             :current_company_id => self.id })
     end
-    
 end

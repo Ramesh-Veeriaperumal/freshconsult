@@ -16,20 +16,20 @@
 	bottom: 0;
 	height: 39px;
 	color: #FFF;
- @include right(10px);
-	z-index: 12;
+ 	@include right(12px);
+	z-index: 1000;
 }
 
 .ff_desktop_notification {
 	position: absolute;
 	right: 335px;
-	top: 6px;
-	background-color: #7B7B7B;
+	top: 2px;
+	background-color: #BBB;
 	.desktopNotifier {
-		width: 38px;
-		height: 28px;
+		width: 50px;
+		height: 32px;
 		position: relative;
-		line-height: 28px;
+		line-height: 32px;
 		cursor: pointer;
 		text-align: center;
 	}
@@ -65,22 +65,138 @@
 		@include border-right-radius(4px);
 	}
 }
-.popupbox-content {
+.freshfone-context-container{
 	position: fixed;
-	bottom: 48px;
-	border: 1px solid $popup-content-border;
-	z-index: 999;
-	@include border-radius(4px);
-	border-bottom: 4px solid #444;
-  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
-	.triangle {
-		@include triangle(down, $popup-content-border, 8px);
-		position: absolute;
-	 @include right(10px);
-		top: 100%;
-		margin-top: 3px;
-	}	
+    bottom: 41px;
+    min-height: 100px;
+    min-width: $ongoing-popup-width;
+    max-width: $ongoing-popup-width;
+    color: #000;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background: #fff;
+    right: $ongoing-popup-right;
+    z-index: $ongoing-popup-z-index;
+    box-shadow: $ongoing-box-shadow;
+    .ff-context-container{
+    	display: block;
+    }
+    .triangle{
+    	position: absolute;
+    	padding-right: 10px;
+    }
+    .context_header{
+    	padding-left: 15px;
+    }
+    .header_text{
+    	padding: 12px 10px 12px 10px;
+    	cursor: pointer;
+    	cursor: hand;
+		span.note_from_agent{
+			font-size: 12px;
+			font-weight: 400;
+			float: right;
+			color: #ccc;
+			margin-top: -15px;
+			margin-left: 100px;
+			text-overflow: ellipsis;
+			text-transform: none;
+		}
+		.tickets-loading{
+			float: right;
+    		margin-top: -8px;
+    		padding-right: 25px;
+		}
+    }
+    .caller-context{
+    	color: #999;
+    	font-size: 12px;
+    	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
+		padding: 13px 10px 13px 10px;
+    	.preview_pic img{
+    		height: 40px;
+    		width: 40px;
+    		margin-right: -4px;
+    		margin-top: 6px;
+    	}
+    	.preview_pic .thumb{
+    		border-radius: 50%;
+    	}
+    	.caller-name{
+    		font-size: 13px;
+    		color: #444;
+    		font-weight: 500;
+    	}
+    	.caller-location{
+    	    font-weight: 500;
+    	}
+    }
+    .recent-tickets .header_text, .add_call_note .header_text{	
+   		&.opened .triangle{
+	    	.caret-right{
+	    		display: none;
+	    	}
+	    	.caret-down{
+	    		display: block;
+	    	}	
+    	}		
+    	&.closed .triangle{		
+    		.caret-right{
+	    		display: block;
+	    	}
+	    	.caret-down{
+	    		display: none;
+	    	}	
+    	}	
+    }	
+    .recent-tickets{ 	
+    	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
+    	
+    }
+    .recent-tickets-content{
+    	.ticket-content{
+    		color: #999;
+   			text-overflow: ellipsis;
+   			padding: 0px 0px 15px 25px;
+    		.ticket-subject a{
+    			font-weight: 500;
+    		}		
+    	}
+    	.ticket-link a {
+    		font-weight: 500;
+    	}
+    }
+    .ffone-add-notes{
+    	display: block;
+    	background-color: $ongoing-call-notes-background;
+    	margin: 1px;
+    	.opened .context_header{
+    		color: #888;
+    	}
+    	textarea{
+    		background-color :$ongoing-call-notes-background;
+    		box-shadow: none;
+    		border: none;
+    		padding: 0px 0px 15px 25px;
+    		width: 279px;
+    	}
+    }
 }
+	.popupbox-content {
+		position: fixed;
+		bottom: 48px;
+		z-index: 999;
+		@include border-radius(4px);
+  		box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
+		.triangle {
+			@include triangle(down, $popup-content-border,  6px);
+			position: absolute;
+			@include right(12px);
+			top: 99.5%;
+			margin-top: 3px;
+		}
+	}
+
 .restrict-call, .can-make-calls {
 	cursor: pointer;
 	height: 16px;

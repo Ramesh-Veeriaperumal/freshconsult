@@ -9,22 +9,18 @@ class HelpdeskReports::Formatter::Ticket::Glance
   end
   
   def perform
-    sort_group_by_values
+    placeholders_for_not_applicable
+    set_others_key_at_last
     result
   end
   
-  def sort_group_by_values
+  def placeholders_for_not_applicable
     result.each do |metric, res|
       res.symbolize_keys!
       next if res[:error].present? || bucket_metric?(metric)     
       res.each do |gp_by, values|
         if gp_by == :general
-          values[:metric_result] = 0 if values[:metric_result] == NA_PLACEHOLDER_GLANCE 
-        else
-          values = values.to_a
-          not_numeric = values.collect{|i| i unless i.second[:value].is_a? Numeric}.compact
-          values = (values - not_numeric).sort_by{|i| i.second[:value]}.reverse!
-          res[gp_by] = (values|not_numeric).to_h
+          values[:metric_result] = NA_PLACEHOLDER_GLANCE if values[:metric_result] == NOT_APPICABLE
         end
       end
     end
@@ -32,6 +28,21 @@ class HelpdeskReports::Formatter::Ticket::Glance
   
   def bucket_metric? metric
     metric.split("_").last == "BUCKET"
+  end
+  
+  def set_others_key_at_last
+    result.each do |metric, res|
+      res.symbolize_keys!
+      next if res[:error].present? || bucket_metric?(metric)     
+      res.each do |gp_by, values|
+        next if gp_by == :general
+        if values[PDF_GROUP_BY_LIMITING_KEY]
+          tmp = values[PDF_GROUP_BY_LIMITING_KEY]
+          values.delete(PDF_GROUP_BY_LIMITING_KEY)
+          values.merge!(PDF_GROUP_BY_LIMITING_KEY => tmp)
+        end
+      end
+    end
   end
 
 end

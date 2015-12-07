@@ -19,7 +19,7 @@ class Social::TwitterHandle < ActiveRecord::Base
       :account_id        => self.account_id,
       :twitter_handle_id => self.id
     }
-    Resque.enqueue(Social::Workers::Twitter::UploadAvatar, args) unless Rails.env.test?
+    Social::UploadAvatar.perform_async(args) unless Rails.env.test?
   end
 
   def populate_streams

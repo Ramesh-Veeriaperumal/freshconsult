@@ -43,14 +43,15 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
         initDataTable : function(row_count){
 
                 var config  = {
-                    "dom" : 'frtSp',
+                    "dom" : 'frtlSp',
                     "bSortCellsTop": true,
                     "bAutoWidth": false,
                     "sScrollX": "100%",   
                     "sScrollXInner": "200%",
                     "bFilter" : false, 
-                    "bLengthChange" : false,
+                    "bLengthChange" : true,
                     "scrollDistance" : 850,
+                    "lengthMenu": [30, 60, 90],
                     "aoColumns": [
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
@@ -76,15 +77,18 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                         "sSearchPlaceholder": "Search"
                      },
                      "fnDrawCallback": function(oSettings) {
-                            if (row_count < 11) {
+                           var current_page_size = jQuery(this).DataTable().page.len();
+                            if (row_count <= current_page_size) {
                                 jQuery('.dataTables_paginate').hide();
+                            }else{
+                                jQuery('.dataTables_paginate').show();
                             }
                       }
                 };
-                var oTable = jQuery("#group-summary").dataTable(config);
+                var oTable = jQuery("#group-summary").DataTable(config);
                 if (jQuery.browser.safari) { 
                     setTimeout(function(){
-                     oTable.fnAdjustColumnSizing(); 
+                     oTable.columns.adjust().draw(); 
                     }, 0 ); 
                 }
         }

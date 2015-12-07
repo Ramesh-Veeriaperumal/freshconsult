@@ -57,6 +57,16 @@ class Freshfone::CallController < FreshfoneBaseController
 		render :json => { :can_accept => (status) ? 1 : 0 }
 	end
 
+	def caller_recent_tickets 	
+		caller =  current_account.all_users.find_by_id(params[:id]) unless params[:id].blank?
+		if caller.present?
+			@caller_tickets_count = current_account.tickets.permissible(current_user).requester_active(caller).visible.count
+			@caller_tickets = current_account.tickets.permissible(current_user).requester_active(caller).visible.newest(3).find(:all, 
+      				:include => [:ticket_status])
+		end
+    render :partial => 'freshfone/caller/caller_recent_tickets'
+	end 
+
 	private
 		def load_user_by_phone
 			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
@@ -75,7 +85,8 @@ class Freshfone::CallController < FreshfoneBaseController
 		    	:ringing_time => call.freshfone_number.ringing_time,
 		    	:transfer_agent => get_transfer_agent(call),
 		    	:group 	=> (call.group.present?) ? call.group.name : "",
-		    	:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : ""
+		    	:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
+		    	:caller_location => [caller.city.blank? ? nil : caller.city ,caller.country.blank? ? nil : caller.country].compact.join(", ")
 		    }
 		  end
 	  end

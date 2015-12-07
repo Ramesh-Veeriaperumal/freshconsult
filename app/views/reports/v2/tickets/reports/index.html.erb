@@ -8,6 +8,10 @@
 <div class="reports-wrapper hide" id="reports_wrapper">
 	<div class="reports-main">
 		<div class="top-links">
+				<ul class="pull-left breadcrumb span8">
+				  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
+				  <li><%=t('adv_reports.glance.report_view')%></li>
+				</ul>
 				<div class="pull-right solution-link">
 					<% if @report_type == 'ticket_volume'%>
 						<a target="_blank" href="https://support.freshdesk.com/solution/articles/213203-ticket-volume-report"><%=t('helpdesk_reports.solution_article_text') %></a>
