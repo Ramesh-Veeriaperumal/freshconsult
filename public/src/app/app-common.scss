@@ -4272,3 +4272,18 @@ $adm-bdr:#F0F0F0;
 		display: none;
 	}
 }
+
+/* Unresolved link in dashboard */
+.unresolved-ticket-link{
+	@include padding( 8px 15px 0 0 );
+	&:after{
+		content: "";
+		display: inline-block;
+		border-top: 5px solid transparent;
+		@include border-left( 5px solid #777 );
+		border-bottom: 5px solid transparent;
+		position: absolute;
+		@include right( 20px ); 
+		top: 30px;
+	}
+}
