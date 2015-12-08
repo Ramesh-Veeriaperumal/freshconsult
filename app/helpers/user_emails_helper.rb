@@ -55,7 +55,7 @@ HTML
             output << ue.text_field(:email, :id => "email_sec", :class => "useremail cont text ue_input fillone", "autocomplete" => "off", "placeholder" => "Enter an email", "data-verified" => ue.object.verified)
         else
             output << ue.hidden_field(:email, :id => "email_sec", :class => "useremail cont #{ue.object.primary_role? ? "disabled" : ""} text ue_input fillone", "autocomplete" => "off", "data-verified" => ue.object.verified)
-            output << "<p class='ue_text #{ue.object.primary_role? ? "disabled" : ""}'>#{ue.object.email}</p>"
+            output << "<p class='ue_text #{ue.object.primary_role? ? "disabled" : ""}'>#{h(ue.object.email)}</p>"
         end
 
         unless ue.object.new_record?
