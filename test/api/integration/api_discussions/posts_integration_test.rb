@@ -12,7 +12,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 6,
         api_destroy: 9,
 
-        create: 34,
+        create: 35,
         update: 17,
         destroy: 30
       }

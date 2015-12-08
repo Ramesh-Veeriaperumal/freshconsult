@@ -16,10 +16,10 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 91,
         show: 18,
-        update: 45,
+        update: 37,
         index: 18,
-        destroy: 31,
-        restore: 31
+        destroy: 32,
+        restore: 32
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
