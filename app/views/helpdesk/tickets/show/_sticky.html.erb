@@ -37,9 +37,7 @@
 						data-hotkey='<%="#{shortcut('ticket_detail.toggle_watcher')}" %>'
 						data-watching="<%= @ticket.subscriptions.map(&:user_id).include? current_user.id %>" 
 						data-currentuserid="<%= current_user.id %>">
-						<span id="monitor">
 							<%= render :partial => "/helpdesk/subscriptions/monitor" %>
-						</span>
 					</div>
 					<% end %>
 				</li>
