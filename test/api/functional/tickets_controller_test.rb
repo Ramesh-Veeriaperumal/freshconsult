@@ -2074,7 +2074,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params
     assert_response 200
     response = parse_response @response.body
-    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
+    assert_equal [Helpdesk::Ticket.where(deleted: 0, spam: 0).count, 30].min, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params
