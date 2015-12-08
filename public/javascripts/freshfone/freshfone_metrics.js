@@ -94,12 +94,12 @@ window.App.Phone = window.App.Phone || {};
 					self.push_event();
 			});
 			$('.add-notes-header').on('click',function(){
-					self.recordSource("add_note_click");
-					self.push_event();
+					// self.recordSource("add_note_click");
+					// self.push_event();
 			});
 			$(".recent-tickets-header").on('click',function(){
-					self.recordSource("freshfone_recent_tickets_click");
-					self.push_event();
+					// self.recordSource("freshfone_recent_tickets_click");
+					// self.push_event();
 			});
 			$(document).on("click",".sm2-360btn",function(ev){ 
     		if(jQuery(this).parent().hasClass("sm2_playing")){

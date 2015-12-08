@@ -4811,7 +4811,7 @@ en:
     title: Archived tickets
     no_reply_msg: This ticket has been archived.
   recent_activity: Recent Activity
-  recent_activities: Recent Activites
+  recent_activities: Recent Activities
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
