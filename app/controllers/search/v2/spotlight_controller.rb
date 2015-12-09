@@ -204,9 +204,9 @@ class Search::V2::SpotlightController < ApplicationController
       @search_sort    = params[:search_sort] || cookies[:search_sort]
       @sort_direction = 'desc'
       @size           = Search::Utils::MAX_PER_PAGE
-      @current_page   = params[:page].to_i.zero? ? 1 : params[:page].to_i
+      @current_page   = params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i
       @offset         = @size * (@current_page - 1)
-      @result_json    = { :results => [], :current_page => 1 }
+      @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
       @es_results     = []
       @search_context = :agent_spotlight
     end

@@ -100,10 +100,18 @@ class Search::V2::AutocompleteController < ApplicationController
                                                             @search_context,
                                                             searchable_type.to_a
                                                           ).fetch(@es_params)
-        @records_from_db = Search::Utils.load_records(es_results, @@esv2_autocomplete_models.dclone, current_account.id)
+        @records_from_db = Search::Utils.load_records(
+                                                        es_results, 
+                                                        @@esv2_autocomplete_models.dclone, 
+                                                        {
+                                                          current_account_id: current_account.id,
+                                                          page: Search::Utils::DEFAULT_PAGE,
+                                                          from: Search::Utils::DEFAULT_OFFSET
+                                                        }
+                                                      )
       rescue => e
         NewRelic::Agent.notice_error(e)
-        @records_from_db = send("#{@search_context}_fallback")
+        @records_from_db = []
       end
     end
 
@@ -111,34 +119,6 @@ class Search::V2::AutocompleteController < ApplicationController
     #
     def searchable_type
       @searchable_klass.demodulize.downcase
-    end
-
-    # DB fallback for Agents
-    #
-    def agent_autocomplete_fallback
-      current_account.technicians.where(['name like ? or email like ?', "%#{@search_key}%", "%#{@search_key}%"]).limit(100)
-    end
-
-    # DB fallback for Users
-    #
-    def requester_autocomplete_fallback
-      current_account.users
-                      .joins([:user_emails])
-                      .where(helpdesk_agent: false)
-                      .where(['name like ? or phone like ? or mobile like ? or user_emails.email like ?',
-                              "%#{@search_key}%", "%#{@search_key}%", "%#{@search_key}%", "%#{@search_key}%"]).limit(100)
-    end
-
-    # DB fallback for Companies
-    #
-    def company_autocomplete_fallback
-      current_account.companies.where(['name like ?' ,"%#{@search_key}%"]).select([:id, :name]).limit(100)
-    end
-
-    # DB fallback for Tags
-    #
-    def tag_autocomplete_fallback
-      current_account.tags.select(:name).order('tag_uses_count desc').limit(25)
     end
 
     def handle_rendering

@@ -267,7 +267,7 @@ class Support::SearchV2::SpotlightController < SupportController
       @es_results     = []
       @size           = (params[:max_matches].to_i.zero? or
                         params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
-      @page           = (params[:page].to_i.zero? ? 1 : params[:page].to_i)
+      @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
       @offset         = @size * (@page - 1)
       @search_context = :portal_spotlight
     end

@@ -2,6 +2,8 @@
 class Search::Utils
 
   MAX_PER_PAGE          = 30
+  DEFAULT_PAGE          = 1
+  DEFAULT_OFFSET        = 0
   TEMPLATE_BY_CONTEXT   = {
     portal_spotlight:       'portalSpotlight',
     portal_article_search:  'portalArticleSearch',
