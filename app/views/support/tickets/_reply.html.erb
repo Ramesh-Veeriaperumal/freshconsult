@@ -20,6 +20,16 @@
 			  <br />
 		  	<% end %>
 		</div>
+    
+    <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% if ilos_app_config[:visible_portal_ticket].to_bool %>
+        <%= stylesheet_link_tag :"cdn/ilos_video" %>
+        <div class="ilos-widget pull-right" id="ilos-widget-portal">
+          <%= ilos_widget(@ticket.display_id, "portal_ticket") %>
+        </div>
+      <% end %>
+    <% end %>
 
 		<%= f.submit t("ticket.support.#{@ticket.closed? ? '.reply_and_open' : '.reply'}" ), {:class => "btn btn-primary"} %>
 		<a href="#" data-hide-dom="#add-note-form" data-show-dom="#add-note-form-proxy" class="btn"><%= t('cancel') %></a>

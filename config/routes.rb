@@ -804,6 +804,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :ilos do
+      post :ticket_note
+      post :forum_topic
+      post :solution_article
+      post :get_recorder_token
+      get :popupbox
+    end
+
     namespace :xero do 
       get :authorize 
       post :update_params

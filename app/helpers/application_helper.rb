@@ -1493,6 +1493,14 @@ module ApplicationHelper
     location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
   end
 
+  def ilos_widget( entity_id, location)
+    ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
+    ilos_widget_html =  
+      %Q{<a class='btn btn-flat' href='#{integrations_ilos_popupbox_path}?ilos_entity_id=#{entity_id}&location=#{location}' title='#{t('integrations.ilos.messages.recording_details')}' id='#{ilos_id}' rel='freshdialog' data-target='#ilos-video-recorder' data-width='430' data-submit-label='#{t('integrations.ilos.messages.start_recording')}' data-close-label='#{t('integrations.ilos.messages.cancel_recording')}'><img id='ilos-image' src='/glyphs/vectors/ilos-icon.svg' alt='ilos'>#{t('integrations.ilos.messages.record_screen')}</a>}
+
+    ilos_widget_html.html_safe
+  end
+
   def shortcut(key)
     Shortcut.get(key)
   end
