@@ -20,6 +20,8 @@ module Helpdesk::DashboardHelper
 			:reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true )),
 			:class => "reminders sidepanel", :id => "reminders"))
 
+		sidebar_content.concat(render :partial => '/helpdesk/dashboard/shared/dashboard_unresolved_tickets') if current_user.privilege?(:view_reports)
+
 		sidebar_content.concat(render :partial => '/freshfone/freshfone_dashboard') if current_account.freshfone_active?
 
 		sidebar_content.concat(content_tag(:div, content_tag(:div, :class => "sloading loading-small loading-block"),

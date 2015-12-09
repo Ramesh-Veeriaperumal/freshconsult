@@ -41,7 +41,8 @@ var UnresolvedTickets = (function () {
 			});	
 			// Filter transition
 			$supervisorDashboard.on('focus.unresolved', '.dataTables_filter input', function(){
-				jQuery(this).addClass('widelength');
+				var placeholder_txt = (jQuery("#unresolved-tab li.active").data('groupby') === "group_id" ) ? "Search by group" : "Search by agent";
+				jQuery(this).addClass('widelength').attr('placeholder', placeholder_txt);
 				jQuery(this).parent().addClass('widelength');
 			});
 			// Filter transition
