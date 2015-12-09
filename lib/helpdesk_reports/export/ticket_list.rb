@@ -85,7 +85,7 @@ module HelpdeskReports
           rescue Exception => err
             NewRelic::Agent.notice_error(err)
           ensure
-            Account.current.data_exports.find(export_id).update_attributes(:status => DataExport::EXPORT_STATUS[:completed])
+            # Account.current.data_exports.find(export_id).update_attributes(:status => DataExport::EXPORT_STATUS[:completed])
             FileUtils.rm_f(file_path) if File.exist?(file_path)
           end
         end
