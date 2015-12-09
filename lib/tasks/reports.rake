@@ -25,34 +25,40 @@ namespace :reports do
   desc "Poll the sqs to get the params for reports export"
   task :poll_sqs => :environment do
     $sqs_reports_helpkit_export.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
-
       puts "** Got ** #{sqs_msg.body} **"
       message    = JSON.parse(sqs_msg.body)
       account_id = message["account_id"]
       export_id  = message["export_id"]
-      Sharding.select_shard_of(account_id) do
-        Sharding.run_on_slave do
-          begin
+      begin
+          Sharding.select_shard_of(account_id) do
             account = Account.find_by_id(account_id)
-            if account && account.make_current
-              current_export = account.data_exports.find(export_id)
-              if (current_export && current_export.status == 1)
-                current_export.update_attributes(:status => DataExport::EXPORT_STATUS[:file_created])
+                if account && account.make_current
+                  current_export = account.data_exports.find(export_id)
+                  if (current_export && current_export.status == 1)
+                    current_export.completed!
+                  else
+                    puts " Duplicate Export task for Account :: #{account_id} : export_id :: #{export_id}"
+                    return #since it's duplicate!
+                  end
+                end
+          end  
+          Account.reset_current_account
+          Sharding.select_shard_of(account_id) do
+            Sharding.run_on_slave do
+                account = Account.find_by_id(account_id)
+                account.make_current
                 HelpdeskReports::Export::TicketList.new(message).trigger
-              end
             end
-          rescue => e
+        end
+      rescue => e
             NewRelic::Agent.notice_error(e, :custom_params => {:export_params => message.to_json})
             subj_txt = "Reports Export exception for #{Account.current.id}"
             message  = "#{e.inspect}\n #{e.backtrace.join("\n")}"
             puts message
             DevNotification.publish(SNS["reports_notification_topic"], subj_txt, message)
-          end
-        end
+      ensure
+        Account.reset_current_account
       end
-      
-      Account.reset_current_account
     end
   end
-  
 end
