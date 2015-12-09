@@ -7,9 +7,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   helper_method :has_scope?
   
   before_filter :check_feature
-  
-  before_filter :ensure_report_type_or_redirect, :date_lag_constraint, 
-                :ensure_ticket_list,                                    :except => [:download_file]              
+  before_filter :check_account_state, :ensure_report_type_or_redirect, 
+                :date_lag_constraint, :ensure_ticket_list,              :except => [:download_file]              
   before_filter :pdf_export_config,                                     :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
