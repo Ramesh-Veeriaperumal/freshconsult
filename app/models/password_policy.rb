@@ -110,24 +110,21 @@ class PasswordPolicy < ActiveRecord::Base
 
 	private
 		def validate_configs
+			input_policies = self.policies.map(&:to_sym)
 			self.configs.each do |key,value|
-				input_policies = self.policies.map(&:to_sym)
-
 				if CONFIG_REQUIRED_POLICIES.exclude?(key.to_sym)
 					errors.add(:base, I18n.t("password_policy.invalid_config"))
 				elsif input_policies.exclude?(key.to_sym)
 					#check if the configs given has the corresponding policy checked.
-					value = DEFAULT_CONFIGS[key]
-				else
-					if value.present?
-						case key
-						when "minimum_characters"
-							errors.add(:base, I18n.t("password_policy.wrong_password_length")) unless value.in? minimum_character_values
-						when "cannot_be_same_as_past_passwords"
-							errors.add(:base, I18n.t("password_policy.wrong_no_of_past_password")) unless value.in? password_history_match_values
-						when "session_expiry", "password_expiry"
-							errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? password_session_expiry_days_values
-						end
+					self.configs[key] = DEFAULT_CONFIGS[key]
+				elsif value.present?
+					case key
+					when "minimum_characters"
+						errors.add(:base, I18n.t("password_policy.wrong_password_length")) unless value.in? minimum_character_values
+					when "cannot_be_same_as_past_passwords"
+						errors.add(:base, I18n.t("password_policy.wrong_no_of_past_password")) unless value.in? password_history_match_values
+					when "session_expiry", "password_expiry"
+						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? password_session_expiry_days_values
 					end
 				end
 
