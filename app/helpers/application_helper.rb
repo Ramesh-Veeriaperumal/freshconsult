@@ -266,7 +266,7 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          output << %(<li>#{"<span class='icon ticksymbol'></span>" if item[2]}#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -367,7 +367,7 @@ module ApplicationHelper
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
       tab(
         s[3] || t("header.tabs.#{s[1].to_s}") ,
-        (s[1] == :tickets) ? helpdesk_tickets_path : {:controller => s[0], :action => :index},
+        s[0] ,
         active && :active, 
         s[1] 
       ).html_safe
