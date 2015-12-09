@@ -57,7 +57,7 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
-      if !scope.nil? && @item.deleted != scope
+      if scope != nil && @item.deleted != scope
         head 404
         return false
       end

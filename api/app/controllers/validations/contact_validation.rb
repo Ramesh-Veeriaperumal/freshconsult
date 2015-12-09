@@ -55,9 +55,8 @@ class ContactValidation < ApiValidation
         errors[:email] << :fill_a_mandatory_field
       end
     end
-    
-    # http://blog.bigbinary.com/2012/01/08/alias-vs-alias-method.html
-    alias_method :contact_detail_missing_update, :contact_detail_missing # Should it be here or above private?
+
+    alias contact_detail_missing_update contact_detail_missing
 
     def validate_avatar
       if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)

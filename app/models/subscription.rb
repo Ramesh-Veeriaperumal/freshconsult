@@ -498,7 +498,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def clear_account_susbcription_cache
-      key = MemcacheKeys::ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
+      key = ACCOUNT_SUBSCRIPTION % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache key
     end
  end
