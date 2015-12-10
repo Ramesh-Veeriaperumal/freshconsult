@@ -34,7 +34,7 @@ module Mobile::Actions::Note
     }
     options = {
       :include => json_include,
-      :methods => [ :formatted_created_at, :call_details , :all_attachments, :third_party_response, :reply_to_forward]
+      :methods => [ :formatted_created_at, :call_details , :all_attachments]
     }
     as_json(options)
   end
@@ -44,15 +44,4 @@ module Mobile::Actions::Note
     AwsWrapper::S3Object.url_for(self.freshfone_call.recording_audio.content.path('original'), self.freshfone_call.recording_audio.content.bucket_name,
                                 :expires => 3600.seconds, :secure => true, :response_content_type => self.freshfone_call.recording_audio.content_content_type)
   end
-
-  def reply_to_forward
-    reply_to_forward?
-  end
-
-  def third_party_response
-    third_party_response?
-  end
-
-
-
 end
