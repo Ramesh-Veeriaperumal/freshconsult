@@ -82,7 +82,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def download_file
-    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{download_file_format(params[:file_name])}"
+    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
     redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
     redirect_to redir_url
   end
