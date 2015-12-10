@@ -76,7 +76,7 @@ module HelpdeskReports
         else
           if @attachment_via_s3
             file_name = file_path.split("/").last
-            options.merge!(:export_url => user_download_url(file_name,"report_export/tickets")) # upload file on S3 and send download link
+            options.merge!(:export_url => user_download_url(file_name)) # upload file on S3 and send download link
           else
             options.merge!(file_path: file_path) # Attach file in mail itself
           end

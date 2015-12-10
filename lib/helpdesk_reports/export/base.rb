@@ -11,6 +11,7 @@ module HelpdeskReports
         set_current_user args[:user_id]
         set_locale
         TimeZone.set_time_zone
+        @today = DateTime.now.utc.strftime('%d-%m-%Y')
       end
         
     end

@@ -41,8 +41,8 @@ module HelpdeskReports::Export::Utils
     REPORTS_NAME_MAPPING[report_type].gsub(" ","_").underscore
   end
   
-  def user_download_url file_name, export_type
-    "#{Account.current.full_url}/#{v2_reports_path}/#{export_type}/#{@today}/#{file_name}"
+  def user_download_url file_name
+    "#{Account.current.full_url}/#{v2_reports_path}/report_export/#{@today}/#{file_name}"
   end
   
   def v2_reports_path
@@ -57,14 +57,10 @@ module HelpdeskReports::Export::Utils
   end
   
   def upload_file(file_path, file_name)
-    path = s3_path file_name, "report_export"
+    path = "data/helpdesk/report_export/#{Rails.env}/#{User.current.id}/#{@today}/#{file_name}"
     file = File.open(file_path)
     write_options = { :content_type => file.content_type,:acl => "public-read" }
     AwsWrapper::S3Object.store(path, file, S3_CONFIG[:bucket], write_options)
-  end
-  
-  def s3_path file_name, export_type
-    "data/helpdesk/#{export_type}/#{Rails.env}/#{User.current.id}/#{@today}/#{file_name}"
   end
   
   def set_attachment_method file_path
