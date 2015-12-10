@@ -24,7 +24,7 @@ class Company < ActiveRecord::Base
   private
   
     def map_contacts_on_update
-      domain_changes = @model_changes[:domains].compact
+      domain_changes = @model_changes[:domains]
       old_list = domains_array(domain_changes[0])
       new_list = domains_array(domain_changes[1])
       new_domains = new_list - old_list
