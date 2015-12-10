@@ -42,9 +42,4 @@ class CompanyField < ActiveRecord::Base
   def label
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label)
   end
-
-  #Used by API For getting only the name of the field omitting the "cf_"
-  def api_name
-    self.default_field? ? self.name : self.name[3..-1]
-  end
 end

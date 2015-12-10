@@ -162,7 +162,7 @@ module Helpers::TicketFieldsTestHelper
       customers_can_edit: tf.editable_in_portal.to_s.to_bool,
       label: tf.label,
       label_for_customers: tf.label_in_portal,
-      name: tf.api_name,
+      name: tf.name,
       position: tf.position,
       required_for_agents: tf.required.to_s.to_bool,
       required_for_closure: tf.required_for_closure.to_s.to_bool,
@@ -195,7 +195,7 @@ module Helpers::TicketFieldsTestHelper
       label: ntf.label,
       label_in_portal: ntf.label_in_portal,
       level: ntf.level,
-      name: ntf.api_name,
+      name: ntf.name,
       ticket_field_id: ntf.ticket_field_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}

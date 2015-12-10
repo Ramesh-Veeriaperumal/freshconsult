@@ -170,7 +170,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children.each do |child|
         next if values[child.name].blank?
         record.errors[field_name.to_sym] << :conditional_not_blank
-        (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.api_name })
+        (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.name })
         return true
       end
       true

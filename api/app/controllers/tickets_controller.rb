@@ -60,7 +60,7 @@ class TicketsController < ApiApplicationController
   private
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@custom_fields_api_name_mapping), item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS, item)
     end
 
     def load_objects
@@ -161,13 +161,11 @@ class TicketsController < ApiApplicationController
 
     def validate_params
       @ticket_fields = Account.current.ticket_fields_from_cache
-      allowed_custom_fields = Helpers::TicketsValidationHelper.custom_field_api_name_mapping(@ticket_fields)
+      allowed_custom_fields = Helpers::TicketsValidationHelper.custom_field_names(@ticket_fields)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields.values
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      @custom_fields_api_name_mapping = allowed_custom_fields
-      append_account_id_for_ticket_fields @custom_fields_api_name_mapping
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
@@ -243,18 +241,13 @@ class TicketsController < ApiApplicationController
     end
 
     def error_options_mappings
-      @custom_fields_api_name_mapping.merge(ApiTicketConstants::FIELD_MAPPINGS)
+      ApiTicketConstants::FIELD_MAPPINGS
     end
 
     def valid_content_type?
       return true if super
       allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
-    end
-
-    def append_account_id_for_ticket_fields custom_fields_api_name_mapping
-      custom_fields_hash = params[cname][:custom_fields]
-      custom_fields_hash.keys.each { | api_name | params[cname][:custom_fields][custom_fields_api_name_mapping.key(api_name.to_sym)] = params[cname][:custom_fields].delete api_name } if custom_fields_hash.is_a? Hash
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

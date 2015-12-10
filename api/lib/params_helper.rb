@@ -22,9 +22,5 @@ class ParamsHelper
         custom_fields[key] = 0 if value.is_a?(FalseClass)
       end
     end
-
-    def prepend_with_cf_for_custom_fields(custom_field_hash, custom_fields_api_name_mapping)
-      custom_field_hash.keys.each { | api_name | custom_field_hash[custom_fields_api_name_mapping.key(api_name.to_sym)] = custom_field_hash.delete api_name  } if custom_field_hash.is_a? Hash
-    end
   end
 end

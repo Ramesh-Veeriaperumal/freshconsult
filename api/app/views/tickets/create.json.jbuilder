@@ -13,7 +13,7 @@ json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frD
 
 json.set! :is_escalated, @item.isescalated
 
-json.set! :custom_fields, TicketDecorator.remove_appended_text_from_ticket_fields(@item.custom_field, @custom_fields_api_name_mapping)
+json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field)
 
 json.set! :tags, @item.tag_names
 

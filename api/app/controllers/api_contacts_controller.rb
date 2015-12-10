@@ -70,12 +70,12 @@ class ApiContactsController < ApiApplicationController
 
     def validate_params
       @contact_fields = current_account.contact_form.custom_contact_fields
-      allowed_custom_fields = @contact_fields.collect{ |x| [x.name.to_sym, x.api_name.to_sym] }.to_h
-      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields.values
+      allowed_custom_fields = @contact_fields.map(&:name)
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
+
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      @custom_fields_api_name_mapping = allowed_custom_fields
-      ParamsHelper.prepend_with_cf_for_custom_fields(params[cname][:custom_fields], @custom_fields_api_name_mapping)
+
       contact = ContactValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
@@ -124,11 +124,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS.merge(@custom_fields_api_name_mapping), item)
+      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS, item)
     end
 
     def error_options_mappings
-      @custom_fields_api_name_mapping.merge(ContactConstants::FIELD_MAPPINGS)
+      ContactConstants::FIELD_MAPPINGS
     end
 
     def assign_protected

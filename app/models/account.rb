@@ -143,10 +143,6 @@ class Account < ActiveRecord::Base
     true
   end
 
-  def id_length
-    @id_length ||= self.id.to_s.length
-  end
-
   class << self # class methods
 
     def reset_current_account

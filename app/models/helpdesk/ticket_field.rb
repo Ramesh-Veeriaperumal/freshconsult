@@ -405,11 +405,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     #   return false
     # end
   end
-
-  #Used by API For getting only the name of the field omitting the _accountId
-  def api_name
-    is_default_field? ? name : chomped_custom_field_name
-  end
   
   protected
 
@@ -513,11 +508,5 @@ class Helpdesk::TicketField < ActiveRecord::Base
   private
     def status_field?
       self.field_type.eql?("default_status")
-    end
-
-    #Defined as a method only to modularize. Please use api_name to get the chomped_custom_field_name i.e without "cf..._accountId"
-    def chomped_custom_field_name
-       #(-Account.current.id_length-2) will omit "_accountId" from name
-      (TicketConstants::TICKET_FIELD_INVALID_START_CHAR.index(label[0]) ? name[3..(-Account.current.id_length-2)] : name[0..(-Account.current.id_length-2)])
     end
 end

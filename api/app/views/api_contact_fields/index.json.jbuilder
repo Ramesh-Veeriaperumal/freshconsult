@@ -1,8 +1,7 @@
 json.array! @items do |contact_field|
   json.cache! CacheLib.compound_key(contact_field, contact_field.choices, params) do
-    json.extract! contact_field, :editable_in_signup, :id, :label, :position
+    json.extract! contact_field, :editable_in_signup, :id, :label, :name, :position
 
-    json.set! :name, contact_field.api_name
     json.set! :type, contact_field.field_type
     json.set! :choices, ContactFieldDecorator.contact_field_choices(contact_field) unless contact_field.choices.blank?
     json.set! :default, contact_field.default_field?

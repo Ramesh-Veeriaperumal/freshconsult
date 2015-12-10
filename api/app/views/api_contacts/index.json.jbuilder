@@ -6,5 +6,5 @@ json.array! @items do |contact|
 
   # Not caching as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
-  json.set! :custom_fields, ContactDecorator.remove_prepended_text_from_contact_fields(contact.custom_field)
+  json.set! :custom_fields, contact.custom_field
 end

@@ -188,9 +188,6 @@ module TicketConstants
   TICKET_DISPLAY_ID_MAX_LOOP = 10
   TICKET_ID_LOCK_EXPIRY = 5 #5 seconds
 
-  #USED BY API to chomp the prepended string "cf_" from name
-  TICKET_FIELD_INVALID_START_CHAR = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "_", " "]
-
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end
