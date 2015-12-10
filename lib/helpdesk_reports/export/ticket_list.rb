@@ -71,20 +71,16 @@ module HelpdeskReports
           :selected_metric => selected_metric
         }
 
-        begin
-          if file_path.blank?
-            ReportExportMailer.no_report_data(options)
+        if file_path.blank?
+          ReportExportMailer.no_report_data(options)
+        else
+          if @attachment_via_s3
+            file_name = file_path.split("/").last
+            options.merge!(:export_url => user_download_url(file_name,"report_export/tickets")) # upload file on S3 and send download link
           else
-            if @attachment_via_s3
-              file_name = file_path.split("/").last
-              options.merge!(:export_url => user_download_url(file_name,"report_export/tickets")) # upload file on S3 and send download link
-            else
-              options.merge!(file_path: file_path) # Attach file in mail itself
-            end
-            ReportExportMailer.bi_report_export(options)
+            options.merge!(file_path: file_path) # Attach file in mail itself
           end
-        ensure
-          FileUtils.rm_f(file_path) if file_path && File.exist?(file_path)
+          ReportExportMailer.bi_report_export(options)
         end
       end
 
