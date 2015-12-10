@@ -69,7 +69,7 @@ module HelpdeskReports::Export::Utils
   
   def set_attachment_method file_path
     size_from_redis    = get_reports_redis_key BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES
-    max_size_allowed   = size_from_redis ? size_from_redis : HelpdeskReports::Constants::Ticket::MAIL_ATTACHMENT_LIMIT_IN_BYTES
+    max_size_allowed   = size_from_redis ? size_from_redis.to_i : HelpdeskReports::Constants::Ticket::MAIL_ATTACHMENT_LIMIT_IN_BYTES
     @attachment_via_s3 = File.size(file_path) > max_size_allowed
   end
   
