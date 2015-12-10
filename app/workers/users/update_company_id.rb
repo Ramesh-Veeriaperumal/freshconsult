@@ -36,6 +36,6 @@ class Users::UpdateCompanyId < BaseWorker
   end
 
   def get_domain(domains)
-    domains.map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+    domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
   end
 end
