@@ -39,4 +39,6 @@ class Solution::Folder < ActiveRecord::Base
     :source => :customer_folders, 
     :readonly => false,
     :extend => Solution::MultipleThroughSetters
+
+	alias_method :parent, :solution_folder_meta
 end

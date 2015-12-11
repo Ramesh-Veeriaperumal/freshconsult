@@ -58,4 +58,6 @@ class Solution::Category < ActiveRecord::Base
 		:readonly => false,
     :class_name => 'Mobihelp::App', 
     :through => :mobihelp_app_solutions_through_meta
+
+	alias_method :parent, :solution_category_meta
 end

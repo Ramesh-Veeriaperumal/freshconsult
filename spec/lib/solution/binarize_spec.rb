@@ -175,10 +175,10 @@ RSpec.describe Solution::ArticleMeta do
           :folder_id => @folder_meta.id,
           :lang_codes => lang_vers + [:primary]
           }))
-    article_meta = Solution::Builder.article(params)
-  	article_meta.send("#{lang_vers[0]}_article").update_attributes(:outdated => true)
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_outdated?").should be_truthy
+		article_meta = Solution::Builder.article(params)
+		article_meta.send("#{lang_vers[0]}_article").update_attributes(:outdated => true)
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_outdated?").should be_truthy
   end
 
   it "should update the outdated column for a version as false when marked as up-to-date" do
@@ -189,11 +189,11 @@ RSpec.describe Solution::ArticleMeta do
           :lang_codes => lang_vers + [:primary],
           :outdated => true
           }))
-    article_meta = Solution::Builder.article(params)
-    article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_article").update_attributes(:outdated => false)
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_outdated?").should be_falsey
+		article_meta = Solution::Builder.article(params)
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_article").update_attributes(:outdated => false)
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_outdated?").should be_falsey
   end
 
   # ---- Published ----
@@ -220,10 +220,10 @@ RSpec.describe Solution::ArticleMeta do
           :folder_id => @folder_meta.id,
           :lang_codes => lang_vers + [:primary]
           }))
-    article_meta = Solution::Builder.article(params)
-  	article_meta.send("#{lang_vers[0]}_article").update_attributes(:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_published?").should be_falsey
+		article_meta = Solution::Builder.article(params)
+		article_meta.send("#{lang_vers[0]}_article").update_attributes(:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_published?").should be_falsey
   end
 
   it "should update the published column for a version as false when marked as published" do
@@ -234,11 +234,11 @@ RSpec.describe Solution::ArticleMeta do
           :lang_codes => lang_vers + [:primary],
           :status => Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
           }))
-    article_meta = Solution::Builder.article(params)
-    article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_article").update_attributes(:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_published?").should be_truthy
+		article_meta = Solution::Builder.article(params)
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_article").update_attributes(:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_published?").should be_truthy
   end
 
   # ---- Draft ----
@@ -264,10 +264,10 @@ RSpec.describe Solution::ArticleMeta do
           :folder_id => @folder_meta.id,
           :lang_codes => lang_vers + [:primary]
           }))
-    article_meta = Solution::Builder.article(params)
-  	article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_draft?").should be_truthy
+		article_meta = Solution::Builder.article(params)
+		article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_draft?").should be_truthy
   end
 
   it "should update the draft column for a version as false when marked draft is discarded" do
@@ -277,12 +277,12 @@ RSpec.describe Solution::ArticleMeta do
           :folder_id => @folder_meta.id,
           :lang_codes => lang_vers + [:primary]
           }))
-    article_meta = Solution::Builder.article(params)
-    article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
-    article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_article").draft.destroy
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
+		article_meta = Solution::Builder.article(params)
+		article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_article").draft.destroy
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
   end
 
   it "should update the draft column for a version as false when marked draft is published" do
@@ -292,12 +292,12 @@ RSpec.describe Solution::ArticleMeta do
           :folder_id => @folder_meta.id,
           :lang_codes => lang_vers + [:primary]
           }))
-    article_meta = Solution::Builder.article(params)
-  	article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
-    article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_article").draft.publish!
-  	article_meta.reload
-  	article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
+		article_meta = Solution::Builder.article(params)
+		article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_article").draft.publish!
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
   end
 
 end
