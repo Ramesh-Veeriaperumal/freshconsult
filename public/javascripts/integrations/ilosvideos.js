@@ -73,6 +73,9 @@ IlosWidget.prototype= {
     jQuery("#ilos-back-btn").on("click", function(){
       window.location.reload();
     })
+    jQuery(window).on('popstate', function(){
+      jQuery('#disablingDiv').remove();
+    })
   },
 
   getRecorderToken: function( videoEndPoint, videoTitle, extras ){

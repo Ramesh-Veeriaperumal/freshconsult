@@ -47,13 +47,15 @@
 	@include opacity(.9); 
 	#ilos-back-page{
 		color:white;
-		@include margin-left(33%);
+		@include margin-left(12%);
 		position:fixed;
     }
     #ilos-back-btn{
-        background-color:white;
         padding:5px 20px;
-        @include margin-left(35%);
+        @include margin-left(42%);
+        background-color: #fff;
+        outline:none;
+     	@include background-image(linear-gradient(to bottom, #ffffff,#ffffff));
     }
 }
 
