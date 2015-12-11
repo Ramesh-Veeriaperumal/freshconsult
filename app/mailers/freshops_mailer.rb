@@ -18,7 +18,7 @@ class FreshopsMailer < ActionMailer::Base
 
   def freshfone_stats_summary_csv(email_params,csv_file)
     headers = {
-      :subject    => "Freshfone #{email_params[:export_type]} Status",
+      :subject    => "Freshfone #{email_params[:export_type].capitalize} Status",
       :to         => email_params[:email],
       :sent_on    => Time.now,
       :body       => "Hi #{email_params[:name]},
