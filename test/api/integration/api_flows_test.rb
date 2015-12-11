@@ -65,6 +65,14 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(message: String)
   end
 
+  def test_trusted_ip_invalid_non_api
+    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
+    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    get '/discussions/categories', nil, @headers.merge('rack.session' => { 'user_credentials_id' => '22' })
+    assert_response 302
+    assert_equal '/unauthorized.html', response.headers['Location']
+  end
+
   def test_globally_blacklisted_ip_invalid
     GlobalBlacklistedIp.any_instance.stubs(:ip_list).returns(['127.0.0.1'])
     post '/api/discussions/categories', '{"name": "testdd"}', @write_headers

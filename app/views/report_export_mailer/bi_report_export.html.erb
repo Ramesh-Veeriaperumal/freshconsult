@@ -3,6 +3,10 @@ Hi <%=@user.name%>,
 <br/>
 <% if @export_url.present? %>
   The <%= @report_type %> report<%= " #{@ticket_export} " %>export you had requested is complete. You can download the file from <a href=<%= @export_url %>>here</a> (It will expire in 45 days). If the link does not work, copy and paste the URL below in your browser's address bar:
+
+  <br/>
+  <%=  @export_url %>
+  <br/>
 <% else %>
   The <%= @report_type %> report<%= " #{@ticket_export} " %>export you had requested is complete. Please find the file attached with this mail.
 <% end %>
@@ -27,10 +31,6 @@ For metric: <%= @selected_metric.html_safe %>
 <br/>
 <br/>
 <%end%>
-<% if @export_url.present? %>
-  <%=  @export_url %>
-<br/>
-<% end %>
 Regards,
 <br/>
 <%= @user.account.helpdesk_name %> Support

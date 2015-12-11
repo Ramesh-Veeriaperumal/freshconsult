@@ -22,7 +22,7 @@ class Freshfone::OpsNotifier
   end
 
   def alert_call
-    url = "#{ops_call_notify_url}/?message=#{CGI.escape(message)}"
+    url = "#{ops_call_notify_url}?message=#{CGI.escape(message)}"
     config_call = 
     to_numbers.each { |number| TwilioMaster.account.calls.create(
       :from => FreshfoneConfig['ops_alert']['call']['from'],

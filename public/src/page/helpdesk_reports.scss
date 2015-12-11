@@ -970,7 +970,7 @@
 		th.sorting::after{
 			content: $font-glyphs-sorting-default;
 		    @extend .sort_icons;
-		    right: -10px;
+		    right: -6px;
 		    top: 2px;
 		    opacity: 0.3;
 		}
@@ -978,14 +978,14 @@
 		th.sorting_asc::after{
 			content: $font-glyphs-sorting-asc;
 		    @extend .sort_icons;
-		    right: -10px;
+		    right: -6px;
 		    top: 5px;
 		}
 
 		th.sorting_desc::after{
 			content: $font-glyphs-sorting-dsc;
 		    @extend .sort_icons;
-		    right: -10px;
+		    right: -6px;
 		}
 	}
 	.DTFC_LeftHeadWrapper{
@@ -1043,6 +1043,7 @@
 	        color: #fff;
 	        display: inline-block;
 	        background: #f2f2f2;
+	        cursor:pointer;
 	    }
 	    .paginate_button {
 	        &.previous {
@@ -1080,6 +1081,7 @@
 	        border-left: 0 !important;
 	        color: #333;
 	        background: #fff;
+	        cursor : pointer;
 	        &.current {
 	            background: #555;
 	            color: #fff;
@@ -1412,6 +1414,8 @@
 	.twocol-form{
 		width : 98%;
 		margin : 0 auto;
+		height : 350px;
+		overflow-y : auto;
 		.item{
 			display : block;
 			margin : 2px 0;

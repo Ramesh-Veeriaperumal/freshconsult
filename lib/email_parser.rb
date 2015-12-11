@@ -3,6 +3,7 @@ module EmailParser
   include AccountConstants
 
   def parse_addresses(addresses)
+    return {:emails => [], :plain_emails => []} if addresses.blank?
     addresses = addresses.split(",") if addresses.is_a?(String)
     name = ""
     plain_emails = []
@@ -11,21 +12,23 @@ module EmailParser
       begin
         to_field = Mail::ToField.new
         to_field.value =  add
-        email = to_field.addrs.first
-        address = email.address
-        address = Mail::Encodings.unquote_and_convert_to(address, "UTF-8") if address.include?("=?")
-        if address =~ EMAIL_REGEX
-          if email.name.present?
-            email_name = email.name
-            email_name = email.name.prepend(name) and name="" if name.present?
-            plain_emails.push $1.downcase
-            emails.push "#{format_name(email_name)} <#{$1.downcase}>".strip
+        parsed_addresses = to_field.addrs
+        parsed_addresses.each do |email| 
+          address = email.address
+          address = Mail::Encodings.unquote_and_convert_to(address, "UTF-8") if address.include?("=?")
+          if address =~ EMAIL_REGEX
+            if email.name.present?
+              email_name = email.name
+              email_name = email.name.prepend(name) and name="" if name.present?
+              plain_emails.push $1.downcase
+              emails.push "#{format_name(email_name)} <#{$1.downcase}>".strip
+            else
+              plain_emails.push $1.downcase
+              emails.push $1.downcase
+            end
           else
-            plain_emails.push $1.downcase
-            emails.push $1.downcase
+            name << "#{address} , "
           end
-        else
-          name << "#{address} , "
         end
       rescue Exception => e
         Rails.logger.debug "Exception when parsing addresses #{addresses} : #{add}"
@@ -47,7 +50,7 @@ module EmailParser
     end
     { :emails => emails.uniq, :plain_emails => plain_emails.uniq }
   end
-
+    
   def format_name(name)
     (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end

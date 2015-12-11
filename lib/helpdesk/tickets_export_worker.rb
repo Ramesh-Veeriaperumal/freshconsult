@@ -95,11 +95,11 @@ class Helpdesk::TicketsExportWorker < Struct.new(:export_params)
     @records = records
 
     if export_params[:archived_tickets]
-      Account.current.archive_tickets.find_in_batches(archive_export_query) do |items|
+      Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
         add_to_records(headers, items)  
       end
     else
-      Account.current.tickets.find_in_batches(export_query) do |items|
+      Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
         add_to_records(headers, items)  
       end
     end

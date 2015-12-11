@@ -2,7 +2,6 @@
 class AgentsController < ApplicationController
   include AgentsHelper
   include UserHelperMethods
-  helper AgentsHelper
   include APIHelperMethods
   include ExportCsvUtil
   

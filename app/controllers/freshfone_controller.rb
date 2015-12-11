@@ -81,14 +81,6 @@ class FreshfoneController < FreshfoneBaseController
 			 end
 		end
 
-		def invalid_number_incoming_fix
-			return if params[:From].blank? || sip_call?
-			if invalid_number?(params[:From]) && !strange_number?(params[:From])
-				Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
-				params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
-			end
- 		end
-
 		def reset_caller_params
 			params[:FromCountry] = country_from_global(params[:From])
 			params[:FromState] = ""

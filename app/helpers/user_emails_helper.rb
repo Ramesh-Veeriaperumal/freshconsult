@@ -42,7 +42,7 @@ HTML
       output = []
       count = 0
       @form_builder.fields_for :user_emails do |ue|
-        output << %(<li class="#{ue.object.primary_role ? "disabled" : ""} #{ue.object.new_record? ? "new_email" : ""}" data-count = "#{count}" data-email = "#{ue.object.email}" data-id = "#{ue.object.id}">)
+        output << %(<li class="#{ue.object.primary_role ? "disabled" : ""} #{ue.object.new_record? ? "new_email" : ""}" data-count = "#{count}" data-email = "#{html_escape ue.object.email}" data-id = "#{ue.object.id}">)
         if !ue.object.primary_role
           output << content_tag(:span, "", :class => "remove_pad ue_remove_image ue_action_icons ficon-minus fsize-12", "data-email" => ue.object.id)
           title = t('merge_contacts.make_primary')
@@ -55,7 +55,7 @@ HTML
             output << ue.text_field(:email, :id => "email_sec", :class => "useremail cont text ue_input fillone", "autocomplete" => "off", "placeholder" => "Enter an email", "data-verified" => ue.object.verified)
         else
             output << ue.hidden_field(:email, :id => "email_sec", :class => "useremail cont #{ue.object.primary_role? ? "disabled" : ""} text ue_input fillone", "autocomplete" => "off", "data-verified" => ue.object.verified)
-            output << "<p class='ue_text #{ue.object.primary_role? ? "disabled" : ""}'>#{ue.object.email}</p>"
+            output << "<p class='ue_text #{ue.object.primary_role? ? "disabled" : ""}'>#{html_escape ue.object.email}</p>"
         end
 
         unless ue.object.new_record?

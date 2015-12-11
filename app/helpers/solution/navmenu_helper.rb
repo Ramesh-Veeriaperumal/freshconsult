@@ -26,7 +26,7 @@ module Solution::NavmenuHelper
     folders.each do |folder|
       next if folder[:is_default]
       op << %( <li class="forum_list_item" id="#{folder[:id]}_folder"> )
-      op << pjax_link_to( "#{folder[:name].truncate(30)} (#{folder[:article_count]})&lrm;".html_safe,
+      op << pjax_link_to( "#{h(folder[:name].truncate(30))} (#{folder[:article_count]})&lrm;".html_safe,
                           solution_folder_path(:id => folder[:id]), {
                             :"data-folder-id" => folder[:id],
                             :"data-category-id" => category_id,

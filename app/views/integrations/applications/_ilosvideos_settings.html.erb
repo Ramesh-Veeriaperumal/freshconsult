@@ -1,0 +1,65 @@
+<%
+if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos])
+  configs_hash=get_app_config(Integrations::Constants::APP_NAMES[:ilos])
+else
+  configs_hash={
+      :visible_agent_ticket=>"1", :visible_portal_ticket=>"1", 
+      :visible_agent_forum=>"1",  :visible_portal_forum=>"1", 
+      :visible_solution=>"1"
+    }
+end
+%>
+
+<table class="ilos-table">
+  <tr class="headings">
+    <th> <%= t('integrations.ilos.settings.enable_ilosvideos_recording') %> </th>
+    <th> <%= t('integrations.ilos.settings.for_agents') %> </th>
+    <th> <%= t('integrations.ilos.settings.for_customer') %> </th>
+  </tr>
+  <tr>
+    <td><div class="info-data">
+      <%= t('integrations.ilos.settings.ticket_interaction') %>
+    </div></td>
+    <td>
+      <%= check_box("configs", "visible_agent_ticket", { 
+          :class => "checkbox", 
+          :checked=>configs_hash[:visible_agent_ticket].to_bool
+        }, "1", "0") %>
+    </td>
+    <td>
+      <%= check_box("configs", "visible_portal_ticket", {
+          :class => "checkbox", 
+          :checked=>configs_hash[:visible_portal_ticket].to_bool
+        }, "1", "0") %>
+    </td>
+  </tr>
+  <tr>
+    <td><div class="info-data">
+      <%= t('integrations.ilos.settings.forum_interaction') %>
+    </div></td>
+    <td>
+      <%= check_box("configs", "visible_agent_forum", {
+          :class => "checkbox", 
+          :checked=>configs_hash[:visible_agent_forum].to_bool
+        }, "1", "0") %>
+    </td>
+    <td>
+      <%= check_box("configs", "visible_portal_forum", {
+          :class => "checkbox", 
+          :checked=>configs_hash[:visible_portal_forum].to_bool
+        }, "1", "0") %>
+    </td>
+  </tr>
+  <tr>
+    <td><div class="info-data">
+      <%= t('integrations.ilos.settings.create_solution') %>
+    </div></td>
+    <td>
+      <%= check_box("configs", "visible_solution", {
+        :class => "checkbox", 
+        :checked=>configs_hash[:visible_solution].to_bool
+      }, "1", "0") %>
+    </td>
+    <td></td>
+  </tr>
+</table>

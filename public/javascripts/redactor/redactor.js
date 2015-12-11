@@ -1682,7 +1682,7 @@ Redactor.prototype = {
 				parent = this.getParentNode();
 				if ($(parent).get(0).tagName === 'A')
 				{
-					$(parent).replaceWith($(parent).text());
+					$(parent).replaceWith(escapeHtml($(parent).text()));
 				}
 				else
 				{
