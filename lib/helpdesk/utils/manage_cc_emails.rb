@@ -15,10 +15,11 @@ module Helpdesk::Utils::ManageCcEmails
 	end
 
 	def parse_all_cc_emails(kbase_email, support_emails)
-		to_email  = parse_to_email[:email]
-   	to_emails = get_email_array(params[:to])
-   	cc_emails = to_emails.push(parse_cc_email).flatten.compact.uniq	
-   	cc_emails.reject{ |cc_email| (cc_email == kbase_email or cc_email == to_email or support_emails.include?(cc_email)) }
+		to_email   = parse_to_email[:email]
+   	to_emails  = get_email_array(params[:to])
+   	sup_emails = support_emails.map(&:downcase)
+   	additional_to_emails = to_emails.reject{ |cc_email| ((cc_email == kbase_email) or (cc_email == to_email) or sup_emails.include?(cc_email.downcase))}
+   	additional_to_emails.push(parse_cc_email).flatten.compact.uniq	
 	end
 	
 end
