@@ -132,6 +132,10 @@ class Va::Action
       act_on.tags << tag unless act_on.tags.include?(tag)
     end
     record_action
+  rescue ActiveRecord::RecordInvalid
+    Rails.logger.debug "For Va::Action #{self} RecordInvalid Exception rescued"
+    last_tag_uses = act_on.tag_uses.last
+    last_tag_uses.delete if last_tag_uses.new_record?
   end
 
   def add_a_cc(act_on)

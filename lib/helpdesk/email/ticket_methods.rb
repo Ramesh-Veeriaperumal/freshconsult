@@ -134,7 +134,9 @@ module Helpdesk::Email::TicketMethods
   private 
   #All recipients are moved to global Cc to have them part of the entire ticket conversation 
   def global_cc
-    @global_cc ||= email[:to_emails].reject{|mail| email[:to][:email].include?(mail)}.push(email[:cc]).flatten.compact.uniq 
+    sup_emails              = Account.current.support_emails.map(&:downcase)
+    additional_to_emails    = email[:to_emails].reject{|mail| email[:to][:email].include?(mail) or sup_emails.include?(mail.downcase)}
+    @global_cc ||= additional_to_emails.push(email[:cc]).flatten.compact.uniq 
   end
   
 end

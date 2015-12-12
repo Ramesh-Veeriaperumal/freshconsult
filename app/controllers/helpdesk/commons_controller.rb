@@ -8,7 +8,7 @@ class Helpdesk::CommonsController < ApplicationController
     assigned_agent = params[:agent]
     blank_value = !params[:blank_value].blank? ? params[:blank_value] : "..."
     @agents = if group_id.present?
-      AgentGroup.where({ :group_id => group_id, :users => {:account_id => current_account.id , :deleted => false } }).joins(:user)
+      AgentGroup.where({ :group_id => group_id, :users => {:account_id => current_account.id , :deleted => false } }).joins(:user).order("users.name")
     else
       current_account.agents.includes(:user)
     end

@@ -6060,6 +6060,50 @@ en:
         create_solution: "Solution (New, Edit)"
         for_agents: "For Agents"
         for_customer: "For Customers"
+    ilos:
+      label: "ilos videos"
+      desc: "Record and share screencasts on tickets, forums, and solution articles."
+      helptext: "<h4>Freshdesk Ilos Integration</h4><p><br/>Paste the admin API key for your Ilos account. This account will own all the videos that agents or customers create using this integration.</br>Control access to the ilos record button for agents and customers on the tickets, forums, or solution articles pages.</p>"
+      form:
+        api_key: "Enter ilosvideos Api Key"
+      settings:
+        enable_ilosvideos_recording: "Enable ilos Videos Recording"
+        ticket_interaction: "Tickets page"
+        forum_interaction: "Forums page"
+        create_solution: "Solutions article"
+        for_agents: "For Agents"
+        for_customer: "For Customers"
+      messages:
+        ilos_success: "200 Ok"
+        ilos_error: "Error"
+        default_video_desc: "A sample video from ilos"
+        ilos_header: "ilos"
+        video_title: "Video Title"
+        video_desc: "Description"
+        about_recording: "Learn more about screen recording"
+        record_screen: "Record Screen"
+        private_note: "Save as private note"
+        recording_details: "Recording Details"
+        start_recording: "Start Recording"
+        cancel_recording: "Cancel"
+        ilos_video_initialized: "<p id='ilos-paragraph'><span><b>Screencast recording has been initiated.</b></span></br>ilos record plugin will start automatically. For more help on recording screecasts follow the instructions <a href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk' target='blank'>here</a>.<br/><br/>Trouble with recording?<br/>Please ensure that you have the <a href='https://www.ilosvideos.com/downloadRecorder/?returnTo=Fresh%20Desk' target='blank'>ilos plugin</a> already installed. If installing for the first time, then please go back and click 'record' again after the plugin has installed.<br/></p>"
+        moderated_forums: "For moderated forums, the recording will appear after approval."
+      agent_ticket:
+        placeholder: "Ticket#"
+        back_to_page: "Back to ticket"
+      agent_forum:
+        placeholder: "Topic#"
+        back_to_page: "Back to topic"
+      solution:
+        placeholder: "Article#"
+        back_to_page: "Back to article"
+      portal_ticket:
+        placeholder: "Ticket#"
+        back_to_page: "Back to ticket"
+      portal_forum:
+        placeholder: "Topic#"
+        back_to_page: "Back to topic"
+
     harvest:
       label: "Harvest"
       desc: "You can log time spent on tickets into your Harvest projects and tasks."

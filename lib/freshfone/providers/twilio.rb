@@ -6,7 +6,7 @@ class Freshfone::Providers::Twilio
     @room                   = conf_params[:room]
     @wait_url               = conf_params[:wait_url]
     @beep                   = conf_params[:beep]
-    @time_limit             = conf_params[:time_limit]
+    @time_limit             = conf_params[:timeLimit]
     @record                 = conf_params[:record]
     @startConferenceOnEnter = conf_params[:startConferenceOnEnter]
     @endConferenceOnExit    = conf_params[:endConferenceOnExit]

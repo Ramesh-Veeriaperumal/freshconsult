@@ -266,7 +266,7 @@ module ApplicationHelper
           output << %(<li class="divider"></li>)
         else
           li_opts = (item[3].present?) ? options.merge(item[3]) : options
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
+          output << %(<li>#{"<span class='icon ticksymbol'></span>" if item[2]}#{ link_to item[0], item[1], li_opts, "tabindex" => "-1" }</li>)
         end
       end
     end
@@ -367,7 +367,7 @@ module ApplicationHelper
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
       tab(
         s[3] || t("header.tabs.#{s[1].to_s}") ,
-        (s[1] == :tickets) ? helpdesk_tickets_path : {:controller => s[0], :action => :index},
+        s[0] ,
         active && :active, 
         s[1] 
       ).html_safe
@@ -1491,6 +1491,14 @@ module ApplicationHelper
     return false
 
     location=="agent_ticket" && configs_hash[:visible_agent_ticket]=="1"
+  end
+
+  def ilos_widget( entity_id, location)
+    ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
+    ilos_widget_html =  
+      %Q{<a class='btn btn-flat' href='#{integrations_ilos_popupbox_path}?ilos_entity_id=#{entity_id}&location=#{location}' title='#{t('integrations.ilos.messages.recording_details')}' id='#{ilos_id}' rel='freshdialog' data-target='#ilos-video-recorder' data-width='430' data-submit-label='#{t('integrations.ilos.messages.start_recording')}' data-close-label='#{t('integrations.ilos.messages.cancel_recording')}'><img id='ilos-image' src='/glyphs/vectors/ilos-icon.svg' alt='ilos'>#{t('integrations.ilos.messages.record_screen')}</a>}
+
+    ilos_widget_html.html_safe
   end
 
   def shortcut(key)

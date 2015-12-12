@@ -67,7 +67,7 @@
 					  <%= label(:user, :name, t('user.full_name'), :class => "control-label" ) %>
 					  <div class="controls">
 						  <%= text_field(:user, :name, :class => "text required input-xlarge", 
-                    :value => @agent.user.name, :placeholder => t('user.name'))  %>
+                    :value => "#{@agent.user.name}", :placeholder => t('user.name'))  %>
 					  </div>
 				  </li>	
             <li class="control-group">
@@ -81,7 +81,7 @@
   					<%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
   					<div class="controls">
   						<%= text_field(:user, :job_title, :class => "text input-xlarge", 
-                  :value => @agent.user.job_title, :placeholder => t('user.title')) %>
+                  :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
   					</div>
   				</li>
   				<li class="control-group">

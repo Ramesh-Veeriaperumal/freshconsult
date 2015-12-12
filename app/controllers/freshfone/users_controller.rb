@@ -11,7 +11,7 @@ class Freshfone::UsersController < ApplicationController
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
-	after_filter  :check_for_bridged_calls, :only => [:refresh_token]
+	after_filter  :check_for_bridged_calls, :only => [:refresh_token, :manage_presence]
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
 
 	def presence
@@ -78,9 +78,8 @@ class Freshfone::UsersController < ApplicationController
 
 	def manage_presence
 		Rails.logger.debug "Admin agent availability manage :: #{current_account.id} :: #{params[:agent_id]}"
-		phone_user = current_account.freshfone_users.find_by_user_id(params[:agent_id])
-		return modify_presence(phone_user,Freshfone::User::PRESENCE[:offline]) if phone_user.presence==1
-		modify_presence(phone_user,Freshfone::User::PRESENCE[:online])
+		return modify_presence(Freshfone::User::PRESENCE[:offline]) if @freshfone_user.online?
+		modify_presence(Freshfone::User::PRESENCE[:online])
 	end
 
 	private
@@ -91,7 +90,8 @@ class Freshfone::UsersController < ApplicationController
 
 		def load_or_build_freshfone_user
 			return node_user if requested_from_node?
-			@freshfone_user = current_user.freshfone_user || build_freshfone_user
+			@freshfone_user = current_account.freshfone_users.find_by_user_id(params[:agent_id]) if params[:agent_id].present?
+			@freshfone_user ||= current_user.freshfone_user || build_freshfone_user
 		end
 
 		def build_freshfone_user
@@ -124,7 +124,7 @@ class Freshfone::UsersController < ApplicationController
 		def check_for_bridged_calls
 			#bridge_queued_call
 			return if @freshfone_user.blank? || !@freshfone_user.online?
-			add_to_call_queue_worker
+			add_to_call_queue_worker(@freshfone_user.user_id) # sending user_id here as it will be used for manage presence too.
 		end
 
 		def requested_from_node?
@@ -172,8 +172,8 @@ class Freshfone::UsersController < ApplicationController
 			params[:force].present? ? params[:force].to_bool : false
 		end
 
-		def modify_presence(user, status)
-			user.change_presence_and_preference(status) 
-			render :json => { :status => user.save }
+		def modify_presence(status)
+			@freshfone_user.change_presence_and_preference(status) 
+			render :json => { :status => @freshfone_user.save }
 		end
 end

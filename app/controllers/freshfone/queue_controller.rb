@@ -15,6 +15,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   before_filter :remove_wait_job,
               :only => [:hangup, :quit_queue_on_voicemail, :dequeue]
   after_filter :update_call, :only => :hangup
+  before_filter :invalid_number_incoming_fix, :only=> :dequeue
   
   def enqueue
     current_call.queued!

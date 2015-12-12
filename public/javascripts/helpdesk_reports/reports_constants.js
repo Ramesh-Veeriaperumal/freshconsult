@@ -11,7 +11,7 @@ HelpdeskReports.Constants = {
                 bucket: ["customer_interactions", "agent_interactions"],
                 bucket_graph_map: ['interactions'],
                 ticket_list_title : "All created tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/212988"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/212988"
             },
             "RESOLVED_TICKETS" : { 
                 name : "RESOLVED TICKETS",
@@ -21,7 +21,7 @@ HelpdeskReports.Constants = {
                 bucket: ["customer_interactions", "agent_interactions"],
                 bucket_graph_map: ['interactions'],
                 ticket_list_title : "All resolved tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/212989"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/212989"
             },
             "REOPENED_TICKETS" : { 
                 name : "REOPENED TICKETS",
@@ -31,7 +31,7 @@ HelpdeskReports.Constants = {
                 bucket: ["customer_interactions", "agent_interactions", "reopen_count"],
                 bucket_graph_map: ['interactions', 'reopen'],
                 ticket_list_title : "All reopened tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213067"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213067"
             },
             "AVG_FIRST_RESPONSE_TIME" : { 
                 name : "AVERAGE 1ST RESPONSE TIME",
@@ -39,7 +39,7 @@ HelpdeskReports.Constants = {
                 description: "Average first response time of all the first responses made in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 ticket_list_title : "All tickets with 1st response",
-                solution_url : "https://support.freshdesk.com/solution/articles/213074"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213074"
             },
             "AVG_RESPONSE_TIME" : { 
                 name : "AVERAGE RESPONSE TIME",
@@ -47,7 +47,7 @@ HelpdeskReports.Constants = {
                 description: "Average response time of all the responses made in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 ticket_list_title : "All tickets with reponse",
-                solution_url : "https://support.freshdesk.com/solution/articles/213085"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213085"
             },
             "AVG_RESOLUTION_TIME" : { 
                 name : "AVERAGE RESOLUTION TIME",
@@ -55,7 +55,7 @@ HelpdeskReports.Constants = {
                 description: "Average resolution time of tickets resolved in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 ticket_list_title : "All resolved tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213112"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213112"
             },
             "AVG_FIRST_ASSIGN_TIME" : { 
                 name : "AVERAGE 1ST ASSIGN TIME",
@@ -63,7 +63,7 @@ HelpdeskReports.Constants = {
                 description: "Average first assign time of tickets assigned to agents in the selected time period",
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 ticket_list_title : "All assigned tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213121"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213121"
             },
             "FCR_TICKETS" : { 
                 name : "FIRST CONTACT RESOLUTION",
@@ -73,7 +73,7 @@ HelpdeskReports.Constants = {
                 ticket_list_metric: 'fcr_violation',
                 ticket_list_complaint_title : "All FCR compliant tickets",
                 ticket_list_violated_title  : "All FCR violated tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213144"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213144"
             },
             "RESPONSE_SLA" : { 
                 name : "FIRST RESPONSE SLA",
@@ -83,7 +83,7 @@ HelpdeskReports.Constants = {
                 ticket_list_metric: 'fr_escalated',
                 ticket_list_complaint_title : "All first response SLA compliant tickets",
                 ticket_list_violated_title : "All first response SLA violated tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213166"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213166"
             },
             "RESOLUTION_SLA" : { 
                 name : "RESOLUTION SLA",
@@ -93,7 +93,7 @@ HelpdeskReports.Constants = {
                 ticket_list_metric: 'is_escalated',
                 ticket_list_complaint_title : "All resolution SLA compliant tickets",
                 ticket_list_violated_title : "All resolution SLA violated tickets",
-                solution_url : "https://support.freshdesk.com/solution/articles/213168"
+                solution_url : "https://support.freshdesk.com/support/solutions/articles/213168"
             }
         },
         default_metric: "RECEIVED_TICKETS",

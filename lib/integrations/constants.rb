@@ -29,7 +29,8 @@ module Integrations::Constants
     :xero => "xero",
     :hootsuite => "hootsuite",
     :onedrive => "onedrive",
-    :github => "github"
+    :github => "github",
+    :ilos => "ilos"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

@@ -13,8 +13,6 @@ class AgentObserver < ActiveRecord::Observer
   def after_commit(agent)
     if agent.send(:transaction_include_action?, :create)
       update_crm(agent) 
-    elsif agent.send(:transaction_include_action?, :update)
-      clear_auto_refresh_cache(agent) if agent.account.features?(:auto_refresh) 
     end
     true
   end
@@ -49,16 +47,6 @@ class AgentObserver < ActiveRecord::Observer
 
     def auto_refresh_key(agent)
       AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
-    end
-
-    def clear_auto_refresh_cache(agent)
-
-      body = {
-        "cacheKey"    => "AUTO_REFRESH_DETAILS:#{agent.account_id}:#{agent.user_id}",
-        "messageType" => "clearCache"
-      }.to_json
-
-      $sqs_autorefresh.send_message(body) unless Rails.env.test?
     end
       
     def update_crm(agent)

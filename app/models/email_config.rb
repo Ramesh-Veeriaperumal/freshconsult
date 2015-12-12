@@ -33,7 +33,13 @@ class EmailConfig < ActiveRecord::Base
   end
   
   def friendly_email
-    active? ? "#{format(name)} <#{reply_email}>" : "support@#{account.full_domain}"
+    if active?
+      "#{format(name)} <#{reply_email}>"
+    elsif primary_role?
+      account.default_friendly_email
+    else
+      product.primary_email_config ? product.primary_email_config.friendly_email : account.default_friendly_email
+    end
   end
   
   def friendly_email_personalize(user_name)

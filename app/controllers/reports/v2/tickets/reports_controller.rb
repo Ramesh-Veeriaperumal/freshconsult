@@ -7,9 +7,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   helper_method :has_scope?
   
   before_filter :check_feature
-  
-  before_filter :ensure_report_type_or_redirect, :date_lag_constraint, 
-                :ensure_ticket_list,                                    :except => [:download_file]              
+  before_filter :check_account_state, :ensure_report_type_or_redirect, 
+                :date_lag_constraint, :ensure_ticket_list,              :except => [:download_file]              
   before_filter :pdf_export_config,                                     :only   => [:index, :fetch_metrics]
   before_filter :filter_data, :set_selected_tab,                        :only   => [:index, :export_report, :email_reports]
   before_filter :normalize_params, :validate_params, :validate_scope, 
@@ -83,7 +82,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def download_file
-    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{download_file_format(params[:file_name])}"
+    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
     redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
     redirect_to redir_url
   end

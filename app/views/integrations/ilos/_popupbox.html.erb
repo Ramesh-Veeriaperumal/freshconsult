@@ -1,0 +1,46 @@
+
+<%= javascript_tag do %>
+  cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
+<% end %>
+
+<%= javascript_include_tag :"cdn/custom_widget" %>
+<%= javascript_include_tag :"cdn/ilosvideos" %>
+
+<div class="ilos-form">
+  <label><b><%= t('integrations.ilos.messages.video_title') %></b></label>
+  <input type="text" class='ilos-video-title' id="ilos-title"  placeholder="<%= t("integrations.ilos.#{location}.placeholder") + ilos_entity_id %>" autofocus></br>
+  <label><b><%= t('integrations.ilos.messages.video_desc') %></b></label>
+  <textarea class='ilos-video-desc' id="ilos-desc" rows="4"></textarea></br>
+  <% if location == "agent_ticket" %>
+    <input id='ilos_private_note' type="checkbox" checked >
+      &nbsp; <%= t('integrations.ilos.messages.private_note') %>
+    </input>
+  <% end %>
+</div>
+
+<div id="disablingDiv">
+  <div id="ilos-back-page">
+    <%= raw t('integrations.ilos.messages.ilos_video_initialized') %>
+    <button class="btn btn-flat" id="ilos-back-btn">
+      <%= t("integrations.ilos.#{location}.back_to_page") %>
+    </button>
+  </div>
+</div>
+
+<script>
+
+  if('<%= location %>' == "portal_forum"){
+    jQuery('#ilos-paragraph').append('<%= t('integrations.ilos.messages.moderated_forums') %>');
+  }
+  jQuery('#ilos-video-recorder').on('shown', function(){
+      jQuery('#ilos-title').val('');
+      jQuery('#ilos-desc').val('');
+      jQuery('#ilos-title').focus();
+  });
+  jQuery('#ilos-video-recorder [data-submit]').on('click', function(){
+      jQuery('#ilos-video-recorder [data-dismiss]').click();
+      var ilosWidget = new IlosWidget( <%= ilos_entity_id.to_i %>, <%= current_user.id %> );
+      ilosWidget.<%= location %>();
+  });
+
+</script>
