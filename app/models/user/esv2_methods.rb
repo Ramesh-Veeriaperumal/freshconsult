@@ -15,11 +15,11 @@ class User < ActiveRecord::Base
               root: false,
               tailored_json: true,
               only: [ :name, :created_at, :updated_at, :account_id, :active, 
-                      :company_id, :job_title, :phone, :mobile, :twitter_id, 
+                      :job_title, :phone, :mobile, :twitter_id, 
                       :description, :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent ], 
-              methods: [ :company_name, :emails ]
-            }, true).merge(esv2_custom_attributes).to_json
+              methods: [ :company_name, :emails, :company_id, :tag_ids ]
+            }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
 
   # Flexifield denormalized
@@ -34,6 +34,16 @@ class User < ActiveRecord::Base
 
   def emails
     user_emails.map(&:email)
+  end
+
+  # Renamed as es_tag_names as tag_names already exists
+  #
+  def es_tag_names
+    tags.map(&:name)
+  end
+
+  def tag_ids
+    tags.map(&:id)
   end
 
   ##########################
