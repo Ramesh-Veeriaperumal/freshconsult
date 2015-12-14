@@ -420,9 +420,9 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:deleted, false)
     params_hash = { company_id: 10_000 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
-    match_json(deleted_contact_pattern(sample_user.reload))
-    assert_response 200
-    assert_equal 10_000, sample_user.reload.company_id
+    assert_response 400
+    assert sample_user.reload.company_id.nil?
+    match_json([bad_request_error_pattern('company_id', :"can't be blank")])
   ensure
     sample_user.update_attribute(:company_id, nil)
   end
