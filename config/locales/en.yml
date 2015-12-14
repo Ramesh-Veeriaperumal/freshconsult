@@ -8559,6 +8559,7 @@ en:
   edit_plan: "Edit Plan"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
+  not_available: "N/A"
   short_code:
     title: Chat Shorthands
     helpnote: "Chat Shorthands are customisable abbreviations which you can use in place of preset messages while you're chatting with someone. You can map different shorthand abbreviations to expand into corresponding messages and access them during your chat by using the '/' symbol."
