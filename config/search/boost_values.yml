@@ -4,12 +4,20 @@
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
+:company_autocompletre:
+  :name_boost: 1
 :requester_autocomplete: 
   :name_boost: 1
   :emails_boost: 1
   :phone_boost: 1
   :mobile_boost: 1
-:agent_spotlight: 
+:tag_autocomplete:
+  :name_boost: 1
+:display_id_merge:
+  :display_id_boost: 1
+:subject_merge:
+  :subject_boost: 1
+:agent_spotlight_overall: 
   :display_id_boost: 1
   :subject_boost: 1
   :ticket_description_boost: 1
@@ -19,15 +27,15 @@
   :es_cc_emails_boost: 1
   :es_fwd_emails_boost: 1
   :ticket_tag_names_boost: 1
-  :ffs_boost: 1
-  :ff_text_boost: 1
+  :ticket_ffs_boost: 1
+  :ticket_ff_text_boost: 1
   :note_attachment_boost: 1
   :note_body_boost: 1
   :company_name_boost: 1
-  :note_boost: 1
+  :company_note_boost: 1
   :company_description_boost: 1
-  :cf_text_boost: 1
-  :cf_str_boost: 1
+  :company_cf_text_boost: 1
+  :company_cf_str_boost: 1
   :domains_boost: 1
   :user_name_boost: 1
   :emails_boost: 1
@@ -38,6 +46,8 @@
   :user_company_name_boost: 1
   :twitter_id_boost: 1
   :fb_profile_id_boost: 1
+  :user_cf_str_boost: 1
+  :user_cf_text_boost: 1
   :topic_title_boost: 1
   :posts_body_boost: 1
   :posts_attachment_boost: 1
@@ -45,6 +55,54 @@
   :desc_un_html_boost: 1
   :article_tag_names_boost: 1
   :attachment_names_boost: 1
+  :ticket_boost: 1
+  :article_boost: 1
+  :company_boost: 1
+  :user_boost: 1
+  :topic_boost: 1
+:agent_spotlight_company_contact:
+  :company_name_boost: 1
+  :company_note_boost: 1
+  :company_description_boost: 1
+  :company_cf_text_boost: 1
+  :company_cf_str_boost: 1
+  :domains_boost: 1
+  :user_name_boost: 1
+  :emails_boost: 1
+  :user_description_boost: 1
+  :job_title_boost: 1
+  :phone_boost: 1
+  :mobile_boost: 1
+  :user_company_name_boost: 1
+  :twitter_id_boost: 1
+  :fb_profile_id_boost: 1
+  :user_cf_str_boost: 1
+  :user_cf_text_boost: 1
+  :company_boost: 1
+  :user_boost: 1
+:agent_spotlight_solution:
+  :title_boost: 1
+  :desc_un_html_boost: 1
+  :article_tag_names_boost: 1
+  :attachment_names_boost: 1
+:agent_spotlight_ticket_notes:
+  :display_id_boost: 1
+  :subject_boost: 1
+  :ticket_description_boost: 1
+  :ticket_attachment_boost: 1
+  :sender_boost: 1
+  :to_emails_boost: 1
+  :es_cc_emails_boost: 1
+  :es_fwd_emails_boost: 1
+  :ticket_tag_names_boost: 1
+  :ticket_ffs_boost: 1
+  :ticket_ff_text_boost: 1
+  :note_attachment_boost: 1
+  :note_body_boost: 1
+:agent_spotlight_topic_posts:
+  :topic_title_boost: 1
+  :posts_body_boost: 1
+  :posts_attachment_boost: 1
 :portal_spotlight: 
   :subject_boost: 1
   :description_boost: 1
