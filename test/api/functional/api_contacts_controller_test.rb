@@ -421,7 +421,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     params_hash = { company_id: 10_000 }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 400
-    assert sample_user.reload.company_id.nil?
     match_json([bad_request_error_pattern('company_id', :"can't be blank")])
   ensure
     sample_user.update_attribute(:company_id, nil)
