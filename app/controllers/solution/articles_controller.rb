@@ -176,7 +176,7 @@ class Solution::ArticlesController < ApplicationController
       a.update_attributes(:outdated => true)
     end
     respond_to do |format|
-      format.json { render :json => { :success => true } }
+      format.html { render :partial => "language_tabs" }
     end
   end
 

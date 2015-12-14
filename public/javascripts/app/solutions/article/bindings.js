@@ -165,30 +165,32 @@ window.App = window.App || {};
       var $this = this;
       $('body').on('click.articles', '#outdate, #uptodate', function () {
         var el = $(this);
+        var type = (this.id === 'outdate') ? 'html' : 'json'
         $(this).button('loading');
         $.ajax({
           url: el.data('url'),
           type: 'PUT',
-          dataType: 'json',
+          dataType: type,
           data: {
             item_id: el.data('itemId'),
             language_id: el.data('languageId')
           },
-          success: function () {
+          success: function (result) {
             el.button('complete');
-            setTimeout($this.postOutdateUpdate(el), 2000);
+            setTimeout($this.postOutdateUpdate(el, result), 2000);
           }
         });
       });
     },
 
-    postOutdateUpdate: function (el) {
+    postOutdateUpdate: function (el, result) {
       el.parent().addClass('hide');
       $('.uptodate-section').removeClass('hide');
       if(el.attr('id') === 'outdate') {
-        $('.lang-tab:not(".selected") .language_symbol.active').removeClass('active').addClass('outdated');
+        $('.language-tabs').html(result);
+        this.formatTranslationDropdown();
       } else {
-        $('.lang-tab.selected .language_symbol').removeClass('outdated').addClass('active');
+        $('.lang-tab.selected .language_symbol').removeClass('outdated');
       }
     },
 
