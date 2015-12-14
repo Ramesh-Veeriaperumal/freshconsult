@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20151209110505) do
+ActiveRecord::Schema.define(:version => 20151214083944) do
 
 
   create_table "account_additional_settings", :force => true do |t|
@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(:version => 20151209110505) do
     t.integer  "account_id",          :limit => 8
     t.boolean  "available",                        :default => true
     t.datetime "active_since"
+    t.datetime "last_active_at"
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
