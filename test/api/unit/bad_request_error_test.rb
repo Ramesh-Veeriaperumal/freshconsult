@@ -3,9 +3,10 @@ require_relative '../unit_test_helper'
 class BadRequestErrorTest < ActionView::TestCase
   def test_base_error_code_mapping
     error_codes =  {
-      missing_field: ['missing_field', 'Mandatory attribute missing', 'missing',
-                      'requester_id_mandatory', 'phone_mandatory', 'required_and_numericality',
-                      'required_and_inclusion', 'required_and_data_type_mismatch', 'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format'],
+      missing_field: ['missing_field', 'Mandatory attribute missing', 'missing', 'requester_id_mandatory',
+                      'phone_mandatory', 'required_and_numericality', 'required_and_inclusion', 'required_and_data_type_mismatch',
+                      'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format',
+                      'fill_a_mandatory_field', 'company_id_required'],
       duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
       invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
       datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number'],
