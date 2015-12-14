@@ -88,6 +88,7 @@ HTML
 			output << article_voting_down(article)
 			output << %(</span>)
 			output << %(</p>)
+			output << article_feedback_link
 			output << article_feedback
 		end
 
@@ -115,6 +116,13 @@ HTML
 									data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
 								#{t('feedback.downvote')})
 		output << %(</span>)
+		output.join('').html_safe
+	end
+
+	def article_feedback_link
+		output = []
+		output << %(<a class="hide a-link" id="vote-feedback-form-link" data-hide-dom="#vote-feedback-form-link" data-show-dom="#vote-feedback-container">#{t('feedback.link')})
+		output << %(</a>)
 		output.join('').html_safe
 	end
 

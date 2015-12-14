@@ -2998,6 +2998,7 @@ en:
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
+      link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
