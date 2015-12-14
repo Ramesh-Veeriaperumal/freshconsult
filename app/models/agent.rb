@@ -25,6 +25,8 @@ class Agent < ActiveRecord::Base
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
   scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   scope :list , lambda {{ :include => :user , :order => :name }}  
+
+  xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
   
   def self.technician_list account_id  
     agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
