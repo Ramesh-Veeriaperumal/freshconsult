@@ -5,6 +5,8 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 	after_update :update_outdated_in_email_notifications
 	belongs_to_account
 
+	xss_sanitize  :only => [:subject, :description], :decode_calm_sanitizer => [:subject, :description]
+
 	CATEGORIES = {
 		:agent => 1,
 		:requester => 2

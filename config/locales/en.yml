@@ -4276,6 +4276,7 @@ en:
     agent_select: Please select the agents you want to notify when a new ticket is created in your helpdesk.
     agent_select_title: Notify Agents
     reset_confirm: "All changes will be lost when you reset. Do you still want to continue?"
+    page_not_found: "This template could not be found."
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\"> Click here </a>to learn more"
       info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
