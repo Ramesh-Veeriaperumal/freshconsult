@@ -13,7 +13,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :load_meta, :only => [:edit, :update]
   # to be done!
   before_filter :validate_and_set_customers, :only => [:create, :update]
-  before_filter :set_modal, :only => [:new, :edit]
+  before_filter :set_modal, :only => [:new, :edit, :update]
   before_filter :old_category, :only => [:move_to]
   before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
   after_filter  :clear_cache, :only => [:move_to, :move_back]
@@ -69,7 +69,7 @@ class Solution::FoldersController < ApplicationController
    
     #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
-      if @folder
+      if @folder.errors.empty?
         format.html { redirect_to solution_folder_path(@folder) }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder, :status => :created }
@@ -84,13 +84,13 @@ class Solution::FoldersController < ApplicationController
 
   def update
     @folder = Solution::Builder.folder(params)
-    
+    language_scoper
     respond_to do |format|     
-      if @folder
+      if @folder.errors.empty?
         format.html do 
           redirect_to solution_folder_path(@folder.id)
         end
-        format.js { render 'after_save', :formats => [:rjs] }
+        format.js { render 'after_save' }
         format.xml  { render :xml => @folder, :status => :ok } 
         format.json  { render :json => @folder, :status => :ok }     
       else

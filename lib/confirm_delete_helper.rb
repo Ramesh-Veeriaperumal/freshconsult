@@ -40,7 +40,11 @@ module ConfirmDeleteHelper
 	end
 
 	def item_title(item, options)
-		options[:"item-title"] || item[:name] || item[:title] || item.name || item.title || ""
+		title = options[:"item-title"] || item[:name] || item[:title]
+		[:name, :title].each do |type|
+			title ||= item.send(type) if item.respond_to?(type)
+		end
+		title || ""
 	end
 
 	def deletion_hint(item)

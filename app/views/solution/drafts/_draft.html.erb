@@ -13,8 +13,8 @@
 				<%= t('solution.draft.kbase') %>
 			<% else %>
 				<%= t('search.in') %>
-				<%= pjax_link_to draft.folder.name, 
-						solution_folder_path(draft.folder),
+				<%= pjax_link_to draft.article.solution_folder_meta.name, 
+						solution_folder_path(draft.article.solution_folder_meta.id),
 						{ :class => "parent-link" } %>
 			<% end %>
 		</div>

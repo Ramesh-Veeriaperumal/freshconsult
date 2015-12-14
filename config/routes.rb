@@ -1874,7 +1874,6 @@ Helpkit::Application.routes.draw do
             put :reorder
             put :move_to
             put :move_back
-            put :change_author
             put :mark_as_outdated
             put :mark_as_uptodate
           end
@@ -1907,7 +1906,6 @@ Helpkit::Application.routes.draw do
         put :reorder
         put :move_to
         put :move_back
-        put :change_author
         put :mark_as_outdated
         put :mark_as_uptodate
       end

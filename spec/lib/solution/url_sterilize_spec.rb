@@ -15,26 +15,24 @@ describe Solution::UrlSterilize do
     "SportsはNBAフューチャーを提供していますか？" => "sportsはnbaフューチャーを提供していますか-",
     "Какой лимит действует по тизерам на матчи NFL?" => "Какой-лимит-действует-по-тизерам-на-матчи-nfl-",
     "≤≥÷…æ“‘«¡™£¢∞§¶•ªº–≠⁄€‹›ﬁﬂ‡°·‚—±¯˘¿ÚÆ”’»" => "-ae-uae-",
-    "And special å∂ßAdhsg ¨ˆ¥ø∑´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π" => "and-special-a-adhsg-i-iaiiai-pi",
-    "However impossible  ≥÷≤…æ“‘«¯¿˘ÆÚ”’»~+_-)(*&^@%$$!&@*)" => "however-impossible-ae-aeu-" 
+    "And special å∂ßAdhsg ¨ˆ¥ø∑´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π" => "and-special-a-ßadhsg-ø∑-i-iaiiai-pi",
+    "However impossible  ≥÷≤…æ“‘«¯¿˘ÆÚ”’»~+_-)(*&^@%$$!&@*)" => "however-impossible-ae-aeu-"
   }
 
   self.use_transactional_fixtures = false
 
   before(:all) do
-    @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-    @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+    @test_category = create_category
+    @test_folder = create_folder({:category_id => @test_category.id })
 
-    @special_characters = "≤≥÷…æ“‘«¡™£¢∞§¶•ªº≠⁄€‹›ﬁﬂ‡°·‚±¯˘¿Ú¿”Æ”’»¨ˆ¥ø∑´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π+)(*&^@%$$&@*)"
+    @special_characters = "≤≥÷…æ“‘«¡™£¢∞§¶•ªº≠⁄€‹›ﬁﬂ‡°·‚±¯˘¿Ú¿”Æ”’»¨ˆ¥´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π+)(*&^@%$$&@*)"
     unicode_title = Faker::Lorem.sentence(1) + @special_characters
 
-    @special_article = create_article({
+    @special_article_meta = create_article({
       :title => "#{unicode_title}",
       :description => "#{Faker::Lorem.sentence(3)}", 
-      :folder_id => @test_folder.id,
-      :user_id => @agent.id, 
-      :status => "2", 
-      :art_type => "1" })
+      :folder_id => @test_folder.id})
+    @special_article = @special_article_meta.primary_article
   end
 
   describe "dangerous characters" do
@@ -47,8 +45,8 @@ describe Solution::UrlSterilize do
 
     it "should be removed from urls" do
       @special_characters.split('').each do |char|
-        expect(solution_article_path(@special_article)).not_to include(char)
-        expect(support_solutions_article_path(@special_article)).not_to include(char)
+        expect(solution_article_path(@special_article, :url_locale => @special_article.language.code)).not_to include(char)
+        expect(support_solutions_article_path(@special_article, :url_locale => @special_article.language.code)).not_to include(char)
       end
     end
   end
@@ -65,10 +63,11 @@ describe Solution::UrlSterilize do
     end
 
     it "should be replaced with equivalents in urls" do
+      article = @special_article_meta.primary_article
       titles_and_paths.each do |title, url|
-        @special_article.update_attributes(:title => title)
-        expect(solution_article_path(@special_article)).to include("#{@special_article.id}-#{url_encode(url)}")
-        expect(support_solutions_article_path(@special_article)).to include("#{@special_article.id}-#{url_encode(url)}")
+        article.update_attributes(:title => title)
+        expect(solution_article_path(article, :url_locale => article.language.code)).to include("#{@special_article_meta.id}-#{url_encode(url)}")
+        expect(support_solutions_article_path(article, :url_locale => article.language.code)).to include("#{@special_article_meta.id}-#{url_encode(url)}")
       end
     end
   end

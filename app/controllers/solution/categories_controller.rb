@@ -80,11 +80,11 @@ class Solution::CategoriesController < ApplicationController
     @category = Solution::Builder.category(params)
 
     respond_to do |format|
-      if @category
+      if @category.errors.blank?
         format.html { redirect_to solution_category_path(@category) }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category, :status => :created, :location => @category }
-        format.json { render :json => @category, :status => :created, :location => @category }
+        format.xml  { render :xml => @category.primary_category, :status => :created, :location => @category.primary_category }
+        format.json { render :json => @category.primary_category, :status => :created, :location => @category.primary_category }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
@@ -93,10 +93,12 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def update
+    language_scoper
+    params[:solution_category][:id] = params[:id] if params[:solution_category].present?
     @category = Solution::Builder.category(params)
     respond_to do |format| 
-      if @category
-        format.html { render solution_all_categories_path }
+      if @category.errors.blank?
+        format.html { redirect_to solution_all_categories_path }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category, :status => :created, :location => @category }     
         format.json { render :json => @category, :status => :ok, :location => @category }     
@@ -209,7 +211,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def default_category
-      current_account.solution_categories.where(:is_default => true).first
+      current_account.solution_category_meta.where(:is_default => true).first
     end
 
     def all_drafts

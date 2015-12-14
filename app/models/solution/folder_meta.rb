@@ -39,6 +39,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	after_destroy :clear_cache
 	after_update :clear_cache_with_condition
 
+	validate :companies_limit_check
+
 	def article_count
 	  solution_article_meta.size
 	end
@@ -68,6 +70,16 @@ class Solution::FolderMeta < ActiveRecord::Base
     end
   end
 
+	def add_visibility(visibility, customer_ids, add_to_existing)
+    add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+    self.visibility = visibility
+    save
+  end
+
+  def has_company_visiblity?
+    visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
+  end
+
 	private
 
 	def clear_cache
@@ -77,12 +89,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def clear_cache_with_condition
 		account.clear_solution_categories_from_cache unless (self.changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
-
-	def add_visibility(visibility, customer_ids, add_to_existing)
-    add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
-    self.visibility = visibility
-    save
-  end
 
   def add_companies(customer_ids, add_to_existing)
     customer_folders.destroy_all unless add_to_existing
@@ -101,6 +107,15 @@ class Solution::FolderMeta < ActiveRecord::Base
   		end
   	end
   	errors.add(:base, I18n.t("activerecord.errors.messages.taken")) if err_flag
+  end
+
+  def companies_limit_check
+    if customer_folders.size > 250
+      errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
+      return false
+    else
+      return true
+    end
   end
 
 end
