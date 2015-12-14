@@ -1,5 +1,8 @@
 <div id="TicketSummary">
-	<%= content_tag :h3, t(".new_title"),:class => "lead" %>
+	<div class="row-fluid">
+		<div class="span6"><%= content_tag :h3, t(".new_title"),:class => "lead" %></div>
+		<div class="span6"><a href="/helpdesk/unresolved_tickets" data-pjax="#body-container" class="unresolved-ticket-link pull-right">Unresolved Tickets</a></div>
+	</div>
 	<ul class="summary clearfix">  
 	  <li>
 	  	<a class="overdue" href="/helpdesk/tickets/filter/overdue" data-pjax="#body-container"
