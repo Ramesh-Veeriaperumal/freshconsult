@@ -252,23 +252,18 @@ module SolutionHelper
 
 	def language_flags(solution_meta)
 		content = ""
-		([Account.current.language] + Account.current.supported_languages).each do |lan|
-			language = Language.find_by_code(lan)
-			if lan == Account.current.language
-				version = solution_meta.send("primary_#{solution_meta.class.short_name}") 
-			else
-				version = solution_meta.send("#{language.to_key}_#{solution_meta.class.short_name}")
-			end
-			content << language_icon(solution_meta, version, language)
+		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
+			content << language_icon(solution_meta, language)
 		end
 		content.html_safe
 	end
 
-	def language_icon(solution_meta, version, language)
+	def language_icon(solution_meta, language)
 		category = solution_meta.class.short_name
+		availability_flag = solution_meta.send("#{language.to_key}_available?")
 		options = { 
-			:class => "language_icon #{status(version)} tooltip",
-			:title => language_label_title(language, version.present?),
+			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
+			:title => language_label_title(language, availability_flag),
 			:id => "version-#{solution_meta.id}-#{language.id}",
 		}
 		options.merge!({:rel => "freshdialog",
@@ -283,7 +278,7 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
-							version.present? ? solution_article_version_path(solution_meta.id, language.code) :
+							availability_flag ? solution_article_version_path(solution_meta.id, language.code) :
 							solution_new_article_version_path(solution_meta.id, language.code) :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
@@ -297,9 +292,16 @@ module SolutionHelper
 		end
 	end
 
-	def status v
-		v.present? ? v.respond_to?(:outdated) && v.outdated ? 'outdated' : 'active' : ''
-	end
+	def language_style(meta_obj, language)
+    classes = []
+    classes << 'unavailable' unless meta_obj.send("#{language.to_key}_available?")
+    if meta_obj.is_a? Solution::ArticleMeta
+      classes << 'unpublished' unless meta_obj.send("#{language.to_key}_published?")
+      classes << 'outdated' if Account.current.language_object != language && meta_obj.send("#{language.to_key}_outdated?")
+      classes << 'draft' if meta_obj.send("#{language.to_key}_draft?")
+    end
+    classes.join(' ')
+  end
 
 	def primary_preview(primary, identifier, current_obj = nil)
 		return unless primary.present? && primary != current_obj
@@ -334,13 +336,12 @@ module SolutionHelper
 	  output.html_safe
 	end
 
-	def languages_popover lang_ids
+	def languages_popover article_meta
 		op = ""
-		lang_ids.each do |i|
-			lang = Language.find(i)
+		Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft?") }.each do |language|
 			op << "<div class='language-item'>"
-			op << "<span class='popover-language-icon'>#{lang.short_code.capitalize}</span>"
-			op << lang.name
+			op << "<span class='popover-language-icon'>#{language.short_code.capitalize}</span>"
+			op << language.name
 			op << "</div>"
 		end
 		op.html_safe

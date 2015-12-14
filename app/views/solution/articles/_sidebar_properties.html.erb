@@ -23,8 +23,7 @@
     </div>
 
     <% if privilege?(:publish_solution) && @article.published? %>
-    	<% #BinaryRewrite! - Rewrite after finishing Binary columns. %>
-	    <% if @article.is_primary? && (@article_meta.solution_articles.select { |a| !a.is_primary? && a.outdated == false }).present? %>
+	    <% if @article.is_primary? && !@article_meta.all_versions_outdated? %>
 		    <div class="outdate-section">
 					<button type="button" class="btn btn-link" id="outdate" data-item-id="<%= @article_meta.id %>" data-loading-text="<%= t('solution.general.outdating') %>" data-complete-text="<%= t('solution.general.outdate_complete') %>" data-url="/solution/articles/mark_as_outdated">
 						<%= t('solution.general.mark_as_outdated') %>

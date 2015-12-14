@@ -135,14 +135,6 @@ module Solution::ArticlesHelper
       </span>).html_safe
   end
 
-  def drafts_present? article_meta
-    drafts_array = article_meta.versions.select do |a|
-      a.draft.present? || a.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-    end
-    @language_ids = drafts_array.map(&:language_id)
-    drafts_array.present?
-  end
-
   def formatted_value number
     number_to_human(number, :units => {:thousand => "K", :million => "M", :billion => "B"}).delete(' ')
   end

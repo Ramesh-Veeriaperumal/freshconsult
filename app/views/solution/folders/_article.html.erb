@@ -26,14 +26,14 @@
 					</span>
 				</div>
 				<div class="span2 pull-right mt6 text-center article-info">
-					<% if drafts_present?(article) %>
+					<% if article.any_supported_draft? %>
 						<%= content_tag :a, t('solutions.status.draft'),
 														:rel => "hover-popover",
 														:class => "label",
 														"data-placement" => "below",
 														"data-widget-container" => "languages-popover-contents-#{article.id}" %>
 						<textarea id="languages-popover-contents-<%= article.id %>" class="hide">
-							<%= languages_popover(@language_ids) %>
+							<%= languages_popover(article) %>
 						</textarea>
 					<% end %>
 				</div>

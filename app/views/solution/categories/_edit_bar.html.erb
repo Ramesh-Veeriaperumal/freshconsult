@@ -6,7 +6,7 @@
 		<li class="lf-item lf-btns faded solution-bulk-actions" id="folder-bulk-action">
 			<span>
 				<%= select_tag :id,
-		          options_for_select(current_account.solution_category_meta.reject { |sc| sc.is_default? || sc.id == (@category || @category_meta || {}).id }.collect{|c|[c.name, c.id]}), {
+		          options_for_select(current_account.solution_category_meta.includes(:primary_category).reject { |sc| sc.is_default? || sc.id == (@category || @category_meta || {}).id }.collect{|c|[c.name, c.id]}), {
 		              :class => "disabled bulk-action-btns input-small select2 m0",
 		              :id => "move_to",
 		              :'data-dropdown-css-class' => 'bulk-action-menu',

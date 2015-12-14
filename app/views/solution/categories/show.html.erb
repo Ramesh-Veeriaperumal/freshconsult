@@ -18,7 +18,7 @@
 	  <input name="reorderlist" type="hidden" value="" />
 	  <input name="category_id" id="reorder_category_id" type="hidden" value="<%= @category.id %>" />
 	  <ul class="row-fluid" rel="sortlist" id="folders_list">
-			<%= render(:partial => "folder", :collection => @category.solution_folder_meta) %>
+			<%= render(:partial => "folder", :collection => @category.solution_folder_meta.includes([:primary_folder, :customers])) %>
 		</ul>
 	<% end %>
 </div>

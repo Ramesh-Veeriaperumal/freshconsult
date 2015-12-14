@@ -29,4 +29,8 @@ class Account < ActiveRecord::Base
   def all_language_ids
     applicable_language_ids + [language_object.id]
   end
+
+  def all_language_objects
+    supported_languages_objects + [language_object]
+  end
 end

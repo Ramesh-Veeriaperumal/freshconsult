@@ -45,9 +45,17 @@ class Solution::ArticleMeta < ActiveRecord::Base
     (['primary'] | Account.current.applicable_languages).collect(&:to_sym).collect {|s| {:"#{s}_#{base_name}" => :draft}}
   end
 
-    def type_name
-        TYPE_NAMES_BY_KEY[art_type]
+  def type_name
+  	TYPE_NAMES_BY_KEY[art_type]
+  end
+
+  def all_versions_outdated?
+  	Account.current.applicable_languages.each do |lan|
+  		next unless self.send("#{lan}_available?")
+      return false unless self.send("#{lan}_outdated?")
     end
+    true
+  end
 
 	private
 

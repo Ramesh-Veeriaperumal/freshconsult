@@ -191,7 +191,7 @@ class Solution::CategoriesController < ApplicationController
 
     def load_category_with_folders
       #META-READ-HACK!!
-      @category = meta_scoper.find_by_id!(params[:id], :include => { :solution_folder_meta => Solution::FolderMeta.translation_associations})
+      @category = meta_scoper.includes(:solution_folder_meta).find_by_id!(params[:id])
     end
 
     def set_modal
