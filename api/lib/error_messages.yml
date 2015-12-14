@@ -71,7 +71,7 @@ api_error_messages:
   invalid_integer: "Should have Positive Integers"
   no_content_required: "Content not required"
   invalid_json: "Request body has invalid json format" 
-  invalid_email_config: "Should be a verified and a valid email config id."
   upload_jpg_or_png_file: "Invalid file type. Please upload a jpg or png file"
   email_cant_be_updated: "Email cannot be updated"
   fill_a_mandatory_field: "Please fill at least 1 of email, mobile, phone, twitter_id fields."
+  validation_failure: "Validation failed"

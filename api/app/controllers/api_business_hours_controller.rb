@@ -1,8 +1,8 @@
-class ApiBusinessCalendarsController < ApiApplicationController
+class ApiBusinessHoursController < ApiApplicationController
   private
 
     def feature_name
-      FeatureConstants::BUSINESS_CALENDAR
+      FeatureConstants::BUSINESS_HOUR
     end
 
     def load_objects
@@ -11,10 +11,12 @@ class ApiBusinessCalendarsController < ApiApplicationController
     end
 
     def load_object
-      if multiple_business_hours_enabled? && !default_business_calendar?
-        super
-      elsif !default_business_calendar?
-        render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
+      if !default_business_hour?
+        if multiple_business_hours_enabled? 
+          super
+        else
+         render_request_error(:require_feature, 403, feature: 'multiple_business_hours'.titleize)
+        end
       end
     end
 
@@ -22,7 +24,7 @@ class ApiBusinessCalendarsController < ApiApplicationController
       current_account.business_calendar
     end
 
-    def default_business_calendar?
+    def default_business_hour?
       return @item if defined?(@item)
       bc = Group.default_business_calendar
       @item = bc if params[:id] == bc.id.to_s

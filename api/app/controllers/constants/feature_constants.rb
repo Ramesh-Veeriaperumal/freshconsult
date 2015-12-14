@@ -1,6 +1,6 @@
 module FeatureConstants
   DISCUSSION = :forums
   TIME_ENTRIES = :timesheets
-  BUSINESS_CALENDAR = :business_hours
+  BUSINESS_HOUR = :business_hours
   PRODUCTS = :multi_product
 end

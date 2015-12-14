@@ -12,7 +12,6 @@ class ApiCompaniesController < ApiApplicationController
 
   def update
     @item.assign_attributes(params[cname])
-    @item.custom_field = @item.custom_field # assign custom_field so that it will not be queried again in model callbacks
     company_delegator = CompanyDelegator.new(@item)
     if !company_delegator.valid?
       render_errors(company_delegator.errors, company_delegator.error_options)

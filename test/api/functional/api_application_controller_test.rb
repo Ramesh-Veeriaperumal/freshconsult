@@ -125,6 +125,14 @@ class ApiApplicationControllerTest < ActionController::TestCase
     actual = controller.send(:paginate_options)
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
     assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
+
+    params = ActionController::Parameters.new(
+      per_page: ['1'],
+      page: ['1'])
+    controller.params = params
+    actual = controller.send(:paginate_options)
+    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page] + 1, actual[:per_page]
+    assert_equal ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page], actual[:page]
   end
 
   def test_paginate_options_returns_default_options_if_per_page_exceeds_limit
@@ -192,5 +200,29 @@ class ApiApplicationControllerTest < ActionController::TestCase
     actual = @controller.send(:validate_content_type)
     assert_equal response.status, 415
     assert_equal response.body, request_error_pattern(:invalid_content_type).to_json
+  end
+
+  def test_render_errors_with_errors_empty
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'PUT'
+    @controller.request = request
+
+    assert_nothing_raised { @controller.send(:render_errors, []) }
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
+  end
+
+  def test_render_custom_errors_with_errors_empty
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    request = ActionDispatch::TestRequest.new
+    request.request_method = 'PUT'
+    @controller.request = request
+
+    assert_nothing_raised { @controller.send(:render_custom_errors, Topic.new) }
+    assert_equal response.status, 500
+    assert_equal response.body, base_error_pattern(:internal_error).to_json
   end
 end
