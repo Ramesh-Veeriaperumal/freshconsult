@@ -144,6 +144,10 @@ class Agent < ActiveRecord::Base
     reset_to_beginner_level
   end
 
+  def update_last_active(force=false)
+    touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
+  end
+
   private
 
   def reset_to_beginner_level

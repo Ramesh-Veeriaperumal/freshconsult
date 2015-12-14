@@ -3045,6 +3045,7 @@ en:
       sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
+      last_active_at: "Last active at"
       created_at: Created date
       asc: Ascending
       desc: Descending
@@ -3369,6 +3370,9 @@ en:
     last_logged_in: Last logged in %{time} ago.
     last_logged: Last logged in
     ago: %{time} ago.
+    days_ago: "%{days} ago"
+    last_active_at: "Last active at"
+    no_recent_activity: "No recent activity"
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_passes_available:
@@ -5611,6 +5615,7 @@ en:
         time_zone: "Timezone"
         phone: "Phone"
         mobile: "Mobile"
+        last_active_at: "Last active time"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
