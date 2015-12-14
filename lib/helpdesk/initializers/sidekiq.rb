@@ -49,7 +49,7 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "Throttler::WebhookThrottler",
-      "WebhookWorker"
+      "WebhookWorker",
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
@@ -67,7 +67,7 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "Throttler::WebhookThrottler",
-      "WebhookWorker"
+      "WebhookWorker",
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
