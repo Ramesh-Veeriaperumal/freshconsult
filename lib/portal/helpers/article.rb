@@ -84,7 +84,9 @@ HTML
 											data-article-id="#{article.id}">
 										#{t('feedback.title')})
 			output << article_voting_up(article)
+			output << %(<span class="vote-down-container">)
 			output << article_voting_down(article)
+			output << %(</span>)
 			output << %(</p>)
 			output << article_feedback
 		end
