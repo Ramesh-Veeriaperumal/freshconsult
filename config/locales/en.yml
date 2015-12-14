@@ -3710,6 +3710,8 @@ en:
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
+    user_signup_portal: "Sign up for your "
+    account: "account"
     login_or_signup: "%{login} or %{signup} for an account"
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
