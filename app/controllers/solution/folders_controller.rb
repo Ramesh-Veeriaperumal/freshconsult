@@ -67,15 +67,15 @@ class Solution::FoldersController < ApplicationController
     @folder = Solution::Builder.folder(params) 
     @category ||= @folder.solution_category_meta
    
-    #@folder = current_account.solution_folders.new(params[nscname]) 
     respond_to do |format|
       if @folder.errors.empty?
         format.html { redirect_to solution_folder_path(@folder) }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder, :status => :created }
-        format.json  { render :json => @folder, :status => :created }     
+        format.json  { render :json => @folder, :status => :created }
       else
         format.html { render :action => "new" }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end

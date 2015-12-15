@@ -87,6 +87,7 @@ class Solution::CategoriesController < ApplicationController
         format.json { render :json => @category.primary_category, :status => :created, :location => @category.primary_category }
       else
         format.html { render :action => "new" }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
       end
     end

@@ -27,7 +27,7 @@ module Solution::LanguageAssociations
       :autosave => true,
       :inverse_of => table_name
     
-    delegation_title = base_class.constantize.columns_hash["name"].present? ? :name : :title
+    delegation_title = base_class.constantize.column_names.include?("name") ? :name : :title
 
     delegate delegation_title, :description, :to => :"primary_#{base_name}"
     
