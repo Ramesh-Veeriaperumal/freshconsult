@@ -2341,6 +2341,7 @@ en:
       email:
         reset: "A reset mail with instructions has been sent to %{requester}."
         user_not_found: No user was found with that email address
+        not_allowed: "You are not authorised to access this portal. Kindly contact the helpdesk administrator to activate your account."
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials

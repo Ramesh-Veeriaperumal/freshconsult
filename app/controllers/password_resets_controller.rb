@@ -13,12 +13,18 @@ class PasswordResetsController < SupportController
   def create
     @user = current_account.user_emails.user_for_email(params[:email])
     if @user
-      @user.deliver_password_reset_instructions! current_portal
-	  message = t(:'flash.password_resets.email.success')
+      if @user.active? || @user.agent? || user_activation_enabled
+        @user.deliver_password_reset_instructions! current_portal 
+        message      = t(:'flash.password_resets.email.success')
+        redirect_url = root_url
+      else
+        message      = t(:'flash.password_resets.email.not_allowed')
+        redirect_url = login_path
+      end
 	    respond_to do |format|
           format.html {
           flash[:notice] = message
-          redirect_to root_url
+          redirect_to redirect_url
         }
         format.nmobile {
           render :json => {:server_response => message, :reset_password => 'success'}
@@ -72,5 +78,9 @@ class PasswordResetsController < SupportController
 
     def load_password_policy
       @password_policy = @user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy
+    end
+    
+    def user_activation_enabled
+      current_account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION).requester_notification?
     end
 end
