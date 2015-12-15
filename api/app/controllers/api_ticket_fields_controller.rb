@@ -11,7 +11,7 @@ class ApiTicketFieldsController < ApiApplicationController
       condition = []
       condition << "field_type = \"#{params[:type]}\"" if params[:type]
       condition << 'helpdesk_ticket_fields.field_type != "default_product"' if exclude_products
-      current_account.ticket_fields.where(condition.join(' AND ')).includes(:nested_ticket_fields)
+      current_account.ticket_fields.where(condition.join(' AND ')).preload(:nested_ticket_fields)
     end
 
     def exclude_products
