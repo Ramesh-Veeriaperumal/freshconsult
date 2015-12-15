@@ -9,19 +9,13 @@ describe Solution::DraftsController do
 	  before(:all) do
 	  	@agent1 = add_test_agent
 	  	@agent2 = add_test_agent
-	  	@test_category = create_category( {:name => "test category #{Faker::Name.name}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-	  	@public_folder  = create_folder({
-	                                      :name => "Public #{Faker::Name.name} visible to All", 
-	                                      :description => "#{Faker::Lorem.sentence(3)}", 
-	                                      :visibility => 1,
-	                                      :category_id => @test_category.id 
-	                                    })
+	  	@test_category_meta = create_category
+	  	@public_folder_meta  = create_folder({:category_id => @test_category_meta.id })
 
-	    @draft_article1 = create_article( {:title => "article1 agent1 #{@agent1.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(1)}", :folder_id => @public_folder.id, 
-	      :status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
-
-	    @draft_article2 = create_article( {:title => "article2 agent2 #{@agent2.id} #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, 
-	      :status => "1", :art_type => "1", :user_id => "#{@agent2.id}" } )
+	    @draft_article_meta1 = create_article({:folder_id => @public_folder_meta.id, :status => 1, :art_type => 1, :user_id => @agent1.id})
+	    @draft_article_meta2 = create_article({:folder_id => @public_folder_meta.id, :status => 1, :art_type => 1, :user_id => @agent2.id})
+	  	@draft_article1 = @draft_article_meta1
+	  	@draft_article2 = @draft_article_meta2
 	  end
 
 	  #start : specs for index action
@@ -46,6 +40,7 @@ describe Solution::DraftsController do
 		    drafts = assigns(:drafts)
 		    user_drafts_from_db = Account.current.solution_drafts.where(:user_id => @agent1.id).limit(10)
 		    drafts.count.should be_eql(user_drafts_from_db.count)
+		    drafts.map(&:id).should include(user_drafts_from_db.map(&:id))
 		  end
 
 		  it "should render all drafts when visited all drafts path" do
@@ -63,22 +58,22 @@ describe Solution::DraftsController do
 			before(:each) do
 				log_in(@agent1)
 
-				@draft_article3 = create_article( {:title => "article3 agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
-	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
+				@draft_article_meta3 = create_article({:folder_id => @public_folder_meta.id, 
+	      		:status => "1", :art_type => "1", :user_id => @agent1.id } )
 	  		# @draft_article3.create_draft_from_article({:title => "Draft 1 for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
-
+	  		@draft_article3 = @draft_article_meta3.primary_article
 	  		request.env["HTTP_REFERER"] = "where_i_came_from"
 	  	end
 
 	  	it "should publish an unpublished article without draft record" do
-	  		post :publish, :id => @draft_article1.id
+	  		post :publish, :id => 1, :article_id => @draft_article_meta1.id, :language_id => @draft_article1.language_id
 	  		@draft_article1.reload
 	  		@draft_article1.status.should be_eql(Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
 	  	end
 
 	  	it "should publish an unpublished article with a draft record" do
 	  		@draft_article3.draft.should_not be_blank
-	  		post :publish, :id => @draft_article3.id
+	  		post :publish, :id => 1, :article_id => @draft_article_meta1.id, :language_id => @draft_article3.language_id
 	  		response.should redirect_to "where_i_came_from"
 	  		@draft_article3.reload
 	  		@draft_article3.status.should be_eql(Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
@@ -98,7 +93,7 @@ describe Solution::DraftsController do
 	  		#article should not be published
 	  		@draft_article3.status.should_not be_eql(Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
 
-	  		post :publish, :id => @draft_article3.id
+	  		post :publish, :id => 1, :article_id => @draft_article_meta1.id, :language_id => @draft_article3.language_id
 	  		#should redirect to where you came from
 	  		response.should redirect_to "where_i_came_from"
 
@@ -117,14 +112,14 @@ describe Solution::DraftsController do
 			before(:each) do
 				log_in(@agent1)
 
-	    	@draft_article3 = create_article( {:title => "article 3 destroy agent1[#{@agent1.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(2)}", :folder_id => @public_folder.id, 
-	      		:status => "1", :art_type => "1", :user_id => "#{@agent1.id}" } )
+	    	@draft_article3 = create_article( { :folder_id => @public_folder_meta.id, 
+	      		:status => "1", :art_type => "1", :user_id => @agent1.id } )
 
 	  		request.env["HTTP_REFERER"] = "where_i_came_from"
 	  	end
 
 	  	it "should not have have flash message if there is not draft for an associated unpublished article" do
-	  		delete :destroy, :id => 255, :article_id => @draft_article1.id
+	  		delete :destroy, :id => 8476384, :article_id => @draft_article1.id
 	  		response.should redirect_to "where_i_came_from"
 	  		flash[:notice].should be_nil
 	  	end

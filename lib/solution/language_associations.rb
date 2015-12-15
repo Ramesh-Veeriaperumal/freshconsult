@@ -26,8 +26,10 @@ module Solution::LanguageAssociations
       :readonly => false,
       :autosave => true,
       :inverse_of => table_name
-      
-    delegate :name, :description, :title, :to => :"primary_#{base_name}"
+    
+    delegation_title = base_class.constantize.column_names.include?("name") ? :name : :title
+
+    delegate delegation_title, :description, :to => :"primary_#{base_name}"
     
     def self.translation_associations
       base_name = self.name.chomp('Meta').gsub("Solution::", '').downcase

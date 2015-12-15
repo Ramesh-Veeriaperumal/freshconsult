@@ -251,7 +251,7 @@ module SolutionHelper
 	def dynamic_hidden_fields f
 		parent_meta = instance_variable_get("@#{f}_meta")
 		op = ""
-		op << hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id) if parent_meta
+		op << hidden_field_tag("solution_#{f}_meta[id]", parent_meta.id) if parent_meta && parent_meta.id.present?
 		op << hidden_field_tag(:language_id,  @language.id)
 		op.html_safe
 	end

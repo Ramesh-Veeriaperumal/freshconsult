@@ -1,9 +1,9 @@
 module SolutionBuilderHelper
 
-  def solution_default_params(base, name = :name)
+  def solution_default_params(base, name = :name, opts = {})
     {
-      "#{name}" => "#{base} #{(Time.now.to_f * 1000).to_i} on #{Faker::Name.name} - #{Time.now.to_s}",
-      "description" => "#{Faker::Lorem.sentence(rand(1..10))}"
+      "#{name}" => opts[name] || "#{base} #{(Time.now.to_f * 1000).to_i} on #{Faker::Name.name}",
+      "description" => opts[:description] || "#{Faker::Lorem.sentence(rand(1..10))}"
     }.deep_symbolize_keys
   end
 

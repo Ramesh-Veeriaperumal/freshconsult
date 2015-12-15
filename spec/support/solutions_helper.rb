@@ -1,51 +1,55 @@
 module SolutionsHelper
 
   def create_category(params = {})
-    category_params = { "solution_category_meta"=>{"primary_category"=>{"name" => params[:name] || Faker::Name.name, 
-                        "description"=> params[:description] || Faker::Lorem.sentence(3)}, "portal_ids"=> params[:portal_ids] || []},
-                        "language_id"=> params[:language_id] || "6" }
-    test_category = Solution::Builder.category(category_params)
-    test_category
+    c_params = create_solution_category_alone(solution_default_params(:category, :name, {
+      :name => params[:name],
+      :description => params[:description]
+    }))
+    c_params[:solution_category_meta][:is_default] = params[:is_default] if params[:is_default].present?
+    category_meta = Solution::Builder.category(c_params)
+    category_meta
   end
 
   def create_folder(params = {})
-    folder_params = { "solution_folder_meta"=>{"primary_folder"=>{"name"=>params[:name] || Faker::Name.name, 
-                      "description"=> params[:description] || Faker::Lorem.sentence(3)},
-                      "solution_category_meta_id"=> params[:category_meta_id] || params[:category_id],
-                      "visibility"=>  params[:visibility] || '1' }
-                    }
-    test_folder =  Solution::Builder.folder(folder_params)
-    test_folder
+    params = create_solution_folder_alone(solution_default_params(:folder, :name, {
+        :name => params[:name],
+        :description => params[:description]
+      }).merge({
+        :category_id => params[:category_meta_id] || params[:category_id],
+        :visibility => params[:visibility]
+      }))
+    folder_meta = Solution::Builder.folder(params)
+    folder_meta
   end
 
-  def create_article(params = {})
-    title = params[:title] || Faker::Name.name
-    description = params[:description] || Faker::Lorem.sentence(3) 
-    article_params = {"solution_article"=>{"title"=> title, "description"=> description, "art_type"=> params[:art_type] || '1'}, 
-                      "solution_article_meta"=>{"solution_folder_meta_id"=>params[:folder_meta_id] || params[:folder_id],
-                      "primary_article"=>{'title' => title,"description"=> description, "art_type"=>  params[:art_type] || '1',
-                      "status"=> params[:status] || 2, "user_id" => params[:user_id] || @agent.id}}}
-    test_article =  Solution::Builder.article(article_params)
-    if params[:attachments]
-      test_article.attachments.build(:content => params[:attachments][:resource], 
-                                    :description => params[:attachments][:description], 
-                                    :account_id => test_article.account_id)
-    end
-
-    test_article.user_id = params[:user_id] || @agent.id
-    test_article.save(validate: false)
-    test_article
+  def create_article(params = {})    
+    params = create_solution_article_alone(solution_default_params(:article, :title, {
+      :title => params[:title],
+      :description => params[:description]
+      }).merge({
+        :folder_id => params[:folder_meta_id] || params[:folder_id],
+        :art_type => params[:art_type],
+        :status => params[:status] || 2,
+        :user_id => params[:user_id] || @agent.id,
+        :attachments => params[:attachments]
+      }))
+    article_meta = Solution::Builder.article(params.deep_symbolize_keys!)
+    article_meta
   end
 
-  def create_customer_folders(folder)
+  def create_customer_folders(folder_meta)
     3.times do
       company = create_company
-      folder.customer_folders.create(:customer_id => company.id)
+      folder_meta.customer_folders.create(:customer_id => company.id)
     end
   end
 
-  def quick_create_artilce
-    create_article(:folder_id => create_folder(:category_id => create_category.id).id)
+  def quick_create_article
+    category_meta = Solution::Builder.category(create_solution_category_alone(solution_default_params(:category)))
+    folder_params = create_solution_folder_alone(solution_default_params(:folder).merge({:category_id => category_meta.id}))
+    folder_meta = Solution::Builder.folder(folder_params)
+    params = create_solution_article_alone(solution_default_params(:article, :title).merge({:folder_id => folder_meta.id}))
+    article_meta = Solution::Builder.article(params.deep_symbolize_keys!)
   end
 
   def solutions_incremented? article_size
@@ -76,24 +80,6 @@ module SolutionsHelper
 
     article_body.desc_un_html.strip.should be_eql(art_description_text)
     article_body[:desc_un_html].strip.should be_eql(art_description_text)
-  end
-  def create_portal(params = {})
-    test_portal = FactoryGirl.build(:portal, 
-                      :name=> params[:portal_name] || Faker::Name.name, 
-                      :portal_url => params[:portal_url] || "", 
-                      :language=>"en",
-                      :forum_category_ids => (params[:forum_category_ids] || [""]),
-                      :solution_category_ids => (params[:solution_category_ids] || [""]),
-                      :account_id => @account.id,
-                      :preferences=> { 
-                        :logo_link=>"", 
-                        :contact_info=>"", 
-                        :header_color=>"#252525",
-                        :tab_color=>"#006063", 
-                        :bg_color=>"#efefef" 
-                      })
-    test_portal.save(validate: false)
-    test_portal
   end
 
   def solution_test_setup

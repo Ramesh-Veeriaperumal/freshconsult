@@ -1,5 +1,5 @@
 <ul id="folder-form-container" class="form-horizontal">  
-  <div id="error_messages"><%= f.error_messages %></div>
+  <div id="error_messages"><%= error_messages_for('solution folder','', :object_name => 'solution_folder', :object => @folder) %></div>
 
   <%= f.fields_for(association, @folder) do |associated_folder| %>
 		<li class="control-group">

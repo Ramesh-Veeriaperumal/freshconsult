@@ -13,12 +13,12 @@ class Solution::ArticlesController < ApplicationController
 
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
-  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties, :destroy]
+  before_filter :load_meta_objects, :only => [:show, :new, :edit, :update, :properties, :destroy, :reset_ratings]
   before_filter :load_article, :only => [:show, :edit, :update, :destroy, :reset_ratings, :properties]
   before_filter :old_folder, :only => [:move_to]
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
-  before_filter :check_new_author, :only => [:change_author]
+  # before_filter :check_new_author, :only => [:change_author]
   before_filter :validate_author, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :language_scoper, :only => [:new]
@@ -26,7 +26,7 @@ class Solution::ArticlesController < ApplicationController
   UPDATE_FLAGS = [:save_as_draft, :publish, :cancel_draft_changes]
 
   def index
-    redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
+    redirect_to solution_folder_path(params[:folder_id])
   end
 
   def show
@@ -77,7 +77,7 @@ class Solution::ArticlesController < ApplicationController
     @article.tags_changed = set_solution_tags
     @article.create_draft_from_article if save_as_draft?
     respond_to do |format|
-      if @article
+      if @article_meta.errors.empty?
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
                             :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
@@ -89,7 +89,8 @@ class Solution::ArticlesController < ApplicationController
         format.html { 
           render "new"
         }
-        format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @article_meta.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @article_meta.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -158,13 +159,13 @@ class Solution::ArticlesController < ApplicationController
   def move_back
   end
 
-  def change_author
-    @articles = current_account.solution_articles.where(:id => params[:items])
-    @articles.update_all(:user_id => params[:parent_id])
-    @updated_items = @articles.map(&:id)
+  # def change_author
+  #   @articles = current_account.solution_articles.where(:id => params[:items])
+  #   @articles.update_all(:user_id => params[:parent_id])
+  #   @updated_items = @articles.map(&:id)
 
-    flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
-  end
+  #   flash[:notice] = t("solution.flash.articles_changed_author") if @updated_items
+  # end
 
   def mark_as_uptodate
     meta_scoper.find(params[:item_id]).send(Language.find(params[:language_id]).code + "_article").update_attributes(:outdated => false)
@@ -180,7 +181,7 @@ class Solution::ArticlesController < ApplicationController
       a.update_attributes(:outdated => true)
     end
     respond_to do |format|
-      format.json { render :json => { :success => true } }
+      format.html { render :partial => "language_tabs" }
     end
   end
 
@@ -431,15 +432,15 @@ class Solution::ArticlesController < ApplicationController
       end
     end
 
-    def check_new_author
-      @new_author = current_account.technicians.find_by_id params[:parent_id]
-      unless @new_author
-        flash[:notice] = t("solution.flash.articles_change_author_fail")
-        respond_to do |format|
-          format.js { render inline: "location.reload();" }
-        end
-      end
-    end
+    # def check_new_author
+    #   @new_author = current_account.technicians.find_by_id params[:parent_id]
+    #   unless @new_author
+    #     flash[:notice] = t("solution.flash.articles_change_author_fail")
+    #     respond_to do |format|
+    #       format.js { render inline: "location.reload();" }
+    #     end
+    #   end
+    # end
 
     def moved_flash_msg
       render_to_string(
@@ -474,7 +475,7 @@ class Solution::ArticlesController < ApplicationController
 
     def language_code
       lang = Language.find(params[:language_id])
-      lang.code == current_account.language ? "primary" : lang.code
+      (lang.blank? || lang.code == current_account.language) ? "primary" : lang.code
     end
 
     def load_article_version
@@ -487,12 +488,15 @@ class Solution::ArticlesController < ApplicationController
 
     def set_common_attributes
       set_user
-      set_status
-      merge_cloud_file_attachments
+      if params[:solution_article_meta].present?
+        set_status
+        merge_cloud_file_attachments
+      end
     end
 
     def set_user
-      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
+      params[:solution_article][:user_id] = current_user.id if params[:solution_article].present?
+      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id if params[:solution_article_meta].present?
     end
 
     def set_status
