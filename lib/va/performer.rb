@@ -9,7 +9,7 @@ class Va::Performer
 	TYPE_CHECK = { ANYONE => 'present?', CUSTOMER => 'customer?', AGENT => 'agent?' }
 
 	def initialize args
-		@type, @members = args[:type], args[:members]
+		@type, @members = args[:type], args[:members].map(&:to_i)
 	end
 
 	def matches? doer, ticket
