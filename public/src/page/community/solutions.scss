@@ -234,6 +234,11 @@
       display: none;
     }
   }
+  
+  .solutions .multilingual_draft .language_icon {
+    @include margin-right(0);
+  }
+  
   .language-item {
     margin: 5px;
   }

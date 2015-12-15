@@ -28,21 +28,29 @@
       }
 
       .solution-icon {
-          padding: 7px 9px;
-          border-radius: 5px;
-          color: #FFF;
-          background-color: #D8DBDF;
+          color: #CCC;
           margin-top: 5px;
           display: inline-block;
-          @include margin-right(20px);
-          float: right;
+          @include float(left);
+          
+          &.kbase_email {
+            color: #000;
+          }
       }
+      
+      
 
       .main-details {
         @include margin-left(-4px);
         .draft-title {
           font-weight: 400; 
           font-size: 14px;
+        }
+        
+        .multilingual_draft {
+          display: block;
+          @include float(left);
+          line-height: 16px;
         }
       }
     }

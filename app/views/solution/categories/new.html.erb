@@ -1,5 +1,5 @@
 <% unless @modal %>
-	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<%= content_tag :h3, t('solution_category.new'), :class => "lead itil-hide" %>
 <% end %>

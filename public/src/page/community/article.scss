@@ -13,12 +13,8 @@
       z-index: 2;
     }
 
-    &.language-multi .redactor_toolbar {
-      top: 143px;
-    }
-    
     &.has-notification .redactor_toolbar {
-      top: 178px;
+      top: 145px;
     }
   }
   
@@ -676,4 +672,27 @@
       }
     }
   }
+}
+
+.solutions.multilingual {
+  #sticky_redactor_toolbar {
+    .redactor_toolbar {
+      top: 145px;
+    }
+    &.has-notification .redactor_toolbar {
+      top: 180px;
+    }
+  }
+  
+  .is_stuck {
+    #sticky_redactor_toolbar {
+      .redactor_toolbar {
+          top: 87px;
+      }
+      &.has-notification .redactor_toolbar {
+        top: 121px;
+      }
+    }
+  }
+  
 }

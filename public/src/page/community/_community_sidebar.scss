@@ -315,6 +315,10 @@ body.community.cs-always-show #community-sidebar {
           display: block;
         }
       }
+			
+			&.multilingual_draft {
+				list-style: none;
+			}
     }
   }
 

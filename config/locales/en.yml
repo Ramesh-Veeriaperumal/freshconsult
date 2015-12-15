@@ -2974,6 +2974,7 @@ en:
       down_vote_form_title: "Can you please tell us how we can improve this article?"
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
+    new_translation: "New %{language} translation"
     status:
       draft: Draft
       published: Published

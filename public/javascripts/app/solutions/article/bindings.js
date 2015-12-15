@@ -88,6 +88,9 @@ window.App = window.App || {};
     bindForCancelBtn: function () {
       var $this = this;
       $("body").on('click.articles', "#edit-cancel-button", function (ev) {
+        if ($this.data.newArticle === true) {
+          return true;
+        }
         ev.preventDefault();
         $this.cancel_UI_toggle();
         $this.editUrlChange(false);

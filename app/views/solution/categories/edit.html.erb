@@ -1,5 +1,5 @@
 <% unless @modal %>
-	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<h3 class="title"><%=t('solution_category.edit')%> <span class="info_data">"<%=h(@category.name)%>"</span> </h3>
 <% end %>

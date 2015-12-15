@@ -46,7 +46,9 @@ module Solution::ArticlesHelper
   end
   
   def form_data_attrs
-    return {} if @article.new_record?
+    return {
+      :"new-article" => true
+    } if @article.new_record?
     
     {
       :"autosave-path" => solution_draft_autosave_path(@article.parent_id, @article.language_id),
@@ -89,6 +91,7 @@ module Solution::ArticlesHelper
   end
 
   def cancel_btn_link
+    return solution_article_path(@article_meta.id) if @article_meta.present? && !@article_meta.new_record? && @article.new_record?
     if params[:folder_id].present?
       solution_folder_path(params[:folder_id])
     elsif params[:category_id].present?

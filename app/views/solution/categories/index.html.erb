@@ -1,4 +1,4 @@
-<% content_for :layoutType do %>community solutions<% end %>
+<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 <% content_for :sidebar do %>
 	<%= content_tag :div, "", :rel => "remote", :id=> "solution-home-sidebar",
 			  "data-remote-url" => '/solution/categories/sidebar' %>

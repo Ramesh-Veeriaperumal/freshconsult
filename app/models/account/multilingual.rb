@@ -1,7 +1,11 @@
 class Account < ActiveRecord::Base
   
   def multilingual?
-    self.features_included?(:multi_language) && self.launched?(:translate_solutions)
+    @is_multilingual ||= 
+      launched?(:translate_solutions) &&
+        features_included?(:multi_language)  &&
+        features_included?(:enable_multilingual)  &&
+        supported_languages.present?
   end
   
   def applicable_languages

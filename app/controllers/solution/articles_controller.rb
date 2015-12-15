@@ -33,9 +33,13 @@ class Solution::ArticlesController < ApplicationController
     @article = current_account.solution_articles.new unless @article
     respond_to do |format|
       format.html {
-        if @article 
-          @current_item = @article.draft || @article
-          @page_title = @current_item.title
+        if @article
+          unless @article.new_record?
+            @current_item = @article.draft || @article
+            @page_title = @current_item.title
+          else
+            @page_title = t('solutions.new_translation', :language => language.name)
+          end
         end
       }
       format.xml  { render :xml => @article }
@@ -76,7 +80,7 @@ class Solution::ArticlesController < ApplicationController
       if @article
         format.html { 
           flash[:notice] = t('solution.articles.published_success',
-                            :url => support_solutions_article_path(@article, :url_locale => @language.code)).html_safe if publish?
+                            :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
           redirect_to solution_article_version_path(@article_meta, @article.language.code)
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
@@ -300,11 +304,11 @@ class Solution::ArticlesController < ApplicationController
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
           flash[:notice] = t('solution.articles.published_success',
-                               :url => support_solutions_article_path(@article, :url_locale => @language.code)).html_safe
-          redirect_to solution_article_path(@article)
+                               :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe
+          redirect_to multilingual_article_path(@article)
         else
           flash[:error] = show_draft_errors || t('solution.articles.published_failure')
-          redirect_to solution_article_path(@article, :anchor => "edit")
+          redirect_to multilingual_article_path(@article, :anchor => "edit")
         end
         return
       end
@@ -325,7 +329,7 @@ class Solution::ArticlesController < ApplicationController
         end
       end
       respond_to do |format|
-        format.html { redirect_to :action => "show" }
+        format.html { redirect_to multilingual_article_path(@article) }
         format.js   { 
           flash[:notice] = t('solution.articles.draft.revert_msg');
           render 'draft_reset'
@@ -340,11 +344,11 @@ class Solution::ArticlesController < ApplicationController
         unless update_draft_attributes
           show_draft_errors
           flash[:error] ||= t('solution.articles.draft.save_error')
-          redirect_to solution_article_path(@article, :anchor => "edit")
+          redirect_to multilingual_article_path(@article, :anchor => "edit")
           return
         end    
       end
-      redirect_to solution_article_path(@article)
+      redirect_to multilingual_article_path(@article)
     end
 
     def latest_content?
@@ -359,7 +363,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def article_params
-      params[:solution_article_meta][@language_scoper]
+      params[:solution_article_meta][language_scoper]
     end
 
     def update_article
@@ -372,7 +376,7 @@ class Solution::ArticlesController < ApplicationController
           format.html { 
             flash[:notice] = t('solution.articles.published_success', 
               :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
-            redirect_to solution_article_path(@article)
+            redirect_to multilingual_article_path(@article)
           }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     
           format.json  { render :json => @article, :status => :ok, :location => @article }
@@ -520,5 +524,12 @@ class Solution::ArticlesController < ApplicationController
         @current_folder = current_account.solution_folders.first
       end
     end
+    
+  	def multilingual_article_path(article, options={})
+  		current_account.multilingual? ?
+  			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.to_key})) :
+  			solution_article_path(article, options.slice(:anchor))
+  	end
+
 
 end

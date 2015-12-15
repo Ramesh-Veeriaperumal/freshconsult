@@ -181,6 +181,13 @@ class Portal < ActiveRecord::Base
   def full_name
     main_portal && name.blank? ? Account.current.name : name
   end
+  
+  def multilingual?
+    @is_multilingual ||= launched?(:translate_solutions) &&
+      features_included?(:multi_language)  &&
+      features_included?(:enable_multilingual)  &&
+      portal_languages.present?
+  end
 
   private
 

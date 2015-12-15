@@ -186,10 +186,11 @@ module SolutionHelper
 
 	def sidebar_drafts a
 		%{
-			<li>
+			<li class="#{'multilingual_draft' if current_account.multilingual?}">
+				#{language_icon(a.article.solution_article_meta, a.article.language) if current_account.multilingual?}
         <div class="sidebar-list-item">
           #{pjax_link_to(h(a.title.truncate(27)),
-                          solution_article_path(a.article)
+                          multilingual_article_path(a.article, :anchor => :edit)
                          )}
 	        <div class="muted"> 
 	          #{t('solution.sidebar.drafts.details',
@@ -217,7 +218,12 @@ module SolutionHelper
 	def drafts_path container_id
 		container_id == 'drafts-all' ? solution_my_drafts_path('all') : solution_drafts_path
 	end
-
+	
+	def multilingual_article_path(article, options={})
+		current_account.multilingual? ?
+			solution_article_version_path(article, options.slice(:anchor).merge({:language => article.language.to_key})) :
+			solution_article_path(article, options.slice(:anchor))
+	end
 
 	def sidebar_feedbacks_list(feedbacks, container_id, active='')
 		filter = (container_id == 'feedbacks-me') ? 'my_article_feedback' : 'article_feedback'
@@ -365,5 +371,9 @@ module SolutionHelper
 		end
 		output << %(</div></div>)
 		output.html_safe
+	end
+	
+	def solution_body_classes
+		"community solutions #{'multilingual' if current_account.multilingual?}"
 	end
 end

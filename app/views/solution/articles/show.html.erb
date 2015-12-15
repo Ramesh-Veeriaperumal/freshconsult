@@ -6,7 +6,7 @@
 
 <div class="solutions">
 
-	<% content_for :layoutType do %>community solutions<% end %>
+	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sticky_title do %>
 		<%= render :partial => "language_tabs" %>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
@@ -31,10 +31,8 @@
 
 	<!-- Solution page content -->
 	<div class="solution-content">
-		<%= render :partial => "view" %>
-		<% unless @article.draft.present? && @article.draft.locked? %>
-			<%= render :partial => "article_form" %>
-		<% end %>
+		<%= render :partial => "view" unless @article_meta.present? && @article.new_record? %>
+		<%= render :partial => "article_form" unless @article.draft.present? && @article.draft.locked? %>
 	</div>
 
 </div>
@@ -49,5 +47,6 @@
 			somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
 			maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>"
 		};
+		<%= 'App.namespace = "solution/articles/new";'.html_safe if @article_meta.present? && @article.new_record? %>
 	});
 </script>

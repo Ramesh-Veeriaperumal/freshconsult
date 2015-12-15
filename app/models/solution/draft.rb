@@ -9,8 +9,6 @@ class Solution::Draft < ActiveRecord::Base
   belongs_to :article, :class_name => "Solution::Article", :readonly => false
   belongs_to :category_meta, :class_name => "Solution::CategoryMeta"
   
-  has_one :folder, :through => :article
-  
   has_one :draft_body, :class_name => "Solution::DraftBody", :autosave => true, :dependent => :destroy
   has_many_attachments
   has_many_cloud_files
@@ -33,7 +31,11 @@ class Solution::Draft < ActiveRecord::Base
 
   default_scope :order => "modified_at DESC"
 
-  scope :as_list_view, :include => [:user, :folder, :category_meta]
+  scope :as_list_view, :include => { 
+    :user => [], 
+    :article => {:solution_article_meta => {:solution_folder_meta => :primary_folder}},
+    :category_meta => []
+  }
   scope :for_sidebar, :include => [:user]
   
   scope :by_user, lambda { |user|
@@ -112,6 +114,10 @@ class Solution::Draft < ActiveRecord::Base
     self.article.publish!
     self.reload
     self.destroy
+  end
+  
+  def folder
+    article.solution_article_meta.solution_folder_meta.primary_folder
   end
 
   def discard_notification
