@@ -25,9 +25,9 @@
 						<%= formatted_value(article.thumbs_down) %>
 					</span>
 				</div>
-				<div class="span2 pull-right mt6 text-center article-info">
-					<% if article.any_supported_draft? %>
-						<%= content_tag :a, t('solutions.status.draft'),
+				<% if article.any_supported_draft? %>
+					<div class="span2 pull-right mt6 text-center article-info">
+						<%= content_tag :a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe,
 														:rel => "hover-popover",
 														:class => "label",
 														"data-placement" => "below",
@@ -35,8 +35,8 @@
 						<textarea id="languages-popover-contents-<%= article.id %>" class="hide">
 							<%= languages_popover(article) %>
 						</textarea>
-					<% end %>
-				</div>
+					</div>
+				<% end %>
 			</div>
 			<div class="span5 pull-right mt8 language-bar">
 				<span class="pull-right">

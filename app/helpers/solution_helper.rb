@@ -345,9 +345,11 @@ module SolutionHelper
 	def languages_popover article_meta
 		op = ""
 		Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft?") }.each do |language|
-			op << "<div class='language-item'>"
-			op << "<span class='popover-language-icon'>#{language.short_code.capitalize}</span>"
-			op << language.name
+			op << "<div class='language_item'>"
+			op << "<span class='language_symbol #{language_style(article_meta, language)}'>"
+			op << "<span class='language_name'>#{language.short_code.capitalize}</span>"
+			op << "</span>"
+			op << "<span class='language_label'>#{language.name}</span>"
 			op << "</div>"
 		end
 		op.html_safe

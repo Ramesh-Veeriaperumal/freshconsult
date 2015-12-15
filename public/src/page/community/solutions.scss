@@ -215,6 +215,14 @@
     &.outdated{
       color: #DE3431;
     }
+    &.draft {
+      .language_name:before {
+        content: "...";
+        position: absolute;
+        top: 10px;
+        left: 1px;
+      }
+    }
   }
   .language_icon{
     @include margin(0 10px 10px 0);
@@ -241,18 +249,6 @@
   
   .language-item {
     margin: 5px;
-  }
-  .popover-language-icon {
-    border: 1px solid;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 500;
-    color: #ccc;
-    text-align: center;
-    margin-right: 10px;
   }
   .language_label{
     position: relative;
