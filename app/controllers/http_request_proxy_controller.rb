@@ -26,6 +26,7 @@ class HttpRequestProxyController < ApplicationController
            "API-Username" => installed_app.configs_username, 
            "API-Password" => installed_app.configsdecrypt_password }
         elsif params[:app_name] == APP_NAMES[:surveymonkey] and params[:domain]=='api.surveymonkey.net'
+          render :status => :unauthorized and return unless current_user.privilege?(:admin_tasks)
           params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
         elsif params[:app_name] == APP_NAMES[:shopify]
           params[:rest_url]["<shopifyauthtoken>"] = "#{installed_app.configs[:inputs]['oauth_token']}"
