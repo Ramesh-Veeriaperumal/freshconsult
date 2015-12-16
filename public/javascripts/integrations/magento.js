@@ -69,6 +69,8 @@ MagentoWidget.prototype= {
 
     MAGENTO_NO_ORDERS: "No orders for this email.",
 
+    MAGENTO_NO_EMAIL : 'Email not available for this requester. A valid Email is required to fetch the orders from Magento.',
+
     initialize:function(){
         var $this = this;
         this.email_list = magentoBundle.reqEmails.split(",");
@@ -95,7 +97,7 @@ MagentoWidget.prototype= {
             }));
         } 
         else {
-            jQuery("#magento .content").html($this.MAGENTO_NO_ORDERS);
+            jQuery("#magento .content").html($this.MAGENTO_NO_EMAIL);
         }
      },
 
