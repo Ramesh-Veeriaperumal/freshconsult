@@ -61,6 +61,10 @@ class Language
 			all.detect { |lang| lang.name == name.to_s}
 		end
 
+		def find_by_key(key)
+			all.detect { |lang| lang.to_key == key.to_s}
+		end
+
 		def reset_current
 			Thread.current[:language] = nil
 		end
