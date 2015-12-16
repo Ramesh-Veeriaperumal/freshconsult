@@ -956,8 +956,8 @@ if Integrations::Application.count == 0
     s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 38
     s.options = {:direct_install => true,
-                 :auth_url => "/magento/new",
-                 :edit_url => "/magento/edit"
+                 :auth_url => "magento/new",
+                 :edit_url => "magento/edit"
                 }
     s.application_type = "magento"
   end

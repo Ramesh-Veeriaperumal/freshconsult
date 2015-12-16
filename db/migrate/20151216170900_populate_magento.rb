@@ -7,8 +7,8 @@ class PopulateMagento < ActiveRecord::Migration
         :description => "integrations.magento.desc",
         :listing_order => 38,
         :options => {:direct_install => true,
-                 :auth_url => "/magento/new",
-                 :edit_url => "/magento/edit"
+                 :auth_url => "magento/new",
+                 :edit_url => "magento/edit"
                 },
         :application_type => "magento",
         :account_id => Integrations::Constants::SYSTEM_ACCOUNT_ID )
