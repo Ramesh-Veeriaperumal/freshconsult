@@ -28,7 +28,6 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
   
     def construct_es_params
       Hash.new.tap do |es_params|
-        es_params[:account_id]  = current_account.id
         
         if @search_field == 'requester'
           es_params[:requester_ids] = @requester_ids
@@ -37,7 +36,6 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         end
         
         es_params[:size]  = @size
-        es_params[:from]  = @offset
 
         es_params[:sort_by]         = @search_sort
         es_params[:sort_direction]  = @sort_direction
@@ -58,9 +56,11 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         es_results      = Search::V2::SearchRequestHandler.new(current_account.id,
                                                                 :requester_autocomplete,
                                                                 ['user']
-                                                              ).fetch(search_term: SearchUtil.es_filter_exact(@search_key),
-                                                                      sort_by: '_score',
-                                                                      sort_direction: 'desc'
+                                                              ).fetch({
+                                                                        search_term: SearchUtil.es_filter_exact(@search_key),
+                                                                        sort_by: '_score',
+                                                                        sort_direction: 'desc'
+                                                                      }.merge(ES_BOOST_VALUES[:requester_autocomplete])
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
@@ -74,7 +74,6 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
       @searchable_klasses = ['Helpdesk::Ticket']
       @search_field       = params[:search_field]
       @size               = Search::Utils::MAX_PER_PAGE
-      @offset             = 0
       @search_by_field    = true
       
       if (@search_field == 'display_id')

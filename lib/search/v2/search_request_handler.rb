@@ -38,14 +38,21 @@ module Search
         end
 
         # Params (w) chosen template for request
+        # Appending aliases by type to use in indices_query
         #
         def construct_payload(es_params)
           {
             template: {
               id: @template_name
             },
-            params: es_params
+            params: es_params.merge(tenant_aliases)
           }.to_json
+        end
+
+        def tenant_aliases
+          ES_SUPPORTED_TYPES.keys.collect { |type| 
+            ["#{type}_alias", @tenant.alias(type)]
+          }.to_h
         end
     end
 
