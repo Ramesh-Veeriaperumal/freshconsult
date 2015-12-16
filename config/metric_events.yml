@@ -1,13 +1,3 @@
-DIAL_BY_KEY: Calling through dialpad(Using Keys)
-DIAL_BY_NUM_PAD: Calling through dialpad(Using Number Pad)
-DIAL_BY_NUM_PASTE: Calling through dialpad(Number was pasted)
-CLICK_CALL_BTN: Calling through call history page
-CLICK_NUM: Calling by clicking number
-CLICK_IVR: Clicked keypad key while on call:trying to use IVR
-KEY_IVR: Typed key while on call:trying to use IVR
-RECENT_CALL_BTN: Calling through recent calls
-SEARCH_CALL_BTN: Calling through the search results
-CLICK_DIAL_PAD_WIDGET: Clicked dialpad widget
 IN_NOTES_ON_CALL: Caller notes used while on call:Incoimng 
 IN_NOTES_AFTER_CALL: Caller notes used after call:Incoming
 IN_NOTES_ALL: Caller notes used during and after call:Incoming
@@ -20,7 +10,6 @@ CALL_HISTORY_LOAD: Call history page loaded
 REPORTS_LOAD: Reports page loaded
 CALL_TO_TICKET: Call has been converted to ticket 
 REPORTS_CSV: Export to csv clicked on reports page
-RECORDING: Recording is being played
 csv: Export to csv clicked on call history page
 excel: Export to excel clicked on call history page
 call_durationasc: Ascending Sort done when duration selected

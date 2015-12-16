@@ -109,6 +109,7 @@
 		}
     }
     .caller-context{
+    	min-height: 48px; 
     	color: #999;
     	font-size: 12px;
     	border-bottom: 1px solid $ongoing-caller-context-bottom-border;
