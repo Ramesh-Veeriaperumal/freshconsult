@@ -38,7 +38,8 @@ class EmailConfig < ActiveRecord::Base
     elsif primary_role?
       account.default_friendly_email
     else
-      product.primary_email_config ? product.primary_email_config.friendly_email : account.default_friendly_email
+      product.try(:primary_email_config) ? product.primary_email_config.friendly_email : 
+                                           account.default_friendly_email
     end
   end
   
