@@ -19,11 +19,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :agent_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key,
-      is_deleted: false,
-      sort_by: 'name',
-      sort_direction: 'asc',
-      size: 100
+      search_term: @search_key
     }.merge(ES_BOOST_VALUES[:agent_autocomplete])
 
     search.each do |document|
@@ -40,11 +36,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :requester_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key,
-      is_deleted: false,
-      sort_by: 'name',
-      sort_direction: 'asc',
-      size: 100
+      search_term: @search_key
     }.merge(ES_BOOST_VALUES[:requester_autocomplete])
 
     search.each do |document|
@@ -57,10 +49,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :company_autocomplete
     @searchable_klass = 'Company'
     @es_params        = {
-      search_term: @search_key,
-      sort_by: 'name',
-      sort_direction: 'asc',
-      size: 100
+      search_term: @search_key
     }
 
     search.each do |document|
@@ -76,10 +65,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :tag_autocomplete
     @searchable_klass = 'Helpdesk::Tag'
     @es_params        = {
-      search_term: @search_key,
-      sort_by: 'tag_uses_count',
-      sort_direction: 'desc',
-      size: 25
+      search_term: @search_key
     }
 
     search.each do |document|
