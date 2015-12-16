@@ -948,4 +948,17 @@ if Integrations::Application.count == 0
     }
     s.application_type = "ilos"
   end
+
+  magento =  Integrations::Application.seed(:name) do |s|
+    s.name = "magento"
+    s.display_name = "integrations.magento.label"
+    s.description = "integrations.magento.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 38
+    s.options = {:direct_install => true,
+                 :auth_url => "/magento/new",
+                 :edit_url => "/magento/edit"
+                }
+    s.application_type = "magento"
+  end
 end

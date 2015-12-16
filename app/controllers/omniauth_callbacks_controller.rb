@@ -18,6 +18,7 @@ class OmniauthCallbacksController < ApplicationController
     )
 
     result = authenticator.after_authenticate(params)
+    flash[:notice] = result.flash_message if result.flash_message.present?
     return failure if result.failed?
     redirect_to result.redirect_url || root_url(:host => origin_account.host)
   end

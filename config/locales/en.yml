@@ -2108,6 +2108,8 @@ en:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
       not_installed: "This integration is not yet installed."
+      setting_saved: "Integration settings have been saved successfully."
+      invalid_url: "The url entered is invalid."
     filter:
       delete_success: "View has been deleted successfully!"
       save_success: "View has been saved successfully!"
@@ -6405,6 +6407,19 @@ en:
       form:
         shop_name: "Shop Name"
         shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
+    magento:
+      label: "Magento"
+      desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
+      helptext: "<h4>Magneto Integration</h4><br/><p>Configure your shopname to display customer's recent orders in Freshdesk. You will be directed to your Magento shop to authorize Freshdesk. Once authorized, you will be able to view the customer's recent Orders and Order details on the Ticket details page. You can quickly access the details in Magento with one click from the Widget.</p>"
+      form:
+        shop_name: "Shop Name"
+        product: "Product"
+        shop_url: "Shop URL"
+        shop_url_info: "For example, <strong>https://my_shop_name.com</strong>."
+        consumer_key: "Consumer Key"
+        consumer_secret: "Consumer Secret"
+        add_shop: "+ Add shop"
+        remove_shop: "Remove this shop"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
