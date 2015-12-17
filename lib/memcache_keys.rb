@@ -12,6 +12,8 @@ module MemcacheKeys
 
   ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
 
+  ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
+
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
@@ -40,6 +42,8 @@ module MemcacheKeys
   ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
 
   ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
+
+  ACCOUNT_TICKET_FIELDS = "v1/ACCOUNT_TICKET_FIELDS:%{account_id}"
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
   

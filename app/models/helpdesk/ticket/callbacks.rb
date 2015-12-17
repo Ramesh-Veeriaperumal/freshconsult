@@ -17,7 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :assign_outbound_agent, :if => :outbound_email?
 
-  before_save  :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
+  before_save  :update_ticket_related_changes, :set_sla_policy, :load_ticket_status, :update_company_id
 
   before_update :update_sender_email
 
@@ -452,6 +452,11 @@ private
     if !self.new_record? && status_changed?
       self.ticket_status = Helpdesk::TicketStatus.status_objects_from_cache(account).find {|x| x.status_id == status }
     end
+  end
+
+  def update_company_id
+    # owner_id will be used as an alias attribute to refer to a ticket's company_id
+    self.owner_id = self.requester.company_id if @model_changes.key?(:requester_id)
   end
 
   def populate_requester

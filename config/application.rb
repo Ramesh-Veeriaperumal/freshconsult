@@ -36,6 +36,12 @@ module Helpkit
       config.active_record.observers = Dir.glob("**/*_observer.rb").collect {|ob_name| ob_name.split(".").first}
     end
 
+    # api paths
+    config.paths["config/routes"] << "config/api_routes.rb"
+    config.paths["app/views"] << "api/app/views"
+    config.paths["app/controllers"] << "api/app/controllers"
+    config.paths["lib"] << "api/lib"
+
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
@@ -73,6 +79,8 @@ module Helpkit
     config.assets.version = '1.0'
 
     config.action_controller.include_all_helpers = false
+    #Raising an Exception if unpermitter parameters are used
+    config.action_controller.action_on_unpermitted_parameters = :raise
 
     # Configuring middlewares -- Game begins from here ;)
     statsd_config = YAML.load_file(File.join(Rails.root, 'config', 'statsd.yml'))[Rails.env]
@@ -86,6 +94,7 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
+    config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
     config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
       # during the ddos attack uncomment the below line
       # r.define_rule(:match => ".*", :type => :frequency, :metric => :rph, :limit => 200, :frequency_limit => 12, :per_ip => true ,:per_url => true )
@@ -122,6 +131,8 @@ module Helpkit
     # TODO-RAILS3 need to rewritten all lib files and adding requires if need to make it thread safe
     # http://hakunin.com/rails3-load-paths
     config.autoload_paths += Dir["#{config.root}/lib/"]
+    config.autoload_paths += Dir["#{config.root}/api/**/*"]
+    # config.autoload_paths += %W(#{config.root}/api/app/validators/)
     # config.eager_load_paths += Dir["#{config.root}/lib/"]
 
 

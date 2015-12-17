@@ -76,7 +76,7 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
         end
       end
     end
-    @summary.sort_by{|a| a["agent_name"]}
+    @summary.sort_by{|a| a["agent_name"].downcase}
   end
 
   def default_value metric

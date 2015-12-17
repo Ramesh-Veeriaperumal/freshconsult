@@ -1,0 +1,36 @@
+Hi <%=@user.name%>,
+<br/>
+<br/>
+<% if @export_url.present? %>
+  The <%= @report_type %> report<%= " #{@ticket_export} " %>export you had requested is complete. You can download the file from <a href=<%= @export_url %>>here</a> (It will expire in 45 days). If the link does not work, copy and paste the URL below in your browser's address bar:
+
+  <br/>
+  <%=  @export_url %>
+  <br/>
+<% else %>
+  The <%= @report_type %> report<%= " #{@ticket_export} " %>export you had requested is complete. Please find the file attached with this mail.
+<% end %>
+<br/>
+<br/>
+
+<% if @selected_metric %>
+For metric: <%= @selected_metric.html_safe %>
+<% end %> 
+
+<br/>
+<br/>
+
+<% if @filter_to_display %>
+  Filters applied:
+  <table border="1">
+    <tr><td>Date Range</td><td><%=@date_range%></td></tr>
+    <% @filters.each do |f| %>
+      <tr><td><%=f["name"]%></td><td><%= f["value"] %></td></tr>
+    <%end%>
+  </table>
+<br/>
+<br/>
+<%end%>
+Regards,
+<br/>
+<%= @user.account.helpdesk_name %> Support

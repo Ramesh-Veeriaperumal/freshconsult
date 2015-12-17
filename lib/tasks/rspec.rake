@@ -117,7 +117,11 @@ if Rails.env.test?
     "spec/controllers/support/discussions_controller_spec.rb",
     "spec/controllers/monitorships_controller_spec.rb",
     "spec/mailers/forum_mailer_spec.rb",
-    "spec/mailers/topic_mailer_spec.rb"
+    "spec/mailers/topic_mailer_spec.rb",
+    "spec/models/discussion/forum_category_spec.rb",
+    "spec/models/discussion/forum_spec.rb",
+    "spec/models/discussion/topic_spec.rb",
+    "spec/models/discussion/post_spec.rb"
   ]
 
   ForumDynamoTests = [
@@ -151,7 +155,11 @@ if Rails.env.test?
     "spec/controllers/api/xml/solutions_category_api_spec.rb",
     "spec/controllers/api/xml/solutions_folders_api_spec.rb",
     "spec/controllers/mobihelp/articles_controller_spec.rb",
-    "spec/controllers/mobihelp/solutions_controller_spec.rb"
+    "spec/controllers/mobihelp/solutions_controller_spec.rb",
+    "spec/models/solution/category_spec.rb",
+    "spec/models/solution/folder_spec.rb",
+    "spec/models/solution/article_spec.rb",
+    "spec/models/solution/draft_spec.rb"
   ]
 
   HelpdeskTests = [ 

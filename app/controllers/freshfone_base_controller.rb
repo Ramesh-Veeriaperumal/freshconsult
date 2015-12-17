@@ -1,5 +1,6 @@
 class FreshfoneBaseController < ApplicationController
 	include TwilioMaster	
+	include Freshfone::CallerLookup
 	
 	before_filter :check_privilege, :if => :restricted_method?
 	before_filter :check_freshfone_feature
@@ -52,4 +53,13 @@ class FreshfoneBaseController < ApplicationController
   	def call_initiation_method?
   		( CALL_INITIATION_METHODS[controller_name.to_sym] || [] ).include? action_name.to_sym
   	end
+
+    def invalid_number_incoming_fix
+      return if params[:From].blank? || sip_call?
+      if invalid_number?(params[:From]) && !strange_number?(params[:From])
+        Rails.logger.info "Number :: #{params[:From]} is an Invalid Number, of CallSid :: #{params[:CallSid]} for Account :: #{current_account.id}"
+        params[:From] = "+#{STRANGE_NUMBERS.invert['ANONYMOUS'].to_s}"
+      end
+    end
+
 end

@@ -1,6 +1,7 @@
 (function($){
 'use strict';
 
+$(document).ready(function() {
 //Added for social tweet links
 $(".autolink").livequery(function(ev){
   $(this).autoLink();
@@ -375,5 +376,7 @@ $('.btn-collapse').livequery(
 		$(this).collapseButton(); 
 	}
 );
+
+});
 
 })(jQuery);

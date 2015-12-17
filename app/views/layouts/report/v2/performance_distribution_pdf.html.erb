@@ -1,0 +1,152 @@
+<%= render :partial => "layouts/report/v2/shared/pdf_files", :formats => [:html], :locals => {} %>
+<div class="reports-wrapper" id="reports_wrapper">
+  <div class="reports-main">
+    <div class="reports-header row-fluid">
+     <%= render :partial => "layouts/report/v2/shared/header", :formats => [:html], :locals => {report_type: report_type}  %> 
+    </div>
+<div class="distribution-chart" id="distribution_container">
+
+  <div class="row-fluid"> 
+    <div class="chart-container chart-container-pdf">
+    
+      <span id="first_response" class="pointer">
+        <%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
+      </span>
+      <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+
+      <div id="first_response_time_bar_chart" class="chart-wrapper" data-bucket-name="first_response_time" data-metric-name="AVG_FIRST_RESPONSE_TIME"></div>
+    </div>
+      <div class="chart-container chart-container-pdf">
+      <span id="response" class="pointer">
+        <%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
+      </span>
+      <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+      <div id="response_time_bar_chart" class="chart-wrapper" data-bucket-name="response_time" data-metric-name="AVG_RESPONSE_TIME"></div>
+    </div>
+    
+    <div class="chart-container chart-container-pdf">
+
+      <span class='title'>
+        <%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>
+      </span>
+      <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.resolution_time')%>"> 
+                <i class="ficon-help-icon fsize-14" size="14"></i>
+            </span>
+
+      <div id="resolution_time_bar_chart" class="chart-wrapper" data-bucket-name="resolution_time" data-metric-name="AVG_RESOLUTION_TIME"></div>
+
+    </div>
+    </div>
+
+    
+  </div>
+<!-- Ends here -->
+
+<!-- Trend Graph for First/Response & Resolution -->
+  <div class="row-fluid">
+    <div class="full-chart-container">
+      <div class="clearfix header-perf">
+        <span class="title">
+          <%=t('helpdesk_reports.performance_distribution.first_response_and_response_trend').html_safe %>
+        </span>
+        <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time_trend')%>"> 
+                  <i class="ficon-help-icon fsize-14" size="14"></i>
+              </span>
+        <div class="response_time_trend trend-type pull-right">
+          <div class="btn-group">
+            <span class="btn" data-format="doy" data-chart="response">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.day') %>
+            </span>
+            <span class="btn" data-format="w" data-chart="response">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.week') %>
+            </span>
+            <span class="btn" data-format="mon" data-chart="response">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.month') %>
+            </span>
+            <span class="btn" data-format="qtr" data-chart='response'>
+              <%=t('helpdesk_reports.ticket_volume.time_trends.qtr') %>
+            </span>
+            <span class="btn" data-format="y" data-chart="response">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.year') %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id="response_time_trend_chart" class="chart-wrapper"></div>  
+    </div>
+
+    <div class="full-chart-container">
+      <div class="clearfix header-perf">
+        <span class="title">
+          <%=t('helpdesk_reports.performance_distribution.resolution_trend').html_safe %>
+        </span>
+        <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.resolution_time_trend')%>"> 
+                  <i class="ficon-help-icon fsize-14" size="14"></i>
+              </span>
+        <div class="resolution_time_trend trend-type pull-right">
+          <div class="btn-group">
+            <span class="btn" data-format="doy" data-chart="resolution">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.day') %>
+            </span>
+            <span class="btn" data-format="w" data-chart="resolution">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.week') %>
+            </span>
+            <span class="btn" data-format="mon" data-chart="resolution">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.month') %>
+            </span>
+            <span class="btn" data-format="qtr" data-chart='resolution'>
+              <%=t('helpdesk_reports.ticket_volume.time_trends.qtr') %>
+            </span>
+            <span class="btn" data-format="y" data-chart="resolution">
+              <%=t('helpdesk_reports.ticket_volume.time_trends.year') %>
+            </span>
+          </div>
+        </div>
+      </div>  
+      <div id="resolution_time_trend_chart" class="chart-wrapper"></div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+<!-- End here -->
+
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+    window.HelpdeskReports = window.HelpdeskReports || {};
+    HelpdeskReports.locals = HelpdeskReports.locals || {};
+    HelpdeskReports.locals.report_type = "<%= report_type %>";
+    HelpdeskReports.locals.date_lag = <%= date_lag_by_plan %>;
+    HelpdeskReports.locals.date_range = "<%= date_range %>";
+    HelpdeskReports.locals.select_hash  = <%= filters.to_json.html_safe%> 
+    HelpdeskReports.locals.chart_hash = <%= data.to_json.html_safe %>;
+    HelpdeskReports.locals.trend = "<%= trend %>"
+    HelpdeskReports.locals.resolution_trend = "<%= resolution_trend %>"
+    HelpdeskReports.locals.response_trend = "<%= response_trend %>"
+    HelpdeskReports.locals.is_non_sprout_plan = '<%= Account.current.subscription.non_sprout_plan? %>';
+    HelpdeskReports.locals.pdf = true;
+    
+    var locals = HelpdeskReports.locals;
+    var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %>;
+
+    if(err) {
+        var div = ['distribution_container'];
+          HelpdeskReports.CoreUtil.populateEmptyChart(div, err);
+      } else {
+      HelpdeskReports.ChartsInitializer.PerformanceDistribution.pdf(locals.chart_hash);
+    }
+    
+    HelpdeskReports.CoreUtil.setFilterDisplayData();
+
+      //Add labels to locals
+    locals.first_response_time_label = '<%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>';
+
+    locals.avg_response_time_label = '<%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>';
+
+    locals.resolution_bar_label = '<%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>';
+  });
+</script>

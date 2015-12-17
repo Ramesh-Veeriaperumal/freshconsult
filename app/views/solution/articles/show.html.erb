@@ -45,7 +45,9 @@
 			unsavedContent: "<%= escape_javascript(t('solution.general.unsaved_content')).html_safe %>",
 			leaveQuestion: "<%= escape_javascript(t('solution.general.leave_page_que')).html_safe %>",
 			somethingWrong: "<%= escape_javascript(t('solution.general.something_wrong')).html_safe %>",
-			maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>"
+			maxInput: "<%= escape_javascript(t('solution.articles.tag_max_len')).html_safe %>",
+			articleDeleted: "<%= escape_javascript(t('solution.articles.article_deleted')).html_safe %>",
+			back: "<%= escape_javascript(t('back')).html_safe %>"
 		};
 		<%= 'App.namespace = "solution/articles/new";'.html_safe if @article_meta.present? && @article.new_record? %>
 	});

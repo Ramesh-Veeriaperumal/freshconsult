@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "9ecc898a6ac3805abafe0ff602c036ad4fc7df0aa8f93cff84c5ba82f166ca46",
-    "current": "9ecc898a6ac3805abafe0ff602c036ad4fc7df0aa8f93cff84c5ba82f166ca46"
+    "previous": "75800162d2d38887288afa700bee24b121517b9fa4fd5b9f4356be3d57a8784d",
+    "current": "75800162d2d38887288afa700bee24b121517b9fa4fd5b9f4356be3d57a8784d"
   },
   "fonts": [
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.ttf",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.svg",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.woff",
-    "public/assets/glyphs_9ecc898a6ac3805abafe0ff602c036ad.eot"
+    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.ttf",
+    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.svg",
+    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.woff",
+    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -538,6 +538,10 @@
       "codepoint": 61785,
       "source": "public/glyphs/vectors/ie.svg"
     },
+    "ilos-icon": {
+      "codepoint": 61952,
+      "source": "public/glyphs/vectors/ilos-icon.svg"
+    },
     "import": {
       "codepoint": 61786,
       "source": "public/glyphs/vectors/import.svg"
@@ -1039,12 +1043,14 @@
     "preprocessor_path": "",
     "quiet": false,
     "templates": [
-      "_glyphs.scss",
+      "scss",
+      "_glyphs-variables.scss",
       "index.html"
     ]
   },
   "templates": [
     "public/src/fonts/_glyphs.scss",
+    "public/src/fonts/_glyphs-variables.scss",
     "public/assets/index.html"
   ]
 }

@@ -41,4 +41,7 @@ class Solution::Category < ActiveRecord::Base
     :through => :mobihelp_app_solutions ,
     :source => :app
 
+  has_many :activities,
+    :class_name => 'Helpdesk::Activity',
+    :as => 'notable'
 end

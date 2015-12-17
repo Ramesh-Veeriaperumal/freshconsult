@@ -39,9 +39,10 @@ describe Solution::Draft do
 
     #Some other agent is editing the article
     it "should return true when Some other agent is editing the article" do
-      @draft.user_id = @agent2.id
+      @agent2.make_current
       @draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:editing]
       @draft.save
+      @agent1.make_current
       @draft.reload
       @draft.locked?.should be_eql(true)
     end
@@ -63,9 +64,10 @@ describe Solution::Draft do
     end
 
     it "should return false when locking an already locked article" do
-      @draft.user_id = @agent2.id
+      @agent2.make_current
       @draft.status = Solution::Draft::STATUS_KEYS_BY_TOKEN[:editing]
       @draft.save
+      @agent1.make_current
       @draft.reload
       @draft.lock_for_editing!.should be_eql(false)
     end
@@ -119,4 +121,88 @@ describe Solution::Draft do
     end
   end
 
+  describe "Activities for Solution Drafts" do
+
+    before(:each) do
+      @article_published = create_article( {:title => "article2 agent2[#{@agent2.id}] #{Faker::Name.name} with status as draft", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @public_folder.id, :status => "2", :art_type => "1", :user_id => "#{@agent2.id}" } )
+      @article_published.create_draft_from_article({:title => "Draft for publish #{Faker::Name.name}", :description => "Desc 1 : #{Faker::Lorem.sentence(4)}"})
+      @draft = @article_published.draft
+    end
+
+    it "should create activity when article-draft is created" do
+      @draft.activities.last.description.should eql 'activities.solutions.new_draft.long'
+      @draft.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should create activity when an article-draft is published" do
+      @draft.publish!
+      @article_published.reload
+      @draft.activities.last.description.should eql 'activities.solutions.published_draft.long'
+      @draft.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should create activity when an article-draft is deleted" do
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.description.should eql 'activities.solutions.delete_draft.long'
+      @draft.activities.last.updated_at.to_date.should eql Time.now.to_date
+    end
+
+    it "should not create a delete_draft activity when an article-draft is published" do
+      @draft.publish!
+      @article_published.reload
+      @draft.activities.select{|a| a["description"] == 'activities.solutions.delete_draft.long'}.should eql []
+    end
+
+    it "should not create delete_draft activity when an article with an article-draft is deleted" do
+      @article_published.destroy
+      @draft.activities.select{|a| a["description"] == 'activities.solutions.delete_draft.long'}.should eql []
+    end
+
+    it "should create an activity with correct agent" do
+      @agent2.make_current
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.user_id.should eql @agent2.id
+    end
+
+    it "should create activity of Solution::Draft notable type" do
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.notable_type.should eql 'Solution::Draft'
+    end
+
+    it "should create activity with the correct path in activity data" do
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.activity_data[:path].should eql Rails.application.routes.url_helpers.solution_article_path(@draft)
+    end
+    
+    it "should create activity with the correct title in activity data" do
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.activity_data[:title].should eql @draft.article.title.to_s
+    end
+
+    it "should create activity with the correct description" do
+      @draft.activities.last.description.should eql 'activities.solutions.new_draft.long'
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.description.should eql 'activities.solutions.delete_draft.long'
+    end
+
+    it "should create activity with the correct short description" do
+      @draft.activities.last.short_descr.should eql 'activities.solutions.new_draft.short'
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.last.short_descr.should eql 'activities.solutions.delete_draft.short'
+    end
+
+    it "should create only one activity for each action" do
+      @draft.activities.size.should eql 1
+      @draft.discarding = true
+      @draft.destroy
+      @draft.activities.size.should eql 2
+    end
+  end
 end

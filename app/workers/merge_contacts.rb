@@ -2,6 +2,8 @@ class MergeContacts < BaseWorker
 
   sidekiq_options :queue => :merge_contacts, :retry => 0, :backtrace => true, :failures => :exhausted
 
+  include RabbitMq::Helper
+
   BATCH_LIMIT = 500
   
   REPORTS_TRACKING_CLASS = ["Helpdesk::Ticket", "Helpdesk::ArchiveTicket"]
@@ -69,7 +71,10 @@ class MergeContacts < BaseWorker
   end
 
   def move_helpdesk_activities children_ids
-    update_by_batches(@account.tickets, "requester_id", ["requester_id in (?)", children_ids])
+    update_by_batches(@account.tickets, 
+                      { :requester_id => @parent_user.id,
+                        :owner_id     => @parent_user.company_id }, 
+                      ["requester_id in (?)", children_ids])
     move_each_of(["notes"], children_ids)
   end
 
@@ -80,12 +85,15 @@ class MergeContacts < BaseWorker
   end
 
   def move_archived_tickets(children_ids)
-    update_by_batches(@account.archive_tickets, "requester_id", ["requester_id in (?)", children_ids])
+    update_by_batches(@account.archive_tickets, 
+                      { :requester_id => @parent_user.id,
+                        :owner_id     => @parent_user.company_id }, 
+                      ["requester_id in (?)", children_ids])
     move_each_of(["archive_notes"], children_ids)
   end
 
   #Moving relations by batches of 500
-  def update_by_batches items, dependent_id, conditions
+  def update_by_batches items, values, conditions
     begin
       items_to_update     = items.where(conditions).limit(BATCH_LIMIT)
       klass_name          = items_to_update.klass.name
@@ -93,14 +101,16 @@ class MergeContacts < BaseWorker
       # but just returns the count. We need to manually push the changes to RMQ as it does not trigger callbacks too.
       # Here adding .all to trigger the query(delayed query) and storing the active record objects for which updates need to be sent to RMQ 
       items_to_update_arr = items_to_update.all if REPORTS_TRACKING_CLASS.include?(klass_name)
-      records_updated     = items_to_update.update_all({dependent_id.to_sym => @parent_user.id})
+      records_updated     = items_to_update.update_all(values)
       send_updates_to_rmq(items_to_update_arr, klass_name) if REPORTS_TRACKING_CLASS.include?(klass_name)
     end while records_updated == BATCH_LIMIT
   end
 
   def move_each_of(arr=[], children_ids)
     arr.each do |relation|
-      update_by_batches(@account.send(relation), "user_id", ["user_id in (?)", children_ids])
+      update_by_batches(@account.send(relation), 
+                        { :user_id => @parent_user.id }, 
+                        ["user_id in (?)", children_ids])
     end
   end
 
@@ -148,16 +158,4 @@ class MergeContacts < BaseWorker
     @account.send(options[:object]).where({:id => update_ids}).update_all({options[:user] => @parent_user.id}) if update_ids.present?
     @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
   end
-  
-  ## TODO Must send only one push for all the subscribers(reports, search, activities)
-  # Currently only reports is handled.
-  # Need to handle it in a generic way for all the subscribers
-  def send_updates_to_rmq(items, klass_name)
-    items.each do |item|
-      item.reload ## Here reloading to get the current state of the object. TODO check if it will trigger any performace impact. Must reorg
-      key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{klass_name.demodulize.tableize.singularize.upcase}_KEY")
-      item.manual_publish_to_rmq("update", key, {:manual_publish => true})
-    end
-  end
-  
 end

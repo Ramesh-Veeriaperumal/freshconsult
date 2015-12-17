@@ -272,8 +272,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   end
 
+  def sort_by_response? 
+    order.to_sym.eql?(:agent_responded_at) || order.to_sym.eql?(:requester_responded_at)
+  end
+
   def results
-    db_type = (order.to_sym.eql?(:requester_responded_at) || Account.current.slave_queries?) ? :run_on_slave : :run_on_master
+    db_type = (sort_by_response? || Account.current.slave_queries?) ? :run_on_slave : :run_on_master
     Sharding.send(db_type) do
       @results ||= begin
         handle_empty_filter! 
@@ -316,7 +320,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
     all_joins[0].concat(article_tickets_join) if self.name == "article_feedback"
     all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
-    all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
+    all_joins[0].concat(states_join) if sort_by_response?
     all_joins
   end
 
@@ -376,7 +380,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                                                 # this causing mysql to use id index instead of account_id index
       order_parts = order_columns.split('.')
       
-      if order.eql? "requester_responded_at"
+      if sort_by_response? 
         "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
       else
         if order_parts.size > 1

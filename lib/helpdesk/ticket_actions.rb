@@ -181,10 +181,10 @@ module Helpdesk::TicketActions
       move_attachments
       @note.remove_activity
       @note.destroy
-      Resque.enqueue(Workers::FbSplitTickets, { :account_id => current_account.id,
-                                                :child_fb_post_ids => @child_fb_note_ids,
-                                                :comment_ticket_id => @item.id,
-                                                :source_ticket_id  => @source_ticket.id}) if (@item.fb_post and !@child_fb_note_ids.blank?)
+      Social::FbSplitTickets.perform_async({  :user_id => current_user.id,
+                                              :child_fb_post_ids => @child_fb_note_ids,
+                                              :comment_ticket_id => @item.id,
+                                              :source_ticket_id  => @source_ticket.id}) if (@item.fb_post and !@child_fb_note_ids.blank?)
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
       puts @item.errors.to_json
@@ -279,8 +279,12 @@ module Helpdesk::TicketActions
     end
   end
 
+  def sort_by_response? 
+    params[:wf_order].to_sym.eql?(:requester_responded_at) || params[:wf_order].to_sym.eql?(:agent_responded_at)
+  end
+
   def get_db_type(params)
-    ((params[:wf_order] && params[:wf_order].to_sym.eql?(:requester_responded_at)) || current_account.slave_queries?) ? :run_on_slave : :run_on_master
+    ((params[:wf_order] && sort_by_response?) || current_account.slave_queries?) ? :run_on_slave : :run_on_master
   end
 
   def get_tag_name

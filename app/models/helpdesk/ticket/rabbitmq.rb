@@ -56,8 +56,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def ticket_custom_field_hash
+    # Sending only non text custom fields in the JSON (All except the single line and paragraph fields)
     {
-      "custom_fields" => custom_field.stringify_keys
+      "custom_fields" => custom_field.select { |k,v| non_text_ff_aliases.include?(k.to_s) }.stringify_keys
     }    
   end
 

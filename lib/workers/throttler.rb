@@ -24,6 +24,7 @@ class Workers::Throttler
       else
         args                   = throttler_args[:args]
         args[:current_user_id] = throttler_args[:current_user_id]
+        args[:account_id]      = throttler_args[:account_id]
         worker                 = throttler_args[:worker].constantize
         count = increment_others_redis(key)
         if expires_after == -1
@@ -38,6 +39,11 @@ class Workers::Throttler
     rescue Exception => e
       puts "something is wrong  Throttler : #{e.message}"
     end
+  end
+
+  def self.around_perform_with_shard(*args)
+    args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
+    yield
   end
 
 end

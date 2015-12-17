@@ -69,6 +69,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 		&.outgoing{
 			[class*="#{$font-class}"]{
 				color: #fff;
+				line-height: 27px;
 			}
 		}
 		li{
@@ -76,7 +77,7 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 			float: left;
 		}
 		[class*="#{$font-class}"]{
-			line-height: 27px;
+			line-height: 32px;
 		}
 		.availabilityOnPhone{
 			.#{$font-class}ff-on-call{
@@ -104,6 +105,41 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 				}
 			}
 	
+		}
+		.transfer_call{
+			.#{$font-class}cross{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}cross{
+					display:block;
+				}
+				.#{$font-class}arrow-right-2{
+					display:none;
+				}
+			}
+			&.transferring_state{
+				.#{$font-class}cross{
+					display:none;
+				}
+				.#{$font-class}arrow-right-2{
+					display:block;
+				}
+			}
+		}
+
+		.ongoingDialpad{
+			.#{$font-class}cross{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}cross{
+					display:block;
+				}
+				.#{$font-class}ff-dialpad{
+					display:none;
+				}
+			}
 		}
 	}
 }

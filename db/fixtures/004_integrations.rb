@@ -930,4 +930,22 @@ if Integrations::Application.count == 0
     }
     s.application_type = "github"
   end
+
+  ilos =  Integrations::Application.seed(:name) do |s|
+    s.name = "ilos"
+    s.display_name = "integrations.ilos.label"
+    s.description = "integrations.ilos.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 37
+    s.options = {
+        :keys_order => [:api_key, :account_settings], 
+        :api_key => { :type => :text, :required => true, :label => "integrations.ilos.form.api_key" },
+        :account_settings => { 
+          :type => :custom, :required => false, :label => "integrations.google_contacts.form.account_settings", 
+          :partial => "/integrations/applications/ilosvideos_settings", 
+          :info => "integrations.google_contacts.form.account_settings_info" 
+        }
+    }
+    s.application_type = "ilos"
+  end
 end

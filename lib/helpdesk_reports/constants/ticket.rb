@@ -3,26 +3,26 @@ module HelpdeskReports::Constants::Ticket
   TICKET_FIELD_NAMES       = [:source, :priority, :status, :ticket_type, :group_id, :agent_id, :product_id, :company_id]
   
   METRIC_AND_QUERY = [
-    [:RECEIVED_TICKETS,            "Count"],
-    [:RESOLVED_TICKETS,            "Count"],
-    [:REOPENED_TICKETS,            "Count"],
-    [:AGENT_ASSIGNED_TICKETS,      "Count"],
-    [:GROUP_ASSIGNED_TICKETS,      "Count"],
-    [:AGENT_REASSIGNED_TICKETS,    "Count"],
-    [:GROUP_REASSIGNED_TICKETS,    "Count"],
-    [:RESPONSES,                   "Count"],
-    [:PRIVATE_NOTES,               "Count"],
-    [:CUSTOMER_INTERACTIONS,       "Count"],
-    [:AGENT_INTERACTIONS,          "Count"],
-    [:RESPONSE_VIOLATED,           "Count"],#Already preprocessed and returning violated % 
-    [:RESOLUTION_VIOLATED,         "Count"],
-    [:AVG_FIRST_RESPONSE_TIME,     "Avg"],
-    [:AVG_RESPONSE_TIME,           "Avg"],
-    [:AVG_RESOLUTION_TIME,         "Avg"],
-    [:AVG_FIRST_ASSIGN_TIME,       "Avg"],
-    [:RESPONSE_SLA,                "Percentage"],
-    [:RESOLUTION_SLA,              "Percentage"],
-    [:FCR_TICKETS,                 "Percentage"],
+    [:RECEIVED_TICKETS,            "Count",       "Created Tickets"],
+    [:RESOLVED_TICKETS,            "Count",       "Tickets Resolved"],
+    [:REOPENED_TICKETS,            "Count",       "Tickets Reopened"],
+    [:AGENT_ASSIGNED_TICKETS,      "Count",       "Tickets Assigned"],
+    [:GROUP_ASSIGNED_TICKETS,      "Count",       "Tickets Assigned"],
+    [:AGENT_REASSIGNED_TICKETS,    "Count",       "Tickets Reassigned"],
+    [:GROUP_REASSIGNED_TICKETS,    "Count",       "Tickets Reassigned"],
+    [:CUSTOMER_INTERACTIONS,       "Count",       "Customer Interactions"],
+    [:AGENT_INTERACTIONS,          "Count",       "Agent Interactions"],
+    [:RESPONSE_VIOLATED,           "Count",       "Response Violated"],#Already preprocessed and returning violated % 
+    [:RESOLUTION_VIOLATED,         "Count",       "Resolution Violated"],
+    [:RESPONSE_SLA,                "Percentage",  "First Response SLA %"],
+    [:RESOLUTION_SLA,              "Percentage",  "Resolution SLA %"],
+    [:FCR_TICKETS,                 "Percentage",  "FCR %"],
+    [:PRIVATE_NOTES,               "Count",       "Private Notes"],
+    [:RESPONSES,                   "Count",       "Responses"],
+    [:AVG_FIRST_RESPONSE_TIME,     "Avg",         "Avg 1st Response Time"],
+    [:AVG_RESPONSE_TIME,           "Avg",         "Avg Response Time"],
+    [:AVG_RESOLUTION_TIME,         "Avg",         "Avg Resolution Time"],
+    [:AVG_FIRST_ASSIGN_TIME,       "Avg",         "Avg 1st Assign Time"],
   ]
   
   TEMPLATE_METRICS_AND_QUERY = [
@@ -37,6 +37,8 @@ module HelpdeskReports::Constants::Ticket
   METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map { |i| i[0].to_s }
   METRIC_TO_QUERY_TYPE  = Hash[*METRIC_AND_QUERY.map { |i| [i[0], i[1]] }.flatten].merge!(Hash[*TEMPLATE_METRICS_AND_QUERY.map { |i| [i[0], i[1]] }.flatten])
   METRIC_TO_QUERY_TYPE.merge!({:list => "TicketList", :bucket => "Bucket" })
+  
+  METRIC_DISPLAY_NAME   = METRIC_AND_QUERY.map{|i| [i[0].to_s, i[2]]}.to_h
 
   #Mappings between redshift columns and what we use in parsing
   COLUMN_MAP = {
@@ -158,6 +160,8 @@ module HelpdeskReports::Constants::Ticket
     "source_name",
     "ticket_type",
     "company_name",
+    "responder_name",
+    "group_name",
     "requester_name",
     "requester_info",
     "requester_phone",
@@ -171,11 +175,21 @@ module HelpdeskReports::Constants::Ticket
   
   NA_PLACEHOLDER_SUMMARY = "-"
   
-  NA_PLACEHOLDER_GLANCE = "NA"
+  NA_PLACEHOLDER_GLANCE = 0
   
+  TICKET_EXPORT_LIMIT = 10
+
   TICKET_FILTER_LIMIT = 5
   
   MULTI_SELECT_LIMIT = 10
   
   TICKET_LIST_LIMIT = 25
+  
+  PDF_GROUP_BY_LIMIT = 11
+  
+  PDF_GROUP_BY_LIMITING_KEY = "-Others"
+  
+  REAL_TIME_REPORTS_EXPORT = false
+  
+  MAIL_ATTACHMENT_LIMIT_IN_BYTES = 5 * 1024 * 1024 # 5MB
 end

@@ -1,9 +1,11 @@
 class Freshfone::CallHistoryController < ApplicationController
 	include Freshfone::CallHistory
 	include Freshfone::FreshfoneUtil
+	include Redis::RedisKeys
+  include Redis::OthersRedis
 	before_filter :set_native_mobile, :only => [:custom_search, :children]
-	before_filter :set_cookies_for_filter, :only => [:custom_search, :export]
-	before_filter :get_cookies_for_filter, :only => [:index, :export]
+	before_filter :cache_filter_params, :only => [:custom_search, :export]
+	before_filter :load_cached_filters, :only => [:index, :export]
 	before_filter :load_calls, :only => [:index, :custom_search]
 	before_filter :load_children, :only => [:children]
 	before_filter :fetch_recent_calls, :only => [:recent_calls]
@@ -66,7 +68,7 @@ class Freshfone::CallHistoryController < ApplicationController
 
 	private
 		
-        def load_calls
+    def load_calls
 			params[:wf_per_page] = 30
 			@calls = all_numbers? ? 
                   current_account.freshfone_calls.roots.filter(:params => params,
@@ -91,20 +93,33 @@ class Freshfone::CallHistoryController < ApplicationController
 			@calls = @parent_call.descendants unless @parent_call.blank?
 		end
 
+		def calls_filter_key
+			ADMIN_CALLS_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
+		end
+
+		def cache_filter_params
+			set_others_redis_hash(calls_filter_key, filter_hash)
+			set_others_redis_expiry(calls_filter_key,86400*7)
+		end
+
+		def filter_hash
+			{:data_hash => params[:data_hash], :number_id => params[:number_id] }
+		end
+
+		def load_cached_filters
+			 if redis_key_exists?(calls_filter_key)
+					@cached_filters = get_others_redis_hash(calls_filter_key)
+					params[:data_hash] = @cached_filters['data_hash']
+				  params[:number_id] = @cached_filters['number_id']
+			 end
+		end
+
 		def fetch_recent_calls
 			@calls = current_user.freshfone_calls.roots.newest(5).include_customer if current_user.agent?
 		end
 
 		def fetch_blacklist
 			@blacklist_numbers =  current_account.freshfone_callers.blocked_callers.pluck(:id)
-		end
-
-		def get_cookies_for_filter
-			params["number_id"] = cookies["fone_number_id"]
-		end
-
-		def set_cookies_for_filter
-			cookies["fone_number_id"] = params["number_id"]
 		end
 
 		def check_export_range

@@ -30,6 +30,24 @@
 			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/<%= @ticket.id %>/component?component=todo"></div>
 		</div>
 		
-		<%= render :partial => "helpdesk/tickets/show/integrations" unless @ticket.ecommerce? %> 
+		<%= render :partial => "helpdesk/tickets/show/integrations" %> 
+
+    <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% if ilos_app_config[:visible_agent_ticket].to_bool %>
+        <%= stylesheet_link_tag :"cdn/ilos_video" %>
+        <div class="widget inactive">
+          <h3><%= t('integrations.ilos.messages.ilos_header') %></h3>
+          <div class="content">
+            <div class="ilos-widget" id="ilos-widget-tkt">
+              <%= ilos_widget(@ticket.display_id, "agent_ticket") %>
+              <p id="ilos-support">
+                <a href= "https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk" target="blank"><%= t('integrations.ilos.messages.about_recording') %></a>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %> 
+    <% end %> 
 	<% end %>
 </div>

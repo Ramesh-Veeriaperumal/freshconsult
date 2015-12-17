@@ -39,6 +39,8 @@ class HttpRequestProxyController < ApplicationController
         elsif params[:app_name] == APP_NAMES[:freshbooks]
           params[:username] = "#{installed_app.configs[:inputs]['api_key']}"
           params[:password] = "x"
+        elsif params[:build_auth_header].present?
+          params[:custom_auth_header] = { "Authorization" => "#{params[:token_type]} #{installed_app.configs[:inputs]['oauth_token']}" }
         else
           params[:password] = installed_app.configsdecrypt_password
         end

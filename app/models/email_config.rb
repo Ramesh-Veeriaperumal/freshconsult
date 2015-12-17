@@ -1,11 +1,11 @@
 class EmailConfig < ActiveRecord::Base
   self.primary_key = :id
 
+  belongs_to_account
   include AccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  belongs_to :account
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
 
@@ -33,7 +33,13 @@ class EmailConfig < ActiveRecord::Base
   end
   
   def friendly_email
-    active? ? "#{format(name)} <#{reply_email}>" : "support@#{account.full_domain}"
+    if active?
+      "#{format(name)} <#{reply_email}>"
+    elsif primary_role?
+      account.default_friendly_email
+    else
+      product.primary_email_config ? product.primary_email_config.friendly_email : account.default_friendly_email
+    end
   end
   
   def friendly_email_personalize(user_name)

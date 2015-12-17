@@ -41,14 +41,15 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 			jQuery(".metric-average-header").html(averageData);
 		},
 		initDataTable : function(row_count) {
-				var oTable = jQuery("#agent-summary").dataTable({
-					"dom" : 'frtSp',
+				 var oTable = jQuery("#agent-summary").DataTable({
+					"dom" : 'frtlSp',
                     "bSortCellsTop": true,
                     "bAutoWidth": false,
                     "sScrollX": "100%",   
 					"sScrollXInner": "200%",
                     "bFilter" : false, 
-                    "bLengthChange" : false,
+                    "bLengthChange" : true,
+                    "lengthMenu": [30, 60, 90],
                     "scrollDistance" : 850,
                     "aoColumns": [
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
@@ -74,14 +75,17 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
 						"sSearchPlaceholder": "Search"
 					  },
 					  "fnDrawCallback": function(oSettings) {
-					        if (row_count < 11) {
+					  	 var current_page_size = jQuery(this).DataTable().page.len();
+					        if (row_count <= current_page_size) {
 					            jQuery('.dataTables_paginate').hide();
+					        }else{
+					        	jQuery('.dataTables_paginate').show();
 					        }
 					  }
                 });
  				if (jQuery.browser.safari) { 
  					setTimeout(function(){
- 					 oTable.fnAdjustColumnSizing(); 
+ 					 oTable.columns.adjust().draw(); 
  					}, 0 ); 
  				}
 		}	

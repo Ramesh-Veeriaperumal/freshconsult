@@ -17,12 +17,14 @@ class Solution::Folder < ActiveRecord::Base
   before_update :clear_customer_folders, :backup_folder_changes
 
   before_save :backup_category
-  before_destroy :backup_category
+  before_destroy :backup_category, :add_activity_delete
 
   after_commit :update_search_index, on: :update, :if => :visibility_updated?
   after_commit :set_mobihelp_solution_updated_time
   
   after_update :clear_cache, :if => Proc.new { |f| f.name_changed? && f.primary? }
+  
+  after_create :add_activity_new
   
   has_many :customers, :through => :customer_folders
 
@@ -44,6 +46,10 @@ class Solution::Folder < ActiveRecord::Base
   include Solution::MetaMethods
   include Solution::LanguageMethods
   # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
+
+  def to_s
+    name
+  end
 
   def self.folders_for_category category_id    
     self.find_by_category_id(category_id)    
@@ -251,4 +257,29 @@ class Solution::Folder < ActiveRecord::Base
       end
     end
 
+    def add_activity_delete
+      create_activity('delete_folder')
+    end
+
+    def add_activity_new
+      create_activity('new_folder')
+    end
+  
+    def create_activity(type)
+      activities.create(
+        :description => "activities.solutions.#{type}.long",
+        :short_descr => "activities.solutions.#{type}.short",
+        :account    => account,
+        :user       => User.current,
+        :activity_data  => {
+                    :path => Rails.application.routes.url_helpers.solution_folder_path(self),
+                    'category_name' => h(category.name.to_s),
+                    :url_params => {
+                              :id => id,
+                              :path_generator => 'solution_folder_path'
+                            },
+                    :title => name.to_s
+                  }
+      )
+    end
 end

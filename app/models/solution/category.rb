@@ -16,11 +16,13 @@ class Solution::Category < ActiveRecord::Base
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
-
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
+  
+  after_create :add_activity_new
+  after_update :clear_cache_with_condition
 
   after_save    :set_mobihelp_solution_updated_time
-  before_destroy :set_mobihelp_app_updated_time
+  before_destroy :set_mobihelp_app_updated_time, :add_activity_delete
 
   concerned_with :associations, :meta_associations
 
@@ -30,6 +32,10 @@ class Solution::Category < ActiveRecord::Base
 
   include Solution::LanguageMethods
   # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
+
+  def to_s
+    name
+  end
 
   def to_xml(options = {})
      options[:root] ||= 'solution_category'
@@ -77,6 +83,31 @@ class Solution::Category < ActiveRecord::Base
 
     def set_mobihelp_app_updated_time
       category_obj.update_mh_app_time
+    end
+
+    def add_activity_delete
+      create_activity('delete_solution_category')
+    end
+
+    def add_activity_new
+      create_activity('new_solution_category')
+    end
+  
+    def create_activity(type)
+      activities.create(
+        :description => "activities.solutions.#{type}.long",
+        :short_descr => "activities.solutions.#{type}.short",
+        :account    => account,
+        :user       => User.current,
+        :activity_data  => {
+                    :path => Rails.application.routes.url_helpers.solution_category_path(self),
+                    :url_params => {
+                              :id => id,
+                              :path_generator => 'solution_category_path'
+                            },
+                    :title => name.to_s
+                  }
+      )
     end
 
     def category_obj

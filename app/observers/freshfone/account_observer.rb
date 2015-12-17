@@ -6,11 +6,14 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 	end
 
 	def before_destroy(freshfone_account)
-		freshfone_account.close
+		freshfone_account.close unless freshfone_account.closed?
+		FreshfoneNotifier.deliver_freshfone_ops_notifier(freshfone_account.account,
+			:message => "Freshfone Account Closed For Account :: #{freshfone_account.account_id}")
 	end
 
 	def after_create(freshfone_account)
 		set_usage_trigger(freshfone_account)
+		freshfone_account.enable_conference
 	end
 
 	def after_update(freshfone_account)

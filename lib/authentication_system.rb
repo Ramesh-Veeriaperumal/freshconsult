@@ -175,8 +175,13 @@ module AuthenticationSystem
       unless current_user.day_pass_granted_on
         store_location
         log_out!
-        flash[:notice] = I18n.t('agent.day_pass_expired')
-        redirect_to login_url
+        respond_to do |format|
+          format.json { day_pass_expired_json } # defined in application_concern.
+          format.all do 
+            flash[:notice] = I18n.t('agent.day_pass_expired')
+            redirect_to login_url
+          end
+        end
       end
     end
     
@@ -193,6 +198,7 @@ module AuthenticationSystem
       true
     end
     
+    # Check qualify_for_day_pass? method in api_applciation_controller if this method is modified.
     def qualify_for_day_pass?
       current_user && current_user.occasional_agent? && !current_account.subscription.trial? && !is_assumed_user?
     end
