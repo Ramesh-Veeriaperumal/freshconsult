@@ -25,6 +25,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Unscoped spotlight search
   #
   def all
+    @search_context     = :agent_spotlight_global
     @searchable_klasses = esv2_klasses
     search
   end
@@ -32,6 +33,7 @@ class Search::V2::SpotlightController < ApplicationController
   # Tickets scoped spotlight search
   #
   def tickets
+    @search_context     = :agent_spotlight_ticket
     @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
     search
   end
@@ -41,6 +43,7 @@ class Search::V2::SpotlightController < ApplicationController
   def customers
     redirect_user unless privilege?(:view_contacts)
 
+    @search_context     = :agent_spotlight_customer
     @searchable_klasses = ['User', 'company']
     search
   end
@@ -50,6 +53,7 @@ class Search::V2::SpotlightController < ApplicationController
   def forums
     redirect_user unless privilege?(:view_forums)
 
+    @search_context     = :agent_spotlight_topic
     @searchable_klasses = ['Topic']
     search
   end
@@ -59,6 +63,7 @@ class Search::V2::SpotlightController < ApplicationController
   def solutions
     redirect_user unless privilege?(:view_solutions)
 
+    @search_context     = :agent_spotlight_solution
     @searchable_klasses = ['Solution::Article']
     search
   end
@@ -130,19 +135,21 @@ class Search::V2::SpotlightController < ApplicationController
     def construct_es_params
       Hash.new.tap do |es_params|
         es_params[:search_term] = @search_key
-        es_params[:account_id]  = current_account.id ##needed?
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
           es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
         end
         
-        if params[:category_id].present?
-          es_params[:article_category_id] = params[:category_id].to_i if searchable_klasses.include('Solution::Article')
-          es_params[:topic_category_id]   = params[:category_id].to_i if searchable_klasses.include('Topic')
+        if searchable_klasses.include?('Solution::Article')
+          es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
+          es_params[:language_id]         = Language.for_current_account.id
+          es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
         end
-        
-        es_params[:article_folder_id] = params[:folder_id].to_i if params[:folder_id].present?
+
+        if searchable_klasses.include?('Topic')
+          es_params[:topic_category_id]   = params[:category_id].to_i if params[:category_id].present?
+        end
         
         unless (@search_sort.to_s == 'relevance') or @suggest
           es_params[:sort_by]         = @search_sort
@@ -151,7 +158,7 @@ class Search::V2::SpotlightController < ApplicationController
         
         es_params[:size]  = @size
         es_params[:from]  = @offset
-      end.merge(ES_BOOST_VALUES[:agent_spotlight])
+      end.merge(ES_BOOST_VALUES[@search_context])
     end
 
     # Reconstructing ES results
@@ -208,6 +215,5 @@ class Search::V2::SpotlightController < ApplicationController
       @offset         = @size * (@current_page - 1)
       @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
       @es_results     = []
-      @search_context = :agent_spotlight
     end
 end

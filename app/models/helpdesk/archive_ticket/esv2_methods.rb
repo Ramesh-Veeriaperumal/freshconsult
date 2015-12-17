@@ -9,13 +9,13 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       :tailored_json => true,
       :methods => [
                     :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
-                    :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails
+                    :status_deleted, :product_id, :trashed, :es_cc_emails, :es_fwd_emails, 
+                    :closed_at, :resolved_at, :to_emails
                   ],
       :only => [
                   :requester_id, :responder_id, :status, :source, :spam, :deleted, 
                   :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by, 
-                  :frDueBy, :priority, :ticket_type, :subject, :description, :resolved_at, 
-                  :closed_at, :to_emails
+                  :frDueBy, :priority, :ticket_type, :subject, :description
                 ]
     }, false).merge(esv2_custom_attributes)
             .merge(attachments: es_v2_attachments).to_json
