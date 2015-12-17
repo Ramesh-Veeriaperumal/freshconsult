@@ -7,6 +7,7 @@ class UserSession < Authlogic::Session::Base
 	find_by_login_method :find_by_user_emails
   params_key :k
   single_access_allowed_request_types :any
+  before_save :set_last_active_time
   after_save :set_user_time_zone, :set_node_session
   before_destroy :delete_node_session
   after_validation :set_missing_node_session
@@ -68,6 +69,10 @@ class UserSession < Authlogic::Session::Base
         errors.add(:base, I18n.t("flash.login.credentials_incorrect"))
       end
     end
+  end
+
+  def set_last_active_time
+    self.record.agent.update_last_active(:force) if self.record.agent? and !self.record.agent.nil?   
   end
 
   attr_accessor :email, :password

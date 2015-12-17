@@ -25,6 +25,8 @@ class Agent < ActiveRecord::Base
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
   scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   scope :list , lambda {{ :include => :user , :order => :name }}  
+
+  xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
   
   def self.technician_list account_id  
     agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
@@ -140,6 +142,10 @@ class Agent < ActiveRecord::Base
     destroy_achieved_quests
     destroy_support_scores
     reset_to_beginner_level
+  end
+
+  def update_last_active(force=false)
+    touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
   end
 
   private

@@ -64,7 +64,11 @@ namespace :freshfone do
 			Freshfone::Account.current_pod.find_due.each do |ff_account|
 				# ff_account.process_subscription
 				account = ff_account.account
-				FreshfoneNotifier.freshfone_account_closure(account)
+				FreshfoneNotifier.deliver_freshfone_ops_notifier(account, {
+					:subject => "Phone Channel Suspended for a Month for Account :: #{account.id}",
+					:message => "The Phone Channel is Suspended for a Month for Account :: #{account.id}<br>
+					And its Suspended on #{1.month.ago.utc.strftime('%d-%b-%Y')}"
+					})
 				#should we collect negative balance amounts here?
 			end
 		end
@@ -96,6 +100,7 @@ namespace :freshfone do
 						ff_account.close
 						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
 							:message => "Freshfone Account Closed For Account :: #{ff_account.account_id}")
+						# FreshfoneNotifier.deliver_account_closing(account) # later for notifying customer
 					else
 						ff_account.update_column(:expires_on, ff_account.expires_on + 15.days) # allowing 15 days grace period.
 						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,

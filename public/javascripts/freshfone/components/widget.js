@@ -41,6 +41,7 @@ var FreshfoneWidget;
 			this.$contextSlide = $(this.contextSlide);
 			this.$ticketsLoading = $('.tickets-loading');
 			this.callerUserId = "";
+			this.widgetLoaded = false;
 		},
 		loadDependencies: function (freshfonecalls, freshfoneuser) {
 			this.freshfoneuser = freshfoneuser;
@@ -101,7 +102,13 @@ var FreshfoneWidget;
 			});
 		},
 		loadContextContainer: function(){
-			this.$contextContainer.show('slide',{direction:'down',duration:700});
+			var self = this;
+			this.$contextContainer.show('slide',{direction:'down',duration:700},function(){
+				if(self.callNote.val()){
+					self.showNotes();
+				}
+				self.widgetLoaded = true;
+			});
 			this.initializeCallContextWidget();			
 			this.loadContext();
 		},
@@ -319,16 +326,24 @@ var FreshfoneWidget;
 		renderNotes: function(data){
 			var headerFromAgent = $('.note_from_agent');
 			headerFromAgent.text('... added by '+freshfoneUserInfo.requestObject.transferAgentName);
-			if(!$('#freshfone_add_notes').find('.call_notes').is(':visible')){
-				this.$addCallNote.click();
+			if(!$('#freshfone_add_notes').find('.call_notes').is(':visible') && this.widgetLoaded ){
+				this.showNotes();
 			}
 			this.callNote.focus().val(this.callNote.val()+data.call_notes);
+			this.$addCallNote.text(freshfone.edit_note_text);
 			this.callNote.on('keyup',function(){
 				headerFromAgent.text("");
 			});
 		},
 		resetNotesAgentHeader: function(){
 			$('.note_from_agent').text("");
+		},
+		showNotes: function(){
+			this.$addCallNote.click();
+		},
+		resetWidget: function(){
+			this.resetNotesAgentHeader();
+			this.widgetLoaded = false;
 		}
 	};
 	$(window).on("load", function () {

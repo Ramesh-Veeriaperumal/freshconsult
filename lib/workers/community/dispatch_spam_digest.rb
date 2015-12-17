@@ -21,7 +21,7 @@ class Workers::Community::DispatchSpamDigest
 							:account => Account.current,
 							:recipients => moderator.email,
 							:moderator => moderator.user,
-							:subject => %(Topics waiting for approval in #{Account.current.helpdesk_name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
+							:subject => %(Topics waiting for approval in #{Account.current.name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
 							:moderation_digest => moderation_digest,
 							:host => Account.current.full_url 
 						}) unless moderator.email.blank?

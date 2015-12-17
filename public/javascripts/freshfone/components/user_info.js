@@ -53,9 +53,11 @@ var FreshfoneUserInfo;
 						self.requestObject.callerId = data.user_id;
 						self.requestObject.avatar = data.user_hover || false;
 						self.requestObject.callMeta = self.construct_meta(data.call_meta);
-						self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
-						self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
-						self.setOngoingCallContext(data.call_meta.caller_location);
+						if(data.call_meta){
+							self.requestObject.transferAgentName = data.call_meta.transfer_agent.user_name;
+							self.requestObject.ffNumberName = (data.call_meta || {}).number || "";
+						}	
+						self.setOngoingCallContext(data.caller_location);
 					}
 					if (self.isOutgoing) {						
 						self.setOngoingStatusAvatar(self.requestObject.avatar || self.blankUserAvatar);
@@ -108,12 +110,12 @@ var FreshfoneUserInfo;
 				this.unknownUserFiller();
 			}
 		},
-		setOngoingCallContext: function(location){
-			var callerName = this.requestObject.callerName==this.customerNumber? "ANONYMOUS" : this.requestObject.callerName;
+		setOngoingCallContext: function(callerLocation){
+			var callerName = this.requestObject.callerName;
 			var callerId = this.requestObject.callerId;
 			var params = {callerName: callerName, 
 							callerNumber: this.formattedNumber(), 
-							callerLocation: location,
+							callerLocation: callerLocation,
 							callerId: callerId
 						};
 			var template = this.$callContext.clone();

@@ -30,7 +30,8 @@ module Integrations::Constants
     :hootsuite => "hootsuite",
     :onedrive => "onedrive",
     :github => "github",
-    :ilos => "ilos"
+    :ilos => "ilos",
+    :magento => "magento"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

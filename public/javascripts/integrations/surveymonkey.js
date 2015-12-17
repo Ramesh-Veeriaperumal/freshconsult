@@ -96,7 +96,7 @@ SurveyMonkey.prototype = {
 				ihtml = "<option value=\"\">- Select -</option>";
 				collectors.each(function(collector) {
 					ihtml = ihtml + "<option value=\"" + collector.id + "\" " +
-									"data-collector-url=\"" + collector.url + "\">" + collector.name + "</option>";
+									"data-collector-url=\"" + collector.url + "\">" + escapeHtml(collector.name) + "</option>";
 				});
 				jQuery(collector_list_wrapper).removeClass("sloading loading-small");
 				jQuery(collector_container).removeClass("sloading loading-small loading-left");
@@ -200,7 +200,7 @@ SurveyMonkey.prototype = {
 				var configured_survey_id = jQuery(this).val();
 				sm.surveys.each(function(s) {
 					selected_attrib = ((s.id == configured_survey_id || has_only_one_survey) ? 'selected="selected" ' : '');
-					ihtml += ("<option value=\"" + s.id + "\" " + selected_attrib + ">" + s.name + "</option>");
+					ihtml += ("<option value=\"" + s.id + "\" " + selected_attrib + ">" + escapeHtml(s.name) + "</option>");
 				});
 				jQuery(this).parent().find(".survey-list-wrapper").removeClass("sloading loading-small loading-left");
 				jQuery(this).parent().find("select.survey_list").html(ihtml);
@@ -225,7 +225,7 @@ SurveyMonkey.prototype = {
 				collectors.each(function(collector) {
 					var selected_attrib = (configured_collector_id == collector.id ? 'selected="selected" ' : '');
 					ihtml = ihtml + "<option value=\"" + collector.id + "\" " + selected_attrib +
-									"data-collector-url=\"" + collector.url + "\">" + collector.name + "</option>";
+									"data-collector-url=\"" + collector.url + "\">" + escapeHtml(collector.name) + "</option>";
 				});
 				jQuery(collector_container).find("select.collector_list").html(ihtml);
 				jQuery(collector_list_wrapper).removeClass("sloading loading-small loading-left");
@@ -268,7 +268,7 @@ SurveyMonkey.prototype = {
 			on_success: function(res){
 				var webLinks = [];
 				res.responseJSON.data.collectors.each(function(collector){
-					if (collector.type=='url') webLinks.push({name: collector.name, url: collector.url, id: collector.collector_id});
+					if (collector.type=='url') webLinks.push({name: escapeHtml(collector.name), url: collector.url, id: collector.collector_id});
 				});
 				if (webLinks.length) {
 					callback(webLinks);

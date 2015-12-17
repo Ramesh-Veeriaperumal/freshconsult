@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce"].each do |provider|
+  ["github","salesforce", "magento"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -810,6 +810,12 @@ Helpkit::Application.routes.draw do
       post :solution_article
       post :get_recorder_token
       get :popupbox
+    end
+
+    namespace :magento do
+      get :new
+      get :edit
+      post :update
     end
 
     namespace :xero do 

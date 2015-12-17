@@ -42,7 +42,7 @@
   </div>
 
   <div class="form-actions">
-    <a data-hide-dom="#vote-feedback-container" class="btn"><%= t('cancel') %></a>
+    <a data-hide-dom="#vote-feedback-container" data-show-dom="#vote-feedback-form-link" class="btn"><%= t('cancel') %></a>
     <%= submit_tag t('send_feedback'), :class => "btn btn-primary btn-toggle", :id => "submit-feedback" -%> 
   </div>
   <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>

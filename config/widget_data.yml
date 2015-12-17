@@ -385,3 +385,18 @@
   id: 24
   description: github.widgets.github_widget.description
   application_type: github
+
+- options:
+    display_in_pages:
+    - helpdesk_tickets_show_page_side_bar
+  script: |-
+          <script type="text/javascript">
+            magentoBundle={reqEmails:"{{requester.all_emails}}", from_email: "{{ticket.from_email}}", ticket_id: "{{ticket.id}}" };
+            Fjax.Assets.integration('magento', function () {
+              new MagentoWidget(magentoBundle);
+            });
+          </script>
+  name: magento_widget
+  id: 25
+  description: integrations.magento.desc
+  application_type: magento

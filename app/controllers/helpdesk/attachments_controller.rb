@@ -2,7 +2,7 @@
 class Helpdesk::AttachmentsController < ApplicationController
 
   include HelpdeskControllerMethods
-  skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_before_filter :check_privilege
   before_filter :load_item, :only => [:text_content, :show]
   before_filter :check_download_permission, :only => [:show, :text_content]
   before_filter :check_destroy_permission, :only => [:destroy]
