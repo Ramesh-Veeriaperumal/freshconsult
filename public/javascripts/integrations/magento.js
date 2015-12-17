@@ -140,55 +140,55 @@ MagentoWidget.prototype= {
 
                 var created_at = $this.format_date(val.created_at);
 
-                line_items_html += $this.ORDER_POPUP_VIEW.evaluate({increment_id: val.increment_id.escapeHTML(), 
-                                    created_at: created_at.escapeHTML(),
-                                    store_currency_code: val.store_currency_code.escapeHTML(), 
+                line_items_html += $this.ORDER_POPUP_VIEW.evaluate({increment_id: $this.escapeHtmlCustom(val.increment_id), 
+                                    created_at: $this.escapeHtmlCustom(created_at),
+                                    store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
                                     status: val.status.humanize().capitalize(), 
-                                    street: val.addresses[1].street.escapeHTML(), 
-                                    city: val.addresses[1].city.escapeHTML(), 
-                                    postcode: val.addresses[1].postcode.escapeHTML(),
-                                    region: val.addresses[1].region.escapeHTML()
+                                    street: $this.escapeHtmlCustom(val.addresses[1].street), 
+                                    city: $this.escapeHtmlCustom(val.addresses[1].city), 
+                                    postcode: $this.escapeHtmlCustom(val.addresses[1].postcode),
+                                    region: $this.escapeHtmlCustom(val.addresses[1].region)
                 });
                 jQuery.each(val.order_items,function(key1, val1) {   
-                    line_items_html += $this.ORDER_LINE_ITEM.evaluate({name: val1.name.escapeHTML(),
-                                        price: parseFloat(val1.price || 0).toFixed(2).escapeHTML(), 
-                                        tax_amount: parseFloat(val1.tax_amount || 0).toFixed(2).escapeHTML(), 
-                                        quantity: parseFloat(val1.qty_ordered || 0).toFixed(2).escapeHTML(),
-                                        store_currency_code: val.store_currency_code.escapeHTML(), 
-                                        row_total: parseFloat(val1.row_total || 0).toFixed(2).escapeHTML()
+                    line_items_html += $this.ORDER_LINE_ITEM.evaluate({name: $this.escapeHtmlCustom(val1.name),
+                                        price: $this.escapeHtmlCustom(parseFloat(val1.price || 0).toFixed(2)), 
+                                        tax_amount: $this.escapeHtmlCustom(parseFloat(val1.tax_amount || 0).toFixed(2)), 
+                                        quantity: $this.escapeHtmlCustom(parseFloat(val1.qty_ordered || 0).toFixed(2)),
+                                        store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
+                                        row_total: $this.escapeHtmlCustom(parseFloat(val1.row_total || 0).toFixed(2))
                                     });
                 });
 
                 line_items_html += $this.ORDER_LINE_ITEM.evaluate({tax_amount: "Shipping & Handling (incl tax)", 
                                         total_row_class: "integ_invoice_total_row",
-                                        store_currency_code: val.store_currency_code.escapeHTML(), 
-                                        row_total: parseFloat(val.shipping_incl_tax || 0).toFixed(2).escapeHTML()
+                                        store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
+                                        row_total: $this.escapeHtmlCustom(parseFloat(val.shipping_incl_tax || 0).toFixed(2))
                                     });
 
                 line_items_html += $this.ORDER_LINE_ITEM.evaluate({tax_amount: "Grand Total", 
                                         total_row_class: "integ_invoice_total_row",
-                                        store_currency_code: val.store_currency_code.escapeHTML(), 
-                                        row_total: parseFloat(val.grand_total || 0).toFixed(2).escapeHTML()
+                                        store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
+                                        row_total: $this.escapeHtmlCustom(parseFloat(val.grand_total || 0).toFixed(2))
                                     });
 
                 line_items_html += $this.ORDER_LINE_ITEM.evaluate({tax_amount: "Total Paid", 
                                         total_row_class: "integ_invoice_total_row",
-                                        store_currency_code: val.store_currency_code.escapeHTML(), 
-                                        row_total: parseFloat(val.total_paid || 0).toFixed(2).escapeHTML()
+                                        store_currency_code: $this.escapeHtmlCustom(val.store_currency_code), 
+                                        row_total: $this.escapeHtmlCustom(parseFloat(val.total_paid || 0).toFixed(2))
                                     });
 
                 line_items_html = $this.LINE_ITEM_HTML.evaluate({line_items_html: line_items_html});
 
                 var website_name = val.store_name.split("\n")[0];
 
-                orders_tag +=  $this.ORDERS_LIST.evaluate({increment_id: val.increment_id.escapeHTML(), 
+                orders_tag +=  $this.ORDERS_LIST.evaluate({increment_id: $this.escapeHtmlCustom(val.increment_id), 
                                     order_items_length: val.order_items.length,
-                                    website_name : website_name.escapeHTML(),
-                                    created_at: created_at.escapeHTML(),
-                                    store_currency_code: val.store_currency_code.escapeHTML(),
-                                    grand_total: parseFloat(val.grand_total || 0).toFixed(2).escapeHTML(),
+                                    website_name : $this.escapeHtmlCustom(website_name),
+                                    created_at: $this.escapeHtmlCustom(created_at),
+                                    store_currency_code: $this.escapeHtmlCustom(val.store_currency_code),
+                                    grand_total: $this.escapeHtmlCustom(parseFloat(val.grand_total || 0).toFixed(2)),
                                     line_items_html: line_items_html,
-                                    status: val.status.humanize().capitalize().escapeHTML()
+                                    status: $this.escapeHtmlCustom(val.status.humanize().capitalize())
                                 });
             });
         }
@@ -224,6 +224,10 @@ MagentoWidget.prototype= {
     handlefailure: function(evt) {
         jQuery("#magento_loading").remove();
         jQuery("#magento .content").html(this.ERROR_MESSAGE);
+    },
+
+    escapeHtmlCustom: function(val) {
+        return (val || "").escapeHTML();
     }
 
 }
