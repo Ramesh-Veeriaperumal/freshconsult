@@ -1,0 +1,88 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.magento.helptext").html_safe%>
+  </div>
+<%- end %>
+
+  <h3 class="lead"><%=t("integrations.magento.magento_settings")%></h3>
+
+  <%= form_tag("/integrations/magento/update", :method=> "post")  do %>
+    <ul class="ui-form">
+      <li class="inline-field">
+        <label class="caption">
+          <div class="logo application-logo-magento"></div>
+          <div class="logo info-data">
+            <%=t('integrations.magento.desc')%>
+          </div>
+        </label>
+        <input type="hidden" id="shops_length" value="<%=configs["shops"].length%>" />
+        <div class="fields">
+          <label for="configs_shop_name"> <%=t('integrations.magento.form.shop_name')%> 
+            <span class="required_star">*</span>
+          </label>
+          <input size="30" 
+                maxlength="14" 
+                aria-required="true" class="text required" 
+                name="configs[shops][0][shop_name]"
+                <%if defined?(configs["shops"][0]["shop_name"]) %>
+                  value = "<%= configs["shops"][0]["shop_name"] %>"
+                <%end%>
+                type="text">
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_shop_url"> <%=t('integrations.magento.form.shop_url')%> 
+            <span class="required_star">*</span>
+          </label>
+          <input aria-required="true" 
+                class="text required"
+                name="configs[shops][0][shop_url]" 
+                size="30"
+                <%if defined?(configs["shops"][0]["shop_url"]) %>
+                  value = "<%= configs["shops"][0]["shop_url"] %>"
+                <%end%>
+                type="text">
+          <div class="info-data"> <%=t('integrations.magento.form.shop_url_info').html_safe%> </div>
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_consumer_token"> <%=t('integrations.magento.form.consumer_key')%>
+            <span class="required_star">*</span>
+          </label>
+          <input aria-required="true" 
+                class="text required"
+                name="configs[shops][0][consumer_token]" 
+                size="30"
+                <%if defined?(configs["shops"][0]["consumer_token"]) %>
+                  value = "<%= configs["shops"][0]["consumer_token"] %>"
+                <%end%>
+                type="text">
+          <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <label for="configs_consumer_secret"> <%=t('integrations.magento.form.consumer_secret')%> 
+            <span class="required_star">*</span>
+          </label>
+          <input aria-required="true" 
+                class="text required"
+                name="configs[shops][0][consumer_secret]" 
+                size="30" 
+                <%if defined?(configs["shops"][0]["consumer_secret"]) %>
+                  value = "<%= configs["shops"][0]["consumer_secret"] %>"
+                <%end%>
+                type="text">
+          <span class="seperator"></span>
+        </div>
+
+        <input type="hidden" id="position" name="configs[position]" value="0"/>
+      </li>
+    </ul>
+
+    <div class="button-container">
+      <%= link_to t('cancel'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+    </div>
+<%end%>

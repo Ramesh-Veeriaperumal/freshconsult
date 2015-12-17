@@ -2108,6 +2108,8 @@ en:
         success: "The integration has been updated successfully!"
         error: "Error in configuring the integration."
       not_installed: "This integration is not yet installed."
+      setting_saved: "Integration settings have been saved successfully."
+      invalid_url: "The url entered is invalid."
     filter:
       delete_success: "View has been deleted successfully!"
       save_success: "View has been saved successfully!"
@@ -2341,6 +2343,7 @@ en:
       email:
         reset: "A reset mail with instructions has been sent to %{requester}."
         user_not_found: No user was found with that email address
+        not_allowed: "You are not authorised to access this portal. Kindly contact the helpdesk administrator to activate your account."
         success: Instructions to reset your password have been emailed to you. Please check your email.
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
@@ -2998,6 +3001,7 @@ en:
       up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
       upvote: "Yes"
       downvote: "No"
+      link: "Send feedback"
       down_vote_form_title: "Can you please tell us how we can improve this article?"
       downvote_feedback_messasge: "Sorry we couldn't be helpful. Help us improve this article with your feedback."
   solutions:
@@ -3045,6 +3049,7 @@ en:
       sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
+      last_active_at: "Last active at"
       created_at: Created date
       asc: Ascending
       desc: Descending
@@ -3369,6 +3374,9 @@ en:
     last_logged_in: Last logged in %{time} ago.
     last_logged: Last logged in
     ago: %{time} ago.
+    days_ago: "%{days} ago"
+    last_active_at: "Last active at"
+    no_recent_activity: "No recent activity"
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_passes_available:
@@ -3710,6 +3718,8 @@ en:
     login_options: "...or login using"
     reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
+    user_signup_portal: "Sign up for your "
+    account: "account"
     login_or_signup: "%{login} or %{signup} for an account"
     to_post_comment: " to post a comment"
     to_submit_ticket: " to submit a new ticket"
@@ -4276,6 +4286,7 @@ en:
     agent_select: Please select the agents you want to notify when a new ticket is created in your helpdesk.
     agent_select_title: Notify Agents
     reset_confirm: "All changes will be lost when you reset. Do you still want to continue?"
+    page_not_found: "This template could not be found."
     helpcard:
       info2: "<a target=\"_blank\" href=\"https://support.freshdesk.com/solution/categories/45922/folders/74513/articles/170407-configuring-dynamic-email-notifications\"> Click here </a>to learn more"
       info3: "You can configure Freshdesk to send out automatic email notifications to agents and the requestor when specific events occur. These notifications can be customized and dynamic content can be added using placeholders. For example, you can notify customers when agents add comments or public notes to their tickets with a customized email with a link to the ticket.<br/><br/>If your plan supports multi-language, you will be able to add notification languages and customize the templates for each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
@@ -5608,6 +5619,7 @@ en:
         time_zone: "Timezone"
         phone: "Phone"
         mobile: "Mobile"
+        last_active_at: "Last active time"
     fields:
       ticket_id: "Ticket Id"
       display_id: "Display Id"
@@ -6395,6 +6407,19 @@ en:
       form:
         shop_name: "Shop Name"
         shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
+    magento:
+      label: "Magento"
+      desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
+      helptext: "<h4>Magneto Integration</h4><br/><p>Configure your shopname to display customer's recent orders in Freshdesk. You will be directed to your Magento shop to authorize Freshdesk. Once authorized, you will be able to view the customer's recent Orders and Order details on the Ticket details page. You can quickly access the details in Magento with one click from the Widget.</p>"
+      form:
+        shop_name: "Shop Name"
+        product: "Product"
+        shop_url: "Shop URL"
+        shop_url_info: "For example, <strong>https://my_shop_name.com</strong>."
+        consumer_key: "Consumer Key"
+        consumer_secret: "Consumer Secret"
+        add_shop: "+ Add shop"
+        remove_shop: "Remove this shop"
     slack:
       label: "Slack"
       desc: "Stay up to date about Freshdesk tickets in Slack"
@@ -8558,6 +8583,7 @@ en:
   edit_plan: "Edit Plan"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
+  not_available: "N/A"
   short_code:
     title: Chat Shorthands
     helpnote: "Chat Shorthands are customisable abbreviations which you can use in place of preset messages while you're chatting with someone. You can map different shorthand abbreviations to expand into corresponding messages and access them during your chat by using the '/' symbol."

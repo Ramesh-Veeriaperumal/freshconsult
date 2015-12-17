@@ -39,7 +39,7 @@ class UserDrop < BaseDrop
 		source.last_name
 	end	
 	def all_emails
-		source.user_emails.collect(&:email)
+		source.user_emails.pluck("email").join(",")
 	end
 
 	def recent_tickets
