@@ -64,6 +64,7 @@ module RabbitMq::Utils
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Publish Error",
                                                         :message => message.to_json }})
     Rails.logger.error("RabbitMq Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    Rails.logger.error("RMQ Sidekiq push error: #{message}")
     rmq_logger.info "#{message}"
     sns_notification("RabbitMq Publish Error", message)
   end
@@ -90,6 +91,7 @@ module RabbitMq::Utils
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "RabbitMq Manual Publish Error",
                                                        :message => message.to_json }})
     Rails.logger.error("RabbitMq Manual Publish Error: \n#{e.message}\n#{e.backtrace.join("\n")}")
+    Rails.logger.error("RMQ Sidekiq push error: #{message}")
     rmq_logger.info "#{message}"
     sns_notification("RabbitMq Manual Publish Error", message)
   end
