@@ -10,7 +10,7 @@ class SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
 
-      entity  = args[:klass_name].constantize.find_by_account_id_and_id(args[:account_id], args[:document_id])
+      entity = args[:klass_name].constantize.find_by_account_id_and_id(args[:account_id], args[:document_id])
 
       # All dates to be stored in UTC
       #
