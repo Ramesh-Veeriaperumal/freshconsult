@@ -44,7 +44,7 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
-  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
+  validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
   validate :status_in_default_folder
 
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
