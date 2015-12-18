@@ -4758,6 +4758,7 @@ en:
     delete_btn: Delete
     status: Status
     source: Source
+    tags: Tag
     verify_human: To verify you are human, please type the given scrambled letters
     edit_btn: Edit
     requester: Requester
@@ -8243,6 +8244,9 @@ en:
   ticket_creating_agent: "Ticket Creating Agent"
   ticket_cc: "Ticket CC"
   select_watchers: "Select Watchers"
+  select_values: "Select one or more values"
+  enter_a_value: "Enter a value"
+  enter_values: "Enter one or more values"
   admins: Admins
   shortcuts:
     title: "Keyboard shortcuts"

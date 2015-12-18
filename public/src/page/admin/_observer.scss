@@ -42,6 +42,10 @@
 		.dependent .select2-container{ @include margin-left(3px); }
 	}
 
+	#filterDOM {
+		.dependent .filter-multi-select {width:297px;}
+	}
+
 	>li{
 		width:100%;
 		margin-bottom:0px;
