@@ -274,7 +274,6 @@ module SolutionHelper
 		}
 		options.merge!({:rel => "freshdialog",
 			:data => {
-			"destroy-on-close" => true,
 			"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
 			"target" => "#version-#{solution_meta.id}-l#{language.id}",
 			"close-label" => t('cancel'),
@@ -304,7 +303,7 @@ module SolutionHelper
     if meta_obj.is_a? Solution::ArticleMeta
       classes << 'unpublished' unless meta_obj.send("#{language.to_key}_published?")
       classes << 'outdated' if Account.current.language_object != language && meta_obj.send("#{language.to_key}_outdated?")
-      classes << 'draft' if meta_obj.send("#{language.to_key}_draft?")
+      classes << 'draft' if meta_obj.send("#{language.to_key}_draft_present?")
     end
     classes.join(' ')
   end
@@ -344,7 +343,7 @@ module SolutionHelper
 
 	def languages_popover article_meta
 		op = ""
-		Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft?") }.each do |language|
+		Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft_present?") }.each do |language|
 			op << "<div class='language_item'>"
 			op << "<span class='language_symbol #{language_style(article_meta, language)}'>"
 			op << "<span class='language_name'>#{language.short_code.capitalize}</span>"

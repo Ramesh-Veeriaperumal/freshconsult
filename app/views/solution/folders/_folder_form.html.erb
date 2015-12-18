@@ -29,7 +29,7 @@
 					<%= dynamic_text_box(:category, @language, category_fields) %>
 				<% end %>
 			<% else %>
-				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.reject(&:is_default?).collect{|c|[c.name, c.id]}, 
+				<%= f.select :solution_category_meta_id, current_account.solution_category_meta.includes(:primary_category).reject(&:is_default?).collect{|c|[c.name, c.id]}, 
 						{ :selected => (@folder_meta && @folder_meta.solution_category_meta_id) || params[:category_id] }, 
 						{ 
 							:class => "select2 required input-large", 

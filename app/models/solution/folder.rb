@@ -277,7 +277,6 @@ class Solution::Folder < ActiveRecord::Base
         :user       => User.current,
         :activity_data  => {
                     :path => Rails.application.routes.url_helpers.solution_folder_path(self),
-                    'category_name' => h(category.name.to_s),
                     :url_params => {
                               :id => id,
                               :path_generator => 'solution_folder_path'

@@ -5,6 +5,7 @@ class Solution::ArticlesController < ApplicationController
   include CloudFilesHelper
   include Solution::LanguageControllerMethods
   helper SolutionHelper
+  include Solution::FlashHelper
   
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :portal_check, :only => :show
@@ -79,8 +80,7 @@ class Solution::ArticlesController < ApplicationController
     respond_to do |format|
       if @article_meta.errors.empty?
         format.html { 
-          flash[:notice] = t('solution.articles.published_success',
-                            :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
+          flash[:notice] = flash_message if publish?
           redirect_to solution_article_version_path(@article_meta, @article.language.code)
         }
         format.xml  { render :xml => @article, :status => :created, :location => @article }
@@ -168,9 +168,9 @@ class Solution::ArticlesController < ApplicationController
   # end
 
   def mark_as_uptodate
-    meta_scoper.find(params[:item_id]).send(Language.find(params[:language_id]).code + "_article").update_attributes(:outdated => false)
+    meta_scoper.find(params[:item_id]).send(Language.find(params[:language_id]).code.underscore + "_article").update_attributes(:outdated => false)
     respond_to do |format|
-      format.json { render :json => { :success => true } }
+      format.json { head :ok }
     end
   end
 
@@ -304,8 +304,7 @@ class Solution::ArticlesController < ApplicationController
       @draft = @article.draft
       if @draft.present? 
         if update_draft_attributes and @draft.publish!
-          flash[:notice] = t('solution.articles.published_success',
-                               :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe
+          flash[:notice] = flash_message
           redirect_to multilingual_article_path(@article)
         else
           flash[:error] = show_draft_errors || t('solution.articles.published_failure')
@@ -375,8 +374,7 @@ class Solution::ArticlesController < ApplicationController
         if @article_meta.errors.empty?
           @article = @article.reload
           format.html { 
-            flash[:notice] = t('solution.articles.published_success', 
-              :url => support_solutions_article_path(@article, :url_locale => language.code)).html_safe if publish?
+            flash[:notice] = flash_message if publish?
             redirect_to multilingual_article_path(@article)
           }
           format.xml  { render :xml => @article, :status => :created, :location => @article }     

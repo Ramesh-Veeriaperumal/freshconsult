@@ -23,9 +23,9 @@
 					<% else %>
 						<%= f.select :solution_folder_meta_id , 
 									option_groups_from_collection_for_select(
-											current_account.solution_category_meta.reject(&:is_default), 
+											current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
 											:solution_folder_meta, :name, :id, :name, 
-											(@article.solution_folder_meta.is_default? ? nil : @article.solution_folder_meta.id )
+											@article_meta.solution_folder_meta_id
 									), 
 									{ :include_blank => true },
 									:class => "select2 span4 required",

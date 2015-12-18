@@ -25,16 +25,28 @@
     <% if privilege?(:publish_solution) && @article.published? %>
 	    <% if @article.is_primary? && !@article_meta.all_versions_outdated? %>
 		    <div class="outdate-section">
-					<button type="button" class="btn btn-link" id="outdate" data-item-id="<%= @article_meta.id %>" data-loading-text="<%= t('solution.general.outdating') %>" data-complete-text="<%= t('solution.general.outdate_complete') %>" data-url="/solution/articles/mark_as_outdated">
-						<%= t('solution.general.mark_as_outdated') %>
+					<button type="button" 
+									class="btn btn-link outdate-uptodate" 
+									data-action-type="mark-outdated" 
+									data-item-id="<%= @article_meta.id %>" 
+									data-loading-text="<%= t('solution.general.outdating') %>" 
+									data-complete-text="<%= t('solution.general.outdate_complete') %>" 
+									data-url="/solution/articles/mark_as_outdated"
+						><%= t('solution.general.mark_as_outdated') %>
 					</button>
 				</div>
 			<% end %>
 
 			<% unless @article.is_primary? %>
 				<div class="update-section <%= 'hide' unless @article.outdated %>">
-					<button type="button" class="btn btn-link" id="uptodate" data-language-id="<%= @article.language_id %>" data-item-id="<%= @article_meta.id %>" data-loading-text="<%= t('solution.general.updating') %>" data-url="/solution/articles/mark_as_uptodate">
-						<%= t('solution.general.mark_as_uptodate') %>
+					<button type="button" 
+									class="btn btn-link outdate-uptodate" 
+									data-action-type="mark-uptodate" 
+									data-language-id="<%= @article.language_id %>" 
+									data-item-id="<%= @article_meta.id %>" 
+									data-loading-text="<%= t('solution.general.updating') %>" 
+									data-url="/solution/articles/mark_as_uptodate"
+						><%= t('solution.general.mark_as_uptodate') %>
 					</button>
 				</div>
 				<div class="uptodate-section <%= 'hide' if @article.outdated %>">

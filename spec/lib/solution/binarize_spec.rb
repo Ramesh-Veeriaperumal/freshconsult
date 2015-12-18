@@ -253,7 +253,7 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta = Solution::Builder.article(params)
 		article_meta.reload
 		lang_vers.each do |lan|
-			article_meta.send("#{lan}_draft?").should be_falsey
+			article_meta.send("#{lan}_draft_present?").should be_falsey
 		end
 	end
 
@@ -267,7 +267,7 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta = Solution::Builder.article(params)
 		article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
 		article_meta.reload
-		article_meta.send("#{lang_vers[0]}_draft?").should be_truthy
+		article_meta.send("#{lang_vers[0]}_draft_present?").should be_truthy
 	end
 
 	it "should update the draft column for a version as false when marked draft is discarded" do
@@ -282,7 +282,7 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta.reload
 		article_meta.send("#{lang_vers[0]}_article").draft.destroy
 		article_meta.reload
-		article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
+		article_meta.send("#{lang_vers[0]}_draft_present?").should be_falsey
 	end
 
 	it "should update the draft column for a version as false when marked draft is published" do
@@ -297,7 +297,7 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta.reload
 		article_meta.send("#{lang_vers[0]}_article").draft.publish!
 		article_meta.reload
-		article_meta.send("#{lang_vers[0]}_draft?").should be_falsey
+		article_meta.send("#{lang_vers[0]}_draft_present?").should be_falsey
 	end
 
 end

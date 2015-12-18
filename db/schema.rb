@@ -2845,7 +2845,7 @@ ActiveRecord::Schema.define(:version => 20151209110505) do
     t.datetime "created_at",                                          :null => false
     t.datetime "updated_at",                                          :null => false
     t.string   "available"
-    t.string   "draft"
+    t.string   "draft_present"
     t.string   "published"
     t.string   "outdated"
   end

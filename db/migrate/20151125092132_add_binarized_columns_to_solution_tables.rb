@@ -9,7 +9,7 @@ class AddBinarizedColumnsToSolutionTables < ActiveRecord::Migration
 	def up
 		Lhm.change_table :solution_article_meta, :atomic_switch => true do |m|
 			m.add_column :available, "varchar(255)"
-			m.add_column :draft, "varchar(255)"
+			m.add_column :draft_present, "varchar(255)"
 			m.add_column :published, "varchar(255)"
 			m.add_column :outdated, "varchar(255)"
 		end
@@ -36,7 +36,7 @@ class AddBinarizedColumnsToSolutionTables < ActiveRecord::Migration
 		Lhm.change_table :solution_article_meta, :atomic_switch => true do |m|
 			m.remove_column :outdated
 			m.remove_column :published
-			m.remove_column :draft
+			m.remove_column :draft_present
 			m.remove_column :available
 		end
 	end

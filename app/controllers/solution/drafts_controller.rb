@@ -3,6 +3,7 @@ class Solution::DraftsController < ApplicationController
   include Solution::DraftContext
   helper SolutionHelper
   helper Solution::ArticlesHelper
+  include Solution::FlashHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :set_selected_tab, :only => [:index]
@@ -37,8 +38,7 @@ class Solution::DraftsController < ApplicationController
       flash[:notice] = t('solution.articles.published_failure')
     else
       @article.draft.present? ? @article.draft.publish! : @article.publish!
-      flash[:notice] = t('solution.articles.published_success',
-                         :url => support_solutions_article_path(@article)).html_safe
+      flash[:notice] = flash_message
     end
     redirect_to :back
   end

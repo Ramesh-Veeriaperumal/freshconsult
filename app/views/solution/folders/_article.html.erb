@@ -25,7 +25,7 @@
 						<%= formatted_value(article.thumbs_down) %>
 					</span>
 				</div>
-				<% if article.any_supported_draft? %>
+				<% if article.any_supported_draft_present? %>
 					<div class="span2 pull-right mt6 text-center article-info">
 						<%= content_tag :a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe,
 														:rel => "hover-popover",

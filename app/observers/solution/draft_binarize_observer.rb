@@ -20,7 +20,7 @@ class Solution::DraftBinarizeObserver < ActiveRecord::Observer
 
 		def update_draft(object, status)
 			meta = object.article.solution_article_meta
-			meta.send("#{object.article.language_key}_draft=", status)
+			meta.send("#{object.article.language_key}_draft_present=", status)
 			meta.save
 		end
 end

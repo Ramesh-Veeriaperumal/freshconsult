@@ -4,7 +4,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	belongs_to_account
 	self.table_name = "solution_article_meta"
 	
-	BINARIZE_COLUMNS = [:available, :outdated, :draft, :published]
+	BINARIZE_COLUMNS = [:available, :outdated, :draft_present, :published]
 	
 	include Redis::RedisKeys
 	include Redis::OthersRedis

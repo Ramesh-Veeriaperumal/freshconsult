@@ -4013,6 +4013,7 @@ en:
       unpublished_version: You are viewing an unpublished version of the article.
       att_deleted: One attachment was deleted.
       published_success: 'This article was published succesfully.<a href= "%{url}" target = "_blank"> View on portal </a>'
+      published_success_msg: 'This article was published succesfully '
       published_failure: This article could not be published.
       view_draft: Preview Draft
       restrict_edit: "%{name} is currently editing this article."

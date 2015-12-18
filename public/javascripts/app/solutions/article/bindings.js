@@ -166,35 +166,38 @@ window.App = window.App || {};
 
     outdateOrUpdate: function () {
       var $this = this;
-      $('body').on('click.articles', '#outdate, #uptodate', function () {
+      $('body').on('click.articles', '.outdate-uptodate', function (e) {
         var el = $(this);
-        var type = (this.id === 'outdate') ? 'html' : 'json'
-        $(this).button('loading');
+        var flag = $(e.target).is(":button")
+        if(flag) {
+          $(this).button('loading');
+        }
         $.ajax({
           url: el.data('url'),
           type: 'PUT',
-          dataType: type,
+          dataType: 'html',
           data: {
             item_id: el.data('itemId'),
             language_id: el.data('languageId')
           },
           success: function (result) {
-            el.button('complete');
-            setTimeout($this.postOutdateUpdate(el, result), 2000);
+            flag ? el.button('complete') : el.remove();
+            setTimeout((el.data('actionType') === 'mark-outdated') ? $this.postOutdate(result) : $this.postUptodate(), 2000);
           }
         });
       });
     },
 
-    postOutdateUpdate: function (el, result) {
-      el.parent().addClass('hide');
+    postOutdate: function (result) {
+      $('.outdate-section').addClass('hide');
+      $('.language-tabs').html(result);
+      this.formatTranslationDropdown();
+    },
+
+    postUptodate: function () {
+      $('.update-section').addClass('hide');
       $('.uptodate-section').removeClass('hide');
-      if(el.attr('id') === 'outdate') {
-        $('.language-tabs').html(result);
-        this.formatTranslationDropdown();
-      } else {
-        $('.lang-tab.selected .language_symbol').removeClass('outdated');
-      }
+      $('.lang-tab.selected .language_symbol').removeClass('outdated');
     },
 
     formatTranslationDropdown: function () {
