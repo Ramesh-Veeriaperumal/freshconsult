@@ -3,6 +3,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 	observe Solution::Article, Solution::Folder, Solution::Category
 
 	def after_create(object)
+		return unless multilingual
 		meta(object)
 		update_available(object, true)
 		update_published(object)
@@ -11,21 +12,25 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 	end
 
 	def after_update(object)
+		return unless multilingual
 		meta(object)
-		toggle_keys(object) if object.language_id_changed?
 		update_published(object)
 		update_outdated(object)
-		update_available(object, true)
 		save_meta
 	end
 
 	def after_destroy(object)
+		return unless multilingual
 		meta(object)
 		update_available(object, false)
 		save_meta
 	end
 
 	private
+
+		def multilingual
+			Account.current.multilingual?
+		end
 
 		def meta(object)
 			@meta = object.parent
@@ -37,26 +42,12 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 
 		def update_published(object)
 			return unless object.respond_to?(:status)
-			update_key(:published, object.language_key, object.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published])
+			update_key(:published, object.language_key, object.published?)
 		end
 
 		def update_outdated(object)
 			return unless object.respond_to?(:outdated)
 			update_key(:outdated, object.language_key, object.outdated)
-		end
-
-		def toggle_keys(object)
-			old_language_key = Language.find(object.language_id_was).to_key
-			update_key(:available, old_language_key, false)
-			update_key(:published, old_language_key, false)
-			update_key(:outdated, old_language_key, false)
-			update_draft_keys(object, old_language_key)
-		end
-
-		def update_draft_keys(object, old_language_key)
-			return unless object.respond_to?(:draft) && object.draft.present?
-			update_key(:draft, old_language_key, false)
-			update_key(:draft, object.language_key, true)
 		end
 
 		def update_key(key, language_key, val)

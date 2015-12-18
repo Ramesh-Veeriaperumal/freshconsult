@@ -41,6 +41,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	validate :companies_limit_check
 
+	alias_method :children, :solution_folders
+
 	def article_count
 	  solution_article_meta.size
 	end

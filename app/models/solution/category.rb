@@ -74,6 +74,10 @@ class Solution::Category < ActiveRecord::Base
   def primary?
     (language_id == Language.for_current_account.id)
   end
+
+  def available?
+    present?
+  end
    
   private 
 

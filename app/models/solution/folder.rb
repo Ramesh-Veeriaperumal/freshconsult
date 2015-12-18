@@ -207,6 +207,10 @@ class Solution::Folder < ActiveRecord::Base
     (language_id == Language.for_current_account.id)
   end
 
+  def available?
+    present?
+  end
+
   def companies_limit_check
     if customer_folders.size > 250
       errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))

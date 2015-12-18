@@ -36,6 +36,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_destroy :clear_cache
 	after_update :clear_cache, :if => :solution_folder_meta_id_changed?
 
+	alias_method :children, :solution_articles
+
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
 	end

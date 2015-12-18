@@ -109,6 +109,14 @@ class Solution::Article < ActiveRecord::Base
   def published?
     status == STATUS_KEYS_BY_TOKEN[:published]
   end
+
+  def draft?
+    draft.present?
+  end
+
+  def available?
+    present?
+  end
   
   def to_param
     title_param = sterilize(title[0..100])

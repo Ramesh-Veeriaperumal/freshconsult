@@ -43,6 +43,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	after_create :clear_cache
 	after_destroy :clear_cache
 
+	alias_method :children, :solution_categories
+
 	def as_cache
 	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
 	    res.merge({ attribute => self.send(attribute) })
