@@ -177,7 +177,7 @@ class User < ActiveRecord::Base
             state.eql?("deleted")]
         when "blocked"
           [ ' ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
-            true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db) ]
+            true, (Time.zone.now+5.days).to_s(:db), true, (Time.zone.now+5.days).to_s(:db) ]
       end
       
       conditions[0] = "#{conditions[0]} and name like '#{letter}%' " unless letter.blank?
@@ -231,7 +231,7 @@ class User < ActiveRecord::Base
           conditions: { deleted: false, active: false }
         },
         blocked: {
-          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
+          conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
         all: {
           conditions: { deleted: false, blocked: false }

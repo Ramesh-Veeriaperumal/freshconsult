@@ -560,17 +560,30 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(deleted: false)
   end
 
-  def test_contact_filter_state
-    @account.all_contacts.update_all(blocked: false)
-    sample_user = @account.all_contacts.first
-    sample_user.update_attribute(:blocked, true)
-    sample_user.update_attribute(:deleted, true)
-    sample_user.update_attribute(:blocked_at, Time.now)
-    sample_user.update_attribute(:deleted_at, Time.now)
+  def test_contact_filter_state_blocked
+    @account.all_contacts.update_all(whitelisted: false)
+    @account.all_contacts.update_all(blocked: true)
+    @account.all_contacts.update_all(blocked_at: Time.zone.now)
+    @account.all_contacts.first.update_attribute(:whitelisted, true)
+    count = @account.all_contacts.count - 1
     get :index, controller_params(state: 'blocked')
     assert_response 200
     response = parse_response @response.body
-    assert_equal 1, response.size
+    assert_equal count, response.size
+    @account.all_contacts.update_all(blocked: false)
+    @account.all_contacts.update_all(whitelisted: false)
+  end
+
+  def test_contact_filter_state_blocked_whitelisted_true
+    @account.all_contacts.update_all(whitelisted: true)
+    @account.all_contacts.update_all(blocked: true)
+    @account.all_contacts.update_all(blocked_at: Time.zone.now)
+    get :index, controller_params(state: 'blocked')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 0, response.size
+    @account.all_contacts.update_all(blocked: false)
+    @account.all_contacts.update_all(whitelisted: false)
   end
 
   def test_contact_filter_phone
@@ -647,6 +660,25 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :index, controller_params(company_id: 'a')
     assert_response 400
     match_json [bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')]
+  end
+
+  def test_contact_blocked_in_future_should_not_be_listed_in_the_index
+    current_timezone = Time.zone
+    current_agent_timezone = @agent.time_zone
+    Time.zone = "Astana"
+    @agent.time_zone = "Astana"
+    sample_user = get_user
+    sample_user.update_attribute(:blocked, true)
+    sample_user.update_attribute(:blocked_at, Time.zone.now + 5.days + 3.hours)
+    sample_user.update_attribute(:whitelisted, false)
+    get :index, controller_params(state: 'blocked')
+    assert_response 200
+    assert @response.body !~ /#{sample_user.email}/
+  ensure
+    sample_user.update_attribute(:blocked, false)
+    sample_user.update_attribute(:blocked_at, nil)
+    Time.zone = current_timezone
+    @agent.time_zone = current_agent_timezone
   end
 
   # Make agent out of a user
