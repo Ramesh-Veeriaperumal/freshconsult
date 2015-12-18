@@ -15,6 +15,10 @@ body.community {
 		color: #000;
 	}
 
+	h1.title{
+		text-transform: none;
+	}
+
 	&.topic-show #inner{
 			.leftcontent, .pagearea {
 				padding-bottom: 0;
