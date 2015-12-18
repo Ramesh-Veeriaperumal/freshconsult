@@ -1205,7 +1205,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def verify_ticket_permission_by_id
       ticket = current_account.tickets.find_by_id(params[:id])
-      verify_ticket_permission(ticket, true)
+      verify_ticket_permission(ticket)
     end
 
   def check_outbound_permission
