@@ -2079,6 +2079,10 @@ en:
   does_not_contain: Does not contain
   non_ssl_request: This request needs a secure connection.You need to enable SSL encryption from /admin/security
   flash:
+    agent_as_requester:
+      ticket_create: Your ticket has been created.
+      ticket_show: You don't have access to this ticket here.
+      view_on_portal: <a href = %{support_ticket_link}> View on customer portal</a>
     password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
@@ -3602,7 +3606,7 @@ en:
       text: Assigned Agent
       description: Ticket's agent
     sla_rule_info1: <b>Important:</b> <br> 1. Response and resolution time should be within <b>15 min to 12 months</b>.
-    sla_rule_info2: 2. Reminder and escalation emails should be configured and enabled in Admin > Email notifications 
+    sla_rule_info2: 2. Reminder and escalation emails should be configured and enabled in Admin > Email notifications
     human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
@@ -4227,6 +4231,8 @@ en:
     user_available: "New tickets will be <br>auto-assigned to you."
     user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     toggle_shortcuts: "Keyboard Shortcuts"
+    goto_customer_portal: Go to Customer Portal
+    goto_agent_portal: Agent Portal
     shortcuts_info: "Press <span class='color-orange'>?</span> to view <a id='shortcuts_info' href='#'>Keyboard hints</a>"
     tabs:
       reports: Reports
@@ -4799,13 +4805,13 @@ en:
       delete_confirmation: "Delete"
       please_note: "Please note:"
       no_fields_selected: "No updates performed as a valid bulk action was not selected."
-      close_all_notification: 
-        text: "You are about to close all %{count} tickets in this view." 
+      close_all_notification:
+        text: "You are about to close all %{count} tickets in this view."
         list1: Related observer rules, if any, will not be triggered
         list2: "'Ticket Closed' Notification emails will not be sent to the customer."
         list3: This action cannot be undone.
         are_you_sure: Are you sure you want to proceed?
-      bulk_all_notification: 
+      bulk_all_notification:
         text: "You are about to execute bulk actions on all %{count} tickets in this view."
         list1: Related observer rules, if any, will not be triggered
         list2: "'Ticket Closed' Notification emails (if applicable) will not be sent to the customer."
@@ -5405,6 +5411,7 @@ en:
         select: Select View...
         spam: Spam
         monitored_by: Tickets I'm Watching
+        raised_by_me: Tickets I Requested
         my_closed: My Closed Tickets
         my_open: My Open Tickets
         tickets_by: Tickets by
@@ -5834,6 +5841,8 @@ en:
       view:
         delete: "Are you sure you want to delete this view?"
     messages:
+      new_view : Now all the tickets you requested can be seen under a new default view called <b> Tickets I requested </b>
+      out_of_scope: Can't find a ticket you requested here? <a href = '%{support_tickets}' target=_blank> View in your customer portal </a>
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
@@ -7289,7 +7298,7 @@ en:
     no_data_to_display_msg: No data to display
     export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
     export_tickets_success_msg: Your ticket data will be sent to your email shortly!
-    ticket_volume: 
+    ticket_volume:
       title: Ticket Volume Trends
       total_received_tickets : Total Received Tickets
       average_received_tickets : Average Received Tickets

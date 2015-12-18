@@ -87,7 +87,12 @@
 							<p class="muted"><%= t("freshchat.change_livechat_tone") %></p>
 							<input type="hidden" id="change_ping_tone" class="agent-tone-select"/>
 						</div>      
-					</div>                
+					</div>       
+					<% if current_user.agent? %>
+						<span class="seperator"></span>
+						<%= link_to t('header.goto_customer_portal').html_safe, current_portal.full_url, 
+															:class => "link"%>  
+					<% end %>   
 					<span class="seperator"></span>			
 					<%= link_to t('header.signout').html_safe, logout_path, :class => "link" %>
 				</div>    

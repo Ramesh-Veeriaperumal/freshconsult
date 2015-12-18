@@ -325,7 +325,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       check_support_emails_from(account, ticket, user, from_email)
 
       begin
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, email_config, params) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
@@ -496,13 +496,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if ticket.agent_performed?(user)
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
       
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket, note)
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, ticket.email_config, params, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)

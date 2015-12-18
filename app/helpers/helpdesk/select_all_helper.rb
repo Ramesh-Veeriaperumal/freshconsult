@@ -3,7 +3,7 @@ module Helpdesk::SelectAllHelper
   include Redis::OthersRedis
 
   def render_select_all_toolbar?
-    @current_view != "deleted" && @current_view != "spam" && select_all_available?
+    !["deleted", "spam"].include?(@current_view) && select_all_available?
   end
 
   def select_all_available?

@@ -25,6 +25,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',')},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
+  
+  def raised_by_me_filter
+    [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
+     { "condition" => "spam", "operator" => "is", "value" => false},
+     { "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
 
   def self.trashed_condition(input)
     { "condition" => 
@@ -116,6 +122,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
        on_hold_filter
      elsif "unresolved".eql?filter_name
        unresolved_filter
+     elsif "raised_by_me".eql?filter_name
+       raised_by_me_filter
      else
        DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
      end

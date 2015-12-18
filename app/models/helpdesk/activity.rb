@@ -68,14 +68,15 @@ class Helpdesk::Activity < ActiveRecord::Base
  :conditions => send(:agent_permission ,user) } if user.agent? && !user.agent.all_ticket_permission  }
   
   def self.agent_permission user
-    
-    permissions = { :all_tickets => [] , 
-                    :group_tickets => ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=? OR helpdesk_tickets.requester_id=?)",
-                                       'Helpdesk::Ticket' , user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
-                    :assigned_tickets =>["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id] 
-                  }
-                  
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+    when :all_tickets
+      []
+    when :group_tickets
+      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=?)",
+          'Helpdesk::Ticket' , user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+    when :assigned_tickets
+      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id]  
+    end
   end
 
   def ticket_activity_type

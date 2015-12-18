@@ -12,7 +12,7 @@ module Helpdesk::Email::NoteMethods
   end
 
   def set_note_source
-    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or user.agent?) ? "note" : "email"]
+    note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[(from_fwd_emails? or note.notable.agent_performed?(user)) ? "note" : "email"]
   end
 
   def note_params

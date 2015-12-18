@@ -84,7 +84,7 @@ class Va::Action
   def responder_id(act_on)
     r_id = value.to_i
     begin
-      responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
+      responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : act_on.account.users.find(value.to_i)
     rescue ActiveRecord::RecordNotFound
     end
     act_on.responder = responder if responder || value.empty?
@@ -112,7 +112,7 @@ class Va::Action
       unless watcher.present?
         user = Account.current.users.find_by_id(watcher_id)
         subscription = act_on.subscriptions.build(:user_id => watcher_id)
-        if user && user.agent? && subscription.save
+        if user && act_on.agent_performed?(user) && subscription.save
           watchers.push subscription.user.name
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                 act_on, 
@@ -218,7 +218,7 @@ class Va::Action
         when ASSIGNED_AGENT
           act_on.responder
         when EVENT_PERFORMER
-          doer.agent? ? doer : nil
+          act_on.agent_performed?(doer) ? doer : nil
         else 
           act_on.account.users.find(a_id)
         end

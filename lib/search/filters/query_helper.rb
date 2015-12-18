@@ -43,8 +43,7 @@ module Search::Filters::QueryHelper
       ({
         :group_tickets      =>  bool_filter(:should => [
                                                         group_id_es_filter('group_id', ['0']), 
-                                                        term_filter('responder_id', [User.current.id.to_s]), 
-                                                        term_filter('requester_id', [User.current.id.to_s])
+                                                        term_filter('responder_id', [User.current.id.to_s])
                                                         ]),
         :assigned_tickets   =>  term_filter('responder_id', [User.current.id.to_s])
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]

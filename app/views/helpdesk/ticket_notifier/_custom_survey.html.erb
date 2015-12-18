@@ -1,5 +1,5 @@
 <% require 'sanitize' %>
-<% if survey_handle %>
+<% if survey_handle && ticket.requester.customer? %>
   <div  style="width: 100%;font: 13px 'Helvetica Neue', Helvetica, Arial, sans-serif;">
     <hr style="height:0;border:0;margin-top:20px;border-top:1px solid #ccc;">
     <div class="freshdesk_satisfaction_survey">

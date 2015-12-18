@@ -14,12 +14,13 @@ class Support::TicketsController < SupportController
   skip_before_filter :verify_authenticity_token
   before_filter :verify_authenticity_token, :unless => :public_request?
   
-  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user, :only => [:show, :index, :filter, :close, :update, :add_people]
-
+  before_filter :load_item, :only => [:show, :update, :close, :add_people]
+  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
+  
   # Ticket object loading
   before_filter :build_tickets, :only => [:index, :filter]
-  before_filter :load_item, :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
+  before_filter :verify_ticket_permission, :only => [:show, :update, :close, :add_people]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
@@ -166,6 +167,8 @@ class Support::TicketsController < SupportController
     end
 
     def check_user_permission
+      return if current_user and current_user.agent? and !preview? and @item.restricted_in_helpdesk?(current_user)
+      
       if current_user and current_user.agent? and !preview?
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
