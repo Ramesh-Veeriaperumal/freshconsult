@@ -46,8 +46,6 @@ class ActionDispatch::IntegrationTest
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
-    set_key("#{v2_api_key}_expiry", 1)
-    set_key("#{api_key}_expiry", 1)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
   end

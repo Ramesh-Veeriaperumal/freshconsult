@@ -95,7 +95,7 @@ class TicketValidation < ApiValidation
 
   def due_by_gt_fr_due_by
     # Due By is parsed here as if both values are given as input string comparison would be done instead of Date Comparison.
-    parsed_due_by = DateTime.parse due_by
+    parsed_due_by = DateTime.parse(due_by)
     if fr_due_by > parsed_due_by
       att = @fr_due_by_set ? :fr_due_by : :due_by
       errors[att] << :lt_due_by

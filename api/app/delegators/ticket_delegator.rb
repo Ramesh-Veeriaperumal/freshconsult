@@ -24,7 +24,10 @@ class TicketDelegator < SimpleDelegator
   end
 
   def attr_changed?(att, record = self)
-    record.changed.include?(att)
+    # changed_attributes gives a hash, that is already constructed when the attributes are assigned.
+    # in Rails 3.2 changed_attributes is a Hash, hence exact strings are required.
+    # Faster than using changed(changed_attributes.keys), would have been faster if changed_attributes were a HashWithIndifferentAccess
+    record.changed_attributes.key? att
   end
 
   def product_presence
