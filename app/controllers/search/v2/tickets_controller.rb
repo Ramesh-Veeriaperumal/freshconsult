@@ -3,7 +3,6 @@
 class Search::V2::TicketsController < Search::V2::SpotlightController
   
   skip_before_filter :set_search_sort_cookie
-  before_filter :initialize_search_parameters
   
   attr_accessor :search_field
   
@@ -12,6 +11,8 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
   }
   
   def index
+    search_users if (@search_field == 'requester')
+
     case @search_field
     when 'display_id'
       @search_context = :merge_display_id
@@ -64,6 +65,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
+        Rails.logger.error e.message
         NewRelic::Agent.notice_error(e)
         @requester_ids  = []
       end
@@ -83,6 +85,5 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         @search_sort      = 'created_at'
         @sort_direction   = 'desc'
       end
-      search_users if (@search_field == 'requester')
     end
 end

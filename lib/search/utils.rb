@@ -1,4 +1,7 @@
 # encoding: utf-8
+
+# _Note_: All app related search data like constants, etc.
+#
 class Search::Utils
 
   MAX_PER_PAGE          = 30

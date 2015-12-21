@@ -13,6 +13,8 @@ class SearchV2::Manager
     def perform
       Search::V2::Tenant.new(Account.current.id).bootstrap
       
+      # Push initially bootstrapped data to ES
+      #
       Account.current.users.visible.find_in_batches(:batch_size => 300) do |users|
         update_in_es(users)
       end

@@ -3,7 +3,6 @@
 class Search::V2::SolutionsController < Search::V2::SpotlightController
   
   skip_before_filter :set_search_sort_cookie
-  before_filter :initialize_search_parameters
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
   
   attr_accessor :search_key, :ticket, :suggest
@@ -40,17 +39,13 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
   end
   
   private
-    
-    # Keep it dummy to prevent rendering
-    # Rendering handled in action
-    #
-    def handle_rendering
-    end
   
     def initialize_search_parameters
       super
+      @search_context     = :agent_spotlight_solution
       @search_key         = params[:q] || ''
       @suggest            = true
+      @no_render          = true
       @searchable_klasses = ['Solution::Article']
     end
     

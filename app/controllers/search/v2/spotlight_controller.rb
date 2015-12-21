@@ -8,7 +8,7 @@ class Search::V2::SpotlightController < ApplicationController
   before_filter :set_search_sort_cookie, :initialize_search_parameters
 
   attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, 
-                :current_page, :size, :offset, :sort_direction, :search_context
+                :current_page, :size, :offset, :sort_direction, :search_context, :no_render
 
   # ESType - [model, associations] mapping
   # Needed for loading records from DB
@@ -93,10 +93,11 @@ class Search::V2::SpotlightController < ApplicationController
         @search_results = []
         @result_set = []
 
+        Rails.logger.error e.message
         NewRelic::Agent.notice_error(e)
       end
 
-      handle_rendering
+      handle_rendering unless @no_render
     end
 
     # Types to be passed to service code to scan
@@ -142,13 +143,28 @@ class Search::V2::SpotlightController < ApplicationController
         end
         
         if searchable_klasses.include?('Solution::Article')
-          es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
-          es_params[:language_id]         = Language.for_current_account.id
-          es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
+          # Params considered in 'ALL' search for this model
+          #
+          es_params[:language_id] = Language.for_current_account.id
+
+          # Params only if solution-scoped.
+          #
+          if (@search_context == :agent_spotlight_solution)
+            es_params[:article_category_id] = params[:category_id].to_i if params[:category_id].present?
+            es_params[:article_folder_id]   = params[:folder_id].to_i if params[:folder_id].present?
+          end
         end
 
         if searchable_klasses.include?('Topic')
-          es_params[:topic_category_id]   = params[:category_id].to_i if params[:category_id].present?
+          # Params considered in 'ALL' search for this model
+          #
+          #=> All search params
+
+          # Params only if topic-scoped.
+          #
+          if (@search_context == :agent_spotlight_topic)
+            es_params[:topic_category_id]   = params[:category_id].to_i if params[:category_id].present?
+          end
         end
         
         unless (@search_sort.to_s == 'relevance') or @suggest

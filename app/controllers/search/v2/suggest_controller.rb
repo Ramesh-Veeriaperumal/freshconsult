@@ -36,6 +36,7 @@ class Search::V2::SuggestController < Search::V2::SpotlightController
 
     def initialize_search_parameters
       super
-      @suggest = true
+      @suggest        = true
+      @search_context = :agent_spotlight_global
     end
 end
