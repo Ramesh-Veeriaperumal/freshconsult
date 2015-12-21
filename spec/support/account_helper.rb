@@ -140,5 +140,11 @@ module AccountHelper
   def pick_languages(primary_lang, n)
     (Language.all_codes.map{ |lang| lang.dup }.reject{ |l| (l == @account.language || l == primary_lang) }).sample(n)
   end
+
+  def enable_multilingual
+    @account.launch(:translate_solutions)
+    @account.features.enable_multilingual.create
+    @account.features.multi_language.create
+  end
   
 end

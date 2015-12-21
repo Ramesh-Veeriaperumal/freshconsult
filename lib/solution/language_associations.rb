@@ -64,20 +64,21 @@ module Solution::LanguageAssociations
       end
     end
 
-    base::BINARIZE_COLUMNS.each do |meth_name|
-      define_method(meth_name) do
-        return self[meth_name] if self[meth_name]
-        columns = base::BINARIZE_COLUMNS.select{|c| self[c].blank?}
-        include_class = columns.include?(:draft) ? [:draft] : []
-        self.children.includes(include_class).each do |a|
-          columns.each do |col|
-            self.send("mark_#{a.language_key}_#{col}") if a.send("#{col}?")
-          end
-        end
-        self.save
-        self[meth_name]
-      end
-    end
+    # Stack level too deep after Binarize Gem change - to be discussed!!!
+    # base::BINARIZE_COLUMNS.each do |meth_name|
+    #   define_method(meth_name) do
+    #     return self[meth_name] if self[meth_name]
+    #     columns = base::BINARIZE_COLUMNS.select{|c| self[c].blank?}
+    #     include_class = columns.include?(:draft) ? [:draft] : []
+    #     self.children.includes(include_class).each do |a|
+    #       columns.each do |col|
+    #         self.send("#{a.language_key}_#{col}=", true) if a.send("#{col}?")
+    #       end
+    #     end
+    #     self.save
+    #     self[meth_name]
+    #   end
+    # end
   end
   
 end
