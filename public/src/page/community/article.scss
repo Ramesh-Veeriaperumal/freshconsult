@@ -16,6 +16,12 @@
     &.has-notification .redactor_toolbar {
       top: 145px;
     }
+
+    &.language-multi {
+      .redactor_toolbar {
+        top: 155px;
+      }
+    }
   }
   
   .is_stuck #sticky_redactor_toolbar{
@@ -254,6 +260,7 @@
     .article-title {
       @include padding-left(0px);
       padding-bottom: 10px;
+      margin-top: 10px;
     }
 
     textarea {

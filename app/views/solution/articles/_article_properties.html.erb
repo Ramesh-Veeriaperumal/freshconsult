@@ -11,7 +11,9 @@
 		</div>
 		<% if @article_meta.new_record? %>
 			<div class="span4">
-				<%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
+				<%= f.label(:solution_folder_meta_id, t('solution.folder'), {
+						:class => "control-label", 
+						:for => "s2id_solution_article_meta_solution_folder_meta_id"}) %>
 				<%= f.select :solution_folder_meta_id, 
 							option_groups_from_collection_for_select(
 									current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
@@ -23,8 +25,6 @@
 							:placeholder => t('solution.folders.choose_folder')
 				%>
 			</div>
-		<% end %>
-		<% if @article_meta.new_record? %>
 			<div class="span4">
 				<%= f.label :art_type, t('solution.articles.type'),:class =>"control-label" %>
 				<div class="span12 pt3">
@@ -34,6 +34,28 @@
 					<% end %>
 				</div>
 			</div>
+		<% elsif @article.new_record? %>
+
+			<%= f.fields_for(:solution_folder_meta, @folder_meta) do |folder_fields| %>
+    
+        <%= folder_fields.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
+          <div class="span4">
+            <%= category_fields.label(:category_id, t('solution.category'), { 
+            	:class => 'control-label',
+            	:for => "solution_article_meta_solution_folder_meta_solution_category_meta_#{@language.to_key}_category_name"
+            }) %>
+            <%= dynamic_text_box(:category, @language, category_fields) %>
+          </div>
+        <% end %>
+
+        <div class="span4">
+          <%= folder_fields.label(:folder_id, t('solution.folder'), { 
+          			:class => 'control-label', 
+          			:for => "solution_article_meta_solution_folder_meta_#{@language.to_key}_folder_name"}) %>
+          <%= dynamic_text_box(:folder, @language, folder_fields) %>
+        </div>
+      <% end %>
+
 		<% end %>
 	</div>
 </div>

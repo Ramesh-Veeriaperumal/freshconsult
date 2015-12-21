@@ -66,25 +66,7 @@
       </div>
     <% end %>
 
-    <% if !@article_meta.new_record? && @article.new_record? %>
-      <%= f.fields_for(:solution_folder_meta, @folder_meta) do |folder_fields| %>
-
-        <%= folder_fields.fields_for(:solution_category_meta, @category_meta) do |category_fields| %>
-          <div class="control-group">
-            <%= category_fields.label(:category_id, t('solution.category'), { :class => 'control-label'}) %>
-            <div class="controls">
-              <%= dynamic_text_box(:category, @language, category_fields) %>
-            </div>
-          </div>
-        <% end %>
-        <div class="control-group">
-          <%= folder_fields.label(:folder_id, t('solution.folder'), { :class => 'control-label'}) %>
-          <div class="controls">
-            <%= dynamic_text_box(:folder, @language, folder_fields) %>
-          </div>
-        </div>
-      <% end %>
-    <% elsif !@article.new_record? && @article_meta.solution_folder_meta.is_default? %>
+    <% if !@article.new_record? && @article_meta.solution_folder_meta.is_default? %>
       <div class="row-fluid select-folder">
         <div class="control-group">
           <%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
