@@ -15,7 +15,7 @@ var globalconn;
 		$('#mute').click(function () { freshfonecalls.mute(); });
 		$("#hold").click(function(){freshfonecalls.handleHold();});
 		$('#hangup_call').click(function () { freshfonecalls.hangup(); });
-		$("#freshfone-presence-toggle").click(function () { console.log('togglePresence-token'); freshfoneuser.toggleUserPresence(); });
+		$("#freshfone-presence-toggle").click(function () { freshfoneuser.toggleUserPresence(); });
 		$widget.find('.availabilityOnPhone').click(function () {
 			freshfoneuser.toggleAvailabilityOnPhone(false);
 		});
@@ -66,17 +66,10 @@ var globalconn;
 					}, 1); 
 			}
 		}	
-				recordSource($(this).parent().prop('className'));
+				
 		});
 
-		function recordSource(parentClass){
-			if(parentClass=="call_user pull-right"){
-				App.Phone.Metrics.recordSource("CLICK_CALL_BTN");
-			}
-			else{
-				App.Phone.Metrics.recordSource("CLICK_NUM");
-			}
-		}
+	
 	
 	});
 		

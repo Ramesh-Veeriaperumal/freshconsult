@@ -1,9 +1,9 @@
 class FreshfoneNotifier < ActionMailer::Base
   layout "email_font"
 
-  def account_expiring(account, trial_days = nil)
+  def account_expiring(account, remaining_days = nil)
     headers = {
-      :subject       => "Warning. Your phone trial will expire in #{trial_days}",
+      :subject       => "Warning. Your phone channel will expire in #{remaining_days}",
       :to            => account.admin_email,
       :from          => AppConfig['billing_email'],
       :sent_on       => Time.now,
@@ -11,7 +11,7 @@ class FreshfoneNotifier < ActionMailer::Base
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
-    @trial_days = trial_days
+    @remaining_days = remaining_days
     @account = account
     mail(headers) do |part|
       part.html { render "account_expiring", :formats => [:html] }
@@ -204,20 +204,19 @@ class FreshfoneNotifier < ActionMailer::Base
     end.deliver
   end
 
-
-  def freshfone_account_closure(account)
+  def account_closing(account)
     headers = {
-      :subject => "Process Account closure for account #{account.id}",
-      :to      => FreshfoneConfig['ops_alert']['mail']['to'],
-      :from    => FreshfoneConfig['ops_alert']['mail']['from'],
+      :subject => 'Phone Channel Closed for your Freshdesk Account',
+      :to      => account.admin_email,
+      :from    => AppConfig['billing_email'],
       :sent_on => Time.now,
-      "Reply-to" => "",
-      "Auto-Submitted" => "auto-generated", 
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+      'Reply-to' => '',
+      'Auto-Submitted' => 'auto-generated',
+      'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
     }
     @account = account
     mail(headers) do |part|
-      part.html { render "freshfone_account_closure" }
+      part.html { render "account_closing", :formats => [:html] }
     end.deliver
   end
 

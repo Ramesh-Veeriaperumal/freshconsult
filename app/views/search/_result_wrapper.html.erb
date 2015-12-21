@@ -3,7 +3,7 @@
 <%= load_more({
   :totalPages   => @total_pages,
   :url          => %{/search/#{current_filter}},
-  :params       => { :term => @search_key },
+  :params       => { :term => h(@search_key) },
   :dataType     => 'json',
   :complete 	=> 'search_page.loadMoreRender(data)',
   :container => '#search-page-results',
