@@ -49,7 +49,7 @@ module ParserUtil
   end
 
   def get_email_array_with_mail_parser emails
-    parse_addresses(addresses)[:plain_emails]
+    parse_addresses(emails)[:plain_emails]
   rescue Exception => e
     Rails.logger.debug "Exception when validating email list : #{emails} : #{e.message} : #{e.backtrace}"
     get_email_array_without_mail_parser(emails)

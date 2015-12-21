@@ -197,10 +197,14 @@ var FreshfoneEndCall;
 		
 		saveTicket: function (is_ticket) {
 			this.convertedToTicket = true;
-			this.ticket_notes = this.$endCallNote.val();
+			this.ticket_notes = this.formatNotes(this.$endCallNote.val());
 
 			if (this.inCall) { this.getParams(); }
 			is_ticket ? this.createTicket() : this.createNote();
+		},
+		formatNotes: function(text){
+			var formatted_text = text.replace(/\n/g,"<br>");
+			return formatted_text.replace(/\s/g,"&nbsp;");
 		},
 		getParams: function () {
 			this.callSid = this.freshfonecalls.getCallSid();

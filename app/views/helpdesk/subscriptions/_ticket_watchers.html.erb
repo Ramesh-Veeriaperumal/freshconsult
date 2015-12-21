@@ -32,20 +32,18 @@
   jQuery("#addwatcher select").trigger("click");
   jQuery(document).trigger('click');
 
-  jQuery(document).off('.watcher');
-
-  jQuery(document).on('click.watcher', ".watcher_btn", function(ev) {
+  jQuery(document).on('click', "#monitor", function(ev) {
     hideActivePopovers(ev);
     remove_highlight_class();
     jQuery("#new_watcher_page").toggle();
   });
 
-  jQuery(document).on("click.watcher",".watcher-close", function(){
+  jQuery(".watcher-close").on("click", function(){
     jQuery(".watchers_tooltip").hide();
     remove_highlight_class();
   });
 
-  jQuery(document).on('click.watcher', function(e){
+  jQuery(document).live('click', function(e){
     if(!jQuery(e.target).parents().hasClass("ticket-btns")){
         jQuery("#new_watcher_page").hide();
         remove_highlight_class();
@@ -70,7 +68,7 @@
           success: function(data){
                     jQuery("#watcherlist").removeClass("sloading");
                     jQuery(".construct").append(jQuery("#watcherlist .unwatch"));
-                    jQuery(".watcher_btn").addClass("monitor").removeClass("monitor_active");
+                    jQuery("#monitor a").addClass("monitor").removeClass("monitor_active");
                     trigger_event("watcher_removed",{});
 
                     if(jQuery.inArray("<%= current_user.id %>", jQuery("select.watcher_input").val()) == -1){
@@ -132,7 +130,7 @@
      jQuery(".watcher_label div").first().append('<span class="watcher_count"></span>');
     }
     if(name == "<%=t("helpdesk.tickets.add_watcher.me")%>" ){
-      jQuery(".watcher_btn").addClass("monitor_active").removeClass("monitor");
+      jQuery("#monitor a").addClass("monitor_active").removeClass("monitor");
     } 
     jQuery(".select2-search-choice").hide();
     jQuery(".watcher_input").focus();

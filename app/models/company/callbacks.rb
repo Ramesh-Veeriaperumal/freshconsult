@@ -24,9 +24,9 @@ class Company < ActiveRecord::Base
   private
   
     def map_contacts_on_update
-      domain_changes = @model_changes[:domains].compact
-      old_list = (domain_changes[0] || "").split(",").collect(&:strip)
-      new_list = (domain_changes[1] || "").split(",").collect(&:strip)
+      domain_changes = @model_changes[:domains]
+      old_list = domains_array(domain_changes[0])
+      new_list = domains_array(domain_changes[1])
       new_domains = new_list - old_list
       old_domains = old_list - new_list
       map_contacts_to_company(new_domains) if new_domains.present?
@@ -35,7 +35,7 @@ class Company < ActiveRecord::Base
                                              :current_company_id => self.id }) if old_domains.present?
     end
     
-    def map_contacts_to_company(domains = self.domains)
+    def map_contacts_to_company(domains = domains_array(self.domains) )
       Users::UpdateCompanyId.perform_async({ :domains => domains, :company_id => self.id }) unless domains.blank?
     end
     
@@ -48,5 +48,10 @@ class Company < ActiveRecord::Base
     def nullify_contact_mapping
       Users::UpdateCompanyId.perform_async({ :company_id => nil,
                                              :current_company_id => self.id })
+    end
+
+    def domains_array(domains)
+      domains ||= ""
+      domains.split(",").collect(&:strip)
     end
 end

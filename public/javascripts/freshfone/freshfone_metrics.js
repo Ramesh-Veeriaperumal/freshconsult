@@ -93,20 +93,18 @@ window.App.Phone = window.App.Phone || {};
 					self.recordSource("REPORTS_CSV");
 					self.push_event();
 			});
-			$('.add-notes-header').on('click',function(){
-					// self.recordSource("add_note_click");
-					// self.push_event();
+			$('.add-notes-header').on('click',function (ev){
+				if(ev.hasOwnProperty('originalEvent')){
+					self.recordSource("add_note_click");
+					self.push_event();
+				}
 			});
-			$(".recent-tickets-header").on('click',function(){
-					// self.recordSource("freshfone_recent_tickets_click");
-					// self.push_event();
+			$(".recent-tickets-header").on('click',function (ev){
+				if(ev.hasOwnProperty('originalEvent')){
+					self.recordSource("freshfone_recent_tickets_click");
+					self.push_event();
+				}
 			});
-			$(document).on("click",".sm2-360btn",function(ev){ 
-    		if(jQuery(this).parent().hasClass("sm2_playing")){
-    			App.Phone.Metrics.recordSource("RECORDING");
-    			App.Phone.Metrics.push_event();
-    		}
-    	});
 
     	$(document).on("saveticket", function (ev, data) {
     			if(self.convertedToTicket){
@@ -116,31 +114,10 @@ window.App.Phone = window.App.Phone || {};
     	});
 
     	$('body').on('click', '.ff_call_button', function (ev) { 
-    		if($(this).parent().prop('className')=="recent_calls_call_user"){
-    			self.recordSource("RECENT_CALL_BTN");
-    		} 
-    		else{
-    			self.recordSource("SEARCH_CALL_BTN");
-    		}
     		self.resetCallDirection();
 				self.resetConvertedToTicket();
-    		self.push_event();
-    	});
+    	}); 
 
-    	$('body').on('click', '.keypad-key', function (ev) { 
-    		if(freshfonecalls.isOngoingCall()){
-    			self.recordSource("CLICK_IVR");
-					self.push_event();
-				}
-				else{
-					self.recordSource("DIAL_BY_NUM_PAD");
-				}
-    	});
-    	
-    	$('body').on('click', '.ficon-ff-dialpad', function (ev) { 
-    		self.recordSource("CLICK_DIAL_PAD_WIDGET");
-    		self.push_event();
-    	});
    
 		},
 

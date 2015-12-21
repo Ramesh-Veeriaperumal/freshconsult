@@ -32,7 +32,6 @@
 		});
 
 		Twilio.Device.offline(function (device) {
-			console.log("offline-token");
 			if(freshfoneuser.tokenRegenerationOn == null)
 				regenerateToken();
 			else{
@@ -70,10 +69,9 @@
 		});
 
 		Twilio.Device.disconnect(function (conn) {
-			console.log("Call disconnected");
 			freshfoneNotification.resetJsonFix();
 			freshfoneDialpadEvents.hideContactDetails();
-			freshfonewidget.resetNotesAgentHeader();
+			freshfonewidget.resetWidget();
 			ffLogger.log({'action': "Call ended", 'params': conn.parameters});
 			if (freshfonecalls.tConn) {
 				var callSid = freshfonecalls.tConn.parameters.CallSid;

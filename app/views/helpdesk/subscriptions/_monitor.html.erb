@@ -1,7 +1,7 @@
-<%= link_to(image_tag(spacer_image_url, :width => "24px", :height => "24px"), 				
-					"", :class => "watcher_btn monitor", :href => "#" ) if not 
+<%= link_to_function(image_tag(spacer_image_url, :width => "24px", :height => "24px"), 				
+					"", :class => "monitor" ) if not 
                    (@ticket.subscriptions.map(&:user_id).include? current_user.id) %>
 
-<%= link_to(image_tag(spacer_image_url, :width => "24px", :height => "24px"),
- 					"", :class => "watcher_btn monitor_active", :href => "#" ) if 
+<%= link_to_function(image_tag(spacer_image_url, :width => "24px", :height => "24px"),
+ 					"", :class => "monitor_active" ) if 
  					(@ticket.subscriptions.map(&:user_id).include? current_user.id) %>

@@ -17,6 +17,17 @@
 	      <%= render :partial => "shared/screenr_recorder", :locals => { :location => "portal_forum" } %>
 	  	<% end %>
 		<hr />
+
+    <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+      <% if ilos_app_config[:visible_portal_forum].to_bool %>
+        <%= stylesheet_link_tag :"cdn/ilos_video" %>
+        <div class="ilos-widget pull-right" id="ilos-widget-portal">
+          <%= ilos_widget(@topic.id, "portal_forum") %>
+          </div>
+      <% end %>
+    <% end %>
+    
 		<div>
 			<%= submit_tag t('topic.add_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 
 			<a href="#" data-hide-dom="#new-post-form" data-show-dom="#reply-form-proxy" class="btn"><%= t('cancel') %></a>

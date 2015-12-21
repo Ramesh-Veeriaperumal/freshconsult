@@ -132,7 +132,7 @@ Helpkit.reports_util = {
   },
   saveReportFilter: function(){
     var data = jQuery(".serialize").serializeArray();
-    data.push({name : 'filter_name' , value: jQuery("#filter_name").val()});
+    data.push({name : 'filter_name' , value: escapeHtml(jQuery("#filter_name").val())});
     data.push({name : 'report_type', value: jQuery("#leftViewMenu").attr("data-report-type")});
     var args ={
       ajaxType: 'report_filter_create',
@@ -144,11 +144,11 @@ Helpkit.reports_util = {
         jQuery("<li/>",{
           'data-id': data['id'],
           'class': 'filter-event',
-          text: data['filter_name']
+          text: unescapeHtml(data['filter_name'])
         }).appendTo("#leftViewMenu");
 
         Helpkit.report_filter_data[data['id']] = {'data': data['data']};
-        jQuery("#active_filter").text(data['filter_name']);
+        jQuery("#active_filter").text(unescapeHtml(data['filter_name']));
         jQuery("#delete-filter-link").removeClass('hide').attr('data-id',data['id']);
         jQuery("#save-filter-link").addClass('hide');
         jQuery("#no-report-data").addClass('hide');
@@ -214,6 +214,10 @@ Helpkit.reports_util = {
       }
     });
     /** event binds related to saved report ends here**/
+    jQuery("#leftViewMenu li").each(function(){
+      var unescapedTitle = unescapeHtml(jQuery(this).text());
+      jQuery(this).text(unescapedTitle);
+    })
   },
   set_filter_data: function(){
     filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
