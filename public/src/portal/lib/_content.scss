@@ -310,10 +310,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		text-decoration: none;
 	}
 }
-.vote-down:before{
+.vote-down-container:before{
 	content: "-";
 	color: #e5e5e5;
-	@include margin-right(10px);
+	@include margin-left(10px);
 }
 
 /* Print button in Solutions Page */

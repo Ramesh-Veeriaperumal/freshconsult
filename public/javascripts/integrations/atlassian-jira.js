@@ -261,12 +261,13 @@ JiraWidget.prototype = {
 	},
 	getAssignableUsers: function(project_key){
 		jiraWidget.freshdeskWidget.request({
-			rest_url: "rest/api/2/user/assignable/search?project=" + project_key,
+			rest_url: "rest/api/2/user/assignable/search?project="+project_key+"&maxResults=1000",
 			content_type: "application/json",
 			on_success: function(evt) {
 				resJ = evt.responseJSON;
-				var unassigned = { displayName: "unassigned", name: "null" };
-				resJ.push(unassigned);
+				resJ =resJ.sort(function(a, b){return a.displayName > b.displayName;});
+				var unassigned = { displayName: "Unassigned", name: "null" };
+				resJ.unshift(unassigned);
 				jiraWidget.customFieldData.assignee['allowedValues'] = resJ;
 				jiraWidget.selectOnlyRequiredFields();
 			},
@@ -361,7 +362,7 @@ JiraWidget.prototype = {
 		jiraWidget.jiraCreateSummaryAndDescription();
 		created_issue = jQuery("#jira-add-form").serializeObject();
 		var assignee = "assignee"
-		if(created_issue.fields.hasOwnProperty(assignee) && created_issue.fields.assignee.name =="undefined")
+		if(created_issue.fields.hasOwnProperty(assignee) && created_issue.fields.assignee.name == "null")
     {
     	delete created_issue.fields.assignee;
     }
@@ -849,10 +850,10 @@ JiraWidget.prototype = {
 		}
 		else if (fieldKey == "assignee")
 		{	
-			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][name]">';
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][name]" id ="jira-assignee" class="select2 full assignee">';
 			var selectOptions = "";
 			jQuery.each(fieldData["allowedValues"],function(key,data){
-				selectOptions += "<option value='"+data["key"]+"'>"+data["displayName"]+"</option>";
+				selectOptions += "<option value='"+data["name"]+"'>"+data["displayName"]+"</option>";
 			});
 			jiraWidget.fieldContainer += selectOptions+ '</select>';		
 		}
@@ -908,6 +909,18 @@ JiraWidget.prototype = {
 
 		}
 	},
+	processJiraFieldOption:function(fieldKey,fieldData){
+		if(fieldData["allowedValues"])
+		{
+			jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][value]">';
+			selectOptions = "";
+			jQuery.each(fieldData["allowedValues"],function(key,data){
+			selectOptions += "<option value='"+data["value"]+"'>"+data["value"]+"</option>";
+		  });
+			jiraWidget.fieldContainer += selectOptions+ '</select>';
+		}			
+	},
 	processJiraFieldArrayString:function(fieldKey,fieldData){
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
 		jiraWidget.fieldContainer += '<input type="text" class ="array" name="fields[' + fieldKey + ']" id="fields[' + fieldKey + '] " value="" placeholder="label1,label2"/>';
@@ -921,7 +934,7 @@ JiraWidget.prototype = {
 		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0][id]">';
 		selectOptions = "";
 		jQuery.each(fieldData["allowedValues"],function(key,data){
-			selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";
+			selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
 		});
 		jiraWidget.fieldContainer += selectOptions+ '</select>';
 	}, 
@@ -950,9 +963,9 @@ JiraWidget.prototype = {
 		var error = [];
 		var flag = false;
 		jQuery.each(jQuery("#jira-add-form").find("input"),function(){
-			if (this.value == "undefined" || this.value == "" || this.value.trim()=="")
+			if (jQuery(this).attr("class") != "select2-focusser select2-offscreen" && jQuery(this).attr("class") != "select2-input" && ( this.value == "undefined" || this.value == "" || this.value.trim()=="") )
 			{
-				error.push(jQuery(this).prev().text());
+		 	  error.push(jQuery(this).prev().text());
 			}
 		});
 		if(error.length > 0){

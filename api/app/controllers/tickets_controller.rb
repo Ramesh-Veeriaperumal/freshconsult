@@ -64,7 +64,7 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      super tickets_filter.includes(:ticket_old_body,
+      super tickets_filter.preload(:ticket_old_body,
                                     :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
     end
 
@@ -82,7 +82,7 @@ class TicketsController < ApiApplicationController
     def ticket_notes
       # eager_loading note_old_body is unnecessary if all notes are retrieved from cache.
       # There is no best solution for this
-      @item.notes.visible.exclude_source('meta').includes(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+      @item.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     end
 
     def paginate_options(is_array = false)

@@ -179,8 +179,15 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                         var percent = calc != undefined ? 100 - parseInt(calc) : calc; 
                          _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_violated_title,_FD.core.addsuffix(percent));
                     }
-                }else{
+                } else if(_FD.constants.time_metrics.indexOf(metric) > -1){
                     _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_title,ticket_count);
+                } else{
+                    var general_result = HelpdeskReports.locals.chart_hash[metric].general;
+                    if(general_result != undefined){
+                         _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_title,general_result.metric_result);
+                    }else{
+                        _FD.core.actions.showTicketList(_FD.constants.metrics[metric].ticket_list_title,"NA");
+                    }
                 }
                 
 

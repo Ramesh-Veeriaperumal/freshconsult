@@ -95,7 +95,6 @@
 	$('.ongoingDialpad, .showDialpad')
 		.on('shown', function (e) {
 			freshfoneMetricsOnKeyPress();
-			freshfoneMetricsOnPaste();
 			if(freshfonecalls.recentCaller != 1){  
 				$number.val("");
 			} else {
@@ -111,24 +110,9 @@
 				if(ev.keyCode===13){
 					App.Phone.Metrics.resetCallDirection();
 					App.Phone.Metrics.resetConvertedToTicket();
-					App.Phone.Metrics.push_event();
-				}
-				else{
-					if(freshfonecalls.isOngoingCall()){
-						App.Phone.Metrics.recordSource("KEY_IVR");
-						App.Phone.Metrics.push_event();
-					}
-					else{
-						App.Phone.Metrics.recordSource("DIAL_BY_KEY");
-					}
 				}
 			});
 	}
 
-	function freshfoneMetricsOnPaste(){
-		$(".user_phone").bind('paste', function() {
-   			App.Phone.Metrics.recordSource("DIAL_BY_NUM_PASTE");
-		});
-	}
 
 }(jQuery));

@@ -31,5 +31,18 @@
 									:modal_target => "following_users_all",
 									:href => discussions_topic_component_path(:id => @topic.id, :name => 'following_users')
 								} %>
+  <% if is_application_installed?(Integrations::Constants::APP_NAMES[:ilos]) %>
+    <% ilos_app_config = get_app_config(Integrations::Constants::APP_NAMES[:ilos]) %>
+    <% if ilos_app_config[:visible_agent_forum].to_bool %>
+      <%= stylesheet_link_tag :"cdn/ilos_video" %>
+      <hr>
+      <div class="ilos-widget" id="ilos-widget-topic">
+        <%= ilos_widget(@topic.id, "agent_forum") %>
+        <p id="ilos-support">
+          <a href= "https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk" target="blank"><%= t('integrations.ilos.messages.about_recording') %></a>
+        </p>
+      </div>
+    <% end %>
+  <% end %>
 
 </div>

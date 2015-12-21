@@ -61,6 +61,8 @@ defaults: &defaults
     - [es_v2_toggle]
     - [bulk_scenario]
     - [github]
+    - [webhook_throttler]
+    - [webhook_worker]
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]

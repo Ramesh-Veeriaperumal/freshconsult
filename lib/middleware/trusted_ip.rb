@@ -68,7 +68,7 @@ class Middleware::TrustedIp
     if req_path.starts_with?('/api/')
       return [api_status, {"Content-type" => "application/json"}, [{message: message}.to_json]]
     else
-      return [302, {"Location" => location}, [message]]
+      return [302, {"Location" => location_header}, [message]]
     end
   end
 

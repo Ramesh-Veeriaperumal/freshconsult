@@ -17,7 +17,7 @@ module Freshfone::Queue
   end
 
   def bridge_queued_call(agent = nil)
-    @available_agent = (agent or default_client).to_s
+    @available_agent ||= (agent or default_client).to_s # if @available_agent.blank?
     @priority_call = nil
     if queued_members.list.any?
       check_for_priority_calls
@@ -155,8 +155,8 @@ module Freshfone::Queue
     def load_hunt_options_for_conf
       call_meta = current_call.meta
       if current_account.features?(:freshfone_conference) && current_call.priority_queued_call?
-        params[:hunt_type] = Freshfone::CallMeta::HUNT_TYPE_REVERSE_HASH[call_meta.hunt_type].to_s if 
-        params[:hunt_id]   = call_meta.agent_hunt? ? current_call.user_id : current_call.group_id
+        params[:hunt_id]   = (call_meta.agent_hunt? ? current_call.user_id : current_call.group_id).to_s
+        params[:hunt_type] = Freshfone::CallMeta::HUNT_TYPE_REVERSE_HASH[call_meta.hunt_type].to_s if params[:hunt_id].present?
       end
     end
 
@@ -180,8 +180,8 @@ module Freshfone::Queue
       xml_builder.Play Freshfone::Number::DEFAULT_QUEUE_MUSIC, :loop => 50
     end
 
-    def add_to_call_queue_worker
-      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), current_user.id)
+    def add_to_call_queue_worker(user_id = current_user.id)
+      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), user_id)
     end
 
     def read_queue_position_message(xml_builder)

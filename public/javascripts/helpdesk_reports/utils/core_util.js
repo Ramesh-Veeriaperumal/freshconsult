@@ -779,7 +779,7 @@ HelpdeskReports.CoreUtil = {
         var date = this.calculateDateLag();
         var previous_value = jQuery("#date_range").val(); //saved filter
         var config = {
-                earliestDate: Date.parse('04/01/2010'),
+                earliestDate: Date.parse('01/01/2010'),
                 latestDate: Date.parse(date.endDate),
                 presetRanges: [{
                     text: 'Last 7 Days',

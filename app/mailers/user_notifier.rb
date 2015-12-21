@@ -110,6 +110,29 @@ class UserNotifier < ActionMailer::Base
       part.html { render "facebook.text.html" }
     end.deliver
   end
+  
+  def notify_webhook_failure(account, to_email, triggering_rule, url)
+    Time.zone = account.time_zone
+    headers = {
+      :subject       => "Please recheck the webhook settings in your account",
+      :to            => to_email,
+      :from          => AppConfig['from_email'],
+      :sent_on       => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+    
+    @automation_type = triggering_rule[:type].to_s
+    @automation_name = triggering_rule[:name].to_s
+    @automation_link = triggering_rule[:path].to_s
+    @webhook_url = url
+    
+    mail(headers) do |part|
+      part.text { render "webhook_failure.text.plain" }
+      part.html { render "webhook_failure.text.html" }
+    end.deliver
+  end
 
   def helpdesk_url_reminder(email_id, helpdesk_urls)
     headers = {

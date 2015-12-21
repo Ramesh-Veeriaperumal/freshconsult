@@ -14,7 +14,6 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     @query_params = params[:query_hash].each{|k| k.symbolize_keys!}
     @report_type  = params[:report_type]
     @date_range   = @query_params.first[:date_range]
-    @today        = DateTime.now.utc.strftime('%d-%m-%Y')
   end
   
   def build_and_email_file
@@ -32,7 +31,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       file_name = file_path.split("/").last
       
       if @attachment_via_s3
-        options.merge!(:export_url => user_download_url(file_name,"report_export")) # upload file on S3 and send download link
+        options.merge!(:export_url => user_download_url(file_name)) # upload file on S3 and send download link
       else 
         options.merge!(file_path: file_path) # Attach file in mail itself
       end
