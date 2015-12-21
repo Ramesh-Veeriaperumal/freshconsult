@@ -33,7 +33,7 @@ module HelpdeskControllerMethods
     options = {}
     options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
     #redirect_back_or_default redirect_url
-    if @item.is_a?(Helpdesk::Ticket) && params[:action] == "create" && @item.restricted_in_helpdesk?(current_user)
+    if @item.is_a?(Helpdesk::Ticket) && params[:action] == "create" && !api_request? && @item.restricted_in_helpdesk?(current_user)
       helpdesk_restricted_access_redirection(@item, 'flash.agent_as_requester.ticket_create')
     else
       respond_to do |format|
@@ -377,6 +377,10 @@ protected
           render :json => {:message => redirect_msg }
         }
     end
+  end
+
+  def api_request?
+    params[:format] == "json" || params[:format] == "xml"
   end
 
 end
