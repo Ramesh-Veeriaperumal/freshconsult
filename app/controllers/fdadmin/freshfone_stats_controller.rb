@@ -59,7 +59,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     end
 
     def freshfone_call_charges_in_date_range(start_date,end_date)
-      "SELECT accounts.id ,accounts.name,SUM(call_cost) FROM freshfone_calls JOIN accounts ON 
+      "SELECT accounts.id ,accounts.name,COUNT(*),SUM(call_cost) FROM freshfone_calls JOIN accounts ON 
        freshfone_calls.account_id = accounts.id 
        WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"' 
        GROUP BY account_id"
@@ -79,7 +79,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
           signup_list  = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(signup_query) })
           generate_email(signup_list,signup_csv_columns)
 
-         when "callcost"
+         when "calldetails"
           charges_query = freshfone_call_charges_in_date_range(startDate,endDate)
           call_cost_list  = cumulative_result(Sharding.run_on_all_slaves { ActiveRecord::Base.connection.execute(charges_query) })
           generate_email(call_cost_list,cost_csv_columns)
@@ -89,6 +89,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     end
     
     def single_account_results(startDate, endDate)
+      
       return invalid_account if account.nil?
       
       conditions = ['created_at > ? and created_at < ?', startDate, endDate]
@@ -101,9 +102,10 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
           payment_list = single_account_payment_list(payments)
           generate_email(payment_list,payment_csv_columns)
         
-        when "callcost"  
-          call_cost = account.freshfone_calls.where(conditions).sum(:call_cost).to_s
-          render :json => {:cost => call_cost}
+        when "calldetails"  
+          calls = account.freshfone_calls.where(conditions)
+
+          render :json => {:call_details => { :count => calls.count , :cost => calls.sum(:call_cost).to_s  }}
       
       end
     
@@ -148,11 +150,14 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     end
 
     def generate_email(list,csv_columns)
-     
-      csv_string = generate_csv(list,csv_columns)  
-      email_csv(csv_string,params)
+      if list.blank?
+        render :json => {:empty => true} 
+      else
+        csv_string = generate_csv(list,csv_columns)  
+        email_csv(csv_string,params)
 
-      render :json => {:status => true}
+        render :json => {:status => true}
+      end 
     end
 
     def generate_csv(full_list,csv_columns)
@@ -182,7 +187,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     end
 
     def cost_csv_columns
-      ["Account ID", "Account Name","Call Charges"]
+      ["Account ID", "Account Name", "Calls Count", "Call Charges"]
     end
 
 end

@@ -253,6 +253,31 @@ class VaRule < ActiveRecord::Base
   def self.cascade_dispatchr_option
     CASCADE_DISPATCHR_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
+  
+  # Used for sending webhook failure notifications
+  def rule_type_desc
+    if dispatchr_rule?
+      I18n.t('admin.home.index.dispatcher')
+    elsif observer_rule?
+      I18n.t('admin.home.index.observer')
+    elsif supervisor_rule?
+      I18n.t('admin.home.index.supervisor')
+    end
+  end
+
+  def rule_path
+    if observer_rule?
+      Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id, 
+                                                        host: Account.current.host, 
+                                                        protocol: Account.current.url_protocol)
+    elsif dispatchr_rule?
+      Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id, 
+                                                        host: Account.current.host, 
+                                                        protocol: Account.current.url_protocol)
+    else
+      I18n.t('not_available')
+    end
+  end
 
   def check_user_privilege
     return true unless automation_rule?

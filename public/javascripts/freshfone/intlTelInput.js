@@ -210,16 +210,30 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             if(freshfone.country_preference.length > 2){ 
               freshfone.country_preference.pop(); 
             }
-            if(freshfonecalls.callerLocation() && $.inArray(freshfonecalls.callerLocation().toLowerCase(),freshfone.country_preference) == -1){
-              freshfone.country_preference.unshift(freshfonecalls.callerLocation().toLowerCase());
+            if(freshfonecalls.callerLocation() ){
+              switch(this.countryPosition()){
+                case -1:
+                  this.updatePreferredCountry();
+                  break;
+                case 1:
+                  freshfone.country_preference.pop(); 
+                  this.updatePreferredCountry();
+                  break;
+              }
             }
           }
             localStorage.setItem("callerPreference", freshfone.original_stringify(freshfone.country_preference));
             this._setPreferredCountries();
             this._appendListItems(this.preferredCountries, "preferred");
+            this._selectFlag(freshfone.country_preference[0]);
+
         },
-
-
+        countryPosition: function(){
+          return $.inArray(freshfonecalls.callerLocation().toLowerCase(),freshfone.country_preference);
+        },
+        updatePreferredCountry: function(){
+          freshfone.country_preference.unshift(freshfonecalls.callerLocation().toLowerCase());
+        },
         // generate all of the markup for the plugin: the selected flag overlay, and the dropdown
         _generateMarkup: function() {
             // telephone input

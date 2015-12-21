@@ -14,6 +14,7 @@ class ExportAgents < BaseWorker
       @csv_hash = args["csv_hash"]
       @portal_url = args["portal_url"]
       User.current = Account.current.users.find_by_id(args["user"])
+      TimeZone.set_time_zone
       I18n.locale = (User.current and User.current.language) ? User.current.language : Account.current.language
       export_data
     ensure
@@ -74,6 +75,15 @@ class ExportAgents < BaseWorker
       group_ids = agent.agent_groups.map(&:group_id)
       agent_groups = Account.current.groups_from_cache.select { |group| group_ids.include? group.id } 
       agent_groups.map(&:name).to_sentence
+    end
+
+    def last_active_at agent
+        formated_date(agent.last_active_at) if agent.last_active_at
+    end
+
+    def formated_date(date_time)
+      time_format = Account.current.date_type :short_day_with_time
+      I18n.l date_time, :format => time_format
     end
 
     def mail_to_user

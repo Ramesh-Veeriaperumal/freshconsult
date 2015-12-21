@@ -138,10 +138,10 @@ module Helpkit
     # TODO-RAILS3 need to cross check
     require 'openid/store/filesystem'
     require 'omniauth'
-    require 'omniauth/strategies/twitter'
-    require 'omniauth/strategies/nimble'
-    require 'omniauth/strategies/slack'
-    require 'omniauth/strategies/github'
+    
+    Dir[Rails.root+"lib/omniauth/strategies/*"].each do |file|
+      require file
+    end
 
     # you will be able to access the above providers by the following url
     # /auth/providername for example /auth/twitter /auth/facebook
@@ -185,6 +185,9 @@ module Helpkit
         unless origin.blank?
           origin = origin.split('?').last
           new_path += "&origin=#{URI.escape(origin)}"
+        end
+        if env['omniauth.error.strategy'].present?
+          new_path += "&provider=#{env['omniauth.error.strategy'].name}"
         end
         [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
       end

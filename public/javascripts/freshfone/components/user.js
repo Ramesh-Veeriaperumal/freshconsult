@@ -120,7 +120,6 @@ var FreshfoneUser,
 			$("#log").text("Registering Freshfone Client...");
 
 			// this.handleFreshfoneSocket();
-			console.log('setPresence-token');
 			this.getCapabilityToken($loading_element);
 		},
 		
@@ -257,7 +256,6 @@ var FreshfoneUser,
 
 		initializeDevice: function () {
 			if (getCookie('freshfone') === undefined){
-				console.log('InitializeDevice-token');
 				this.getCapabilityToken();
 			}
 			else 

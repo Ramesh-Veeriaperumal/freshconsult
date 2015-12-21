@@ -38,17 +38,17 @@ Helpkit::Application.routes.draw do
       end
       resources :topics, :except => [:new, :edit, :index, :create]do
         member do
-          get :comments, to: 'comments#topic_comments'
+          get :comments, to: 'api_comments#topic_comments'
           post :follow, to: :follow
           delete :follow, to: :unfollow
           get :follow, to: :is_following
-          post :comments, to: 'comments#create'
+          post :comments, to: 'api_comments#create'
         end
         collection do 
           get :followed_by
         end
       end
-      resources :comments, :except => [:new, :edit, :index, :show, :create]
+      resources :comments, as: "api_comments", :controller => "api_comments", :only => [:destroy, :update]
     end
     resources :groups, as: "api_groups", :controller => "api_groups", :except => [:new, :edit]
 

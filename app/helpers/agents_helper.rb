@@ -8,6 +8,7 @@ module AgentsHelper
                           }
 
   AGENT_SORT_ORDER_COLUMN = [:name, :last_login_at, :created_at]
+  #AGENT_SORT_ORDER_COLUMN = [:name, :last_active_at, :created_at]
   AGENT_SORT_ORDER_TYPE = [:ASC, :DESC]
   
   def check_agents_limit
@@ -117,6 +118,28 @@ module AgentsHelper
     end
   end
   
+  def last_active_tooltip(agent)
+    "class='tooltip' title='#{t('agent.last_active_at')} #{formated_date(agent.last_active_at)}'" if agent.last_active_at
+  end 
+
+  def last_active_at(agent)
+    if agent.last_active_at
+      last_active_in_words(agent)
+    else
+      t('agent.no_recent_activity')
+    end  
+  end  
+
+  def last_active_in_words(agent)
+    if agent.last_active_at.today?
+      t('today')
+    elsif agent.last_active_at.to_date == Date.yesterday
+      t('yesterday')
+    else
+      t('agent.days_ago', :days => distance_of_time_in_words_to_now(agent.last_active_at))
+    end   
+  end   
+
   def ticket_permission(id)
     ticket_permission_mapper[id]
   end

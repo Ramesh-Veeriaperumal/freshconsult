@@ -28,6 +28,12 @@ class Freshfone::Account < ActiveRecord::Base
 	STATE_HASH = Hash[*STATE.map { |i| [i[0], i[2]] }.flatten]
 	STATE_AS_STRING = Hash[*STATE.map { |i| [i[0], i[1]] }.flatten]
 
+	STATE_HASH.each_pair do |key, value|
+		define_method("#{key}?") do
+			self.state == value
+		end
+	end 
+
 	#validates_presence_of :twilio_subaccount_id, :twilio_subaccount_token, :queue, :friendly_name
 	validates_presence_of :account_id
 	validates_inclusion_of :state, :in => STATE_HASH.values,
@@ -53,8 +59,12 @@ class Freshfone::Account < ActiveRecord::Base
 	def update_voice_url
 		freshfone_application.update({
 				:voice_url => "#{host}/freshfone/voice",
-				:voice_fallback_url => "#{host}/freshfone/voice_fallback"
+				:voice_fallback_url => "#{host}/freshfone/voice_fallback",
+				:status_callback => "#{host}/freshfone/conference_call/status"
 			})
+	rescue => e
+		Rails.logger.error "Error on Updating Voice URL of Freshfone for Account :: #{self.account_id}"
+		Rails.logger.error "Exception Stacktrace :: #{e.backtrace.join('\n\t')}"
 	end
 
 	def suspend
@@ -129,14 +139,6 @@ class Freshfone::Account < ActiveRecord::Base
 		update_conference_status_url
 	end
 
-	def suspended?
-		state == STATE_HASH[:suspended]
-	end
-
-	def active?
-		state == STATE_HASH[:active]
-	end
-
 	def update_twilio_subaccount_state(status)
 		twilio_subaccount.update(:status => status)
 	end
@@ -150,7 +152,7 @@ class Freshfone::Account < ActiveRecord::Base
 	end
 
 	def freshfone_application
-		@app ||= freshfone_subaccount.applications.get(app_id)
+		@app ||= twilio_subaccount.applications.get(app_id)
 	end
 
 end

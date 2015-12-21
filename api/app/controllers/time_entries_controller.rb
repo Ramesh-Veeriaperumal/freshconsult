@@ -44,7 +44,7 @@ class TimeEntriesController < ApiApplicationController
     end
 
     def load_objects
-      super time_entry_filter.includes(:workable)
+      super time_entry_filter.preload(:workable)
     end
 
     def fetch_changed_attributes(timer_running)

@@ -31,10 +31,11 @@ class Freshfone::CallController < FreshfoneBaseController
       format.json {
 				render :json => {
      		  :user_hover => render_to_string(:partial => 'layouts/shared/freshfone/caller_photo', 
-                          :locals => { :user => @user }),
+					:locals => { :user => @user }),
 		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
-          :call_meta => call_meta
+          :call_meta => call_meta,
+          :caller_location => caller_location
     		}
       }
 	  end
@@ -72,24 +73,32 @@ class Freshfone::CallController < FreshfoneBaseController
 			@user = search_user_with_number(params[:PhoneNumber].gsub(/^\+/, ''))
 		end
 
-		def call_meta
+		def call_meta	
 	    #Yet to handle the scenario where multiple calls at the same time 
 	    #from the same number targeting different groups.
-	    caller = current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
-	    return if caller.blank?
-	    call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
-              :conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
- 
-	    if call.present?
-		    { :number => call.freshfone_number.number_name,
-		    	:ringing_time => call.freshfone_number.ringing_time,
-		    	:transfer_agent => get_transfer_agent(call),
-		    	:group 	=> (call.group.present?) ? call.group.name : "",
-		    	:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
-		    	:caller_location => [caller.city.blank? ? nil : caller.city ,caller.country.blank? ? nil : caller.country].compact.join(", ")
-		    }
-		  end
-	  end
+			return if caller.blank?
+			call = current_account.freshfone_calls.first( :include => [:freshfone_number], 
+							:conditions => {:caller_number_id => caller.id}, :order => "freshfone_calls.id DESC") 
+
+			if call.present?
+				{ :number => call.freshfone_number.number_name,
+					:ringing_time => call.freshfone_number.ringing_time,
+					:transfer_agent => get_transfer_agent(call),
+					:group 	=> (call.group.present?) ? call.group.name : "",
+					:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
+					:caller_location => caller_location
+				}
+			end
+		end
+
+		def caller 
+			@caller ||= current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
+		end
+
+		def caller_location 
+			return [caller.city , caller.country].compact.reject{|c| c.empty? }.join(", ") if caller.present?
+			GlobalPhone.parse(params[:PhoneNumber]).territory.name 
+		end 
 
 		def populate_call_details
 			key = ACTIVE_CALL % { :account_id => current_account.id, :call_sid => params[:DialCallSid]}

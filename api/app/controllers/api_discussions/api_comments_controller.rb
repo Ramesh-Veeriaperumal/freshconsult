@@ -1,10 +1,10 @@
 module ApiDiscussions
-  class CommentsController < ApiApplicationController
+  class ApiCommentsController < ApiApplicationController
     before_filter :topic_exists?, only: [:topic_comments]
 
     def topic_comments
       @comments = paginate_items(@item.posts)
-      render '/api_discussions/comments/comment_list'
+      render '/api_discussions/api_comments/comment_list'
     end
 
     private
@@ -33,7 +33,7 @@ module ApiDiscussions
       def validate_params
         return false if create? && !load_topic
         params[cname].permit(*get_fields)
-        comment = ApiDiscussions::CommentValidation.new(params[cname], @item)
+        comment = ApiDiscussions::ApiCommentValidation.new(params[cname], @item)
         render_errors comment.errors, comment.error_options unless comment.valid?
       end
 

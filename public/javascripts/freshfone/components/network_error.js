@@ -69,7 +69,6 @@ var FreshfoneNetworkError;
         },2000);
         if(this.freshfoneuser.isOnline()){
           this.freshfoneuser.makeOffline();
-          console.log("hideNetworkErrorWidget-token");
           setTimeout(freshfoneuser.toggleUserPresence(),10000);
         }
         setTimeout(freshfonesocket.getAvailableAgents(),10000); //Calling this after 10 seconds for Resque Job to do the work
