@@ -8,7 +8,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		update_available(object, true)
 		update_published(object)
 		update_outdated(object)
-		save_meta
+		save_meta(object)
 	end
 
 	def after_update(object)
@@ -16,14 +16,14 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		meta(object)
 		update_published(object)
 		update_outdated(object)
-		save_meta
+		save_meta(object)
 	end
 
 	def after_destroy(object)
 		return unless multilingual
 		meta(object)
 		update_available(object, false)
-		save_meta
+		save_meta(object)
 	end
 
 	private
@@ -34,6 +34,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 
 		def meta(object)
 			@meta = object.parent
+			@parent_changes = @meta.changes.present?
 		end
 
 		def update_available(object, status)
@@ -54,7 +55,11 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 			@meta.send("#{val ? :mark : :unmark}_#{language_key}_#{key}") if @meta.respond_to?(key)
 		end
 
-		def save_meta
+		def save_meta(object)
+			if object.is_a? Solution::Article
+				return if @parent_changes
+				return if (object.draft.present? && object.draft.new_record?)
+			end
 			@meta.save
 		end
 end

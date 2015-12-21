@@ -2,7 +2,14 @@
 
 RSpec.describe Solution::CategoryMeta do
 	before(:all) do
-		@lang_list = Language.all.map(&:to_key).sample(25) - [@account.language]
+		enable_multilingual
+		supported_languages = Language.all.map(&:code).sample(25) - [@account.language]
+		@lang_list = supported_languages.map{|l| Language.find_by_code(l).to_key}
+		@initial_lang_list = @account.account_additional_settings.supported_languages
+		@account.account_additional_settings.supported_languages = supported_languages
+		@account.save
+		Account.current.reload
+		Account.current.reload_features
 	end
 
 	it "should update the available column based on its versions" do
@@ -39,13 +46,25 @@ RSpec.describe Solution::CategoryMeta do
 		end
 	end
 
+	after(:all) do
+    @account.account_additional_settings.supported_languages = @initial_lang_list
+    @account.save
+  end
+
 end
 
 #------------ Folder ---------------
 
 RSpec.describe Solution::FolderMeta do
 	before(:all) do
-		@lang_list = Language.all.map(&:to_key).sample(25) - [@account.language]
+		enable_multilingual
+		supported_languages = Language.all.map(&:code).sample(25) - [@account.language]
+		@lang_list = supported_languages.map{|l| Language.find_by_code(l).to_key}
+		@initial_lang_list = @account.account_additional_settings.supported_languages
+		@account.account_additional_settings.supported_languages = supported_languages
+		@account.save
+		Account.current.reload
+		Account.current.reload_features
 		@folder_lang_ver = @lang_list.sample(10)
 		params = create_solution_category_alone(solution_default_params(:category).merge({
 			:lang_codes => @folder_lang_ver + [:primary]
@@ -93,13 +112,25 @@ RSpec.describe Solution::FolderMeta do
 		end
 	end
 
+	after(:all) do
+    @account.account_additional_settings.supported_languages = @initial_lang_list
+    @account.save
+  end
+
 end
 
 #------------ Article ---------------
 
 RSpec.describe Solution::ArticleMeta do
 	before(:all) do
-		@lang_list = Language.all.map(&:to_key).sample(25) - [@account.language]
+		enable_multilingual
+		supported_languages = Language.all.map(&:code).sample(25) - [@account.language]
+		@lang_list = supported_languages.map{|l| Language.find_by_code(l).to_key}
+		@initial_lang_list = @account.account_additional_settings.supported_languages
+		@account.account_additional_settings.supported_languages = supported_languages
+		@account.save
+		Account.current.reload
+		Account.current.reload_features
 		@article_lang_ver = @lang_list.sample(10)
 		params = create_solution_category_alone(solution_default_params(:category).merge({
 			:lang_codes => @article_lang_ver + [:primary]
@@ -299,5 +330,10 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta.reload
 		article_meta.send("#{lang_vers[0]}_draft_present?").should be_falsey
 	end
+
+	after(:all) do
+    @account.account_additional_settings.supported_languages = @initial_lang_list
+    @account.save
+  end
 
 end
