@@ -1,5 +1,5 @@
 <%= form_for :solution_article_meta, 
-			:url => solution_article_path(@article_meta.id, :language_id => @language.id), 
+			:url => solution_article_version_path(@article_meta.id, @language.code), 
 			:method => :put,
 			:html => {:id => "article-form", :class => "form-horizontal"}, 
 			:remote => true do |f| %>

@@ -98,6 +98,7 @@ class Solution::FoldersController < ApplicationController
           set_customers_field
           render :action => "edit" 
         }
+        format.js { render 'after_save' }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }
       end
     end

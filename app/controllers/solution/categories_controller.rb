@@ -105,6 +105,7 @@ class Solution::CategoriesController < ApplicationController
         format.json { render :json => @category, :status => :ok, :location => @category }     
       else
         format.html { render :action => "edit" }
+        format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
       end
     end
