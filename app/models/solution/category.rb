@@ -19,7 +19,6 @@ class Solution::Category < ActiveRecord::Base
   after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
   
   after_create :add_activity_new
-  after_update :clear_cache_with_condition
 
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time, :add_activity_delete
