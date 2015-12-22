@@ -256,11 +256,16 @@ module SolutionHelper
 		op.html_safe
 	end
 
-	def language_flags(solution_meta)
+	def language_flags(solution_meta, article_flag = false)
+		return "" unless current_account.multilingual?
 		content = ""
+		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag}'>"
+		content << '<span class="pull-right">'
 		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
 			content << language_icon(solution_meta, language)
 		end
+		content << '</span>'
+		content << '</div>'
 		content.html_safe
 	end
 

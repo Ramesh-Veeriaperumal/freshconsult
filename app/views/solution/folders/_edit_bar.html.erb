@@ -36,8 +36,10 @@
 			<%# end %>
 		</li>
 	</ul>
-	<span id="language-toggle">
-		<%= link_to t('solution.show_languages'), '', :id => 'show-link'%>
-		<%= link_to t('solution.hide_languages'), '', :id => 'hide-link'%>
-	</span>
+	<% if Account.current.multilingual? %>
+		<span id="language-toggle">
+			<%= link_to t('solution.show_languages'), '', :id => 'show-link'%>
+			<%= link_to t('solution.hide_languages'), '', :id => 'hide-link'%>
+		</span>
+	<% end %>
 </div>

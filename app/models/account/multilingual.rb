@@ -37,4 +37,8 @@ class Account < ActiveRecord::Base
   def all_language_objects
     supported_languages_objects + [language_object]
   end
+
+  def portal_languages_objects
+    portal_languages.map { |l| Language.find_by_code(l) }
+  end
 end

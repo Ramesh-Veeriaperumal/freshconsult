@@ -38,11 +38,7 @@
 					</div>
 				<% end %>
 			</div>
-			<div class="span5 pull-right mt8 language-bar">
-				<span class="pull-right">
-					<%= language_flags(article) %>
-				</span>
-			</div>
+			<%= language_flags(article, true) %>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>
 				<div class="comm-item-title ellipsis tooltip" title="<%= article.title if article.title.length > 75 %>">

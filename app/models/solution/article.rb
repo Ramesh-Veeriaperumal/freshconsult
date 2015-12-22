@@ -119,6 +119,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
+    return parent_id if new_record?
     title_param = sterilize(title[0..100])
     parent_id ? "#{parent_id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
   end
