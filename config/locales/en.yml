@@ -1554,6 +1554,8 @@ en:
       conditions: on tickets with these properties
       actions: perform these actions
       performed_by: and the events are performed by
+      customer_performed: Requester
+      agent_performed: Agent
       agent: Agent
       customer: Requester
       present: Anyone
