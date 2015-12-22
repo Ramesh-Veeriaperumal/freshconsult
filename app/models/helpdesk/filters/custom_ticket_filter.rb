@@ -32,10 +32,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       "operator" => "is", "value" => input}
   end
 
-  def self.created_in_last_month
-    {"condition" => "created_at", "operator" => "is_greater_than", "value" => "last_month"}
-  end
-
   DEFAULT_FILTERS ={ 
                       "spam" => [spam_condition(true),deleted_condition(false)],
                       "deleted" =>  [deleted_condition(true),trashed_condition(false)],
@@ -46,7 +42,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "new" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1"},spam_condition(false),deleted_condition(false)],
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
                       "new_and_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
-                      "all_tickets" => [spam_condition(false),deleted_condition(false),created_in_last_month],
+                      "all_tickets" => [spam_condition(false),deleted_condition(false)],
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
