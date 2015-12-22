@@ -1,6 +1,6 @@
 <div class="article-edit <%= 'hide' unless @article.new_record? %>">
   <%= form_for :solution_article_meta, 
-              :url => @article.new_record? ? solution_articles_path : solution_article_path(@article_meta.id, :language_id => @language.id), 
+              :url => @article.new_record? ? solution_articles_path : solution_article_version_path(@article_meta.id, @language.code), 
               :html => {
                 :method => @article.new_record? ? :post : :put,
                 :multipart => true, 
