@@ -583,7 +583,7 @@ class User < ActiveRecord::Base
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.company_id && ticket.requester.company_id && (ticket.requester.company_id == self.company_id) )
+    (is_client_manager? && self.company_id && ticket.company_id && (ticket.company_id == self.company_id) )
   end
   
   def restricted?

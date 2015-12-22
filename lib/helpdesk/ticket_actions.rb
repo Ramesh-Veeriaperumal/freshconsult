@@ -314,9 +314,9 @@ module Helpdesk::TicketActions
       cache_filter_params
     elsif params[:company_id]
       params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
-                            "condition"=>"users.customer_id", "value"=> params[:company_id] }]
+                            "condition"=>"owner_id", "value"=> params[:company_id] }]
       
-      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"users.customer_id", 
+      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"owner_id", 
                                     "value"=> params[:company_id] }]
       cache_filter_params
     end

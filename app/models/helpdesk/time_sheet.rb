@@ -49,8 +49,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   scope :for_companies, lambda{ |company_ids|
     {
-      :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
-      :conditions => {:users => {:customer_id => company_ids}}
+      :conditions => {:helpdesk_tickets => {:owner_id => company_ids}}
     } unless company_ids.blank?
   }
       
@@ -82,8 +81,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   scope :archive_for_companies, lambda{ |company_ids|
     {
-      :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
-      :conditions => {:users => {:customer_id => company_ids}}
+      :conditions => {:archive_tickets => {:owner_id => company_ids}}
     } unless company_ids.blank?
   }
       

@@ -50,6 +50,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
 
+  alias_attribute :company_id, :owner_id
+
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
         }
@@ -66,18 +68,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
   
   scope :all_company_tickets,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id ),
-        :conditions => [" users.customer_id = ?",company_id]
+        :conditions => ["owner_id = ?",company_id]
   } 
   }
   
   scope :company_tickets_resolved_on_time,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
+        :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
           helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",company_id]
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND helpdesk_tickets.owner_id = ?",company_id]
   } 
   }
   
@@ -94,12 +93,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
   scope :company_first_call_resolution,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
+        :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
           helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
         :conditions => [%(helpdesk_ticket_states.resolved_at is not null  and  
-          helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?),company_id]
+          helpdesk_ticket_states.inbound_count = 1 AND helpdesk_tickets.owner_id = ?),company_id]
   } 
   }
         
@@ -526,11 +524,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def company_name
-    requester.company.name if (requester && requester.company)
-  end
-  
-  def company_id
-    requester.company_id if requester
+    company ? company.name : "No company"
   end
 
   def last_interaction
@@ -725,10 +719,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
    
   def responder_name
     responder.nil? ? "No Agent" : responder.name
-  end
-    
-  def company_name
-    requester.company.nil? ? "No company" : requester.company.name
   end
     
   def cc_email_hash

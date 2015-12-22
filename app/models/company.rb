@@ -119,5 +119,8 @@ class Company < ActiveRecord::Base
   def domains
     read_attribute(:domains) && read_attribute(:domains).gsub(/^\,/, '').chomp(',')
   end
-  
+
+  def tickets
+    all_tickets.joins(:requester).where('users.deleted =?', false)
+  end
 end

@@ -6,7 +6,7 @@ module Search::Filters::QueryHelper
     COLUMN_MAPPING = {
       #_Note_: From WF filters => ES field
       'helpdesk_schema_less_tickets.boolean_tc02' =>  'trashed',
-      'users.customer_id'                         =>  'company_id',
+      'owner_id'                                  =>  'company_id',
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers'

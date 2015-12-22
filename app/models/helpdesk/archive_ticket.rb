@@ -13,7 +13,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   belongs_to :responder, :class_name => 'User', :conditions => 'users.helpdesk_agent = true'
   belongs_to :group
 
-  has_one :archive_ticket_association,
+  belongs_to :company, :foreign_key => :owner_id
+  
+  has_one :archive_ticket_association, 
         :class_name => "Helpdesk::ArchiveTicketAssociation",
         :dependent => :destroy
   has_many :archive_notes,
@@ -84,11 +86,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ",
     user.id ], :order => 'created_at DESC' } }
   scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  scope :all_company_tickets,lambda { |company_id| {
-        :joins => %(INNER JOIN users ON users.id = archive_tickets.requester_id and
-          users.account_id = archive_tickets.account_id ),
-        :conditions => [" users.customer_id = ?",company_id]
-    }
+  scope :all_company_tickets,lambda { |company_id| { 
+        :conditions => [" owner_id = ?",company_id]
+    } 
   }
   scope :created_at_inside, lambda { |start, stop| { :conditions =>
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
@@ -271,7 +271,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def company_name
-    requester.company.nil? ? "No company" : requester.company.name
+    company.nil? ? "No company" : company.name
   end
 
   def included_in_to_emails?(from_email)
