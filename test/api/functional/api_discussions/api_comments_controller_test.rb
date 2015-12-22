@@ -166,14 +166,14 @@ module ApiDiscussions
     end
 
     def test_comments_invalid_id
-      get :topic_comments, construct_params(id: (1000 + Random.rand(11)))
+      get :topic_comments, controller_params(id: (1000 + Random.rand(11)))
       assert_response :missing
       assert_equal ' ', @response.body
     end
 
     def test_comments
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
-      get :topic_comments, construct_params(id: t.id)
+      get :topic_comments, controller_params(id: t.id)
       result_pattern = []
       t.posts.each do |p|
         result_pattern << comment_pattern(p)
@@ -187,26 +187,19 @@ module ApiDiscussions
       3.times do
         create_test_post(t, User.first)
       end
-      get :topic_comments, construct_params(id: t.id, per_page: 1)
+      get :topic_comments, controller_params(id: t.id, per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :topic_comments, construct_params(id: t.id, per_page: 1, page: 2)
+      get :topic_comments, controller_params(id: t.id, per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
     def test_comments_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      t = topic_obj
-      4.times do
-        create_test_post(t, User.first)
-      end
-      get :topic_comments, construct_params(id: t.id, per_page: 4)
-      assert_response 200
-      assert JSON.parse(response.body).count == 3
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+      t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
+      get :topic_comments, controller_params(id: t.id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     end
 
     def test_comments_with_link_header
@@ -215,7 +208,7 @@ module ApiDiscussions
         create_test_post(t, User.first)
       end
       per_page = t.posts.count - 1
-      get :topic_comments, construct_params(id: t.id, per_page: per_page)
+      get :topic_comments, controller_params(id: t.id, per_page: per_page)
       assert_response 200
       pattern = []
       t.posts.limit(per_page).each do |f|
@@ -225,7 +218,7 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == per_page
       assert_equal "<http://#{@request.host}/api/v2/discussions/topics/#{t.id}/comments?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :topic_comments, construct_params(id: t.id, per_page: per_page, page: 2)
+      get :topic_comments, controller_params(id: t.id, per_page: per_page, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']

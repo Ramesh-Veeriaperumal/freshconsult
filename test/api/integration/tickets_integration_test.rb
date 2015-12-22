@@ -15,9 +15,9 @@ class TicketsIntegrationTest < ActionDispatch::IntegrationTest
         api_restore: 6,
 
         create: 91,
-        show: 19,
+        show: 18,
         update: 36,
-        index: 25,
+        index: 18,
         destroy: 32,
         restore: 32
       }

@@ -6,7 +6,7 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.company_form.company_fields.each do |cf|
       pattern << company_field_pattern(CompanyField.find(cf.id))

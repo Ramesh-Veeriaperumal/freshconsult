@@ -531,7 +531,7 @@ module ApiDiscussions
     end
 
     def test_category_forums
-      get :category_forums, construct_params(id: fc_obj.id)
+      get :category_forums, controller_params(id: fc_obj.id)
       assert_response 200
       result_pattern = []
       fc_obj.forums.each do |f|
@@ -541,7 +541,7 @@ module ApiDiscussions
     end
 
     def test_category_forums_invalid_id
-      get :category_forums, construct_params(id: 'x')
+      get :category_forums, controller_params(id: 'x')
       assert_response :missing
       assert_equal ' ', @response.body
     end
@@ -550,29 +550,22 @@ module ApiDiscussions
       3.times do
         create_test_forum(fc_obj)
       end
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 2)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 3)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1, page: 3)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
     def test_category_forums_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
       category = fc_obj
-      4.times do
-        create_test_forum(category)
-      end
-      get :category_forums, construct_params(id: category.id, per_page: 4)
-      assert_response 200
-      assert_equal 3, JSON.parse(response.body).count
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+      get :category_forums, controller_params(id: category.id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     end
 
     def test_category_forums_with_link_header
@@ -580,7 +573,7 @@ module ApiDiscussions
       3.times do
         create_test_forum(fc)
       end
-      get :category_forums, construct_params(id: fc.id,  per_page: 2)
+      get :category_forums, controller_params(id: fc.id,  per_page: 2)
       assert_response 200
       pattern = []
       fc.forums.limit(2).each do |f|
@@ -590,7 +583,7 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 2
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories/#{fc.id}/forums?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :category_forums, construct_params(id: fc.id,  per_page: 2, page: 2)
+      get :category_forums, controller_params(id: fc.id,  per_page: 2, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']

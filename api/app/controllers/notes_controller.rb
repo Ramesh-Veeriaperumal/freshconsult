@@ -36,6 +36,7 @@ class NotesController < ApiApplicationController
   end
 
   def ticket_notes
+    return if validate_filter_params
     notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     @notes = paginate_items(notes)
   end
