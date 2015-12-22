@@ -110,7 +110,7 @@ class Solution::Article < ActiveRecord::Base
     status == STATUS_KEYS_BY_TOKEN[:published]
   end
 
-  def draft?
+  def draft_present?
     draft.present?
   end
 
