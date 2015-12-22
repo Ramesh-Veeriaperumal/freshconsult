@@ -165,6 +165,8 @@ $("input.datepicker_popover").livequery(
 		}
 		$(this).datepicker({
 			dateFormat: dateFormat,
+			 changeMonth: true,
+             changeYear: true,
 			beforeShow: function(){
 				Helpdesk.calenderSettings.insideCalendar = true;
 				Helpdesk.calenderSettings.closeCalendar = false;
@@ -185,6 +187,8 @@ $('input.datetimepicker_popover').livequery(
 		$(this).datetimepicker({
 			timeFormat: "HH:mm:ss",
 			dateFormat: 'MM dd,yy',
+			 changeMonth: true,
+             changeYear: true,
 			beforeShow: function(){
 				Helpdesk.calenderSettings.insideCalenda = true;
 				Helpdesk.calenderSettings.closeCalendar = false;
@@ -243,7 +247,7 @@ $("div.request_mail").livequery(function(){ quote_text(this); });
 $("input.datepicker").livequery(
 	function(){ 
 		$(this).datepicker( 
-			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker') }  )
+			$.extend( {}, $(this).data() , { dateFormat: getDateFormat('datepicker'),changeMonth: true,changeYear: true }  )
 			)
 	}
 );
