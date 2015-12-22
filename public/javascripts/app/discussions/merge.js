@@ -35,7 +35,7 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
 		bindMergeEvent: function (topic_id) {
-			$("a[data-merge='topic']").click(function(ev){
+			$("body").on('click.merge_topics',"a[data-merge='topic']", function(ev){
 				ev.preventDefault();
 
 				$.ajax({
@@ -45,8 +45,8 @@ window.App.Discussions = window.App.Discussions || {};
 					success: function (data) {
 						$('#merge_topicdialog-content').html(data);
 					}
+	    		});
 	    	});
-	    });
 		},
 
 		enableContinue: function () {
