@@ -46,6 +46,24 @@ RSpec.describe Solution::CategoryMeta do
 		end
 	end
 
+	it "should compute and update the available column when the column is null" do
+		lang_vers = @lang_list.sample(5)
+		remaining_lang = @lang_list - lang_vers
+		params = create_solution_category_alone(solution_default_params(:category).merge({
+			:lang_codes => lang_vers + [:primary]
+		}))
+		category_meta = Solution::Builder.category(params)
+		category_meta.reload
+		lang_vers.each do |lan|
+			category_meta.send("#{lan}_available?").should be_truthy
+		end
+		category_meta.update_column(:available, nil)
+		lang_vers.each do |lan|
+			category_meta.send("#{lan}_available?").should be_truthy
+		end
+		category_meta.available.should_not be_nil
+	end
+
 	after(:all) do
     @account.account_additional_settings.supported_languages = @initial_lang_list
     @account.save
@@ -110,6 +128,27 @@ RSpec.describe Solution::FolderMeta do
 			folder_meta.reload
 			folder_meta.send("#{lan}_available?").should be_falsey
 		end
+	end
+
+	it "should compute and update the available column when the column is null" do
+		lang_vers = @folder_lang_ver.sample(5)
+		remaining_lang = @folder_lang_ver - lang_vers
+		params = create_solution_folder_alone(solution_default_params(:folder).merge(
+		{   
+			:category_id => @category_meta.id,
+			:visibility => 2,
+			:lang_codes => lang_vers + [:primary]
+		}))
+		folder_meta = Solution::Builder.folder(params)
+		folder_meta.reload
+		lang_vers.each do |lan|
+			folder_meta.send("#{lan}_available?").should be_truthy
+		end
+		folder_meta.update_column(:available, nil)
+		lang_vers.each do |lan|
+			folder_meta.send("#{lan}_available?").should be_truthy
+		end
+		folder_meta.available.should_not be_nil
 	end
 
 	after(:all) do
@@ -182,6 +221,7 @@ RSpec.describe Solution::ArticleMeta do
 			article_meta.send("#{lan}_available?").should be_falsey
 		end
 	end
+
 
 	# ---- Outdated ----
 
@@ -329,6 +369,38 @@ RSpec.describe Solution::ArticleMeta do
 		article_meta.send("#{lang_vers[0]}_article").draft.publish!
 		article_meta.reload
 		article_meta.send("#{lang_vers[0]}_draft_present?").should be_falsey
+	end
+
+	it "should compute and update the binarized columns when its value is null" do
+		lang_vers = @article_lang_ver.sample(5)
+		remaining_lang = @article_lang_ver - lang_vers
+		params = create_solution_article_alone(solution_default_params(:article, :title).merge({
+			:folder_id => @folder_meta.id,
+			:lang_codes => lang_vers + [:primary],
+			:status => Solution::Article::STATUS_KEYS_BY_TOKEN[:published],
+			:outdated => true
+		}))
+		article_meta = Solution::Builder.article(params)
+		article_meta.reload
+		lang_vers.each do |lan|
+			article_meta.send("#{lan}_available?").should be_truthy
+			article_meta.send("#{lan}_outdated?").should be_truthy
+			article_meta.send("#{lan}_published?").should be_truthy
+		end
+		article_meta.send("#{lang_vers[0]}_article").create_draft_from_article
+		article_meta.reload
+		article_meta.send("#{lang_vers[0]}_draft_present?").should be_truthy
+		article_meta.update_column(:available, nil)
+		article_meta.update_column(:published, nil)
+		article_meta.update_column(:outdated, nil)
+		article_meta.update_column(:draft_present, nil)
+		article_meta.reload
+		lang_vers.each do |lan|
+			article_meta.send("#{lan}_available?").should be_truthy
+			article_meta.send("#{lan}_outdated?").should be_truthy
+			article_meta.send("#{lan}_published?").should be_truthy
+		end
+		article_meta.send("#{lang_vers[0]}_draft_present?").should be_truthy
 	end
 
 	after(:all) do
