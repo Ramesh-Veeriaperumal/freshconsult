@@ -83,6 +83,7 @@ class Support::Discussions::TopicsController < SupportController
 
   def create
 		@forum = forum_scoper.find(params[:topic][:forum_id])
+    (redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) and return) unless @forum.visible?(current_user) 
 		if @forum.announcement?
 			flash[:notice] = t(".flash.portal.discussions.topics.not_allowed")
 			creation_response(false) 
