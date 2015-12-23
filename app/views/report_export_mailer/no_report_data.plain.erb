@@ -1,0 +1,17 @@
+Hi <%=@user.name%>,
+
+
+Seems like there is no data to display for date range <%=@date_range%> with applied filters.
+
+<% if @filter_to_display  %>
+  Filters applied:
+    Date Range : <%=@date_range%>
+    <% @filters.each do |f| %>
+      <%=f["name"]%> : <%= f["value"] %>
+    <%end%>
+
+<%end%>
+
+Regards,
+
+<%= @user.account.helpdesk_name %> Support

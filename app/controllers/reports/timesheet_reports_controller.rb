@@ -38,6 +38,7 @@ class Reports::TimesheetReportsController < ApplicationController
   
   def time_sheet_list
     @report_date = params[:date_range]
+    @report_type = "timesheet_reports"
     current_range_time_sheet
     previous_range_time_sheet #Fetching the previous time range data.
     if Account.current.features?(:archive_tickets)

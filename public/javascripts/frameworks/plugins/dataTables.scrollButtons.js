@@ -84,6 +84,8 @@
     },
     translateTable: function() {
         var _this = this;
+        //Trigger event which can be used by other plugins
+        trigger_event("scrollButtons.scroll_event",this.current_scroll_position);
         jQuery(".dataTables_scrollBody").animate({
                 scrollLeft: this.current_scroll_position
             },

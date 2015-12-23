@@ -409,19 +409,17 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 divs.push(metric.toLowerCase()+'_'+ meta.dom_element + '_container');
                 HelpdeskReports.CoreUtil.populateEmptyChart(divs, msg);
             }
-        },
+        },      
         clickEventForBucketTicketList: function (ev) {
-
             var container = ev.series.chart.container;
             var bucket_type = jQuery(container).closest('[data-glance-container="bucket"]').data('bucket-name');
+            var series_name = ev.series.options.id;
             var series = ev.series.name;
-            var bucket_name = HelpdeskReports.Constants.Glance.bucket_data[bucket_type].name_series[series];
-
             var hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric + '_BUCKET'].value_map;
             var data = {
-                condition: bucket_name,
-                operator: hash[bucket_name][ev.category][1],
-                value: hash[bucket_name][ev.category][0],
+                condition: series_name,
+                operator: hash[series_name][ev.category][1],
+                value: hash[series_name][ev.category][0],
                 series : series,
                 x : ev.category,
                 y : ev.y

@@ -16,7 +16,6 @@ class Helpdesk::Activity < ActiveRecord::Base
   validates_presence_of :description, :notable_id, :user_id
   
   before_create :set_short_descr
-  before_create :set_migration_key, :if => :feature_present?
   
   OLD_MIGRATION_KEYS = ["bi_reports", "bi_reports_1"]
   MIGRATION_KEYS     = ["bi_reports_2"]
@@ -112,18 +111,6 @@ class Helpdesk::Activity < ActiveRecord::Base
   private
     def set_short_descr
       self.short_descr ||= description
-    end
-    
-    def feature_present?
-      # Added feature check as a separate method so that activities can reuse 
-      # this by adding their feature
-      Account.current.reports_enabled? 
-    end
-    
-    def set_migration_key
-      MIGRATION_KEYS.each do |key|
-        self.activity_data.merge!(key => true)
-      end if ticket?
     end
 
 end

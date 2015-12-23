@@ -1,3 +1,4 @@
+
 en:
   meta:
    language_name: 'English'
@@ -7321,6 +7322,7 @@ en:
         title: Day of the week and Hour of the day trend
         subtitle: See which hour of which day receives the most number of tickets and allocate your staff accordingly
     glance:
+      index_title: Helpdesk<br/>In-depth
       title: Helpdesk In-depth
     performance_distribution:
       title: Performance Distribution
@@ -7367,6 +7369,14 @@ en:
       resolution_violated: Resolution SLA violations %
       customer_interactions: Customer responses
       agent_interactions: Agent responses
+    timesheet_reports:
+      title: Time Sheet Summary
+    phone_summary:
+      title: Phone Summary
+    chat_summary:
+      title: Chat Summary
+    satisfaction_survey:
+      title: Satisfaction Survey
     export:
       export_report_pdf: "Export as PDF"
       export_report_csv: "Export as CSV"
