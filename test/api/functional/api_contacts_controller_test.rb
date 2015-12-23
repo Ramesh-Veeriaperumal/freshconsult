@@ -310,7 +310,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_create_length_invalid
-    post :create, construct_params({}, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
+    post :create, construct_params({}, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('job_title', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('mobile', :"is too long (maximum is 255 characters)"),
@@ -318,7 +318,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 255 characters)")])
+                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
     assert_response 400
   end
 
@@ -460,7 +460,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = get_user
     email = sample_user.email
     sample_user.update_attribute(:email, nil)
-    put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
+    put :update, construct_params({ id: sample_user.id }, name: Faker::Lorem.characters(300), job_title: Faker::Lorem.characters(300), mobile: Faker::Lorem.characters(300), address: Faker::Lorem.characters(300), email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(300)}.com", twitter_id: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
     match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('job_title', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('mobile', :"is too long (maximum is 255 characters)"),
@@ -468,7 +468,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('email', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('twitter_id', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 255 characters)")])
+                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
     assert_response 400
     sample_user.update_attribute(:email, email)
   end

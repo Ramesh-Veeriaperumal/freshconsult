@@ -186,7 +186,9 @@ class TicketsController < ApiApplicationController
     def verify_object_state
       action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|
-        if @item.send(scope_attribute) != value
+        item_value = @item.send(scope_attribute)
+        if item_value != value
+          Rails.logger.error "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
           head(404)
           return false
         end
