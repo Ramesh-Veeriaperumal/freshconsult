@@ -212,12 +212,12 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_length_invalid
-    params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
+    params = ticket_params_hash.except(:email).merge(name: Faker::Lorem.characters(300), subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+                bad_request_error_pattern('tags', :"is too long (maximum is 255 characters)")])
     assert_response 400
   end
 
@@ -1491,12 +1491,12 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_length_invalid
     t = ticket
-    params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(34)])
+    params_hash = update_ticket_params_hash.merge(name: Faker::Lorem.characters(300), requester_id: nil, subject: Faker::Lorem.characters(300), phone: Faker::Lorem.characters(300), tags: [Faker::Lorem.characters(300)])
     put :update, construct_params({ id: t.display_id }, params_hash)
     match_json([bad_request_error_pattern('name', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('subject', :"is too long (maximum is 255 characters)"),
                 bad_request_error_pattern('phone', :"is too long (maximum is 255 characters)"),
-                bad_request_error_pattern('tags', :"is too long (maximum is 32 characters)")])
+                bad_request_error_pattern('tags', :"is too long (maximum is 255 characters)")])
     assert_response 400
   end
 

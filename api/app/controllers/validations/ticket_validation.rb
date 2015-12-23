@@ -44,7 +44,7 @@ class TicketValidation < ApiValidation
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
   validates :tags, string_rejection: { excluded_chars: [','] }
 
   # Custom fields validations
