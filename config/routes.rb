@@ -472,7 +472,6 @@ Helpkit::Application.routes.draw do
         post :quit_queue_on_voicemail
         post :trigger_voicemail
         post :trigger_non_availability
-        post :bridge
         post :hangup
       end
     end
@@ -2477,6 +2476,8 @@ Helpkit::Application.routes.draw do
           get :fetch_conference_state
           put :enable_conference
           put :disable_conference
+          put :update_timeouts_and_queue
+          get :fetch_numbers
         end
       end
 

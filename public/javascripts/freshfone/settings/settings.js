@@ -34,6 +34,11 @@ var FreshfoneMessage;
 			this.template = $.tmpl(template, templateOptions);
 		},
 		handleAttachmentsDelete: function (id) {
+			var elements = ["wait_message", "hold_message"];
+			if (elements.include(this.settingsObject.type)) {
+				this.template.find('.remove_attachment').hide();
+				this.template.find('[rel=attachment_id]').val('');
+			}
 		},
 		init_setting: function(){
 

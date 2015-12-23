@@ -1526,7 +1526,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
-    t.integer  "rr_timeout",                                                              :default => 10
+    t.integer  "rr_timeout",                                                              :default => 20
     t.integer  "ringing_time",                                                            :default => 30
     t.boolean  "recording_visibility",                                                    :default => true
     t.text     "wait_message"
