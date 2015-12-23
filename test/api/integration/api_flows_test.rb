@@ -60,17 +60,51 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_trusted_ip_invalid
     Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
-    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers.merge('rack.session' => { 'user_credentials_id' => '22' })
+    ApiDiscussions::CategoriesController.any_instance.expects(:create).never
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers
+    assert_nil ForumCategory.find_by_name("testdd_truested_ip")
     assert_response 403
     response.body.must_match_json_expression(message: String)
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    ApiDiscussions::CategoriesController.any_instance.unstub(:create)
+  end
+
+  def test_trusted_ip_invalid_shard
+    ShardMapping.stubs(:lookup_with_domain).returns(nil)
+    ApiDiscussions::CategoriesController.any_instance.expects(:select_shard).once
+    post '/api/discussions/categories', {"name" => "testdd_truested_ip"}.to_json, @write_headers
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    ShardMapping.unstub(:lookup_with_domain)
+  end
+
+  def test_trusted_ip_invalid_subdomain
+    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
+    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    ApiApplicationController.any_instance.expects(:route_not_found).once
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers.merge('HTTP_HOST' => 'billing.junk.com')
+    assert_nil ForumCategory.find_by_name("testdd_truested_ip")
+    assert_response 404
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    ApiApplicationController.any_instance.unstub(:route_not_found)
   end
 
   def test_trusted_ip_invalid_non_api
     Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    DiscussionsController.any_instance.expects(:categories).once
     get '/discussions/categories', nil, @headers.merge('rack.session' => { 'user_credentials_id' => '22' })
     assert_response 302
     assert_equal '/unauthorized.html', response.headers['Location']
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    DiscussionsController.any_instance.unstub(:categories)
   end
 
   def test_globally_blacklisted_ip_invalid
