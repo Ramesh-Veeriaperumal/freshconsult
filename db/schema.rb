@@ -3679,6 +3679,22 @@ ActiveRecord::Schema.define(:version => 20151216170900) do
   add_index "user_accesses", ["account_id"], :name => "index_user_accesses_on_account_id"
   add_index "user_accesses", ["user_id"], :name => "index_user_accesses_on_user_id"
 
+  create_table "user_companies", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "company_id", :limit => 8
+    t.integer  "account_id", :limit => 8
+    t.boolean  "default"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+  
+  add_index "user_companies", ["account_id", "user_id", "company_id"], 
+            :name => "index_user_companies_on_account_id_user_id_company_id"
+  add_index "user_companies", ["account_id", "user_id"], 
+            :name => "index_user_companies_on_account_id_user_id"
+  add_index "user_companies", ["account_id", "company_id"], 
+            :name => "index_user_companies_on_account_id_company_id"
+
   create_table "user_emails", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
     t.integer  "user_id",          :limit => 8,                    :null => false

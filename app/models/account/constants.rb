@@ -1,5 +1,11 @@
 class Account < ActiveRecord::Base
 
+  DEFAULT_IN_OPERATOR_FIELDS = {
+    :ticket =>   ["priority", "ticket_type", "status", "source", "product_id", "responder_id", "group_id"] ,
+    :requester => ["time_zone", "language"],
+    :company => ["name"]
+  }
+
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc team people india us talk
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out
                           logs projects itil marketing partner store channel reseller resellers online

@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_cache_buster
   before_filter :logging_details 
   before_filter :remove_pjax_param 
-  #after_filter :set_last_active_time
+  after_filter :set_last_active_time
 
   after_filter :remove_rails_2_flash_after
 
@@ -243,7 +243,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_last_active_time
-      current_user.agent.update_last_active if current_user && current_user.agent? && !current_user.agent.nil?
+      current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
     end
 end
 

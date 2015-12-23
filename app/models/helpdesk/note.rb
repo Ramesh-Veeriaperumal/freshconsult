@@ -228,7 +228,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def save_response_time
     if human_note_for_ticket?
       ticket_state = notable.ticket_states   
-      if user.customer?  
+      if notable.customer_performed?(user)
         if notable.outbound_email?
           ticket_state.requester_responded_at = created_at  if can_set_requester_response?
         else

@@ -21,7 +21,8 @@ class User < ActiveRecord::Base
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
-  after_commit :update_tickets_company_id, on: :update, :if => :company_id_updated?
+  after_commit :set_user_company, on: :create, :if => :customer_id?
+  after_commit :update_tickets_company_id, :update_user_company, on: :update, :if => :company_id_updated?
 
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?
 
@@ -76,6 +77,19 @@ class User < ActiveRecord::Base
 
   def discard_contact_field_data
     self.flexifield.destroy
+  end
+
+  def set_user_company
+    user_companies.create(:company_id => customer_id)
+  end
+
+  def update_user_company
+    if customer_id.present?
+      user_companies.any? ? user_companies.first.update_attributes(:company_id => customer_id) : 
+                            set_user_company
+    elsif @model_changes.key?("customer_id")
+      user_companies.where(:company_id => @model_changes["customer_id"][0]).destroy_all
+    end
   end
 
   # This will also update the ticket's company in reports

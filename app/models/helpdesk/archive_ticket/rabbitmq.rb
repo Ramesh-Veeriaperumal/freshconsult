@@ -33,7 +33,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       "responder_id"     =>   responder_id,
       "agent_id"         =>   responder_id,
       "group_id"         =>   group_id,
-      "company_id"       =>   requester.customer_id,
+      "company_id"       =>   owner_id,
       "status"           =>   status,
       "priority"         =>   priority,
       "source"           =>   source,

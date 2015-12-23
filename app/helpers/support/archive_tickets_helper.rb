@@ -68,7 +68,7 @@ module Support::ArchiveTicketsHelper
   end
 
   def customer_survey_required?
-    can_access_support_ticket? && current_account && current_account.features?(:survey_links, :surveys) && @ticket.closed?
+    can_access_support_ticket? && current_user.customer? && current_account && current_account.features?(:survey_links, :surveys) && @ticket.closed?
   end
 
   def can_access_support_ticket?

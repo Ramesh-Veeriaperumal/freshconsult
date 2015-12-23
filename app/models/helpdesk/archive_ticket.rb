@@ -6,12 +6,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-  
+
   self.primary_key = :id
   belongs_to_account
   belongs_to :requester, :class_name => 'User'
   belongs_to :responder, :class_name => 'User', :conditions => 'users.helpdesk_agent = true'
   belongs_to :group
+
+  belongs_to :company, :foreign_key => :owner_id
   
   has_one :archive_ticket_association, 
         :class_name => "Helpdesk::ArchiveTicketAssociation",
@@ -20,11 +22,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
            :class_name => "Helpdesk::ArchiveNote",
            :dependent => :destroy
 
-  has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
+  has_many :inline_attachments, :class_name => "Helpdesk::Attachment",
                                 :conditions => { :attachable_type => "ArchiveTicket::Inline" },
                                 :foreign_key => "attachable_id",
                                 :dependent => :destroy
-                                
+
   has_many :activities, :class_name => 'Helpdesk::Activity',:as => :notable, :dependent => :destroy
   has_many :survey_handles, :as => :surveyable, :dependent => :destroy
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
@@ -45,19 +47,19 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
-  
+
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
-  
+
   has_many :public_notes,
     :class_name => 'Helpdesk::ArchiveNote',
     :conditions => { :private =>  false }
-  
+
   has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
   has_many_attachments
   has_many_cloud_files
-  
-  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, 
+
+  delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?,
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
 
   attr_protected :account_id
@@ -79,18 +81,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
-  
+
   scope :permissible , lambda { |user| { :conditions => agent_permission(user)} unless user.customer? }
-  scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ", 
+  scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ",
     user.id ], :order => 'created_at DESC' } }
   scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
   scope :all_company_tickets,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = archive_tickets.requester_id and 
-          users.account_id = archive_tickets.account_id ),
-        :conditions => [" users.customer_id = ?",company_id]
+        :conditions => [" owner_id = ?",company_id]
     } 
   }
-  scope :created_at_inside, lambda { |start, stop| { :conditions => 
+  scope :created_at_inside, lambda { |start, stop| { :conditions =>
     [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
   }
   # do we need this
@@ -98,14 +98,14 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   default_scope where(:progress => false)
 
   def self.agent_permission user
-    permissions = {
-      :all_tickets => [] , 
-      :group_tickets => ["group_id in (?) OR responder_id = ? OR requester_id = ?", 
-                  user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id], 
-      :assigned_tickets =>["responder_id = ?", user.id]
-    }
-                 
-    permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+    when :assigned_tickets
+      ["responder_id=?", user.id]
+    when :group_tickets
+      ["group_id in (?) OR responder_id=?", user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+    when :all_tickets
+      []
+    end
   end
 
   def self.sort_fields_options
@@ -123,7 +123,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def priority_name
     TicketConstants.translate_priority_name(priority)
   end
-  
+
   def priority_key
     PRIORITY_TOKEN_BY_KEY[priority]
   end
@@ -137,15 +137,15 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def is_twitter?
-    (tweet) and (tweet.twitter_handle) 
+    (tweet) and (tweet.twitter_handle)
   end
   alias :is_twitter :is_twitter?
 
   def is_facebook?
-     (fb_post) and (fb_post.facebook_page) 
+     (fb_post) and (fb_post.facebook_page)
   end
   alias :is_facebook :is_facebook?
- 
+
   def is_fb_message?
    (fb_post) and (fb_post.facebook_page) and (fb_post.message?)
   end
@@ -154,11 +154,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def is_fb_wall_post?
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
   end
-  
+
   def is_fb_comment?
     (fb_post) and (fb_post.comment?)
   end
-  
+
   def mobihelp?
     source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
   end
@@ -198,7 +198,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def cc_email_hash
     ticket = archive_ticket_association.association_data["helpdesk_tickets"]
     cc_email = ticket["cc_email"] if ticket.present?
-    if cc_email and cc_email.is_a?(Array)     
+    if cc_email and cc_email.is_a?(Array)
       {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
     else
       cc_email
@@ -225,21 +225,21 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def custom_field
-    account_ticket_fields.inject({}) do |hash, field| 
+    account_ticket_fields.inject({}) do |hash, field|
       hash[field.name] = custom_field_value(field.name) unless field.is_default_field?
       hash
     end
   end
 
   def non_text_custom_field
-    account_ticket_fields.inject({}) do |hash, field| 
+    account_ticket_fields.inject({}) do |hash, field|
       if !field.is_default_field? and !NON_TEXT_FIELDS.include?(field.field_type)
         hash[field.name] = custom_field_value(field.name)
       end
       hash
     end
   end
-  
+
   def account_ticket_fields
     @account_ticket_fields ||= Account.current.ticket_fields_with_nested_fields.includes([:picklist_values, :flexifield_def_entry])
   end
@@ -257,21 +257,21 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or 
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
                      included_in_to_emails?(from_email))
   end
-  
+
   def group_name
     group.nil? ? "No Group" : group.name
   end
-    
+
   def product_name
     self.product ? self.product.name : "No Product"
   end
 
   def company_name
-    requester.company.nil? ? "No company" : requester.company.name
+    company.nil? ? "No company" : company.name
   end
 
   def included_in_to_emails?(from_email)
@@ -279,7 +279,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def to_liquid
-    @archive_ticket_drop ||= Helpdesk::ArchiveTicketDrop.new self    
+    @archive_ticket_drop ||= Helpdesk::ArchiveTicketDrop.new self
   end
 
   def status_updated_at
@@ -317,12 +317,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def description_with_attachments
-    attachments.empty? ? description_html : 
+    attachments.empty? ? description_html :
         "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
   end
 
   def liquidize_attachments(attachments)
-    attachments.each_with_index.map { |a, i| 
+    attachments.each_with_index.map { |a, i|
       "#{i+1}. <a href='#{Rails.application.routes.url_helpers.helpdesk_attachment_url(a, :host => portal_host)}'>#{a.content_file_name}</a>"
       }.join("<br />")
   end
@@ -363,19 +363,58 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
+  def url_protocol
+    if self.product && !self.product.portal_url.blank?
+      self.product.portal.ssl_enabled? ? 'https' : 'http'
+    else
+      account.ssl_enabled? ? 'https' : 'http'
+    end
+  end
+
+  def support_ticket_path
+    "#{url_protocol}://#{portal_host}/support/tickets/#{display_id}"
+  end
+
+  ## Methods related to agent as a requester starts here ##
+  def customer_performed?(user)
+    user.customer? || agent_as_requester?(user.id)
+  end
+
+  def agent_as_requester?(user_id)
+    requester_id == user_id && requester.agent?
+  end
+
+  def accessible_in_helpdesk?(user)
+    user.privilege?(:manage_tickets) && (user.can_view_all_tickets? || restricted_agent_accessible?(user) || group_agent_accessible?(user))
+  end
+
+  def restricted_in_helpdesk?(user)
+    agent_as_requester?(user.id) && !accessible_in_helpdesk?(user)
+  end
+
+  def group_agent_accessible?(user)
+    user.group_ticket_permission && (responder_id == user.id || Account.current.agent_groups.where(:user_id => user.id, :group_id => group_id).present? )
+  end
+
+  def restricted_agent_accessible?(user)
+    user.assigned_ticket_permission && responder_id == user.id
+  end
+
+  ## Methods related to agent as a requester ends here ##
+
   def as_json(options = {}, deep=true)#TODO-RAILS3
     return super(options) unless options[:tailored_json].blank?
-     
-    options[:methods] = [:cc_email, :description, :description_html, :due_by, :frDueBy, 
-      :fr_escalated, :isescalate, :status_name, :requester_status_name, :priority_name, :source_name, 
+
+    options[:methods] = [:cc_email, :description, :description_html, :due_by, :frDueBy,
+      :fr_escalated, :isescalate, :status_name, :requester_status_name, :priority_name, :source_name,
       :requester_name,:responder_name, :to_emails, :product_id] unless options.has_key?(:methods)
-    
+
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id, :subject, :deleted]
       json_hsh = super options
       return json_hsh
     end
-    
+
     if deep
       self[:notes] = self.archive_notes
       options[:methods].push(:attachments)
@@ -393,16 +432,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
 
-    unless options[:basic].blank? #to give only the basic properties[basic prop set from 
+    unless options[:basic].blank? #to give only the basic properties[basic prop set from
       return super(:builder =>xml,:skip_instruct => true,:only =>[:display_id,:subject,:deleted],
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name, :responder_name])
     end
     ticket_attributes = [:archive_notes, :attachments]
     ticket_attributes = { :archive_notes => {},:attachments => {},:tags=> { :only => [:name] }}
     ticket_attributes = [] if options[:shallow]
-    super(:builder => xml, :root => "helpdesk-archived-ticket", 
-      :skip_instruct => true, :include => ticket_attributes, 
-      :except => [:account_id, :import_id, :archive_created_at, :archive_updated_at], 
+    super(:builder => xml, :root => "helpdesk-archived-ticket",
+      :skip_instruct => true, :include => ticket_attributes,
+      :except => [:account_id, :import_id, :archive_created_at, :archive_updated_at],
       :methods=>[:description, :description_html, :status_name, :requester_status_name, :priority_name, :source_name, :requester_name, :responder_name, :product_id]) do |xml|
       xml.to_emails do
         self.to_emails.each do |emails|
@@ -412,7 +451,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin
-           value = custom_field_value(field.name) 
+           value = custom_field_value(field.name)
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
 
            if(field.field_type == "nested_field")
@@ -421,9 +460,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
                 xml.tag!(nested_field.name.gsub(/[^0-9A-Za-z_]/, ''), nested_field_value) unless nested_field_value.blank?
               end
            end
-         
+
          rescue
-           end 
+           end
         end
       end
      end

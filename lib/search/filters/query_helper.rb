@@ -6,7 +6,7 @@ module Search::Filters::QueryHelper
     COLUMN_MAPPING = {
       #_Note_: From WF filters => ES field
       'helpdesk_schema_less_tickets.boolean_tc02' =>  'trashed',
-      'users.customer_id'                         =>  'company_id',
+      'owner_id'                                  =>  'company_id',
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers'
@@ -43,8 +43,7 @@ module Search::Filters::QueryHelper
       ({
         :group_tickets      =>  bool_filter(:should => [
                                                         group_id_es_filter('group_id', ['0']), 
-                                                        term_filter('responder_id', [User.current.id.to_s]), 
-                                                        term_filter('requester_id', [User.current.id.to_s])
+                                                        term_filter('responder_id', [User.current.id.to_s])
                                                         ]),
         :assigned_tickets   =>  term_filter('responder_id', [User.current.id.to_s])
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]

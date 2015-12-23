@@ -34,6 +34,18 @@ window.FactoryUI = {
 				.addClass(className)
 				.val(value);
 	},
+	multiple_text:function(_placeholder, _name, _value, _className){
+		var className	= _className || "",
+			placeholder = _placeholder || "",
+			name		= _name || "",
+			value		= _value || "";
+
+		var text_field = jQuery("<input type='text' />")
+				.prop({ "name": name, "placeholder":placeholder })
+				.addClass(className)
+				.val(value);
+		return text_field;
+	},
 	date: function(_placeholder, _name, _value, _className, _date_format) {
 		var className	= _className || "datepicker_popover",
 			placeholder = _placeholder || "",

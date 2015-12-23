@@ -19,7 +19,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
     def edit_data
       @event_input = ActiveSupport::JSON.encode @va_rule.filter_data[:events]
-      @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data[:conditions]
+      filter_data = change_to_in_operator @va_rule.filter_data[:conditions]
+      @filter_input = ActiveSupport::JSON.encode filter_data
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
     end
 

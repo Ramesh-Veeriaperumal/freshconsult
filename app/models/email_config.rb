@@ -45,7 +45,14 @@ class EmailConfig < ActiveRecord::Base
   
   def friendly_email_personalize(user_name)
     user_name = user_name ? user_name : name
-    active? ? "#{format(user_name)} <#{reply_email}>" : "support@#{account.full_domain}"
+    if active?
+      "#{format(user_name)} <#{reply_email}>"
+    elsif primary_role?
+      account.default_friendly_email_personalize(user_name)
+    else
+      product.try(:primary_email_config) ? product.primary_email_config.friendly_email_personalize(user_name) : 
+                                           account.default_friendly_email_personalize(user_name)
+    end
   end
 
   def set_activator_token

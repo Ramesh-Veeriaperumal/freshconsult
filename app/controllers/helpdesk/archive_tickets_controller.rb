@@ -180,9 +180,8 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
         params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in",
                               "condition"=>"helpdesk_tags.name", "value"=> params[:tag_name] }]
       elsif params[:company_id]
-        params["users.customer_id"] = params[:company_id]
         params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
-                              "condition"=>"users.customer_id", "value"=> params[:company_id] }]
+                              "condition"=>"owner_id", "value"=> params[:company_id] }]
     end
   end
 

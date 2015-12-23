@@ -1,21 +1,11 @@
 module Helpdesk::Permissions
 
-  def verify_ticket_permission(ticket, handle_xhr = false)    
+  def verify_ticket_permission(ticket)    
     verified = true
     unless ticket && current_user && current_user.has_ticket_permission?(ticket) && !ticket.trashed
       verified = false
       flash[:notice] = access_denied_message
-      if handle_xhr
-        if params['format'] == "widget"
-          return false
-        elsif request.xhr?
-          params[:redirect] = "true"
-        else
-          redirect_to helpdesk_tickets_url
-        end
-      else
-        handle_responses(helpdesk_tickets_url)
-      end  
+      handle_responses(helpdesk_tickets_url)
     end
     verified
   end

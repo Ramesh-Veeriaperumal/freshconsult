@@ -10,7 +10,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 		<%= user_avatar(activity[:user], :thumb, 'preview_pic circle') %>
 	</div>
 	<% end %>
-	<div class="commentbox <%= (activity[:user].blank? or activity[:user].agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
+	<div class="commentbox <%= (activity[:user].blank? or note.notable.agent_performed?(activity[:user])) ? 'commentbox-gray' : 'commentbox-requester' %>">
 		<div class="tag">
 			<%= t('activities.tag.' + activity[:important][:type], :value => activity[:important][:value] ).html_safe %>
 		</div>
