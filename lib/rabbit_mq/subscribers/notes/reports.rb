@@ -75,7 +75,7 @@ module RabbitMq::Subscribers::Notes::Reports
     end
     
     def customer_reply?
-      (incoming && notable.customer_performed?(user))
+      notable.customer_performed?(user)
     end
     
     def consecutive_agent_response?
