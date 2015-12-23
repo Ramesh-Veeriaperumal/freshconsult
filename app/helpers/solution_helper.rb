@@ -68,10 +68,16 @@ module SolutionHelper
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					opts = { "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+						"data-target" => "#new-cat"
+					}
 					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					opts = { "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+						"data-target" => "#new-fold"
+					}
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					opts = { :"data-pjax" => "#body-container" }
@@ -100,9 +106,13 @@ module SolutionHelper
 	def new_btn_opts(type)
 		case type
 		when :category
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+				"data-target" => "#new-cat" })
 		when :folder
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+				"data-target" => "#new-fold" })
 		when :article
 			{ :"data-pjax" => "#body-container", :rel => nil }
 		end
@@ -279,7 +289,7 @@ module SolutionHelper
 		}
 		options.merge!({:rel => "freshdialog",
 			:data => {
-			"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
+			"modal-title" => "#{t("solution.edit_#{category}")}#{language_label(language)}",
 			"target" => "#version-#{solution_meta.id}-l#{language.id}",
 			"close-label" => t('cancel'),
 			"submit-label" => t('save')
@@ -311,6 +321,11 @@ module SolutionHelper
       classes << 'draft' if meta_obj.send("#{language.to_key}_draft_present?")
     end
     classes.join(' ')
+  end
+
+  def language_label(l = current_account.language_object)
+  	return "" unless current_account.multilingual?
+  	content_tag(:span, l.name, :class => 'label pull-right')
   end
 
 	def primary_preview(primary, identifier, current_obj = nil)
