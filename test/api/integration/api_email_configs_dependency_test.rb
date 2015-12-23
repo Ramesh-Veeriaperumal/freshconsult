@@ -15,7 +15,7 @@ class ApiEmailConfigsDependencyTest < ActionDispatch::IntegrationTest
 
   def test_validations_email_config
     actual = EmailConfig.validators.map { |x| [x.class, x.attributes, x.options] }
-    expected =  [[ActiveModel::Validations::PresenceValidator, [:to_email, :reply_email], {}], [ActiveModel::Validations::FormatValidator, [:to_email], {:with=>/\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i, :message=>"is invalid"}], [ActiveRecord::Validations::UniquenessValidator, [:reply_email], {:case_sensitive=>true, :scope=>:account_id}], [ActiveModel::Validations::FormatValidator, [:reply_email], {:with=>/\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i, :message=>"is invalid"}], [ActiveRecord::Validations::UniquenessValidator, [:activator_token], {:case_sensitive=>true, :allow_nil=>true}]]
+    expected =  [[ActiveModel::Validations::PresenceValidator, [:to_email, :reply_email], {}], [ActiveModel::Validations::FormatValidator, [:to_email], { with: /\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i, message: 'is invalid' }], [ActiveRecord::Validations::UniquenessValidator, [:reply_email], { case_sensitive: true, scope: :account_id }], [ActiveModel::Validations::FormatValidator, [:reply_email], { with: /\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i, message: 'is invalid' }], [ActiveRecord::Validations::UniquenessValidator, [:activator_token], { case_sensitive: true, allow_nil: true }]]
     assert_equal expected, actual
   end
 end

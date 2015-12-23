@@ -15,7 +15,6 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
     # In the case of dependant fields it is possible to have choices as empty array. Hence, the below check is included.
     record.errors[attribute] << :should_be_blank if value.present? && inclusion_list.empty?
 
-
     unless inclusion_list.include?(value) || inclusion_list.empty?
 
       # message should be different if the attribute is required but not defined.

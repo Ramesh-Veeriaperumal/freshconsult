@@ -39,24 +39,25 @@ module ApiDiscussions
       match_json([bad_request_error_pattern('answer', :invalid_field)])
       post.topic.update_column(:stamp_type, 6)
     end
+
     def test_update_post_answer
       post = quick_create_post
       assert_equal 7, post.topic.stamp_type
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
-      match_json(comment_pattern({answer: true }, post.reload))
+      match_json(comment_pattern({ answer: true }, post.reload))
       assert_response 200
       assert_equal 6, post.topic.reload.stamp_type
       assert post.reload.answer
 
-      other_post = post.topic.posts.create(user_id: @agent.id, body_html: "test", forum_id: post.topic.forum_id)
+      other_post = post.topic.posts.create(user_id: @agent.id, body_html: 'test', forum_id: post.topic.forum_id)
       put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: true)
       assert_response 200
-      match_json(comment_pattern({answer: true }, other_post.reload))
+      match_json(comment_pattern({ answer: true }, other_post.reload))
       refute post.reload.answer
       assert other_post.reload.answer
 
       put :update, construct_params({ id: other_post.id }, body_html: 'test reply 2', answer: false)
-      match_json(comment_pattern({answer: false }, other_post.reload))
+      match_json(comment_pattern({ answer: false }, other_post.reload))
       assert_response 200
       assert_equal 7, post.topic.reload.stamp_type
       refute other_post.reload.answer
@@ -95,7 +96,7 @@ module ApiDiscussions
     def test_update_with_extra_params
       comment =  comment_obj
       put :update, construct_params({ id: comment.id }, topic_id: topic_obj, created_at: Time.zone.now.to_s,
-                                                     updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
+                                                        updated_at: Time.zone.now.to_s, email:  Faker::Internet.email, user_id: customer.id)
       assert_response 400
       match_json([bad_request_error_pattern('topic_id', :invalid_field),
                   bad_request_error_pattern('created_at', :invalid_field),
@@ -137,7 +138,7 @@ module ApiDiscussions
       assert_response 201
       match_json(comment_pattern(Post.last))
       match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
-                                user_id: @agent.id }, Post.last))
+                                   user_id: @agent.id }, Post.last))
     end
 
     def test_create_returns_location_header
@@ -146,7 +147,7 @@ module ApiDiscussions
       assert_response 201
       match_json(comment_pattern(Post.last))
       match_json(comment_pattern({ body_html: 'test', topic_id: topic.id,
-                                user_id: @agent.id }, Post.last))
+                                   user_id: @agent.id }, Post.last))
       result = parse_response(@response.body)
       assert_equal true, response.headers.include?('Location')
       assert_equal "http://#{@request.host}/api/v2/discussions/comments/#{result['id']}", response.headers['Location']

@@ -62,7 +62,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
     ApiDiscussions::CategoriesController.any_instance.expects(:create).never
     post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers
-    assert_nil ForumCategory.find_by_name("testdd_truested_ip")
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 403
     response.body.must_match_json_expression(message: String)
   ensure
@@ -74,7 +74,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_trusted_ip_invalid_shard
     ShardMapping.stubs(:lookup_with_domain).returns(nil)
     ApiDiscussions::CategoriesController.any_instance.expects(:select_shard).once
-    post '/api/discussions/categories', {"name" => "testdd_truested_ip"}.to_json, @write_headers
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
   ensure
     Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
     Middleware::TrustedIp.any_instance.unstub(:valid_ip)
@@ -86,7 +86,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
     ApiApplicationController.any_instance.expects(:route_not_found).once
     post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers.merge('HTTP_HOST' => 'billing.junk.com')
-    assert_nil ForumCategory.find_by_name("testdd_truested_ip")
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 404
   ensure
     Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
@@ -667,7 +667,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    skip_bullet {get "/api/v2/tickets/#{id}?include=notes", nil, @headers}
+    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
@@ -709,35 +709,35 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_pagination_with_invalid_datatype_string
     get 'api/discussions/categories?page=x&per_page=x', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-      bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     assert_response 400
   end
 
   def test_pagination_with_blank_values
     get 'api/discussions/categories?page=&per_page=', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-      bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     assert_response 400
   end
 
   def test_pagination_with_invalid_value
     get 'api/discussions/categories?page=0&per_page=0', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-      bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     assert_response 400
   end
 
   def test_pagination_with_invalid_negative_value
     get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-      bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     assert_response 400
   end
 
   def test_pagination_with_invalid_datatype_array
     get 'api/discussions/categories?page[]=1&per_page[]=1', nil, @headers
     match_json([bad_request_error_pattern('page', :invalid_field),
-      bad_request_error_pattern('per_page', :invalid_field)])
+                bad_request_error_pattern('per_page', :invalid_field)])
     assert_response 400
   end
 

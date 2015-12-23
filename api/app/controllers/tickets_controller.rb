@@ -65,7 +65,7 @@ class TicketsController < ApiApplicationController
 
     def load_objects
       super tickets_filter.preload(:ticket_old_body,
-                                    :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
+                                   :schema_less_ticket, flexifield: { flexifield_def: :flexifield_def_entries })
     end
 
     def after_load_object

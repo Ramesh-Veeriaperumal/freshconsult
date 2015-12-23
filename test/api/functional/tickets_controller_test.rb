@@ -1161,9 +1161,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_inconsistency_already_in_model
     user = add_new_user(@account)
     user.update_attribute(:blocked, true)
-    params = {requester_id: user.id, email_config_id: 8888, responder_id: 8888, group_id: 8888}
+    params = { requester_id: user.id, email_config_id: 8888, responder_id: 8888, group_id: 8888 }
     t = ticket
-    Helpdesk::Ticket.update_all(params, {:id => t.id} )
+    Helpdesk::Ticket.update_all(params, id: t.id)
     t.schema_less_ticket.update_column(:product_id, 8888)
     t.schema_less_ticket.reload
     put :update, construct_params({ id: t.display_id }, params)

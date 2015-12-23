@@ -253,7 +253,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def validate_filter_params(additional_fields = [])
-      # This method has been overridden by index actions that have filters on them. 
+      # This method has been overridden by index actions that have filters on them.
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
@@ -340,7 +340,7 @@ class ApiApplicationController < MetalApiController
       else
         # before_callbacks may return false without populating the errors hash.
         Rails.logger.error("API Error Hash empty :: Params: #{params.inspect}")
-        notify_new_relic_agent(StandardError, {description: 'API Error Hash empty', params: params})
+        notify_new_relic_agent(StandardError, description: 'API Error Hash empty', params: params)
         render_base_error(:internal_error, 500)
       end
     end

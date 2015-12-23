@@ -56,7 +56,7 @@ class ContactValidation < ApiValidation
       end
     end
 
-    alias contact_detail_missing_update contact_detail_missing
+    alias_method :contact_detail_missing_update, :contact_detail_missing
 
     def validate_avatar
       if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)

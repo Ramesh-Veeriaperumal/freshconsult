@@ -29,7 +29,7 @@ class TicketValidation < ApiValidation
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
   validate :due_by_gt_created_at, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
   validate :fr_due_gt_created_at, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
-  validate :due_by_gt_fr_due_by, if: -> {(@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank?}
+  validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }

@@ -666,8 +666,8 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_contact_blocked_in_future_should_not_be_listed_in_the_index
     current_timezone = Time.zone
     current_agent_timezone = @agent.time_zone
-    Time.zone = "Astana"
-    @agent.time_zone = "Astana"
+    Time.zone = 'Astana'
+    @agent.time_zone = 'Astana'
     sample_user = get_user
     sample_user.update_attribute(:blocked, true)
     sample_user.update_attribute(:blocked_at, Time.zone.now + 5.days + 3.hours)

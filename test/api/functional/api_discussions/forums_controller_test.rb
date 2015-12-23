@@ -495,7 +495,7 @@ module ApiDiscussions
     end
 
     def test_is_following_without_privilege_invalid_user_id
-      get :is_following, controller_params({user_id: ['1'], id: f_obj.id}, false)
+      get :is_following, controller_params({ user_id: ['1'], id: f_obj.id }, false)
       assert_response 400
       match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
