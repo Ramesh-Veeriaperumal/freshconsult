@@ -198,8 +198,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
-        self.additional_emails = get_email_array($1)[1..-1]
-        self.reply_to_email = parse_email($1)
+        self.additional_emails = get_email_array($1.strip)[1..-1]
+        self.reply_to_email = parse_email($1.strip)
       end
       reply_to_email
     end
@@ -236,7 +236,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       #Assigns email of reply_to if feature is present or gets it from params[:from]
       #Will fail if there is spaces and no key after reply_to or has a garbage string
-      f_email = reply_to_email || parse_email(params[:from])
+      f_email = reply_to_email || parse_email(params[:from].strip)
       
       #Ticket will be created for no_reply if there is no other reply_to
       f_email = reply_to_email if valid_from_email?(f_email, reply_to_feature)
