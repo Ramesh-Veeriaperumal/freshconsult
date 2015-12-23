@@ -201,8 +201,8 @@ staging:
     scope: read write sign
     api_key: cjw2pjzf2s9fbvkz8863wwmt
  shopify:
-   consumer_token: e160240bdc6507d0945c6ee6971cb263
-   consumer_secret: dc44a9d893c1963eac73f3d843fc1f69
+   consumer_token: b78ef7808d2dba974b17fd21dc94201f
+   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
    options:
       scope: 'read_orders'   
  box:
@@ -267,8 +267,8 @@ production:
     api_key: d499g57y8synva8crhycgmfx
     scope: read write sign
  shopify:
-   consumer_token: 00db090ddd4d64ff5c40d5129ae8cafd
-   consumer_secret: 44b5aa84216bc6cc6b08eb04377234b7
+   consumer_token: b78ef7808d2dba974b17fd21dc94201f
+   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
    options:
          scope: 'read_orders'
  box:

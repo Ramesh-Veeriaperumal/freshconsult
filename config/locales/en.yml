@@ -6285,7 +6285,7 @@ en:
       add_private_note_in_fd: "Add a private note in Freshdesk."
       add_public_note_in_fd: "Add a public note in Freshdesk."
     quickbooks:
-      label: "QuickBooks<span class='beta'>Preview</span>"
+      label: "QuickBooks"
       desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
       connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
       remote_configurations:
@@ -6578,6 +6578,8 @@ en:
       pivotal_updates: "Select to get updates from Pivotal Tracker"
     marketplace_login:
       associate_account:
+        email: Email
+        user_name: Name
         new_account: New account
         existing_user: Existing account
         company_name: Company Name

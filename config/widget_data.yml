@@ -300,8 +300,10 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-              CustomWidget.include_js("/javascripts/integrations/shopify.js");
               shopifyBundle={domain:"https://{{shopify.shop_name}}", reqEmail:"{{requester.email}}", widget_type:"{{widget_type}}" } ;
+              Fjax.Assets.integration('shopify', function () {
+                new ShopifyWidget(shopifyBundle);
+              });
           </script>
   name: shopify_widget
   id: 19

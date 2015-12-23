@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento"].each do |provider|
+  ["github","salesforce", "magento", "shopify"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -786,6 +786,14 @@ Helpkit::Application.routes.draw do
       namespace :quickbooks_sso do
         get :open_id
         get :open_id_complete
+      end
+
+      namespace :shopify do
+        get :signup
+        get :landing
+        put :install
+        get :create
+        post :receive_webhook
       end
 
       namespace :signup do
