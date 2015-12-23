@@ -32,6 +32,18 @@ module IntegrationServices
     def prepare_request
     end
 
+    def encode_path_with_params(path, params={})
+      [URI.escape(path),encode_params(params)].reject { |url_element| url_element.empty? }.join("?")
+    end
+
+    def encode_params params = {}
+      (params || {}).collect { |k,v| "#{uri_escape(k)}=#{uri_escape(v)}"}.join("&")
+    end
+
+    def uri_escape element
+      URI.escape(element.to_s,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    end
+
     def self.default_http_options
       @@default_http_options ||= {
         :request => {:timeout => 10, :open_timeout => 5},

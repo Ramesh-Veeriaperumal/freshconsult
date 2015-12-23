@@ -41,9 +41,10 @@ module IntegrationServices::Services
         return { "totalSize" => 0, "done" => true, "records" => [] } if email.blank?
         address_fields = ["MailingStreet","MailingCity","MailingState","MailingCountry","MailingPostalCode"]
         fields = format_selected_fields fields, address_fields
+        email = escape_reserved_chars email
         soql = "SELECT #{fields} FROM Contact WHERE Email = '#{email}'"
-        request_url = "#{salesforce_old_rest_url}/query?q=#{soql}"
-        url  = URI.encode(request_url.strip)
+        request_url = "#{salesforce_old_rest_url}/query"
+        url = encode_path_with_params request_url, :q => soql 
         response = http_get url
         process_response(response, 200) do |contact|
           return contact
