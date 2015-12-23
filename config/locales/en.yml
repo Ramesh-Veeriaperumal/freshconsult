@@ -2084,7 +2084,7 @@ en:
     agent_as_requester:
       ticket_create: Your ticket has been created.
       ticket_show: You don't have access to this ticket here.
-      view_on_portal: <a href = %{support_ticket_link}> View on customer portal</a>
+      view_ticket_on_portal:  <a href = %{support_ticket_link} target=_blank> View on customer portal </a>
     password_expiry: "Your password will expire in %{time_in_words}"
     gmail_gadgets:
       kvp_missing: "Invalid authentication.  Reopen the mail and try again."
@@ -5844,7 +5844,7 @@ en:
         delete: "Are you sure you want to delete this view?"
     messages:
       new_view : Now all the tickets you requested can be seen under a new default view called <b> Tickets I requested </b>
-      out_of_scope: Can't find a ticket you requested here? <a href = '%{support_tickets}' target=_blank> View in your customer portal </a>
+      out_of_scope: Tickets you requested, for which you don't have agent permission can be seen in your customer portal. <a href = %{support_tickets} target=_blank> Go to customer portal </a>
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
