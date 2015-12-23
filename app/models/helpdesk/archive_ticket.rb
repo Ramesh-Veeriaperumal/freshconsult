@@ -372,7 +372,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def support_ticket_path
-    "#{url_protocol}://#{portal_host}/support/tickets/#{display_id}"
+    "#{url_protocol}://#{portal_host}/support/tickets/archived/#{display_id}"
   end
 
   ## Methods related to agent as a requester starts here ##
@@ -382,6 +382,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def agent_as_requester?(user_id)
     requester_id == user_id && requester.agent?
+  end
+
+  def agent_performed?(user)
+    user.agent? && !agent_as_requester?(user.id)
   end
 
   def accessible_in_helpdesk?(user)

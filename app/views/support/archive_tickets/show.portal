@@ -29,7 +29,7 @@
 
 		<section id="ticket-comments">
 			{% for comment in ticket.public_comments %}
-				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
+				<section class="user-comment {% if comment.by_agent %} comment-by-agent {% endif %}" 
 						 id="ticket-note-{{ comment.id }}">
 
 					<div class="user-info">
