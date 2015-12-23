@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "75800162d2d38887288afa700bee24b121517b9fa4fd5b9f4356be3d57a8784d",
-    "current": "75800162d2d38887288afa700bee24b121517b9fa4fd5b9f4356be3d57a8784d"
+    "previous": "c60762bbccdd03d21175843b10ba12c3d86f71ac163fbc7076806a38063b5804",
+    "current": "c60762bbccdd03d21175843b10ba12c3d86f71ac163fbc7076806a38063b5804"
   },
   "fonts": [
-    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.ttf",
-    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.svg",
-    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.woff",
-    "public/assets/glyphs_75800162d2d38887288afa700bee24b1.eot"
+    "public/assets/glyphs_c60762bbccdd03d21175843b10ba12c3.ttf",
+    "public/assets/glyphs_c60762bbccdd03d21175843b10ba12c3.svg",
+    "public/assets/glyphs_c60762bbccdd03d21175843b10ba12c3.woff",
+    "public/assets/glyphs_c60762bbccdd03d21175843b10ba12c3.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -162,6 +162,10 @@
       "codepoint": 61916,
       "source": "public/glyphs/vectors/categories-orphan.svg"
     },
+    "category": {
+      "codepoint": 61953,
+      "source": "public/glyphs/vectors/category.svg"
+    },
     "chat": {
       "codepoint": 61885,
       "source": "public/glyphs/vectors/chat.svg"
@@ -301,6 +305,10 @@
     "dropbox": {
       "codepoint": 61747,
       "source": "public/glyphs/vectors/dropbox.svg"
+    },
+    "dropdown-circle": {
+      "codepoint": 61954,
+      "source": "public/glyphs/vectors/dropdown-circle.svg"
     },
     "dropdown_blank": {
       "codepoint": 61748,
@@ -1028,6 +1036,10 @@
     "config": "config/fontcustom.yml",
     "css_selector": ".ficon-{{glyph}}",
     "debug": false,
+    "font_ascent": 448,
+    "font_descent": 64,
+    "font_design_size": 16,
+    "font_em": 512,
     "font_name": "glyphs",
     "force": true,
     "input": {
@@ -1042,6 +1054,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",
