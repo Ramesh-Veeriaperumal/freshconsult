@@ -28,6 +28,15 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_show_a_contact_with_avatar
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    sample_user = get_user
+    sample_user.build_avatar({content_content_type: file.content_type, content_file_name: file.original_filename})
+    get :show, construct_params(id: sample_user.id)
+    match_json(contact_pattern(sample_user.reload))
+    assert_response 200
+  end
+
   def test_show_a_non_existing_contact
     sample_user = get_user
     get :show, construct_params(id: 0)
