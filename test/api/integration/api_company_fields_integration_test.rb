@@ -6,7 +6,7 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_api_index_query_count = 1
-      v2_index_query_count = 13
+      v2_index_query_count = 14
       # index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
         get('/api/v2/company_fields.json', nil, @headers)
@@ -18,7 +18,7 @@ class ApiCompanyFieldsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      v1[:index] += 1 # account suspended check is done in v2 alone.
+      v1[:index] += 3 # account suspended check is done in v2 alone. trusted_ip
 
       write_to_file(v1, v2)
 

@@ -8,7 +8,7 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_contact_fields: 1,
 
-        contact_fields: 14
+        contact_fields: 15
       }
 
       # contact_fields
@@ -21,7 +21,7 @@ class ApiContactFieldsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      v1[:contact_fields] += 1 # account suspended check is done in v2 alone.
+      v1[:contact_fields] += 2 # account suspended check is done in v2 alone& trusted_ip
 
       write_to_file(v1, v2)
 

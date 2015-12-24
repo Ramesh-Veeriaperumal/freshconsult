@@ -32,8 +32,8 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 8,
         api_index: 1,
 
-        update: 17,
-        index: 11
+        update: 18,
+        index: 12
       }
       agent = add_test_agent(@account)
       sp1 = create_sla_policy(agent)
@@ -62,6 +62,8 @@ class ApiSlaPoliciesIntegrationTest < ActionDispatch::IntegrationTest
         get('/api/v2/sla_policies', nil, @headers)
         assert_response 200
       end
+
+      v1[:index] += 1 # trusted_ip
 
       write_to_file(v1, v2)
 

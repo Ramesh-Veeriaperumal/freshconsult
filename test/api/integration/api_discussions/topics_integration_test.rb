@@ -17,14 +17,14 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         api_is_following: 1,
         api_posts: 2,
 
-        create: 45,
-        show: 12,
-        update: 34,
-        destroy: 28,
-        follow: 13,
-        unfollow: 20,
+        create: 44,
+        show: 13,
+        update: 35,
+        destroy: 29,
+        follow: 14,
+        unfollow: 21,
         is_following: 12,
-        posts: 13
+        posts: 14
       }
 
       forum_id = create_test_forum(ForumCategory.first).id
@@ -98,6 +98,8 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         get(api_follow_path, nil, @headers)
         assert_response 204
       end
+
+      v2[:is_following] -= 1 # trusted_ip
 
       # unfollow
       v1[:unfollow] = count_queries do

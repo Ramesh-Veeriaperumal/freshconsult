@@ -24,6 +24,7 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       assert_response 200
     end
 
+    v2[:show] -= 1
     v1[:show] += 1 # account suspended check is done in v2 alone.
 
     # index
@@ -35,6 +36,8 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       get('/agents.json', nil, @headers)
       assert_response 200
     end
+
+    v2[:index] -= 1
 
     write_to_file(v1, v2)
 
