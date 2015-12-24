@@ -2,9 +2,9 @@ class ApiTicketFieldsController < ApiApplicationController
   private
 
     def validate_filter_params
-      params.permit(:type, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      ticket_field_filter = ApiTicketFieldFilterValidation.new(params, nil, true)
-      render_errors(ticket_field_filter.errors, ticket_field_filter.error_options) unless ticket_field_filter.valid?
+      params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
+      errors = [[:type, :blank]] if params.key?(:type) && ApiTicketConstants::FIELD_TYPES.exclude?(params[:type])
+      render_errors errors if errors
     end
 
     def scoper

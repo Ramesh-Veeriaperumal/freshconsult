@@ -219,13 +219,9 @@ module ApiDiscussions
 
     def test_update_without_edit_topic_privilege
       topic = first_topic
-      Topic.any_instance.stubs(:user_id).returns(other_user.id)
       User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
       assert_response 403
-    ensure
-      User.any_instance.unstub(:privilege?)
-      Topic.any_instance.unstub(:user_id)
     end
 
     def test_update_with_email

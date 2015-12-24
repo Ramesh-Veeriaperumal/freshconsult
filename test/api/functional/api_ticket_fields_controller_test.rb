@@ -185,7 +185,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter_value
     get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, list:  ApiTicketConstants::FIELD_TYPES.join(','))])
+    match_json([bad_request_error_pattern('type', :"can't be blank")])
   end
 
   def test_index_with_valid_filter
@@ -194,20 +194,5 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal ['nested_field'], response.map { |x| x['type'] }.uniq
     assert_equal 1, response.count
-  end
-
-  def test_index_with_pagination
-    get :index, controller_params(per_page: 1)
-    assert_response 200
-    assert JSON.parse(response.body).count == 1
-    get :index, controller_params(per_page: 1, page: 2)
-    assert_response 200
-    assert JSON.parse(response.body).count == 1
-  end
-
-  def test_index_with_pagination_exceeds_limit
-    get :index, controller_params(per_page: 101)
-    assert_response 400
-    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
   end
 end
