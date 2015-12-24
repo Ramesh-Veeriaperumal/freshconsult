@@ -138,8 +138,12 @@ module Solution::ArticlesHelper
       </span>).html_safe
   end
 
-  def formatted_value number
-    number_to_human(number, :units => {:thousand => "K", :million => "M", :billion => "B"}).delete(' ')
+  def humanize_stats number
+    opts = number >= 1000 ? { :class => 'tooltip', :title => number_with_delimiter(number) } : {}
+    content_tag(:span, number_to_human(number, 
+                                    :units => Solution::Constants::HUMANIZE_STATS, 
+                                    :precision => 1, 
+                                    :significant => false).delete(' '), opts)
   end
   
 end

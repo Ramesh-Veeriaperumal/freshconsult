@@ -53,4 +53,12 @@ module Solution::Constants
                   }
   }
 
+  HUMANIZE_STATS = {
+    :thousand => "K+", 
+    :million => "M+", 
+    :billion => "B+",
+    :trillion => "T+",
+    :quadrillion => "Q+"
+  }
+
 end
