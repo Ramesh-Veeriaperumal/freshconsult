@@ -15,7 +15,6 @@ window.App = window.App || {};
       this.bindForCancelBtn();
       this.bindForEditBtn();
 
-      this.dummyActionButtonTriggers();
       this.modalBindings();
       this.outdateOrUpdate();
     },

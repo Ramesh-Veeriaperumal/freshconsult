@@ -8,7 +8,7 @@
 
 	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sticky_title do %>
-		<%= render :partial => "language_tabs" %>
+		<%= render :partial => "language_tabs" if Account.current.multilingual? %>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
 		</div>
@@ -16,13 +16,13 @@
 	<% content_for :sticky_right do %>
 	  <%= preview_portal(support_solutions_article_path(@article, :url_locale => @language.code), @article.solution_folder_meta.solution_category_meta) if @article.published? %>
 	  <% if privilege?(:publish_solution) %>
-      <% unless @article.draft.present? && @article.draft.locked? %>
+      <% unless @article.new_record? || (@article.draft.present? && @article.draft.locked?) %>
     	  <div class="pagination-right edit-container">
     	    <a href="javascript:void(0)" class="btn btn-primary article-edit-btn"><%= t('edit') %></a>
     	  </div>
       <% end %>
     <% end %>
-    <div class="pagination-right breadcrumb-btns hide">
+    <div class="pagination-right breadcrumb-btns <%= 'hide' unless @article.new_record? %>">
       <%= article_btns('save-btn', 'publish-btn') %>
     </div>
 	<% end %>

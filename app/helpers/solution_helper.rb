@@ -281,10 +281,9 @@ module SolutionHelper
 
 	def language_icon(solution_meta, language)
 		category = solution_meta.class.short_name
-		availability_flag = solution_meta.send("#{language.to_key}_available?")
 		options = { 
 			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
-			:title => language_label_title(language, availability_flag),
+			:title => language_label_title(language, solution_meta.send("#{language.to_key}_available?")),
 			:id => "version-#{solution_meta.id}-#{language.id}",
 		}
 		options.merge!({:rel => "freshdialog",
@@ -298,8 +297,7 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
-							availability_flag ? solution_article_version_path(solution_meta.id, language.code) :
-							solution_new_article_version_path(solution_meta.id, language.code) :
+							solution_article_version_path(solution_meta.id, language.code) :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
 	end

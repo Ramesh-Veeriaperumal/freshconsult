@@ -46,7 +46,7 @@ toolbar ||= false
   <div class="sticky_title"><%= yield :sticky_title %></div>
   <% if toolbar %>
     <div class="clearfix"></div>
-    <div id="sticky_redactor_toolbar" class="hide <%= 'language-multi' if @article.present? && @article.new_record? %>"></div>
+    <div id="sticky_redactor_toolbar" class="hide <%= 'article-version' if @article.present? && !@article_meta.new_record? %>"></div>
   <% end %>
 </div>
 <div class="clearfix"></div>
