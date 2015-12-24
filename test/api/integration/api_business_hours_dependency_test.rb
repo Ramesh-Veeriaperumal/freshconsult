@@ -8,7 +8,7 @@ class ApiBusinessHoursDependencyTest < ActionDispatch::IntegrationTest
                         :remove_rails_2_flash_before, :check_account_state, :set_time_zone, :check_day_pass_usage,
                         :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details, :remove_pjax_param,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :set_selected_tab,
-                        :load_object]
+                        :load_object, :set_last_active_time]
     actual_filters = Admin::BusinessCalendarsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
