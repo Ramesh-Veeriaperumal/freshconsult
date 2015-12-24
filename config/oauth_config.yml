@@ -131,6 +131,11 @@ defaults: &defaults
     prompt: none
     scope: https://www.googleapis.com/auth/calendar profile email
     name: google_gadget
+ shopify:
+  consumer_token: b78ef7808d2dba974b17fd21dc94201f
+  consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
+  options:
+    scope: 'read_orders'
   
 test:
  <<: *defaults
