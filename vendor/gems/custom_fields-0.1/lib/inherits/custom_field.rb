@@ -27,6 +27,7 @@ module Inherits
 
         scope :custom_fields, :conditions => ["field_type > '#{MAX_DEFAULT_FIELDS}'"]
         scope :deleted, :conditions => { :deleted => true }
+        scope :custom_dropdown_fields, :conditions => ["field_type = #{CUSTOM_FIELD_PROPS[:custom_dropdown][:type]}"]
 
         include InstanceMethods
         include ApiMethods

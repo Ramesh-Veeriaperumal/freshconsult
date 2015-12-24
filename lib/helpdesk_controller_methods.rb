@@ -5,12 +5,12 @@ module HelpdeskControllerMethods
   include Helpdesk::NoteActions
   include CloudFilesHelper
   include Helpdesk::Permissions
-  
+
   def self.included(base)
     base.send :before_filter, :build_item,          :only => [:new, :create]
-    base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]   
+    base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
-    base.send :before_filter, :add_to_history,      :only => [:show] 
+    base.send :before_filter, :add_to_history,      :only => [:show]
   end
 
   def create
@@ -21,29 +21,33 @@ module HelpdeskControllerMethods
       create_error
     end
   end
-  
-  def post_persist #Need to check whether this should be called only inside create by Shan to do 
-    #create_attachments 
+
+  def post_persist #Need to check whether this should be called only inside create by Shan to do
+    #create_attachments
     if @item.is_a?(Helpdesk::Ticket) and @item.outbound_email?
       flash[:notice] = I18n.t('flash.general.create.compose_email_success')
     else
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     end
-    process_item #    
+    process_item #
     options = {}
     options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
     #redirect_back_or_default redirect_url
-    respond_to do |format|
-      format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
-      format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
-      format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
-      format.js
-      format.mobile {
-        render :json => {:success => true,:item => @item , :success_message => I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)}.to_json
-      }
-      format.json { 
-        render :json => @item.to_json(options)
-      }
+    if @item.is_a?(Helpdesk::Ticket) && params[:action] == "create" && !api_request? && @item.restricted_in_helpdesk?(current_user)
+      helpdesk_restricted_access_redirection(@item, 'flash.agent_as_requester.ticket_create')
+    else
+      respond_to do |format|
+        format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
+        format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
+        format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
+        format.js
+        format.mobile {
+          render :json => {:success => true,:item => @item , :success_message => I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)}.to_json
+        }
+        format.json {
+          render :json => @item.to_json(options)
+        }
+      end
     end
   end
 
@@ -51,14 +55,14 @@ module HelpdeskControllerMethods
     respond_to do |format|
       format.html { render :action => :new }
       format.xml  { render :xml => @item.errors }
-      format.widget { 
+      format.widget {
         flash[:error] = "Error in creating the ticket. Try again later."
         render :action=>:create_ticket_status, :layout => "widgets/contacts"
       }
       format.mobile {
         render :json => { :failure => true, :errors => @item.errors.fd_json }
       }
-      format.all {# TODO-RAILS3 
+      format.all {# TODO-RAILS3
         render :text => " ", :status => 406
       }
     end
@@ -86,11 +90,11 @@ module HelpdeskControllerMethods
         item.destroy
       end
     end
-    
+
     options = params[:basic].blank? ? {:basic=>true} : params[:basic].to_s.eql?("true") ? {:basic => true} : {}
     respond_to do |expects|
-      expects.html do 
-        process_destroy_message  
+      expects.html do
+        process_destroy_message
         redirect_to after_destroy_url
       end
       expects.mobile{
@@ -100,9 +104,9 @@ module HelpdeskControllerMethods
         render :json => {:success => true}
       }
       expects.json  { render :json => :deleted}
-      expects.js { 
+      expects.js {
         process_destroy_message
-        after_destroy_js 
+        after_destroy_js
       }
       #until we impl query based retrieve we show only limited data on deletion.
       expects.xml{ render :xml => @items.to_xml(options)}
@@ -120,7 +124,7 @@ module HelpdeskControllerMethods
       result.html{
         flash[:notice] = render_to_string(
           :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items).html_safe
-        redirect_to after_restore_url 
+        redirect_to after_restore_url
       }
       result.mobile { render :json => { :success => true }}
       result.nmobile { render :json => { :success => true }}
@@ -135,11 +139,11 @@ module HelpdeskControllerMethods
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan (POSSIBLE DEAD CODE)
     items = autocomplete_scoper.find(
-      :all, 
-      :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account], 
+      :all,
+      :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account],
       :limit => 30)
 
-    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.send(autocomplete_field)} } } 
+    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.send(autocomplete_field)} } }
 
     respond_to do |format|
       format.json { render :json => r.to_json }
@@ -158,7 +162,7 @@ protected
   end
 
   def nscname
-    @nscname ||= controller_path.gsub('/', '_').singularize 
+    @nscname ||= controller_path.gsub('/', '_').singularize
   end
 
   def autocomplete_scoper
@@ -175,14 +179,14 @@ protected
 
   def load_by_param(id)
     @temp_item = scoper.find_by_id(id.to_i)
-    
+
     #by Shan new
     raise(ActiveRecord::RecordNotFound) if (@temp_item.respond_to?('account_id=') && @temp_item.account_id != current_account.id)
     @temp_item
   end
 
   def load_item
-    @item = self.instance_variable_set('@' + cname, load_by_param(params[:id])) 
+    @item = self.instance_variable_set('@' + cname, load_by_param(params[:id]))
     #raise(ActiveRecord::RecordNotFound) if (@item.respond_to?('account_id=') && @item.account_id != current_account.id)
     #by Shan temp
     @item || raise(ActiveRecord::RecordNotFound)
@@ -199,15 +203,15 @@ protected
 
   def load_multiple_items
     @items = (params[:ids] || Array.wrap(params[:id])).map { |id| load_by_param(id) }.select{ |r| r }
-    self.instance_variable_set('@' + cname.pluralize, @items) 
+    self.instance_variable_set('@' + cname.pluralize, @items)
   end
-  
+
   def build_item
     logger.debug "testing the caller class:: #{nscname} and cname::#{cname}"
     @item = self.instance_variable_set('@' + cname,
       scoper.is_a?(Class) ? scoper.new(params[nscname]) : scoper.build(params[nscname]))
     set_item_user
-    
+
     @item
   end
 
@@ -219,14 +223,14 @@ protected
   def process_item
     # Hook for controllers to add post create/update code
   end
-  
+
   def process_destroy_message
     flash[:notice] = render_to_string(:partial => '/helpdesk/shared/flash/delete_notice').html_safe
     # Hook for controllers to add their own message and redirect
   end
 
   def load_parent_ticket # possible dead code
-    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
+    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless @parent
   end
 
@@ -237,7 +241,7 @@ protected
   end
 
   def optionally_load_parent
-    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) 
+    @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
   end
 
   def build_attachments item, model_name
@@ -259,17 +263,17 @@ protected
       end
  end
 
-  def item_url 
+  def item_url
     @item
   end
 
   def after_destroy_url
     :back
   end
-  
+
   def after_destroy_js
-    render(:update) { |page| 
-      @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
+    render(:update) { |page|
+      @items.each { |i| page.visual_effect('fade', dom_id(i)) }
       if @cname == "note"
         page << "trigger_event('note_deleted', #{to_event_data(@items[0])});"
         page << "if(document.getElementById('cnt-reply-quoted')){"
@@ -280,8 +284,8 @@ protected
         attachment_details = ticket_page_attachment(attachment)
         if attachment_details
           if attachment_details[:attachments_count] > 0
-            page.replace_html "#{attachment_details[:type]}_attachments_title_#{attachment_details[:id]}", 
-                              pluralize(attachment_details[:attachments_count], 
+            page.replace_html "#{attachment_details[:type]}_attachments_title_#{attachment_details[:id]}",
+                              pluralize(attachment_details[:attachments_count],
                                         "Attachment")
           else
             page.replace_html "#{attachment_details[:type]}_attachments_container_#{attachment_details[:id]}", ""
@@ -295,7 +299,7 @@ protected
       show_ajax_flash(page)
     }
   end
-  
+
   def after_restore_url
     return :back if params[:redirect_back] or @items.size>1
     return @items.first if @items.size == 1
@@ -307,7 +311,7 @@ protected
     return unless item.respond_to? :nickname
 
     page = {
-      :title => item.nickname, 
+      :title => item.nickname,
       :url => {
         :controller => params[:controller],
         :action => params[:action],
@@ -323,7 +327,7 @@ protected
       history << page
       session[:helpdesk_history] = history
     end
-  end 
+  end
 
   def fetch_item_attachments
     return unless @item.is_a? Helpdesk::Note and @item.fwd_email?
@@ -357,6 +361,28 @@ protected
 
   def scoper_user_filters
     current_account.ticket_filters.my_ticket_filters(current_user)
+  end
+
+  def helpdesk_restricted_access_redirection(ticket, msg)
+    view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => ticket.support_ticket_path)
+    redirect_msg =  "#{I18n.t(:"#{msg}")} #{view_on_portal_msg}".html_safe
+    flash[:notice] = redirect_msg
+    respond_to do |format|
+        format.html { redirect_to helpdesk_tickets_url }
+        format.xml  { render :xml => {:message => redirect_msg } }
+        format.widget { render :text => redirect_msg }
+        format.js
+        format.mobile {
+          render :json => {:message => redirect_msg }
+        }
+        format.json {
+          render :json => {:message => redirect_msg }
+        }
+    end
+  end
+
+  def api_request?
+    params[:format] == "json" || params[:format] == "xml"
   end
 
 end

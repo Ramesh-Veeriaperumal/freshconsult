@@ -35,6 +35,7 @@ window.App = window.App || {};
 			core.actions.closeFilterMenu();
 			core.actions.hideTicketList();
 			core.actions.hideViewMore();
+			core.flushDataTable();
 		}
 	}
 }(window.jQuery));

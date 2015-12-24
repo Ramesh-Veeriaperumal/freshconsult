@@ -5,7 +5,7 @@
   script: |- 
           <script type="text/javascript">
               CustomWidget.include_js("/javascripts/capsule_crm.js")
-              capsuleBundle={ t:"{{capsule_crm.api_key}}", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name | escape_html}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}", domain:"{{capsule_crm.domain}}", title:"{{capsule_crm.title}}"};
+              capsuleBundle={ t:"{{capsule_crm.api_key}}", reqId:"{{requester.id}}", reqName:"{{requester.name | make_vaild_javascript}}", reqOrg:"{{requester.company_name | make_vaild_javascript}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}", domain:"{{capsule_crm.domain}}", title:"{{capsule_crm.title}}"};
           </script>
   name: contact_widget
   id: 1
@@ -18,7 +18,7 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            freshbooksBundle={domain:"{{freshbooks.api_url}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", invoice_type:"{{freshbooks.invoice_option}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email | escape_html}}", reqCompany:"{{requester.company_name | escape_html}}",reqName:"{{requester.name | escape_html}}", widget_type:"{{widget_type}}"};
+            freshbooksBundle={domain:"{{freshbooks.api_url}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", invoice_type:"{{freshbooks.invoice_option}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.display_id}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email | make_vaild_javascript}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}",reqName:"{{requester.name | make_vaild_javascript}}", widget_type:"{{widget_type}}"};
             Fjax.Assets.integration('freshbooks', function () {
               if ("{{widget_type}}" == "_contacts") {
                 new FreshbooksContactWidget(freshbooksBundle);
@@ -58,7 +58,7 @@
            </pre>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/atlassian-jira.js");
-            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | h}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
+            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_url:"{{ticket.public_url}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}", attachments: {{cloud_files}} } ;
             Fjax.Assets.integration('jira', function () {
               new JiraWidget(jiraBundle);
             });
@@ -99,7 +99,7 @@
 
   script: |-
           <script type="text/javascript">
-            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | escape_html}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name}}" } ;
+            var salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", contactLabels:"{{salesforce.contact_labels}}", leadLabels:"{{salesforce.lead_labels}}", reqName:"{{requester.name | make_vaild_javascript}}" , accountLabels:"{{salesforce.account_labels}}", accountFields:"{{salesforce.account_fields}}" , reqCompany : "{{requester.company_name | make_vaild_javascript}}" } ;
             Fjax.Assets.integration('salesforce', function () {
               new SalesforceWidget(salesforceBundle);
             });
@@ -118,7 +118,7 @@
             </div>
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/logmein.js");
-            logmeinBundle={ticketId:"{{ticket.raw_id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name | h}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
+            logmeinBundle={ticketId:"{{ticket.raw_id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name | make_vaild_javascript}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
            </script>
   name: logmein_widget
   id: 8
@@ -131,7 +131,7 @@
 
   script: |-
           <script type="text/javascript">
-              batchbookBundle={ domain:"{{batchbook.domain}}", k:"{{batchbook.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | escape_html}}", ver: "{{batchbook.version}}"};        
+              batchbookBundle={ domain:"{{batchbook.domain}}", k:"{{batchbook.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | make_vaild_javascript}}", ver: "{{batchbook.version}}"};        
               CustomWidget.include_js("/javascripts/integrations/batchbook.js");
           </script>
   name: batchbook_widget
@@ -145,7 +145,7 @@
 
   script: |-
           <script type="text/javascript">
-              highrise_options={ domain:"{{highrise.domain}}", k:"{{highrise.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | escape_html}}"};
+              highrise_options={ domain:"{{highrise.domain}}", k:"{{highrise.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | make_vaild_javascript}}"};
               CustomWidget.include_js("/javascripts/integrations/highrise.js");
           </script>
   name: highrise_widget
@@ -161,7 +161,7 @@
   script: |-
           <script type="text/javascript">
               CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
-              mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname | escape_html}}" , lname: "{{requester.lastname | escape_html}}"  } ;
+              mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}" , fname: "{{requester.firstname | make_vaild_javascript}}" , lname: "{{requester.lastname | make_vaild_javascript}}"  } ;
           </script>
   name: mailchimp_widget
   id: 11
@@ -176,7 +176,7 @@
   script: |-
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/constantcontact.js");
-            ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
+            ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
           </script>
   name: constantcontact_widget
   id: 12
@@ -191,7 +191,7 @@
   script: |-
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/icontact.js");
-            icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
+            icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
           </script>
   name: icontact_widget
   id: 13
@@ -206,7 +206,7 @@
   script: |-
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/campaignmonitor.js");
-            cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}"};
+            cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}"};
           </script>
   name: campaignmonitor_widget
   id: 14
@@ -219,7 +219,7 @@
 
   script: |-
           <script type="text/javascript">
-              zohocrm_options={ k:"{{zohocrm.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | escape_html}}"};
+              zohocrm_options={ k:"{{zohocrm.api_key}}", reqEmail: "{{requester.email}}", reqName: "{{requester.name | make_vaild_javascript}}"};
               CustomWidget.include_js("/javascripts/integrations/zohocrm.js");
           </script>
   name: zohocrm_widget
@@ -257,7 +257,7 @@
               application_id: {{application.id}},
               oauth_token:"{{installed_app.user_access_token}}",
               ticket_id: parseInt('{{ticket.id}}'),
-              ticket_subject: "{{ticket.subject | encode_html | strip_newlines}}",
+              ticket_subject: "{{ticket.subject | make_vaild_javascript}}",
               events_list: [{{installed_app.events_list}}],
               oauth_url: "{{installed_app.oauth_url}}"
             };
@@ -275,7 +275,7 @@
   script: |- 
           <script type="text/javascript">
             CustomWidget.include_js("/javascripts/integrations/nimble.js");
-            nimbleBundle={domain:"{{nimble.instance_url}}", reqName: "{{requester.name | escape_html}}", reqEmail:"{{requester.email}}", oauth_token:"{{nimble.oauth_token}}" } ;
+            nimbleBundle={domain:"{{nimble.instance_url}}", reqName: "{{requester.name | make_vaild_javascript}}", reqEmail:"{{requester.email}}", oauth_token:"{{nimble.oauth_token}}" } ;
           </script>
   name: nimble_widget
   id: 17
@@ -286,7 +286,7 @@
   script: |-
           <div class="sloading loading-block loading-small" id="pivotal_tracker_loading"></div>
           <script type="text/javascript">
-            pivotal_bundle={ticketId:"{{ticket.id}}", ticketSubject:"{{ticket.subject | h}}", get_pivotal_updates:"{{integrated_resource["get_updates"]}}",webhooks_application_ids:"{{integrated_resource["webhooks_application_ids"]}}",local_integratable_id:"{{integrated_resource["local_integratable_id"]}}", remote_integratable_id:"{{integrated_resource["remote_integratable_id"]}}", resource_id:"{{integrated_resource["resource_id"]}}", reqEmail:"{{requester.email}}" , application_id:"{{application.id}}"};
+            pivotal_bundle={ticketId:"{{ticket.id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", get_pivotal_updates:"{{integrated_resource["get_updates"]}}",webhooks_application_ids:"{{integrated_resource["webhooks_application_ids"]}}",local_integratable_id:"{{integrated_resource["local_integratable_id"]}}", remote_integratable_id:"{{integrated_resource["remote_integratable_id"]}}", resource_id:"{{integrated_resource["resource_id"]}}", reqEmail:"{{requester.email}}" , application_id:"{{application.id}}"};
             CustomWidget.include_js("/javascripts/integrations/pivotal_tracker.js");
           </script>
   name: pivotal_tracker_widget
@@ -300,8 +300,10 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-              CustomWidget.include_js("/javascripts/integrations/shopify.js");
               shopifyBundle={domain:"https://{{shopify.shop_name}}", reqEmail:"{{requester.email}}", widget_type:"{{widget_type}}" } ;
+              Fjax.Assets.integration('shopify', function () {
+                new ShopifyWidget(shopifyBundle);
+              });
           </script>
   name: shopify_widget
   id: 19
@@ -340,7 +342,7 @@
     - helpdesk_tickets_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", invoice_option:"{{quickbooks.invoice_option}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqId:"{{requester.id}}", reqCompany:"{{requester.company_name | escape_html}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name | escape_html}}", ticketId:"{{ticket.id}}"};
+            quickbooksBundle={domain:"https://quickbooks.api.intuit.com", token_renewal_date:"{{quickbooks.token_renewal_date}}", invoice_option:"{{quickbooks.invoice_option}}", companyId:"{{quickbooks.company_id}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", reqId:"{{requester.id}}", reqCompany:"{{requester.company_name | make_vaild_javascript}}", agentEmail:"{{agent.email}}", agentName:"{{agent.name | make_vaild_javascript}}", ticketId:"{{ticket.id}}"};
             Fjax.Assets.integration('quickbooks', function () {
               if ("{{widget_type}}" == "_contacts") {
                 new QuickBooksContactsWidget(quickbooksBundle);
@@ -363,7 +365,7 @@
     - helpdesk_tickets_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            xeroBundle={invoice_name:"",integrated_resource_id:"",remote_integratable_id:"",reqEmail:"{{requester.email}}", reqName:"{{requester.name | escape_html}}", reqCompanyName:"{{requester.company_name | escape_html}}",application_id:"{{application.id}}", ticket_id:"{{ticket.id}}", ticket_timesheet: {{timesheet}} } ;
+            xeroBundle={invoice_name:"",integrated_resource_id:"",remote_integratable_id:"",reqEmail:"{{requester.email}}", reqName:"{{requester.name | make_vaild_javascript}}", reqCompanyName:"{{requester.company_name | make_vaild_javascript}}",application_id:"{{application.id}}", ticket_id:"{{ticket.id}}", ticket_timesheet: {{timesheet}} } ;
             CustomWidget.include_js("/javascripts/integrations/xero.js");
           </script>
   name: xero_widget
@@ -376,7 +378,7 @@
     - helpdesk_tickets_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            githubBundle={can_set_milestone:"{{github.can_set_milestone}}", application_id:"{{application.id}}", integrated_resource_id:"", remote_integratable_id:"", ticketId:"{{ticket.id}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | h}}", repositories:{{installed_app.configs_repositories}} };
+            githubBundle={can_set_milestone:"{{github.can_set_milestone}}", application_id:"{{application.id}}", integrated_resource_id:"", remote_integratable_id:"", ticketId:"{{ticket.id}}",ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | make_vaild_javascript}}", repositories:{{installed_app.configs_repositories}} };
             Fjax.Assets.integration('github', function () {
               new GithubWidget();
             });

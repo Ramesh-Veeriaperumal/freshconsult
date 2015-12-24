@@ -138,9 +138,24 @@ class Account < ActiveRecord::Base
   def active_groups
     active_groups_in_account(id)
   end
-  
-  def reports_enabled?
-    true
+
+  def fields_with_in_operators
+    custom_dropdown = "custom_dropdown"
+    default_in_op_fields = Hash.new
+
+    default_in_op_fields[:ticket] = DEFAULT_IN_OPERATOR_FIELDS[:ticket].clone
+    default_in_op_fields[:ticket] << custom_dropdown_fields_from_cache.map(&:name)
+    default_in_op_fields[:ticket].flatten!
+
+    default_in_op_fields[:requester] = DEFAULT_IN_OPERATOR_FIELDS[:requester].clone
+    default_in_op_fields[:requester] << contact_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:requester].flatten!
+
+    default_in_op_fields[:company] = DEFAULT_IN_OPERATOR_FIELDS[:company].clone
+    default_in_op_fields[:company] << company_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:company].flatten!
+
+    default_in_op_fields.stringify_keys!
   end
 
   class << self # class methods

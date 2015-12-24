@@ -272,15 +272,6 @@ var FreshfoneUser,
 			this.setStatus(status);
 		},
 
-		bridgeQueuedCalls: function () {
-			if (!this.online) { return false; }
-			$.ajax({
-				url: '/freshfone/queue/bridge',
-				type: 'POST',
-				success: function (data) {  }
-			});
-		},
-
 		publishLiveCall: function (dontUpdateCallCount) {
 			var self = this;
 			self.setStatus(userStatus.BUSY);

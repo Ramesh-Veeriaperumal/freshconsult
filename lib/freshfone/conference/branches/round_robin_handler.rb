@@ -26,7 +26,7 @@ module Freshfone::Conference::Branches::RoundRobinHandler
 
     def reset_presence_for_forward_calls
       return unless params[:CallStatus] == 'completed'
-      check_for_bridged_calls
+      update_mobile_user_presence
     end
 
     def batch_agents_ids

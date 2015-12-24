@@ -32,7 +32,7 @@
 			.report-title-block{
 				margin-top: 7px;
 				display: inline-block;
-				cursor: auto;
+				cursor: pointer;
 				vertical-align: top;
 				#report-title{
 					font-size: 20px;
@@ -44,9 +44,6 @@
 					padding-top: 2px;
 				}
 			}
-			.data-refresh{
-				padding: 5px;
-			}
 			.selected-menu-logo{
 				text-align: center;
 				color: #5c5c5c;
@@ -55,13 +52,13 @@
 				}
 			}
 			.generate-pdf-button{
-				float: right;
+				@include float(right);
 				color: #06c;
 				background:none!important;
 				border:none; 
 				font: inherit;
 				cursor: pointer;
-				margin-right: 8px;
+				@include margin-right(8px);
 				margin-top: 7px;
 
 				&:hover{
@@ -69,7 +66,7 @@
 				}
 			}
 			.pdf-export-info{
-				padding-right: 10px;
+				@include padding-right(10px);
 				font-size: 14px;
 			}
 		}
@@ -121,7 +118,7 @@
 							display: inline-block;
 						}
 						font-size: 14px;
-						height: 45px;
+						min-height: 45px;
 						line-height: 45px;
 						padding: 0px 25px 0 18px;
 						color: #7f7f7f;
@@ -246,7 +243,7 @@
 		line-height : 0;
 
 		.title_wrapper{
-			float : left;
+			@include float(left);
 
 			.metric_title{
 				font-size: 15px;
@@ -268,12 +265,12 @@
 			display: inline-block;
 			font-weight: bold;
 			font-size: 13px;
-			float: right;
+			@include float(right);
 		}
 
 		.cross {
 			width: 29px;
-			float: right;
+			@include float(right);
 			cursor: pointer;
 			margin : 20px 0;	
 		}
@@ -332,7 +329,7 @@
 		
 		.link1{
 			padding : 0px 12px;
-			border-right: 1px solid #333;
+			@include border-right(1px solid #333);
 			display: inline-block;
 		}
 
@@ -870,16 +867,16 @@
 	   	}
 	}
 }	
-/*Agent summary table*/
-.summary-table{
-
-	margin: 40px auto;
-	.data-wrapper{
-		display: block;
-		min-height: 100px;
-		position: relative;
-		border-top-left-radius: 8px;
-		overflow: hidden;	 	 
+	/* Summary table*/
+	.summary-table{
+		margin: 40px auto;
+		.data-wrapper{
+			display: block;
+			min-height: 100px;
+			position: relative;
+			border-top-left-radius: 8px;
+			overflow: hidden;	 	 
+		}
 	}
 	table.dataTable{
 		border-spacing: 0;
@@ -988,11 +985,15 @@
 		    right: -6px;
 		}
 	}
-	.DTFC_LeftHeadWrapper{
+	.DTFC_LeftHeadWrapper , .fixedColumns{
 		@extend .sorting_style;
 	}
 	.dataTables_scrollHeadInner{
 		@extend .sorting_style;
+	}
+	/* Disable Trackpad scroll */
+	.dataTables_scrollBody{
+		overflow: hidden !important;
 	}
 	
 	/* Pagination Button */
@@ -1100,7 +1101,7 @@
 		@include float(left);
 		margin-top: 15px;
 	}
-} /* end of summary table */
+ /* end of summary table */
 
 .no-data-section {
 	margin: 20px auto;

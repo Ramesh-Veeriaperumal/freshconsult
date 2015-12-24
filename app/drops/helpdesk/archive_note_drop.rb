@@ -19,6 +19,10 @@ class Helpdesk::ArchiveNoteDrop < BaseDrop
 	def commenter
 		@source.user
 	end
+	
+	def by_agent
+		user.agent && @source.archive_ticket.requester_id != user.id
+	end
 
 	def note_ticket
 		@source.notable

@@ -1171,8 +1171,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_index_with_agent_has_group_ticket_permission
     Agent.any_instance.stubs(:ticket_permission).returns(2)
-    group_id = (Group.first || create_group).id
-    User.any_instance.stubs(:agent_groups).returns([AgentGroup.new(group_id: group_id)])
+    group_id = create_group_with_agents(@account, agent_list: [@agent.id])
     user = add_new_user(@account)
     Helpdesk::Ticket.update_all(responder_id: nil, group_id: nil, requester_id: user.id)
     Helpdesk::TimeSheet.first.workable.update_column(:group_id, group_id)
@@ -1182,7 +1181,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     assert_equal expected, JSON.parse(response.body).count
   ensure
     Agent.any_instance.unstub(:ticket_permission)
-    User.any_instance.unstub(:agent_groups)
+    Group.find(group_id).destroy
   end
 
   def test_index_with_agent_has_all_ticket_permission

@@ -113,3 +113,14 @@ end %>
 	</div>
 <% end %>
 
+<script type="text/javascript">
+/* NOTE : the following is to make plug code work on both ticket and contact pages using FreshApp.run(<app_code>). 
+          Talk to Raghav or Arun before making any changes here */
+
+if(page_type == "ticket"){
+  jQuery(document).on("sidebar_loaded", function(event) {
+    jQuery(document).trigger("dom_helper_loaded");
+    window.postMessage({type: "FA_INITIATE"}, "*");
+  });
+}
+</script>

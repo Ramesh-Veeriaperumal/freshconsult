@@ -80,7 +80,6 @@ module Reports::HelpdeskReportControllerMethods
     # Prepending flexifields and users class to match the condition as in ticket list view data hash
     parsed_data_hash.each do |x|
       x['condition'].prepend('flexifields.') if x['condition'].include?('ffs_')
-      x['condition'].prepend('users.') if x['condition'] == 'customer_id'
     end
 
     Reports::Constants::REPORTS_GLANCE_TICKET_VIEW[glance_type.to_sym].each do |report_type|

@@ -11,7 +11,7 @@ class TopicMailer < ActionMailer::Base
     headers = {
       :to        => emailcoll,
       :from      => sender,
-      :subject   => "[New Topic] in #{topic.forum.name}",
+      :subject   => "[New Topic] #{topic.title} in #{topic.forum.name}",
       :sent_on   => Time.now
     }
     inline_attachments = []

@@ -3,6 +3,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
   include Freshfone::CallHistory
   include Freshfone::NumberMethods
   include Freshfone::Presence
+  include Freshfone::Queue
   include Freshfone::Endpoints
   include Freshfone::Conference::EndCallActions
 
@@ -175,6 +176,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
 
     def check_and_initiate_voicemail
       current_call.update_attributes(:agent => nil)
+      check_for_queued_calls
       initiate_voicemail
       empty_twiml
     end

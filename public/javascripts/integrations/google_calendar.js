@@ -601,13 +601,13 @@ GoogleCalendar.prototype = {
 
 			// description = "";
 			if(description.length > 120) description = description.substring(0, 120) + "...";
-			cal_html += this.EVENT_TEMPLATE.evaluate({event_description: description,
-												event_summary: calEvents[evNo].summary,
+			cal_html += this.EVENT_TEMPLATE.evaluate({event_description: escapeHtml(description),
+												event_summary: escapeHtml(calEvents[evNo].summary),
 												formatted_time: formatEventTime(calEvents[evNo].start, calEvents[evNo].end),
 												custom_class: isFutureEvent(ev)?'':'past-event', 
 												id: calEvents[evNo].id,
 												event_link: calEvents[evNo].htmlLink,
-												event_location: calEvents[evNo].location
+												event_location: escapeHtml(calEvents[evNo].location)
 											});	
 			evNo++;
 		}

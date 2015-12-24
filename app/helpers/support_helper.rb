@@ -88,6 +88,8 @@ module SupportHelper
 
 		# Showing portal login link or signout link based on user logged in condition
 		if portal['user']
+			# Show switch to agent portal if the loggedin user is an agent
+			output << %(<b><a href="#{ portal['helpdesk_url']}">#{ t('header.goto_agent_portal') }</a></b> | ) if portal['user'].agent?
 			# Showing profile settings path for loggedin user
 			output << %(<b><a href="#{ portal['profile_url'] }">#{ t('header.edit_profile') }</a></b>)
 			# Showing Signout path for loggedin user

@@ -187,7 +187,9 @@
         dateFormat = jQuery(this).data('date-format');
       }
       jQuery(this).datepicker({
-        dateFormat: dateFormat
+        dateFormat: dateFormat,
+        changeMonth:true,
+        changeYear:true,
       });
       if(jQuery(this).data('showImage')) {
         jQuery(this).datepicker('option', 'showOn', "both" );

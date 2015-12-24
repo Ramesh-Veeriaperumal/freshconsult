@@ -38,10 +38,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
           Rails.logger.info "Redirecting to google_contacts oauth."
           redirect_to "#{oauth2_url(@installed_application)}"
           return
-        elsif @installing_application.name == "shopify"
-          shop_name = (@installed_application.configs_shop_name.include? ".myshopify.com") ? @installed_application.configs_shop_name : @installed_application.configs_shop_name+".myshopify.com"
-          redirect_to "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
-          return
         end
         flash[:notice] = t(:'flash.application.install.success')
       else
@@ -63,13 +59,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       begin
         @installed_application.save!
         flash[:notice] = t(:'flash.application.update.success')
-      
-        if @installed_application.application.name == "shopify"
-          shop_name = (@installed_application.configs_shop_name.include? ".myshopify.com") ? @installed_application.configs_shop_name : @installed_application.configs_shop_name+".myshopify.com"
-          redirect_to "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
-          return
-        end
-
       rescue VersionDetectionError => e
         flash[:error] = t("integrations.batchbook.detect_error")
       rescue => e

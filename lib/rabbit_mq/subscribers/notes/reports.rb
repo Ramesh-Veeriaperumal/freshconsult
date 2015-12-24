@@ -19,7 +19,7 @@ module RabbitMq::Subscribers::Notes::Reports
   end
 
   def mq_reports_valid(action, model)
-    account.reports_enabled? && valid_model?(model) && send("#{model}_valid?", action)
+    valid_model?(model) && send("#{model}_valid?", action)
   end
 
   private
@@ -75,7 +75,7 @@ module RabbitMq::Subscribers::Notes::Reports
     end
     
     def customer_reply?
-      (incoming && user.customer?)
+      notable.customer_performed?(user)
     end
     
     def consecutive_agent_response?

@@ -181,6 +181,11 @@ class Portal < ActiveRecord::Base
   def full_name
     main_portal && name.blank? ? Account.current.name : name
   end
+  
+  def tickets_url
+    main_portal ? "#{Account.current.full_url}/support/tickets" : "#{url_protocol}://#{portal_url}/support/tickets"
+  end
+  
 
   private
 

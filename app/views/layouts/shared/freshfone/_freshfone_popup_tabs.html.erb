@@ -1,10 +1,11 @@
 <ul class="popupbox-tabs ongoing hide">
-	<li>
-		<a href="#no_popup" class="end_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
-		<%= font_icon "ff-phone-reject", :size => 24 %></a>
-	</li><li class="call_details no_action">
+	<li class="call_details no_action">
 		<!--<div id="incall_user_info"></div>-->
-		<a href="#" id="call_timings" class="call_duration">00:00</a>
+		<div class ="end_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
+		<a href="#no_popup" class="end_call_icon " >
+		<%= font_icon "ff-phone-reject", :size => 24 %></a>
+		<a href="#no_popup" id="call_timings" class="call_duration">00:00</a>
+		</div>
 	</li>
 	<li>
 		<a href="#no_popup" id="mute" class="mute tooltip <%=freshfone_non_conference_class%>" data-toggle="popupbox"

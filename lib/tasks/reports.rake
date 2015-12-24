@@ -10,7 +10,6 @@ namespace :reports do
         accounts.each do |account|
           begin
             account.make_current
-            next unless account.reports_enabled?
             Reports::BuildNoActivity.perform_async({:date => Time.now.utc})
           rescue Exception => e
             puts e.inspect
@@ -42,7 +41,7 @@ namespace :reports do
             if (current_export && current_export.status == 1)
               current_export.file_created!
               list_export = HelpdeskReports::Export::TicketList.new(message)
-              Sharding.run_on_slave { list_export.trigger }
+              Sharding.run_on_slave { list_export.perform }
               current_export.completed!
             else
               puts "Duplicate Reports Ticket Export task for Account :: #{account_id} : export_id :: #{export_id}"

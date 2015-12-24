@@ -1,6 +1,6 @@
 class HelpdeskReports::Response::Ticket::Base
 
-  include HelpdeskReports::Constants::Ticket
+  include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
 
   attr_accessor :raw_result, :processed_result, :date_range, :report_type

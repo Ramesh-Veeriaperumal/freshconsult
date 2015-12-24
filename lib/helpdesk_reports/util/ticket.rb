@@ -1,5 +1,5 @@
 module HelpdeskReports::Util::Ticket
-  include HelpdeskReports::Constants::Ticket
+  include HelpdeskReports::Constants
 
   def reverse_mapping_required? field
     return true if valid_field_name?(field) and [101, 107].include? REPORT_TYPE_BY_KEY[report_type]
@@ -81,15 +81,15 @@ module HelpdeskReports::Util::Ticket
   end
   
   def presentable_format value, metric
-    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Avg" ? time_format(value) : value
+    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Avg" ? hhmm(value) : value
   end
   
-  def time_format seconds
-    minutes = (seconds/60)%60
-    minutes = minutes > 9 ? "#{minutes}" : "0#{minutes}"
-    hours = seconds/(60*60)
-    hours = hours > 9 ? "#{hours}" : "0#{hours}"
-    "#{hours}:#{minutes}"
+  def hhmm(seconds)
+    seconds = 0 if seconds.nil?
+    hh = (seconds/3600).to_i
+    mm = ((seconds % 3600) / 60).to_i
+    ss = (seconds % 60).to_i
+    "#{hh.to_s.rjust(2,'0')}:#{mm.to_s.rjust(2,'0')}:#{ss.to_s.rjust(2,'0')}"
   end
   
 end

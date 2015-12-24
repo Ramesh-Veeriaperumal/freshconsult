@@ -422,6 +422,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamics_crm", :only => [:settings, :edit, :settings_update, :fields_update]
+    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"

@@ -28,7 +28,7 @@ class Helpdesk::Note < ActiveRecord::Base
       "source"      =>   source,
       "category"    =>   schema_less_note.category,
       "user_id"     =>   user_id,
-      "agent"       =>   (human_note_for_ticket? and !user.customer?),
+      "agent"       =>   (human_note_for_ticket? && notable.agent_performed?(user)),
       "private"     =>   private,
       "incoming"    =>   incoming,
       "deleted"     =>   deleted,

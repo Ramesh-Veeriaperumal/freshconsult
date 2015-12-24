@@ -24,14 +24,15 @@ class Integrations::Marketplace::LoginController < ApplicationController
   private
 
   def initialize_attr(data)
-    if data['email'] && data['remote_id']
+    if (data['email_not_reqd'] && data['remote_id']) || (data['email'] && data['remote_id'])
+      @email_not_reqd = data['email_not_reqd'] || false
       @email = data['email']
       @remote_id = data['remote_id']
-      @name = data['name']
-      @account = Account.new(:domain => '', :name => @name)
+      @name = data['user_name']
+      @account = Account.new(:domain => data['domain'], :name => data['account_name'])
       @user = @account.users.new(:email => @email, :name => @name)
       @operation = params[:operation] || ''
-      @app_name = params[:app] || ''
+      @app_name = params[:app] || data['app'] || ''
       @account_id = nil
       @remote_integ_mapping = get_remote_integ_mapping(@remote_id, @app_name)
       if @remote_integ_mapping.present?
@@ -44,10 +45,14 @@ class Integrations::Marketplace::LoginController < ApplicationController
   end
 
   def map_remote_user
-    if @email && @remote_id
+    if (@email || @email_not_reqd) && @remote_id
       if login_account.present?
         login_account.make_current
-        @domain_user = get_user(login_account, @email)
+        if @email_not_reqd
+          @domain_user = nil
+        else
+          @domain_user = get_user(login_account, @email)
+        end
         if @domain_user.nil?
           redirect_url = send(@app_name + '_url')
           redirect_to redirect_url and return
@@ -72,7 +77,7 @@ class Integrations::Marketplace::LoginController < ApplicationController
         @account_id = @remote_integ_mapping.account_id
       end
     end
-    @login_account = Account.find_by_id(@account_id) if @account_id
+    @login_account = Account.find(@account_id) if @account_id
   end
 
   def activate_user_and_redirect
