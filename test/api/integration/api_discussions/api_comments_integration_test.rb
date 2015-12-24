@@ -1,6 +1,6 @@
 require_relative '../../test_helper'
 
-class PostsIntegrationTest < ActionDispatch::IntegrationTest
+class ApiCommentsIntegrationTest < ActionDispatch::IntegrationTest
   include Helpers::DiscussionsTestHelper
 
   def test_query_count
@@ -12,7 +12,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 6,
         api_destroy: 9,
 
-        create: 34,
+        create: 35,
         update: 17,
         destroy: 30
       }
@@ -26,7 +26,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 201
       end
       v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
-        post("/api/discussions/topics/#{topic_id}/posts", v2_post_payload(t), @write_headers)
+        post("/api/discussions/topics/#{topic_id}/comments", v2_post_payload(t), @write_headers)
         assert_response 201
       end
 
@@ -39,7 +39,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
-        put("/api/discussions/posts/#{id1}", v2_post_payload(t), @write_headers)
+        put("/api/discussions/comments/#{id1}", v2_post_payload(t), @write_headers)
         assert_response 200
       end
 
@@ -49,7 +49,7 @@ class PostsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
-        delete("/api/discussions/posts/#{id1}", nil, @headers)
+        delete("/api/discussions/comments/#{id1}", nil, @headers)
         assert_response 204
       end
 

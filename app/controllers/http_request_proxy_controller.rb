@@ -29,7 +29,7 @@ class HttpRequestProxyController < ApplicationController
           render :status => :unauthorized and return unless current_user.privilege?(:admin_tasks)
           params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
         elsif params[:app_name] == APP_NAMES[:shopify]
-          params[:rest_url]["<shopifyauthtoken>"] = "#{installed_app.configs[:inputs]['oauth_token']}"
+          params[:custom_auth_header] = {'X-Shopify-Access-Token' => "#{installed_app.configs[:inputs]['oauth_token']}"}
         elsif params[:app_name] == "harvest"
           harvest_auth(installed_app)
         elsif params[:app_name] == "pivotal_tracker"

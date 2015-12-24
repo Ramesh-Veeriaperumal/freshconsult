@@ -21,9 +21,9 @@ class Freshfone::Number::Message
 		{ :message => message,
 			:messageType => message_type,
 			:attachmentId => attachment_id,
-			:attachmentName => attachment_name,
-			:attachmentUrl => attachment_url,
-			:recordingUrl => recording_url,
+			:attachmentName => CGI.escapeHTML(attachment_name || ""),
+			:attachmentUrl => CGI.escapeHTML(attachment_url || ""),
+			:recordingUrl => CGI.escapeHTML(recording_url || ""),
 			:type => type,
 			:group_id => group_id
 		}

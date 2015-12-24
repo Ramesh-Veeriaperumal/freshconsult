@@ -74,7 +74,6 @@ gem "dynamics_crm", "~> 0.4.1"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
-gem 'omniauth-shopify-oauth2', "1.0.0"
 
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do

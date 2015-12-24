@@ -256,7 +256,7 @@ module IntegrationServices::Services
       co_attributes = {}
       co_attributes["freshdesk__SalesforceAccount__c"] = sf_account_id
       co_attributes["freshdesk__SalesforceContact__c"] = sf_con_id
-      co_attributes["freshdesk__RequesterName__c"] = con_name_for_sync
+      co_attributes["freshdesk__RequesterName__c"] = con_name_for_sync.truncate(40)
       co_attributes
     end
 
@@ -270,7 +270,7 @@ module IntegrationServices::Services
       co_attributes["freshdesk__TicketDescription__c"] = ticket.description.truncate(32767)
       co_attributes["freshdesk__TicketStatus__c"]  = ticket.status_name
       co_attributes["freshdesk__AgentEmail__c"] = (ticket.responder.present?)? ticket.responder.email : nil
-      co_attributes["freshdesk__AgentName__c"] = (ticket.responder.present?)? ticket.responder.name : nil
+      co_attributes["freshdesk__AgentName__c"] = (ticket.responder.present?)? ticket.responder.name.truncate(40) : nil
       if ticket.responder.present?
         user_response  = contact_resource.find_user "Email = '#{ticket.responder.email}'"
         co_attributes["freshdesk__SalesforceUser__c"] = user_response["records"].first["Id"] unless user_response["records"].blank?

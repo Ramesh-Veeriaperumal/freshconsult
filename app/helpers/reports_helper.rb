@@ -2,6 +2,7 @@ module ReportsHelper
   
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Reports::CommonHelperMethods
   
   def current_start_time
     
@@ -31,10 +32,6 @@ module ReportsHelper
       content_tag( :li, pjax_link_to( link_content.html_safe, item_info[:url].html_safe ) )
   end
   
-  def bi_reports_ui_enabled?
-    current_account.reports_enabled? && ismember?(BI_REPORTS_UI_ENABLED, current_account.id)
-  end
-
   def freshfone_reports?
     feature?(:freshfone) && !current_account.freshfone_numbers.empty?
   end

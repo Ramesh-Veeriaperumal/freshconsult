@@ -228,7 +228,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def save_response_time
     if human_note_for_ticket?
       ticket_state = notable.ticket_states   
-      if user.customer?  
+      if notable.customer_performed?(user)
         if notable.outbound_email?
           ticket_state.requester_responded_at = created_at  if can_set_requester_response?
         else
@@ -263,7 +263,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     if ticket_state.first_response_time.nil?
       if notable.outbound_email?
-        resp_time_bhrs,resp_time = outbound_note_level_response
+        resp_time,resp_time_bhrs = outbound_note_level_response
       else
         notable.schema_less_ticket.set_first_response_id(id)
         resp_time,resp_time_bhrs = calculate_response_time(notable)

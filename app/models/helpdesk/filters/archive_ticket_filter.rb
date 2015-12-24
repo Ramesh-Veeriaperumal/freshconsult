@@ -48,7 +48,7 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
 
   def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
-    add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
+    add_condition("owner_id", :is_in, params[:company_id]) unless params[:company_id].blank?
   end
 
   def add_tag_filter(params)

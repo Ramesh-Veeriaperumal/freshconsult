@@ -105,6 +105,15 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_status_invalid
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { status: true, status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?
+    Account.unstub(:current)
+  end
+
   def test_complex_fields_with_nil
     Account.stubs(:current).returns(Account.first)
     controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], cc_emails: nil, tags: nil, custom_fields: nil, attachments: nil }

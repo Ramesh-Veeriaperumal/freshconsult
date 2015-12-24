@@ -51,3 +51,4 @@
 //= require frameworks/plugins/collapseButton.js
 //= require frameworks/plugins/jquery.dataTables.js
 //= require frameworks/plugins/dataTable.fixedColumns.js
+//= require marketplace/freshapp.js

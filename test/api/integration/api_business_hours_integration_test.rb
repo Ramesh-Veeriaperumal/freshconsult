@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 
-class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
+class ApiBusinessHoursIntegrationTest < ActionDispatch::IntegrationTest
   include BusinessCalendarsHelper
 
   def test_query_count
@@ -13,17 +13,17 @@ class ApiBusinessCalendarsIntegrationTest < ActionDispatch::IntegrationTest
       index: 12
     }
 
-    business_calendar = create_business_calendar
-    id = business_calendar.id
+    business_hour = create_business_calendar
+    id = business_hour.id
     # show
     v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
-      get("/api/v2/business_calendars/#{id}", nil, @headers)
+      get("/api/v2/business_hours/#{id}", nil, @headers)
       assert_response 200
     end
 
     # index
     v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
-      get('/api/v2/business_calendars', nil, @headers)
+      get('/api/v2/business_hours', nil, @headers)
       assert_response 200
     end
 

@@ -34,13 +34,13 @@ SalesforceWidget.prototype= {
 
 	get_contact_request: function() {
 		var requestUrls = [];
-		var custEmail = escape(this.salesforceBundle.reqEmail);
+		var custEmail = this.salesforceBundle.reqEmail;
 		requestUrls.push( { type:"contact", value:custEmail } )
 		requestUrls.push( { type:"lead", value:custEmail } )
 		var custCompany = this.salesforceBundle.reqCompany;
 		if( this.salesforceBundle.accountFields && this.salesforceBundle.accountFields.length > 0 ) { //accountFields is configured
-			if ( custCompany  && custCompany.length > 0 ) { // make sure company is present 
-				custCompany = custCompany.replace(/\W/g,' ').replace(/\s+/g, ' ');
+			if ( custCompany  && custCompany.length > 0 ) { // make sure company is present
+				custCompany = custCompany.trim(); 
 				requestUrls.push( { type:"account", value:{company:custCompany} } )
 			}
 			else{

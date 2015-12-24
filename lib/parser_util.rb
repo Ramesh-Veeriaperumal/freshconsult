@@ -182,7 +182,7 @@ module ParserUtil
       address = Mail::Encodings.unquote_and_convert_to(address, "UTF-8") if address.include?("=?")
       position = address =~ EMAIL_REGEX
       if position
-        parsed_hash[:email] = $1
+        parsed_hash[:email] = $1.downcase
         if email.domain.present?
           parsed_hash[:name] = email.name.prepend(name_prefix) if email.name.present?
           parsed_hash[:domain] = email.domain

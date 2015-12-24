@@ -27,7 +27,7 @@ module RabbitMq::Utils
       message = { 
         "object"                    =>  model,
         "action"                    =>  action,
-        "action_epoch"              =>  Time.zone.now.to_i,
+        "action_epoch"              =>  Time.zone.now.to_f,
         "#{model}_properties"    =>  {}, 
         "subscriber_properties" =>  {}        
       }
@@ -84,7 +84,6 @@ module RabbitMq::Utils
     # Decide we gonna publish message to exchange via sidekiq or diretly
     # Currently we directly push to exchange
     # If there is any performance, then we can push via sidekiq
-    return unless Account.current.reports_enabled?
     job_id = RabbitmqWorker.perform_async(Account.current.rabbit_mq_exchange_key(exchange), message, key)
     Rails.logger.debug "Sidekiq Job Id #{job_id} " 
   rescue => e

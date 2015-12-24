@@ -81,7 +81,7 @@ class Freshfone::Initiator::Incoming
 
   def call_user_with_number(number)
     return restricted_call if !authorized?(number)
-    return @telephony.initiate_voicemail if direct_dialled_number_busy?(number)
+    return @telephony.return_non_availability(false) if direct_dialled_number_busy?(number)
 
     current_call = @call_actions.register_direct_dial(number)
     @telephony.initiate_customer_conference({ :wait_url => direct_dial_wait_url }, true)

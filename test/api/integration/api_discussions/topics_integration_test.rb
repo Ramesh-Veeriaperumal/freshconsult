@@ -58,13 +58,13 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      # posts
+      # comments
       v1[:posts] = count_queries do
         get(id_path, nil, @headers)
         assert_response 200
       end
       v2[:posts], v2[:api_posts], v2[:posts_queries] = count_api_queries do
-        get(api_id_path + '/posts', nil, @headers)
+        get(api_id_path + '/comments', nil, @headers)
         assert_response 200
       end
       # there is no posts method in v1

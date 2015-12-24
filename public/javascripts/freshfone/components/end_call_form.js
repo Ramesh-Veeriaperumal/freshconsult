@@ -186,7 +186,6 @@ var FreshfoneEndCall;
 				this.freshfoneuser.resetStatusAfterCall();
 				if (!this.convertedToTicket) { this.freshfoneuser.updatePresence(); }
 
-				this.freshfoneuser.bridgeQueuedCalls();
 				this.freshfonewidget.resetToDefaultState();
 				this.freshfonecalls.init();
 				this.freshfoneuser.init();

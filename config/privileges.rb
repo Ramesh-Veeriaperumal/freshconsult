@@ -225,7 +225,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_discussions/category", :only => [:index, :show]
     resource :"api_discussions/forum", :only => [:show, :category_forums, :follow, :unfollow, :is_following]
     resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by]
-    resource :"api_discussions/post", :only => [:create, :topic_posts]
+    resource :"api_discussions/api_comment", :only => [:create, :topic_comments]
   end
 
   # create_edit_forum_category
@@ -260,7 +260,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
     # Used for API V2
     resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
-    resource :"api_discussions/post", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
+    resource :"api_discussions/api_comment", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic
@@ -422,6 +422,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamics_crm", :only => [:settings, :edit, :settings_update, :fields_update]
+    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"
@@ -458,7 +459,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_ticket_field, :only => [:index]
     resource :"api_contact_field", :only => [:index]
     resource :"api_company_field", :only => [:index]
-    resource :"api_business_calendar", :only => [:index, :show]
+    resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update]
     resource :"api_product", :only => [:index, :show]

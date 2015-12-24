@@ -297,9 +297,18 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def traffic_cop_warning
         return unless has_unseen_notes?
+        @notes = @parent.conversation_since(params[:since_id]).reverse
+        @public_notes = @notes.select{ |note| note.private == false || note.incoming == true }
         respond_to do |format|
           format.js {
             render :file => "helpdesk/notes/traffic_cop.rjs" and return true
+          }
+          format.nmobile {
+            note_arr = []
+            @public_notes.each do |note|
+              note_arr << note.to_mob_json
+            end
+            render :json => { :traffic_cop_warning => true, :notes => note_arr }
           }
         end
       end

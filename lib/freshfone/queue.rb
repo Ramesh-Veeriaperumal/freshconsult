@@ -180,8 +180,9 @@ module Freshfone::Queue
       xml_builder.Play Freshfone::Number::DEFAULT_QUEUE_MUSIC, :loop => 50
     end
 
-    def add_to_call_queue_worker(user_id = current_user.id)
-      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => current_account.id), user_id)
+    def add_to_call_queue_worker(async = false, user_id = current_user.id, params = params)
+      return Freshfone::CallQueueWorker.perform_async(params.merge(:account_id => ::Account.current.id), user_id) if async
+      Freshfone::CallQueueWorker.perform_in(10.seconds, params.merge(:account_id => ::Account.current.id), user_id)
     end
 
     def read_queue_position_message(xml_builder)
@@ -189,6 +190,17 @@ module Freshfone::Queue
       queue_values = { "position" => params['QueuePosition']}
       text = Liquid::Template.parse(current_number.queue_position_message).render("queue" => queue_values)
       xml_builder.Say "#{text}", { :voice => current_number.voice_type }
+    end
+
+    def load_freshfone_user
+      current_user ||= current_account.technicians.visible.find(params[:agent] || params[:agent_id])
+      @freshfone_user ||= current_user.freshfone_user if current_user.present?
+    end
+
+    def check_for_queued_calls
+      load_freshfone_user
+      return unless @freshfone_user.present? && @freshfone_user.online?
+      add_to_call_queue_worker(true, @freshfone_user.user_id) if params[:CallStatus].present? && Freshfone::CallMeta::MISSED_RESPONSE_HASH.key?(params[:CallStatus].to_sym)
     end
 
 end

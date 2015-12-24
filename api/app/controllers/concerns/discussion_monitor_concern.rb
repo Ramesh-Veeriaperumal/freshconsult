@@ -50,6 +50,7 @@ module DiscussionMonitorConcern
     def validate_follow_delegator
       delegator = MonitorshipDelegator.new(@monitorship)
       if delegator.invalid?
+        ErrorHelper.rename_error_fields({ user: :user_id }, delegator)
         render_errors delegator.errors
         return true
       end
@@ -98,8 +99,12 @@ module DiscussionMonitorConcern
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && params[:user_id].to_i != api_current_user.id && !privilege?(:manage_forums)
+      if params[:user_id].present? && is_not_current_user_id? && !privilege?(:manage_forums)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
+    end
+
+    def is_not_current_user_id?
+      !params[:user_id].respond_to?(:to_i) || params[:user_id].to_i != api_current_user.id
     end
 end

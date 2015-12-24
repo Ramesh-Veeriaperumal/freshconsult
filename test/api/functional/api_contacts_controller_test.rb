@@ -414,6 +414,16 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
     assert sample_user.reload.company_id.nil?
     match_json([bad_request_error_pattern('company_id', :"can't be blank")])
+
+    # already item invalid scenario
+    sample_user.update_attribute(:company_id, 10_000)
+    sample_user.update_attribute(:deleted, false)
+    params_hash = { company_id: 10_000 }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('company_id', :"can't be blank")])
+  ensure
+    sample_user.update_attribute(:company_id, nil)
   end
 
   def test_update_email_when_email_is_not_nil
@@ -859,6 +869,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('mobile', :"can't be blank"),
                 bad_request_error_pattern('address', :"can't be blank"),
                 bad_request_error_pattern('description', :"can't be blank"),
+                bad_request_error_pattern('client_manager', :data_type_mismatch, data_type: 'Boolean'),
                 bad_request_error_pattern('twitter_id', :"can't be blank"),
                 bad_request_error_pattern('phone', :"can't be blank"),
                 bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),

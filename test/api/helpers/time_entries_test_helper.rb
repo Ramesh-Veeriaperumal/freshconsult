@@ -1,6 +1,7 @@
 module Helpers::TimeEntriesTestHelper
   include TicketHelper
   include CompanyHelper
+  include GroupHelper
   # Patterns
   def time_entry_pattern(expected_output = {}, time_entry)
     {

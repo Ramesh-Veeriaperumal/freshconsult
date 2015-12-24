@@ -5,7 +5,7 @@ class TopicObserver < ActiveRecord::Observer
     #setting replied_by needed for API else api has to do item reloads while rendering the response
     topic.replied_by = topic.user_id 
     topic.posts_count = 1 #Default count
-    topic.published ||= (topic.user.agent? || topic.import_id?) #Agent Topics are approved by default.
+    topic.published = true
     topic
 	end
 

@@ -130,34 +130,13 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
-  def test_create_with_inactive_email_config_id
-    email_config = EmailConfig.first || create_email_config
-    email_config.update_column(:active, false)
-    params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
-    post :create, construct_params({}, params)
-    email_config.update_column(:active, true)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_email_config)])
-    assert_response 400
-  end
-
-  def test_update_with_inactive_email_config_id
-    email_config = EmailConfig.first || create_email_config
-    email_config.update_column(:active, false)
-    params = { email_config_id: email_config.reload.id }
-    t = ticket
-    put :update, construct_params({ id: t.display_id }, params)
-    email_config.update_column(:active, true)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_email_config)])
-    assert_response 400
-  end
-
   def test_create_with_invalid_email_config_id
     email_config = EmailConfig.first || create_email_config
     email_config.update_column(:account_id, 999)
     params = { requester_id: requester.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_email_config)])
+    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
     assert_response 400
   end
 
@@ -168,12 +147,12 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
     email_config.update_column(:account_id, @account.id)
-    match_json([bad_request_error_pattern('email_config_id', :invalid_email_config)])
+    match_json([bad_request_error_pattern('email_config_id', :"can't be blank")])
     assert_response 400
   end
 
   def test_create_with_product_id
-    product = create_product(email: Faker::Internet.email)
+    product = create_product
     params = { requester_id: requester.id, product_id: product.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     post :create, construct_params({}, params)
     t = Helpdesk::Ticket.last
@@ -200,8 +179,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_product_id_and_email_config_id
-    product = create_product(email: Faker::Internet.email)
-    product_1 = create_product(email: Faker::Internet.email)
+    product = create_product
+    product_1 = create_product
     email_config = product_1.primary_email_config
     email_config.update_column(:active, true)
     params = { requester_id: requester.id, product_id: product.id, email_config_id: email_config.reload.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
@@ -467,7 +446,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', :"can't be blank"),
                 bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :invalid_email_config),
+                bad_request_error_pattern('email_config_id', :"can't be blank"),
                 bad_request_error_pattern('product_id', :"can't be blank"),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", :not_included, list: 'Australia,USA'),
@@ -476,7 +455,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_default_product_assignment_from_portal
     portal = @account.main_portal
-    product = Product.first || create_product(email: Faker::Internet.email)
+    product = Product.first || create_product
     portal.update_column(:product_id, product.id)
     post :create, construct_params({}, ticket_params_hash)
     assert_response 201
@@ -990,7 +969,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update
     portal = @account.main_portal
-    product = Product.first || create_product(email: Faker::Internet.email)
+    product = Product.first || create_product
     portal.update_column(:product_id, product.id)
     params_hash = update_ticket_params_hash.merge(custom_fields: {})
     CUSTOM_FIELDS.each do |custom_field|
@@ -1056,7 +1035,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_nil_due_by_with_fr_due_by
     t = ticket
-    fr_due_by = 12.days.since.utc.iso8601
+    fr_due_by = 2.days.since.utc.iso8601
     params = update_ticket_params_hash.merge(due_by: nil, fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.display_id }, params)
     match_json(ticket_pattern(params, t.reload))
@@ -1155,7 +1134,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('group_id', :"can't be blank"),
                 bad_request_error_pattern('responder_id', :"can't be blank"),
-                bad_request_error_pattern('email_config_id', :invalid_email_config),
+                bad_request_error_pattern('email_config_id', :"can't be blank"),
                 bad_request_error_pattern('requester_id', :user_blocked),
                 bad_request_error_pattern('product_id', :"can't be blank"),
                 bad_request_error_pattern("test_custom_country_#{@account.id}", :not_included, list: 'Australia,USA'),
@@ -1183,7 +1162,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id
-    product = create_product(email: Faker::Internet.email)
+    product = create_product
     params_hash = { product_id: product.id }
     t = ticket
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1193,8 +1172,8 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_diff_email_config_id
-    product = create_product(email: Faker::Internet.email)
-    product_1 = create_product(email: Faker::Internet.email)
+    product = create_product
+    product_1 = create_product
     email_config = product_1.primary_email_config
     email_config.update_column(:active, true)
     params_hash = { product_id: product.id, email_config_id: email_config.reload.id }
@@ -1206,7 +1185,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_product_id_and_same_email_config_id
-    product = create_product(email: Faker::Internet.email)
+    product = create_product
     email_config = create_email_config(product_id: product.id)
     params_hash = { product_id: product.id, email_config_id: email_config.id }
     t = ticket
@@ -2065,7 +2044,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params
     assert_response 200
     response = parse_response @response.body
-    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
+    assert_equal [Helpdesk::Ticket.where(deleted: 0, spam: 0).count, 30].min, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params
@@ -2434,7 +2413,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_all_default_fields_required_valid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
-    product = create_product(email: Faker::Internet.email)
+    product = create_product
     post :create, construct_params({},  requester_id: @agent.id,
                                         status: 2,
                                         priority: 2,

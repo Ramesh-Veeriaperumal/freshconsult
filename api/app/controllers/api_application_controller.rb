@@ -331,8 +331,15 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_errors(errors, meta = nil)
-      @errors = ErrorHelper.format_error(errors, meta)
-      render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+      if errors.present?
+        @errors = ErrorHelper.format_error(errors, meta)
+        render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
+      else
+        # before_callbacks may return false without populating the errors hash.
+        Rails.logger.error("API Error Hash empty :: Params: #{params.inspect}")
+        notify_new_relic_agent(StandardError, {description: 'API Error Hash empty', params: params})
+        render_base_error(:internal_error, 500)
+      end
     end
 
     def cname
@@ -429,12 +436,12 @@ class ApiApplicationController < MetalApiController
     end
 
     def get_page
-      page = params[:page].to_i
+      page = params[:page].respond_to?(:to_i) ? params[:page].to_i : 0
       page == 0 ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] : page
     end
 
     def get_per_page
-      if params[:per_page].to_i == 0
+      if !params[:per_page].respond_to?(:to_i) || params[:per_page].to_i == 0
         ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
       else
         [params[:per_page].to_i, ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
@@ -443,6 +450,10 @@ class ApiApplicationController < MetalApiController
 
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
+      get_fields_from_constant(constant)
+    end
+
+    def get_fields_from_constant(constant)
       fields = constant[:all]
       constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
       fields

@@ -53,6 +53,12 @@ module TestCaseMethods
   end
 
   def match_json(json)
+    if [400, 409].include?(response.status) && json.is_a?(Array)
+      json = {
+         description: ErrorConstants::ERROR_MESSAGES[:validation_failure],
+         errors: json
+      }
+    end
     response.body.must_match_json_expression json
   end
 
