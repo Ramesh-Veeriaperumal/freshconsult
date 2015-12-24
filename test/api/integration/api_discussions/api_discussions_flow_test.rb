@@ -58,7 +58,7 @@ class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
 
       assert_equal f.id, t.forum_id
       assert_difference 'Post.count', 1 do
-        post "/api/discussions/topics/#{t.id}/posts", v2_post_payload(t), @write_headers
+        post "/api/discussions/topics/#{t.id}/comments", v2_post_payload(t), @write_headers
         assert_response 201
       end
       assert_equal t.id, p.topic_id

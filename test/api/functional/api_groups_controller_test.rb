@@ -32,11 +32,11 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_create_group_with_invalid_fields
-    post :create, construct_params({}, id: 123, business_calendar_id: 2,
+    post :create, construct_params({}, id: 123, business_hour_id: 2,
                                        name: 'TestGroups1', description: Faker::Lorem.paragraph)
     assert_response 400
     match_json([bad_request_error_pattern('id', :invalid_field),
-                bad_request_error_pattern('business_calendar_id', :invalid_field)])
+                bad_request_error_pattern('business_hour_id', :invalid_field)])
   end
 
   def test_create_group_with_invalid_field_values

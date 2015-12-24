@@ -4,13 +4,25 @@ class CustomInclusionValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :allow_string_param, :attribute4, :multi_error
+    attr_accessor :attribute1, :attribute2, :attribute3, :error_options, :allow_string_param, :attribute4, :multi_error, :range_attr
     validates :attribute1, custom_inclusion: { in: [1, 2], message: 'attribute1_invalid', allow_nil: true }
     validates :attribute2, custom_inclusion: { in: [1, 2], required: true }
     validates :attribute3, custom_inclusion: { in: [1, 2], exclude_list: true, allow_blank: true }
     validates :attribute4, custom_inclusion: { in: [1, 2], ignore_string: :allow_string_param, allow_blank: true }
     validates :multi_error, custom_numericality: { allow_nil: true }
     validates :multi_error, custom_inclusion: { in: [8, 9], allow_nil: true }
+    validates :range_attr, custom_inclusion: { in: ['a'..'d'], allow_nil: true }
+  end
+
+  def test_range_attr_does_not_include_covered_attributes
+    test = TestValidation.new
+    test.attribute2 = 1
+    test.range_attr = 'cc'
+    refute test.valid?
+    errors = test.errors.to_h
+    error_options = test.error_options.to_h
+    assert_equal({ range_attr: :not_included }, errors)
+    assert_equal({ range_attr: { list: 'a..d' } }, error_options)
   end
 
   def test_custom_message

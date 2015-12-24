@@ -349,6 +349,8 @@ protected
     end
   end
 
+  # If there is any change in this method related to ticket permission, 
+  # Please change the same in api/tickets_controller#ticket_permission?
   def filter_params_ids
     if current_user.group_ticket_permission
       params[:ids] = current_account.tickets.group_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id)
