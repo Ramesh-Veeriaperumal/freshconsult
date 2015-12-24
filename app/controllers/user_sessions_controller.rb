@@ -27,6 +27,7 @@ include GoogleLoginHelper
   skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :ensure_proper_protocol, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_after_filter :set_last_active_time
   
   def new
     flash.keep

@@ -6,6 +6,7 @@ class SsoController < ApplicationController
   skip_before_filter :check_privilege
   before_filter :get_redis_key, :only =>[:google_login]
   skip_before_filter :check_privilege, :verify_authenticity_token
+  skip_after_filter :set_last_active_time
 
   def login
     auth = Authorization.find_by_provider_and_uid_and_account_id(params['provider'], params['uid'], current_account.id)

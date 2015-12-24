@@ -13,6 +13,7 @@ class AuthorizationsController < ApplicationController
                     :check_day_pass_usage, :set_locale, :only => [:create, :failure]
   before_filter :require_user, :only => [:destroy]
   before_filter :load_authorization, :only => [:create]
+  skip_after_filter :set_last_active_time
 
   def create
     Rails.logger.debug "@omniauth "+@omniauth.inspect
