@@ -15,7 +15,11 @@ class Integrations::Marketplace::SignupController < ApplicationController
 
   def associate_account
     @account.make_current
-    login_user = get_user(@account, @email)
+    if @email_not_reqd
+      login_user = nil
+    else
+      login_user = get_user(@account, @email)
+    end
     if login_user.present?
       verify_user_and_redirect(login_user)
     else
@@ -53,8 +57,10 @@ class Integrations::Marketplace::SignupController < ApplicationController
   private
 
   def select_shard(&block)
-    if full_domain.blank?
+    full_domain
+    if @sub_domain.blank?
       flash.now[:error] = t(:'flash.g_app.no_subdomain')
+      get_account_and_user_new
       render 'integrations/marketplace/associate_account' and return
     end
 
@@ -134,6 +140,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
     @remote_id = params[:user][:remote_id]
     @operation = params[:request_params][:operation]
     @app_name = params[:request_params][:app_name]
+    @email_not_reqd = params[:request_params][:email_not_reqd].to_bool
   end
 
   def check_remote_integrations_mapping
@@ -151,8 +158,13 @@ class Integrations::Marketplace::SignupController < ApplicationController
 
   def full_domain
     base_domain = AppConfig['base_domain'][Rails.env]    
-    @sub_domain = params[:account][:sub_domain] || params[:account][:domain]
+    @sub_domain = params[:account][:domain]
     @full_domain = @sub_domain + "." + base_domain
+  end
+
+  def get_account_and_user_new
+    @account = Account.new(:domain => params[:account][:domain], :name => params[:account][:name])
+    @user = @account.users.new(:email => params[:user][:email], :name => params[:user][:name])
   end
 
 end

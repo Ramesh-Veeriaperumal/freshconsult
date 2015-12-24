@@ -182,7 +182,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
       if notable.customer_performed?(user)
         schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] :
-          CATEGORIES[:customer_response]
+          (private? ? CATEGORIES[:agent_private_response] : CATEGORIES[:customer_response])
       else
         schema_less_note.category = private? ? CATEGORIES[:agent_private_response] :
           CATEGORIES[:agent_public_response]

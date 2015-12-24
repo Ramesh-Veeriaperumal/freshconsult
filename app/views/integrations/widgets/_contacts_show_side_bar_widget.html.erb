@@ -65,4 +65,9 @@
   jQuery("body").on('click.contact-sidebar', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
     jQuery(this).parent().toggleClass('inactive');
   });
+  
+  if(page_type == "contact"){
+    jQuery(document).trigger("dom_helper_loaded");
+    window.postMessage({type: "FA_INITIATE"}, "*");
+  }
 </script>

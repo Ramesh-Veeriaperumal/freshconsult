@@ -40,8 +40,10 @@ class Freshfone::CallMeta < ActiveRecord::Base
   USER_AGENT_TYPE_HASH = Hash[*USER_AGENT_TYPE.map { |i| [i[0], i[1]] }.flatten]
   USER_AGENT_TYPE_REVERSE_HASH = Hash[*USER_AGENT_TYPE.map { |i| [i[1], i[0]] }.flatten]
 
-  PINGED_AGENT_RESPONSE_HASH =Hash[*PINGED_AGENT_RESPONSE.map { |i| [i[0], i[1]] }.flatten]
+  PINGED_AGENT_RESPONSE_HASH = Hash[*PINGED_AGENT_RESPONSE.map { |i| [i[0], i[1]] }.flatten]
   PINGED_AGENT_RESPONSE_REVERSE_HASH = Hash[*PINGED_AGENT_RESPONSE.map { |i| [i[1], i[0]] }.flatten]
+
+  MISSED_RESPONSE_HASH = PINGED_AGENT_RESPONSE_HASH.slice(:'no-answer', :busy, :canceled, :failed)
 
   HUNT_TYPE.each do |k, v|
     define_method("#{k}_hunt?") do
@@ -78,7 +80,7 @@ class Freshfone::CallMeta < ActiveRecord::Base
 
   def all_agents_missed?
     pinged_agents.find do |agent| 
-      missed_responses.exclude? agent[:response]
+      MISSED_RESPONSE_HASH.values.exclude? agent[:response]
     end.blank?
   end
 
@@ -116,10 +118,5 @@ class Freshfone::CallMeta < ActiveRecord::Base
       agent[:response] == PINGED_AGENT_RESPONSE_HASH[:accepted]
     end.present?
   end
-
-  private
-    def missed_responses
-      [ PINGED_AGENT_RESPONSE_HASH[:busy], PINGED_AGENT_RESPONSE_HASH[:'no-answer'], PINGED_AGENT_RESPONSE_HASH[:'canceled'], PINGED_AGENT_RESPONSE_HASH[:failed] ]
-    end
 
 end

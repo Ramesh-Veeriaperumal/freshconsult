@@ -3,9 +3,6 @@ jQuery(document).ready(function() {
 	jQuery(".btn-primary").removeClass("disabled");
 	jQuery(".btn-primary").attr("Submit","Loading...");
 	jQuery(".btn-primary").removeAttr("disabled");
-	if (sub_domain != null && sub_domain != "") {
-		associate_existing_domain()
-	}
 
 	// script to store visitor traffic info in cookie
 	if(session){
@@ -27,9 +24,23 @@ jQuery(document).ready(function() {
 		jQuery("#first_search_engine").val((jQuery.cookie("fd_se")||""));
 		jQuery("#first_search_query").val((jQuery.cookie("fd_sq")||""));
 		jQuery("#pre_visits").val((jQuery.cookie("fd_vi")||0));
-		jQuery(".btn-primary").addClass("disabled");
-		jQuery(".btn-primary").attr("value","Loading...");
-		jQuery(".btn-primary").attr("disabled", "disabled");
+		jQuery('#account_domain').val(jQuery('#account_domain').val().toLowerCase().replace(/\W/g, ''));
+		if (isFormValid()) {
+			jQuery(".btn-primary").addClass("disabled");
+			jQuery(".btn-primary").attr("value","Loading...");
+			jQuery(".btn-primary").attr("disabled", "disabled");
+		}
+	})
+
+	jQuery("#account_name").change(function() {
+		if (jQuery("#account_domain").val() === ''){
+			jQuery("#account_domain").val(jQuery(this).val().toLowerCase().replace(/\W/g, ''));
+			jQuery('#account_domain').trigger('change');
+		}
+	})
+
+	jQuery('#account_domain').change(function() {
+		jQuery(this).val(jQuery(this).val().toLowerCase().replace(/\W/g, ''));
 	})
 });
 
@@ -37,6 +48,18 @@ function getLocalTimeZoneOffset() {
 	var timeZoneOffset = (new Date()).getTimezoneOffset() / 60 * (-1);
 	timeZoneOffset -= (isDST() ? 1 : 0);
 	return timeZoneOffset;
+}
+
+function isFormValid() {
+	var form_elements = ['user_name', 'user_email', 'account_name', 'account_domain'];
+	var result = true;
+	form_elements.each(function(element_id) {
+		var element = jQuery('#' + element_id);
+		if (element.length && !element.val()) {
+			result = false;
+		}
+	});
+	return result;
 }
 
 function isDST() {
@@ -51,14 +74,4 @@ function isDST() {
 	var hoursDiffDaylightTime = (jul - jul_local) / (1000 * 60 * 60);
 
 	return hoursDiffDaylightTime != hoursDiffStdTime;
-}
-
-function associate_existing_domain() {
-	jQuery("#signup-form").hide();
-	jQuery("#change-sub-domain").show();
-}
-
-function new_account() {
-	jQuery("#change-sub-domain").hide();
-	jQuery("#signup-form").show();
 }

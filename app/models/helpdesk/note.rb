@@ -263,7 +263,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     if ticket_state.first_response_time.nil?
       if notable.outbound_email?
-        resp_time_bhrs,resp_time = outbound_note_level_response
+        resp_time,resp_time_bhrs = outbound_note_level_response
       else
         notable.schema_less_ticket.set_first_response_id(id)
         resp_time,resp_time_bhrs = calculate_response_time(notable)

@@ -40,10 +40,11 @@ class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketp
       ax_response = OpenID::AX::FetchResponse.from_success_response(resp)
       data['email'] = ax_response.data["http://axschema.org/contact/email"].first
       data['remote_id'] = ax_response.data["http://axschema.org/intuit/realmId"].first
-      data['name'] = ax_response.data["http://axschema.org/namePerson"].first
+      data['user_name'] = ax_response.data["http://axschema.org/namePerson"].first
+      data['account_name'] = ''
 
       if data['email'] && data['remote_id']
-        data['name'] = data['email'].split('@')[0] if data['name'].nil?
+        data['user_name'] = '' if data['user_name'] == data['email']
       end
     else
       data['email'] = nil

@@ -140,6 +140,12 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
     def load_ticket
       @ticket = @item = current_account.archive_tickets.find_by_display_id(params[:id])
+      if @ticket and @ticket.restricted_in_helpdesk?(current_user)
+        view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => @item.support_ticket_path)
+        redirect_msg =  "#{I18n.t('flash.agent_as_requester.ticket_show')} #{view_on_portal_msg}".html_safe
+        flash[:notice] = redirect_msg
+        redirect_to helpdesk_archive_tickets_url 
+      end
       @item || raise(ActiveRecord::RecordNotFound)
     end
 

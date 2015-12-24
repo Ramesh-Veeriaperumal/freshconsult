@@ -27,8 +27,7 @@ WorkflowMaxWidget.prototype = {
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "time.api/get/"+workflowMaxBundle.remote_integratable_id+this.auth_keys,
-				on_success: workflow_maxWidget.loadTimeEntry.bind(this),
-				on_failure: function(evt){}
+				on_success: workflow_maxWidget.loadTimeEntry.bind(this)
 			}
 		workflowMaxOptions = {
 			widget_name:"workflow_max_widget",
@@ -69,8 +68,8 @@ WorkflowMaxWidget.prototype = {
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "client.api/list"+this.auth_keys,
-			on_success: workflow_maxWidget.loadClientList.bind(this),
-			on_failure: function(evt){} })
+			on_success: workflow_maxWidget.loadClientList.bind(this)
+		})
 	},
 
 	loadTimeEntry: function(resData) {
@@ -143,8 +142,7 @@ WorkflowMaxWidget.prototype = {
 			accept_type: "application/xml",
 			method: "get", 
 			rest_url: "job.api/get/"+job_id+this.auth_keys,
-			on_success: workflow_maxWidget.loadTaskEntry.bind(this),
-			on_failure: function(evt){} })
+			on_success: workflow_maxWidget.loadTaskEntry.bind(this) })
 		}
 	},
 
@@ -157,8 +155,7 @@ WorkflowMaxWidget.prototype = {
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/staff/"+staff_id+this.auth_keys,
-		on_success: workflow_maxWidget.loadJobEntry.bind(this),
-		on_failure: function(evt){} })
+		on_success: workflow_maxWidget.loadJobEntry.bind(this) })
 
 	},
 
@@ -261,11 +258,9 @@ WorkflowMaxWidget.prototype = {
 												this.result_callback = resultCallback;
 												resultCallback(evt);
 											}
-										}.bind(this),
-										on_failure: function(evt){}
+										}.bind(this)
 									});
-								}.bind(this),
-								on_failure: function(evt){}
+								}.bind(this)
 							}); //job.api/task - post
 						}
 						else
@@ -291,8 +286,7 @@ WorkflowMaxWidget.prototype = {
 								this.result_callback = resultCallback;
 								resultCallback(evt);
 								}
-							}.bind(this),
-							on_failure: function(evt){}
+							}.bind(this)
 							});
 						} //else ifexists -true
 					}.bind(this) //jobapi.task success
@@ -613,8 +607,7 @@ WorkflowMaxWidget.prototype = {
 		accept_type: "application/xml",
 		method: "get", 
 		rest_url: "job.api/client/"+client_id+this.auth_keys,
-		on_success: workflow_maxWidget.loadStaffEntry.bind(this),
-		on_failure: function(evt){} })
+		on_success: workflow_maxWidget.loadStaffEntry.bind(this) })
 	},
 
 	removeDuplicates: function (array){
@@ -668,8 +661,7 @@ WorkflowMaxWidget.prototype = {
 				accept_type: "application/xml",
 				method: "get", 
 				rest_url: "staff.api/list"+this.auth_keys,
-				on_success: workflow_maxWidget.loadAllStaffData.bind(this),
-				on_failure: function(evt){} })
+				on_success: workflow_maxWidget.loadAllStaffData.bind(this) })
 			}
 	},
 

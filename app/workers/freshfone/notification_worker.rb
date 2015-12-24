@@ -81,7 +81,7 @@ module Freshfone
       call_params  = {
         :url             => forward_accept_url(current_call.id, agent),
         :status_callback => forward_status_url(current_call.id, agent),
-        :from            => current_call.number, #Showing freshfone number
+        :from            => get_caller_id(current_call),
         :to              => current_account.users.find(agent).available_number,
         :timeout         => current_number.ringing_time,
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
@@ -137,7 +137,7 @@ module Freshfone
         :url             => mobile_transfer_accept_url(current_call.id, params[:source_agent_id], agent),
         :status_callback => mobile_transfer_status_url(current_call.id, agent),
         :to              => freshfone_user.available_number,
-        :from            => current_call.number, #Showing freshfone number
+        :from            => get_caller_id(current_call),
         :timeout         => current_number.ringing_time,
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :if_machine      => "hangup"
@@ -163,7 +163,7 @@ module Freshfone
         :status_callback => external_transfer_complete(current_call.children.last.id, params[:external_number]),
         :timeout         => current_number.ringing_time,
         :to              => params[:external_number],
-        :from            => current_call.number, #Showing freshfone number
+        :from            => get_caller_id(current_call),
         :timeLimit       => current_account.freshfone_credit.call_time_limit
       }
       begin
@@ -187,7 +187,7 @@ module Freshfone
                             round_robin_agent_wait_url(current_call) : 
                             forward_accept_url(current_call.id, agent["id"]),
         :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
-        :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : current_call.number,
+        :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : get_caller_id(current_call),
         :to              => browser_agent? ? "client:#{agent['id']}" : 
                             current_account.users.find(agent["id"]).available_number,
         :timeout         => current_number.ringing_duration,

@@ -364,7 +364,7 @@ protected
   end
 
   def helpdesk_restricted_access_redirection(ticket, msg)
-    view_on_portal_msg = I18n.t('flash.agent_as_requester.view_on_portal', :support_ticket_link => ticket.support_ticket_path)
+    view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => ticket.support_ticket_path)
     redirect_msg =  "#{I18n.t(:"#{msg}")} #{view_on_portal_msg}".html_safe
     flash[:notice] = redirect_msg
     respond_to do |format|

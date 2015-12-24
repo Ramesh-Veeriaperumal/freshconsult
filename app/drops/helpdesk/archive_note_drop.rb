@@ -21,7 +21,7 @@ class Helpdesk::ArchiveNoteDrop < BaseDrop
 	end
 	
 	def by_agent
-		user.agent && note_ticket.requester_id != user.id
+		user.agent && @source.archive_ticket.requester_id != user.id
 	end
 
 	def note_ticket

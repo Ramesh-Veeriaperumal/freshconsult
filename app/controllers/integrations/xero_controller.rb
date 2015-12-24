@@ -249,6 +249,7 @@
   end
 
   def check_contact_exist
+    params["reqCompanyName"] = params["reqCompanyName"].gsub(/\"/,"")
     company_name = %Q[Name="#{params["reqCompanyName"]}"]
     contact = @xero_client.Contact.all(:where => company_name)
     if contact.blank? 

@@ -138,10 +138,6 @@ class Account < ActiveRecord::Base
   def active_groups
     active_groups_in_account(id)
   end
-  
-  def reports_enabled?
-    true
-  end
 
   def fields_with_in_operators
     custom_dropdown = "custom_dropdown"
