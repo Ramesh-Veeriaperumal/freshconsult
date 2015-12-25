@@ -7,8 +7,14 @@ class Search::Utils
   MAX_PER_PAGE          = 30
   DEFAULT_PAGE          = 1
   DEFAULT_OFFSET        = 0
+
+  # _Note_: Query Template name to use in ES.
+  #
   TEMPLATE_BY_CONTEXT   = {
-    portal_spotlight:           'portalSpotlight',
+    portal_spotlight_global:    'portalSpotlightGlobal',
+    portal_spotlight_ticket:    'portalSpotlightTicket',
+    portal_spotlight_solution:  'portalSpotlightSolution',
+    portal_spotlight_topic:     'portalSpotlightTopic',
     portal_article_search:      'portalArticleSearch',
     agent_autocomplete:         'agentAutocomplete',
     requester_autocomplete:     'requesterAutocomplete',
@@ -21,8 +27,12 @@ class Search::Utils
     agent_spotlight_customer:   'agentSpotlightCustomer',
     merge_display_id:           'mergeDisplayId',
     merge_subject:              'mergeSubject',
-    merge_requester:            'mergeRequester'
+    merge_requester:            'mergeRequester',
+    merge_topic_search:         'mergeTopicSearch'
   }
+
+  # _Note_: Parent ID to be used for routing.
+  #
   PARENT_BASED_ROUTING  = {
     'Helpdesk::Note'        => :notable_id,
     'Helpdesk::ArchiveNote' => :notable_id,

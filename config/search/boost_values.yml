@@ -17,118 +17,167 @@
   :display_id_boost: 1
 :subject_merge:
   :subject_boost: 1
+:merge_topic_search:
+  :topic_title_boost: 1
+  :posts_body_boost: 1
+  :posts_attachment_boost: 1
 :agent_spotlight_global: 
-  :display_id_boost: 1
-  :subject_boost: 1
+  #=> Ticket fields boost <=#
+  :ticket_display_id_boost: 1
+  :ticket_subject_boost: 1
   :ticket_description_boost: 1
   :ticket_attachment_boost: 1
-  :sender_boost: 1
-  :to_emails_boost: 1
-  :es_cc_emails_boost: 1
-  :es_fwd_emails_boost: 1
+  :ticket_to_emails_boost: 1
+  :ticket_cc_emails_boost: 1
+  :ticket_fwd_emails_boost: 1
   :ticket_tag_names_boost: 1
   :ticket_ffs_boost: 1
   :ticket_ff_text_boost: 1
-  :note_attachment_boost: 1
   :note_body_boost: 1
+  :note_attachment_boost: 1
+  #=> Archive Ticket fields boost <=#
+  :archiveticket_display_id_boost: 1
+  :archiveticket_subject_boost: 1
+  :archiveticket_description_boost: 1
+  :archiveticket_attachment_boost: 1
+  :archiveticket_to_emails_boost: 1
+  :archiveticket_cc_emails_boost: 1
+  :archiveticket_fwd_emails_boost: 1
+  :archiveticket_tag_names_boost: 1
+  :archiveticket_ffs_boost: 1
+  :archiveticket_ff_text_boost: 1
+  :archivenote_body_boost: 1
+  :archivenote_attachment_boost: 1
+  #=> Company fields boost <=#
   :company_name_boost: 1
   :company_note_boost: 1
   :company_description_boost: 1
   :company_cf_text_boost: 1
   :company_cf_str_boost: 1
-  :domains_boost: 1
+  :company_domains_boost: 1
+  #=> User fields boost <=#
   :user_name_boost: 1
-  :emails_boost: 1
+  :user_emails_boost: 1
   :user_description_boost: 1
-  :job_title_boost: 1
-  :phone_boost: 1
-  :mobile_boost: 1
+  :user_job_title_boost: 1
+  :user_phone_boost: 1
+  :user_mobile_boost: 1
   :user_company_name_boost: 1
-  :twitter_id_boost: 1
-  :fb_profile_id_boost: 1
+  :user_twitter_id_boost: 1
+  :user_fb_profile_id_boost: 1
   :user_cf_str_boost: 1
   :user_cf_text_boost: 1
+  #=> Topic fields boost <=#
   :topic_title_boost: 1
   :posts_body_boost: 1
   :posts_attachment_boost: 1
-  :title_boost: 1
-  :desc_un_html_boost: 1
+  #=> Article fields boost <=#
+  :article_title_boost: 1
+  :article_desc_un_html_boost: 1
   :article_tag_names_boost: 1
-  :solution_attachment_boost: 1
+  :article_attachment_boost: 1
+  #=> Index boost (Mostly won't be used) <=#
   :ticket_boost: 1
+  :archiveticket_boost: 1
   :article_boost: 1
   :company_boost: 1
   :user_boost: 1
   :topic_boost: 1
 :agent_spotlight_customer:
+  #=> Company fields boost <=#
   :company_name_boost: 1
   :company_note_boost: 1
   :company_description_boost: 1
   :company_cf_text_boost: 1
   :company_cf_str_boost: 1
-  :domains_boost: 1
-  :user_name_boost: 1
-  :emails_boost: 1
-  :user_description_boost: 1
-  :job_title_boost: 1
-  :phone_boost: 1
-  :mobile_boost: 1
-  :user_company_name_boost: 1
-  :twitter_id_boost: 1
-  :fb_profile_id_boost: 1
-  :user_cf_str_boost: 1
-  :user_cf_text_boost: 1
-  :company_boost: 1
-  :user_boost: 1
-:agent_spotlight_solution:
-  :title_boost: 1
-  :desc_un_html_boost: 1
-  :article_tag_names_boost: 1
-  :solution_attachment_boost: 1
-:agent_spotlight_ticket:
-  :display_id_boost: 1
-  :subject_boost: 1
-  :ticket_description_boost: 1
-  :ticket_attachment_boost: 1
-  :sender_boost: 1
-  :to_emails_boost: 1
-  :es_cc_emails_boost: 1
-  :es_fwd_emails_boost: 1
-  :ticket_tag_names_boost: 1
-  :ticket_ffs_boost: 1
-  :ticket_ff_text_boost: 1
-  :note_attachment_boost: 1
-  :note_body_boost: 1
-:agent_spotlight_topic:
-  :topic_title_boost: 1
-  :posts_body_boost: 1
-  :posts_attachment_boost: 1
-:portal_spotlight: 
-  :subject_boost: 1
-  :description_boost: 1
-  :to_emails_boost: 1
-  :es_cc_boost: 1
-  :es_fwd_emails_boost: 1
-  :attachment_boost: 1
-  :body_boost: 1
-  :note_attachment_boost: 1
-  :company_name_boost: 1
-  :company_note_boost: 1
-  :company_description_boost: 1
   :company_domains_boost: 1
+  #=> User fields boost <=#
   :user_name_boost: 1
   :user_emails_boost: 1
   :user_description_boost: 1
-  :user_job_boost: 1
+  :user_job_title_boost: 1
   :user_phone_boost: 1
   :user_mobile_boost: 1
-  :user_company_boost: 1
-  :twitter_boost: 1
-  :fb_profile_boost: 1
-  :topic_title_boost: 1
-  :posts_attachment_boost: 1
-  :posts_body_boost: 1
+  :user_company_name_boost: 1
+  :user_twitter_id_boost: 1
+  :user_fb_profile_id_boost: 1
+  :user_cf_str_boost: 1
+  :user_cf_text_boost: 1
+  #=> Index boost (Mostly won't be used) <=#
+  :company_boost: 1
+  :user_boost: 1
+:agent_spotlight_solution:
+  #=> Article fields boost <=#
   :article_title_boost: 1
-  :article_desc_boost: 1
-  :article_tag_boost: 1
+  :article_desc_un_html_boost: 1
+  :article_tag_names_boost: 1
   :article_attachment_boost: 1
+:agent_spotlight_ticket: 
+  #=> Ticket fields boost <=#
+  :ticket_display_id_boost: 1
+  :ticket_subject_boost: 1
+  :ticket_description_boost: 1
+  :ticket_attachment_boost: 1
+  :ticket_to_emails_boost: 1
+  :ticket_cc_emails_boost: 1
+  :ticket_fwd_emails_boost: 1
+  :ticket_tag_names_boost: 1
+  :ticket_ffs_boost: 1
+  :ticket_ff_text_boost: 1
+  :note_body_boost: 1
+  :note_attachment_boost: 1
+  #=> Archive Ticket fields boost <=#
+  :archiveticket_display_id_boost: 1
+  :archiveticket_subject_boost: 1
+  :archiveticket_description_boost: 1
+  :archiveticket_attachment_boost: 1
+  :archiveticket_to_emails_boost: 1
+  :archiveticket_cc_emails_boost: 1
+  :archiveticket_fwd_emails_boost: 1
+  :archiveticket_tag_names_boost: 1
+  :archiveticket_ffs_boost: 1
+  :archiveticket_ff_text_boost: 1
+  :archivenote_body_boost: 1
+  :archivenote_attachment_boost: 1
+  #=> Index boost (Mostly won't be used) <=#
+  :ticket_boost: 1
+  :archiveticket_boost: 1
+:agent_spotlight_topic:
+  #=> Topic fields boost <=#
+  :topic_title_boost: 1
+  :posts_body_boost: 1
+  :posts_attachment_boost: 1
+:portal_spotlight_topic: 
+  :topic_title_boost: 1
+  :posts_body_boost: 1
+  :posts_attachment_boost: 1
+:portal_spotlight_solution: 
+  :article_title_boost: 1
+  :article_desc_un_html_boost: 1
+  :article_tag_names_boost: 1
+  :article_attachment_boost: 1
+:portal_spotlight_ticket: 
+  :ticket_display_id_boost: 1
+  :ticket_subject_boost: 1
+  :ticket_description_boost: 1
+  :ticket_attachment_boost: 1
+  :ticket_to_emails_boost: 1
+  :ticket_cc_emails_boost: 1
+  :ticket_fwd_emails_boost: 1
+  :ticket_tag_names_boost: 1
+  :ticket_ffs_boost: 1
+  :ticket_ff_text_boost: 1
+  :note_body_boost: 1
+  :note_attachment_boost: 1
+  :archiveticket_display_id_boost: 1
+  :archiveticket_subject_boost: 1
+  :archiveticket_description_boost: 1
+  :archiveticket_attachment_boost: 1
+  :archiveticket_to_emails_boost: 1
+  :archiveticket_cc_emails_boost: 1
+  :archiveticket_fwd_emails_boost: 1
+  :archiveticket_tag_names_boost: 1
+  :archiveticket_ffs_boost: 1
+  :archiveticket_ff_text_boost: 1
+  :archivenote_body_boost: 1
+  :archivenote_attachment_boost: 1
