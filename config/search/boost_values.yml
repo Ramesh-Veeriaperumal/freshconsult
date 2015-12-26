@@ -148,15 +148,18 @@
   :posts_body_boost: 1
   :posts_attachment_boost: 1
 :portal_spotlight_topic: 
+  #=> Topic fields boost <=#
   :topic_title_boost: 1
   :posts_body_boost: 1
   :posts_attachment_boost: 1
 :portal_spotlight_solution: 
+  #=> Article fields boost <=#
   :article_title_boost: 1
   :article_desc_un_html_boost: 1
   :article_tag_names_boost: 1
   :article_attachment_boost: 1
 :portal_spotlight_ticket: 
+  #=> Ticket fields boost <=#
   :ticket_display_id_boost: 1
   :ticket_subject_boost: 1
   :ticket_description_boost: 1
@@ -169,6 +172,7 @@
   :ticket_ff_text_boost: 1
   :note_body_boost: 1
   :note_attachment_boost: 1
+  #=> Archive Ticket fields boost <=#
   :archiveticket_display_id_boost: 1
   :archiveticket_subject_boost: 1
   :archiveticket_description_boost: 1
@@ -181,3 +185,47 @@
   :archiveticket_ff_text_boost: 1
   :archivenote_body_boost: 1
   :archivenote_attachment_boost: 1
+  #=> Index boost (Mostly won't be used) <=#
+  :ticket_boost: 1
+  :archiveticket_boost: 1
+:portal_spotlight_global: 
+  #=> Ticket fields boost <=#
+  :ticket_display_id_boost: 1
+  :ticket_subject_boost: 1
+  :ticket_description_boost: 1
+  :ticket_attachment_boost: 1
+  :ticket_to_emails_boost: 1
+  :ticket_cc_emails_boost: 1
+  :ticket_fwd_emails_boost: 1
+  :ticket_tag_names_boost: 1
+  :ticket_ffs_boost: 1
+  :ticket_ff_text_boost: 1
+  :note_body_boost: 1
+  :note_attachment_boost: 1
+  #=> Archive Ticket fields boost <=#
+  :archiveticket_display_id_boost: 1
+  :archiveticket_subject_boost: 1
+  :archiveticket_description_boost: 1
+  :archiveticket_attachment_boost: 1
+  :archiveticket_to_emails_boost: 1
+  :archiveticket_cc_emails_boost: 1
+  :archiveticket_fwd_emails_boost: 1
+  :archiveticket_tag_names_boost: 1
+  :archiveticket_ffs_boost: 1
+  :archiveticket_ff_text_boost: 1
+  :archivenote_body_boost: 1
+  :archivenote_attachment_boost: 1
+  #=> Topic fields boost <=#
+  :topic_title_boost: 1
+  :posts_body_boost: 1
+  :posts_attachment_boost: 1
+  #=> Article fields boost <=#
+  :article_title_boost: 1
+  :article_desc_un_html_boost: 1
+  :article_tag_names_boost: 1
+  :article_attachment_boost: 1
+  #=> Index boost (Mostly won't be used) <=#
+  :ticket_boost: 1
+  :archiveticket_boost: 1
+  :article_boost: 1
+  :topic_boost: 1

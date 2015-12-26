@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Support::SearchV2::SpotlightController < SupportController
 
-  extend NewRelic::Agent::MethodTracer
   include ActionView::Helpers::TextHelper
 
   before_filter :initialize_search_parameters
@@ -24,7 +23,8 @@ class Support::SearchV2::SpotlightController < SupportController
   #
   def all
     @searchable_klasses = esv2_klasses
-    @current_filter = :all
+    @current_filter     = :all
+    @search_context     = :portal_spotlight_global
     search
   end
 
@@ -34,7 +34,8 @@ class Support::SearchV2::SpotlightController < SupportController
     require_user_login unless current_user
 
     @searchable_klasses = ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket']
-    @current_filter = :tickets
+    @current_filter     = :tickets
+    @search_context     = :portal_spotlight_ticket
     search
   end
 
@@ -44,7 +45,8 @@ class Support::SearchV2::SpotlightController < SupportController
     require_user_login unless forums_enabled?
 
     @searchable_klasses = ['Topic']
-    @current_filter = :topics
+    @current_filter     = :topics
+    @search_context     = :portal_spotlight_topic
     search
   end
 
@@ -54,13 +56,15 @@ class Support::SearchV2::SpotlightController < SupportController
     require_user_login unless allowed_in_portal?(:open_solutions)
 
     @searchable_klasses = ['Solution::Article']
-    @current_filter = :solutions
+    @current_filter     = :solutions
+    @search_context     = :portal_spotlight_solution
     search
   end
 
   def suggest_topic
     @no_render          = true
     @searchable_klasses = ['Topic']
+    @search_context     = :portal_spotlight_topic
     search
     @results            = @search_results
 
@@ -92,6 +96,7 @@ class Support::SearchV2::SpotlightController < SupportController
         @search_results = []
         @result_set = []
 
+        Rails.logger.error "Exception encountered - #{e.message}"
         NewRelic::Agent.notice_error(e)
       end
 
@@ -106,34 +111,39 @@ class Support::SearchV2::SpotlightController < SupportController
       }
     end
 
-    # To-do: Handling phrase queries, add note params
     # Constructing params for ES
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        es_params[:search_term]               = @search_key
-        es_params[:account_id]                = current_account.id ##needed?
-        es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
-        es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
-        es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
+        es_params[:search_term] = @search_key
+
         if current_user
-          es_params[:article_company_id]     = current_user.company_id.to_i
-          es_params[:topic_company_id]       = current_user.company_id.to_i
           if privilege?(:client_manager)
-            es_params[:ticket_company_id]     = current_user.company_id.to_i
+            es_params[:ticket_company_id]     = current_user.company_id
           else
             es_params[:ticket_requester_id]   = current_user.id
           end
         end
-        es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id) if @searchable_klasses.include?('Solution::Article')
-        es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id) if @searchable_klasses.include?('Topic')
 
-        es_params[:size]                      = @size
-        es_params[:from]                      = @offset
-      end.merge(ES_BOOST_VALUES[:portal_spotlight])
+        if @searchable_klasses.include?('Solution::Article')
+          es_params[:language_id]               = Language.for_current_account.id
+          es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
+          es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
+          es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id)
+          es_params[:article_company_id]        = current_user.company_id if current_user
+        end
+
+        if @searchable_klasses.include?('Topic')
+          es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
+          es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id)
+          es_params[:topic_company_id]          = current_user.company_id if current_user
+        end
+
+        es_params[:size] = @size
+        es_params[:from] = @offset
+      end.merge(ES_BOOST_VALUES[@search_context])
     end
 
-    # To-do: Check if already exists
     # Check tweaking user_visibility in article.rb
     # Reusing from SearchUtil module
     #
@@ -269,7 +279,6 @@ class Support::SearchV2::SpotlightController < SupportController
                         params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
       @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
       @offset         = @size * (@page - 1)
-      @search_context = :portal_spotlight
     end
 
 end

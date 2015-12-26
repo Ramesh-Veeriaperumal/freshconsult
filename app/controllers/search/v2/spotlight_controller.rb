@@ -93,7 +93,7 @@ class Search::V2::SpotlightController < ApplicationController
         @search_results = []
         @result_set = []
 
-        Rails.logger.error e.message
+        Rails.logger.error "Exception encountered - #{e.message}"
         NewRelic::Agent.notice_error(e)
       end
 

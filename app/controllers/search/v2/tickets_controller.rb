@@ -65,7 +65,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
-        Rails.logger.error e.message
+        Rails.logger.error "Exception encountered - #{e.message}"
         NewRelic::Agent.notice_error(e)
         @requester_ids  = []
       end

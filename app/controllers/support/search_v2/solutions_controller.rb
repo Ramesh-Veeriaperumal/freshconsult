@@ -7,7 +7,7 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
   # Needed for loading records from DB
   #
   @@esv2_spotlight_models = {
-    "article" => { model: "Solution::Article",  associations: [ :folder, :article_body ] }
+    'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
   }
 
   def related_articles
@@ -41,16 +41,12 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
         es_params[:from]                      = @offset
       end
     end
-    
-    # Keep dummy to override parent
-    #
-    def process_results
-    end
 
     def initialize_search_parameters
       super
       @searchable_klasses = ['Solution::Article']
       @article            = current_account.solution_articles.find(params[:article_id])
+      @no_render          = true
     end
 
 end

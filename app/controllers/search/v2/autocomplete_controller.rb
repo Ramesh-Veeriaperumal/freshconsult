@@ -96,7 +96,7 @@ class Search::V2::AutocompleteController < ApplicationController
                                                         }
                                                       )
       rescue => e
-        Rails.logger.error e.message
+        Rails.logger.error "Exception encountered - #{e.message}"
         NewRelic::Agent.notice_error(e)
         @records_from_db = []
       end
