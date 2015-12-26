@@ -1,8 +1,8 @@
 json.array! @items do |tf|
   json.cache! CacheLib.key(tf, params) do
     json.extract! tf, :id, :default, :description, :label, :name, :position, :required_for_closure
-    json.set! :portal_cc, TicketFieldDecorator.portal_cc(tf) if TicketFieldDecorator.default_requester_field(tf)
-    json.set! :portal_cc_to, TicketFieldDecorator.portalcc_to(tf) if TicketFieldDecorator.default_requester_field(tf)
+    json.set! :portal_cc, tf.portal_cc if tf.default_requester?
+    json.set! :portal_cc_to, tf.portalcc_to if tf.default_requester?
 
     json.set! :type, tf.field_type
     json.set! :required_for_agents, tf.required
@@ -14,8 +14,7 @@ json.array! @items do |tf|
     json.partial! 'shared/utc_date_format', item: tf
   end
 
-  choices = TicketFieldDecorator.ticket_field_choices(tf)
-  json.set! :choices, choices if choices.present?
+  json.set! :choices, tf.ticket_field_choices if tf.ticket_field_choices.present?
 
   if tf.field_type == 'nested_field'
     json.set! :nested_ticket_fields do

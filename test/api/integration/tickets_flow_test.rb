@@ -49,8 +49,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
                     due_by: 14.days.since.iso8601, fr_due_by: 1.days.since.iso8601, group_id: @create_group.id }
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
-    field1 = tkt_field1.name
-    field2 = tkt_field2.name
+    field1 = tkt_field1.name[0..-3]
+    field2 = tkt_field2.name[0..-3]
     headers, params = encode_multipart(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => 'false' }), 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
@@ -132,17 +132,17 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     Helpdesk::Ticket.any_instance.stubs(:custom_field).returns(custom_date_1: time)
 
     # without CustomFieldDecorator
-    CustomFieldDecorator.stubs(:utc_format).returns(custom_date_1: time)
+    TicketDecorator.any_instance.stubs(:utc_format).returns(time)
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
-    assert_equal time.iso8601, parsed_response['custom_date_1']
-    assert_not_equal time.utc.iso8601, parsed_response['custom_date_1']
+    assert_equal time.iso8601, parsed_response['custom_date']
+    assert_not_equal time.utc.iso8601, parsed_response['custom_date']
 
     # with CustomFieldDecorator
-    CustomFieldDecorator.unstub(:utc_format)
+    TicketDecorator.any_instance.unstub(:utc_format)
     get "/api/v2/tickets/#{t.display_id}", nil, @write_headers
     parsed_response = JSON.parse(response.body)['custom_fields']
-    assert_equal time.utc.iso8601, parsed_response['custom_date_1']
+    assert_equal time.utc.iso8601, parsed_response['custom_date']
     Helpdesk::Ticket.any_instance.unstub(:custom_field)
   end
 end

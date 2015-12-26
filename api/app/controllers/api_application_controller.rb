@@ -34,6 +34,8 @@ class ApiApplicationController < MetalApiController
   include SubscriptionSystem
   # App specific Before filters Ends
 
+  include DecoratorConcern
+
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 

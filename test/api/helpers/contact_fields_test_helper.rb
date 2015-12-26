@@ -12,7 +12,7 @@ module Helpers::ContactFieldsTestHelper
       id: Fixnum,
       label: expected_output[:label] || contact_field.label,
       label_for_customers: expected_output[:label_for_customers] || contact_field.label_in_portal,
-      name: expected_output[:name] || contact_field.name,
+      name: expected_output[:name] || (default_contact_field ? contact_field.name : CustomFieldDecorator.without_cf(contact_field.name)),
       position: expected_output[:position] || contact_field.position,
       required_for_agents: expected_output[:required_for_agents] || contact_field.required_for_agent,
       required_for_customers: expected_output[:required_for_customers] || contact_field.required_in_portal,

@@ -22,5 +22,11 @@ class ParamsHelper
         custom_fields[key] = 0 if value.is_a?(FalseClass)
       end
     end
+
+    def modify_custom_fields(params, name_mapping)
+      return unless params.is_a? Hash
+      # -> {:text => :test} => {:text_1 => :test}
+      params.keys.each { |field| params[name_mapping[field.to_sym]] = params.delete(field) }
+    end
   end
 end
