@@ -188,7 +188,7 @@ module ApiDiscussions
     def test_create
       fc = ForumCategory.first
       post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: 1,
-                                                                     forum_type: 1, name: 'test')
+                                                    forum_type: 1, name: 'test')
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: fc.id)
       assert_response 201

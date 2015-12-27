@@ -86,7 +86,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      v1[:index] +=1 #trusted_ip
+      v1[:index] += 1 # trusted_ip
 
       # destroy
       v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do

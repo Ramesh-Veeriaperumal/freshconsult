@@ -1,12 +1,11 @@
 class TicketFieldDecorator
-
   attr_accessor :record
-  
-  delegate :id, :default, :description, :label, :position, :required_for_closure,
-   :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal, 
-   :created_at, :updated_at, :nested_ticket_fields, to: :record
 
-  def initialize(record, options)
+  delegate :id, :default, :description, :label, :position, :required_for_closure,
+           :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
+           :created_at, :updated_at, :nested_ticket_fields, to: :record
+
+  def initialize(record, _options)
     @record = record
   end
 

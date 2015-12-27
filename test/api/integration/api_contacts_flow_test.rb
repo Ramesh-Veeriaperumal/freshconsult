@@ -166,7 +166,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
     turn_off_caching
     assert_response 200
-    match_json(contact_pattern({ custom_field: custom_field.map {|k,v| [CustomFieldDecorator.without_cf(k), v]}.to_h }, sample_user))
+    match_json(contact_pattern({ custom_field: custom_field.map { |k, v| [CustomFieldDecorator.without_cf(k), v] }.to_h }, sample_user))
   ensure
     Account.unstub(:current)
   end

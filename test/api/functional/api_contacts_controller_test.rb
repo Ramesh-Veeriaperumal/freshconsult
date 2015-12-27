@@ -31,7 +31,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_show_a_contact_with_avatar
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     sample_user = get_user
-    sample_user.build_avatar({content_content_type: file.content_type, content_file_name: file.original_filename})
+    sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
     assert_response 200
@@ -71,7 +71,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_existing_email
     email = Faker::Internet.email
-    add_new_user(@account, {name: Faker::Lorem.characters(15), email: email})
+    add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
     match_json([bad_request_error_pattern('email', :"Email has already been taken")])

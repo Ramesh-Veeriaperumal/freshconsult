@@ -5,7 +5,7 @@ class Helpers::TicketsValidationHelper
     end
 
     def name_mapping(ticket_fields)
-      ticket_fields.reject(&:default).each_with_object({}) { |tf, hash| hash[tf.name.to_sym] = TicketDecorator.without_account_id(tf.name).to_sym}
+      ticket_fields.reject(&:default).each_with_object({}) { |tf, hash| hash[tf.name.to_sym] = TicketDecorator.without_account_id(tf.name).to_sym }
     end
 
     def custom_dropdown_fields(delegator)

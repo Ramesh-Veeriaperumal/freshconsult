@@ -1,10 +1,10 @@
 class CompanyFieldDecorator
   attr_accessor :record
-  
-  delegate :choices, :field_type, :id, :name, :label, :position, :required_for_agent, 
-  :default_field?, :created_at, :updated_at, to: :record
 
-  def initialize(record, options)
+  delegate :choices, :field_type, :id, :name, :label, :position, :required_for_agent,
+           :default_field?, :created_at, :updated_at, to: :record
+
+  def initialize(record, _options)
     @record = record
   end
 
