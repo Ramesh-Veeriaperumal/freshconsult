@@ -1,15 +1,6 @@
 class HelpdeskReports::Request::Base
 
-  attr_accessor :req_params, :url
-
-  def request    
-    begin
-      response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
-      JSON.parse(response.body)
-    rescue => e
-      {"errors" => e.inspect}     
-    end   
-  end
+  attr_accessor :req_params
 
   def list_query?
     req_params[:list]

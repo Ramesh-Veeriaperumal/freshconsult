@@ -7,10 +7,9 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
   attr_accessor :metric, :query_type
 
   def initialize params, report_type
-    @url         = ReportsAppConfig::TICKET_REPORTS_URL
-    @req_params  = params
-    @metric      = params[:metric]
-    @query_type  = set_query_type # list or bucket or simple, NECESSARY for result parsing
+    @req_params = params
+    @metric     = params[:metric]
+    @query_type = set_query_type # list or bucket or simple, NECESSARY for result parsing
     @report_type = report_type
   end
 

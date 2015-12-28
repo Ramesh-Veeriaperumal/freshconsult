@@ -457,7 +457,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         renderViewMore: function (el) {
             var attr = jQuery(el).data('group-container');
-            jQuery('#view_all_container').attr('data-group',attr);
+            jQuery('#view_all_container').data('group',attr);
             var active_metric_hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric];
 
             if (!jQuery.isEmptyObject(active_metric_hash[attr])) {
