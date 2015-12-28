@@ -34,25 +34,25 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       create_v2_payload = v2_contact_payload
 
       # create
-      v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
-        post('/api/v2/contacts', create_v2_payload, @write_headers)
-        assert_response 201
-      end
       v1[:create] = count_queries do
         post('/contacts.json', create_v1_payload, @write_headers)
         assert_response 200
+      end
+      v2[:create], v2[:api_create], v2[:create_queries] = count_api_queries do
+        post('/api/v2/contacts', create_v2_payload, @write_headers)
+        assert_response 201
       end
 
       id1 = User.last(2).first.id
       id2 = User.last.id
 
       # update
-      v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
-        put("/api/contacts/#{id1}", v2_contact_update_payload, @write_headers)
-        assert_response 200
-      end
       v1[:update] = count_queries do
         put("/contacts/#{id2}.json", v1_contact_update_payload, @write_headers)
+        assert_response 200
+      end
+      v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
+        put("/api/contacts/#{id1}", v2_contact_update_payload, @write_headers)
         assert_response 200
       end
 
@@ -61,12 +61,12 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:update] -= 3
 
       # show
-      v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
-        get("/api/v2/contacts/#{id1}", nil, @headers)
-        assert_response 200
-      end
       v1[:show] = count_queries do
         get("/contacts/#{id2}.json", nil, @headers)
+        assert_response 200
+      end
+      v2[:show], v2[:api_show], v2[:show_queries] = count_api_queries do
+        get("/api/v2/contacts/#{id1}", nil, @headers)
         assert_response 200
       end
 
@@ -77,37 +77,37 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v2[:show] -= 3
 
       # index
-      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
-        get('/api/v2/contacts', nil, @headers)
-        assert_response 200
-      end
       v1[:index] = count_queries do
         get('/contacts.json', nil, @headers)
+        assert_response 200
+      end
+      v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do
+        get('/api/v2/contacts', nil, @headers)
         assert_response 200
       end
 
       v1[:index] += 1 # trusted_ip
 
       # destroy
-      v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
-        delete("/api/v2/contacts/#{id1}", nil, @headers)
-        assert_response 204
-      end
       v1[:destroy] = count_queries do
         delete("/contacts/#{id2}.json", nil, @headers)
         assert_response 200
+      end
+      v2[:destroy], v2[:api_destroy], v2[:destroy_queries] = count_api_queries do
+        delete("/api/v2/contacts/#{id1}", nil, @headers)
+        assert_response 204
       end
 
       id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
       id2 = User.where(helpdesk_agent: false, deleted: false).last.id
 
       # make_agent
-      v2[:make_agent], v2[:api_make_agent], v2[:make_agent_queries] = count_api_queries do
-        put("/api/v2/contacts/#{id1}/make_agent", {}.to_json, @write_headers)
-        assert_response 200
-      end
       v1[:make_agent] = count_queries do
         put("/contacts/#{id2}/make_agent.json", {}.to_json, @write_headers)
+        assert_response 200
+      end
+      v2[:make_agent], v2[:api_make_agent], v2[:make_agent_queries] = count_api_queries do
+        put("/api/v2/contacts/#{id1}/make_agent", {}.to_json, @write_headers)
         assert_response 200
       end
 
