@@ -113,16 +113,16 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       ticket.update_column(:deleted, false)
-      turn_on_caching
-      get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
-      note.note_body.body = 'Test update note body'
-      note.save
-      get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
-      turn_off_caching
-      parsed_response = JSON.parse(response.body)['notes']
-      notes = parsed_response.select { |n| n['id'] = note.id } if parsed_response
-      assert_response 200
-      assert_equal 'Test update note body', notes[0]['body']
+      enable_cache { 
+        get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
+        note.note_body.body = 'Test update note body'
+        note.save
+        get "/api/v2/tickets/#{ticket.display_id}", { include: 'notes' }, @write_headers
+        parsed_response = JSON.parse(response.body)['notes']
+        notes = parsed_response.select { |n| n['id'] = note.id } if parsed_response
+        assert_response 200
+        assert_equal 'Test update note body', notes[0]['body']
+      }
     end
   end
 

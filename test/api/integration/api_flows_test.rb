@@ -641,24 +641,24 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_throttled_valid_request_with_plan_api_limit_changed
-    turn_on_caching
-    old_plan = @account.subscription.subscription_plan
-    subscription = @account.subscription
-    new_plan = SubscriptionPlan.find(3)
-    set_key(plan_key(3), 230, nil)
-    remove_key(account_key)
+    enable_cache { 
+      old_plan = @account.subscription.subscription_plan
+      subscription = @account.subscription
+      new_plan = SubscriptionPlan.find(3)
+      set_key(plan_key(3), 230, nil)
+      remove_key(account_key)
 
-    get '/api/v2/discussions/categories', nil, @headers
-    assert_response 200
-    assert_equal '200', response.headers['X-RateLimit-Total']
-    @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
-    @account.reload.subscription.reload.subscription_plan
+      get '/api/v2/discussions/categories', nil, @headers
+      assert_response 200
+      assert_equal '200', response.headers['X-RateLimit-Total']
+      @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
+      @account.reload.subscription.reload.subscription_plan
 
-    get '/api/v2/discussions/categories', nil, @headers
-    assert_response 200
-    assert_equal '230', response.headers['X-RateLimit-Total']
-    subscription.update_column(:subscription_plan_id, old_plan.id)
-    turn_off_caching
+      get '/api/v2/discussions/categories', nil, @headers
+      assert_response 200
+      assert_equal '230', response.headers['X-RateLimit-Total']
+      subscription.update_column(:subscription_plan_id, old_plan.id)
+    }
   end
 
   def test_expiry_condition
