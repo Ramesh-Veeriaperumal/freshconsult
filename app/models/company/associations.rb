@@ -15,5 +15,5 @@ class Company < ActiveRecord::Base
   has_many :customer_folders, :class_name => 'Solution::CustomerFolder', :dependent => :destroy,
            :foreign_key => 'customer_id'
   
-  has_many :archive_tickets , :through => :all_users , :class_name => 'Helpdesk::ArchiveTicket'
+  has_many :archive_tickets , :class_name => 'Helpdesk::ArchiveTicket' , :foreign_key => "owner_id"
 end

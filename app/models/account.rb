@@ -260,7 +260,9 @@ class Account < ActiveRecord::Base
   end
 
   def default_friendly_email_personalize(user_name)
-    primary_email_config.friendly_email_personalize(user_name)
+    primary_email_config.active? ? 
+      primary_email_config.friendly_email_personalize(user_name) :
+      "#{primary_email_config.send(:format_name, user_name)} <support@#{full_domain}>"
   end
   
   def default_email

@@ -11,6 +11,7 @@ class MailgunController < ApplicationController
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
   skip_before_filter :logging_details, :ensure_proper_protocol
+  skip_after_filter :set_last_active_time
 
   def create
     Helpdesk::Email::Process.new(params).perform

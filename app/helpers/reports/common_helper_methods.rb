@@ -13,8 +13,8 @@ module Reports::CommonHelperMethods
 			["/reports/v2/group_summary", 			 "group_summary",            "group-summary" ,	  			  "productivity"],
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ,     "productivity"],      
 			["/timesheet_reports",                   "timesheet_reports",        "time_sheet" ,      			  "productivity"],
-			["/survey/reports",                      "satisfaction_survey",    	 "customer_satisfaction",   "customer_happiness"],
-			["/reports/v2/customer_report",          "customer_report",          "customer_reports" ,  		"customer_happiness"]
+			["/reports/v2/customer_report",          "customer_report",          "customer_reports" ,  		"customer_happiness"],
+			["/survey/reports",                      "satisfaction_survey",    	 "customer_satisfaction",   "customer_happiness"]
 		]
 
 	PJAX_SUPPORT_REPORTS = ["glance","ticket_volume","agent_summary","group_summary","customer_report","performance_distribution"]

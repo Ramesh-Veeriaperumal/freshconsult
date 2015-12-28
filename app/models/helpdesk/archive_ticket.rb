@@ -64,6 +64,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   attr_protected :account_id
   attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state
+
+  alias_attribute :company_id, :owner_id
+  
   accepts_nested_attributes_for :archive_ticket_association, allow_destroy: true
 
   concerned_with :rabbitmq

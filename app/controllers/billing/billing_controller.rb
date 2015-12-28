@@ -5,6 +5,8 @@ class Billing::BillingController < ApplicationController
                       :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
+  skip_after_filter :set_last_active_time
+
   # Authentication, SSL and Events to be tracked or not. This must be the last prepend_before_filter
   # for this controller 
   prepend_before_filter :event_monitored, :ssl_check, :login_from_basic_auth
