@@ -87,6 +87,14 @@ class Search::Utils
   def self.es_version
     (Time.zone.now.to_f * 1000000).ceil
   end
+
+  def self.exact_match?(search_term)
+    search_term.present? and (search_term.start_with?('<','"') && search_term.end_with?('>', '"'))
+  end
+
+  def self.extract_term(search_term)
+    search_term.to_s.gsub(/^<?"?|"?>?$/,'').squish
+  end
   
   private
     

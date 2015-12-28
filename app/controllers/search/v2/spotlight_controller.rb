@@ -135,7 +135,12 @@ class Search::V2::SpotlightController < ApplicationController
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        es_params[:search_term] = @search_key
+        if Search::Utils.exact_match?(@search_key)
+          es_params[:search_term] = Search::Utils.extract_term(@search_key)
+          es_params[:exact_match] = true
+        else
+          es_params[:search_term] = @search_key
+        end
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i

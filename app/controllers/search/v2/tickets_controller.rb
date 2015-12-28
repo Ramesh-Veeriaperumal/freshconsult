@@ -33,7 +33,12 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         if @search_field == 'requester'
           es_params[:requester_ids] = @requester_ids
         else
-          es_params[:search_term] = @search_key
+          if Search::Utils.exact_match?(@search_key)
+            es_params[:search_term] = Search::Utils.extract_term(@search_key)
+            es_params[:exact_match] = true
+          else
+            es_params[:search_term] = @search_key
+          end
         end
         
         es_params[:size]  = @size
@@ -54,14 +59,22 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
     #
     def search_users
       begin
+        user_params     = Hash.new.tap do |es_params|
+          if Search::Utils.exact_match?(@search_key)
+            es_params[:search_term] = Search::Utils.extract_term(@search_key)
+            es_params[:exact_match] = true
+          else
+            es_params[:search_term] = @search_key
+          end
+
+          es_params[:sort_by]         = '_score'
+          es_params[:sort_direction]  = 'desc'
+        end
+
         es_results      = Search::V2::SearchRequestHandler.new(current_account.id,
                                                                 :requester_autocomplete,
                                                                 ['user']
-                                                              ).fetch({
-                                                                        search_term: SearchUtil.es_filter_exact(@search_key),
-                                                                        sort_by: '_score',
-                                                                        sort_direction: 'desc'
-                                                                      }.merge(ES_BOOST_VALUES[:requester_autocomplete])
+                                                              ).fetch(user_params.merge(ES_BOOST_VALUES[:requester_autocomplete])
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
