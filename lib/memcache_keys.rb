@@ -74,9 +74,9 @@ module MemcacheKeys
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
   
-  SHARD_BY_DOMAIN = "v3/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v4/SHARD_BY_DOMAIN:%{domain}"
  
-  SHARD_BY_ACCOUNT_ID = "v3/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v4/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
@@ -106,7 +106,7 @@ module MemcacheKeys
   
   PRODUCT_NOTIFICATION = "v3/%{language}/PRODUCT_NOTIFICATION"
 
-  POD_SHARD_ACCOUNT_MAPPING = "v1/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
+  POD_SHARD_ACCOUNT_MAPPING = "v2/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
   ACCOUNT_ADDITIONAL_SETTINGS = "v1/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
 
