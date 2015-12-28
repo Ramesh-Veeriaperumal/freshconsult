@@ -13,7 +13,7 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
   def related_articles
     @no_render          = true
     @size               = params[:limit]
-    @search_context     = :portal_article_search
+    @search_context     = :portal_related_articles
     search
     @related_articles   = @result_set
     @container          = params[:container]
@@ -30,16 +30,16 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
         es_params[:search_term] = ("#{@article.tags.map(&:name).join(' ')} #{@article.title}").gsub(/[\^\$]/, '')
         return [] if es_params[:search_term].blank?
 
-        es_params[:account_id]                = current_account.id
+        es_params[:language_id]               = Language.for_current_account.id
         es_params[:article_id]                = @article.id
         es_params[:article_status]            = Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft]
-        es_params[:article_folder_visibility] = @article.user_visibility
+        es_params[:article_visibility]        = @article.user_visibility
         es_params[:article_company_id]        = User.current.company_id
         es_params[:article_category_id]       = current_portal.portal_solution_categories.map(&:solution_category_id)
 
         es_params[:size]                      = @size
         es_params[:from]                      = @offset
-      end
+      end.merge(ES_BOOST_VALUES[@search_context])
     end
 
     def initialize_search_parameters

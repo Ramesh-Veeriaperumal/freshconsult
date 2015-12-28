@@ -1,6 +1,6 @@
 class SearchV2::TopicOperations < SearchV2::IndexOperations
   
-  class UpdateForum < SearchSidekiq::IndexUpdate
+  class UpdateForum < SearchV2::TopicOperations
     def perform(args)
       args.symbolize_keys!
       forum = Account.current.forums.find(args[:forum_id])
@@ -11,7 +11,7 @@ class SearchV2::TopicOperations < SearchV2::IndexOperations
     end
   end
   
-  class RemoveForumTopics < SearchSidekiq::IndexUpdate
+  class RemoveForumTopics < SearchV2::TopicOperations
     def perform(args)
       args.symbolize_keys!
       Search::V2::IndexRequestHandler.new(

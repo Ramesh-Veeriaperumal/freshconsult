@@ -15,7 +15,7 @@ class Search::Utils
     portal_spotlight_ticket:    'portalSpotlightTicket',
     portal_spotlight_solution:  'portalSpotlightSolution',
     portal_spotlight_topic:     'portalSpotlightTopic',
-    portal_article_search:      'portalArticleSearch',
+    portal_related_articles:    'portalRelatedArticles',
     agent_autocomplete:         'agentAutocomplete',
     requester_autocomplete:     'requesterAutocomplete',
     company_autocomplete:       'companyAutocomplete',

@@ -229,3 +229,9 @@
   :archiveticket_boost: 1
   :article_boost: 1
   :topic_boost: 1
+:portal_related_articles: 
+  #=> Article fields boost <=#
+  :article_title_boost: 1
+  :article_desc_un_html_boost: 1
+  :article_tag_names_boost: 1
+  :article_attachment_boost: 1
