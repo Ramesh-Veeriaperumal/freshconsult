@@ -152,7 +152,7 @@ class Ecommerce::Ebay::Api
     ebay_account_counter = get_integ_redis_key(ebay_account_key)
     application_counter = get_integ_redis_key(application_key)
 
-    expire_time = (Time.now.utc + 1.week)
+    expire_time = (Time.now.utc + 1.week).to_i
 
     set_integ_redis_key(application_key , 0, expire_time) if application_counter.blank?
     application_counter = incr_val(application_key)
