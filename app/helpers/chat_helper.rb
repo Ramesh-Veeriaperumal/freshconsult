@@ -339,13 +339,10 @@ module ChatHelper
       if msg['userId'] && !(msg['userId'].include?'visitor')
         msgclass = "background:rgba(242,242,242,0.3)"
       end
-      time = (msg['createdAt'].is_a? Fixnum) ? Time.at(msg['createdAt'] / 1000) : Time.zone.parse(msg['createdAt'])
-      time = time.strftime('%I:%M %p')
       image = msg['photo'] ? msg['photo'] : '/images/fillers/profile_blank_thumb.gif';
       message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
              '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 
-             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td>' +
-             '<td style="padding:10px; font-size:10px; color:#aaa; text-align:right; min-width:50px; border:0">'+time+'</td></tr>'
+             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td>' 
       conversation += message;
     end
     conversation = '<div class="conversation_wrap"><table style="width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse; border-right:0; border-bottom:0;">'+conversation+'</table></div>';
