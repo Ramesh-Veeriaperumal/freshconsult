@@ -11,7 +11,7 @@ module IntegrationServices::Services
     LINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} linked Freshdesk ticket <a href='%{ticket_url}'>%{ticket_id}</a> to this issue"
     UNLINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} unlinked Freshdesk ticket <a href='%{ticket_url}'>%{ticket_id}</a> from this issue"
     COMMENT_TO_GITHUB = "Comment added by %{user_type} %{user} in Freshdesk ticket id <a href='%{ticket_url}'>%{ticket_id}</a>:<br/>%{comment}"
-    COMMENT_TO_FRESHDESK = "<b> GitHub Repository : </b> %{repo}, <b>Issue ID :</b> %{issue_id} <br/><br/> %{comment}"
+    COMMENT_TO_FRESHDESK = "<b> GitHub Repository : </b> %{repo}, <b>Issue ID :</b> <a href='%{issue_url}'>%{issue_id}</a> <br/><br/> %{comment}"
     CREATE_GITHUB_ISSUE = "Freshdesk Ticket ID: <a href='%{ticket_url}'>%{ticket_id}</a> <br/> " +
                           "Freshdesk Ticket Agent: %{agent_name}<br/>" +
                           "Freshdesk Ticket Agent Email: %{agent_email}<br/>" +
@@ -167,6 +167,7 @@ module IntegrationServices::Services
                      :comment => comment,
                      :name => user.name,
                      :issue_id => issue_id,
+                     :issue_url => @payload["issue"]["html_url"],
                      :repo => repo
                    }).html_safe
       options = {
