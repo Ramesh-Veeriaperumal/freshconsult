@@ -76,9 +76,9 @@ gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
-source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
-  gem 'sidekiq-pro'
-end
+source "https://a55d1643:d20410bb@gems.contribsys.com/" do 
+  gem 'sidekiq-pro' 
+end 
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
 gem "jira4r", "0.3.0"
