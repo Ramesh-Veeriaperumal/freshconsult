@@ -342,7 +342,7 @@ module ChatHelper
       image = msg['photo'] ? msg['photo'] : '/images/fillers/profile_blank_thumb.gif';
       message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
              '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 
-             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td>' 
+             '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg['name']+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg['msg']+'</p></td><td>&nbsp;</td>' 
       conversation += message;
     end
     conversation = '<div class="conversation_wrap"><table style="width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse; border-right:0; border-bottom:0;">'+conversation+'</table></div>';
