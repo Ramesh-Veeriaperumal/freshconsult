@@ -4,7 +4,7 @@ class Helpdesk::Tag < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
 
   after_commit :clear_cache
 

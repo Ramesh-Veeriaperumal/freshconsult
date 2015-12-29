@@ -21,12 +21,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
   include ActionView::Helpers::TranslationHelper
-  include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
-    Helpdesk::TicketNotifications
+  include Helpdesk::TicketActivities, Helpdesk::TicketCustomFields, Helpdesk::TicketNotifications
   include Helpdesk::Services::Ticket
   include BusinessHoursCalculation
   include AccountConstants
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 

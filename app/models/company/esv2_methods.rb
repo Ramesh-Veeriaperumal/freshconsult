@@ -7,7 +7,6 @@ class Company < ActiveRecord::Base
   end
 
   # Custom json used by ES v2
-  # To-do: Change based on mappings
   #
   def to_esv2_json
     as_json({

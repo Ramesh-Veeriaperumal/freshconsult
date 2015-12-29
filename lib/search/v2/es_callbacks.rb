@@ -9,7 +9,7 @@ module Search
     ### (*) esv2_fields_updated? - If needed          ###
     #####################################################
 
-    module EsCommitObserver
+    module EsCallbacks
       extend ActiveSupport::Concern
 
       included do
@@ -26,7 +26,6 @@ module Search
           end
 
           # Update document in ES
-          # To-Do: Update notes in ES if ticket updated if notes is not stored in parent-child format
           #
           def es_update
             update_searchv2 if (self.respond_to?(:esv2_fields_updated?) ? self.esv2_fields_updated? : true)
@@ -38,6 +37,7 @@ module Search
             return true unless esv2_valid?
 
             SearchV2::IndexOperations::DocumentAdd.perform_async({
+              queue:        :omg,
               type:         self.class.to_s.demodulize.downcase,
               account_id:   self.account_id,
               document_id:  self.id,
@@ -47,7 +47,6 @@ module Search
           end
 
           # Remove document from ES
-          # To-Do: Need to handle archive if not separate index
           #
           def es_delete
             return true unless esv2_valid?

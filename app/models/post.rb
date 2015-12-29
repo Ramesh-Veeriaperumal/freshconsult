@@ -1,7 +1,7 @@
 class Post < ActiveRecord::Base
   
   include Juixe::Acts::Voteable
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
 
   SORT_ORDER = {
     :date => 'id ASC',

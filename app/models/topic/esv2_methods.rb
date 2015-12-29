@@ -20,7 +20,7 @@ class Topic < ActiveRecord::Base
   end
 
   def company_ids
-    forum.customer_forums.map(&:customer_id)
+    forum.customer_forums.pluck(:customer_id)
   end
 
   ##########################

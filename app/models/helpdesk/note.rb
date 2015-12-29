@@ -9,7 +9,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include Helpdesk::Services::Note
   include ApiWebhooks::Methods
   include BusinessHoursCalculation
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
 
   SCHEMA_LESS_ATTRIBUTES = ['from_email', 'to_emails', 'cc_emails', 'bcc_emails', 'header_info', 'category', 
                             'response_time_in_seconds', 'response_time_by_bhrs', 'email_config_id', 'subject']

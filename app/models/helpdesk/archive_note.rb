@@ -3,7 +3,7 @@ require 'digest/md5'
 
 class Helpdesk::ArchiveNote < ActiveRecord::Base
   include ParserUtil
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
 
   self.primary_key = :id
   belongs_to_account

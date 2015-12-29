@@ -41,7 +41,7 @@ class Solution::Article < ActiveRecord::Base
       folder_id: solution_folder_meta.id,
       folder_category_id: solution_folder_meta.solution_category_meta_id,
       folder_visibility: solution_folder_meta.visibility,
-      company_ids: solution_folder_meta.customer_folders.map(&:customer_id)
+      company_ids: solution_folder_meta.customer_folders.pluck(:customer_id)
     }
   end
 

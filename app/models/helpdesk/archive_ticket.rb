@@ -6,7 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-  include Search::V2::EsCommitObserver
+  include Search::V2::EsCallbacks
   
   self.primary_key = :id
   belongs_to_account
@@ -295,8 +295,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     return nil unless ff_entry
 
     field_name = ff_entry.flexifield_name
-    # ticket_association = archive_ticket_association.association_data["helpdesk_tickets_association"]
-    # ticket_association["flexifield"][field_name] if ticket_association
     flexifield_data[field_name] if helpdesk_tickets_association
   end
   

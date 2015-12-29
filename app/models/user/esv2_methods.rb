@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
   end
 
   # Custom json used by ES v2
-  # To-do: Change based on mappings
   #
   def to_esv2_json
     as_json({
@@ -33,7 +32,7 @@ class User < ActiveRecord::Base
   end
 
   def emails
-    user_emails.map(&:email)
+    user_emails.pluck(:email)
   end
 
   # Renamed as es_tag_names as tag_names already exists

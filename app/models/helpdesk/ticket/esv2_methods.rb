@@ -92,7 +92,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def watchers
-    subscriptions.map(&:user_id)
+    subscriptions.pluck(:user_id)
   end
 
   def status_stop_sla_timer
@@ -146,8 +146,49 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text|_int|_decimal)/}
   end
 
-  ###                                                         ###
-  #=> Should bring in ticket_elastic_search_methods.rb here?? <=#
-  ###                                                         ###
+  # _Note_: Will be deprecated and removed in near future
+  #
+  def es_from
+    if source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
+      requester.twitter_id
+    elsif source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+      requester.fb_profile_id
+    else
+      from_email
+    end
+  end
+
+  # Being re-used in V2
+  #
+  def es_cc_emails
+    cc_email_hash[:cc_emails] if cc_email_hash
+  end
+
+  # Being re-used in V2
+  #
+  def es_fwd_emails
+    cc_email_hash[:fwd_emails] if cc_email_hash
+  end
+
+  # _Note_: Will be deprecated and removed in near future
+  #
+  def update_notes_es_index
+    if !@model_changes[:deleted].nil? or !@model_changes[:spam].nil?
+      delete_from_es_notes if (deleted? or spam?) 
+      restore_es_notes if (!deleted? and !spam?)
+    end
+  end
+   
+  # _Note_: Will be deprecated and removed in near future
+  #
+  def delete_from_es_notes
+    SearchSidekiq::Notes::DeleteNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
+  end
+
+  # _Note_: Will be deprecated and removed in near future
+  #
+  def restore_es_notes
+    SearchSidekiq::Notes::RestoreNotesIndex.perform_async({ :ticket_id => id }) if ES_ENABLED
+  end                                                         ###
 
 end
