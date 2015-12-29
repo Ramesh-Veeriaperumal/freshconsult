@@ -37,7 +37,6 @@ module Search
             return true unless esv2_valid?
 
             SearchV2::IndexOperations::DocumentAdd.perform_async({
-              queue:        :omg,
               type:         self.class.to_s.demodulize.downcase,
               account_id:   self.account_id,
               document_id:  self.id,
