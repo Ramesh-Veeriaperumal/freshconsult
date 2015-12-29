@@ -30,6 +30,8 @@ class Solution::Folder < ActiveRecord::Base
 
   validate :companies_limit_check
 
+  alias_method :parent, :solution_folder_meta
+
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped

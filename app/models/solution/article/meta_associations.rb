@@ -10,6 +10,4 @@ class Solution::Article < ActiveRecord::Base
     :through => :solution_folder_meta,
 	:readonly => false,
     :conditions => proc { "solution_folders.language_id = '#{Language.for_current_account.id}'" }
-
-	alias_method :parent, :solution_article_meta
 end

@@ -29,6 +29,8 @@ class Solution::Category < ActiveRecord::Base
   
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
+  alias_method :parent, :solution_category_meta
+
   include Solution::LanguageMethods
   # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
