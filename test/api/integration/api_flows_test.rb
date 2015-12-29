@@ -394,9 +394,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal '1000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Total']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
-    remaining_limit = 1000 - new_v2_api_consumed_limit.to_i
+    remaining_limit = 3000 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
   end
@@ -643,22 +643,46 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_throttled_valid_request_with_plan_api_limit_changed
     turn_on_caching
     old_plan = @account.subscription.subscription_plan
-    subscription = @account.subscription
     new_plan = SubscriptionPlan.find(3)
     set_key(plan_key(3), 230, nil)
     remove_key(account_key)
-
-    get '/api/v2/discussions/categories', nil, @headers
-    assert_response 200
-    assert_equal '200', response.headers['X-RateLimit-Total']
+    Subscription.fetch_by_account_id(@account.id) # setting memcache key
+    
     @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
     @account.reload.subscription.reload.subscription_plan
 
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal '230', response.headers['X-RateLimit-Total']
-    subscription.update_column(:subscription_plan_id, old_plan.id)
+  ensure
+    @account.subscription.update_column(:subscription_plan_id, old_plan.id)
     turn_off_caching
+  end
+
+  def test_throttler_with_redis_down
+    remove_key(v2_api_key)
+    rate_limit_instance = $rate_limit
+    $rate_limit = mock("Redis Client Instance")
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    $rate_limit = rate_limit_instance
+    assert_equal '3000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Remaining']
+    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_nil get_key(v2_api_key)
+    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version'] 
+  ensure
+    $rate_limit = rate_limit_instance
+  end
+
+  def test_throttler_with_expiry_not_set_properly
+    old_api_consumed_limit = get_key(v2_api_key).to_i
+    remove_key(v2_api_key)
+    set_key(v2_api_key, '5000', nil)
+    get '/api/v2/discussions/categories', nil, @headers
+    set_key(v2_api_key, old_api_consumed_limit, nil)
+    assert_response 429
+    assert_equal '-1', response.headers['Retry-After']
   end
 
   def test_expiry_condition

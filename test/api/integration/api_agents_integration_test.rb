@@ -8,8 +8,8 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       api_show: 2,
       api_index: 2,
 
-      show: 12,
-      index: 12
+      show: 13,
+      index: 13
     }
 
     id = Agent.first.user.id

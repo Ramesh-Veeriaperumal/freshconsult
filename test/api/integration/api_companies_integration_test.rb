@@ -13,11 +13,11 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 8,
         api_destroy: 8,
 
-        create: 20,
-        show: 16,
-        index: 16,
-        update: 21,
-        destroy: 20
+        create: 21,
+        show: 17,
+        index: 17,
+        update: 22,
+        destroy: 21
       }
 
       # create

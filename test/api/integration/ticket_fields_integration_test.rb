@@ -8,7 +8,7 @@ class TicketFieldsIntegrationTest < ActionDispatch::IntegrationTest
       v2_expected = {
         api_index: 4,
 
-        index: 23
+        index: 24
       }
 
       # index
