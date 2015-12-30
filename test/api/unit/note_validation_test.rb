@@ -45,7 +45,7 @@ class NoteValidationTest < ActionView::TestCase
   def test_attachment_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
-    Helpers::TicketsValidationUtil.stubs(:attachment_size).returns(100)
+    Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
     controller_params = { 'user_id' => 1, attachments: ['file.png'],  body: Faker::Lorem.paragraph }
     item = nil
     note = NoteValidation.new(controller_params, item)
@@ -54,7 +54,7 @@ class NoteValidationTest < ActionView::TestCase
     assert errors.include?('Attachments data_type_mismatch')
     assert errors.count == 1
     Account.unstub(:current)
-    Helpers::TicketsValidationUtil.unstub(:attachment_size)
+    Helpers::TicketsValidationHelper.unstub(:attachment_size)
   end
 
   def test_complex_fields_with_nil
