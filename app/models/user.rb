@@ -527,7 +527,8 @@ class User < ActiveRecord::Base
   end
   
   def to_s
-    name.blank? ? email : name
+    user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
+    user_display_text.to_s
   end
   
   def to_liquid

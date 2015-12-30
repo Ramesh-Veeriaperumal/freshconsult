@@ -140,7 +140,7 @@ protected
   private
     def can_access_support_ticket?
       @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.requester.company == current_user.company))))
+                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
     end
 
     def update_reply_cc cc_hash, old_cc_hash

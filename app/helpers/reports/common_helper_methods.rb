@@ -31,7 +31,7 @@ module Reports::CommonHelperMethods
 		current_report_category = REPORT_CATEGORY[@report_type]
 		
 		sub_menu = REPORT_MAPPING.map do |s|
-			next unless has_scope?("#{s[1]}") && "#{s[3]}" == current_report_category
+			next unless "#{s[3]}" == current_report_category && has_scope?("#{s[1]}")
 			content_tag :li, :data => { :report => "#{s[1]}" }, :class => active_report(s[1])  do
 				temp_title = "helpdesk_reports.#{s[1]}.title"
 				link_content = <<HTML

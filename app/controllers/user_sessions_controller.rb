@@ -204,14 +204,14 @@ include GoogleLoginHelper
           redirect_to support_login_path
         }
         format.nmobile{# TODO-RAILS3
-          json = "{'login':'failed',"
-          @user_session.errors.messages.each do |attr, error|
+          err_resp = {login: "failed"}
+          @user_session.errors.messages.each do |attribute, error|
             error.each do |err|
-              json << "'attr' : '#{attr}', 'message' : '#{err}'}"
+              err_resp.merge!(:attr => "#{attribute}", message: "#{err}")
               break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
             end
           end
-          render :json => json
+          render :json => err_resp
         } 
       end
       
