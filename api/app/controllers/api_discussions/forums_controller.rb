@@ -10,6 +10,7 @@ module ApiDiscussions
     end
 
     def category_forums
+      return if validate_filter_params
       @forums = paginate_items(@item.forums)
       render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
     end

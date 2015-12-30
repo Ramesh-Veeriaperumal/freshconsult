@@ -36,6 +36,7 @@ class NotesController < ApiApplicationController
   end
 
   def ticket_notes
+    return if validate_filter_params
     notes = scoper.visible.exclude_source('meta').where(notable_id: @ticket.id).preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
     @notes = paginate_items(notes)
   end
@@ -124,9 +125,7 @@ class NotesController < ApiApplicationController
     end
 
     def sanitize_params
-      unless update?
-        prepare_array_fields "NoteConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize
-      end
+      prepare_array_fields "NoteConstants::#{action_name.upcase}_ARRAY_FIELDS".constantize
       # set source only for create/reply action not for update action. Hence TYPE_FOR_ACTION is checked.
       params[cname][:source] = NoteConstants::TYPE_FOR_ACTION[action_name] if NoteConstants::TYPE_FOR_ACTION.keys.include?(action_name)
 

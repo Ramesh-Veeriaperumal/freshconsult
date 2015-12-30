@@ -181,8 +181,14 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
 
       if notable.customer_performed?(user)
-        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] :
-          (private? ? CATEGORIES[:agent_private_response] : CATEGORIES[:customer_response])
+        schema_less_note.category = case 
+        when replied_by_third_party?
+          CATEGORIES[:third_party_response]
+        when private? && notable.agent_as_requester?(user.id)
+          CATEGORIES[:agent_private_response]
+        else
+          CATEGORIES[:customer_response]
+        end
       else
         schema_less_note.category = private? ? CATEGORIES[:agent_private_response] :
           CATEGORIES[:agent_public_response]

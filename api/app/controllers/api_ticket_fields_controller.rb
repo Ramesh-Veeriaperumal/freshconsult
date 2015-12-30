@@ -2,7 +2,7 @@ class ApiTicketFieldsController < ApiApplicationController
   private
 
     def validate_filter_params
-      params.permit(:type, *ApiConstants::DEFAULT_PARAMS)
+      params.permit(:type, *ApiConstants::DEFAULT_INDEX_FIELDS) # We will allow pagination options, but they will be ignored, to be consistent with contact/company fields.
       errors = [[:type, :blank]] if params.key?(:type) && ApiTicketConstants::FIELD_TYPES.exclude?(params[:type])
       render_errors errors if errors
     end
@@ -16,5 +16,10 @@ class ApiTicketFieldsController < ApiApplicationController
 
     def exclude_products
       (!current_portal.main_portal || current_account.products_from_cache.empty?)
+    end
+
+    def load_objects(items = scoper)
+      # This method has been overridden to avoid pagination.
+      @items = items
     end
 end

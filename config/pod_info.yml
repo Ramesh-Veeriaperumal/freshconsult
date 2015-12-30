@@ -1,2 +1,8 @@
 # Used in account class to fill the pod info as part of shard_mapping
 CURRENT_POD: poduseast # values can be poduseast, podeu. This should exactly match with the values of Nginx. Else routing may fail.
+
+GLOBAL_POD: poduseast
+
+pod_paths:
+  pod_endpoint: "/fdadmin/freshops_pod/pod_endpoint"
+

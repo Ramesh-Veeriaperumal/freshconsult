@@ -313,5 +313,15 @@ module HelpdeskReports::Helper::Ticket
   def pdf_export_config
     @real_time_export = REAL_TIME_REPORTS_EXPORT
   end
-
+  
+  def bulk_request req_params
+    begin
+      url = ReportsAppConfig::TICKET_REPORTS_URL
+      response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
+      JSON.parse(response.body)
+    rescue => e
+      [{"errors" => e.inspect}]     
+    end   
+  end
+  
 end

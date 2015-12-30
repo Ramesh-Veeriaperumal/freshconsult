@@ -6,7 +6,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   end
 
   def test_index_load_sla_policies
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.sla_policies.all.each do |sp|
       pattern << sla_policy_pattern(sp)
@@ -107,12 +107,12 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       quick_create_sla_policy
     end
     per_page = Account.current.sla_policies.all.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/sla_policies?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

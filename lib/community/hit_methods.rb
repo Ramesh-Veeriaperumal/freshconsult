@@ -6,8 +6,7 @@ module Community::HitMethods
 		current_klass = self.class
 		new_count = increment_others_redis(hit_key)
 		if new_count >= current_klass::HITS_CACHE_THRESHOLD
-			total_hits = read_attribute(:hits) + current_klass::HITS_CACHE_THRESHOLD
-			self.update_column(:hits, total_hits)
+			self.class.update_counters(self.id, :hits => current_klass::HITS_CACHE_THRESHOLD)
 			decrement_others_redis(hit_key, current_klass::HITS_CACHE_THRESHOLD)
 		end
 		return true unless self.respond_to?(:meta_association)

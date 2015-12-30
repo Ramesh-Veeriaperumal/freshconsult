@@ -141,9 +141,15 @@ var Ivr;
 			isVisible ? element.show() : element.hide();
 		},
 		anyErrorInIvrForm: function () {
-			var self = this, error=false, element;
+			var self = this, error=false, element, val, formattedNum;
 			$(".number_performer_input:visible").each(function () { 
 				element = $(this);
+				val = element.val();
+				if(val) {
+					formattedNum = formatE164(countryForE164Number(val), val);
+					if(formattedNum && formattedNum != val)
+						element.val(formattedNum);
+				}
 				if ( !isValidNumber(element.val()) ) {
 					self.toggleInvalidNumberError(true, element.next());
 					error = true;

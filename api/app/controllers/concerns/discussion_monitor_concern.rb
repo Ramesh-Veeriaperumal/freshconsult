@@ -8,7 +8,8 @@ module DiscussionMonitorConcern
     before_filter :privileged_to_send_user?, only: [:followed_by, :is_following]
 
     # For same reason above validate_follow_params is not part of after_load_object.
-    before_filter :validate_follow_params, only: [:followed_by, :is_following, :unfollow]
+    before_filter :validate_follow_params, only: [:is_following, :unfollow]
+    before_filter :validate_user_id, only: :followed_by
 
     # find_monitorship is not aprt of after_load_object as that would necessitate a unfollow? check in after_load_object.
     before_filter :find_monitorship, only: [:unfollow]
@@ -82,20 +83,19 @@ module DiscussionMonitorConcern
     def validate_toggle_params
       toggle_params = DiscussionConstants::FOLLOW_FIELDS
       params[cname].permit(*toggle_params)
-      validate params[cname]
-      params[cname][:user_id] ||= api_current_user.id
+      validate_user_id params[cname]
     end
 
     def validate_follow_params
       fields = "DiscussionConstants::#{action_name.upcase}_FIELDS".constantize
       params.permit(*fields, *ApiConstants::DEFAULT_PARAMS)
-      validate params
-      params[:user_id] ||= api_current_user.id
+      validate_user_id params
     end
 
-    def validate(params_hash)
+    def validate_user_id(params_hash = params)
       monitor = ApiDiscussions::MonitorValidation.new(params_hash, nil, string_request_params?)
       render_errors monitor.errors, monitor.error_options unless monitor.valid?
+      params_hash[:user_id] ||= api_current_user.id
     end
 
     def privileged_to_send_user?

@@ -20,13 +20,15 @@ class Helpdesk::DetectUserLanguage
       client.authorization.access_token = oauth_keys["consumer_token"]
       client.key = oauth_keys["api_key"]
       response = client.execute(:api_method => translate.detections.list,:parameters => {'q' => text})
-      language = JSON.parse(response.body)["data"]["detections"].flatten.last["language"]
+      response_body = JSON.parse(response.body)
+      language = response_body["data"]["detections"].flatten.last["language"] if (response_body and response_body["data"])
 
       # Hack for hypenated language codes
-      language = GOOGLE_LANGUAGES.has_key?(language.to_sym) ? GOOGLE_LANGUAGES[language.to_sym] : language
-
-      user.language = (I18n.available_locales_with_name.map{
-     		|lang,sym| sym.to_s }.include? language) ? language : user.account.language
+      if language
+        language = GOOGLE_LANGUAGES.has_key?(language.to_sym) ? GOOGLE_LANGUAGES[language.to_sym] : language
+        user.language = (I18n.available_locales_with_name.map{
+       		|lang,sym| sym.to_s }.include? language) ? language : user.account.language
+      end
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:custom_params =>
        {:description => "Error occoured while detecting user language using google translate"}})

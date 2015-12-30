@@ -9,7 +9,7 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
     3.times do
       create_business_calendar
     end
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.business_calendar.order(:name).all.each do |bc|
       pattern << business_hour_index_pattern(bc)
@@ -58,12 +58,12 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
       create_business_calendar
     end
     per_page = Account.current.business_calendar.all.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/business_hours?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

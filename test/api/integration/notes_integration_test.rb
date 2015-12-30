@@ -15,9 +15,9 @@ class NotesIntegrationTest < ActionDispatch::IntegrationTest
 
         create: 56,
         reply: 58,
-        update: 23,
-        destroy: 20,
-        ticket_notes: 16
+        update: 25,
+        destroy: 22,
+        ticket_notes: 18
       }
 
       ticket_id = Helpdesk::Ticket.first.display_id

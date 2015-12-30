@@ -186,9 +186,11 @@ GoogleCalendar.prototype = {
 				accept_type: "application/json",
 				method: "get",
 				on_success: function(resData){ 
-					console.log('This ticket event ' + resData.responseJSON.id + ' loaded');
 					this.nLoadingEvents--;
-					this.showEvent(resData);}.bind(this),
+					if(resData.responseJSON.status != "cancelled"){
+						this.showEvent(resData);
+					}
+				}.bind(this),
 				after_failure: function(evt){
 					gcal.nLoadingEvents--;
 					gcal.populateEvents();
@@ -374,7 +376,7 @@ GoogleCalendar.prototype = {
 						method: "post",
 						rest_url: "calendar/v3/calendars/" + calendarId + "/events/" + eventId + "/move",
 						body: "calendarId="+calendarId+'&destination='+selected_calendar_id+'&eventId='+eventId,
-						on_success: function(res){console.log("Event Moved to new calendar successfuly.");
+						on_success: function(res){
 									gcal.updateCalId(res.responseJSON);
 						}
 					});

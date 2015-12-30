@@ -1,4 +1,4 @@
-class TicketFilterValidation < ApiValidation
+class TicketFilterValidation < FilterValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :order_type, :conditions, :requester
 

@@ -216,7 +216,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def customer_name
-    workable.requester.company ? workable.requester.company.name : workable.requester.name
+    workable.company ? workable.company.name : workable.requester.name
   end
 
   def priority_name

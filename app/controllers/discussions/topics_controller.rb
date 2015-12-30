@@ -226,6 +226,7 @@ class Discussions::TopicsController < ApplicationController
 						user = current_account.all_users.where(:id => params[:topic][:user_id]).first
 					end
 				end
+				user = @topic_ticket.requester if @topic_ticket
 				user || current_user
 			end
 		end
@@ -303,8 +304,6 @@ class Discussions::TopicsController < ApplicationController
 		def associate_ticket
 			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
 			add_ticket_attachments if ( params[:post] and params[:post][:ticket_attachments])
-			@topic.user = @topic_ticket.requester
-			@post.user = @topic_ticket.requester
 			@topic.published = true
 			@post.published = true
 		end

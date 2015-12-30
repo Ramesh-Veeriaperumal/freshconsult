@@ -18,11 +18,13 @@ module ApiDiscussions
     end
 
     def forum_topics
+      return if validate_filter_params
       @topics = paginate_items(@item.topics.newest)
       render '/api_discussions/topics/topic_list'
     end
 
     def followed_by
+      return if validate_filter_params(DiscussionConstants::FOLLOWED_BY_FIELDS)
       @topics = paginate_items(current_account.topics.followed_by(params[:user_id]).newest)
       render '/api_discussions/topics/topic_list'
     end
