@@ -164,4 +164,14 @@ module TestCaseMethods
   end
 end
 
+  def create_whitelisted_ips(agent_only = false)
+    WhitelistedIp.destroy_all
+    @account.make_current
+    @account.reload
+    wip = @account.build_whitelisted_ip
+    wip.load_ip_info("127.0.1.1")
+    wip.update_attributes({"enabled"=>true, "applies_only_to_agents"=>agent_only, 
+      "ip_ranges"=>[{"start_ip"=>"127.0.1.1", "end_ip"=>"127.0.1.10"}]})
+  end
+
 include TestCaseMethods
