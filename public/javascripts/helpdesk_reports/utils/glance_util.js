@@ -144,7 +144,6 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 HelpdeskReports.locals.active_custom_field = val;
                 jQuery('#custom_field_group_by .half-container').attr('id', val + '_container');
                 jQuery('#custom_field_group_by .half-container').attr('data-group', val);
-                jQuery("#custom_field_group_by [data-container='view-more']").data("group-container", val).removeClass('active');
                 
                 if (!HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric].hasOwnProperty(val)) {
                     _FD.constructCustomFieldParams(val);
