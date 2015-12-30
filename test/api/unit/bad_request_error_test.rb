@@ -15,6 +15,15 @@ class BadRequestErrorTest < ActionView::TestCase
     }
 
     assert_equal error_codes, ErrorConstants::API_ERROR_CODES
+
+    # this will not save against all the messages for invalid_value custom_code
+    expected = [:"Mandatory attribute missing", :"Email has already been taken", :"Can't update user when timer is running"]
+    actual = ErrorConstants::API_ERROR_CODES.values.flatten.map(&:to_sym) - ErrorConstants::ERROR_MESSAGES.keys
+    assert_equal expected, actual
+
+    expected = [:"Mandatory attribute missing", :"Email has already been taken", :"Can't update user when timer is running"]
+    actual = ErrorConstants::API_ERROR_CODES.values.flatten.map(&:to_sym) + [:new_key_sans_yml] - ErrorConstants::ERROR_MESSAGES.keys
+    assert_not_equal expected, actual
   end
 
   def test_missing_field_code
