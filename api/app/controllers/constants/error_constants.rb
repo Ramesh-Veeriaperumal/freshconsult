@@ -8,7 +8,9 @@ module ErrorConstants
     invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
     invalid_field: ['invalid_field', "Can't update user when timer is running"],
     datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number', 'gt_zero_lt_max_per_page'],
-    invalid_size: ['invalid_size']
+    invalid_size: ['invalid_size'],
+    incompatible_field: ['incompatible_field'],
+    inaccessible_field: ['inaccessible_field']
   }.freeze
 
   API_HTTP_ERROR_STATUS_BY_CODE = {

@@ -262,7 +262,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 1, forum_type: 1, name: 'customer test 2', company_ids: [customer.id] }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('company_ids', :invalid_field)])
+      match_json([bad_request_error_pattern('company_ids', :incompatible_field)])
       assert_response 400
     end
 
@@ -271,7 +271,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 1, company_ids: [customer.id])
-      match_json([bad_request_error_pattern('company_ids', :invalid_field)])
+      match_json([bad_request_error_pattern('company_ids', :incompatible_field)])
       assert_response 400
     end
 
@@ -341,7 +341,7 @@ module ApiDiscussions
       forum = create_test_forum(fc)
       topic = create_test_topic(forum)
       put :update, construct_params({ id: forum.id }, forum_type: 2)
-      pattern = [bad_request_error_pattern('forum_type', :invalid_field)]
+      pattern = [bad_request_error_pattern('forum_type', :incompatible_field)]
       match_json(pattern)
       assert_response 400
     end

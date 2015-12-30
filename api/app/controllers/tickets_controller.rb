@@ -132,9 +132,9 @@ class TicketsController < ApiApplicationController
 
     def validate_url_params
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
-      if ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
-        errors = [[:include, :blank]]
-        render_errors errors
+      if params.key?(:include) && ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.exclude?(params[:include])
+        errors = [[:include, :not_included]]
+        render_errors errors, {list: ApiTicketConstants::ALLOWED_INCLUDE_PARAMS.join(', ')}
       end
     end
 

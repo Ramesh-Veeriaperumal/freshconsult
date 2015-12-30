@@ -111,6 +111,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
+      v1[:make_agent] += 2 # trusted_ip
+
       write_to_file(v1, v2)
 
       v1.keys.each do |key|

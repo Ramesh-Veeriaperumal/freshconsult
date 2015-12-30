@@ -10,7 +10,7 @@ module ApiTicketConstants
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                      tags attachments).freeze | (ARRAY_FIELDS - ['cc_emails']).map { |x| Hash[x, [nil]] } | HASH_FIELDS
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = ['notes', nil]
+  ALLOWED_INCLUDE_PARAMS = ['notes']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT

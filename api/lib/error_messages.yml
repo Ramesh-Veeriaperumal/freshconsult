@@ -9,6 +9,8 @@ api_error_messages:
   invalid_field: "Unexpected/invalid field in request" 
   invalid_size: "Total attachment(s) size should not exceed %{max_size}"
   missing_field: "Mandatory attribute missing"
+  incompatible_field: "Cannot be set, as it is incompatible with the state of the resource."
+  inaccessible_field: "Cannot be set, due to insufficient permissions."
   "is required": "Mandatory attribute missing"
   missing: "Mandatory attribute missing"
   invalid_user: "You are not authorized to perform this action on behalf of this user. id:%{id}, name:%{name}"

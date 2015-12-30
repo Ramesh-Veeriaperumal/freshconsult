@@ -5,7 +5,7 @@ module DiscussionConstants
   CREATE_FORUM_FIELDS = %w(name description forum_type forum_visibility company_ids).freeze | FORUM_ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
   UPDATE_FORUM_FIELDS = CREATE_FORUM_FIELDS << 'forum_category_id'
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type sticky locked), manage_forums: ['forum_id'] }.freeze
-  CREATE_TOPIC_FIELDS = %w(title message_html stamp_type sticky locked).freeze
+  CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type sticky locked)}.freeze
   QUESTION_FORUM_TYPE = Forum::TYPE_KEYS_BY_TOKEN[:howto]
   QUESTION_STAMPS = Topic::QUESTIONS_STAMPS_BY_KEY.keys
   FORUM_TO_STAMP_TYPE = {
@@ -17,8 +17,11 @@ module DiscussionConstants
       QUESTION_STAMPS.last => [QUESTION_STAMPS.first]
     }
   }
-  UPDATE_COMMENT_FIELDS = %w(body_html answer).freeze
-  COMMENT_FIELDS = %w(body_html)
+
+  # If :all option is added to this hash, have to assign privilege for this action in privileges.rb 
+  UPDATE_COMMENT_FIELDS = {edit_topic: %w(body_html), view_forums: %w(answer)}.freeze
+  
+  CREATE_COMMENT_FIELDS = { all: %w(body_html) }.freeze
   IS_FOLLOWING_FIELDS = ['user_id', 'id'].freeze
   FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
   FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS

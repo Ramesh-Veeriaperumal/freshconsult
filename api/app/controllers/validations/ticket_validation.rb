@@ -1,5 +1,5 @@
 class TicketValidation < ApiValidation
-  attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
+  attr_accessor :id, :cc_emails, :description, :description_html, :due_by, :email_config_id, :fr_due_by, :group, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :status_ids, :ticket_fields
 
@@ -19,16 +19,22 @@ class TicketValidation < ApiValidation
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
-  validates :description, required: true
+  validates :description, required: true, data_type: { rules: String }
+  validates :description_html, data_type: { rules: String, allow_nil: true }
 
   # Due by and First response due by validations
-  validates :fr_due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_fr_due_by?
-  validates :due_by, custom_absence: { allow_nil: true, message: :invalid_field }, if: :disallow_due_by?
+  # Both should not be present in params if status is closed or resolved
+  validates :fr_due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_fr_due_by?
+  validates :due_by, custom_absence: { allow_nil: true, message: :incompatible_field }, if: :disallow_due_by?
+  # Either both should be present or both should be absent, cannot send one of them in params.
   validates :due_by, required: { message: :due_by_validation }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
   validates :fr_due_by, required: { message: :fr_due_by_validation }, if: -> { due_by && errors[:due_by].blank? }
+  # Both should be a valid datetime
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
+  # Both should be greater than created_at
   validate :due_by_gt_created_at, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
   validate :fr_due_gt_created_at, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
+  # Due by should be greater than or equal to fr_due_by
   validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario

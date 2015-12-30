@@ -260,7 +260,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"discussions/merge_topic", :owned_by => { :scoper => :topics }
     # Used for API V2
     resource :"api_discussions/topic", :only => [:update], :owned_by => { :scoper => :topics }
-    resource :"api_discussions/api_comment", :only => [:update, :destroy], :owned_by => { :scoper => :posts }
+    resource :"api_discussions/api_comment", :only => [:destroy], :owned_by => { :scoper => :posts }
   end
 
   # delete_forum_topic

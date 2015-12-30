@@ -143,8 +143,10 @@ class ApiApplicationController < MetalApiController
     def invalid_field_handler(exception) # called if extra fields are present in params.
       return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
       Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      invalid_fields = Hash[exception.params.map { |v| [v, :invalid_field] }]
-      render_errors invalid_fields
+      inaccessible_fields = @all_fields ? @all_fields.flat_map(&:last) & exception.params : []
+      invalid_fields = exception.params - inaccessible_fields
+      errors = Hash[invalid_fields.map { |v| [v, :invalid_field] } + inaccessible_fields.map{|v| [v, :inaccessible_field] } ] 
+      render_errors errors
     end
 
     def handle_invalid_multipart_form_data(exception_params)
@@ -453,9 +455,13 @@ class ApiApplicationController < MetalApiController
       get_fields_from_constant(constant)
     end
 
-    def get_fields_from_constant(constant)
-      fields = constant[:all]
-      constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key) }
+    def get_fields_from_constant(constant, item = @item)
+      # all_fields is used to differentiate between junk fields and inaccessible_fields in invalid_field_handler.
+      # all_fields should not be modified as it a reference to the constant and not a separate object.
+      # item is sent to privilege to accomodate owned_by privileges.
+      @all_fields = constant
+      fields = constant[:all] || []
+      constant.except(:all).keys.each { |key| fields += constant[key] if privilege?(key, item) }
       fields
     end
 
