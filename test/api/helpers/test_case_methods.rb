@@ -55,8 +55,8 @@ module TestCaseMethods
   def match_json(json)
     if [400, 409].include?(response.status) && json.is_a?(Array)
       json = {
-         description: ErrorConstants::ERROR_MESSAGES[:validation_failure],
-         errors: json
+        description: ErrorConstants::ERROR_MESSAGES[:validation_failure],
+        errors: json
       }
     end
     response.body.must_match_json_expression json
@@ -163,5 +163,15 @@ module TestCaseMethods
     [headers, body.scrub!]
   end
 end
+
+  def create_whitelisted_ips(agent_only = false)
+    WhitelistedIp.destroy_all
+    @account.make_current
+    @account.reload
+    wip = @account.build_whitelisted_ip
+    wip.load_ip_info("127.0.1.1")
+    wip.update_attributes({"enabled"=>true, "applies_only_to_agents"=>agent_only, 
+      "ip_ranges"=>[{"start_ip"=>"127.0.1.1", "end_ip"=>"127.0.1.10"}]})
+  end
 
 include TestCaseMethods

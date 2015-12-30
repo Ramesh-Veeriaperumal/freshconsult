@@ -8,8 +8,8 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       api_show: 2,
       api_index: 2,
 
-      show: 12,
-      index: 12
+      show: 13,
+      index: 13
     }
 
     id = Agent.first.user.id
@@ -24,6 +24,7 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       assert_response 200
     end
 
+    v2[:show] -= 1
     v1[:show] += 1 # account suspended check is done in v2 alone.
 
     # index
@@ -35,6 +36,8 @@ class ApiAgentsIntegrationTest < ActionDispatch::IntegrationTest
       get('/agents.json', nil, @headers)
       assert_response 200
     end
+
+    v2[:index] -= 1
 
     write_to_file(v1, v2)
 

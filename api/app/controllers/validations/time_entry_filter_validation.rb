@@ -1,4 +1,4 @@
-class TimeEntryFilterValidation < ApiValidation
+class TimeEntryFilterValidation < FilterValidation
   attr_accessor :company_id, :agent_id, :billable, :executed_after, :executed_before
 
   # Since query params in URL are always strings, we have to check with boolean strings instead of boolean values

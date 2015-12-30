@@ -1,4 +1,4 @@
-class ContactFilterValidation < ApiValidation
+class ContactFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }, allow_nil: true

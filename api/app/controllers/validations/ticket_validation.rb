@@ -27,9 +27,9 @@ class TicketValidation < ApiValidation
   validates :due_by, required: { message: :due_by_validation }, if: -> { fr_due_by && errors[:fr_due_by].blank? }
   validates :fr_due_by, required: { message: :fr_due_by_validation }, if: -> { due_by && errors[:due_by].blank? }
   validates :due_by, :fr_due_by, date_time: { allow_nil: true }
-  validate :due_by_validation, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
-  validate :fr_due_by_validation, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
-
+  validate :due_by_gt_created_at, if: -> { @due_by_set && due_by && errors[:due_by].blank? }
+  validate :fr_due_gt_created_at, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
+  validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
@@ -44,7 +44,7 @@ class TicketValidation < ApiValidation
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
   # Tags validations
-  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
+  validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String,  allow_nil: true }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long,  allow_nil: true } }
   validates :tags, string_rejection: { excluded_chars: [','] }
 
   # Custom fields validations
@@ -85,12 +85,21 @@ class TicketValidation < ApiValidation
     email.present? && twitter_id.blank? && facebook_id.blank? && phone.blank? && requester_id.blank?
   end
 
-  def due_by_validation
+  def due_by_gt_created_at
     errors[:due_by] << :gt_created_and_now if due_by < (@item.try(:created_at) || Time.zone.now)
   end
 
-  def fr_due_by_validation
+  def fr_due_gt_created_at
     errors[:fr_due_by] << :gt_created_and_now if fr_due_by < (@item.try(:created_at) || Time.zone.now)
+  end
+
+  def due_by_gt_fr_due_by
+    # Due By is parsed here as if both values are given as input string comparison would be done instead of Date Comparison.
+    parsed_due_by = DateTime.parse(due_by)
+    if fr_due_by > parsed_due_by
+      att = @fr_due_by_set ? :fr_due_by : :due_by
+      errors[att] << :lt_due_by
+    end
   end
 
   def cc_emails_max_count

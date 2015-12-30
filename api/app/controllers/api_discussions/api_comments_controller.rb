@@ -3,6 +3,7 @@ module ApiDiscussions
     before_filter :topic_exists?, only: [:topic_comments]
 
     def topic_comments
+      return if validate_filter_params
       @comments = paginate_items(@item.posts)
       render '/api_discussions/api_comments/comment_list'
     end

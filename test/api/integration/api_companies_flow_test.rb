@@ -54,9 +54,10 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
     company.update_attributes(custom_field: { 'cf_linetext1' => 'test', 'cf_testimony1' => 'test testimony' })
     custom_field = company.custom_field
     get "/api/v2/companies/#{company.id}", nil, @write_headers
-    Account.unstub(:current)
     turn_off_caching
     assert_response 200
     match_json(company_pattern({ custom_field: custom_field }, company))
+  ensure
+    Account.unstub(:current)
   end
 end

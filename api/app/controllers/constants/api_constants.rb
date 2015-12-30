@@ -28,6 +28,8 @@ module ApiConstants
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
 
+  TAG_MAX_LENGTH_STRING = 32
+
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json].freeze
 

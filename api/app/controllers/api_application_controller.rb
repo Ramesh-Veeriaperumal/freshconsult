@@ -252,9 +252,12 @@ class ApiApplicationController < MetalApiController
       @item.account = current_account if account_included
     end
 
-    def validate_filter_params
-      # Template method - If filtering is present in index action, this can be used to validate
-      # each filter and its value using strong params and custom validation classes.
+    def validate_filter_params(additional_fields = [])
+      # This method has been overridden by index actions that have filters on them.
+      # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
+      params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
+      @filter = FilterValidation.new(params, nil, true)
+      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -337,7 +340,7 @@ class ApiApplicationController < MetalApiController
       else
         # before_callbacks may return false without populating the errors hash.
         Rails.logger.error("API Error Hash empty :: Params: #{params.inspect}")
-        notify_new_relic_agent(StandardError, {description: 'API Error Hash empty', params: params})
+        notify_new_relic_agent(StandardError, description: 'API Error Hash empty', params: params)
         render_base_error(:internal_error, 500)
       end
     end
@@ -436,16 +439,11 @@ class ApiApplicationController < MetalApiController
     end
 
     def get_page
-      page = params[:page].respond_to?(:to_i) ? params[:page].to_i : 0
-      page == 0 ? ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page] : page
+      (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
     end
 
     def get_per_page
-      if !params[:per_page].respond_to?(:to_i) || params[:per_page].to_i == 0
-        ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
-      else
-        [params[:per_page].to_i, ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]].min
-      end
+      (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).to_i
     end
 
     def get_fields(constant_name) # retrieves fields that strong params allows by privilege.

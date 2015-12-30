@@ -6,7 +6,7 @@ class ApiProductsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.products_from_cache.each do |product|
       pattern << product_pattern(product)
@@ -55,12 +55,12 @@ class ApiProductsControllerTest < ActionController::TestCase
       create_product
     end
     per_page =  Account.current.products_from_cache.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/products?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

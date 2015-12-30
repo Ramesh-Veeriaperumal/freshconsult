@@ -20,7 +20,7 @@ class Helpers::DefaultFieldValidatorTestHelper
         client_manager: { data_type: { rules: 'Boolean', ignore_string: :allow_string_param } },
         job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
         language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-        tags:  { data_type: { rules: Array }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
+        tags:  { data_type: { rules: Array }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
         time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
         phone: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
         mobile: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
