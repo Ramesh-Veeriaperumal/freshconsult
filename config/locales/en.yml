@@ -7660,6 +7660,8 @@ en:
       forward_number_alert: "Please update your phone number in Profile Settings to forward calls to your phone"
       desktop_notification: "Turn on desktop notification"
       network_error: "Check your Internet Connection"
+      browser_alert: "Recent Changes in Chrome mandates a secure connection using SSL(https://) to make or receive calls"
+      read_more: "<b>Read More</b>"
       transfer:
         tranfer_via: "via "
         to: "To: "

@@ -63,10 +63,10 @@ class Freshfone::Initiator::Incoming
     queue_disabled_or_overloaded? ? return_non_availability : @telephony.initiate_queue
   end
 
-  def return_non_availability
+  def return_non_availability(welcome_message = true)
     current_call ||= current_account.freshfone_calls.find_by_call_sid(params[:CallSid])
     current_call.update_missed_abandon_status unless (current_call.present? && current_number.voicemail_active)
-    @telephony.return_non_availability
+    @telephony.return_non_availability(welcome_message)
   end
 
   def call_users_in_group(group_id)
@@ -81,7 +81,7 @@ class Freshfone::Initiator::Incoming
 
   def call_user_with_number(number)
     return restricted_call if !authorized?(number)
-    return @telephony.return_non_availability(false) if direct_dialled_number_busy?(number)
+    return return_non_availability(false) if direct_dialled_number_busy?(number)
 
     current_call = @call_actions.register_direct_dial(number)
     @telephony.initiate_customer_conference({ :wait_url => direct_dial_wait_url }, true)

@@ -89,7 +89,7 @@ class Freshfone::Notifier
 
 
   def initiate_round_robin(current_call, available_agents)
-      Rails.logger.debug "available_agents in initiate_round_robin => #{available_agents}"
+      Rails.logger.debug "available_agents in initiate_round_robin => #{available_agents.inspect}"
       @current_number ||= current_call.freshfone_number
       params[:caller_id] = current_call.caller.number if params[:caller_id].blank?
       agent = available_agents.slice!(0,1)
