@@ -226,7 +226,7 @@ class Discussions::TopicsController < ApplicationController
 						user = current_account.all_users.where(:id => params[:topic][:user_id]).first
 					end
 				end
-				user = @ticket_topic.requester if @ticket_topic
+				user = @topic_ticket.requester if @topic_ticket
 				user || current_user
 			end
 		end
