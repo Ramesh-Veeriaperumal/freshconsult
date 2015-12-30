@@ -1,4 +1,4 @@
-json.extract! @item, :active, :address, :company_id, :deleted, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :client_manager, :custom_fields, :tags
+json.extract! @item, :active, :address, :company_id, :deleted, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :custom_fields, :tags
 
 json.partial! 'shared/utc_date_format', item: @item
 

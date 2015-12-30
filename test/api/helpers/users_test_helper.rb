@@ -22,7 +22,6 @@ module Helpers::UsersTestHelper
     {
       active: expected_output[:active] || contact.active,
       address: expected_output[:address] || contact.address,
-      client_manager: expected_output[:client_manager] || contact.client_manager,
       company_id: expected_output[:company_id] || contact.company_id,
       description: expected_output[:description] || contact.description,
       email: expected_output[:email] || contact.email,

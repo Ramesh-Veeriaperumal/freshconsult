@@ -1,5 +1,5 @@
 json.cache! CacheLib.key(@item, params) do
-  json.extract! @item, :active, :address, :client_manager, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :tags
+  json.extract! @item, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :tags
   json.partial! 'shared/utc_date_format', item: @item
 
   json.set! :deleted, @item.deleted if @item.deleted
