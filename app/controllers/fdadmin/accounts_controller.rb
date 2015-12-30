@@ -2,6 +2,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   include Fdadmin::AccountsControllerMethods
 
+  before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:show, :features, :agents, :tickets, :portal]
   around_filter :select_master_shard , :only => [:add_day_passes, :add_feature, :change_url, :single_sign_on,:remove_feature,:change_account_name, :change_api_limit]
   before_filter :validate_params, :only => [ :change_api_limit ]
@@ -277,6 +278,19 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           render :json => {:url => sso_link , :status => "success" , :account_id => account.id , :account_name => account.name}
         end
       end
+  end
+
+  def check_domain_exists
+    request_parameters = {
+      :old_domain => params[:domain_name], 
+      :new_domain => params[:new_url], 
+      :target_method => :check_domain_availability
+    }
+    response = connect_main_pod(
+      :post,request_parameters,
+      PodConfig["pod_paths"]["pod_endpoint"],
+      "#{AppConfig['freshops_subdomain']['global']}.#{AppConfig['base_domain'][Rails.env]}")
+    render :json => { status: "notice"} and return if response["status"]
   end
 
   private 
