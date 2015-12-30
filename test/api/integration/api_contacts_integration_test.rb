@@ -17,16 +17,16 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_create: 3,
         api_update: 4,
         api_show: 3,
-        api_index: 3,
+        api_index: 2,
         api_destroy: 6,
         api_make_agent: 4,
 
         create: 36,
         update: 31,
         show: 17,
-        index: 18,
+        index: 17,
         destroy: 21,
-        make_agent: 49
+        make_agent: 45
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -43,8 +43,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 201
       end
 
-      id1 = User.last(2).first.id
-      id2 = User.last.id
+      id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
+      id2 = User.where(helpdesk_agent: false, deleted: false).last.id
 
       # update
       v1[:update] = count_queries do
@@ -56,9 +56,11 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
+      # Queries that will be part of the User attributes 'avatar' and 'tags'.
       # These attributes are introduced in V2, hence subtracting it
-      v2[:update] -= 3
+      v2[:update] -= 2
+
+      v1[:update] += 2 # trusted_ip
 
       # show
       v1[:show] = count_queries do
@@ -72,9 +74,9 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
 
       v1[:show] += 2 # account suspended check is done in v2 alone & trusted_ip
 
-      # Queries that will be part of the User attributes 'client_manager', 'avatar' and 'tags'.
+      # Queries that will be part of the User attributes 'avatar' and 'tags'.
       # These attributes are introduced in V2, hence subtracting it
-      v2[:show] -= 3
+      v2[:show] -= 2
 
       # index
       v1[:index] = count_queries do
@@ -98,10 +100,10 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 204
       end
 
-      id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
-      id2 = User.where(helpdesk_agent: false, deleted: false).last.id
+      id1 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last(2).first.id
+      id2 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last.id
 
-      # make_agent
+      # make_agent      
       v1[:make_agent] = count_queries do
         put("/contacts/#{id2}/make_agent.json", {}.to_json, @write_headers)
         assert_response 200
