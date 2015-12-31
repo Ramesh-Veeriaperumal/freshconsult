@@ -3,15 +3,18 @@ json.set! :notes, @notes do |note|
   json.set! :body, note.body
   json.set! :body_html, note.body_html
 
-  json.cache! CacheLib.key(note, params) do
-    json.extract! note, :id, :user_id, :support_email
+  json.cache! CacheLib.compound_key(note, "V2", params) do
+    json.extract! note, :id, :user_id, :support_email, :source
 
     json.set! :ticket_id, @item.display_id
+    json.set! :to_emails, note.schema_less_note.try(:to_emails)
+    json.set! :from_email, note.schema_less_note.try(:from_email)
+    json.set! :cc_emails, note.schema_less_note.try(:cc_emails)
+    json.set! :bcc_emails, note.schema_less_note.try(:bcc_emails)
 
     json.partial! 'shared/boolean_format', boolean_fields: { incoming: note.incoming, private: note.private }
     json.partial! 'shared/utc_date_format', item: note
 
-    json.set! :notified_to, note.schema_less_note.try(:to_emails)
   end
   json.set! :attachments do
     json.array! note.attachments do |att|

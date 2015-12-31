@@ -13,11 +13,22 @@ module Helpers::NotesTestHelper
       user_id: expected_output[:user_id] || note.user_id,
       support_email: note.support_email,
       ticket_id: expected_output[:ticket_id] || note.notable_id,
-      notified_to: expected_output[:notify_emails] || note.to_emails,
+      to_emails: expected_output[:notify_emails] || note.to_emails,
       attachments: Array,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+  end
+
+  def index_note_pattern(note)
+    index_note = { 
+      from_email: note.from_email,
+      cc_emails:  note.cc_emails,
+      bcc_emails: note.bcc_emails, 
+      source: note.source
+    }
+    single_note = note_pattern({}, note)
+    single_note.merge(index_note)
   end
 
   def reply_note_pattern(expected_output = {}, note)
@@ -30,7 +41,7 @@ module Helpers::NotesTestHelper
       cc_emails: expected_output[:cc_emails] || note.cc_emails,
       bcc_emails: expected_output[:bcc_emails] || note.bcc_emails,
       ticket_id: expected_output[:ticket_id] || note.notable_id,
-      replied_to: note.to_emails,
+      to_emails: note.to_emails,
       attachments: Array,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}

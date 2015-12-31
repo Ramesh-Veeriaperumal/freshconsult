@@ -675,7 +675,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     match_json(result_pattern.ordered!)
   end
@@ -688,7 +688,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == parent_ticket.notes.visible.exclude_source('meta').count
     match_json(result_pattern)
@@ -698,7 +698,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == 0
     match_json(result_pattern)
