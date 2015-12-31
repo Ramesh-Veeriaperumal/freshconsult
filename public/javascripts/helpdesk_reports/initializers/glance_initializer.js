@@ -175,6 +175,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         renderCommonChart: function (current_hash, options, group_by, view_all, current_value_array, metric) {
             var height, data1, data2, dataLab, labels, container;
+            var custom_fields = HelpdeskReports.locals.custom_fields_group_by;
+
             if (view_all) {
                 labels = _.keys(current_hash);
                 height = _FD.calculateChartheight(labels.length);
@@ -191,7 +193,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     data1 = this.fillArray(options.value, point_limit);
                     data2 = _.first(current_value_array,point_limit); 
 
-                    jQuery("[data-group-container='"+ group_by +"']").addClass('active');
+                    //Using data to dynamically update the custom field. 
+                    if (custom_fields.indexOf(group_by) < 0){
+                        jQuery("[data-group-container='"+ group_by +"']").addClass('active');
+                    }else{
+                        jQuery("#custom_field_group_by [data-container='view-more']").data("group-container", group_by).addClass('active');
+                    }
 
                 } else {
                     labels = _.keys(current_hash);
@@ -200,8 +207,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     data1 = this.fillArray(options.value,current_value_array.length);
                     data2 = current_value_array;
 
-                    jQuery("[data-group-container='"+ group_by +"']").removeClass('active');
-                    
+                    if (custom_fields.indexOf(group_by) < 0){
+                        jQuery("[data-group-container='"+ group_by +"']").removeClass('active');
+                    }else{
+                        jQuery("#custom_field_group_by [data-container='view-more']").data("group-container", group_by).removeClass('active');
+                    }
+
                 }
                 if (HelpdeskReports.locals.pdf !== undefined){
                     container = metric+'_'+group_by;
