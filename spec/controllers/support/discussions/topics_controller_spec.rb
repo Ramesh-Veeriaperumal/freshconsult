@@ -352,6 +352,21 @@ describe Support::Discussions::TopicsController do
 		@account.reload
 	end
 
+	it "should not create while topic when forum is not visible to the user" do 
+		 @user.make_current
+		 forum = create_test_forum(@category,nil,Forum::VISIBILITY_KEYS_BY_TOKEN[:agents])
+		 topic_title = Faker::Lorem.sentence(1)
+		 post :create,
+		 	:topic =>
+		 			{:title=> topic_title, 
+		 			:body_html=>"<p>#{@post_body}</p>", 
+		 			:forum_id=> forum.id},
+		 	:post => {}
+		 	response.status.should eql(302)
+		 	new_topic = @account.topics.find_by_title(topic_title)
+		 	new_topic.should be_eql(nil)
+	end
+
 
 	# it "should lock a topic on put 'update_lock'" do
 	# 	topic = publish_topic(create_test_topic(@forum, @user))

@@ -50,10 +50,6 @@ var FreshfoneConnection;
 			this.connection.reject();
 			freshfonesocket.notify_ignore(this.connection.parameters.CallSid);
 			this.freshfoneNotification.popOngoingNotification(this.connection, this);
-			setTimeout(function() {
-				ffLogger.log("Bridging calls after a reject");
-				freshfoneuser.bridgeQueuedCalls();
-			}, 30000);
 		},
 		callSid: function() {
 			return this.connection.parameters.CallSid;

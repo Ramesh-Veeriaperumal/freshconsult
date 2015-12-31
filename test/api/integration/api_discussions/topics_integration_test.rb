@@ -18,13 +18,13 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         api_posts: 2,
 
         create: 45,
-        show: 12,
-        update: 34,
-        destroy: 28,
-        follow: 13,
-        unfollow: 20,
-        is_following: 12,
-        posts: 13
+        show: 14,
+        update: 36,
+        destroy: 30,
+        follow: 15,
+        unfollow: 22,
+        is_following: 13,
+        posts: 15
       }
 
       forum_id = create_test_forum(ForumCategory.first).id
@@ -58,13 +58,13 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      # posts
+      # comments
       v1[:posts] = count_queries do
         get(id_path, nil, @headers)
         assert_response 200
       end
       v2[:posts], v2[:api_posts], v2[:posts_queries] = count_api_queries do
-        get(api_id_path + '/posts', nil, @headers)
+        get(api_id_path + '/comments', nil, @headers)
         assert_response 200
       end
       # there is no posts method in v1
@@ -98,6 +98,8 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
         get(api_follow_path, nil, @headers)
         assert_response 204
       end
+
+      v2[:is_following] -= 1 # trusted_ip
 
       # unfollow
       v1[:unfollow] = count_queries do

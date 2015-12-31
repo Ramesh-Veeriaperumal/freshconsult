@@ -9,8 +9,8 @@ var domHelper = domHelper || {};
   // Helper Object Methods (API)
   if(page_type === "ticket"){
     // get current ticket data in json format
-    dh.getTicketInfo = function(opt){
-      return tktDetailDom.getTicketInfo(opt);
+    dh.getTicketInfo = function(){
+      return tktDetailDom.getTicketInfo();
     }
 
     // open reply box
@@ -71,12 +71,67 @@ var domHelper = domHelper || {};
       tktDetailDom.appendToSidebar(markup);
     }
 
+    dh.onReplyClick = function(callback){
+      tktDetailDom.onReplyClick(callback);
+    }
+
+    dh.onFwdClick = function(callback) {
+      tktDetailDom.onFwdClick(callback);
+    }
+
+    dh.onAddNoteClick = function(callback) {
+      tktDetailDom.onAddNoteClick(callback);
+    }
+
+    dh.onSubmitClick = function(callback) {
+      tktDetailDom.onSubmitClick(callback);
+    }
+
+    dh.onTicketCloseClick = function(callback) {
+      tktDetailDom.onTicketCloseClick(callback)
+    }
+
+    dh.onPrevTicketClick = function(callback) {
+      tktDetailDom.onPrevTicketClick(callback);
+    }
+
+    dh.onNextTicketClick = function(callback) {
+      tktDetailDom.onNextTicketClick(callback);
+    }
+
+    dh.onPriorityChanged = function(callback) {
+      tktDetailDom.onPriorityChanged(callback);
+    }
+
+    dh.onStatusChanged = function(callback) {
+      tktDetailDom.onStatusChanged(callback);
+    }
+
+    dh.onSourceChanged = function(callback) {
+      tktDetailDom.onSourceChanged(callback);
+    }
+
+    dh.onGroupChanged = function(callback) {
+      tktDetailDom.onGroupChanged(callback);
+    }
+
+    dh.onAgentChanged = function(callback) {
+      tktDetailDom.onAgentChanged(callback);
+    }
+
+    dh.onTypeChanged = function(callback) {
+      tktDetailDom.onTypeChanged(callback);
+    }
+
+    dh.onTicketPropertiesUpdated = function(callback) {
+      tktDetailDom.onTicketPropertiesUpdated(callback);
+    }
   }
 
   if(page_type === "contact"){
     // get current contact data in json format
-    dh.getContactInfo = function(opt){
-      return contactDom.getContactInfo(opt);
+    dh.getContactInfo = function(){
+      return contactDom.getContactInfo();
     }
 
     //convert contact to agent

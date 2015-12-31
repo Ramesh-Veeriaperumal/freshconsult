@@ -8,6 +8,7 @@ module ApiConstants
 
   DEFAULT_PARAMS = %w(version format k id).freeze
   DEFAULT_INDEX_FIELDS = %w(version format k id per_page page).freeze
+  PAGINATE_FIELDS = %w(page per_page).freeze
   UPLOADED_FILE_TYPE = ActionDispatch::Http::UploadedFile
 
   TIME_UNITS = %w(hours minutes seconds).freeze # do not change the order.
@@ -26,6 +27,8 @@ module ApiConstants
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255
+
+  TAG_MAX_LENGTH_STRING = 32
 
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json].freeze

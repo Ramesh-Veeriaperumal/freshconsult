@@ -3,17 +3,17 @@
 </div>
 <script type="text/javascript">
   function getFilterData(){
-    query_hash = $A(); 
+    query_hash = $A();
     jQuery("div.ff_item").map(function () {
       var condition = this.getAttribute("condition"),
           container = this.getAttribute("container"),
           operator  = this.getAttribute("operator");
-      _selector = 'input:checkbox:checked'; 
+      _selector = 'input:checkbox:checked';
       var value;
-          
+
       if(container == "multi_select") _selector = 'option:selected';
-       
-      if(container == "nested_field") {         
+
+      if(container == "nested_field") {
         value = jQuery(this).children('select').val();
       }
       else if(container == "requester"){
@@ -29,7 +29,7 @@
       else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
-                        
+
       if(value && value.length && ((container != "nested_field") || ((container == "nested_field") && (value != -1))) ) {
         if(condition == "created_at" && value == "set_date"){
           value = jQuery("#created_date_range").val();
@@ -60,7 +60,7 @@
       showEditAndDelete();
     setDivider();
     getFilterData();
-    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
+    jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change");
   }
 
   function toggle_save_and_refresh() {
@@ -95,14 +95,14 @@
       <input type="hidden" name="data_hash" value="" />
       <input type="hidden" name="filter_name" value="<%= @current_view %>" />
       <input type="hidden" name="wf_order" value="<%= current_wf_order %>" />
-      <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />    
+      <input type="hidden" name="wf_order_type" value="<%= current_wf_order_type %>" />
   		<input type="hidden" name="page" value="1" />
       <input type="hidden" name="total_entries" value="0">
       <input type="hidden" name="total_entries" value="0">
 
       <input type="hidden" name="unsaved_view" id="flag_unsaved_view" <%= "disabled" unless params[:unsaved_view] %> value="true" />
     </form>
-      <% @show_options.each_with_index do |c_hash, i| %> 
+      <% @show_options.each_with_index do |c_hash, i| %>
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
@@ -111,13 +111,13 @@
           elsif ['requester', 'customers'].include?(c_hash[:name])
             container = c_hash[:name]
           else
-            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select"
           end
-        %> 
+        %>
     	  <%=
         unless c_hash[:options].blank?
-          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
-                                :class       => "ff_item", 
+          content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}",
+                                :class       => "ff_item",
                                 :condition   => c_hash[:condition],
                                 :operator    => c_hash[:operator],
                                 :ff_name     => c_hash[:ff_name],
@@ -125,11 +125,11 @@
             <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{c_hash[:name]}").html_safe.capitalize : c_hash[:name].html_safe.capitalize %></h4>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name], :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","), :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => @current_options, :c_hash => c_hash} %>
           <% end
-          end 
+          end
         end %>
 <%= javascript_tag do%>
 	var query_hash  = $A();
-  
+
 	jQuery(document).ready(function(){
 
   jQuery("#div_ff_created_date_range").hide();
@@ -170,7 +170,7 @@
     jQuery("#created_date_range").on("show",function(){
       jQuery(".ranges .active").click();
     });
-    
+
     setDivider();
 
     jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
@@ -222,7 +222,7 @@
     jQuery(".wf_order_type, .wf_order").live("click", function(ev){
       ev.preventDefault();
       jQuery("#FilterOptions input[name="+this.className+"]").val(this.getAttribute(this.className)).trigger("change");
-    });	
+    });
     jQuery(".toolbar_pagination a, .toolbar_pagination_full a").die();
 		jQuery(".toolbar_pagination a, .toolbar_pagination_full a").live("click", function(ev){
 			ev.preventDefault();
@@ -230,12 +230,12 @@
       count = +jQuery('#ticket_list_count').html();
       jQuery("#FilterOptions input[name=total_entries]").val(count);
 			jQuery("#FilterOptions input[name=page]").val(getParameterByName("page", this.href)).trigger("change");
-		});	
+		});
 
     if (jQuery('#ticket-list table tr').not('.headings').length == 0) {
       jQuery('#export_tickets').hide();
       jQuery('#empty_trash').hide();
-    }	
+    }
 
     jQuery('#all-views').html($J('#all-views-tmpl').html());
     jQuery('#all-views-tmpl').html('');
@@ -248,7 +248,7 @@
     }
     <%
     # Select all should be persisted on pagination
-    # but not when filter get changed, which is handled in change event of 
+    # but not when filter get changed, which is handled in change event of
     # .filter_item in ticket_list.js
     %>
     if(!jQuery("#all-views").data("selectallMode")) {
@@ -265,7 +265,7 @@
       type: "POST",
       dataType: "script",
       data: jQuery(this).serializeArray(),
-      success: function(script){ 
+      success: function(script){
         var all_view_selector = jQuery("#all-views");
         if(all_view_selector.data("selectallMode")) {
           jQuery("#helpdesk-select-all")
@@ -274,7 +274,7 @@
             .trigger("change");
           jQuery("#select_all_alert").show();
           all_view_selector.data("selectallMode", false);
-          jQuery("#toggle_select_all").trigger("click");           
+          jQuery("#toggle_select_all").trigger("click");
         }
         jQuery("#FilterOptions input[name=total_entries]").val(0);
 
@@ -282,11 +282,11 @@
           jQuery('#export_tickets').hide();
         } else {
           jQuery('#export_tickets').show();
-        } 
+        }
         // For highlighting updated and new tickets
         if(!updated_tickets) var updated_tickets = [];
 
-        if (<%= @is_auto_refresh_feature %>){          
+        if (<%= @is_auto_refresh_feature %>){
           jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
           updated_tickets = [];
           new_ticket_ids = [];
@@ -295,6 +295,6 @@
         }
         window.FreshdeskNode.addSubscriptions();
       }
-    }); 
+    });
   });
 <% end %>

@@ -112,10 +112,6 @@ HelpdeskReports.Constants = {
                     'agent_interactions': 'Agent responses', 
                     'customer_interactions' : 'Customer responses'
                 },
-                name_series: {
-                    'Agent responses': 'agent_interactions',
-                    'Customer responses': 'customer_interactions'
-                },
                 meta_data:{
                     dom_element: 'interactions',
                     legend: true,
@@ -128,9 +124,6 @@ HelpdeskReports.Constants = {
             reopen: {
                 series: {
                     'reopen_count' : 'Reopens'
-                },
-                name_series: {
-                    'Reopens': 'reopen_count'
                 },
                 meta_data: {
                     dom_element:  'reopened_tickets',
@@ -171,7 +164,7 @@ HelpdeskReports.Constants = {
         }
     } ,
      AgentSummary: {
-        metrics: ["RESOLVED_TICKETS","REOPENED_TICKETS", "AGENT_REASSIGNED_TICKETS", "RESPONSE_SLA", 
+        metrics: ["AGENT_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS", "AGENT_REASSIGNED_TICKETS", "RESPONSE_SLA", 
             "RESOLUTION_SLA", "FCR_TICKETS", "PRIVATE_NOTES", "RESPONSES", "AVG_FIRST_RESPONSE_TIME", 
             "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
         repeat: [],
@@ -193,7 +186,7 @@ HelpdeskReports.Constants = {
         }
     },
     GroupSummary: {
-        metrics: ["RESOLVED_TICKETS","REOPENED_TICKETS", "GROUP_REASSIGNED_TICKETS", "RESPONSE_SLA", 
+        metrics: ["GROUP_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS", "GROUP_REASSIGNED_TICKETS", "RESPONSE_SLA", 
             "RESOLUTION_SLA", "FCR_TICKETS", "PRIVATE_NOTES", "RESPONSES", "AVG_FIRST_RESPONSE_TIME", 
             "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
         repeat: [], 

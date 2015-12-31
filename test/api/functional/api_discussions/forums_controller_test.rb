@@ -186,7 +186,7 @@ module ApiDiscussions
     end
 
     def test_create
-      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: '1',
+      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: 1,
                                                                      forum_type: 1, name: 'test')
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: ForumCategory.first.id)
@@ -209,7 +209,7 @@ module ApiDiscussions
     def test_create_with_visibility_company_users
       name = Faker::Name.name
       fc = ForumCategory.first
-      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: '4',
+      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: 4,
                                                     forum_type: 1, name: name)
       pattern = forum_pattern(Forum.last).merge(company_ids: [])
       match_json(pattern)
@@ -222,7 +222,7 @@ module ApiDiscussions
     def test_create_returns_location_header
       name = Faker::Name.name
       forum_category_id =  ForumCategory.first.id
-      post :create, construct_params({ id: forum_category_id }, description: 'desc', forum_visibility: '1',
+      post :create, construct_params({ id: forum_category_id }, description: 'desc', forum_visibility: 1,
                                                                 forum_type: 1, name: name)
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: name, forum_category_id: forum_category_id)
@@ -235,7 +235,7 @@ module ApiDiscussions
     def test_create_invalid_customer_id
       fc = fc_obj
       customer = company
-      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: '4', forum_type: 1,
+      post :create, construct_params({ id: fc.id }, description: 'desc', forum_visibility: 4, forum_type: 1,
                                                     name: 'customer test', company_ids: [customer.id, 67, 78])
       assert_response 400
       match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '67, 78')])
@@ -279,8 +279,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 'x', forum_type: 1, name: Faker::Name.name, company_ids: [customer.id] }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('company_ids', :invalid_field)])
+      match_json([bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4')])
       assert_response 400
     end
 
@@ -289,8 +288,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 'x', company_ids: "#{customer.id}")
-      match_json([bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('company_ids', :invalid_field)])
+      match_json([bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4')])
       assert_response 400
     end
 
@@ -361,7 +359,7 @@ module ApiDiscussions
     def test_create_invalid_model
       fc = fc_obj
       forum = create_test_forum(fc)
-      post :create, construct_params({ id: fc.id }, forum_visibility: '1', forum_type: 1, name: forum.name)
+      post :create, construct_params({ id: fc.id }, forum_visibility: 1, forum_type: 1, name: forum.name)
       match_json([bad_request_error_pattern('name', :"already exists in the selected category")])
       assert_response 409
     end
@@ -396,7 +394,7 @@ module ApiDiscussions
     end
 
     def test_create_with_customers
-      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: '4',
+      post :create, construct_params({ id: ForumCategory.first.id }, description: 'desc', forum_visibility: 4,
                                                                      forum_type: 1, name: 'test new name')
       forum = Forum.last
       result_pattern = forum_pattern(forum)
@@ -456,7 +454,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -470,7 +468,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: f_obj.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_is_following_without_user_id
@@ -493,6 +491,13 @@ module ApiDiscussions
       get :is_following, controller_params(user_id: user.id, id: f_obj.id)
       assert_response 403
       match_json(request_error_pattern(:access_denied, id: user.id))
+      @controller.unstub(:privilege?)
+    end
+
+    def test_is_following_without_privilege_invalid_user_id
+      get :is_following, controller_params({ user_id: ['1'], id: f_obj.id }, false)
+      assert_response 400
+      match_json([bad_request_error_pattern('user_id', :invalid_field)])
     end
 
     def test_is_following_without_privilege_valid
@@ -500,6 +505,7 @@ module ApiDiscussions
       monitor_forum(f_obj, @agent, 1)
       get :is_following, controller_params(user_id: @agent.id, id: f_obj.id)
       assert_response 204
+      @controller.unstub(:privilege?)
     end
 
     def test_is_following_non_numeric_user_id
@@ -525,7 +531,7 @@ module ApiDiscussions
     end
 
     def test_category_forums
-      get :category_forums, construct_params(id: fc_obj.id)
+      get :category_forums, controller_params(id: fc_obj.id)
       assert_response 200
       result_pattern = []
       fc_obj.forums.each do |f|
@@ -535,7 +541,7 @@ module ApiDiscussions
     end
 
     def test_category_forums_invalid_id
-      get :category_forums, construct_params(id: 'x')
+      get :category_forums, controller_params(id: 'x')
       assert_response :missing
       assert_equal ' ', @response.body
     end
@@ -544,29 +550,22 @@ module ApiDiscussions
       3.times do
         create_test_forum(fc_obj)
       end
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 2)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :category_forums, construct_params(id: fc_obj.id, per_page: 1, page: 3)
+      get :category_forums, controller_params(id: fc_obj.id, per_page: 1, page: 3)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
     def test_category_forums_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
       category = fc_obj
-      4.times do
-        create_test_forum(category)
-      end
-      get :category_forums, construct_params(id: category.id, per_page: 4)
-      assert_response 200
-      assert_equal 3, JSON.parse(response.body).count
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+      get :category_forums, controller_params(id: category.id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     end
 
     def test_category_forums_with_link_header
@@ -574,7 +573,7 @@ module ApiDiscussions
       3.times do
         create_test_forum(fc)
       end
-      get :category_forums, construct_params(id: fc.id,  per_page: 2)
+      get :category_forums, controller_params(id: fc.id,  per_page: 2)
       assert_response 200
       pattern = []
       fc.forums.limit(2).each do |f|
@@ -584,7 +583,7 @@ module ApiDiscussions
       assert JSON.parse(response.body).count == 2
       assert_equal "<http://#{@request.host}/api/v2/discussions/categories/#{fc.id}/forums?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :category_forums, construct_params(id: fc.id,  per_page: 2, page: 2)
+      get :category_forums, controller_params(id: fc.id,  per_page: 2, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']

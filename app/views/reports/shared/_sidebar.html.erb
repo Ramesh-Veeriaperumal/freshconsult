@@ -12,7 +12,7 @@
 	    </div>
 	<% end %> 
 	<% @show_options.each_with_index do |c_hash, i| %> 
-        <% container = (c_hash[:condition] == "users.customer_id") ? "select" : "multi_select" %> 
+        <% container = (c_hash[:condition] == "owner_id") ? "select" : "multi_select" %> 
     	    <%= content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
 				:class       => "ff_item", 
 				:operator    => c_hash[:operator],

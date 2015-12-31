@@ -10,68 +10,10 @@ var TktDetailDom = Class.create({
       "to-do": "ToDoList",
       "time-tracked": "TimesheetTab"
     };
-    
-    jQuery(window).on("message.extn", this.receiveFAMessage.bindAsEventListener(this));
-
-    var custom_events = [
-      "time_entry_deleted",
-      "time_entry_created",
-      "time_entry_started",
-      "time_entry_stopped",
-      "time_entry_updated",
-      "todo_created",
-      "todo_completed",
-      "note_created",
-      "note_updated",
-      "ticket_fields_updated",
-      "scenario_executed",
-      "ticket_show_more",
-      "activities_toggle",
-      "ticket_view_loaded",
-      "ticket_view_unloaded",
-      "sidebar_loaded",
-      "watcher_added",
-      "watcher_removed"
-    ];
-
-    for(var i=0; i < custom_events.length; i++){
-      jQuery(document).on(custom_events[i], this.onDomCustomEvent.bindAsEventListener(this));
-    }
   },
 
-  onDomCustomEvent: function(event){
-    var evt_name = event.type;
-    var msg = {
-      action: event.type,
-      type: "FA_CUSTOM_EVENTS"
-    }
-    window.postMessage(msg, "*");
-  },
-  //for ticket details dom related page
-  getTicketInfo: function(opt){
-    if(opt){
-      var msg_for_extn = {
-        dom_helper_data: dom_helper_data,
-        type: "FA_FROM_HK"
-      }
-      window.postMessage(msg_for_extn, "*");
-    }
-    else{
-      return dom_helper_data;
-    }
-  },
-  
-  receiveFAMessage: function(event){
-    var data = event.originalEvent.data;
-    if(page_type == "ticket"){
-      if(data.type == "FA_DOM_EVENTS") {
-        method = data.action;
-        this[method](data.txt);
-      } 
-      else if(data.type == "FA_TO_HK"){
-        this.getTicketInfo(data.txt);
-      }
-    }
+  getTicketInfo: function(){
+    return dom_helper_data;
   },
 
   openReply: function(options){
@@ -178,8 +120,114 @@ var TktDetailDom = Class.create({
     }
   },
 
+  onReplyClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '[data-note-type="reply"]', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onFwdClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '[data-note-type="fwd"]', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onAddNoteClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '[data-note-type="note"]', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onSubmitClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('submit', '.request_panel:visible form', function(ev){
+      _that.executeCallback(callback);
+    });
+  },
+
+  onTicketCloseClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '#close_ticket_btn', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onNextTicketClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '.next_page', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onPrevTicketClick: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '.prev_page', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onPriorityChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_priority", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onStatusChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_status", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onSourceChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_source", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onGroupChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_group_id", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onAgentChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_responder_id", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onTypeChanged: function(callback) {
+    var _that = this;
+    jQuery('body').on('change.ticket_details', "#helpdesk_ticket_ticket_type", function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  onTicketPropertiesUpdated: function(callback) {
+    var _that = this;
+    jQuery('body').on('click.ticket_details', '#helpdesk_ticket_submit, #helpdesk_ticket_submit_dup', function() {
+      _that.executeCallback(callback);
+    });
+  },
+
+  executeCallback: function(callback) {
+    if(callback) {
+      callback.call();
+    }
+  },
+
   destroy: function(){
     dom_helper_data = {};
+    jQuery(document, 'body').off("click submit");
+    jQuery(document, 'body').off(".ticket_details");
     //need to clear all sorts of data manipulations when navigating away.
   }
 });

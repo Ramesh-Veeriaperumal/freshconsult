@@ -35,6 +35,13 @@
         padding: 15px 0;
         border-bottom: 1px solid #e5e4e4;
         box-sizing: border-box;
+        
+        &.fixedControls{
+            position: fixed;
+            top : 0px;
+            height: 50px;
+            width: 5.2%;
+        }
     }
 
     .emptyColumn {

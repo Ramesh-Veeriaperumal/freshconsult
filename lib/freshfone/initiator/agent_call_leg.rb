@@ -1,6 +1,7 @@
 class Freshfone::Initiator::AgentCallLeg
   include Freshfone::FreshfoneUtil
   include Freshfone::Presence
+  include Freshfone::Queue
   include Freshfone::Endpoints
   include Freshfone::Conference::Branches::RoundRobinHandler
 
@@ -131,6 +132,7 @@ class Freshfone::Initiator::AgentCallLeg
         current_call.update_call(call_params)
         notify_source_agent_to_reconnect
       else
+        check_for_queued_calls
         initiate_voicemail unless current_call.noanswer? #means client ended the call.
       end
     end

@@ -8,7 +8,7 @@ class CategoriesDependencyTest < ActionDispatch::IntegrationTest
                         :check_day_pass_usage, :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details,
                         :remove_pjax_param, :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token,
                         :build_object, :load_object, :portal_check, :check_no_topics, :set_selected_tab, :content_scope,
-                        :fetch_spam_counts]
+                        :fetch_spam_counts, :set_last_active_time]
     actual_filters = DiscussionsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

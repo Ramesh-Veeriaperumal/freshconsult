@@ -374,7 +374,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
-  remote: https://690a8c5e:5d9334f0@gems.contribsys.com/
+  remote: https://a55d1643:d20410bb@gems.contribsys.com/
   specs:
     POpen4 (0.1.4)
       Platform (>= 0.4.0)
@@ -707,8 +707,6 @@ GEM
       rack-openid (~> 1.3.1)
     omniauth-quickbooks (0.0.2)
       omniauth-oauth (~> 1.0)
-    omniauth-shopify-oauth2 (1.0.0)
-      omniauth-oauth2 (~> 1.0.0)
     omniauth-surveymonkey (1.0.0)
       omniauth (~> 1.0)
       omniauth-oauth2
@@ -962,7 +960,7 @@ GEM
       unf_ext
     unf_ext (0.0.6)
     uniform_notifier (1.7.0)
-    useragent (0.4.16)
+    useragent (0.16.3)
     uuid (2.3.7)
       macaddr (~> 1.0)
     uuidtools (2.1.4)
@@ -1084,7 +1082,6 @@ DEPENDENCIES
   omniauth-openid
   omniauth-quickbooks
   omniauth-salesforce!
-  omniauth-shopify-oauth2 (= 1.0.0)
   omniauth-surveymonkey (= 1.0.0)
   open_id_authentication!
   paperclip (~> 2.8.0)
@@ -1160,7 +1157,7 @@ DEPENDENCIES
   twitter (~> 5.5.1)
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)
-  useragent (~> 0.4.16)
+  useragent (~> 0.16.3)
   webrick (= 1.3.1)
   white_list!
   wicked_pdf (~> 0.9.10)

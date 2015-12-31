@@ -65,6 +65,9 @@ class Freshfone::Number < ActiveRecord::Base
 	HUNT_TYPE = { :simultaneous => 1, :round_robin => 2 }
 	RECORDING_VISIBILITY = {:public_recording => true, :private_recording => false}
 	ALL_NUMBERS = "0" #Used in Call History and Reports for filtering
+	MIN_RINGING_TIME = 30
+	MIN_RR_TIMEOUT = 10
+	MAX_RINGING_TIME = 999
 
 	validates_presence_of :account_id
 	validates_presence_of :number, :presence => true
@@ -79,6 +82,8 @@ class Freshfone::Number < ActiveRecord::Base
 	validate :validate_purchase, on: :create
 	validate :validate_settings, :validate_attachments, :validate_name, :unless => :deleted_changed?, on: :update
 	validate :validate_queue_position_message, :if => :queue_position_preference, on: :update
+	validates_inclusion_of :rr_timeout, :in => MIN_RR_TIMEOUT..MAX_RINGING_TIME
+	validates_inclusion_of :ringing_time, :in => MIN_RINGING_TIME..MAX_RINGING_TIME
 	validates_uniqueness_of :number, :scope => :account_id
 
 	scope :filter_by_number, lambda {|from, to| {

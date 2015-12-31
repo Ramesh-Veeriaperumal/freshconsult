@@ -5,13 +5,13 @@ module Va
       :email       => [ "is", "is_not", "contains", "does_not_contain" ],
       :text        => [ "is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with" ],
       :checkbox    => [ "selected", "not_selected" ],
-      :choicelist  => [ "is", "is_not" ],
+      :choicelist  => [ "in", "not_in" ],
       :number      => [ "is", "is_not" ],
       :decimal     => [ "is", "is_not" ],
       :hours       => [ "is", "greater_than", "less_than" ],
       :nestedlist  => [ "is" ],
       :greater     => [ "greater_than" ],
-      :object_id   => [ "is", "is_not"],
+      :object_id   => [ "in", "not_in"],
       :date_time   => [ "during" ],
       :date        => [ "is" , "is_not", "greater_than", "less_than" ],
       :number_for_contacts => [ "is", "is_not", "greater_than", "less_than" ]
@@ -49,10 +49,12 @@ module Va
       :not_selected      =>  I18n.t('not_selected'),
       :less_than         =>  I18n.t('less_than'),
       :greater_than      =>  I18n.t('greater_than'),
-      :during            =>  I18n.t('during')
+      :during            =>  I18n.t('during'),
+      :in                =>  I18n.t('is'),
+      :not_in            =>  I18n.t('is_not')
     }
 
-    NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected']
+    NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
     
     AUTOMATIONS_MAIL_NAME = "automations rule"
 

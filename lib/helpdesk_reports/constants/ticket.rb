@@ -10,8 +10,8 @@ module HelpdeskReports::Constants::Ticket
     [:GROUP_ASSIGNED_TICKETS,      "Count",       "Tickets Assigned"],
     [:AGENT_REASSIGNED_TICKETS,    "Count",       "Tickets Reassigned"],
     [:GROUP_REASSIGNED_TICKETS,    "Count",       "Tickets Reassigned"],
-    [:CUSTOMER_INTERACTIONS,       "Count",       "Customer Interactions"],
-    [:AGENT_INTERACTIONS,          "Count",       "Agent Interactions"],
+    [:CUSTOMER_INTERACTIONS,       "Count",       "Customer Responses"],
+    [:AGENT_INTERACTIONS,          "Count",       "Agent Responses"],
     [:RESPONSE_VIOLATED,           "Count",       "Response Violated"],#Already preprocessed and returning violated % 
     [:RESOLUTION_VIOLATED,         "Count",       "Resolution Violated"],
     [:RESPONSE_SLA,                "Percentage",  "First Response SLA %"],
@@ -87,10 +87,6 @@ module HelpdeskReports::Constants::Ticket
   REPORT_TYPE_BY_NAME = REPORT_TYPE.map { |i| i[0].to_s.downcase }   
   REPORT_TYPE_BY_KEY  = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
   
-  DEFAULT_REPORTS     = ["agent_summary", "group_summary"]
-  ADVANCED_REPORTS    = DEFAULT_REPORTS + ["glance"]
-  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + ["ticket_volume", "performance_distribution","customer_report"] 
-
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
   REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution, :customer_report]
@@ -150,24 +146,6 @@ module HelpdeskReports::Constants::Ticket
     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate] => 0,
     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest] => 0
   }
-  
-  TICKET_EXPORT_FIELDS = [
-    "display_id",
-    "subject",
-    "description",
-    "status_name",
-    "priority_name",
-    "source_name",
-    "ticket_type",
-    "company_name",
-    "responder_name",
-    "group_name",
-    "requester_name",
-    "requester_info",
-    "requester_phone",
-    "ticket_tags",
-    "ticket_survey_results"
-  ]
 
   DEFAULT_TIME_ZONE = "Pacific Time (US & Canada)"   
 
@@ -177,19 +155,10 @@ module HelpdeskReports::Constants::Ticket
   
   NA_PLACEHOLDER_GLANCE = 0
   
-  TICKET_EXPORT_LIMIT = 10
-
   TICKET_FILTER_LIMIT = 5
   
   MULTI_SELECT_LIMIT = 10
   
   TICKET_LIST_LIMIT = 25
   
-  PDF_GROUP_BY_LIMIT = 11
-  
-  PDF_GROUP_BY_LIMITING_KEY = "-Others"
-  
-  REAL_TIME_REPORTS_EXPORT = false
-  
-  MAIL_ATTACHMENT_LIMIT_IN_BYTES = 5 * 1024 * 1024 # 5MB
 end

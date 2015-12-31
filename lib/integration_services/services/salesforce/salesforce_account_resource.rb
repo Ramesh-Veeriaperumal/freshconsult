@@ -11,9 +11,10 @@ module IntegrationServices::Services
       end
 
       def find fd_comp_name
+        fd_comp_name = escape_reserved_chars fd_comp_name
         soql_account = "SELECT Id FROM Account WHERE Name = '#{fd_comp_name}'"
-        request_url = "#{salesforce_rest_url}/query?q=#{soql_account}"
-        url  = URI.encode(request_url.strip)
+        request_url = "#{salesforce_rest_url}/query"
+        url = encode_path_with_params request_url, :q => soql_account 
         response = http_get url
         process_response(response, 200) do |account|
           return account
@@ -31,12 +32,14 @@ module IntegrationServices::Services
         address_fields = ["BillingStreet","BillingCity","BillingState","BillingCountry","BillingPostalCode"]
         fields = format_selected_fields fields, address_fields
         soql = if value[:company].present?
-          "SELECT #{fields} FROM Account WHERE Name = '#{value[:company]}'"
+          company_name = escape_reserved_chars value[:company]
+          "SELECT #{fields} FROM Account WHERE Name = '#{company_name}'"
         elsif value[:email].present?
+          value[:email] = escape_reserved_chars value[:email]
           "SELECT #{fields} FROM Account WHERE Id IN (SELECT AccountId FROM Contact WHERE Email = '#{value[:email]}')"
         end
-        request_url = "#{salesforce_old_rest_url}/query?q=#{soql}"
-        url  = URI.encode(request_url.strip)
+        request_url = "#{salesforce_old_rest_url}/query"
+        url = encode_path_with_params request_url, :q => soql 
         response = http_get url
         process_response(response, 200) do |account|
           return account

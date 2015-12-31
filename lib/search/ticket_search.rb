@@ -139,9 +139,9 @@ module Search::TicketSearch
       return Account.current.tags_from_cache.collect { |au| [au.name, CGI.escapeHTML(au.name)] }
     end
 
-    if criteria_key == "users.customer_id"
-      if @current_options && @current_options.has_key?("users.customer_id")
-        company_id = @current_options["users.customer_id"].split(',')
+    if criteria_key == :owner_id
+      if @current_options && @current_options.has_key?("owner_id")
+        company_id = @current_options["owner_id"].split(',')
       end
       @selected_companies = Account.current.companies_from_cache.reject { |c| !company_id.include?(c.id.to_s) } if company_id
       return @selected_companies || [[1,""]]

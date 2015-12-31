@@ -6,6 +6,10 @@ class Va::Handlers::Numeric < Va::RuleHandler
       value.to_i
     end
 
+    def non_blank_values(arr)
+      arr.reject{|s| s.blank?}
+    end
+
     def is(evaluate_on_value)
       evaluate_on_value == numeric_value
     end
@@ -23,7 +27,12 @@ class Va::Handlers::Numeric < Va::RuleHandler
     end
 
     def in(evaluate_on_value)
-      value.map(&:to_i).include?(evaluate_on_value)
+      [*value].map(&:to_i).include?(evaluate_on_value)
+    end
+
+    def not_in(evaluate_on_value)
+      values = non_blank_values([*value])
+      values.present? && ! values.map(&:to_i).include?(evaluate_on_value)
     end
     
     def filter_query_is

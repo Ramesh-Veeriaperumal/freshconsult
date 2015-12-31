@@ -7,7 +7,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
   end
 
   def test_index
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.all_email_configs.reorder(:to_email).all.each do |ec|
       pattern << email_config_pattern(ec)
@@ -49,7 +49,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     end
     email_configs = Account.current.all_email_configs.reorder(:to_email)
     per_page =   email_configs.all.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     pattern = []
     email_configs.limit(per_page).each do |ec|
@@ -59,7 +59,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/email_configs?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

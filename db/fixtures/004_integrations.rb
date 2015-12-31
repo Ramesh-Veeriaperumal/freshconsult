@@ -686,6 +686,10 @@ if Integrations::Application.count == 0
     s.listing_order = 24
     s.options = {:direct_install => false, :keys_order => [:shop_name],
                  :shop_name => { :type => :text, :required => true, :label => "integrations.shopify.form.shop_name", :info => "integrations.shopify.form.shop_name_info", :rel => "ghostwriter", :autofill_text => ".myshopify.com"},
+                 :no_settings => true,
+                 :after_commit_on_create => { :clazz => "Integrations::ShopifyUtil", :method => "update_remote_integrations_mapping" },
+                 :after_commit_on_destroy => { :clazz => "Integrations::ShopifyUtil", :method => "remove_remote_integrations_mapping" },
+                 :install_action => { :url => { :controller => 'integrations/marketplace/shopify', :action => 'install' }, :html => {:method => 'put'} }
                 }
     s.application_type = "shopify"
   end

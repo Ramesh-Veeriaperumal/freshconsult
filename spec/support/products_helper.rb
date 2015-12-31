@@ -2,7 +2,7 @@ module ProductsHelper
 
 	def create_product(option={})
 		defaults = {
-			:email => "#{Faker::Internet.domain_word}@#{@account.full_domain}",
+			:email => "#{Faker::Internet.domain_word}#{rand(0..9999)}@#{@account.full_domain}",
 			:portal_name => Faker::Company.name
 		}
 

@@ -3,7 +3,6 @@ class Freshfone::UsersController < ApplicationController
 	include Freshfone::Presence
 	include Freshfone::NodeEvents
 	include Freshfone::CallsRedisMethods
- 	include Freshfone::Queue
 
 	EXPIRES = 3600
 	before_filter { |c| c.requires_feature :freshfone }
@@ -11,7 +10,6 @@ class Freshfone::UsersController < ApplicationController
 	skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:node_presence]
 	before_filter :validate_presence_from_node, :only => [:node_presence]
 	before_filter :load_or_build_freshfone_user
-	after_filter  :check_for_bridged_calls, :only => [:refresh_token, :manage_presence]
 	before_filter :set_native_mobile, :only => [:presence, :in_call, :refresh_token]
 
 	def presence
@@ -52,7 +50,8 @@ class Freshfone::UsersController < ApplicationController
 	end
 	
 	def refresh_token
-		@freshfone_user.change_presence_and_preference(params[:status], view_context.user_avatar(current_user,:thumb, "preview_pic", {:width => "30px", :height => "30px"}), is_native_mobile?)
+		@freshfone_user.change_presence_and_preference(params[:status], 
+			view_context.user_avatar(current_user,:thumb, "preview_pic", {:width => "30px", :height => "30px"}), is_native_mobile?)
 		resolve_busy if is_agent_busy?
 		respond_to do |format|
 			format.any(:json, :nmobile) {
@@ -119,12 +118,6 @@ class Freshfone::UsersController < ApplicationController
 		
 		def outgoing?
 			params[:outgoing].to_bool
-		end
-
-		def check_for_bridged_calls
-			#bridge_queued_call
-			return if @freshfone_user.blank? || !@freshfone_user.online?
-			add_to_call_queue_worker(@freshfone_user.user_id) # sending user_id here as it will be used for manage presence too.
 		end
 
 		def requested_from_node?

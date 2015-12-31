@@ -2,6 +2,13 @@
 /**
  * @author venom
  */
+vrformatResult = function(result) {
+	return "<span class='select2_list_detail'>" + result.value + "</span>"; 
+}
+
+vrFormatSelection = function(result) {
+	return result.value;
+}
 
 function postProcessCondition(filter, id){
 	if(filter && filter.domtype === 'autocompelete'){
@@ -19,6 +26,44 @@ function postProcessCondition(filter, id){
 		});
 		Form.Element.activate(id);
 		jQuery("#"+id).trigger("blur");		
+	}
+	if(filter && filter.domtype === 'autocomplete_multiple'){
+			jQuery('#'+id).select2('destroy');
+			jQuery('#'+id).select2({
+				minimumInputLength: 1,
+				multiple: true,
+				tags:true,
+				allowClear:true,
+				quietMillis: 1000,
+				data: [],
+				initSelection: function(element, callback) {
+					var data = [];
+					var val = jQuery(element).val().split(",");
+						jQuery(val).each(function () {
+							data.push({id: this,value:this,text:this});
+				    });
+					callback(data);
+				},
+				ajax: {
+						url: filter.data_url,
+						dataType:'json',
+						data: function (term) { 
+								return {
+									q: term
+								};
+						},
+						results: function (data) {
+								jQuery(data.results).each(function(){
+									this.id = this.value;
+									this.value=this.value;
+									this.text=this.value;
+								});
+								return {results: data.results};
+						}
+				},
+				formatResult: vrformatResult,
+				formatSelection: vrFormatSelection
+			});
 	}
 };
 
@@ -100,6 +145,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			criteria 		   : "ticket",
 			is_requester	   : false,
 			orig_filter_data   : filter_data,
+			autocomplete_multiple_fields : {"ticket" : ["tag_names"], "company" : ["name"]},
 			onRuleSelect       : function(){},
 			change_filter_data : function(_filter_data){return _filter_data}
 		};
@@ -358,7 +404,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								currentHash[hash_key] = item.value
 								tempConstruct.set(hash_name, currentHash)
 							}else if(item.name!='name' //Hack for set_nested_fields
-								&& tempConstruct.get(item.name)){
+								&& (tempConstruct.get(item.name) || tempConstruct.get(item.name) == "")){
                	group_item = tempConstruct.get(item.name)
 	              if(group_item instanceof Array)
 	                group_item.push(item.value)
@@ -377,6 +423,17 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				
 				current_filter = serialHash.get(name);
 
+				if(name == "filter") {
+					jQuery.grep(current_filter, function(e){
+						if((e.evaluate_on == "ticket" && jQuery.inArray(e.name, setting.autocomplete_multiple_fields.ticket) != -1) ||
+							(e.evaluate_on == "company" && jQuery.inArray(e.name, setting.autocomplete_multiple_fields.company) != -1)) {
+							e.value = e.value.split(",");
+						}
+						if(e.value == undefined) {
+							e.value = ""
+						}
+					});
+				}
 				if( current_filter && current_filter.length != 0 ){
 
 					if(current_filter[0]['email_body'] != undefined)

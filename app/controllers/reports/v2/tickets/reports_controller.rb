@@ -4,9 +4,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include ApplicationHelper
   include ExportCsvUtil
   helper HelpdeskV2ReportsHelper
-  helper_method :has_scope?
   
-  before_filter :check_feature
   before_filter :check_account_state, :ensure_report_type_or_redirect, 
                 :date_lag_constraint, :ensure_ticket_list,              :except => [:download_file]              
   before_filter :pdf_export_config,                                     :only   => [:index, :fetch_metrics]
@@ -14,8 +12,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :normalize_params, :validate_params, :validate_scope, 
                 :only_ajax_request,                                     :except => [:index, :configure_export, :export_report, :download_file]
   before_filter :pdf_params,                                            :only   => [:export_report]
-  before_filter :export_tickets_params,                                 :only   => [:export_tickets]
   skip_before_filter :verify_authenticity_token,                        :except => [:index]
+  
+  wrap_parameters false
   
   attr_accessor :report_type
 
@@ -48,7 +47,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def export_tickets
-    request_object = HelpdeskReports::Request::Ticket.new(@query_params[:query_hash])
+    @query_params  = params[:export_params]
+    request_object = HelpdeskReports::Request::Ticket.new(@query_params[:query_hash], report_type)
     request_object.build_request
     @query_params[:user_id]     = current_user.id
     @query_params[:account_id]  = current_account.id
@@ -82,7 +82,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   
   def download_file
-    path = "data/helpdesk/#{params[:export_type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
+    path = "data/helpdesk/#{params[:report_export]}/#{params[:type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
     redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
     redirect_to redir_url
   end
@@ -112,13 +112,21 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def build_and_execute
-    @results = []
-    @query_params.each do |param|
-      request_object = HelpdeskReports::Request::Ticket.new(param)
+    requests = []
+    @query_params.each_with_index do |param, i|
+      request_object = HelpdeskReports::Request::Ticket.new(param.merge!(index: i),report_type)
       request_object.build_request
-      response = request_object.request
-      result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type, report_type, @pdf_export.present?)
-      @results << result_object
+      requests << request_object
+    end
+        
+    response = bulk_request requests
+    
+    @results = []
+    response.each do |res|
+      index = res["index"].to_i
+      param = requests[index].fetch_req_params
+      query_type = requests[index].query_type
+      @results << HelpdeskReports::Response::Ticket.new(res, param, query_type,report_type, @pdf_export.present?)   
     end
   end
 
@@ -168,10 +176,10 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     csv_result = @data.present? ? export_summary_report : t('helpdesk_reports.no_data_to_display_msg')
     send_csv csv_result
   end
-  
+
   def ticket_list_query?
     @results.first.query_type == :list
-  end
+  end 
 
   def parse_list_result
     id_list = @results.first.parse_result
@@ -180,6 +188,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   # TODO -> Ticket from Archive
   def ticket_from_db id_list
+    ticket_list_columns = "display_id, subject, responder_id, status, priority, requester_id"
     Sharding.select_shard_of(current_account.id) do
       Sharding.run_on_slave do
         tkt = current_account.tickets.permissible(current_user).newest(TICKET_LIST_LIMIT)
@@ -194,10 +203,6 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
         @processed_result = tickets_data(tickets + archive_tickets)
       end
     end
-  end
-  
-  def ticket_list_columns
-    "display_id, subject, responder_id, status, priority, requester_id"
   end
   
   def tickets_data(tickets)
@@ -224,7 +229,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     avatars = users.collect{ |u| [u.id, user_avatar(u)]}.to_h
     {users: id_hash, avatars: avatars}
   end
-  
+
   def send_json_result
     respond_to do |format|
       format.json do
@@ -233,23 +238,8 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
   end
   
-  def check_feature
-    return if current_account.reports_enabled?
-    render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/non_covered_feature.html", :locals => {:feature => :bi_reports} }
-  end
-
   def only_ajax_request
     redirect_to reports_path unless request.xhr?
-  end
-  
-  def has_scope?(report_type)
-    if current_account.features_included?(:enterprise_reporting)
-      ENTERPRISE_REPORTS.include?(report_type)
-    elsif current_account.features_included?(:advanced_reporting)
-      ADVANCED_REPORTS.include?(report_type)
-    else
-      DEFAULT_REPORTS.include?(report_type)
-    end 
   end
 
   def generate_data_exports_id

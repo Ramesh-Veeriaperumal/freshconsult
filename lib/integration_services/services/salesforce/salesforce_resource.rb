@@ -57,6 +57,10 @@ module IntegrationServices::Services
         end
       end
 
+      def escape_reserved_chars element
+        element.gsub(/['\\]/){|match| "\\#{match}"}
+      end
+
       def salesforce_rest_url
         "#{@service.instance_url}/services/data/v35.0"
       end

@@ -4,6 +4,7 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
     var _FD = {
         bindEvents: function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+                _FD.core.flushDataTable();
                 _FD.actions.submitReports();
             });
 

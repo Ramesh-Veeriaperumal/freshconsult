@@ -17,7 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :assign_outbound_agent, :if => :outbound_email?
 
-  before_save  :update_ticket_related_changes, :set_sla_policy, :load_ticket_status, :update_company_id
+  before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy, :load_ticket_status
 
   before_update :update_sender_email
 
@@ -347,7 +347,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_display_id?
-    Account.current.features?(:redis_display_id)
+    Account.current.features?(:redis_display_id) && display_id.nil?
   end
 
   def assign_display_id

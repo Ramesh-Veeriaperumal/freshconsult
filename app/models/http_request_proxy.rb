@@ -2,6 +2,7 @@ class HttpRequestProxy
 
   include Integrations::OauthHelper
   include HttpProxyMethods
+  include Fdadmin::ApiCallConstants
 
   DEFAULT_TIMEOUT = 30
 
@@ -87,7 +88,7 @@ class HttpRequestProxy
           Rails.logger.debug "Response Body: #{proxy_response.body}"
           Rails.logger.debug "Response Code: #{proxy_response.code}"
         else
-          net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
+          net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
           final_url       = encode_url ? URI.encode(remote_url) : remote_url
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
           Rails.logger.debug "Sending request: #{proxy_request.inspect}"
@@ -133,17 +134,5 @@ class HttpRequestProxy
     end
     return {:text=>response_body, :content_type => response_type, :status => response_code, 'x-headers' => x_headers}
   end
-
-  HTTP_METHOD_TO_CLASS_MAPPING = {
-            "get" => Net::HTTP::Get,
-            "post" => Net::HTTP::Post,
-            "put" => Net::HTTP::Put,
-            "delete" => Net::HTTP::Delete,
-            "patch" => Net::HTTP::Patch
-        }
-
-  HTTP_METHOD_TO_SYMBOL_MAPPING = {
-    "get" => :get,
-    "post" => :post
-  }
+  
 end

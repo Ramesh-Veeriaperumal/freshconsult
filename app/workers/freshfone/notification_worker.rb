@@ -78,18 +78,19 @@ module Freshfone
       Rails.logger.info "Notify Mobile for User Id :: #{agent} Account Id :: #{current_account.id}"
       current_call = @current_account.freshfone_calls.find_by_conference_sid(params[:ConferenceSid])
       return unless current_call.can_be_connected?
-      call_params  = {
-        :url             => forward_accept_url(current_call.id, agent),
-        :status_callback => forward_status_url(current_call.id, agent),
-        :from            => current_call.number, #Showing freshfone number
-        :to              => current_account.users.find(agent).available_number,
-        :timeout         => current_number.ringing_time,
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
-        :if_machine      => "hangup"
-      }
-
-      begin
-        agent_call = telephony.make_call(call_params)
+      begin 
+        from = current_call.number #Showing freshfone number
+        to = current_account.users.find(agent).available_number
+        call_params  = {
+          :url             => forward_accept_url(current_call.id, agent),
+          :status_callback => forward_status_url(current_call.id, agent),
+          :from            => from,
+          :to              => to_number(from, to, agent),
+          :timeout         => current_number.ringing_time,
+          :timeLimit       => current_account.freshfone_credit.call_time_limit,
+          :if_machine      => "hangup"
+        }
+        agent_call = telephony.make_call(call_params)   
       rescue => e
         call_actions.handle_failed_incoming_call current_call, agent
         raise e
@@ -133,17 +134,18 @@ module Freshfone
       return unless current_call.can_be_connected? || ( params[:transfer] == 'true' && current_call.onhold?)
       freshfone_user = current_account.freshfone_users.find_by_user_id agent
       self.current_number = current_call.freshfone_number
-      call_params    = {
-        :url             => mobile_transfer_accept_url(current_call.id, params[:source_agent_id], agent),
-        :status_callback => mobile_transfer_status_url(current_call.id, agent),
-        :to              => freshfone_user.available_number,
-        :from            => current_call.number, #Showing freshfone number
-        :timeout         => current_number.ringing_time,
-        :timeLimit       => current_account.freshfone_credit.call_time_limit,
-        :if_machine      => "hangup"
-      }
-      
       begin
+        from = current_call.number
+        to = freshfone_user.available_number
+        call_params    = {
+          :url             => mobile_transfer_accept_url(current_call.id, params[:source_agent_id], agent),
+          :status_callback => mobile_transfer_status_url(current_call.id, agent),
+          :to              => to_number(from, to, agent),
+          :from            => get_caller_id(current_call),
+          :timeout         => current_number.ringing_time,
+          :timeLimit       => current_account.freshfone_credit.call_time_limit,
+          :if_machine      => "hangup"
+        }
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_transfer_call current_call, agent
@@ -158,15 +160,17 @@ module Freshfone
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected? || (params[:external_transfer] == 'true' && current_call.onhold?)
       self.current_number = current_call.freshfone_number
-      call_params    = {
-        :url             => external_transfer_accept(current_call.id, params[:source_agent_id], params[:external_number]),
-        :status_callback => external_transfer_complete(current_call.children.last.id, params[:external_number]),
-        :timeout         => current_number.ringing_time,
-        :to              => params[:external_number],
-        :from            => current_call.number, #Showing freshfone number
-        :timeLimit       => current_account.freshfone_credit.call_time_limit
-      }
       begin
+        from = current_call.number
+        to = params[:external_number]
+        call_params    = {
+          :url             => external_transfer_accept(current_call.id, params[:source_agent_id], params[:external_number]),
+          :status_callback => external_transfer_complete(current_call.children.last.id, params[:external_number]),
+          :timeout         => current_number.ringing_time,
+          :to              => to_number(from, to),
+          :from            => get_caller_id(current_call),
+          :timeLimit       => current_account.freshfone_credit.call_time_limit
+        }
         agent_call = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_external_transfer_call current_call
@@ -176,28 +180,28 @@ module Freshfone
       add_pinged_agents_call(current_call.children.last.id, agent_call.sid)
       current_call.children.last.meta.reload.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
     end
-
     def notify_round_robin_agent
       Rails.logger.info "Notify Round Robin for User Id :: #{agent['id']} Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
       return unless current_call.can_be_connected?
       self.current_number = current_call.freshfone_number
-      call_params    = {
-        :url             => browser_agent? ?
-                            round_robin_agent_wait_url(current_call) : 
-                            forward_accept_url(current_call.id, agent["id"]),
-        :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
-        :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : current_call.number,
-        :to              => browser_agent? ? "client:#{agent['id']}" : 
-                            current_account.users.find(agent["id"]).available_number,
-        :timeout         => current_number.ringing_duration,
-        :timeLimit       => current_account.freshfone_credit.call_time_limit
-      }
-      call_params.merge!(:if_machine => 'hangup') unless browser_agent?
       begin
+        from = current_call.number
+        to = current_account.users.find(agent["id"]).available_number
+        call_params    = {
+          :url             => browser_agent? ?
+                              round_robin_agent_wait_url(current_call) : 
+                              forward_accept_url(current_call.id, agent["id"]),
+          :status_callback => round_robin_call_status_url(current_call, agent["id"], !browser_agent?),
+          :from            => browser_agent? ? browser_caller_id(params[:caller_id]) : get_caller_id(current_call),
+          :to              => browser_agent? ? "client:#{agent['id']}" : to_number(from, to, agent["id"]),
+          :timeout         => current_number.ringing_duration,
+          :timeLimit       => current_account.freshfone_credit.call_time_limit
+        }
+        call_params.merge!(:if_machine => 'hangup') unless browser_agent?
         agent_call = telephony.make_call(call_params)
       rescue => e
-        call_actions.handle_failed_incoming_call(current_call, agent['id'])
+        call_actions.handle_failed_round_robin_call(current_call, agent["id"])
         raise e
       end
       update_and_validate_pinged_agents(current_call, agent_call)
@@ -209,15 +213,17 @@ module Freshfone
       Rails.logger.info "Notify Direct Dial for Number :: #{current_call.direct_dial_number} for Account Id :: #{current_account.id}"
       return unless current_call.can_be_connected?
       self.current_number = current_call.freshfone_number
-      call_params    = {
-        :url             => direct_dial_accept(current_call.id),
-        :status_callback => direct_dial_complete(current_call.id),
-        :timeout         => current_number.ringing_time,
-        :to              => current_call.direct_dial_number,
-        :from            => get_caller_id(current_call),
-        :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit
-      }
       begin
+        from = current_call.number
+        to = current_call.direct_dial_number
+        call_params    = {
+          :url             => direct_dial_accept(current_call.id),
+          :status_callback => direct_dial_complete(current_call.id),
+          :timeout         => current_number.ringing_time,
+          :to              => to_number(from, to),
+          :from            => get_caller_id(current_call),
+          :timeLimit       => current_account.freshfone_credit.direct_dial_time_limit
+        }    
         direct_dial = telephony.make_call(call_params)
       rescue => e
         call_actions.handle_failed_direct_dial_call current_call
@@ -242,7 +248,7 @@ module Freshfone
           :message    => "Account :: #{(current_account || {})[:id]} <br>
           Number Id :: #{(current_number || {})[:id]}<br>
           Number :: #{(current_number || {})[:number]}<br>
-          Params :: #{params}<br><br>
+          Params :: #{params.inspect}<br><br>
           Exception Message :: #{exception.message} <br><br>
           Error Code(if any) :: #{exception.respond_to?(:code) ? exception.code : ''} <br><br>
           Exception Stacktrace :: #{exception.backtrace.join("\n\t")}<br>" })
@@ -280,6 +286,16 @@ module Freshfone
     def get_caller_id(call)
       return call.caller_number if current_account.freshfone_account.caller_id_enabled?
       call.number
+    end
+  private
+    def to_number(from,to,agent_id=nil)
+      return if from.blank? || to.blank?
+      to = to.gsub(/\D/,'')
+      from = from.gsub(/\D/,'')
+      if from == to
+        raise "Self calling exception from #{from} to #{to} #{"For User:: #{agent_id}" if agent_id.present?}"
+      end
+      to
     end
   end
 end

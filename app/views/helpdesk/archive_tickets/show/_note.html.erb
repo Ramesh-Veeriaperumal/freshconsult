@@ -34,7 +34,7 @@ end
   <div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, 'preview_pic circle') %></div>
   <% end %>
   <div class="commentbox 
-          <%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
+          <%= (note.user.blank? or note.archive_ticket.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
           <%= 'private-note' if note.private_note? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
     <% if note.private_note? %>
       <%= content_tag(:span, "", :class => "comment-lock") %>

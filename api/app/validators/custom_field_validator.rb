@@ -57,7 +57,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Datatype validator for boolean field
   def validate_custom_checkbox(record, field_name)
-    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', allow_nil: !@is_required }, :required_boolean)
+    boolean_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required }, :required_boolean)
     DataTypeValidator.new(boolean_options).validate(record)
   end
 

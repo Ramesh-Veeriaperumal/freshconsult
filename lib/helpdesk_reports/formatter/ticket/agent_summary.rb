@@ -4,14 +4,15 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
 
   attr_accessor :result
 
-  METRICS = ["AGENT_REASSIGNED_TICKETS", "AVG_FIRST_RESPONSE_TIME", "AVG_RESOLUTION_TIME",
-             "AVG_RESPONSE_TIME", "FCR_TICKETS", "PRIVATE_NOTES", "REOPENED_TICKETS",
-             "RESOLUTION_SLA", "RESOLVED_TICKETS", "RESPONSE_SLA", "RESPONSES"]
+  METRICS = ["AGENT_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS",
+             "AGENT_REASSIGNED_TICKETS","RESPONSE_SLA","RESOLUTION_SLA",
+             "FCR_TICKETS","PRIVATE_NOTES","RESPONSES","AVG_FIRST_RESPONSE_TIME",
+             "AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME"]
 
   def initialize data, args = {}
-    @result = data
-    @args = args
-    @current = @result['AGENT_SUMMARY_CURRENT']
+    @result   = data
+    @args     = args
+    @current  = @result['AGENT_SUMMARY_CURRENT']
     @historic = @result['AGENT_SUMMARY_HISTORIC']
   end
 
@@ -66,21 +67,13 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
       if @ids.include?(id)
         row.merge!("agent_name"=>@agent_hash[id])
         METRICS.each do |key|
-          value = row[key.downcase]
-          if value
-            row[key] = value.to_i
-          else
-            row[key] = default_value(key)
-          end
+          value    = row[key.downcase]
+          row[key] = value ? value.to_i : NA_PLACEHOLDER_SUMMARY
           row.delete(key.downcase)
         end
       end
     end
     @summary.sort_by{|a| a["agent_name"].downcase}
-  end
-
-  def default_value metric
-    METRIC_TO_QUERY_TYPE[metric.to_sym] == "Count" ? 0 : NA_PLACEHOLDER_SUMMARY
   end
 
 end
