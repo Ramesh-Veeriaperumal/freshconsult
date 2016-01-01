@@ -43,6 +43,10 @@ run "ln -nfs #{shared_path}/config/marketplace.yml #{node[:rel_path]}/config/mar
 run "ln -nfs #{shared_path}/config/ecommerce.yml #{node[:rel_path]}/config/ecommerce.yml"
 run "ln -nfs #{shared_path}/config/third_party_app_config.yml #{node[:rel_path]}/config/third_party_app_config.yml"
 
+#search V2
+run "ln -nfs #{shared_path}/config/boost_values.yml #{node[:rel_path]}/config/boost_values.yml"
+run "ln -nfs #{shared_path}/config/supported_types.yml #{node[:rel_path]}/config/supported_types.yml"
+
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-private-nopass.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-private-nopass.pem"
