@@ -21,7 +21,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @es_params        = {
       search_term: @search_key,
       exact_match: @exact_match
-    }.merge(ES_BOOST_VALUES[:agent_autocomplete])
+    }.merge(ES_V2_BOOST_VALUES[:agent_autocomplete])
 
     search.each do |document|
       @search_results[:results].push(*[{
@@ -39,7 +39,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @es_params        = {
       search_term: @search_key,
       exact_match: @exact_match
-    }.merge(ES_BOOST_VALUES[:requester_autocomplete])
+    }.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
 
     search.each do |document|
       @search_results[:results].push(*document.search_data)

@@ -52,7 +52,7 @@ class SearchV2::Manager
     def perform(args)
       args.symbolize_keys!
       
-      ES_SUPPORTED_TYPES.keys.each do |es_type|
+      ES_V2_SUPPORTED_TYPES.keys.each do |es_type|
         Search::V2::IndexRequestHandler.new(es_type, args[:account_id], nil).remove_by_query({ account_id: args[:account_id] })
       end
       

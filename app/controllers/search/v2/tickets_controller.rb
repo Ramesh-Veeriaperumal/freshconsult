@@ -74,7 +74,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         es_results      = Search::V2::SearchRequestHandler.new(current_account.id,
                                                                 :requester_autocomplete,
                                                                 ['user']
-                                                              ).fetch(user_params.merge(ES_BOOST_VALUES[:requester_autocomplete])
+                                                              ).fetch(user_params.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e

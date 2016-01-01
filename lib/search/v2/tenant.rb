@@ -37,7 +37,7 @@ module Search
       def bootstrap
         clear_cache
         Store::Data.instance.store_config(id)
-        aliases = ES_SUPPORTED_TYPES.each_pair.map do |type, params|
+        aliases = ES_V2_SUPPORTED_TYPES.each_pair.map do |type, params|
           {
             add: (Hash.new.tap do |alias_props|
               alias_props[:index]           = params[:index_prefix] % { index_suffix: 'v1' } # To-do: Get version from store
@@ -61,7 +61,7 @@ module Search
       end
 
       def rollback
-        aliases = ES_SUPPORTED_TYPES.each_pair.map do |type, params|
+        aliases = ES_V2_SUPPORTED_TYPES.each_pair.map do |type, params|
           { remove: {
             index: params[:index_prefix] % { index_suffix: 'v1' }, # To-do: Get version from store
             alias: self.alias(type)
@@ -106,7 +106,7 @@ module Search
           Store::Cache.instance.remove(Store::Cache::CLUSTER % { tenant_id: id })
           Store::Cache.instance.remove(Store::Cache::TENANT % { tenant_id: id })
           Store::Cache.instance.remove(Store::Cache::TENANT_INFO % { tenant_id: id })
-          ES_SUPPORTED_TYPES.keys.each do |type|
+          ES_V2_SUPPORTED_TYPES.keys.each do |type|
             Store::Cache.instance.remove(Store::Cache::ALIAS % { tenant_id: id, type: type })
           end
         end

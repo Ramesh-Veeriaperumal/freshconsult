@@ -25,11 +25,14 @@ module Search
         private
 
           def config(tenant_id)
-            ES_SUPPORTED_TYPES.inject({}) do |type_hash, (type, params)|
+            # latest_cluster = Rails.env.development? ? 1 : 1 #=> Latest cluster from host_list(Dynamo/YML)
+
+            ES_V2_SUPPORTED_TYPES.inject({}) do |type_hash, (type, params)|
               type_hash[type] = (params[:alias_prefix] % { alias_suffix: tenant_id }); type_hash
             end.merge(
-              'tenant_id' => tenant_id,
-              'home_cluster' => 'http://localhost:9201' # To-Do: get_lru_cluster
+              'tenant_id'     => tenant_id,
+              'home_cluster'  => ES_V2_CLUSTERS[:esv2_host]#, #=> Mostly no use in future.
+              # 'cluster_id'    => "v2_cluster_#{latest_cluster}"
             )
           end
       end

@@ -65,17 +65,17 @@ class CacheStoreTest < ActionController::TestCase
 
   # Test if alias key is added
   def test_alias_key_add
-    Search::V2::Store::Cache.instance.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_SUPPORTED_TYPES.first }) do
-      "#{ES_SUPPORTED_TYPES.first}_#{@tenant_id}"
+    Search::V2::Store::Cache.instance.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_V2_SUPPORTED_TYPES.first }) do
+      "#{ES_V2_SUPPORTED_TYPES.first}_#{@tenant_id}"
     end
 
-    refute_nil $memcache.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_SUPPORTED_TYPES.first })
+    refute_nil $memcache.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_V2_SUPPORTED_TYPES.first })
   end
 
   # Test if alias key is removed
   def test_alias_key_remove
-    Search::V2::Store::Cache.instance.remove(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_SUPPORTED_TYPES.first })
+    Search::V2::Store::Cache.instance.remove(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_V2_SUPPORTED_TYPES.first })
 
-    assert_nil $memcache.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_SUPPORTED_TYPES.first })
+    assert_nil $memcache.fetch(Search::V2::Store::Cache::ALIAS % { tenant_id: @tenant_id, type: ES_V2_SUPPORTED_TYPES.first })
   end
 end

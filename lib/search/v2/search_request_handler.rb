@@ -50,7 +50,7 @@ module Search
         end
 
         def tenant_aliases
-          ES_SUPPORTED_TYPES.keys.collect { |type| 
+          ES_V2_SUPPORTED_TYPES.keys.collect { |type| 
             ["#{type}_alias", @tenant.alias(type)]
           }.to_h
         end

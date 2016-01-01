@@ -39,7 +39,7 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
 
         es_params[:size]                      = @size
         es_params[:from]                      = @offset
-      end.merge(ES_BOOST_VALUES[@search_context])
+      end.merge(ES_V2_BOOST_VALUES[@search_context])
     end
 
     def initialize_search_parameters

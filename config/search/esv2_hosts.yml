@@ -1,0 +1,11 @@
+defaults: &defaults
+  :esv2_host: 'localhost:9201'
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
