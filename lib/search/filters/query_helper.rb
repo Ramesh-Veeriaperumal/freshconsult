@@ -80,6 +80,15 @@ module Search::Filters::QueryHelper
       missing_es_filter(field_name, values)
     end
 
+    def status_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.concat(Helpdesk::TicketStatus.unresolved_statuses(Account.current).map(&:to_s))
+      end
+
+      missing_es_filter(field_name, values)
+    end
+
     # Handle conditions with null queries
     def missing_es_filter(field_name, values)
       if values.include?('-1')
@@ -177,7 +186,7 @@ module Search::Filters::QueryHelper
 
     # For generically handling other fields
     def handle_field(field_name, values)
-      send("#{field_name}_es_filter", field_name, values) rescue terms_filter(field_name, values)
+      send("#{field_name}_es_filter", field_name, values) rescue missing_es_filter(field_name, values)
     end
 
     ### ES METHODS ###
