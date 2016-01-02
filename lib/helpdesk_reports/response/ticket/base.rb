@@ -151,9 +151,14 @@ class HelpdeskReports::Response::Ticket::Base
           padding_hash[i] = 0 
       end
     else
-      (start_day.year..end_day.year).each do |y|
+      end_year = end_day.year
+      if trend == 'w' && end_day.month == 1 && end_day.cweek >= 52
+        end_year = end_day.year - 1
+      end
+
+      (start_day.year..end_year).each do |y|
         start_point  = (start_day.year == y) ? date_part(start_day, trend) : 1
-        end_point = (end_day.year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
+        end_point = (end_year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
         
         (start_point..end_point).each do |i|
           month = trend == "w" ? week_1_specialcase(y) : nil
