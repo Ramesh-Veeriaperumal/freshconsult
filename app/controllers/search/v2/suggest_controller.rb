@@ -2,18 +2,6 @@ class Search::V2::SuggestController < Search::V2::SpotlightController
 
   attr_accessor :result_json, :search_key, :total_pages, :current_page, :search_results, :suggest
 
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_spotlight_models = {
-    'company'       => { model: 'Company',                  associations: [] }, 
-    'topic'         => { model: 'Topic',                    associations: [ :forum ] }, 
-    'ticket'        => { model: 'Helpdesk::Ticket',         associations: [{ flexifield: :flexifield_def }, :ticket_states ] }, 
-    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] }, 
-    'article'       => { model: 'Solution::Article',        associations: [] }, 
-    'user'          => { model: 'User',                     associations: [] }
-  }
-
   def index
     search
   end
@@ -38,5 +26,19 @@ class Search::V2::SuggestController < Search::V2::SpotlightController
       super
       @suggest        = true
       @search_context = :agent_spotlight_global
+    end
+
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_agent_models
+      @@esv2_agent_spotlight_suggest ||= {
+        'company'       => { model: 'Company',                  associations: [] }, 
+        'topic'         => { model: 'Topic',                    associations: [ :forum ] }, 
+        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [{ flexifield: :flexifield_def }, :ticket_states ] }, 
+        'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] }, 
+        'article'       => { model: 'Solution::Article',        associations: [] }, 
+        'user'          => { model: 'User',                     associations: [] }
+      }
     end
 end

@@ -10,18 +10,6 @@ class Search::V2::SpotlightController < ApplicationController
   attr_accessor :search_key, :search_sort, :result_json, :es_results, :search_results, :total_pages, 
                 :current_page, :size, :offset, :sort_direction, :search_context, :no_render
 
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_spotlight_models = {
-    'company'       => { model: 'Company',            associations: [] }, 
-    'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
-    'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
-    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',     associations: [] }, 
-    'article'       => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
-    'user'          => { model: 'User',               associations: [ :avatar, :customer ] }
-  }
-
   # Unscoped spotlight search
   #
   def all
@@ -80,7 +68,7 @@ class Search::V2::SpotlightController < ApplicationController
                                                           ).fetch(construct_es_params)
         @result_set = Search::Utils.load_records(
                                                   @es_results, 
-                                                  @@esv2_spotlight_models.dclone, 
+                                                  esv2_agent_models.dclone, 
                                                   {
                                                     current_account_id: current_account.id,
                                                     page: @current_page,
@@ -93,7 +81,7 @@ class Search::V2::SpotlightController < ApplicationController
         @search_results = []
         @result_set = []
 
-        Rails.logger.error "Exception encountered - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message}"
         NewRelic::Agent.notice_error(e)
       end
 
@@ -236,5 +224,19 @@ class Search::V2::SpotlightController < ApplicationController
       @offset         = @size * (@current_page - 1)
       @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
       @es_results     = []
+    end
+
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_agent_models
+      @@esv2_agent_spotlight ||= {
+        'company'       => { model: 'Company',            associations: [] }, 
+        'topic'         => { model: 'Topic',              associations: [{ forum: :forum_category }, :user ] }, 
+        'ticket'        => { model: 'Helpdesk::Ticket',   associations: [{ flexifield: :flexifield_def },{ requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group ] }, 
+        'archiveticket' => { model: 'Helpdesk::ArchiveTicket',     associations: [] }, 
+        'article'       => { model: 'Solution::Article',  associations: [ :user, :folder ] }, 
+        'user'          => { model: 'User',               associations: [ :avatar, :customer ] }
+      }
     end
 end

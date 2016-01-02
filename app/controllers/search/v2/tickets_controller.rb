@@ -6,10 +6,6 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
   
   attr_accessor :search_field
   
-  @@esv2_spotlight_models = {
-    'ticket'  => { model: 'Helpdesk::Ticket',   associations: [ :requester, :ticket_states, { :flexifield => :flexifield_def }] }
-  }
-  
   def index
     search_users if (@search_field == 'requester')
 
@@ -78,7 +74,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
-        Rails.logger.error "Exception encountered - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message}"
         NewRelic::Agent.notice_error(e)
         @requester_ids  = []
       end
@@ -98,5 +94,14 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
         @search_sort      = 'created_at'
         @sort_direction   = 'desc'
       end
+    end
+  
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_agent_models
+      @@esv2_agent_ticket ||= {
+        'ticket'  => { model: 'Helpdesk::Ticket',   associations: [ :requester, :ticket_states, { :flexifield => :flexifield_def }] }
+      }
     end
 end

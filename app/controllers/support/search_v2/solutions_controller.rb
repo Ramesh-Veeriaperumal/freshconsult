@@ -3,13 +3,6 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
 
   attr_accessor :related_articles, :container
 
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_spotlight_models = {
-    'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
-  }
-
   def related_articles
     @no_render          = true
     @size               = params[:limit]
@@ -47,6 +40,15 @@ class Support::SearchV2::SolutionsController < Support::SearchV2::SpotlightContr
       @searchable_klasses = ['Solution::Article']
       @article            = current_account.solution_articles.find(params[:article_id])
       @no_render          = true
+    end
+
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_portal_models
+      @@esv2_portal_solution ||= {
+        'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
+      }
     end
 
 end

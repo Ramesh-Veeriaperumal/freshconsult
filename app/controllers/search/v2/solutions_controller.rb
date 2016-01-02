@@ -6,13 +6,6 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
   before_filter :load_ticket, :only => [:related_solutions, :search_solutions]
   
   attr_accessor :search_key, :ticket, :suggest
-  
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_spotlight_models = {
-    'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
-  }
     
   # Find solutions for ticket
   #
@@ -53,5 +46,14 @@ class Search::V2::SolutionsController < Search::V2::SpotlightController
     #
     def load_ticket
       @ticket = current_account.tickets.find_by_id(params[:ticket])
+    end
+  
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_agent_models
+      @@esv2_agent_solution ||= {
+        'article' => { model: 'Solution::Article',  associations: [ :folder, :article_body ] }
+      }
     end
 end

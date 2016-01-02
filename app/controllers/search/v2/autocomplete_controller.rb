@@ -6,15 +6,6 @@ class Search::V2::AutocompleteController < ApplicationController
 
   attr_accessor :search_key, :search_context, :searchable_klass, :records_from_db, :search_results
 
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_autocomplete_models = {
-    'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
-    'company' => { model: 'Company',        associations: [] },
-    'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
-  }
-
   def agents
     @search_context   = :agent_autocomplete
     @searchable_klass = 'User'
@@ -91,7 +82,7 @@ class Search::V2::AutocompleteController < ApplicationController
                                                           ).fetch(@es_params)
         @records_from_db = Search::Utils.load_records(
                                                         es_results, 
-                                                        @@esv2_autocomplete_models.dclone, 
+                                                        esv2_autocomplete_models.dclone, 
                                                         {
                                                           current_account_id: current_account.id,
                                                           page: Search::Utils::DEFAULT_PAGE,
@@ -99,7 +90,7 @@ class Search::V2::AutocompleteController < ApplicationController
                                                         }
                                                       )
       rescue => e
-        Rails.logger.error "Exception encountered - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message}"
         NewRelic::Agent.notice_error(e)
         @records_from_db = []
       end
@@ -126,5 +117,16 @@ class Search::V2::AutocompleteController < ApplicationController
         @search_key   = Search::Utils.extract_term(@search_key)
         @exact_match  = true
       end
+    end
+
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_autocomplete_models
+      @@esv2_agent_autocomplete ||= {
+        'user'    => { model: 'User',           associations: [{ :account => :features }, :user_emails] },
+        'company' => { model: 'Company',        associations: [] },
+        'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
+      }
     end
 end

@@ -9,16 +9,6 @@ class Support::SearchV2::SpotlightController < SupportController
                 :search_results, :search, :pagination, :results, :no_render,
                 :related_articles, :container, :search_context
 
-  # ESType - [model, associations] mapping
-  # Needed for loading records from DB
-  #
-  @@esv2_spotlight_models = {
-    'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body ] },
-    'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
-    'topic'         => { model: 'Topic',                    associations: [] },
-    'article'       => { model: 'Solution::Article',        associations: [ :folder, :article_body ] }
-  }
-
   # Unscoped customer-side spotlight search
   #
   def all
@@ -83,7 +73,7 @@ class Support::SearchV2::SpotlightController < SupportController
                                                           ).fetch(construct_es_params)
         @result_set = Search::Utils.load_records(
                                                   @es_results, 
-                                                  @@esv2_spotlight_models.dclone, 
+                                                  esv2_portal_models.dclone, 
                                                   {
                                                     current_account_id: current_account.id,
                                                     page: @page,
@@ -96,7 +86,7 @@ class Support::SearchV2::SpotlightController < SupportController
         @search_results = []
         @result_set = []
 
-        Rails.logger.error "Exception encountered - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message}"
         NewRelic::Agent.notice_error(e)
       end
 
@@ -284,6 +274,18 @@ class Support::SearchV2::SpotlightController < SupportController
                         params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
       @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
       @offset         = @size * (@page - 1)
+    end
+
+    # ESType - [model, associations] mapping
+    # Needed for loading records from DB
+    #
+    def esv2_portal_models
+      @@esv2_portal_spotlight ||= {
+        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body ] },
+        'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
+        'topic'         => { model: 'Topic',                    associations: [] },
+        'article'       => { model: 'Solution::Article',        associations: [ :folder, :article_body ] }
+      }
     end
 
 end
