@@ -2,6 +2,7 @@ class Discussions::TopicsController < ApplicationController
 
 	include CloudFilesHelper
 	helper DiscussionsHelper
+	include Community::Voting
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
@@ -18,6 +19,7 @@ class Discussions::TopicsController < ApplicationController
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab
+	before_filter :fetch_vote, :toggle_vote, :only => [:vote]
 
 	COMPONENTS = [:voted_users, :participating_users, :following_users]
 	POSTS_PER_PAGE = 10
@@ -159,6 +161,9 @@ class Discussions::TopicsController < ApplicationController
 			format.json  { head 200 }
 		end
 	end
+	
+	def vote
+	end
 
 
 	def update_stamp
@@ -251,6 +256,10 @@ class Discussions::TopicsController < ApplicationController
 			@topic = current_account.topics.find(params[:id]) 
 			@forum = @topic.forum
 			@category = @forum.forum_category
+		end
+		
+		def vote_parent
+			@topic
 		end
 
 		def portal_check

@@ -3245,6 +3245,12 @@ en:
         vote_info_include_1: "You have this Question"
         vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
+      announce:
+        vote_info_1: "%{vote} Person like this Announcement"
+        vote_info_2: "%{vote} People like this Announcement"
+        vote_info_include_1: "You like this Announcement"
+        vote_info_include_2: "You and %{vote} People like this Announcement"
+        voted_users_widget_title: People who like this announcement
     post:
       upvote: Upvote
       voted_up_title: people upvoted this post
