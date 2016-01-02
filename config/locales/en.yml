@@ -135,6 +135,8 @@ en:
     unassigned: Unassigned
     products: Products
     created_date_range: Time period
+    none: None
+    unresolved: All Unresolved
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -5406,6 +5408,7 @@ en:
         overdue: Overdue Tickets
         due_today: Tickets Due Today
         resolved: Resolved Tickets
+        unresolved: All Unresolved Tickets
         my_overdue: My Overdue Tickets
         tags: Tags by Ticket
         my_due_today: My Tickets Due Today
