@@ -240,7 +240,8 @@ class HelpdeskReports::Response::Ticket::Base
   end
   
   def date_from_week week, month, year
-    year += 1 if month and week == 1 and month == 12
+    year += 1 if month && week == 1 && month == 12
+    year -= 1 if month && week >= 52 && month == 1
     [Date.commercial(year, week),Date.commercial(year, week, 7)]
   end
 
