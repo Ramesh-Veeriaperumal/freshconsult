@@ -70,7 +70,7 @@ module MemcacheKeys
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
-  WHITELISTED_IP_FIELDS = "v2/WHITELISTED_IP_FIELDS:%{account_id}"
+  WHITELISTED_IP_FIELDS = "v3/WHITELISTED_IP_FIELDS:%{account_id}"
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
   
