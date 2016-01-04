@@ -15,15 +15,15 @@ module DecoratorConcern
     alias_method :before_render, :append_before_render_action
 
     def decorate_views(options = {})
-      options.reverse_merge!(collection: [:index], object: [:update, :create, :show])
-
-      send(:before_render, :decorate_objects, only: options[:collection]) unless options[:collection].empty?
-      send(:before_render, :decorate_object, only: options[:object]) unless options[:object].empty?
+      options.reverse_merge!({collection: [:index], object: [:update, :create, :show]})
+      
+      self.send(:before_render, :decorate_objects, only: options[:collection]) unless options[:collection].empty?
+      self.send(:before_render, :decorate_object, only: options[:object]) unless options[:object].empty?
     end
 
     def decorator_name
       # name is a class variable, will be computed only once when class is loaded.
-      @name ||= "#{name.gsub('Controller', '').gsub('Api', '').singularize}Decorator".constantize
+      @name ||= "#{self.name.gsub("Controller", "").gsub("Api", "").singularize}Decorator".constantize
     end
   end
 
@@ -34,14 +34,14 @@ module DecoratorConcern
   end
 
   def decorate_objects
-    return if @errors || @error
+    return if (@errors || @error)
     # To create multiple decorator objects if the views involve considerable cosmetic manipulations.
     decorator, options = decorator_options
-    @items.map! { |item| decorator.new(item, options) }
+    @items.map!{|item| decorator.new(item, options)}
   end
 
   def decorate_object
-    return if @errors || @error
+    return if (@errors || @error)
     # To create decorator object if the views involve considerable cosmetic manipulations.
     if decorator_options
       decorator, options = decorator_options
@@ -49,7 +49,8 @@ module DecoratorConcern
     end
   end
 
-  def decorator_options(options = {})
+  def decorator_options options = {}
     [self.class.decorator_name, options]
   end
+
 end

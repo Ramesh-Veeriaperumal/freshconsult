@@ -11,7 +11,7 @@ class ApiBusinessHoursController < ApiApplicationController
     end
 
     def load_object
-      unless default_business_hour?
+      if !default_business_hour?
         if multiple_business_hours_enabled?
           super
         else

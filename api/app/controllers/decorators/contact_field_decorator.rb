@@ -1,11 +1,11 @@
 class ContactFieldDecorator
   attr_accessor :record
-
+  
   delegate :choices, :editable_in_signup, :id, :label, :position, :field_type, :default_field?,
-           :editable_in_portal, :label_in_portal, :required_in_portal, :visible_in_portal, :required_for_agent,
-           :created_at, :updated_at, to: :record
+    :editable_in_portal, :label_in_portal, :required_in_portal, :visible_in_portal, :required_for_agent,
+    :created_at, :updated_at, to: :record
 
-  def initialize(record, _options)
+  def initialize(record, options)
     @record = record
   end
 

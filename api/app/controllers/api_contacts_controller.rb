@@ -51,14 +51,14 @@ class ApiContactsController < ApiApplicationController
   private
 
     def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping) })
+      super({name_mapping: (@name_mapping || get_name_mapping)})
     end
 
     def get_name_mapping
-      # will be called only for index and show.
+      # will be called only for index and show. 
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
       custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) { |(name, value), hash| hash[name.to_sym] = CustomFieldDecorator.without_cf(name) } if custom_field
+      custom_field.each_with_object({}) {|(name, value), hash| hash[name.to_sym] = CustomFieldDecorator.without_cf(name)} if custom_field
     end
 
     def load_object
@@ -69,7 +69,7 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
-      if !scope.nil? && @item.deleted != scope
+      if scope != nil && @item.deleted != scope
         head 404
         return false
       end

@@ -21,6 +21,6 @@ json.array! @items do |tkt|
   # Not caching the body as it has a bigger impact for tickets having huge body
   # Not caching custom field as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
-
+  
   json.extract! tkt, :description, :description_html, :custom_fields
 end

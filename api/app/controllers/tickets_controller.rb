@@ -62,14 +62,14 @@ class TicketsController < ApiApplicationController
   private
 
     def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping) })
+      super({name_mapping: (@name_mapping || get_name_mapping)})
     end
 
     def get_name_mapping
-      # will be called only for index and show.
+      # will be called only for index and show. 
       # We want to avoid memcache call to get custom_field keys and hence following below approach.
       custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) { |(name, value), hash| hash[name.to_sym] = TicketDecorator.without_account_id(name) } if custom_field
+      custom_field.each_with_object({}) {|(name, value), hash| hash[name.to_sym] = TicketDecorator.without_account_id(name)} if custom_field
     end
 
     def set_custom_errors(item = @item)
