@@ -1,7 +1,7 @@
 class ApiContactFieldsController < ApiApplicationController
   private
 
-    def validate_filter_params(additional_fields = [])
+    def validate_filter_params(_additional_fields = [])
       # This method has been overridden to avoid validating pagination options.
     end
 

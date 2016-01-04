@@ -222,7 +222,7 @@ class NotesControllerTest < ActionController::TestCase
     post :reply, construct_params({ id: ticket.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
-      bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
   end
 
   def test_reply_with_ticket_trashed
