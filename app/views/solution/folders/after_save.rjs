@@ -7,7 +7,14 @@ if @folder.errors.empty?
 		page << "App.Solutions.AfterSave.hide('#version-#{@folder.id}-l#{params[:language_id]}');"
 		page << "App.Solutions.AfterSave.hide('#folder-edit');"
 	end
-	page << "App.Solutions.AfterSave.postFolderAction(#{@folder.solution_category_meta_id}, '#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder})}', #{@folder.id}, '#{params[:action]}', '#{escape_javascript( render :partial => '/solution/categories/edit_bar' ) if privilege?(:manage_solutions)}');"
+	if params[:article].present?
+		page << "App.Solutions.AfterSave.reloadFolderSelect('#solution_article_meta_solution_folder_meta_id', 
+												'#{escape_javascript(option_groups_from_collection_for_select(
+												current_account.solution_category_meta.includes(:primary_category, :solution_folder_meta => :primary_folder).reject(&:is_default), 
+												:solution_folder_meta, :name, :id, :name))}','#{@folder.id}');"
+	else
+		page << "App.Solutions.AfterSave.postFolderAction(#{@folder.solution_category_meta_id}, '#{escape_javascript( render :partial => 'solution/categories/folder', :locals => {:folder => @folder})}', #{@folder.id}, '#{params[:action]}', '#{escape_javascript( render :partial => '/solution/categories/edit_bar' ) if privilege?(:manage_solutions)}');"
+	end
 else
 	page.replace_html :error_messages, "#{error_messages_for :folder}"
 end

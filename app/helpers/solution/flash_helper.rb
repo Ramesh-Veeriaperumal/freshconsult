@@ -12,7 +12,7 @@ module Solution::FlashHelper
   end
 
   def view_on_portal_link
-    "<a href=#{support_solutions_article_path(@article, :url_locale => language.code)}
+    "<a href=#{support_solutions_article_path(@article, :url_locale => @article.language.code)}
         target = '_blank'
       > #{t('solution.view_on_portal')}
     </a>"

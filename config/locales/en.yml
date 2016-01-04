@@ -3898,6 +3898,7 @@ en:
     plain_edit: Edit
     show_languages: Show languages
     hide_languages: Hide languages
+    create_new: Create New
     language_label_titles:
       primary_edit: "Edit %{name}"
       supporting_new: "Add %{name} translation"

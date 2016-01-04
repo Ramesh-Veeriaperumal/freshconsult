@@ -3,7 +3,7 @@
 	<% content_for :sidebar do -%>&nbsp;<%-end %>
 	<%= content_tag :h3, t(".new_folder"), :class => "lead itil-hide" %>
 <% end %>
-<%= form_for :solution_folder_meta, :url => solution_folders_path,
+<%= form_for :solution_folder_meta, :url => solution_folders_path({:article => params[:article]}),
 						:html => {
 							:remote => true,
 							:method => :post,
