@@ -84,7 +84,7 @@ module Freshfone
         call_params  = {
           :url             => forward_accept_url(current_call.id, agent),
           :status_callback => forward_status_url(current_call.id, agent),
-          :from            => from,
+          :from            => get_caller_id(current_call),
           :to              => to_number(from, to, agent),
           :timeout         => current_number.ringing_time,
           :timeLimit       => current_account.freshfone_credit.call_time_limit,
