@@ -36,7 +36,15 @@
 		<a href="#" data-toggle="popupbox"></a>
 	</li> -->
 </ul>
-
+<div class="browser_notify hide" id="alert_message">
+ <div class="dbl_left arrow adjust_arrow "></div>
+ 	<div class="ff_alert_card inner">
+ 		<div class="content">
+   		<div><%= t('freshfone.widget.browser_alert').html_safe %></div><br/>
+   		<a href="https://support.freshdesk.com/support/solutions/articles/207922"><%= t('freshfone.widget.read_more').html_safe %></a>
+		</div>
+	</div>	
+</div>
 <ul class="popupbox-tabs outgoing hide">
 		<li class="dialpad_popup tooltip">
 			<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"

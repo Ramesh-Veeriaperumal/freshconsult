@@ -29,7 +29,7 @@ class Middleware::TrustedIp
       # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
       if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
         if trusted_ips_enabled?
-          unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'])
+          unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'], req_path)
             @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
                                                         'Your IPAddress is blocked by the administrator')
             return [@status, @headers, @response]
@@ -57,8 +57,10 @@ class Middleware::TrustedIp
           (whitelisted_ips || {})[:enabled] 
   end
 
-  def valid_ip(current_ip, current_user_id)
-    unless applies_to_agent?(current_user_id)
+  def valid_ip(current_ip, current_user_id, req_path)
+    # If api request, valid ip check should occur as both options in trusted_ip is applicable for agents.
+    # If api is changed to accept customer login also, this should be changed.
+    if api_request?(req_path) || trusted_ip_applicable_to_user?(current_user_id)
       whitelisted_ips.ip_ranges.each do |ip|
         return true if ip_is_in_range?(IPAddress(ip[:start_ip]),IPAddress(ip[:end_ip]),IPAddress(current_ip))
       end
@@ -68,9 +70,13 @@ class Middleware::TrustedIp
     return false
   end
 
-  def applies_to_agent?(current_user_id)
-    whitelisted_ips.applies_only_to_agents && 
-           !@current_account.users.find_by_id(current_user_id).agent? 
+  # If applicable to only agents, check for agent login else customer login.
+  def trusted_ip_applicable_to_user?(current_user_id)
+    if whitelisted_ips.applies_only_to_agents  
+      return @current_account.users.find_by_id(current_user_id).agent?
+    else
+      return true
+    end
   end
 
   def ip_is_in_range?(start_ip, end_ip, current_ip)

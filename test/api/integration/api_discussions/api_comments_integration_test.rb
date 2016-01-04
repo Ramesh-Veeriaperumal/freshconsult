@@ -12,9 +12,9 @@ class ApiCommentsIntegrationTest < ActionDispatch::IntegrationTest
         api_update: 6,
         api_destroy: 9,
 
-        create: 34,
-        update: 18,
-        destroy: 31
+        create: 35,
+        update: 19,
+        destroy: 32
       }
 
       t = create_test_topic(create_test_forum(ForumCategory.first))

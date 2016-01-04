@@ -34,7 +34,7 @@ class EmailConfig < ActiveRecord::Base
   
   def friendly_email
     if active?
-      "#{format(name)} <#{reply_email}>"
+      "#{format_name(name)} <#{reply_email}>"
     elsif primary_role?
       account.default_friendly_email
     else
@@ -46,7 +46,7 @@ class EmailConfig < ActiveRecord::Base
   def friendly_email_personalize(user_name)
     user_name = user_name ? user_name : name
     if active?
-      "#{format(user_name)} <#{reply_email}>"
+      "#{format_name(user_name)} <#{reply_email}>"
     elsif primary_role?
       account.default_friendly_email_personalize(user_name)
     else
@@ -76,7 +76,7 @@ class EmailConfig < ActiveRecord::Base
 
   private
     # Wrap name with double quotes if it has a special character and not already wrapped
-    def format(name)
+    def format_name(name)
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
     end      
 

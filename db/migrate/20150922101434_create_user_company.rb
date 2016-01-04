@@ -7,8 +7,6 @@ class CreateUserCompany < ActiveRecord::Migration
     
     add_index :user_companies, [:account_id, :user_id, :company_id], 
               :name => "index_user_companies_on_account_id_user_id_company_id"
-    add_index :user_companies, [:account_id, :user_id], 
-              :name => "index_user_companies_on_account_id_user_id"
     add_index :user_companies, [:account_id, :company_id], 
               :name => "index_user_companies_on_account_id_company_id"
   end

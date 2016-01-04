@@ -347,7 +347,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_display_id?
-    Account.current.features?(:redis_display_id)
+    Account.current.features?(:redis_display_id) && display_id.nil?
   end
 
   def assign_display_id

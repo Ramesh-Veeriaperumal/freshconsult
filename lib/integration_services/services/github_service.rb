@@ -8,11 +8,11 @@ module IntegrationServices::Services
 
     LINK_ISSUE_FD_TEMPLATE = "Linked ticket to issue <a href='%{issue_link}'> \#%{issue} </a> in GitHub repository %{repo}"
     UNLINK_ISSUE_FD_TEMPLATE = "Unlinked ticket from issue <a href='%{issue_link}'> \#%{issue} </a> in GitHub repository %{repo}"
-    LINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} linked Freshdesk ticket %{ticket_id} to this issue"
-    UNLINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} unlinked Freshdesk ticket %{ticket_id} from this issue"
-    COMMENT_TO_GITHUB = "Comment added by %{user_type} %{user} in Freshdesk ticket id %{ticket_id}:<br/>%{comment}"
-    COMMENT_TO_FRESHDESK = "<b> GitHub Repository : </b> %{repo}, <b>Issue ID :</b> %{issue_id} <br/><br/> %{comment}"
-    CREATE_GITHUB_ISSUE = "Freshdesk Ticket ID: %{ticket_id} <br/> " +
+    LINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} linked Freshdesk ticket <a href='%{ticket_url}' target='_blank'>%{ticket_id}</a> to this issue"
+    UNLINK_ISSUE_GIT_TEMPLATE = "%{user_type} %{user} unlinked Freshdesk ticket <a href='%{ticket_url}' target='_blank'>%{ticket_id}</a> from this issue"
+    COMMENT_TO_GITHUB = "Comment added by %{user_type} %{user} in Freshdesk ticket id <a href='%{ticket_url}' target='_blank'>%{ticket_id}</a>:<br/>%{comment}"
+    COMMENT_TO_FRESHDESK = "<b> GitHub Repository : </b> %{repo}, <b>Issue ID :</b> <a href='%{issue_url}'>%{issue_id}</a> <br/><br/> %{comment}"
+    CREATE_GITHUB_ISSUE = "Freshdesk Ticket ID: <a href='%{ticket_url}' target='_blank'>%{ticket_id}</a> <br/> " +
                           "Freshdesk Ticket Agent: %{agent_name}<br/>" +
                           "Freshdesk Ticket Agent Email: %{agent_email}<br/>" +
                           "Ticket Priority: %{ticket_priority}<br/>" +
@@ -36,7 +36,8 @@ module IntegrationServices::Services
                   :agent_name => ticket.responder ? ticket.responder.name : "Unassigned",
                   :agent_email => ticket.responder ? ticket.responder.email : "Unavailable",
                   :ticket_priority => ticket.priority_name,
-                  :ticket_id => ticket.display_id
+                  :ticket_id => ticket.display_id,
+                  :ticket_url => ticket_url(ticket)
                 }).html_safe
         issue = issue_resource.create(@payload[:title], body, @payload[:options])
         integrated_resource = link_issue_to_ticket(issue, ticket)
@@ -138,7 +139,8 @@ module IntegrationServices::Services
                      :comment => note.liquidize_body,
                      :user => note.user.name,
                      :user_type => note.user.agent? ? "agent" : "customer",
-                     :ticket_id => note.notable.display_id
+                     :ticket_id => note.notable.display_id,
+                     :ticket_url => ticket_url(note.notable)
                    }).html_safe
         issue_comment = issue_resource.add_comment(issue_id, comment)
         redis_key = get_redis_key(remote_resource, issue_comment["url"])
@@ -165,6 +167,7 @@ module IntegrationServices::Services
                      :comment => comment,
                      :name => user.name,
                      :issue_id => issue_id,
+                     :issue_url => @payload["issue"]["html_url"],
                      :repo => repo
                    }).html_safe
       options = {
@@ -251,13 +254,14 @@ module IntegrationServices::Services
     end
 
     def add_git_link_unlink_comment(type, integrated_resource)
-      liquid_obj = {
+      template_data = {
         :user => User.current.name,
         :user_type => User.current.agent? ? "Agent" : "Customer",
-        :ticket_id => integrated_resource.local_integratable.display_id
+        :ticket_id => integrated_resource.local_integratable.display_id,
+        :ticket_url => ticket_url(integrated_resource.local_integratable)
       }
       template = type == "link" ? LINK_ISSUE_GIT_TEMPLATE : UNLINK_ISSUE_GIT_TEMPLATE
-      comment = (template % liquid_obj).html_safe
+      comment = (template % template_data).html_safe
       first_resource = @installed_app.integrated_resources.first_integrated_resource("#{@payload[:repository]}/issues/#{@payload[:number]}").first
       issue_comment = issue_resource.add_comment(@payload[:number], comment)
       redis_key = get_redis_key(first_resource, issue_comment["url"])
@@ -265,13 +269,13 @@ module IntegrationServices::Services
     end
 
     def add_fd_link_unlink_note(type, issue, integrated_resource)
-      liquid_obj = {
+      template_data = {
         :repo => @payload[:repository],
         :issue => issue["number"],
         :issue_link => issue["html_url"],
       }
       template = type == "link" ? LINK_ISSUE_FD_TEMPLATE : UNLINK_ISSUE_FD_TEMPLATE
-      note_body = (template % liquid_obj).html_safe
+      note_body = (template % template_data).html_safe
       add_note_and_external_note integrated_resource.local_integratable, User.current, note_body
     end
 
@@ -337,6 +341,10 @@ module IntegrationServices::Services
 
     def get_issue_repo_and_id(resource)
       resource.remote_integratable_id.split('/issues/')
+    end
+
+    def ticket_url(ticket)
+      Rails.application.routes.url_helpers.helpdesk_ticket_url(ticket, :host => Account.current.host, :protocol => Account.current.url_protocol)
     end
 
     def repo_resource

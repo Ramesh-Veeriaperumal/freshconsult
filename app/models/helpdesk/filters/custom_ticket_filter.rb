@@ -32,6 +32,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      { "condition" => "deleted", "operator" => "is", "value" => false}]
   end
 
+  def api_all_tickets_filter
+    [self.class.spam_condition(false), self.class.deleted_condition(false)]
+  end
+
   def self.trashed_condition(input)
     { "condition" => 
       "helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}", 
@@ -114,7 +118,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
 
-  def default_filter(filter_name, from_export = false)
+  def default_filter(filter_name, from_export = false, from_api=false)
      default_value = from_export ? "all_tickets" : "new_and_my_open"
      self.name = filter_name.blank? ? default_value : filter_name
 
@@ -124,6 +128,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
        unresolved_filter
      elsif "raised_by_me".eql?filter_name
        raised_by_me_filter
+     elsif (from_api && "all_tickets".eql?(filter_name))
+       api_all_tickets_filter
      else
        DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
      end
@@ -178,7 +184,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name], !!params[:export_fields])  if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml"].include?(params[:format])) if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|

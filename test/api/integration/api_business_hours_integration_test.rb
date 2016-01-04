@@ -9,8 +9,8 @@ class ApiBusinessHoursIntegrationTest < ActionDispatch::IntegrationTest
       api_show: 1,
       api_index: 1,
 
-      show: 14,
-      index: 13
+      show: 15,
+      index: 14
     }
 
     business_hour = create_business_calendar

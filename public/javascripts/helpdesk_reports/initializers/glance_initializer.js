@@ -175,6 +175,8 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         renderCommonChart: function (current_hash, options, group_by, view_all, current_value_array, metric) {
             var height, data1, data2, dataLab, labels, container;
+            var custom_fields = HelpdeskReports.locals.custom_fields_group_by;
+
             if (view_all) {
                 labels = _.keys(current_hash);
                 height = _FD.calculateChartheight(labels.length);
@@ -191,7 +193,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     data1 = this.fillArray(options.value, point_limit);
                     data2 = _.first(current_value_array,point_limit); 
 
-                    jQuery("[data-group-container='"+ group_by +"']").addClass('active');
+                    //Using data to dynamically update the custom field. 
+                    if (custom_fields.indexOf(group_by) < 0){
+                        jQuery("[data-group-container='"+ group_by +"']").addClass('active');
+                    }else{
+                        jQuery("#custom_field_group_by [data-container='view-more']").data("group-container", group_by).addClass('active');
+                    }
 
                 } else {
                     labels = _.keys(current_hash);
@@ -200,8 +207,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     data1 = this.fillArray(options.value,current_value_array.length);
                     data2 = current_value_array;
 
-                    jQuery("[data-group-container='"+ group_by +"']").removeClass('active');
-                    
+                    if (custom_fields.indexOf(group_by) < 0){
+                        jQuery("[data-group-container='"+ group_by +"']").removeClass('active');
+                    }else{
+                        jQuery("#custom_field_group_by [data-container='view-more']").data("group-container", group_by).removeClass('active');
+                    }
+
                 }
                 if (HelpdeskReports.locals.pdf !== undefined){
                     container = metric+'_'+group_by;
@@ -297,7 +308,15 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var active_metric = HelpdeskReports.locals.active_metric;
             if (!(HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(active_metric) < 0 && el.series.name == 'dummy')) {
                 var container = el.series.chart.container;
-                var group_by = jQuery(container).closest('[data-report="glance-container"]').attr('data-group');
+                //Added the group attribute to view_all_container using jquery data, so to retrieve we use
+                //data function , for others we use attr to get and set. This is done because attr was not updating
+                //properly dynamically
+                var group_by = "";
+                if(container && jQuery(container).parent().attr('id') == "view_all_container"){
+                    group_by = jQuery(container).closest('[data-report="glance-container"]').data('group');
+                } else{
+                    group_by = jQuery(container).closest('[data-report="glance-container"]').attr('data-group');
+                }
                 HelpdeskReports.CoreUtil.actions.hideViewMore();
                 var data = {};
                 data.label = el.category;
@@ -457,7 +476,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         },
         renderViewMore: function (el) {
             var attr = jQuery(el).data('group-container');
-            jQuery('#view_all_container').attr('data-group',attr);
+            jQuery('#view_all_container').data('group',attr);
             var active_metric_hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric];
 
             if (!jQuery.isEmptyObject(active_metric_hash[attr])) {

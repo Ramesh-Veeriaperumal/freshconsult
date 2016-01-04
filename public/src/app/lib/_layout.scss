@@ -383,6 +383,18 @@ label.overlabel{
 .ff_hover_card{
 	min-width: 140px !important;
 }
+.ff_alert_card{
+	min-width: 250px !important;
+	position: relative;
+	right:10px;
+	top: -20px;
+}
+.adjust_arrow{
+	left: auto !important;
+	top: 83px;
+	right:57px;
+	position: relative;
+}
 .ff_presence_options {
 	padding: 0 !important;
 	.availabilityOnPhone {

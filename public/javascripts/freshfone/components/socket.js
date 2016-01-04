@@ -683,7 +683,7 @@ var FreshfoneSocket;
 			freshfonecalls.freshfoneCallTransfer.successTransferCall(transfer_success);
 		},
     successTransferConferenceCall: function(call_sid) {
-      if(!freshfonecalls.freshfoneCallTransfer.cancelled){
+      if(freshfonecalls.isCallActive() && !freshfonecalls.freshfoneCallTransfer.cancelled){
         freshfonecalls.freshfoneCallTransfer.disconnectAgent(call_sid);
         freshfonecalls.freshfoneCallTransfer.successTransferCall('true');
       }

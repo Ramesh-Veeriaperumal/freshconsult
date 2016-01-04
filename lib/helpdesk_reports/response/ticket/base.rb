@@ -151,9 +151,16 @@ class HelpdeskReports::Response::Ticket::Base
           padding_hash[i] = 0 
       end
     else
-      (start_day.year..end_day.year).each do |y|
-        start_point  = (start_day.year == y) ? date_part(start_day, trend) : 1
-        end_point = (end_day.year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
+      start_year = start_day.year
+      end_year = end_day.year
+      if trend == 'w'
+        start_year = start_day.year - 1 if start_day.month == 1 && start_day.cweek >= 52
+        end_year = end_day.year - 1 if end_day.month == 1 && end_day.cweek >= 52
+      end
+
+      (start_year..end_year).each do |y|
+        start_point  = (start_year == y) ? date_part(start_day, trend) : 1
+        end_point = (end_year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
         
         (start_point..end_point).each do |i|
           month = trend == "w" ? week_1_specialcase(y) : nil
@@ -235,8 +242,20 @@ class HelpdeskReports::Response::Ticket::Base
   end
   
   def date_from_week week, month, year
-    year += 1 if month and week == 1 and month == 12
+    if month && week == 1 && month == 12
+      year += 1
+      [Date.commercial(year, week),Date.commercial(year, week, 7)]
+    elsif month && week >= 52 && month == 1
+      year -= 1
+      begin
+        [Date.commercial(year, week),Date.commercial(year, week, 7)]
+      rescue
+        year += 1
+        [Date.commercial(year, week),Date.commercial(year, week, 7)]
+      end
+    else
     [Date.commercial(year, week),Date.commercial(year, week, 7)]
+    end
   end
 
 end

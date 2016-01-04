@@ -33,13 +33,21 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     end
 
     def build_and_execute
-      @results = []
-      @query_params.each do |param|
-        request_object = HelpdeskReports::Request::Ticket.new(param, report_type)
+      requests = []
+      @query_params.each_with_index do |param, i|
+        request_object = HelpdeskReports::Request::Ticket.new(param.merge!(index: i),report_type)
         request_object.build_request
-        response = request_object.request
-        result_object = HelpdeskReports::Response::Ticket.new(response, param, request_object.query_type, report_type, true)
-        @results << result_object
+        requests << request_object
+      end
+          
+      response = bulk_request requests
+      
+      @results = []
+      response.each do |res|
+        index = res["index"].to_i
+        param = requests[index].fetch_req_params
+        query_type = requests[index].query_type
+        @results << HelpdeskReports::Response::Ticket.new(res, param, query_type,report_type, @pdf_export.present?)   
       end
     end
 

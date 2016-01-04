@@ -13,11 +13,11 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         api_index: 0,
         api_destroy: 11,
 
-        create: 23,
-        show: 14,
-        update: 21,
-        index: 13,
-        destroy: 35
+        create: 24,
+        show: 15,
+        update: 22,
+        index: 14,
+        destroy: 36
       }
 
       v2_payload = v2_group_payload

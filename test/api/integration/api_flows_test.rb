@@ -58,39 +58,40 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_trusted_ip_invalid
-    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
-    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    @account.features.whitelisted_ips.create
+    create_whitelisted_ips(true)
+    @account.reload
+    ip_ranges = @account.whitelisted_ip.ip_ranges.first.symbolize_keys!
+    WhitelistedIp.any_instance.stubs(:ip_ranges).returns([ip_ranges])
     ApiDiscussions::CategoriesController.any_instance.expects(:create).never
+    Middleware::TrustedIp.any_instance.expects(:trusted_ip_applicable_to_user).never
     post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers
     assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 403
     response.body.must_match_json_expression(message: String)
   ensure
-    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
-    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
     ApiDiscussions::CategoriesController.any_instance.unstub(:create)
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ip_applicable_to_user)
+    @account.features.whitelisted_ips.destroy
   end
 
   def test_trusted_ip_invalid_shard
     ShardMapping.stubs(:lookup_with_domain).returns(nil)
     ApiDiscussions::CategoriesController.any_instance.expects(:select_shard).once
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled).never
     post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
   ensure
-    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
-    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
     ShardMapping.unstub(:lookup_with_domain)
   end
 
   def test_trusted_ip_invalid_subdomain
-    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
-    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled?).never
     ApiApplicationController.any_instance.expects(:route_not_found).once
     post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers.merge('HTTP_HOST' => 'billing.junk.com')
     assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 404
   ensure
     Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
-    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
     ApiApplicationController.any_instance.unstub(:route_not_found)
   end
 
@@ -394,9 +395,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal '1000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Total']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
-    remaining_limit = 1000 - new_v2_api_consumed_limit.to_i
+    remaining_limit = 3000 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
   end
@@ -641,24 +642,48 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_throttled_valid_request_with_plan_api_limit_changed
-    enable_cache { 
+    enable_cache {
       old_plan = @account.subscription.subscription_plan
-      subscription = @account.subscription
       new_plan = SubscriptionPlan.find(3)
       set_key(plan_key(3), 230, nil)
       remove_key(account_key)
-
-      get '/api/v2/discussions/categories', nil, @headers
-      assert_response 200
-      assert_equal '200', response.headers['X-RateLimit-Total']
+      Subscription.fetch_by_account_id(@account.id) # setting memcache key
+      
       @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
       @account.reload.subscription.reload.subscription_plan
 
       get '/api/v2/discussions/categories', nil, @headers
       assert_response 200
       assert_equal '230', response.headers['X-RateLimit-Total']
-      subscription.update_column(:subscription_plan_id, old_plan.id)
     }
+  ensure
+    @account.subscription.update_column(:subscription_plan_id, old_plan.id)
+  end
+
+  def test_throttler_with_redis_down
+    remove_key(v2_api_key)
+    rate_limit_instance = $rate_limit
+    $rate_limit = mock("Redis Client Instance")
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    $rate_limit = rate_limit_instance
+    assert_equal '3000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Remaining']
+    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_nil get_key(v2_api_key)
+    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version'] 
+  ensure
+    $rate_limit = rate_limit_instance
+  end
+
+  def test_throttler_with_expiry_not_set_properly
+    old_api_consumed_limit = get_key(v2_api_key).to_i
+    remove_key(v2_api_key)
+    set_key(v2_api_key, '5000', nil)
+    get '/api/v2/discussions/categories', nil, @headers
+    set_key(v2_api_key, old_api_consumed_limit, nil)
+    assert_response 429
+    assert_equal '-1', response.headers['Retry-After']
   end
 
   def test_expiry_condition

@@ -14,12 +14,12 @@ class TimeEntriesIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 7,
         api_ticket_time_entries: 3,
 
-        create: 22,
-        update: 18,
-        index: 14,
-        toggle_timer: 20,
-        destroy: 18,
-        ticket_time_entries: 15
+        create: 23,
+        update: 19,
+        index: 15,
+        toggle_timer: 21,
+        destroy: 19,
+        ticket_time_entries: 16
       }
 
       ticket = create_ticket

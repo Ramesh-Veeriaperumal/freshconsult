@@ -13,8 +13,8 @@ module Reports::CommonHelperMethods
 			["/reports/v2/group_summary", 			 "group_summary",            "group-summary" ,	  			  "productivity"],
 			["/reports/v2/performance_distribution", "performance_distribution", "performance-distribution" ,     "productivity"],      
 			["/timesheet_reports",                   "timesheet_reports",        "time_sheet" ,      			  "productivity"],
-			["/survey/reports",                      "satisfaction_survey",    	 "customer_satisfaction",   "customer_happiness"],
-			["/reports/v2/customer_report",          "customer_report",          "customer_reports" ,  		"customer_happiness"]
+			["/reports/v2/customer_report",          "customer_report",          "customer_reports" ,  		"customer_happiness"],
+			["/survey/reports",                      "satisfaction_survey",    	 "customer_satisfaction",   "customer_happiness"]
 		]
 
 	PJAX_SUPPORT_REPORTS = ["glance","ticket_volume","agent_summary","group_summary","customer_report","performance_distribution"]
@@ -31,7 +31,7 @@ module Reports::CommonHelperMethods
 		current_report_category = REPORT_CATEGORY[@report_type]
 		
 		sub_menu = REPORT_MAPPING.map do |s|
-			next unless has_scope?("#{s[1]}") && "#{s[3]}" == current_report_category
+			next unless "#{s[3]}" == current_report_category && has_scope?("#{s[1]}")
 			content_tag :li, :data => { :report => "#{s[1]}" }, :class => active_report(s[1])  do
 				temp_title = "helpdesk_reports.#{s[1]}.title"
 				link_content = <<HTML
