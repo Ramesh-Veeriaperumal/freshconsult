@@ -8678,3 +8678,5 @@ en:
     search_group: "Search by group"
     search_agent: "Search by agent"
     loading_label: "Loading"
+  email:
+    spam_error: "An internal error occured.  Please contact support."
