@@ -113,7 +113,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def send_notifications
       return if skip_notification
-      if user.customer?
+      if notable.customer_performed?(user)
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
         Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
@@ -180,9 +180,15 @@ class Helpdesk::Note < ActiveRecord::Base
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
 
-      if user.customer?
-        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] :
+      if notable.customer_performed?(user)
+        schema_less_note.category = case 
+        when replied_by_third_party?
+          CATEGORIES[:third_party_response]
+        when private? && notable.agent_as_requester?(user.id)
+          CATEGORIES[:agent_private_response]
+        else
           CATEGORIES[:customer_response]
+        end
       else
         schema_less_note.category = private? ? CATEGORIES[:agent_private_response] :
           CATEGORIES[:agent_public_response]
@@ -237,7 +243,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
-      if user && user.customer? || !note?
+      if user && notable.customer_performed?(user) || !note?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}

@@ -135,7 +135,12 @@ module Cache::Memcache::Account
 
    def whitelisted_ip_from_cache
     key = WHITELISTED_IP_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.whitelisted_ip }
+
+    # fetch won't know the difference between nils from query block and key not present.
+    # Hence DB will be queried again & again via memcache for accounts without whitelisted ip if we use self.whitelisted_ip
+    # Below query will return array containing results from query self.whitelisted_ip. 
+    # So that cache won't be executed again & again for accounts without whitelistedip.
+    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1) }
   end
 
   def agent_names_from_cache

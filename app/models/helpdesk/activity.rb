@@ -16,7 +16,6 @@ class Helpdesk::Activity < ActiveRecord::Base
   validates_presence_of :description, :notable_id, :user_id
   
   before_create :set_short_descr
-  before_create :set_migration_key, :if => :feature_present?
   
   OLD_MIGRATION_KEYS = ["bi_reports", "bi_reports_1"]
   MIGRATION_KEYS     = ["bi_reports_2"]
@@ -68,14 +67,15 @@ class Helpdesk::Activity < ActiveRecord::Base
  :conditions => send(:agent_permission ,user) } if user.agent? && !user.agent.all_ticket_permission  }
   
   def self.agent_permission user
-    
-    permissions = { :all_tickets => [] , 
-                    :group_tickets => ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=? OR helpdesk_tickets.requester_id=?)",
-                                       'Helpdesk::Ticket' , user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
-                    :assigned_tickets =>["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id] 
-                  }
-                  
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
+    when :all_tickets
+      []
+    when :group_tickets
+      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=?)",
+          'Helpdesk::Ticket' , user.agent_groups.pluck(:group_id).insert(0,0), user.id]
+    when :assigned_tickets
+      ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id]  
+    end
   end
 
   def ticket_activity_type
@@ -111,18 +111,6 @@ class Helpdesk::Activity < ActiveRecord::Base
   private
     def set_short_descr
       self.short_descr ||= description
-    end
-    
-    def feature_present?
-      # Added feature check as a separate method so that activities can reuse 
-      # this by adding their feature
-      Account.current.reports_enabled? 
-    end
-    
-    def set_migration_key
-      MIGRATION_KEYS.each do |key|
-        self.activity_data.merge!(key => true)
-      end if ticket?
     end
 
 end

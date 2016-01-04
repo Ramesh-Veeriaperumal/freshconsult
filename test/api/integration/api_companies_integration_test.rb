@@ -11,12 +11,12 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
         api_show: 1,
         api_index: 2,
         api_update: 8,
-        api_destroy: 10,
+        api_destroy: 8,
 
-        create: 20,
-        show: 15,
-        index: 15,
-        update: 21,
+        create: 21,
+        show: 17,
+        index: 17,
+        update: 22,
         destroy: 21
       }
 
@@ -41,6 +41,7 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
         get("/api/v2/companies/#{id1}", nil, @headers)
         assert_response 200
       end
+      v1[:show] += 1 # trusted_ip
 
       # V2 index
       v2[:index], v2[:api_index], v2[:index_queries] = count_api_queries do

@@ -14,7 +14,7 @@ class ContactValidation < ApiValidation
                               }
 
   validates :name, required: true, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-  validates :client_manager, data_type: { rules: 'Boolean', allow_nil: true,  ignore_string: :allow_string_param }
+  validates :client_manager, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
 
   validate :contact_detail_missing, on: :create
 
@@ -56,7 +56,7 @@ class ContactValidation < ApiValidation
       end
     end
 
-    alias contact_detail_missing_update contact_detail_missing
+    alias_method :contact_detail_missing_update, :contact_detail_missing
 
     def validate_avatar
       if ContactConstants::AVATAR_EXT.exclude?(File.extname(avatar.original_filename).downcase)

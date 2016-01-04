@@ -10,6 +10,7 @@ module ApiDiscussions
     end
 
     def category_forums
+      return if validate_filter_params
       @forums = paginate_items(@item.forums)
       render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
     end
@@ -21,7 +22,7 @@ module ApiDiscussions
       end
 
       def load_category
-        @category = current_account.forum_categories.find_by_id(params[:id].to_i)
+        @category = current_account.forum_categories.find_by_id(params[:id])
         head 404 unless @category
         @category
       end

@@ -14,6 +14,7 @@ class EmailController < ApplicationController
   skip_before_filter :set_locale, :force_utf8_params
   skip_before_filter :logging_details
   skip_before_filter :ensure_proper_protocol
+  skip_after_filter :set_last_active_time
   
   def new
     render :layout => false

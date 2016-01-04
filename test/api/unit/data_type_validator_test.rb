@@ -4,7 +4,7 @@ class DataTypeValidatorTest < ActionView::TestCase
   class TestValidation
     include ActiveModel::Validations
 
-    attr_accessor :array, :hash, :error_options, :allow_unset_param, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error
+    attr_accessor :array, :hash, :error_options, :allow_unset_param, :allow_string_param, :required_param, :allow_string_boolean, :boolean, :multi_error, :set_boolean
 
     validates :multi_error, required: true
     validates :allow_unset_param, data_type: { rules: String, allow_unset: true }
@@ -13,6 +13,7 @@ class DataTypeValidatorTest < ActionView::TestCase
     validates :hash, data_type: { rules: Hash, allow_nil: false }
     validates :boolean, data_type: { rules: 'Boolean', allow_nil: true }
     validates :allow_string_boolean, data_type: { rules: 'Boolean', ignore_string: :allow_string_param, allow_nil: true }
+    validates :set_boolean, data_type: { rules: 'Boolean' }
   end
 
   def test_disallow_nil
@@ -83,5 +84,20 @@ class DataTypeValidatorTest < ActionView::TestCase
     error_options = test.error_options.to_h.sort
     assert_equal({ array: :data_type_mismatch, hash: :data_type_mismatch, boolean: :data_type_mismatch, allow_string_boolean: :data_type_mismatch, multi_error: :missing, required_param: :required_and_data_type_mismatch }.sort, errors)
     assert_equal({ array: { data_type: Array }, hash:  { data_type: 'key/value pair' }, boolean:  { data_type: 'Boolean' }, allow_string_boolean:  { data_type: 'Boolean' }, required_param:  { data_type: Array } }.sort, error_options)
+  end
+
+  def test_allow_unset
+    test = TestValidation.new
+    test.set_boolean = nil
+    test.array = [1, 2]
+    test.multi_error = [1, 2]
+    test.hash = { a: 1 }
+    test.boolean = true
+    test.required_param = [1, 2, 3]
+    refute test.valid?
+    errors = test.errors.to_h.sort
+    error_options = test.error_options.to_h.sort
+    assert_equal({ set_boolean: :data_type_mismatch }.sort, errors)
+    assert_equal({ set_boolean:  { data_type: 'Boolean' } }.sort, error_options)
   end
 end

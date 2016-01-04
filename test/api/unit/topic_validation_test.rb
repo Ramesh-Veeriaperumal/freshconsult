@@ -36,6 +36,7 @@ class TopicValidationsTest < ActionView::TestCase
     item.stubs(:first_post).returns(post)
     controller_params = {}
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
+    topic.valid?
     error = topic.errors.full_messages
     refute error.include?("Title can't be blank")
     refute error.include?("Message html can't be blank")
@@ -57,6 +58,7 @@ class TopicValidationsTest < ActionView::TestCase
     controller_params = {}
     item = Topic.new('sticky' => 'true', 'locked' => false)
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
+    topic.valid?
     error = topic.errors.full_messages
     refute error.include?('Locked data_type_mismatch')
     refute error.include?('Sticky data_type_mismatch')

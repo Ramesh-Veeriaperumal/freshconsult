@@ -18,6 +18,10 @@ module Integrations::FDTextFilter
     "//#{bucket}/#{s3_asset_id}/assets/#{input}"
   end
 
+  def make_vaild_javascript(input)
+    ActionController::Base.helpers.escape_javascript(input) rescue input
+  end
+
   private
 
     def plug_asset

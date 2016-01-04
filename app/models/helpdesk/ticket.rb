@@ -37,7 +37,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq
+  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :permissions
   
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -49,6 +49,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 #  attr_protected :attachments #by Shan - need to check..
 
   attr_protected :account_id, :display_id, :attachments #to avoid update of these properties via api.
+
+  alias_attribute :company_id, :owner_id
 
   scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -66,18 +68,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
   
   scope :all_company_tickets,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id ),
-        :conditions => [" users.customer_id = ?",company_id]
+        :conditions => ["owner_id = ?",company_id]
   } 
   }
   
   scope :company_tickets_resolved_on_time,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
+        :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
           helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND users.customer_id = ?",company_id]
+        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND helpdesk_tickets.owner_id = ?",company_id]
   } 
   }
   
@@ -94,12 +93,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
            :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
 
   scope :company_first_call_resolution,lambda { |company_id| { 
-        :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and 
-          users.account_id = helpdesk_tickets.account_id INNER JOIN helpdesk_ticket_states on 
+        :joins => %(INNER JOIN helpdesk_ticket_states on 
           helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and 
           helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
         :conditions => [%(helpdesk_ticket_states.resolved_at is not null  and  
-          helpdesk_ticket_states.inbound_count = 1 AND users.customer_id = ?),company_id]
+          helpdesk_ticket_states.inbound_count = 1 AND helpdesk_tickets.owner_id = ?),company_id]
   } 
   }
         
@@ -116,22 +114,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
       user.id ], :order => 'created_at DESC' } }
+      
   scope :requester_completed, lambda { |user| { :conditions => 
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }
-      
-  scope :permissible , lambda { |user| { :conditions => agent_permission(user)}  unless user.customer? }
-
-  scope :assigned_tickets_permission , lambda { |user,ids| { 
-    :select => "helpdesk_tickets.display_id",
-    :conditions => ["responder_id=? and display_id in (?)", user.id, ids] } 
-  }
-
-  scope :group_tickets_permission , lambda { |user,ids| { 
-    :select => "distinct helpdesk_tickets.display_id", 
-    :joins => "LEFT JOIN agent_groups on helpdesk_tickets.group_id = agent_groups.group_id and helpdesk_tickets.account_id = agent_groups.account_id", 
-    :conditions => ["(agent_groups.user_id=? or helpdesk_tickets.responder_id=? or helpdesk_tickets.requester_id=?) and display_id in (?)", user.id, user.id, user.id, ids] } 
-  }
  
   scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
 
@@ -228,18 +214,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
 
-    def agent_permission user
-      case Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]
-      when :assigned_tickets
-        ["`helpdesk_tickets`.responder_id=?", user.id]
-      when :group_tickets
-        ["`helpdesk_tickets`.group_id in (?) OR `helpdesk_tickets`.responder_id=? OR `helpdesk_tickets`.requester_id=?", 
-                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id]
-      when :all_tickets
-        []
-      end
-    end
-
     def find_by_param(token, account)
       where(display_id: token, account_id: account.id).first
     end
@@ -261,27 +235,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       { :cc_emails => [], :fwd_emails => [], :reply_cc => [], :tkt_cc => [] }
     end
 
-  end
- 
-  def agent_permission_condition user
-     permissions = {:all_tickets => "" , 
-                   :group_tickets => " AND (group_id in (
-                    #{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
-                   :assigned_tickets => " AND (responder_id= #{user.id}) " }
-                  
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
-  end
-  
-  def get_default_filter_permissible_conditions user
-    
-     permissions = {:all_tickets => "" , 
-                   :group_tickets => " [{\"condition\": \"responder_id\", \"operator\": \"is_in\", 
-                   \"value\": \"#{user.id}\"}, {\"condition\": \"group_id\", \"operator\": \"is_in\", 
-                   \"value\": \"#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}\"}] " , 
-                   :assigned_tickets => "[{\"condition\": \"responder_id\", \"operator\": \"is_in\", 
-                   \"value\": \"#{user.id}\"}]"}
-                  
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
 
   def to_param 
@@ -571,11 +524,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def company_name
-    requester.company.name if (requester && requester.company)
-  end
-  
-  def company_id
-    requester.company_id if requester
+    company ? company.name : "No company"
   end
 
   def last_interaction
@@ -772,10 +721,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     responder.nil? ? "No Agent" : responder.name
   end
     
-  def company_name
-    requester.company.nil? ? "No company" : requester.company.name
-  end
-    
   def cc_email_hash
     if cc_email.is_a?(Array)     
       {:cc_emails => cc_email, :fwd_emails => [], :reply_cc => cc_email}
@@ -968,6 +913,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def header_info_present?
     header_info.present? && header_info[:message_ids].present?
   end
+  
+  def support_ticket_path
+    "#{url_protocol}://#{portal_host}/support/tickets/#{display_id}"
+  end
+  
+  ## Methods related to agent as a requester starts here ###
+  
+  def agent_performed?(user)
+    user.agent? && !agent_as_requester?(user.id)
+  end
+  
+  def customer_performed?(user)
+    user.customer? || agent_as_requester?(user.id)
+  end
+  
+  def agent_as_requester?(user_id)
+    requester_id == user_id && requester.agent?
+  end
+
+  ## Methods related to agent as a requester starts here ###
 
   def linked_to_integration?(installed_app)
     self.linked_applications.where(:id => installed_app.id).any?

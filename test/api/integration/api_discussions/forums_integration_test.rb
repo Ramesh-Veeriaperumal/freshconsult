@@ -16,14 +16,14 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       api_is_following: 1,
       api_topics: 2,
 
-      create: 18,
-      show: 12,
-      update: 19,
-      destroy: 26,
-      follow: 19,
-      unfollow: 19,
-      is_following: 12,
-      topics: 13
+      create: 20,
+      show: 14,
+      update: 21,
+      destroy: 28,
+      follow: 21,
+      unfollow: 21,
+      is_following: 13,
+      topics: 15
     }
 
     category_id = ForumCategory.first.id
@@ -93,6 +93,8 @@ class ForumsIntegrationest < ActionDispatch::IntegrationTest
       get("/discussions/forum/#{id2}/subscriptions/is_following.json", nil, @headers)
       assert_response 200
     end
+
+    v2[:is_following] -= 1 # trusted_ip
 
     # unfollow
     v2[:unfollow], v2[:api_unfollow], v2[:unfollow_queries] = count_api_queries do

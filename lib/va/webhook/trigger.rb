@@ -17,25 +17,14 @@ module Va::Webhook::Trigger
       params[:body] = substitute_placeholders_in_format(act_on, :params, content_type)
     end
     
-    if redis_key_exists?(WEBHOOK_THROTTLER_SIDEKIQ_ENABLED)
-      Throttler::WebhookThrottler.perform_async({
-        :args => {
-          :params => params,
-          :retry_count => 0,
-          :auth_header => auth_header,
-          :rule_id => self.va_rule.id,
-          :account_id => Account.current.id
-        }
-      })
-    else
-      throttler_args  =   { :worker => Workers::Webhook.to_s,
-                            :args => {  :params => params, 
-                                        :retry_count => 0, 
-                                        :auth_header => auth_header },
-                            :key => key, 
-                            :expire_after => THROTTLE_EVERY, 
-                            :limit => THROTTLE_LIMIT }
-      Resque.enqueue(Workers::Throttler, throttler_args)
-    end
+    Throttler::WebhookThrottler.perform_async({
+      :args => {
+        :params => params,
+        :retry_count => 0,
+        :auth_header => auth_header,
+        :rule_id => self.va_rule.id,
+        :account_id => Account.current.id
+      }
+    })
   end
 end

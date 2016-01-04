@@ -24,7 +24,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def failure
-    port = (Rails.env.development? ? ":#{request.port}" : '')
+    port = ''
     path = ''
     path = integrations_applications_path
     flash[:notice] = t(:'flash.g_app.authentication_failed')
@@ -73,7 +73,7 @@ class OmniauthCallbacksController < ApplicationController
   def portal_url
     account = origin_account
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
-    port = (Rails.env.development? ? ":#{request.port}" : '')
+    port = ''
     @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
   end
 

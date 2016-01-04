@@ -25,6 +25,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',')},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
+  
+  def raised_by_me_filter
+    [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
+     { "condition" => "spam", "operator" => "is", "value" => false},
+     { "condition" => "deleted", "operator" => "is", "value" => false}]
+  end
+
+  def api_all_tickets_filter
+    [self.class.spam_condition(false), self.class.deleted_condition(false)]
+  end
 
   def self.trashed_condition(input)
     { "condition" => 
@@ -108,7 +118,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
 
-  def default_filter(filter_name, from_export = false)
+  def default_filter(filter_name, from_export = false, from_api=false)
      default_value = from_export ? "all_tickets" : "new_and_my_open"
      self.name = filter_name.blank? ? default_value : filter_name
 
@@ -116,6 +126,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
        on_hold_filter
      elsif "unresolved".eql?filter_name
        unresolved_filter
+     elsif "raised_by_me".eql?filter_name
+       raised_by_me_filter
+     elsif (from_api && "all_tickets".eql?(filter_name))
+       api_all_tickets_filter
      else
        DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
      end
@@ -170,7 +184,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name], !!params[:export_fields])  if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml"].include?(params[:format])) if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|
@@ -190,7 +204,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
-    add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
+    add_condition("owner_id", :is_in, params[:company_id]) unless params[:company_id].blank?
   end
 
   def add_article_feedback_conditions(params)

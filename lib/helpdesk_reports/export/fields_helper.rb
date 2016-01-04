@@ -4,8 +4,31 @@ module HelpdeskReports
 
       include HelpdeskReports::Helper::Ticket
       
-      
       DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
+      
+      def non_archive_tickets(ticket_ids)
+        tickets = []
+        Account.current.tickets.includes(ticket_associations_include).where(id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
+          tickets << tkts
+        end
+        tickets.flatten
+      end
+      
+      def archive_tickets(ticket_ids)
+        tickets = []
+        Account.current.archive_tickets.includes(archive_associations_include).where(id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
+          tickets << tkts
+        end
+        tickets.flatten
+      end
+      
+      def ticket_associations_include
+        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :schema_less_ticket, :ticket_status, :group, :responder, :tags ]
+      end
+      
+      def archive_associations_include
+        [ {:flexifield => [:flexifield_def]}, {:requester => [:company] }, :archive_ticket_association, :ticket_status, :group, :responder, :tags]
+      end
 
       def generate_ticket_data(list_of_tickets, archive_status)
         records = []

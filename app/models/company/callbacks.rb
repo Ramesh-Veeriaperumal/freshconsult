@@ -7,6 +7,7 @@ class Company < ActiveRecord::Base
   
   before_create :check_sla_policy
   before_update :check_sla_policy, :backup_company_changes
+  before_save :format_domain, :if => :domains_changed?
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -52,6 +53,10 @@ class Company < ActiveRecord::Base
 
     def domains_array(domains)
       domains ||= ""
-      domains.split(",").collect(&:strip)
+      domains.split(",").collect(&:strip).reject(&:blank?)
+    end
+
+    def format_domain
+      self.domains = domains_array(self.domains).join(',').prepend(",").concat(",") if self.domains
     end
 end

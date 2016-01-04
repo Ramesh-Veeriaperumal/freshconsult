@@ -18,7 +18,7 @@
 			td_class = 'disable'; //Always disabling
 		} else { 
 			metric_data = HelpdeskReports.CoreUtil.shortenLargeNumber(current_data, 1);
-			td_class = (current_data == 0) ? 'disable' : ( HelpdeskReports.locals.enable_ticket_list ? '' : 'disable'  );
+			td_class = (typeof current_data !== 'number') ? 'disable' : ( HelpdeskReports.locals.enable_ticket_list ? '' : 'disable'  );
 		}
 
 		var tmpl =  "<td data-agent-id=" + data[i]['agent_id'] + " class='" + td_class + "' data-metric-name=" + agent_metrics[j];

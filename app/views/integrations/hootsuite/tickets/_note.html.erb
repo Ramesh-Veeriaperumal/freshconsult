@@ -12,7 +12,7 @@ kind = note.kind
 	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user, :thumb, "preview_pic circle small") %></div>
 	<% end %>
 	<div class="commentbox 
-					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
+					<%= (note.user.blank? or note.notable.agent_performed?(note.user)) ? 'commentbox-gray' : 'commentbox-requester' %> 
 					<%= 'private-note' if note.private_note? || note.fwd_email? || is_twitter_dm?(note) || is_facebook_message?(note) %>">
 
 		<%= note_lock_icon(note) %>

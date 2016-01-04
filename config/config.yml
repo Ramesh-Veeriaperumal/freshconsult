@@ -119,7 +119,11 @@ gateway: brain_tree
 # here will allow admin.example.com to serve the admin interface.
 admin_subdomain: admin
 
-freshops_subdomain: freshops
+freshops_subdomain:
+  global: freshopspoduseast
+  non_global:
+    - freshopspodeuwest
+    - freshopspodeuwest1
 
 partner_subdomain: partner
 

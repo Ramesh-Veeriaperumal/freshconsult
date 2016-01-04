@@ -22,7 +22,7 @@
                 <li>
                      <a href="/reports/v2/glance" data-pjax="#body-container" >
                         <div class="img-outer"><i class="fsize-36 ficon-helpdesk_at_glance"></i></div>
-                        <div class="report-icon-text">Helpdesk<br/>In-depth</div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.glance.index_title').html_safe %></div>
                      </a>
                 </li>
               <% end %>
@@ -38,7 +38,7 @@
                 <li>
                   <a href="<%= reports_freshfone_summary_reports_url %>">
                         <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
-                        <div class="report-icon-text"><%= t('reports.freshfone.ff_report_title') %></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.phone_summary.title') %></div>
                    </a>
                 </li>
               <%end%>
@@ -46,7 +46,7 @@
                 <li>
                   <a href="<%= reports_freshchat_summary_reports_url %>">
                         <div class="img-outer"><i class="fsize-36 ficon-live_chat"></i></div>
-                        <div class="report-icon-text"><%= t('reports.freshchat.report_title') %></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.chat_summary.title') %></div>
                    </a>
                 </li>
               <%end%>
@@ -80,7 +80,7 @@
                 <li>
                   <a href="<%= timesheet_reports_url %>">
                         <div class="img-outer"><i class="fsize-36 ficon-time_sheet"></i></div>
-                        <div class="report-icon-text"><%= t('reports.timesheet_reports.index.title') %></div>
+                        <div class="report-icon-text"><%= t('helpdesk_reports.timesheet_reports.title') %></div>
                    </a>
                 </li>
               <%end%>
@@ -102,7 +102,7 @@
                   <li>
                      <a href="<%= survey_activity_url %>">
                           <div class="img-outer"><i class="fsize-36 ficon-customer_satisfaction"></i></div>
-                          <div class="report-icon-text"><%= t('reports.surveys_title_nav') %></div>
+                          <div class="report-icon-text"><%= t('helpdesk_reports.satisfaction_survey.title') %></div>
                      </a>
                   </li>
                 <%end%>

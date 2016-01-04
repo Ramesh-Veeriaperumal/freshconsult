@@ -27,6 +27,7 @@ include GoogleLoginHelper
   skip_before_filter :set_current_account, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :set_locale, :only => [:oauth_google_gadget,:opensocial_google] 
   skip_before_filter :ensure_proper_protocol, :only => [:oauth_google_gadget,:opensocial_google] 
+  skip_after_filter :set_last_active_time
   
   def new
     flash.keep
@@ -203,14 +204,14 @@ include GoogleLoginHelper
           redirect_to support_login_path
         }
         format.nmobile{# TODO-RAILS3
-          json = "{'login':'failed',"
-          @user_session.errors.messages.each do |attr, error|
+          err_resp = {login: "failed"}
+          @user_session.errors.messages.each do |attribute, error|
             error.each do |err|
-              json << "'attr' : '#{attr}', 'message' : '#{err}'}"
+              err_resp.merge!(:attr => "#{attribute}", message: "#{err}")
               break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
             end
           end
-          render :json => json
+          render :json => err_resp
         } 
       end
       

@@ -20,14 +20,18 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   def create
     check_captcha = params[:check_captcha] == "true"
+    widget_response = {}
     if create_the_ticket(check_captcha)
-      render :json => {:success => true}
+      widget_response = {:success => true }
     else
       @feeback_widget_error = true
       decord_params
       setup_form
-      render :json => {:success => false, :error => @ticket.errors.full_messages.first }
+      widget_response = {:success => false, :error => @ticket.errors.full_messages.first }
     end
+
+    # For IE browsers, we are rendering the json response as text instead of json
+    render :text => widget_response.to_json
 
   end
 

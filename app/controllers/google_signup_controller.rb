@@ -66,4 +66,10 @@ class GoogleSignupController < AccountsController
       @full_domain ||= get_full_domain_for_google
     end
 
+    def create_user(account, name, email)
+      user = account.users.new(:name => name, :email => email, :active => true)
+      user.save!
+      user
+    end
+
 end

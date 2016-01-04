@@ -71,8 +71,13 @@ class Admin::QuestsController < Admin::AdminController
     end
 
     def load_config
-      @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
-      @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
+      operator_types = OPERATOR_TYPES.clone
+      
+      operator_types[:choicelist] = ["is", "is_not"]
+      operator_types[:object_id] = ["is", "is_not"]
+
+      @op_types         = ActiveSupport::JSON.encode operator_types
+      @op_list          = ActiveSupport::JSON.encode OPERATOR_LIST
       @available_badges = available_badges
       
       filter_hash = {

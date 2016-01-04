@@ -19,13 +19,32 @@ class ForumValidationsTest < ActionView::TestCase
   end
 
   def test_inclusion_params_invalid
-    controller_params = { 'forum_type' => 'x', 'forum_visibility' => '9' }
+    controller_params = { 'forum_type' => '1', 'forum_visibility' => '1', 'company_ids' => 'test' }
     item = nil
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?
     error = forum.errors.full_messages
     assert error.include?('Forum visibility not_included')
     assert error.include?('Forum type not_included')
+    assert forum.errors[:company_ids].blank?
+
+    controller_params = { 'forum_type' => 'x', 'forum_visibility' => 'x', 'company_ids' => ['test'] }
+    item = nil
+    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    refute forum.valid?
+    error = forum.errors.full_messages
+    assert error.include?('Forum visibility not_included')
+    assert error.include?('Forum type not_included')
+    assert forum.errors[:company_ids].blank?
+
+    controller_params = { 'forum_type' => true, 'forum_visibility' => true, 'company_ids' => ['test'] }
+    item = nil
+    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    refute forum.valid?
+    error = forum.errors.full_messages
+    assert error.include?('Forum visibility not_included')
+    assert error.include?('Forum type not_included')
+    assert forum.errors[:company_ids].blank?
   end
 
   def test_presence_item_valid
@@ -46,7 +65,7 @@ class ForumValidationsTest < ActionView::TestCase
 
   def test_inclusion_item_valid
     controller_params = {}
-    item = Forum.new(forum_type: '1', forum_visibility: 1)
+    item = Forum.new(forum_type: 1, forum_visibility: 1)
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     error = forum.errors.full_messages
     refute error.include?('Forum type Should be a value in the list 1,2,3,4')
@@ -78,6 +97,20 @@ class ForumValidationsTest < ActionView::TestCase
 
   def test_company_ids_invalid
     controller_params = { company_ids: nil }
+    item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
+    item.forum_category_id = 1
+    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    refute forum.valid?(:update)
+    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
+
+    controller_params = { company_ids: 'test' }
+    item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
+    item.forum_category_id = 1
+    forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    refute forum.valid?(:update)
+    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
+
+    controller_params = { company_ids: ['test'] }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)

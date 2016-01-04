@@ -1,5 +1,5 @@
 defaults: &defaults
-  host: "http://localhost:3001"
+  host: "reports-servie-628547972.us-east-1.elb.amazonaws.com"
   ticket_reports: "/enterprise_reports/execute/"
   timesheet_reports: "/example/execute"
 

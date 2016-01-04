@@ -140,6 +140,12 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
     def load_ticket
       @ticket = @item = current_account.archive_tickets.find_by_display_id(params[:id])
+      if @ticket and @ticket.restricted_in_helpdesk?(current_user)
+        view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => @item.support_ticket_path)
+        redirect_msg =  "#{I18n.t('flash.agent_as_requester.ticket_show')} #{view_on_portal_msg}".html_safe
+        flash[:notice] = redirect_msg
+        redirect_to helpdesk_archive_tickets_url 
+      end
       @item || raise(ActiveRecord::RecordNotFound)
     end
 
@@ -180,9 +186,8 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
         params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in",
                               "condition"=>"helpdesk_tags.name", "value"=> params[:tag_name] }]
       elsif params[:company_id]
-        params["users.customer_id"] = params[:company_id]
         params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
-                              "condition"=>"users.customer_id", "value"=> params[:company_id] }]
+                              "condition"=>"owner_id", "value"=> params[:company_id] }]
     end
   end
 

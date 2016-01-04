@@ -1,13 +1,15 @@
 <%= f.error_messages %>
 <%= show_flash %>
 <input type="hidden" name="call_back" id="call_back_url" value="<%=@call_back_url%>" />
-<input type="hidden" value="<%=@user.name%>" size="24" name="user[name]" id="user_name" class="textfield">
-<input type="hidden" value="<%=@user.email%>" size="24" name="user[email]" id="user_email" class="textfield">
+<% if !@email_not_reqd %>
+	<input type="hidden" value="<%=@user.email%>" name="user[email]" id="user_email" class="textfield">
+<% end %>
 <input type="hidden" name="utc_offset" id="account_timezone_offset" />
 <input type="hidden" value="<%=@account.google_domain%>" name="account[google_domain]" id="account_google_domain" class="textfield" />
 <input type="hidden" value="<%=@app_name%>" name="request_params[app_name]" id="request_params_app_name"  />
 <input type="hidden" value="<%=@remote_id%>" name="user[remote_id]" id="user_remote_id"  />
 <input type="hidden" value="<%=@operation%>" name="request_params[operation]" id="request_params_app_name"  />
+<input type="hidden" value="<%=@email_not_reqd%>" name="request_params[email_not_reqd]" id="request_params_email_not_reqd"  />
 
 <input type="hidden" name="session_json" id="session_json" value="">
 <input type="hidden" name="first_referrer" id="first_referrer" value="">
@@ -19,30 +21,30 @@
 <% base_domain = '.' + AppConfig['base_domain'][Rails.env] %>
 <ul>
 	<li>
+		<label for="user_name"><strong><%= t('integrations.marketplace_login.associate_account.user_name') %> <span class="required_star">*</span></strong></label>
+		<input type="text" autocomplete="off" name="user[name]" id="user_name" class="text required input-xlarge" value="<%=@user.name%>">
+	</li>
+	<% if @email_not_reqd %>
+		<li>
+			<label for="user_email"><strong><%= t('integrations.marketplace_login.associate_account.email') %> <span class="required_star">*</span></strong></label>
+			<input type="email" autocomplete="off" name="user[email]" id="user_email" class="text required input-xlarge" value="<%=@user.email%>">
+		</li>
+	<% end %>
+	<li>
 		<label for="account_name"><strong><%= t('integrations.marketplace_login.associate_account.company_name') %> <span class="required_star">*</span></strong></label>
-		<input type="text" size="24" name="account[name]" id="account_name" class="text required input-xlarge" value="<%=@account.name%>">
+		<input type="text" name="account[name]" minlength="3" id="account_name" class="text required input-xlarge" value="<%=@account.name%>">
 	</li>
 	<li>
-		<label for="account_sub_domain"><strong><%= t('integrations.marketplace_login.associate_account.helpdesk_url') %> <span class="required_star">*</span></strong></label>
-		<div class="textfield">
-  				<div class="domain">
-  					<label for="account_domain" class="ghostwriter_info">
-  						<label class="ghostwriter_hide"></label>
-  						<label></label>
-  					</label>
-  					<div class="input-append">
-						  <input type="text" class="span4 required" value="<%= @account.domain %>" size="24" maxlength="60" rel="ghostWriter" autocomplete="off" name="account[domain]" id="account_domain" placeholder="<%= t('integrations.marketplace_login.associate_account.helpdesk_name') %>" data-ghost-text="<%= base_domain %>">
-						  <span class="add-on"><strong><%= base_domain %></strong></span>
-						</div>
-  				</div>
-  			</div>
-
-		<!--input type="text" value="<%=@account.domain%>" size="24" name="account[domain]" id="account_domain" class="text very_small required"><strong class="big-text">.freshservice-dev.com</strong-->
+		<label for="account_domain"><strong><%= t('integrations.marketplace_login.associate_account.helpdesk_url') %> <span class="required_star">*</span></strong></label>
+		<div class="input-append">
+			<input type="text" class="required input-xlarge" value="<%= @account.domain %>" maxlength="60" autocomplete="off" name="account[domain]" id="account_domain" placeholder="<%= t('integrations.marketplace_login.associate_account.helpdesk_name') %>">
+			<span class="add-on"><strong><%= base_domain %></strong></span>
+		</div>
 		<div class="info-data"><%= t('integrations.marketplace_login.associate_account.domain_info') %></div>
 	</li>
 	<li>
 		<label for="user_email"><strong><%= t('integrations.marketplace_login.associate_account.phone_no') %></strong></label>
-      	<input type="text" size="24" name="user[phone]" id="user_phone" class="text input-xlarge" value="<%=@user.phone%>">
+    <input type="text" name="user[phone]" id="user_phone" class="text input-xlarge" value="<%=@user.phone%>">
 	</li>
 	<li class="button-container">
 		<div><%= submit_tag t('integrations.marketplace_login.associate_account.create_my_account'), :class => "btn btn-primary pull-left" %></div>

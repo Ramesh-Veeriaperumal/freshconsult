@@ -6,6 +6,13 @@
   <% if(@items.length > 0) %>
   	<%= render :partial => "/helpdesk/shared/ticket_sort" , :inline => true %>
   <% end %>
+  <% if @current_view == "raised_by_me" && !current_user.agent.all_ticket_permission%>
+	<div class="out-of-scope-flash">  
+	   <label class="center pt5"> 
+	    	<%= I18n.t('wf.messages.out_of_scope', :support_tickets => current_portal.tickets_url).html_safe %> 
+	    </label>
+	</div>
+   <% end %>
 </div>
 
 <div id="ticket-list-body"><div id="ticket-list-body-content">

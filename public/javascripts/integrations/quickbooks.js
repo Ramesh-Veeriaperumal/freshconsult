@@ -45,6 +45,10 @@ QuickBooksWidget.prototype = {
 
     initialize:function(quickbooksBundle, loadinline) {
         Freshdesk.NativeIntegration.quickbooksWidget = this;
+        Freshdesk.NativeIntegration.quickbooksWidget.all_clients = [];
+        Freshdesk.NativeIntegration.quickbooksWidget.client_push_count = 0;
+        Freshdesk.NativeIntegration.quickbooksWidget.all_employees = [];
+        Freshdesk.NativeIntegration.quickbooksWidget.employee_push_count = 0;
         quickbooksBundle.quickbooksNote = jQuery('#quickbooks-note').html();
         this.executed_date = new Date();
         this.timeEntryJson = "";
@@ -52,11 +56,11 @@ QuickBooksWidget.prototype = {
 
         var init_reqs = [];
 
-        employee_all = {
-            "query" : "select id, displayname, PrimaryEmailAddr from employee"
+        var employee_count = {
+          "query" : "select count(*) from employee"
         };
-        customer_all = {
-            "query" : "select * from customer"
+        var customer_count = {
+          "query" : "select count(*) from customer"
         };
 
         jQuery('#quickbooks_widget').append('<div id="quickbooks_timeentry_error" class="error"></div>');
@@ -74,22 +78,11 @@ QuickBooksWidget.prototype = {
         employee_req_options = {
             rest_url : "v3/company/" + quickbooksBundle.companyId + "/query",
             method : "get",
-            encode_params : JSON.stringify(employee_all),
+            encode_params : JSON.stringify(employee_count),
             content_type: "application/json",
             on_success: function(evt) {
                 var query_response = evt.responseJSON.IntuitResponse.QueryResponse;
-                var employees = [];
-
-                if (query_response && query_response.Employee) {
-                    if (query_response.Employee instanceof Array) {
-                        employees = query_response.Employee;
-                    }
-                    else {
-                        employees.push(query_response.Employee);
-                    }
-                }
-                var default_value = Freshdesk.NativeIntegration.quickbooksWidget.find_default_employee(employees);
-                Freshdesk.NativeIntegration.quickbooksWidget.loadEmployee(employees, default_value);
+                Freshdesk.NativeIntegration.quickbooksWidget.fetchEntities(query_response, 'employee');
             }.bind(this),
             on_failure: function(evt) {
                 jQuery('#quickbooks_widget .content').hide();
@@ -101,21 +94,11 @@ QuickBooksWidget.prototype = {
         client_req_options = {
             rest_url : "v3/company/" + quickbooksBundle.companyId + "/query",
             method : "get",
-            encode_params : JSON.stringify(customer_all),
+            encode_params : JSON.stringify(customer_count),
             content_type: "application/json",
             on_success: function(evt) {
                 var query_response = evt.responseJSON.IntuitResponse.QueryResponse;
-                var clients = [];
-                if (query_response && query_response.Customer) {
-                    if (query_response.Customer instanceof Array) {
-                        clients = query_response.Customer;
-                    }
-                    else {
-                        clients.push(query_response.Customer);
-                    }
-                }
-                var default_value = Freshdesk.NativeIntegration.quickbooksWidget.find_default_client(clients);
-                Freshdesk.NativeIntegration.quickbooksWidget.loadClient(clients, default_value);
+                Freshdesk.NativeIntegration.quickbooksWidget.fetchEntities(query_response, 'customer');
             }.bind(this)
         };
         init_reqs.push(client_req_options);
@@ -135,6 +118,84 @@ QuickBooksWidget.prototype = {
         if (loadinline) {
             this.convertToInlineWidget();
         }
+    },
+
+    fetchEntities: function(responseJSON, entity_type) {
+      var count = 0;
+      if (responseJSON && responseJSON.totalCount) {
+        count = parseInt(responseJSON.totalCount);
+      }
+      if (count == 0) {
+        if (entity_type == 'customer') {
+          Freshdesk.NativeIntegration.quickbooksWidget.loadClient([], '-');
+        }
+        else {
+          Freshdesk.NativeIntegration.quickbooksWidget.loadEmployee([], '-');
+        }
+      }
+      else {
+        var pages = Math.ceil(count / 1000);
+        for (var i = 1; i <= pages; i++) {
+          var query = {
+            "query" : "select id, displayname, PrimaryEmailAddr from " + entity_type + " startposition " + ((i - 1) * 1000 + 1) + " maxresults 1000"
+          }
+          Freshdesk.NativeIntegration.quickbooksWidget.freshdeskWidget.request({
+            rest_url : "v3/company/" + quickbooksBundle.companyId + "/query",
+            method : "get",
+            encode_params : JSON.stringify(query),
+            content_type : "application/json",
+            on_success : function(evt) {
+              var query_response = evt.responseJSON.IntuitResponse.QueryResponse;
+              if (entity_type == 'customer') {
+                Freshdesk.NativeIntegration.quickbooksWidget.finishFetchClients(query_response, pages);
+              }
+              else {
+                Freshdesk.NativeIntegration.quickbooksWidget.finishFetchEmployees(query_response, pages);
+              }
+            }.bind(this),
+            on_failure: function(evt) {
+              jQuery('#quickbooks_widget .content').hide();
+              Freshdesk.NativeIntegration.quickbooksWidget.freshdeskWidget.resource_failure(evt, {}, null);
+            }
+          });
+        }
+      }
+    },
+
+    finishFetchClients: function(query_response, count) {
+      var clients = [];
+      if (query_response && query_response.Customer) {
+        if (query_response.Customer instanceof Array) {
+          clients = query_response.Customer;
+        }
+        else {
+          clients.push(query_response.Customer);
+        }
+      }
+      Freshdesk.NativeIntegration.quickbooksWidget.all_clients = Freshdesk.NativeIntegration.quickbooksWidget.all_clients.concat(clients);
+      Freshdesk.NativeIntegration.quickbooksWidget.client_push_count++;
+      if (Freshdesk.NativeIntegration.quickbooksWidget.client_push_count == count) {
+        var default_value = Freshdesk.NativeIntegration.quickbooksWidget.find_default_client(Freshdesk.NativeIntegration.quickbooksWidget.all_clients);
+        Freshdesk.NativeIntegration.quickbooksWidget.loadClient(Freshdesk.NativeIntegration.quickbooksWidget.all_clients, default_value);
+      }
+    },
+
+    finishFetchEmployees: function(query_response, count) {
+      var employees = [];
+      if (query_response && query_response.Employee) {
+        if (query_response.Employee instanceof Array) {
+          employees = query_response.Employee;
+        }
+        else {
+          employees.push(query_response.Employee);
+        }
+      }
+      Freshdesk.NativeIntegration.quickbooksWidget.all_employees = Freshdesk.NativeIntegration.quickbooksWidget.all_employees.concat(employees);
+      Freshdesk.NativeIntegration.quickbooksWidget.employee_push_count++;
+      if (Freshdesk.NativeIntegration.quickbooksWidget.employee_push_count == count) {
+        var default_value = Freshdesk.NativeIntegration.quickbooksWidget.find_default_employee(Freshdesk.NativeIntegration.quickbooksWidget.all_employees);
+        Freshdesk.NativeIntegration.quickbooksWidget.loadEmployee(Freshdesk.NativeIntegration.quickbooksWidget.all_employees, default_value);
+      }
     },
     
     loadTimeEntry: function(resData) {
@@ -205,6 +266,7 @@ QuickBooksWidget.prototype = {
 
         employeeData = {"Empl" : employeeData};
         UIUtil.constructDropDown(employeeData, 'hash', 'quickbooks-timeentry-employee', 'Empl', 'ID', ['Name'], null, '', false);
+        jQuery('#quickbooks-timeentry-employee').addClass('select2');
         if (employees.length == 0 || default_value == '-') {
             // UIUtil.addDropdownEntry('quickbooks-timeentry-employee', '_addnew_', 'Add new employee', true);
             UIUtil.addDropdownEntry('quickbooks-timeentry-employee', '-', 'No matching employee found', true);
@@ -227,6 +289,7 @@ QuickBooksWidget.prototype = {
 
         clientData = {"Client" : clientData}
         UIUtil.constructDropDown(clientData, 'hash', 'quickbooks-timeentry-client', 'Client', 'ID', ['Name'], null, '', false);
+        jQuery('#quickbooks-timeentry-client').addClass('select2');
         if (clients.length == 0 || default_value == '-') {
             UIUtil.addDropdownEntry('quickbooks-timeentry-client', '-', 'No matching customer found', true);
         }
@@ -368,7 +431,12 @@ QuickBooksWidget.prototype = {
                 }
             }.bind(this),
             on_failure: function(evt) {
-                alert("Time activity was not updated in QuickBooks because of invalid employee/customer/time entry.");
+              var error_message = "An error occured. Please contact support@freshdesk.com."
+              try {
+                error_message = evt.responseJSON.Fault.Error[0].Message;
+              }
+              catch(e) {}
+              alert("QuickBooks: " + error_message);
             }
         });
     },
@@ -418,7 +486,12 @@ QuickBooksWidget.prototype = {
                 }
             }.bind(this),
             on_failure: function(evt) {
-                alert("Time activity was not pushed to QuickBooks because of invalid employee/customer/time entry.");
+              var error_message = "An error occured. Please contact support@freshdesk.com."
+              try {
+                error_message = evt.responseJSON.Fault.Error[0].Message;
+              }
+              catch(e) {}
+              alert("QuickBooks: " + error_message);
             }
         });
     },

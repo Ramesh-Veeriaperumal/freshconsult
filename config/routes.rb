@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento"].each do |provider|
+  ["github","salesforce", "magento", "shopify"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -472,7 +472,6 @@ Helpkit::Application.routes.draw do
         post :quit_queue_on_voicemail
         post :trigger_voicemail
         post :trigger_non_availability
-        post :bridge
         post :hangup
       end
     end
@@ -786,6 +785,14 @@ Helpkit::Application.routes.draw do
       namespace :quickbooks_sso do
         get :open_id
         get :open_id_complete
+      end
+
+      namespace :shopify do
+        get :signup
+        get :landing
+        put :install
+        get :create
+        post :receive_webhook
       end
 
       namespace :signup do
@@ -1243,7 +1250,7 @@ Helpkit::Application.routes.draw do
   match "/reports/v2/:report_type/export_tickets",    :controller => 'reports/v2/tickets/reports', :action => 'export_tickets', :method => :post
   match "/reports/v2/:report_type/export_report",     :controller => 'reports/v2/tickets/reports', :action => 'export_report', :method => :post
   match "/reports/v2/:report_type/email_reports",     :controller => 'reports/v2/tickets/reports', :action => 'email_reports', :method => :post
-  match "/reports/v2/download_file/:export_type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
+  match "/reports/v2/download_file/:report_export/:type/:date/:file_name", :controller => 'reports/v2/tickets/reports', :action => 'download_file', :method => :get
   # END
   
   
@@ -2402,14 +2409,29 @@ Helpkit::Application.routes.draw do
     # end
   end
 
-  constraints(lambda {|req| req.subdomain == AppConfig['freshops_subdomain'] })  do 
+  constraints(lambda {|req| FreshopsSubdomains.include?(req.subdomain) })  do 
     namespace :fdadmin, :name_prefix => "fdadmin_", :path_prefix => nil do
+
+      resources :billing, :only => :none do 
+        collection do 
+          post :trigger
+        end
+      end
+
+      resources :freshops_pod, :only => :none do 
+        collection do 
+          get :fetch_pod_info
+          post :pod_endpoint
+        end
+      end
+      
       resources :subscriptions, :only => [:none] do
         collection do
           get :display_subscribers
           get :customers
           get :customer_summary
           get :deleted_customers
+          get :account_subscription_info
         end
       end
 
@@ -2478,6 +2500,8 @@ Helpkit::Application.routes.draw do
           get :fetch_conference_state
           put :enable_conference
           put :disable_conference
+          put :update_timeouts_and_queue
+          get :fetch_numbers
         end
       end
 

@@ -340,6 +340,7 @@ var FreshfoneWidget;
 		},
 		showNotes: function(){
 			this.$addCallNote.click();
+			this.$addCallNote.text(freshfone.edit_note_text);
 		},
 		resetWidget: function(){
 			this.resetNotesAgentHeader();

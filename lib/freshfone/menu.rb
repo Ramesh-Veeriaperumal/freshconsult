@@ -64,9 +64,9 @@ class Freshfone::Menu < Tree::TreeNode
 			:menuName => CGI.escapeHTML(menu_name),
 			:menuId => menu_id,
 			:attachmentId => attachment_id,
-			:attachmentName => attachment_name,
-			:attachmentUrl => attachment_url,
-			:recordingUrl => recording_url,
+			:attachmentName => CGI.escapeHTML(attachment_name || ""),
+			:attachmentUrl => CGI.escapeHTML(attachment_url || ""),
+			:recordingUrl => CGI.escapeHTML(recording_url || ""),
 			:options => self.options
 		}
 	end

@@ -212,7 +212,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     3.times do
       create_company
     end
-    get :index, request_params
+    get :index, controller_params
     pattern = []
     Account.current.companies.order(:name).all.each do |company|
       pattern << company_pattern(Company.find(company.id))
@@ -225,25 +225,21 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     3.times do
       create_company
     end
-    get :index, construct_params(per_page: 1)
+    get :index, controller_params(per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
-    get :index, construct_params(per_page: 1, page: 2)
+    get :index, controller_params(per_page: 1, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
-    get :index, construct_params(per_page: 1, page: 3)
+    get :index, controller_params(per_page: 1, page: 3)
     assert_response 200
     assert JSON.parse(response.body).count == 1
   end
 
   def test_company_with_pagination_exceeds_limit
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-    get :index, construct_params(per_page: 4)
-    assert_response 200
-    assert JSON.parse(response.body).count == 3
-    ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+    get :index, controller_params(per_page: 101)
+    assert_response 400
+    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
   end
 
   def test_create_companies_with_invalid_domains
@@ -362,12 +358,12 @@ class ApiCompaniesControllerTest < ActionController::TestCase
       create_company
     end
     per_page =  Account.current.companies.all.count - 1
-    get :index, construct_params(per_page: per_page)
+    get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page
     assert_equal "<http://#{@request.host}/api/v2/companies?per_page=#{per_page}&page=2>; rel=\"next\"", response.headers['Link']
 
-    get :index, construct_params(per_page: per_page, page: 2)
+    get :index, controller_params(per_page: per_page, page: 2)
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']

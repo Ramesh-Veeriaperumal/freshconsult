@@ -16,7 +16,7 @@ module RabbitMq::Subscribers::ArchiveTickets::Reports
   end
 
   def mq_reports_valid(action, model) 
-    account.reports_enabled? && valid_model?(model) && update_action?(action)
+    valid_model?(model) && update_action?(action)
   end
 
   private

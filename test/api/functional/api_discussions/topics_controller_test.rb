@@ -184,7 +184,7 @@ module ApiDiscussions
     def test_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_new_monitor_follow_user_id_valid
@@ -200,7 +200,7 @@ module ApiDiscussions
     def test_new_monitor_follow_user_id_invalid
       post :follow, construct_params({ id: first_topic.id }, user_id: 999)
       assert_response 400
-      match_json [bad_request_error_pattern('user', :"can't be blank")]
+      match_json [bad_request_error_pattern('user_id', :"can't be blank")]
     end
 
     def test_show
@@ -217,21 +217,11 @@ module ApiDiscussions
       assert_equal ' ', @response.body
     end
 
-    def test_create_without_edit_topic_privilege
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      post :create, construct_params({ id: forum_obj.id },
-                                     title: 'test title', message_html: 'test content', sticky: true)
-      assert_response 400
-      match_json([bad_request_error_pattern('sticky', :invalid_field)])
-    end
-
     def test_update_without_edit_topic_privilege
       topic = first_topic
-      controller.class.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
-      controller.class.any_instance.stubs(:privilege?).with(:manage_forums).returns(true).once
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
-      assert_response 400
-      match_json([bad_request_error_pattern('sticky', :invalid_field)])
+      assert_response 403
     end
 
     def test_update_with_email
@@ -278,9 +268,27 @@ module ApiDiscussions
       forum.update_column(:forum_type, 2)
       allowed = Topic::FORUM_TO_STAMP_TYPE[forum.forum_type]
       allowed_string = allowed.join(',')
-      allowed_string += 'nil' if allowed.include?(nil)
+      allowed_string += 'null' if allowed.include?(nil)
       put :update, construct_params({ id: first_topic.id }, stamp_type: 78)
       match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: allowed_string)])
+      assert_response 400
+    end
+
+    def test_update_with_invalid_question_stamp_type
+      topic = first_topic
+      forum = topic.forum
+      forum.update_column(:forum_type, 1)
+      unless topic.answer
+        post = create_test_post(topic, @agent)
+        post.update_column(:answer, true)
+      end
+      put :update, construct_params({ id: topic.id }, stamp_type: 7)
+      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '6')])
+      assert_response 400
+
+      topic.posts.update_all(answer: false)
+      put :update, construct_params({ id: topic.id }, stamp_type: 6)
+      match_json([bad_request_error_pattern('stamp_type', :allowed_stamp_type, list: '7')])
       assert_response 400
     end
 
@@ -342,6 +350,20 @@ module ApiDiscussions
       match_json result_pattern
     end
 
+    def test_followed_by_pagination
+      user = user_without_monitorships
+      monitor_topic(create_test_topic(forum_obj), user, 1)
+      @controller.stubs(:privilege?).with(:manage_forums).returns(true)
+      get :followed_by, controller_params(user_id: user.id, page: 1, per_page: 1)
+      assert_response 200
+      result_pattern = []
+      Topic.followed_by(user.id).each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      assert result_pattern.count == 1
+      match_json result_pattern
+    end
+
     def test_followed_by_invalid_id
       get :followed_by, controller_params(user_id: (1000 + Random.rand(11)))
       assert_response 200
@@ -372,7 +394,6 @@ module ApiDiscussions
       monitor_topic(first_topic, user, 1)
       get :followed_by, controller_params(user_id: user.id)
       assert_response 403
-      match_json(request_error_pattern(:access_denied, id: user.id))
     end
 
     def test_followed_by_without_privilege_valid
@@ -439,7 +460,7 @@ module ApiDiscussions
     end
 
     def test_topics_invalid_id
-      get :forum_topics, construct_params(id: 'x')
+      get :forum_topics, controller_params(id: 'x')
       assert_response :missing
       assert_equal ' ', @response.body
     end
@@ -449,7 +470,7 @@ module ApiDiscussions
       3.times do
         create_test_topic(f, User.first)
       end
-      get :forum_topics, construct_params(id: f.id)
+      get :forum_topics, controller_params(id: f.id)
       result_pattern = []
       f.topics.newest.each do |t|
         result_pattern << topic_pattern(t)
@@ -462,25 +483,21 @@ module ApiDiscussions
       3.times do
         create_test_topic(forum_obj, User.first)
       end
-      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1)
+      get :forum_topics, controller_params(id: forum_obj.id, per_page: 1)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1, page: 2)
+      get :forum_topics, controller_params(id: forum_obj.id, per_page: 1, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
-      get :forum_topics, construct_params(id: forum_obj.id, per_page: 1, page: 3)
+      get :forum_topics, controller_params(id: forum_obj.id, per_page: 1, page: 3)
       assert_response 200
       assert JSON.parse(response.body).count == 1
     end
 
     def test_topics_with_pagination_exceeds_limit
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:per_page).returns(2)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:max_per_page).returns(3)
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.stubs(:[]).with(:page).returns(1)
-      get :forum_topics, construct_params(id: forum_obj.id, per_page: 4)
-      assert_response 200
-      assert JSON.parse(response.body).count == 3
-      ApiConstants::DEFAULT_PAGINATE_OPTIONS.unstub(:[])
+      get :forum_topics, controller_params(id: forum_obj.id, per_page: 101)
+      assert_response 400
+      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
     end
 
     def test_topics_with_link_header
@@ -488,12 +505,12 @@ module ApiDiscussions
       3.times do
         create_test_topic(f, User.first)
       end
-      get :forum_topics, construct_params(id: f.id, per_page: 2)
+      get :forum_topics, controller_params(id: f.id, per_page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 2
       assert_equal "<http://#{@request.host}/api/v2/discussions/forums/#{f.id}/topics?per_page=2&page=2>; rel=\"next\"", response.headers['Link']
 
-      get :forum_topics, construct_params(id: f.id, per_page: 2, page: 2)
+      get :forum_topics, controller_params(id: f.id, per_page: 2, page: 2)
       assert_response 200
       assert JSON.parse(response.body).count == 1
       assert_nil response.headers['Link']

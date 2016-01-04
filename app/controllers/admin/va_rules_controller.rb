@@ -53,8 +53,21 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def edit_data
-      @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data
+      filter_data = supervisor_rules_controller? ? @va_rule.filter_data : change_to_in_operator(@va_rule.filter_data)
+      @filter_input = ActiveSupport::JSON.encode filter_data
       super
+    end
+
+    def change_to_in_operator(filter_data)
+      fields = current_account.fields_with_in_operators
+      filter_data.each do |f|
+        f.symbolize_keys!
+        dropdown_fields = f[:evaluate_on].present? ? fields[f[:evaluate_on]] : fields["ticket"]
+        if (f[:operator] == "is" || f[:operator] == "is_not") && (dropdown_fields.include?(f[:name]))
+          f[:operator] = (f[:operator] == "is") ? "in" : "not_in"
+        end
+      end
+      filter_data
     end
 
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -91,9 +104,15 @@ class Admin::VaRulesController < Admin::AdminController
         add_contact_fields filter_hash
         add_company_fields filter_hash
       end
-
       @filter_defs  = ActiveSupport::JSON.encode filter_hash
-      @op_types     = ActiveSupport::JSON.encode OPERATOR_TYPES
+
+      operator_types = OPERATOR_TYPES.clone
+      
+      if supervisor_rules_controller?
+        operator_types[:choicelist] = ["is", "is_not"]
+        operator_types[:object_id] = ["is", "is_not"]
+      end
+      @op_types     = ActiveSupport::JSON.encode operator_types
       @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
     end
 
@@ -115,24 +134,24 @@ class Admin::VaRulesController < Admin::AdminController
           :domtype => "text", :operatortype => "text", :condition => !supervisor_rules_controller? },
         { :name => "last_interaction", :value => I18n.t('last_interaction'), :domtype => "text",
           :operatortype => "text", :condition => observer_rules_controller? },
-        { :name => "priority", :value => t('ticket.priority'), :domtype => "dropdown", 
+        { :name => "priority", :value => t('ticket.priority'), :domtype => dropdown_domtype, 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
-        { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
+        { :name => "ticket_type", :value => t('ticket.type'), :domtype => dropdown_domtype, 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
           :operatortype => "choicelist" },
-        { :name => "status", :value => t('ticket.status'), :domtype => "dropdown", 
+        { :name => "status", :value => t('ticket.status'), :domtype => dropdown_domtype, 
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
-        { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
+        { :name => "source", :value => t('ticket.source'), :domtype => dropdown_domtype, 
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
-        { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => 'dropdown', 
+        { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => dropdown_domtype, 
           :choices => [['', t('none')]]+@products, :operatortype => "choicelist",
           :condition => multi_product_account? },
         { :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "business_hours_dropdown",
           :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort, :business_hours_choices => business_hours_for_account,
           :condition => va_rules_controller? },
-        { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => "dropdown",
+        { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @agents },
-        { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => "dropdown",
+        { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => dropdown_domtype,
           :operatortype => "object_id", :choices => @groups }
       ]
 
@@ -229,7 +248,8 @@ class Admin::VaRulesController < Admin::AdminController
                              :name => field.name,
                              :value => field.label,
                              :field_type => field.field_type,
-                             :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
+                             :domtype => (field.field_type == "nested_field") ? "nested_field" : 
+                                    field.flexifield_def_entry.flexifield_coltype == "dropdown" ? dropdown_domtype : field.flexifield_def_entry.flexifield_coltype,
                              :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case nested_special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
                              :action => "set_custom_field",
                              :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
@@ -248,10 +268,10 @@ class Admin::VaRulesController < Admin::AdminController
           :operatortype => "text" },
         { :name => "job_title", :value => t('requester_title'), :domtype => "text", 
           :operatortype => "text" },
-        { :name => "time_zone", :value => t('requester_time_zone'), :domtype => "dropdown", 
+        { :name => "time_zone", :value => t('requester_time_zone'), :domtype => dropdown_domtype, 
           :choices => AVAILABLE_TIMEZONES, :operatortype => "choicelist",
           :condition => multi_timezone_account? },
-        { :name => "language", :value => t('requester_language'), :domtype => "dropdown", 
+        { :name => "language", :value => t('requester_language'), :domtype => dropdown_domtype, 
           :choices => AVAILABLE_LOCALES, :operatortype => "choicelist",
           :condition => multi_language_account? }
       ]
@@ -261,8 +281,8 @@ class Admin::VaRulesController < Admin::AdminController
     def add_company_fields filter_hash
       filter_hash['company'] = [
         { :name => -1, :value => t('click_to_select_filter') },
-        { :name => "name", :value => t('company_name'), :domtype => "text", 
-          :operatortype => "text" },
+        { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
+          :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
         { :name => "domains", :value => t('company_domain'), :domtype => "text", 
           :operatortype => "text" }
       ]
@@ -282,7 +302,7 @@ class Admin::VaRulesController < Admin::AdminController
             :name => "#{field.name}",
             :value => field.label,
             :field_type => field.field_type,
-            :domtype => field.dom_type,
+            :domtype => (field.dom_type == :dropdown_blank) ? dropdown_domtype : field.dom_type,
             :choices => special_case+field.custom_field_choices.collect { |c| [c.value, c.value ] },
             :action => "set_custom_field",
             :operatortype => CF_CUSTOMER_TYPES.fetch(field.field_type.to_s, "text"),
@@ -303,5 +323,9 @@ class Admin::VaRulesController < Admin::AdminController
         bhrs = account_bhs if account_bhs.size > 1
       end
       bhrs
+    end
+
+    def dropdown_domtype
+      supervisor_rules_controller? ? "dropdown" : "multiple_select"
     end
 end

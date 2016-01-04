@@ -200,7 +200,7 @@ QuickBooksInvoiceWidget.prototype = {
     fetch_items_parse_invoice: function(invoices, item_ids, customer_id, multiple_customers) {
         var $this = this;
         var id_string = '';
-        id_string = jQuery.map(item_ids, function(value) {
+        id_string = jQuery.map(item_ids.uniq(), function(value) {
             return "'" + value + "'";
         }).join(',');
         var item_query = {

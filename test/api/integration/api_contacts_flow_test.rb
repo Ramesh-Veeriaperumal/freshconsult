@@ -164,9 +164,10 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     sample_user.update_attributes(custom_field: { 'cf_linetext' => 'test', 'cf_testimony' => 'test testimony' })
     custom_field = sample_user.custom_field
     get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
-    Account.unstub(:current)
     turn_off_caching
     assert_response 200
     match_json(contact_pattern({ custom_field: custom_field }, sample_user))
+  ensure
+    Account.unstub(:current)
   end
 end

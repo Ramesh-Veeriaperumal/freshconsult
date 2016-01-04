@@ -4,11 +4,8 @@ class HelpdeskReports::Workers::Export < BaseWorker
   
   sidekiq_options :queue => :report_export_queue, :retry => 0, :backtrace => true, :failures => :exhausted
   
-
   def perform params
-    params.symbolize_keys!
-    args = { account_id: params[:account_id] , user_id: params[:user_id] }
-    HelpdeskReports::Export::Report.new(args).perform(params)
+    HelpdeskReports::Export::Report.new(params).perform
   end
   
 end
