@@ -1,4 +1,4 @@
-json.cache! CacheLib.compound_key(@item, "V2", params) do
+json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v2], params) do
   json.extract! @item, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :tags
   json.partial! 'shared/utc_date_format', item: @item
 

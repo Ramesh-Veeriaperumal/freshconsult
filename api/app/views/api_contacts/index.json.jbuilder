@@ -1,5 +1,5 @@
 json.array! @items do |contact|
-  json.cache! CacheLib.compound_key(contact, "V2", params) do
+  json.cache! CacheLib.compound_key(contact, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! contact, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id
     json.partial! 'shared/utc_date_format', item: contact
   end

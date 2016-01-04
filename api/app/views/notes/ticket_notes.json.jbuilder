@@ -3,7 +3,7 @@ json.array! @notes do |note|
   json.set! :body, note.body
   json.set! :body_html, note.body_html
 
-  json.cache! CacheLib.compound_key(note, "V2", params) do
+  json.cache! CacheLib.compound_key(note, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! note, :id, :incoming, :private, :user_id, :support_email, :source
 
     json.set! :ticket_id, @ticket.display_id
