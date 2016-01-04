@@ -78,6 +78,7 @@ window.App.Solutions = window.App.Solutions || {};
     reloadFolderSelect: function (element, data, val) {
       $(element).html(data);
       $(element).select2('val', val);
+      $('#create-new').remove();
     },
 
     bindCreateNew: function () {

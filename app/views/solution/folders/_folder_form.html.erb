@@ -35,7 +35,7 @@
 							:class => "select2 required input-large", 
 							:name => "solution_folder_meta[solution_category_meta_id]"
 						}  %>
-				<%= category_create_new(f) %>
+				<%= category_create_new(f) if @folder_meta.new_record? %>
 			<% end %>
 	 	</div>
 	</li>

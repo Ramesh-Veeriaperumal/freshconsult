@@ -413,8 +413,9 @@ module SolutionHelper
 
 	def folder_create_new
 		op = t('solution.folder')
-		op << " - "
+		op << "<span id='create-new'> - "
 		op << link_to(t('solution.create_new'), new_solution_folder_path((btn_default_params(:folder) || {}).merge({ :article => true })), new_btn_opts(:folder))
+		op << "</span>"
 		op.html_safe
 	end
 end
