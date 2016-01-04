@@ -2,9 +2,9 @@ module ApiDiscussions
   class ApiCommentValidation < ApiValidation
     attr_accessor :body_html, :answer
     validates :body_html, required: true
-    validates :answer, custom_absence: { allow_nil: false, message: :incompatible_field }, if: -> { @answer_set && 
-      DiscussionConstants::QUESTION_STAMPS.exclude?(@stamp_type) }, on: :update
-    validates :answer, data_type: { rules: 'Boolean' }, on: :update
+    validates :answer, custom_absence: { allow_nil: false, message: :incompatible_field }, if: -> do 
+      @answer_set && 
+validates :answer, data_type: { rules: 'Boolean' }, on: :update
     validates :body_html, data_type: { rules: String, allow_nil: true }
 
     def initialize(request_params, item)

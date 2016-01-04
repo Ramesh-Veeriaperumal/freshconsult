@@ -191,7 +191,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter_value
     get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, list: "default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field")])
+    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field')])
   end
 
   def test_index_with_valid_filter

@@ -13,7 +13,6 @@ json.array! @notes do |note|
     json.set! :bcc_emails, note.schema_less_note.try(:bcc_emails)
 
     json.partial! 'shared/utc_date_format', item: note
-
   end
   json.set! :attachments do
     json.array! note.attachments do |att|

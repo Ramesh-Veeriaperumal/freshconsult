@@ -30,5 +30,5 @@ module ErrorConstants
   # http://stackoverflow.com/questions/16621073/when-to-use-symbols-instead-of-strings-in-ruby
   # Deep Symbolizing keys as this is not dynamically generated data.
   # Moreover, construction is faster & comparison is faster.
-  ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml'))["api_error_messages"].symbolize_keys!.freeze
+  ERROR_MESSAGES = YAML.load_file(File.join(Rails.root, 'api/lib', 'error_messages.yml'))['api_error_messages'].symbolize_keys!.freeze
 end

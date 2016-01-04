@@ -21,10 +21,10 @@ module Helpers::NotesTestHelper
   end
 
   def index_note_pattern(note)
-    index_note = { 
+    index_note = {
       from_email: note.from_email,
       cc_emails:  note.cc_emails,
-      bcc_emails: note.bcc_emails, 
+      bcc_emails: note.bcc_emails,
       source: note.source
     }
     single_note = note_pattern({}, note)

@@ -14,7 +14,6 @@ json.set! :notes, @notes do |note|
 
     json.partial! 'shared/boolean_format', boolean_fields: { incoming: note.incoming, private: note.private }
     json.partial! 'shared/utc_date_format', item: note
-
   end
   json.set! :attachments do
     json.array! note.attachments do |att|

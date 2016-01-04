@@ -49,10 +49,10 @@ class TopicValidationsTest < ActionView::TestCase
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     topic.valid?
     error = topic.errors.full_messages
-    refute error.include?("Title blank")
-    refute error.include?("Message html blank")
-    refute error.include?("Title missing")
-    refute error.include?("Message html missing")
+    refute error.include?('Title blank')
+    refute error.include?('Message html blank')
+    refute error.include?('Title missing')
+    refute error.include?('Message html missing')
   end
 
   def test_numericality_item_valid_only_update

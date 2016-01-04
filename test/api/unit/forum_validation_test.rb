@@ -52,8 +52,8 @@ class ForumValidationsTest < ActionView::TestCase
     item = Forum.new(name: 'test')
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     forum.valid?
-    refute forum.errors.full_messages.include?("Name blank")
-    refute forum.errors.full_messages.include?("Name missing")
+    refute forum.errors.full_messages.include?('Name blank')
+    refute forum.errors.full_messages.include?('Name missing')
   end
 
   def test_numericality_item_valid_only_update

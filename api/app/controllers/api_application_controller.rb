@@ -145,7 +145,7 @@ class ApiApplicationController < MetalApiController
       Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
       inaccessible_fields = @all_fields ? @all_fields.flat_map(&:last) & exception.params : []
       invalid_fields = exception.params - inaccessible_fields
-      errors = Hash[invalid_fields.map { |v| [v, :invalid_field] } + inaccessible_fields.map{|v| [v, :inaccessible_field] } ] 
+      errors = Hash[invalid_fields.map { |v| [v, :invalid_field] } + inaccessible_fields.map { |v| [v, :inaccessible_field] }]
       render_errors errors
     end
 

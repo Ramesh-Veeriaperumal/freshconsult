@@ -6,7 +6,7 @@ class ApiTicketFieldsController < ApiApplicationController
     def validate_filter_params
       params.permit(:type, *ApiConstants::DEFAULT_INDEX_FIELDS) # We will allow pagination options, but they will be ignored, to be consistent with contact/company fields.
       errors = [[:type, :not_included]] if params.key?(:type) && ApiTicketConstants::FIELD_TYPES.exclude?(params[:type])
-      render_errors errors, {list: ApiTicketConstants::FIELD_TYPES.join(', ')} if errors
+      render_errors errors, list: ApiTicketConstants::FIELD_TYPES.join(', ') if errors
     end
 
     def scoper

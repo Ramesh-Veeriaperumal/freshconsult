@@ -107,7 +107,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_fr_due_by_not_nil_and_due_by_not_nil_when_status_is_closed
     Account.stubs(:current).returns(Account.first)
-    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: "", fr_due_by: "" }
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: '', fr_due_by: '' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
@@ -153,7 +153,7 @@ class TicketValidationTest < ActionView::TestCase
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
-    assert ticket.errors.full_messages.include?("Description blank")
+    assert ticket.errors.full_messages.include?('Description blank')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
 
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: true, description_html: true }

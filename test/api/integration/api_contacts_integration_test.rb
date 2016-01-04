@@ -103,7 +103,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       id1 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last(2).first.id
       id2 = User.where(helpdesk_agent: false, deleted: false, customer_id: nil).last.id
 
-      # make_agent      
+      # make_agent
       v1[:make_agent] = count_queries do
         put("/contacts/#{id2}/make_agent.json", {}.to_json, @write_headers)
         assert_response 200

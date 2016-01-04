@@ -642,20 +642,20 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_throttled_valid_request_with_plan_api_limit_changed
-    enable_cache {
-      old_plan = @account.subscription.subscription_plan
+    old_plan = @account.subscription.subscription_plan
+    enable_cache do
       new_plan = SubscriptionPlan.find(3)
       set_key(plan_key(3), 230, nil)
       remove_key(account_key)
       Subscription.fetch_by_account_id(@account.id) # setting memcache key
-      
+
       @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
       @account.reload.subscription.reload.subscription_plan
 
       get '/api/v2/discussions/categories', nil, @headers
       assert_response 200
       assert_equal '230', response.headers['X-RateLimit-Total']
-    }
+    end
   ensure
     @account.subscription.update_column(:subscription_plan_id, old_plan.id)
   end
@@ -663,7 +663,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_throttler_with_redis_down
     remove_key(v2_api_key)
     rate_limit_instance = $rate_limit
-    $rate_limit = mock("Redis Client Instance")
+    $rate_limit = mock('Redis Client Instance')
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     $rate_limit = rate_limit_instance
@@ -671,7 +671,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '3000', response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
     assert_nil get_key(v2_api_key)
-    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version'] 
+    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
   ensure
     $rate_limit = rate_limit_instance
   end

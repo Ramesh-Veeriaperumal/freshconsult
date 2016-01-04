@@ -62,7 +62,7 @@ module TestClassMethods
     end
   end
 
-  def enable_cache block= {}
+  def enable_cache(block = {})
     system 'memcached &'
     MetalApiController.perform_caching = true
     yield block

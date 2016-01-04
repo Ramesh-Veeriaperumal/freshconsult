@@ -56,8 +56,8 @@ module ApiDiscussions
     def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
                                      message_html: true)
-      match_json([bad_request_error_pattern('title', :missing_field), 
-        bad_request_error_pattern('message_html', :data_type_mismatch, data_type: 'String')])
+      match_json([bad_request_error_pattern('title', :missing_field),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: 'String')])
       assert_response 400
     end
 
