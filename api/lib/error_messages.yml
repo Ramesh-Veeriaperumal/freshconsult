@@ -70,7 +70,7 @@ api_error_messages:
   max_agents_reached: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
   cannot_update_default_sla: "Default SLA policy cannot be updated"
   unsupported_environment: "Demo site doesn't have this access!"
-  company_id_required: "Company ID is required for a contact to be a Client Manager"
+  company_id_required: "Company ID is required for a contact to view all tickets"
   inconsistent_state: "Email should be associated to the contact before converting it to an agent"
   invalid_integer: "Should have Positive Integers"
   no_content_required: "Content not required"

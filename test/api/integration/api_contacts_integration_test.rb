@@ -21,12 +21,12 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_destroy: 6,
         api_make_agent: 4,
 
-        create: 36,
-        update: 31,
-        show: 17,
-        index: 17,
-        destroy: 21,
-        make_agent: 45
+        create: 37,
+        update: 32,
+        show: 18,
+        index: 18,
+        destroy: 22,
+        make_agent: 46
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
