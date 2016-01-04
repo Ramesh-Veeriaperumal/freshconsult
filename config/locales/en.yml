@@ -6120,7 +6120,7 @@ en:
         recording_details: "Recording Details"
         start_recording: "Start Recording"
         cancel_recording: "Cancel"
-        ilos_video_initialized: "<p id='ilos-paragraph'><span><b>Screencast recording has been initiated.</b></span></br>ilos record plugin will start automatically. For more help on recording screecasts follow the instructions <a href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk' target='blank'>here</a>.<br/><br/>Trouble with recording?<br/>Please ensure that you have the <a href='https://www.ilosvideos.com/downloadRecorder/?returnTo=Fresh%20Desk' target='blank'>ilos plugin</a> already installed. If installing for the first time, then please go back and click 'record' again after the plugin has installed.<br/></p>"
+        ilos_video_initialized: "<p id='ilos-paragraph'><span><b>Screencast recording has been initiated.</b></span></br>ilos record plugin will start automatically. For more help on recording screecasts follow the instructions <a href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk' target='blank'>here</a>.<br/><br/>Trouble with recording?<br/>Please ensure that you have the <a href='https://app.ilosvideos.com/downloadRecorder/?returnTo=Freshdesk' target='blank'>ilos plugin</a> already installed. If installing for the first time, then please go back and click 'record' again after the plugin has installed.<br/></p>"
         moderated_forums: "For moderated forums, the recording will appear after approval."
       agent_ticket:
         placeholder: "Ticket#"
