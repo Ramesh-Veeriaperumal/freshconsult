@@ -1,6 +1,5 @@
 class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
-  decorate_views
 
   def create
     assign_protected
@@ -50,17 +49,6 @@ class ApiContactsController < ApiApplicationController
 
   private
 
-    def decorator_options
-      super({name_mapping: (@name_mapping || get_name_mapping)})
-    end
-
-    def get_name_mapping
-      # will be called only for index and show. 
-      # We want to avoid memcache call to get custom_field keys and hence following below approach.
-      custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) {|(name, value), hash| hash[name.to_sym] = CustomFieldDecorator.without_cf(name)} if custom_field
-    end
-
     def load_object
       @item = scoper.find_by_id(params[:id])
       head :not_found unless @item
@@ -82,12 +70,12 @@ class ApiContactsController < ApiApplicationController
 
     def validate_params
       @contact_fields = current_account.contact_form.custom_contact_fields
-      @name_mapping = CustomFieldDecorator.name_mapping(@contact_fields)
-      custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+      allowed_custom_fields = @contact_fields.map(&:name)
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
 
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
+
       contact = ContactValidation.new(params[cname], @item, string_request_params?)
       render_custom_errors(contact, true)  unless contact.valid?(action_name.to_sym)
     end
@@ -136,12 +124,11 @@ class ApiContactsController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(ContactConstants::FIELD_MAPPINGS, item)
     end
 
     def error_options_mappings
-      @merge_item_error_options = true
-      @name_mapping.merge(ContactConstants::FIELD_MAPPINGS)
+      ContactConstants::FIELD_MAPPINGS
     end
 
     def assign_protected

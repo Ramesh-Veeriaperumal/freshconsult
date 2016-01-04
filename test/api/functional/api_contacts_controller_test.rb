@@ -71,7 +71,9 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_existing_email
     email = Faker::Internet.email
-    add_new_user(@account, {name: Faker::Lorem.characters(15), email: email})
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: email)
+    assert_response 201
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
     match_json([bad_request_error_pattern('email', :"Email has already been taken")])
@@ -220,7 +222,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         language: 'en',
                                         tags: tags,
                                         avatar: file,
-                                        custom_fields: { 'department' => 'Sample Dept' })
+                                        custom_fields: { 'cf_department' => 'Sample Dept' })
     DataTypeValidator.any_instance.stubs(:valid_type?)
     match_json(deleted_contact_pattern(User.last))
     assert User.last.avatar.content_content_type == 'image/jpeg'
@@ -248,7 +250,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: true,
                                         company_id: comp.id,
                                         language: 'en',
-                                        custom_fields: { 'department' => 'Sample Dept', 'sample_check_box' => true, 'another_check_box' => false, 'sample_date' => '2010-11-01', 'sample_dropdown' => 'Choice 1' })
+                                        custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_another_check_box' => false, 'cf_sample_date' => '2010-11-01', 'cf_sample_dropdown' => 'Choice 1' })
     assert_response 201
     assert User.last.custom_field['cf_sample_check_box'] == true
     assert User.last.custom_field['cf_another_check_box'] == false
@@ -263,10 +265,10 @@ class ApiContactsControllerTest < ActionController::TestCase
     create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Sample Date', editable_in_signup: 'true'))
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        custom_fields: { 'sample_url' => 'aaaa', 'sample_date' => '2015-09-09T08:00' })
+                                        custom_fields: { 'cf_sample_url' => 'aaaa', 'cf_sample_date' => '2015-09-09T08:00' })
     assert_response 400
-    match_json([bad_request_error_pattern('sample_date', :invalid_date),
-                bad_request_error_pattern('sample_url', 'invalid_format')])
+    match_json([bad_request_error_pattern('cf_sample_date', :invalid_date),
+                bad_request_error_pattern('cf_sample_url', 'invalid_format')])
   end
 
   def test_create_contact_without_required_custom_fields
@@ -276,7 +278,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :missing_field)])
+    match_json([bad_request_error_pattern('cf_code', :missing_field)])
     cf.update_attribute(:required_for_agent, false)
   end
 
@@ -290,10 +292,10 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: true,
                                         company_id: comp.id,
                                         language: 'en',
-                                        custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
+                                        custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
     assert_response 400
-    match_json([bad_request_error_pattern('check_me', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('doj', :invalid_date)])
+    match_json([bad_request_error_pattern('cf_check_me', :data_type_mismatch, data_type: 'Boolean'),
+                bad_request_error_pattern('cf_doj', :invalid_date)])
   end
 
   def test_create_contact_with_invalid_dropdown_field
@@ -311,9 +313,9 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         client_manager: true,
                                         company_id: comp.id,
                                         language: 'en',
-                                        custom_fields: { 'choose_me' => 'Choice 4' })
+                                        custom_fields: { 'cf_choose_me' => 'Choice 4' })
     assert_response 400
-    match_json([bad_request_error_pattern('choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
+    match_json([bad_request_error_pattern('cf_choose_me', :not_included, list: 'Choice 1,Choice 2,Choice 3')])
   end
 
   def test_create_length_invalid
@@ -368,7 +370,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_user_with_valid_params
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name, 'tag_sample_test_3']
-    cf = { 'city' => 'Chennai' }
+    cf = { 'cf_city' => 'Chennai' }
 
     sample_user = User.where(helpdesk_agent: false).last
     params_hash = { language: 'cs',
@@ -413,6 +415,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_update_client_manager_with_unavailable_company_id
     sample_user = get_user
+    comp = get_company
     sample_user.update_attribute(:client_manager, false)
     sample_user.update_attribute(:company_id, nil)
     params_hash = { company_id: 10_000 }
@@ -420,10 +423,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
     assert sample_user.reload.company_id.nil?
     match_json([bad_request_error_pattern('company_id', :"can't be blank")])
-  end
 
-  def test_update_client_manager_with_already_invalid_company_id
-    sample_user = get_user
+    # already item invalid scenario
     sample_user.update_attribute(:company_id, 10_000)
     sample_user.update_attribute(:deleted, false)
     params_hash = { company_id: 10_000 }

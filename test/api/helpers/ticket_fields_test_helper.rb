@@ -162,7 +162,7 @@ module Helpers::TicketFieldsTestHelper
       customers_can_edit: tf.editable_in_portal.to_s.to_bool,
       label: tf.label,
       label_for_customers: tf.label_in_portal,
-      name: tf.default ? tf.name : tf.name[0..-3],
+      name: tf.name,
       position: tf.position,
       required_for_agents: tf.required.to_s.to_bool,
       required_for_closure: tf.required_for_closure.to_s.to_bool,

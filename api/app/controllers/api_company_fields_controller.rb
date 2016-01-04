@@ -1,6 +1,4 @@
 class ApiCompanyFieldsController < ApiApplicationController
-  decorate_views
-
   private
 
     def validate_filter_params(additional_fields = [])

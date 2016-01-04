@@ -1,6 +1,4 @@
 class ApiTicketFieldsController < ApiApplicationController
-  decorate_views
-
   private
 
     def validate_filter_params

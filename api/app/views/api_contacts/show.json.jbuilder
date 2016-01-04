@@ -1,6 +1,11 @@
 json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v2], params) do
   json.extract! @item, :active, :address, :company_id, :description, :email, :id, :job_title, :language, :mobile, :name, :phone, :time_zone, :twitter_id, :tags
+
   json.partial! 'shared/utc_date_format', item: @item
+
+  json.set! :custom_fields, @item.custom_field
+
+  json.set! :tags, @item.tags.map(&:name)
 
   json.set! :deleted, @item.deleted if @item.deleted
 end
@@ -19,4 +24,3 @@ if @item.avatar
 else
   json.set! :avatar, nil
 end
-json.set! :custom_fields, @item.custom_fields

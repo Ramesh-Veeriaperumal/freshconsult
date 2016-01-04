@@ -3,7 +3,6 @@ class TicketsController < ApiApplicationController
   include Helpdesk::TagMethods
   include CloudFilesHelper
   include TicketConcern
-  decorate_views
 
   before_filter :ticket_permission?, only: [:destroy]
 
@@ -61,19 +60,8 @@ class TicketsController < ApiApplicationController
 
   private
 
-    def decorator_options
-      super({name_mapping: (@name_mapping || get_name_mapping)})
-    end
-
-    def get_name_mapping
-      # will be called only for index and show. 
-      # We want to avoid memcache call to get custom_field keys and hence following below approach.
-      custom_field = index? ? @items.first.try(:custom_field) : @item.custom_field
-      custom_field.each_with_object({}) {|(name, value), hash| hash[name.to_sym] = TicketDecorator.without_account_id(name)} if custom_field
-    end
-
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS.merge(@name_mapping), item)
+      ErrorHelper.rename_error_fields(ApiTicketConstants::FIELD_MAPPINGS, item)
     end
 
     def load_objects
@@ -173,14 +161,12 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_params
-      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
       @ticket_fields = Account.current.ticket_fields_from_cache
-      @name_mapping = Helpers::TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+      allowed_custom_fields = Helpers::TicketsValidationHelper.custom_field_names(@ticket_fields)
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
-      custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+      custom_fields = allowed_custom_fields.empty? ? [nil] : allowed_custom_fields
       field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
       params[cname].permit(*(field))
-      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
       load_ticket_status # loading ticket status to avoid multiple queries in model.
       params_hash = params[cname].merge(status_ids: @statuses.map(&:status_id), ticket_fields: @ticket_fields)
       ticket = TicketValidation.new(params_hash, @item, string_request_params?)
@@ -258,8 +244,7 @@ class TicketsController < ApiApplicationController
     end
 
     def error_options_mappings
-      @merge_item_error_options = true
-      @name_mapping.merge(ApiTicketConstants::FIELD_MAPPINGS)
+      ApiTicketConstants::FIELD_MAPPINGS
     end
 
     def valid_content_type?

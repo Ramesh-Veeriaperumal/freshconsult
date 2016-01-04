@@ -1,11 +1,8 @@
 class CustomFieldDecorator < SimpleDelegator
   class << self
-    def without_cf(name)
-      "#{name[3..-1]}"
-    end
-
-    def name_mapping(fields)
-      fields.each_with_object({}) { |cf, hash| hash[cf.name.to_sym] = CustomFieldDecorator.without_cf(cf.name).to_sym }
+    def utc_format(cf)
+      cf.each_pair { |k, v| cf[k] = v.utc if v.respond_to?(:utc) }
+      cf
     end
   end
 end

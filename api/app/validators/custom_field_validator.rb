@@ -170,7 +170,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children.each do |child|
         next if values[child.name].blank?
         record.errors[field_name.to_sym] << :conditional_not_blank
-        (record.error_options ||= {}).merge!(field_name.to_sym => { child: TicketDecorator.without_account_id(child.name) }) # we are explicitly calling decorator here, instead of handling this in the controller, in order to avoid unnecessary looping across all ticket fields.
+        (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.name })
         return true
       end
       true

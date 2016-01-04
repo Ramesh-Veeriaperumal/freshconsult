@@ -3,8 +3,7 @@ module Helpers::UsersTestHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    custom_field = contact.custom_field.map {|k,v| [CustomFieldDecorator.without_cf(k), v]}.to_h
-    contact_custom_field = (custom_field && ignore_extra_keys) ? custom_field.ignore_extra_keys! : custom_field
+    contact_custom_field = (contact.custom_field && ignore_extra_keys) ? contact.custom_field.ignore_extra_keys! : contact.custom_field
 
     if contact.avatar
       contact_avatar = {
