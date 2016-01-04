@@ -241,6 +241,7 @@ class Helpdesk::ConversationsController < ApplicationController
           @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
           @post.user = current_user
           @post.account_id = current_account.id
+          attachment_builder(@post, params[:helpdesk_note][:attachments], params[:cloud_file_attachments] )
           @post.save!
         end
       end

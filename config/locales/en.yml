@@ -2065,6 +2065,8 @@ en:
     visible_to: Visible to
     category: Forum Category
     spam: "Spam (%{count})"
+    convert_to_ticket: Auto-Convert Topics to Tickets
+    convert_to_ticket_info: All new topics created in this forum will automatically be converted and created as a ticket.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users

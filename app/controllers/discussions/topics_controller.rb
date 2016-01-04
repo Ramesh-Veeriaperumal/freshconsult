@@ -307,12 +307,12 @@ class Discussions::TopicsController < ApplicationController
 			@topic_ticket = nil unless @topic_ticket.requester.active?
 			return if @topic_ticket.nil?
 			@topic.title = @topic_ticket.subject
-		  @topic.posts.build(body_html: @topic_ticket.description_html)
+		  	@topic.posts.build(body_html: @topic_ticket.description_html)
 		end
 
 		def associate_ticket
 			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
-			add_ticket_attachments if ( params[:post] and params[:post][:ticket_attachments])
+			add_ticket_attachments if ( params[:post] and (params[:post][:ticket_attachments] or params[:post][:cloud_file_attachments]))
 			@topic.published = true
 			@post.published = true
 		end
@@ -323,6 +323,12 @@ class Discussions::TopicsController < ApplicationController
 				attachment = Helpdesk::Attachment.find_by_id(a[:resource])
 				next unless attachment
 				@topic.posts.first.attachments.build(:content => attachment.content, :description => attachment.description)
+			end
+
+			params[:post][:cloud_file_attachments].each do |c|
+				attach = Helpdesk::CloudFile.find_by_id(c[:resource])
+				next unless attach
+				@topic.posts.first.cloud_files.build({:url => attach.url, :application_id => attach.application_id, :filename => attach.filename })
 			end
 		end
 

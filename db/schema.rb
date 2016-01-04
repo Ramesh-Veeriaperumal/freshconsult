@@ -14,7 +14,6 @@
 
 ActiveRecord::Schema.define(:version => 20151221042435) do
 
-
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -1330,7 +1329,8 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.integer "forum_category_id", :limit => 8
     t.integer "forum_type"
     t.integer "import_id",         :limit => 8
-    t.integer "forum_visibility"
+    t.integer "forum_visibility",
+    t.boolean "convert_to_ticket"
   end
 
   add_index "forums", ["account_id", "forum_category_id", "position"], :name => "index_forums_on_account_id_and_forum_category_id_and_position"

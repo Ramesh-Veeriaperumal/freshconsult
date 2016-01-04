@@ -33,12 +33,24 @@
 		<%= form.label :forum_visibility, t('forum.visible_to'), :class => "control-label" %>
 		<div class="controls">
 			<%= form.select :forum_visibility, Forum::VISIBILITY_OPTIONS, {}, { :class => "select2 input-xlarge" } %>
-			<br/><br/>
 			<span id="company_forums">
 				<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies, 
 					:max_limit => 250 }) %>
 			</span>
 		</div>
+	</div>
+	<div class="control-group">
+			<%= form.label :convert_to_ticket, t('forum.convert_to_ticket'), :class => "control-label" %>
+			<div class="controls mt12">
+				<div class="vertical-alignment">
+					<%= form.check_box :convert_to_ticket, :rel => 'toggle',  "data-checked-label" => t('plain_yes'), "data-unchecked-label" => t('plain_no') %>
+				</div>
+				<div class="vertical-alignment pl5">
+					<div class="muted"><%= t('forum.convert_to_ticket_info') %>
+					</div>
+			    </div>
+				<br/><br/>
+			</div>
 	</div>
 </div>
 <%= javascript_tag do %>
