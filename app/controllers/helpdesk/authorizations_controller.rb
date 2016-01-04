@@ -3,6 +3,8 @@ class Helpdesk::AuthorizationsController < ApplicationController
 
   include HelpdeskControllerMethods
 
+  skip_after_filter :set_last_active_time
+  
   def index
     @items = Helpdesk::Authorization.paginate(
       :page => params[:page], 

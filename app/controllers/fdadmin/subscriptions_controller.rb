@@ -2,6 +2,8 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
 	include Fdadmin::SubscriptionControllerMethods
 
+  around_filter :select_slave_shard , :only => :account_subscription_info
+
   PAGE_LIMIT = 25
 
 	def customer_summary
@@ -23,13 +25,18 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
 	def display_subscribers
 		subscription_summary = {}
-		subscription_summary[:subscriptions] = fetch_subscription_details(search(params[:search]))
+		subscription_summary[:subscriptions] = search(params[:search])
 		respond_to do |format|
 			format.json do
 				render :json => subscription_summary
 			end
 		end
 	end
+
+  def account_subscription_info
+    result = fetch_subscription_details(Subscription.find_by_account_id(params[:account_id], :include => :account))
+    render :json => result
+  end
 
 	def customers
 		result = {}
@@ -64,7 +71,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
   def fetch_signups_per_month
      signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
                                        :order => "created_at desc", :conditions => "created_at is not null") })
-     signups_by_month = signups_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i  }.reverse
+     signups_by_month = signups_by_month.sort_by{|k,v| Time.parse(k)}.reverse.to_h
   end
 
   def fetch_customers_per_month
@@ -75,7 +82,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
       customers_by_month.store(date.strftime("%b, %Y"),count+1)
     end
     end
-   customers_by_month =  customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }.reverse
+   customers_by_month = customers_by_month.sort_by{|k,v| Time.parse(k)}.reverse.to_h
  	end
 
  	
@@ -102,7 +109,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
                                                  :group => "DATE_FORMAT(accounts.created_at,'%b %Y')") }
 
     conv_customers_by_month = merge_array_of_hashes(results)
-    conv_customers_by_month =  conv_customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }.reverse
+    conv_customers_by_month = conv_customers_by_month.sort_by{|k,v| Time.parse(k)}.reverse.to_h
   end
 
   def merge_array_of_hashes(arr)

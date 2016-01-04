@@ -1,13 +1,15 @@
 class ReportExportMailer < ActionMailer::Base
 
-  include HelpdeskReports::Export::Constants
+  include HelpdeskReports::Constants::Export
 
   def bi_report_export options ={}
     headers = mail_headers options
 
-    headers[:subject] = "Ticket export | #{report_name(options[:report_type])} report for #{options[:date_range]}" if options[:ticket_export].present?
-
-    options[:file_path].present? ? attachments[options[:file_path].split("/").last] = File.read(options[:file_path]) : @export_url = options[:export_url]
+    if options[:file_path].present?
+      attachments[options[:file_path].split("/").last] = File.read(options[:file_path])
+    else
+      @export_url = options[:export_url]
+    end
 
     @user    = options[:user]
     @filters = options[:filters]
@@ -18,7 +20,8 @@ class ReportExportMailer < ActionMailer::Base
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
 
     mail(headers) do |part|
-      part.html { render "bi_report_export", :formats => [:html] }
+      part.text { render "bi_report_export.plain" }
+      part.html { render "bi_report_export.html" }
     end.deliver
   end
 
@@ -32,7 +35,8 @@ class ReportExportMailer < ActionMailer::Base
     @filter_to_display = filter_to_display?(options[:report_type], options[:ticket_export])
 
     mail(headers) do |part|
-      part.html { render "no_report_data", :formats => [:html] }
+      part.text { render "no_report_data.plain" }
+      part.html { render "no_report_data.html" }
     end.deliver
   end
 
@@ -40,14 +44,20 @@ class ReportExportMailer < ActionMailer::Base
 
   def mail_headers options
     {
-      :subject => "#{report_name(options[:report_type])} report for #{options[:date_range]}",
-      :to      => options[:user].email,
-      :from    => AppConfig['from_email'],
+      :subject     => mail_subject( options ),
+      :to             => options[:user].email,
+      :from         => AppConfig['from_email'],
       "Reply-to" => "",
       :sent_on   => Time.now,
       "Auto-Submitted" => "auto-generated",
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
+  end
+
+  def mail_subject options
+    sub = "#{report_name(options[:report_type])} report for #{options[:date_range]}"
+    sub.prepend( "Ticket export | " ) if options[:ticket_export].present?
+    sub
   end
 
   def report_name report_type

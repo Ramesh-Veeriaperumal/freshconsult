@@ -50,13 +50,14 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
                     "bFilter" : false, 
                     "bLengthChange" : true,
                     "lengthMenu": [30, 60, 90],
-                    "scrollDistance" : 850,
+                    "scrollDistance" : 950,
                     "aoColumns": [
-                        { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
@@ -88,6 +89,9 @@ HelpdeskReports.ChartsInitializer.AgentSummary = (function () {
  					 oTable.columns.adjust().draw(); 
  					}, 0 ); 
  				}
+ 				setTimeout(function(){
+ 					 fixedHeader.init({},"#agent-summary");
+ 				}, 0 ); 
 		}	
 	};
 	return  {

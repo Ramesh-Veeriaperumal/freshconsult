@@ -939,12 +939,13 @@ HelpdeskReports.CoreUtil = {
         //Data for Ajax request
         var export_options = {};
         export_options.query_hash = HelpdeskReports.locals.list_params[0];
-        export_options.export_fields = {};
+        export_options.date_range = HelpdeskReports.locals.date_range,
         export_options.select_hash = HelpdeskReports.locals.select_hash;
         //Add the metric title and value to the request payload
         export_options.metric_title = jQuery(".title_wrapper .metric_title").html().trim();
         export_options.metric_value = jQuery(".title_wrapper .metric_value").html().trim();
         //Push all the checked input fields in export list
+        export_options.export_fields = {};
         jQuery("#ticket_fields input:checked").each(function(idx,el){
                 export_options.export_fields[jQuery(el).val()] = jQuery(el).data('label');
         });
@@ -1088,6 +1089,7 @@ HelpdeskReports.CoreUtil = {
         var trend_args = _this.getTrendArgs();
         var pdf_args = {
             query_hash: pdf_params,
+            date_range: HelpdeskReports.locals.date_range,
             select_hash:  HelpdeskReports.locals.select_hash,
             custom_field: HelpdeskReports.locals.custom_fields_group_by,
             trend: trend_args
@@ -1132,6 +1134,9 @@ HelpdeskReports.CoreUtil = {
                     charts[i].destroy();
             }
         }
+    },
+    flushDataTable : function(){
+        fixedHeader.flush();
     },
     scrollTop: function () {
         var body = jQuery("html, body");

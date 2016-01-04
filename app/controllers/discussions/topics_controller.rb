@@ -36,10 +36,10 @@ class Discussions::TopicsController < ApplicationController
 		@post.topic = @topic
 		
 		associate_ticket if @topic_ticket
-		if privilege?(:view_admin) && topic_param[:import_id].present? && params[:email].present?
-			@post.user = current_account.all_users.find_by_email(params[:email])
-		end
-		@post.user  ||= current_user
+		
+		@topic.user = assign_user
+		@post.user = assign_user
+		
 		@post.account_id = current_account.id
 		@post.portal = current_portal.id
 		# only save topic if post is valid so in the view topic will be a new record if there was an error
@@ -206,12 +206,6 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def assign_protected
-			if @topic.new_record?
-				if privilege?(:view_admin)
-					@topic.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
-				end
-				@topic.user ||= current_user
-			end
 			@topic.account_id = current_account.id
 			# admins and moderators can sticky and lock topics
 			return unless privilege?(:edit_topic, @topic)
@@ -219,6 +213,22 @@ class Discussions::TopicsController < ApplicationController
 			# only admins can move
 			return unless privilege?(:manage_forums)
 			@topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
+		end
+
+		def assign_user
+			@creating_user ||= begin
+				user = nil
+				if privilege?(:view_admin)
+					unless (topic_param[:import_id].blank? && params[:email].blank?)
+						user = current_account.all_users.where(email: params[:email]).first
+					end
+					unless  params[:topic][:user_id].blank?
+						user = current_account.all_users.where(:id => params[:topic][:user_id]).first
+					end
+				end
+				user = @topic_ticket.requester if @topic_ticket
+				user || current_user
+			end
 		end
 
 		def build_attachments
@@ -277,11 +287,11 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def topic_param
-			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id].include? k }
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id,:user_id].include? k }
 		end
 
 		def post_param
-			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked,:display_id].include? k }
+			@post_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:title,:sticky,:locked,:display_id,:user_id].include? k }
 		end
 
 		def populate_topic
@@ -294,8 +304,6 @@ class Discussions::TopicsController < ApplicationController
 		def associate_ticket
 			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
 			add_ticket_attachments if ( params[:post] and params[:post][:ticket_attachments])
-			@topic.user = @topic_ticket.requester
-			@post.user = @topic_ticket.requester
 			@topic.published = true
 			@post.published = true
 		end

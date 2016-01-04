@@ -35,11 +35,11 @@ class WebhookWorker < BaseWorker
         }
         Throttler::WebhookThrottler.perform_async(throttler_args)
       else
-        error_notification_key = error_notification_redis_key(args[:account_id], args[:rule_id])
-        unless redis_key_exists?(error_notification_key)
-          set_others_redis_key( error_notification_key, true, ERROR_NOTIFICATION_TIMEOUT)
-          notify_failure(args)
-        end
+        # error_notification_key = error_notification_redis_key(args[:account_id], args[:rule_id])
+        # unless redis_key_exists?(error_notification_key)
+        #   set_others_redis_key( error_notification_key, true, ERROR_NOTIFICATION_TIMEOUT)
+        #   notify_failure(args)
+        # end
       end
     end
   rescue => e

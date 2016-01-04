@@ -9,13 +9,10 @@ ShopifyWidget.prototype= {
         shopifyWidget = this;
         shopifyBundle.app_name = "shopify";
         shopifyBundle.integratable_type = "crm";
-        shopifyBundle.auth_type = "OAuth";
+        shopifyBundle.auth_type = "NoAuth";
         shopifyBundle.widget_name = "shopify" + shopifyBundle.widget_type + "_widget";
         shopifyBundle.handleRender = true;
-        shopifyBundle.url_auth = true;
-        shopifyBundle.url_token_key = "access_token";
         shopifyBundle.use_server_password = "true";
-        shopifyBundle.password = "<shopifyauthtoken>";
         shopifyBundle.domain = shopifyBundle.domain;
         this.shopifyBundle = shopifyBundle;
         freshdeskWidget = new Freshdesk.CRMWidget(shopifyBundle, this);
@@ -178,9 +175,4 @@ ShopifyWidget.prototype= {
             '</div>'
 
 
-}
-
-
-shopifyWidget = new ShopifyWidget(shopifyBundle);
-
-
+};

@@ -87,7 +87,7 @@ class Va::ScenarioFlashMessage
     def responder_id(responder = nil)
       if responder.nil?
         r_id = value.to_i
-        responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : Account.current.users.find_by_id(value.to_i)
+        responder = (r_id == EVENT_PERFORMER) ? (act_on.agent_performed?(doer) ? doer : nil) : Account.current.users.find_by_id(value.to_i)
       end
       
       if responder || value.blank?
@@ -114,7 +114,7 @@ class Va::ScenarioFlashMessage
         watcher_value = value.kind_of?(Array) ? value : value.to_a
         watcher_value.each do |watcher_id|
           user = Account.current.users.find_by_id(watcher_id)
-          if user && user.agent?
+          if user && act_on.agent_performed?(user)
             watchers.push user.name
           end
         end

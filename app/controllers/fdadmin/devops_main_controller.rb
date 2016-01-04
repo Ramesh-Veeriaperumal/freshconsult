@@ -4,16 +4,19 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
   before_filter :verify_signature
   before_filter :check_freshops_subdomain
 
+  include Fdadmin::APICalls
   private
     def verify_signature
       payload = ""
       request.query_parameters.each do |key , value |
         payload << "#{key}#{value.to_s}" unless key.to_s == "digest"
       end
+      payload = payload.chars.sort.join
       sha_signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('MD5'), determine_api_key, payload)
       if sha_signature != params[:digest]
-         Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
-        render :json => {:message => "Authorization failed"}, :status => 401 and return
+        Rails.logger.debug(": : : SIGNATURE VERIFICATION FAILED : : :")
+        head 401
+        render :json => {:message => "Authorization failed"} and return
       end
       Rails.logger.debug(": : : -> SHA SIGNATURE VERIFIED <- : : :")
     end
@@ -22,17 +25,12 @@ class Fdadmin::DevopsMainController < Fdadmin::MetalApiController
       Time.zone = 'Pacific Time (US & Canada)'
     end
 
-    def determine_api_key
-      app_name = params[:app_name] || "freshopsadmin"
-      return ServiceApiKey.find_by_service_name(app_name).api_key 
-    end
-
     def check_freshops_subdomain
       raise ActionController::RoutingError, "Not Found" unless freshops_subdomain?
     end
 
     def freshops_subdomain?
-      request.subdomains.first == AppConfig['freshops_subdomain']
+      FreshopsSubdomains.include?(request.subdomains.first)
     end
 
     def select_by_parameter

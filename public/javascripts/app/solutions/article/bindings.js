@@ -16,7 +16,6 @@ window.App = window.App || {};
       this.bindForEditBtn();
       this.bindForShowMaster();
 
-      this.dummyActionButtonTriggers();
       this.modalBindings();
       this.outdateOrUpdate();
     },

@@ -24,6 +24,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :requester, :class_name => 'User'
 
+  belongs_to :company, :foreign_key => :owner_id
+
   has_many :notes, :inverse_of => :notable, :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy # TODO-RAILS3 Need to cross check, :foreign_key => :id
 
   has_many :mobihelp_notes,  :class_name => 'Helpdesk::Note',

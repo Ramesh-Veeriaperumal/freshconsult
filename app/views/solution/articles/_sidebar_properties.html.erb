@@ -22,7 +22,7 @@
     	</span>
     </div>
 
-    <% if privilege?(:publish_solution) && @article.published? %>
+    <% if Account.current.multilingual? && (privilege?(:publish_solution) && @article.published?) %>
 	    <% if @article.is_primary? && !@article_meta.all_versions_outdated? %>
 		    <div class="outdate-section">
 					<button type="button" 

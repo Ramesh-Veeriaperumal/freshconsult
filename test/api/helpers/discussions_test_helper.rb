@@ -33,7 +33,7 @@ module Helpers::DiscussionsTestHelper
       forum_type: forum.forum_type,
       forum_visibility: forum.forum_visibility,
       topics_count: forum.topics_count,
-      posts_count: forum.posts_count
+      comments_count: forum.posts_count
     }
   end
 
@@ -48,7 +48,7 @@ module Helpers::DiscussionsTestHelper
       forum_type: hash[:forum_type] || f.forum_type,
       forum_visibility: hash[:forum_visibility] || f.forum_visibility,
       topics_count: hash[:topics_count] || f.topics_count,
-      posts_count: hash[:posts_count] || f.posts_count
+      comments_count: hash[:posts_count] || f.posts_count
     }
   end
 
@@ -66,7 +66,7 @@ module Helpers::DiscussionsTestHelper
       stamp_type: expected_output[:stamp_type] || topic.stamp_type,
       replied_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       replied_by: expected_output[:replied_by] || topic.replied_by,
-      posts_count: expected_output[:posts_count] || topic.posts_count,
+      comments_count: expected_output[:posts_count] || topic.posts_count,
       hits: expected_output[:hits] || topic.hits,
       user_votes: expected_output[:user_votes] || topic.user_votes,
       merged_topic_id: expected_output[:merged_topic_id] || topic.merged_topic_id,
@@ -75,7 +75,7 @@ module Helpers::DiscussionsTestHelper
     }
   end
 
-  def post_pattern(expected_output = {}, post)
+  def comment_pattern(expected_output = {}, post)
     expected_output[:ignore_created_at] ||= true
     expected_output[:ignore_updated_at] ||= true
     {

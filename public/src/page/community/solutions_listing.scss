@@ -90,7 +90,7 @@
     }
 
     .dropdown-menu {
-      min-width: 140px;  
+      min-width: 200px;
     }
 
     .list-default-btns, .list-reorder-btns {
@@ -310,6 +310,10 @@
       color: #999;
       float: left;
       text-align: center;
+    }
+    .article-list-meta .meta-component .ficon-dislike{
+      top: 5px;
+      position: relative;
     }
   }
 }

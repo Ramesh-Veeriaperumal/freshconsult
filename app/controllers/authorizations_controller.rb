@@ -13,6 +13,7 @@ class AuthorizationsController < ApplicationController
                     :check_day_pass_usage, :set_locale, :only => [:create, :failure]
   before_filter :require_user, :only => [:destroy]
   before_filter :load_authorization, :only => [:create]
+  skip_after_filter :set_last_active_time
 
   def create
     Rails.logger.debug "@omniauth "+@omniauth.inspect
@@ -111,8 +112,6 @@ class AuthorizationsController < ApplicationController
     }
 
     case provider
-      when "shopify"
-        config_params['shop_name'] = params[:shop]
       when "box"
         config_params['email'] = @omniauth.extra.raw_info.login
       when "google_contacts"
@@ -247,7 +246,7 @@ class AuthorizationsController < ApplicationController
     account ||= Account.find(@account_id || DomainMapping.find_by_domain(request.host).account_id)
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
     protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
-    port = (Rails.env.development? ? ":#{request.port}" : '')
+    port = ''
     @portal_url = protocol + portal.host + port
   end
 
@@ -296,7 +295,7 @@ class AuthorizationsController < ApplicationController
     end
 
   OAUTH1_PROVIDERS = ["quickbooks"]
-  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "shopify", "box","slack", "google_contacts"]
+  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "box", "slack", "google_contacts"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
-  OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "shopify","slack"]
+  OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "slack"]
 end

@@ -32,7 +32,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def all_categories
-    @categories = @portal.solution_category_meta.include_translations.reject(&:is_default)
+    @categories = @portal.solution_category_meta.includes(:primary_category, :portals).reject(&:is_default)
   end
   
   def navmenu

@@ -48,6 +48,6 @@ class DataTypeValidator < ActiveModel::EachValidator
     end
 
     def allow_unset?(type)
-      !options[:required] && ([Hash, Array].include?(type) || options[:allow_unset])
+      !options[:required] && ([Hash, Array, 'Boolean'].include?(type) || options[:allow_unset])
     end
 end

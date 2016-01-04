@@ -109,12 +109,12 @@ class DefaultFieldValidatorTest < ActionView::TestCase
 
   def test_array_length_validator
     params = {  source: '2', status: '2', priority: '1', type: 'Lead', group_id: 1, responder_id: 1, product_id: 1, subject: Faker::Name.name, description: Faker::Lorem.paragraph,
-                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: [Faker::Name.name + white_space, Faker::Name.name + white_space], address: Faker::Lorem.paragraph,
+                email: Faker::Internet.email, phone: '123455', mobile: '12344', client_manager: true, company_id: 1, tags: ["#{Faker::Name.name}#{ " "* 20}#{Faker::Name.name}"], address: Faker::Lorem.paragraph,
                 job_title: Faker::Name.name, twitter_id: Faker::Name.name, language: 'en', time_zone: 'Chennai', domains: [Faker::Internet.domain_word], note: Faker::Name.name }
     test = TestValidation.new(params, true)
     refute test.valid?
     errors = test.errors.to_h.sort
-    assert_equal({ tags: 'is too long (maximum is 255 characters)' }.sort, errors)
+    assert_equal({ tags: 'is too long (maximum is 32 characters)' }.sort, errors)
   end
 
   def test_string_rejection_validator

@@ -68,10 +68,16 @@ module SolutionHelper
 			article = nil unless privilege?(:publish_solution)
 			case default_btn
 				when :category
-					opts = { "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+						"data-target" => "#new-cat"
+					}
 					btn_dropdown_menu(category, [folder, article], opts.merge(default_new_btn_opts))
 				when :folder
-					opts = { "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" }
+					opts = { 
+						"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+						"data-target" => "#new-fold"
+					}
 					btn_dropdown_menu(folder, [category, article], opts.merge(default_new_btn_opts))
 				else
 					opts = { :"data-pjax" => "#body-container" }
@@ -100,9 +106,13 @@ module SolutionHelper
 	def new_btn_opts(type)
 		case type
 		when :category
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_category"), "data-target" => "#new-cat" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_category")}#{language_label}", 
+				"data-target" => "#new-cat" })
 		when :folder
-			default_new_btn_opts.merge({ "data-modal-title" => t("solution.add_folder"), "data-target" => "#new-fold" })
+			default_new_btn_opts.merge({ 
+				"data-modal-title" => "#{t("solution.add_folder")}#{language_label}", 
+				"data-target" => "#new-fold" })
 		when :article
 			{ :"data-pjax" => "#body-container", :rel => nil }
 		end
@@ -256,25 +266,29 @@ module SolutionHelper
 		op.html_safe
 	end
 
-	def language_flags(solution_meta)
+	def language_flags(solution_meta, article_flag = false)
+		return "" unless current_account.multilingual?
 		content = ""
+		content << "<div class='span5 pull-right mt8 #{"language-bar" if article_flag}'>"
+		content << '<span class="pull-right">'
 		([Account.current.language_object] + Account.current.supported_languages_objects).each do |language|
 			content << language_icon(solution_meta, language)
 		end
+		content << '</span>'
+		content << '</div>'
 		content.html_safe
 	end
 
 	def language_icon(solution_meta, language)
 		category = solution_meta.class.short_name
-		availability_flag = solution_meta.send("#{language.to_key}_available?")
 		options = { 
 			:class => "language_icon #{language_style(solution_meta, language)} tooltip",
-			:title => language_label_title(language, availability_flag),
+			:title => language_label_title(language, solution_meta.send("#{language.to_key}_available?")),
 			:id => "version-#{solution_meta.id}-#{language.id}",
 		}
 		options.merge!({:rel => "freshdialog",
 			:data => {
-			"modal-title" => "#{t("solution.edit_#{category}")}<span class='label pull-right'>#{language.name}</span>",
+			"modal-title" => "#{t("solution.edit_#{category}")}#{language_label(language)}",
 			"target" => "#version-#{solution_meta.id}-l#{language.id}",
 			"close-label" => t('cancel'),
 			"submit-label" => t('save')
@@ -283,8 +297,7 @@ module SolutionHelper
 		link_to( "<span class='language_name'>#{language.short_code.capitalize}</span>
 							<span class='ficon-pencil fsize-14'></span>".html_safe, 
 							category.eql?('article') ? 
-							availability_flag ? solution_article_version_path(solution_meta.id, language.code) :
-							solution_new_article_version_path(solution_meta.id, language.code) :
+							solution_article_version_path(solution_meta.id, language.code) :
 							send("edit_solution_#{category}_path", solution_meta, :language_id => language.id),
 							options)
 	end
@@ -306,6 +319,11 @@ module SolutionHelper
       classes << 'draft' if meta_obj.send("#{language.to_key}_draft_present?")
     end
     classes.join(' ')
+  end
+
+  def language_label(l = current_account.language_object)
+  	return "" unless current_account.multilingual?
+  	content_tag(:span, l.name, :class => 'label pull-right')
   end
 
 	def primary_preview(primary, identifier, current_obj = nil)

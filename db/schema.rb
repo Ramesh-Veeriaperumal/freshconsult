@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(:version => 20151216170900) do
+ActiveRecord::Schema.define(:version => 20151221042435) do
 
 
   create_table "account_additional_settings", :force => true do |t|
@@ -1526,7 +1526,7 @@ ActiveRecord::Schema.define(:version => 20151216170900) do
     t.string   "name"
     t.integer  "direct_dial_limit",                                                       :default => 1
     t.integer  "hunt_type",                                                               :default => 1
-    t.integer  "rr_timeout",                                                              :default => 10
+    t.integer  "rr_timeout",                                                              :default => 20
     t.integer  "ringing_time",                                                            :default => 30
     t.boolean  "recording_visibility",                                                    :default => true
     t.text     "wait_message"
@@ -3684,6 +3684,22 @@ ActiveRecord::Schema.define(:version => 20151216170900) do
   add_index "user_accesses", ["access_id"], :name => "index_user_accesses_on_access_id"
   add_index "user_accesses", ["account_id"], :name => "index_user_accesses_on_account_id"
   add_index "user_accesses", ["user_id"], :name => "index_user_accesses_on_user_id"
+
+  create_table "user_companies", :force => true do |t|
+    t.integer  "user_id",    :limit => 8
+    t.integer  "company_id", :limit => 8
+    t.integer  "account_id", :limit => 8
+    t.boolean  "default"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+  
+  add_index "user_companies", ["account_id", "user_id", "company_id"], 
+            :name => "index_user_companies_on_account_id_user_id_company_id"
+  add_index "user_companies", ["account_id", "user_id"], 
+            :name => "index_user_companies_on_account_id_user_id"
+  add_index "user_companies", ["account_id", "company_id"], 
+            :name => "index_user_companies_on_account_id_company_id"
 
   create_table "user_emails", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false

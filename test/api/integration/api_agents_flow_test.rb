@@ -31,8 +31,8 @@ class ApiAgentsFlowTest < ActionDispatch::IntegrationTest
     turn_off_caching
     assert_response 200
     parsed_response = JSON.parse(response.body)
-    agents = parsed_response.select { |agent| agent['user']['id'] = sample_agent.user.id }
+    agents = parsed_response.select { |agent| agent['contact']['email'] == sample_agent.user.email }
     assert_equal 1, agents.size
-    assert_equal 'test', agents[0]['user']['job_title']
+    assert_equal 'test', agents[0]['contact']['job_title']
   end
 end

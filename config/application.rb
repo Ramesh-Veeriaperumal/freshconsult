@@ -158,13 +158,8 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce'].include?(oauth_provider)
-      if oauth_provider == "shopify"
-        provider :shopify, key_hash["consumer_token"], key_hash["consumer_secret"],
-                 :scope => 'read_orders',
-                 :setup => lambda { |env| params = Rack::Utils.parse_query(env['QUERY_STRING'])
-                 env['omniauth.strategy'].options[:client_options][:site] = "https://#{params['shop']}" }
-      elsif key_hash["options"].blank?
+        next if ['github', 'salesforce', 'shopify'].include?(oauth_provider)
+      if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       elsif key_hash["options"]["name"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]

@@ -1,5 +1,5 @@
 class HelpdeskReports::Response::Ticket
-  include HelpdeskReports::Constants::Ticket
+  include HelpdeskReports::Constants
   
   attr_accessor :result, :metric, :query_type, :date_range
   

@@ -1,20 +1,21 @@
 class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
   
   include TicketConstants
-  include HelpdeskReports::Constants::Ticket
+  include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
 
   attr_accessor :metric, :query_type
 
-  def initialize params
-    @url        = ReportsAppConfig::TICKET_REPORTS_URL
+  def initialize params, report_type
     @req_params = params
     @metric     = params[:metric]
     @query_type = set_query_type # list or bucket or simple, NECESSARY for result parsing
+    @report_type = report_type
   end
 
   def build_request
     req_params.merge!(account_id: Account.current.id)
+    req_params.merge!(report_type: @report_type)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
     

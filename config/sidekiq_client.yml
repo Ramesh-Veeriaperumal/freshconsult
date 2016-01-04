@@ -64,6 +64,7 @@ defaults: &defaults
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]
+    - [solution_binarize_sync]
 
 development:
   <<: *defaults

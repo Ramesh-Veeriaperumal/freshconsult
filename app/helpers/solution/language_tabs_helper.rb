@@ -90,7 +90,7 @@ module Solution::LanguageTabsHelper
 
   def new_language_tab language
     update_variables(language)
-    generate_tab(language, solution_new_article_version_path(@article_meta.id, language.code))
+    generate_tab(language, solution_article_version_path(@article_meta.id, language.code))
   end
 
   def update_variables language

@@ -12,17 +12,17 @@
 			<% end %>
 			<div class="article-details">
 				<div class="span3 pull-right text-right article-list-meta">
-					<span class="span4 align-right meta-component <%= 'faded' if article.hits == 0 %>">
+					<span class="span4 align-left meta-component <%= 'faded' if article.hits == 0 %>">
 						<%= font_icon "file-visible" %>
-						<%= formatted_value(article.hits) %>
+						<%= humanize_stats(article.hits) %>
 					</span>
-					<span class="span4 align-right meta-component <%= 'faded' if article.thumbs_up == 0 %>">
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_up == 0 %>">
 						<%= font_icon "like", :size => 18 %>
-						<%= formatted_value(article.thumbs_up) %>
+						<%= humanize_stats(article.thumbs_up) %>
 					</span>
-					<span class="span4 align-right meta-component <%= 'faded' if article.thumbs_down == 0 %>">
+					<span class="span4 align-left meta-component <%= 'faded' if article.thumbs_down == 0 %>">
 						<%= font_icon "dislike", :size => 18 %>
-						<%= formatted_value(article.thumbs_down) %>
+						<%= humanize_stats(article.thumbs_down) %>
 					</span>
 				</div>
 				<% if article.any_supported_draft_present? %>
@@ -38,11 +38,7 @@
 					</div>
 				<% end %>
 			</div>
-			<div class="span5 pull-right mt8 language-bar">
-				<span class="pull-right">
-					<%= language_flags(article) %>
-				</span>
-			</div>
+			<%= language_flags(article, true) %>
 			<div class="span6 comm-item-main clear-left-margin">
 				<%= font_icon "book-hollow", :size => 16, :class => "solution-icon" %>
 				<div class="comm-item-title ellipsis tooltip" title="<%= article.title if article.title.length > 75 %>">

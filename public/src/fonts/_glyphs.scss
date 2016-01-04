@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_75800162d2d38887288afa700bee24b1.eot");
-  src: font-url("glyphs_75800162d2d38887288afa700bee24b1.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_75800162d2d38887288afa700bee24b1.woff") format("woff"),
-       font-url("glyphs_75800162d2d38887288afa700bee24b1.ttf") format("truetype"),
-       font-url("glyphs_75800162d2d38887288afa700bee24b1.svg#glyphs") format("svg");
+  src: font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.eot");
+  src: font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.woff") format("woff"),
+       font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.ttf") format("truetype"),
+       font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_75800162d2d38887288afa700bee24b1.svg#glyphs") format("svg");
+    src: font-url("glyphs_27201b5fe8ec1b123e48d6ffec709091.svg#glyphs") format("svg");
   }
 }
 
@@ -29,6 +29,7 @@
 .ficon-agent-fchat-off:before,
 .ficon-agent-fchat-on:before,
 .ficon-agent-summary:before,
+.ficon-alert:before,
 .ficon-all-streams:before,
 .ficon-android:before,
 .ficon-answer-checked:before,
@@ -61,6 +62,7 @@
 .ficon-caret-up:before,
 .ficon-categories:before,
 .ficon-categories-orphan:before,
+.ficon-category:before,
 .ficon-chat:before,
 .ficon-chat-bubble:before,
 .ficon-chat-disable:before,
@@ -96,6 +98,7 @@
 .ficon-dispatcher:before,
 .ficon-dots:before,
 .ficon-dropbox:before,
+.ficon-dropdown-circle:before,
 .ficon-dropdown_blank:before,
 .ficon-earth:before,
 .ficon-ecommerce:before,
@@ -296,6 +299,7 @@
 .ficon-agent-fchat-off:before { content: "\f1b0"; }
 .ficon-agent-fchat-on:before { content: "\f1b1"; }
 .ficon-agent-summary:before { content: "\f1bb"; }
+.ficon-alert:before { content: "\f203"; }
 .ficon-all-streams:before { content: "\f102"; }
 .ficon-android:before { content: "\f103"; }
 .ficon-answer-checked:before { content: "\f104"; }
@@ -328,6 +332,7 @@
 .ficon-caret-up:before { content: "\f11b"; }
 .ficon-categories:before { content: "\f1db"; }
 .ficon-categories-orphan:before { content: "\f1dc"; }
+.ficon-category:before { content: "\f201"; }
 .ficon-chat:before { content: "\f1bd"; }
 .ficon-chat-bubble:before { content: "\f11c"; }
 .ficon-chat-disable:before { content: "\f11d"; }
@@ -363,6 +368,7 @@
 .ficon-dispatcher:before { content: "\f131"; }
 .ficon-dots:before { content: "\f132"; }
 .ficon-dropbox:before { content: "\f133"; }
+.ficon-dropdown-circle:before { content: "\f202"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
 .ficon-earth:before { content: "\f135"; }
 .ficon-ecommerce:before { content: "\f1e2"; }

@@ -23,7 +23,7 @@ module Helpers::AgentsTestHelper
       signature_html: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: agent.updated_at,
-      user: expected_output[:user] || user
+      contact: expected_output[:user] || user
     }
   end
 end

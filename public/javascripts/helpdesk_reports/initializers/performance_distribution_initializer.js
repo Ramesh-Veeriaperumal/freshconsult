@@ -119,8 +119,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             }
             else {
 
-                var first_response_data = this.convertingIntoFractionalPart(_.values(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]),plot_type);
-                var response_data       = this.convertingIntoFractionalPart(_.values(hash["AVG_RESPONSE_TIME"][current_trend]),plot_type);
                 var data_length         = _.size(hash["AVG_RESPONSE_TIME"][current_trend]);
                 var plot_type           = (_.max(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]) > 3600 || _.max(hash["AVG_RESPONSE_TIME"][current_trend]) > 3600 ) ? 'Hours' : 'Mins';                
                 var start_value         = _.keys(hash["AVG_RESPONSE_TIME"][current_trend])[0];
@@ -135,7 +133,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                         symbol: 'circle'
                     };
 
-                HelpdeskReports.locals.response = plot_type;
+                HelpdeskReports.locals.response_plot_type = plot_type;
     
                 time_trend_data.push({
                     name: 'Avg first response time',
@@ -197,7 +195,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                         symbol: 'circle'
                     };    
 
-                HelpdeskReports.locals.resolution = plot_type;
+                HelpdeskReports.locals.resolution_plot_type = plot_type;
                     
                 time_trend_data.push({
                     name: 'Avg resolution time',
@@ -258,7 +256,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
         redrawTimeBased: function (trend,charttype) {
             var chart        = jQuery('#'+charttype+'_time_trend_chart').highcharts();
             var series       = this.METRICS_MAPPING[charttype];
-            var plot_type    = HelpdeskReports.locals[charttype];
+            var plot_type    = HelpdeskReports.locals[charttype+'_plot_type'];
             var xAxisLength  = _.size(HelpdeskReports.locals.chart_hash[series[0]][trend]);
             var start_value  = _.keys(HelpdeskReports.locals.chart_hash[series[0]][trend])[0];
             var end_value    = _.keys(HelpdeskReports.locals.chart_hash[series[0]][trend])[xAxisLength-1];
@@ -298,23 +296,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             
             _FD.responseTimeTrend(hash);
             _FD.resolutionTimeTrend(hash);
-
-            _FD.bindChartEvents();
-        },
-        contructChartsForPdf: function (hash) {
-            _FD.constants   = HelpdeskReports.Constants.PerformanceDistribution;
-            var metrics     = _FD.constants.metrics
-            var bucket_name = _FD.constants.bucket_conditions
-
-            jQuery.each(metrics, function (index, value) {
-                _FD.barTrend(hash[value+'_BUCKET'],bucket_name[index])
-            });
-            
-            _FD.responseTimeTrend(hash);
-            _FD.resolutionTimeTrend(hash);
-            
-            jQuery('#first_response').addClass('active');
-            jQuery('#response').addClass('active');
         },
         fillArray: function(value, length) {
             var arr = [];
@@ -334,14 +315,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             };
             return sum;
         },
-        convertingIntoFractionalPart: function(data,type) {
-            var arr = [];
-            var divider = (type === 'Hours') ? 3600 : 60
-            for (var i = 0; i < data.length; i++) {
-                arr.push(parseFloat((data[i]/divider).toFixed(2)));
-            }
-            return arr;
-        },       
         convertHashIntoArrayOfArray: function(hash,type){
             if(typeof hash === 'undefined')
                 return [];
@@ -356,9 +329,10 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
    return {
         init: function (hash) {
             _FD.contructCharts(hash);
+            _FD.bindChartEvents();
         },
         pdf: function (hash) {
-            _FD.contructChartsForPdf(hash);
+            _FD.contructCharts(hash);
         }
     };
 })();

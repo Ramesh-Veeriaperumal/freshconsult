@@ -1,20 +1,27 @@
 class Va::Handlers::ObjectId < Va::RuleHandler
 
   private
+
     def proper_value
       value.blank? ? nil : value.to_i
     end
-  
+
     def is(evaluate_on_value)
       evaluate_on_value == proper_value
     end
 
     def is_not(evaluate_on_value)
-      evaluate_on_value != proper_value
+      !is(evaluate_on_value)
     end
 
     def in(evaluate_on_value)
-      value.map(&:to_i).include?(evaluate_on_value)
+      evaluate_on_value ||= 0
+      [*value].map(&:to_i).include?(evaluate_on_value)
+    end
+
+    def not_in(evaluate_on_value)
+      evaluate_on_value ||= 0
+      ! [*value].map(&:to_i).include?(evaluate_on_value)
     end
 
     def filter_query_is

@@ -23,6 +23,7 @@ window.App = window.App || {};
       } else {
         this.eventsForShowPage();
       }
+      this.dummyActionButtonTriggers();
       this.formatTranslationDropdown();
       this.showVersionDropdown();
       this.versionSelection();

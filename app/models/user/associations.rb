@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
   belongs_to :company, :foreign_key => 'customer_id'
+  has_many :user_companies, :class_name => 'UserCompany', :dependent => :destroy
   belongs_to :parent, :class_name =>'User', :foreign_key => :string_uc04
 
   has_many :authorizations, :dependent => :destroy

@@ -69,16 +69,19 @@ module Solution::LanguageAssociations
         return self[meth_name] if self[meth_name]
         columns = base::BINARIZE_COLUMNS.select{|c| self[c].blank?}
         include_class = columns.include?(:draft_present) ? [:draft] : []
-        self.children.includes(include_class).each do |a|
+        self.children.includes(include_class).each do |child|
           columns.each do |col|
-            val = self.read_attribute(col) || 0
-            val = val | flag_mapping(col, a.language_key) if a.send("#{col}?")
-            self[col] = val
+            compute_assign_binarize(col, child)
           end
         end
-        self.save
         self[meth_name]
       end
+    end
+
+    def compute_assign_binarize(col, child)
+      val = self.read_attribute(col) || 0
+      val = val | flag_mapping(col, child.language_key) if child.send("#{col}?")
+      self[col] = val
     end
   end
   

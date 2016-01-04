@@ -31,7 +31,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @article = current_account.solution_articles.new unless @article
+    build_article_version unless @article
     respond_to do |format|
       format.html {
         if @article
@@ -189,6 +189,10 @@ class Solution::ArticlesController < ApplicationController
 
     def load_article
       @article = @article_meta.send(language_scoper)
+    end
+
+    def build_article_version
+      @article = @article_meta.send("build_#{language_scoper}")
     end
 
     def scoper #possible dead code
@@ -450,7 +454,7 @@ class Solution::ArticlesController < ApplicationController
                                     :id => 'articles_undo_bulk',
                                     :data => { 
                                       :items => @updated_items, 
-                                      :parent_id => @folder_id,
+                                      :parent_id => @old_folder.id,
                                       :action_on => 'articles'
                                     })
                   )).html_safe
@@ -481,7 +485,7 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def cleanup_params_for_title
-      params.slice!("id", "format", "controller", "action")
+      params.slice!("id", "format", "controller", "action", "language")
     end
 
     def set_common_attributes

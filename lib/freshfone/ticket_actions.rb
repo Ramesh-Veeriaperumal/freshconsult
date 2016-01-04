@@ -3,7 +3,7 @@ module Freshfone::TicketActions
 
 	def create_note
 		@ticket = current_account.tickets.find_by_display_id(params[:ticket])
-		
+		select_current_call
 		if @ticket.present? && build_note(params.merge({ :agent => agent })).save
 			flash[:notice] = t(:'freshfone.create.success.with_link',
 				{ :human_name => t(:'freshfone.note.human_name'),
@@ -24,6 +24,7 @@ module Freshfone::TicketActions
 	end
 
 	def create_ticket
+		select_current_call
 		json_response = {}
 		if build_ticket(params.merge!({ :agent => agent })).save
 			@ticket = current_call.notable
@@ -46,6 +47,14 @@ module Freshfone::TicketActions
 	ensure
 		update_user_presence unless call_history?
 	end
+
+
+    def select_current_call
+      return if current_call.blank? || call_history?
+      @current_call = current_call.parent if 
+      	current_call.parent.present? && current_call.missed_or_busy?
+    end
+
 
 	def voicmail_ticket(args)
 		args.merge!({:agent => fetch_calling_agent(args[:agent])}) if args[:agent].present?

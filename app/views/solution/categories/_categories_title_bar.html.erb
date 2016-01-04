@@ -2,7 +2,7 @@
 	<% if privilege?(:manage_solutions) -%>
 	<div class="sol-details-left">
 		<ul class="list-actions-left category-icon-bg">
-			<li> <%= font_icon(:cube, {:size => 26}) %> </li>
+			<li> <%= font_icon(:category, {:size => 24}) %> </li>
 		</ul>
 	</div>
 	<% end %>
@@ -19,25 +19,22 @@
 			  </li>
 			</ul>
 		<% end %>
-		<% if current_account.portals.count > 1 %>
 		<div class="span7 clear-left-margin title-dropdown">
-			<span class="dropdown">
-				<span class='dropdown-toggle' data-toggle="dropdown">
-					<h1>
-						<%= @portal.portal_name %>
-						<span class='caret'></span>
-					</h1>
+			<% if current_account.portals.count > 1 %>
+				<span class="dropdown">
+					<span class='dropdown-toggle' data-toggle="dropdown">
+						<h1>
+							<%= @portal.portal_name %>
+							<%= font_icon(:"dropdown-circle", {:size => 20}) %>
+						</h1>
+					</span>
+					<% options = {:'data-pjax' => "#body-container"} %>
+					<%= dropdown_menu(current_account.portals.map{|p| [p.portal_name, solution_all_categories_path(:portal_id => p.id)] if p != @portal}.compact, options)%>
 				</span>
-				<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
-				<% options = {:'data-pjax' => "#body-container"} %>
-				<%= dropdown_menu(current_account.portals.map{|p| [p.portal_name, solution_all_categories_path(:portal_id => p.id)] if p != @portal}.compact, options)%>
-			</span>
-		</div>
-		<% else %>
-			<div class="span7 clear-left-margin title-dropdown">
+			<% else %>
 				<h1><%= @portal.portal_name %></h1>
-				<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
-			</div>
-		<% end %>
+			<% end %>
+			<div class="muted"><%= t("solution.currently_viewing", :portal_name => @portal.portal_name)%></div>
+		</div>
 	</div>
 </div>

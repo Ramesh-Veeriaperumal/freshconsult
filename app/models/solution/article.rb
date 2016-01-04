@@ -47,6 +47,8 @@ class Solution::Article < ActiveRecord::Base
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_article_meta.new_record?"
   validate :status_in_default_folder
 
+  alias_method :parent, :solution_article_meta
+
   ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   default_scope proc {
     Account.current.launched?(:meta_read) ? joins(:solution_article_meta).preload(:solution_article_meta) : unscoped
@@ -119,6 +121,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_param
+    return parent_id if new_record?
     title_param = sterilize(title[0..100])
     parent_id ? "#{parent_id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
   end

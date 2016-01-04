@@ -6,7 +6,7 @@ class Va::Performer
 	CUSTOMER = '2'
 	ANYONE = '3'
 	ASSIGNED_AGENT = -1
-	TYPE_CHECK = { ANYONE => 'present?', CUSTOMER => 'customer?', AGENT => 'agent?' }
+	TYPE_CHECK = { ANYONE => 'present?', CUSTOMER => 'customer_performed?', AGENT => 'agent_performed?' }
 
 	def initialize args
 		@type    = args[:type]
@@ -15,14 +15,15 @@ class Va::Performer
 
 	def matches? doer, ticket
 		Rails.logger.debug "INSIDE Performer.matches? WITH ticket : #{ticket.inspect}, doer #{doer}"
-		return false unless check_type doer
+		return false unless check_type doer, ticket
 		members.nil? ? true : (check_members doer, ticket)
 	end
 
   private
 
-  	def check_type doer
-	    doer.send TYPE_CHECK[type]
+  	def check_type doer, ticket
+			return doer.send TYPE_CHECK[type] if type == ANYONE
+	    ticket.send TYPE_CHECK[type], doer
 	  end
 
 	  def check_members doer, ticket

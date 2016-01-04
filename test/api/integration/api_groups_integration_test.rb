@@ -13,11 +13,11 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         api_index: 0,
         api_destroy: 11,
 
-        create: 22,
-        show: 13,
-        update: 20,
-        index: 12,
-        destroy: 34
+        create: 24,
+        show: 15,
+        update: 22,
+        index: 14,
+        destroy: 36
       }
 
       v2_payload = v2_group_payload
@@ -43,7 +43,7 @@ class ApiGroupsIntegrationTest < ActionDispatch::IntegrationTest
         assert_response 200
       end
 
-      v1[:show] += 1 # account suspended check is done in v2 alone.
+      v1[:show] += 3 # account suspended check is done in v2 alone. & trusted_ip check
 
       # update
       v2[:update], v2[:api_update], v2[:update_queries] = count_api_queries do
