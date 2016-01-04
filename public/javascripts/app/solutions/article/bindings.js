@@ -14,6 +14,7 @@ window.App = window.App || {};
 
       this.bindForCancelBtn();
       this.bindForEditBtn();
+      this.bindForShowMaster();
 
       this.dummyActionButtonTriggers();
       this.modalBindings();
@@ -105,7 +106,7 @@ window.App = window.App || {};
           $this.autoSave.contentChanged = false;
           $this.autoSave.totalCount = 0;
           $this.autoSave.successCount = 0;
-          $this.autoSave.failureCount = 0; 
+          $this.autoSave.failureCount = 0;
         }
       });
     },
@@ -147,7 +148,7 @@ window.App = window.App || {};
         if ($this.unsavedContent()) {
           var msg = $this.STRINGS.unsavedContent;
           e = e || window.event;
-          if (e) { 
+          if (e) {
             e.returnValue = msg;
           }
           return msg;
@@ -274,6 +275,23 @@ window.App = window.App || {};
           return { id: term, text: term };
         }
       });
+    },
+
+    bindForShowMaster: function(){
+      $('body').on('click.articles', '#show_master_article', function (ev) {
+         ev.preventDefault();
+         $('#show_master_article').fdpopover('show');
+       });
+
+      $('#show_master_article').fdpopover({
+        trigger:"manual",
+        html:true,
+        content: function() {
+          return $('#master_article').html();
+        }
+      });
+
+
     }
   });
 }(window.jQuery));

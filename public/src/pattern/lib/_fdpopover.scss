@@ -1,24 +1,42 @@
 //
-// Popovers
+// FDPopover
 // --------------------------------------------------
-// No need RTL, handled in js
 
-
-.popover {
-  position: absolute;
+.fd-popover {
+  position: fixed;
   top: 0;
   left:0;
   z-index: $zindexPopover;
   padding: 6px;
   display: none;
+  max-width: 350px;
+  min-width: 350px;
+
   .inner {
-    background: $popoverStroke;
-    background: rgba($popoverStroke, 0.8);
-    padding: 4px 1px 1px;
+    background: #FFF;
     overflow: hidden;
     @include min-width(220px);
     @include border-radius($popover-radius);
-    @include box-shadow(0 10px 30px -10px rgba(0, 0, 0, 0.4));
+    @include box-shadow(0 0 10px rgba(0,0,0,0.3));
+    @include margin-left(4px);
+    border: 1px solid #787878;
+    .fd-popover-close {
+      position: relative;
+      right: 8px;
+      top:7px;
+    	padding: 0px;
+    	cursor: pointer;
+    	background: transparent none repeat scroll 0px 0px;
+    	border: 0px none;
+      float: right;
+    	font-size: 21px;
+    	font-weight: 700;
+
+    	color: #787878;
+    	text-shadow: 0px 1px 0px #FFF;
+      outline: none;
+
+    }
   }
   .title {
     margin: 0; // reset heading margin
@@ -29,16 +47,23 @@
     @include border-radius($popover-radius $popover-radius 0 0);
   }
   .content {
-    overflow:hidden; // fix for Contact hover
     background-color: #ffffff;
-    padding: 14px;
-    @include border-radius($popover-radius);
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
+    // height: 500px;
+    // overflow: auto;
+    font-size: 90%;
     p, ul, ol{
       margin-bottom: 0;
     }
+    img {
+      max-width: 100%;
+    }
+    table, th, td {
+     border: 1px solid #afafaf;
+    }
+
   }
 
   .arrow {
@@ -50,9 +75,11 @@
       display:block;
       position: absolute;
       width:0; height:0;
+      z-index: 2000;
     }
+    @include margin-left(4px);
   }
-  /*
+
   &.above{
     .arrow {
       bottom: -1px;
@@ -68,7 +95,7 @@
         border-left: $popover-arrow-size solid transparent;
         border-right: $popover-arrow-size solid transparent;
         border-top: $popover-arrow-size solid $popover-arrow-color;
-        z-index: 2000;
+
       }
     }
   }
@@ -96,20 +123,20 @@
   }
   &.left{
     .arrow {
-      top: 50%;
+      //top: 50%;
       right: -1px;
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
       border-left: $popover-arrow-size solid  $popoverStroke;
       &:after {
-        top: 0px;
+        //top: 0px;
         right: 1px;
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
         border-left: $popover-arrow-size solid $popover-arrow-color;
-        z-index: 2000;
+
       }
     }
   }
@@ -134,20 +161,18 @@
   }
   &.right{
     .arrow {
-      top: 50%;
       left: -2px;
       margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
       border-right: $popover-arrow-size solid $popoverStroke;
       &:after {
-        top: 0px;
         left: 1px;
         margin-top: -$popover-arrow-size;
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
         border-right: $popover-arrow-size solid $popover-arrow-color;
-        z-index: 2000;
+
       }
     }
   }
@@ -166,11 +191,10 @@
         border-top: $popover-arrow-size solid transparent;
         border-bottom: $popover-arrow-size solid transparent;
         border-right: $popover-arrow-size solid $popover-arrow-color;
-        z-index: 2000;
+
       }
     }
   }
-  */
   .negtive-margin{
     margin:-27px;
   }

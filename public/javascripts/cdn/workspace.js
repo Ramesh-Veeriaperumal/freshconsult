@@ -4,6 +4,7 @@
 //= require app/loading-init.js
 //= require bootstrap/tabs.js
 //= require bootstrap/popover.js
+//= require bootstrap/FDPopover.js
 //= require dyn_menu.js
 //= require fast_autocompleter.js
 //= require factory_ui.js

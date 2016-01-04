@@ -6,6 +6,30 @@
 	</span>
 <% else %>
 	<%= article_language_tabs %>
+	<span class="pull-right">
+
+		<a href="#" id="show_master_article"  role="button" data-toggle="popover" data-placement="right" data-title="<%= @article.title %>">
+			Show Master</a>
+	</span>
+	<div style='display:none;' id="master_article">
+		<div  id="master_article_inner">
+				<ul class="nav nav-tabs sleek-tab" id="master-article-tab">
+				  		<li><a href="#draft" data-toggle="tab">Draft</a></li>
+				  		<li  class="active"><a href="#published" data-toggle="tab">Published</a></li>
+				</ul>
+				<div class="master-article-tab-content tab-content">
+					<div id="draft" class="tab-pane">
+						<h1> Draft content </h1>
+					</div>
+					<div id="published" class="tab-pane active">
+						<%= render :partial => "view"  %>
+					</div>
+				</div>
+		</div>
+	</div>
+
+
+
 	<%= extra_tab if @lang_objs.length == 1 %>
 	<% if @lang_objs.present? %>
 		<div class="inline-block">
