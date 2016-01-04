@@ -15,6 +15,10 @@ var FreshfoneUser,
 		if (this.online) { this.updateUserPresence(); }
 		if (!freshfone.user_phone) { this.toggleAvailabilityOnPhone(true); }
 		this.bindUserPresenceHover();
+		if(this.chromeSSLRestriction()){
+			//From "47.0.2526.80" Chrome version, SSL is mandated. So, giving alerts temporarily
+			this.bindSSLAlert();
+		}
 	};
 
 
@@ -343,6 +347,28 @@ var FreshfoneUser,
 	      $(element).prepend($('<span class="icon ticksymbol"></span>'));
 	      this.updateAvailabilityOptionTemplate($(element).attr('id'));
 	    }
+		},
+		bindSSLAlert: function(){
+			$('.browser_alert').show();
+			$("a[rel=ff-alert-popover]").livequery(function(){
+				$(this).popover({ 
+				  trigger: 'manual',
+				  offset: 0,
+				  html: true,
+				  template: $("#alert_message").html()
+				}); 
+			});
+		},
+		chromeSSLRestriction: function(){
+			if (window.chrome && window.location.protocol === "http:") {
+				var version = $.browser.version.split(".");	
+		  	var stable = parseInt(version[0]);
+		  	var patch = parseInt(version[2]);
+				if(stable > 47 || (stable == 47 && patch >= 2526)){
+					return true;
+				}
+				return false;
+			}
 		}
 	};
 }(jQuery));

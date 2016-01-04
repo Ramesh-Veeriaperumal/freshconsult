@@ -6,6 +6,9 @@
 	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
 </div>
 <div class="freshfone_widget">
+  <div class="browser_alert hide">
+   <a class="alert_popup" href="#" title="phoneicon" data-placement="above" rel="ff-alert-popover"><i class="ficon-alert active fsize-20"></i></a> 
+  </div>
 	<div class="ff_desktop_notification hide tooltip" 
 		data-placement="left" title="<%= t('freshfone.widget.desktop_notification') %>">
 		<div class="desktopNotifier"><%= font_icon "bell", :size => 22 %></div>

@@ -2400,14 +2400,29 @@ Helpkit::Application.routes.draw do
     # end
   end
 
-  constraints(lambda {|req| req.subdomain == AppConfig['freshops_subdomain'] })  do 
+  constraints(lambda {|req| FreshopsSubdomains.include?(req.subdomain) })  do 
     namespace :fdadmin, :name_prefix => "fdadmin_", :path_prefix => nil do
+
+      resources :billing, :only => :none do 
+        collection do 
+          post :trigger
+        end
+      end
+
+      resources :freshops_pod, :only => :none do 
+        collection do 
+          get :fetch_pod_info
+          post :pod_endpoint
+        end
+      end
+      
       resources :subscriptions, :only => [:none] do
         collection do
           get :display_subscribers
           get :customers
           get :customer_summary
           get :deleted_customers
+          get :account_subscription_info
         end
       end
 
