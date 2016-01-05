@@ -1329,7 +1329,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.integer "forum_category_id", :limit => 8
     t.integer "forum_type"
     t.integer "import_id",         :limit => 8
-    t.integer "forum_visibility",
+    t.integer "forum_visibility"
     t.boolean "convert_to_ticket"
   end
 
