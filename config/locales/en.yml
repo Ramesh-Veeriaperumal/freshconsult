@@ -2795,6 +2795,7 @@ en:
                     Primary language CANNOT be changed
                     when multilingual support is enabled
       supported_languages_validity: "should be valid"
+      portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!

@@ -33,6 +33,7 @@ describe AccountsController do
   it 'should get account data on edit without redis_display_id feature' do
     get :edit
     @account.features.redis_display_id.destroy
+    assigns[:supported_languages_list].should be_eql(@account.account_additional_settings.supported_languages)
     assigns[:ticket_display_id].should be_eql(@account.get_max_display_id)
   end
 
@@ -156,6 +157,9 @@ describe AccountsController do
             :language => @primary_language
           },
           :account_additional_settings_attributes => {
+            :supported_languages => [],
+            :additional_settings => {
+            }
           },
           :id => @account.id
         }
@@ -171,7 +175,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages => @secondary_languages
+            :supported_languages => @secondary_languages,
+            :additional_settings => {
+            }
           },
           :id => @account.id
         }
@@ -185,7 +191,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages => @secondary_languages
+            :supported_languages => @secondary_languages,
+            :additional_settings => {
+            }
           },
           :id => @account.id
         }
@@ -207,6 +215,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
+            :supported_languages => [],
+            :additional_settings => {
+            }
           },
           :main_portal_attributes => {
             :language => @primary_language,
@@ -223,6 +234,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
+            :supported_languages => [],
+            :additional_settings => {
+            }
           },
           :main_portal_attributes => {
             :language => "test-primary",
@@ -240,7 +254,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages => @secondary_languages
+            :supported_languages => @secondary_languages,
+            :additional_settings => {
+            }
           },
           :main_portal_attributes => {
             :language => @primary_language,
@@ -257,7 +273,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages =>  []
+            :supported_languages =>  [],
+            :additional_settings => {
+            }
           },
           :main_portal_attributes => {
             :language => @primary_language,
@@ -277,7 +295,9 @@ describe AccountsController do
       put :update_languages, {
         :account => {
           :account_additional_settings_attributes => {
-            :supported_languages => @secondary_languages
+            :supported_languages => @secondary_languages,
+            :additional_settings => {
+            }
           },
           :main_portal_attributes => {
             :language => @primary_language,
@@ -291,6 +311,29 @@ describe AccountsController do
       @account.supported_languages.should eql(lang_arr)
       @account.language.should_not eql(@primary_language)
       @account.language.should eql(lang)
+    end
+
+    it "should not update the languages if portal languages are not a subset of supported languages" do
+      lang_arr = @account.portal_languages
+      portal_languages = @secondary_languages + ["test"]
+      put :update_languages, {
+        :account => {
+          :account_additional_settings_attributes => {
+            :supported_languages => @secondary_languages,
+            :additional_settings => {
+              :portal_languages => portal_languages
+            }
+          },
+          :main_portal_attributes => {
+            :language => @primary_language,
+            :id => @account.main_portal.id
+          },
+          :id => @account.id
+        }
+      }
+      @account.reload
+      @account.portal_languages.should_not eql(portal_languages)
+      @account.portal_languages.should eql(lang_arr)
     end
   end
 
@@ -314,7 +357,7 @@ describe AccountsController do
       @account.language.should eql(primary_language)
     end
 
-    it "should not update the primary language if the language is not a part of the available locales and multilingual feature is enabled" do
+    it "should not update the primary language if the language is not a part of the available locales and multilingual feature is not enabled" do
       destroy_enable_multilingual_feature
       put :update, {
         :account => {

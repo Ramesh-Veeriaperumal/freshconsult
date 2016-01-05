@@ -35,6 +35,7 @@ window.App = window.App || {};
 				break;
 				
 			case 'accounts/manage_languages':
+			case "accounts/update_languages":
 				this.current_module = 'LanguageSettings';
 				break;
 			}
