@@ -30,7 +30,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
       JOIN subscriptions ON subscriptions.account_id = accounts.id 
-      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 300 DAY) AND
+      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND
       subscriptions.state = 'active' 
       ORDER BY freshfone_payments.created_at DESC LIMIT 10"
     end
