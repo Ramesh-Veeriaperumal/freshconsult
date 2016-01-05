@@ -1142,23 +1142,23 @@ en:
         new_quest: New Quest
         quest_title: Quests
     surveys:
-     successfully_created: Customer Satisfaction settings has been successfully created.
-     successfully_updated: Customer Satisfaction settings has been successfully updated.
-     successfully_deleted: Survey has been successfully deleted.
-     error_updated: Error while updating survey settings.
-     custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
+      successfully_created: Customer Satisfaction settings has been successfully created.
+      successfully_updated: Customer Satisfaction settings has been successfully updated.
+      successfully_deleted: Survey has been successfully deleted.
+      error_updated: Error while updating survey settings.
+      custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
-     Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
-     <br><br>
-     <b>Agent survey and follow-up surveys</b><br>
-     You can ask one agent survey question and multiple follow-up survey questions.
-     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
-     The observer rules and gamification points will be based only on the agent survey rating.<br>
-     <br><br>
-     <b>Points scale</b><br>
-     You can choose different point scales for the agent survey and follow-up survey. It could be<br>
+      You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+      You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
+      Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
+      <br><br>
+      <b>Agent survey and follow-up surveys</b><br>
+      You can ask one agent survey question and multiple follow-up survey questions.
+      The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
+      The observer rules and gamification points will be based only on the agent survey rating.<br>
+      <br><br>
+      <b>Points scale</b><br>
+      You can choose different point scales for the agent survey and follow-up survey. It could be<br>
       2 point (Eg: Yes, No)<br>
       3 point (Eg: Agree, Undecided, Disagree)<br>
       5 point (Eg: Always to Never)<br>
@@ -1167,34 +1167,34 @@ en:
       Once a customer takes the survey, the scales will be locked down and they cannot be edited.
       </p>"
 
-     helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
+      helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
 
-     Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
-     <br><br>
-     <b>Creating your satisfaction survey:</b><br>
-     The following steps let you collect feedback from your customers through a link in your response emails:<br>
-     1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
-     <br>
-     <b>Choose which emails have the satisfaction survey link:</b><br>
-     You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
-     <br><br>
-     You can learn more about satisfaction surveys from our solutions page.
-     </p>"
-     limit_exceed_error: You can only add upto %{count} surveys.
-     custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+      Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
+      <br><br>
+      <b>Creating your satisfaction survey:</b><br>
+      The following steps let you collect feedback from your customers through a link in your response emails:<br>
+      1.Enable the Customer Satisfaction Surveys checkbox<br>
+      2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
+      <br>
+      <b>Choose which emails have the satisfaction survey link:</b><br>
+      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
+      <br><br>
+      You can learn more about satisfaction surveys from our solutions page.
+      </p>"
+      limit_exceed_error: You can only add upto %{count} surveys.
+      custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
-     Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
-     <br><br>
-     <b>Satisfaction Survey</b><br>
-     You can ask one customer satisfaction survey question and additional survey questions.
-     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
-     The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
-     <br><br>
-     <b>Point scales</b><br>
-     You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
+      You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+      You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
+      Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
+      <br><br>
+      <b>Satisfaction Survey</b><br>
+      You can ask one customer satisfaction survey question and additional survey questions.
+      The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
+      The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
+      <br><br>
+      <b>Point scales</b><br>
+      You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
       2 point (Eg: Yes, No)<br>
       3 point (Eg: Agree, Undecided, Disagree)<br>
       5 point (Eg: Always to Never)<br>
@@ -1203,16 +1203,16 @@ en:
       Once a customer takes the survey, the scales will be locked down and they cannot be edited.
       </p>"
 
-     questions:
+      questions:
         limit_exceed_error: You can only add upto %{count} questions.
-     new_layout:
+      new_layout:
         loading: Loading...
         default_survey: Default Survey
         title: Title
         title_error_text: Survey Name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
 
-     new_rating:
+      new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
@@ -1226,7 +1226,7 @@ en:
         scale_text: You have chosen
         scale: point scale
 
-     new_thanks:
+      new_thanks:
         survey_feedback: Survey Feedback Page
         survey_feedback_v2: Thank You Page
         thanks_feedback: Thank you for your valuable feedback.
@@ -1244,13 +1244,13 @@ en:
         help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
                     Questions can be about product/company/agent.
 
-     new_questions_layout:
+      new_questions_layout:
         title_text: Select the points scale for your questions
         title_text_v2: Select the point scale for your questions
         add_question: Add Question
         questions: Questions
 
-     index:
+      index:
         custom_title: Surveys
         title: Customer Satisfaction Settings
         new_survey: New Survey
@@ -1280,9 +1280,7 @@ en:
         survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
         on: ON
         off: OFF
-
-
-     choice_contents:
+      choice_contents:
         strongly_disagree: Strongly Disagree
         some_what_disagree: Some What Disagree
         disagree: Disagree
@@ -1291,7 +1289,7 @@ en:
         some_what_agree: Some What Agree
         strongly_agree: Strongly Agree
 
-     thanks_contents:
+      thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
         title_text_v2: Thank you message for Customer Satisfaction Survey.
         message_text: Thank you for your valuable feedback.
@@ -1300,7 +1298,7 @@ en:
         question_error_text: Question has been already entered.
         empty_text: Question value cannot be blank.
 
-     satisfaction_settings:
+      satisfaction_settings:
         enable_label: Customer Satisfaction Rating
         enable_label_v2: Customer Satisfaction Survey
         satisfaction_text: I am satisfied with the service provided to me by
