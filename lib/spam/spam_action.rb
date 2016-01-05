@@ -9,7 +9,7 @@ module Spam::SpamAction
     
     if domain_check(email_domain) && (3.days.ago < current_account.created_at) 
       if has_less_open_tickets?
-        @errors << t("email.spam_error")
+        @errors << t("email_notification.spam_error")
       end  
     end
   end
