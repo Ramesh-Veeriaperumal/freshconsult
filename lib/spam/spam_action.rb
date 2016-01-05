@@ -15,16 +15,7 @@ module Spam::SpamAction
   end
   
   def account_whitelisted?
-    all_accounts = get_all_members_in_a_redis_set(SPAM_NOTIFICATION_WHITELISTED_DOMAINS)
-    valid_accounts = []
-    all_accounts.each do |account_id|
-      if get_others_redis_key(notification_whitelisted_key(account_id)).nil?
-        remove_member_from_redis_set(SPAM_NOTIFICATION_WHITELISTED_DOMAINS, account_id)
-      else
-        valid_accounts << account_id
-      end
-    end
-    valid_accounts.include?(current_account.id.to_s)
+    !get_others_redis_key(notification_whitelisted_key(current_account.id)).nil?
   end
   
   def notification_whitelisted_key(account)
