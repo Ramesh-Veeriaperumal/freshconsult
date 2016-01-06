@@ -60,7 +60,7 @@ describe Discussions::TopicsController do
 
 		new_post.user_id.should eql @agent.id
 		new_post.account_id.should eql @account.id
-		Monitorship.count.should eql old_follower_count  1
+		Monitorship.count.should eql old_follower_count + 1
 		Monitorship.last.portal_id.should_not be_nil
 
 		response.should redirect_to "/discussions/topics/#{new_topic.id}"
@@ -315,7 +315,7 @@ describe Discussions::TopicsController do
 
     put :vote, :id => topic.id
     liked_topic = @account.topics.find_by_id(topic.id)
-    liked_topic.user_votes.should be_eql(vote_count  1)
+    liked_topic.user_votes.should be_eql(vote_count + 1)
     vote = liked_topic.votes.find_by_user_id(@agent.id)
     vote.should be_an_instance_of(Vote)
     vote.voteable_id.should eql topic.id
