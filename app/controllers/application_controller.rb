@@ -175,12 +175,16 @@ class ApplicationController < ActionController::Base
   end
 
   def append_info_to_payload(payload)
-    super
-    payload[:domain] = request.env['HTTP_HOST']
-    payload[:ip] = request.env['CLIENT_IP']
-    payload[:url] = request.url
-    payload[:server_ip] = request.env['SERVER_ADDR']
-    payload[:account_id] = Account.current.id
+    begin
+      super
+      payload[:domain] = request.env['HTTP_HOST']
+      payload[:ip] = request.env['CLIENT_IP']
+      payload[:url] = request.url
+      payload[:server_ip] = request.env['SERVER_ADDR']
+      payload[:account_id] = Account.current? Account.current.id.to_s : ""
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:description => "Error occoured while appending info to payload for controller logging."})
+    end
   end
 
   protected

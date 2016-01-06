@@ -18,7 +18,11 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   end
 
   def logging_format(payload)
-    @log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime].round(2)}, view_time=#{payload[:view_runtime].round(2)}"
+    begin
+      @log_file_format = "ip=#{payload[:ip]}, account_id=#{payload[:account_id]}, domain=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, controller=#{payload[:controller]}, action=#{payload[:action]}, server_ip=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db_runtime=#{payload[:db_runtime].round(2)}, view_time=#{payload[:view_runtime].round(2)}"
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:description => "Error occoured while appending info to payload for controller logging."})
+    end
   end
 
   def log_file
