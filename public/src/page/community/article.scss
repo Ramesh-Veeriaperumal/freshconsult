@@ -701,5 +701,19 @@
       }
     }
   }
+
+  .draft-qtip{
+    &.ui-tooltip{
+      min-width: 120px;
+    }
+    .ui-tooltip-content{
+      @include border-radius(4px);
+      background-color: #FFF;
+      border-color: #E2E2E2;
+      padding: 10px;
+      .language_item:not(:last-child){ padding-bottom: 10px; }
+      .language_item{ font-weight: 500; }
+    }
+  }
   
 }

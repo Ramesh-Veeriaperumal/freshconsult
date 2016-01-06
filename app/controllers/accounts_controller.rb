@@ -284,7 +284,6 @@ class AccountsController < ApplicationController
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
       check_and_enable_multilingual_feature
-      Community::SolutionBinarizeSync.perform_async
       redirect_to admin_home_index_path
     else
       render :action => 'manage_languages'
@@ -557,6 +556,7 @@ class AccountsController < ApplicationController
       if @account.supported_languages.present?
         @account.features.enable_multilingual.create
       end
+      Community::SolutionBinarizeSync.perform_async
     end
 
     def validate_portal_language_inclusion

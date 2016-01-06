@@ -33,11 +33,11 @@ class Account < ActiveRecord::Base
   end
 
   def all_language_ids
-    applicable_language_ids + [language_object.id]
+    [language_object.id] + applicable_language_ids
   end
 
   def all_language_objects
-    supported_languages_objects + [language_object]
+    [language_object] + supported_languages_objects
   end
 
   def portal_languages_objects

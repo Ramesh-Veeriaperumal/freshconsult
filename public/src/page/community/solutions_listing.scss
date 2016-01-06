@@ -301,16 +301,7 @@
       @include float(left);
       padding: 10px 17px 7px 17px;
     }
-
-    .draft-label:before {
-      content: "...";
-      position: relative;
-      top: 25px;
-      width: 100%;
-      color: #999;
-      float: left;
-      text-align: center;
-    }
+    
     .article-list-meta .meta-component .ficon-dislike{
       top: 5px;
       position: relative;
