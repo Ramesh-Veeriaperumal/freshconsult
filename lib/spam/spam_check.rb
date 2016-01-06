@@ -1,5 +1,6 @@
 require 'net/http'
 require 'uri'
+require 'spam/spam_result'
 
 module Spam
   class SpamCheck
