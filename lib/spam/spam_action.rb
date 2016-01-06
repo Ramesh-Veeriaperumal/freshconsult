@@ -27,6 +27,6 @@ module Spam::SpamAction
   end
   
   def has_less_open_tickets?
-    current_account.tickets.where(:status => Helpdesk::Ticketfields::TicketStatus::OPEN).limit(11).count < 11
+    current_account.tickets.limit(11).count < 10
   end
 end
