@@ -65,6 +65,8 @@ defaults: &defaults
     - [update_users_company_id]
     - [update_tickets_company_id]
     - [email_notification_spam_queue]
+    - [bulk_ticket_actions]
+    - [bulk_ticket_reply]
 
 development:
   <<: *defaults
