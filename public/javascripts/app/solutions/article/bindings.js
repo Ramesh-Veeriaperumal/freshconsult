@@ -287,7 +287,8 @@ window.App = window.App || {};
         html:true,
         content: function() {
           return $('#master_article').html();
-        }
+        },
+        offset:20
       });
 
 

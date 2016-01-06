@@ -39,7 +39,7 @@
 
         $tip
           .css({ top: 0, left: 0, display: 'block' })
-          .prependTo(document.body);
+          .insertAfter(this.$element);
 
         targetPos = this.$element.offset();
         pos = $.extend({}, this.$element.offset(), {
@@ -59,15 +59,15 @@
             tp = {top: 0 , left: pos.left + pos.width / 2 - actualWidth / 2};
             break;
           case 'left':
-            tp = {top: pos.height + 90 , left: pos.left - actualWidth - this.options.offset};
+
             arrow_pos = {top: targetPos.top / 2 -  this.$element[0].offsetHeight};
+            tp = {top: targetPos.top , left: pos.left - actualWidth - this.options.offset};
             break;
           case 'topLeft':
             tp = {top: 0 , left: pos.left - actualWidth - this.options.offset};
             break;
           case 'right':
-            tp = {top: pos.height + 90 , left: pos.left + pos.width + this.options.offset};
-            arrow_pos = {top: targetPos.top / 2 -  this.$element[0].offsetHeight,left: -2};
+            tp = {top: 0, left: pos.left  + this.options.offset};
             break;
           case 'topRight':
             tp = {top: 0 , left: pos.left + this.options.offset};
@@ -79,8 +79,6 @@
             tp = {top: 0 , left: pos.left + pos.width/2  - actualWidth/5 + this.options.offset};
             break;
         }
-
-        $arrow.css(arrow_pos);
 
         $tip
           .css(tp)
@@ -117,7 +115,7 @@
 
     tip: function() {
       if (!this.$tip) {
-        this.$tip = $('<div class="fd-popover"  rel="sticky" data-collapsed="true" data-scroll-top="true" data-sticky-bottom="true" />')
+        this.$tip = $('<div class="fd-popover"/>')
           .html(this.options.template);
       }
       return this.$tip;

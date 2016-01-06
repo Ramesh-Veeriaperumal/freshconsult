@@ -3,15 +3,12 @@
 // --------------------------------------------------
 
 .fd-popover {
-  position: fixed;
-  top: 0;
-  left:0;
+  position:absolute;
   z-index: $zindexPopover;
   padding: 6px;
   display: none;
   max-width: 350px;
   min-width: 350px;
-
   .inner {
     background: #FFF;
     overflow: hidden;
@@ -23,15 +20,13 @@
     .fd-popover-close {
       position: relative;
       right: 8px;
-      top:7px;
+      top:6px;
     	padding: 0px;
     	cursor: pointer;
     	background: transparent none repeat scroll 0px 0px;
     	border: 0px none;
       float: right;
-    	font-size: 21px;
-    	font-weight: 700;
-
+    	font-size: 22px;
     	color: #787878;
     	text-shadow: 0px 1px 0px #FFF;
       outline: none;
@@ -161,8 +156,9 @@
   }
   &.right{
     .arrow {
+      top:85px;
       left: -2px;
-      margin-top: -$popover-arrow-size;
+      //margin-top: -$popover-arrow-size;
       border-top: $popover-arrow-size solid transparent;
       border-bottom: $popover-arrow-size solid transparent;
       border-right: $popover-arrow-size solid $popoverStroke;
@@ -198,4 +194,26 @@
   .negtive-margin{
     margin:-27px;
   }
+  // For sleek tabs customization
+  .nav-tabs {
+    li{
+      a{
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+    &.sleek-tab {
+      li {
+        a {
+          padding: 10px 0 5px 0;
+        }
+      }
+    }
+  }
+
+
+}
+// For sticky padding adjustment
+.is_stuck .fd-popover.right .arrow {
+  top:65px;
 }

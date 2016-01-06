@@ -309,13 +309,17 @@ body.community #sticky_header.category-sticky.is_stuck {
   }
 }
 
+#show_master_article {
+  position: relative;
+  top:14px;
+}
 
 #master-article-tab {
-  padding:0 10px;
+  padding:0 10px 0 15px;
 }
 
 .master-article-tab-content {
-    padding:10px;
+    padding:10px 15px;
     height: 500px;
     overflow: auto;
 }
