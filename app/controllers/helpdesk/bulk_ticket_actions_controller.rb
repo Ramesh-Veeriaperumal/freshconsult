@@ -109,7 +109,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     def validate_params
       #Removing invalid ticket types
       ticket_types = Account.current.ticket_types_from_cache.collect(&:value)
-      unless ticket_types.include?(params[:helpdesk_ticket][:ticket_type])
+      if params[:helpdesk_ticket] && !ticket_types.include?(params[:helpdesk_ticket][:ticket_type])
         params[:helpdesk_ticket].delete(:ticket_type)
       end
     end
