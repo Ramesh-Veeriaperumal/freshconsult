@@ -1,3 +1,5 @@
+require 'spam/spam_check'
+
 module Admin
   class SpamCheckerWorker < BaseWorker
 

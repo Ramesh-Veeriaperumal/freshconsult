@@ -36,7 +36,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
       end
       if @email_notification.update_attributes(params[:email_notification])
         # we should handle this at model level in future
-        spam_check(params[:email_notification][:agent_template])
+        template_spam_check
         flash[:notice] = t(:'flash.email_notifications.update.success')
       else
         flash[:notice] = t(:'flash.email_notifications.update.failure')
@@ -97,5 +97,13 @@ class Admin::EmailNotificationsController < Admin::AdminController
       :referrer => request.referrer,
       :notification_type => @email_notification.notification_type}
     )
+  end
+  
+  def template_spam_check
+    email_notfn = params[:email_notification]
+    user = email_notfn.keys[0].include?("requester") ? "requester" : "agent"
+    ["subject_template", "template"].each do |suffix|
+      spam_check(email_notfn["#{user}_#{suffix}"])
+    end    
   end
 end
