@@ -27,13 +27,7 @@
 				</div>
 				<% if article.any_supported_draft_present? %>
 					<div class="span2 pull-right mt9 text-center article-info">
-						<%= content_tag :a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe,
-														:rel => "draft-qtip",
-														:class => "label",
-														"data-content-id" => "languages-qtip-contents-#{article.id}" %>
-						<div id="languages-qtip-contents-<%= article.id %>" class="hide">
-							<%= languages_popover(article) %>
-						</div>
+						<%= draft_label_popover(article) %>
 					</div>
 				<% end %>
 			</div>

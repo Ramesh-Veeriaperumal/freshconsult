@@ -46,21 +46,21 @@ module Solution::LanguageAssociations
 
     base::BINARIZE_COLUMNS.each do |col|
       define_method "any_supported_#{col}?" do
-        Account.current.applicable_languages.each do |lan|
+        Account.current.all_language_objects.map(&:to_key).each do |lan|
           return true if self.send("#{lan}_#{col}?")
         end
         return false
       end
 
       define_method "all_supported_#{col}?" do
-        Account.current.applicable_languages.each do |lan|
+        Account.current.all_language_objects.map(&:to_key).each do |lan|
           return false unless self.send("#{lan}_#{col}?")
         end
         true
       end
 
       define_method "supported_in_#{col}?" do
-        send("in_#{col}") & Account.current.applicable_languages.map(&:to_key)
+        send("in_#{col}") & Account.current.all_language_objects.map(&:to_key)
       end
     end
 

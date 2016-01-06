@@ -362,6 +362,19 @@ module SolutionHelper
 	  output.html_safe
 	end
 
+	def draft_label_popover article_meta
+		op = ""
+		options = {:class => "label"}
+		options.merge!({ :rel => "draft-qtip", 
+			"data-content-id" => "languages-qtip-contents-#{article_meta.id}"}) if current_account.multilingual?
+		op << content_tag(:a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe, options)
+		return op.html_safe unless current_account.multilingual?
+		op << "<div id='languages-qtip-contents-#{article_meta.id}' class='hide'>"
+		op << languages_popover(article_meta)
+		op << "</div>"
+		op.html_safe
+	end
+
 	def languages_popover article_meta
 		op = ""
 		draft_languages = Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft_present?") }
@@ -374,7 +387,7 @@ module SolutionHelper
 			op << "</div>"
 		end
 		op << "<div class='language_item text-center'>+#{t('solution.articles.more_languages', :count => draft_languages.size - 5)}</div>" if draft_languages.size > 5
-		op.html_safe
+		op
 	end
 
 	def category_delete_btn category
