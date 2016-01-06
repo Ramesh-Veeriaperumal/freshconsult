@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
@@ -60,7 +60,8 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, 
+        :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -81,7 +82,8 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :custom_survey => false, :gamification_enable => true, :google_signin => true,
+    :anonymous_tickets =>true, :survey_links => true, :default_survey => false, :custom_survey => false, 
+    :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,

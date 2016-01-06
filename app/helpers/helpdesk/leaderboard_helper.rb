@@ -16,7 +16,7 @@ module Helpdesk::LeaderboardHelper
 	end
 
 	def customer_satisfaction_enabled?
-		current_account.features?(:surveys, :survey_links)
+		current_account.any_survey_feature_enabled_and_active?
 	end
 
 	def date_filter

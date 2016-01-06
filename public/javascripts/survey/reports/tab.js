@@ -16,24 +16,33 @@ var SurveyTab = {
                 this.inactivate(jQuery(tabs[i]));
             }
         },
-        change:function(tabId,type){ 
-                SurveyTab.activeTab = {"id":tabId , "type" : type};
-                this.inactivateAll();
-                this.activate(jQuery("#"+tabId+"_"+type));
-                var tabRef = null;
-                tabRef = SurveyUtil.findQuestion(tabId);         
+        change:function(tabId,type,renderFlag){ 
+            SurveyTab.activeTab = {"id":tabId , "type" : type};
+            this.inactivateAll();
+            this.activate(jQuery("#"+tabId+"_"+type));
+            var tabRef = SurveyUtil.findQuestion(tabId);
+            SurveySummary.reset(type,tabId);
+            if(jQuery('#survey_overview_link').hasClass('active')){
                 SurveyChart.create(tabRef);
                 SurveyTable.reset(tabRef.id,tabRef);
-                SurveySummary.reset(type,tabId);
+            }
+            else{
+                if(renderFlag){
+                    SurveyRemark.renderFilterBy();
+                    SurveyState.RemarksOnly = true;
+                    SurveyState.fetch();
+                }
+            } 
         },
         data:function(){
            var survey = SurveyUtil.whichSurvey();
            var tabs = [];
-            for(var i=0;i<survey.survey_questions.length;i++){
+           var q_length = survey.survey_questions.length;
+            for(var i=0;i<q_length;i++){
                 var question = survey.survey_questions[i];
-                if(!question.rating){continue;}
                 var tab = this.format(question);
-                if(i == 0){
+                tab.disabled = (!question.rating) ? "disable" : "";
+                if(0 === i){
                     tab.title = SurveyI18N.overall_rating;
                 }else{
                     tab.title = SurveyI18N.question+i;
@@ -42,10 +51,11 @@ var SurveyTab = {
                 tab.state = (i==0) ? "active" : "inactive";
                 tabs.push(tab);
             }
+
             return tabs;
         },
         format:function(data){
-            var tab = SurveyUtil.consolidatedPercentage(data);
+            var tab = SurveyUtil.consolidatedPercentage(data,true);
             tab.id = data.id;
             tab.overallStatus = "neutral";
             if((tab.happy.percentage>tab.unhappy.percentage) 
@@ -56,26 +66,42 @@ var SurveyTab = {
         },
         isRequired:function(){
             return SurveyUtil.isQuestionsExist();
+        },        
+        renderSidebar:function(){
+                if(SurveyTab.isRequired()){
+                    jQuery("#survey_report_sidebar").html(
+                        JST["survey/reports/template/stats_tab_layout"]()
+                    );
+                    jQuery('.report-panel-content').removeClass('no_questions');
+                    SurveyTab.state();
+                }
+                else{
+                    jQuery("#survey_report_sidebar").html("");
+                    jQuery('.report-panel-content').addClass('no_questions');
+                }
         },
         state:function(){
             if(SurveyTab.activeTab != ''){
-                SurveyTab.change(SurveyTab.activeTab["id"],SurveyTab.activeTab["type"]);
+                SurveyTab.change(SurveyTab.activeTab["id"],SurveyTab.activeTab["type"],false);
             }
         },
         resetState:function(){
           SurveyTab.activeTab = '';
         },
         ToolTip:{
-            showToolTip:function(object,id,type){
+            showToolTip:function(object,id,type,title){
                 if(jQuery(object).parent().hasClass('active')){
                     return;
                 }
                 var data = jQuery(object).find('div#summary-content');
                 data.empty();
                 data.html(JST["survey/reports/template/content_summary"]({
-                        data:SurveySummary.create(type,id)
+                        data:SurveySummary.create(type,id,true)
                 }));
-                data.find('ul').remove();
+                if(!SurveyUtil.findQuestion(id).default){
+                    data.find('.well-survey').prepend("<div class='survey-tooltip-title pull-left'>"+title+ ". </div>");
+                }
+                data.find('.survey-answers').remove();
                 data.find('.muted').remove();
                 jQuery(object).qtip({
                   style: {

@@ -3,6 +3,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   include HelpdeskReports::Helper::Ticket
   include ApplicationHelper
   include ExportCsvUtil
+  include HelpdeskV2ReportsHelper
   helper HelpdeskV2ReportsHelper
   
   before_filter :check_account_state, :ensure_report_type_or_redirect, 

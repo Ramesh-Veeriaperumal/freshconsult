@@ -1,5 +1,5 @@
 class CustomSurvey::Survey < ActiveRecord::Base
-  belongs_to :account
+  belongs_to_account
   has_many :survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :foreign_key => :survey_id, :dependent => :destroy
   #custom_survey_handles is a temporary fix to access survey_handles through current_account in support
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :foreign_key => :survey_id, :dependent => :destroy
@@ -11,9 +11,12 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   accepts_nested_attributes_for :survey_questions
 
-  scope :active, :conditions => {:active => [true]}
+  scope :with_questions_and_choices, :include => :survey_questions
+  scope :active, :conditions => { :active => true }
+  scope :default, :conditions => { :default => true }
+  scope :custom,  :conditions => { :default => false }
   
-  validates_uniqueness_of :title_text, :scope => :account_id
+  validates :title_text, uniqueness: {scope: :account_id, message: I18n.t('admin.surveys.new_layout.title_error_text')}
 
   validates_length_of :title_text , :maximum => TITLE_TEXT_LIMIT
 

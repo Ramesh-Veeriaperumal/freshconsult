@@ -252,6 +252,7 @@ module Helpdesk::TicketsHelper
  
     requester_template = current_account.email_notifications.find_by_notification_type(EmailNotification::DEFAULT_REPLY_TEMPLATE).get_reply_template(ticket.requester)
     if(!requester_template.nil?)
+      requester_template.gsub!('{{ticket.satisfaction_survey}}', '')
       reply_email_template = Liquid::Template.parse(requester_template).render('ticket' => ticket,'helpdesk_name' => ticket.account.portal_name)
       # Adding <p> tag for the IE9 text not shown issue
       default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>"

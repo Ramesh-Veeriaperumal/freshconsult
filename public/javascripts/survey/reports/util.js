@@ -7,6 +7,10 @@ var SurveyUtil = {
              "NEUTRAL" : "ficon-survey-neutral",
              "UNHAPPY" : "ficon-survey-sad"
         },
+        surveyNavigate: function(event){
+            event.stopPropagation();
+            jQuery("#reports_type_menu").toggle();
+        },
         whichSurvey:function(){
             var surveySelectComponent = jQuery("#survey_report_survey_list");
             var selectedSurvey = SurveyReportData.surveysList[0];
@@ -33,10 +37,13 @@ var SurveyUtil = {
            }
         },
         updateData:function(data){
-             SurveyReportData.unanswered = data.unanswered;
-             SurveyReportData.questionsResult = JSON.parse(data.questions_result);
-             SurveyReportData.groupWiseReport = JSON.parse(data.group_wise_report);
-             SurveyReportData.agentWiseReport = JSON.parse(data.agent_wise_report);
+             SurveyReportData.questionsResult = data.aggregate_report;
+        },
+        updateTableData:function(data, question_id, type){
+            SurveyReportData.TableFormatData = data.table_format_data;
+            var question = SurveyReportData.questionTableData[question_id] || {} ;
+            question[type] = SurveyReportData.TableFormatData;
+            SurveyReportData.questionTableData[question_id] = question;
         },
         updateState:function(){
           SurveyState.isRating = false;
@@ -56,20 +63,42 @@ var SurveyUtil = {
                   survey.survey_questions[i]["rating"] = this.ratingFormat(SurveyUtil.findQuestionResult(survey.survey_questions[i].name));
             }
         },
-        makeURL:function(root){
-            if(!root){ root=""; }
+        getUrlData:function(){
+            var urlData = {};
             var surveyObj = jQuery("#survey_report_survey_list");
             var groupObj = jQuery("#survey_report_group_list");
             var agentObj = jQuery("#survey_report_agent_list");
-            var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
-            var rating = "all";
-            var url = surveyObj.val()+"/"+groupObj.val()+"/"+agentObj.val();
-            if(root=="remarks"){
-                var ratingVal = SurveyState.getFilter('rating_list');
-                if(ratingVal==undefined){ ratingVal = "r"; }
-                url = root+"/"+url+"/"+ratingVal;
+            
+
+            urlData['survey_id'] = surveyObj.val();
+            urlData['group_id'] = groupObj.val();
+            urlData['agent_id'] = agentObj.val();
+            urlData['survey_question_id'] = SurveyUtil.findQuestionId();
+            return urlData;
+        },
+        getDataName:function(id,type){
+            if(!id){
+                return;
             }
-            url = SurveyState.path + url + "/"+timestamp;
+            var list = (type == SurveyReportData.defaultAllValues.group) ? SurveyReportData.groupsList : SurveyReportData.agentsList;
+            for(var i=0; i<list.length;i++){
+                if(list[i].id == id){
+                    return list[i].name;
+                }
+            }
+        },
+        makeURL:function(root){
+            var urlData = SurveyUtil.getUrlData();
+            var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
+            var url = urlData.survey_id+"/"+urlData.group_id+"/"+urlData.agent_id;
+            if(root!="aggregate_report"){
+                url += "/"+ urlData.survey_question_id;
+                if(root=="responses"){
+                    var ratingVal = SurveyState.getFilter('rating_list') || SurveyReportData.defaultAllValues.rating;
+                    url += "/"+ ratingVal;
+                }
+            }
+            url = SurveyState.path+root+"/"+url+"/"+timestamp;
             
             return url;
         },  
@@ -91,6 +120,10 @@ var SurveyUtil = {
                         }
                 }
         },
+        findQuestionId:function(){
+            
+            return (SurveyTab.activeTab["id"] || SurveyUtil.whichSurvey().survey_questions[0].id);
+        },
         ratingFormat:function(obj){
             var newObj = {};
             if(!obj || obj.length==0){return;}
@@ -110,22 +143,28 @@ var SurveyUtil = {
             else if(rating<SurveyConstants.rating.NEUTRAL){ smileyKey="UNHAPPY"; }
             return SurveyUtil.smiley[smileyKey];
         },
-        consolidatedPercentage:function(data,type){
+        consolidatedPercentage:function(data,tooltipflag){
             var percentile = new Object({
                     happy: {
                         count:0,
                         smiley: SurveyUtil.smiley["HAPPY"],
-                        status: SurveyI18N.positive
+                        status: SurveyI18N.positive,
+                        dotClasses: [],
+                        dotValues: []
                     },
                     neutral: {
                         count:0,
                         smiley: SurveyUtil.smiley["NEUTRAL"],
-                        status: SurveyI18N.neutral
+                        status: SurveyI18N.neutral,
+                        dotClasses: [],
+                        dotValues: []
                     },
                     unhappy: {
                         count:0,
                         smiley: SurveyUtil.smiley["UNHAPPY"],
-                        status: SurveyI18N.negative
+                        status: SurveyI18N.negative,
+                        dotClasses: [],
+                        dotValues: []
                     }
             });
 
@@ -142,7 +181,24 @@ var SurveyUtil = {
                             percentile.neutral.count+=rating[key];
                         }
                 }
-                
+                if(tooltipflag != true){
+                    var choices = data["choices"];
+                    for(var i=0;i<choices.length;i++){
+                            var key = choices[i];
+                            if(key.face_value>SurveyConstants.rating.NEUTRAL){
+                                percentile.happy.dotClasses.push(SurveyReportData.customerRatingsStyle[key.face_value]);
+                                percentile.happy.dotValues.push(key.value);
+                            }
+                            else if(key.face_value<SurveyConstants.rating.NEUTRAL){
+                                percentile.unhappy.dotClasses.push(SurveyReportData.customerRatingsStyle[key.face_value]);
+                                percentile.unhappy.dotValues.push(key.value);
+                            }
+                            else{
+                                percentile.neutral.dotClasses.push(SurveyReportData.customerRatingsStyle[key.face_value]);
+                                percentile.neutral.dotValues.push(key.value);
+                            }
+                    }
+                }
                 var totalRating = percentile.happy.count+percentile.neutral.count+percentile.unhappy.count;
                 for(var key in percentile){
                     if(!totalRating){
@@ -153,7 +209,6 @@ var SurveyUtil = {
                     }
                 }
             }
-           
             return percentile;
             
         },
@@ -172,13 +227,13 @@ var SurveyUtil = {
                 var negativeOptions = [];
                 var positiveOptions = [];
                 var neutralOptions = []; 
-                var choices  = SurveyUtil.whichSurvey().choices;
+                var choices  = SurveyUtil.findQuestion(SurveyUtil.findQuestionId()).choices;
                 for(var c=0;c<choices.length;c++){
-                    if(choices[c].survey_question_choice.face_value == SurveyConstants.rating.EXTREMELY_UNHAPPY || 
-                        choices[c].survey_question_choice.face_value == SurveyConstants.rating.VERY_UNHAPPY ||
-                        choices[c].survey_question_choice.face_value == SurveyConstants.rating.UNHAPPY){
+                    if(choices[c].face_value == SurveyConstants.rating.EXTREMELY_UNHAPPY || 
+                        choices[c].face_value == SurveyConstants.rating.VERY_UNHAPPY ||
+                        choices[c].face_value == SurveyConstants.rating.UNHAPPY){
                           negativeOptions.push(SurveyUtil.rating.getChoiceFormat(choices[c],SurveyI18N.negative));
-                    }else if(choices[c].survey_question_choice.face_value == SurveyConstants.rating.NEUTRAL){
+                    }else if(choices[c].face_value == SurveyConstants.rating.NEUTRAL){
                           neutralOptions.push(SurveyUtil.rating.getChoiceFormat(choices[c],SurveyI18N.neutral));
                     }else{
                           positiveOptions.push(SurveyUtil.rating.getChoiceFormat(choices[c],SurveyI18N.positive));
@@ -213,15 +268,16 @@ var SurveyUtil = {
             },
             getChoiceFormat:function(choice,type){
              return {
-                      value: ""+choice.survey_question_choice.face_value,
-                      label: choice.survey_question_choice.value,
-                      class: SurveyConstants.iconClass[""+choice.survey_question_choice.face_value],
+                      value: ""+choice.face_value,
+                      label: choice.value,
+                      class: SurveyConstants.iconClass[""+choice.face_value],
                       type: type
                     };
             },
             filter:function(obj){
               SurveyState.store(obj,'rating_list');
               SurveyState.fetch();
+              SurveyState.RemarksOnly = true;
              }
         }
 }

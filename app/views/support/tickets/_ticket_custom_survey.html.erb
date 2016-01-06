@@ -4,10 +4,10 @@
     <div class="survey-form">
             <% 
                     form_display = ""
-                    choices = current_account.custom_surveys.active.first.choices
-                    unless @ticket.custom_survey_results.blank?
+                    choices = current_account.active_custom_survey_from_cache.choices
+                    sresult = @ticket.custom_survey_results.last
+                    unless sresult.blank?
                         form_display = "hide"
-                        sresult = @ticket.custom_survey_results.last
                         feedback = ""
                         feedback =  sresult.survey_remark.feedback.body unless sresult.survey_remark.blank?
                         rating_class = sresult.get_small_img_class
@@ -30,7 +30,7 @@
                 <% end %>
 
             <div id="survey-feedback" class="<%= form_display %>"> 
-                        <% unless @ticket.custom_survey_results.blank? %>
+                        <% unless sresult.blank? %>
                             <a href="#" class='feedback-text' data-toggle-dom="#survey-information, #survey-feedback">
                             <%=t('support.tickets.ticket_survey.back') %></a>
                         <% end %>
