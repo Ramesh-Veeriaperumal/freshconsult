@@ -26,15 +26,14 @@
 					</span>
 				</div>
 				<% if article.any_supported_draft_present? %>
-					<div class="span2 pull-right mt6 text-center article-info">
+					<div class="span2 pull-right mt9 text-center article-info">
 						<%= content_tag :a, "<span class='draft-label'>#{t('solutions.status.draft')}</span>".html_safe,
-														:rel => "hover-popover",
+														:rel => "draft-qtip",
 														:class => "label",
-														"data-placement" => "below",
-														"data-widget-container" => "languages-popover-contents-#{article.id}" %>
-						<textarea id="languages-popover-contents-<%= article.id %>" class="hide">
+														"data-content-id" => "languages-qtip-contents-#{article.id}" %>
+						<div id="languages-qtip-contents-<%= article.id %>" class="hide">
 							<%= languages_popover(article) %>
-						</textarea>
+						</div>
 					</div>
 				<% end %>
 			</div>

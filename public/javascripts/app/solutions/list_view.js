@@ -132,6 +132,7 @@ window.App = window.App || {};
       });
 
       focusFirstModalElement('folders_articles');
+      $this.initialiseDraftPopover();
     },
 
     toggleVisibleTo: function (flag) {
@@ -146,6 +147,28 @@ window.App = window.App || {};
         $('.language-bar').toggle();
         $('#hide-link').toggle();
         $('#show-link').toggle();
+      });
+    },
+
+    initialiseDraftPopover: function () {
+      $('[rel="draft-qtip"]').each(function () {
+        $(this).qtip({
+          prerender: false,
+          position: {
+            my: 'top left',
+            at: 'bottom left',
+            viewport: $(window)
+          },
+          style: {
+            classes: 'draft-qtip',
+            tip: {
+              mimic: 'center'
+            }
+          },
+          content: function() {
+            return $('#' + $(this).data('content-id')).html();
+          }
+        });
       });
     },
 

@@ -11,7 +11,7 @@
 		</div>
 		<% if @article_meta.new_record? %>
 			<div class="span4">
-				<%= f.label(:solution_folder_meta_id, t('solution.folder'), {
+				<%= f.label(:solution_folder_meta_id, folder_create_new, {
 						:class => "control-label", 
 						:for => "s2id_solution_article_meta_solution_folder_meta_id"}) %>
 				<%= f.select :solution_folder_meta_id, 

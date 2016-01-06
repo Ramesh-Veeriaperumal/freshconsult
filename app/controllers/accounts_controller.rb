@@ -47,6 +47,7 @@ class AccountsController < ApplicationController
   end   
    
   def edit
+    @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
     if current_account.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => current_account.id }
@@ -219,6 +220,7 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
+    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if dynamic_content_available? && !@account.multilingual_available?
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
@@ -282,7 +284,6 @@ class AccountsController < ApplicationController
     if @account.save
       flash[:notice] = t(:'flash.account.update.success')
       check_and_enable_multilingual_feature
-      Community::SolutionBinarizeSync.perform_async
       redirect_to admin_home_index_path
     else
       render :action => 'manage_languages'
@@ -555,6 +556,7 @@ class AccountsController < ApplicationController
       if @account.supported_languages.present?
         @account.features.enable_multilingual.create
       end
+      Community::SolutionBinarizeSync.perform_async
     end
 
     def validate_portal_language_inclusion
@@ -572,8 +574,9 @@ class AccountsController < ApplicationController
 
     def update_language_attributes
       @account = current_account
+      portal_languages = params[:account][:account_additional_settings_attributes][:additional_settings][:portal_languages]
       @account.main_portal_attributes = params[:account][:main_portal_attributes] unless @account.features?(:enable_multilingual)
       @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages]
-      @account.account_additional_settings.additional_settings[:portal_languages] =params[:account][:account_additional_settings_attributes][:additional_settings][:portal_languages].split(',')
+      @account.account_additional_settings.additional_settings[:portal_languages] = portal_languages.split(',') if portal_languages.present?
     end
 end

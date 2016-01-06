@@ -35,6 +35,7 @@
 							:class => "select2 required input-large", 
 							:name => "solution_folder_meta[solution_category_meta_id]"
 						}  %>
+				<%= category_create_new(f) if @folder_meta.new_record? %>
 			<% end %>
 	 	</div>
 	</li>
@@ -62,3 +63,7 @@
   </li>
   <%= dynamic_hidden_fields(:folder) %>
 </ul>
+<%= javascript_tag do %>
+	App.Solutions.AfterSave.bindCreateNew();
+<% end %>
+

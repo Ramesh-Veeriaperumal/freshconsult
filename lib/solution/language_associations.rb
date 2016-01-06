@@ -79,7 +79,7 @@ module Solution::LanguageAssociations
     end
 
     def compute_assign_binarize(col, child)
-      val = self.read_attribute(col) || 0
+      val = self.read_attribute(col).to_i || 0
       val = val | flag_mapping(col, child.language_key) if child.send("#{col}?")
       self[col] = val
     end

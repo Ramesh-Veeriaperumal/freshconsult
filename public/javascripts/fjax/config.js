@@ -33,6 +33,7 @@ window.Fjax = window.Fjax || {};
 		paths: {
 			"/discussions": 'discussions',
 			"/admin": 'admin',
+			"/account/update_languages": 'admin',
 			"/phone/call_history": 'freshfonecallhistory',
 			"/phone/dashboard": 'freshfonedashboard',
 			"/reports/phone/summary_reports": 'freshfonereports',

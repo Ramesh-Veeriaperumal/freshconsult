@@ -1,0 +1,46 @@
+<% multilingual_flag = @account.features?(:enable_multilingual) %>
+<div class="control-group">
+	<%= portal.label :language, 
+				"#{@account.multilingual_available? && multilingual_flag ? t('account.languages') : t('account.primary_language')}", 
+				:class => "control-label"  
+	%>
+	<div class="controls">
+		<% if @account.multilingual_available? && multilingual_flag %>
+			<div class="span4 multilingual-enabled">
+				<div class="muted">
+					<%= t('account.primary_language') %>
+				</div>
+				<div class="mt5">
+					<%= @account.language_object.name %>
+				</div>
+				<div class="muted mt5">
+					<%= t('account.additional_languages') %>
+				</div>
+				<div class="mt5 secondary-languages span9">
+					<%= @account.supported_languages_objects.join(', ') %>
+				</div>
+				<% if @account.portal_languages.present? %>
+					<div class="muted">
+						<%= t('account.portal_languages') %>
+					</div>
+					<div class="mt5">
+						<%= @account.portal_languages_objects.join(', ') %>
+					</div>
+				<% end %>
+			</div>
+			<div class="span3 manage-link">
+				<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>
+			</div>
+		<% else %>
+			<%= portal.select :language, 
+						I18n.available_locales_with_name , 
+						{
+							:selected =>  @account.main_portal.language.to_sym() 
+						}
+			%>
+			<span class="ml10">
+				<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path if @account.multilingual_available? %>
+			</span>
+		<% end %>
+	</div>
+</div>

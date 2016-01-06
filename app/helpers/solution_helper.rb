@@ -332,21 +332,24 @@ module SolutionHelper
 		<span class='muted'>#{primary.send(identifier)}<span>".html_safe unless primary.send(identifier).blank?
 	end
 
-	def dynamic_text_box(f, language, form)
+	def dynamic_text_box(f, language, form, options = {})
 		op = ""
 		parent_meta = instance_variable_get("@#{f}_meta")
-		obj_version = parent_meta.send("#{language.to_key}_#{f}")
-		if obj_version.present?
+		if parent_meta && parent_meta.send("#{language.to_key}_#{f}").present?
 			op << "<div class='pt5'>"
-			op << obj_version.name
+			op << parent_meta.send("#{language.to_key}_#{f}").name
 			op << "</div>"
 		else
 			op << text_field_tag("#{form.object_name}[#{language.to_key}_#{f}][name]", nil,
-	                         :class => "required",
+	                         :class => "required #{options[:class]}",
+	                         :id => "#{options[:id]}",
 	                         :autocomplete => "off",
-	                         :autofocus => true)
-	    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
-	    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
+	                         :autofocus => true,
+	                         :disabled => options[:disabled] || false)
+			if parent_meta
+		    op << hidden_field_tag("#{form.object_name}[id]", parent_meta.id)
+		    op << primary_preview(parent_meta.send("primary_#{f}"), :name)
+			end
 	  end
     op.html_safe
 	end
@@ -361,14 +364,16 @@ module SolutionHelper
 
 	def languages_popover article_meta
 		op = ""
-		Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft_present?") }.each do |language|
+		draft_languages = Account.current.all_language_objects.select { |l| article_meta.send("#{l.to_key}_draft_present?") }
+		draft_languages.first(5).each do |language|
 			op << "<div class='language_item'>"
 			op << "<span class='language_symbol #{language_style(article_meta, language)}'>"
 			op << "<span class='language_name'>#{language.short_code.capitalize}</span>"
 			op << "</span>"
-			op << "<span class='language_label'>#{language.name}</span>"
+			op << "<span class='language_label'> #{language.name}</span>"
 			op << "</div>"
 		end
+		op << "<div class='language_item text-center'>+#{t('solution.articles.more_languages', :count => draft_languages.size - 5)}</div>" if draft_languages.size > 5
 		op.html_safe
 	end
 
@@ -394,5 +399,25 @@ module SolutionHelper
 	
 	def solution_body_classes
 		"community solutions #{'multilingual' if current_account.multilingual?}"
+	end
+
+	def category_create_new(f)
+		op = "<div>"
+		op << link_to(t('solution.create_new'), '', :id => 'create-new-category')
+		op << link_to(t('cancel'), '', :id => 'cancel-create-new', :class => 'hide')
+		f.fields_for(:solution_category_meta) do |category_fields|
+			op << dynamic_text_box(:category, @language, category_fields, 
+									{ :class => "hide", :disabled => true, :id => 'create-category-text'})
+		end
+		op << "</div>"
+		op.html_safe
+	end
+
+	def folder_create_new
+		op = t('solution.folder')
+		op << "<span id='create-new'> - "
+		op << link_to(t('solution.create_new'), new_solution_folder_path((btn_default_params(:folder) || {}).merge({ :article => true })), new_btn_opts(:folder))
+		op << "</span>"
+		op.html_safe
 	end
 end

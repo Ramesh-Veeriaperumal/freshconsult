@@ -15,6 +15,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   serialize :resource_rlimit_conf, Hash
   validate :validate_bcc_emails
   validate :validate_supported_languages
+  validate :validate_portal_languages
 
   def handle_email_notification_outdate
     if supported_languages_changed? 
@@ -56,11 +57,17 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def validate_supported_languages
-    self.supported_languages.each do |l|
-      unless Language.all_codes.include?(l)
-        errors.add(:supported_languages, I18n.t('accounts.multilingual_support.supported_languages_validity'))
-        return false
-      end
+    if (self.supported_languages - Language.all_codes).present?
+      errors.add(:supported_languages, I18n.t('accounts.multilingual_support.supported_languages_validity'))
+      return false
+    end
+    return true
+  end
+
+  def validate_portal_languages
+    if ((self.additional_settings[:portal_languages] || []) - self.supported_languages).present?
+      errors.add(:portal_languages, I18n.t('accounts.multilingual_support.portal_languages_validity'))
+      return false
     end
     return true
   end

@@ -1,11 +1,13 @@
 class Account < ActiveRecord::Base
   
   def multilingual?
-    @is_multilingual ||= 
-      launched?(:translate_solutions) &&
-        features_included?(:multi_language)  &&
+    @is_multilingual ||= multilingual_available? &&
         features_included?(:enable_multilingual)  &&
         supported_languages.present?
+  end
+
+  def multilingual_available?
+    @is_multilingual_available ||= launched?(:translate_solutions) && features_included?(:multi_language)
   end
   
   def applicable_languages
@@ -31,11 +33,11 @@ class Account < ActiveRecord::Base
   end
 
   def all_language_ids
-    applicable_language_ids + [language_object.id]
+    [language_object.id] + applicable_language_ids
   end
 
   def all_language_objects
-    supported_languages_objects + [language_object]
+    [language_object] + supported_languages_objects
   end
 
   def portal_languages_objects

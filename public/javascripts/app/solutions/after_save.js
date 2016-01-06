@@ -19,6 +19,9 @@ window.App.Solutions = window.App.Solutions || {};
       this.bindHandlers();
     },
 
+    bindHandlers: function () {
+    },
+
     setCurrentObject: function (obj) {
       switch (App.namespace) {
       case this.NAMESPACES.category_show:
@@ -72,8 +75,21 @@ window.App.Solutions = window.App.Solutions || {};
       }
     },
 
-    bindHandlers: function () {
-      
+    reloadFolderSelect: function (element, data, val) {
+      $(element).html(data);
+      $(element).select2('val', val);
+      $('#create-new').remove();
+    },
+
+    bindCreateNew: function () {
+      $('#create-new-category, #cancel-create-new').on('click', function (ev) {
+        ev.preventDefault();
+        var flag = $(this).attr('id') === "create-new-category"
+        $('#solution_folder_meta_solution_category_meta_id').select2("enable", !flag);
+        $('#create-category-text').toggleClass('hide', !flag).attr('disabled', !flag);
+        $('#cancel-create-new').toggleClass('hide', !flag);
+        $('#create-new-category').toggleClass('hide', flag);
+      });
     },
 
     onLeave: function () {
