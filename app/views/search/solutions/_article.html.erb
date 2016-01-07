@@ -4,7 +4,7 @@
 		<td>
 			<div class="search-solution-content">
 				<%= content_tag :span, t('solutions.status.draft'), :class => 'draft-label' unless article.published? %>
-				<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
+				<%= content_tag :span, "", :class => 'private-icon' unless article.solution_folder_meta.visible?(current_user) %>
 				<%= article.title %>
 				<%= link_to font_icon('open-in-new-window', :size => 13), article_url, :target => "blank", 
 												:title => truncate( article.desc_un_html, :length => 100), :class => "open_in_new" %> 
@@ -12,7 +12,7 @@
 			<div class='actions-menu-wrapper'>
 				<div class="actions-menu">
 					<%= t('ticket.insert') %>:
-					<% if article.folder.visible?(@ticket.requester) && article.published? %>
+					<% if article.solution_folder_meta.visible?(@ticket.requester) && article.published? %>
 						<%= link_to_function t('ticket.suggested_solutions.link'), 
 										"respondWithSol('link', '#{article.id}', '#{article_url}', '#{escape_javascript(article.title)}')", 
 										:class => "btn btn-mini btn-flat" %>

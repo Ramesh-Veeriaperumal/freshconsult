@@ -1,5 +1,5 @@
 <form id="searchmoreform" class="searchmoreform" action="#">
-	<%= select_tag "language_id", options_from_collection_for_select(Language.all, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"} %>
+	<%= select_tag "language_id", options_from_collection_for_select(Account.current.all_language_objects, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"} %>
 
 	  <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
 	  <span class="searchicon"></span>
