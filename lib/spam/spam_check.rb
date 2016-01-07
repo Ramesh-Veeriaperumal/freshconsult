@@ -26,6 +26,7 @@ module Spam
                   options[:user_agent], 
                   options[:referrer]
                 ) unless is_spam?(result)
+      Rails.logger.debug "Spam check result is #{result} for params #{options}"
       notify_spam(result, options)
       return result
     end
