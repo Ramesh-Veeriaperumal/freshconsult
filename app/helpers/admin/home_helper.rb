@@ -106,8 +106,8 @@
         :privilege                     =>   privilege?(:manage_canned_responses)
       },
       :"survey-settings"               =>   {
-        :url                           =>   "/admin/surveys/",
-        :privilege                     =>   current_account.features?(:surveys) && privilege?(:admin_tasks)
+        :url                           =>   current_account.new_survey_enabled? ? "/admin/custom_surveys" : "/admin/surveys",
+        :privilege                     =>   current_account.any_survey_feature_enabled? && privilege?(:admin_tasks)
       },
       :"gamification-settings"         =>   {
         :url                           =>   "/admin/gamification",

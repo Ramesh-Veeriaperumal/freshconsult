@@ -8,14 +8,22 @@ var SurveyValidate = {
 			if(SurveyValidate.isUniqueName() && 
         SurveyValidate.questions.isBlank(survey_questions) && SurveyValidate.questions.isUnique(survey_questions)){
 				jQuery(this).ajaxSubmit(function(data){
-					survey_list = JSON.parse(data.surveys);
-					if(data.errors){
-						jQuery("#error").html(data.errors).show();
-						closeableFlash("#error");
-						jQuery("body").scrollTop(0);
-						return;
-					}
-					SurveyAdmin.list();
+          if(data.surveys){
+  					survey_list = JSON.parse(data.surveys);
+  					if(data.redirect_url){
+              pjaxify(data.redirect_url);
+  					}
+            else{
+              SurveyAdmin.list();
+            }
+          }
+          else{
+            for(key in data.errors){
+              jQuery("#"+key+"-error").html(data.errors[key]['0']).show();
+              jQuery('input[name='+key+']').addClass("error").focus();
+            }
+            return;
+          }
 				});
 			}
 			event.stopPropagation();
@@ -27,7 +35,7 @@ var SurveyValidate = {
     isUnique: function(questions){
       if(questions.length>0){
           for(i=0;i<questions.length;i++){
-            if(jQuery(questions[i])[0].value == jQuery('input[name="link_text"]').val()){
+            if(jQuery(questions[i])[0].value.trim() == jQuery('input[name="link_text"]').val().trim()){
                 var value = jQuery(questions[i])[0].value;
                 jQuery(questions[i]).focus();
                 jQuery(questions[i]).addClass('error');
@@ -36,7 +44,7 @@ var SurveyValidate = {
                 return false;
             }
             for(j=i+1;j<questions.length;j++){
-              if(jQuery(questions[i])[0].value == jQuery(questions[j])[0].value){
+              if(jQuery(questions[i])[0].value.trim() == jQuery(questions[j])[0].value.trim()){
                 var value = jQuery(questions[j])[0].value;
                 jQuery(questions[j]).focus();
                 jQuery(questions[j]).addClass('error');

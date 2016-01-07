@@ -4,6 +4,7 @@ class Support::Discussions::TopicsController < SupportController
   include SupportDiscussionsControllerMethods
   include SpamAttachmentMethods
   include CloudFilesHelper
+  include Community::Voting
 
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
                                       :users_voted, :destroy, :toggle_solution, :hit]

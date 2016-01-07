@@ -1040,6 +1040,21 @@ Redactor.prototype = {
 
 		this.$el.val(content);
 	},
+	removeCursorImage: function() {
+		//check HTML view in redactor
+		if(this.$el.is(":hidden")){ 
+			var removeCursor = this.$el.data('removeCursor');
+			if(removeCursor == undefined || removeCursor){
+				this.deleteCursor();	
+			} else {
+				if(jQuery.browser.mozilla){ 
+					// Add display:none style for cursor's <img> tag
+					this.$el.data('redactor').addNoneStyleForCursor();
+				}
+			}
+			this.changesInTextarea();
+		}
+	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
 	shortcuts: function(e, cmd, params)
@@ -4563,21 +4578,7 @@ $.fn.insertExternal = function(html)
 			jQuery(this.$form).on("submit", $.proxy(this.remove, this));
 		},
 		remove: function(){
-			//check HTML view in redactor
-			if(this.$editor.$el.is(":hidden")){ 
-				var removeCursor = this.$editor.$el.data('removeCursor');
-				if(removeCursor == undefined || removeCursor){
-					this.$editor.deleteCursor();	
-				} else {
-					if(jQuery.browser.mozilla){ 
-						// Add display:none style for cursor's <img> tag
-						this.$editor.$el.data('redactor').addNoneStyleForCursor();
-					}
-				}
-				
-				this.$editor.changesInTextarea();
-			}
-			
+			this.$editor.removeCursorImage();
 		}
 	}
 

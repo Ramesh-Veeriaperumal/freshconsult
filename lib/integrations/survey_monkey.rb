@@ -49,8 +49,10 @@ module Integrations::SurveyMonkey
   end
 
   def self.survey_html ticket
-    SurveyHelper.render_content_for_placeholder({:survey_handle => nil, :in_placeholder => true,
-                       :surveymonkey_survey => survey_for_notification(Survey::PLACE_HOLDER, ticket)})
+    args = {:survey_handle => nil, :in_placeholder => true,
+              :surveymonkey_survey => survey_for_notification(Survey::PLACE_HOLDER, ticket)}
+    Account.current.new_survey_enabled? ? CustomSurveyHelper.render_content_for_placeholder(args)
+                                        : SurveyHelper.render_content_for_placeholder(args) #ask Murugan
   end
 
   def self.show_surveymonkey_checkbox?

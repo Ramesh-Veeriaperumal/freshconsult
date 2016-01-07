@@ -160,10 +160,12 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def satisfaction_survey
-		if @source.account.custom_survey_enabled
-			CustomSurvey::Survey.satisfaction_survey_html(@source)
-		else
-			Survey.satisfaction_survey_html(@source)
+		@satisfaction_survey ||= begin
+			if @source.account.new_survey_enabled?
+				CustomSurvey::Survey.satisfaction_survey_html(@source)
+			else
+				Survey.satisfaction_survey_html(@source)
+			end
 		end
 	end
 

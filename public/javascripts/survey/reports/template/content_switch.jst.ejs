@@ -1,12 +1,10 @@
-<ul class="nav nav-pills">
+<ul class="nav nav-tabs sleek-tab">
  <li class="active survey_overview reports" id="survey_overview_link" data-container="survey_overview" data-hide-container="survey_responses">
   	<a href="#/overview"><%=SurveyI18N.overview%></a>
   </li>
-  <% if(SurveyUtil.whichSurvey().can_comment){%>
    <li class="survey_responses remarks" id="survey_responses_link" data-container="survey_responses" data-hide-container="survey_overview">
   	<a href="#/responses"><%=SurveyI18N.responses%></a>
   	</li>
-  <%}%>
 
   <div class="column dropdown pull-left" id="survey_report_filter_by_component" style="display:none;">
     <%= JST["survey/reports/template/filter_by_component"]()%>

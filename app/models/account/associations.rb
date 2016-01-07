@@ -193,10 +193,10 @@ class Account < ActiveRecord::Base
   has_many :survey_remarks
 
   has_many :custom_surveys, :class_name => 'CustomSurvey::Survey'
-  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :through => :custom_surveys, :source => :account
-  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle', :through => :custom_surveys
-  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult', :through => :custom_surveys
-  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark', :through => :custom_surveys
+  has_many :custom_survey_questions, :class_name => 'CustomSurvey::SurveyQuestion'
+  has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle'
+  has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult'
+  has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark'
 
   has_many :scoreboard_ratings
   has_many :scoreboard_levels

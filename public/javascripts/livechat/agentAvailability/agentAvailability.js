@@ -149,10 +149,12 @@
             }
           });
         }else{
-          return _.sortBy(collection.models, function(model){
+          return _.sortBy(_.sortBy(collection.models, function(model){
             if(model.attributes[that.filterBy]){
               return new Date(model.attributes[that.filterBy]).getTime() * -1; // -1 for getting reverse array with null values at last
             }
+          }), function(model){
+            return !model.attributes.onGoingChatCount;
           });
         }
       }

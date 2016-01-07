@@ -76,7 +76,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     { 
         "object"                =>  "ticket",
         "action"                =>  action,
-        "action_epoch"          =>  Time.zone.now.to_i,
+        "action_epoch"          =>  Time.zone.now.to_f,
         "ticket_properties"     =>  mq_reports_ticket_properties(action),
         "subscriber_properties" =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
     }

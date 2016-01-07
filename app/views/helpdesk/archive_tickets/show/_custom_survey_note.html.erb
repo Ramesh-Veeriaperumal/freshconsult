@@ -9,7 +9,7 @@
     <%end %>
       <% if note.survey_remark.blank? %>
         <%= note.body_html.html_safe %>
-      <%else%>
+      <%elsif note.body.present?%>
         <div class="note-text muted">
           "<%= note.body_html.html_safe %>"
         </div>

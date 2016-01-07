@@ -5,7 +5,6 @@ describe Topic do
 	describe "Activities for Topics: " do
 
 		before(:all) do
-			@agent2 = add_test_agent
 			@category = create_test_category
 			@forum = create_test_forum(@category)
 		end
@@ -68,7 +67,6 @@ describe Topic do
 		describe 'Topic stamp types :'do
 
 			before(:all) do
-				@agent2 = add_test_agent
 				@category = create_test_category
 			end
 
@@ -174,6 +172,50 @@ describe Topic do
 				end
 			end
 
+		end
+	end
+
+	describe "Topic to Ticket: " do
+
+		before(:all) do
+			@category = create_test_category
+			@forum_with_convert_to_ticket = create_test_forum(@category, 1, nil, 1)
+			@forum_without_convert_to_ticket = create_test_forum(@category, 1, nil, 0)
+		end
+
+		it "should create ticket for a topic, if 'convert_to_ticket' is set for the forum" do
+			@topic = create_test_topic(@forum_with_convert_to_ticket)
+			@topic.ticket_topic.should_not eql nil
+		end
+
+		it "should NOT create ticket for a topic, if 'convert_to_ticket' is NOT set for the forum" do
+			@topic = create_test_topic(@forum_without_convert_to_ticket)
+			@topic.ticket_topic.should eql nil
+		end
+
+		it "should create ticket with attachment if the topic has an attachment, if 'convert_to_ticket' is set for the forum" do
+			@topic = create_test_topic_with_attachments(@forum_with_convert_to_ticket)
+			@topic.ticket.attachments.should_not eql []
+		end
+
+		it "should create ticket with cloud file attachment if the topic has an attachment, if 'convert_to_ticket' is set for the forum" do
+			@topic = create_test_topic_with_cloud_files(@forum_with_convert_to_ticket)
+			@topic.ticket.cloud_files.should_not eql []
+		end
+
+		it "Should create a ticket with fields populated from the topic, if 'convert_to_ticket' is set for the forum" do
+			@topic = create_test_topic(@forum_with_convert_to_ticket)
+			@topic.ticket.subject.should eql @topic.title
+        	@topic.ticket.description.should eql @topic.posts.first.body
+    		@topic.ticket.requester.should eql @topic.user
+    		@topic.ticket.source.should eql Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+		end
+
+		it "Should NOT create a ticket if the user is an agent and if 'convert_to_ticket' is set for the forum" do
+			@agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+			@agent.make_current
+			@topic = create_test_topic(@forum_with_convert_to_ticket, @agent)
+			@topic.ticket_topic.should eql nil
 		end
 	end
 end

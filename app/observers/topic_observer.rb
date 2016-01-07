@@ -1,5 +1,7 @@
 class TopicObserver < ActiveRecord::Observer
 
+  include CloudFilesHelper
+
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
     #setting replied_by needed for API else api has to do item reloads while rendering the response
@@ -39,11 +41,43 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_publishing(topic)
     monitor_topic(topic)
+    create_ticket(topic) if topic.forum.convert_to_ticket? and !topic.user.agent?
     create_activity(topic, 'new_topic')
   end
 
   def monitor_topic topic
     send_later(:send_monitorship_emails, topic)
+  end
+
+  def create_ticket topic
+    ticket_params = {
+      :subject => topic.title, 
+      :requester => topic.user,
+      :ticket_body_attributes => {
+        :description => topic.posts.first.body,
+        :description_html => topic.posts.first.body_html
+      },
+      :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+    }
+    ticket = topic.account.tickets.build(ticket_params)
+    ticket.build_ticket_topic(:topic_id => topic.id)
+    copy_attachment(topic, ticket)
+    ticket.save_ticket
+  end
+
+  def copy_attachment(topic, ticket)
+    topic.first_post.attachments.each do |attachment|      
+      url = attachment.authenticated_s3_get_url
+      io = open(url) 
+      if io
+        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+      end
+      ticket.attachments.build(:content => io, :description => attachment.description, :account_id => ticket.account_id)
+    end
+    
+    topic.first_post.cloud_files.each do |cloud_file|
+      ticket.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+    end
   end
 
   def send_monitorship_emails topic

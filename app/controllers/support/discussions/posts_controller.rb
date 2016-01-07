@@ -4,6 +4,7 @@ class Support::Discussions::PostsController < SupportController
 	include CloudFilesHelper
 	include SupportDiscussionsControllerMethods
 	include Community::Moderation
+	include Community::Voting
 
 	before_filter { |c| c.requires_feature :forums }
 	before_filter :check_forums_state
