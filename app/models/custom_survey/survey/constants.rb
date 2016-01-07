@@ -49,5 +49,5 @@ class CustomSurvey::Survey < ActiveRecord::Base
     :feedback_response_text =>  :"admin.surveys.new_thanks.thanks_feedback_v2",
     :comments_text          =>  :"admin.surveys.new_thanks.comments_feedback",
     :link_text              =>  :"admin.surveys.satisfaction_settings.link_text_input_label"
-  }
+  }.with_indifferent_access
 end
