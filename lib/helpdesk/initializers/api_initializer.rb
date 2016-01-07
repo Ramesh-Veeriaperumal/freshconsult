@@ -45,10 +45,6 @@ if Infra['API_LAYER']
     # A gem which helps you detect the users preferred language, 
     # as sent by the "Accept-Language" HTTP header. Used only in account create.
     config.middleware.delete HttpAcceptLanguage::Middleware
-    
-    #Using Yajl JSON generator For faster Jbuilder rendering.
-    #https://github.com/rails/jbuilder#faster-json-backends
-    MultiJson.use :yajl
  
     # Deep_munge has to be patched as it converts empty array to nil
     # https://github.com/rails/rails/issues/13420

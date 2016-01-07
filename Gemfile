@@ -11,7 +11,6 @@ gem "syck", :platform => [:mri_20, :mri_21]
 
 gem "json", "~> 1.8"
 gem 'jbuilder', "2.2.13"
-gem 'yajl-ruby', "~> 1.2.1"
 gem 'strong_parameters', "0.2.3" # Used for API params validation
 
 gem "mysql2", "~> 0.3.0"
@@ -183,6 +182,8 @@ gem "jwt", "1.0.0" #could not use latest gem version(1.2.0) since twilio-ruby ge
 group :production,:test,:staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
+
+
 
 gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "delayed_job", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/delayed_job"
