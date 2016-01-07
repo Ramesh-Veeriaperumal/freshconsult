@@ -113,7 +113,8 @@ var SurveyTab = {
                   position: { 
                     type: 'absolute',
                     my: 'left middle',
-                    at: 'right  middle'
+                    at: 'right  middle',
+                    viewport: jQuery("#survey_report_main_content")
                   },
                   overwrite: false,
                   show: {
