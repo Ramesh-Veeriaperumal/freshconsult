@@ -24,9 +24,7 @@ Sidekiq.configure_client do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario",
-      "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkScenario"
     ]
   end
 end
@@ -55,9 +53,7 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario",
-      "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkScenario"
     ]
   end
   config.client_middleware do |chain|
@@ -75,9 +71,7 @@ Sidekiq.configure_server do |config|
       "DevNotificationWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
-      "Tickets::BulkScenario",
-      "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkScenario"
     ]
   end
 end

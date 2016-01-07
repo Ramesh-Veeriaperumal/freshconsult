@@ -44,8 +44,6 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout
 
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :execute_bulk_scenario]
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
-
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
     :close_multiple ,:pick_tickets, :delete_forever ]
 
@@ -941,30 +939,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   private
-
-
-    def scoper_ticket_actions
-      # check for mobile can be removed when mobile apps perform bulk actions as background job
-      if  !mobile?  and (params[:ids] and params[:ids].length > BACKGROUND_THRESHOLD)
-        ticket_actions_background
-      end
-    end
-
-    def params_for_bulk_action
-      params.slice('ids','responder_id')
-    end
-
-    def ticket_actions_background
-      args = { :action => action_name }
-      args.merge!(params_for_bulk_action)
-      Tickets::BulkTicketActions.perform_async(args)
-      respond_to do |format|
-        format.html {
-          flash[:notice] = t('helpdesk.flash.tickets_background')
-          redirect_to helpdesk_tickets_path
-        }
-      end
-    end
 
     def find_topic
     	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
