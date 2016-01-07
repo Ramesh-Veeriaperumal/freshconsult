@@ -103,7 +103,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
     email_notfn = params[:email_notification]
     user = email_notfn.keys[0].include?("requester") ? "requester" : "agent"
     ["subject_template", "template"].each do |suffix|
-      spam_check(email_notfn["#{user}_#{suffix}"])
+      template_content = email_notfn["#{user}_#{suffix}"]
+      spam_check(template_content) if template_content.present?
     end    
   end
 end
