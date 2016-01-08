@@ -1,8 +1,10 @@
-<ul class="point-scale">
+<div class="flexcontainer">
 <%_.each(choice,function(item){%>
-	<li>
-		<span class="survey-rating <%=item.className%>"></span>
-		<input type="text" maxlength="<%=SurveyConstants.limit.scale%>" name="<%=name%>" <%if(item.position){%>data-position="<%=item.position%>"<%}%> class="input-medium" placeholder="<%=item.text%>" value='<%=(item.value || "")%>' data-face-value="<%=item.id%>"/>
-	</li>
-<%})%>	
-</ul>
+		<textarea class="survey-card border-<%=item.className%> <%if(!surveyLimit){%> expand-card <% } %>"maxlength="<%=SurveyConstants.limit.scale%>" name="<%=name%>" <%if(item.position){%>data-position="<%=item.position%>"<%}%> placeholder="<%=(item.value ||item.text)%>"  data-face-value="<%=item.id%>"><%=(item.value || item.text)%></textarea>
+<%})%>
+
+<% if(surveyLimit){
+	for(i = choice.length; i < 7 ;i++){%>
+		<div class="empty-survey-card"></div>
+<%}}%>	
+</div>

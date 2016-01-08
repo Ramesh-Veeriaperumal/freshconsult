@@ -231,10 +231,16 @@ if Rails.env.test?
     "spec/controllers/chats_controller_spec.rb"
     #"spec/models/chat_setting_spec.rb"
   ]
+
+  VaRulesTests = [
+    "spec/controllers/admin/observer_rules_controller_spec.rb",
+    "spec/controllers/admin/va_rules_controller_spec.rb",
+    "spec/controllers/admin/supervisor_rules_controller_spec.rb"
+  ]
     
   UnitTests = [ APITests, BillingTests, EmailTests, FacebookTests, ForumTests, FreshfoneTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests, 
-                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests]
+                TwitterTests, XssTests, FreshfoneReportsTests, ChatTests, IntegrationTests, VaRulesTests]
 
   UnitTests.flatten!.uniq!
 
@@ -490,6 +496,15 @@ if Rails.env.test?
         RSpec::Core::RakeTask.new(:all) do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ForumDynamoTests)
+        end
+      end
+
+      namespace :va_rules do
+        desc "Running all VA rules tests"
+        Rake::Task["spec:db:reset".to_sym].invoke if Rails.env.test?
+        RSpec::Core::RakeTask.new(:all) do |t|
+          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
+          t.pattern = FileList.new(VaRulesTests)
         end
       end
 

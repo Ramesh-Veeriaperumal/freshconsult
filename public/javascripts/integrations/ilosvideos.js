@@ -8,7 +8,7 @@ IlosWidget.prototype= {
       app_name: 'ilos',
       use_server_password: false,
       auth_type: 'NoAuth',
-      domain: "https://www.ilosvideos.com",
+      domain: "https://api.ilosvideos.com",
     });
   },
 
@@ -54,7 +54,7 @@ IlosWidget.prototype= {
   getRequestParams: function(requestBody){
     this.afterTokenEvent();
     return {
-      rest_url: "api/auth/token",
+      rest_url: "v1/token/record",
       body: requestBody,
       content_type: 'application/x-www-form-urlencoded',
       method: "post",

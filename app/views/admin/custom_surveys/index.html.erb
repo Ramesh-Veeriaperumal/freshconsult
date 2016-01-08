@@ -23,9 +23,9 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 	<div class="survey-overlay center" style="display:none;"><div class="sloading loading-small loading-center"> <div class="survey-overlay-text"><b> <%= t('admin.surveys.new_layout.loading') %> </b></div></div></div>
 	<div class="list-page-header" >
     <div class="row-fluid">
-      <div class="span6"><h3 class="title"><%=t('admin.surveys.index.custom_title')%></h3></div>
+      <div class="span6"><h3 class="title"><%=t('admin.surveys.index.custom_title_v2')%></h3></div>
       	<div class="span6 pull-right pagination-right header_buttons align-right" >		
-        	<%= link_to t('admin.surveys.index.new_survey'),new_admin_survey_path, :class => "btn btn-primary" ,:id => "newSurvey"
+        	<%= link_to t('admin.surveys.index.new_survey'),new_admin_custom_survey_path, :class => "btn btn-primary" ,:id => "newSurvey"
         		%>
         	<%#= (link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "btn btn-primary") %>
       </div>
@@ -49,13 +49,12 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 					</td>
 					<td>
             <strong>
-						  <%= link_to survey.title_text.blank? ? t('admin.surveys.index.default_survey') : survey.title_text, edit_admin_survey_path(survey.id) %>
+						  <%= link_to survey.title_text.blank? ? t('admin.surveys.index.default_survey') : survey.title_text, edit_admin_custom_survey_path(survey.id) %>
             </strong>
-						<div class="muted"><%=formated_date(survey.updated_at,{:format => :short_day_separated, :include_year => true})%></div>
 					</td>
 					<td>
 						<div class="item_actions align-right">
-							<%=link_to t('admin.surveys.index.edit'),edit_admin_survey_path(survey.id),:class => "btn btn-mini"%>							
+							<%=link_to t('admin.surveys.index.edit'),edit_admin_custom_survey_path(survey.id),:class => "btn btn-mini"%>							
 							      <a class="btn btn-mini survey-delete" id="survey_<%=survey.id%>" 
 										  <%if(survey.active?)%>
 												disabled="disabled"
@@ -80,6 +79,9 @@ survey_list = <%=@surveys.to_json.html_safe%>;
 	<div class="helpcard">
 		<p>	<%= t('admin.surveys.custom_helptext_v2').html_safe %> </p>
 	</div>
+<%end%>
+<% content_for :dialogs do %>
+	<div id="SurveyConfirmContainer"></div>
 <%end%>
 	<!-- <div id="survey_link_con" class="vertical-alignment">				
 						<#%if @account.features?(:survey_links)%>

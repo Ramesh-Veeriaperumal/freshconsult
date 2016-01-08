@@ -1,17 +1,22 @@
-<h3 class="sub-lead mb10"> <%= surveysI18n.question_title_text %></h3>
+<hr>
+<h3 class="lead mb10"> <%= surveysI18n.question_title_text %><a href="javascript:SurveyQuestion.remove_dialog();" id="question-cancel" class="vertical-alignment">&ndash;&nbsp;&nbsp;<%= surveysI18n.hide %> </a></h3>
 <div class="control-group row-fluid">
-	<div class="span6">
-		<label class="span4 pt5" id="question_point_scale"> <%= surveysI18n.points_scale %></label>
-		<div class="span8" id="question_rating_choice"></div>
+	<div class="clearfix">
+		<label class="spanhack control-label pt5" id="question_point_scale"> <%= surveysI18n.points_scale %></label>
+		<div id="question_rating_choice" class="clear-fix"></div>
 	</div>
-	<div class="span6">
+	<div class="clearfix">
 		<div id="question_rating_options"></div>
 	</div>
 </div>
-<div class="survey-questions-wrap">
-	<h3 class="sub-lead mb10"> <%= surveysI18n.questions %></h3>
+<div class="survey-questions-wrap control-group">
+	<label class="wt500"> <%= surveysI18n.questions %></label>
 	<div id="survey_question_set"></div>
 	<div class="add-srvy-ques">
-				<a href="javascript:SurveyQuestion.add();"><i class="ficon-plus"></i> <%= surveysI18n.add_question %></a>
+		<a href="javascript:SurveyQuestion.add();">
+			<i class="ficon-plus"></i> 
+			<span><%= surveysI18n.add_question %></span>
+		</a>
 	</div>
 </div>
+<hr>

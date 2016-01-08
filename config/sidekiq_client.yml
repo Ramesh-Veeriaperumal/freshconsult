@@ -64,6 +64,7 @@ defaults: &defaults
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]
+    - [email_notification_spam_queue]
 
 development:
   <<: *defaults

@@ -583,7 +583,7 @@ module ApplicationHelper
     # Survey Placeholders
     place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
-                      ] if current_account.features?(:surveys, :survey_links)
+                      ] if current_account.any_survey_feature_enabled_and_active? && params[:type] != 'reply_template'
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?

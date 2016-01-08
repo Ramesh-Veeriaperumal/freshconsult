@@ -2,9 +2,9 @@
 	<h3 class="lead"><%= data.question %></h3>
 	<div class="row-fluid survey-summary">
 	   <% if(data.isRatingFilter){ %>
-		<%= JST["survey/reports/template/content_summary_remark"]({data: data})%>
-	   <%}else{%>
 		<%= JST["survey/reports/template/content_summary_report"]({data: data})%>
+	   <%}else{%>
+		<%= JST["survey/reports/template/content_summary_remark"]({data: data})%>
 	   <%}%>
 	</div>
 </div>

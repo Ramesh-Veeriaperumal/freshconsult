@@ -88,6 +88,7 @@ namespace :freshfone do
 	#Cleanup Accounts if they are left suspended for 2 months. 
   #Two months because the released numbers are kept in recycling state by Twilio only for 
   #two months after which they are released permanently.
+  #Only expiring the phone channel, Twilio Subaccount will remain suspended
   desc "Freshfone abandoned accounts cleanup "
 	task :close_accounts => :environment do
 		Sharding.execute_on_all_shards do
@@ -97,9 +98,9 @@ namespace :freshfone do
 					account.make_current
 					last_call = account.freshfone_calls.last
 					if last_call.blank? || last_call.created_at < 45.days.ago
-						ff_account.close
+						ff_account.expire
 						FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
-							:message => "Freshfone Account Closed For Account :: #{ff_account.account_id}")
+							:message => "Freshfone Account Expired For Account :: #{ff_account.account_id}")
 						# FreshfoneNotifier.deliver_account_closing(account) # later for notifying customer
 					else
 						ff_account.update_column(:expires_on, ff_account.expires_on + 15.days) # allowing 15 days grace period.
@@ -108,7 +109,7 @@ namespace :freshfone do
 					end
 				rescue => e
 					FreshfoneNotifier.deliver_freshfone_ops_notifier(account,
-						{:subject => "Error On Closing Freshfone Account For Account :: #{ff_account.account_id}",
+						{:subject => "Error On Expiring Freshfone Account For Account :: #{ff_account.account_id}",
 						:message => "Account :: #{ff_account.account_id}<br>Exception Message :: #{e.message}<br>
 						Exception Stacktrace :: #{e.backtrace.join('\n\t')}"})
 				ensure

@@ -26,7 +26,8 @@ class Freshfone::CreditObserver < ActiveRecord::Observer
     end
 
     def update_freshfone_account_state(freshfone_credit, account)
-      if account.freshfone_account.suspended?
+      freshfone_account = account.freshfone_account
+      if freshfone_account.suspended? || freshfone_account.expired?
         restore_freshfone_account_state(freshfone_credit, account)
       elsif freshfone_credit.zero_balance?
         suspend_freshfone_account(account)

@@ -10,6 +10,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def show
     account_summary = {}
     account = Account.find(params[:account_id])
+    shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:passes] = account.day_pass_config.available_passes
     account_summary[:contact_details] = { email: account.admin_email , phone: account.admin_phone }
@@ -21,6 +22,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:api_limit] = account.api_limit
     credit = account.freshfone_credit
     account_summary[:freshfone_credit] = credit ? credit.available_credit : 0
+    account_summary[:shard] = shard_info.shard_name
+    account_summary[:pod] = shard_info.pod_info
     respond_to do |format|
       format.json do
         render :json => account_summary
