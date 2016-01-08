@@ -278,6 +278,16 @@ module ApiDiscussions
       put :update, construct_params({ id: topic.id }, params)
       match_json([bad_request_error_pattern('forum_id', :inaccessible_field)])
       assert_response 400
+    ensure
+      @controller.unstub(:privilege?)
+    end
+
+    def test_update_with_array_forum_id
+      topic = first_topic
+      params = { forum_id: [1] }
+      put :update, construct_params({ id: topic.id }, params)
+      match_json([bad_request_error_pattern('forum_id', :invalid_field)])
+      assert_response 400
     end
 
     def test_update_with_invalid_stamp_type
