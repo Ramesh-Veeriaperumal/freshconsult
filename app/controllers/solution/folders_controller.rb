@@ -64,7 +64,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def create
-    @folder = Solution::Builder.folder(params) 
+    @folder = Solution::Builder.folder(params)
     @category ||= @folder.solution_category_meta
    
     respond_to do |format|
@@ -74,6 +74,7 @@ class Solution::FoldersController < ApplicationController
         format.xml  { render :xml => @folder, :status => :created }
         format.json  { render :json => @folder, :status => :created }
       else
+        @folder_meta = @folder
         format.html { render :action => "new" }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @folder.errors, :status => :unprocessable_entity }

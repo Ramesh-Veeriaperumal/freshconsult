@@ -2,27 +2,16 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 
 	observe Solution::Article, Solution::Folder, Solution::Category
 
-	def after_create(object)
+	def after_commit(object)
 		return unless multilingual
 		meta(object)
-		update_available(object, true)
-		update_published(object)
-		update_outdated(object)
-		save_meta(object)
-	end
-
-	def after_update(object)
-		return unless multilingual
-		meta(object)
-		update_published(object)
-		update_outdated(object)
-		save_meta(object)
-	end
-
-	def after_destroy(object)
-		return unless multilingual
-		meta(object)
-		update_available(object, false)
+		if object.send(:transaction_include_action?, :destroy)
+			update_available(object, false)
+		else
+			update_available(object, true)
+			update_published(object)
+			update_outdated(object)
+		end
 		save_meta(object)
 	end
 
@@ -33,8 +22,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		end
 
 		def meta(object)
-			@meta = object.parent
-			@parent_changes = @meta.changes.present?
+			@meta = object.parent.reload
 		end
 
 		def update_available(object, status)
@@ -56,10 +44,6 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		end
 
 		def save_meta(object)
-			if object.is_a? Solution::Article
-				return if @parent_changes
-				return if (object.draft.present? && object.draft.new_record?)
-			end
 			@meta.save
 		end
 end

@@ -212,7 +212,7 @@ RSpec.describe Solution::Builder do
             }
           })
         end
-        folder_meta = Solution::Builder.folder(update_params.deep_symbolize_keys!)
+        folder_meta = Solution::Builder.folder(update_params.deep_symbolize_keys)
         solution_check_updates(lang_vers, folder_meta, update_params, type = :folder)
       end
 
@@ -311,7 +311,7 @@ RSpec.describe Solution::Builder do
         params = create_solution_article_alone(solution_default_params(:article, :title).merge({
           :folder_id => @folder_meta.id
           }))
-        article_meta = Solution::Builder.article(params.deep_symbolize_keys!)
+        article_meta = Solution::Builder.article(params.deep_symbolize_keys)
         expect(article_meta.id).to be_present
         expect(article_meta.solution_articles.count).to eql(1)
         expect(article_meta.primary_article.title).to be_eql(params[:solution_article_meta][:primary_article][:title]) 
@@ -332,7 +332,7 @@ RSpec.describe Solution::Builder do
             } 
           }
         }
-        article_meta = Solution::Builder.article(update_params.deep_symbolize_keys!)
+        article_meta = Solution::Builder.article(update_params.deep_symbolize_keys)
         expect(article_meta.id).to be_present
         expect(article_meta.primary_article.title).to be_eql(update_params[:solution_article_meta][:primary_article][:title])
       end
@@ -364,7 +364,7 @@ RSpec.describe Solution::Builder do
             }
           })
         end
-        article_meta = Solution::Builder.article(update_params.deep_symbolize_keys!)
+        article_meta = Solution::Builder.article(update_params.deep_symbolize_keys)
         solution_check_updates(lang_vers, article_meta, update_params, :article)
       end
 
@@ -656,7 +656,7 @@ RSpec.describe Solution::Builder do
   end
 
   def solution_check_updates(lang_vers, meta_obj, params, type = :category)
-    params.deep_symbolize_keys!
+    params = params.deep_symbolize_keys
     name_type = type == :article ? :title : :name
     lang_vers.each do |lang|
       sol_obj_ver = meta_obj.send("#{lang}_#{type}")

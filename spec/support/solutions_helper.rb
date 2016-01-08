@@ -33,7 +33,7 @@ module SolutionsHelper
         :user_id => params[:user_id] || @agent.id,
         :attachments => params[:attachments]
       }))
-    article_meta = Solution::Builder.article(params.deep_symbolize_keys!)
+    article_meta = Solution::Builder.article(params.deep_symbolize_keys)
     article_meta
   end
 

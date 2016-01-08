@@ -143,6 +143,7 @@ if Rails.env.test?
     "spec/lib/solution/meta_association_switcher_spec.rb",
     "spec/lib/solution/cache_spec.rb",
     "spec/lib/solution/builder_spec.rb",
+    "spec/lib/solution/binarize_spec.rb",
     "spec/lib/solution/url_sterilize_spec.rb",
     "spec/controllers/helpdesk/solution_articles_controller_spec.rb",
     "spec/controllers/helpdesk/solution_folders_controller_spec.rb",
