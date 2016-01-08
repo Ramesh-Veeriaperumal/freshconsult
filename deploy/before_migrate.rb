@@ -44,9 +44,9 @@ run "ln -nfs #{shared_path}/config/ecommerce.yml #{node[:rel_path]}/config/ecomm
 run "ln -nfs #{shared_path}/config/third_party_app_config.yml #{node[:rel_path]}/config/third_party_app_config.yml"
 
 #search V2
-run "ln -nfs #{shared_path}/config/boost_values.yml #{node[:rel_path]}/config/boost_values.yml"
-run "ln -nfs #{shared_path}/config/supported_types.yml #{node[:rel_path]}/config/supported_types.yml"
-run "ln -nfs #{shared_path}/config/esv2_hosts.yml #{node[:rel_path]}/config/esv2_hosts.yml"
+run "ln -nfs #{shared_path}/config/search/boost_values.yml #{node[:rel_path]}/config/search/boost_values.yml"
+run "ln -nfs #{shared_path}/config/search/supported_types.yml #{node[:rel_path]}/config/search/supported_types.yml"
+run "ln -nfs #{shared_path}/config/search/esv2_hosts.yml #{node[:rel_path]}/config/search/esv2_hosts.yml"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"
