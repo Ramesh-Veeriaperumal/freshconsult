@@ -30,6 +30,7 @@ class PortalObserver < ActiveRecord::Observer
       elsif portal.send(:transaction_include_action?, :destroy)
         commit_on_destroy(portal)
       end
+      update_users_language(portal) if @all_changes.has_key?(:language)
       true
     end
     
@@ -87,6 +88,14 @@ class PortalObserver < ActiveRecord::Observer
     def remove_domain_mapping(portal)
       domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
       domain_mapping.destroy if domain_mapping
+    end
+
+    def update_users_language(portal)
+      unless account.features.multi_language?
+        account = portal.account
+        User.current.update_attribute(:language, account.language) if User.current
+        Users::UpdateLanguage.perform_async({ :account_id => account.id }) 
+      end
     end
 	
 end
