@@ -30,7 +30,7 @@ class PortalObserver < ActiveRecord::Observer
       elsif portal.send(:transaction_include_action?, :destroy)
         commit_on_destroy(portal)
       end
-      update_users_language(portal) if @all_changes.has_key?(:language)
+      update_users_language(portal) if portal.main_portal? and @all_changes.has_key?(:language)
       true
     end
     
