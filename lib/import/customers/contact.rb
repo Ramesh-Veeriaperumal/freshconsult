@@ -7,7 +7,7 @@ class Import::Customers::Contact < Import::Customers::Base
 	def default_validations
 		item_param = @params_hash[:"#{@type}"]
 		item_param[:name] = "" if item_param[:name].nil? && item_param[:email].blank?
-		item_param[:client_manager] = item_param[:client_manager].to_s.strip.downcase == "yes" ? "true" : nil
+		item_param[:client_manager] = ["yes","true"].include?(item_param[:client_manager].to_s.strip.downcase) ? "true" : nil if item_param.include?(:client_manager)
 
 		company_name = item_param[:company_name].to_s.strip
 		item_param[:company_id] = current_account.companies.find_or_create_by_name(company_name).id unless company_name.blank?

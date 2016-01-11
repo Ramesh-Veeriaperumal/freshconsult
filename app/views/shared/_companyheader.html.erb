@@ -43,6 +43,7 @@
 				"data-width" => "550",
 				"data-title" => t('contacts.export_title', :type => type.capitalize.pluralize),
 				:title => t('contacts.export_title', :type => type.capitalize.pluralize),
+				"data-close-label" =>  t('cancel') ,
 				"data-submit-loading" => t('please_wait'),
 				"data-target"=>"#customer_export" %>
 			<% if privilege?(:manage_contacts) %>
