@@ -447,6 +447,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update ]
     resource :"integrations/salesforce"
+    resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"admin/integrations/freshplug"
     resource :"admin/extension"
     resource :"admin/installed_extension"

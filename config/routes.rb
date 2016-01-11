@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -669,6 +669,15 @@ Helpkit::Application.routes.draw do
         post :install
         post :notify
     end
+
+    namespace :slack_v2 do
+      get :oauth
+      get :new
+      post :install
+      get :edit
+      put :update
+      post :create_ticket
+    end
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -730,7 +739,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :slack do
+    resources :slack do #Belongs to Old Slack
       collection do
         post :create_ticket
       end

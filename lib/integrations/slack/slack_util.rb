@@ -1,3 +1,4 @@
+#Belongs to Old Slack, remove when slack_v1 is obselete
 class Integrations::Slack::SlackUtil 
 
   include Integrations::Slack::SlackConfigurationsUtil

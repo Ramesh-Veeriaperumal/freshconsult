@@ -522,6 +522,7 @@ module ApplicationHelper
                       ['{{ticket.due_by_time}}',      'Due by time',        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',           'Tags',           '',         'ticket_tags'],
                       ['{{ticket.latest_public_comment}}',  'Last public comment',  '',         'ticket_latest_public_comment'],
+                      ['{{ticket.latest_private_comment}}', 'Last private comment', '', 'ticket_latest_private_comment'],
                       ['{{ticket.group.name}}',       'Group name',       '',          'ticket_group_name'],
                       ['{{ticket.agent.name}}',       'Agent name',       '',        'ticket_agent_name'],
                       ['{{ticket.agent.email}}',      'Agent email',        "",         'ticket_agent_email']

@@ -1,0 +1,154 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.slack_v2.helptext").html_safe%>
+  </div>
+<%- end %>
+
+  <h3 class="lead"><%=t("integrations.slack_v2.form.slack_v2_settings")%></h3>
+
+  <%= form_for @installed_app, :url => { :controller=> "slack_v2", :action => @action }, :html => {:id => "ConfigureApplication" } do |f| %>
+    <ul class="ui-form slack-form">
+
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-<%= @installed_app.application.name%>"></div>
+        <div class="logo info-data">
+          <%= t(@installed_app.application.description) %>
+        </div>
+      </label>
+        
+         <% default_fields = []%> <%# this should be the label value %>
+
+            <div class="salesforce-wrapper">
+
+              <%unless @fields["public_channels"].blank? %>
+                <div class="contact-fields"> 
+                  <h3 class="leftselect2"><%=t("integrations.slack_v2.form.access_public_channels")%></h3>
+                  <div id='public_channels'>
+                    <span>
+                      <div id="public_channel_list">
+                        <ul>
+                          <% public_channels = @fields['public_channels'] %>
+                          <%selected_fields = default_fields.collect{|label| public_channels[label]} %>
+
+                          <%unless @installed_app.configs_public_labels.blank? %>
+                            <%selected_fields.push(@installed_app.configs_public_labels.split(",").collect!{ |label| next if  default_fields.include?(label); 
+                              public_channels[label]
+                              })%>
+                          <%end%>
+                        </ul>
+                      </div>
+                      <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+                      <%data =selected_fields.join(",").html_safe%>
+                      <% # order the fields in such a way so that default fields come at the top
+                        public_channels_list = [] #should be a list of lists. [ [label, field] [label, field] ]
+                        default_fields.each { |label| public_channels_list.push([label, public_channels[label]]) } 
+                        @fields['public_channels'].each{|label, field|
+                          public_channels_list.push([label, field]) if not default_fields.include?(label);
+                        }
+                      %>
+                      <%=hidden_field_tag "configs[public_labels]" %>
+                      <%= select_tag "configs[public_channels]", 
+                              options_for_select(public_channels_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder required" => " ", "data-max-selection-size" => "20", :rel => "select-choice", "data-disable-field" => "Telephone"} %> <!-- space in placeholder to add an empty option -->
+                    </span>
+                  </div>
+                </div>
+              <%end%>
+
+              <%unless @fields['private_channels'].blank? %>
+                <div class="lead-fields">
+                  <h3><%=t("integrations.slack_v2.form.access_private_channels")%></h3>   
+                  <div id="private_channels">
+                    <span>
+                    <div id="private_channel_list">
+                          <ul>
+                            <% private_channels = @fields['private_channels'] %>
+                            <%selected_private_channels = default_fields.collect{|label| private_channels[label]} # use a copy to not change default fields %>
+                          <%unless @installed_app.configs_private_labels.blank? %>
+                          <%selected_private_channels.push(@installed_app.configs_private_labels.split(",").collect!{ |label| next if default_fields.include?(label);
+                           private_channels[label]
+                           })%>
+                          <%end%>
+                          </ul>
+                    </div>
+                    <%data =selected_private_channels.join(",").html_safe%>
+                    <% # order the fields in such a way so that default fields come at the top
+                      private_channels_list = []
+                      default_fields.each { |label| private_channels_list.push([label, private_channels[label]]) }
+                      @fields['private_channels'].each{|label, field|
+                        private_channels_list.push([label, field]) if not default_fields.include?(label); 
+                      }
+                      %>
+                    <%=hidden_field_tag "configs[private_labels]" %>
+                    <%= select_tag "configs[private_channels]", 
+                              options_for_select(private_channels_list,data.split(",")),{:multiple=>true, :class=>"select2-fields int-select ","data-placeholder" => " ", "data-max-selection-size" => "20", :rel => "select-choice", "data-disable-field" => "Telephone"} %><!-- space in placeholder to add an empty option -->
+                        </span>
+                  </div>
+                </div>
+              <%end%>
+              <span class="seperator"></span>
+              <br/>
+              <%= check_box(:configs, 'allow_dm', :checked => @installed_app.configs[:inputs]["allow_dm"].present? ) %>
+              <label for="configs_allow_dm" class="inline-block"> <%=t("integrations.slack_v2.form.allow_dm_agent")%> </label>
+              <br/>
+              <input 
+                <%if @installed_app.configs[:inputs]["slash_command_token"].present? %>
+                  checked = "checked"
+                <%end%>
+              id="allow_slash_command" type="checkbox">
+              <label  class="inline-block"> <%=t("integrations.slack_v2.form.allow_slash_command").html_safe%> </label>
+
+              <div class="slash_command_token <%if @installed_app.configs[:inputs]["slash_command_token"].blank? %> hide <% end %> ml20 mt5">
+                <label class="span3" for="configs_slash_command_token"> <%=t('integrations.slack_v2.form.slash_command_token')%> <span class="required_star">*</span> </label><input aria-required="true" class="span3" id="configs_slash_command_token" name="configs[slash_command_token]"
+                <%if defined?(@installed_app.configs[:inputs]["slash_command_token"]) %>
+                  value = "<%= @installed_app.configs[:inputs]["slash_command_token"] %>"
+                <%end%>
+                type="text">
+                
+              </div>
+            </div>
+
+          </ul>
+            <div class="button-container">
+            <%= link_to t('back'), integrations_applications_path, :class => "floatl uiButton" if @installed_app.configs.present? %>
+            <%= submit_tag @action.capitalize, :class => "btn btn-primary" %>
+            </div>
+  <% end %>
+
+  <script type="text/javascript">
+    jQuery("#configs[public_channels]").select2({maximumSelectionSize: 20,removeOptionOnBackspace:false})
+    jQuery("#configs[private_channels]").select2({maximumSelectionSize: 20,removeOptionOnBackspace:false})
+
+    jQuery('#ConfigureApplication').submit(function() {
+      var public_channel_labels = [];
+      var private_channel_labels =[];
+      jQuery("#public_channels :selected").each(function(){
+            public_channel_labels.push(jQuery(this).text());
+      });
+      jQuery('#configs_public_labels').val(public_channel_labels);
+
+      jQuery("#private_channels :selected").each(function(){
+          private_channel_labels.push(jQuery(this).text()); 
+      });
+      jQuery('#configs_private_labels').val(private_channel_labels);
+      return true;
+    });
+
+    jQuery("#allow_slash_command").click(function() {
+      if(jQuery(this).prop('checked') == true) {
+        jQuery(".slash_command_token").show();
+        jQuery("#configs_slash_command_token").addClass("required")
+      } else {
+        jQuery("#configs_slash_command_token").removeClass("required")
+        jQuery("#configs_slash_command_token").val("");
+        jQuery(".slash_command_token").hide();
+      }
+    });
+
+    jQuery(document).ready(function() {
+      if(jQuery("#allow_slash_command").prop('checked') == true) {
+        jQuery("#configs_slash_command_token").addClass("required")
+      }
+    });
+  </script>
+

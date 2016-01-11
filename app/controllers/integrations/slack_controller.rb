@@ -1,9 +1,11 @@
+#Remove when Slack v1 is obselete.
 require 'json'
 class Integrations::SlackController < ApplicationController
   include Integrations::Slack::SlackConfigurationsUtil
   include  Integrations::Slack::Constant
 
   skip_before_filter :check_privilege, :verify_authenticity_token
+  #before_filter :verify_installed_app, :verify_authentication, :only => [:create_ticket]
   before_filter :verify_authentication, :only => [:create_ticket]
 
   def create_ticket
@@ -114,6 +116,13 @@ class Integrations::SlackController < ApplicationController
     text.gsub!("<","")
     text.gsub!(">","")
     text
+  end
+
+  def verify_installed_app
+    app = current_account.installed_applications.with_name("slack")
+    unless app.present?
+      render :json => {:success => false} and return
+    end
   end
 
   def verify_authentication

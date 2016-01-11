@@ -6478,6 +6478,37 @@ en:
       form:
          slack_setting: ""
          slack_info: ""
+    slack_v2:
+      label: "Slack <span class='beta'>New</span>"
+      desc: "Stay up to date with your Freshdesk on Slack."
+      helptext: "<h4>Slack Integration</h4><br><p>Select the list of Public Channels and Private Groups that you want to make available to Freshdesk's Dispatch'r and Observer. When setting up their automation rules, you can specify which channel to push messages to. </p>"
+      form:
+         slack_v2_settings: "Slack Settings"
+         access_public_channel: "Allow access to public channels"
+         access_private_channel: "Allow access to private channels"
+         allow_dm_agent: "Allow DM to agent"
+         allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
+         slash_command_token: "Slash Command Token"
+      action_options:
+        public: "Public"
+        private: "Private"
+        dm: "DM"
+      message:
+        ticket_success: "Succesfully created ticket in Freshdesk."
+        ticket_failure: "Failure while creating ticket. Please report to support@freshdesk.com if the error continues."
+        missing_remote_token: "Please pass your Slack user token (https://api.slack.com/web) with this slash command once. From next time token is not needed :simple_smile:"
+        slash_key_mismatch: "Slash command secret key does not match the value configured on Freshdesk."
+        uninstall_old_slack: "You have an older version of this application already installed. Please follow the <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a> for detailed steps on how to migrate to the newer version."
+        report_error: "Slack reports the following error"
+        action_queued: "Your request has been received and you shall get a notification on this channel once the ticket is created."
+        not_installed: "Looks like you haven't installed Slack V2!"
+        no_app_found: "Application is not installed!"
+        invalid_channel: "Slash command to create a ticket works only on Direct Messages."
+        push_to_slack: "Push to Slack"
+        no_agent: "No Agent"
+      subject:
+        chat: "Chat Conversation with"
+        default_chat: "Chat Conversation of"
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -6486,6 +6517,8 @@ en:
       status_update: "Status update"
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
+      deprecation_notice: "A new release of Freshdesk Slack integration is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      uninstall_old_slack: Integration is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
       notify_on_ticket_create: "Ticket created by "

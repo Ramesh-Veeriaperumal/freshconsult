@@ -2264,6 +2264,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.string   "remote_user_id"
   end
 
+  add_index "integrations_user_credentials", ["account_id", "installed_application_id", "remote_user_id"], :name => "index_on_account_and_installed_app_and_remote_user_id", :unique => true
   add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
