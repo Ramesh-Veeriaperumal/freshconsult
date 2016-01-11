@@ -50,9 +50,22 @@ module ApiDiscussions
       put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
       match_json([bad_request_error_pattern('answer', :inaccessible_field)])
       assert_response 400
+
+      @controller.stubs(:api_current_user).returns(nil)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      @controller.unstub(:api_current_user)
+      match_json(request_error_pattern(:invalid_credentials))
+      assert_response 401
+
+      User.any_instance.stubs(:customer?).returns(true)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      match_json(request_error_pattern(:access_denied))
+      assert_response 403
     ensure
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:customer?)
       @controller.unstub(:privilege?)
+      @controller.unstub(:api_current_user)
     end
 
     def test_update
