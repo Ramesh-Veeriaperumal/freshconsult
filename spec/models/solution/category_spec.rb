@@ -9,7 +9,8 @@ describe Solution::Category do
 		end	
 
 		before(:each) do
-			@category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+			@category_meta = create_category
+			@category = @category_meta.primary_category
 		end
 
 		it "should create activity when category is created" do

@@ -7,12 +7,13 @@ describe Solution::Article do
 		before(:all) do
 			@agent1 = add_test_agent
 	    	@agent2 = add_test_agent
-		    @test_category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-		    @test_folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @test_category.id } )
+		    @test_category_meta = create_category
+		    @test_folder_meta = create_folder({:visibility => 1, :category_id => @test_category_meta.id})
 		end	
 
 		before(:each) do
-			@article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id, :user_id => @agent1.id, :status => "1", :art_type => "1" } )
+			@article_meta = create_article({:folder_id => @test_folder_meta.id, :user_id => @agent1.id, :status => "1", :art_type => "1" })
+			@article = @article_meta.primary_article
 		end
 
 		it "should create activity when article is created" do
