@@ -6,11 +6,12 @@ describe Solution::Folder do
 
 		before(:all) do
 	    	@agent2 = add_test_agent
-	    	@category = create_category( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
+	    	@category_meta = create_category
 		end	
 
 		before(:each) do
-			@folder = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @category.id } )
+			@folder_meta = create_folder( {:name => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :visibility => 1, :category_id => @category_meta.id } )
+			@folder = @folder_meta.primary_folder
 		end
 
 		it "should create activity when folder is created" do
