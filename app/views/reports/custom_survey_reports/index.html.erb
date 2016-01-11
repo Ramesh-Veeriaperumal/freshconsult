@@ -103,7 +103,7 @@
 			  	<li>
 			  		<span><%=t('reports.survey_reports.main.agent')%> : </span>
 			  	
-			  		<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a[:name],a[:id]]}.insert(0,["All","a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2 agent-select' %>
+			  		<%= select_tag :survey_report_agent_list , options_for_select(@agents.collect{ |a| [a[:name],a[:id]]}.insert(0,["All","a"])) , :onchange => "SurveyAgent.change(this)", :class => 'select2' %>
 			  	</li>
 		  	</ul>
 		</div>
