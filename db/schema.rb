@@ -3221,7 +3221,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   add_index "survey_remarks", ["account_id", "survey_result_id"], :name => "index_survey_remarks_on_account_id_and_survey_result_id"
   add_index "survey_remarks", ["account_id", "note_id"], :name => "index_survey_remarks_on_account_id_and_note_id"
 
-  create_table "survey_result_data", :force => true do |t|
+  create_table "survey_result_data", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                :null => false
     t.integer  "account_id",       :limit => 8, :default => 0, :null => false
     t.integer  "survey_id",        :limit => 8
@@ -3314,6 +3314,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   add_index "survey_result_data", ["account_id", "survey_id"], :name => "index_survey_result_data_on_account_id_and_survey_id"
   add_index "survey_result_data", ["account_id", "survey_result_id"], :name => "index_survey_result_data_on_account_id_and_survey_result_id"
   add_index "survey_result_data", ["id"], :name => "index_survey_result_data_id"
+  execute "ALTER TABLE survey_result_data ADD PRIMARY KEY (account_id,id)"
 
   create_table "survey_results", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8, :null => false
