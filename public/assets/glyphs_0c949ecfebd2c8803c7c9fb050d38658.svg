@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2016-1-4: Created with FontForge (http://fontforge.org)
+2016-1-11: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20150504 at Mon Jan  4 11:35:39 2016
+Created by FontForge 20150504 at Mon Jan 11 12:21:21 2016
  By Sravya
 Copyright (c) 2016, Sravya
 </metadata>
@@ -22,9 +22,11 @@ Copyright (c) 2016, Sravya
     bbox="-0.424634 -65 1343 448.392"
     underline-thickness="25.6"
     underline-position="-51.2"
-    unicode-range="U+F100-F203"
+    unicode-range="U+0020-F203"
   />
     <missing-glyph />
+    <glyph glyph-name="space" unicode=" " horiz-adv-x="200" 
+ />
     <glyph glyph-name="uniF11F" unicode="&#xf11f;" horiz-adv-x="499" 
 d="M441 224v-70v-138c0 -33 -22 -56 -55 -56h-332c-31 0 -54 23 -54 54v253v61c0 32 22 56 54 56h297c1 0 1 -1 3 -1c-1 -2 -3 -3 -4 -4c-19 -21 -28 -30 -47 -51c-2 -3 -4 -4 -8 -4h-220c-14 0 -16 -2 -16 -15v-277c0 -10 3 -13 13 -13h296c12 0 14 2 14 14v103
 c0 2 1 5 2 7c22 30 33 48 55 78c0 0 1 1 2 3zM241 194c12 13 25 26 37 39c54 57 107 115 161 172c4 5 9 10 13 14c7 7 14 8 22 3c7 -4 14 -10 20 -16c7 -6 7 -12 2 -20c-4 -7 -8 -13 -12 -19c-75 -101 -151 -201 -226 -302c-9 -13 -22 -13 -31 0l-102 147l-9 15

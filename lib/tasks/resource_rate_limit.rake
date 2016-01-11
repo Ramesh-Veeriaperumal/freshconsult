@@ -8,9 +8,9 @@ namespace :resource_rate_limit do
   end
 
   def spam_url(account,user,table)
-    shard_name = ShardMapping.lookup_with_account_id(account.id).shard_name
+    shard_mapping = ShardMapping.lookup_with_account_id(account.id)
     type = table.split("_").last  
-    "freshopsadmin.freshdesk.com/#{shard_name}/spam_watch/#{user.id}/#{type}"
+    "freshopsadmin.freshdesk.com/#{shard_mapping.pod_info}/#{shard_mapping.shard_name}/spam_watch/#{user.id}/#{type}"
   end
 
   def rl_alert(account,user,queue)

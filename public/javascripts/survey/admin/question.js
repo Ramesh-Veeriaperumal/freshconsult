@@ -33,11 +33,11 @@ var SurveyQuestion = {
 	survey_id: '',
 	hideOptions:function(view){
 		jQuery("div#survey_rating_choice").hide();
+		jQuery("a#question-cancel").hide();
     jQuery('div#survey_question_set').find('a.delete-question').hide();
 		jQuery("div#question_rating_choice").hide();
-    jQuery("#survey_point_scale,#question_point_scale").removeClass('span4');
-    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +view.choiceValues.length+ " " +surveysI18n.points_scale);
-    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +view.questions.choiceValues.length+ " " +surveysI18n.points_scale);
+    jQuery('#survey_point_scale').text(surveysI18n.scale_text + " " +view.choiceValues.length+ " " +surveysI18n.scale).removeClass("spanhack");
+    jQuery('#question_point_scale').text(surveysI18n.scale_text + " " +view.questions.choiceValues.length+ " " +surveysI18n.points_scale).removeClass("spanhack");
 		jQuery(".add-srvy-ques").hide();
     jQuery('div#comments').find("input[name='can_comment']").attr('disabled',true);
 	},
@@ -78,12 +78,14 @@ var SurveyQuestion = {
 		jQuery("div#survey_questions").css('display',"block");
 		var data = view.thanks;
 		var defaultScale = (view.questions.choices && view.questions.choices.length>=2) ? view.questions.choices.length : view.scale.default;
-		jQuery('div#survey_questions').append(JST["survey/admin/template/new_questions_layout"](view.questions));
-		
+ 		jQuery('div#survey_questions').append(JST["survey/admin/template/new_questions_layout"](view.questions));
+		jQuery('#addQuestion').hide();
+		jQuery('#additional-thanks').show();
 		jQuery('#question_rating_options').html(
 				JST["survey/admin/template/new_scale_option"]({
 					"name":"question-scale",
-					"choice":view.choice.values(defaultScale,"questions")
+					"choice":view.choice.values(defaultScale,"questions"),
+					"surveyLimit": SurveyAdmin.fullSurvey
 				})
 		);
 		jQuery('#question_rating_choice').html(
@@ -93,6 +95,12 @@ var SurveyQuestion = {
 					defaultScale:defaultScale
 				})
 		);
+		jQuery('.survey-questions-wrap').sortable({
+			handle: '.rearrange-icon',
+			cursor: 'move',
+			containment: '.survey-questions-wrap',
+			items: '.question'
+		});
 		view.questions.count = 0;
 		for(var i=0;i<view.questions.list.length;i++){
 			this.add(view.questions.list[i],view.isSurveyResult);
@@ -100,11 +108,6 @@ var SurveyQuestion = {
 		if(view.action=="edit"){
 			jQuery("input[name=jsonData]").val(SurveyJSON.stringify(view.questions.list));
 		}
-		jQuery("div#feedback-thanks").show();
-	
-    if(jQuery('#survey_questions').is(':visible')){
-      jQuery('a#question-cancel').show();
-    }
 		jQuery("div#question_rating_options input").on("input",function(){
 			 SurveyQuestion.updateOptionValues();
 		});
@@ -124,11 +127,20 @@ var SurveyQuestion = {
 			jQuery('.add-srvy-ques').show();
 		}
 	},
+	remove_dialog:function(){
+		jQuery('#SurveyConfirmContainer').html(JST["survey/admin/template/confirm_dialog"]({
+			"id": 0,
+			"message": surveysI18n.remove_msg,
+			"confirm": surveysI18n.hide,
+			"confirm_type": 'remove'
+		}));
+		jQuery('#SurveyConfirmModal').modal('show');
+	},
 	hide:function(){
 		jQuery('div#survey_questions').hide();
 		jQuery("div#survey_questions").html("");
-		jQuery("div#feedback-thanks").hide();
-    jQuery('a#question-cancel').hide();
+		jQuery("#additional-thanks").hide();
+    	jQuery('#addQuestion').show();
 	},
 	add:function(question,isSurveyResult){
 		var surveyQuestionId = 0;
@@ -166,14 +178,14 @@ var SurveyQuestion = {
 			jQuery('.add-srvy-ques').hide();
 			return;
 		}
-		this.setOptions(view.questions.count,choices);
+		SurveyQuestion.setOptions(view.questions.count,choices);
     this.updateOptionValues();
 	},
 	//ignore edit if survey results are already present
 	defaultOptions: function(surveyProtocol){
     if(surveyProtocol.isSurveyResult || surveyProtocol.isDefault){	
       SurveyQuestion.hideOptions(surveyProtocol);
-      jQuery('.addQuest').hide();
+      jQuery('#addQuestion').hide();
     }else{
       SurveyQuestion.showOptions();
     }
@@ -185,6 +197,9 @@ var SurveyQuestion = {
 						"choices":choices
 				})
 		);
+	},
+	additionalComment: function(){
+		jQuery('#feedback-thanks').toggle();
 	},
 	resetOptions:function(){
 		var defaultScale = jQuery("input[name=question-choice]:checked").val();

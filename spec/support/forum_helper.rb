@@ -19,12 +19,13 @@ module ForumHelper
 		forum_category
 	end
 
-	def create_test_forum(forum_category,type = 1, visibility=nil)
+	def create_test_forum(forum_category, type = 1, visibility=nil, convert = 0)
 		forum = FactoryGirl.build(
 							:forum, 
 							:account_id => @account.id, 
 							:forum_category_id => forum_category.id,
-							:forum_type => type
+							:forum_type => type,
+							:convert_to_ticket => convert
 							)
 		forum.forum_visibility = visibility if visibility
 		forum.save(validate: false)
@@ -51,14 +52,13 @@ module ForumHelper
 							)
 		post.save!
 		topic.last_post_id = post.id
-		topic.save
 		publish_post(post)
 		topic.reload
 	end
 
 	def create_test_topic_with_attachments(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
-		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys.sample
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
 		topic = FactoryGirl.build(
 							:topic, 
 							:account_id => @account.id, 
@@ -75,12 +75,41 @@ module ForumHelper
 							:user_id => user.id,
 							:user_votes => 0
 							)
-		post.save!
 		attachment = post.attachments.build(
 									:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
                   :description => Faker::Name.first_name, 
                   :account_id => post.account_id)
 		attachment.save
+		post.save!
+		topic.last_post_id = post.id
+		publish_post(post)
+		topic.reload
+	end
+
+	def create_test_topic_with_cloud_files(forum, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+		topic = FactoryGirl.build(
+							:topic, 
+							:account_id => @account.id, 
+							:forum_id => forum.id,
+							:user_id => user.id,
+							:stamp_type => stamp_type,
+							:user_votes => 0
+							)
+		topic.save
+		post = FactoryGirl.build(
+							:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							:user_votes => 0
+							)
+		cloud_file = post.cloud_files.build(:url => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting Started.pdf?dl=0", 
+			:application_id => 20, :filename => "Getting Started.pdf")
+		cloud_file.save
+		post.save!
+		topic.last_post_id = post.id
 		publish_post(post)
 		topic.reload
 	end
@@ -106,7 +135,7 @@ module ForumHelper
 											:account_id => @account.id,
 											:topic_id => topic.id,
 											:ticketable_id => ticket.id,
-											:ticketable_type =>'Helpdesk::Ticket'
+											:ticketable_type => 'Helpdesk::Ticket'
 										)
 		ticket_topic.save
 		ticket_topic

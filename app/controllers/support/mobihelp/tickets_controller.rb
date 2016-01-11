@@ -129,7 +129,7 @@ class Support::Mobihelp::TicketsController < SupportController
     end
 
     def check_ticket_permissions
-      render_json({ :access_denied => true }) unless @ticket and current_user.has_ticket_permission? @ticket
+      render_json({ :access_denied => true }) unless @ticket and current_user.has_customer_ticket_permission? @ticket
     end
 
     def validate_user

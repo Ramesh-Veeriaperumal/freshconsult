@@ -211,6 +211,10 @@ class PortalDrop < BaseDrop
     @settings ||= source.template.preferences
   end
   
+  def recent_topics
+    Forum::RecentTopicsDrop.new(self.source)
+  end
+  
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],

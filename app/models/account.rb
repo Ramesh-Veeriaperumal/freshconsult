@@ -82,19 +82,38 @@ class Account < ActiveRecord::Base
   end
   
   def survey
-    if custom_survey_enabled
-      custom_survey_from_cache || custom_surveys.first
-    else
-      surveys.first unless surveys.blank?
+    @survey ||= begin
+      if new_survey_enabled?
+        active_custom_survey_from_cache || custom_surveys.first
+      else
+        surveys.first unless surveys.blank?
+      end
     end
   end
 
-  def survey_enabled
-      features?(:surveys)
+  def any_survey_feature_enabled?
+    survey_enabled? || default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def any_survey_feature_enabled_and_active?
+    new_survey_enabled? ? active_custom_survey_from_cache.present? :
+      features?(:surveys, :survey_links)
+  end
+
+  def survey_enabled?
+    features?(:surveys)
+  end
+
+  def new_survey_enabled?
+    default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def default_survey_enabled?
+    features?(:default_survey) && !custom_survey_enabled?
   end
   
-  def custom_survey_enabled
-      features?(:custom_survey)
+  def custom_survey_enabled?
+    features?(:custom_survey)
   end
 
   def freshfone_enabled?

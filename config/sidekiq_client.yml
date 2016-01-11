@@ -65,6 +65,7 @@ defaults: &defaults
     - [update_users_company_id]
     - [update_tickets_company_id]
     - [solution_binarize_sync]
+    - [email_notification_spam_queue]
 
 development:
   <<: *defaults

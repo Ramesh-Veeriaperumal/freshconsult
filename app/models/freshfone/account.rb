@@ -23,7 +23,8 @@ class Freshfone::Account < ActiveRecord::Base
 	STATE = [
 		[ :active, "active", 1 ],
 		[ :suspended, "suspended", 2 ],
-		[ :closed, "closed", 3 ]
+		[ :closed, "closed", 3 ],
+		[ :expired, "expired", 4]
 	]
 	STATE_HASH = Hash[*STATE.map { |i| [i[0], i[2]] }.flatten]
 	STATE_AS_STRING = Hash[*STATE.map { |i| [i[0], i[1]] }.flatten]
@@ -79,7 +80,12 @@ class Freshfone::Account < ActiveRecord::Base
 
 	def restore
 		update_twilio_subaccount_state STATE_AS_STRING[:active]
-		update_attributes(:state => STATE_HASH[:active], :expires_on => nil)
+		update_attributes(:state => STATE_HASH[:active], :expires_on => nil, :deleted => false)
+	end
+
+	def expire
+		delete_numbers # soft deletion
+		update_attributes(:state => STATE_HASH[:expired], :deleted => true)		
 	end
 
 	def self.find_due(expires_on = Time.zone.now)
@@ -155,4 +161,11 @@ class Freshfone::Account < ActiveRecord::Base
 		@app ||= twilio_subaccount.applications.get(app_id)
 	end
 
+	private
+
+		def delete_numbers
+			account.freshfone_numbers.each do |number|
+				number.update_attributes(:deleted => true)
+			end
+		end
 end

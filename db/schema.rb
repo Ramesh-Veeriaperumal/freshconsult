@@ -14,7 +14,6 @@
 
 ActiveRecord::Schema.define(:version => 20151221042435) do
 
-
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -314,6 +313,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.boolean  "deleted",                         :default => false
     t.string   "access_token"
     t.boolean  "progress",                        :default => false
+    t.integer  "owner_id"
   end
 
   add_index "archive_tickets", ["account_id", "access_token"], :name => "index_archive_tickets_on_account_id_and_access_token", :length => {"account_id"=>nil, "access_token"=>10}
@@ -1330,6 +1330,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.integer "forum_type"
     t.integer "import_id",         :limit => 8
     t.integer "forum_visibility"
+    t.boolean "convert_to_ticket"
   end
 
   add_index "forums", ["account_id", "forum_category_id", "position"], :name => "index_forums_on_account_id_and_forum_category_id_and_position"

@@ -239,4 +239,8 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     helpdesk_notes_association["note_old_body"]["full_text_html"]
   end
 
+  def notable
+    archive_ticket
+  end
+
 end

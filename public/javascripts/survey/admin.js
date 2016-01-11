@@ -2,11 +2,15 @@
     Core module for surveys admin activities.
 */
 var SurveyAdmin = {	
+		fullSurvey: true,
 		path: "/admin/custom_surveys/",
+		setFullSurvey: function(defaultSurveyFlag){
+			SurveyAdmin.fullSurvey = defaultSurveyFlag;
+		},
 		render:function(view){
 			SurveyDetail.rating.create(view);
 			SurveyDetail.thanks.create(view);
-			if(view.action=="edit" && view.questions.exists){
+			if(view.action=="edit" && view.questions.exists && SurveyAdmin.fullSurvey){
 				SurveyQuestion.create(view);
 			}
 			SurveyValidate.initialize();

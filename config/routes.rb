@@ -1046,8 +1046,8 @@ Helpkit::Application.routes.draw do
     match '/surveys/enable/' => 'surveys#enable' , :via => :post
     match '/surveys/disable/' => 'surveys#disable' , :via => :post
 
-    match '/custom_surveys/enable/:id' => 'custom_surveys#enable' , :via => :post
-    match '/custom_surveys/disable/:id' => 'custom_surveys#disable' , :via => :post
+    match '/custom_surveys/activate/:id' => 'custom_surveys#activate' , :via => :post
+    match '/custom_surveys/deactivate/:id' => 'custom_surveys#deactivate' , :via => :post
 
     resources :gamification do
       collection do
@@ -1416,9 +1416,13 @@ Helpkit::Application.routes.draw do
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
   match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
   match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
+  
   match '/custom_survey/reports' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
-  match '/custom_survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#reports', :as => :custom_survey_reports
-  match '/custom_survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
+  match '/custom_survey/reports/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
+  match '/custom_survey/reports/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
+  match '/custom_survey/reports/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
+  match '/custom_survey/reports/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
+
 
   namespace :social do
 

@@ -1,4 +1,4 @@
-<% if current_account.custom_survey_enabled %>
+<% if current_account.custom_survey_enabled? %>
     <%= render :partial => 'archive_ticket_custom_survey' %>
 <%else %>
     <%= render :partial => 'old_archive_ticket_survey' %>

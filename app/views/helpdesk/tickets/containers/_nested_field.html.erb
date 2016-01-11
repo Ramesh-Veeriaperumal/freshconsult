@@ -2,8 +2,11 @@
   category_id = "#{field_id}_category"
   sub_category_id = "#{field_id}_sub_category"
   sub_category_item_id = "#{field_id}_item_sub_category"
+  any = t('any')
+  none = t("filter_options.none")
 %>
-<% options = options.unshift([t('any'),"-1"]) %>
+<% 
+options = options.unshift([any,""], [none, "-1"]) %>
 <%= select_tag name, options_for_select(options.map {|k, v| [CGI.unescapeHTML(k), v.to_s]}, selected_val), 
                     :id => category_id, :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
 <%
@@ -14,7 +17,6 @@
     unless category_picklist_value.nil?
       sub_category[:options] = category_picklist_value.choices
       sub_category[:options].unshift(["...",""])
-
       sub_category_selected = current_options[sub_category[:condition].to_s]
 
       if !item.nil? && !sub_category_selected.blank?
@@ -57,7 +59,8 @@
             subcategory_val: '<%= CGI.unescapeHTML(current_options[sub_category[:condition].to_s].to_s) %>',
             category_val: '<%= selected_val.map { |val| CGI.unescapeHTML(val) } %>'            
           },
-          include_blank: "Any",
+          include_blank: "<%= any %>",
+          include_none: "<%= none %>",
           data_tree: <%= options.to_json.html_safe %>,
           subcategory_id: '<%= sub_category_id %>',
           item_id: '<%= sub_category_item_id %>',

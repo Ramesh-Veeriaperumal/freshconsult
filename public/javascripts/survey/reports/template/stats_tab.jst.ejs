@@ -1,7 +1,11 @@
-<a href="javascript:SurveyTab.change(<%=tab.id%>,'<%=tab.type%>');" onmouseover="javascript:SurveyTab.ToolTip.showToolTip(this,<%=tab.id%>,<%=tab.type%>)" onmouseleave="javascript:SurveyTab.ToolTip.removeToolTip(this)">
-<div id="summary-content"></div>
-	<span class="survey-nav-lead center"><%=tab.title%></span>
-	<span class="survey-nav-summary">
-		<%= JST["survey/reports/template/stats_percentile"]({className:tab[tab.overallStatus].smiley,percentage:tab[tab.overallStatus].percentage,status:''})%>
-	</span>
-</a>
+<% if (tab.disabled == ""){%>
+	<a href="javascript:SurveyTab.change(<%=tab.id%>,'<%=tab.type%>',true);" onmouseover="javascript:SurveyTab.ToolTip.showToolTip(this,<%=tab.id%>,<%=tab.type%>,'<%=tab.title%>')" onmouseleave="javascript:SurveyTab.ToolTip.removeToolTip(this)">
+	<div id="summary-content"></div>
+		<span class="survey-nav-lead center"><%=tab.title%></span>
+		<span class="survey-nav-summary">
+			<%= JST["survey/reports/template/stats_percentile"]({className:tab[tab.overallStatus].smiley,percentage:tab[tab.overallStatus].percentage,status:'',dotClasses:[]})%>
+		</span>
+	</a>
+<%} else{%>
+		<span class="survey-nav-lead center"><%=tab.title%></span>			
+<% } %>

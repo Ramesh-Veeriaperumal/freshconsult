@@ -10,6 +10,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Twitter
   include Facebook::Core::Util
   include Helpdesk::Activities
+  include Helpdesk::Permissions
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Social::Util
@@ -24,6 +25,7 @@ class Helpdesk::ConversationsController < ApplicationController
     :fetch_item_attachments, :set_native_mobile, :except => [:full_text, :traffic_cop]
   before_filter :set_ticket_status, :except => [:forward, :reply_to_forward, :traffic_cop]
   before_filter :load_item, :only => [:full_text]
+  before_filter :verify_permission, :only => [:reply, :forward, :reply_to_forward, :note, :twitter, :facebook, :mobihelp, :ecommerce, :traffic_cop, :full_text]
   before_filter :traffic_cop_warning, :only => [:reply, :twitter, :facebook, :mobihelp, :ecommerce]
   before_filter :check_for_public_notes, :only => [:note]
   before_filter :validate_ecommerce_reply, :only => :ecommerce
@@ -148,6 +150,10 @@ class Helpdesk::ConversationsController < ApplicationController
 
   protected
 
+    def verify_permission
+      verify_ticket_permission(@parent)
+    end
+
     def build_note_body_attributes
       if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]
         unless params[:helpdesk_note].has_key?(:note_body_attributes)
@@ -241,6 +247,7 @@ class Helpdesk::ConversationsController < ApplicationController
           @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
           @post.user = current_user
           @post.account_id = current_account.id
+          attachment_builder(@post, params[:helpdesk_note][:attachments], params[:cloud_file_attachments] )
           @post.save!
         end
       end
