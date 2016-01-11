@@ -2321,11 +2321,13 @@ Helpkit::Application.routes.draw do
         get :mobile_pre_loader
         get :deliver_activation_instructions
         get :configurations
+        get :mobile_configurations
       end
     end
     resources :freshfone do 
       collection do
         get :numbers
+        get :can_accept_incoming_calls
       end
     end
   end
