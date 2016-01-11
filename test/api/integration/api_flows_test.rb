@@ -77,9 +77,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_trusted_ip_invalid_shard
     ShardMapping.stubs(:lookup_with_domain).returns(nil)
-    ApiDiscussions::CategoriesController.any_instance.expects(:select_shard).once
     Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled).never
     post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 404
   ensure
     ShardMapping.unstub(:lookup_with_domain)
   end
@@ -775,5 +775,26 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_pagination_with_valid_values
     get 'api/discussions/categories?page=1000&per_page=100', nil, @headers
     assert_response 200
+  end
+
+  def test_invalid_domain_with_no_shard
+    ShardMapping.stubs(:lookup_with_domain).returns(nil)
+    ApiDiscussions::CategoriesController.any_instance.expects(:current_shard).once
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 404
+  ensure
+    ShardMapping.unstub(:lookup_with_domain)
+    ApiDiscussions::CategoriesController.any_instance.unstub(:current_shard)
+  end
+
+  def test_active_record_not_found_error
+    error = ActiveRecord::RecordNotFound.new
+    error.set_backtrace(['a', 'b'])
+    ApiDiscussions::CategoriesController.any_instance.stubs(:set_time_zone).raises(error)
+    ApiDiscussions::CategoriesController.any_instance.expects(:notify_new_relic_agent).with(error, description: "ActiveRecord::RecordNotFound error occured while processing api request").once
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+    assert_response 500
+  ensure
+    ApiDiscussions::CategoriesController.any_instance.unstub(:set_time_zone, :notify_new_relic_agent)
   end
 end

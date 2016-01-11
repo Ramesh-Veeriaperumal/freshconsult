@@ -19,6 +19,7 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
+  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
@@ -133,9 +134,23 @@ class ApiApplicationController < MetalApiController
     end
 
     def record_not_found(e)
-      notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
-      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      head 404
+      # Render 404 if domain is not present else 500.
+      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
+      if current_shard.nil?
+        Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
+        head 404 
+      else
+        notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
+        Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+        render_base_error(:internal_error, 500)
+      end
+    end
+
+    # Caching current_shard_selection in local instance variable to find out domain not found error.
+    # As exception ensures connection to be switched to initial shard.
+    def current_shard
+      return @current_shard if defined?(@current_shard)
+      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -407,6 +422,7 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
+      Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
