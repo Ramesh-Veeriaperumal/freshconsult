@@ -12,7 +12,8 @@ module Solution::LanguageControllerMethods
 
 	def language
 		@language ||= begin
-			lang = (Language.find(params[:language_id]) || Language.find_by_code(params[:language]) || Language.for_current_account)
+			lang = Language.for_current_account unless current_account.multilingual?
+			lang ||= (Language.find(params[:language_id]) || Language.find_by_code(params[:language]) || Language.for_current_account)
 			([lang] | current_account.all_language_objects).first
 		end
 	end

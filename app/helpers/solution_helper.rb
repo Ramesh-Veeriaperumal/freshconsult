@@ -433,4 +433,8 @@ module SolutionHelper
 		op << "</span>"
 		op.html_safe
 	end
+
+	def path_url_locale
+		current_account.multilingual? ? { :url_locale => @language.code } : {}
+	end
 end

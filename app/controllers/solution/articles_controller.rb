@@ -20,7 +20,7 @@ class Solution::ArticlesController < ApplicationController
   before_filter :check_new_folder, :bulk_update_folder, :only => [:move_to, :move_back]
   before_filter :set_current_folder, :only => [:create]
   # before_filter :check_new_author, :only => [:change_author]
-  before_filter :validate_author, :only => [:update]
+  before_filter :validate_author, :language, :only => [:update]
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :language_scoper, :only => [:new]
   

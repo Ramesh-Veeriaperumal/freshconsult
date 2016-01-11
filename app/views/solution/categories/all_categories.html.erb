@@ -2,9 +2,6 @@
 <% content_for :sticky_title do %>
 	<%= render :partial => 'categories_title_bar' %>
 <% end %>
-<% content_for :sticky_right do %>
-	<%= preview_portal(support_solutions_path(:url_locale => Language.for_current_account.code)) %>
-<% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :all_category, :sticky_class => "sol-sticky",
 						:search_url => "/search/solutions?term=" } %>
 

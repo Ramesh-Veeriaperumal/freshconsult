@@ -55,7 +55,7 @@ module Solution::ArticlesHelper
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
       :"default-folder" => @article.solution_folder_meta.is_default,
       :"draft-discard-url" => solution_draft_delete_path(@article.parent_id, @article.language_id),
-      :"preview-path" => support_draft_preview_path(@article, 'preview', :url_locale => @language.code),
+      :"preview-path" => support_draft_preview_path(@article, 'preview', path_url_locale),
       :"preview-text" =>  t('solution.articles.view_draft'),
       :"article-id" => @article.id
     }
@@ -134,7 +134,7 @@ module Solution::ArticlesHelper
     %(<span> #{t('solution.draft.autosave.save_success')} </span>
       <span title="#{formated_date(@article.draft.updated_at)}" class="tooltip" data-livestamp="#{@article.draft.updation_timestamp}"></span>
       <span class="pull-right">
-        #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview"),:target => "draft-"+@article.id.to_s}
+        #{link_to t('solution.articles.view_draft'), support_draft_preview_path(@article, "preview", path_url_locale),:target => "draft-"+@article.id.to_s}
       </span>).html_safe
   end
 

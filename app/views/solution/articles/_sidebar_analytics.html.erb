@@ -18,9 +18,11 @@
 	</div>
 </div>
 
-<div class="show-cumulative-stats drop-right"> 
-	<%= t('solution.articles.show_all_analytics') %>
-</div>
+<% if Account.current.multilingual? %>
+	<div class="show-cumulative-stats drop-right"> 
+		<%= t('solution.articles.show_all_analytics') %>
+	</div>
+<% end %>
 
 <div class="section cumulative-stats hide">
 	<div class="views">

@@ -6,7 +6,7 @@
   </div>
 <% end %>
 <% content_for :sticky_right do %>
-  <%= preview_portal(support_solutions_folder_path(@folder, :url_locale => @language.code), @folder.solution_category_meta) %>
+  <%= preview_portal(support_solutions_folder_path(@folder, path_url_locale), @folder.solution_category_meta) %>
 <% end %>
 <%= render :partial => '/solution/shared/sticky', :locals => { :page => :folder, :sticky_class => "sol-sticky category-sticky",
                       :search_url => "/search/solutions?folder_id=#{@folder.id}&term="} %>

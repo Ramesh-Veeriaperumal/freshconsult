@@ -4,12 +4,14 @@ class Solution::DraftsController < ApplicationController
   helper SolutionHelper
   helper Solution::ArticlesHelper
   include Solution::FlashHelper
+  include Solution::LanguageControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => :show
   before_filter :set_selected_tab, :only => [:index]
   before_filter :page_title, :only => [:index]
   before_filter :load_article_with_meta, :only => [:autosave, :publish, :destroy, :attachments_delete]
   before_filter :load_attachment, :only => [:attachments_delete]
+  before_filter :language, :only => [:publish, :attachments_delete]
 
   def index
     @drafts = drafts_scoper.as_list_view.paginate(:page => params[:page], :per_page => 10)
