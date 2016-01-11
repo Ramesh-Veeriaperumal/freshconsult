@@ -5198,6 +5198,7 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+      merge_ticket_failed: "Failure during merging of tickets."
 
     shared:
       addcc: "Add cc"
