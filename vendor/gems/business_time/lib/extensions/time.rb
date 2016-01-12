@@ -26,7 +26,7 @@ class Time
     def self.workday?(day,business_calendar_config = nil)
       business_calendar_config ||= BusinessCalendar.config
       Time.weekday?(day,business_calendar_config) &&
-          !business_calendar_config.holidays.include?(day.to_date)
+          !business_calendar_config.holidays.any?{|h| h.strftime("%d %m") == day.to_date.strftime("%d %m") }
     end
 
     # True if this time falls on a weekday.
