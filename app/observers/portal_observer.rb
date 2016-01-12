@@ -91,8 +91,8 @@ class PortalObserver < ActiveRecord::Observer
     end
 
     def update_users_language(portal)
+      account = portal.account
       unless account.features.multi_language?
-        account = portal.account
         User.current.update_attribute(:language, account.language) if User.current
         Users::UpdateLanguage.perform_async({ :account_id => account.id }) 
       end
