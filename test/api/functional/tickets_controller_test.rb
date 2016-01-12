@@ -169,6 +169,22 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_duplicate_tags
+    @account.tags.create(name: 'existing')
+    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'], 
+      status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
+      assert_difference 'Helpdesk::TagUse.count', 2 do # duplicates should be rejected
+        post :create, construct_params({}, params)
+      end
+    end
+    assert_response 201
+    params[:tags] = ['new', 'existing']
+    t = Helpdesk::Ticket.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+  end
+
   def test_create_with_responder_id_not_in_group
     group = create_group(@account)
     params = { requester_id: requester.id, responder_id: @agent.id, group_id: group.id, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
