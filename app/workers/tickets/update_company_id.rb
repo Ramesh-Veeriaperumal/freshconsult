@@ -1,7 +1,7 @@
 class Tickets::UpdateCompanyId < BaseWorker
   
   sidekiq_options :queue => :update_tickets_company_id, 
-                  :retry => 0, 
+                  :retry => 2, 
                   :backtrace => true, 
                   :failures => :exhausted
 

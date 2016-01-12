@@ -23,6 +23,10 @@
           <% disp_header = 0
           no_custom_app = true
           @applications.each do |application| %>
+          <% # Remove the below if block when old slack is removed from applications table. %>
+          <% if application.name == "slack" %> 
+            <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
+          <% end %>
           <%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
             <% if application.system_app? %>
               <li class="app-native">

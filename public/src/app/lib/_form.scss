@@ -523,6 +523,7 @@ ul.ui-form .ui-form-inline{
 			.radiolabel{@include margin-right(10px);}
 			.webhook{
 				@include margin(20px 0 10px 0px);
+				width: 100%;
 				.credentials{@include padding-left(15.2%); box-sizing: border-box; -moz-box-sizing: border-box;}
 				>div{
 					margin: 2px 0;

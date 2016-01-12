@@ -28,6 +28,7 @@ module ApiWebhooks::PlaceholderMethods
       ['{{ticket.agent.name}}','ticket_agent_name'],
       ['{{ticket.agent.email}}','ticket_agent_email'],
       ['{{ticket.latest_public_comment}}','ticket_latest_public_comment'],
+      ['{{ticket.latest_private_comment}}', 'ticket_latest_private_comment'],
       ['{{helpdesk_name}}','helpdesk_name'],
       ['{{ticket.portal_name}}','ticket_portal_name'],
       ['{{ticket.product_description}}','ticket_product_description']

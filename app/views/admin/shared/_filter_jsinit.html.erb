@@ -306,6 +306,9 @@
           jQuery(c_dom).attr('placeholder',(compName == 'filter') ? '<%= I18n.t('select_values') %>' : '<%= I18n.t('select_watchers') %>')
           jQuery(c_dom).prop({'multiple':'multiple'}).val(initFeed["value"]);
         break;
+        <% if current_account.installed_applications.with_name("slack_v2").present? %>
+          <%= render :partial => "integrations/va_actions/slack", :formats => [:js] %>
+        <% end %>
 
         default:
         c_dom = "";

@@ -965,4 +965,17 @@ if Integrations::Application.count == 0
                 }
     s.application_type = "magento"
   end
+
+  slack_v2 =  Integrations::Application.seed(:name) do |s|
+    s.name = "slack_v2"
+    s.display_name = "integrations.slack_v2.label"
+    s.description = "integrations.slack_v2.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 39
+    s.options = {:direct_install => true,
+                 :auth_url => "/integrations/slack_v2/oauth",
+                 :edit_url => "/integrations/slack_v2/edit"
+                }
+    s.application_type = "slack_v2"
+  end
 end

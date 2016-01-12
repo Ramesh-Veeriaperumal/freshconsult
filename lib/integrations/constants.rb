@@ -31,7 +31,8 @@ module Integrations::Constants
     :onedrive => "onedrive",
     :github => "github",
     :ilos => "ilos",
-    :magento => "magento"
+    :magento => "magento",
+    :slack_v2 => "slack_v2"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

@@ -55,20 +55,24 @@ class Mobile::SettingsController < ApplicationController
   end
 
 # Mobile devices to fetch admin level settings
+# Deprecated - use configurations
   def mobile_pre_loader
     render :json => {ff_feature: current_account.freshfone_account, view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id,ff_conference: current_account.features?(:freshfone_conference) }
   end
 
   def deliver_activation_instructions
-
    #Code Moved to accounts/new_signup_free , so that activation mail is sent without second get request.
-
    render :json => {result: true}
 
   end  
-   
+  
+  # Deprecated - use mobile_configurations
   def configurations
     render :json => current_user.as_config_json.merge(current_account.as_config_json)
   end	
+
+  def mobile_configurations
+    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url']}
+  end
 
 end

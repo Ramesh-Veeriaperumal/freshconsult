@@ -295,7 +295,7 @@ class AuthorizationsController < ApplicationController
     end
 
   OAUTH1_PROVIDERS = ["quickbooks"]
-  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "box", "slack", "google_contacts"]
+  OAUTH2_PROVIDERS = ["nimble", "google_oauth2", "surveymonkey", "box", "google_contacts"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
-  OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey", "slack"]
+  OAUTH2_OMNIAUTH_CRENDENTIALS = ["surveymonkey"]
 end
