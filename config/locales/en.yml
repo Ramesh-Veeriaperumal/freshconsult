@@ -5199,6 +5199,7 @@ en:
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
       merge_ticket_failed: "Failure during merging of tickets."
+      tickets_background: "Please wait while we update the tickets. This might take a few minutes."
 
     shared:
       addcc: "Add cc"

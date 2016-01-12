@@ -67,6 +67,8 @@ defaults: &defaults
     - [email_notification_spam_queue]
     - [update_user_language]
     - [integrations]
+    - [bulk_ticket_actions]
+    - [bulk_ticket_reply]
 
 development:
   <<: *defaults

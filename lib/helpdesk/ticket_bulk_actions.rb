@@ -1,5 +1,6 @@
 class Helpdesk::TicketBulkActions
   include Helpdesk::ToggleEmailNotification
+  include Helpdesk::TagMethods
 
   class InvalidActionError < StandardError
   end
@@ -7,11 +8,16 @@ class Helpdesk::TicketBulkActions
   def initialize(params)
     params.symbolize_keys!
     @change_hash = construct_ticket_change(params)
-    raise InvalidActionError unless @change_hash.present?
+    @tags = params[:tags] unless params[:tags].nil?
+    raise InvalidActionError unless ( @change_hash.present? or @tags )
   end
 
   def perform(ticket)
-    update_ticket(ticket)
+    @change_hash.each do |key, value|
+        ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
+    end
+    update_tags(@tags,false,ticket) if @tags
+    ticket.save
   end
 
   private
@@ -29,12 +35,5 @@ class Helpdesk::TicketBulkActions
         :delete          => { :deleted => true }
       }
       change_hash[action.to_sym]
-    end
-
-    def update_ticket(ticket)
-      @change_hash.each do |key, value|
-        ticket.send("#{key}=", value) if ticket.respond_to?("#{key}=")
-      end
-      ticket.save
     end
 end
