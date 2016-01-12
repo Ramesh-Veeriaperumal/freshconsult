@@ -10,7 +10,7 @@ class PopulateSlackV2Application < ActiveRecord::Migration
       :name => "slack_v2",
       :display_name => "integrations.slack_v2.label",
       :description => "integrations.slack_v2.desc",
-      :listing_order => 37,
+      :listing_order => 39,
       :options => {
         :direct_install => true,
         :auth_url => "/integrations/slack_v2/oauth",

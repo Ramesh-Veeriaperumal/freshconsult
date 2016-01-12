@@ -60,10 +60,10 @@ module IntegrationServices::Services::Slack::Formatter
           slack_id = @requester_slack_id
           return slack_id.present? ? "<@#{slack_id}>" : "#{requester_email}"
         else
-          return "tw: #{requester.twitter_id}" if requester.twitter_id.present?
-          return "fb: #{requester.fb_profile_id}" if requester.fb_profile_id.present?
-          return "wph: #{requester.phone}" if requester.phone.present?
-          return "mph: #{requester.mobile}" if requester.mobile.present?
+          return "https://www.twitter.com/#{requester.twitter_id}" if requester.twitter_id.present?
+          return "https://www.facebook.com/#{requester.fb_profile_id}" if requester.fb_profile_id.present?
+          return "WorkPhone: #{requester.phone}" if requester.phone.present?
+          return "MobilePhone: #{requester.mobile}" if requester.mobile.present?
         end
         return "#{requester.name}"
       end

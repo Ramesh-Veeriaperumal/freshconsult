@@ -86,7 +86,7 @@
                   </div>
                 </div>
               <%end%>
-              <span class="seperator"></span>
+              <span class="seperator slack-bottom"></span>
               <br/>
               <%= check_box(:configs, 'allow_dm', :checked => @installed_app.configs[:inputs]["allow_dm"].present? ) %>
               <label for="configs_allow_dm" class="inline-block"> <%=t("integrations.slack_v2.form.allow_dm_agent")%> </label>

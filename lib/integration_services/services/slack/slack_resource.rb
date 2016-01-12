@@ -4,8 +4,7 @@ module IntegrationServices::Services
 
       USER_NAME = "Freshdesk"
 
-      # Change this url to the url of the uploaded production app account in slack.
-      ICON_URL = "https://s3-us-west-2.amazonaws.com/slack-files2/bot_icons/2015-02-12/3702689370_48.png"
+      ICON_URL = "https://d1hashle7dv0hm.cloudfront.net/integrations/slack/3702689370_48.png"
 
       def faraday_builder(b)
         super

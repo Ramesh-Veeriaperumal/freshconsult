@@ -283,7 +283,7 @@ module IntegrationServices::Services
       end
 
       def handle_error e
-        @logger.debug("slack_service error #{e.message}") #include the ticket id and triggered event.
+        @logger.debug("slack_service error #{e.message}")
         NewRelic::Agent.notice_error(e)
         {:error => true, :error_message => e.message}
       end
