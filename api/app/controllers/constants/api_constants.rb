@@ -6,6 +6,9 @@ module ApiConstants
     page: 1
   }
 
+  # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
+  PAGE_MAX = WillPaginate::PageNumber::BIGINT
+
   DEFAULT_PARAMS = %w(version format k id).freeze
   DEFAULT_INDEX_FIELDS = %w(version format k id per_page page).freeze
   PAGINATE_FIELDS = %w(page per_page).freeze

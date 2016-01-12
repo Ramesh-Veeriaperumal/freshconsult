@@ -734,28 +734,28 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_pagination_with_invalid_datatype_string
     get 'api/discussions/categories?page=x&per_page=x', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page)])
     assert_response 400
   end
 
   def test_pagination_with_blank_values
     get 'api/discussions/categories?page=&per_page=', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_value
     get 'api/discussions/categories?page=0&per_page=0', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_negative_value
     get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page)])
     assert_response 400
   end
 
@@ -767,9 +767,20 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_pagination_with_per_page_exceeding_max_value
-    get 'api/discussions/categories?page=1000&per_page=101', nil, @headers
-    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    get 'api/discussions/categories?page=922337203685&per_page=101', nil, @headers
+    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page)])
     assert_response 400
+
+    get 'api/discussions/categories?page=9223372036854775808&per_page=101', nil, @headers
+    match_json([bad_request_error_pattern('page', :gt_zero_lt_max_per_page)])
+    assert_response 400
+  end
+
+  def test_unexpected_range_error
+    Sharding.stubs(:select_shard_of).raises(RangeError)
+    get '/api/discussions/categories', nil, @headers
+    assert_response 500
+    response.body.must_match_json_expression(base_error_pattern(:internal_error))
   end
 
   def test_pagination_with_valid_values

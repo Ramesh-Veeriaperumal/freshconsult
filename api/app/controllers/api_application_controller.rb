@@ -6,6 +6,7 @@ class ApiApplicationController < MetalApiController
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
+  rescue_from RangeError, with: :range_error
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
@@ -125,6 +126,21 @@ class ApiApplicationController < MetalApiController
       notify_new_relic_agent(e, description: 'Duplicate Record Error.')
       Rails.logger.error("Duplicate Entry Error: #{params.inspect} \n#{e.original_exception} \n#{e.message}\n#{e.backtrace.join("\n")}")
       render_request_error(:duplicate_value, 409)
+    end
+
+    def range_error(e)
+      # http://ruby-doc.org/core-2.1.0/RangeError.html
+      # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb#L18
+      # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
+      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:>) && params[:page] > ApiConstants::PAGE_MAX
+        # raised by will_paginate gem
+        render_errors [[:page, :gt_zero_lt_max_per_page]]
+      else
+        # unexpected exception
+        notify_new_relic_agent(e, description: 'Invalid Offset Error.')
+        render_base_error(:internal_error, 500)
+      end
+      Rails.logger.error("Invalid Offset Error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
     end
 
     def db_query_error(e)
