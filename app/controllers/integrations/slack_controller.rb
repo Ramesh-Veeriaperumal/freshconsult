@@ -5,8 +5,7 @@ class Integrations::SlackController < ApplicationController
   include  Integrations::Slack::Constant
 
   skip_before_filter :check_privilege, :verify_authenticity_token
-  #before_filter :verify_installed_app, :verify_authentication, :only => [:create_ticket]
-  before_filter :verify_authentication, :only => [:create_ticket]
+  before_filter :verify_installed_app, :verify_authentication, :only => [:create_ticket]
 
   def create_ticket
     channel = params[:channel_id]
