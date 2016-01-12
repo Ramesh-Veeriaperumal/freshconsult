@@ -7,12 +7,13 @@ class Support::ArchiveTicketsController < SupportController
   skip_before_filter :verify_authenticity_token
   before_filter :verify_authenticity_token, :unless => :public_request?
   
-  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user, :only => [:show, :index, :filter]
+  before_filter :load_item, :only => [:show]
+  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
 
   # Ticket object loading
   before_filter :current_filter, :build_tickets, :only => [:index, :filter]
-  before_filter :load_item, :verify_ticket_permission, :only => [:show]
+  before_filter :verify_ticket_permission, :only => [:show]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
@@ -121,6 +122,8 @@ protected
     end
 
     def check_user_permission
+      return if current_user and current_user.agent? and !preview? and @item.restricted_in_helpdesk?(current_user)
+      
       if current_user and current_user.agent? and !preview?
         return redirect_to helpdesk_ticket_url(:format => params[:format])
       end
@@ -137,7 +140,7 @@ protected
   private
     def can_access_support_ticket?
       @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.requester.company == current_user.company))))
+                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
     end
 
     def update_reply_cc cc_hash, old_cc_hash

@@ -115,9 +115,12 @@ module FreshdeskCore::Model
                         "subscriptions",
 
                         "surveys",
+                          "survey_questions",
+                          "survey_question_choices",
                           "survey_handles",
-                          "survey_results", 
-                          "survey_remarks", 
+                          "survey_results",
+                          "survey_result_data",
+                          "survey_remarks",
                         
                         "topics",
                           "ticket_topics",

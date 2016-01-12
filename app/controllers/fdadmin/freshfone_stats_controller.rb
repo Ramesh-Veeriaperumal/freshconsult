@@ -25,10 +25,13 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     def freshfone_payments
       #INTERVAL 1 DAY
       "SELECT accounts.id, accounts.name, 
-      freshfone_payments.purchased_credit AS 'credits', freshfone_payments.created_at, freshfone_payments.status
+      freshfone_payments.purchased_credit AS 'credits', freshfone_payments.created_at, freshfone_payments.status,
+      freshfone_payments.status_message, freshfone_payments.id
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
-      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      WHERE freshfone_payments.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND
+      subscriptions.state = 'active' 
       ORDER BY freshfone_payments.created_at DESC LIMIT 10"
     end
 
@@ -37,16 +40,21 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
       "SELECT accounts.id, accounts.name, freshfone_accounts.created_at
       FROM freshfone_accounts
       JOIN accounts ON freshfone_accounts.account_id = accounts.id 
-      WHERE freshfone_accounts.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      WHERE freshfone_accounts.created_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND
+      subscriptions.state = 'active' 
       ORDER BY freshfone_accounts.created_at DESC LIMIT 10"
     end
 
     def freshfone_payments_in_date_range(start_date,end_date)
       "SELECT accounts.id, accounts.name, 
-      freshfone_payments.purchased_credit AS 'credits',freshfone_payments.status, freshfone_payments.created_at
+      freshfone_payments.purchased_credit AS 'credits',freshfone_payments.status, freshfone_payments.created_at,
+      freshfone_payments.status_message, freshfone_payments.id AS 'pay_id'
       FROM freshfone_payments 
       JOIN accounts ON freshfone_payments.account_id = accounts.id 
-      WHERE freshfone_payments.created_at >= '"+start_date+"' AND freshfone_payments.created_at <= '"+end_date+"' 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      WHERE freshfone_payments.created_at >= '"+start_date+"' AND freshfone_payments.created_at <= '"+end_date+"'   
+      AND subscriptions.state = 'active'
       ORDER BY freshfone_payments.created_at DESC"
     end
 
@@ -54,15 +62,19 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
       "SELECT accounts.id, accounts.name, freshfone_accounts.created_at
       FROM freshfone_accounts
       JOIN accounts ON freshfone_accounts.account_id = accounts.id 
-      WHERE freshfone_accounts.created_at >= '"+start_date+"' AND freshfone_accounts.created_at <= '"+end_date+"' 
+      JOIN subscriptions ON subscriptions.account_id = accounts.id 
+      WHERE freshfone_accounts.created_at >= '"+start_date+"' AND freshfone_accounts.created_at <= '"+end_date+"'
+      AND subscriptions.state = 'active'  
       ORDER BY freshfone_accounts.created_at DESC"
     end
 
     def freshfone_call_charges_in_date_range(start_date,end_date)
-      "SELECT accounts.id ,accounts.name,COUNT(*),SUM(call_cost) FROM freshfone_calls JOIN accounts ON 
-       freshfone_calls.account_id = accounts.id 
-       WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"' 
-       GROUP BY account_id"
+      "SELECT accounts.id ,accounts.name,COUNT(*),SUM(call_cost) FROM freshfone_calls 
+       JOIN accounts ON freshfone_calls.account_id = accounts.id 
+       JOIN subscriptions ON subscriptions.account_id = accounts.id 
+       WHERE freshfone_calls.created_at >= '"+start_date+"' AND freshfone_calls.created_at <= '"+end_date+"'
+       AND subscriptions.state = 'active' 
+       GROUP BY subscriptions.account_id"
     end
 
     def all_accounts_results(startDate,endDate)
@@ -98,8 +110,8 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
       
         when "payments"
          
-          payments = account.freshfone_payments.where(conditions)
-          payment_list = single_account_payment_list(payments)
+          payments = account.freshfone_payments.where(conditions) 
+          payment_list = single_account_payment_list(payments) 
           generate_email(payment_list,payment_csv_columns)
         
         when "calldetails"  
@@ -119,7 +131,9 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
                               result['name'],
                               result['credits'],
                               result['status'] == 1 ? "Success": "Failed" ,
-                              result['created_at']]
+                              result['created_at'],
+                              result['status_message'],
+                              result['pay_id']]
                              end
       }
       total_result
@@ -140,7 +154,9 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
                       account.name,
                       payment.purchased_credit,
                       payment.status ? "Success": "Failed" ,
-                      payment.created_at.utc ]
+                      payment.created_at.utc,
+                      payment.status_message,
+                      payment.id ]
        end
        payments
     end
@@ -179,7 +195,7 @@ class Fdadmin::FreshfoneStatsController < Fdadmin::DevopsMainController
     end
 
     def payment_csv_columns
-      [ "Account ID", "Account Name", "Credits Added", "Status", "Time" ]
+      [ "Account ID", "Account Name", "Credits Added", "Status", "Time","Status_message","Payment Id" ]
     end
 
     def signup_csv_columns

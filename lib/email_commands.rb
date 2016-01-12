@@ -2,6 +2,8 @@
 module EmailCommands 
 
   def process_email_commands(ticket, user, email_config, email_param, note = nil)
+    return if ticket.agent_as_requester?(user.id)
+    
     content = email_param[:text] || Helpdesk::HTMLSanitizer.plain(email_param[:html])
     begin
       email_cmds_regex = get_email_cmd_regex(ticket.account)

@@ -33,7 +33,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
       "responder_id"     =>   responder_id,
       "agent_id"         =>   responder_id,
       "group_id"         =>   group_id,
-      "company_id"       =>   requester.customer_id,
+      "company_id"       =>   owner_id,
       "status"           =>   status,
       "priority"         =>   priority,
       "source"           =>   source,
@@ -78,7 +78,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     { 
       "object"                       =>  "archive_ticket",
       "action"                       =>  action,
-      "action_epoch"                 =>  Time.zone.now.to_i,
+      "action_epoch"                 =>  Time.zone.now.to_f,
       "archive_ticket_properties"    => mq_reports_archive_ticket_properties(action),
       "subscriber_properties"        =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
     }

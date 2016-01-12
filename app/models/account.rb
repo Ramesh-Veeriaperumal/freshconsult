@@ -82,19 +82,38 @@ class Account < ActiveRecord::Base
   end
   
   def survey
-    if custom_survey_enabled
-      custom_survey_from_cache || custom_surveys.first
-    else
-      surveys.first unless surveys.blank?
+    @survey ||= begin
+      if new_survey_enabled?
+        active_custom_survey_from_cache || custom_surveys.first
+      else
+        surveys.first unless surveys.blank?
+      end
     end
   end
 
-  def survey_enabled
-      features?(:surveys)
+  def any_survey_feature_enabled?
+    survey_enabled? || default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def any_survey_feature_enabled_and_active?
+    new_survey_enabled? ? active_custom_survey_from_cache.present? :
+      features?(:surveys, :survey_links)
+  end
+
+  def survey_enabled?
+    features?(:surveys)
+  end
+
+  def new_survey_enabled?
+    default_survey_enabled? || custom_survey_enabled?
+  end
+
+  def default_survey_enabled?
+    features?(:default_survey) && !custom_survey_enabled?
   end
   
-  def custom_survey_enabled
-      features?(:custom_survey)
+  def custom_survey_enabled?
+    features?(:custom_survey)
   end
 
   def freshfone_enabled?
@@ -138,9 +157,24 @@ class Account < ActiveRecord::Base
   def active_groups
     active_groups_in_account(id)
   end
-  
-  def reports_enabled?
-    true
+
+  def fields_with_in_operators
+    custom_dropdown = "custom_dropdown"
+    default_in_op_fields = Hash.new
+
+    default_in_op_fields[:ticket] = DEFAULT_IN_OPERATOR_FIELDS[:ticket].clone
+    default_in_op_fields[:ticket] << custom_dropdown_fields_from_cache.map(&:name)
+    default_in_op_fields[:ticket].flatten!
+
+    default_in_op_fields[:requester] = DEFAULT_IN_OPERATOR_FIELDS[:requester].clone
+    default_in_op_fields[:requester] << contact_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:requester].flatten!
+
+    default_in_op_fields[:company] = DEFAULT_IN_OPERATOR_FIELDS[:company].clone
+    default_in_op_fields[:company] << company_form.custom_fields.custom_dropdown_fields.pluck(:name)
+    default_in_op_fields[:company].flatten!
+
+    default_in_op_fields.stringify_keys!
   end
 
   class << self # class methods
@@ -245,7 +279,9 @@ class Account < ActiveRecord::Base
   end
 
   def default_friendly_email_personalize(user_name)
-    primary_email_config.friendly_email_personalize(user_name)
+    primary_email_config.active? ? 
+      primary_email_config.friendly_email_personalize(user_name) :
+      "#{primary_email_config.send(:format_name, user_name)} <support@#{full_domain}>"
   end
   
   def default_email

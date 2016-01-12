@@ -4,9 +4,9 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   include Redis::RedisKeys
 
   FRESHDESK_DOMAIN = 'freshdesk'
-  SKIPPED_SUBDOMAINS =  %w(admin billing partner signup freshsignup email login emailparser mailboxparser freshops) # check if this is valid
+  SKIPPED_SUBDOMAINS =  %w(admin billing partner signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains
   THROTTLE_PERIOD    =  1.hour
-  API_LIMIT = 1000
+  API_LIMIT = 3000
   DEFAULT_USED_LIMIT = 1
   API_CURRENT_VERSION = 'v2'
   NOT_FOUND_RESPONSE = [404, { 'Content-Type' => 'application/json' }, [' ']]
@@ -67,7 +67,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def increment_redis_key(used)
-      @count = increment_redis(key, used)
+      @count = increment_redis(key, used).to_i
       set_redis_expiry(key, THROTTLE_PERIOD) if @count == used_limit # Setting expiry for first time.
     end
 
@@ -76,7 +76,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def retry_after
-      newrelic_begin_rescue { return $rate_limit.ttl(key) }
+      handle_exception { return $rate_limit.ttl(key) }
     end
 
     def extra_credits
@@ -104,14 +104,13 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def api_limit
-      api_limits = get_multiple_redis_keys(account_api_limit_key, default_api_limit_key) || []
-      (api_limits.first || plan_api_limit || api_limits.last || API_LIMIT).to_i
+      api_limits = get_multiple_redis_keys(account_api_limit_key, plan_api_limit_key, default_api_limit_key) || []
+      (api_limits[0] || api_limits[1] || api_limits[2] || API_LIMIT).to_i
     end
 
-    def plan_api_limit
+    def plan_api_limit_key
       if plan_id = fetch_plan_id
-        plan_api_limit_key = PLAN_API_LIMIT % { plan_id: plan_id }
-        get_redis_key(plan_api_limit_key)
+        PLAN_API_LIMIT % { plan_id: plan_id }
       end
     end
 
@@ -126,19 +125,15 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def increment_redis(key, used)
-      newrelic_begin_rescue { return $rate_limit.INCRBY(key, used) }
+      handle_exception { return $rate_limit.INCRBY(key, used) }
     end
 
     def set_redis_expiry(key, expires)
-      newrelic_begin_rescue { $rate_limit.expire(key, expires) }
-    end
-
-    def get_redis_key(key)
-      newrelic_begin_rescue { $rate_limit.get(key) }
+      handle_exception { $rate_limit.expire(key, expires) }
     end
 
     def get_multiple_redis_keys(*keys)
-      newrelic_begin_rescue { $rate_limit.mget(*keys) }
+      handle_exception { $rate_limit.mget(*keys) }
     end
 
     def key
@@ -151,5 +146,17 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def api_version
       @request.env['action_dispatch.request.path_parameters'].try(:[], :version) # This parameter would come from api_routes
+    end
+
+    def handle_exception
+      # similar to newrelic_begin_rescue, additionally logs and sends more info to newrelic.
+        yield
+      rescue Exception => e
+        options_hash =  { uri: @request.env['REQUEST_URI'], custom_params: @request.env["action_dispatch.request_id"], 
+          description: "Error occurred while accessing Redis", request_method: @request.env['REQUEST_METHOD'], 
+          request_body: @request.env["rack.input"].gets }
+        Rails.logger.error("FdApiThrottler :: Redis Exception, Host: #{@host}, Exception: #{e.message}\n#{e.class}\n#{e.backtrace.join("\n")}")
+        NewRelic::Agent.notice_error(e, options_hash)
+        return
     end
 end

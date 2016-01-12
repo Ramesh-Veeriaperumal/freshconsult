@@ -12,7 +12,11 @@ module Gamification
 					remove_score(args)
 				else
 					ticket = Helpdesk::Ticket.find_by_id_and_account_id(id, account_id)
-					add_score(ticket, args)
+					if ticket
+						add_score(ticket, args)
+					else
+						puts "Ticket was deleted before processing score :: Ticket ID : #{id}, Account ID : #{account_id}"
+					end
 				end
 			end
 

@@ -45,7 +45,7 @@ module SupportTicketControllerMethods
   
   def can_access_support_ticket?
     @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( privilege?(:client_manager) && @ticket.requester.company == current_user.company))))
+                          ( privilege?(:client_manager) && @ticket.company == current_user.company))))
   end
 
   def visible_ticket?
@@ -57,7 +57,7 @@ module SupportTicketControllerMethods
   end
 
   def customer_survey_required?
-    can_access_support_ticket? && current_account && current_account.features?(:survey_links, :surveys)  && 
+    can_access_support_ticket? && current_user.customer? && current_account && current_account.any_survey_feature_enabled_and_active?  && 
     (@ticket.closed? || @ticket.resolved?)
   end
 

@@ -35,7 +35,7 @@ class Freshfone::CallController < FreshfoneBaseController
 		      :user_name => caller_lookup(params[:PhoneNumber],@user),
   	 		  :user_id => (@user || {})[:id],
           :call_meta => call_meta,
-          :caller_location => caller_location
+          :caller_card => caller_card
     		}
       }
 	  end
@@ -85,14 +85,17 @@ class Freshfone::CallController < FreshfoneBaseController
 					:ringing_time => call.freshfone_number.ringing_time,
 					:transfer_agent => get_transfer_agent(call),
 					:group 	=> (call.group.present?) ? call.group.name : "",
-					:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : "",
-					:caller_location => caller_location
+					:company_name => (@user.present? && @user.company_name.present?) ? @user.company_name : ""
 				}
 			end
 		end
 
 		def caller 
 			@caller ||= current_account.freshfone_callers.find_by_number(params[:PhoneNumber])
+		end
+
+		def caller_card
+			render_to_string(:partial => 'layouts/shared/freshfone/caller_card.html', :locals => { :user => @user, :caller_location => caller_location } , :format=> :html)
 		end
 
 		def caller_location 

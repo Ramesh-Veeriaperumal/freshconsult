@@ -8,7 +8,7 @@ class Support::SurveysController < ApplicationController
   include SupportTicketControllerMethods  
     
   def delta_handle
-   redirect_to params.merge!(:controller => "support/custom_surveys") if current_account.features?(:custom_survey)
+   redirect_to params.merge!(:controller => "support/custom_surveys") if current_account.new_survey_enabled?
   end
 
   def new

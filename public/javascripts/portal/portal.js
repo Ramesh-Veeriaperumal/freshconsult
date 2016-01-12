@@ -279,7 +279,9 @@
 				dateFormat = $(this).data('date-format');
 			}
 			$(this).datepicker({
-				dateFormat: dateFormat
+				dateFormat: dateFormat,
+				 changeMonth: true,
+                 changeYear: true,
 			});
 			 if($(this).data('showImage')) {
 		        $(this).datepicker('option', 'showOn', "both" );

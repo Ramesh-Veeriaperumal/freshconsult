@@ -36,6 +36,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
   private 
 
     def set_filter
+      @report_type = "phone_summary"
       @calls = filter(@start_date,@end_date)
       previous_time_range #setting the date range to previous time period 
       @old_calls = filter(@prev_start_time,@prev_end_time)

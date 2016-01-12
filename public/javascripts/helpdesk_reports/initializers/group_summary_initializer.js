@@ -50,14 +50,15 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                     "sScrollXInner": "200%",
                     "bFilter" : false, 
                     "bLengthChange" : true,
-                    "scrollDistance" : 850,
+                    "scrollDistance" : 950,
                     "lengthMenu": [30, 60, 90],
                     "aoColumns": [
-                        { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
+                        { "sWidth": "120px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
-                        { "sWidth": "150px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "130px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
                         { "sWidth": "100px" ,"orderSequence": [ "desc" , "asc" ]},
@@ -91,6 +92,9 @@ HelpdeskReports.ChartsInitializer.GroupSummary = (function () {
                      oTable.columns.adjust().draw(); 
                     }, 0 ); 
                 }
+                setTimeout(function(){
+                     fixedHeader.init({},"#group-summary");
+                }, 0 );
         }
     };
     return  {

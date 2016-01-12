@@ -58,7 +58,7 @@ class ChatsController < ApplicationController
       if params[:chatOwnerId]
         ticket.responder_id = params[:chatOwnerId]
         params[:userId] = params[:chatOwnerId]
-      else        
+      else  
         ticket.responder_id = current_user.id
         params[:userId] = current_user.id
       end
@@ -169,7 +169,7 @@ class ChatsController < ApplicationController
   #######
 
   def chat_note
-    params[:userId] = @ticket.requester_id
+    params[:userId] = @ticket.requester_id if params[:userId].blank?
     params[:note] = add_style JSON.parse(params[:messages])
     status = create_note
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }

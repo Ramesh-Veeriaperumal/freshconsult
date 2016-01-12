@@ -542,10 +542,10 @@ module ApplicationHelper
                       ['{{ticket.requester.address}}', 'Requester address',   "",       'ticket_requester_address']
                     ],
       :company => [
-                      ['{{ticket.requester.company.name}}',     'Company name',       '',         'ticket_requester_company_name'],
-                      ['{{ticket.requester.company.description}}',     'Company description',       '',         'ticket_requester_company_description'],
-                      ['{{ticket.requester.company.note}}',     'Company note',       '',         'ticket_requester_company_note'],
-                      ['{{ticket.requester.company.domains}}',     'Company domains',       '',         'ticket_requester_company_domains']
+                      ['{{ticket.company.name}}',     'Company name',       '',         'ticket_company_name'],
+                      ['{{ticket.company.description}}',     'Company description',       '',         'ticket_company_description'],
+                      ['{{ticket.company.note}}',     'Company note',       '',         'ticket_company_note'],
+                      ['{{ticket.company.domains}}',     'Company domains',       '',         'ticket_company_domains']
                     ],
       :helpdesk => [
                       ['{{helpdesk_name}}', 'Helpdesk name', '',         'helpdesk_name'],
@@ -577,13 +577,13 @@ module ApplicationHelper
     current_account.company_form.custom_company_fields.each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
-      place_holders[:company] <<  ["{{ticket.requester.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
+      place_holders[:company] <<  ["{{ticket.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
     }
 
     # Survey Placeholders
     place_holders[:tickets] << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
                       'Includes satisfaction survey.', 'ticket_satisfaction_survey'
-                      ] if current_account.features?(:surveys, :survey_links)
+                      ] if current_account.any_survey_feature_enabled_and_active? && params[:type] != 'reply_template'
     place_holders[:tickets] << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
                       'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
                       ] if Integrations::SurveyMonkey.placeholder_allowed?

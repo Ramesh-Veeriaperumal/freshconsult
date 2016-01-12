@@ -47,7 +47,7 @@ class Helpdesk::Email::HandleTicket
 	def create_ticket(start_time)
     create_ticket_object
     check_valid_ticket
-    handle_ticket_email_commands if current_agent?
+    handle_ticket_email_commands if ticket.agent_performed?(user)
     # Creating attachments without attachable info
     # Hitting S3 outside create-ticket transaction
     # attachable info will be updated on ticket save
@@ -73,7 +73,7 @@ class Helpdesk::Email::HandleTicket
     build_note_object
     begin
       update_ticket_cc
-      handle_note_email_commands if (user.agent? && !user.deleted?)
+      handle_note_email_commands if (ticket.agent_performed?(user) && !user.deleted?)
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end

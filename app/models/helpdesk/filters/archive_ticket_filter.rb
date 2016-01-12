@@ -48,7 +48,7 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
 
   def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
-    add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
+    add_condition("owner_id", :is_in, params[:company_id]) unless params[:company_id].blank?
   end
 
   def add_tag_filter(params)
@@ -84,27 +84,7 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
-          if condition.key.to_s.include?("responder_id") 
-            arr = condition.container.value.split(",")
-            if arr.include?("0")
-              arr.delete("0")
-              arr << User.current.id.to_s
-            end
-            condition.container.values[0] = arr.join(",")  
-          end
-          
-          if condition.key.to_s.include?("group_id")
-            if condition.container.value.include?("0")
-              group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
-              group_ids = ["-2"] if group_ids.empty?
-              garr = condition.container.value.split(",")
-              if garr.include?("0")
-                garr.delete("0")
-                garr << group_ids
-              end
-              condition.container.values[0] = garr.join(",")
-            end
-          end
+          handle_special_values(condition)
 
           sql_condition = condition.container.sql_condition
           
@@ -187,6 +167,37 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
     "INNER JOIN helpdesk_ticket_statuses ON 
           archive_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
             archive_tickets.status = helpdesk_ticket_statuses.status_id"
+  end
+
+  private
+
+  def handle_special_values(condition)    
+    key = condition.key.to_s
+    type = case 
+    when key.include?("responder_id")
+      :user
+    when key.include?("group_id")
+      :group
+    end
+
+    if type
+      values = condition.container.value.split(",")
+      if values.include?("0")
+        values.delete("0")
+        values << convert_special_values(type)
+      end
+      condition.container.values[0] = values.join(",")
+    end
+  end
+
+  def convert_special_values(type)
+    case type
+    when :user
+      User.current.id.to_s
+    when :group
+      ids = User.current.agent_groups.pluck(:group_id)
+      ids.blank? ? ["-2"] : ids
+    end
   end
 
 end

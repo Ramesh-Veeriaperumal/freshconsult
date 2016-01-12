@@ -76,6 +76,10 @@ class PortalDrop < BaseDrop
   def new_ticket_url
     @new_ticket_url ||= new_support_ticket_path(url_options)
   end
+  
+  def helpdesk_url
+    @helpdesk_url ||= root_path
+  end
 
   def my_topics_url
     @my_topics_url ||= my_topics_support_discussions_topics_path
@@ -205,6 +209,10 @@ class PortalDrop < BaseDrop
   
   def settings
     @settings ||= source.template.preferences
+  end
+  
+  def recent_topics
+    Forum::RecentTopicsDrop.new(self.source)
   end
   
   private

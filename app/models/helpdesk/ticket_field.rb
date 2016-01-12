@@ -117,7 +117,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_requester            => { :type => :default, :dom_type => "requester",
                                               :form_field => "email"  , :visible_in_view_form => false },
                   :default_ticket_type          => { :type => :default, :dom_type => "dropdown_blank"},
-                  :default_status               => { :type => :default, :dom_type => "dropdown_blank"}, 
+                  :default_status               => { :type => :default, :dom_type => "dropdown"}, 
                   :default_priority             => { :type => :default, :dom_type => "dropdown"},
                   :default_group                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
                   :default_agent                => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},

@@ -1,8 +1,6 @@
 class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
   NESTED_EVENTS_SEPERATION = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
-  before_filter :require_survey_rule, :only => [:edit]
-  include SurveyRuleHelperMethods
 	protected
 
     def scoper
@@ -19,7 +17,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
     def edit_data
       @event_input = ActiveSupport::JSON.encode @va_rule.filter_data[:events]
-      @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data[:conditions]
+      filter_data = change_to_in_operator @va_rule.filter_data[:conditions]
+      @filter_input = ActiveSupport::JSON.encode filter_data
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
     end
 
@@ -60,17 +59,19 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => @time_sheet_actions, :type => 1 },
       ]
 
-      if current_account.custom_survey_enabled
-        event_hash.push(
-            { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
-              :choices =>[ ['--', t('any_val.any_feedback')] ]+current_account.custom_surveys.active.first.choice_names, :type => 1,
-              :valuelabel => t('event.rating'), :condition => survey_featured_account?
-            }) unless current_account.custom_surveys.active.blank?
+      if current_account.new_survey_enabled? 
+        if current_account.active_custom_survey_from_cache.present?
+          event_hash.push(
+              { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
+                :choices =>[ ['--', t('any_val.any_feedback')] ]+current_account.active_custom_survey_from_cache.choice_names, :type => 1,
+                :valuelabel => t('event.rating'), :condition => survey_active_account?
+              })
+        end
       else
         event_hash.push(
           { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
-          :valuelabel => t('event.rating'), :condition => survey_featured_account? })
+          :valuelabel => t('event.rating'), :condition => survey_active_account? })
       end
       event_hash = event_hash.select{ |event| event.fetch(:condition, true) }
       add_custom_events event_hash
@@ -147,14 +148,4 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       end
     end
 
-    private
-    
-    def survey_data
-      {
-        :rules => JSON.parse(ActiveSupport::JSON.encode @va_rule.filter_data[:events]),
-        :name => 'customer_feedback',
-        :survey_modified_msg => I18n.t('admin.survey_modified'),
-        :survey_disabled_msg => I18n.t('admin.observer_rules.survey_disabled_rule')
-      }
-    end
 end

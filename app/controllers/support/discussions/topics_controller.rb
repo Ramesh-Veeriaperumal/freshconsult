@@ -4,6 +4,7 @@ class Support::Discussions::TopicsController < SupportController
   include SupportDiscussionsControllerMethods
   include SpamAttachmentMethods
   include CloudFilesHelper
+  include Community::Voting
 
   before_filter :load_topic, :only => [:show, :edit, :update, :like, :unlike, :toggle_monitor,
                                       :users_voted, :destroy, :toggle_solution, :hit]
@@ -83,6 +84,7 @@ class Support::Discussions::TopicsController < SupportController
 
   def create
 		@forum = forum_scoper.find(params[:topic][:forum_id])
+    (redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) and return) unless @forum.visible?(current_user) 
 		if @forum.announcement?
 			flash[:notice] = t(".flash.portal.discussions.topics.not_allowed")
 			creation_response(false) 

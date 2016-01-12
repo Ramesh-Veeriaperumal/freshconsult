@@ -1,6 +1,5 @@
 class Admin::QuestsController < Admin::AdminController
   include ModelControllerMethods
-  include SurveyRuleHelperMethods
 	include Va::Constants
 	include Gamification::Quests::Constants
 	include Gamification::Quests::Badges
@@ -8,7 +7,6 @@ class Admin::QuestsController < Admin::AdminController
   before_filter { |c| c.requires_feature :gamification }
   before_filter :set_filter_data, :only => [ :create, :update ]
   before_filter :load_config, :only => [:new, :edit]
-  before_filter :require_survey_rule, :only => [:edit]
 
   def index
     redirect_back_or_default '/admin/gamification#quests'
@@ -71,8 +69,13 @@ class Admin::QuestsController < Admin::AdminController
     end
 
     def load_config
-      @op_types        = ActiveSupport::JSON.encode OPERATOR_TYPES
-      @op_list        = ActiveSupport::JSON.encode OPERATOR_LIST
+      operator_types = OPERATOR_TYPES.clone
+      
+      operator_types[:choicelist] = ["is", "is_not"]
+      operator_types[:object_id] = ["is", "is_not"]
+
+      @op_types         = ActiveSupport::JSON.encode operator_types
+      @op_list          = ActiveSupport::JSON.encode OPERATOR_LIST
       @available_badges = available_badges
       
       filter_hash = {
@@ -102,12 +105,12 @@ class Admin::QuestsController < Admin::AdminController
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
         { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" }
       ]
-      if current_account.custom_survey_enabled
+      if current_account.new_survey_enabled?
         ticket_filter.push(
               { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
-                :choices => current_account.custom_surveys.active.first.choice_names.collect { |c| 
+                :choices => current_account.active_custom_survey_from_cache.choice_names.collect { |c| 
                 [c[0],CGI.escapeHTML(c[1])]}, :operatortype => "choicelist" 
-              }) unless current_account.custom_surveys.active.blank?
+              }) unless current_account.active_custom_survey_from_cache.blank?
       else
         ticket_filter.push(
           { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
@@ -176,14 +179,4 @@ class Admin::QuestsController < Admin::AdminController
       ]
     end
 
-    private
-    
-    def survey_data
-      {
-        :rules => JSON.parse(ActiveSupport::JSON.encode @quest.actual_filter_data),
-        :name => 'st_survey_rating',
-        :survey_modified_msg => I18n.t('admin.survey_modified'),
-        :survey_disabled_msg => I18n.t('quests.survey_disabled_event')
-      }
-    end
 end

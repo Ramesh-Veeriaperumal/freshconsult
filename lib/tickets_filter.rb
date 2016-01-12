@@ -13,6 +13,7 @@ module TicketsFilter
     [:my_overdue,       I18n.t('helpdesk.tickets.views.my_overdue'), [:visible, :responded_by, :overdue]  ],
     [:my_on_hold,       I18n.t('helpdesk.tickets.views.my_on_hold'), [:visible, :responded_by, :on_hold]  ],
     [:monitored_by,     I18n.t('helpdesk.tickets.views.monitored_by'), [:visible]  ],
+    [:raised_by_me,     I18n.t('helpdesk.tickets.views.raised_by_me'), [:visible] ],
     [:my_all,           I18n.t('helpdesk.tickets.views.my_all'), [:visible, :responded_by]  ],
     [:article_feedback, I18n.t('helpdesk.tickets.views.article_feedback'), [:visible]  ],
     [:my_article_feedback, I18n.t('helpdesk.tickets.views.my_article_feedback'), [:visible]  ],
@@ -33,6 +34,7 @@ module TicketsFilter
     [:on_hold,          I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
     [:all,              I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
     
+    [:unresolved,       I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
     [:spam,             I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,          I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags  ,           I18n.t('helpdesk.tickets.views.tags') ],
@@ -109,8 +111,8 @@ module TicketsFilter
   SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open all_tickets monitored_by spam deleted )
-  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open all_tickets monitored_by archived spam deleted )
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by spam deleted )
+  DEFAULT_VISIBLE_FILTERS_WITH_ARCHIVE = %w( new_and_my_open unresolved all_tickets raised_by_me monitored_by archived spam deleted )
 
   def self.default_views
     filters = if Account.current && Account.current.features?(:archive_tickets)

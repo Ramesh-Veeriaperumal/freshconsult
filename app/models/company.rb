@@ -21,7 +21,7 @@ class Company < ActiveRecord::Base
   concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq
 
   scope :domains_like, lambda { |domain|
-    { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
+    { :conditions => [ "domains like ?", "%,#{domain},%" ] } if domain
   }
 
   scope :custom_search, lambda { |search_string| 
@@ -87,5 +87,12 @@ class Company < ActiveRecord::Base
   def custom_field_types
     @custom_field_types ||=  custom_form.custom_company_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
-  
+
+  def domains
+    read_attribute(:domains) && read_attribute(:domains).gsub(/^\,/, '').chomp(',')
+  end
+
+  def tickets
+    all_tickets.joins(:requester).where('users.deleted =?', false)
+  end
 end

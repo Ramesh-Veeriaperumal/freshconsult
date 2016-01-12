@@ -99,8 +99,12 @@ class Portal < ActiveRecord::Base
       account.solution_articles.articles_for_portal(self).visible.newest(10)
   end
 
-  def recent_portal_topics user
-    account.topics.topics_for_portal(self).published.visible(user).newest.limit(6)
+  def recent_portal_topics user, limit = 6
+    limit = 100 if limit.to_i > 100
+    account.
+      topics.topics_for_portal(self).
+      published.visible(user).newest.
+      preload(:user, :forum, :last_post => {:user => :avatar}).limit(limit)
   end
 
   def my_topics(user, per_page, page)
@@ -181,6 +185,11 @@ class Portal < ActiveRecord::Base
   def full_name
     main_portal && name.blank? ? Account.current.name : name
   end
+  
+  def tickets_url
+    main_portal ? "#{Account.current.full_url}/support/tickets" : "#{url_protocol}://#{portal_url}/support/tickets"
+  end
+  
 
   private
 

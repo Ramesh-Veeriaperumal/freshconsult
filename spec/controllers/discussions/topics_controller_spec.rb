@@ -306,6 +306,220 @@ describe Discussions::TopicsController do
 		topics.each do |topic|
 			@account.topics.find_by_id(topic.id).should be_nil
 		end
+	end  
+
+  it "should vote a topic on put 'vote'" do
+    request.env["HTTP_ACCEPT"] = "application/javascript"
+    topic = create_test_topic(@forum, @agent)
+    vote_count = topic.user_votes
+
+    put :vote, :id => topic.id
+    liked_topic = @account.topics.find_by_id(topic.id)
+    liked_topic.user_votes.should be_eql(vote_count + 1)
+    vote = liked_topic.votes.find_by_user_id(@agent.id)
+    vote.should be_an_instance_of(Vote)
+    vote.voteable_id.should eql topic.id
+    vote.voteable_type.should eql "Topic"
+    response.should render_template 'discussions/topics/vote'
+
+    put :vote, :id => topic.id
+
+    unliked_topic = @account.topics.find_by_id(topic.id)
+    unliked_topic.user_votes.should be_eql(vote_count)
+    vote = unliked_topic.votes.find_by_user_id(@agent.id)
+    vote.should be_nil
+    response.should render_template 'discussions/topics/vote'
+
+  end
+
+
+	describe "User assignment" do 
+
+		before(:all) do 
+			@user = add_new_user(@account)
+		end
+
+		describe("Only users with admin privilege can create topic on behalf of others") do 
+
+			before(:each) do
+				agent = add_agent(@account, { :name => Faker::Name.name, 
+					                        :email => Faker::Internet.email, 
+					                        :active => 1, 
+					                        :role => 1, 
+					                        :agent => 1,
+					                        :role_ids => [@account.roles.find_by_name("Account Administrator").id.to_s],
+					                        :ticket_permission => 1})
+				agent.save!
+				log_in(agent)
+			end
+
+			it "should assign author to topic mentioned by user_id" do
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:user_id => @user.id}
+
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql @user.id
+				new_topic.published.should eql true
+
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql @user.id
+				new_post.published.should eql true
+			end
+
+			it "should assign author to topic mentioned by email_id" do 
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:import_id => 1
+							},
+					:email => @user.email
+
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql @user.id
+				new_topic.published.should eql true
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql @user.id
+				new_post.published.should eql true
+			end
+
+			it "should assign author to topic mentioned by user_id when both email and user_id is passed" do
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				user = add_new_user(@account)
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:import_id => 1,
+							:user_id => user.id
+							},
+					:email => @user.email
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql user.id
+				new_topic.published.should eql true
+
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql user.id
+				new_post.published.should eql true
+			end
+		end
+
+
+		describe("Users with out admin privilege can't create topic on behalf of others") do
+
+			before(:each) do
+				@user = add_new_user(@account)
+				@test_agent = add_agent(@account, { :name => Faker::Name.name, 
+					                        :email => Faker::Internet.email, 
+					                        :active => 1, 
+					                        :role => 1, 
+					                        :agent => 1,
+					                        :role_ids => [@account.roles.find_by_name("Agent").id.to_s],
+					                        :ticket_permission => 1})
+				@test_agent.save!
+				log_in(@test_agent)
+			end
+
+			it "should assign current user as author for user_id" do
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:user_id => @user.id}
+
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql @test_agent.id
+				new_topic.published.should eql true
+
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql @test_agent.id
+				new_post.published.should eql true
+			end
+
+			it"should assign current user as author for email" do 
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:import_id => 1
+							},
+					:email => @user.email
+
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql @test_agent.id
+				new_topic.published.should eql true
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql @test_agent.id
+				new_post.published.should eql true
+			end
+			it "should assign current user as author for user_id and email_id" do
+				topic_title = Faker::Lorem.sentence(1)
+				post_body = Faker::Lorem.paragraph
+				user = add_new_user(@account)
+				post :create,
+					:topic =>
+							{:title=> topic_title, 
+							:body_html=>"<p>#{post_body}</p>", 
+							:forum_id=> @forum.id,
+							:sticky => 0,
+							:locked => 0,
+							:import_id => 1,
+							:user_id => user.id
+							},
+					:email => @user.email
+				new_topic = @account.topics.find_by_title(topic_title)
+				new_topic.forum_id.should eql @forum.id
+				new_topic.user_id.should eql @test_agent.id
+				new_topic.published.should eql true
+
+				new_post = @account.posts.find_by_body_html("<p>#{post_body}</p>")
+				new_post.topic_id.should eql new_topic.id
+				new_post.user_id.should eql @test_agent.id
+				new_post.published.should eql true
+			end
+		end
 	end
 
 	describe "Topic creation from ticket" do

@@ -318,10 +318,12 @@ class Topic < ActiveRecord::Base
 
   def set_locked
     self.locked = false if self.locked.nil?
+    true
   end
 
   def set_sticky
     self.sticky = 0 if self.sticky.nil?
+    true
   end
 
   def set_unanswered_stamp

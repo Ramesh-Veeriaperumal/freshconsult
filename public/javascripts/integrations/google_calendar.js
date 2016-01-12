@@ -186,9 +186,11 @@ GoogleCalendar.prototype = {
 				accept_type: "application/json",
 				method: "get",
 				on_success: function(resData){ 
-					console.log('This ticket event ' + resData.responseJSON.id + ' loaded');
 					this.nLoadingEvents--;
-					this.showEvent(resData);}.bind(this),
+					if(resData.responseJSON.status != "cancelled"){
+						this.showEvent(resData);
+					}
+				}.bind(this),
 				after_failure: function(evt){
 					gcal.nLoadingEvents--;
 					gcal.populateEvents();
@@ -374,7 +376,7 @@ GoogleCalendar.prototype = {
 						method: "post",
 						rest_url: "calendar/v3/calendars/" + calendarId + "/events/" + eventId + "/move",
 						body: "calendarId="+calendarId+'&destination='+selected_calendar_id+'&eventId='+eventId,
-						on_success: function(res){console.log("Event Moved to new calendar successfuly.");
+						on_success: function(res){
 									gcal.updateCalId(res.responseJSON);
 						}
 					});
@@ -601,13 +603,13 @@ GoogleCalendar.prototype = {
 
 			// description = "";
 			if(description.length > 120) description = description.substring(0, 120) + "...";
-			cal_html += this.EVENT_TEMPLATE.evaluate({event_description: description,
-												event_summary: calEvents[evNo].summary,
+			cal_html += this.EVENT_TEMPLATE.evaluate({event_description: escapeHtml(description),
+												event_summary: escapeHtml(calEvents[evNo].summary),
 												formatted_time: formatEventTime(calEvents[evNo].start, calEvents[evNo].end),
 												custom_class: isFutureEvent(ev)?'':'past-event', 
 												id: calEvents[evNo].id,
 												event_link: calEvents[evNo].htmlLink,
-												event_location: calEvents[evNo].location
+												event_location: escapeHtml(calEvents[evNo].location)
 											});	
 			evNo++;
 		}

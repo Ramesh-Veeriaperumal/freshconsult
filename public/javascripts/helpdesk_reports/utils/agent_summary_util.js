@@ -4,6 +4,7 @@ HelpdeskReports.ReportUtil.AgentSummary = (function () {
     var _FD = {
         bindEvents: function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+                _FD.core.flushDataTable();
                 _FD.actions.submitReports();
             });
             jQuery('#reports_wrapper').on('click.helpdesk_reports', '[data-table="ticket-data"] td:not(".disable")', function () {

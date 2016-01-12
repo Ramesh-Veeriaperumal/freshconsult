@@ -6,7 +6,7 @@ module Search::Filters::QueryHelper
     COLUMN_MAPPING = {
       #_Note_: From WF filters => ES field
       'helpdesk_schema_less_tickets.boolean_tc02' =>  'trashed',
-      'users.customer_id'                         =>  'company_id',
+      'owner_id'                                  =>  'company_id',
       'helpdesk_tags.id'                          =>  'tag_ids',
       'helpdesk_tags.name'                        =>  'tag_names',
       'helpdesk_subscriptions.user_id'            =>  'watchers'
@@ -43,8 +43,7 @@ module Search::Filters::QueryHelper
       ({
         :group_tickets      =>  bool_filter(:should => [
                                                         group_id_es_filter('group_id', ['0']), 
-                                                        term_filter('responder_id', [User.current.id.to_s]), 
-                                                        term_filter('requester_id', [User.current.id.to_s])
+                                                        term_filter('responder_id', [User.current.id.to_s])
                                                         ]),
         :assigned_tickets   =>  term_filter('responder_id', [User.current.id.to_s])
       })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
@@ -76,6 +75,15 @@ module Search::Filters::QueryHelper
       if values.include?('0')
         values.delete('0')
         values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
+      end
+
+      missing_es_filter(field_name, values)
+    end
+
+    def status_es_filter(field_name, values)
+      if values.include?('0')
+        values.delete('0')
+        values.concat(Helpdesk::TicketStatus.unresolved_statuses(Account.current).map(&:to_s))
       end
 
       missing_es_filter(field_name, values)
@@ -178,7 +186,7 @@ module Search::Filters::QueryHelper
 
     # For generically handling other fields
     def handle_field(field_name, values)
-      send("#{field_name}_es_filter", field_name, values) rescue terms_filter(field_name, values)
+      send("#{field_name}_es_filter", field_name, values) rescue missing_es_filter(field_name, values)
     end
 
     ### ES METHODS ###

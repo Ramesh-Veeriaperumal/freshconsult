@@ -37,11 +37,6 @@ class Freshfone::QueueController < FreshfoneBaseController
     end
   end
 
-  def bridge
-    bridge_queued_call #if this is faster, replace with add_to_call_queue_worker.
-    render :json => {:status => :success}
-  end
-
   def dequeue
     current_call.default!
     render :xml => ( freshfone_conference? ? incoming_initiator.dequeue(params[:client])  : current_call_flow.dequeue(params[:client]) )

@@ -3,6 +3,7 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   self.primary_key = :id
   belongs_to_account
   belongs_to :survey
+  
   DEFAULT_FIELD_PROPS = {}
   CUSTOM_FIELDS_SUPPORTED = [:custom_survey_radio]
   DB_COLUMNS = {
@@ -14,18 +15,19 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
                     :field_data_class => 'CustomSurvey::SurveyResultData',
                     :field_choices_class => 'CustomSurvey::SurveyQuestionChoice'
 
-  validates_uniqueness_of :name, :scope => [:account_id, :survey_id]
-   validates_presence_of :name , :label
-  acts_as_list scope: [:survey_id]
+  validates :name, uniqueness: {scope: [:account_id, :survey_id], message: I18n.t('admin.surveys.thanks_contents.question_error_text')}
+  validates_presence_of :name , :label
+
+  acts_as_list scope: [:account_id, :survey_id]
 
   attr_accessible :survey_id, :name, :column_name, :label, :position, :field_type, :default, :custom_field_choices_attributes  
 
-  scope :default, :conditions => {:default=>true}
-  scope :feedback, :conditions => {:default=>false}
+  scope :default, :conditions => {:default  => true}
+  scope :feedback, :conditions => {:default => false}
 
   xss_sanitize :only => [:name, :label], :plain_sanitizer => [:label, :name]
  
-  def survey_method  param_survey_id
-        (Account.current || account).custom_surveys.find_by_id(param_survey_id)
+  def survey_method(param_survey_id)
+    (Account.current || account).custom_surveys.find_by_id(param_survey_id)
   end
 end

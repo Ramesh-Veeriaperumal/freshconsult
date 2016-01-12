@@ -28,7 +28,7 @@ class Helpdesk::Note < ActiveRecord::Base
       "source"      =>   source,
       "category"    =>   schema_less_note.category,
       "user_id"     =>   user_id,
-      "agent"       =>   (human_note_for_ticket? and !user.customer?),
+      "agent"       =>   (human_note_for_ticket? && notable.agent_performed?(user)),
       "private"     =>   private,
       "incoming"    =>   incoming,
       "deleted"     =>   deleted,
@@ -46,7 +46,7 @@ class Helpdesk::Note < ActiveRecord::Base
     { 
       "object"                =>  "note",
       "action"                =>  action,
-      "action_epoch"          =>  Time.zone.now.to_i,
+      "action_epoch"          =>  Time.zone.now.to_f,
       "note_properties"       =>  mq_reports_note_properties(action),
       "subscriber_properties" =>  {"reports" => mq_reports_subscriber_properties(action).merge(options) }    
     }

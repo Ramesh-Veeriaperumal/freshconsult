@@ -198,8 +198,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def parse_reply_to_email
       if(!params[:headers].nil? && params[:headers] =~ /^Reply-[tT]o: (.+)$/)
-        self.additional_emails = get_email_array($1)[1..-1]
-        self.reply_to_email = parse_email($1)
+        self.additional_emails = get_email_array($1.strip)[1..-1]
+        self.reply_to_email = parse_email($1.strip)
       end
       reply_to_email
     end
@@ -236,7 +236,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       #Assigns email of reply_to if feature is present or gets it from params[:from]
       #Will fail if there is spaces and no key after reply_to or has a garbage string
-      f_email = reply_to_email || parse_email(params[:from])
+      f_email = reply_to_email || parse_email(params[:from].strip)
       
       #Ticket will be created for no_reply if there is no other reply_to
       f_email = reply_to_email if valid_from_email?(f_email, reply_to_feature)
@@ -325,7 +325,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       check_support_emails_from(account, ticket, user, from_email)
 
       begin
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, email_config, params) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
@@ -496,13 +496,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :cc_emails => parsed_cc_emails
       )  
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if ticket.agent_performed?(user)
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
       
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket, note)
-        if (user.agent? && !user.deleted?)
+        if (ticket.agent_performed?(user) && !user.deleted?)
           process_email_commands(ticket, user, ticket.email_config, params, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
@@ -548,7 +548,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def belong_to_same_company?(ticket,user)
-      user.company_id and (user.company_id == ticket.requester.company_id)
+      user.company_id and (user.company_id == ticket.company_id)
     end
 
     def text_part
@@ -689,6 +689,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
         unless sanitized_old_msg.blank?
           remove_identifier_span(sanitized_old_msg)
+          remove_survey_div(sanitized_old_msg) unless plain
           old_msg = sanitized_old_msg.inner_html
         end
       end
@@ -728,7 +729,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_email_hash_value = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
       cc_emails_val =  parse_all_cc_emails(ticket.account.kbase_email, ticket.account.support_emails)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value) unless in_reply_to.to_s.include? "notification.freshdesk.com"
+      reply_type = in_reply_to.to_s.include?("notification.freshdesk.com") ? :notification : :default
+      add_to_reply_cc(cc_emails_val, ticket, note, cc_email_hash_value, reply_type)
       cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
@@ -744,9 +746,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def cleansed_html
-      @cleaned_html_body ||= run_with_timeout(HtmlSanitizerTimeoutError) { 
-                               Helpdesk::HTMLSanitizer.clean params[:html]
-                             }
+      @cleaned_html_body ||= begin
+        cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
+           Helpdesk::HTMLSanitizer.clean params[:html]
+        }
+      end 
+    end
+
+    def remove_survey_div parsed_html
+      survey_div = parsed_html.css("div[title='freshdesk_satisfaction_survey']")
+      survey_div.remove unless survey_div.blank?
     end
 
     def text_to_html(body)

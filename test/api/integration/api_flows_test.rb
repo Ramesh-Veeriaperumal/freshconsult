@@ -58,19 +58,54 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_trusted_ip_invalid
-    Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
-    Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
-    post '/api/discussions/categories', '{"name": "testdd"}', @write_headers.merge('rack.session' => { 'user_credentials_id' => '22' })
+    @account.features.whitelisted_ips.create
+    create_whitelisted_ips(true)
+    @account.reload
+    ip_ranges = @account.whitelisted_ip.ip_ranges.first.symbolize_keys!
+    WhitelistedIp.any_instance.stubs(:ip_ranges).returns([ip_ranges])
+    ApiDiscussions::CategoriesController.any_instance.expects(:create).never
+    Middleware::TrustedIp.any_instance.expects(:trusted_ip_applicable_to_user).never
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
     assert_response 403
     response.body.must_match_json_expression(message: String)
+  ensure
+    ApiDiscussions::CategoriesController.any_instance.unstub(:create)
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ip_applicable_to_user)
+    @account.features.whitelisted_ips.destroy
+  end
+
+  def test_trusted_ip_invalid_shard
+    ShardMapping.stubs(:lookup_with_domain).returns(nil)
+    ApiDiscussions::CategoriesController.any_instance.expects(:select_shard).once
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled).never
+    post '/api/discussions/categories', { 'name' => 'testdd_truested_ip' }.to_json, @write_headers
+  ensure
+    ShardMapping.unstub(:lookup_with_domain)
+  end
+
+  def test_trusted_ip_invalid_subdomain
+    Middleware::TrustedIp.any_instance.expects(:trusted_ips_enabled?).never
+    ApiApplicationController.any_instance.expects(:route_not_found).once
+    post '/api/discussions/categories', '{"name": "testdd_truested_ip"}', @write_headers.merge('HTTP_HOST' => 'billing.junk.com')
+    assert_nil ForumCategory.find_by_name('testdd_truested_ip')
+    assert_response 404
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    ApiApplicationController.any_instance.unstub(:route_not_found)
   end
 
   def test_trusted_ip_invalid_non_api
     Middleware::TrustedIp.any_instance.stubs(:trusted_ips_enabled?).returns(true)
     Middleware::TrustedIp.any_instance.stubs(:valid_ip).returns(false)
+    DiscussionsController.any_instance.expects(:categories).once
     get '/discussions/categories', nil, @headers.merge('rack.session' => { 'user_credentials_id' => '22' })
     assert_response 302
     assert_equal '/unauthorized.html', response.headers['Location']
+  ensure
+    Middleware::TrustedIp.any_instance.unstub(:trusted_ips_enabled?)
+    Middleware::TrustedIp.any_instance.unstub(:valid_ip)
+    DiscussionsController.any_instance.unstub(:categories)
   end
 
   def test_globally_blacklisted_ip_invalid
@@ -360,9 +395,9 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     new_v1_api_consumed_limit = get_key(api_key).to_i
     assert_equal old_v2_api_consumed_limit + 1, new_v2_api_consumed_limit
     assert_equal old_v1_api_consumed_limit, new_v1_api_consumed_limit
-    assert_equal '1000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Total']
     assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version']
-    remaining_limit = 1000 - new_v2_api_consumed_limit.to_i
+    remaining_limit = 3000 - new_v2_api_consumed_limit.to_i
     assert_equal remaining_limit.to_s, response.headers['X-RateLimit-Remaining']
     assert_equal '1', response.headers['X-RateLimit-Used']
   end
@@ -609,22 +644,46 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_throttled_valid_request_with_plan_api_limit_changed
     turn_on_caching
     old_plan = @account.subscription.subscription_plan
-    subscription = @account.subscription
     new_plan = SubscriptionPlan.find(3)
     set_key(plan_key(3), 230, nil)
     remove_key(account_key)
-
-    get '/api/v2/discussions/categories', nil, @headers
-    assert_response 200
-    assert_equal '200', response.headers['X-RateLimit-Total']
+    Subscription.fetch_by_account_id(@account.id) # setting memcache key
+    
     @account.subscription.update_attribute(:subscription_plan_id, new_plan.id)
     @account.reload.subscription.reload.subscription_plan
 
     get '/api/v2/discussions/categories', nil, @headers
     assert_response 200
     assert_equal '230', response.headers['X-RateLimit-Total']
-    subscription.update_column(:subscription_plan_id, old_plan.id)
+  ensure
+    @account.subscription.update_column(:subscription_plan_id, old_plan.id)
     turn_off_caching
+  end
+
+  def test_throttler_with_redis_down
+    remove_key(v2_api_key)
+    rate_limit_instance = $rate_limit
+    $rate_limit = mock("Redis Client Instance")
+    get '/api/v2/discussions/categories', nil, @headers
+    assert_response 200
+    $rate_limit = rate_limit_instance
+    assert_equal '3000', response.headers['X-RateLimit-Total']
+    assert_equal '3000', response.headers['X-RateLimit-Remaining']
+    assert_equal '1', response.headers['X-RateLimit-Used']
+    assert_nil get_key(v2_api_key)
+    assert_equal 'latest=v2; requested=v2', response.headers['X-Freshdesk-API-Version'] 
+  ensure
+    $rate_limit = rate_limit_instance
+  end
+
+  def test_throttler_with_expiry_not_set_properly
+    old_api_consumed_limit = get_key(v2_api_key).to_i
+    remove_key(v2_api_key)
+    set_key(v2_api_key, '5000', nil)
+    get '/api/v2/discussions/categories', nil, @headers
+    set_key(v2_api_key, old_api_consumed_limit, nil)
+    assert_response 429
+    assert_equal '-1', response.headers['Retry-After']
   end
 
   def test_expiry_condition
@@ -633,7 +692,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
     id = (Helpdesk::Ticket.first || create_ticket).display_id
     # first call after expiry
-    skip_bullet {get "/api/v2/tickets/#{id}?include=notes", nil, @headers}
+    skip_bullet { get "/api/v2/tickets/#{id}?include=notes", nil, @headers }
     assert_response 200
 
     assert_equal 2, get_key(v2_api_key).to_i
@@ -670,5 +729,51 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 404
     assert_equal ' ', @response.body
     ShardMapping.any_instance.unstub(:not_found?)
+  end
+
+  def test_pagination_with_invalid_datatype_string
+    get 'api/discussions/categories?page=x&per_page=x', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    assert_response 400
+  end
+
+  def test_pagination_with_blank_values
+    get 'api/discussions/categories?page=&per_page=', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_value
+    get 'api/discussions/categories?page=0&per_page=0', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_negative_value
+    get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    assert_response 400
+  end
+
+  def test_pagination_with_invalid_datatype_array
+    get 'api/discussions/categories?page[]=1&per_page[]=1', nil, @headers
+    match_json([bad_request_error_pattern('page', :invalid_field),
+                bad_request_error_pattern('per_page', :invalid_field)])
+    assert_response 400
+  end
+
+  def test_pagination_with_per_page_exceeding_max_value
+    get 'api/discussions/categories?page=1000&per_page=101', nil, @headers
+    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    assert_response 400
+  end
+
+  def test_pagination_with_valid_values
+    get 'api/discussions/categories?page=1000&per_page=100', nil, @headers
+    assert_response 200
   end
 end

@@ -3,12 +3,12 @@
   $J("#helpdesk-select-all").bind('toggleState click', function(ev){
     $J("#tickets-expanded input[type=checkbox]").prop("checked", $J(this).prop("checked"));
     $J("#tickets-expanded input[type=checkbox]").trigger('change');
-  }); 
+  });
 
   $J("#select_view_id").live("change", function(ev){
     window.location = this.value;
   });
-  
+
   $J("#assign-options-link").live("click", function(ev){
     jQuery("#assign-options").show();
     jQuery(this).hide();
@@ -30,20 +30,21 @@
   <% if @is_auto_refresh_feature %>
     <%= render :partial => "freshdesk_socket_autorefresh" %>
   <% end %>
-<% end %>  
+<% end %>
 
 <% content_for :layoutType do -%>ticket_list<%- end %>
-  <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
+  <div id="leftcol" class="ticket-leftcol" style="display:<%=(['deleted', 'spam', 'monitored_by'].include?(@current_view)) ? 'none' : 'block' %>">
     <%if request.headers['X-PJAX'] %>
-      <div id="ticket-leftFilter" class="leftFilter">   
+      <div id="ticket-leftFilter" class="leftFilter">
       </div>
     <%else%>
-      <div id="ticket-leftFilter" rel="remote" class="leftFilter">   
+      <div id="ticket-leftFilter" rel="remote" class="leftFilter">
         <%= render :partial => "helpdesk/shared/filter_options", :locals => { :current_filter => @ticket_filter, :requester_id =>  params[:requester_id] } %>
       </div>
     <%end%>
   </div>
-  <div id="rightCol" class="contentCol <%="hasRightCol" unless (@current_view == "deleted" or @current_view == "spam" or @current_view == "monitored_by") %>">
+  <div id="rightCol" class="contentCol <%="hasRightCol" unless (['deleted', 'spam', 'monitored_by'].include?(@current_view)) %>">
+    <%= render :partial => "helpdesk/tickets/new_view_flash" %>
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items, :current_view => @current_view } , :inline => true %>
   </div>
 <% content_for :pagefixed do %>
@@ -54,3 +55,4 @@
 <script type="text/javascript">
   Fjax.current_page = "ticket_list";
 </script>
+

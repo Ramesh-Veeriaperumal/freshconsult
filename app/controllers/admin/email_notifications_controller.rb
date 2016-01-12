@@ -1,8 +1,10 @@
 class Admin::EmailNotificationsController < Admin::AdminController 
   include LiquidSyntaxParser
-
+  include Spam::SpamAction
+  
   before_filter :load_item, :except => :index
   before_filter :validate_liquid, :only => :update
+  before_filter :detect_spam_action, :only => :update
   
   def index
     e_notifications = current_account.email_notifications 
@@ -33,6 +35,8 @@ class Admin::EmailNotificationsController < Admin::AdminController
         end   
       end
       if @email_notification.update_attributes(params[:email_notification])
+        # we should handle this at model level in future
+        template_spam_check
         flash[:notice] = t(:'flash.email_notifications.update.success')
       else
         flash[:notice] = t(:'flash.email_notifications.update.failure')
@@ -82,5 +86,25 @@ class Admin::EmailNotificationsController < Admin::AdminController
     ["subject_template", "template"].each do |suffix|
       syntax_rescue(email_notfn["#{user}_#{suffix}"])
     end
+  end
+  
+  def spam_check(content)
+    Admin::SpamCheckerWorker.perform_async({
+      :content => content,
+      :user_id => User.current.id,
+      :remote_ip => request.remote_ip,
+      :user_agent => request.env['HTTP_USER_AGENT'],
+      :referrer => request.referrer,
+      :notification_type => @email_notification.notification_type}
+    )
+  end
+  
+  def template_spam_check
+    email_notfn = params[:email_notification]
+    user = email_notfn.keys[0].include?("requester") ? "requester" : "agent"
+    ["subject_template", "template"].each do |suffix|
+      template_content = email_notfn["#{user}_#{suffix}"]
+      spam_check(template_content) if template_content.present?
+    end    
   end
 end

@@ -4,8 +4,9 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 	around_filter :select_slave_shard , :only => :get_country_list
 	before_filter :load_account
 	before_filter :validate_triggers, :only => [:update_usage_triggers]
+	before_filter :validate_timeout_and_queue,:construct_timeout_and_queue_hash, :only => [:update_timeouts_and_queue]
 	before_filter :validate_credits, :only => [:add_credits]
-	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers, :fetch_conference_state]
+	before_filter :notify_freshfone_ops , :except => [:get_country_list, :fetch_usage_triggers, :fetch_conference_state, :fetch_numbers]
 
 	TRIGGER_TYPE = { :credit_overdraft => 1, :daily_credit_threshold => 2 }
 
@@ -226,6 +227,33 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		end
 	end
 
+	def update_timeouts_and_queue
+		result = {:account_id => @account.id, :number_id => params[:number_id], :account_name => @account.name }
+		ff_acc = @account.freshfone_account
+		begin
+			if ff_acc.active?
+				if params[:number_id] == 'all'
+					@account.freshfone_numbers.update_all(@timeout_and_queue_hash)
+				else
+					@account.freshfone_numbers.where('id=?',params[:number_id]).update_all(@timeout_and_queue_hash)
+				end
+				result[:status] = 'success'
+			else
+				result[:status] = 'notice'
+			end
+		rescue Exception => e
+			Rails.logger.debug "Error while updating the timeouts and queue values for Account: #{@account.id}."
+			result[:status] = 'error'
+		ensure
+			respond_to do |format|
+				format.json do
+					render :json => result
+				end
+			end
+		end				
+	end
+
+
 	def restore_freshfone_account
 		result = { :account_id => @account.id, :account_name => @account.name }
 			begin
@@ -294,6 +322,31 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
+  end
+
+  def fetch_numbers
+  	result = { :account_id => @account.id }
+  	ph_numbers = @account.freshfone_numbers
+  	if ph_numbers.blank?
+  		result[:status] = "error"
+  		result[:reason] = "No Freshfone numbers"
+  	else 
+  		result[:numbers] = ph_numbers.map do |no| {
+  			:number => no.number,
+  			:id => no.id,
+  			:ring_time => no.ringing_time,
+  			:idle_time => no.rr_timeout,
+  			:wait_time => no.queue_wait_time,
+  			:max_length => no.max_queue_length
+  		}
+  		end
+  		result[:status] = "success"
+  	end
+  	respond_to do |format|
+     format.json do
+       render :json => result
+     end
+  	end
   end
 
 	private
@@ -371,5 +424,42 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 			params[:trigger_first].present? &&
 			params[:trigger_second].present? &&
 			params[:trigger_first].to_i < params[:trigger_second].to_i
+	end
+
+	def construct_timeout_and_queue_hash
+		@timeout_and_queue_hash = {}
+		@timeout_and_queue_hash.merge!({:ringing_time => params[:ringing_time].to_i}) if !params[:ringing_time].blank?
+		@timeout_and_queue_hash.merge!({:rr_timeout => params[:rr_timeout].to_i}) if !params[:rr_timeout].blank?
+		@timeout_and_queue_hash.merge!({:queue_wait_time => params[:queue_wait_time].to_i }) if !params[:queue_wait_time].blank?
+		@timeout_and_queue_hash.merge!({:max_queue_length => params[:max_queue_length].to_i}) if !params[:max_queue_length].blank?	
+	end
+	def validate_timeout_and_queue
+		validate_ringing_time
+		validate_round_robin_time
+		validate_queue
+	end
+
+	def validate_ringing_time
+		if !params[:ringing_time].blank?
+			if  params[:ringing_time].to_i > 999 || params[:ringing_time].to_i < 30  
+				render :json => {:status => "validationerror", :reason => "Ringing Timeout values should be in range between 30 and 999 seconds"} and return
+			end
+		end
+	end
+
+	def validate_round_robin_time
+		if !params[:rr_timeout].blank?
+			if params[:rr_timeout].to_i > 999 || params[:rr_timeout].to_i < 10
+				render :json => {:status => "validationerror", :reason => "Round robin timeout should be in range between 10 and 999 seconds"} and return
+			end
+		end
+	end
+
+	def validate_queue
+		if !params[:max_queue_length].blank?
+			if params[:max_queue_length].to_i > 1000
+				render :json => {:status => "validationerror", :reason => "Maximum queue length should be less than 1000"} and return
+			end
+		end
 	end
 end
