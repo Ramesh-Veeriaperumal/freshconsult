@@ -2,6 +2,7 @@ class Discussions::TopicsController < ApplicationController
 
 	include CloudFilesHelper
 	helper DiscussionsHelper
+	include Community::Voting
 
 	rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
@@ -18,6 +19,7 @@ class Discussions::TopicsController < ApplicationController
 	before_filter { |c| c.check_portal_scope :open_forums }
 
 	before_filter :set_selected_tab
+	before_filter :fetch_vote, :toggle_vote, :only => [:vote]
 
 	COMPONENTS = [:voted_users, :participating_users, :following_users]
 	POSTS_PER_PAGE = 10
@@ -159,6 +161,9 @@ class Discussions::TopicsController < ApplicationController
 			format.json  { head 200 }
 		end
 	end
+	
+	def vote
+	end
 
 
 	def update_stamp
@@ -252,6 +257,10 @@ class Discussions::TopicsController < ApplicationController
 			@forum = @topic.forum
 			@category = @forum.forum_category
 		end
+		
+		def vote_parent
+			@topic
+		end
 
 		def portal_check
 			if current_user.nil? || current_user.customer?
@@ -298,12 +307,12 @@ class Discussions::TopicsController < ApplicationController
 			@topic_ticket = nil unless @topic_ticket.requester.active?
 			return if @topic_ticket.nil?
 			@topic.title = @topic_ticket.subject
-		  @topic.posts.build(body_html: @topic_ticket.description_html)
+		  	@topic.posts.build(body_html: @topic_ticket.description_html)
 		end
 
 		def associate_ticket
 			@topic.build_ticket_topic(ticketable_id: @topic_ticket.id, ticketable_type: 'Helpdesk::Ticket')
-			add_ticket_attachments if ( params[:post] and params[:post][:ticket_attachments])
+			add_ticket_attachments if ( params[:post] and (params[:post][:ticket_attachments] or params[:post][:cloud_file_attachments]))
 			@topic.published = true
 			@post.published = true
 		end
@@ -314,6 +323,12 @@ class Discussions::TopicsController < ApplicationController
 				attachment = Helpdesk::Attachment.find_by_id(a[:resource])
 				next unless attachment
 				@topic.posts.first.attachments.build(:content => attachment.content, :description => attachment.description)
+			end
+
+			params[:post][:cloud_file_attachments].each do |c|
+				attach = Helpdesk::CloudFile.find_by_id(c[:resource])
+				next unless attach
+				@topic.posts.first.cloud_files.build({:url => attach.url, :application_id => attach.application_id, :filename => attach.filename })
 			end
 		end
 

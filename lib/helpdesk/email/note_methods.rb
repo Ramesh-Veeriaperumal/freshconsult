@@ -48,9 +48,9 @@ module Helpdesk::Email::NoteMethods
     
     {
       :body => tokenize_emojis(email[:stripped_text]),
-      :body_html => sanitize_message(email[:stripped_html]),
+      :body_html => sanitize_note_message(email[:stripped_html]),
       :full_text => tokenize_emojis(email[:text]),
-      :full_text_html => sanitize_message(email[:description_html])
+      :full_text_html => sanitize_note_message(email[:description_html])
     }
   end
 
@@ -98,15 +98,21 @@ module Helpdesk::Email::NoteMethods
   #   %(#{original_msg}<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>#{old_msg}</blockquote></div>)
   # end
 
-  def sanitize_message msg
+  def sanitize_note_message msg
     sanitized_msg = run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(msg).at_css("body") }
     remove_identifier_span(sanitized_msg)
+    remove_survey_div(sanitized_msg)
     sanitized_msg.inner_html unless sanitized_msg.blank?
   end
 
   def remove_identifier_span msg
     id_span = msg.css("span[title='fd_tkt_identifier']") || select_id_span(msg)
     id_span.remove if id_span
+  end
+
+  def remove_survey_div msg
+    survey_div = msg.css("div[title='freshdesk_satisfaction_survey']")
+    survey_div.remove unless survey_div.blank?
   end
 
   def select_id_span msg

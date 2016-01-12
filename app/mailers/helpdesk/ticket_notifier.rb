@@ -173,7 +173,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @survey_feedback_preview = false
     end
 
-    if params[:ticket].account.features?(:custom_survey)
+    if params[:ticket].account.new_survey_enabled?
       @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id], @survey_feedback_preview)
     else
       @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
@@ -236,7 +236,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket
     @account = note.account    
 
-    if ticket.account.features?(:custom_survey)
+    if ticket.account.new_survey_enabled?
        @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
     else
        @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])

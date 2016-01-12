@@ -182,3 +182,4 @@ module Helpdesk::Email::ParseEmailData
 	alias_method :parse_recipients, :parse_recipients_new
 
 end
+

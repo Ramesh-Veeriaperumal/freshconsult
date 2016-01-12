@@ -5,9 +5,8 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
   concerned_with :associations, :constants
 
   def self.create_handle(ticket, note, specific_include)
-    create_handle_internal(ticket, 
-      (specific_include) ? CustomSurvey::Survey::SPECIFIC_EMAIL_RESPONSE : CustomSurvey::Survey::ANY_EMAIL_RESPONSE , 
-      nil,note)
+    send_while = specific_include ? CustomSurvey::Survey::SPECIFIC_EMAIL_RESPONSE : CustomSurvey::Survey::ANY_EMAIL_RESPONSE
+    create_handle_internal(ticket, send_while, nil, note)
   end
   
   def self.create_handle_for_place_holder(ticket)    
@@ -19,87 +18,77 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
     create_handle_internal(ticket, send_while, survey_id, note=nil, preview, portal) if send_while
   end
 
+  def self.create_handle_for_portal(ticket, notification_type)
+    send_while = NOTIFICATION_VS_SEND_WHILE[notification_type]
+    create_handle_internal(ticket, send_while, survey_id=nil, note=nil, preview=false, portal=true, 
+                            save=false) if send_while
+  end
+
   def survey_url(ticket, rating)
     Rails.application.routes.url_helpers.support_customer_custom_survey_url(id_token, CustomSurvey::Survey::CUSTOMER_RATINGS[rating],:host => ticket.portal_host, :protocol => ticket.account.url_protocol)
   end
   
-  def create_survey_result rating
-    clear_survey_result if survey_result
-    
+  def record_survey_result rating
     old_rating = CustomSurvey::Survey::old_rating rating.to_i
 
-    build_survey_result({
-      :account_id => survey.account_id,
-      :survey_id => survey_id,
-      :surveyable_id => surveyable_id,
-      :surveyable_type => surveyable_type,
-      :customer_id => surveyable.requester_id,
-      :agent_id => which_agent,
-      :group_id => which_group,
-      :response_note_id => response_note_id,
-      :custom_field => {"#{survey.default_question.name}" => rating},
-      :rating => old_rating
-    })
-    
-    self.rated = true
-    
-    save
+    ActiveRecord::Base.transaction do
+      create_survey_result({
+        :account_id       => survey.account_id,
+        :survey_id        => survey_id,
+        :surveyable_id    => surveyable_id,
+        :surveyable_type  => surveyable_type,
+        :customer_id      => which_customer,
+        :agent_id         => which_agent,
+        :group_id         => which_group,
+        :response_note_id => response_note_id,
+        :custom_field     => {
+          "#{survey.default_question.name}" => rating
+        },
+        :rating           => old_rating
+      })
+      destroy
+    end
   end
 
   def feedback_url(rating)
-    url = survey_result.blank? ? '' : Rails.application.routes.url_helpers.support_custom_survey_feedback_path(survey_result.id, rating)
-    url
+    survey_result.blank? ? '' : 
+      Rails.application.routes.url_helpers.support_custom_survey_feedback_path(survey_result.id, rating)
   end
 
   def agent_name
-      account.users.find(agent_id).name
+    agent.try :name
   end
   
   private
 
+    def which_customer
+      User.current.try(:id) || surveyable.requester_id
+    end
+
     def which_agent
-          !(agent.blank?) ? agent.id : (response_note ? response_note.user_id : surveyable.responder_id)
+      !(agent.blank?) ? agent.id : (response_note ? response_note.user_id : surveyable.responder_id)
     end
 
     def which_group
-          !(group.blank?) ? group.id : surveyable.group_id
+      !(group.blank?) ? group.id : surveyable.group_id
     end
 
-    def self.create_handle_internal(ticket, send_while, survey_id = nil, note = nil,preview = false, portal = false)
-      if(!preview and !portal)
-        return nil unless ticket.can_send_survey?(send_while)
-      end
+    def self.create_handle_internal(ticket, send_while, survey_id = nil, note = nil,
+                                      preview = false, portal = false, save = true)
+    
+      return nil unless (preview or portal or ticket.can_send_survey?(send_while))
+
       s_handle = ticket.custom_survey_handles.build({
-        :id_token => Digest::MD5.hexdigest(Helpdesk::SECRET_1 + ticket.id.to_s + 
-          Time.now.to_f.to_s).downcase,
-        :sent_while => send_while
+        :id_token   => Digest::MD5.hexdigest("#{Helpdesk::SECRET_1}#{ticket.id}#{Time.now.to_f}").downcase,
+        :sent_while => send_while,
+        :survey_id  => survey_id || ticket.account.survey.id,
+        :account_id => ticket.account_id,
+        :preview    => preview,
+        :group_id   => ticket.group_id
       })
-      survey_id ||= ticket.account.survey.id
-      s_handle.survey_id = survey_id
-      s_handle.account_id = ticket.account_id
       s_handle.response_note_id = note.id if note
-      s_handle.preview = preview
       s_handle.agent_id = note ? note.user_id : ticket.responder_id
-      s_handle.group_id = ticket.group_id
-      s_handle.save
+      s_handle.save if save
       s_handle
     end
-    
-    def clear_survey_result
-      survey_result.destroy
-    end
-
-    def self.find_duplicate_handle(s_handle)
-      if(s_handle.sent_while == CustomSurvey::Survey::PLACE_HOLDER)
-        survey_handle = self.where(:account_id => s_handle.account_id, 
-                        :sent_while => s_handle.sent_while , :rated => s_handle.rated , 
-                        :response_note_id => s_handle.response_note_id, 
-                        :surveyable_id => s_handle.surveyable_id,
-                        :response_note_id => s_handle.response_note_id, :survey_id => s_handle.survey_id,
-                        :agent_id => s_handle.agent_id , :group_id => s_handle.group_id).last
-        return survey_handle.blank? ? s_handle : survey_handle
-      end
-      s_handle
-    end
-    
 end

@@ -609,6 +609,85 @@ RSpec.describe Helpdesk::TicketsController do
       (response.body.include? created_at_timestamp).should be_truthy
     end
 
+    it "should return unresolved tickets using Unresolved filter view" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "filter_name" => "unresolved",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no tags" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "helpdesk_tags.name", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no products" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "helpdesk_schema_less_tickets.product_id", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets with no companies" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "users.customer_id", operator: "is_in", ff_name: "default", value: "-1"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
+    it "should return tickets which are unresolved" do
+      created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.to_i}"
+      ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now}, create_group(@account, {:name => "Tickets_list"}))
+      get "custom_search" , {
+        "data_hash" => ActiveSupport::JSON.encode([{condition: "status", operator: "is_in", ff_name: "default", value: "0"}]),
+        "filter_name" => "all_tickets",
+        "wf_order" => "updated_at",
+        "wf_order_type" => "desc",
+        "page" => 1,
+        "total_entries" => 0,
+        "unsaved_view" => true
+      }
+      (assigns(:items).include? ticket_created).should be_truthy
+      (response.body.include? created_at_timestamp).should be_truthy
+    end
+
     it "should show the custom view save popup" do
       created_at_timestamp = "#{Time.zone.now.to_f} - #{Time.zone.now.beginning_of_week.to_i}"
       ticket_created = create_ticket({ :status => 2, :subject => created_at_timestamp, :created_at => Time.zone.now.beginning_of_week+1.hour}, create_group(@account, {:name => "Tickets_list"}))

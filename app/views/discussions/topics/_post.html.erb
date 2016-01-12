@@ -105,9 +105,10 @@ unpublished =  !original && !post.published
 				</ul>
 			</div>
 
-			<%= render :partial => 'discussions/topics/widgets/vote_info',
-						:locals => { :first_post => @first_post, :post => post, :topic => @topic } %>
-						
+			<div  id="vote-info-<%=post.id%>">
+				<%= render :partial => 'discussions/topics/widgets/vote_info',
+								:locals => { :first_post => @first_post, :post => post, :topic => @topic } %>
+			</div>
 		<% if original && @topic.answered? && @topic.answer %>
 			<%= render :partial => 'discussions/shared/answer',
 						:locals => {

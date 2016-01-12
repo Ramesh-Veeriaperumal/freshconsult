@@ -159,8 +159,8 @@ module AutomationControllerMethods
     current_account.features?(:multi_product)
   end
 
-  def survey_featured_account?
-    current_account.features?(:surveys, :survey_links)
+  def survey_active_account?
+    current_account.any_survey_feature_enabled_and_active?
   end
 
   def multi_timezone_account?

@@ -923,7 +923,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = "nmobile".eql?(params[:format])? 1 : 3
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :cloud_files,:note_old_body])
+    includes = [:user, :attachments, :schema_less_note, :cloud_files,:note_old_body]
+    includes << (Account.current.new_survey_enabled? ? {:custom_survey_remark => 
+                  {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark )
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,includes)
     reply_to_all_emails
   end
 

@@ -119,6 +119,12 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
               }
             }
             else if ((filter_options[i].ff_name == "default")) {
+              var message_key = filter_options[i].condition === "helpdesk_schema_less_tickets.product_id" ?
+                "product_id"
+                : filter_options[i].condition;
+              var message_val = (message[message_key]) ? 
+                message[message_key]
+                : "-1";
               if (filter_options[i].condition == "responder_id") {
                 if (filter_values.indexOf('0') >= 0) {
                     filter_values[filter_values.indexOf('0')] = current_userid;
@@ -130,6 +136,16 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                     filter_values = filter_values.concat(hashed_params['groups'].map(function(val){ return val+'';}));
                 }
               }
+              if (filter_options[i].condition == "status" && filter_values.indexOf('0') >= 0) {
+                filter_values[filter_values.indexOf('0')] = undefined;
+                if(!(
+                  presentInList(hashed_params['resolved_statuses'].map(String), message_val[0]) >=0 &&
+                  presentInList(hashed_params['resolved_statuses'].map(String), message_val[1]) >=0
+                )) {
+                  count++;
+                  continue;
+                }
+              }
 
               if(filter_options[i].condition == "helpdesk_tags.name"){
                 for(var t = 0; t < message["tag_names"].length; t++){
@@ -139,19 +155,20 @@ var refreshCallBack = function (message, hashed_params, current_userid,updated_t
                   }
                 } 
               }
-
-              var message_val = (message[filter_options[i].condition]) ? 
-                message[filter_options[i].condition]
-                : "-1";
               if (presentInList(filter_values, message_val) >= 0) {
                 count++;
               } 
             }
             else if (
               (filter_options[i].ff_name != "default") &&
-              Object.keys(message['custom_fields']).length != 0 &&
-              presentInList(filter_values, message['custom_fields'][filter_options[i].ff_name]) >= 0) {
-                count++;
+              Object.keys(message['custom_fields']).length != 0
+            ) {
+              var message_val = (message['custom_fields'][filter_options[i].ff_name]) ? 
+                message['custom_fields'][filter_options[i].ff_name]
+                : "-1";
+                if (presentInList(filter_values, message_val) >= 0) {
+                  count++;
+                }
             }
         };
         if (count == filter_options.length) {
@@ -169,6 +186,9 @@ var presentInList = function(filter_values, msg_val){
       return filter_values.indexOf(msg_val.toString());
     }else{
       for (var i=0; i < msg_val.length; i++){
+        if(msg_val[i] === null) {
+          msg_val[i] = -1
+        }
         if (filter_values.indexOf(msg_val[i].toString()) >= 0){
             return 1;
         }

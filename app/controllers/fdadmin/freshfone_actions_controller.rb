@@ -235,7 +235,7 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 				if params[:number_id] == 'all'
 					@account.freshfone_numbers.update_all(@timeout_and_queue_hash)
 				else
-					update_freshfone_timeout_and_queue(params)
+					@account.freshfone_numbers.where('id=?',params[:number_id]).update_all(@timeout_and_queue_hash)
 				end
 				result[:status] = 'success'
 			else
@@ -433,17 +433,6 @@ class Fdadmin::FreshfoneActionsController < Fdadmin::DevopsMainController
 		@timeout_and_queue_hash.merge!({:queue_wait_time => params[:queue_wait_time].to_i }) if !params[:queue_wait_time].blank?
 		@timeout_and_queue_hash.merge!({:max_queue_length => params[:max_queue_length].to_i}) if !params[:max_queue_length].blank?	
 	end
-
-	def update_freshfone_timeout_and_queue(params)
-		ff_number = @account.freshfone_numbers.find(params[:number_id])
-		if ff_number.present?
-			ff_number.update_attribute(:rr_timeout, params[:rr_timeout])
-			ff_number.update_attribute(:ringing_time, params[:ringing_time])
-			ff_number.update_column(:queue_wait_time, params[:queue_wait_time])
-			ff_number.update_column(:max_queue_length, params[:max_queue_length])
-		end
-	end
-
 	def validate_timeout_and_queue
 		validate_ringing_time
 		validate_round_robin_time

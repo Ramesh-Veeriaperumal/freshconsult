@@ -21,7 +21,8 @@
 			responsive: 	"",
 			widgetType: 	"popup",
 			buttonType:     "text",
-			captcha: ""
+			captcha: 		"",
+			loadOnEvent:    "windowLoad" // 'documentReady' || 'immediate' || 'onDemand'
 		},
 		widgetHeadHTML, widgetBodyHTML = null;
 		$widget_attr = {
@@ -283,12 +284,27 @@
 		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined') && options.screenshot == "")
 			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
 
-		bind(window, 'load', function(){
-			// File name to be changed later when uploaded
-			createButton();
-			createContainer();
-		});
+		switch(options.loadOnEvent){
+			case 'windowLoad':
+				bind(window, 'load', createWidget);
+			break;
+			case 'documentReady':
+				bind(document, 'ready', createWidget);
+			break;
+			case 'immediate':
+				createWidget();
+			break;
+		}
+		
+
 		loadcssfile(options.assetUrl+"/freshwidget.css?ver=" + version);
+	 }
+
+
+	 function createWidget() {
+	 	// File name to be changed later when uploaded
+	 	createButton();
+		createContainer();
 	 }
 
 	 function updateWidget(params){
@@ -311,6 +327,9 @@
 	 	init 		: function(apikey, params){
 						catchException(function(){ return initialize(params); });
 				      },
+		create      : function(){
+						catchException(function(){ return createWidget(); });
+					  },
 		show 		: function(){
 						catchException(function(){ return showContainer(); });
 					  },
