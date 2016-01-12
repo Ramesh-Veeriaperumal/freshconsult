@@ -223,6 +223,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def name_uniqueness_validation
+    return true unless new_record? || name_changed?
     if ((self.solution_folder_meta.solution_category_meta.solution_folders.where(:language_id => self.language_id)) - [self]).map(&:name).include?(self.name)
       errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
       return false

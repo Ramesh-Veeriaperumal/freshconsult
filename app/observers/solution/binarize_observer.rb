@@ -40,7 +40,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		end
 
 		def update_key(key, language_key, val)
-			@meta.send("#{val ? :mark : :unmark}_#{language_key}_#{key}") if @meta.respond_to?(key)
+			@meta.send("#{language_key}_#{key}=", val) if @meta.respond_to?(key)
 		end
 
 		def save_meta(object)
