@@ -35,6 +35,8 @@ module Integrations::Constants
     :slack_v2 => "slack_v2"
   }
 
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks]
+
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
     11 => :crm,
@@ -52,6 +54,9 @@ module Integrations::Constants
   DYNAMICS_CRM_CONSTANTS = { "rst2_login_url" => "https://login.microsoftonline.com/RST2.srf" }
 
   GOOGLE_CONTACTS = {"provider" => "google_contacts", "app_name" => "google_contacts"}
+
+  SUCCESS = "success"
+  FAILURE = "failure"
 
   INVOICE_APPS = [APP_NAMES[:quickbooks], APP_NAMES[:freshbooks]]
 

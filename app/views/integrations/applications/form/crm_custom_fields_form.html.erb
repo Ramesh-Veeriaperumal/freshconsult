@@ -1,0 +1,161 @@
+<% application_name = @installed_app.application.name %>
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.#{application_name}.helptext").html_safe%>
+  </div>
+<%- end %>
+ 
+  <h3 class="lead"><%=t("integrations.#{application_name}.form.#{application_name}_settings")%></h3>
+
+  <%= form_tag("/#{params[:controller]}/fields_update", :method=> "post")  do %>
+  <%default_fields = @installed_app.application.options[:default_fields] %>
+  
+  <% if application_name == Integrations::Constants::APP_NAMES[:infusionsoft] %>
+  <%= hidden_field_tag  'contact_custom_fields', @fields["contact_custom_fields"] %>
+  <%= hidden_field_tag  'account_custom_fields', @fields["account_custom_fields"] %>
+  <%= hidden_field_tag  'contact_data_types', @fields["contact_data_types"] %>
+  <%= hidden_field_tag  'account_data_types', @fields["account_data_types"] %>
+  <% end %>
+
+    <ul class="ui-form">
+
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-<%=application_name%>"></div>
+        <div class="logo info-data">
+          <%=t("integrations.#{application_name}.desc")%>
+        </div>
+      </label>
+      <div class="salesforce-wrapper">
+
+        <%unless @fields["contact_fields"].blank? %>
+          <div class="contact-fields"> 
+            <h3 class="leftselect2"><%=t("integrations.#{application_name}.form.contact")%></h3>
+            <div id='contacts'>
+              <span>
+                <div id="contactslist">
+                  <ul>
+                    <% contact_fields = @fields['contact_fields'] %>
+                    <%selected_fields = default_fields[:contact].collect{|label| contact_fields[label]} %> 
+                    <%unless @installed_app.configs_contact_labels.blank? %>
+                      <%selected_fields.push(@installed_app.configs_contact_labels.split(",").collect!{ |label| next if  default_fields[:contact].include?(label); 
+                        contact_fields[label]
+                        })%>
+                    <%end%>  
+                  </ul>
+                </div>
+                <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+                <%data = selected_fields.join(",").html_safe%>
+                <% # order the fields in such a way so that default fields come at the top
+                  contact_fields_list = [] #should be a list of lists. [ [label, field] [label, field] ]
+                  default_fields[:contact].each { |label| contact_fields_list.push([label, contact_fields[label]]) } 
+                  @fields['contact_fields'].each{|label, field|
+                    contact_fields_list.push([label, field]) if not default_fields[:contact].include?(label);
+                  }
+                %>
+                <%=hidden_field_tag :contact_labels %>
+                <%= select_tag :contacts, 
+                        options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "select-choice", "data-disable-field" =>  default_fields[:contact].join(",")} %> <!-- space in placeholder to add an empty option -->
+              </span>
+            </div>
+          </div>
+        <%end%>
+        <%unless @fields['lead_fields'].blank? %>
+          <div class="lead-fields">
+            <h3><%=t("integrations.#{application_name}.form.lead")%></h3>   
+            <div id="leads">
+              <span>
+              <div id="leadslist">
+                    <ul>
+                      <% lead_fields = @fields['lead_fields'] %>
+                      <%selected_lead_fields = default_fields[:lead].collect{|label| lead_fields[label]} # use a copy to not change default fields %>
+                    <%unless @installed_app.configs_lead_labels.blank? %>
+                    <%selected_lead_fields.push(@installed_app.configs_lead_labels.split(",").collect!{ |label| next if default_fields[:lead].include?(label);
+                     lead_fields[label]
+                     })%>
+                    <%end%>
+                    </ul>
+              </div>
+              <%data =selected_lead_fields.join(",").html_safe%>
+              <% # order the fields in such a way so that default fields come at the top
+                lead_fields_list = []
+                default_fields[:lead].each { |label| lead_fields_list.push([label, lead_fields[label]]) }
+                @fields['lead_fields'].each{|label, field|
+                  lead_fields_list.push([label, field]) if not default_fields[:lead].include?(label); 
+                }
+                %>
+              <%=hidden_field_tag :lead_labels %>
+              <%= select_tag :leads, 
+                        options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " ", :rel => "select-choice", "data-disable-field" => default_fields[:lead].join(",")} %><!-- space in placeholder to add an empty option -->
+                  </span>
+            </div>
+          </div>
+        <%end%>
+        <%unless @fields['account_fields'].blank? %>
+          <div class="account-fields"> 
+            <h3 class="leftselect2"><%=t("integrations.#{application_name}.form.account")%></h3>
+            <div id='accounts'>
+              <span>
+                <div id="accountslist">
+                  <ul>
+                    <% account_fields = @fields['account_fields'] %>
+                    <%selected_fields = default_fields[:account].collect{|label| account_fields[label]} %>
+                    <%unless @installed_app.configs_account_labels.blank? %> 
+                      <%config_account_labels = @installed_app.configs[:inputs]['account_labels'] ? @installed_app.configs[:inputs]['account_labels'] : ""%>
+                      <%selected_fields.push(config_account_labels.split(",").collect!{ |label| next if  default_fields[:account].include?(label);
+                         account_fields[label]
+                        })%>
+                    <%end%>
+                  </ul>
+                </div>
+                <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+                <%data =selected_fields.join(",").html_safe%>
+                <% # order the fields in such a way so that default fields come at the top
+                  account_fields_list = []
+                  default_fields[:account].each { |label| account_fields_list.push([label, account_fields[label]]) } 
+                  @fields['account_fields'].each{|label, field|
+                    account_fields_list.push([label, field]) if not default_fields[:account].include?(label);
+                  }
+                %>
+                <%=hidden_field_tag :account_labels %>
+                <%= select_tag :accounts, 
+                        options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "select-choice", "data-disable-field" => default_fields[:account].join(",")} %> <!-- space in placeholder to add an empty option -->
+              </span>
+            </div>
+          </div>
+        <%end%>
+      </div>
+    </li>
+    </ul>
+    <div class="button-container">
+  <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn pull-left" %>  
+  
+  <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+    </div>
+
+  <%end%>
+
+<script type="text/javascript">
+function fillLabels(){
+   var selectedValues = []; 
+   var leadValues =[];   
+   var accountValues =[];   
+    jQuery("#contacts :selected").each(function(){
+        selectedValues.push(jQuery(this).text()); 
+    });
+    jQuery('#contact_labels').val(selectedValues);
+
+    jQuery("#leads :selected").each(function(){
+        leadValues.push(jQuery(this).text()); 
+    });
+    jQuery('#lead_labels').val(leadValues);
+
+    jQuery("#accounts :selected").each(function(){
+        accountValues.push(jQuery(this).text()); 
+    });
+    jQuery('#account_labels').val(accountValues);
+    return true;
+}
+  
+
+</script>

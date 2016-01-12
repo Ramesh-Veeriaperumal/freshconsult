@@ -1,45 +1,29 @@
-class Integrations::DynamicsCrmController < ApplicationController
-  include Integrations::DynamicsCrm::CrmUtil
-  include Integrations::DynamicsCrm::ApiUtil
-  include Integrations::Constants
+class Integrations::DynamicscrmController < Integrations::CrmAppsController
+  include Integrations::Dynamicscrm::CrmUtil
+  include Integrations::Dynamicscrm::ApiUtil
 
-  before_filter :load_settings_config, :only => [ :widget_data, :fields_update, :edit ]
+  before_filter :get_installed_app, :only =>[:widget_data,:edit,:fields_update]
+  before_filter :load_settings_config, :only => [ :widget_data,:edit ]
   before_filter :load_fields, :only => [:edit]
 
-  def settings
-    render_settings
-  end
-
-  def edit
-    render_fields
-  end
 
   def settings_update
     dyn_client = dynamics_client(construct_client_params, params["configs"]["contact_email"])
-    if dyn_client["status"] != "failure"
+    if dyn_client["status"] != FAILURE
       error_message = verify_settings_data(dyn_client)
       if error_message.present?
         flash.now[:error] = error_message
         render_settings
       else
-        @installed_app = Integrations::Application.install_or_update("dynamicscrm", current_account.id, config_hash)
+        construct_app
+        get_default_fields_params
+        update_crm_fields and return
         render_fields
       end
     else
       flash.now[:error] = "#{t(:'integrations.dynamicscrm.form.error')}"
       render_settings
     end
-  end
-
-  def fields_update
-    CRM_MODULE_TYPES.each do |m_type|
-      label_key = "#{m_type}_labels"
-      field_key = "#{m_type}s"
-      @installed_app["configs"][:inputs][label_key] = params[label_key] unless params[label_key].blank?
-      @installed_app["configs"][:inputs][field_key] = params[field_key] unless params[field_key].blank?
-    end
-    flash[:notice] = @installed_app.save! ? t(:'flash.application.install.success') : t(:'flash.application.install.failure')
-    redirect_to :controller=> 'applications', :action => 'index'
   end
 
   def widget_data
@@ -55,8 +39,8 @@ class Integrations::DynamicsCrmController < ApplicationController
   end
 
   private
+
     def load_settings_config
-      @installed_app = current_account.installed_applications.with_name("dynamicscrm").first
       unless @installed_app.blank?
         @instance_type = @installed_app["configs"][:inputs]["instance_type"]
         @domain_user_email = @installed_app["configs"][:inputs]["domain"]
@@ -117,7 +101,7 @@ class Integrations::DynamicsCrmController < ApplicationController
         unless email.blank?
           client_obj = dynamics_client["client_obj"]
           result_type = verify_email_and_populate_fields(client_obj, m_type, email)
-          error_message += "#{email} #{t(:'integrations.dynamicscrm.form.entity_error')} #{m_type}. \n" if result_type == "failure"
+          error_message += "#{email} #{t(:'integrations.dynamicscrm.form.entity_error')} #{m_type}. \n" if result_type == FAILURE
         end
       end
       error_message
@@ -139,19 +123,7 @@ class Integrations::DynamicsCrmController < ApplicationController
       result_flag
     end
 
-    def render_settings
-       render :template => "integrations/applications/dynamics_crm/dynamics_settings",
-              :locals => {:configs => params["configs"]},
-              :layout => 'application' and return
-    end
-
-    def render_fields
-      render :template => "integrations/applications/dynamics_crm/dynamics_fields",
-             :layout => 'application' and return
-    end
-
     def api_error
       {"error" => "#{t(:'integrations.dynamicscrm.form.api_error')}"} 
     end
-
 end

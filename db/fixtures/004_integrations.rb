@@ -868,9 +868,13 @@ if Integrations::Application.count == 0
     s.name = "dynamicscrm"
     s.display_name = "integrations.dynamicscrm.label"
     s.description = "integrations.dynamicscrm.desc"
-    s.account_id = 0
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
     s.listing_order = 31
-    s.options = {:direct_install => false }
+    s.options = {  :direct_install => true,
+                   :auth_url => "/integrations/dynamicscrm/settings",
+                   :edit_url => "/integrations/dynamicscrm/edit",
+                   :default_fields => {:contact => ["Telephone"], :account => ["Telephone"], :lead => ["Telephone"]}
+                }
     s.application_type = "dynamicscrm"
   end
 

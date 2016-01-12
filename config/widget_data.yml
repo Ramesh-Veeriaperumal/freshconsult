@@ -328,8 +328,12 @@
     - contacts_show_page_side_bar
   script: |-
           <script type="text/javascript">
-            CustomWidget.include_js("/javascripts/integrations/dynamicscrm.js");
-            dynamicscrmBundle={ reqEmail:"{{requester.email}}", domain:"{{dynamicscrm.domain}}", endpoint:"{{dynamicscrm.endpoint}}"  } ;
+          dynamicscrmBundle={ 
+                              reqEmail: "{{requester.email}}", 
+                              domain: "{{dynamicscrm.domain}}", 
+                              endpoint: "{{dynamicscrm.endpoint}}" 
+                            };
+          Fjax.Assets.integration('dynamicscrm', function() { new DynamicsWidget(dynamicscrmBundle); });
           </script>
   name: dynamicscrm_widget
   id: 21
