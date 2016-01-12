@@ -284,10 +284,14 @@ window.App = window.App || {};
 
       $('body').on('click.articles', '#show_master_article', function (ev) {
         ev.preventDefault();
-        $('#show_master_article').fdpopover('show');
+        $('#show_master_article').fdpopover('show').toggleClass('disabled');
         $('#master-article-tab a:last').tab('show');
         $('.fd-popover .master-article-tab-content div:last').trigger('afterShow');
        });
+
+      $('body').on('click.articles', '.fd-popover-close', function (){
+        $('#show_master_article').toggleClass('disabled');
+      });
 
       $('#show_master_article').fdpopover({
         trigger:"manual",
