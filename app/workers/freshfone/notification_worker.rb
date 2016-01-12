@@ -162,7 +162,7 @@ module Freshfone
       self.current_number = current_call.freshfone_number
       begin
         from = current_call.number
-        to = params[:external_number]
+        to = format_external_number
         call_params    = {
           :url             => external_transfer_accept(current_call.id, params[:source_agent_id], params[:external_number]),
           :status_callback => external_transfer_complete(current_call.children.last.id, params[:external_number]),
@@ -288,11 +288,9 @@ module Freshfone
       call.number
     end
   private
-    def to_number(from,to,agent_id=nil)
+    def to_number(from, to, agent_id = nil)
       return if from.blank? || to.blank?
-      to = to.gsub(/\D/,'')
-      from = from.gsub(/\D/,'')
-      if from == to
+      if from.gsub(/\D/, '') == to.gsub(/\D/, '')
         raise "Self calling exception from #{from} to #{to} #{"For User:: #{agent_id}" if agent_id.present?}"
       end
       to
