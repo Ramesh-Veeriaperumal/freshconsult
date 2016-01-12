@@ -314,12 +314,21 @@ body.community #sticky_header.category-sticky.is_stuck {
   top:14px;
 }
 
-#master-article-tab {
-  padding:0 10px 0 15px;
+#master_article_inner{
+  #master-article-tab {
+    padding: 5px 10px 0 20px;
+  }
+  .status-label{
+    padding: 15px 0 0 15px;
+  }
 }
 
 .master-article-tab-content {
     padding:10px 15px;
     height: 500px;
     overflow: auto;
+    .article-content{
+      font-size: 13px;
+      padding-top: 10px;
+    }
 }

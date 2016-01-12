@@ -277,9 +277,16 @@ window.App = window.App || {};
     },
 
     bindForShowMaster: function(){
+
+      $('body').on('click.articles', '#draft-tab', function (){
+        $('#master-draft').trigger('afterShow');
+      });
+
       $('body').on('click.articles', '#show_master_article', function (ev) {
-         ev.preventDefault();
-         $('#show_master_article').fdpopover('show');
+        ev.preventDefault();
+        $('#show_master_article').fdpopover('show');
+        $('#master-article-tab a:last').tab('show');
+        $('.fd-popover .master-article-tab-content div:last').trigger('afterShow');
        });
 
       $('#show_master_article').fdpopover({

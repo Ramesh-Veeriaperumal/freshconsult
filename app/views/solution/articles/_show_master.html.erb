@@ -1,0 +1,34 @@
+<span class="pull-right">
+	<%= link_to t('solution.show_master'), '#',
+					:id => "show_master_article", 
+					:"data-toggle" => "popover",
+					:"data-placement"=>"right",
+					:"data-reload-content" => false %>
+</span>
+
+<% tabs = []
+	tabs << :draft if @article_meta.primary_draft_present?
+	tabs << :published if @article_meta.primary_published?
+%>
+
+<div class="hide" id="master_article">
+	<div  id="master_article_inner">
+			<% if tabs.count > 1 %>
+			<ul class="nav nav-tabs sleek-tab" id="master-article-tab">
+					<% tabs.each do |tab|%>
+				  	<li><a href="#master-<%= tab %>" data-toggle="tab" id="<%= tab %>-tab"><%= t("solutions.status.#{tab}") %></a></li>
+				  <% end %>
+			</ul>
+			<% else %>
+				<div class="status-label">
+					<span class="label"><%= t("solutions.status.#{tabs[0]}") %></span>
+				</div>
+			<% end %>
+			<div class="master-article-tab-content tab-content">
+				<% tabs.each do |tab| %>
+				<div id="master-<%= tab %>" class="<%= 'tab-pane' if tabs.count > 1 %>" rel="remote" data-remote-url="<%= show_master_solution_article_path(@article_meta.id, { :published =>  tab.eql?(:published) }) %>" >
+				</div>
+				<% end %>
+			</div>
+	</div>
+</div>

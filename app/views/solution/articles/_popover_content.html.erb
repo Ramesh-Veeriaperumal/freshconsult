@@ -1,0 +1,8 @@
+<div class="article-view">
+  <div class="row-fluid article-title">
+    <div class="span10">
+      <h3 class="lead" id="current-article-title"><%= @item.title %></h3>
+    </div>
+  </div>
+  <div class="article-content" id="current-article-description"><%= (@item.description || "").html_safe %></div>
+</div>

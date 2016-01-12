@@ -3936,6 +3936,7 @@ en:
     show_languages: Show languages
     hide_languages: Hide languages
     create_new: Create New
+    show_master: Show Master
     language_label_titles:
       primary_edit: "Edit %{name}"
       supporting_new: "Add %{name} translation"

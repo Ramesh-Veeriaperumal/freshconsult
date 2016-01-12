@@ -8,30 +8,10 @@
 
 	<% content_for :layoutType do %><%= solution_body_classes %><% end %>
 	<% content_for :sticky_title do %>
-		<span class="pull-right">
-			<a href="#" id="show_master_article"  role="button" data-toggle="popover" data-placement="right" data-title="<%= @article.title %>">
-				Show Master</a>
-		</span>
+		<%= render :partial => "show_master" if Account.current.multilingual? && !@article.is_primary? %>
 		<%= render :partial => "language_tabs" if Account.current.multilingual? %>
 		<div class="solution-header draft-notif" id="solution-notification-bar">
 			<%= render :partial => 'notification_bar' %>
-		</div>
-
-		<div style='display:none;' id="master_article">
-			<div  id="master_article_inner">
-					<ul class="nav nav-tabs sleek-tab" id="master-article-tab">
-					  		<li><a href="#draft" data-toggle="tab">Draft</a></li>
-					  		<li  class="active"><a href="#published" data-toggle="tab">Published</a></li>
-					</ul>
-					<div class="master-article-tab-content tab-content">
-						<div id="draft" class="tab-pane">
-							<h1> Draft content </h1>
-						</div>
-						<div id="published" class="tab-pane active">
-							<%= render :partial => "view"  %>
-						</div>
-					</div>
-			</div>
 		</div>
 
 	<% end %>

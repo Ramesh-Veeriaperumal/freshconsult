@@ -185,6 +185,14 @@ class Solution::ArticlesController < ApplicationController
     end
   end
 
+  def show_master
+    @article_meta = current_account.solution_article_meta.find(params[:id])
+    @item = params[:published].to_bool ? @article_meta.primary_article : @article_meta.draft
+    respond_to do |format|
+      format.html { render :partial => "popover_content" }
+    end
+  end
+
   protected
 
     def load_article

@@ -1947,6 +1947,7 @@ Helpkit::Application.routes.draw do
         put :reset_ratings
         get :properties
         get :voted_users
+        get :show_master
       end
       
       resources :tag_uses

@@ -62,6 +62,10 @@ module Solution::LanguageAssociations
       define_method "supported_in_#{col}?" do
         send("in_#{col}") & Account.current.all_language_objects.map(&:to_key)
       end
+
+      define_method "primary_#{col}?" do
+        send("#{Language.for_current_account.to_key}_#{col}?")
+      end
     end
 
     base::BINARIZE_COLUMNS.each do |meth_name|
