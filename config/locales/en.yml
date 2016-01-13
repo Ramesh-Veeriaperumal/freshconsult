@@ -3086,7 +3086,7 @@ en:
       sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
-      last_active_at: "Last active at"
+      last_active_at: "Last seen"
       created_at: Created date
       asc: Ascending
       desc: Descending
