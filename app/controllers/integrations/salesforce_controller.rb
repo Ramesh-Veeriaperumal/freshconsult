@@ -6,10 +6,18 @@ class Integrations::SalesforceController < Admin::AdminController
 
 
   def new
+    @sync_type = Integrations::Constants::SALESFORCE_SYNC_TYPE
     @installed_app = current_account.installed_applications.build(:application => @application)
     @installed_app.configs = { :inputs => {} }
     @installed_app.configs[:inputs] = get_app_configs
     @salesforce_config = fetch_metadata_fields
+    @salesforce_config['enble_sync'] = @installed_app.configs[:inputs]['enble_sync']
+    @salesforce_config['contacts_sync_type'] = @installed_app.configs[:inputs]['contacts_sync_type']
+    @salesforce_config['crm_sync_type'] = @installed_app.configs[:inputs]['crm_sync_type']
+    @salesforce_config['sf_contact'] = convert_map_to_hash(@salesforce_config['contact_fields'])
+    @salesforce_config['sf_company'] = convert_map_to_hash(@salesforce_config['account_fields'])
+    @salesforce_config['fd_company'] = convert_object_to_hash(current_account.company_form.fields)
+    @salesforce_config['fd_contact'] = convert_object_to_hash(current_account.contact_form.fields)
     @action = 'install'
     @installed_app = nil
     render :template => "integrations/applications/salesforce_fields"
@@ -78,12 +86,17 @@ class Integrations::SalesforceController < Admin::AdminController
 
   def get_metadata_fields(params)
     config_hash = Hash.new 
+    config_hash['enble_sync'] = params[:enble_sync]
+    config_hash['contacts_sync_type'] = params[:contacts_sync_type]
+    config_hash['crm_sync_type'] = params[:crm_sync_type]
     config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
     config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
     config_hash['account_fields'] = params[:accounts].join(",") unless params[:accounts].nil?
     config_hash['contact_labels'] = params['contact_labels']
     config_hash['lead_labels'] = params['lead_labels']
     config_hash['account_labels'] = params['account_labels']
+    config_hash['companies'] = get_selected_field_arrays(params[:inputs][:companies])
+    config_hash['contacts'] = get_selected_field_arrays(params[:inputs][:contacts])
     if current_account.features?(:salesforce_sync)
       config_hash['salesforce_sync_option'] = params["salesforce_sync_option"]["value"]
     end
@@ -129,4 +142,40 @@ class Integrations::SalesforceController < Admin::AdminController
     raise "OAuth Token is nil" if app_config["oauth_token"].nil?
     app_config
   end
+
+   def convert_map_to_hash(map)
+    arr = Array.new
+    map.each{|key, val|
+      has = Hash.new
+      if key == "Address"
+        next
+      end
+      has["id"] = key
+      has["name"] = val
+      arr.push(has)
+    }
+    arr
+   end
+ 
+   def convert_object_to_hash(object)
+    arr = Array.new
+    object.each{|field|
+      has = Hash.new
+      has["id"] = field[:name]
+      has["name"] = field["label"]
+      arr.push(has)
+    }
+    arr
+   end
+
+  def get_selected_field_arrays(fields)
+    sf_fields = []
+    fd_fields = []
+    fields.each { |field|
+      sf_fields << field["sf_field"]
+      fd_fields << field["fd_field"]
+    }
+    {"fd_fields" => fd_fields, "sf_fields" => sf_fields}
+  end
+
 end

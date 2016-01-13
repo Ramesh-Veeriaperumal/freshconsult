@@ -20,7 +20,7 @@ class Company < ActiveRecord::Base
   concerned_with :associations, :callbacks, :es_methods, :rabbitmq
 
   scope :domains_like, lambda { |domain|
-    { :conditions => [ "domains like ?", "%,#{domain},%" ] } if domain
+    { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
   scope :custom_search, lambda { |search_string| 
@@ -115,6 +115,8 @@ class Company < ActiveRecord::Base
   def custom_field_types
     @custom_field_types ||=  custom_form.custom_company_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
+  
+end
 
   def domains
     read_attribute(:domains) && read_attribute(:domains).gsub(/^\,/, '').chomp(',')
@@ -123,4 +125,21 @@ class Company < ActiveRecord::Base
   def tickets
     all_tickets.joins(:requester).where('users.deleted =?', false)
   end
+
+  class << self 
+  # Used by API V2
+  def company_filter(company_filter)
+    {
+      all: {
+          conditions: {}
+      },
+      updated_since: {
+        conditions: ['customers.updated_at >= ?', company_filter.try(:updated_since).try(:to_time).try(:utc)]
+      },
+      name: {
+        conditions: { name: company_filter.name }
+      }
+    }
+  end
+end
 end

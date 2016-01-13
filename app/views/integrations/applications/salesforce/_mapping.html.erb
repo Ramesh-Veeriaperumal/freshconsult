@@ -1,0 +1,93 @@
+
+<div class="field-mapping">
+  <div id="field-wrap"></div>
+  <div class="row-fluid" id="sync-setting-list">
+    <div class="radio-btn-wrapper pl18 mt10 mb20 ml5 span6">
+      <div class="radio-btn-title"> Sync contact and company... </div>
+
+      <div class="radio-btn">
+        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="<%=@sync_type[:import]%>">  
+        <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a>
+        <label for="crm_sync_type_1"> from Salesforce </label>   
+      </div>
+      <div class="radio-btn">
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="<%=@sync_type[:export]%>"> 
+        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
+        <label for="crm_sync_type_2"> from Freshdesk </label> 
+      </div>
+      <div class="radio-btn">
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="<%=@sync_type[:bidirectional]%>"> 
+        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
+        <label for="crm_sync_type_3"> both Freshdesk and Salesforce </label> 
+      </div>
+
+    </div>
+  </div>
+  <div class="sf-title-wrapper mb10 mt10">
+    <span> Field Mapping </span>
+  </div>
+
+  <div class="row-fluid" id="rule-list">
+      <ul class="nav nav-flat">
+        <li class="active">
+          <a href="#company-mapping-tab" data-toggle="tab">Company</a>
+        </li>
+        <li>
+          <a href="#contact-mapping-tab" data-toggle="tab">Contact</a>
+        </li>
+      </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane active" id="company-mapping-tab">
+        <div class="contact-wrapper">
+          <div class="contact-tabel-head">
+            <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+            <div class="contact-tabel-data field-2">
+              <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+            </div>
+            <div class="contact-tabel-data field-3"> <span> Salesforce Account Fields </span> </div>
+          </div>
+          <div rel="construct_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+        </div>
+      </div>
+
+      <div class="tab-pane" id="contact-mapping-tab">
+        <div class="contact-wrapper">
+          <div class="contact-tabel-head">
+            <div class="contact-tabel-data field-1"> <span class="field-1-text"> Freshdesk Fields </span> </div>
+            <div class="contact-tabel-data field-2"> 
+              <a class="center-icon"><%= font_icon "left-direction", { :size => 20 } %></a>
+            </div>
+            <div class="contact-tabel-data field-3"> <span> Salesforce Contact Fields </span> </div>
+          </div>
+          <div rel="construct_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script class="construct_company" type="text/html" data-default-value = '<%= existing_companies.to_json.html_safe %>'>
+    <% fd_company = @salesforce_config["fd_company"] %>
+    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+    <% sf_company = @salesforce_config["account_fields"] %>
+    <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script>   
+
+<script class="construct_contact" type="text/html" data-default-value='<%= existing_contacts.to_json.html_safe %>'>
+  <% fd_contact = @salesforce_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k]}), 
+          { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
+  <% sf_contact = @salesforce_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k]}), 
+            { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
+</script> 
+
+<script>
+jQuery(function(){
+  jQuery('[rel="construct_rules"]').constructRules();
+})
+</script>

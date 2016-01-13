@@ -249,6 +249,9 @@ class User < ActiveRecord::Base
         },
         mobile: {
           conditions: { mobile: contact_filter.mobile }
+        },
+        updated_since: {
+          conditions: ['users.updated_at >= ?', contact_filter.try(:updated_since).try(:to_time).try(:utc)]
         }
       }
     end
@@ -369,19 +372,6 @@ class User < ActiveRecord::Base
       else
         deliver_activation_instructions!(portal,false, params[:email_config])
       end
-    end
-    true
-  end
-
-  # Used by API V2
-  def create_contact!
-    self.avatar = self.avatar
-    return false unless save_without_session_maintenance
-    if (!self.deleted and !self.email.blank?)
-      portal = nil
-      force_notification = false
-      args = [ portal, force_notification ]
-      Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, :deliver_activation_instructions!, args), nil, 2.minutes.from_now)
     end
     true
   end
@@ -527,8 +517,7 @@ class User < ActiveRecord::Base
   end
   
   def to_s
-    user_display_text = name.blank? ? (email.blank? ? (phone.blank? ? mobile : phone) : email) : name
-    user_display_text.to_s
+    name.blank? ? email : name
   end
   
   def to_liquid
@@ -577,14 +566,14 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (group_ticket_permission && (ticket.group_id && (agent_groups.pluck(:group_id).insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder_id == self.id ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
 
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
     (self.id == ticket.requester_id) or 
-    (is_client_manager? && self.company_id && ticket.company_id && (ticket.company_id == self.company_id) )
+    (is_client_manager? && self.company_id && ticket.requester.company_id && (ticket.requester.company_id == self.company_id) )
   end
   
   def restricted?
@@ -673,7 +662,6 @@ class User < ActiveRecord::Base
   
   def make_customer
     return true if customer?
-    set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
       subscriptions.destroy_all
       agent.destroy
@@ -787,25 +775,6 @@ class User < ActiveRecord::Base
 
   def company_id
     self.customer_id
-  end
-
-  # failed_login_count increases for each consecutive failed login.
-  # See Authlogic::Session::BruteForceProtection and the consecutive_failed_logins_limit config option for more details.
-  def update_failed_login_count(valid_pwd, user_name = nil, ip = nil)
-    if valid_pwd
-      # reset failed_login_count only when it has changed. This is to prevent unnecessary save on user.
-      if self.failed_login_count != 0
-        self.failed_login_count = 0 
-        self.save
-      end
-      self
-    else
-      self.failed_login_count ||= 0
-      self.failed_login_count += 1
-      self.save
-      Rails.logger.error "API Unauthorized Error: Failed login attempt '#{self.failed_login_count}' for '#{user_name}' from #{ip} at #{Time.now.utc}"
-      nil
-    end
   end
 
   private

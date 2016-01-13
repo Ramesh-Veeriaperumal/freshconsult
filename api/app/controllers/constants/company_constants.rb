@@ -2,6 +2,7 @@ module CompanyConstants
   ARRAY_FIELDS = ['domains'].freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
+  INDEX_FIELDS = %w( updated_since name ).freeze
 
   FIELDS = %w(name description domains note).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
 

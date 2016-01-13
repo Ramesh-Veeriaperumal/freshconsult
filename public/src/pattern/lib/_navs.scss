@@ -83,6 +83,7 @@
 // -------------
 
 // Common styles
+.nav-flat,
 .nav-tabs,
 .nav-pills {
   &:after{@include clear(both);}
@@ -92,6 +93,7 @@
     content: "";
   }
 }
+.nav-flat > li,
 .nav-tabs > li,
 .nav-pills > li {
   @include float(left);
@@ -420,4 +422,23 @@
   border: 0;
   border-bottom: 5px solid #838383;
   font-weight: bold;
-}  
+} 
+
+.nav-flat > li > a {
+   @include padding-right(15px);
+   @include margin-right(15px);
+   @include border-right(1px solid #afafaf);  
+   font-size: 15px;
+ } 
+
+.nav-flat > li:last-child > a {
+   @include border-right(0);  
+ }
+ 
+.nav-flat > li > a:hover {
+   background-color: transparent;
+ }
+ 
+.nav-flat > li.active > a {
+   color: #333333;
+ }

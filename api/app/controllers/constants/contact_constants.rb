@@ -2,11 +2,11 @@ module ContactConstants
   ARRAY_FIELDS = ['tags']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
+  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name phone time_zone twitter_id tags).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
 
   STATES = %w( verified unverified all deleted blocked ).freeze
 
-  INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
+  INDEX_FIELDS = %w( state email phone mobile company_id updated_since).freeze
 
   DELETED_SCOPE = {
     'update' => false,
@@ -40,7 +40,7 @@ module ContactConstants
   DEFAULT_FIELD_VALIDATIONS = {
     job_title:  { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     language: { custom_inclusion: { in: ContactConstants::LANGUAGES } },
-    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
+    tag_names:  { data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING, message: :too_long } }, string_rejection: { excluded_chars: [','] } },
     time_zone: { custom_inclusion: { in: ContactConstants::TIMEZONES } },
     phone: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     mobile: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },

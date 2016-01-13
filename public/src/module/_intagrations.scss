@@ -1303,3 +1303,108 @@ span.beta {
 	margin-bottom: 2px;
 	}
 }
+<<<<<<< Updated upstream
+=======
+
+.slack-bottom{
+	clear:both;
+}
+
+
+	.slack-form {
+		min-height: 300px;
+	}
+
+// --------------------------------------------------------------------------------------------------
+//												Salesforce
+// --------------------------------------------------------------------------------------------------
+
+#field-mapping-tab{
+	.field-mapping{
+		position: relative;
+	}
+	
+	.field-disable{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		background-color: rgba(245, 245, 245, 0.66);
+		z-index: 10;
+		border-radius: 5px;
+	}
+	.sf-title-wrapper{
+		color: #333;
+		font-weight: 500;	
+		font-size: 15px;
+		padding-bottom: 10px;
+		label{
+			display: inline-block;
+			vertical-align: middle;
+			font-weight: 500;
+			font-size: 15px;
+		}
+	}
+	.radio-btn-wrapper{
+		border-left: 1px solid #D5D5D5;
+	}
+
+	.radio-btn-title{
+		font-weight: 500;
+		margin-bottom: 10px;
+		line-height: 1;
+	}
+	.radio-btn {
+		color: #888;
+		label{
+			display: inline-block;
+		}
+		input {
+			float: none;
+			margin: 0;
+		}
+		i{
+			margin: 10px;	
+			color: 888;
+		}
+	}
+	.center-icon i{
+		font-size: 20px;
+	}
+	.contact-wrapper{
+		width: 99%;
+		border: 1px solid #d2d2d2;
+		border-radius: 2px;
+		.contact-tabel-head{
+			background-color: #f3f3f3;
+			border-bottom: 1px solid #d2d2d2;
+			color: #333;
+		}
+		.contact-tabel-data{
+			display: inline-block;
+			vertical-align: middle;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		.field-1-text{
+			margin-right: 5px;
+			margin-left: 5px;
+		}
+		.field-1{
+			text-align: right;
+		}
+		.field-1, .field-3{
+			width: 44%;
+			font-weight: 500;
+		}
+		.field-2{
+			width: 10%;
+			text-align: center;
+		}
+	}
+	.nav-flat{
+		a{
+			font-size: 13px;
+		}
+	}
+}
+>>>>>>> Stashed changes

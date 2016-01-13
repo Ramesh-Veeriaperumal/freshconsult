@@ -42,7 +42,7 @@ group :development, :test do
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
   gem 'pry-byebug'
-  gem 'pry-nav'
+  # gem 'pry-nav'
   gem 'binding_of_caller'
   gem 'meta_request'
 end
@@ -220,6 +220,7 @@ group :development, :test do
   gem "forgery","0.5.0"
   gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
+  gem 'thin'
   gem 'jasmine'
 end
 
