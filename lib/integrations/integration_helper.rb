@@ -3,7 +3,7 @@ module Integrations::IntegrationHelper
   def construct_rules(data, default_value)
     unless data.empty?
       output = ""
-      output << %(<div class='make_drop rules_wrapper' id='construct_rules' rel='construct_rules' data-default-value='#{default_value.html_safe}'>)
+      output << %(<div class='rules_wrapper construct_rules' id='construct_rules' rel='construct_rules' data-default-value='#{default_value.html_safe}'>)
 
       data.each do |value|
         

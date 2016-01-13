@@ -660,6 +660,14 @@ Helpkit::Application.routes.draw do
         post :install
     end
 
+    namespace :cloud_elements do
+       get :oauth_url
+       get :instances
+       post :install
+       get :edit
+       put :update
+    end
+
     resources :remote_configurations
 
     namespace :github do

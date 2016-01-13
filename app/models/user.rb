@@ -218,6 +218,47 @@ class User < ActiveRecord::Base
       User.current = nil
     end
 
+<<<<<<< Updated upstream
+=======
+    # Used by API V2
+    def contact_filter(contact_filter)
+      {
+        deleted: {
+          conditions: { deleted: true }
+        },
+        verified: {
+          conditions: { deleted: false, active: true }
+        },
+        unverified: {
+          conditions: { deleted: false, active: false }
+        },
+        blocked: {
+          conditions: [ "blocked = true and blocked_at < ? and deleted = true and deleted_at < ?", Time.zone.now+5.days, Time.zone.now+5.days ]
+        },
+        all: {
+          conditions: { deleted: false, blocked: false }
+        },
+        company_id: {
+          conditions: { customer_id: contact_filter.company_id }
+        },
+        email: {
+          joins: :user_emails, 
+          # It is guranteed that all contacts in FD have atleast one entry in user_emails table. 
+          conditions: { user_emails: { email: contact_filter.email }}
+        },
+        phone: {
+          conditions: { phone: contact_filter.phone }
+        },
+        mobile: {
+          conditions: { mobile: contact_filter.mobile }
+        },
+        updated_since: {
+          conditions: ['users.updated_at >= ?', contact_filter.try(:updated_since).try(:to_time).try(:utc)]
+        }
+      }
+    end
+
+>>>>>>> Stashed changes
     # protected :find_by_email_or_name, :find_by_an_unique_id
   end
 

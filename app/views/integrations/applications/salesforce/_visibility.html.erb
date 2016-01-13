@@ -1,0 +1,92 @@
+<div class="salesforce-wrapper">
+        <div class="contact-fields"> 
+          <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+          <div id='sfcontacts'>
+            <span>
+              <div id="contactslist">
+                <ul>
+                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% contact_fields = @salesforce_config['contact_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                contact_fields_list = []
+                default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
+                @salesforce_config['contact_fields'].keys.collect{|field|
+                  contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :contact_labels %>
+              <%= select_tag :contacts, 
+                      options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ", :rel => "select-choice", "data-disable-field" => "Full Name"} %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+        <div class="lead-fields">
+          <h3><%=t("integrations.salesforce.form.lead")%></h3>   
+          <div id="sfleads">
+            <span>
+            <div id="leadslist">
+                  <ul>
+                    <%selected_lead_fields = default_fields.collect{|x| x} # use a copy to not change default fields %>
+                  <%unless @installed_app.blank? %>
+                  <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
+                   x
+                   })%>
+                  <%end%>
+                  </ul>
+            </div>
+            <%data =selected_lead_fields.join(",").html_safe%>
+            <% lead_fields = @salesforce_config['lead_fields'] %>
+            <% # order the fields in such a way so that default fields come at the top
+              lead_fields_list = []
+              default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
+              @salesforce_config['lead_fields'].keys.collect{|field|
+                lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
+              }
+              %>
+            <%=hidden_field_tag :lead_labels %>
+            <%= select_tag :leads, 
+                      options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " ",:rel => "select-choice", "data-disable-field" => "Full Name"} %><!-- space in placeholder to add an empty option -->
+                </span>
+          </div>
+        </div>
+        <div class="account-fields"> 
+          <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
+          <div id='sfaccounts'>
+            <span>
+              <div id="accountslist">
+                <ul>
+                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %> 
+                    <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
+                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                       x
+                      })%>
+                  <%end%>
+                </ul>
+              </div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",").html_safe%>
+              <% account_fields = @salesforce_config['account_fields'] %>
+              <% # order the fields in such a way so that default fields come at the top
+                account_fields_list = []
+                default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
+                @salesforce_config['account_fields'].keys.collect{|field|
+                  account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
+                }
+              %>
+              <%=hidden_field_tag :account_labels %>
+              <%= select_tag :accounts, 
+                      options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " ",:rel => "select-choice", "data-disable-field" => "Account Name" } %> <!-- space in placeholder to add an empty option -->
+            </span>
+          </div>
+        </div>
+</div> 

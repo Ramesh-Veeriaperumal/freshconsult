@@ -4,7 +4,7 @@
 development:
   adapter: mysql2
   encoding: utf8
-  database: helpkit1
+  database: helpkit20
   pool: 5
   host: 127.0.0.1
   username: root
@@ -12,7 +12,7 @@ development:
   shards:
     shard_1:
       host: 127.0.0.1
-      database: helpkit1
+      database: helpkit20
       not_a_shard: false
 
 
@@ -47,17 +47,17 @@ test:
   # timeout: 5000
   adapter: mysql2
   encoding: utf8
-  database: helpkit_test_rails3
+  database: helpkit_test_rails3_1
   username: root
   password:
   shards:
     shard_2:
       host: 127.0.0.1
-      database: helpkit_test_rails3
+      database: helpkit_test_rails3_1
       not_a_shard: false
     shard_1:
       host: 127.0.0.1
-      database: helpkit_test_rails3
+      database: helpkit_test_rails3_1
       not_a_shard: false
 
 production:

@@ -4,135 +4,60 @@
   </div>
 <%- end %>
 
-	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-  <% method_type = (@action == "install") ? "post" : "put" %>
-  <%= form_tag("/integrations/salesforce/#{@action}", :method => method_type)  do %>
+  <h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
+  <% method_type = (@action == 'install' ) ? 'post' : 'put' %>
+  <%= form_tag("/integrations/cloud_elements/#{@action}", :method => method_type )  do %>
 
-   <% default_fields = ["Name"]%>
-    <ul class="ui-form">
-    <li class="inline-field">
-      <label class="caption">
+  <ul class="nav nav-pills">
+    <li class="active">
+      <a href="#field-visibility-tab" data-toggle="tab">Field Visibility</a>
+    </li>
+    <li>
+      <a href="#field-mapping-tab" data-toggle="tab">Field Mapping</a>
+    </li>
+    <div class="sf-title-wrapper pull-right">
+      <label for="enble_sync"> Enable Sync </label> 
+      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @salesforce_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
+    </div>
+  </ul>
+  
+  <div class="well">
+    <div class="tab-content row-fluid">
+      <label class="caption span3">
         <div class="logo application-logo-salesforce"></div>
         <div class="logo info-data">
-          <%=t('integrations.salesforce.desc')%>
+          <%= t('integrations.salesforce.desc') %>
         </div>
       </label>
-      <div class="salesforce-wrapper">
-        <div class="contact-fields"> 
-          <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+      <div class="tab-pane span9" id="field-mapping-tab">
 
-      		<div id='sfcontacts'>
-      			<span>
-      				<div id="contactslist">
-      	  			<ul>
-                  <%selected_fields = default_fields.collect{|x| x} %>
-                  <%unless @installed_app.blank? %>
-                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
-                       x
-                      })%>
-                  <%end%>
-                </ul>
-    	  			</div>
-              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-              <%data =selected_fields.join(",").html_safe%>
-              <% contact_fields = @salesforce_config['contact_fields'] %>
-              <% # order the fields in such a way so that default fields come at the top
-                contact_fields_list = []
-                default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
-                @salesforce_config['contact_fields'].keys.collect{|field|
-                  contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
-                }
-              %>
-              <%=hidden_field_tag :contact_labels %>
-      			  <%= select_tag :contacts, 
-                			options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-          	</span>
-      		</div>
-        </div>
-        <div class="lead-fields">
-          <h3><%=t("integrations.salesforce.form.lead")%></h3>   
-      		<div id="sfleads">
-      			<span>
-      			<div id="leadslist">
-      	  				<ul>
-                    <%selected_lead_fields = default_fields.collect{|x| x} # use a copy to not change default fields %>
-                  <%unless @installed_app.blank? %>
-                  <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
-                   x
-                   })%>
-                  <%end%>
-                  </ul>
-      	  	</div>
-            <%data =selected_lead_fields.join(",").html_safe%>
-            <% lead_fields = @salesforce_config['lead_fields'] %>
-            <% # order the fields in such a way so that default fields come at the top
-              lead_fields_list = []
-              default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
-              @salesforce_config['lead_fields'].keys.collect{|field|
-                lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
-              }
-              %>
-            <%=hidden_field_tag :lead_labels %>
-      			<%= select_tag :leads, 
-                			options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
-                </span>
-      	  </div>
-        </div>
-        <div class="account-fields"> 
-          <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
-      		<div id='sfaccounts'>
-      			<span>
-      				<div id="accountslist">
-      	  			<ul>
-                  <%selected_fields = default_fields.collect{|x| x} %>
-                  <%unless @installed_app.blank? %> 
-                    <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
-                    <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
-                       x
-                      })%>
-                  <%end%>
-                </ul>
-    	  			</div>
-              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-              <%data =selected_fields.join(",").html_safe%>
-              <% account_fields = @salesforce_config['account_fields'] %>
-              <% # order the fields in such a way so that default fields come at the top
-                account_fields_list = []
-                default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
-                @salesforce_config['account_fields'].keys.collect{|field|
-                  account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
-                }
-              %>
-              <%=hidden_field_tag :account_labels %>
-      			  <%= select_tag :accounts, 
-                			options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
-          	</span>
-      		</div>
-        </div>
-        <% if current_account.features?(:salesforce_sync) %>
-        <div>
-          <% sync_checked = true%>
-          <%unless @installed_app.blank? %>
-            <% installed_sync_checked = @installed_app.configs_salesforce_sync_option %>
-            <% sync_checked = installed_sync_checked.to_bool if installed_sync_checked.present? %>
-          <%end%>
-          <%= check_box(:salesforce_sync_option, "value", :checked => sync_checked) %>
-          <%= content_tag(:span, "Sync tickets to salesforce", :class => 'checkbox_label') %>
-        </div>  
-        <% end%>
+        <% existing_companies = [{"fd_field" => "name", "sf_field" => "Name"}]
+           existing_contacts = [{"fd_field" => "name", "sf_field" => "Name"}, {"fd_field" => "email", "sf_field" => "Email"}, {"fd_field" => "mobile", "sf_field" => "MobilePhone"}]
+           existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+           existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+        %>
+        <%= render :partial => "/integrations/applications/salesforce/mapping",
+                   :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>
+          
       </div>
-    </li>
-    </ul>
-    <div class="button-container">
-      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
-      <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+      <div class="tab-pane active span9" id="field-visibility-tab">
+        <%= render :partial => "/integrations/applications/salesforce/visibility", 
+                     :locals => { :default_fields => ["Name"] } %>
+      </div>
+
     </div>
+  </div>
+
+  <div class="button-container">
+    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+    <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
+  </div>
 
   <%end%>
 
 
-<script type="text/javascript">
 
+<script type="text/javascript">
 function fillLabels(){
    var selectedValues = []; 
    var leadValues =[];   
@@ -141,43 +66,47 @@ function fillLabels(){
         selectedValues.push(jQuery(this).text()); 
     });
     jQuery('#contact_labels').val(selectedValues);
-
     jQuery("#leads :selected").each(function(){
         leadValues.push(jQuery(this).text()); 
     });
     jQuery('#lead_labels').val(leadValues);
-
     jQuery("#accounts :selected").each(function(){
         accountValues.push(jQuery(this).text()); 
     });
     jQuery('#account_labels').val(accountValues);
     return true;
 }
-  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
-
-  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
-
-  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
-
-  //setting the Name as default field(can't be removed.)
-  jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
-    value = jQuery(element).text();
-    if(value =="Full Name"){
-      jQuery(element).next("a").remove();
-    }
+  jQuery("#field_mapping").click(function(){
+    jQuery("#field_mapping_div").show();
+    jQuery("#field_visiblity_div").hide();
+    jQuery("#company_div").show();
   });
-
-jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
-    value = jQuery(element).text();
-    if(value =="Full Name"){
-      jQuery(element).next("a").remove();
-    }
+  jQuery("#field_visiblity").click(function(){
+    jQuery("#field_mapping_div").hide();
+    jQuery("#field_visiblity_div").show();
+    jQuery("#company_div").hide();
+    jQuery("#contact_div").hide();
   });
-  jQuery("#sfaccounts ul .select2-search-choice div").each(function(index,element){
-    value = jQuery(element).text();
-    if(value =="Account Name"){
-      jQuery(element).next("a").remove();
-    }
+  jQuery("#contact").click(function(){
+    jQuery("#contact_div").show();
+    jQuery("#company_div").hide();
   });
-
+  jQuery("#company").click(function(){
+    jQuery("#company_div").show();
+    jQuery("#contact_div").hide();
+  });
+  jQuery(document).ready(function(){
+    if(!jQuery('#enble_sync').is(':checked')){
+      change();
+    }
+    jQuery('#enble_sync').prop('checked', "<%= @salesforce_config['enble_sync'] %>");
+    jQuery('input[name="crm_sync_type"][value="' + "<%= @salesforce_config['crm_sync_type'] %>" + '"]').attr('checked', true);
+  });
+  function change(){ 
+    jQuery('#field-wrap').toggleClass('field-disable')
+  }
+  jQuery(document).on('click','.sync-radio-btn', function(){
+    var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
+    jQuery('.center-icon').html('').html(clone_element);
+  })
 </script>
