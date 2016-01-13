@@ -89,8 +89,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def uninstall
     begin
-      success = @installed_application.destroy
-      if success
+      obj = @installed_application.destroy
+      if obj.destroyed?
         flash[:notice] = t(:'flash.application.uninstall.success')
       else
         flash[:error] = t(:'flash.application.uninstall.error')
