@@ -114,7 +114,6 @@ module Freshfone
         :timeLimit       => current_account.freshfone_credit.call_time_limit,
         :timeout         => current_number.ringing_time
       }
-      
       begin
         agent_call = telephony.make_call(call_params)
       rescue => e
@@ -180,6 +179,7 @@ module Freshfone
       add_pinged_agents_call(current_call.children.last.id, agent_call.sid)
       current_call.children.last.meta.reload.update_external_transfer_call(params[:external_number], agent_call.sid) if agent_call.present?
     end
+
     def notify_round_robin_agent
       Rails.logger.info "Notify Round Robin for User Id :: #{agent['id']} Account Id :: #{current_account.id}"
       current_call   = current_account.freshfone_calls.find(params[:call_id])
@@ -204,6 +204,8 @@ module Freshfone
         call_actions.handle_failed_round_robin_call(current_call, agent["id"])
         raise e
       end
+
+      current_call.meta.update_pinged_agent_ringing_at agent['id']
       update_and_validate_pinged_agents(current_call, agent_call)
       set_browser_sid(agent_call.sid, current_call.call_sid) if (browser_agent? && agent_call.present?)
     end

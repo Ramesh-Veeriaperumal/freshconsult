@@ -437,6 +437,7 @@ Helpkit::Application.routes.draw do
         post :unhold
         post :transfer_unhold
         post :transfer_fallback_unhold
+        post :quit
       end
     end
 
@@ -461,6 +462,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
+        put :acw
         get :call_notes
       end
     end

@@ -1383,6 +1383,26 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
 
   add_index "freshfone_blacklist_numbers", ["account_id", "number"], :name => "index_freshfone_blacklist_numbers_on_account_id_and_number"
 
+  create_table "freshfone_call_metrics", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "call_id",            :limit => 8
+    t.integer  "ivr_time",           :limit => 8
+    t.integer  "hold_duration",      :limit => 8, :default => 0
+    t.integer  "call_work_time",     :limit => 8, :default => 0
+    t.integer  "queue_wait_time",    :limit => 8
+    t.integer  "total_ringing_time", :limit => 8
+    t.integer  "talk_time",          :limit => 8
+    t.integer  "answering_speed",    :limit => 8
+    t.integer  "handle_time",        :limit => 8, :default => 0
+    t.datetime "ringing_at"
+    t.datetime "hangup_at"
+    t.datetime "answered_at"
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
+  end
+
+  add_index "freshfone_call_metrics", ["account_id", "call_id"], :name => "index_freshfone_call_metrics_on_account_id_and_call_id"
+
   create_table "freshfone_callers", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.string   "number",     :limit => 50

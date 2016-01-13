@@ -66,9 +66,9 @@ class Freshfone::CallMeta < ActiveRecord::Base
   
   def update_pinged_agents_with_response(user_id, response)
     pinged_agents.each do |agent|
-      agent.merge!({:response => PINGED_AGENT_RESPONSE_HASH[response.to_sym]}) if agent[:id] == user_id.to_i && agent[:response].blank? # Because cant have multiple responses # Spreadheet L 19
+      agent.merge!({:response => PINGED_AGENT_RESPONSE_HASH[response.to_sym]}) if agent[:id] == user_id.to_i && agent[:response].blank?
     end
-    save
+    save!
   end
 
   def update_agent_call_sids(user_id, call_sid)
@@ -98,6 +98,28 @@ class Freshfone::CallMeta < ActiveRecord::Base
       agent.merge!({:response => PINGED_AGENT_RESPONSE_HASH[response.to_sym]}) if agent[:number] == number
     end
     save
+  end
+
+  def update_pinged_agent_ringing_at(agent_id)
+    pinged_agents.each do |agent|
+      agent.merge!({ :ringing_at => Time.zone.now }) if agent[:id] == agent_id.to_i
+    end
+    save!
+  end
+
+  def update_agent_ringing_time(agent_id)
+    pinged_agents.each do |agent|
+      agent.merge!({ :ringing_time => (Time.zone.now - agent[:ringing_at]).to_i.abs }) if agent[:id] == agent_id.to_i
+    end
+    save!
+  end
+
+  def pinged_agent_ringing_time(agent_id, answered_at)
+    pinged_agents.each do |agent|
+      if agent[:id] == agent_id.to_i
+        return (answered_at - agent[:ringing_at]).to_i.abs if agent[:ringing_at].present?
+      end
+    end
   end
 
   def agent_response_present?(user_id)

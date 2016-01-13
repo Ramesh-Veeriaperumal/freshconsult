@@ -58,7 +58,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets ]
     resource :"freshfone/conference", :only => [:initiate, :notify ]
     resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes]
+    resource :"freshfone/conference_call", :only => [:call_notes, :save_call_notes, :acw]
     resource :"freshfone/hold", :only => [ :add, :remove ]
     resource :"freshfone/call_history"
     resource :"freshfone/autocomplete"

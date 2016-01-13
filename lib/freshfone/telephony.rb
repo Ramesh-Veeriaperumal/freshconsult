@@ -67,7 +67,7 @@ class Freshfone::Telephony #Wrapper for all telephony provider related actions
   end
 
   def hold_enqueue
-    telephony.add_to_hold_queue(params[:hold_queue], hold_wait_url)
+    telephony.add_to_hold_queue(params[:hold_queue], hold_wait_url, hold_quit_url)
   end
 
   def play_wait_music
