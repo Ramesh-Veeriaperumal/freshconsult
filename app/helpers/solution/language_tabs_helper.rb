@@ -133,7 +133,6 @@ module Solution::LanguageTabsHelper
     select_tag :code,
       options_for_select(@lang_objs.collect { |lang| generate_option(lang) }
       ), {
-          :class => 'input-small m0 tooltip',
           :id => 'version_selection',
           :include_blank => true,
           :"data-html" => true,

@@ -203,11 +203,10 @@ window.App = window.App || {};
     formatTranslationDropdown: function () {
       $('#version_selection').select2({
         formatResult: this.format,
-        formatSelection: this.format,
-        escapeMarkup: function(m) { return m; },
         dropdownAutoWidth: 'true',
         containerCssClass: 'add-translation-link',
-        dropdownCssClass: 'add-translation-dropdown'
+        dropdownCssClass: 'add-translation-dropdown',
+        minimumResultsForSearch: 7
       });
     },
 
