@@ -41,10 +41,10 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		else
 			respond_to do |format|
 				format.html do
-					flash[:error] = t("flash.merge_ticket_failed")
+					flash[:error] = t("helpdesk.merge.bulk_merge.merge_ticket_failed")
 					redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
 				end
-				format.nmobile { render :json => {:error => t(:'flash.merge_ticket_failed')}, :status => :forbidden}
+				format.nmobile { render :json => {:error => t(:'helpdesk.merge.bulk_merge.merge_ticket_failed')}, :status => :forbidden}
 			end
 		end
 	end
