@@ -1,5 +1,5 @@
 class ContactValidation < ApiValidation
-  attr_accessor :avatar, :client_manager, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
+  attr_accessor :avatar, :view_all_tickets, :custom_fields, :company_name, :email, :fb_profile_id, :job_title,
                 :language, :mobile, :name, :phone, :tag_names, :time_zone, :twitter_id, :address, :description
 
   alias_attribute :company_id, :company_name
@@ -14,7 +14,7 @@ class ContactValidation < ApiValidation
                               }
 
   validates :name, required: true, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-  validates :client_manager, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
 
   validate :contact_detail_missing, on: :create
 
@@ -24,7 +24,7 @@ class ContactValidation < ApiValidation
 
   validate :check_update_email, if: -> { email }, on: :update
 
-  validates :company_name, required: { allow_nil: false, message: :company_id_required }, if: -> { client_manager.to_s == 'true' }
+  validates :company_name, required: { allow_nil: false, message: :company_id_required }, if: -> { view_all_tickets.to_s == 'true' }
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {

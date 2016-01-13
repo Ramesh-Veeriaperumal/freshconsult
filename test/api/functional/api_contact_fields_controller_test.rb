@@ -33,7 +33,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     match_json(pattern)
   end
 
-  
   def test_index_ignores_pagination
     get :index, controller_params(per_page: 1, page: 2)
     assert_response 200

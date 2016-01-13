@@ -71,8 +71,10 @@ class Helpdesk::BulkReplyTickets
     end
 
     def set_current_user
-      user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
-      user.make_current
+      if params[:account_id] and params[:current_user_id]
+        user = User.find_by_account_id_and_id(params[:account_id],params[:current_user_id])
+        user.make_current
+       end
     end
 
     def add_reply ticket

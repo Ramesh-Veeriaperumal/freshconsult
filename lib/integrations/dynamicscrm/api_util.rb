@@ -1,5 +1,5 @@
 #Wrappers for the gem https://github.com/TinderBox/dynamics_crm
-module Integrations::DynamicsCrm::ApiUtil
+module Integrations::Dynamicscrm::ApiUtil
   include Integrations::Constants
 
   # Return an hash with authentication status and client object
@@ -8,19 +8,19 @@ module Integrations::DynamicsCrm::ApiUtil
     begin
       organization_name = client_params["organization_name"]
       host_name = host_name_from_end_point(client_params["end_point"])
-      region = (client_params["instance_type"] == CRM_INSTANCE_TYPES["on_demand"]) ? 
-                                            region_from_host_name(host_name) : client_params["region"]
+      
       login_url = (client_params["instance_type"] == CRM_INSTANCE_TYPES["on_demand"]) ? 
                                             DYNAMICS_CRM_CONSTANTS['rst2_login_url'] : client_params["login_url"]
+                                            
       client = DynamicsCRM::Client.new({organization_name: organization_name, hostname: host_name,
-                                            region: region, login_url: login_url})
+                                            login_url: login_url})
       client.authenticate(client_params["domain_user_email"], client_params["decrypted_password"])
       client.retrieve_multiple("contact", [["emailaddress1", "Equal", contact_email]]) unless contact_email.blank?
       result_hash["client_obj"] = client
-      result_hash["status"] = "success"
+      result_hash["status"] = SUCCESS
     rescue => e
       Rails.logger.debug("Error while authenticating dynamics CRM  \n#{e.message}\n#{e.backtrace.join("\n")}")
-      result_hash["status"] = "failure"
+      result_hash["status"] = FAILURE
     end
     result_hash
   end
@@ -83,16 +83,4 @@ module Integrations::DynamicsCrm::ApiUtil
       result
     end
 
-    def region_from_host_name host_name
-      case host_name
-        when /crm5\.dynamics\.com/
-          "urn:crmapac:dynamics.com"
-        when /crm4\.dynamics\.com/
-          "urn:crmemea:dynamics.com"
-        when /\.dynamics\.com/
-          "urn:crmna:dynamics.com"
-      else
-        "urn:crmna:dynamics.com"
-      end
-    end
 end

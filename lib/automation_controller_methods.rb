@@ -1,5 +1,6 @@
 module AutomationControllerMethods
 
+  include Integrations::IntegrationHelper
   def index
     @va_rules = all_scoper
     @va_rules
@@ -133,7 +134,7 @@ module AutomationControllerMethods
         :condition => va_rules_controller? },
       { :name => -1, :value => "-----------------------" }
     ]
-
+    append_integration_actions action_hash
     action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
     add_custom_actions action_hash
     @action_defs = ActiveSupport::JSON.encode action_hash

@@ -142,7 +142,7 @@ module Cache::Memcache::Account
     # Hence DB will be queried again & again via memcache for accounts without whitelisted ip if we use self.whitelisted_ip
     # Below query will return array containing results from query self.whitelisted_ip. 
     # So that cache won't be executed again & again for accounts without whitelistedip.
-    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1) }
+    MemcacheKeys.fetch(key) { WhitelistedIp.where(account_id: self.id).limit(1).all }
   end
 
   def agent_names_from_cache

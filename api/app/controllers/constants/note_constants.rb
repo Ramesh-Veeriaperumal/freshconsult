@@ -16,6 +16,9 @@ module NoteConstants
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails cc_emails bcc_emails).freeze
 
+  # Denotes the email fields in notes.
+  EMAIL_FIELDS = [:notify_emails, :cc_emails, :bcc_emails].freeze
+
   # Wrap parameters args
   WRAP_PARAMS = [:note, exclude: [], format: [:json, :multipart_form]].freeze
 

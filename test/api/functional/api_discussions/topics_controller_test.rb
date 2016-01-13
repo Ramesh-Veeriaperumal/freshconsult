@@ -53,10 +53,11 @@ module ApiDiscussions
       assert_response 201
     end
 
-    def test_create_without_title
+    def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
-                                     message_html: 'test content')
-      match_json([bad_request_error_pattern('title', :missing_field)])
+                                     message_html: true)
+      match_json([bad_request_error_pattern('title', :missing_field),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: 'String')])
       assert_response 400
     end
 
@@ -219,9 +220,13 @@ module ApiDiscussions
 
     def test_update_without_edit_topic_privilege
       topic = first_topic
+      User.any_instance.stubs(:owns_object?).returns(false)
       User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false).once
       put :update, construct_params({ id: topic }, sticky: !topic.sticky)
       assert_response 403
+    ensure
+      User.any_instance.unstub(:owns_object?)
+      User.any_instance.unstub(:privilege?)
     end
 
     def test_update_with_email
@@ -261,6 +266,28 @@ module ApiDiscussions
       match_json(topic_pattern(topic.reload))
       match_json(topic_pattern(params, topic))
       assert_response 200
+    end
+
+    def test_update_without_manage_forums_privilege
+      forum = Forum.where(forum_type: 2).first
+      topic = first_topic
+      @controller.stubs(:privilege?).with(:manage_forums, topic).returns(false)
+      params = { title: 'New', message_html: 'New msg',
+                 stamp_type: Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
+                 sticky: !topic.sticky, locked: !topic.locked, forum_id: forum.id }
+      put :update, construct_params({ id: topic.id }, params)
+      match_json([bad_request_error_pattern('forum_id', :inaccessible_field)])
+      assert_response 400
+    ensure
+      @controller.unstub(:privilege?)
+    end
+
+    def test_update_with_array_forum_id
+      topic = first_topic
+      params = { forum_id: [1] }
+      put :update, construct_params({ id: topic.id }, params)
+      match_json([bad_request_error_pattern('forum_id', :invalid_field)])
+      assert_response 400
     end
 
     def test_update_with_invalid_stamp_type

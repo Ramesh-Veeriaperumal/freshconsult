@@ -7,8 +7,7 @@ module AgentsHelper
                             :"data-loading-classes" => 'sloading loading-small'
                           }
 
-  AGENT_SORT_ORDER_COLUMN = [:name, :last_login_at, :created_at]
-  #AGENT_SORT_ORDER_COLUMN = [:name, :last_active_at, :created_at]
+  AGENT_SORT_ORDER_COLUMN = [:name, :last_active_at, :created_at]
   AGENT_SORT_ORDER_TYPE = [:ASC, :DESC]
   
   def check_agents_limit
@@ -112,14 +111,12 @@ module AgentsHelper
     cookies[type] = (params[type] ? params[type] : ( (!cookies[type].blank?) ? cookies[type] : default_value )).to_sym
   end
   
-  def last_login_tooltip(agent)
-    if agent.user.last_login_at
-      "class='tooltip' title='#{t('agent.last_logged')} #{formated_date(agent.user.last_login_at)}'"
-    end
-  end
-  
   def last_active_tooltip(agent)
-    "class='tooltip' title='#{t('agent.last_active_at')} #{formated_date(agent.last_active_at)}'" if agent.last_active_at
+    if agent.last_active_at
+      "class='tooltip' title='#{t('agent.last_active_at')} #{formated_date(agent.last_active_at, format: :short_day_with_week)}'"
+    else
+      "class='faded'"
+    end
   end 
 
   def last_active_at(agent)

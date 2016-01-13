@@ -83,7 +83,7 @@ module Mobile::Actions::Ticket
     options = { 
       :only => [ :id, :display_id, :subject, :priority, :status, :updated_at],
       :methods => [ :ticket_subject_style,:ticket_sla_status,:ticket_sla_status_type, :status_name, :priority_name, :source_name, :requester_name,
-                    :responder_name, :need_attention, :pretty_updated_date ,:ticket_current_state]
+                    :responder_name, :company_name,:need_attention, :pretty_updated_date ,:ticket_current_state]
     }
     as_json(options,false) 
   end

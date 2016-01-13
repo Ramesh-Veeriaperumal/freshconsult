@@ -7,6 +7,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
+    create_call_metrics(freshfone_call) if freshfone_call.account.features? :freshfone_call_metrics
 	end
 
 	def before_save(freshfone_call)
@@ -17,6 +18,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   def after_update(freshfone_call)
     publish_new_call_status(freshfone_call) if freshfone_call.call_status_changed?
     trigger_cost_job freshfone_call if freshfone_call.account.features? :freshfone_conference
+    freshfone_call.update_metrics if freshfone_call.account.features? :freshfone_call_metrics
   end    
 
 	private
@@ -133,6 +135,10 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
     def trigger_active_call_end_publish(freshfone_call, account)
       publish_active_call_end(freshfone_call,account)
+    end
+
+    def create_call_metrics(freshfone_call)
+      freshfone_call.create_call_metrics ({:account => freshfone_call.account})
     end
 
 end

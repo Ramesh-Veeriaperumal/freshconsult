@@ -13,6 +13,8 @@ class ActionController::TestCase
     set_request_params
     set_key(account_key, 1000, nil)
     set_key(default_key, 100, nil)
+    # To prevent DynamoDB errors.
+    SpamCounter.stubs(:count).returns(0)
   end
 
   def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
@@ -48,6 +50,8 @@ class ActionDispatch::IntegrationTest
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
     Bullet.add_whitelist type: :unused_eager_loading, class_name: 'ForumCategory', association: :forums
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
+    # To prevent DynamoDB errors.
+    SpamCounter.stubs(:count).returns(0)
   end
 
   ActiveRecord::Base.logger.level = 1

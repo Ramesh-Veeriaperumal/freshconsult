@@ -3,7 +3,7 @@ module ApiDiscussions
     attr_accessor :title, :forum_id, :sticky, :locked,
                   :stamp_type, :message_html
     validates :title, required: true, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
-    validates :message_html, required: true
+    validates :message_html, required: true, data_type: { rules: String }
     validates :forum_id, required: { allow_nil: false, message: :required_and_numericality }, on: :update
     validates :sticky, :locked, data_type: { rules: 'Boolean' }
     validates :forum_id, custom_numericality: { allow_nil: true }, on: :update
