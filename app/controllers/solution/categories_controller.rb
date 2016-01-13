@@ -19,9 +19,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :load_portal_solution_category_ids, :only => [:all_categories, :create, :update]
 
   def index
-    ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-    include_assoc = (current_account.launched?(:meta_read) ? :folders_through_meta : :folders)
-    @categories = current_portal.solution_categories.includes(include_assoc)
+    @categories = current_portal.solution_category_meta.includes(:solution_folder_meta)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
@@ -89,6 +87,7 @@ class Solution::CategoriesController < ApplicationController
         format.html { render :action => "new" }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @category.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -101,12 +100,13 @@ class Solution::CategoriesController < ApplicationController
       if @category.errors.blank?
         format.html { redirect_to solution_all_categories_path }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category, :status => :created, :location => @category }     
-        format.json { render :json => @category, :status => :ok, :location => @category }     
+        format.xml  { render :xml => @category, :status => :created, :location => @category.primary_category }     
+        format.json { render :json => @category, :status => :ok, :location => @category.primary_category }     
       else
         format.html { render :action => "edit" }
         format.js { render 'after_save', :formats => [:rjs] }
         format.xml  { render :xml => @category.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @category.errors, :status => :unprocessable_entity }
       end
     end
   end

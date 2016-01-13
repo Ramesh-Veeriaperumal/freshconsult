@@ -396,7 +396,8 @@ class Solution::ArticlesController < ApplicationController
           }
         else
           format.html { render_edit }
-          format.xml  { render :xml => @article.errors, :status => :unprocessable_entity }
+          format.xml  { render :xml => @article_meta.errors, :status => :unprocessable_entity }
+          format.json  { render :json => @article_meta.errors, :status => :unprocessable_entity }
           format.js {
             flash[:notice] = t('solution.articles.prop_updated_error')
             render 'update_error'
@@ -496,17 +497,21 @@ class Solution::ArticlesController < ApplicationController
       params.slice!("id", "format", "controller", "action", "language")
     end
 
-    def set_common_attributes
-      set_user
+    def set_common_attributes  
+      set_user_and_status
       if params[:solution_article_meta].present?
-        set_status
         merge_cloud_file_attachments
       end
     end
 
-    def set_user
-      params[:solution_article][:user_id] = current_user.id if params[:solution_article].present?
-      params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id if params[:solution_article_meta].present?
+    def set_user_and_status
+      if params[:solution_article].present?
+        params[:solution_article][:status] ||= get_status
+        params[:solution_article][:user_id] = current_user.id
+      else
+        params[:solution_article_meta][language_scoper.to_sym][:user_id] ||= current_user.id
+        params[:solution_article_meta][language_scoper.to_sym][:status] ||= get_status
+      end
     end
 
     def set_status

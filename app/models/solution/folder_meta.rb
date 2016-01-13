@@ -19,7 +19,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :solution_folders, :class_name => "Solution::Folder", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_folder_meta, :dependent => :destroy
 
-	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
+	has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy, :autosave => true
 
 	has_many :customers, :through => :customer_folders
 
@@ -66,8 +66,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 
   def customer_folders_attributes=(cust_attr)
     customer_folders.destroy_all
-    customers = cust_attr.kind_of?(Array) ? cust_attr : cust_attr[:customer_id]
-    customers.each do |cust_id|
+    company_ids = cust_attr.kind_of?(Array) ? cust_attr : cust_attr[:customer_id]
+    company_ids.each do |cust_id|
       customer_folders.build({:customer_id =>cust_id})
     end
   end

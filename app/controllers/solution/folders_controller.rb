@@ -13,6 +13,7 @@ class Solution::FoldersController < ApplicationController
   before_filter :load_meta, :only => [:edit, :update]
   # to be done!
   before_filter :validate_and_set_customers, :only => [:create, :update]
+  before_filter :set_parent_for_old_params, :only => [:create, :update]
   before_filter :set_modal, :only => [:new, :edit, :update]
   before_filter :old_category, :only => [:move_to]
   before_filter :check_new_category, :bulk_update_category, :only => [:move_to, :move_back]
@@ -197,10 +198,15 @@ class Solution::FoldersController < ApplicationController
     end
 
     def validate_and_set_customers
-      (return unless params[nscname][:customer_folders_attributes].blank?) if params[nscname].present?
-      customer_ids = valid_customers(params[:customers]) || []
+      customer_ids = params[:customers] || ((params[nscname] || {})[:customer_folders_attributes] || {})[:customer_id] || []
+      customer_ids = customer_ids.join(',') if customer_ids.kind_of?(Array)
+      valid_customer_ids = valid_customers(customer_ids) || []
+      if params[nscname].present?
+        params[nscname][:customer_folders_attributes] = valid_customer_ids
+        return
+      end
       params[:solution_folder_meta][:customer_folders_attributes] = {}
-      params[:solution_folder_meta][:customer_folders_attributes] = customer_ids
+      params[:solution_folder_meta][:customer_folders_attributes] = valid_customer_ids
     end
 
     def set_modal
@@ -288,7 +294,7 @@ class Solution::FoldersController < ApplicationController
         ).html_safe
     end
 
-    #META-READ-HACK!!    
+    #META-READ-HACK!!  #possible dead code  
     def meta_article_scope
       current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
     end
@@ -299,5 +305,11 @@ class Solution::FoldersController < ApplicationController
 
     def set_customers_field
       @customer_id = params["customers"].present? ? params["customers"].split(',') : []
+    end
+
+    def set_parent_for_old_params
+      return unless params[:solution_folder].present?
+      params[:solution_folder][:category_id] = params[:category_id]
+      params[:solution_folder][:id] = params[:id] if params[:id].present?
     end
 end

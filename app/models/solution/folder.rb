@@ -164,6 +164,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def customer_folders_attributes=(cust_attr)
+    return unless cust_attr.present?
     customer_folders.destroy_all
     cust_attr[:customer_id].each do |cust_id|
       customer_folders.build({:customer_id =>cust_id})

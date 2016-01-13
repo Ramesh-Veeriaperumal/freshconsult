@@ -20,49 +20,50 @@ RSpec.describe Solution::CategoriesController do
     post :create, params.merge!(:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
 
-    expected = (response.status === 201)  && (compare(result["category"].keys,APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
-    expected.should be(true)
-
+    expect(response.status).to be_eql(201)
+    expect(assert_array(result["category"].keys, APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
   end
+
   it "should be able to update a solution category" do
     solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     put :update, { :id => solution_category.id, :solution_category => {:description => Faker::Lorem.paragraph }, :format => 'json'}
     
-    response.status.should === 200
-
+    expect(response.status).to be_eql(200)
   end
+
   it "should be able to view a solution category" do
     solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
 
     get :show, { :id => solution_category.id, :format => 'json'}
     result = parse_json(response)
 
-    expected = (response.status === 200) &&  (compare(result["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
-    expected.should be(true)
+    expect(response.status).to be_eql(200)
+    expect(assert_array(result["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
   end
+
   it "should be able to view all solution categories" do
     solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     solution_category_2 = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
     
     get :index, {:format => 'json'}
     result = parse_json(response)
-    expected = (response.status === 200)  && (compare(result.first["category"].keys-["folders"],APIHelper::SOLUTION_CATEGORY_ATTRIBS,{}).empty?)
-    expected.should be(true)
+
+    expect(response.status).to be_eql(200)
+    expect(assert_array(result.first["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
   end
+
   it "should be able to delete a solution category" do
     solution_category = create_category( {:name => "#{Faker::Lorem.sentence(2)}", :description => "#{Faker::Lorem.sentence(3)}", :is_default => false} )
-
     delete :destroy, { :id => solution_category.id, :format => 'json'}
-
-    expected = (response.status === 200)
-    expected.should be(true)
+    expect(response.status).to be_eql(200)
   end
+
   #negative condition check.
   it "should not create a forum solution without a name" do
     post :create, {:solution_category => { :description=>Faker::Lorem.paragraph },:format => 
     'json'}, :content_type => 'application/json'
     #currently no error handling for json. change this once its implemented.
-    response.status.should === 406
+    expect(response.status).to be_eql(422)
   end
 
     def solution_category_api_params

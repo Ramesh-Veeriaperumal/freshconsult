@@ -24,6 +24,9 @@ module APIAuthHelper
     result = JsonCompare.get_diff(input.keys,output.keys,exclusions)
   end
 
+  def assert_array(first_input, second_input, exclusions = [])
+    ((first_input - second_input) - exclusions).empty?
+  end
 
 end
  

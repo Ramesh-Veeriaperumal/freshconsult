@@ -32,6 +32,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	
 	HITS_CACHE_THRESHOLD = 100
 
+	before_save :set_default_art_type
 	after_create :clear_cache
 	after_destroy :clear_cache
 	after_update :clear_cache, :if => :solution_folder_meta_id_changed?
@@ -63,6 +64,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	def clear_cache
 		account.clear_solution_categories_from_cache
+	end
+
+	def set_default_art_type
+		self.art_type ||= Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
 	end
 
 end
