@@ -8,6 +8,29 @@ class NoteValidationTest < ActionView::TestCase
     assert note.valid?(:create)
   end
 
+  def test_body
+    controller_params = { 'user_id' => 1 }
+    item = nil
+    note = NoteValidation.new(controller_params, item)
+    refute note.valid?(:create)
+    assert note.errors.full_messages.include?('Body missing')
+    refute note.errors.full_messages.include?('Body html data_type_mismatch')
+
+    controller_params = { 'user_id' => 1, body: '', body_html: '' }
+    item = nil
+    note = NoteValidation.new(controller_params, item)
+    refute note.valid?(:create)
+    assert note.errors.full_messages.include?('Body blank')
+    refute note.errors.full_messages.include?('Body html data_type_mismatch')
+
+    controller_params = { 'user_id' => 1, body: true, body_html: true }
+    item = nil
+    note = NoteValidation.new(controller_params, item)
+    refute note.valid?(:create)
+    assert note.errors.full_messages.include?('Body data_type_mismatch')
+    assert note.errors.full_messages.include?('Body html data_type_mismatch')
+  end
+
   def test_emails_validation_invalid
     controller_params = { 'notify_emails' => ['fggg@ddd.com,ss@fff.com'], 'cc_emails' => ['fggg@ddd.com,ss@fff.com'], 'bcc_emails' => ['fggg@ddd.com,ss@fff.com']  }
     item = nil

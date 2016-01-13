@@ -2,7 +2,7 @@ module ContactConstants
   ARRAY_FIELDS = ['tags']
   HASH_FIELDS = ['custom_fields']
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CONTACT_FIELDS = %w(address avatar client_manager company_id description email job_title language mobile name phone time_zone twitter_id tags).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
+  CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name phone time_zone twitter_id tags).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] } | HASH_FIELDS
 
   STATES = %w( verified unverified all deleted blocked ).freeze
 

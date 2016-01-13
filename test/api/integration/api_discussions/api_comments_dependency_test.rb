@@ -17,4 +17,11 @@ class ApiCommentsDependencyTest < ActionDispatch::IntegrationTest
     expected = [[ActiveModel::Validations::PresenceValidator, [:user_id, :body_html, :topic], {}]]
     assert_equal expected, actual
   end
+
+  def no_privilege_for_update
+    fields_dependant_on_update_privilege = DiscussionConstants::UPDATE_COMMENT_FIELDS[:all]
+    update_privilege = ABILITIES[:"api_discussions/api_comment"].map(&:action).include?(:update)
+    # both should be false or both should be true
+    assert (update_privilege && fields_dependant_on_update_privilege) == (update_privilege || fields_dependant_on_update_privilege)
+  end
 end

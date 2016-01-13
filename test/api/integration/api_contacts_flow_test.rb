@@ -81,12 +81,12 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       end
 
       sample_user = User.last
-      params = { client_manager: true }
+      params = { view_all_tickets: true }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
       match_json([bad_request_error_pattern('company_id', :company_id_required)])
 
       company = get_company
-      params = { client_manager: true, company_id: company.id }
+      params = { view_all_tickets: true, company_id: company.id }
       put "/api/v2/contacts/#{sample_user.id}", params.to_json, @write_headers
       assert_response 200
 
@@ -123,7 +123,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     create_contact_field(cf_params(type: 'number', field_type: 'custom_number', label: 'sample_number', editable_in_signup: 'true'))
     tags = [Faker::Name.name, Faker::Name.name]
     comp = Company.first || create_company
-    params_hash = { name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true,
+    params_hash = { name: Faker::Lorem.characters(15), email: Faker::Internet.email, view_all_tickets: true,
                     company_id: comp.id, language: 'en', tags: tags, custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_number' => 7878 } }
     headers, params = encode_multipart(params_hash, 'avatar', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
@@ -158,15 +158,15 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Linetext', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'paragraph', field_type: 'custom_paragraph', label: 'Testimony', editable_in_signup: 'true'))
     sample_user = get_user
-    turn_on_caching
-    Account.stubs(:current).returns(@account)
-    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
-    sample_user.update_attributes(custom_field: { 'cf_linetext' => 'test', 'cf_testimony' => 'test testimony' })
-    custom_field = sample_user.custom_field
-    get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
-    turn_off_caching
-    assert_response 200
-    match_json(contact_pattern({ custom_field: custom_field }, sample_user))
+    enable_cache do
+      Account.stubs(:current).returns(@account)
+      get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+      sample_user.update_attributes(custom_field: { 'cf_linetext' => 'test', 'cf_testimony' => 'test testimony' })
+      custom_field = sample_user.custom_field
+      get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
+      assert_response 200
+      match_json(contact_pattern({ custom_field: custom_field }, sample_user))
+    end
   ensure
     Account.unstub(:current)
   end

@@ -10,7 +10,7 @@ module ApiTicketConstants
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
                      tags attachments).freeze | (ARRAY_FIELDS - ['cc_emails']).map { |x| Hash[x, [nil]] } | HASH_FIELDS
   SHOW_FIELDS = ['include']
-  ALLOWED_INCLUDE_PARAMS = ['notes', nil]
+  ALLOWED_INCLUDE_PARAMS = ['notes']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
@@ -47,6 +47,8 @@ module ApiTicketConstants
     create: [:json, :multipart_form],
     update: [:json, :multipart_form]
   }.freeze
+
+  MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT
 
   FIELD_MAPPINGS = { group: :group_id, agent: :responder_id, responder: :responder_id, requester: :requester_id, email_config: :email_config_id,
                      product: :product_id, ticket_type: :type }.freeze
