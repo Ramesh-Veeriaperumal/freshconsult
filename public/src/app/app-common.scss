@@ -2588,17 +2588,16 @@ a.mobile_switchBtn {
 	.linkback-url{ margin: 5px 0; }
 	.reset-color{ margin-top: 5px; }
 
-	.secondary-languages {
-		@include margin-left(0);
-		margin-bottom: 5px;
-	}
-
 	.multilingual-enabled {
 		@include border-right(1px solid #ddd);
+
+		.more-languages {
+			color: $linkColor;
+		}
 	}
 
 	.manage-link {
-		padding-top: 30px;
+		padding-top: 50px;
 	}
 }
 

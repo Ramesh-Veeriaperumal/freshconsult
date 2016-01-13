@@ -6,27 +6,29 @@
 	%>
 	<div class="controls">
 		<% if @account.multilingual_available? && multilingual_flag %>
-			<div class="span4 multilingual-enabled">
-				<div class="muted">
-					<%= t('account.primary_language') %>
-				</div>
-				<div class="mt5">
-					<%= @account.language_object.name %>
-				</div>
-				<div class="muted mt5">
-					<%= t('account.additional_languages') %>
-				</div>
-				<div class="mt5 secondary-languages span9">
-					<%= @account.supported_languages_objects.join(', ') %>
-				</div>
-				<% if @account.portal_languages.present? %>
+			<div class="span5 multilingual-enabled">
+				<div class="span10">
 					<div class="muted">
-						<%= t('account.portal_languages') %>
+						<%= t('account.primary_language') %>
 					</div>
 					<div class="mt5">
-						<%= @account.portal_languages_objects.join(', ') %>
+						<%= @account.language_object.name %>
 					</div>
-				<% end %>
+					<div class="muted mt5">
+						<%= t('account.supported_languages', :count => @account.supported_languages.size) %>
+					</div>
+					<div class="mt5">
+						<%= languages_listing(@account.supported_languages_objects) %>
+					</div>
+					<% if @account.portal_languages.present? %>
+						<div class="muted mt5">
+							<%= t('account.portal_languages', :count => @account.portal_languages.size) %>
+						</div>
+						<div class="mt5">
+							<%= languages_listing(@account.portal_languages_objects) %>
+						</div>
+					<% end %>
+				</div>
 			</div>
 			<div class="span3 manage-link">
 				<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>

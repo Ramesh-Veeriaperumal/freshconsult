@@ -2827,6 +2827,7 @@ en:
       supported_languages_validity: "should be valid"
       portal_languages_validity: "should be a subset of supported languages"
       portal_language_inclusion: "Supported languages should not include the portal language"
+      more_languages: ", <span class='more-languages'>%{count} more</span>"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -5036,7 +5037,8 @@ en:
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
-    portal_languages: Supported Portal Languages
+    supported_languages: "Supported Languages (%{count})"
+    portal_languages: "Enabled Portal Languages (%{count})"
     same_language_alert: Supported languages should not include the Portal language.
     settings: "Settings"
     logo_and_colors: "Logo and colors"
