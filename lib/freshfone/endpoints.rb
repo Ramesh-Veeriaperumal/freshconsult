@@ -96,6 +96,10 @@ module Freshfone::Endpoints
     "#{host}/freshfone/hold/wait?call=#{params[:call]}#{transfer_params}"
   end
 
+  def hold_quit_url
+    "#{host}/freshfone/hold/quit?call=#{params[:call]}"
+  end
+
   def transfer_params
     return if params[:transfer].blank?
     "&transfer=#{params[:transfer]}&source=#{params[:source]}&target=#{params[:target]}&group_transfer=#{params[:group_transfer]}&transfer_type=#{params[:transfer_type]}#{external_transfer_param}"

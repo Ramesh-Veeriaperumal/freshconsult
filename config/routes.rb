@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -437,6 +437,7 @@ Helpkit::Application.routes.draw do
         post :unhold
         post :transfer_unhold
         post :transfer_fallback_unhold
+        post :quit
       end
     end
 
@@ -461,6 +462,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
+        put :acw
         get :call_notes
       end
     end
@@ -669,6 +671,15 @@ Helpkit::Application.routes.draw do
         post :install
         post :notify
     end
+
+    namespace :slack_v2 do
+      get :oauth
+      get :new
+      post :install
+      get :edit
+      put :update
+      post :create_ticket
+    end
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -730,7 +741,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :slack do
+    resources :slack do #Belongs to Old Slack
       collection do
         post :create_ticket
       end
@@ -801,14 +812,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :dynamics_crm do
-      collection do
-        post :settings_update
-        get :edit
-        post :fields_update
-        post :widget_data
-        get :settings
-      end
+    namespace :dynamicscrm do
+      post :settings_update
+      get :edit
+      post :fields_update
+      post :widget_data
+      get :settings
     end
 
     namespace :ilos do
@@ -2321,11 +2330,13 @@ Helpkit::Application.routes.draw do
         get :mobile_pre_loader
         get :deliver_activation_instructions
         get :configurations
+        get :mobile_configurations
       end
     end
     resources :freshfone do 
       collection do
         get :numbers
+        get :can_accept_incoming_calls
       end
     end
   end

@@ -22,6 +22,7 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :load_ffone_agents_by_group, :only => [:agent_status]
   around_filter :run_on_slave, :only => [:unresolved_tickets_data]
   before_filter :load_filter_params, :only => [:unresolved_tickets_data]
+  skip_after_filter :set_last_active_time, :only => [:latest_activities]
 
   def index
     if request.xhr? and !request.headers['X-PJAX']

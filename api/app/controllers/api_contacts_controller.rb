@@ -57,7 +57,7 @@ class ApiContactsController < ApiApplicationController
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
-      if scope != nil && @item.deleted != scope
+      if !scope.nil? && @item.deleted != scope
         head 404
         return false
       end
@@ -85,9 +85,9 @@ class ApiContactsController < ApiApplicationController
       params_hash = params[cname]
       params_hash[:tag_names] = params_hash.delete(:tags).join(',') if params_hash.key?(:tags)
 
-      # Making the client_manager as the last entry in the params_hash, since company_id
-      # has to be initialised first for making a contact as a client_manager
-      params_hash[:client_manager] = params_hash.delete(:client_manager) if params_hash.key?(:client_manager)
+      # Making the view_all_tickets as the last entry in the params_hash, since company_id
+      # has to be initialised first for making a contact as a view_all_tickets
+      params_hash[:view_all_tickets] = params_hash.delete(:view_all_tickets) if params_hash.key?(:view_all_tickets)
 
       if params_hash[:avatar]
         extension = File.extname(params_hash[:avatar].original_filename).downcase
@@ -97,7 +97,7 @@ class ApiContactsController < ApiApplicationController
 
       ParamsHelper.assign_checkbox_value(params_hash[:custom_fields], current_account.contact_form.custom_checkbox_fields.map(&:name)) if params_hash[:custom_fields]
 
-      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash)
+      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, view_all_tickets: :client_manager }, params_hash)
     end
 
     def validate_filter_params
@@ -108,7 +108,7 @@ class ApiContactsController < ApiApplicationController
 
     def load_objects
       # preload(:flexifield) will avoid n + 1 query to contact field data.
-      super contacts_filter(scoper).preload(:flexifield, :company).order('users.name')
+      super contacts_filter(scoper).preload(:flexifield).order('users.name')
     end
 
     def contacts_filter(contacts)

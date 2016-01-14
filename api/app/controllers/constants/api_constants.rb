@@ -29,6 +29,7 @@ module ApiConstants
   MAX_LENGTH_STRING = 255
 
   TAG_MAX_LENGTH_STRING = 32
+  CACHE_VERSION = { v2: 'V2' }.freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json].freeze

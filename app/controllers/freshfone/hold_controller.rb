@@ -67,7 +67,6 @@ class Freshfone::HoldController < FreshfoneBaseController
       telephony.unmute_participants(current_call)
       #Adding back to the original conference
       current_call.inprogress!
-      current_call.add_to_hold_duration(params['QueueTime'])
       notifier.notify_call_unhold(current_call)
       agent_sid = transfered_leg?(current_call) ? current_call.dial_call_sid : current_call.call_sid
       render :xml => telephony.initiate_customer_conference({
@@ -78,6 +77,11 @@ class Freshfone::HoldController < FreshfoneBaseController
       Rails.logger.error "#{message} \n #{e.backtrace.join("\n\t")}"
       render :xml => error_handler(:xml, "#{message} \n #{e.backtrace.first(2).join("\n\t")}") # Spreadheet L 68
     end
+  end
+
+  def quit
+    current_call.add_to_hold_duration(params['QueueTime'])
+    render :xml => telephony.no_action
   end
 
   def transfer_unhold

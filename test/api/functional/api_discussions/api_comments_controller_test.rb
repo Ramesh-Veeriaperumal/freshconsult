@@ -24,6 +24,37 @@ module ApiDiscussions
       User.where('id != ? and helpdesk_agent = ?', @agent.id, true).first || add_test_agent
     end
 
+    def test_privilege_for_update
+      comment = quick_create_post
+      comment.update_column(:user_id, @agent.id)
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(true)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      assert_response 200
+
+      comment.update_column(:user_id, 999)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      match_json([bad_request_error_pattern('body_html', :inaccessible_field)])
+      assert_response 400
+
+      put :update, construct_params({ id: comment.id }, answer: true)
+      assert_response 200
+
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(true)
+      put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
+      assert_response 200
+
+      comment.update_column(:user_id, @agent.id)
+      @controller.stubs(:privilege?).with(:view_forums, comment).returns(false)
+      @controller.stubs(:privilege?).with(:edit_topic, comment).returns(true)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      match_json([bad_request_error_pattern('answer', :inaccessible_field)])
+      assert_response 400
+    ensure
+      User.any_instance.unstub(:privilege?)
+      @controller.unstub(:privilege?)
+    end
+
     def test_update
       comment = quick_create_post
       put :update, construct_params({ id: comment.id }, body_html: 'test reply 2', answer: true)
@@ -36,7 +67,7 @@ module ApiDiscussions
       post.topic.update_column(:stamp_type, nil)
       put :update, construct_params({ id: post.id }, body_html: 'test reply 2', answer: true)
       assert_response 400
-      match_json([bad_request_error_pattern('answer', :invalid_field)])
+      match_json([bad_request_error_pattern('answer', :incompatible_field)])
       post.topic.update_column(:stamp_type, 6)
     end
 

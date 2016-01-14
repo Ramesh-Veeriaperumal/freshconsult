@@ -108,10 +108,12 @@ class NotesControllerTest < ActionController::TestCase
   end
 
   def test_create_datatype_invalid
-    params_hash = { notify_emails: 'x', attachments: 'x', body: Faker::Lorem.paragraph }
+    params_hash = { notify_emails: 'x', attachments: 'x', body: true, body_html: true }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
     match_json([bad_request_error_pattern('notify_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
+                bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('body', :data_type_mismatch, data_type: 'String'),
+                bad_request_error_pattern('body_html', :data_type_mismatch, data_type: 'String')])
     assert_response 400
   end
 
@@ -198,6 +200,29 @@ class NotesControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_create_with_invalid_notify_emails_count
+    notify_emails = []
+    51.times do
+      notify_emails << Faker::Internet.email
+    end
+    params = create_note_params_hash.merge(notify_emails: notify_emails)
+    post :create, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('notify_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
+  end
+
+  def test_reply_with_invalid_cc_emails_count
+    cc_emails = []
+    51.times do
+      cc_emails << Faker::Internet.email
+    end
+    params = reply_note_params_hash.merge(cc_emails: cc_emails, bcc_emails: cc_emails)
+    post :reply, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
+                bad_request_error_pattern('bcc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}")])
   end
 
   def test_reply_with_ticket_trashed
@@ -650,7 +675,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     match_json(result_pattern.ordered!)
   end
@@ -663,7 +688,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == parent_ticket.notes.visible.exclude_source('meta').count
     match_json(result_pattern)
@@ -673,7 +698,7 @@ class NotesControllerTest < ActionController::TestCase
     assert_response 200
     result_pattern = []
     parent_ticket.notes.visible.exclude_source('meta').each do |n|
-      result_pattern << note_pattern(n)
+      result_pattern << index_note_pattern(n)
     end
     assert JSON.parse(response.body).count == 0
     match_json(result_pattern)

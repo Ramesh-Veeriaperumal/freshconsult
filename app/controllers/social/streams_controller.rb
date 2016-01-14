@@ -12,6 +12,7 @@ class Social::StreamsController < Social::BaseController
   before_filter :set_native_mobile, :only => [:stream_feeds, :show_old, :fetch_new, :interactions]
   before_filter :set_stream_params, :only => [:stream_feeds], :if => :is_mobile_meta_request?
   before_filter :load_reply_handles, :only => [:index, :stream_feeds, :show_old, :fetch_new, :interactions]
+  skip_after_filter :set_last_active_time, :only => [:fetch_new]
 
   def index
     set_stream_params

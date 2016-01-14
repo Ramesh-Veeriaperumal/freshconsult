@@ -182,7 +182,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml"].include?(params[:format])) if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml","nmobile"].include?(params[:format])) if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|

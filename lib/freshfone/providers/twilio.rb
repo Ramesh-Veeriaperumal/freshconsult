@@ -76,9 +76,9 @@ class Freshfone::Providers::Twilio
     end
   end
 
-  def add_to_hold_queue(queue_name, hook)
+  def add_to_hold_queue(queue_name, wait_hook, quit_hook)
     twiml_response do |r|
-      r.Enqueue queue_name, :waitUrl => hook
+      r.Enqueue queue_name, :waitUrl => wait_hook, :action => quit_hook
     end
   end
 

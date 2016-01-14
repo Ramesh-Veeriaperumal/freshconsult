@@ -1,4 +1,4 @@
-module Integrations::DynamicsCrm::CrmUtil
+module Integrations::Dynamicscrm::CrmUtil
 
   # Front end javascript is designed to work on the returned json array formed here.
   def admin_config_filter api_data_arr, inputs_hash

@@ -39,14 +39,19 @@ module Helpdesk::ProcessByMessageId
     end
   end
 
+  def all_message_ids
+    reply_to = in_reply_to
+    all_keys = references || []
+    all_keys << reply_to if reply_to
+    all_keys.reverse
+  end
+
   private
 
     def parent_ticket from_email, account
-      reply_to = in_reply_to
-      all_keys = references
-      all_keys << reply_to if reply_to
+      all_keys = all_message_ids
       return nil if all_keys.blank?
-      all_keys.reverse.each do |ticket_key|
+      all_keys.each do |ticket_key|
         ticket_id = get_others_redis_key(message_key(account, ticket_key))
         if ticket_id
           ticket_id = $1 if ticket_id =~ /(.+?):/
@@ -61,11 +66,9 @@ module Helpdesk::ProcessByMessageId
     end
 
     def archive_parent_ticket from_email, account
-      reply_to = in_reply_to
-      all_keys = references 
-      all_keys << reply_to if reply_to
+      all_keys = all_message_ids
       return nil if all_keys.blank?
-      all_keys.reverse.each do |ticket_key|
+      all_keys.each do |ticket_key|
         ticket_id = get_others_redis_key(message_key(account, ticket_key))
         if ticket_id
           ticket_id = $1 if ticket_id =~ /(.+?):/

@@ -411,11 +411,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_unpermitted_params
-    @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    @controller.stubs(:privilege?).with(:edit_time_entries, nil).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params_hash.merge(agent_id: 99))
     assert_response 400
-    match_json([bad_request_error_pattern('agent_id', :invalid_field)])
+    match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
     @controller.unstub(:privilege?)
   end
 
@@ -523,7 +523,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_without_permission_but_ownership
-    @controller.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    @controller.stubs(:privilege?).with(:edit_time_entries, nil).returns(false)
     @controller.stubs(:privilege?).with(:all).returns(true)
     post :create, construct_params({ id: ticket.display_id }, params_hash.except(:agent_id))
     assert_response 201

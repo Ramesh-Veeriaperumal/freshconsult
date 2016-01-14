@@ -337,7 +337,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
   end
 
   def test_create_with_nil_fr_due_by_with_due_by
@@ -419,7 +419,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{TicketConstants::MAX_EMAIL_COUNT}"),
+    match_json([bad_request_error_pattern('cc_emails', :max_count_exceeded, max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}"),
                 bad_request_error_pattern('due_by', :gt_created_and_now)])
   end
 
@@ -485,6 +485,13 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('description', :missing),
                 bad_request_error_pattern('priority', :required_and_inclusion, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :required_and_inclusion, list: '2,3,4,5,6,7')])
+  end
+
+  def test_create_datatype_invalid
+    post :create, construct_params({}, ticket_params_hash.merge(description: true, description_html: true))
+    assert_response 400
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, data_type: 'String'),
+                bad_request_error_pattern('description_html', :data_type_mismatch, data_type: 'String')])
   end
 
   def test_create_with_existing_user
@@ -1013,7 +1020,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge(status: 5, fr_due_by: nil, due_by: 12.days.since.iso8601)
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
   end
 
   def test_update_with_nil_fr_due_by_with_due_by
@@ -1467,8 +1474,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_field),
-                bad_request_error_pattern('fr_due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('due_by', :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :incompatible_field)])
   end
 
   def test_update_with_status_resolved_and_only_due_by
@@ -1476,7 +1483,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 4, due_by: 12.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('due_by', :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_only_fr_due_by
@@ -1484,7 +1491,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 5, fr_due_by: 4.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('fr_due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('fr_due_by', :incompatible_field)])
   end
 
   def test_update_with_status_closed_and_due_by
@@ -1492,8 +1499,8 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = { status: 5, due_by: 12.days.since.iso8601, fr_due_by: 4.days.since.iso8601 }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('due_by', :invalid_field),
-                bad_request_error_pattern('fr_due_by', :invalid_field)])
+    match_json([bad_request_error_pattern('due_by', :incompatible_field),
+                bad_request_error_pattern('fr_due_by', :incompatible_field)])
   end
 
   def test_update_numericality_invalid
@@ -2044,14 +2051,14 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :"can't be blank")])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
   end
 
   def test_show_with_invalid_param_value
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :"can't be blank")])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'notes')])
   end
 
   def test_show_with_invalid_params
@@ -2071,10 +2078,10 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_without_permitted_tickets
     Helpdesk::Ticket.update_all(responder_id: nil)
-    get :index, controller_params
+    get :index, controller_params(per_page: 50)
     assert_response 200
     response = parse_response @response.body
-    assert_equal [Helpdesk::Ticket.where(deleted: 0, spam: 0).count, 30].min, response.size
+    assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).count, response.size
 
     Agent.any_instance.stubs(:ticket_permission).returns(3)
     get :index, controller_params

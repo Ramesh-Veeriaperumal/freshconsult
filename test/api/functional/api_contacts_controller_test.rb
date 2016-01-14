@@ -31,7 +31,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_show_a_contact_with_avatar
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     sample_user = get_user
-    sample_user.build_avatar({content_content_type: file.content_type, content_file_name: file.original_filename})
+    sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(id: sample_user.id)
     match_json(contact_pattern(sample_user.reload))
     assert_response 200
@@ -92,16 +92,16 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: 'String',
+                                        view_all_tickets: 'String',
                                         company_id: comp.id)
-    match_json([bad_request_error_pattern('client_manager', :data_type_mismatch, data_type: 'Boolean')])
+    match_json([bad_request_error_pattern('view_all_tickets', :data_type_mismatch, data_type: 'Boolean')])
     assert_response 400
   end
 
   def test_create_contact_with_client_manager_without_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true)
+                                        view_all_tickets: true)
     match_json([bad_request_error_pattern('company_id', :company_id_required)])
     assert_response 400
   end
@@ -110,7 +110,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id)
     assert User.last.client_manager == true
     assert_response 201
@@ -121,7 +121,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: Faker::Lorem.characters(5),
                                         time_zone: Faker::Lorem.characters(5))
@@ -135,7 +135,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         time_zone: 'Mountain Time (US & Canada)')
@@ -147,7 +147,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: 'tag1, tag2, tag3')
@@ -159,7 +159,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     params = {  name: Faker::Lorem.characters(15),
                 email: Faker::Internet.email,
-                client_manager: true,
+                view_all_tickets: true,
                 company_id: comp.id,
                 language: 'en',
                 avatar: Faker::Internet.email }
@@ -173,7 +173,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     params = {  name: Faker::Lorem.characters(15),
                 email: Faker::Internet.email,
-                client_manager: true,
+                view_all_tickets: true,
                 company_id: comp.id,
                 language: 'en',
                 avatar: file }
@@ -186,7 +186,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_invalid_avatar_file_size
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    params = {  name: Faker::Lorem.characters(15), email: Faker::Internet.email, client_manager: true, company_id: 1,
+    params = {  name: Faker::Lorem.characters(15), email: Faker::Internet.email, view_all_tickets: true, company_id: 1,
                 language: 'en', avatar: file }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     Rack::Test::UploadedFile.any_instance.stubs(:size).returns(20_000_000)
@@ -200,7 +200,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     params = {  name: Faker::Lorem.characters(15),
                 email: Faker::Internet.email,
-                client_manager: true,
+                view_all_tickets: true,
                 company_id: comp.id,
                 language: 'en',
                 custom_fields: { dummyfield: Faker::Lorem.characters(20) } }
@@ -217,7 +217,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: tags,
@@ -247,7 +247,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_another_check_box' => false, 'cf_sample_date' => '2010-11-01', 'cf_sample_dropdown' => 'Choice 1' })
@@ -289,7 +289,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         custom_fields: { 'cf_check_me' => 'aaa', 'cf_doj' => 2010 })
@@ -310,7 +310,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         custom_fields: { 'cf_choose_me' => 'Choice 4' })
@@ -392,7 +392,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_contact_with_valid_company_id_and_client_manager
     comp = get_company
     sample_user = get_user
-    params_hash = { company_id: comp.id, client_manager: true }
+    params_hash = { company_id: comp.id, view_all_tickets: true }
     put :update, construct_params({ id: sample_user.id }, params_hash)
     assert_response 200
     assert sample_user.reload.client_manager == true
@@ -403,7 +403,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_update_client_manager_with_invalid_company_id
     sample_user = get_user
     comp = get_company
-    params_hash = { company_id: comp.id, client_manager: true, phone: '1234567890' }
+    params_hash = { company_id: comp.id, view_all_tickets: true, phone: '1234567890' }
     sample_user.update_attributes(params_hash)
     sample_user.reload
     params_hash = { company_id: nil }
@@ -797,7 +797,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: [1, 2, 3])
@@ -858,7 +858,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: Faker::Internet.email,
-                                        client_manager: true,
+                                        view_all_tickets: true,
                                         company_id: Company.first.id,
                                         language: 'en',
                                         time_zone: 'Mountain Time (US & Canada)',
@@ -880,7 +880,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     sample_user = get_user
     put :update, construct_params({ id: sample_user.id },  email: nil,
-                                                           client_manager: nil,
+                                                           view_all_tickets: nil,
                                                            company_id: nil,
                                                            language: nil,
                                                            time_zone: nil,
@@ -898,7 +898,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('mobile', :"can't be blank"),
                 bad_request_error_pattern('address', :"can't be blank"),
                 bad_request_error_pattern('description', :"can't be blank"),
-                bad_request_error_pattern('client_manager', :data_type_mismatch, data_type: 'Boolean'),
+                bad_request_error_pattern('view_all_tickets', :data_type_mismatch, data_type: 'Boolean'),
                 bad_request_error_pattern('twitter_id', :"can't be blank"),
                 bad_request_error_pattern('phone', :"can't be blank"),
                 bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),

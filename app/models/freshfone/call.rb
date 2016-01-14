@@ -22,6 +22,7 @@ class Freshfone::Call < ActiveRecord::Base
   belongs_to :group
 
   has_one :meta, :class_name => 'Freshfone::CallMeta', :dependent => :destroy
+  has_one :call_metrics, :class_name => "Freshfone::CallMetric", :dependent => :destroy
 
   has_ancestry :orphan_strategy => :destroy
 
@@ -33,9 +34,10 @@ class Freshfone::Call < ActiveRecord::Base
   delegate :number, :to => :freshfone_number
   delegate :name, :to => :agent, :allow_nil => true, :prefix => true
   delegate :name, :to => :customer, :allow_nil => true, :prefix => true
+  delegate :update_acw_duration, :to => :call_metrics
 
   attr_protected :account_id
-  attr_accessor :params
+  attr_accessor :params, :queue_duration
   
   VOICEMAIL_MAX_LENGTH = 180 #seconds
   RECORDING_MAX_LENGTH = 300
@@ -206,7 +208,11 @@ class Freshfone::Call < ActiveRecord::Base
   end
 
   def update_call(params)
-    update_call_details(params).save
+    update_call_details(params).save!
+  end
+
+  def update_metrics
+    call_metrics.process self 
   end
   
   def update_call_details(params)
@@ -218,6 +224,16 @@ class Freshfone::Call < ActiveRecord::Base
     set_call_duration(params) if !account.features?(:freshfone_conference) && call_duration.blank? # will set duration only for non-conf. mode here
     self.direct_dial_number = params[:direct_dial_number] if ivr_direct_dial?
     update_status(params)
+  end
+
+  def update_queue_duration(duration)
+    self.queue_duration = duration.to_i
+    save
+  end
+
+  def queue_duration=(duration)
+    attribute_will_change!("queue_duration") if @queue_duration != duration
+    @queue_duration = duration
   end
 
   def update_status(params)
@@ -442,7 +458,7 @@ class Freshfone::Call < ActiveRecord::Base
   def add_to_hold_duration(duration)
     return if duration.blank? || duration == "0"
     hold_duration = 0 if hold_duration.blank?
-    self.update_attributes!(:hold_duration => hold_duration + duration.to_i)
+    self.increment!(:hold_duration, duration.to_i)
   end
 
   def set_total_duration(params)
@@ -474,6 +490,10 @@ class Freshfone::Call < ActiveRecord::Base
 
   def missed_or_busy?
     busy? || noanswer? || canceled?
+  end
+
+  def missed_child?
+    parent.present? && missed_or_busy? 
   end
 
   def sip?

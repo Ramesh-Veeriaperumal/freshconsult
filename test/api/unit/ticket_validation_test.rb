@@ -105,6 +105,18 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_fr_due_by_not_nil_and_due_by_not_nil_when_status_is_closed
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { 'requester_id' => 1,  description: Faker::Lorem.paragraph,  ticket_fields: [], status_ids: [2, 3, 4, 5, 6], status: 5, due_by: '', fr_due_by: '' }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Due by incompatible_field')
+    assert errors.include?('Fr due by incompatible_field')
+    Account.unstub(:current)
+  end
+
   def test_status_invalid
     Account.stubs(:current).returns(Account.first)
     controller_params = { status: true, status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
@@ -125,6 +137,31 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Custom fields data_type_mismatch')
     assert errors.include?('Cc emails data_type_mismatch')
     assert errors.include?("Attachments can't be blank")
+    Account.unstub(:current)
+  end
+
+  def test_description
+    Account.stubs(:current).returns(Account.first)
+    controller_params = { 'requester_id' => 1, ticket_fields: [] }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    assert ticket.errors.full_messages.include?('Description missing')
+    refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
+
+    controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    assert ticket.errors.full_messages.include?('Description blank')
+    refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
+
+    controller_params = { 'requester_id' => 1, ticket_fields: [], description: true, description_html: true }
+    item = nil
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?(:create)
+    assert ticket.errors.full_messages.include?('Description data_type_mismatch')
+    assert ticket.errors.full_messages.include?('Description html data_type_mismatch')
     Account.unstub(:current)
   end
 end

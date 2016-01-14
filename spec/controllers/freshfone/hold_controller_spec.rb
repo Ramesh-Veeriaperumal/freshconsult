@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.configure do |c|
   c.include ConferenceTransferSpecHelper
+  c.include FreshfoneCallMetricHelper
 end
 
 RSpec.describe Freshfone::HoldController do
@@ -324,4 +325,40 @@ RSpec.describe Freshfone::HoldController do
     expect(response.body).to eq(' ')
   end
 
+  it 'should update the parent call call_metrics when transfer answered by the another agent' do
+    @account.freshfone_calls.destroy_all
+    parent_call = create_freshfone_conf_call('CONFCALL')
+    create_conf_child_call('CONF_CHILD')
+    parent_call.update_attributes!({ :conference_sid => "ConSid" })
+    mock_call_metrics_attricbutes(parent_call)
+    conference = mock
+    Twilio::REST::Conferences.any_instance.stubs(:get).returns(conference)
+    set_twilio_signature("/freshfone/hold/transfer_unhold?child_sid=CONF_CHILD&call=#{parent_call.id}", transfer_unhold_params.except(:child_sid,:call))
+    Freshfone::Call.any_instance.stubs(:disconnect_source_agent)
+    post :transfer_unhold, transfer_unhold_params
+    parent_call.reload
+    call_metrics = parent_call.call_metrics.reload
+    expect(call_metrics.hangup_at).not_to be_nil
+    expect(call_metrics.total_ringing_time).not_to be_nil
+    Twilio::REST::Conferences.any_instance.unstub(:get)
+    Freshfone::Call.any_instance.unstub(:disconnect_source_agent)
+  end
+
+
+  it "should update transfer leg ringing metrics when no answer from target agent" do
+    @account.freshfone_calls.destroy_all
+    parent_call = create_freshfone_conf_call('CONFCALL',Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
+    child_call = create_conf_child_call('CONF_CHILD')
+    mock_call_metrics_attricbutes(child_call)
+    child_call.update_attributes({:call_status => Freshfone::Call::CALL_STATUS_HASH[:'no-answer']})
+    parent_call.update_attributes!({ :conference_sid => 'ConSid' })
+    Freshfone::Call.any_instance.stubs(:disconnect_agent)
+    Freshfone::Telephony::any_instance.stubs(:unmute_participants)
+    set_twilio_signature("freshfone/hold/transfer_fallback_unhold?call=#{parent_call.id}", transfer_fallback_unhold_params.except(:call))
+    post :transfer_fallback_unhold, transfer_fallback_unhold_params
+    call_metrics = child_call.call_metrics.reload
+    expect(call_metrics.total_ringing_time).not_to be_nil
+    Freshfone::Telephony::any_instance.unstub(:unmute_participants)
+    Freshfone::Call.any_instance.unstub(:disconnect_agent)
+  end
 end

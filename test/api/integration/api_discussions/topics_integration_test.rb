@@ -131,4 +131,22 @@ class TopicsIntegrationTest < ActionDispatch::IntegrationTest
       end
     end
   end
+
+  def test_hits_not_cached
+    t = Topic.first
+    hits = t.hits
+    enable_cache {
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    }
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits, response['hits']
+    t.hit! # This will update only redis key
+    enable_cache {
+      get "/api/discussions/topics/#{t.id}", nil, @headers
+    }
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal hits + 1, response['hits']
+  end
 end

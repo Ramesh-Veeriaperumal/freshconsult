@@ -360,7 +360,7 @@ var FreshfoneUser,
 			});
 		},
 		chromeSSLRestriction: function(){
-			if (window.chrome && window.location.protocol === "http:") {
+			if (window.chrome && window.location.protocol === "http:" && this.validateEnvironment()) {
 				var version = $.browser.version.split(".");	
 		  	var stable = parseInt(version[0]);
 		  	var patch = parseInt(version[2]);
@@ -369,6 +369,9 @@ var FreshfoneUser,
 				}
 				return false;
 			}
+		},
+		validateEnvironment: function(){
+			return freshfone.env != "development"
 		}
 	};
 }(jQuery));

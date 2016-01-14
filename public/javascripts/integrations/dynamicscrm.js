@@ -34,7 +34,7 @@ DynamicsWidget.prototype= {
 		this.ignore_labels = ["internal_use_entity_type", "Full Name", "Contact ID", "Account ID", "Account Name"];
 		var init_reqs = [];
 		init_reqs = [{
-				source_url: "/integrations/dynamics_crm/widget_data",
+				source_url: "/integrations/dynamicscrm/widget_data",
 				content_type: "application/json",
 				method: "get",
 				email: dynamicsBundle.reqEmail,
@@ -159,6 +159,3 @@ DynamicsWidget.prototype= {
 		this.freshdeskWidget.alert_failure("Unable to establish connection with DynamicsCRM. Please contact Support at support@freshdesk.com")
 	}
 }
-
-dynamicsWidget = new DynamicsWidget(dynamicscrmBundle);
-

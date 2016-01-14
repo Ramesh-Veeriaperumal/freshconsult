@@ -19,7 +19,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
       mail_options.merge!({:url => hash_url(@current_account.host)}) unless @calls.blank?
       CallHistoryMailer.deliver_call_history_export(mail_options)
     rescue Exception => e
-      Rails.logger.error "CallHistoryExport ::: Exception occured while trying to export call history for #{@current_account.id} :\n#{e.backtrace.join('\n')}"
+      Rails.logger.error "CallHistoryExport ::: Exception occured while trying to export call history for #{@current_account.id} : #{e.message}\n:\n#{e.backtrace.join('\n')}"
     ensure
       Rails.logger.debug "CallHistoryExport ::: Completed call history export for #{export_params[:account_id]}"
     end
@@ -130,7 +130,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
 
     def field_hash 
       return Proc.new { |t_call|
-        {
+        data_hash = {
           "Call ID" => t_call.id.blank? ? "-" : t_call.id - (@first_call_id - 1),
           "Customer Name" => t_call.customer.blank? ? "-" : t_call.customer_name,
           "Customer Number" => t_call.caller_number,
@@ -141,17 +141,56 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
           "Call Status" => call_status_class(t_call),
           "Transfer Count" => t_call.children_count,
           "Parent Call ID" => t_call.parent_id.blank? ? "-" : t_call.parent_id - (@first_call_id - 1),
-          "Date" => t_call.created_at.to_s,
-          "Call Duration" => t_call.call_duration.blank? ? "-" : Time.at(t_call.call_duration).utc.strftime("%H:%M:%S"),
-          "CallCost ($)" => t_call.call_cost.blank? ? "-" : t_call.call_cost.to_s,
-          "Ticket ID" => t_call.notable_present? ? t_call.associated_ticket.display_id : "-"
-          # "Recording_url" => @current_account.host + '/' + t_call.recording_audio.attachment_url.sub(t_call.call_sid, "")
+          "Date" => t_call.created_at.to_s 
         }
+        if @current_account.features?(:freshfone_call_metrics)
+          data_hash.merge!(data_fields_with_metrics(t_call))
+        else 
+          data_hash.merge!(data_fields_without_metrics(t_call))
+        end
+       data_hash
+      }
+    end
+
+    def data_fields_with_metrics(t_call)
+      t_call.call_metrics = Freshfone::CallMetric.new if t_call.call_metrics.blank?
+      {
+        "In Business Hour" => business_hour_call(t_call),
+        "IVR Time" =>  formated_durations(t_call.call_metrics.ivr_time),
+        "Queue Time" =>  formated_durations(t_call.call_metrics.queue_wait_time),
+        "Ring Time" =>  formated_durations(t_call.call_metrics.total_ringing_time),
+        "Speed to Answer" => formated_durations(t_call.call_metrics.answering_speed),
+        "Hold Time" =>  formated_durations(t_call.call_metrics.hold_duration),
+        "Talk time (without hold time)" => formated_durations(t_call.call_metrics.talk_time),
+        "After Call Work Time" =>  formated_durations(t_call.call_metrics.call_work_time),
+        "Handle Time" =>  formated_durations(t_call.call_metrics.handle_time),
+        "Recording Time" => t_call.call_duration.blank? ? "N/A" : formated_durations(t_call.call_duration),
+        "Bill Time" => t_call.total_duration.blank? ? "N/A" : formated_durations(t_call.total_duration),
+        "CallCost ($)" => t_call.call_cost.blank? ? "N/A" : t_call.call_cost.to_s,
+        "Ticket ID" => t_call.notable_present? ? t_call.associated_ticket.display_id : "N/A"
+      }
+    end
+
+    def data_fields_without_metrics(t_call)
+      {
+        "Call Duration" => t_call.call_duration.blank? ? "-" : Time.at(t_call.call_duration).utc.strftime("%H:%M:%S"),
+        "CallCost ($)" => t_call.call_cost.blank? ? "-" : t_call.call_cost.to_s,
+        "Ticket ID" => t_call.notable_present? ? t_call.associated_ticket.display_id : "-"
+        # "Recording_url" => @current_account.host + '/' + t_call.recording_audio.attachment_url.sub(t_call.call_sid, "")
       }
     end
 
     def escape_html(val)
       ((val.blank? || val.is_a?(Integer)) ? val : CGI::unescapeHTML(val.to_s).gsub(/\s+/, " "))
+    end
+
+    def format_recording_url(t_call)
+      @current_account.host + '/' + t_call.recording_audio.attachment_url.sub(t_call.call_sid, "")
+    end
+
+    def formated_durations(duration)
+      duration_in_seconds = duration || 0
+      Time.at(duration_in_seconds).utc.strftime("%H:%M:%S")
     end
 
     def call_direction_class(call)
@@ -202,5 +241,9 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
 
     def abandon_state(call)
       Freshfone::Call::CALL_ABANDON_TYPE_STR_HASH[call.abandon_state]
+    end
+
+    def business_hour_call(call)
+      call.business_hour_call ? "Yes" : "No"
     end
 end

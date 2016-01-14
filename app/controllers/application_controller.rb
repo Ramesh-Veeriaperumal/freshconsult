@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   before_filter :force_utf8_params
   before_filter :persist_user_agent
   before_filter :set_cache_buster
-  before_filter :logging_details 
+  #before_filter :logging_details 
   before_filter :remove_pjax_param 
   after_filter :set_last_active_time
 
@@ -172,6 +172,15 @@ class ApplicationController < ActionController::Base
       response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
       response.headers["Pragma"] = "no-cache"
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  def append_info_to_payload(payload)
+    super
+    payload[:domain] = request.env['HTTP_HOST']
+    payload[:ip] = request.env['CLIENT_IP']
+    payload[:url] = request.url
+    payload[:server_ip] = request.env['SERVER_ADDR']
+    payload[:account_id] = Account.current ? Account.current.id : ""
   end
 
   protected

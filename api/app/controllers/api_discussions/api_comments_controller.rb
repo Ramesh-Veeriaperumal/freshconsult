@@ -10,6 +10,11 @@ module ApiDiscussions
 
     private
 
+      def check_privilege
+        # skipping check_privilege for update as different params(body_html & answer) require different privileges.
+        update? ? true : super
+      end
+
       def build_object
         super
         @item.user = api_current_user
@@ -33,17 +38,9 @@ module ApiDiscussions
 
       def validate_params
         return false if create? && !load_topic
-        params[cname].permit(*get_fields)
+        params[cname].permit(*get_fields("DiscussionConstants::#{action_name.upcase}_COMMENT_FIELDS"))
         comment = ApiDiscussions::ApiCommentValidation.new(params[cname], @item)
-        render_errors comment.errors, comment.error_options unless comment.valid?
-      end
-
-      def get_fields
-        if create? || DiscussionConstants::QUESTION_STAMPS.exclude?(@item.topic.stamp_type)
-          DiscussionConstants::COMMENT_FIELDS
-        else
-          DiscussionConstants::UPDATE_COMMENT_FIELDS
-        end
+        render_errors comment.errors, comment.error_options unless comment.valid?(action_name.to_sym)
       end
 
       def scoper

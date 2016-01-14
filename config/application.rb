@@ -157,7 +157,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       elsif key_hash["options"]["name"].blank?

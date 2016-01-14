@@ -1,0 +1,43 @@
+case 'slack':
+  var method_choices = [];
+    filter.choices.each(function(arrayItem){
+      method_choices.push({
+        name: arrayItem[0],
+        value: arrayItem[1]
+      });
+    });
+
+    if(filter.choices.length == 0) {
+      method_choices.push({
+        name: initFeed['push_to'],
+        value: "Channel not available (this could be from a previously configured action"
+      });
+    }
+
+  var method_dropdown = FactoryUI.dropdown(method_choices, "push_to", _class_name, {'minimumResultsForSearch':'2', 'specialFormatting': true})
+
+  jQuery(method_dropdown).val(initFeed['push_to']); // population for page load.
+  var method = jQuery('<div class="row-fluid"/>')
+                .append('<span class="span2"> <label class="required_label"> Push to </label> <b class="required_star">*</b> </span>')
+                .append(method_dropdown)
+              .append(FactoryUI.link('How slack integration works', 'https://support.freshdesk.com/support/solutions/articles/206103', 'using_webhooks'));
+
+  var uri_textarea = FactoryUI.paragraph("", "slack_text", initFeed['slack_text'], "text uri insert-placeholder-target")
+                        .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
+
+  <% # Hidden values are used as part of action hash of va_rule by the workers at rule execution %>
+  var method_name = "<div> <input type='hidden' name='value' value='slack_trigger'> </div>";
+  var rule = "<div> <input type='hidden' name='include_va_rule' value='true'></div>";
+  setTimeout(function(ev){
+    uri_textarea.autosize();
+  }, 500);
+  var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('canned_folders.insert_placeholder') %> &raquo;</a> </span>")
+  var message = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
+              .append(FactoryUI.label('Message', 'required_label')))
+              .append(placeholder1)
+              .append(uri_textarea)
+              .append(rule)
+              .append(method_name)
+
+  c_dom = jQuery('<div class="integrations webhook"/>').append(method).append(message);
+  break;

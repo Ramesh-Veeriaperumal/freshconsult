@@ -51,7 +51,9 @@ class ForumValidationsTest < ActionView::TestCase
     controller_params = {}
     item = Forum.new(name: 'test')
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
-    refute forum.errors.full_messages.include?("Name can't be blank")
+    forum.valid?
+    refute forum.errors.full_messages.include?('Name blank')
+    refute forum.errors.full_messages.include?('Name missing')
   end
 
   def test_numericality_item_valid_only_update
@@ -67,6 +69,7 @@ class ForumValidationsTest < ActionView::TestCase
     controller_params = {}
     item = Forum.new(forum_type: 1, forum_visibility: 1)
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
+    forum.valid?
     error = forum.errors.full_messages
     refute error.include?('Forum type Should be a value in the list 1,2,3,4')
     refute error.include?('Forum visibility Should be a value in the list 1,2,3,4')
@@ -92,7 +95,7 @@ class ForumValidationsTest < ActionView::TestCase
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Forum type invalid_field'], forum.errors.full_messages
+    assert_equal ['Forum type incompatible_field'], forum.errors.full_messages
   end
 
   def test_company_ids_invalid
@@ -101,21 +104,21 @@ class ForumValidationsTest < ActionView::TestCase
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
+    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
 
     controller_params = { company_ids: 'test' }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
+    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
 
     controller_params = { company_ids: ['test'] }
     item = Forum.new(forum_type: 1, forum_visibility: 1, topics_count: 2, forum_category_id: 1, name: Faker::Name.name)
     item.forum_category_id = 1
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Company ids invalid_field'], forum.errors.full_messages
+    assert_equal ['Company ids incompatible_field'], forum.errors.full_messages
   end
 
   def test_company_ids_data_type_mismatch
