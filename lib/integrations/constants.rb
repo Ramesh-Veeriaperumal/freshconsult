@@ -35,7 +35,7 @@ module Integrations::Constants
     :slack_v2 => "slack_v2"
   }
 
-  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks]
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
