@@ -7,11 +7,11 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :attribute2, :attribute3, :attribute4, :error_options, :attribute5, :allow_string_param, :multi_error
 
     validates :multi_error, data_type: { rules: Fixnum, allow_nil: true }
-    validates :multi_error, custom_numericality: { allow_nil: true }
-    validates :attribute1, custom_numericality: { allow_nil: true }
-    validates :attribute2, custom_numericality: { allow_nil: false }
-    validates :attribute3, custom_numericality: { allow_negative: true, allow_nil: true }
-    validates :attribute4, custom_numericality: { allow_negative: true, allow_nil: true, message: 'only integers are allowed' }
+    validates :multi_error, custom_numericality: { allow_nil: true, only_integer: true, greater_than: 0 }
+    validates :attribute1, custom_numericality: { allow_nil: true, only_integer: true, greater_than: 0 }
+    validates :attribute2, custom_numericality: { allow_nil: false, only_integer: true, greater_than: 0 }
+    validates :attribute3, custom_numericality: { only_integer: true, allow_nil: true }
+    validates :attribute4, custom_numericality: { only_integer: true, allow_nil: true, message: 'only integers are allowed' }
     validates :attribute5, custom_numericality: { ignore_string: :allow_string_param, allow_nil: true }
   end
 
@@ -22,7 +22,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute2: :data_type_mismatch }, errors)
-    assert_equal({ attribute2: { data_type: 'Positive Integer' } }, error_options)
+    assert_equal({ attribute2: { data_type: :'Positive Integer' } }, error_options)
   end
 
   def test_allow_nil
@@ -61,7 +61,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     errors = test.errors.to_h
     error_options = test.error_options.to_h
     assert_equal({ attribute4: 'only integers are allowed' }, errors)
-    assert_equal({ attribute4: { data_type: 'Integer' } }, error_options)
+    assert_equal({ attribute4: { data_type: :Integer } }, error_options)
   end
 
   def test_invalid_values
@@ -74,7 +74,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: :data_type_mismatch, attribute1: :data_type_mismatch, attribute3: :data_type_mismatch, attribute5: :data_type_mismatch }.sort.to_h, errors.sort.to_h)
-    assert_equal({ attribute2: { data_type: 'Positive Integer' }, attribute1: { data_type: 'Positive Integer' }, attribute3: { data_type: 'Integer' }, attribute5: { data_type: 'Positive Integer' } }.sort.to_h, error_options.sort.to_h)
+    assert_equal({ attribute2: :positive_number, attribute1: :positive_number, attribute3: :data_type_mismatch, attribute5: :data_type_mismatch }.sort.to_h, errors.sort.to_h)
+    assert_equal({ attribute2: { data_type: :'Positive Integer' }, attribute1: { data_type: :'Positive Integer' }, attribute3: { data_type: :Integer }, attribute5: { data_type: :'Positive Integer' } }.sort.to_h, error_options.sort.to_h)
   end
 end

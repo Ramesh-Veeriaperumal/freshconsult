@@ -75,8 +75,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: 'Positive Integer' },
-      responder_id: { data_type: 'Positive Integer' }, product_id: { data_type: 'Positive Integer' }, client_manager: { data_type: 'Boolean' },
+      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
+      responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') },
       domains: { data_type: Array }, description: { data_type: String }, note: { data_type: String }
     }.sort,
@@ -98,8 +98,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
                  errors
                 )
     assert_equal({
-      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: 'Positive Integer' },
-      responder_id: { data_type: 'Positive Integer' }, product_id: { data_type: 'Positive Integer' }, client_manager: { data_type: 'Boolean' },
+      source: { list: '1,2,3,7,8,9' }, status: { list: '2,3,4,5' }, priority: { list: '1,2,3,4' }, type: { list: 'Lead,Question,Problem,Maintenance,Breakage' }, group_id: { data_type: :'Positive Integer' },
+      responder_id: { data_type: :'Positive Integer' }, product_id: { data_type: :'Positive Integer' }, client_manager: { data_type: 'Boolean' },
       description: { data_type: String }, note: { data_type: String }, job_title: { data_type: String },
       tags: { data_type: Array }, language: { list: I18n.available_locales.map(&:to_s).join(',') }, time_zone: { list: ActiveSupport::TimeZone.all.map(&:name).join(',') }, domains: { data_type: Array }
     }.sort,

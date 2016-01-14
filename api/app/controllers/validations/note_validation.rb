@@ -4,7 +4,7 @@ class NoteValidation < ApiValidation
 
   validates :body, required: true, data_type: { rules: String }
   validates :body_html, data_type: { rules: String, allow_nil: true }
-  validates :user_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param }
+  validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
   validates :private, :incoming, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
   validates :notify_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
   validate :max_email_count

@@ -92,7 +92,7 @@ class TimeEntriesController < ApiApplicationController
     def validate_filter_params
       params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timeentry_filter = TimeEntryFilterValidation.new(params, nil, string_request_params?)
-      render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
+      render_query_param_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
     def validate_params

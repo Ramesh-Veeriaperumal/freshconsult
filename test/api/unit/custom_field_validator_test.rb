@@ -133,8 +133,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({
       check1_1: { data_type: 'Boolean' },
       check2_1: { data_type: 'Boolean' },
-      number2_1: { data_type: 'Integer' },
-      number1_1: { data_type: 'Integer' }
+      number2_1: { data_type: :Integer },
+      number1_1: { data_type: :Integer }
     }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -206,8 +206,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: 'Integer' }, number2_1: { data_type: 'Integer' }, number_3: { data_type: 'Integer' },
-                   number_4: { data_type: 'Integer' },
+                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number_3: { data_type: :Integer },
+                   number_4: { data_type: :Integer },
                    check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -219,8 +219,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: 'Integer' }, number2_1: { data_type: 'Integer' }, number_3: { data_type: 'Integer' },
-                   number_4: { data_type: 'Integer' },
+                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number_3: { data_type: :Integer },
+                   number_4: { data_type: :Integer },
                    check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
   end
 

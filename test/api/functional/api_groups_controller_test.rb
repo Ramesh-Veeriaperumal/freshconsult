@@ -232,7 +232,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_groups_with_pagination_exceeds_limit
     get :index, controller_params(per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
   end
 
   def test_update_group_with_existing_name

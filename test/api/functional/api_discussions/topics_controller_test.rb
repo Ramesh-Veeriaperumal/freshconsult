@@ -524,7 +524,7 @@ module ApiDiscussions
     def test_topics_with_pagination_exceeds_limit
       get :forum_topics, controller_params(id: forum_obj.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
     end
 
     def test_topics_with_link_header

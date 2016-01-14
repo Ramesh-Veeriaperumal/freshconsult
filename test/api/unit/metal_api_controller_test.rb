@@ -1,4 +1,4 @@
-require_relative '../test_helper'
+require_relative '../unit_test_helper'
 
 class MetalApiControllerTest < ActionView::TestCase
   def test_included_modules

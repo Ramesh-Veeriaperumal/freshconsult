@@ -244,7 +244,7 @@ module ApiDiscussions
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       get :topic_comments, controller_params(id: t.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
     end
 
     def test_comments_with_link_header
