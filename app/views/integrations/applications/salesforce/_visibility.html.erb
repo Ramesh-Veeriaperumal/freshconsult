@@ -1,3 +1,4 @@
+<% binding.pry %>
 <div class="salesforce-wrapper">
         <div class="contact-fields"> 
           <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
@@ -15,11 +16,11 @@
               </div>
               <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
               <%data =selected_fields.join(",").html_safe%>
-              <% contact_fields = @salesforce_config['contact_fields'] %>
+              <% contact_fields = @element_config['contact_fields'] %>
               <% # order the fields in such a way so that default fields come at the top
                 contact_fields_list = []
                 default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
-                @salesforce_config['contact_fields'].keys.collect{|field|
+                @element_config['contact_fields'].keys.collect{|field|
                   contact_fields_list.push([contact_fields[field],field]) if not default_fields.include?(field); 
                 }
               %>
@@ -44,11 +45,11 @@
                   </ul>
             </div>
             <%data =selected_lead_fields.join(",").html_safe%>
-            <% lead_fields = @salesforce_config['lead_fields'] %>
+            <% lead_fields = @element_config['lead_fields'] %>
             <% # order the fields in such a way so that default fields come at the top
               lead_fields_list = []
               default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
-              @salesforce_config['lead_fields'].keys.collect{|field|
+              @element_config['lead_fields'].keys.collect{|field|
                 lead_fields_list.push([lead_fields[field],field]) if not default_fields.include?(field); 
               }
               %>
@@ -75,11 +76,11 @@
               </div>
               <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
               <%data =selected_fields.join(",").html_safe%>
-              <% account_fields = @salesforce_config['account_fields'] %>
+              <% account_fields = @element_config['account_fields'] %>
               <% # order the fields in such a way so that default fields come at the top
                 account_fields_list = []
                 default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
-                @salesforce_config['account_fields'].keys.collect{|field|
+                @element_config['account_fields'].keys.collect{|field|
                   account_fields_list.push([account_fields[field],field]) if not default_fields.include?(field); 
                 }
               %>

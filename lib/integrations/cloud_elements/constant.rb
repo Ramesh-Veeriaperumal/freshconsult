@@ -4,13 +4,13 @@ module Integrations::CloudElements::Constant
   OAUTH_URL = 'elements/%{element}/oauth/url'
   API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
   API_SECRET = '98436661440156758'
-  CALLBACK_URL = 'https://jagdamba.ngrok.io/integrations/cloud_elements/instances'
+  CALLBACK_URL = 'https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances'
   AUTH_HEADER = 'User m6uVXpHEaqhvPrq6VoU2DaezQ4mFaWb5L66qmNhsdP8=,Organization 403ba71daccf7a6faf248cd9083c7c61'
   CONTENT_TYPE = 'application/json'
   GET = 'get'
   POST = 'post'
   PUT = 'put'
-  SYNC_TYPE = {
+  CRM_SYNC_TYPE = {
     :import => "sf_to_fd",
     :export => "fd_to_sf",
     :bidirectional => "both sf and fd"
@@ -22,11 +22,11 @@ module Integrations::CloudElements::Constant
       "configuration" => {
         "username" => "%{api_key}",
         "password" => "X",
-        "subdomain" => "sumitjagdambacom",
+        "subdomain" => "%{subdomain}",
         "event.notification.enabled" => "true"
       },
       "tags" => [],
-      "name" => "%{fd_instance}"
+      "name" => "%{fd_instance_name}"
   }
 
   TRANSFORMATION_BODY = {
@@ -59,7 +59,7 @@ CRM_ELEMENT_INSTANCE_BODY = {
 
   'sfdc' =>  {
 
-    'objects' => {'contact' => 'Contact', 'account' => 'Account','lead' => 'Lead'},
+    'objects' => {'contact' => 'Contact', 'account' => 'Account'},
 
     'parameters' => ['code'],
 
@@ -67,7 +67,7 @@ CRM_ELEMENT_INSTANCE_BODY = {
               'element' => {"key" => "sfdc"},
               'providerData' => {"code" => "%{code}"},
               'configuration' => {
-                 'oauth.callback.url' => 'https://jagdamba.ngrok.io/integrations/cloud_elements/instances',
+                 'oauth.callback.url' => 'https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances',
                  'oauth.api.key' => '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG',
                  'oauth.api.secret' => '98436661440156758',
                  'event.vendor.type' => "webhook",
@@ -81,7 +81,7 @@ CRM_ELEMENT_INSTANCE_BODY = {
 
   'dynamicscrm' => {
 
-      'objects' => {'contact' => 'contact', 'account' => 'account','lead' => 'lead'},
+      'objects' => {'contact' => 'contact', 'account' => 'account'},
 
       'parameters' => ['username','password','dynamicscrm_url'],
 

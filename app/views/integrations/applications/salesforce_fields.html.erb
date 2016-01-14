@@ -3,10 +3,9 @@
       <%=t("integrations.salesforce.helptext").html_safe%>
   </div>
 <%- end %>
-
   <h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
   <% method_type = (@action == 'install' ) ? 'post' : 'put' %>
-  <%= form_tag("/integrations/cloud_elements/#{@action}", :method => method_type )  do %>
+  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type )  do %>
 
   <ul class="nav nav-pills">
     <li class="active">
@@ -17,7 +16,7 @@
     </li>
     <div class="sf-title-wrapper pull-right">
       <label for="enble_sync"> Enable Sync </label> 
-      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @salesforce_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
+      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
     </div>
   </ul>
   
@@ -99,8 +98,8 @@ function fillLabels(){
     if(!jQuery('#enble_sync').is(':checked')){
       change();
     }
-    jQuery('#enble_sync').prop('checked', "<%= @salesforce_config['enble_sync'] %>");
-    jQuery('input[name="crm_sync_type"][value="' + "<%= @salesforce_config['crm_sync_type'] %>" + '"]').attr('checked', true);
+    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
+    jQuery('input[name="crm_sync_type"][value="' + "<%= @element_config['crm_sync_type'] %>" + '"]').attr('checked', true);
   });
   function change(){ 
     jQuery('#field-wrap').toggleClass('field-disable')

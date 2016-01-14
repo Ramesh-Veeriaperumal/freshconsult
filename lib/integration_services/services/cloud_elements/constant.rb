@@ -5,7 +5,7 @@ module IntegrationServices::Services
   OAUTH_URL = 'elements/%{element}/oauth/url'
   API_KEY = '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG'
   API_SECRET = '98436661440156758'
-  CALLBACK_URL = 'https://jagdamba.ngrok.io/integrations/cloud_elements/instances'
+  CALLBACK_URL = 'https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances'
   AUTH_HEADER = 'User m6uVXpHEaqhvPrq6VoU2DaezQ4mFaWb5L66qmNhsdP8=,Organization 403ba71daccf7a6faf248cd9083c7c61'
   CONTENT_TYPE = 'application/json'
   GET = 'get'
@@ -68,7 +68,7 @@ CRM_ELEMENT_INSTANCE_BODY = {
               'element' => {"key" => "sfdc"},
               'providerData' => {"code" => "%{code}"},
               'configuration' => {
-                 'oauth.callback.url' => 'https://jagdamba.ngrok.io/integrations/cloud_elements/instances',
+                 'oauth.callback.url' => 'https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances',
                  'oauth.api.key' => '3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG',
                  'oauth.api.secret' => '98436661440156758',
                  'event.vendor.type' => "webhook",

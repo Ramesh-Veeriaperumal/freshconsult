@@ -166,6 +166,16 @@ GIT
       railties (>= 3.0)
 
 GIT
+  remote: git@github.com:TinderBox/dynamics_crm.git
+  revision: b45d285149cec3e6f52a4ea6eb510952ecefebb1
+  branch: master
+  specs:
+    dynamics_crm (0.6.0)
+      builder (>= 3.0.0, < 4.0.0)
+      curb (~> 0.8, >= 0.8.5)
+      mimemagic (~> 0.2, >= 0.2.1)
+
+GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 30a7b6deb34c992e84498facdec397527c551b47
   branch: dynamic_rules
@@ -174,10 +184,11 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: f28908d6b32bf6d52448b771f0b882f782e64e63
+  revision: ad0b4c9db935036be7df6ae5a3e8c6eaccf30122
   branch: master
   specs:
     launchparty (0.1.1)
+      newrelic_rpm (~> 3.9.9.275)
       redis (>= 3)
       redis-namespace (>= 1)
 
@@ -373,7 +384,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
-  remote: https://690a8c5e:5d9334f0@gems.contribsys.com/
+  remote: https://a55d1643:d20410bb@gems.contribsys.com/
   specs:
     POpen4 (0.1.4)
       Platform (>= 0.4.0)
@@ -428,6 +439,9 @@ GEM
       activemodel
       fog (>= 1.8.0)
       unf
+    ast (2.0.0)
+    astrolabe (1.3.0)
+      parser (>= 2.2.0.pre.3, < 3.0)
     authlogic (3.4.2)
       activerecord (>= 3.2)
       activesupport (>= 3.2)
@@ -514,10 +528,6 @@ GEM
     doorkeeper (2.2.1)
       railties (>= 3.2)
     dynamic_form (1.1.4)
-    dynamics_crm (0.4.1)
-      builder (>= 3.0.0, < 4.0.0)
-      curb (~> 0.8, >= 0.8.5)
-      mimemagic (~> 0.2, >= 0.2.1)
     ejs (1.1.1)
     encryptor (1.1.3)
     equalizer (0.0.9)
@@ -607,6 +617,9 @@ GEM
       rack (>= 1.2.1)
       rake
     jasmine-core (2.2.0)
+    jbuilder (2.2.13)
+      activesupport (>= 3.0.0, < 5)
+      multi_json (~> 1.2)
     jira4r (0.3.0)
       soap4r
     jmespath (1.0.2)
@@ -614,6 +627,7 @@ GEM
     journey (1.0.4)
     json (1.8)
     json-compare (0.1.8)
+    json_expressions (0.8.3)
     json_pure (1.8.2)
     jwt (1.0.0)
     koala (1.10.1)
@@ -643,6 +657,18 @@ GEM
     method_source (0.8.2)
     mime-types (1.25.1)
     mimemagic (0.3.0)
+    minitest (4.7.5)
+    minitest-rails (1.0.1)
+      minitest (~> 4.7)
+      minitest-test (~> 1.0)
+      railties (>= 3.0, < 4.1)
+    minitest-reporters (0.14.24)
+      ansi
+      builder
+      minitest (>= 2.12, < 5.0)
+      powerbar
+    minitest-test (1.1.0)
+      minitest (~> 4.0)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     money (6.2.1)
@@ -696,20 +722,21 @@ GEM
       rack-openid (~> 1.3.1)
     omniauth-quickbooks (0.0.2)
       omniauth-oauth (~> 1.0)
-    omniauth-shopify-oauth2 (1.0.0)
-      omniauth-oauth2 (~> 1.0.0)
-    omniauth-surveymonkey (1.0.0)
-      omniauth (~> 1.0)
-      omniauth-oauth2
     open4 (1.3.0)
     paperclip (2.8.0)
       activerecord (>= 2.3.0)
       activesupport (>= 2.3.2)
       cocaine (>= 0.0.2)
       mime-types
+    parser (2.2.2.1)
+      ast (>= 1.1, < 3.0)
     pg (0.17.1)
     phantomjs (1.9.8.0)
     polyglot (0.3.3)
+    powerbar (1.0.12)
+      ansi (~> 1.5.0)
+      hashie (>= 1.1.0)
+    powerpack (0.1.0)
     premailer (1.8.0)
       css_parser (>= 1.3.5)
       htmlentities (>= 4.0.0)
@@ -750,6 +777,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
+    rainbow (2.0.0)
     rake (10.4.0)
     rb-fsevent (0.9.4)
     rb-inotify (0.9.4)
@@ -814,6 +842,18 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.2)
+    rspec_junit_formatter (0.2.0)
+      builder (< 4)
+      rspec (>= 2, < 4)
+      rspec-core (!= 2.12.0)
+    rubocop (0.30.0)
+      astrolabe (~> 1.3)
+      parser (>= 2.2.0.1, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.4)
+    rubocop-checkstyle_formatter (0.1.1)
+      rubocop (>= 0.14.0)
     ruby-hmac (0.4.0)
     ruby-ole (1.2.11.3)
     ruby-openid-apps-discovery (1.2.0)
@@ -866,6 +906,8 @@ GEM
     simplecov-csv (0.1.3)
       simplecov
     simplecov-html (0.7.1)
+    simplecov-rcov (0.2.3)
+      simplecov (>= 0.4.1)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -883,6 +925,11 @@ GEM
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
     static_model (1.0.4)
+    strong_parameters (0.2.3)
+      actionpack (~> 3.0)
+      activemodel (~> 3.0)
+      activesupport (~> 3.0)
+      railties (~> 3.0)
     susy (2.1.3)
       sass (>= 3.3.0, < 3.5)
     syck (1.0.4)
@@ -899,6 +946,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    timecop (0.7.3)
     timers (4.0.1)
       hitimes
     treetop (1.4.15)
@@ -928,7 +976,7 @@ GEM
       unf_ext
     unf_ext (0.0.6)
     uniform_notifier (1.7.0)
-    useragent (0.4.16)
+    useragent (0.16.3)
     uuid (2.3.7)
       macaddr (~> 1.0)
     uuidtools (2.1.4)
@@ -985,7 +1033,7 @@ DEPENDENCIES
   dev_notification!
   doorkeeper (= 2.2.1)
   dynamic_form
-  dynamics_crm (~> 0.4.1)
+  dynamics_crm!
   ebayr!
   ejs (= 1.1.1)
   encryptor (= 1.1.3)
@@ -1017,9 +1065,11 @@ DEPENDENCIES
   ipaddress (= 0.8.0)
   jammit (= 0.6.5)
   jasmine
+  jbuilder (= 2.2.13)
   jira4r (= 0.3.0)
   json (~> 1.8)
   json-compare (= 0.1.8)
+  json_expressions
   jwt (= 1.0.0)
   koala (= 1.10.1)
   launchparty (= 0.1.1)!
@@ -1030,6 +1080,8 @@ DEPENDENCIES
   mail
   marketo!
   meta_request
+  minitest-rails (~> 1.0)
+  minitest-reporters
   mocha (~> 0.13.0)
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)
@@ -1048,8 +1100,6 @@ DEPENDENCIES
   omniauth-openid
   omniauth-quickbooks
   omniauth-salesforce!
-  omniauth-shopify-oauth2 (= 1.0.0)
-  omniauth-surveymonkey (= 1.0.0)
   open_id_authentication!
   paperclip (~> 2.8.0)
   paperclip_ext!
@@ -1073,6 +1123,7 @@ DEPENDENCIES
   rate-limiting!
   recaptcha!
   redis (= 3.0.7)
+  request_store (~> 1.0)
   resque (~> 1.24.0)
   resque-scheduler
   resque-status (= 0.4.1)
@@ -1085,6 +1136,8 @@ DEPENDENCIES
   rspec (~> 3.0.0)
   rspec-collection_matchers (= 1.0.0)
   rspec-rails (~> 3.0.0)
+  rspec_junit_formatter
+  rubocop-checkstyle_formatter
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
   ruby-saml (= 0.8.1)
@@ -1099,6 +1152,7 @@ DEPENDENCIES
   sidekiq-pro!
   simplecov (~> 0.7.1)
   simplecov-csv
+  simplecov-rcov
   sneaky-save!
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.9.0)
@@ -1107,15 +1161,13 @@ DEPENDENCIES
   ssl_requirement!
   static_model (~> 1.0.4)
   statsd-ruby!
+  strong_parameters (= 0.2.3)
   susy (= 2.1.3)
   syck
   text_data_store!
   therubyracer
-<<<<<<< Updated upstream
-=======
   thin
   timecop
->>>>>>> Stashed changes
   tire!
   turbo-sprockets-rails3 (= 0.3.14)
   twilio-ruby!
@@ -1123,7 +1175,7 @@ DEPENDENCIES
   typhoeus (= 0.7.3)
   tzinfo (~> 0.3.29)
   uglifier (~> 2.1.2)
-  useragent (~> 0.4.16)
+  useragent (~> 0.16.3)
   webrick (= 1.3.1)
   white_list!
   wicked_pdf (~> 0.9.10)
@@ -1135,10 +1187,6 @@ DEPENDENCIES
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!
-<<<<<<< Updated upstream
-  
-=======
 
 BUNDLED WITH
    1.10.6
->>>>>>> Stashed changes
