@@ -5,7 +5,6 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
   MUST_BE_LESS_THAN = "must be less than"
   
   def validate_each(record, attribute, value)
-    byebug
     return if record.errors[attribute].present?
 
     message = options[:message]

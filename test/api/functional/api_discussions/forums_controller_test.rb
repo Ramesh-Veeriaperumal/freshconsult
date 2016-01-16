@@ -566,7 +566,7 @@ module ApiDiscussions
       category = fc_obj
       get :category_forums, controller_params(id: category.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number)])
     end
 
     def test_category_forums_with_link_header

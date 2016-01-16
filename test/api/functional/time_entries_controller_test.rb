@@ -188,7 +188,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_pagination_exceeds_limit
     get :index, controller_params(billable: false, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number)])
   end
 
   def test_index_with_invalid_params
@@ -1073,7 +1073,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_ticket_time_entries_with_pagination_exceeds_limit
     get :ticket_time_entries, controller_params(id: ticket.display_id, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number)])
   end
 
   def test_ticket_time_entries_with_ticket_trashed

@@ -239,7 +239,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   def test_company_with_pagination_exceeds_limit
     get :index, controller_params(per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :per_page_positive_number)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number)])
   end
 
   def test_create_companies_with_invalid_domains

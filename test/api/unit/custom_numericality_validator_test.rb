@@ -12,7 +12,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     validates :attribute2, custom_numericality: { allow_nil: false, only_integer: true, greater_than: 0 }
     validates :attribute3, custom_numericality: { only_integer: true, allow_nil: true }
     validates :attribute4, custom_numericality: { only_integer: true, allow_nil: true, message: 'only integers are allowed' }
-    validates :attribute5, custom_numericality: { ignore_string: :allow_string_param, allow_nil: true }
+    validates :attribute5, custom_numericality: { ignore_string: :allow_string_param, only_integer: true, greater_than: 0, allow_nil: true }
   end
 
   def test_disallow_nil
@@ -74,7 +74,7 @@ class CustomNumericalityValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     error_options = test.error_options.to_h
-    assert_equal({ attribute2: :positive_number, attribute1: :positive_number, attribute3: :data_type_mismatch, attribute5: :data_type_mismatch }.sort.to_h, errors.sort.to_h)
+    assert_equal({ attribute2: :invalid_number, attribute1: :invalid_number, attribute3: :data_type_mismatch, attribute5: :data_type_mismatch }.sort.to_h, errors.sort.to_h)
     assert_equal({ attribute2: { data_type: :'Positive Integer' }, attribute1: { data_type: :'Positive Integer' }, attribute3: { data_type: :Integer }, attribute5: { data_type: :'Positive Integer' } }.sort.to_h, error_options.sort.to_h)
   end
 end
