@@ -18,3 +18,12 @@ JbuilderTemplate.class_eval do
     yield
   end
 end
+
+#Monkey Patch to avoid the conversion of BigDecimal to String while rendering using MultiJson. (Rails bug)
+#REF - http://stackoverflow.com/questions/6128794/rails-json-serialization-of-decimal-adds-quotes
+class BigDecimal
+  def as_json(options = nil)
+    #Returns true if the value is a valid IEEE floating point number (it is not infinite, and nan? is false)
+      self.to_f if finite?
+  end
+end

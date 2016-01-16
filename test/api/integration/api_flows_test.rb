@@ -203,7 +203,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_equal Hash, parse_response(@response.body).class
     result = JSON.parse(@response.body)
     assert_equal @agent.id, result['requester_id']
-    assert_equal '2.34', result['custom_fields']["#{field1}"]
+    assert_equal 2.34, result['custom_fields']["#{field1}"]
     assert_equal false, result['custom_fields']["#{field2}"]
   end
 

@@ -57,7 +57,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     [tkt_field1, tkt_field2].each(&:destroy)
     assert_response 201
-    match_json(ticket_pattern(params_hash.merge(custom_fields: { field1.to_sym => '2.34', field2.to_sym => false }), Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params_hash.merge(custom_fields: { field1.to_sym => 2.34, field2.to_sym => false }), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert Helpdesk::Ticket.last.attachments.count == 1
   end
