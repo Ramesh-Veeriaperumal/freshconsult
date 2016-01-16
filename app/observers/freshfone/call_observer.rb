@@ -7,8 +7,11 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
-    create_call_metrics(freshfone_call) if freshfone_call.account.features? :freshfone_call_metrics
 	end
+
+  def after_create(freshfone_call)
+    create_call_metrics(freshfone_call) if freshfone_call.account.features? :freshfone_call_metrics
+  end
 
 	def before_save(freshfone_call)
 		set_customer_on_ticket_creation(freshfone_call) if freshfone_call.customer_id.blank?
