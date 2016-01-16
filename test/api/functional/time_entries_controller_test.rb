@@ -411,12 +411,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_unpermitted_params
-    @controller.stubs(:privilege?).with(:edit_time_entries, nil).returns(false)
-    @controller.stubs(:privilege?).with(:all).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
     post :create, construct_params({ id: ticket.display_id }, params_hash.merge(agent_id: 99))
     assert_response 400
     match_json([bad_request_error_pattern('agent_id', :inaccessible_field)])
-    @controller.unstub(:privilege?)
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_create_start_time_and_timer_not_running
@@ -523,11 +525,13 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_create_without_permission_but_ownership
-    @controller.stubs(:privilege?).with(:edit_time_entries, nil).returns(false)
-    @controller.stubs(:privilege?).with(:all).returns(true)
-    post :create, construct_params({ id: ticket.display_id }, params_hash.except(:agent_id))
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_time_entries).returns(true)
+    User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 201
-    @controller.unstub(:privilege?)
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_create_with_other_user
@@ -889,14 +893,12 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_without_privilege
     ts = create_time_entry(timer_running: true, agent_id: other_agent.id)
-    controller.class.any_instance.stubs(:privilege?).with(:all).returns(true).once
     User.any_instance.stubs(:privilege?).with(:edit_time_entries).returns(false).at_most_once
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     User.any_instance.unstub(:privilege?)
     controller.class.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
-    controller.class.any_instance.unstub(:privilege?)
   end
 
   def test_update_without_feature
@@ -905,7 +907,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
-    User.any_instance.stubs(:feature?)
+    User.any_instance.unstub(:feature?)
   end
 
   def test_update_with_ticket_trashed

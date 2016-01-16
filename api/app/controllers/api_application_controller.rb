@@ -491,19 +491,30 @@ class ApiApplicationController < MetalApiController
       (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).to_i
     end
 
-    def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
+    def get_fields(constant_name, item = @item, owned_by_field = :user_id) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
-      get_fields_from_constant(constant)
+      get_fields_from_constant(constant, item, owned_by_field)
     end
 
-    def get_fields_from_constant(constant, item = @item)
+    def get_fields_from_constant(constant, item, owned_by_field)
       # all_fields is used to differentiate between junk fields and inaccessible_fields in invalid_field_handler.
       # all_fields should not be modified as it a reference to the constant and not a separate object.
       # item is sent to privilege to accomodate owned_by privileges.
       @all_fields = constant
       @fields = constant[:all] || []
-      constant.except(:all).keys.each { |key| @fields += constant[key] if privilege?(key, item) }
+      owned_by_permissions = constant.except(:all).keys & ApiConstants::PRIVILEGES_WITH_OWNEDBY
+      permissions = constant.except(:all, *owned_by_permissions).keys
+      permissions.each { |key| @fields += constant[key] if privilege?(key) }
+      owned_by_permissions.each{ |key| @fields += constant[key] if has_privilege_or_owns_object?(key, item, owned_by_field) }
       @fields
+    end
+
+    def has_privilege_or_owns_object?(key, item, owned_by_field)
+      # this method assumes that,
+      # when load_object is not called then the action is a create action,
+      # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario 
+      # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
+      item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
     end
 
     def update?

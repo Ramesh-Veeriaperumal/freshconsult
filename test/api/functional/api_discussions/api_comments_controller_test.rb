@@ -45,8 +45,8 @@ module ApiDiscussions
       assert_response 200
 
       comment.update_column(:user_id, @agent.id)
-      @controller.stubs(:privilege?).with(:view_forums, comment).returns(false)
-      @controller.stubs(:privilege?).with(:edit_topic, comment).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(false)
+      User.any_instance.stubs(:privilege?).with(:edit_topic, comment).returns(true)
       put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
       match_json([bad_request_error_pattern('answer', :inaccessible_field)])
       assert_response 400

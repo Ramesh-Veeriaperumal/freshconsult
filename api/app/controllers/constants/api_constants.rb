@@ -34,6 +34,8 @@ module ApiConstants
   TAG_MAX_LENGTH_STRING = 32
   CACHE_VERSION = { v2: 'V2' }.freeze
 
+  PRIVILEGES_WITH_OWNEDBY = ABILITIES.values.flatten.select(&:owned_by).map(&:name).uniq
+
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json].freeze
 

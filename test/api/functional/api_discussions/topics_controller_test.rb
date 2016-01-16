@@ -271,7 +271,7 @@ module ApiDiscussions
     def test_update_without_manage_forums_privilege
       forum = Forum.where(forum_type: 2).first
       topic = first_topic
-      @controller.stubs(:privilege?).with(:manage_forums, topic).returns(false)
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       params = { title: 'New', message_html: 'New msg',
                  stamp_type: Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
                  sticky: !topic.sticky, locked: !topic.locked, forum_id: forum.id }

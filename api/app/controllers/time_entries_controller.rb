@@ -97,7 +97,7 @@ class TimeEntriesController < ApiApplicationController
 
     def validate_params
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
-      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS")
+      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS", @item, :agent_id)
       params[cname].permit(*fields)
       @time_entry_val = TimeEntryValidation.new(params[cname], @item, @timer_running)
       render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)
