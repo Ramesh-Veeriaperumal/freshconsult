@@ -780,7 +780,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     Sharding.stubs(:select_shard_of).raises(RangeError)
     get '/api/discussions/categories', nil, @headers
     assert_response 500
-    response.body.must_match_json_expression(base_error_pattern(:internal_error))
+    response.body.must_match_json_expression(request_error_pattern(:internal_error))
   end
 
   def test_pagination_with_valid_values

@@ -132,7 +132,7 @@ class ApiApplicationController < MetalApiController
       # http://ruby-doc.org/core-2.1.0/RangeError.html
       # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb#L18
       # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
-      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:>) && params[:page] > ApiConstants::PAGE_MAX
+      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && params[:page].to_i > ApiConstants::PAGE_MAX
         # raised by will_paginate gem
         render_errors [[:page, :gt_zero_lt_max_per_page]]
       else
