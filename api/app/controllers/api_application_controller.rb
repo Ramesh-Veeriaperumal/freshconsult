@@ -134,7 +134,7 @@ class ApiApplicationController < MetalApiController
       # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
       if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && params[:page].to_i > ApiConstants::PAGE_MAX
         # raised by will_paginate gem
-        render_errors [[:page, :gt_zero_lt_max_per_page]]
+        render_errors [[:page, :per_page_invalid_number]]
       else
         # unexpected exception
         notify_new_relic_agent(e, description: 'Invalid Offset Error.')
@@ -154,7 +154,7 @@ class ApiApplicationController < MetalApiController
       # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
       if current_shard.nil?
         Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
-        head 404 
+        head 404
       else
         notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
         Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
@@ -372,7 +372,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_query_param_errors(errors)
-      # this will translate generic positive_number error to specific per_page_positive_number 
+      # this will translate generic positive_number error to specific per_page_positive_number
       # this is being done to get different custom codes with the same error message.
       errors[:per_page] = "per_page_#{errors.to_h[:per_page]}" if errors[:per_page].present?
     end

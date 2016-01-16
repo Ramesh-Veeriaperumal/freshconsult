@@ -15,7 +15,6 @@ json.cache! CacheLib.key(@item, params) do # ticket caching
   json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
 
   json.set! :is_escalated, @item.isescalated
-
 end
 
 json.set! :description, @item.description

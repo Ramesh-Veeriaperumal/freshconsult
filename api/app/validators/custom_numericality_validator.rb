@@ -1,9 +1,9 @@
 class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValidator
-  NOT_A_NUMBER = "is not a number"
-  NOT_AN_INTEGER = "is not an integer"
-  MUST_BE_GREATER_THAN = "must be greater than"
-  MUST_BE_LESS_THAN = "must be less than"
-  
+  NOT_A_NUMBER = 'is not a number'
+  NOT_AN_INTEGER = 'is not an integer'
+  MUST_BE_GREATER_THAN = 'must be greater than'
+  MUST_BE_LESS_THAN = 'must be less than'
+
   def validate_each(record, attribute, value)
     return if record.errors[attribute].present?
 
@@ -21,8 +21,8 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
       if message
         record.errors[attribute] = message
       else
-        # if message is sent, it is not possible to distinguish between datatype_mismatch and invalid_value in custom_code, 
-        # custom message has to either be handled in controller(eg. per_page) or should use single custom_code(eg. array numericality) 
+        # if message is sent, it is not possible to distinguish between datatype_mismatch and invalid_value in custom_code,
+        # custom message has to either be handled in controller(eg. per_page) or should use single custom_code(eg. array numericality)
         record.errors[attribute] = error_msg(record, attribute, value)
       end
       (record.error_options ||= {}).merge!(attribute => { data_type: data_type(options[:greater_than], options[:only_integer]) })
@@ -31,7 +31,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
 
   private
 
-    def validate_numeric(record, attribute, value, message)
+    def validate_numeric(record, attribute, value, _message)
       if options[:only_integer]
         record.errors[attribute] = NOT_AN_INTEGER and return unless value.is_a?(Integer)
       else
@@ -50,7 +50,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
     def invalid_value_error(record, attribute)
       # numericality validator will add a error message like, "must be greater than.." if that particular constraint fails
       record.errors[attribute].first.starts_with?(MUST_BE_GREATER_THAN) || record.errors[attribute].first.starts_with?(MUST_BE_LESS_THAN)
-    end 
+    end
 
     def error_msg(record, attribute, value)
       required = required_attribute_not_defined?(record, attribute, value)
@@ -59,14 +59,14 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
       else # numericality validator will add a error message like, is not a number (or) must be an integer
         record.errors[attribute] = required ? :required_and_data_type_mismatch : :data_type_mismatch
       end
-    end 
+    end
 
     def data_type(greater_than, only_integer)
       # it is assumed that greater_than will always mean greater_than 0, when this assumption is invalidated, we have to revisit this method
-      if only_integer 
-        greater_than ? :'Positive Integer' : :'Integer'
+      if only_integer
+        greater_than ? :'Positive Integer' : :Integer
       else
-        greater_than ? :'Positive Number' : :'Number'
+        greater_than ? :'Positive Number' : :Number
       end
     end
 

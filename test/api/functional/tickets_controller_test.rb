@@ -171,8 +171,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_duplicate_tags
     @account.tags.create(name: 'existing')
-    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'], 
-      status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    params = { requester_id: requester.id, tags: ['new', '<1>new', 'existing', '<2>existing', 'Existing', 'NEW'],
+               status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
     assert_difference 'Helpdesk::Tag.count', 1 do # only new should be inserted.
       assert_difference 'Helpdesk::TagUse.count', 2 do # duplicates should be rejected
         post :create, construct_params({}, params)

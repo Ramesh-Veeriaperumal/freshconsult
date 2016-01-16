@@ -152,9 +152,8 @@ class TicketsController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
 
-      # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query. 
+      # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       prepare_tags
-      
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
@@ -162,7 +161,7 @@ class TicketsController < ApiApplicationController
     end
 
     def prepare_tags
-      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq{|x| x.downcase}.reject(&:blank?) if create? || params[cname].key?(:tags)
+      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
       params[cname][:tags] = construct_tags(tags) if tags
     end
 
