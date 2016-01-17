@@ -110,6 +110,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		in_user_time_zone(@source.frDueBy).strftime("%I:%M %p")
 	end
 
+	def sla_policy_name
+		@source.sla_policy_name.to_s
+	end
+
 	def url
 		helpdesk_ticket_url(@source, :host => @source.account.host, :protocol=> @source.url_protocol)
 	end
