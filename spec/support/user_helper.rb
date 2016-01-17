@@ -120,7 +120,7 @@ module UsersHelper
 
   def add_new_user_with_twitter_id(account,options={})
     if options[:twitter_id]
-      user = User.find_by_fb_profile_id(options[:twitter_id])
+      user = User.find_by_twitter_id(options[:twitter_id])
       return user if user
     end
     new_user = FactoryGirl.build(:user, :account => account,

@@ -6,6 +6,7 @@ development:
 
 test:
   <<: *defaults
+  :esv2_host: 'localhost:9090'
 
 staging:
   <<: *defaults

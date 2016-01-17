@@ -1,10 +1,31 @@
-require 'test_helper'
+require_relative '../../../test_helper'
 require 'minitest/spec'
 
 # Test cases for cache store
 class CacheStoreTest < ActionController::TestCase
   def setup
     @tenant_id = 78_899
+
+    # Start Memcache
+    begin
+      @pid = Process.spawn('memcached -vv')
+      Process.detach(@pid)
+      print("\n...Started memcached server ##{@pid}...".ansi(:cyan, :bold))
+    rescue => e
+      print('Could not start memcache server for test!!')
+      exit(1)
+    end
+  end
+
+  def teardown
+    # Stop Memcache
+    begin
+      Process.kill('INT', @pid)
+      print("\n...Stopped memcached server...".ansi(:cyan, :bold))
+    rescue => e
+      print('Could not stop memcache server after test!!')
+      exit(1)
+    end
   end
 
   def test_singleton

@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative '../../../test_helper'
 require 'minitest/spec'
 
 # Test cases for data store
@@ -18,13 +18,13 @@ class DataStoreTest < ActionController::TestCase
   def test_config_add
     Search::V2::Store::Data.instance.store_config(@tenant_id)
 
-    refute_nil $dynamo_client.get_item(table_name: 'tenant_info', key: { tenant_id: @tenant_id }).item
+    refute_nil Search::V2::Store::Data.instance.tenant_info(@tenant_id)
   end
 
   # Test if config is removed from data store
   def test_config_remove
     Search::V2::Store::Data.instance.remove_config(@tenant_id)
 
-    assert_nil $dynamo_client.get_item(table_name: 'tenant_info', key: { tenant_id: @tenant_id }).item
+    assert_nil Search::V2::Store::Data.instance.tenant_info(@tenant_id)
   end
 end
