@@ -51,10 +51,9 @@ class Support::SignupsController < SupportController
     end
 
     def set_language
-      locale = http_accept_language.compatible_language_from I18n.available_locales  
-      locale = current_portal.language if locale.blank?
-      locale = current_account.language if locale.blank? 
-      params[:user][:language] ||= locale.to_s()
+      params[:user][:language] ||= ( http_accept_language.compatible_language_from I18n.available_locales || 
+        current_portal.language || current_account.language
+      ).to_s
     end
 
     def set_validatable_custom_fields
