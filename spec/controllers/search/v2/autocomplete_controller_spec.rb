@@ -5,11 +5,7 @@ describe Search::V2::AutocompleteController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    Searchv2::TestCluster.start
-    Sidekiq::Testing.inline!
-
-    @account.features.es_v2_writes.create
-    @account.send(:enable_searchv2)
+    setup_searchv2
   end
 
   before(:each) do
@@ -18,8 +14,7 @@ describe Search::V2::AutocompleteController do
   end
 
   after(:all) do
-    @account.send(:disable_searchv2)
-    Searchv2::TestCluster.stop
+    teardown_searchv2
   end
 
   ########################
@@ -28,7 +23,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the complete name" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.name
 
@@ -38,7 +33,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the partial name" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.name[0..10]
 
@@ -48,7 +43,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the complete email" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email
 
@@ -58,7 +53,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the partial email" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email.split('@').first
 
@@ -68,7 +63,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the email domain" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email.split('@').last
 
@@ -78,7 +73,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the requester matching the phone number" do
     user = add_new_user_without_email(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.phone
 
@@ -92,7 +87,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the complete name" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.name
 
@@ -102,7 +97,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the partial name" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.name[0..10]
 
@@ -112,7 +107,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the complete email" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email
 
@@ -122,7 +117,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the partial email" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email.split('@').first
 
@@ -132,7 +127,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the email domain" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email.split('@').last
 
@@ -146,7 +141,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the company matching complete name" do
     company = create_company
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
     get :companies, :q => company.name
 
@@ -156,11 +151,35 @@ describe Search::V2::AutocompleteController do
 
   it "should return the company matching partial name" do
     company = create_company
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
     get :companies, :q => company.name[0..10]
 
     res_body = JSON.parse(response.body)['results'].map { |item| item['id'] }
     res_body.should include(company.id)
+  end
+
+  ######################
+  # Tag test cases #
+  ######################
+
+  it "should return the tag matching complete name" do
+    tag = @account.tags.create(name: 'es-v2.testing1')
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    get :tags, :q => tag.name
+
+    res_body = JSON.parse(response.body)['results'].map { |item| item['value'] }
+    res_body.should include(tag.name)
+  end
+
+  it "should return the tag matching partial name" do
+    tag = @account.tags.create(name: 'es-v2.testing2')
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    get :tags, :q => tag.name[0..5]
+
+    res_body = JSON.parse(response.body)['results'].map { |item| item['value'] }
+    res_body.should include(tag.name)
   end
 end

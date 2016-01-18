@@ -5,11 +5,7 @@ describe Search::V2::AutocompleteController do
   self.use_transactional_fixtures = false
 
   before(:all) do
-    Searchv2::TestCluster.start
-    Sidekiq::Testing.inline!
-
-    @account.features.es_v2_writes.create
-    @account.send(:enable_searchv2)
+    setup_searchv2
   end
 
   before(:each) do
@@ -18,8 +14,7 @@ describe Search::V2::AutocompleteController do
   end
 
   after(:all) do
-    @account.send(:disable_searchv2)
-    Searchv2::TestCluster.stop
+    teardown_searchv2
   end
 
   ########################
@@ -28,7 +23,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the facebook id" do
     user = add_new_user_with_fb_id(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.fb_profile_id
 
@@ -38,7 +33,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the twitter id" do
     user = add_new_user_with_twitter_id(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.twitter_id
 
@@ -48,7 +43,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the complete name" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.name
 
@@ -58,7 +53,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the partial name" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.name[0..10]
 
@@ -68,7 +63,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the complete email" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email
 
@@ -78,7 +73,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the partial email" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email.split('@').first
 
@@ -88,7 +83,7 @@ describe Search::V2::AutocompleteController do
 
   it "should return the agent matching the email domain" do
     user = add_test_agent(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :requesters, :q => user.email.split('@').last
 
@@ -102,7 +97,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the complete name" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.name
 
@@ -112,7 +107,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the partial name" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.name[0..10]
 
@@ -122,7 +117,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the complete email" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email
 
@@ -132,7 +127,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the partial email" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email.split('@').first
 
@@ -142,7 +137,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the email domain" do
     user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.email.split('@').last
 
@@ -152,7 +147,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the requester matching the phone number" do
     user = add_new_user_without_email(@account)
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
     get :agents, :q => user.phone
 
@@ -166,7 +161,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the company matching description" do
     company = create_company
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
     get :companies, :q => company.description
 
@@ -176,7 +171,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the company matching note" do
     company = create_company
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
     get :companies, :q => company.note
 
@@ -186,7 +181,7 @@ describe Search::V2::AutocompleteController do
 
   it "should not return the company matching domain" do
     company = create_company
-    sleep 3 # Delaying for sidekiq to send to ES
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
     get :companies, :q => company.domains.split(',').first
 
