@@ -1,0 +1,18 @@
+
+{
+    "level" : "instance",
+
+    "vendorName" : "%{object_name}",
+
+    "fields" : [],
+
+    "configuration" : [
+      {
+        "type" : "passThrough",
+        "properties" : {
+          "fromVendor" : false,
+          "toVendor" : false
+        }
+      }
+    ]
+  }

@@ -1,0 +1,13 @@
+
+{
+    "formula" : {"active" : true},
+    
+    "name" : "%{formula_instance}",
+
+    "active" : true,
+
+    "configuration" : {
+        "salesforce.source" : "%{element_instance_id}", 
+        "freshdesk.target" : "%{fd_instance_id}"
+      }
+}

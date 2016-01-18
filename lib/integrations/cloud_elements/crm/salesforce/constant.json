@@ -1,0 +1,14 @@
+
+{
+    "objects" : {"contact" : "Contact", "account" : "Account", "lead" : "Lead" },
+
+    "parameters" : ["code"],
+
+    "existing_companies" : [{"fd_field" : "name", "sf_field" : "Name"}],
+
+    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "Name"}, {"fd_field" : "email", "sf_field" : "Email"}, {"fd_field" : "mobile", "sf_field" : "MobilePhone"}],
+
+    "default_fields" : ["Name"]
+
+}
+

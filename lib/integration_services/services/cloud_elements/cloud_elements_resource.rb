@@ -1,11 +1,11 @@
 module IntegrationServices::Services
   module CloudElements
     class CloudElementsResource < IntegrationServices::GenericResource
-      include Constant
+      include Integrations::CloudElements::Crm::Constant
 
       def faraday_builder(b)
         super
-        b.headers['Authorization'] = IntegrationServices::Services::CloudElements::Constant::AUTH_HEADER
+        b.headers['Authorization'] = Integrations::CloudElements::Constant::AUTH_HEADER
       end
       
       def cloud_elements_api_url
@@ -13,7 +13,7 @@ module IntegrationServices::Services
       end
 
       def authorization_header
-        { 'Authorization' => IntegrationServices::Services::CloudElements::Constant::AUTH_HEADER + "," + "Element #{@service.meta_data[:element_token]}" }
+        { 'Authorization' => Integrations::CloudElements::Constant::AUTH_HEADER + "," + "Element #{@service.meta_data[:element_token]}" }
       end
 
       def oauth_rest_url

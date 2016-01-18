@@ -670,6 +670,9 @@ Helpkit::Application.routes.draw do
     namespace :cloud_elements do
       namespace :crm do
         get :instances
+        post :install
+        get :edit
+        put :update
       end
     end
 

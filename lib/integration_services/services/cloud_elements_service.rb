@@ -29,6 +29,10 @@ module IntegrationServices::Services
       account_resource.get_fields
     end
 
+    def receive_lead_metadata
+      lead_resource.get_fields
+    end
+
     def receive_create_instance_object_definition
         object_resource.create_instance_level_object_definition
     end
@@ -38,11 +42,11 @@ module IntegrationServices::Services
     end
 
     def receive_create_instance_transformation
-        object_resource.create_instance_level_transformation
+      transformation_resource.create_instance_level_transformation
     end
 
     def receive_update_instance_transformation
-      object_resource.update_instance_level_transformation
+      transformation_resource.update_instance_level_transformation
     end
 
     def receive_create_formula_instance
@@ -65,6 +69,10 @@ module IntegrationServices::Services
 
       def object_resource
         @object_resource ||= IntegrationServices::Services::CloudElements::Platform::ObjectResource.new(self)
+      end
+
+      def transformation_resource
+        @transformation_resource ||= IntegrationServices::Services::CloudElements::Platform::TransformationResource.new(self)
       end
 
       def formula_resource

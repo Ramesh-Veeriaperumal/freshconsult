@@ -1,0 +1,18 @@
+{
+  "element" : {"key" : "sfdc"}, 
+
+  "providerData" : { "code" : "%{code}" }, 
+
+  "configuration" : { 
+    "oauth.callback.url" : "https://jagdamba.ngrok.io/integrations/cloud_elements/crm/instances", 
+    "oauth.api.key" : "3MVG9ZL0ppGP5UrC7ycgr9IfYGKWrOe3Ke9gOzfPife6xgS.XNFCXko7jC.mpUNeF84vm9aGmEk2DOKAtSkfG", 
+    "oauth.api.secret" : "98436661440156758", 
+    "event.vendor.type" : "polling", 
+    "event.notification.enabled" : "true", 
+    "event.objects" : "Contact,Account"
+    }, 
+
+    "tags" : [], 
+
+    "name" : "%{element_name}"
+  }
