@@ -73,6 +73,7 @@ if Infra['API_LAYER']
     # Metal changes has to be included irrespective of whether the layer is API or not. 
     # This is required as in some cases, API and web requests can be served from the same box.
     ActionController::Metal.send(:include, AbstractController::Callbacks )
+    ActionController::Metal.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
 
   end
 
@@ -86,11 +87,4 @@ file = File.join(Rails.root, 'config', 'dalli.yml') unless file_exists
 
 METAL_CACHE_CONFIG = YAML.load_file(file)[Rails.env].symbolize_keys!
 METAL_MEMCACHE_SERVER = METAL_CACHE_CONFIG.delete(:servers)
-
-# Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation is included into ActionController::Base by AuthLogic.
-# When Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation is included inside a controller, that module raises an exception if ApplicationController is already defined.
-# According to http://guides.rubyonrails.org/configuring.html#initializers, initializers will run before classes are eagerloaded.
-# Hence at this point, irrespective of cache_classes value, ApplicationController would not have been defined.
-MetalApiController.send(:include, Authlogic::ControllerAdapters::RailsAdapter::RailsImplementation)
-
 
