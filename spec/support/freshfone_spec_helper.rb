@@ -307,4 +307,16 @@ module FreshfoneSpecHelper
     @freshfone_call.sneaky_save
   end
 
+  def get_pinged_agent(agent_id, call = @freshfone_call)
+    call.meta.reload
+    call.meta.pinged_agents.each do |agent|
+      return agent if agent[:id] == agent_id
+    end
+  end
+
+  def update_ringing_at_in_pinged_agents(agent_id, call = @freshfone_call)
+    call.meta.reload
+    call.meta.update_agent_ringing_at(agent_id, "#{2.minutes.ago(Time.now.utc)}")
+  end
+
 end

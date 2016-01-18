@@ -62,12 +62,11 @@ module TestClassMethods
     end
   end
 
-  def turn_on_caching
+  def enable_cache(block = {})
     system 'memcached &'
     MetalApiController.perform_caching = true
-  end
-
-  def turn_off_caching
+    yield block
+  ensure
     MetalApiController.perform_caching = false
     system "ps -ef | grep memcached | grep -v 'grep' | awk '{print $2}' | xargs kill"
   end

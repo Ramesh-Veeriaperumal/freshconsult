@@ -69,5 +69,6 @@ helpdesk:
     - doorkeeper
     - ebay_config
     - helpdesk_reports/reports_app_config
+    - controller_log_subscriber
 
 

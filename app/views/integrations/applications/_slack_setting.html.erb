@@ -1,3 +1,5 @@
+<% #Belongs to Old Slack. Delete this when slackv1 is obselete%>
+<% flash[:error] = t('integrations.slack_msg.deprecation_notice').html_safe %>
 <% 
 if is_application_installed?("slack")
   configs_hash = get_app_config("slack")
@@ -36,8 +38,11 @@ jQuery(function(){
           data.value = data.value.replace('<%= t("integrations.slack_settings.status_update") %>', "status_update");
       });
     });
-    
+
+    jQuery('#ConfigureApplication').attr('class', 'disabled');
+    jQuery(".button-container").remove();
 });
+
 
 </script> 
 

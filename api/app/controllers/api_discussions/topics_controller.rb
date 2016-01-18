@@ -5,7 +5,7 @@ module ApiDiscussions
 
     def create
       @item.user = api_current_user
-      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::COMMENT_FIELDS.include?(x) })
+      post = @item.posts.build(params[cname].select { |x| DiscussionConstants::CREATE_COMMENT_FIELDS.flat_map(&:last).include?(x) })
       post.user = api_current_user
       assign_parent post, :topic, @item
       super
@@ -82,16 +82,8 @@ module ApiDiscussions
       end
 
       def validate_params
-        if create?
-          if !load_forum
-            return false
-          else
-            fields = DiscussionConstants::CREATE_TOPIC_FIELDS
-          end
-        else
-          fields = get_fields_from_constant(DiscussionConstants::UPDATE_TOPIC_FIELDS)
-        end
-        params[cname].permit(*(fields))
+        return false if create? && !load_forum
+        params[cname].permit(*(get_fields("DiscussionConstants::#{action_name.upcase}_TOPIC_FIELDS")))
         topic = ApiDiscussions::TopicValidation.new(params[cname], @item)
         render_errors topic.errors, topic.error_options unless topic.valid?(action_name.to_sym)
       end

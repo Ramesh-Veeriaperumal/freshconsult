@@ -25,4 +25,41 @@ module Integrations::IntegrationHelper
     end
   end
 
+  def exists_in_installed_apps? application, installed_apps_list
+    result = false
+    installed_apps_list.each do |inst_app|
+      result = true if application.id == inst_app.application_id
+    end
+    result
+  end
+
+  def append_integration_actions action_hash
+    integration_list = ["slack_v2"]
+    integration_actions = fetch_integration_actions(integration_list)
+    if integration_actions.present?
+      action_hash.push(integration_actions)
+      action_hash.push({ :name => -1, :value => "-----------------------" })
+    end
+    action_hash.flatten!
+  end
+
+  def fetch_integration_actions integration_list
+    integration_actions = []
+    installed_apps = current_account.installed_applications.where("applications.name IN (?)", integration_list ).joins(:application)
+    obj = Integrations::ActionsUtil.new
+    installed_apps.each do |installed_app|
+      app_name = installed_app.application.name
+      begin
+        if obj.respond_to?(app_name)
+          condition = { :dispatcher => va_rules_controller?, :observer => observer_rules_controller? }
+          option = obj.send(app_name, installed_app, condition)
+          integration_actions.push(option)
+        end
+      rescue => err
+        Rails.logger.debug "Error while getting Integration actions : #{err}"
+        NewRelic::Agent.notice_error(err)
+      end
+    end
+    integration_actions
+  end
 end

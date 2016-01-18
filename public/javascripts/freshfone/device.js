@@ -145,9 +145,6 @@
 			var freshfoneConnection = new FreshfoneConnection(conn);
 			freshfoneConnection.incomingAlert();
         });
-
-		Twilio.Device.presence(function (pres) {
-		});
 	}
 	function regenerateToken () {
 		freshfoneuser.getCapabilityToken();

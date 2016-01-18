@@ -24,7 +24,7 @@ module Helpers::TicketsTestHelper
   def ticket_pattern_with_notes(ticket, limit = false)
     notes_pattern = []
     ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      notes_pattern << note_pattern(n)
+      notes_pattern << index_note_pattern(n)
     end
     notes_pattern = notes_pattern.take(limit) if limit
     ticket_pattern(ticket).merge(notes: notes_pattern.ordered!)

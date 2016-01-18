@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.configure do |c|
   c.include FreshfoneQueueHelper
   c.include Freshfone::Queue
+  c.include FreshfoneCallMetricHelper
 end
 
 RSpec.describe Freshfone::QueueController do
@@ -145,5 +146,26 @@ RSpec.describe Freshfone::QueueController do
     freshfone_call = @account.freshfone_calls.find(freshfone_call)
     freshfone_call.should be_default
     freshfone_call.abandon_state.should be_nil
+  end
+
+  it 'should update IVR time in metrics before enqueue' do
+    set_twilio_signature('freshfone/queue/enqueue?hunt_type=&hunt_id=', queue_params)
+    create_freshfone_call('CAae09f7f2de39bd201ac9276c6f1cc66a')
+    create_call_meta
+    mock_call_metrics_attricbutes
+    post :enqueue, queue_params
+    @freshfone_call.reload
+    call_metrics = @freshfone_call.call_metrics.reload
+    expect(call_metrics.ivr_time).not_to be_nil
+  end
+
+  it 'should update IVR time in metrics on hangup' do
+    set_twilio_signature('freshfone/queue/hangup', hangup_params)
+    create_freshfone_call('CDEFAULTQUEUE')
+    set_default_queue_redis_entry
+    mock_call_metrics_attricbutes
+    post :hangup, hangup_params
+    call_metrics = @freshfone_call.call_metrics.reload
+    call_metrics.queue_wait_time.should be_eql(67)
   end
 end

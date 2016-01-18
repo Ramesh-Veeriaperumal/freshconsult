@@ -1,7 +1,7 @@
 class Users::UpdateCompanyId < BaseWorker
   
   sidekiq_options :queue => :update_users_company_id, 
-                  :retry => 0, 
+                  :retry => 2, 
                   :backtrace => true, 
                   :failures => :exhausted
 
