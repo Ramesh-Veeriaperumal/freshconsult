@@ -2529,6 +2529,7 @@ en:
       published_article:
         short: "{{user_path}}'s article has been published"
         long: "{{user_path}} published an article'{{notable_path}}'"
+        long_v2: "{{user_path}} published an article '{{notable_path}}'"
       unpublished_article:
         short: "{{user_path}}'s article has been unpublished"
         long: "{{user_path}}' unpublished an article '{{notable_path}}'"
@@ -4022,6 +4023,7 @@ en:
           without_draft: This will remove the published article from the portal and save the content under Draft
         save_error: This article could not be saved.
         portal_preview_msg: You are previewing draft version of this article.
+        portal_preview_msg_v2: You are previewing the draft version of this article.
         discard_msg: The draft has been discarded.
         discard_confirm: Do you want to discard this draft?
         revert_msg: "The current session of auto-save has been discarded."
