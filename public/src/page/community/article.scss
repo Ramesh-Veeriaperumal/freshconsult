@@ -45,7 +45,7 @@
       position: relative;
       top: -40px;
       padding-bottom: 0;
-      float: right;
+      @include float(right);
       height: 0;
     }
   }
