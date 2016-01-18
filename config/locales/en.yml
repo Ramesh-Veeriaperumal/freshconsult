@@ -5884,7 +5884,6 @@ en:
       view:
         delete: "Are you sure you want to delete this view?"
     messages:
-      new_view : Now all the tickets you requested can be seen under a new default view called <b> Tickets I requested </b>
       out_of_scope: Tickets you requested, for which you don't have agent permission can be seen in your customer portal. <a href = %{support_tickets} target=_blank> Go to customer portal </a>
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
