@@ -2528,8 +2528,7 @@ en:
         long: "{{user_path}} created a new article '{{notable_path}}'"
       published_article:
         short: "{{user_path}}'s article has been published"
-        long: "{{user_path}} published an article'{{notable_path}}'"
-        long_v2: "{{user_path}} published an article '{{notable_path}}'"
+        long: "{{user_path}} published an article '{{notable_path}}'"
       unpublished_article:
         short: "{{user_path}}'s article has been unpublished"
         long: "{{user_path}}' unpublished an article '{{notable_path}}'"

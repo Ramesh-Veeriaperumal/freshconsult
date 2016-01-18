@@ -22,7 +22,7 @@ describe Solution::Article do
 
 		it "should create activity when article is published" do
 			@article.publish!
-			@article.activities.last.description.should eql 'activities.solutions.published_article.long_v2'
+			@article.activities.last.description.should eql 'activities.solutions.published_article.long'
 			@article.activities.last.updated_at.to_date.should eql Time.now.to_date
 		end
 
