@@ -135,6 +135,8 @@ en:
     unassigned: Unassigned
     products: Products
     created_date_range: Time period
+    none: None
+    unresolved: All Unresolved
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -561,7 +563,6 @@ en:
 
   quests:
     delete: "Are you sure you want to delete this quest?"
-    survey_disabled_event: Surveys are disabled. Events associated with survey might not work as expected.
     inactive_quests: Inactive Quests
     date: Date
     satisfaction: Customer satisfaction rating
@@ -643,11 +644,11 @@ en:
       ticket_list: "Your tickets"
       ticket_view: "Ticket details"
       my_topics: "My Topics"
+      csat_survey: "Customer Satisfaction Survey"
   admin:
     help_image_alt:
       helpdesk_arcarde: "Helpdesk Arcade"
       import_csv_file_pattern: "Import CSV file pattern"
-    survey_modified: The survey associated with the rule is modified.Please re-configure.
     social:
       helpcard:
         title1: "Adding social accounts"
@@ -1140,23 +1141,24 @@ en:
         new_quest: New Quest
         quest_title: Quests
     surveys:
-     successfully_created: Customer Satisfaction settings has been successfully created.
-     successfully_updated: Customer Satisfaction settings has been successfully updated.
-     successfully_deleted: Survey has been successfully deleted.
-     error_updated: Error while updating survey settings.
-     custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
+      survey_not_found: The survey you are trying to access is not present.
+      successfully_created: Customer Satisfaction settings has been successfully created.
+      successfully_updated: Customer Satisfaction settings has been successfully updated.
+      successfully_deleted: Survey has been successfully deleted.
+      error_updated: Error while updating survey settings.
+      custom_helptext: "<p><b>Enabling Satisfaction Surveys</b> <br>
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
-     Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
-     <br><br>
-     <b>Agent survey and follow-up surveys</b><br>
-     You can ask one agent survey question and multiple follow-up survey questions.
-     The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
-     The observer rules and gamification points will be based only on the agent survey rating.<br>
-     <br><br>
-     <b>Points scale</b><br>
-     You can choose different point scales for the agent survey and follow-up survey. It could be<br>
+      You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+      You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
+      Customers’ response can be seen in <b> Reports > Customer satisfaction report </b>
+      <br><br>
+      <b>Agent survey and follow-up surveys</b><br>
+      You can ask one agent survey question and multiple follow-up survey questions.
+      The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey.
+      The observer rules and gamification points will be based only on the agent survey rating.<br>
+      <br><br>
+      <b>Points scale</b><br>
+      You can choose different point scales for the agent survey and follow-up survey. It could be<br>
       2 point (Eg: Yes, No)<br>
       3 point (Eg: Agree, Undecided, Disagree)<br>
       5 point (Eg: Always to Never)<br>
@@ -1165,52 +1167,71 @@ en:
       Once a customer takes the survey, the scales will be locked down and they cannot be edited.
       </p>"
 
-     helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
+      helptext: "<p><b>Why enable satisfaction surveys?</b> <br>
 
-     Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
-     <br><br>
-     <b>Creating your satisfaction survey:</b><br>
-     The following steps let you collect feedback from your customers through a link in your response emails:<br>
-     1.Enable the Customer Satisfaction Surveys checkbox<br>
-     2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please tell us what you think of your support experience.&rdquo;<br>
-     <br>
-     <b>Choose which emails have the satisfaction survey link:</b><br>
-     You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved.
-     <br><br>
-     You can learn more about satisfaction surveys from our solutions page.
-     </p>"
-     limit_exceed_error: You can only add upto %{count} surveys.
-     custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+      Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
+      <br><br>
+      <b>Creating your satisfaction survey:</b><br>
+      The following steps let you collect feedback from your customers through a link in your response emails:<br>
+      1. Turn on the Customer Satisfaction Survey<br>
+      2. Specify the Survey Question. The default text goes as &ldquo;How would you rate your overall satisfaction for the resolution provided by the agent?&rdquo;<br>
+      <br>
+      <b>Choose which emails have the satisfaction survey link:</b><br>
+      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved. Customers’ response can be seen in <b>Reports > Customer Satisfaction Report</b>
+      <br><br>
+      You can learn more about satisfaction surveys from our solutions page.
+      </p>"
 
-     You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
-     You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
-     Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
-     <br><br>
-     <b>Satisfaction Survey</b><br>
-     You can ask one customer satisfaction survey question and additional survey questions.
-     The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
-     The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
-     <br><br>
-     <b>Point scales</b><br>
-     You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
+      helptext_v2: "<p><b>Why enable satisfaction surveys?</b> <br>
+
+      Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction.
+      <br><br>
+      <b>Creating your satisfaction survey:</b><br>
+      The following steps let you collect feedback from your customers through a link in your response emails:<br>
+      1. Turn on the Customer Satisfaction Survey<br>
+      2. Specify the Survey Question. The default text goes as &ldquo;How would you rate your overall satisfaction for the resolution provided by the agent?&rdquo;<br>
+      <br>
+      <b>Choose which emails have the satisfaction survey link:</b><br>
+      You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved. Customers’ response can be seen in <b>Reports > Customer Satisfaction Report</b>
+      <br><br>
+      You can learn more about satisfaction surveys from <a target= ‘_blank’ href='https://support.freshdesk.com/solution/articles/215322'>this solution article</a>.
+      </p>"
+
+      limit_exceed_error: You can only add upto %{count} surveys.
+      custom_helptext_v2: "<p><b>Enabling Satisfaction Survey</b> <br>
+
+      You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product.
+      You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’.
+      Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b>
+      <br><br>
+      <b>Satisfaction Survey</b><br>
+      You can ask one customer satisfaction survey question and additional survey questions.
+      The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions.
+      The observer rules and gamification points will be based only on the customer satisfaction survey.<br>
+      <br>
+      <b>Point scales</b><br>
+      You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br>
       2 point (Eg: Yes, No)<br>
       3 point (Eg: Agree, Undecided, Disagree)<br>
       5 point (Eg: Always to Never)<br>
       7 point (Eg: Very Poor to Exceptional)<br><br>
 
-      Once a customer takes the survey, the scales will be locked down and they cannot be edited.
+      Once a customer takes the survey, the scales will be locked down and they cannot be edited.<br><br>
+      You can learn more about satisfaction surveys from <a target= ‘_blank’ href='https://support.freshdesk.com/solution/articles/215321'>this solution article</a>.
       </p>"
 
-     questions:
+      questions:
         limit_exceed_error: You can only add upto %{count} questions.
-     new_layout:
+      new_layout:
         loading: Loading...
         default_survey: Default Survey
-        title: Title
+        survey: Survey
+        title: Survey Name
         title_error_text: Survey Name has already been taken
         result_exist_msg: Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers.
 
-     new_rating:
+
+      new_rating:
         content_text: This Question helps access the overall satisfaction for the response provided by the agent.
                       It appears below your signature at the bottom of the email sent to the customer.
                       Scale cannot be changed once response has been collected for this question.
@@ -1224,7 +1245,7 @@ en:
         scale_text: You have chosen
         scale: point scale
 
-     new_thanks:
+      new_thanks:
         survey_feedback: Survey Feedback Page
         survey_feedback_v2: Thank You Page
         thanks_feedback: Thank you for your valuable feedback.
@@ -1241,15 +1262,18 @@ en:
                     Questions can be about product/company/agent.
         help_text_v2: Additional survey questions appear in a new page after the customer takes the satisfaction survey.
                     Questions can be about product/company/agent.
+        thanks_help_text: Additional survey questions appear in the Thank You page after the customer takes the satisfaction survey.
+                    Questions can be about product/company/agent.
 
-     new_questions_layout:
+      new_questions_layout:
         title_text: Select the points scale for your questions
-        title_text_v2: Select the point scale for your questions
+        title_text_v2: Additional questions
         add_question: Add Question
         questions: Questions
 
-     index:
+      index:
         custom_title: Surveys
+        custom_title_v2: Customer Satisfaction Surveys
         title: Customer Satisfaction Settings
         new_survey: New Survey
         load_text: Loading survey list...
@@ -1258,8 +1282,8 @@ en:
         saving_survey: Saving survey
         enabling_survey: Enabling survey
         disabling_survey: Disabling survey
-        feedback_survey_begin: Sending survey feedback to your email id
-        feedback_survey_end: Survey feedback is sent to your email id
+        feedback_survey_begin: Sending a survey to your email id
+        feedback_survey_end: Survey has been sent to your email id
         survey_feedback: Submitting Feedback...
         portal_msg: Redirecting to ticket page
         update: update
@@ -1267,7 +1291,7 @@ en:
         edit: Edit
         cancel: Cancel
         hide: Remove
-        preview: Test
+        preview_survey: Preview
         enabled: Enabled
         disabled: Disabled
         save_survey: Save
@@ -1276,11 +1300,15 @@ en:
         delete_msg: Are you sure you want to delete this survey?
         survey_help_msg: Selecting a rating above will link off to the page below
         survey_help_msg_v2: When a satisfaction rating is selected, a thank you page is shown.
+        survey_help_msg_v3: When a satisfaction rating is selected, a thank you page is shown to collect more feedback
         on: ON
         off: OFF
-
-
-     choice_contents:
+        confirm_text: Please Confirm...
+        delete: Delete
+        activate_survey: Activate
+        activate_msg: Activating this survey will deactivate <b id='active_survey_name'> Default Survey </b><br> Are you sure you want to proceed?
+        remove_msg: Removing this section will result in the loss of any changes made to the additional questions. Do you wish to continue?
+      choice_contents:
         strongly_disagree: Strongly Disagree
         some_what_disagree: Some What Disagree
         disagree: Disagree
@@ -1289,16 +1317,16 @@ en:
         some_what_agree: Some What Agree
         strongly_agree: Strongly Agree
 
-     thanks_contents:
+      thanks_contents:
         title_text: Thank you message for Customer satisfaction rating
-        title_text_v2: Thank you message for Customer Satisfaction Survey.
+        title_text_v2: Thank you message for Customer Satisfaction Survey
         message_text: Thank you for your valuable feedback.
         label_text: Add a feedback survey
         label_text_v2: Additional Survey Questions
         question_error_text: Question has been already entered.
         empty_text: Question value cannot be blank.
 
-     satisfaction_settings:
+      satisfaction_settings:
         enable_label: Customer Satisfaction Rating
         enable_label_v2: Customer Satisfaction Survey
         satisfaction_text: I am satisfied with the service provided to me by
@@ -1310,7 +1338,8 @@ en:
         send_while_option2: Emails sent after a ticket is "Resolved".
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
-        send_while_title: Choose which emails have the satisfaction survey link
+        send_while_title: Which emails should have the satisfaction survey link?
+        send_while_title_v2: Which emails should have the satisfaction survey link?
         enter_happy_text: Enter the happy text
         enter_neutral_text: Enter the neutral text
         enter_unhappy_text: Enter the unhappy text
@@ -1526,7 +1555,6 @@ en:
         title: Supervisor - Clone Rule
     observer_rules:
       info_help_1: "For any event performed in a ticket, the Observer rules let you trigger specific actions."
-      survey_disabled_rule: Surveys are disabled. Rules associated with survey might not work as expected.
       index:
         human_name: Observer Rule
         title: Observer - Rules
@@ -2063,6 +2091,8 @@ en:
     visible_to: Visible to
     category: Forum Category
     spam: "Spam (%{count})"
+    convert_to_ticket: Auto-Convert Topics to Tickets
+    convert_to_ticket_info: All new topics created in this forum will automatically be converted and created as a ticket.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users
@@ -3056,7 +3086,7 @@ en:
       sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
-      last_active_at: "Last active at"
+      last_active_at: "Last seen"
       created_at: Created date
       asc: Ascending
       desc: Descending
@@ -3243,6 +3273,12 @@ en:
         vote_info_include_1: "You have this Question"
         vote_info_include_2: "You and %{vote} People have this Question"
         voted_users_widget_title: People who have this question
+      announce:
+        vote_info_1: "%{vote} Person like this Announcement"
+        vote_info_2: "%{vote} People like this Announcement"
+        vote_info_include_1: "You like this Announcement"
+        vote_info_include_2: "You and %{vote} People like this Announcement"
+        voted_users_widget_title: People who like this announcement
     post:
       upvote: Upvote
       voted_up_title: people upvoted this post
@@ -4262,6 +4298,7 @@ en:
   tag:
     title: Tags
   email_notifications:
+    preview_email_verification: "<p>Hi {{ticket.requester.firstname}},<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>"
     default_font: "Default Font : "
     customize_email: Customize Email
     edit_reply_template: Edit Template
@@ -5161,6 +5198,7 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+      tickets_background: "Please wait while we update the tickets. This might take a few minutes."
 
     shared:
       addcc: "Add cc"
@@ -5406,6 +5444,7 @@ en:
         overdue: Overdue Tickets
         due_today: Tickets Due Today
         resolved: Resolved Tickets
+        unresolved: All Unresolved Tickets
         my_overdue: My Overdue Tickets
         tags: Tags by Ticket
         my_due_today: My Tickets Due Today
@@ -5485,6 +5524,7 @@ en:
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
+        merge_ticket_failed: "Failure during merging of tickets."
         target_merge_description:  "Ticket %{ticket.id} %{ticket.subject} is merged with this request"
         target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1:
@@ -6111,7 +6151,7 @@ en:
         recording_details: "Recording Details"
         start_recording: "Start Recording"
         cancel_recording: "Cancel"
-        ilos_video_initialized: "<p id='ilos-paragraph'><span><b>Screencast recording has been initiated.</b></span></br>ilos record plugin will start automatically. For more help on recording screecasts follow the instructions <a href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk' target='blank'>here</a>.<br/><br/>Trouble with recording?<br/>Please ensure that you have the <a href='https://www.ilosvideos.com/downloadRecorder/?returnTo=Fresh%20Desk' target='blank'>ilos plugin</a> already installed. If installing for the first time, then please go back and click 'record' again after the plugin has installed.<br/></p>"
+        ilos_video_initialized: "<p id='ilos-paragraph'><span><b>Screencast recording has been initiated.</b></span></br>ilos record plugin will start automatically. For more help on recording screecasts follow the instructions <a href='https://support.freshdesk.com/solution/articles/214400-ilos-videos-integration-with-freshdesk' target='blank'>here</a>.<br/><br/>Trouble with recording?<br/>Please ensure that you have the <a href='https://app.ilosvideos.com/downloadRecorder/?returnTo=Freshdesk' target='blank'>ilos plugin</a> already installed. If installing for the first time, then please go back and click 'record' again after the plugin has installed.<br/></p>"
         moderated_forums: "For moderated forums, the recording will appear after approval."
       agent_ticket:
         placeholder: "Ticket#"
@@ -6440,6 +6480,37 @@ en:
       form:
          slack_setting: ""
          slack_info: ""
+    slack_v2:
+      label: "Slack <span class='beta'>New</span>"
+      desc: "Stay up to date with your Freshdesk on Slack."
+      helptext: "<h4>Slack Integration</h4><br><p>Select the list of Public Channels and Private Groups that you want to make available to Freshdesk's Dispatch'r and Observer. When setting up their automation rules, you can specify which channel to push messages to. </p>"
+      form:
+         slack_v2_settings: "Slack Settings"
+         access_public_channel: "Allow access to public channels"
+         access_private_channel: "Allow access to private channels"
+         allow_dm_agent: "Allow DM to agent"
+         allow_slash_command: "Allow Slash Command (<a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'> Convert Slack DM to Freshdesk ticket </a>)"
+         slash_command_token: "Slash Command Token"
+      action_options:
+        public: "Public"
+        private: "Private"
+        dm: "DM"
+      message:
+        ticket_success: "Succesfully created ticket in Freshdesk."
+        ticket_failure: "Failure while creating ticket. Please report to support@freshdesk.com if the error continues."
+        missing_remote_token: "Please pass your Slack user token (https://api.slack.com/web) with this slash command once. From next time token is not needed :simple_smile:"
+        slash_key_mismatch: "Slash command secret key does not match the value configured on Freshdesk."
+        uninstall_old_slack: "You have an older version of this application already installed. Please follow the <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a> for detailed steps on how to migrate to the newer version."
+        report_error: "Slack reports the following error"
+        action_queued: "Your request has been received and you shall get a notification on this channel once the ticket is created."
+        not_installed: "Looks like you haven't installed Slack V2!"
+        no_app_found: "Application is not installed!"
+        invalid_channel: "Slash command to create a ticket works only on Direct Messages."
+        push_to_slack: "Push to Slack"
+        no_agent: "No Agent"
+      subject:
+        chat: "Chat Conversation with"
+        default_chat: "Chat Conversation of"
     slack_settings:
       channels: "Channels to post"
       notify: "Notification for"
@@ -6448,6 +6519,8 @@ en:
       status_update: "Status update"
     slack_msg:
       wrong_channel: ERROR converting channel transcript into Ticket :Ticket can be created only in direct channel group
+      deprecation_notice: "A new release of Freshdesk Slack integration is now available. This version is now obsolete. Please follow this <a href='https://support.freshdesk.com/support/solutions/articles/206103' target='_blank'>solution article</a>  for detailed steps on how to migrate to the new implementation."
+      uninstall_old_slack: Integration is deprecated and updates are ceased. Install Slack V2 for more powerful features.
       invalid_api_key: ERROR :Invalid Freshdesk Api key
       notify_on_ticket_update: "Status updated for  "
       notify_on_ticket_create: "Ticket created by "
@@ -6806,6 +6879,7 @@ en:
         main:
             all: All
             time_period: Time Period
+            survey_name: Survey Name
             group: Group
             agent: Agent
             overview: Overview
@@ -6819,11 +6893,14 @@ en:
             answered: Answered
             unanswered: Unanswered
             total_responses: Total No.of responses
+            total_responses_v2: Total
             filter_by: Filter by
             preparing_chart_for: Preparing chart for
             loading_chart: Loading...
+            loading_msg: "Generating Reports ..."
             no_remarks: No responses available
             loading_remarks: Loading remarks
+            loading_responses: Loading responses
             fetching_responses: Fetching responses
             no_overview: No data available
             view_report_by: View by
@@ -7380,6 +7457,8 @@ en:
     export:
       export_report_pdf: "Export as PDF"
       export_report_csv: "Export as CSV"
+    customer_satisfaction:
+      title: Customer Satisfaction Report
   adv_reports:
     at_a_glance: "At-a-glance"
     select_an_option: "Select an option"
@@ -8667,3 +8746,5 @@ en:
     search_group: "Search by group"
     search_agent: "Search by agent"
     loading_label: "Loading"
+  email_notification:
+    spam_error: "An internal error occured.  Please contact support."

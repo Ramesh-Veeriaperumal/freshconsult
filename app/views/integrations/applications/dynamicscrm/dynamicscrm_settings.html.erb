@@ -6,7 +6,7 @@
 
 	<h3 class="lead"><%=t("integrations.dynamicscrm.form.dynamicscrm_settings")%></h3>
 
-  <%= form_tag("/integrations/dynamics_crm/settings_update", :method=> "post")  do %>
+  <%= form_tag("/integrations/dynamicscrm/settings_update", :method=> "post")  do %>
    <% default_fields = ["Name", "Position", "Company"]%>
    <% crm_instance_types = Integrations::Constants::CRM_INSTANCE_TYPES %>
     <ul class="ui-form">
@@ -118,7 +118,7 @@
       </li>
     </ul>
     <div class="button-container">
-      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn pull-left" %>
       <%= submit_tag t('update'), :class => "btn btn-primary" %>
     </div>
 

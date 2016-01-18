@@ -155,6 +155,68 @@ RSpec.describe Helpdesk::ConversationsController do
       topic.last_post.body.strip.should be_eql(body)
     end
 
+    it "should add a post to forum topic with attachment" do
+      test_ticket = create_ticket({:status => 2 })
+      category = create_test_category
+      forum = create_test_forum(category)
+      topic = create_test_topic(forum)
+      create_ticket_topic_mapping(topic,test_ticket)
+      now = (Time.now.to_f*1000).to_i
+      body = "ticket topic note #{now}"
+      post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                     :helpdesk_note => { :cc_emails => "", 
+                                         :note_body_attributes => {:body_html => "<div>#{body}</div>",
+                                                                   :full_text_html => "<div>#{body}</div>"},
+                                         :private => "0",
+                                         :source => "0",
+                                         :to_emails => "#{@agent.email}",
+                                         :from_email => "support@#{@account.full_domain}",
+                                         :bcc_emails => "",
+                                         :attachments => [{:resource => fixture_file_upload('/files/attachment.txt', 'plain/text', :binary), 
+                                          :description => Faker::Lorem.characters(10)}]
+                                        },
+                     :ticket_status => "",
+                     :ticket_id => test_ticket.display_id,
+                     :since_id => "-1",
+                     :post_forums => "1",
+                     :showing => "notes"
+                   } 
+      topic.reload
+      topic.last_post.body.strip.should be_eql(body)
+      topic.last_post.attachments.should_not eql []
+    end
+
+    it "should add a post to forum topic with cloud file attachment" do
+      test_ticket = create_ticket({:status => 2 })
+      category = create_test_category
+      forum = create_test_forum(category)
+      topic = create_test_topic(forum)
+      create_ticket_topic_mapping(topic,test_ticket)
+      now = (Time.now.to_f*1000).to_i
+      body = "ticket topic note #{now}"
+      post :reply , { :reply_email => { :id => "support@#{@account.full_domain}"},
+                     :helpdesk_note => { :cc_emails => "", 
+                                         :note_body_attributes => {:body_html => "<div>#{body}</div>",
+                                                                   :full_text_html => "<div>#{body}</div>"},
+                                         :private => "0",
+                                         :source => "0",
+                                         :to_emails => "#{@agent.email}",
+                                         :from_email => "support@#{@account.full_domain}",
+                                         :bcc_emails => ""
+                                        },
+                     :cloud_file_attachments => [{:link => "https://www.dropbox.com/s/7d3z51nidxe358m/Getting%20Started.pdf?dl=0",
+                                    :name => "Getting Started.pdf",:provider => "dropbox"}.to_json],
+                     :ticket_status => "",
+                     :ticket_id => test_ticket.display_id,
+                     :since_id => "-1",
+                     :post_forums => "1",
+                     :showing => "notes"
+                   } 
+      topic.reload
+      topic.last_post.body.strip.should be_eql(body)
+      topic.last_post.cloud_files.should_not eql []
+    end
+
     # Keep this last as ticket_cc is being changed
     it "should add a reply and alter reply_cc" do
       @test_ticket.cc_email = { :cc_emails => ["superman@justiceleague.com"], :fwd_emails => [], :reply_cc => ["superman@justiceleague.com"] }

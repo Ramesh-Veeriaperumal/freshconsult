@@ -3,6 +3,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   extend ParserUtil
   include Helpdesk::NotifierFormattingMethods
+
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   layout "email_font"
 
@@ -136,6 +139,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     end
   end
 
+  def message_key(account_id, message_id)
+    EMAIL_TICKET_ID % {:account_id => account_id, :message_id => message_id}
+  end
+
   def email_notification(params)
     ActionMailer::Base.set_mailbox params[:ticket].reply_email_config.smtp_mailbox
 
@@ -147,21 +154,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     private_tag = params[:private_comment] ? "private-" : ""
 
-    headers = {
-      :subject                   => params[:subject],
-      :to                        => receips,
-      :from                      => from_email,
-      :bcc                       => bcc_email,
-      "Reply-To"                 => "#{from_email}",
-      "Message-ID"               => "<#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com>",
-      "Auto-Submitted"           => "auto-generated",
-      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply",
-      "References"               => generate_email_references(params[:ticket]),
-      "In-Reply-To"              => in_reply_to(params[:ticket]),
-      :sent_on                   => Time.now
-    }
+    #Store message ID in Redis for new ticket notifications to improve threading
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@#{private_tag}notification.freshdesk.com"
 
-
+    headers = email_headers(params[:ticket], message_id, true, private_tag.present?).merge({
+      :subject    =>  params[:subject],
+      :to         =>  receips,
+      :from       =>  from_email,
+      :bcc        =>  bcc_email,
+      "Reply-To"  =>  "#{from_email}"
+    })
 
     inline_attachments   = []
     @ticket              = params[:ticket]
@@ -173,7 +175,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       @survey_feedback_preview = false
     end
 
-    if params[:ticket].account.features?(:custom_survey)
+    if params[:ticket].account.new_survey_enabled?
       @survey_handle = CustomSurvey::SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type], params[:survey_id], @survey_feedback_preview)
     else
       @survey_handle = SurveyHandle.create_handle_for_notification(params[:ticket], params[:notification_type])
@@ -200,6 +202,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       part.text { render "email_notification.text.plain" }
       part.html { render "email_notification.text.html" }
     end.deliver
+
+    if params[:notification_type] == EmailNotification::NEW_TICKET and params[:ticket].source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+      set_others_redis_key(message_key(params[:ticket].account_id, message_id),
+                           "#{params[:ticket].display_id}:#{message_id}",
+                           86400*7) unless message_id.nil?
+      update_ticket_header_info(params[:ticket].id, message_id)
+    end
   end
 
   def reply(ticket, note , options={})
@@ -212,16 +221,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     return if from_email.empty? || to_emails.empty?
 
     options = {} unless options.is_a?(Hash) 
-    headers = {
-      :subject                       => formatted_subject(ticket),
-      :to                            => to_emails,
-      :bcc                           => bcc_emails,
-      :from                          => from_email,
-      :sent_on                       => Time.now,
-      "Reply-To"                     => "#{from_email}", 
-      "References"                   => generate_email_references(ticket),
-      "In-Reply-To"                  => in_reply_to(ticket)
-    }
+    headers = email_headers(ticket, nil, false).merge({
+      :subject    =>  formatted_subject(ticket),
+      :to         =>  to_emails,
+      :bcc        =>  bcc_emails,
+      :from       =>  from_email,
+      "Reply-To"  =>  "#{from_email}"
+    })
 
     headers[:cc] = validate_emails(note.cc_emails, note) unless options[:include_cc].blank?
 
@@ -236,7 +242,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     @ticket = ticket
     @account = note.account    
 
-    if ticket.account.features?(:custom_survey)
+    if ticket.account.new_survey_enabled?
        @survey_handle = CustomSurvey::SurveyHandle.create_handle(ticket, note, options[:send_survey])
     else
        @survey_handle = SurveyHandle.create_handle(ticket, note, options[:send_survey])
@@ -268,17 +274,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
     
-    headers = {
-      :subject                                => fwd_formatted_subject(ticket),
-      :to                                     => to_emails,
-      :cc                                     => cc_emails,
-      :bcc                                    => bcc_emails,
-      :from                                   => from_email,
-      :sent_on                                => Time.now,
-      "Reply-To"                              => "#{from_email}", 
-      "References"                            => generate_email_references(ticket),
-      "In-Reply-To"                           => in_reply_to(ticket)
-    }
+    headers = email_headers(ticket, nil, false).merge({
+      :subject    =>  fwd_formatted_subject(ticket),
+      :to         =>  to_emails,
+      :cc         =>  cc_emails,
+      :bcc        =>  bcc_emails,
+      :from       =>  from_email,
+      "Reply-To"  =>  "#{from_email}"
+    })
 
     inline_attachments = []
     @ticket = ticket
@@ -314,17 +317,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
     
-    headers = {
-      :subject                                => formatted_subject(ticket),
-      :to                                     => to_emails,
-      :cc                                     => cc_emails,
-      :bcc                                    => bcc_emails,
-      :from                                   => from_email,
-      :sent_on                                => Time.now,
-      "Reply-To"                              => "#{from_email}", 
-      "References"                            => generate_email_references(ticket),
-      "In-Reply-To"                           => in_reply_to(ticket)
-    }
+    headers = email_headers(ticket, nil, false).merge({
+      :subject    =>  formatted_subject(ticket),
+      :to         =>  to_emails,
+      :cc         =>  cc_emails,
+      :bcc        =>  bcc_emails,
+      :from       =>  from_email,
+      "Reply-To"  =>  "#{from_email}"
+    })
 
     inline_attachments = []
     @ticket = ticket
@@ -352,18 +352,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def email_to_requester(ticket, content, sub=nil)
     ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
-    
-    headers   = {
-      :subject                      => (sub.blank? ? formatted_subject(ticket) : sub),
-      :to                           => ticket.from_email,
-      :from                         => ticket.friendly_reply_email,
-      :sent_on                      => Time.now,
-      "Reply-To"                    => "#{ticket.friendly_reply_email}", 
-      "Auto-Submitted"              => "auto-replied", 
-      "X-Auto-Response-Suppress"    => "DR, RN, OOF, AutoReply", 
-      "References"                  => generate_email_references(ticket),
-      "In-Reply-To"                 => in_reply_to(ticket)
-    }
+
+    headers   = email_headers(ticket, nil).merge({
+      :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
+      :to         =>  ticket.from_email,
+      :from       =>  ticket.friendly_reply_email,
+      :sent_on    =>  Time.now,
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+    })
+
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
@@ -383,18 +380,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def internal_email(ticket, receips, content, sub=nil)
     ActionMailer::Base.set_mailbox ticket.reply_email_config.smtp_mailbox
-    
-    headers     =  {
-      :subject                        => (sub.blank? ? formatted_subject(ticket) : sub),
-      :to                             => receips,
-      :from                           => ticket.friendly_reply_email,
-      :sent_on                        => Time.now,
-      "Reply-To"                      => "#{ticket.friendly_reply_email}", 
-      "Auto-Submitted"                => "auto-generated", 
-      "X-Auto-Response-Suppress"      => "DR, RN, OOF, AutoReply", 
-      "References"                    => generate_email_references(ticket),
-      "In-Reply-To"                   => in_reply_to(ticket)
-    }
+
+    headers = email_headers(ticket, nil).merge({
+      :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
+      :to         =>  receips,
+      :from       =>  ticket.friendly_reply_email,
+      :sent_on    =>  Time.now,
+      "Reply-To"  =>  "#{ticket.friendly_reply_email}"
+    })
+
     inline_attachments = []
     @body = Helpdesk::HTMLSanitizer.plain(content)
     @body_html = generate_body_html(content)
@@ -427,17 +421,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc_emails = validate_emails(ticket.cc_email[:cc_emails], ticket)
     bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
 
-    headers = {
-      :subject                   => ticket.subject,
-      :to                        => to_email,
-      :from                      => from_email,
-      :cc                        => cc_emails,
-      :bcc                       => bcc_emails,
-      "Reply-To"                 => from_email, 
-      "References"               => generate_email_references(ticket),
-      "In-Reply-To"              => in_reply_to(ticket),
-      :sent_on                   => Time.now
-    }
+    #Store message ID in Redis for outbound email to improve threading
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@outbound-email.freshdesk.com"
+
+    headers = email_headers(ticket, message_id, false).merge({
+      :subject    =>  ticket.subject,
+      :to         =>  to_email,
+      :from       =>  from_email,
+      :cc         =>  cc_emails,
+      :bcc        =>  bcc_emails,
+      "Reply-To"  =>  from_email
+    })
 
     inline_attachments   = []
     @account = ticket.account
@@ -461,11 +455,66 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       part.text { render "notify_outbound_email.text.plain" }
       part.html { render "notify_outbound_email.text.html" }
     end.deliver
+
+    set_others_redis_key(message_key(ticket.account_id, message_id),
+                         "#{ticket.display_id}:#{message_id}",
+                         86400*7) unless message_id.nil?
+    update_ticket_header_info(ticket.id, message_id)
   end
 
   private
     def account_bcc_email(ticket)
       ticket.account.bcc_email unless ticket.account.bcc_email.blank?
+    end
+
+    def update_ticket_header_info(ticket_id, ticket_message_id)
+      ticket = Account.current.tickets.find_by_id(ticket_id) if ticket_id and Account.current
+      if ticket and ticket_message_id.present?
+        header_info = (ticket.header_info || {})
+        #Update header info only if not present
+        if header_info[:message_ids].blank?
+          header_info[:message_ids] = [ticket_message_id]
+          ticket.header_info = header_info
+          ticket.save
+        end
+      end
+    end
+
+    def email_headers(ticket, message_id, auto_submitted=true, suppress_references=false)
+      #default message id
+      message_id = message_id || "#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com"
+
+      headers = {
+        "Message-ID"  =>  "<#{message_id}>",
+        :sent_on      =>  Time.now
+      }
+
+      if auto_submitted
+        headers.merge!({
+          "Auto-Submitted"            =>  "auto-generated",
+          "X-Auto-Response-Suppress"  =>  "DR, RN, OOF, AutoReply"
+        })
+      end
+
+      #Don't send empty headers
+      #Don't send 'references' header for private notification
+      if suppress_references
+        set_others_redis_key(message_key(ticket.account_id, message_id),
+                         "#{ticket.display_id}:#{message_id}",
+                         86400*7) unless message_id.nil?
+      else
+        references = generate_email_references(ticket)
+        headers["References"] = references unless references.blank?
+
+        reply_to = in_reply_to(ticket)
+        headers["In-Reply-To"] = reply_to unless reply_to.blank?
+      end
+
+      headers
+    end
+
+    def message_key(account_id, message_id)
+      EMAIL_TICKET_ID % {:account_id => account_id, :message_id => message_id}
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3

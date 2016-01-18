@@ -14,7 +14,6 @@
 
 ActiveRecord::Schema.define(:version => 20151221042435) do
 
-
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -314,6 +313,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.boolean  "deleted",                         :default => false
     t.string   "access_token"
     t.boolean  "progress",                        :default => false
+    t.integer  "owner_id"
   end
 
   add_index "archive_tickets", ["account_id", "access_token"], :name => "index_archive_tickets_on_account_id_and_access_token", :length => {"account_id"=>nil, "access_token"=>10}
@@ -1330,6 +1330,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.integer "forum_type"
     t.integer "import_id",         :limit => 8
     t.integer "forum_visibility"
+    t.boolean "convert_to_ticket"
   end
 
   add_index "forums", ["account_id", "forum_category_id", "position"], :name => "index_forums_on_account_id_and_forum_category_id_and_position"
@@ -1381,6 +1382,26 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   end
 
   add_index "freshfone_blacklist_numbers", ["account_id", "number"], :name => "index_freshfone_blacklist_numbers_on_account_id_and_number"
+
+  create_table "freshfone_call_metrics", :force => true do |t|
+    t.integer  "account_id",         :limit => 8
+    t.integer  "call_id",            :limit => 8
+    t.integer  "ivr_time",           :limit => 8
+    t.integer  "hold_duration",      :limit => 8, :default => 0
+    t.integer  "call_work_time",     :limit => 8, :default => 0
+    t.integer  "queue_wait_time",    :limit => 8
+    t.integer  "total_ringing_time", :limit => 8
+    t.integer  "talk_time",          :limit => 8
+    t.integer  "answering_speed",    :limit => 8
+    t.integer  "handle_time",        :limit => 8, :default => 0
+    t.datetime "ringing_at"
+    t.datetime "hangup_at"
+    t.datetime "answered_at"
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
+  end
+
+  add_index "freshfone_call_metrics", ["account_id", "call_id"], :name => "index_freshfone_call_metrics_on_account_id_and_call_id"
 
   create_table "freshfone_callers", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -2263,6 +2284,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
     t.string   "remote_user_id"
   end
 
+  add_index "integrations_user_credentials", ["account_id", "installed_application_id", "remote_user_id"], :name => "index_on_account_and_installed_app_and_remote_user_id", :unique => true
   add_index "integrations_user_credentials", ["account_id","installed_application_id","user_id"], :name => "index_on_account_and_installed_app_and_user_id", :unique => true
 
   create_table "mailbox_jobs", :force => true do |t|
@@ -3219,7 +3241,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   add_index "survey_remarks", ["account_id", "survey_result_id"], :name => "index_survey_remarks_on_account_id_and_survey_result_id"
   add_index "survey_remarks", ["account_id", "note_id"], :name => "index_survey_remarks_on_account_id_and_note_id"
 
-  create_table "survey_result_data", :force => true do |t|
+  create_table "survey_result_data", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                :null => false
     t.integer  "account_id",       :limit => 8, :default => 0, :null => false
     t.integer  "survey_id",        :limit => 8
@@ -3312,6 +3334,7 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
   add_index "survey_result_data", ["account_id", "survey_id"], :name => "index_survey_result_data_on_account_id_and_survey_id"
   add_index "survey_result_data", ["account_id", "survey_result_id"], :name => "index_survey_result_data_on_account_id_and_survey_result_id"
   add_index "survey_result_data", ["id"], :name => "index_survey_result_data_id"
+  execute "ALTER TABLE survey_result_data ADD PRIMARY KEY (account_id,id)"
 
   create_table "survey_results", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8, :null => false

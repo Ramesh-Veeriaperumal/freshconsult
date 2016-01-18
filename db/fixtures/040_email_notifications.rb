@@ -107,7 +107,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
       <br/><br/>Thanks, <br/>{{helpdesk_name}} <br/></p>',
     :requester_subject_template => '{{helpdesk_name}} Email Activation'
 },
-  {
+{
   :notification_type => EmailNotification::NOTIFY_COMMENT,
   :account_id => account.id, :requester_notification => false, :agent_notification => true,
   :agent_template => '<p>Hi , <br/><br/> {{comment.commenter.name}} added a note and wants you to have a look.</p><br> Ticket URL:<br> {{ticket.url}} <br><br> Subject: <br>{{ticket.subject}}<br><br> Requester: {{ticket.requester.name}} <br><br> Note Content: <br> {{comment.body}}',
@@ -124,12 +124,6 @@ EmailNotification.seed_many(:account_id, :notification_type, [
   :account_id => account.id, :requester_notification => true, :agent_notification => false,
   :requester_template => '<p>There is a new comment in the ticket submitted by {{ticket.requester.name}} to {{ticket.portal_name}}</p><br> Comment added by : {{comment.commenter.name}}<br><br>Comment Content: <br>{{comment.body}}',
   :requester_subject_template => 'New comment - [#{{ticket.id}}] {{ticket.subject}}'
-},
-{
-    :notification_type => EmailNotification::PREVIEW_EMAIL_VERIFICATION,
-    :account_id => account.id, :requester_notification => false, :agent_notification => true,
-    :agent_template => '<p>Hi agent,<br/><br/>This email is to give a preview of how customer satisfaction survey feedback is done.<br/><br/></p>',
-    :agent_subject_template => '{{ticket.subject}}'
 },
 {
     :notification_type => EmailNotification::RESPONSE_SLA_REMINDER, 

@@ -146,7 +146,8 @@ var FreshfoneEndCall;
 		});
 
 		$(document).on('hide', '#end_call', function (ev) {
-			self.resetDefaults();
+			if(self.inCall) { self.updateCallWorkTime(); }
+      self.resetDefaults();
 		});
 	};
 	
@@ -312,6 +313,15 @@ var FreshfoneEndCall;
 				}).done(function(data) {
 					self.$requesterName.select2("data",data.results[0]);
 				});
-		}
-	};
+		},
+    updateCallWorkTime: function() { 
+      var self = this;
+      if (this.callSid == "") { this.getParams(); }
+      $.ajax({
+        type: 'PUT',
+        url: '/freshfone/conference_call/acw',
+        data: { 'CallSid' : self.callSid }
+      });
+    } 
+  };
 }(jQuery));

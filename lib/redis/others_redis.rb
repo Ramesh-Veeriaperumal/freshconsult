@@ -83,4 +83,16 @@ module Redis::OthersRedis
 	def get_others_redis_hash(key)
 		newrelic_begin_rescue { $redis_others.hgetall(key) }
 	end
+  
+  def add_member_to_redis_set(key, member)
+    newrelic_begin_rescue { $redis_others.sadd(key, member) }
+  end
+
+  def remove_member_from_redis_set(key, member)
+    newrelic_begin_rescue { $redis_others.srem(key, member) }
+  end
+  
+  def get_all_members_in_a_redis_set(key)
+    newrelic_begin_rescue { $redis_others.smembers(key) }
+  end
 end

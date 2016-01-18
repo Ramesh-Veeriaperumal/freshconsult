@@ -16,7 +16,7 @@ class Portal < ActiveRecord::Base
   validates_inclusion_of :language, :in => Language.all_codes, :if => :language_changed?
   validate :validate_preferences
   before_update :backup_portal_changes , :if => :main_portal
-  after_commit :update_users_language, :update_solutions_language, on: :update, :if => :main_portal_language_changes?
+  after_commit :update_solutions_language, on: :update, :if => :main_portal_language_changes?
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
@@ -99,8 +99,12 @@ class Portal < ActiveRecord::Base
       account.solution_articles.articles_for_portal(self).visible.newest(10)
   end
 
-  def recent_portal_topics user
-    account.topics.topics_for_portal(self).published.visible(user).newest.limit(6)
+  def recent_portal_topics user, limit = 6
+    limit = 100 if limit.to_i > 100
+    account.
+      topics.topics_for_portal(self).
+      published.visible(user).newest.
+      preload(:user, :forum, :last_post => {:user => :avatar}).limit(limit)
   end
 
   def my_topics(user, per_page, page)
@@ -188,10 +192,6 @@ class Portal < ActiveRecord::Base
   
 
   private
-
-    def update_users_language
-      account.all_users.update_all(:language => account.language) unless account.features.multi_language?
-    end
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language

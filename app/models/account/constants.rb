@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 )
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 ) + FreshopsSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
@@ -60,7 +60,8 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
+      :features => [ :gamification, :auto_refresh, :twitter, :facebook, :forums, :surveys, 
+        :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -81,7 +82,8 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :custom_survey => false, :gamification_enable => true, :google_signin => true,
+    :anonymous_tickets =>true, :survey_links => true, :default_survey => false, :custom_survey => false, 
+    :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
     :personalized_email_replies => false, :cascade_dispatchr => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
@@ -95,7 +97,7 @@ class Account < ActiveRecord::Base
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
     :public_ticket_url => false, :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
     :limit_mobihelp_results => false, :ecommerce => false, :tokenize_emoji => false, 
-    :salesforce_sync => false, :round_robin_on_update => false }
+    :salesforce_sync => false, :round_robin_on_update => false, :freshfone_call_metrics => false }
 
 
   # This list below is for customer portal features list only to prevent from adding addition features

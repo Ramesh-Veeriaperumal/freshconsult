@@ -480,7 +480,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(in_reply_to)),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids)),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -689,6 +689,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
         unless sanitized_old_msg.blank?
           remove_identifier_span(sanitized_old_msg)
+          remove_survey_div(sanitized_old_msg) unless plain
           old_msg = sanitized_old_msg.inner_html
         end
       end
@@ -745,9 +746,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def cleansed_html
-      @cleaned_html_body ||= run_with_timeout(HtmlSanitizerTimeoutError) { 
-                               Helpdesk::HTMLSanitizer.clean params[:html]
-                             }
+      @cleaned_html_body ||= begin
+        cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
+           Helpdesk::HTMLSanitizer.clean params[:html]
+        }
+      end 
+    end
+
+    def remove_survey_div parsed_html
+      survey_div = parsed_html.css("div[title='freshdesk_satisfaction_survey']")
+      survey_div.remove unless survey_div.blank?
     end
 
     def text_to_html(body)

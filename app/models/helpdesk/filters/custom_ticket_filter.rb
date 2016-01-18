@@ -16,16 +16,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     { "condition" => "spam", "operator" => "is", "value" => input}
   end
 
+  def self.unresolved_condition
+    { "condition" => "status", "operator" => "is_in", "value" => 0}
+  end
+
   def on_hold_filter
     [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::onhold_statuses(Account.current)).join(',')},
       { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
   end
-  
-  def unresolved_filter
-    [{ "condition" => "status", "operator" => "is_in", "value" => (Helpdesk::TicketStatus::unresolved_statuses(Account.current)).join(',')},
-      { "condition" => "spam", "operator" => "is", "value" => false},{ "condition" => "deleted", "operator" => "is", "value" => false}]
-  end
-  
+
   def raised_by_me_filter
     [{ "condition" => "requester_id", "operator" => "is_in", "value" => [User.current.id]},
      { "condition" => "spam", "operator" => "is", "value" => false},
@@ -57,6 +56,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "monitored_by" => [{ "condition" => "helpdesk_subscriptions.user_id", "operator" => "is_in", "value" => "0"},spam_condition(false),deleted_condition(false)],
                       "new_and_my_open" => [{ "condition" => "status", "operator" => "is_in", "value" => OPEN},{ "condition" => "responder_id", "operator" => "is_in", "value" => "-1,0"},spam_condition(false),deleted_condition(false)],
                       "all_tickets" => [spam_condition(false),deleted_condition(false),created_in_last_month],
+                      "unresolved" => [unresolved_condition, spam_condition(false), deleted_condition(false)],
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
@@ -124,8 +124,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
      if "on_hold".eql?filter_name
        on_hold_filter
-     elsif "unresolved".eql?filter_name
-       unresolved_filter
      elsif "raised_by_me".eql?filter_name
        raised_by_me_filter
      elsif (from_api && "all_tickets".eql?(filter_name))
@@ -184,7 +182,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml"].include?(params[:format])) if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields], ["json", "xml","nmobile"].include?(params[:format])) if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|
@@ -213,7 +211,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def add_tag_filter(params)
-  add_condition("helpdesk_tags.id", :is_in, params[:tag_id]) unless params[:tag_id].blank?
+    add_condition("helpdesk_tags.id", :is_in, params[:tag_id]) unless params[:tag_id].blank?
   end
 
   def ticket_select
@@ -233,28 +231,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         condition_at(0)
         0.upto(size - 1) do |index|
           condition = condition_at(index)
-          if condition.key.to_s.include?("responder_id") or condition.key.to_s.include?("helpdesk_subscriptions.user_id") 
-            arr = condition.container.value.split(",")
-            if arr.include?("0")
-              arr.delete("0")
-              arr << User.current.id.to_s
-            end
-            condition.container.values[0] = arr.join(",")  
-          end
-          
-          if condition.key.to_s.include?("group_id")
-            if condition.container.value.include?("0")
-              group_ids = User.current.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
-              group_ids = ["-2"] if group_ids.empty?
-              garr = condition.container.value.split(",")
-              if garr.include?("0")
-                garr.delete("0")
-                garr << group_ids
-              end
-              condition.container.values[0] = garr.join(",")
-            end
-          end
-          
+
+          handle_special_values(condition)
+
           sql_condition = condition.container.sql_condition
           
           unless sql_condition
@@ -275,6 +254,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       all_sql_conditions
     end
   end
+
   def serialize_to_params(merge_params = {})
     params = {}
     params[:wf_type]        = self.class.name
@@ -287,7 +267,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     params[:data_hash] = self.query_hash
     params
-  
   end
 
   def sort_by_response? 
@@ -343,9 +322,9 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def statues_join
-    "INNER JOIN helpdesk_ticket_statuses ON 
+    " INNER JOIN helpdesk_ticket_statuses ON 
           helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
-          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id"
+          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id "
   end
 
   def schema_less_join
@@ -359,29 +338,28 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       INNER JOIN `helpdesk_tags` ON (`helpdesk_tags`.`id` = `helpdesk_tag_uses`.`tag_id`)  "
   end
 
- def monitor_ships_join
-   " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id  "
- end
- 
- def users_join
-   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id  and  users.account_id = helpdesk_tickets.account_id  "
- end
+  def monitor_ships_join
+   " INNER JOIN helpdesk_subscriptions ON helpdesk_subscriptions.ticket_id = helpdesk_tickets.id "
+  end
 
- def states_join
-  " INNER JOIN helpdesk_ticket_states on helpdesk_ticket_states.ticket_id = helpdesk_tickets.id 
+  def users_join
+   " INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id "
+  end
+
+  def states_join
+    " INNER JOIN helpdesk_ticket_states on helpdesk_ticket_states.ticket_id = helpdesk_tickets.id 
     AND helpdesk_ticket_states.account_id = helpdesk_tickets.account_id "
- end
- 
- def article_tickets_join
-  " INNER JOIN `article_tickets` ON `article_tickets`.`ticketable_id` = `helpdesk_tickets`.`id` 
-    AND `article_tickets`.`account_id` = `helpdesk_tickets`.`account_id` AND `article_tickets`.`ticketable_type` = 'Helpdesk::Ticket' "
- end
+  end
 
- def articles_join
-  "#{article_tickets_join} INNER JOIN `solution_articles` ON `solution_articles`.`id` = `article_tickets`.`article_id` 
-    AND `article_tickets`.`account_id` = `solution_articles`.`account_id` "
- end
-  
+  def article_tickets_join
+    " INNER JOIN `article_tickets` ON `article_tickets`.`ticketable_id` = `helpdesk_tickets`.`id` 
+    AND `article_tickets`.`account_id` = `helpdesk_tickets`.`account_id` AND `article_tickets`.`ticketable_type` = 'Helpdesk::Ticket' "
+  end
+
+  def articles_join
+    " #{article_tickets_join} INNER JOIN `solution_articles` ON `solution_articles`.`id` = `article_tickets`.`article_id` 
+      AND `article_tickets`.`account_id` = `solution_articles`.`account_id` "
+  end
   
   def joins
     ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and  flexifields.account_id = helpdesk_tickets.account_id "]
@@ -442,6 +420,41 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     return (" AND (helpdesk_tickets.account_id = #{account.id}) " << ticket.agent_permission_condition(user))   
   end
 
+  private
+
+  def handle_special_values(condition)
+    key = condition.key.to_s
+
+    type = case 
+    when key.include?("responder_id"), key.include?("helpdesk_subscriptions.user_id")
+      :user
+    when key.include?("group_id")
+      :group
+    when key.include?("status")
+      :status
+    end
+
+    if type
+      values = condition.container.value.split(",")
+      if values.include?("0")
+        values.delete("0")
+        values << convert_special_values(type)        
+      end
+      condition.container.values[0] = values.join(",")
+    end
+  end
+
+  def convert_special_values(type)
+    case type
+    when :user
+      User.current.id.to_s
+    when :group
+      ids = User.current.agent_groups.pluck(:group_id)
+      ids.blank? ? ["-2"] : ids
+    when :status
+      Helpdesk::TicketStatus::unresolved_statuses(Account.current)
+    end
+  end  
 
   class << self
     include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter

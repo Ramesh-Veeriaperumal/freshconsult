@@ -7,7 +7,7 @@ module TwilioMaster
 		:call => [:in_call, :status, :direct_dial_success, :call_transfer_success, :external_transfer_success],
 		:conference => [:wait, :incoming_agent_wait, :agent_wait, :outgoing_accepted, :connect_incoming_caller, :client_accept, :connect_agent],
 		:forward => [:initiate, :complete, :transfer_initiate, :transfer_wait, :transfer_complete, :direct_dial_wait, :direct_dial_accept, :direct_dial_connect, :direct_dial_complete],
-		:hold => [ :initiate, :wait, :unhold, :transfer_unhold, :transfer_fallback_unhold ],
+		:hold => [ :initiate, :wait, :unhold, :transfer_unhold, :transfer_fallback_unhold, :quit ],
 		:conference_call => [ :status, :in_call, :update_recording ],
 		:conference_transfer => [ :transfer_agent_wait, :transfer_source_redirect, :transfer_success ],
 		:call_transfer => [:transfer_incoming_call, :transfer_outgoing_call, :transfer_incoming_to_group, 

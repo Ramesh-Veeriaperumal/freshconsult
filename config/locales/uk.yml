@@ -137,11 +137,13 @@ uk:
     creditcard: "Введіть дійсний номер кредитної картки."
     equalTo: "Введіть те ж значення знову."
   confirm_delete_message: "Дійсно видалити %{human_name}?"
+  reload: Reload
   any: Будь-який
   or: або
   reorder_rules: "Змінити послідовність активних правил"
   plain_yes: Так
   plain_no: Ні
+  add_all: "Add all"
   unspam: "Не спам"
   unblock: "Білий список"
   enabled: Увімкнено
@@ -216,6 +218,10 @@ uk:
   trail_expiry_one_more_day: "Щоб не переривати роботу у Freshdesk, терміново оберіть платний або безкоштовний тарифний план."
   trail_expiry_after_trial: "Термін дії ознайомлюваної версії сплине <b>%{no_of_days}</b>. Щоб продовжувати користуватися Freshdesk, оберіть тарифний план."
   hard_pressed_for_time: "Виникли труднощі? Отримуйте поради, підказки та рекомендациї від експертів Freshdesk."
+  facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  reauthorize_facebook: "Reauthorize your facebook account."
+  twitter_reauth: "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
+  reauthorize_twitter: "Reauthorize your twitter handle."
   schedule_a_complimentary_session: "Заплануйте ознайомлюваний сеанс"
   choose_a_plan: "Оберіть тарифний план"
   upgrade_trial: "Придбайте повну версію!"
@@ -235,6 +241,7 @@ uk:
   security_code: "Код безпеки"
   example: приклад
   pending: Очікування
+  outbound_email: "Outbound Email"
   twitter_source: Twitter
   facebook_source: Facebook
   facebook_user: "Користувач Facebook"
@@ -280,6 +287,7 @@ uk:
   after_onemonth: "Через 1 місяць"
   add_more_lang: "Додати в службу підтримки додаткові мови."
   support_multi_languge: "Здійснюєте підтримку клієнтів на декількох мовах?"
+  many: many
   user:
     company: Компанія
     photo: Фото
@@ -319,16 +327,22 @@ uk:
     insert_field: "Drag & Drop поле"
     drag_drop_field_intro: "Щоб додати нове поле, що можна налаштувати, перетягніть поле будь-якого типу в форму \"%{name}\"."
     number: Кількість
+    empty_section_info: "Drop field here"
     text: "Однорядковий текст"
     paragraph: "Багатолінійний Текст"
     checkbox: Перемикач
     dropdown: Спливаючий
+    decimal: Decimal
     dropdown_blank: "Список, що розкривається"
     phone_number: "Телефонний Номер"
     url: URL
     date: Дата
+    delete: Delete
     regex: Regex
     email: Email
+    nested_field: "Dependent field"
+    drag_and_drop_field: "Drag & Drop Field"
+    default_field_error: "Default fields cannot be dropped into section"
   ticket_fields:
     fields:
       source: Джерело
@@ -345,9 +359,11 @@ uk:
       tags: Ознаки
     saving_ticket: "Збереження полів заявки..."
     untitled: "Без назви"
+    properties: Properties
     first_choice: "Перший варіант"
     second_choice: "Другий варіант"
     confirm_delete: "Дійсно видалити це поле?"
+    confirm_deletion: "This action will remove the field. You will lose permanently from the database, This action is undoable.. Are you sure you want to continue?"
     no_choice_message: "Повинен бути щонайменш один дійсний варіант вибору"
     index:
       number: Номер
@@ -359,26 +375,33 @@ uk:
       paragraph: "Текст абзацу"
       checkbox: Прапорець
       save: "Зберегти поля заявки"
+      save_ticket_fields: Save
       drag_drop_intro: "Щоб додати нове поле, що можна налаштувати, перетягніть поле будь-якого типу в форму \"Нова заявка\"."
       dropdown: "Список, що розкривається"
       nestedfield: "Залежне поле"
+      drag_and_drop_field: "Drag & Drop Field"
     formfield_props:
       form_title: "Властивості поля"
       behavior: Поведінка
       label: "мітка поля"
       nested_label: "Вкладені мітки полів"
+      level: Level
       level1: "Рівень 1"
       level2: "Рівень 2"
       level3: "Рівень 3"
       nestedfield_helptext: |-
           Використовуйте наведену нижче текстову область довільної форми, щоб додати або відредагувати елементи для списків, що розкриваються, натиснувши кнопку вкладки один або два рази. Ми перетворимо їх в елементи випадаючого списку на основі відступів, тож будьте уважними.
           <a target='_blank' href=%{learn_more}>Дізнатися більше</a>
+      nested_field_helptext: "Use the below textarea to add or edit items in your dropdown. Indent items by pressing the tab key once or twice. We will convert it to dropdown items based on the indentation. <a target='_blank' href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Learn more</a> "
       dropdown_items_edit: "Елементи списку, що розкривається - представлення редагування"
+      drop_down_items_edit: "Dropdown items - Edit"
       dropdown_items_preview: "Елементи списку, що розкривається - попередній перегляд"
       status_choices: "Варіанти вибору статуса"
       display_to_customer: "Відображати повідомлення для клієнта"
       sla_timer: "Таймер SLA"
+      section_type_change: "Please save the ticket form to see the latest changes that you have made to type field."
       nestedfield_helptext_preview: "Це \"Попередній перегляд\" зразків списку, що розкривається. Щоб відредагувати елементи, використовуйте текстову область довільної форми у вікні \"Представлення редагування\"."
+      nested_field_helptext_preview: "This is the preview of sample dropdown items. Click \"Edit\" to change the values for each drop down."
       delete_field: "Видалити поле"
       field_label_agents: "Мітка поля для агентів"
       field_label_customer: "Мітка поля для клієнтів"
@@ -401,6 +424,36 @@ uk:
       display_cc_field: "Показати поле копії"
       cc_company_contacts: "Можна відправити копію тільки на адресу компанії"
       cc_any_email: "Можна надіслати копію на будь-яку адресу електронної пошти"
+      field_delete_disabled: "You cant delete default fields"
+      default_field_delete_disabled: "Default fields cannot be deleted"
+      dropdown_choice_disabled: "Default choice cant be deleted"
+      nested_tree_validation: "You need atleast one category & sub-category"
+      nested_unique_names: "Agent label should not be same as other two levels"
+      nested_3rd_level: "Label required for 3rd level items"
+    section:
+      remove_type: "Section is associated with this type"
+      new_section: "New Section"
+      confirm_text: "Please Confirm..."
+      oops_btn: Oops!
+      move_keep_copy: "Copy field to target section"
+      delete_field_section: "Delete field from this section"
+      would_you_like_to: "Would you like to"
+      move_field_remove_section: "Move field to target section"
+      delete_permanent: "Delete field from all sections"
+      delete_from_section: "Are you sure you want to delete this field from this section?"
+      field_remove_all_section: "Moving the field outside will remove the field from all sections"
+      delete_section: "Are you sure you want to delete this section?"
+      section_has_fields: "Section has fields"
+      field_available: "The field already exists in target section."
+      section_delete_btn: "Delete Section"
+      ok_btn: OK
+      confirm_btn: Confirm
+      delete_btn: Delete
+      continue_btn: Continue
+      section_prop: "Section Properties"
+      sectino_label: "Section Title"
+      section_type_is: "Show section when type is"
+      section_name_unique: "Section name already used"
   folder:
     edit: "Редагувати папку"
     info1: "Дійсно видалити цю папку?"
@@ -448,15 +501,20 @@ uk:
   support:
     tickets:
       ticket_survey:
+        subject: "Test mail for survey - %{title}"
+        survey_preview_ticket_message: "This is a sample ticket created during preview of customer satisfaction survey"
         title: "Опитування клієнтів"
         rating_sub_title: "Ви оцінили нас"
         survey_title: "Приділіть хвилинку оцінці якості підтримки"
+        survey_question_title: "How well did our customer service representative answer your question or solve your problem?"
         feedback_title: "Опишіть якість підтримки (не обов'язково)"
         rated_on: "по %{rated_on}"
         change_of_mind: "Змінили думку?"
         rate_again: "Оцініть нас ще раз"
         submit: Відправити
         cancel: Відміна
+        back: Back
+        loading_feedback: "Loading Feedback"
     login:
       form:
         email: "Електронна пошта"
@@ -485,25 +543,25 @@ uk:
     surveys:
       thanks_for_feedback: "Ми отримали ваш відгук. Дуже дякуємо."
       feedback_already_done: "Ви вже залишили відгук за цим питанням."
+      handle_expired: "Your survey request link has been expired."
+      preview_feedback_error: "The url entered is invalid."
+      no_survey_result_error: "Invalid parameters to create feedback."
+      no_survey_active_error: "Survey is not enabled to create feedback."
+      feedback_not_given: "No comments"
       new:
         thanks_info: "Дякуємо за те, що знайшли час оцініти якість підтримки."
         feedback_info: "Ваш відгук дуже важливий для нас."
         feedback_optional: "Залишати відгук не обов'язково"
+        send: Відправити
         submit: Submit
-        happy: Awesome
-        neutral: "Just Okay"
-        unhappy: "Not Good"
-        additional_info: "Крім того, ви можете поділитися своїм робочим досвідом з нами."
-        customer_satisfaction: "Customer satisfaction rating"
-        rating: "Your Rating"
-      index:
-        thanks_info: "Thanks for taking time to rate our support experience."
-        thanks: "Thank you very much for rating us!"
-        sorry: "But, really sorry for the inconvenience."
-        happy_info: "It has been our pleasure to serve you. We are glad you are happy with our service."
-        neutral_info: "Wish you were a little more happy."
+        additional_comments: "Additional Comments"
+        thanks: "Дуже дякуємо, що оцінили нас!"
+        sorry: "Перепрошуємо за заподіяні незручності."
+        happy_info: "Нам було приємно обслуговувати вас. Ми ради, що ви задоволені нашим сервісом."
         neutral_information: "Wish you were a little more happy."
-        unhappy_info: "We will ensure that we will take extra care the next time around."
+        neutral_info: "Жаль, що ви не так раді."
+        unhappy_info: "Наступного разу ми обов'язково виявимо більше уваги."
+        additional_info: "Крім того, ви можете поділитися своїм робочим досвідом з нами."
   gamification:
     levels:
       beginner: Новачок
@@ -545,6 +603,7 @@ uk:
       love_trophie_info_group: "Група, що отримала в цьому місяці максимальну кількість балів за задоволення вимог клієнтів"
   quests:
     delete: "Дійсно видалити цей квест?"
+    survey_disabled_event: "Surveys are disabled. Events associated with survey might not work as expected."
     inactive_quests: "Неактивні квести"
     date: Дата
     satisfaction: "Рейтинг задоволеності клієнтів"
@@ -629,6 +688,7 @@ uk:
     help_image_alt:
       helpdesk_arcarde: "Helpdesk Arcade"
       import_csv_file_pattern: "Import CSV file pattern"
+    survey_modified: "The survey associated with the rule is modified.Please re-configure."
     social:
       helpcard:
         title1: "Додавання соціальних аккаунтів"
@@ -742,7 +802,9 @@ uk:
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
         field_label_agents: "Field label for agents"
+        field_label_agents_level2: "Level 2 label for agents"
         field_label_customer: "Field label for customers"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: "Add Item"
         customer_mandatory: "Required when submitting the form"
         customer_edit_signup: "Customer can see this when they Sign up"
@@ -798,7 +860,7 @@ uk:
         form_title: Властивості
         behavior: Поведінка
         label: Ярлик
-        nested_label: "Nested field labels"
+        nested_label: "Dependent field labels"
         level1: "Рівень 1"
         level2: "Рівень 2"
         level3: "Рівень 3"
@@ -810,8 +872,11 @@ uk:
         sla_timer: "SLA timer"
         nestedfield_helptext_preview: "This is the \"Preview\" of sample dropdown items, use the freeform textarea in \"Edit view\" to edit items"
         delete_field: "Delete field"
+        delete_section: "Delete Section"
         field_label_agents: "Field label for agents"
         field_label_customer: "Field label for customers"
+        field_label_agents_level2: "Level 2 label for agents"
+        field_label_customer_level2: "Level 2 label for customers"
         add_new_choice: "Add Item"
         customer_mandatory: "Required when submitting the form"
         customer_edit_signup: "Customer can see this when they Sign up"
@@ -837,7 +902,12 @@ uk:
         regexp_example_html: "For example, To match a string that contains only alphabets & numbers: <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word \"fresh\" <b> %{regex} </b>."
         max_choices: "Maximum items reached"
     portal:
-      index:
+      delete_confirm:
+        title: "Deleting this portal will remove"
+        info1: "All the settings in portal customization"
+        info2: "All the linked solution and forum categories"
+      settings:
+        title: "Customer Portals"
         portal_customizer_title: "Customer Portal Configuration"
         signup_login: "User Signup and Login"
         allow_signup: "Allow users to Sign Up from the customer portal"
@@ -847,16 +917,21 @@ uk:
         facebook: Facebook
         user_permissions: "User Permissions for portal"
         submit_ticket: "Who can submit a new ticket on portal"
+        portal_security: "Portal Security"
+        enable_public_urls: "Enable public ticket URL"
+        enable_public_urls_help: "Public ticket URL lets anybody see the ticket without logging in. If you disable it, users will not be able to access public ticket links in email replies and notifications."
         logged_in: "Logged in users"
-        everyone: Кожен
-        none: Ніхто
+        everyone: Everyone
+        none: "No one"
+        simple_none: None
         auto_suggest_solutions: "Auto suggest solutions while creating a new ticket"
         auto_suggest_solutions_help: "This also applies to the search feature inside feedback widget."
         captcha: "Enable CAPTCHA to help avoid spam"
+        forum_captcha: "Logged in users should enter CAPTCHA to create topic"
         view_solutions: "Who can view solutions"
         view_forums: "Who can view forums"
         notify_agents: "Send Moderation and Spam Notification to:"
-        forums: Форуми
+        forums: Forums
         enable: Enabled
         disable: Disabled
         moderation: "Moderate Forums"
@@ -867,6 +942,13 @@ uk:
         moderate_all_help: "Enable this feature if you want to be stringent on every post that gets created in your community."
         moderate_none: "Do not Moderate"
         moderate_none_help: "Enable this feature if you are sure that your community does not attract spammers."
+      helpnote:
+        title: "Setting up your portals"
+        tour: "Help me configure my portal"
+        info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
+        info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
+        info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
+        info4: "If you would like to set up user permissions and tweak forum moderation settings, click on the 'Settings' tab. Settings cannot be configured for each portal and will be common for all portals that have been created."
     mobihelp:
       app_review:
         request_sent: "App Review Request Sent"
@@ -903,6 +985,7 @@ uk:
           app_key: "App Key"
           app_secret: "App Secret"
           integration_details: "Integration Details"
+          saving: Saving...
         index:
           title: "Mobihelp Apps"
           new_app: "New App"
@@ -1001,6 +1084,7 @@ uk:
       points: Бали
       successfully_updated: "Налаштування успішно збережені."
       error_updated: "Помилка оновлення налаштувань ігрофікації."
+      survey_preview_error: "The current user is not an agent. Error while previewing the survey."
       help_text:
         why_game: "Бали та рівні."
         why_game_info1: "Бали призначаються агенту на підставі того, як швидко він вирішить призначені йому заявки. За рішення при першому зверненні і задоволених клієнтах призначаються бонусні бали. За затримку рішення заявок і за незадоволених клієнтів агенти втрачають бали."
@@ -1042,16 +1126,114 @@ uk:
         new_quest: "Новий квест"
         quest_title: Квести
     surveys:
+      successfully_created: "Customer Satisfaction settings has been successfully created."
       successfully_updated: "Налаштування задоволеності клієнтів успішно оновлені."
+      successfully_deleted: "Survey has been successfully deleted."
       error_updated: "Помилка при оновленні налаштувань опитування."
+      custom_helptext: |-
+          <p><b>Enabling Satisfaction Surveys</b> <br>
+          You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. Customers’ response can be seen in <b> Reports > Customer satisfaction report </b> <br><br> <b>Agent survey and follow-up surveys</b><br> You can ask one agent survey question and multiple follow-up survey questions. The agent survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with follow-up survey. The observer rules and gamification points will be based only on the agent survey rating.<br> <br><br> <b>Points scale</b><br> You can choose different point scales for the agent survey and follow-up survey. It could be<br> 2 point (Eg: Yes, No)<br> 3 point (Eg: Agree, Undecided, Disagree)<br> 5 point (Eg: Always to Never)<br> 7 point (Eg: Very Poor to Exceptional)<br><br>
+          Once a customer takes the survey, the scales will be locked down and they cannot be edited. </p>
       helptext: |-
           <p><b>Навіщо використовувати опитування задоволеності?</b><br>
           Опитування задоволеності дозволяють додавати посилання у ваші електронні листи з відповідями і таким чином напряму отримувати відгуки клієнтів. <br><br><b> Створення опитування задоволеності клієнтів. </b><br> Нижченаведені кроки допоможуть вам отримувати відгуки від клієнтів за допомогою посилання в елекронних листах з відповідями. <br> 1. Встановіть прапорець опитування задоволеності клієнтів. <br> 2. Задайте текст посилання на опитування задоволеності. За замовчуванням використовується текст "Поділіться своїми враженнями про якість нашої підтримки". <br><br><b> Виберіть всі електронні листи, в яких міститиметься посилання на опитування задоволеності клієнтів. </b><br> Можна віправляти посилання на опитування задоволеності у всіх електронних листах або тільки в останньому листі після вирішення заявки. <br><br>Додаткову інформацію про опитування задоволеності клієнтів див. на нашій сторінці рішень.</p>
+      limit_exceed_error: "You can only add upto %{count} surveys."
+      custom_helptext_v2: |-
+          <p><b>Enabling Satisfaction Survey</b> <br>
+          You can add a satisfaction survey in the agent ticket replies to find out how happy customers are with the support/company/product. You can choose to send surveys with all emails or only when an issue is ‘closed’ or ‘resolved’. Customers’ response can be seen in <b> Reports > Customer Satisfaction Report </b> <br><br> <b>Satisfaction Survey</b><br> You can ask one customer satisfaction survey question and additional survey questions. The customer satisfaction survey is shown inside the email, and when customers choose a survey option, they will be taken to a page with the additional survey questions. The observer rules and gamification points will be based only on the customer satisfaction survey.<br> <br><br> <b>Point scales</b><br> You can choose different point scales for the customer satisfaction survey and additional survey questions. It could be<br> 2 point (Eg: Yes, No)<br> 3 point (Eg: Agree, Undecided, Disagree)<br> 5 point (Eg: Always to Never)<br> 7 point (Eg: Very Poor to Exceptional)<br><br>
+          Once a customer takes the survey, the scales will be locked down and they cannot be edited. </p>
+      questions:
+        limit_exceed_error: "You can only add upto %{count} questions."
+      new_layout:
+        loading: Loading...
+        default_survey: "Default Survey"
+        title: Title
+        title_error_text: "Survey Name has already been taken"
+        result_exist_msg: "Since responses have already been collected for this survey, the point scale and no. of questions cannot be altered. However, you can edit the questions and answers."
+      new_rating:
+        content_text: "This Question helps access the overall satisfaction for the response provided by the agent. It appears below your signature at the bottom of the email sent to the customer. Scale cannot be changed once response has been collected for this question."
+        content_text_v2: "This question helps assess the overall satisfaction for the response provided by the agent. It appears below your signature at the bottom of the email sent to the customer."
+        survey_question: "Survey question"
+        survey_question_v2: "Survey Question"
+        error_text: "This field is required"
+        points_scale: "points scale"
+        point_scale_v2: "Point scale"
+        scale_text: "You have chosen"
+        scale: "point scale"
+      new_thanks:
+        survey_feedback: "Survey Feedback Page"
+        survey_feedback_v2: "Thank You Page"
+        thanks_feedback: "Thank you for your valuable feedback."
+        thanks_feedback_v2: "Thank you. Your feedback has been submitted."
+        additional_comments_feedback: "Collect additional feedback"
+        comments_feedback: "Add more details about customer experience."
+        thanks_message_feedback: "Thank you message for Feedback survey"
+        thanks_message_feedback_v2: "Thank you message for Additional Questions"
+        default_question_text: "Are you satisfied with our customer support experience?"
+        thanks_label: "Message will appear after submitting the feedback survey"
+        thanks_label_v2: "Message will appear after submitting feedback for additional questions."
+        feedback_response_text: "Thank you. Your feedback has been sent."
+        help_text: "Follow-up survey appears in a new page after the customer takes the agent survey. Questions can be about product/company/agent."
+        help_text_v2: "Additional survey questions appear in a new page after the customer takes the satisfaction survey. Questions can be about product/company/agent."
+      new_questions_layout:
+        title_text: "Select the points scale for your questions"
+        title_text_v2: "Select the point scale for your questions"
+        add_question: "Add Question"
+        questions: Questions
       index:
+        custom_title: Surveys
         title: "Налаштування задоволеності клієнтів"
+        new_survey: "New Survey"
+        load_text: "Loading survey list..."
+        editing_survey: "Editing survey"
+        deleting_survey: "Deleting survey"
+        saving_survey: "Saving survey"
+        enabling_survey: "Enabling survey"
+        disabling_survey: "Disabling survey"
+        feedback_survey_begin: "Sending survey feedback to your email id"
+        feedback_survey_end: "Survey feedback is sent to your email id"
+        survey_feedback: "Submitting Feedback..."
+        portal_msg: "Redirecting to ticket page"
+        update: update
+        new: New
+        edit: Edit
+        cancel: Cancel
+        hide: Remove
+        preview: Test
+        enabled: Enabled
+        disabled: Disabled
+        save_survey: Save
+        default_survey: "Default Survey"
+        delete_survey: "Delete Survey"
+        delete_msg: "Are you sure you want to delete this survey?"
+        survey_help_msg: "Selecting a rating above will link off to the page below"
+        survey_help_msg_v2: "When a satisfaction rating is selected, a thank you page is shown."
+        ? "true"
+        : true
+        ? "false"
+        : false
+      choice_contents:
+        strongly_disagree: "Strongly Disagree"
+        some_what_disagree: "Some What Disagree"
+        disagree: Disagree
+        neutral: Neutral
+        agree: Agree
+        some_what_agree: "Some What Agree"
+        strongly_agree: "Strongly Agree"
+      thanks_contents:
+        title_text: "Thank you message for Customer satisfaction rating"
+        title_text_v2: "Thank you message for Customer Satisfaction Survey."
+        message_text: "Thank you for your valuable feedback."
+        label_text: "Add a feedback survey"
+        label_text_v2: "Additional Survey Questions"
+        question_error_text: "Question has been already entered."
+        empty_text: "Question value cannot be blank."
       satisfaction_settings:
         enable_label: "Опитування задоволеності клієнтів"
+        enable_label_v2: "Customer Satisfaction Survey"
+        satisfaction_text: "I am satisfied with the service provided to me by"
         link_text_label: "Текст посилання на опитування задоволеності клієнтів"
+        link_text_input_label: "How would you rate your overall satisfaction for the resolution provided by the agent?"
         link_text_input: "Please tell us what you think of your support experience"
         link_text_info: "Цей текст відобразиться під вашим підписом внизу елекронного листа клієнту"
         send_while_option1: "Всі відповіді відправлені клієнту."
@@ -1230,7 +1412,8 @@ uk:
       clone_rule:
         title: "Supervisor - Clone Rule"
     observer_rules:
-      info_help: "Правила Observer дозволяють автоматично виконувати дії при виявленні певних умов в заявках."
+      info_help_1: "For any event performed in a ticket, the Observer rules let you trigger specific actions."
+      survey_disabled_rule: "Surveys are disabled. Rules associated with survey might not work as expected."
       index:
         human_name: "Правило Observer"
         title: "Observer — правила"
@@ -1391,7 +1574,9 @@ uk:
         heading1: "Декілька продуктів"
         content1: "З одного облікового запису Freshdesk можна здійснювати підтримку декількох продуктів на порталах різних торгівельних марок. Можна налаштувати адреси електронної пошти служби підтримки для кожного продукту і автоматично збудувати їх в чергу у відповідній групі."
         heading2: "Конфігурація окремого порталу для продуктів"
+        heading3: "Supporting Multiple Products"
         content2: "Під час конфігурації окремого порталу для кожного продукту можна надати унікальний набір статей бази знань і форумів для кожної торгової марки."
+        content3: "You can configure portals for these products ​by clicking on the Admin tab and then 'Portals​'​"
       new:
         title: "Новий продукт"
         saving: Збереження...
@@ -1402,15 +1587,18 @@ uk:
         select_solution_category: "Оберіть категорію рішень..."
         solution_categories_info: "You can associate multiple solution categories to this product. All other solutions will not be shown to the customers, when viewing the solutions tab in this product portal."
         forum_categories_info: "You can associate multiple forum categories to this product. All other forums will not be shown to the customers, when viewing the forums tab in this product portal."
-        portal_settings: "Налаштування портала"
+        settings: Settings
         portal_name_info: "Назва буде відображатися поряд із логотипом у верхній частині порталу продукта"
         portal_url: "URL портала"
         solution_categories: "Solution Categories"
         forum_categories: "Forum Categories"
         portal_name: "Назва портала"
         portal_language: "Мова портала"
+        default_portal_language: "Default Portal Language"
         portal_language_info: "Для клієнтів, що відвідуюсь ваш портал, ця мова буде встановлена за замовчуванням"
         portal_customization: "Налаштування порталу"
+        portal_settings: "Налаштування портала"
+        edit_portal: "Edit Portal"
         customize_portal: "Налаштувати портал"
         save_and_customize: "Зберегти та налаштувати портал."
         save_and_continue: "У вашій формі є незбережені зміни. Зберегти та продовжити?"
@@ -1419,9 +1607,15 @@ uk:
         last_published: "Ваш портал в останній раз публікувався"
         contact_us: "Зв'язатися з нами"
         logo_and_favicon: "Логотип та піктограма сайту"
+        customer_portal: "Customer Portal"
+        categories_visible: "Portal Categories"
+        product_label: "Product: %{product_name}"
       edit:
         title: "Редагувати продукт"
         updating: Оновлення...
+      footer:
+        edit_portal: "Save & Edit Portal"
+        enable_portal: "Save & Enable Portal"
       form:
         configure_seperate_portal: "Ввімкнути портал для клієнтів"
         enable_product_portal: "Ввімкнути портал продукта"
@@ -1439,6 +1633,8 @@ uk:
         edit_facebook_page: "Редагувати сторінку Facebook %{page_name}"
         customize_portal: "Налаштувати портал"
         enable_portal: "Увімкнути портал"
+        portal_disabled: "Portal disabled"
+        disable_portal: "Disable Portal"
         email_not_verified: "Не підтверждено"
         view_portal: "Перегляд порталу"
         delete: "Дійсно видалити цей продукт?"
@@ -1548,6 +1744,7 @@ uk:
         survey-settings: "Опитування задоволенності клієнтів"
         gamification-settings: Аркада
         rebranding: "Зміна оформлення порталу служби підтримки"
+        helpdesk-settings: Helpdesk
         account-settings: "Обліковий запис"
         helpdesk-productivity: "Helpdesk Productivity"
         canned-response: "Шаблонні відповіді"
@@ -1581,10 +1778,11 @@ uk:
         security: Безпека
         email_commands_setting: "Команди електронної пошти"
         billing: "Тарифні плани та оплата"
-        freshfone: Freshfone
+        phone-channel: Phone
         tags: Теги
         mobihelp: Mobihelp
         customer-portal: "Портал для клієнтів"
+        portals: Portals
       keywords:
         forum_moderation: "Forum Moderation"
         configure_support_email: "Configure support email"
@@ -1722,6 +1920,9 @@ uk:
       agents: Агенти
       all: Усі
       select_company: "Обрати компанії"
+    follower:
+      title: "Forum Followers"
+      description: "Agents added as followers receives email alerts when a new topic is posted"
   password_reset_email: "Електронний лист для скидання паролю"
   default_reply_template: "Шаблон відповіді агента"
   additional_email_verification: "Additional Email Verification"
@@ -1753,7 +1954,7 @@ uk:
         success: "Інтегрований сервіс успішно ввімкнено!"
         error: "Помилка ввімкнення інтегрованого сервісу."
         cti_error: "Multiple integrations of type CTI can not be enabled."
-        freshfone_enabled: "CTI integration can not be enabled along with freshfone"
+        freshfone_alert: "CTI integration cannot be enabled when your phone channel is enabled."
       update:
         success: "Інтегрований сервіс успішно оновлений!"
         error: "Помилка налаштування інтегрованого сервісу."
@@ -1776,25 +1977,40 @@ uk:
             post: "Thank you for posting. Your reply will appear in the topic after checking for spam."
           spam_check: "Thank you for starting a new topic. Your topic will appear in the forum after a standard moderation process."
           success: "Thank you for posting. Your reply will appear in the topic after a standard moderation process."
+          not_allowed: "Please select different forum. You are not allowed to post in this forum."
         posts:
           spam_check: "Thank you for posting in our forums. Your post will appear once it has been approved."
       tickets:
         create:
           success: "Вашу заявку створено. ЇЇ копія відправлена вам на електронну пошту."
+      create:
+        success: "Portal has been enabled for '%{product_name}'"
+        failure: "Portal could not be enabled"
+      update:
+        success: "Portal has been updated"
+        failure: "Portal could not be updated"
+      destroy:
+        success: "Portal of '%{product_name}' has been disabled"
+        failure: "Main portal can not be disabled"
+      not_found:
+        portal: "The portal could not be found. It might have been deleted or the URL mistyped."
+        product: "The product could not be found. It might have been deleted or the URL mistyped."
     g_app:
       user_deleted: "Користувача видалено!"
       authentication_failed: "Не вдалося виконтаи аутентифікацію"
       authentication_success: "Аутентификація успішно виконана"
       no_subdomain: "Такого субдомену не існує. Повторіть спробу."
       page_unavailable: "На жаль, ця сторінка тимчасово недоступна для вас. За додатковою інформацією зверніться до адміністратора."
+      domain_restriction: "Domain restriction in place. This email is not allowed."
     freshfone:
       credits:
-        success: "Кредити Freshfone приодбані успішно"
-        error: "Помилка придбання кредитів Freshfone"
+        successful_purchase: "Successfully purchased phone credits."
+        unsuccessful_purchase: "Error purchasing phone credits."
         invalid_recharge_amount: "Введіть дійсну суму поповнення"
       number:
-        success: "Номер успішно додано в ваш обліковий запис Freshfone"
-        error: "Помилка придбання номеру для вашого облікового запису Freshphone"
+        successful_purchase: "Successfully purchased phone number."
+        unsuccessful_purchase: "Error purchasing phone number."
+        invalide_address_error: "Unable to purchase number. Kindly make sure the address is a valid local address in %{country}."
         blank_message: "%{num_type} не може бути порожнім"
         invalid_message_length: "%{num_type} shouldn't exceed 4096 characters"
         add_blacklist_success: "Номер успішно заблоковано"
@@ -1894,6 +2110,7 @@ uk:
         stop: "Ви більше не працюєте з цією заявкою"
         start: "Тепер ви працюєте з цією заявкою"
       empty_trash:
+        delay_delete: "Please wait while we delete all tickets from your trash. This might take a few minutes."
         success: "Кошик очищено."
       delete_forever:
         success: "Видалено: %{tickets}."
@@ -1918,6 +2135,8 @@ uk:
       type:
         contact_fields_controller: "Contact Fields"
         company_fields_controller: "Company Fields"
+        surveys_controller: Surveys
+        custom_surveys_controller: Surveys
       success: "%{type} have been successfully updated."
       delete:
         failure: "deletion failed."
@@ -1996,6 +2215,7 @@ uk:
       create:
         failure: "Не вдалося зберегти %{human_name}"
         success: "%{human_name} створений."
+        compose_email_success: "Your email has been sent and a new ticket has been created."
       update:
         success: "%{human_name} оновлений."
         failure: "Неможливо оновити %{human_name}."
@@ -2035,6 +2255,7 @@ uk:
     add_page: "Додати сторінку Facebook"
     deleted: "Сторінку Facebook %{facebook_page} видалено."
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
+    user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: "Ви не авторизувалися на Facebook"
     realtime: "<b>Додаток поетапного збору призупинено</b> із-за певних змін цього облікового запису Facebook <a href='%{realtime_url}' >Виконайте повторну авторизацію і увімкніть</a>"
   import_user_notification: "Із вкладки \"Клієнти\" можна відправити електронного листа активації для імпортованих контактів"
@@ -2089,6 +2310,7 @@ uk:
       group_change: "Групу агента змінено"
       group_change_none: "Групу агенту змінено"
       source_change: "Джерело заявки"
+      due_date_updated: "Due Date Updated"
     solutions:
       new_solution:
         short: "{{user_path}} створив(-ла) нове вирішення"
@@ -2169,6 +2391,9 @@ uk:
       new_ticket:
         short: "{{user_path}} відправив заявку"
         long: "{{user_path}} відправив нову заявку {{notable_path}}"
+      new_outbound:
+        short: "{{user_path}} created a ticket"
+        long: "{{user_path}} created a ticket {{notable_path}}"
       conversation:
         out_email:
           short: "{{user_path}} відправив {{reply_path}}"
@@ -2250,6 +2475,10 @@ uk:
         short: "{{user_path}} оновив джерело до {{source_name}}"
         without_user: "оновив(-ла) джерело до <strong>{{source_name}}</strong>"
         long: "{{user_path}} оновив джерело заявки {{notable_path}} до {{source_name}}"
+      due_date_updated:
+        short: "{{user_path}} updated due date to {{due_date_updated}}"
+        without_user: "updated due date to <strong>{{due_date_updated}}</strong>"
+        long: "{{user_path}} updated due date of {{notable_path}} to {{due_date_updated}}"
   credit_card_info: "Інформація про кредитну картку"
   zendesk_backup_info: "Оберіть файл резервної копії Zendesk, завантажений із Zendesk"
   backup_error_msg: "The file exceeds the prescribed limit of 50MB, please <a href='#' id='import_request'>contact support</a> to proceed with the import."
@@ -2279,8 +2508,12 @@ uk:
     helpcard:
       title: "Зміна оформлення порталу підтримки"
       tour: "Допомога в зміні оформлення служби підтримки"
+      tour1: "Help me setup my helpdesk"
+      setup: "Setting up your helpdesk"
       info1: "Можна повністю змінити зовнішній вигляд служби підтримки Freshdesk для клієнтів і агентів, які відвідують ваш портал підтримки. Зміните зовнішній вигляд і колірну схему служби підтримки: завантажите новий логотип і піктограму сайту, виберіть нове ім'я і фонові кольори."
       info2: "За бажанням можна забезпечити клієнтам і агентам служби підтримки доступ до порталу підтримки з власного домену. Можна змінити URL вашої служби підтримки з вашакомпанія.freshdesk.com на ваш домен, наприклад: підтримка.вашакомпанія.com."
+      info3: "All basic settings of your helpdesk can be customized here such as - language, time zone and colour schemes."
+      info4: "The 'Edit Portal' option will let you configure the portal for your product."
     cancel:
       cancel_account: "Анулювати обліковий запис Freshdesk"
       info_text: "Приділіть хвилинку, щоб повідомити нам причини вашого бажання анулювати обліковий запис. Можливо, ми все ще можемо допомогти..."
@@ -2412,6 +2645,7 @@ uk:
     shared: Shared
     personal: Personal
     no_scenario: "No Personal Scenarios <a href=%{link}>Create New</a>"
+    duplicate_title: "Duplicate scenario. Name already exists"
     visibility:
       groups: "Agents in group"
       all_agents: "All agents"
@@ -2442,6 +2676,7 @@ uk:
   feedbackwidget_btcustomize: "Налаштування кнопок"
   chatwidget_agentsonline: "Коли агенти онлайн"
   solution_category:
+    all: "All Categories"
     name: Назва
     new: "Нова категорія рішень"
     edit: "Редагувати категорію рішень"
@@ -2452,6 +2687,7 @@ uk:
     product_portal_visibility: "Visible in"
     select_solution_category: "Select a product portal..."
     solution_categories_portal_info: "This category will be visible in the main product portal along with the above selected product portals."
+    more_catogories: "See all Categories"
   forum_category:
     product_portal_visibility: "Visible in"
     select_product: "Select a product portal..."
@@ -2478,6 +2714,7 @@ uk:
     clone: "Dispatch’r - Clone Rule"
     new: "Диспетчер - Нове Правило"
     cascade_text: "Для кожної вхідної заявки виконувати"
+    info_help: "For each incoming ticket, execute first matching rule"
     cascade: "Усі відповідні правила"
     no_cascade: "перше відповідне правило"
     add_new_choice: "Додати новий варіант вибору"
@@ -2512,7 +2749,7 @@ uk:
     skip_notification_no: Ні
   header_logo: "Логотип у верхньому колонтитулі"
   feedback:
-    title: "Чи була ця выдповідь корисною?"
+    title: "Чи була ця відповідь корисною?"
     up_vote_thank_you_message: "Раді були допомогти. Дякуємо за відгук"
     upvote: Так
     downvote: Ні
@@ -2535,6 +2772,15 @@ uk:
       placeholder: "Пошук за усіма рішеннями"
     search:
       placeholder: "Пошук %{name}"
+    drafts:
+      empty: "There are no drafts here."
+      discard: Discard
+      publish: Publish
+    delete: Delete
+    edit: Edit
+    company:
+      add_existing: "Add to Existing"
+      replace_existing: "Replace Existing"
   auto_suggest_solutions:
     info: "<b>Чи знаєте ви? В нас уже може бути відповідь на ваше питання.</b><br/> Перевірте, чи підходить одна із них."
   requester_reopens: "Автор заявки знову відкрив її"
@@ -2576,6 +2822,12 @@ uk:
     open: "Знову відкрити цю тему"
     close: "Закрити тему"
     mark_as_spam: "Mark as Spam"
+    vote:
+      one: "1 person"
+      few: "%{count} people"
+      many: "%{count} people"
+      other: "%{count} people"
+    upvote_appended_text: "upvoted this"
     post: "Створити тему"
     add_comment: "Залишити коментар"
     update_comment: "Оновити коментар"
@@ -2643,6 +2895,9 @@ uk:
     spam_action: "Approve and Publish"
     replied_time: " replied, %{time_in_words} ago"
     visible_in: "Visible in"
+    follower:
+      title: "Topic Followers"
+      description: "Agents added as followers receives email alerts when a new reply is posted"
   activerecord:
     errors:
       models:
@@ -2701,8 +2956,19 @@ uk:
   save_reply: "Зберегти відповідь"
   forum_shared:
     follow_topic: "Слідкувати за цією темою"
+    followers:
+      one: "%{count} Follower"
+      few: "%{count} Followers"
+      many: "%{count} Followers"
+      other: "%{count} Followers"
+    followers_title:
+      one: "1 person follows this Forum"
+      few: "%{count} people follow this Forum"
+      many: "%{count} people follow this Forum"
+      other: "%{count} people follow this Forum"
     edit_title: Редагувати
     topic_vote:
+      upvote: Upvote
       unlike: "Не подобається!"
       ideas:
         vote_button: "Мені подобається ця ідея"
@@ -2726,6 +2992,13 @@ uk:
         vote_info_include_2: "Ви і <a id='users - voted' href='#' title=\"Узнать, хто поставив це вопрос\"> ще %{vote} користувача(-ів)</a> поставили це питання"
         voted_users_widget_title: "Користувачі з цим питанням"
     post:
+      upvote: Upvote
+      voted_up_title: "people upvoted this post"
+      voted_up_message:
+        one: "person upvoted this post"
+        few: "people upvoted this post"
+        many: "people upvoted this post"
+        other: "people upvoted this post"
       posted_on: "%{user_name} в %{post_date}"
       edit_comment: "Редагувати коментар"
       unmark_answer: "Скасувати обране в якості відповіді"
@@ -2790,6 +3063,9 @@ uk:
     select_an_agent: "Обрати агентів"
     select_business_calendar: "Обрати робочі години"
     learn_more: "Дізнатись більше"
+    settings_saved: "Your setting is successfully saved."
+    disable_round_robin_info1: "Allow agents the ability to turn on/off automatic ticket assignment"
+    disable_round_robin_info2: "If disabled, agents will always be set as “available”. Admins can change the agent availability from the dashboard, if necessary."
     round_robin_desc: "Якщо увімкнути цю функцію, призначені цій групі заявки розподілятимуться між агентами по колу. Якщо ви бажаєте призначати заявки вручну або автоматично розподіляти їх за допомогою Dispatch''r або Supervisor, вимкніть цю функцію."
     assigntime:
       half: "30 хвилин"
@@ -2829,7 +3105,9 @@ uk:
     type: "Тип агенту"
     delete_agent: "Видалити агента"
     delete_agent_confirmation: "Видалений агент буде доступний в службі підтримки як контакт. Ви впевнені?"
+    convert_agent_confirmation: "Warning - Converting an agent to a contact will remove all agent information permanently. Are you sure you want to proceed?"
     agent_restored: "Агента відновлено"
+    convert_to_contact: "Convert To Contact"
     status:
       active: Активні
       deleted: Видалені
@@ -2954,6 +3232,7 @@ uk:
     edit_contact: "Редагувати контакт"
     edit: "Редагувати контакт"
     merged_into: "Contact merged to"
+    merged_info: "Contact merged to : "
     save_changes: "Зберегти зміни"
     save: Зберегти
     export_start: "Your Contact data will be sent to your email shortly!"
@@ -2999,10 +3278,10 @@ uk:
       enter_tags: "Enter Tags"
     conversations:
       title: Conversations
-      ticket_subject: "<a href='%{ticket_url}'>%{ticket_subject}</a>"
-      created_forum_title: "Created a topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      replied_forum_title: "Replied to topic <a href='%{topic_url}' class='bold-title'>%{topic_title}</a>"
-      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' class='muted'>%{forum_title}</a>"
+      ticket_subject: "<a href='%{ticket_url}' data-pjax='#body-container'>%{ticket_subject}</a>"
+      created_forum_title: "Created a topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      replied_forum_title: "Replied to topic <a href='%{topic_url}' data-pjax='#body-container' class='bold-title'>%{topic_title}</a>"
+      user_forum_timeinfo: "%{time} ago in <a href='%{forum_url}' data-pjax='#body-container' class='muted'>%{forum_title}</a>"
       user_ticket_timeinfo: " %{time} ago,  Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       company_ticket_timeinfo: "by %{user_name}, %{time} ago <span class='middot'> &middot; </span> Status: %{status} <span class='middot'> &middot; </span> Agent: %{agent_name}"
       contact_all: "Recent ticket and forum activities"
@@ -3011,6 +3290,7 @@ uk:
       no_conversations: "No Conversations"
       all: "All conversations"
       tickets: Tickets
+      recent_tickets: "Recent Tickets"
       forums: Forums
       contact_tickets: "Recent ticket activities"
       contact_forums: "Recent forum activities"
@@ -3031,6 +3311,7 @@ uk:
       verified: "Активні контакти"
       unverified: "Контакти з непідтвердженними адресами електронної пошти"
       deleted: "Видалені контакти"
+      blocked: "Blocked contacts"
       all: "Усі контакти"
     verified:
       no_contacts: "У вас немає контактів."
@@ -3041,12 +3322,19 @@ uk:
     unverified:
       no_contacts: "У вас немає непідвердженних контактів."
       no_contacts_with_letter: "Немає відповідних контактів, які починаються з літери «%{alphabet}»"
+    segment_api:
+      invalid_type: "Invalid operation. Check your type."
+      email_blank: "Email can't be blank"
   between: Між
   profile_settings: "Налаштування профілю"
   portal_key: Портал
+  portals_key: Portals
   add_new_forum: "додати новий форум"
   no_forum_category: "У цій категорії немає форумів"
   sla_policy:
+    assigned_agent:
+      text: "Assigned Agent"
+      description: "Ticket's agent"
     sla_rule: "<b>Важливо.</b> Час відповіді та рішення повинні знаходитись у діапазоні від <b>15 хвилин до 12 місяців</b>."
     human_name: "Політика SLA"
     sla_targets: "Цілі SLA"
@@ -3094,6 +3382,11 @@ uk:
     applicable_info: "Оберіть хоча б одну умову спрацювання."
     disabled_old_policy: "Для активації цієї політики SLA встановіть умову спрацювання."
     default_policy: "Політику SLA за замовчуванням вимкнути неможливо"
+    update_company_sla_api:
+      update_failed: "SLA policy update failed."
+      invalid_arguments_for_update: "Invalid arguments."
+      invalid_data_type: "Company ids should be a comma separated value."
+      default_policy_update: "Cannot update default SLA policy."
   left: Залишок
   subscription:
     error:
@@ -3137,7 +3430,7 @@ uk:
     reported: повідовив
     said: сказав
     solutions_home: "Головна сторінка рішень"
-    print_title: "Print this Article"
+    print_title: "Роздрукувати цю статтю"
     attach_file: "Додати <b>файл</b>"
     header:
       preview_message: "<b>Режим перегляду</b>- <a href='javascript:window.close()'>Натисніть тут</a>, щоб повернутися назад."
@@ -3174,6 +3467,8 @@ uk:
     my_topics: "Мої теми"
     showing_recently_popular_topics: "Відображення останніх популярних тем"
     topic_deleted: "Seems like this topic has been deleted. So you are not allowed to post."
+    topic_not_found: "Seems like this topic has been deleted"
+    post_not_found: "Seems like this post has been deleted"
     showing_my_topics: "Відображення тем, за якими ви слідкуєте"
     community_forums: "Форуми спільноти"
     knowledge_base: "База знань"
@@ -3186,7 +3481,7 @@ uk:
       see_all_articles: "Дивитись усі статті (%{count})"
       more_articles: "Більше статей у <span class='folder-name'>%{article_name}</span>"
       modified_on: "Змінено:"
-      related_articles: "Related Articles"
+      related_articles: "Статті по темі"
     folder:
       filler_text: "Тут будуть знаходитись статті, які стосуються %{folder_name}"
     topic:
@@ -3220,22 +3515,36 @@ uk:
         few: "Topics merged into this topic:"
         many: "Topics merged into this topic:"
         other: "Topics merged into this topic:"
-    topic_vote:
+      sort_heading: "Sorted by:"
+      sort_order:
+        date: "Oldest First"
+        recency: "Newest First"
+        popularity: Popular
+      sort_by_most_recent: "Most Recent"
+      sort_by_most_popular: "Most Popular"
+      sort_by_default: Default
+    vote:
       you:
-        one: Ви
-        few: "Ви (вам, у вас) і ще"
-        many: "Ви (вам, у вас) і ще"
-        other: "Ви (вам, у вас) і ще"
+        one: "You "
+        few: "You and "
+        many: "You and "
+        other: "You and "
       more:
-        one: "1 корист."
-        few: "%{count} корист."
-        many: "%{count} корист"
-        other: "%{count} корист"
+        one: "1 other "
+        few: "%{count} others "
+        many: "%{count} others "
+        other: "%{count} others "
       people:
-        one: "1 корист."
-        few: "%{count} корист."
-        many: "%{count} корист."
-        other: "%{count} корист."
+        one: "1 person "
+        few: "%{count} people "
+        many: "%{count} people "
+        other: "%{count} people "
+    topic_vote:
+      announce:
+        one: "likes this"
+        few: "like this"
+        many: "like this"
+        other: "like this"
       ideas:
         one: "подобається ця ідея"
         few: "подобається ця ідея"
@@ -3251,15 +3560,30 @@ uk:
         few: "виникло це питання"
         many: "виникло це питання"
         other: "виникло це питання"
+      votes: votes
+      upvote: up-vote
+      upvoted: up-voted
+      user_upvote_list_title: "People who up-voted"
+      announce_button: "Do you like this?"
       ideas_button: "Вам подобається ця ідея?"
       problem_button: "У вас виникла подібна проблема?"
       howto_button: "У вас виникло це запитання?"
+      announce_unlike_button: unlike!
       ideas_unlike_button: "не подобається!"
       problem_unlike_button: "У мене немає такої проблеми!"
       howto_unlike_button: "Мене не цікавить це питання!"
+      announce_users_voted_title: "People who like this"
       ideas_users_voted_title: "Користувачі, яким подобається ця ідея"
       problem_users_voted_title: "Користувачі с цією проблемою"
       howto_users_voted_title: "Користувачі з цим питанням"
+    post_vote:
+      upvoted: "You have upvoted"
+      upvote: Upvote
+      like:
+        one: "likes this"
+        few: "like this"
+        many: "like this"
+        other: "like this"
     tickets:
       merged_topic_note: "Merged topic cannot be converted into a ticket."
       export: "Експортувати заявки"
@@ -3287,13 +3611,105 @@ uk:
   urgent: Терміново
   import_groups: Групи
   solution:
+    ? "true"
+    : "on"
+    orphan_category_info: "This category is not associated with any portal"
+    sidebar:
+      orphan: "Orphan Categories"
+      orphan_desc: "These categories are not associated in any portal"
+      view_all: "View all"
+      view_less: "View less"
+      drafts:
+        title: Drafts
+        me: "My Drafts"
+        all: "All Drafts"
+        details: "Edited by %{name}, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+      feedbacks:
+        title: "Article Feedback"
+        me: "Your Feedback"
+        all: "All Feedback"
+        details: "%{name}'s feedback, <abbr data-livestamp=%{time}>%{time_string}</abbr>"
+        status: "Status : %{status}"
+    anonymous_votes: "Anonymous (%{count})"
+    home: "Solutions Home"
+    add_category: "New Category"
+    orphan: Orphan
+    add_folder: "New Folder"
+    add_article: "New Article"
+    view_feedback: "View all feedback"
+    change_author: "Change Author"
+    move_to: "Move to"
+    details: "By %{user_name}, <abbr data-livestamp=%{created_time}>%{time_ago}</abbr>"
+    flash:
+      folders_move_to: "Folders have been moved to the selected category \"<b>%{category_name}</b>\" %{undo}"
+      articles_move_to: "Articles have been moved to the selected folder \"<b>%{folder_name}</b>\" %{undo}"
+      articles_changed_author: "Author has been succesfully changed"
+    general:
+      created_by: "Created by"
+      last_published: "Last Published by"
+      article_prop: "Article Properties"
+      feedback: Feedback
+      analytics: Analytics
+      unsaved_content: "You have unsaved content in this page."
+      leave_page_que: "Do you want to leave this page?"
+      something_wrong: "Something went wrong!"
     folders:
+      view_all: "View all folders..."
+      choose_folder: "Choose folder"
+      choose_folder_warning: "Please select a folder for saving the article"
       new:
         new_folder: "Додати папку"
       folder_form:
         category: Category
         visible_to: Видно
+      visibility:
+        no_companies: "You haven't selected any valid companies."
+        success: "Successfully changed the visibility."
+        failure: "Could not change the visibility of the selected folders."
+        extra_companies:
+          one: " and one more company."
+          few: " and %{count} more companies."
+          many: " and %{count} more companies."
+          other: " and %{count} more companies."
+      draft: "All emails sent to kbase@%{domain_name} will be stored here as drafts"
     articles:
+      search_all: "Search Articles"
+      search_in: "Search in %{search_scope}"
+      type: "Article Type"
+      prop_tabs:
+        tag_fol: "Tags & folders"
+        meta: Meta
+      draft:
+        show:
+          edit: Edit
+        show_page_msg: "Viewing draft edited by"
+        you: you
+        unpublish:
+          msg: "Unpublish the article from portal"
+          with_draft: "This will delete the published article permanently and retain the draft content under Drafts"
+          without_draft: "This will remove the published article from the portal and save the content under Draft"
+        save_error: "This article could not be saved."
+        portal_preview_msg: "You are previewing draft version of this article."
+        discard_msg: "The draft has been discarded."
+        discard_confirm: "Do you want to discard this draft?"
+        revert_msg: "Succesfully reverted changes done in draft."
+      tag_max_len: "Maximum key length"
+      locked: Locked
+      cant_publish: "can't be changed to published of an article in default folder/category"
+      draft_published_label: "There is also a published version."
+      unpublished_version: "You are viewing an unpublished version of the article."
+      att_deleted: "One attachment was deleted."
+      published_success: "This article was published succesfully.<a href= \"%{url}\" target = \"_blank\"> View on portal </a>"
+      published_failure: "This article could not be published."
+      view_draft: "Preview Draft"
+      restrict_edit: "%{name} is currently editing this article."
+      edit: "Edit Article"
+      properties: Properties
+      edit_properties: "Edit Properties"
+      prop_updated_msg: "The Article properties was updated succesfully."
+      save_and_publish: "Save and Publish"
+      save_as_draft: "Save as Draft"
+      publish: Publish
       where: Де
       search_articles: "Пошук статей"
       guides: "Інструкціі користувача"
@@ -3308,6 +3724,8 @@ uk:
       article_useful: "Рді були допомогти. Дякуємо за відгук."
       article_not_useful: "Дязкуємо за відгук. Ми поліпшимо цю статтю."
       error_message: "Помилка %{error_msg}"
+      votes: Votes
+      views: Views
       reset_rating:
         link: Reset
         dialog_title: "Reset likes and dislikes"
@@ -3315,6 +3733,23 @@ uk:
         resetting: Resetting
         dialog_msg: "Are you sure you want to reset article rating - likes and dislikes to zero?"
         count: "%{no_of_likes} likes and %{no_of_dislikes} dislikes will be reset to zero."
+        confirm_msg: "Are you sure you want to reset both '%{no_of_likes} Likes' and '%{no_of_dislikes} Dislikes' to zero?"
+    draft:
+      name: Drafts
+      all_drafts: "All Drafts"
+      my_drafts: "My Drafts"
+      kbase: "KBase Email"
+      portal:
+        all: All
+      autosave:
+        save_success: "Draft saved "
+        somebody_editing: "%{name} is currently editing this article. "
+        content_changed_other: "%{name} has updated the content while you were away. "
+        content_changed_you: "You have updated the content elsewhere. "
+        content_changed: "The content has changed. "
+        other_problem: "The content could not be saved. "
+    no_articles_info: "No articles in this folder"
+    you: You
     info9: "Загальнодоступне (буде опубліковано для самообслуговування)"
     edit: "Редагувати рішення"
     view_on_portal: "View on Portal"
@@ -3334,6 +3769,18 @@ uk:
     info7: "У цій категорії немає рішень"
     status: "Статус рішення"
     info8: "Дійсно видалити це рішення?"
+    info11: "<b>All</b> - This makes it publicly visible to anyone who accesses your self-service portal."
+    info12: "<b>Logged In Users</b> - This makes it visible only to those who have signed up and logged in with their credentials."
+    info13: "<b>Agents</b> - This makes it private, so only agents on your helpdesk can view them. This is useful for internal knowledge sharing."
+    info14: "<b>Select Companies</b> - This makes it viewable only to certain companies that you select from your contacts"
+    info15: "Articles can either be saved as a <b>draft</b> or directly <b>published</b>."
+    info16: "<b>Published</b> articles will be visible in the Self-Service Portal and also appear in search results. "
+    info17: "<b>Draft</b> articles are visible only to agents, and will appear only in search results for agents."
+    info18: "A published article can be edited and saved as draft which retains the published version on the portal while having an additional draft version for agents to edit. This is useful when you need to update articles, without taking them down from your portal."
+    info19: "Article type can be either <b>permanent</b> or <b>workaround</b>."
+    info20: "You can attach <b>tags</b> to your articles, which is useful for categorizing articles of a similar kind."
+    info21: "Agents can mail solution articles to <b>kbase@defaultportal.com</b> which will be shown under drafts section."
+    kbase_email_info: "Agents can mail solution articles to <b>kbase@%{domain_name}</b> which will be shown here under drafts section."
     folder: Папка
     solution_meta: "Метатеги для пошукових систем"
     solution_meta_title: "Тег заголовку"
@@ -3348,6 +3795,12 @@ uk:
     feedback_message_2: "Difficult to understand"
     feedback_message_3: "Inaccurate/irrelevant content"
     feedback_message_4: "Missing/broken link"
+    properties: Properties
+    solution_title: Title
+    via: via
+    article_properties:
+      title_counter_message: "Best SEO pages recommend 50-60 characters for title."
+      description_counter_message: "Best SEO pages recommend 150-160 characters for description."
   import_updated: Оновлено
   feedbackwidget_intro: "Налаштуйте ваш віджет Freshdesk нижче і скористайтеся попереднім переглядом в реальному часі."
   chatwidget_intro: "Налаштуйте ваш віджет Freshchat нижче і скористайтеся передпереглядом в реальному часі."
@@ -3462,6 +3915,8 @@ uk:
     welcome: "Ласкаво просимо"
     new_ticket: Нова
     new_ticket_tip: "Нова заявка"
+    new_phone_ticket: Ticket
+    compose_email: Email
     search: Пошук
     submit_a_ticket: "Відправити заявку"
     login: <b>Увійти</b>
@@ -3483,6 +3938,9 @@ uk:
       admin: Адміністратор
       checkstatus: "Перевірте статус заявки"
       solutions: Вирішення
+      new_solution: "New Solution"
+      new_folder: "New Folder"
+      new_solution_category: "New Category"
       forums: Форуми
       tickets: Заявки
       home: Головна
@@ -3627,7 +4085,7 @@ uk:
     inactive_info1: "Всі ваші електронні листи в службу підтримки досі не підтверджені. Підтвердіть хоча б одне з них."
     info14: "Всі електронні листи, відправлені на цю адресу електронної пошти, будуть перетворюватися в заявки"
     info4: "<strong>ПРИМІТКА.</strong> Якщо у вас є кілька адрес електронної пошти для підтримки декількох продуктів, <a href='{{products_path}}'> ви можете додати їх тут </a>."
-    spf_info: "Усі ваши листи дійдуть до адресата, але для більшої безпеки створіть <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"%{solution_url}\">запис в інфраструктурі політики відправників (SPF) </a> у файлі зони DNS, якщо використовуєте пошту в рамках власного домену. Це покращить якість доставки листів."
+    spf_info: "Усі ваши листи дійдуть до адресата, але для більшої безпеки створіть <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">запис в інфраструктурі політики відправників (SPF) </a> у файлі зони DNS, якщо використовуєте пошту в рамках власного домену. Це покращить якість доставки листів."
     reply_email: "Ваш електронний лист в службу підтримки"
     unverified_info1: "Активуйте цю адресу електронної пошти, перейшовши за посиланням підтверждення у теці \"Вхідні\" вашої пошти."
     inactive_info2: "До тих пір в якості адреси електронної пошти для відповідей буде використовуватися за замовчуванням \"%{default_email}\"."
@@ -3636,7 +4094,7 @@ uk:
       tour1: "Допомога в налаштуванні електронної пошти служби підтримки"
       tour2: "Допомога в налаштуванні декількох поштових скриньок"
       info5: "Your default support email address is <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\"> %{solution_url}</a>. Any email sent here gets automatically converted into a ticket that you can get working on."
-      info19: "Можна налаштувати обліковий запис Freshdesk таким чином, щоб використовувалася адреса електронної пошти на власному домені, наприклад підтримка@моякомпанія.com. Для цього встановіть переадресацію на <a class='break-all' target=\"_blank\" href=\"https://%{solution_url}\">%{solution_url}</a>"
+      info19: "Можна налаштувати обліковий запис Freshdesk таким чином, щоб використовувалася адреса електронної пошти на власному домені, наприклад підтримка@моякомпанія.com. Для цього встановіть переадресацію на <a class='break-all' target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>"
       edit_info: "Щоб створити нову скриньку електронної пошти служби підтримки, в загальних налаштуваннях електронної пошти натисніть «Редагувати»."
       info20: "Використання декількох поштових скриньок"
       info21: "Можна створювати необмежену кількість поштових скриньок служби підтримки (наприклад, інфо@вашакомпанія.com, продажі@вашакомпанія.com і т. д.). Крім того, в Freshdesk можна налаштувати автоматичне призначення електронних листів з кожного ящика певній групі."
@@ -3674,6 +4132,8 @@ uk:
     config_saved_message: "Ваші налаштування успішно збережені."
     reply_to_tickets: "Для створення контактів авторів заявок використовуйте адреси електронної пошти для відповідей."
     reply_to_tickets_info: "Примітка. Якщо ця функція відключена, контакти авторів заявок створюватимуться на основі адреси відправника."
+    disable_agent_forward: "For forwarded emails, use original sender as requester"
+    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Неможливо видалити основну адресу електронної пошти"
     using_custom_mailbox: "Використання власного почтового серверу"
   step2: "Крок 2"
@@ -3741,6 +4201,7 @@ uk:
     include_quoted_text: "Додавати попередні відповіді"
     more_details: Подробиці...
     reported: повідомив
+    outbound: emailed
     new_ticket: "Нова заявка"
     new_tickets: "Нові заявки"
     ticket_updated: "Заявку оновлено"
@@ -3750,6 +4211,7 @@ uk:
     reported_on: "відправник: %{username}, дата останнього оновлення: %{date}"
     scenarios: Сценарії
     ticket_from: "From: %{username}"
+    ticket_to: "To: %{username}"
     ticket_list_status_closed_at: "Відправник: %{username}, закрито: <span class='emphasize'>%{time_ago} тому </span>"
     ticket_list_status_resolved_at: "Відправник: %{username}, вирішено: <span class='emphasize'>%{time_ago} тому</span>"
     ticket_list_status_agent_responded_at: "Відправник: %{username}, агент відповів: <span class='emphasize'>%{time_ago} тому</span>"
@@ -3799,6 +4261,7 @@ uk:
     spam_btn_title: "Позначити як спам"
     assigned_to: "Назначено користувачу"
     assigned_agent: Агент
+    action: Action
     edit: "Редагувати заявку"
     ham_btn_title: "Це не спам"
     reported_from_source: "Звіт з допомогою %{source}"
@@ -3858,7 +4321,11 @@ uk:
     pick_up: Взяти
     unwatch: "Видалити зі списку перегляду"
     submit_ticket_title: "Надіслати заявку"
+    learn_more: "Learn more."
+    submit_ticket_new_title: "Create a new ticket"
     create_ticket_title: "Створити заявку"
+    compose_email_info: "The email will be sent to the customer and will be logged as a ticket without triggering any notifications."
+    submit_a_ticket_info: "The requester will receive an email notification that a new ticket has been created. It can be disabled in Admin > Email notifications."
     convert_ticket_title: "Перетворити у заявку"
     reply_form:
       post_to_linked_forum: "Запис на зв'заному форумі"
@@ -3968,6 +4435,8 @@ uk:
     non_monitor_flash: "Ви припинили слідкувати за %{type}"
     follow_title: Слідкувати
     unfollow_title: "Припинити слідкувати"
+    me: Me
+    pick_agents: "Add agents"
   forums:
     search_all:
       placeholder: "Шукати по всім темам"
@@ -3981,7 +4450,7 @@ uk:
   company:
     created: "Company was successfully created."
     updated: "Company was successfully updated."
-    created_view: "Company was successfully created. <a href=\"%{company_url}\"> View company. </a>"
+    created_view: "Company was successfully created. <a href=\"%{company_url}\" data-pjax=\"#body-container\"> View company. </a>"
     info9: "Freshdesk автоматично прив'яже контакти цієї компанії, якщо в ідентифікаторах адрес електронної пошти містяться ці домени"
     sla_policy_name: "Політика SLA"
     name: "Назва компанії"
@@ -4067,7 +4536,9 @@ uk:
     non_us: DAY-MONTH-YEAR
     us: MONTH-DAY-YEAR
     helpdesk_name: "Назва порталу/служби підтримки"
+    helpdesk_name_plain: "Helpdesk Name"
     rebrand: "Змініть оформлення для вашої служби підтримки"
+    helpdesk: Helpdesk
     helpdesk_url: "URL порталу/служби підтримки"
     language: Мова
     primary_language: "Основна мова"
@@ -4098,7 +4569,7 @@ uk:
     delete: "Дійсно видалити?"
     valid_time: "Введіть дійсний час"
     holiday_name: "Назва свята (вихідного дня)"
-    import_holiday: "Імпортувати вихідні дні"
+    holiday_calendar: "Holiday Calendar"
     title: "Робочі години"
     info1: "Призначення робочого часу у Freshdesk дозволить вам краще контролювати виконання умов SLA в службі підтримки і терміни відповідей на заявки. Наприклад, ваша служба підтримки працює з 9 ранку до 6 вечора з понеділка по п'ятницю, а клієнт створює заявку в 7 вечорів у вівторок. В цьому випадку таймери терміну виконання запустяться лише в середу в 9 ранку."
     info2: "Вихідні дні обробляються виходячи з тих же принципів, що і робочий час. Якщо ваша служба підтримки працює з 9 ранку до 6 вечора з понеділка по п'ятницю, а клієнт створює заявку середнього пріоритету, яку необхідно вирішити протягом 24 годин, в 8 вечорів п'ятниці, то термін виконання встановлюється як 9 ранку вівторка, а не о 8 вечора суботи."
@@ -4141,6 +4612,17 @@ uk:
   export_to_CSV: "Експорт в CSV-файл"
   back_to_reports: "← Назад до звітів"
   helpdesk:
+    send_email: "Send an email"
+    send: Send
+    send_and_new: "Send and <strong> New </strong>"
+    enter_subject: "Enter Subject..."
+    from: "From:"
+    to: "To:"
+    cc: "Cc:"
+    bcc: "Bcc:"
+    add_requester: "Add Requester"
+    surveys:
+      invalid_rating: "Rating value \"%{rating}\" is invalid. Please rate with the correct rating value."
     ticket_notifier:
       reply:
         happy: Відмінно
@@ -4208,6 +4690,7 @@ uk:
         tags_merge: "З такою назвою тег вже існує. Об'єднати ці теги?"
         remove_tags: "Видалити зв'язок з тегом"
         remove_confirmation: "Дійсно видалити зв'язок з тегом?"
+        delete_confirmation: "Are you sure you want to delete the selected tag(s)?"
       tag:
         ticket: Заявка
         tickets: Заявки
@@ -4248,6 +4731,7 @@ uk:
       addcc: "Додати копію"
       cc: копія
       bcc: bcc
+      response_added_alert: "Ticket has been updated with new replies. Please review them before sending."
       reply_form:
         title: "Відповісти %{email}"
         cc: Копія
@@ -4270,7 +4754,9 @@ uk:
       history:
         recent_item: "Нещодавні елементи"
     dashboard:
+      agent_availability: "Agent Availability"
       round_robin:
+        ticket_assignment: "Ticket Assignment"
         all_agents: "All agents"
         showing: Showing
         available_agents: "Available agents"
@@ -4279,8 +4765,19 @@ uk:
         na: N/A
         since_now: "Since 1 second"
         header: "Automatic ticket assignment"
-        view_agent_status: "View agent status"
-        no_agents_available: "No agents available in the group"
+        view_agent_status: "Agent Availability Status"
+        no_agents: "- No Agents -"
+        back: Back
+      freshfone:
+        phone: Phone
+        sort_by: "Sorted by"
+        last_modified: "Last Activity"
+        name: Name
+        accepting: Accepting
+        not_accepting: "Not Accepting"
+        call_in_progress: "Call in progress"
+        no_agents: "- No Agents -"
+        no_activity: "No Activity"
       index:
         todo_title: "Перелік завдань"
       summary:
@@ -4384,6 +4881,16 @@ uk:
           addbcc: "Додати приховану копію"
           removebcc: "Видалити приховану копію"
           not_sent: "Звіт не перенапрвлений!"
+        reply_to_forward:
+          title: Reply
+          cc: Cc
+          to: To
+          addcc: "Add Cc"
+          removecc: "Remove Cc"
+          bcc: Bcc
+          addbcc: "Add Bcc"
+          removebcc: "Remove Bcc"
+          not_sent: "Reply was not sent!"
         tweet_form:
           title: "Відповісти %{user}"
         facebook_form:
@@ -4391,6 +4898,7 @@ uk:
           title: "Відповісти %{user}"
         history:
           recent_item: "Нещодавні елементи"
+        max_tag_length_msg: "Tag cannot be greater than 32 characters"
         due_date:
           when_is_it_due: "Коли закінчується термін?"
           today: Сьогодні
@@ -4448,6 +4956,8 @@ uk:
         open_or_pending: "Відкриті або очікуючі"
         resolved_or_closed: "Вирішені або закриті"
         no_tickets: "У вас немає заявок у поточному вигляді"
+        article_feedback: "Article Feedback"
+        my_article_feedback: "My Articles Feedback"
       note:
         posted_on: "%{user_name} о %{note_date}"
         created_on:
@@ -4462,6 +4972,7 @@ uk:
           reply: "%{user_name} відповів(-ла) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           forward: "%{user_name} переадресував(-ла) <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           survey: "%{user_name} встановив(-ла) рейтинг цієї заявки <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: "Редагувати примітку"
         split_this_as_new_ticket: "Розділити і створити окрему заявку"
         delete_note: "Видалити це із обговорення заявки?"
@@ -4479,6 +4990,9 @@ uk:
           not_added: "(Not Added)"
           not_added_greater: "(> 15 mb Not Added)"
           exceed_limit: "Exceeds attachments size"
+        survey_response: "Survey response for %{survey_name}"
+        survey_response_to: "to %{agent}"
+        survey_satisfaction: "How would you rate your overall satisfaction for the resolution provided by the agent?"
     merge:
       merge:
         merge_into: "Об'єднати в?"
@@ -4623,6 +5137,7 @@ uk:
     closed_at: закрито
     from: Відправник
     to: Отримувач
+    check_uncheck_title: "Check/Uncheck all"
     data_backup:
       body: "Дані експорту готові для завантаження."
     no_tickets_mail:
@@ -4635,7 +5150,7 @@ uk:
       body: "Ваш експорт заявок завершено. Файл можна завантажити <a href=%{url}>тут</a>. Якщо посилання не працює, скопіюйте вказаний нижче URL і вставте його в рядок адресу вашого браузера."
     fields:
       ticket_id: "Ticket Id"
-      subject: Subject
+      subject: Тема
       description: Description
       status: Status
       priority: Priority
@@ -4663,6 +5178,7 @@ uk:
       tags: Tags
       survey_result: "Survey Result"
       product: Product
+      requester_phone: "Requester Phone"
     call_history:
       info:
         success: "We have started exporting your call records. It will be mailed to you once completed."
@@ -4728,6 +5244,7 @@ uk:
         forbidden_error: "This action has been forbidden for your account. Please check account permissions with Twitter."
         client_error: "We could not process your request. Please try after sometime."
         wrong_call: "Trying to unfavorite a tweet that has not been favorited"
+        not_following: "The user does not allow direct messages if they are not following you. Please send your reply as a tweet"
         cannot_reply: "You dont have permission to reply to a tweet."
         cannot_retweet: "You dont have permission to retweet a tweet."
         cannot_favorite: "You dont have permission to favorite a tweet."
@@ -4913,10 +5430,8 @@ uk:
       host_name_info: "Give Ip with port no. alone without http Ex. ip:port"
     five9:
       label: Five9
-      desc: "Lets you to integrate the Five9 CTI into the Freshdesk"
-      helptext: "This is Five9 helptext"
-      recording_path_info: "Same path should be configured in five9 admin to store the call recording"
-      recording_path: "Directory path for the call recording"
+      desc: "Make inbound & outbound calls, record the call details and log them into a Freshdesk ticket"
+      helptext: "<h4>Five9 Integration Help</h4><p><br/>Install Five9 Agent Desktop Toolkit and you can then type in your Five9 Username and Password to login.<br/>Now when you receive a inbound call, there will be a automatic screen pop-up that provides contextual data about customers</p>"
     drishti:
       label: Ameyo
       desc: "Answer calls or trigger an outgoing call with this powerful Ameyo's telephony capabilities embedded inside Freshdesk"
@@ -5124,6 +5639,7 @@ uk:
       send_reply_in_fd: "Повідомити клієнту електронною адресою"
       add_comment_in_jira: "Додати коментар в JIRA"
       update_jira_status: "Оновити статус JIRA"
+      add_attachments_in_jira: "While syncing exclude ticket attachments"
     salesforce:
       label: "Відділ продажів"
       desc: "У Freshdesk можна переглядати контактну інформацію з CRM-системи Salesforce."
@@ -5140,6 +5656,15 @@ uk:
     nimble:
       label: Nimble
       desc: "У Freshdesk можна переглядати контактну інформацію з CRM-системи Nimble."
+    quickbooks:
+      label: "QuickBooks<span class='beta'>Preview</span>"
+      desc: "View QuickBooks customer details and create/update time-sheet entries for customers in your QuickBooks account."
+      connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
+      remote_configurations:
+        signup: "<p>You are now being redirected to Freshdesk\\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
+        disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
+        launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
     zohocrm:
       label: "CRM-система Zoho"
       desc: "У Freshdesk можна переглядати контактну інформацію з CRM-системи Zoho."
@@ -5171,6 +5696,37 @@ uk:
         widget_title: "Заголовок віджету"
         username: "Ім'я користувача"
         password: Пароль
+    dynamicscrm:
+      label: "Dynamics CRM"
+      helptext: "<h4>Dynamics CRM Integration Help</h4><p><br/> Once you enable this integration, your agents can access Dynamics CRM contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
+      desc: "You can view contact information from Dynamics CRM in Freshdesk."
+      form:
+        instance_type: "Dynamics CRM Instance Type"
+        password: Password
+        domain: "User Id"
+        endpoint: "Organization Service SOAP End Point"
+        loginurl: "Login Url"
+        region: Region
+        organization_name: "Organization Unique Name"
+        contact_email: "Contact Email"
+        account_email: "Account Email (Optional)"
+        lead_email: "Lead Email (Optional)"
+        instance_info: "On-Demand instances should be converted to IFD for this integration to work."
+        domain_info: "Use super admin's office 365 user ID like name@company.onmicrosoft.com in case of On-demand."
+        organization_name_info: "To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Your Organization Information -> Organization Unique Name."
+        end_point_info: "Example: https://freshpo4.api.crm5.dynamics.com/XRMServices/2011/Organization.svc. To locate this go to Dynamics CRM Settings -> Customizations -> DeveloperResources -> Organisation Service for SOAP protocol in the bottom of the developer resource page."
+        account_email_info: "Enter a valid email ID associated with any account in Dynamics CRM (based on which account associated CRM fields are listed in the next step)"
+        contact_email_info: "Enter a valid email ID associated with any contact in Dynamics CRM (based on which contact associated CRM fields are listed in the next step)"
+        lead_email_info: "Enter a valid email ID associated with any lead in Dynamics CRM (based on which lead associated CRM fields are listed in the next step)"
+        login_url: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Login URL: Policy -> Issuer -> Address."
+        region_info: "Can be located in the client's Organization WSDL. https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 and locate Region: SecureTokenService -> AppliesTo."
+        dynamicscrm_settings: "Dynamics CRM Settings"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        error: "Oops, something went wrong! Please verify if you have entered correct values."
+        entity_error: "is not a valid email address for the Entity type"
+        api_error: "Problem gathering API data!"
     google_calendar:
       label: "Google Календар"
       desc: "За допомогою Google Календара можна керувати подіями для кожної заявки."
@@ -5343,6 +5899,9 @@ uk:
       desc: "Attach and Share your data/files from Box."
       helptext: "<h4>Box integration help</h4><br/><p>The Box Integration lets agents and users browse for files from their Box folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p> Your Box Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       login_required: "Sorry, you need to be logged in to %{helpdesk_name}'s support portal to attach files from Box."
+    xero:
+      label: Xero
+      desc: "You can create new invoice for the recorded time against the ticket and view the most recent invoices with links to modify them in Xero"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"
@@ -5364,10 +5923,10 @@ uk:
       new:
         feedback_widgets_search: Пошук
         feedback_widgets_search_results: "Search results"
-        feedback_widgets_search_our: "Search our "
+        feedback_widgets_search_our: "Шукайте по нашій "
         feedback_widgets_knowledge_base: "базі знань"
         feedback_widgets_help_articles: "or Browse help articles"
-        show_all_results: "Show all results"
+        show_all_results: "Переглянути всі результати"
         no_results: "No results for "
   reorder: Reorder
   reports:
@@ -5402,7 +5961,7 @@ uk:
       range_exceed: "Range cannot exceed 90 days"
       filter_by_title: "Filtered by"
       time_period: "Time Period"
-      report_title: "Freshfone Summary"
+      ff_report_title: "Phone Summary"
       summary_title: "Agent Call Summary "
       agent: Agent
       group: Group
@@ -5423,13 +5982,17 @@ uk:
       agent_calls_count: Calls
       total_unanswered_calls: "Unanswered Calls"
       num_of_transfered: "No of Transfers"
+      num_of_external_transfers: "External Transfers"
       unanswered_transfers: "Unanswered Transfers"
       answered_percentage: "Answer %"
       generate_summary: Generate
       filter_close: Close
       unanswered_count: Unanswered
+      others: Others
+      external: "External Numbers"
       includes_transfer: "Includes transferred calls"
       no_agent: "- No Agent -"
+      no_external: "Transfers made to external numbers are not included"
     time_sheets:
       billable: "Billable Hours"
       non_billable: "Non-Billable Hours"
@@ -5487,6 +6050,32 @@ uk:
       customer_champion: "Чемпион по задоволенню вимог клієнтів"
       valuable_player: "Найцінніший гравець"
     survey_reports:
+      main:
+        all: All
+        time_period: "Time Period"
+        group: Group
+        agent: Agent
+        overview: Overview
+        responses: Responses
+        response_to: "Response to"
+        rating: Rating
+        question: Q
+        positive: Positive
+        neutral: Neutral
+        negative: Negative
+        answered: Answered
+        unanswered: Unanswered
+        total_responses: "Total No.of responses"
+        filter_by: "Filter by"
+        preparing_chart_for: "Preparing chart for"
+        loading_chart: Loading...
+        no_remarks: "No responses available"
+        loading_remarks: "Loading remarks"
+        fetching_responses: "Fetching responses"
+        no_overview: "No data available"
+        view_report_by: "View by"
+        overall_rating: Rating
+        all_responses: "All Responses"
       index:
         agent_list_loading: "Отримання списку агентів"
       feedbacks:
@@ -5559,10 +6148,11 @@ uk:
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
       ticket_type_example: Question
+      note: Note
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: To
   email_command_preview_to_email_value: support@acme.freshdesk.com
-  email_command_preview_subject: Subject
+  email_command_preview_subject: Тема
   email_command_preview_subject_value: "Support Ticket"
   unable_to_charge: "Unable to charge the card for the added agent!"
   ticket_field:
@@ -5570,8 +6160,11 @@ uk:
       tour: "Help me understand ticket fields"
       title1: "Ticket Fields"
       title2: "Dependent Fields"
+      title3: "Dynamic Fields"
       info1: "The ticket form is the easiest way to capture all the data you need from the customer, even as they submit a ticket. For example, having the customer’s order ID in an e-commerce setting helps bring up the right context to the ticket and speed things up a bit. You can customize your Ticket Form in Freshdesk to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want."
+      info_1: "The ticket form helps capture the data you need from the customer when they submit a ticket. You can customize your Ticket Form to include the right ticket fields for your business, and let your customers and agents fill in the information you need in the format you want. For example, in an e-commerce company, getting a customer's order ID in the ticket form would be very helpful to the agent solving the ticket."
       info2: "Dependent Fields give you an easy way to create deeper ticket categories and identify the biggest issues that clog your support.  With dependent fields you can organize tickets hierarchically  into categories, subcategories and item affected."
+      info3: "If you are in the estate plan or above, you can have dynamic fields that appear based on the option selected in the type field. For every option in the type field, you can create a different section. You can then add more ticket fields to each section. For example, in an ecommerce scenario, when the type is chosen as \"Replacement\", a section with a field called \"Reason\" can open up that will collect the reason why customer needs a replacement for the item. <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/210807'>Read more about dynamic fields</a>."
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
@@ -5613,6 +6206,8 @@ uk:
     sorted_by: "Sorted by:"
     by: "by:"
     in: in
+    created_by: "Created by"
+    edited_by: "Edited by"
     requested_by: "Requested by,"
     agent: "Agent:"
     status: "Status:"
@@ -5652,9 +6247,10 @@ uk:
   fwd_to: Переслати
   add_cc: "Додати копію"
   add_a_cc: "Додати копію"
+  reply_to_fwd: Reply
   add_new_requester: "Додати нового автора заявки"
   fwd_success_msg: "Заявка успішно перенаправлена"
-  validate_fwd_to_email_msg: "Введіть дійснину адресу електронної почти"
+  validate_fwd_to_email_msg: "Введіть дійсну адресу електронної пошти."
   use_reply_option: "Скористайтесь функцією відповіді, щоб відправити листа автору заявки"
   index_tooltip_loading_msg: Завантаження...
   being_processed: Оброблюється
@@ -5686,6 +6282,7 @@ uk:
   forwarded_to: Перенаправлено
   replied_to: Відповів
   notified_to: Повідомлено
+  reply_to_forward: "replied to forward"
   to: отримувач
   cc_emails_key: ", копія: %{cc_emails}"
   bcc_emails_key: ", прихована копія: %{bcc_emails}"
@@ -5781,6 +6378,7 @@ uk:
   merge_contacts:
     header: "Important:<br />You are about to merge %{number} contacts with %{name}."
     info: "Please note that merging will move the entire set of emails, tickets, notes and contact information from the selected contacts into %{name}. Also, the merged contacts will be marked as deleted and cannot be restored. <br /><br />Proceed to merge the contacts into %{name}"
+    new_info: "This cannot be undone.<br />Merging will move all the tickets, notes and contact information from the secondary contacts into %{name}. Also, the secondary contacts will been deleted and cannot be restored. <br /><br />Click <b>Confirm and merge</b> to continue"
     invalid: "The E-Mail address provided is invalid"
     loading: "Preparing Merge <img src='/images/loading.gif'>"
     email_activated: "email id already activated"
@@ -5799,6 +6397,7 @@ uk:
     merge_contact: "Merge Contact"
     verify: "Send Verification"
     remove: Remove
+    validation: "Cannot add more than "
     success: "Contacts have been successfully merged"
     verify_mail: "Verification email sent"
     activate_email: "Activation email sent"
@@ -5811,6 +6410,9 @@ uk:
     email_remove: "Are you sure you want to remove this Email?"
     default_email: "Default Email"
     additional_email: "Additional Email Verification"
+    primary_contact: "Primary contact"
+    mark_as_primary: "Mark as primary"
+    merge_progress: "Please wait while the contacts are being merged. This might take a few minutes."
   portalcss:
     reset_all_changes: "Reset ALL changes"
     reset_all_confirm_message: "Все зміни будуть скинуті, після чого будуть відновлені налаштування Freshdesk за замовчуванням. Дійсно продовжити?"
@@ -5864,8 +6466,14 @@ uk:
   yesterday: Вчора
   seven_days: "Цього тижня"
   thirty_days: "Цього місяця"
+  last_week: "Last week"
+  last_month: "Last month"
   two_months: "За останні 2 місяці"
   six_months: "За останні 6 місяців"
+  last_seven_days: "Last 7 days"
+  last_thirty_days: "Last 30 days"
+  last_sixty_days: "Last 60 days"
+  last_one_eighty_days: "Last 180 days"
   set_date: "Select Time Period"
   Source: Джерело
   Subject: Тема
@@ -5911,6 +6519,32 @@ uk:
   activation_link: "Activation link has been sent to %{email}"
   activation_link_no_email: "Реєстрація виконана успішно"
   not_given: "Не визначено."
+  helpdesk_reports:
+    time_period: "Select Time Period"
+    filter_by: "Filter by"
+    edit_filter: Filter
+    ticket_volume:
+      title: "Ticket Volume"
+      time_trends:
+        day: Day
+        week: Week
+        month: Month
+        qtr: Quarter
+        year: Year
+        title: "Trend of Tickets Received and Resolved"
+      day_trend:
+        title: "Day of the Week Trend of Tickets Received and Resolved"
+        subtitle: "See which hour of which day receives the most number of tickets and allocate your staff accordingly"
+    glance:
+      title: "Helpdesk At A Glance"
+    performance:
+      title: "Performance Distribution"
+    group_summary:
+      title: "Group Summary"
+    agent_summary:
+      title: "Agent Summary"
+    customer_report:
+      title: "Customer Report"
   adv_reports:
     at_a_glance: "Стислий огляд"
     select_an_option: "Обрати один із варіантів"
@@ -6081,17 +6715,20 @@ uk:
     recording_on_process: "Запис оброблюється. <a href='#' target='_parent' id='checkfreshfoneaudio'> Перевірте</a> знову через кілька хвилин"
     not_enough_credit: "Недостатньо кредитів!"
     recharge: Поповнити
-    number: "Номер Freshfone"
+    ff_number: "Phone Number"
+    via_browser: "via Browser / App"
+    via_phone: "via Phone"
     subscription:
       auto_recharge_text: "Ми стягуємо плату тільки після того, як на вашому балансі залишиться менше 5 доларів США"
       current_balance: "Ваш поточний баланс"
-      purchase: "Придбати кредити Freshfone"
+      purchase_text: "Purchase Phone Credits"
       setup_auto_recharge: "Налаштувати автоматичне поповнення"
-      no_credit_card: "Введіть платіжну інформацію для придбання кредитів Freshfone"
+      no_credit_card_text: "Enter payment information to purchase phone credits"
       recharge_now_text: "Поповніть баланс одноразовим платежем"
       auto_recharge_amt: "Сума автоматичного поповнення"
       see_detailed_pricing: "See Detailed Pricing"
-      followup_text: "worth Freshfone credits"
+      followup: "worth phone credits"
+      followup_text: "worth phone credits"
     dialpad:
       not_valid_number: "Введіть дійсний номер"
       could_be_invalid_number: "Could be an invalid number."
@@ -6099,6 +6736,12 @@ uk:
       not_enough_credit: "Недостатньо кредитів"
       restricted_country: "Restricted country"
       already_in_call: "Одночасні вихідні виклики заборонені"
+      strange_number: "Cannot call a Restricted number"
+      move_to_dialer: "Back to dialer"
+      connect_call: Call
+    search:
+      work_phone: Work
+      mobile_phone: Mobile
     call_status:
       default: ""
       completed: Закінчено.
@@ -6112,22 +6755,31 @@ uk:
       voicemail: Voicemail
       restricted: Restricted
       all_calls: "All Calls"
+      answered: Answered
+      on-hold: "On Hold"
     general:
-      suspended_account: "Дія вашого облікового запису Freshfone зараз призупинена. Відновіть дію облікового запису Freshfone, щоб приймати та робити виклики"
-      suspended_on_low_balance: "Дія вашого облікового запису Freshfone зараз призупинена. Поповніть рахунок, щоб активувати обліковий запис"
+      suspended_account_msg: "Your phone channel is currently suspended. Please enable phone to make and receive calls."
+      suspended_on_low_balance_msg: "Your phone channel has been suspended due to low balance. Please recharge to activate."
     dashboard:
+      title: Phone
       in_conversation: Розмовляє
       available_agents: "Доступні агенти"
-      freshfone_recharge_alert: "Сервіс Freshfone зараз недоступний. Щоб приймати та робити виклики, зверніться до адміністратора."
-      admin_freshfone_recharge_alert: "Сервіс Freshfone зараз недоступний через нестачу коштів на балансі. Щоб приймати та робити виклики, будь ласка <a href='/subscription'>поповніть</a>рахунок."
+      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
+      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
     widget:
       ignore: Ігнорувати
       accept: Прийняти
       end_call: "Завершити дзвінок"
       mute: "Виключити звук"
+      hold: Hold
+      holding: |-
+          Sorry unable to hold..
+           Please try again later...
+      hold_success: "Now call on hold"
       transfer_call: "Перевести виклик"
       dialpad: "Панель набору номеру"
       call_notes: "Примітки до виклику"
+      phone_icon: Phone
       on_phone: "Доступно в телефоні"
       on_browser: "Доступно в браузері"
       invalid_phone_number: "Please update your phone number with '+' prefix and country code in Profile Settings"
@@ -6138,8 +6790,10 @@ uk:
       recent_calls: "Нещодавні дзвінки"
       transferring: "<span>Переадресування виклику</span><br />Зачекайте..."
       transfer_agents: "Пошук доступних агентів"
+      transfer_numbers: "Type an external number..."
       unavailable_agents: "Агенти для переадресування виклику недоступні"
-      agents_count_in_group: "%{count} agents available"
+      no_transfers: "No recent transfers"
+      agents_count_in_group: "%{count} Agents"
       ticket_info: "Створіть нову заявку або додайте до існуючої заявки примітку з записом."
       add_note: "Додати примітку"
       note_placeholder: "Додати примітку до виклику..."
@@ -6154,9 +6808,24 @@ uk:
       save: Зберегти
       notes: Примітки
       new_requester: "Новий автор заявки"
-      inactive: "Сервіс Freshfone недоступний"
+      low_credit: "Low on phone credit. Please contact your account admin."
       forward_number_alert: "Для переадресації викликів на ваш номер оновіть номер телефону в налаштуваннях профілю"
       desktop_notification: "Turn on desktop notification"
+      network_error: "Check your Internet Connection"
+      transfer:
+        tranfer_via: "via "
+        to: "To: "
+        transferring: Transferring...
+        transfer_canceled: Ignored
+        tranfer_no_answer: "Not available"
+        tranfer_connected: Transferred
+        group_tranfer_no_answer: "No agnets available"
+        group_tranfer_connected: "Connected with customer"
+        close: Close
+        resume: Resume
+        cancel: Cancel
+        cancelling: Cancelling...
+        resuming: Resuming...
     call_history:
       title: "Журнал викликів"
       sort_by: "Sorted by:"
@@ -6193,6 +6862,7 @@ uk:
       save_ticket: "Перетворити в заявку"
       convert: Перетворити
       helpdesk: "Служба підтримки"
+      external: External
       unblock_number: Розблокувати
       block_number_title: "Заблокувати номер"
       filter_option_all_agents: "All Agents"
@@ -6202,6 +6872,24 @@ uk:
       filter_option_missed_calls: Missed
       filter_option_voicemail: Voicemail
       filter_option_blocked_calls: Blocked
+      recording_delete:
+        done_by: "Deleted By"
+        tooltip: "Delete Recording"
+        confirmation_btn: Delete
+        confirmation_heading: "Please Confirm.."
+        confirmation_warning: "This will delete the recorded message permanentely."
+        confirmation_notification: "Are you sure you want to delete?"
+        successful: "Call Recording deleted successfully!"
+        unsuccessful: "Call Recording couldn't be deleted, Please try againg after some time"
+        error: "Error while deleting a Call Record!!! Please try again after some time"
+      strange_numbers: ~
+      restricted: RESTRICTED
+      blocked: BLOCKED
+      unknown: UNKNOWN
+      anonymous: ANONYMOUS
+      empty: EMPTY
+      total_duration: Duration
+      minutes: Minutes
     ticket:
       recording: "Озвучити повідомлення"
       ticket_desc_with_name: "Conversation with <b> %{customer_name} </b> (%{customer_number}, %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >"
@@ -6227,10 +6915,10 @@ uk:
       settings: Налаштування
       greetings: Вітання
       messages: Повідомлення
-      freshfone_numbers: "Номери Freshfone"
-      disable_alert: "<b>Важливо.</b>При відключенні облікового запису Freshfone щомісячна плата за номери Freshfone буде надалі зніматися. Щоб цього не сталося, видаліть придбані номери."
-      purchase_credit: "Придбайте кредити Freshfone, щоб зробити доступними місцеві і безкоштовні номери та почати користуватися Freshfone"
-      purchase_numbers: "Придбайте місцеві або безкоштовні номери, щоб почати користуватися Freshfone та надавати підтримку клієнтам по телефону"
+      freshfone_numbers_title: Phone
+      suspended_alert: "<b>Important:</b> Disabling your phone channel will not prevent the monthly rental on your numbers. To avoid getting charged, please delete the purchased numbers."
+      purchase_credit_text: "Purchase credits to buy numbers, make and receive calls using the phone channel."
+      purchase_numbers_text: "Buy a local or toll free number and support customers anywhere across the world over phone"
       search: "Пошук за цифрами та фразами"
       local: Місцеві
       toll_free: Безкоштовні
@@ -6238,8 +6926,8 @@ uk:
         simultaneous: "Call all agents"
         round_robin: "Call idle agent first"
       number_settings:
-        title: "Управління центром обробки викликів за допомогою Freshfone"
-        info: "<b>Призначення телефонних дзвінків агентам і групам </b><br/>За допомогою Freshfone можна налаштувати систему інтерактивної голосової відповіді (IVR) і направляти дзвінки різним групам або агентам вашої команди. Наприклад, можна перенаправляти дзвінок у службу підтримки, якщо клієнт натискає 1, або у відділ продажів, якщо клієнт натискає 2.<br/>Крім того, ви можете налаштувати інтерактивні повідомлення, які будуть відтворюватися для клієнтів. Для цього можна записати власний голос, завантажити відповідний файл або скористатися функцією перетворення тексту в мову.<br><br><b>Налаштування номеру Freshfone </b><br> У Freshfone можна задати будь-які налаштування для кожного номеру окремо. Це базові налаштування такі, як максимальна кількість людей у черзі і максимальний час очікування з'єднання. При досягненні граничного значення для однієї з таких налаштувань почне автоматично відтворюватися повідомлення про недоступність.<br/>Якщо включити функцію запису дзвінків, всі дзвінки вашої служби підтримки будуть записуватися і прикріплятися до заявок. У Freshfone можна також встановити заборону на прийом викликів у неробочі години. Наприклад, можна встановити дві лінії підтримки, одна з яких буде доступна тільки в робочі години, а інша, з більш високим пріоритетом, зможе приймати виклики цілодобово.<br/><br/>"
+        title_text: "Managing your call center"
+        info_content: "<b>Assigning phone calls to agents and groups</b></br>You can set up an interactive voice response system (IVR) and route calls to different groups or agents in your team. For example, you could have your customers calls forwarded to your Support team when they press 1, and to somebody from Sales when they press 2.<br/>Additionally, you can also customize the messages that will be played back to your customers by recording your voice, uploading a file or using the text-to-speech feature.<br><br><b>Customizing your number</b><br>You could also configure each and every phone number separately and let it have it’s own set of customizations. This includes basic settings such as the maximum number of people on the queue and maximum waiting time for your customers. Once either of them are reached, a non-availability message will be played to your customers automatically.<br/>When you enable call recording, every phone call across your helpdesk is recorded and attached to your tickets, and the recording can be publicly available to customers or kept private. You can also restrict your phone channel from taking calls during non-business hours. For example, you could set up two support lines, one of which will be available to take calls only during working hours, and another high-priority helpline that will be available 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Read more about customizing your number</a>"
         non_business_hours: "Приймати виклики під час..."
         business_calendar: "Обрати робочі години"
         transcript_voice: "Розшифрувати голос"
@@ -6254,7 +6942,7 @@ uk:
         max_queue_calls: "Максимальна кількість викликів в черзі"
         call_wait_time: "з максимальним часом очікування"
         call_wait_time_suffix: "на дзвінок"
-        wait_message: "Повідомлення про необхідність зачекати"
+        queue_message: "Queue Message"
         non_availability_message: "Повідомлення про недоступніть"
         voicemail_message: "Повідомлення голосової пошти"
         non_business_hours_message: "Повідомлення про неробочі години"
@@ -6270,6 +6958,7 @@ uk:
         audio_upload: "Оберіть файл для завантаження"
         greeting_message: "Введіть ваше повідомлення тут"
         attachment_help_info: "Приймати аудіофайли менше 5 МБ"
+        attachment_help_text: "Accepts audio file (mp3) < 5mb"
         recording_help_info: "Ввімкнути мікрофон. Тривалість менше 5 хв."
         cancel: Відміна
         change: Змінити
@@ -6286,9 +6975,12 @@ uk:
         recording_privacy_public: "Visible to customers and agents"
         recording_privacy_private: "Visible only to agents"
         name_maxlength: "Name cannot have more than 255 Characters"
+        number_accessible: "Accessible by"
+        wait_music: "Wait Music"
+        hold_music: "Hold Music"
       numbers:
-        title: "Надавайте підтримку клієнтам за допомогою Freshfone"
-        info: "Freshfone - вбудована у Freshdesk телефонна система. За допомогою Freshfone можна отримувати вхідні та робити вихідні дзвінки як в браузері, так і по телефону. Freshfone також дозволяє записувати виклики і перетворювати необхідні телефонні розмови в заявки. Можна також заборонити прийом викликів від певних номерів, заблокувавши їх у журналі викликів. <br/> <br/> <b> Налаштування Freshfone </b> <br/> Щоб почати використання Freshfone, необхідно спочатку включити цей сервіс, а потім придбати номер для вхідних дзвінків. В даний час Freshdesk дозволяє купувати номери в 28 країнах. Для обслуговування клієнтів у США, Канаді та Великобританії можна також придбати безкоштовні номери служби підтримки. <br/> <br/> <b> Використання інтелектуальних систем IVR </b> <br/> У Freshfone можна створювати інтелектуальні системи інтерактивної голосової відповіді (IVR), що дозволяє краще розбивати по категоріям клієнтів, які телефонують до служби підтримки, а також перенаправляти їх у необхідний відділ, команду або відповідному агенту. Freshfone дозволяє створювати до 2 рівнів інтелектуальних систем IVR."
+        sidebar_title: "Freshdesk’s built-in phone channel"
+        sidebar_content: "Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>."
         purchase_number: "Придбати номер"
         purchase_phone_number: "Buy Number (%{number})"
         buy: "Купити номер"
@@ -6301,8 +6993,8 @@ uk:
         purchase_confirm: "Ви впевнені?"
         delete_alert: "Видалений номер неможливо придбати знову. Дійсно видалити номер?"
         manage: Керування
-        cannot_purchase: "Не вдалося придбати номер для вашого облікового запису Freshfone."
-        insuffcient_credits: "На вашому балансі Freshfone не вичтачає кредитів для придбання нового номеру. Поповніть рахунок і повторіть спробу"
+        failure_purchase: "Unable to purchase the phone number. Kindly make sure the address is a valid local address in <span class='certification-country'></span>."
+        low_credits: "Your phone credit is too low to purchase a new number. Please recharge and try again."
         address:
           name: "Company / Name"
           address: Address
@@ -6312,8 +7004,8 @@ uk:
           country: Country
           required_field: "All fields are required"
         setup:
-          title: "Налаштування Freshfone"
-          info: "Щоб почати роботу з Freshfone, необхідно спочатку придбати номер для вхідних викликів від ваших клієнтів. Ви можете придбати місцевий номер в будь-якій з 28* країн, які підтримують Freshfone в даний час. Для обслуговування клієнтів у США, Канаді і Великобританії можна також придбати безкоштовні номери.<br/><br/>Можна придбати кілька номерів Freshfone в різних країнах і налаштувати безкоштовні телефонні лінії підтримки прямо під Freshdesk, не вдаючись до послуг третіх сторін. Всі вхідні, вихідні та перенаправлені виклики служби підтримки будуть оплачуватися згідно зі стандартних тарифів.<br/><br/> Після придбання номери Freshfone для вашої телефонної лінії підтримки, всі вхідні дзвінки будуть розподілятися між агентами, що ввійшли в систему. Крім того, агенти можуть автоматично обирати, приймати виклики в браузері або по звичайному телефоні."
+          title_text: "Setting up a call center"
+          info_text: "In order to start using the phone channel, you will first need to purchase a call-in number to offer your customers. You can purchase a local number in any <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a>. If your customers will be calling you from the US, UK or Canada, you can also offer them a Toll-free dial in number.<br/><br/>You can purchase multiple phone numbers from various countries and setup toll-free helplines inside Freshdesk without using any third party service. You will be charged standard rates for incoming, outgoing and forwarding calls from your helpdesk. Check out the <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>call rates here</a>.<br/><br/> Once you have purchased a phone number for your support helpline, all incoming calls will be distributed to agents who are logged in to your helpdesk. In addition, your agents can choose to pick up phone calls from inside the browser or have them forwarded to their desk phone automatically."
       invalid_attachment: "Доданий аудіофайл «%{name}» недійсний або його розмір перевищує 5 МБ"
       ivr:
         simple_message_title: "Просте повідомлення"
@@ -6354,21 +7046,22 @@ uk:
         seed_menu_name: "Головне/початкове меню"
         invalid_number_format: "Enter valid phone number with '+' prefix and country code in front of the number"
       welcome_page:
-        title: "Welcome to Freshfone"
+        title_text: Phone
       feature_request_content:
-        title: Freshfone
-        heading: "Support your customers with Freshfone"
-        about_numbers: "Purchase support numbers from across the globe"
-        about_ivr: "Create IVR's and route calls to the right agents"
-        about_recording: "Record customer conversations and access it anywhere"
-        read_more: "Read more"
+        title_text: Phone
+        heading_text: "Support your customers using the phone channel"
+        number_info: "Purchase local and toll-free numbers from across the globe"
+        ivr_info: "Route calls to the right agent and group using IVR"
+        recording_info: "Record and convert calls to tickets, just like your emails"
+        learn_more: "Learn more"
         pricing: "See all call rates and supported countries"
-        email_subject: "Freshfone Request - %{account_name}"
+        request_subject: "Phone Request - %{account_name}"
         email_message: "Need Freshfone Feature"
-        success_message_flash: "Thanks for your interest in Freshfone. We will get back to you shortly."
+        success: "We will get back to you within two business days."
         error_message: "Sorry we can not make your request right now. Try again later."
-        additional_note: "Freshfone request will take two business days"
-        button_label: "Request for Freshfone"
+        additional_info: "You will be able to purchase numbers, make and take calls once the phone channel is enabled in your account"
+        button_text: "Request for phone"
+        video_title: "Watch the video to find out what you can do with the phone channel"
   freshchat:
     feature_request:
       title: "Welcome to Live Chat"
@@ -6418,7 +7111,6 @@ uk:
     chat_availability: "Chat Availability"
     show_chat_hours: "Show chat"
     show_chat_hours_msg: "Set the time during which you will be online and available to accept chats. "
-    show_chat_hours_info: "Note: Chat window will appear only when agents are available."
     business_hours: "During business hours"
     anytime: "Always (24/7)"
     business_calendar: "Select Business Hour"
@@ -6564,7 +7256,6 @@ uk:
     chatsettings_save: "Ваші зміни не збережені. Зберегти зміни?"
     transfer_accepted_msg: "Передача відвідувача прийнята"
     transfer_request_timeout_msg: "Термін очікування запиту на передачу закінчився"
-    integrate_freshchat_info: "Примітка. Вікно чату відображається тільки тоді, коли агенти онлайн."
     click_to_go_online: "Зараз ви в автономному режимі <br> Натисніть , щоб перейти в режим онлайн"
     click_to_go_offline: "Тепер ви в режимі онлайн <br> Натисніть, щоб перейти в автономний режим"
     fetching: Зачекайте
@@ -6630,6 +7321,7 @@ uk:
     agent_initiated: "Agent Initiated"
     agent_to_agent: "Agent to Agent"
     missed_chat: Missed
+    spam_chat: Spam
     filter: Filter
     close: Close
     visitorId: "Visitor ID"
@@ -6662,6 +7354,15 @@ uk:
     missed_chat_info: "Chat has been missed.!"
     change_livechat_tone: "LiveChat Notification Tone"
     message: Message
+    unmark_spam: "Mark As Not Spam"
+    mark_spam: "Mark As Spam"
+    convert: Convert
+    add_note: "Add Note"
+    conversation: Conversation
+    and: and
+    via_widget: via
+    reported: reported
+    view_ticket: "view ticket"
   facebook_tab:
     remove_tab: "Видалити вкладку сторінки"
     tab_not_removed: "Не вдалося видалити вкладку"
@@ -6826,6 +7527,11 @@ uk:
       replied: replied
       spam: Spam
       waiting_for_approval: Unpublished
+      comment:
+        one: "1 Comment"
+        few: "%{count} Comments"
+        many: "%{count} Comments"
+        other: "%{count} Comments"
       locked: Locked
       locked_label: "Topic is locked for comments"
       merged_label: "Topic is merged into another topic"
@@ -6873,6 +7579,7 @@ uk:
           few: "%{count} views"
           many: "%{count} views"
           other: "%{count} views"
+        no_votes: "No Votes"
         vote_info:
           ideas:
             one: "%{count} Person likes this Idea"
@@ -6880,10 +7587,10 @@ uk:
             many: "%{count} people like this Idea"
             other: "%{count} people like this Idea"
           announce:
-            one: "%{count} Person likes this Annoucement"
-            few: "%{count} people like this Annoucement"
-            many: "%{count} people like this Annoucement"
-            other: "%{count} people like this Annoucement"
+            one: "%{count} Person likes this Announcement"
+            few: "%{count} people like this Announcement"
+            many: "%{count} people like this Announcement"
+            other: "%{count} people like this Announcement"
           problem:
             one: "%{count} Person has this Problem"
             few: "%{count} people have this Problem"
@@ -7062,3 +7769,6 @@ uk:
     alert:
       code_mandatory: "Both fields are required. Shorthands can be upto 10 characters and cannot contain any special characters except '-'."
       code_duplicate: "This shorthand is already in use."
+  new_label: NEW
+  api:
+    record_not_found: "Resource not found."

@@ -10,6 +10,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :check_conference_feature, :only => [:status]
   before_filter :check_credit_balance, :only => [:status]
   before_filter :select_current_call, :only => [:status]
+  before_filter :validate_acw, :only => [:acw]
   before_filter :handle_blocked_numbers, :only => [:status]
   before_filter :terminate_ivr_preview, :only => [:status]
   before_filter :validate_dial_call_status, :only => [ :status ]
@@ -72,6 +73,11 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       Rails.logger.error "Unable to update recording for the conference #{params[:ConferenceSid]}"
     end
     return empty_twiml
+  end
+
+  def acw
+    current_call_leg = current_call.missed_child? ? current_call.parent : current_call
+    render :json => {:result => current_call_leg.update_acw_duration}
   end
 
   private
@@ -233,5 +239,10 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       dial_call_status = 'no-answer' if (!call.is_root? && call.ringing?)
       call_params =  params.merge({:DialCallStatus => dial_call_status}) # For handle_direct_dial 
       call.set_abandon_call(call_params)
+    end
+
+    def validate_acw
+      render :json => {:status => :error} if current_call.blank? || 
+        !current_account.features?(:freshfone_call_metrics)   
     end
 end

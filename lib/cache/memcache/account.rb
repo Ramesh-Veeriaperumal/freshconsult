@@ -31,10 +31,12 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.main_portal }
   end
 
-  def custom_survey_from_cache
-    key = ACCOUNT_CUSTOM_SURVEY % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      custom_surveys.active.first
+  def active_custom_survey_from_cache
+    @active_custom_survey_from_cache ||= begin
+      key = ACCOUNT_CUSTOM_SURVEY % { :account_id => self.id }
+      MemcacheKeys.fetch(key) do
+        custom_surveys.active.with_questions_and_choices.first
+      end
     end
   end
 

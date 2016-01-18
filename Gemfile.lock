@@ -166,6 +166,16 @@ GIT
       railties (>= 3.0)
 
 GIT
+  remote: git@github.com:TinderBox/dynamics_crm.git
+  revision: b45d285149cec3e6f52a4ea6eb510952ecefebb1
+  branch: master
+  specs:
+    dynamics_crm (0.6.0)
+      builder (>= 3.0.0, < 4.0.0)
+      curb (~> 0.8, >= 0.8.5)
+      mimemagic (~> 0.2, >= 0.2.1)
+
+GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 30a7b6deb34c992e84498facdec397527c551b47
   branch: dynamic_rules
@@ -517,10 +527,6 @@ GEM
     doorkeeper (2.2.1)
       railties (>= 3.2)
     dynamic_form (1.1.4)
-    dynamics_crm (0.4.1)
-      builder (>= 3.0.0, < 4.0.0)
-      curb (~> 0.8, >= 0.8.5)
-      mimemagic (~> 0.2, >= 0.2.1)
     ejs (1.1.1)
     encryptor (1.1.3)
     equalizer (0.0.9)
@@ -710,9 +716,6 @@ GEM
       rack-openid (~> 1.3.1)
     omniauth-quickbooks (0.0.2)
       omniauth-oauth (~> 1.0)
-    omniauth-surveymonkey (1.0.0)
-      omniauth (~> 1.0)
-      omniauth-oauth2
     open4 (1.3.0)
     paperclip (2.8.0)
       activerecord (>= 2.3.0)
@@ -1020,7 +1023,7 @@ DEPENDENCIES
   dev_notification!
   doorkeeper (= 2.2.1)
   dynamic_form
-  dynamics_crm (~> 0.4.1)
+  dynamics_crm!
   ebayr!
   ejs (= 1.1.1)
   encryptor (= 1.1.3)
@@ -1086,7 +1089,6 @@ DEPENDENCIES
   omniauth-openid
   omniauth-quickbooks
   omniauth-salesforce!
-  omniauth-surveymonkey (= 1.0.0)
   open_id_authentication!
   paperclip (~> 2.8.0)
   paperclip_ext!

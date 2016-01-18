@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -437,6 +437,7 @@ Helpkit::Application.routes.draw do
         post :unhold
         post :transfer_unhold
         post :transfer_fallback_unhold
+        post :quit
       end
     end
 
@@ -461,6 +462,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
+        put :acw
         get :call_notes
       end
     end
@@ -669,6 +671,15 @@ Helpkit::Application.routes.draw do
         post :install
         post :notify
     end
+
+    namespace :slack_v2 do
+      get :oauth
+      get :new
+      post :install
+      get :edit
+      put :update
+      post :create_ticket
+    end
     
     resources :applications, :only => [:index, :show] do
       collection do
@@ -730,7 +741,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :slack do
+    resources :slack do #Belongs to Old Slack
       collection do
         post :create_ticket
       end
@@ -801,14 +812,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :dynamics_crm do
-      collection do
-        post :settings_update
-        get :edit
-        post :fields_update
-        post :widget_data
-        get :settings
-      end
+    namespace :dynamicscrm do
+      post :settings_update
+      get :edit
+      post :fields_update
+      post :widget_data
+      get :settings
     end
 
     namespace :ilos do
@@ -1046,8 +1055,8 @@ Helpkit::Application.routes.draw do
     match '/surveys/enable/' => 'surveys#enable' , :via => :post
     match '/surveys/disable/' => 'surveys#disable' , :via => :post
 
-    match '/custom_surveys/enable/:id' => 'custom_surveys#enable' , :via => :post
-    match '/custom_surveys/disable/:id' => 'custom_surveys#disable' , :via => :post
+    match '/custom_surveys/activate/:id' => 'custom_surveys#activate' , :via => :post
+    match '/custom_surveys/deactivate/:id' => 'custom_surveys#deactivate' , :via => :post
 
     resources :gamification do
       collection do
@@ -1416,9 +1425,13 @@ Helpkit::Application.routes.draw do
   match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
   match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
   match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
+  
   match '/custom_survey/reports' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
-  match '/custom_survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#reports', :as => :custom_survey_reports
-  match '/custom_survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
+  match '/custom_survey/reports/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
+  match '/custom_survey/reports/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
+  match '/custom_survey/reports/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
+  match '/custom_survey/reports/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
+
 
   namespace :social do
 
@@ -2317,11 +2330,13 @@ Helpkit::Application.routes.draw do
         get :mobile_pre_loader
         get :deliver_activation_instructions
         get :configurations
+        get :mobile_configurations
       end
     end
     resources :freshfone do 
       collection do
         get :numbers
+        get :can_accept_incoming_calls
       end
     end
   end

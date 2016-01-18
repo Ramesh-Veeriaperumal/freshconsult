@@ -82,7 +82,7 @@ class ExportAgents < BaseWorker
     end
 
     def formated_date(date_time)
-      time_format = Account.current.date_type :short_day_with_time
+      time_format = Account.current.date_type :short_day_with_week
       I18n.l date_time, :format => time_format
     end
 

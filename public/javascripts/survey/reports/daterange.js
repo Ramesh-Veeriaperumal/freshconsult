@@ -3,8 +3,11 @@
 */
 var SurveyDateRange = {
     isInitialized: false,
+    month_names: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     updateLink:function(dateRange){
-        jQuery("#survey_date_range_link").text(jQuery("#survey_date_range").val());
+        var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
+        var dateRange = SurveyDateRange.convertTimestampToDate(timestamp);
+        jQuery("#survey_date_range_link").text(dateRange);
     },
     init:function(){
         if(!this.isInitialized){
@@ -20,7 +23,9 @@ var SurveyDateRange = {
             closeOnSelect: true
         });
         jQuery('#survey_date_range').on('apply.bootstrapDaterangepicker', function(ev, picker) {
-              jQuery("#survey_date_range_link").text(jQuery("#survey_date_range").val());
+              var timestamp = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
+              var dateRange = SurveyDateRange.convertTimestampToDate(timestamp);
+              jQuery("#survey_date_range_link").text(dateRange);
               SurveyState.fetch();
               SurveyDateRange.close();
         });
@@ -40,20 +45,31 @@ var SurveyDateRange = {
     close:function(){
        jQuery("#survey_date_text_container").hide();
        jQuery("#survey_date_link_container").show();
-       jQuery(".daterangepicker").removeClass("survey_date_range");
     },
     convertDateToTimestamp:function(date){
         var dateArray = date.split("-");
-        var fromTimestamp = (("0" + (new Date(dateArray[0]).getDate())).slice(-2))  + "" + (("0" + (new Date(dateArray[0]).getMonth()+1)).slice(-2)) + "" +
-                            (new Date(dateArray[0]).getYear()+1900);
-        var toTimestamp   = (("0" + (new Date(dateArray[1]).getDate())).slice(-2)) + "" + (("0" + (new Date(dateArray[1]).getMonth()+1)).slice(-2)) + "" +
-                            (new Date(dateArray[1]).getYear()+1900);
+        var d_from = new Date(dateArray[0]);
+        var d_to = new Date(dateArray[1]);
+        var fromTimestamp = (("0" + (d_from.getDate())).slice(-2))  + "" + (("0" + (d_from.getMonth()+1)).slice(-2)) + "" +
+                            (d_from.getYear()+1900);
+        var toTimestamp   = (("0" + (d_to.getDate())).slice(-2)) + "" + (("0" + (d_to.getMonth()+1)).slice(-2)) + "" +
+                            (d_to.getYear()+1900);
         var timestamp = fromTimestamp + "-" + toTimestamp;
         return timestamp;
     },
     convertTimestampToDate: function(timestamp){
         var formatDate = function(date){
             return date.substring(0,2)+ " " + SurveyI18N.month_names[(parseInt(date.substring(2,4)))]+", "+(date.substring(4,8));
+        }
+        var dateArray = timestamp.split("-");        
+        fromDate  = formatDate(dateArray[0]);
+        toDate    = formatDate(dateArray[1]);
+        var dateRange = fromDate + "-" + toDate;
+        return dateRange;
+    },
+    convertTimestampToDateEn: function(timestamp){
+        var formatDate = function(date){
+            return date.substring(0,2)+ " " + SurveyDateRange.month_names[(parseInt(date.substring(2,4))-1)]+", "+(date.substring(4,8));
         }
         var dateArray = timestamp.split("-");        
         fromDate  = formatDate(dateArray[0]);

@@ -26,7 +26,7 @@ describe Admin::ObserverRulesController do
     observer_rule_name = "created by #{Faker::Name.name}"
     post :create , { :type=>"virtual_agents",
                      :va_rule =>{"name"=>observer_rule_name, "description"=>Faker::Lorem.sentence(3), "match_type"=>"all"},
-                     :filter_data=>[{:name=>"ticket_type", :operator=>"is", :value=>"Problem"}].to_json,
+                     :filter_data=>[{:name=>"ticket_type", :operator=>"in", :value=>["Problem", "Question"]}].to_json,
                      :filter=>"end",
                      :operator=>"is", :value=>"2",
                      :event_data=>[{:name=>"priority", :from=>"--", :to=>"--"}].to_json,
@@ -52,7 +52,7 @@ describe Admin::ObserverRulesController do
   it "should update observer rule" do
     put :update, {:va_rule=>{"name"=>@test_observer_rule.name+" - temp", "description"=>Faker::Lorem.sentence(3)},
                   :filter_data=>[{:name=>"subject", :operator=>"is", :value=>"temp"}].to_json,
-                  :filter=>"end", :name=>"status", :operator=>"is", :value=>"6",
+                  :filter=>"end", :name=>"status", :operator=>"in", :value=>["6", "2"],
                   :event_data =>[{:name=>"priority", :from=>"--", :to=>"--"}].to_json,
                   :event=>"end",
                   :name=>"status", :from=>"--", :to=>"--", :performer_data=>{"type"=>"1"},
