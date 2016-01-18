@@ -85,6 +85,7 @@
   });
 
   freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
+  freshfone.env = "<%= Rails.env %>";
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_client' %>
 <% unless AppMetrics::FRESHFONE_METRICS.blank? %>

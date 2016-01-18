@@ -437,6 +437,7 @@ Helpkit::Application.routes.draw do
         post :unhold
         post :transfer_unhold
         post :transfer_fallback_unhold
+        post :quit
       end
     end
 
@@ -461,6 +462,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
+        put :acw
         get :call_notes
       end
     end
@@ -810,14 +812,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :dynamics_crm do
-      collection do
-        post :settings_update
-        get :edit
-        post :fields_update
-        post :widget_data
-        get :settings
-      end
+    namespace :dynamicscrm do
+      post :settings_update
+      get :edit
+      post :fields_update
+      post :widget_data
+      get :settings
     end
 
     namespace :ilos do

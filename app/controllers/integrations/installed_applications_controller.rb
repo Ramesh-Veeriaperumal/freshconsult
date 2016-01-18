@@ -76,7 +76,6 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   end
 
   def edit
-    redirect_to :controller => "dynamics_crm", :action => "edit" if @installing_application.dynamics_crm?
     if @installed_application.blank?
       flash[:error] = t(:'flash.application.not_installed')
       redirect_to :controller=> 'applications', :action => 'index'
@@ -90,8 +89,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def uninstall
     begin
-      success = @installed_application.destroy
-      if success
+      obj = @installed_application.destroy
+      if obj.destroyed?
         flash[:notice] = t(:'flash.application.uninstall.success')
       else
         flash[:error] = t(:'flash.application.uninstall.error')

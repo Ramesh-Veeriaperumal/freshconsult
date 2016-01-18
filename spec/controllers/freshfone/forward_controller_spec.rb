@@ -42,6 +42,9 @@ RSpec.describe Freshfone::ForwardController do
 
   it 'should update the conference sid while waiting for transfer' do
     create_freshfone_call
+    create_freshfone_user
+    create_call_meta
+    create_pinged_agents
     params = incoming_params.merge('ConferenceSid' => 'ConSid')
     set_twilio_signature("freshfone/forward/transfer_wait", params)
     post :transfer_wait, params
@@ -54,6 +57,8 @@ RSpec.describe Freshfone::ForwardController do
 
   it 'should send an empty twiml on transfer complete to the mobile number' do
     create_call_family
+    create_call_meta(@parent_call.children.last)
+    create_pinged_agents(false,@parent_call.children.last)
     @parent_call.update_column(:call_status, Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
     params = { :CallSid => @parent_call.call_sid, :CallStatus => Freshfone::Call::CALL_STATUS_HASH[:answered] }
     set_twilio_signature("freshfone/forward/transfer_complete", params)
@@ -202,5 +207,104 @@ RSpec.describe Freshfone::ForwardController do
     expect(xml[:Response][:Comment]).to match(/Agent #{reqst_params[:agent_id]} ignored the forwarded call/)
     expect(xml[:Response]).to have_key(:Hangup)
   end
+
+  it 'should connect the direct dial and should update call metrics attribute (answered_at)' do
+    create_freshfone_call
+    params = { :CallSid => @freshfone_call.call_sid }
+    set_twilio_signature("freshfone/forward/direct_dial_connect", params)
+    post :direct_dial_connect, params
+    call_metrics = @freshfone_call.call_metrics.reload
+    expect(call_metrics.answered_at).not_to be_nil
+  end
+
+  it 'should update hangup_at in call_metrics when direct dial call completed' do
+    create_freshfone_call
+    params = conference_call_params.merge!({ :CallStatus => 'answered' })
+    set_twilio_signature('freshfone/forward/direct_dial_complete', params)
+    post :direct_dial_complete, params
+    call_metrics = @freshfone_call.call_metrics.reload
+    expect(call_metrics.hangup_at).not_to be_nil
+  end
+
+  it 'should update ivr time in call metrics while waiting in direct dial' do
+    create_freshfone_call
+    Freshfone::Notifier.any_instance.stubs(:ivr_direct_dial).raises(StandardError, 'This is an exceptional message')
+    params = { :CallSid => @freshfone_call.call_sid, :ConfereceSid => 'ConSid', :Timestamp => "#{Time.now.utc}" }
+    set_twilio_signature("freshfone/forward/direct_dial_wait", params)
+    post :direct_dial_wait, params
+    call_metrics = @freshfone_call.call_metrics.reload
+    expect(call_metrics.ivr_time).not_to be_nil
+  end
+
+  it 'should update ringing_at in call meta for the completion of forwarding  to the mobile number' do
+    create_freshfone_call
+    create_freshfone_user
+    create_call_meta
+    create_pinged_agents
+    stub_twilio_queues
+    params = { :CallSid => @freshfone_call.call_sid, :CallStatus => 'ringing', :agent => @agent.id, :Timestamp => "#{Time.now.utc}" }
+    set_twilio_signature("freshfone/forward/complete?agent=#{@agent.id}",params.except(:agent))
+    post :complete, params
+    @freshfone_call.reload
+    expect(get_pinged_agent(@agent.id)[:ringing_at]).not_to be_nil
+    Twilio::REST::Queues.any_instance.unstub(:get)
+  end
+
+  it 'should update ringing_time in call meta when forwarding to the mobile number is answered' do
+    create_freshfone_call
+    create_freshfone_user
+    create_call_meta
+    create_pinged_agents
+    update_ringing_at_in_pinged_agents(@agent.id)
+    stub_twilio_queues
+    params = { :CallSid => @freshfone_call.call_sid, :CallStatus => 'in-progress', :agent => @agent.id , :Timestamp => "#{Time.now.utc}"}
+    set_twilio_signature("freshfone/forward/complete?agent=#{@agent.id}",params.except(:agent))
+    post :complete, params
+    @freshfone_call.reload
+    expect(get_pinged_agent(@agent.id)[:ringing_time]).not_to be_nil
+    Twilio::REST::Queues.any_instance.unstub(:get)
+  end
+
+  it 'should update ringing_at on transfer ringing to the mobile number' do
+    create_call_family
+    create_freshfone_user
+    child_call = @parent_call.children.last
+    create_call_meta(child_call)
+    create_pinged_agents(false, child_call)
+    @parent_call.update_column(:call_status, Freshfone::Call::CALL_STATUS_HASH[:'on-hold'])
+    params = { :CallSid => @parent_call.call_sid, :CallStatus => "ringing" , :agent => @agent.id, :Timestamp => "#{Time.now.utc}"}
+    set_twilio_signature("freshfone/forward/transfer_complete", params.except(:agent))
+    post :transfer_complete, params
+    child_call.reload
+    expect(get_pinged_agent(@agent.id, child_call)[:ringing_at]).not_to be_nil
+  end
+
+  it 'should update ringing_time on transfer answered by the mobile number' do
+    create_call_family
+    create_freshfone_user
+    child_call = @parent_call.children.last
+    create_call_meta(child_call)
+    create_pinged_agents(false, child_call)
+    update_ringing_at_in_pinged_agents(@agent.id, child_call)
+    @parent_call.update_column(:call_status, Freshfone::Call::CALL_STATUS_HASH[:completed])
+    params = { :CallSid => @parent_call.call_sid, :CallStatus => 'in-progress', :agent => @agent.id, :Timestamp => "#{Time.now.utc}"}
+    set_twilio_signature("freshfone/forward/transfer_complete", params.except(:agent))
+    post :transfer_complete, params
+    child_call.reload
+    expect(get_pinged_agent(@agent.id, child_call)[:ringing_time]).not_to be_nil
+  end
+
+  it 'should update the ringing_at in metrics while waiting for transfer' do
+    create_freshfone_call
+    create_freshfone_user
+    create_call_meta
+    create_pinged_agents
+    params = incoming_params.merge({'ConferenceSid' => 'ConSid', 'CallStatus' => "ringing", :agent => @agent.id, 'Timestamp' => "#{Time.now.utc}"})
+    set_twilio_signature("freshfone/forward/transfer_wait", params.except(:agent))
+    post :transfer_wait, params
+    @freshfone_call.reload
+    expect(get_pinged_agent(@agent.id)[:ringing_at]).not_to be_nil
+  end
+
 end
 

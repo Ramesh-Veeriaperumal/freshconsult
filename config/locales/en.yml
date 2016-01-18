@@ -3086,7 +3086,7 @@ en:
       sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
-      last_active_at: "Last active at"
+      last_active_at: "Last seen"
       created_at: Created date
       asc: Ascending
       desc: Descending
@@ -5198,7 +5198,6 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
-      merge_ticket_failed: "Failure during merging of tickets."
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
 
     shared:
@@ -5525,6 +5524,7 @@ en:
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
+        merge_ticket_failed: "Failure during merging of tickets."
         target_merge_description:  "Ticket %{ticket.id} %{ticket.subject} is merged with this request"
         target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1:
