@@ -1,7 +1,7 @@
 class Helpdesk::TagsController < ApplicationController
   helper Helpdesk::TicketsHelper
 
-  before_filter :set_selected_tab
+  before_filter :set_selected_tab, :check_admin_user_privilege
 
   include HelpdeskControllerMethods
 
@@ -63,6 +63,12 @@ class Helpdesk::TagsController < ApplicationController
     end
   end
 
+  def check_admin_user_privilege
+    if !(current_user and  current_user.privilege?(:admin_tasks))
+      flash[:notice] = t('flash.general.access_denied')
+      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+    end
+  end 
 
   protected
   
