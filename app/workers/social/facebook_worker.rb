@@ -1,7 +1,7 @@
 module Social
   class FacebookWorker < BaseWorker
     
-    
+    include Facebook::RedisMethods
     include Facebook::KoalaWrapper::ExceptionHandler
     
     sidekiq_options :queue => :facebook, :retry => 0, :backtrace => true, :failures => :exhausted
@@ -13,6 +13,7 @@ module Social
     }
 
     def perform(msg = nil)
+      return if app_rate_limit_reached?
       Koala.config.api_version = "v2.2" 
       account = Account.current
       if msg and msg['fb_page_id']
