@@ -57,7 +57,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def validate_supported_languages
-    if (self.supported_languages - Language.all_codes).present?
+    if ((self.supported_languages || []) - Language.all_codes).present?
       errors.add(:supported_languages, I18n.t('accounts.multilingual_support.supported_languages_validity'))
       return false
     end

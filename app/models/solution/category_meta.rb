@@ -22,7 +22,9 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :delete_all
 
-	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories
+	has_many :portals, :class_name => "Portal", :through => :portal_solution_categories, 
+    :after_add => :clear_cache,
+    :after_remove => :clear_cache
 
 	has_many :mobihelp_app_solutions, 
 		:class_name => 'Mobihelp::AppSolution', 
@@ -53,7 +55,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	private
 
-	def clear_cache
+	def clear_cache(args = nil)
 		account.clear_solution_categories_from_cache
 	end
 

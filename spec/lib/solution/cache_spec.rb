@@ -21,12 +21,12 @@ describe Solution::Cache do
     it "should store correct data in cache" do
       cached_categories = $memcache.get(solutions_cache_key(@current_account))
       cached_categories.each do |c_cat|
-        cat = @current_account.solution_categories.find(c_cat['id'])
+        cat = @current_account.solution_category_meta.find(c_cat['id'])
         c_cat['name'].should eql cat.name
         c_cat['position'].should eql cat.position
-        c_cat['folders'].count.should eql cat.folders.count
+        c_cat['folders'].count.should eql cat.solution_folder_meta.count
         c_cat['folders'].each do |c_folder|
-          folder =  cat.folders.find(c_folder['id'])
+          folder =  cat.solution_folder_meta.find(c_folder['id'])
           c_folder['name'].should eql folder.name
           c_folder['article_count'].should eql folder.article_count
         end
@@ -39,7 +39,7 @@ describe Solution::Cache do
       @portals.each do |portal|
         @category_collection = nil
         portal.solution_categories.where(:is_default => false).count.should eql category_collection(portal)[:current].count
-        others_count = @current_account.solution_categories.where(:is_default => false).count - category_collection(portal)[:current].count
+        others_count = @current_account.solution_category_meta.where(:is_default => false).count - category_collection(portal)[:current].count
         category_collection(portal)[:others].count.should eql others_count
       end
     end
@@ -54,19 +54,19 @@ describe Solution::Cache do
 
     it "should clear cache on article creation" do
       article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", 
-                :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @categories[0].folders[1].id,
+                :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @categories[0].solution_folder_meta[1].id,
                 :user_id => @agent.id, :status => "2", :art_type => "1" } )
       check_cache_invalidation(@current_account)
     end
 
     it "should clear cache on article deletion" do
-      @categories[2].folders[3].articles[3].destroy
+      @categories[2].solution_folder_meta[3].solution_article_meta[3].destroy
       check_cache_invalidation(@current_account)
     end
 
     it "should clear cache when article's folder_id changes" do
-      @categories[4].folders[4].articles[4].folder_id = @categories[4].folders[3].id
-      @categories[4].folders[4].articles[4].save(:validate => false)
+      @categories[4].solution_folder_meta[4].solution_article_meta[4].solution_folder_meta_id = @categories[4].solution_folder_meta[3].id
+      @categories[4].solution_folder_meta[4].solution_article_meta[4].save(:validate => false)
       check_cache_invalidation(@current_account)
     end
 
@@ -79,24 +79,24 @@ describe Solution::Cache do
     end
 
     it "should clear cache on folder deletion" do
-      @categories[4].folders[1].destroy
+      @categories[4].solution_folder_meta[1].destroy
       check_cache_invalidation(@current_account)
     end
 
     it "should clear cache when folder name changes" do
-      @categories[3].folders[2].name = "folder3_name"
-      @categories[3].folders[2].save(validate: false)
+      @categories[3].solution_folder_meta[2].primary_folder.name = "folder3_name"
+      @categories[3].solution_folder_meta[2].save(validate: false)
       check_cache_invalidation(@current_account)
     end
 
     it "should clear cache when folder category_id changes" do
-      @categories[3].folders[1].category_id = 4
-      @categories[3].folders[1].save(validate: false)
+      @categories[3].solution_folder_meta[1].solution_category_meta_id = 4
+      @categories[3].solution_folder_meta[1].save(validate: false)
       check_cache_invalidation(@current_account)
     end
 
     it "should clear cache when folder position changes " do
-      f = @categories[1].folders.last
+      f = @categories[1].solution_folder_meta.last
       f.position += 1
       f.save(validate: false)
       check_cache_invalidation(@current_account)
@@ -116,7 +116,8 @@ describe Solution::Cache do
     end
 
     it "should clear cache when category name changes " do
-      @categories[1].reload.name = Faker::Name.name
+      @categories[1].reload
+      @categories[1].primary_category.name = Faker::Name.name
       @categories[1].save(validate: false)
       check_cache_invalidation(@current_account) 
     end

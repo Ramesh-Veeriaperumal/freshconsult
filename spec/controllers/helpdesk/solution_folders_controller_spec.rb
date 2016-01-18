@@ -22,7 +22,7 @@ describe Solution::FoldersController do
 
   it "should redirect to category show if folder index is hit" do 
     get :index, :category_id => @test_category_meta.id
-    response.should redirect_to(solution_category_url(@test_category_meta.id))
+    response.should redirect_to(solution_category_path(@test_category_meta.id))
   end
 
   it "should render a show page of a folder" do

@@ -169,7 +169,8 @@ describe Solution::Draft do
     it "should create activity with the correct path in activity data" do
       @draft.discarding = true
       @draft.destroy
-      @article_published.activities.last.activity_data[:path].should eql Rails.application.routes.url_helpers.solution_article_path(@draft)
+      @article_published.activities.last.description.should eql 'activities.solutions.delete_draft.long'
+      @article_published.activities.last.activity_data[:path].should eql Rails.application.routes.url_helpers.solution_article_path(@draft.article.id)
     end
     
     it "should create activity with the correct title in activity data" do

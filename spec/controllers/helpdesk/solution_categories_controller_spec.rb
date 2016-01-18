@@ -170,7 +170,7 @@ describe Solution::CategoriesController do
 
     delete :destroy, :id => @test_category_meta.id
     @account.solution_categories.find_by_name(@test_category_meta.name).should be_nil
-    response.should redirect_to(solution_categories_url)
+    response.should redirect_to(solution_categories_path)
   end
 
   it "should render sidebar" do
