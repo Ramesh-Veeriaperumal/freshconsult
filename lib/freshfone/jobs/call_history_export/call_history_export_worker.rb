@@ -106,7 +106,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     def generate_csv
       CSVBridge.generate do |csv|
         headers = field_hash
-        title_row = headers.call(Freshfone::Call.new).keys
+        title_row = headers.call(freshfone_call).keys
         csv << title_row
         @calls_hash.each do |phone_call|
           csv << phone_call.values
@@ -116,7 +116,8 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
 
     def generate_xls
       require 'erb'
-      @xls_hash = field_hash.call(Freshfone::Call.new)
+
+      @xls_hash = field_hash.call(freshfone_call)
       @xls_hash.each { |key, value| @xls_hash[key] = key }
       @headers = @xls_hash.keys.map { |header| escape_html(header) }
       @records ||= []
@@ -126,6 +127,12 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
       end
       path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
       ERB.new(File.read(path)).result(binding)
+    end
+
+    def freshfone_call
+      call_params = {} 
+      call_params.merge!({:call_metrics => Freshfone::CallMetric.new}) if @current_account.features?(:freshfone_call_metrics)
+      Freshfone::Call.new(call_params)
     end
 
     def field_hash 
@@ -143,7 +150,7 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
           "Parent Call ID" => t_call.parent_id.blank? ? "-" : t_call.parent_id - (@first_call_id - 1),
           "Date" => t_call.created_at.to_s 
         }
-        if @current_account.features?(:freshfone_call_metrics)
+        if call_metrics_enabled?(t_call)
           data_hash.merge!(data_fields_with_metrics(t_call))
         else 
           data_hash.merge!(data_fields_without_metrics(t_call))
@@ -153,7 +160,6 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
     end
 
     def data_fields_with_metrics(t_call)
-      t_call.call_metrics = Freshfone::CallMetric.new if t_call.call_metrics.blank?
       {
         "In Business Hour" => business_hour_call(t_call),
         "IVR Time" =>  formated_durations(t_call.call_metrics.ivr_time),
@@ -245,5 +251,9 @@ class Freshfone::Jobs::CallHistoryExport::CallHistoryExportWorker < Struct.new(:
 
     def business_hour_call(call)
       call.business_hour_call ? "Yes" : "No"
+    end
+
+    def call_metrics_enabled?(t_call)
+      @current_account.features?(:freshfone_call_metrics) && t_call.call_metrics.present?
     end
 end
