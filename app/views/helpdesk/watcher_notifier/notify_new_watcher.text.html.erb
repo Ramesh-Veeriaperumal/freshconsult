@@ -1,32 +1,32 @@
-<%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>, <br /> <br /> 
+<%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>, <br /> <br />
 <% if @agent_name == Va::Constants::AUTOMATIONS_MAIL_NAME %>
     <%= I18n.t('helpdesk.tickets.add_watcher.mail.added_as_watcher_by_automation') %>
 <% else %>
     <%= I18n.t('helpdesk.tickets.add_watcher.mail.added_as_watcher', :agent_name => @agent_name) %>
 <% end %>
-<br /> <br /> 
+<br /> <br />
 <table>
     <tr>
         <td> <b> <%=t('helpdesk.tickets.add_watcher.mail.ticket') %> </b> </td>
         <td> : </td>
-        <td> 
-            <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host,:protocol => @ticket.url_protocol)%>'> 
-                #<%=@ticket.display_id%> <%=@ticket.subject%> 
+        <td>
+            <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host,:protocol => @ticket.url_protocol)%>'>
+                #<%=@ticket.display_id%> <%=@ticket.subject%>
             </a>
         </td>
     </tr>
     <tr>
         <td> <b> <%=t('helpdesk.tickets.add_watcher.mail.requester') %> </b> </td>
         <td> : </td>
-        <td> 
+        <td>
             <%= @ticket.requester.name%>
             &lt;<%= @ticket.requester.email unless @ticket.requester.email.blank? %>&gt;
-        </td> <br />
+        </td>
     </tr>
 </table><br />
 
 ---------- <%=t('helpdesk.tickets.add_watcher.mail.ticket_details') %> ----------<br /> <br />
-<%=@ticket.description_html.html_safe%> <br /> <br /> 
+<%=@ticket.description_html.html_safe%> <br /> <br />
 ---------- ---------- ----------<br /><br />
 
 <a href='<%=unsubscribe_helpdesk_ticket_subscriptions_url(@ticket,
