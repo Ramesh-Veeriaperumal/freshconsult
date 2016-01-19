@@ -56,7 +56,7 @@ class ContactForm < ActiveRecord::Base
   end
 
   def custom_dropdown_field_choices
-    custom_drop_down_fields.map { |x| [x.name.to_sym, x.choices.map { |t| t[:value] }] }.to_h
+    custom_drop_down_fields.map { |x| [x.name, x.choices.map { |t| t[:value] }] }.to_h
   end
 
   def custom_checkbox_fields

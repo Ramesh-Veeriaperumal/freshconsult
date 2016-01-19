@@ -32,7 +32,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, _values)
     method = method_name
     if respond_to?(method, true)
-      send(method, record, attribute.to_sym)
+      send(method, record, attribute)
     else
       warn :"Validation Method #{method} is not present for the #{current_field.field_type} - #{current_field.inspect}"
     end
@@ -169,8 +169,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
       children = @custom_fields.select { |x| x.parent_id == @current_field.id || (x.level == 3 && x.parent_id == @current_field.parent_id) }
       children.each do |child|
         next if values[child.name].blank?
-        record.errors[field_name.to_sym] << :conditional_not_blank
-        (record.error_options ||= {}).merge!(field_name.to_sym => { child: child.name })
+        record.errors[field_name] << :conditional_not_blank
+        (record.error_options ||= {}).merge!(field_name => { child: TicketDecorator.display_name(child.name) }) # we are explicitly calling decorator here, instead of handling this in the controller, in order to avoid unnecessary looping across all ticket fields.
         return true
       end
       true

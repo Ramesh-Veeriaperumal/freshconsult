@@ -38,7 +38,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     skip_bullet do
       create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'city', editable_in_signup: 'true'))
       tags = [Faker::Name.name, Faker::Name.name, 'tag_sample_test_3']
-      cf = { 'cf_city' => 'Chennai' }
+      cf = { 'city' => 'Chennai' }
       comp = get_company
 
       params = {  name: Faker::Lorem.characters(15),
@@ -124,7 +124,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
     tags = [Faker::Name.name, Faker::Name.name]
     comp = Company.first || create_company
     params_hash = { name: Faker::Lorem.characters(15), email: Faker::Internet.email, view_all_tickets: true,
-                    company_id: comp.id, language: 'en', tags: tags, custom_fields: { 'cf_department' => 'Sample Dept', 'cf_sample_check_box' => true, 'cf_sample_number' => 7878 } }
+                    company_id: comp.id, language: 'en', tags: tags, custom_fields: { 'department' => 'Sample Dept', 'sample_check_box' => true, 'sample_number' => 7878 } }
     headers, params = encode_multipart(params_hash, 'avatar', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/contacts', params, @headers.merge(headers)
@@ -165,7 +165,7 @@ class ApiContactsFlowTest < ActionDispatch::IntegrationTest
       custom_field = sample_user.custom_field
       get "/api/v2/contacts/#{sample_user.id}", nil, @write_headers
       assert_response 200
-      match_json(contact_pattern({ custom_field: custom_field }, sample_user))
+      match_json(contact_pattern({ custom_field: custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h }, sample_user))
     end
   ensure
     Account.unstub(:current)

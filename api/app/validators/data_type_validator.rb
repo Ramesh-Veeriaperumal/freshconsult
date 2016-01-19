@@ -23,7 +23,7 @@ class DataTypeValidator < ActiveModel::EachValidator
     def valid_type?(type, value, record, attribute)
       case value
       when NilClass
-        allow_unset?(type) && !record.instance_variable_defined?("@#{attribute}".to_sym)
+        allow_unset?(type) && !record.instance_variable_defined?("@#{attribute}")
       when type
         true
       when TrueClass
@@ -40,7 +40,7 @@ class DataTypeValidator < ActiveModel::EachValidator
     end
 
     def required_attribute_not_defined?(record, attribute, _value)
-      options[:required] && !record.instance_variable_defined?("@#{attribute}".to_sym)
+      options[:required] && !record.instance_variable_defined?("@#{attribute}")
     end
 
     def allow_string?(record)

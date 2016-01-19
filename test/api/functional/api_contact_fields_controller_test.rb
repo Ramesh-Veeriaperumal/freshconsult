@@ -9,7 +9,7 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
   def test_contact_field_index
     get :index, controller_params
     assert_response 200
-    contact_fields = ContactField.all
+    contact_fields = ContactField.scoped.order(:position)
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern.ordered!)
   end

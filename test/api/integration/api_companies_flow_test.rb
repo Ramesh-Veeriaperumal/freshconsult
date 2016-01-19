@@ -52,7 +52,7 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
       Account.stubs(:current).returns(@account)
       get "/api/v2/companies/#{company.id}", nil, @write_headers
       company.update_attributes(custom_field: { 'cf_linetext1' => 'test', 'cf_testimony1' => 'test testimony' })
-      custom_field = company.custom_field
+      custom_field = company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v] }.to_h
       get "/api/v2/companies/#{company.id}", nil, @write_headers
       assert_response 200
       match_json(company_pattern({ custom_field: custom_field }, company))

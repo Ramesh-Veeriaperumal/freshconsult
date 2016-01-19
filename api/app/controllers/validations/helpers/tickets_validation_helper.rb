@@ -4,8 +4,8 @@ class Helpers::TicketsValidationHelper
       Account.current ? Account.current.ticket_types_from_cache.map(&:value) : []
     end
 
-    def custom_field_names(ticket_fields)
-      ticket_fields.select { |x| !x.default }.collect(&:name)
+    def name_mapping(ticket_fields)
+      ticket_fields.reject(&:default).each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) }
     end
 
     def custom_dropdown_fields(delegator)
@@ -18,7 +18,7 @@ class Helpers::TicketsValidationHelper
 
     def custom_dropdown_field_choices
       Account.current.custom_dropdown_fields_from_cache.collect do |x|
-        [x.name.to_sym, x.choices.flatten.uniq]
+        [x.name, x.choices.flatten.uniq]
       end.to_h
     end
 

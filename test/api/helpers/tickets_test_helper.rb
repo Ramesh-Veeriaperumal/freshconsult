@@ -32,7 +32,8 @@ module Helpers::TicketsTestHelper
 
   def ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
-    ticket_custom_field = (ticket.custom_field && ignore_extra_keys) ? ticket.custom_field.as_json.ignore_extra_keys! : ticket.custom_field.as_json
+    custom_field = ticket.custom_field.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h
+    ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
     expected_output[:description_html] ||= format_html(ticket, expected_output[:description]) if expected_output[:description]
 
     {
