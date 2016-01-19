@@ -1,0 +1,6 @@
+{
+
+    "objects" : {"contact" : "contact", "account" : "account"},
+
+    "parameters" : ["username","password","dynamicscrm_url"]
+}   

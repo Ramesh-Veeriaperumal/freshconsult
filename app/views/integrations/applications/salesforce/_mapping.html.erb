@@ -1,4 +1,7 @@
-
+<div class="sf-title-wrapper">
+      <label for="enble_sync"> Enable Sync </label> 
+      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
+</div>
 <div class="field-mapping">
   <div id="field-wrap"></div>
   <div class="row-fluid" id="sync-setting-list">
@@ -69,19 +72,19 @@
 </div>
 
 <script class="construct_company" type="text/html" data-default-value = '<%= existing_companies.to_json.html_safe %>'>
-    <% fd_company = @salesforce_config["fd_company"] %>
+    <% fd_company = @element_config["fd_company"] %>
     <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-    <% sf_company = @salesforce_config["account_fields"] %>
+    <% sf_company = @element_config["account_fields"] %>
     <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script>   
 
 <script class="construct_contact" type="text/html" data-default-value='<%= existing_contacts.to_json.html_safe %>'>
-  <% fd_contact = @salesforce_config["fd_contact"] %>
+  <% fd_contact = @element_config["fd_contact"] %>
   <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k]}), 
           { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-  <% sf_contact = @salesforce_config["contact_fields"] %>
+  <% sf_contact = @element_config["contact_fields"] %>
   <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script> 

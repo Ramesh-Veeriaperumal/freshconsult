@@ -1,0 +1,17 @@
+
+{
+      "element" : { "key" : "freshdesk" },
+
+      "configuration" : {
+        "username" : "%{api_key}",
+        "password" : "X",
+        "subdomain" : "%{subdomain}",
+        "event.notification.enabled" : "true",
+        "event.poller.refresh_interval": "5",
+        "event.poller.configuration": " "
+      },
+
+      "tags" : [],
+
+      "name" : "%{fd_instance_name}"
+  }

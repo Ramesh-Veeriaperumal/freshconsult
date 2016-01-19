@@ -1,0 +1,16 @@
+
+{
+    "element" : { "key" : "dynamicscrm"},
+
+    "configuration" : {
+        "user.username" : "%{username}",
+        "user.password" : "%{password}",
+        "dynamics.tenant" : "%{dynamicscrm_url}",
+        "document.tagging" : false,
+        "event.notification.enabled" : "true",
+        "event.vendor.type" : "polling"
+      },
+
+    "name" : "%{element_name}"
+    
+}       

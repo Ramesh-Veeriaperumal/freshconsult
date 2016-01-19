@@ -3,10 +3,10 @@
       <%=t("integrations.salesforce.helptext").html_safe%>
   </div>
 <%- end %>
-
   <h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
   <% method_type = (@action == 'install' ) ? 'post' : 'put' %>
-  <%= form_tag("/integrations/cloud_elements/#{@action}", :method => method_type )  do %>
+  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type )  do %>
+  <%= hidden_field_tag  'state', params[:state] %>
 
   <ul class="nav nav-pills">
     <li class="active">
@@ -15,10 +15,6 @@
     <li>
       <a href="#field-mapping-tab" data-toggle="tab">Field Mapping</a>
     </li>
-    <div class="sf-title-wrapper pull-right">
-      <label for="enble_sync"> Enable Sync </label> 
-      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @salesforce_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
-    </div>
   </ul>
   
   <div class="well">
@@ -31,10 +27,11 @@
       </label>
       <div class="tab-pane span9" id="field-mapping-tab">
 
-        <% existing_companies = [{"fd_field" => "name", "sf_field" => "Name"}]
-           existing_contacts = [{"fd_field" => "name", "sf_field" => "Name"}, {"fd_field" => "email", "sf_field" => "Email"}, {"fd_field" => "mobile", "sf_field" => "MobilePhone"}]
+        <% existing_companies = @element_config['existing_companies']
+           existing_contacts = @element_config['existing_contacts']
            existing_companies = @installed_app.configs_companies unless @installed_app.nil?
            existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
+           default_fields = @element_config['default_fields']
         %>
         <%= render :partial => "/integrations/applications/salesforce/mapping",
                    :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>
@@ -42,20 +39,18 @@
       </div>
       <div class="tab-pane active span9" id="field-visibility-tab">
         <%= render :partial => "/integrations/applications/salesforce/visibility", 
-                     :locals => { :default_fields => ["Name"] } %>
+                     :locals => { :default_fields =>  default_fields }  %>
       </div>
 
     </div>
   </div>
 
   <div class="button-container">
-    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+    <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
     <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
   </div>
 
   <%end%>
-
-
 
 <script type="text/javascript">
 function fillLabels(){
@@ -99,8 +94,8 @@ function fillLabels(){
     if(!jQuery('#enble_sync').is(':checked')){
       change();
     }
-    jQuery('#enble_sync').prop('checked', "<%= @salesforce_config['enble_sync'] %>");
-    jQuery('input[name="crm_sync_type"][value="' + "<%= @salesforce_config['crm_sync_type'] %>" + '"]').attr('checked', true);
+    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
+    jQuery('input[name="crm_sync_type"][value="' + "<%= @element_config['crm_sync_type'] %>" + '"]').attr('checked', true);
   });
   function change(){ 
     jQuery('#field-wrap').toggleClass('field-disable')
