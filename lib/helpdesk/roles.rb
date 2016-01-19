@@ -405,7 +405,6 @@ module Helpdesk
       :assign_group,
       :create_solution_draft,
       :compose_email,
-      :manage_dashboard,
       :view_social,                           #Social_privilege
       :phone_attend_call,                     #FreshFone_privileges
       :phone_make_call,
