@@ -132,9 +132,9 @@ class ApiApplicationController < MetalApiController
       # http://ruby-doc.org/core-2.1.0/RangeError.html
       # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb#L18
       # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
-      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && params[:page].to_i > ApiConstants::PAGE_MAX
+      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && @per_page && ((params[:page].to_i - 1) * (@per_page + 1)) > ApiConstants::PAGE_MAX
         # raised by will_paginate gem
-        render_errors [[:page, :per_page_invalid_number]]
+        render_errors([[:page, :page_invalid_offset]], {page: {max_value: ((ApiConstants::PAGE_MAX / (@per_page + 1)) + 1)}})
       else
         # unexpected exception
         notify_new_relic_agent(e, description: 'Invalid Offset Error.')
@@ -367,14 +367,17 @@ class ApiApplicationController < MetalApiController
     end
 
     def render_query_param_errors(errors, meta = nil)
-      set_query_param_errors(errors)
+      set_query_param_errors(errors, meta)
       render_errors(errors, meta)
     end
 
-    def set_query_param_errors(errors)
+    def set_query_param_errors(errors, meta)
       # this will translate generic positive_number error to specific per_page_positive_number
       # this is being done to get different custom codes with the same error message.
-      errors[:per_page] = "per_page_#{errors.to_h[:per_page]}" if errors[:per_page].present?
+      if errors[:per_page].present?
+        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
+        meta[:per_page].merge!({max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]})
+      end
     end
 
     def render_errors(errors, meta = nil)

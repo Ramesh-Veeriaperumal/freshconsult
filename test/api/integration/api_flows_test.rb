@@ -734,28 +734,28 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_pagination_with_invalid_datatype_string
     get 'api/discussions/categories?page=x&per_page=x', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_data_type_mismatch)])
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, {max_value: 100})])
     assert_response 400
   end
 
   def test_pagination_with_blank_values
     get 'api/discussions/categories?page=&per_page=', nil, @headers
     match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_data_type_mismatch)])
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, {max_value: 100})])
     assert_response 400
   end
 
   def test_pagination_with_invalid_value
     get 'api/discussions/categories?page=0&per_page=0', nil, @headers
     match_json([bad_request_error_pattern('page', :invalid_number, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid_number)])
+                bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     assert_response 400
   end
 
   def test_pagination_with_invalid_negative_value
     get 'api/discussions/categories?page=-1&per_page=-1', nil, @headers
     match_json([bad_request_error_pattern('page', :invalid_number, data_type: 'Positive Integer'),
-                bad_request_error_pattern('per_page', :per_page_invalid_number)])
+                bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     assert_response 400
   end
 
@@ -768,12 +768,15 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_pagination_with_per_page_exceeding_max_value
     get 'api/discussions/categories?page=922337203685&per_page=101', nil, @headers
-    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number)])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     assert_response 400
 
     get 'api/discussions/categories?page=9223372036854775808&per_page=100', nil, @headers
-    match_json([bad_request_error_pattern('page', :per_page_invalid_number)])
+    match_json([bad_request_error_pattern('page', :per_page_invalid_number, max_value: 91320515216383919)])
     assert_response 400
+
+    get 'api/discussions/categories?page=91320515216383919&per_page=100', nil, @headers
+    assert_response 200
   end
 
   def test_unexpected_range_error
