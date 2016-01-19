@@ -32,7 +32,7 @@ module ApiConstants
   MAX_LENGTH_STRING = 255
 
   TAG_MAX_LENGTH_STRING = 32
-  CACHE_VERSION = { v2: 'V2' }.freeze
+  CACHE_VERSION = { v2: 'V2', v3: 'V3' }.freeze
 
   PRIVILEGES_WITH_OWNEDBY = ABILITIES.values.flatten.select(&:owned_by).map(&:name).uniq
 
