@@ -61,9 +61,10 @@ module ApiDiscussions
 
     actions.select { |a| ['index', 'create'].exclude?(a) }.each do |action|
       define_method("test_#{action}_load_object_present") do
+        category = fc 
         ForumCategory.any_instance.stubs(:destroy).returns(true)
-        send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
-        assert_equal fc.reload, assigns(:item)
+        send(methods[action], action, construct_params({ id: category.id }, name: 'new'))
+        assert_equal category.reload, assigns(:item)
       end
 
       define_method("test_#{action}_load_object_not_present") do

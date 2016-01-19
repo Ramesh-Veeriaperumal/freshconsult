@@ -43,11 +43,11 @@ class DateTimeValidator < ActiveModel::EachValidator
     end
 
     def iso8601_format(value)
-      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ get_date_time_regex_for_value
+      fail(ArgumentError, FORMAT_EXCEPTION_MSG) unless value =~ date_time_regex_for_value
       true
     end
 
-    def get_date_time_regex_for_value
+    def date_time_regex_for_value
       options[:only_date] ? DATE_REGEX : DATE_TIME_REGEX
     end
 

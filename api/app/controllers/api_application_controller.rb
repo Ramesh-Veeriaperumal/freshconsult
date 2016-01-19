@@ -134,7 +134,7 @@ class ApiApplicationController < MetalApiController
       # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
       if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && @per_page && ((params[:page].to_i - 1) * (@per_page + 1)) > ApiConstants::PAGE_MAX
         # raised by will_paginate gem
-        render_errors([[:page, :page_invalid_offset]], {page: {max_value: ((ApiConstants::PAGE_MAX / (@per_page + 1)) + 1)}})
+        render_errors([[:page, :page_invalid_offset]], page: { max_value: ((ApiConstants::PAGE_MAX / (@per_page + 1)) + 1) })
       else
         # unexpected exception
         notify_new_relic_agent(e, description: 'Invalid Offset Error.')
@@ -311,7 +311,7 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
-      add_link_header(page: (get_page + 1)) if next_page_exists
+      add_link_header(page: (page + 1)) if next_page_exists
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
@@ -376,7 +376,7 @@ class ApiApplicationController < MetalApiController
       # this is being done to get different custom codes with the same error message.
       if errors[:per_page].present?
         errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
-        meta[:per_page].merge!({max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page]})
+        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
       end
     end
 
@@ -478,19 +478,19 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options(is_array = false)
       options = {}
-      @per_page = get_per_page # user given/defualt page number
+      @per_page = per_page # user given/defualt page number
       options[:per_page] =  is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
-      options[:offset] = @per_page * (get_page - 1) unless is_array # assign offset unless scoper is array
-      options[:page] = get_page
+      options[:offset] = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
+      options[:page] = page
       options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
       options
     end
 
-    def get_page
+    def page
       (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
     end
 
-    def get_per_page
+    def per_page
       (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).to_i
     end
 
@@ -508,14 +508,14 @@ class ApiApplicationController < MetalApiController
       owned_by_permissions = constant.except(:all).keys & ApiConstants::PRIVILEGES_WITH_OWNEDBY
       permissions = constant.except(:all, *owned_by_permissions).keys
       permissions.each { |key| @fields += constant[key] if privilege?(key) }
-      owned_by_permissions.each{ |key| @fields += constant[key] if has_privilege_or_owns_object?(key, item, owned_by_field) }
+      owned_by_permissions.each { |key| @fields += constant[key] if privilege_or_owns_object?(key, item, owned_by_field) }
       @fields
     end
 
-    def has_privilege_or_owns_object?(key, item, owned_by_field)
+    def privilege_or_owns_object?(key, item, owned_by_field)
       # this method assumes that,
       # when load_object is not called then the action is a create action,
-      # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario 
+      # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario
       # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
       item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
     end
