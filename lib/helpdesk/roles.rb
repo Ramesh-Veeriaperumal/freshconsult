@@ -350,7 +350,6 @@ module Helpdesk
       :import_customers,
       :export_customers,
       :create_solution_draft,
-      :manage_dashboard,
       :compose_email,
       :solution_view_versions,
       :forum_basic_moderator,
