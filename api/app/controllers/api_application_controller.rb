@@ -204,11 +204,13 @@ class ApiApplicationController < MetalApiController
 
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
+      log_error_response @error
       render '/request_error', status: status
     end
 
     def render_base_error(code, status, params_hash = {})
       @error = BaseError.new(code, params_hash)
+      log_error_response @error
       render '/base_error', status: status
     end
 
@@ -385,6 +387,7 @@ class ApiApplicationController < MetalApiController
     def render_errors(errors, meta = nil)
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
+        log_error_response @errors
         render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
       else
         # before_callbacks may return false without populating the errors hash.
@@ -571,5 +574,10 @@ class ApiApplicationController < MetalApiController
 
     def increment_api_credit_by(value)
       RequestStore.store[:extra_credits] += value
+    end
+
+    def log_error_response(errors)
+      # to get printed in the hash format, we have this manipulation.
+      Rails.logger.debug "API V2 Error Response : #{errors.map(&:instance_values).inspect}"
     end
 end
