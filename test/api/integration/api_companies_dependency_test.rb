@@ -6,7 +6,7 @@ class ApiCompaniesDependencyTest < ActionDispatch::IntegrationTest
                         :unset_current_account, :unset_current_portal, :set_current_account, :set_default_locale,
                         :set_locale, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :remove_rails_2_flash_before, :check_account_state, :set_time_zone, :check_day_pass_usage,
-                        :force_utf8_params, :persist_user_agent, :set_cache_buster, :logging_details, :remove_pjax_param,
+                        :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token,
                         :load_multiple_items, :add_to_history, :set_selected_tab, :load_item, :build_item,
                         :set_required_fields, :set_validatable_custom_fields, :set_native_mobile, :set_last_active_time]
