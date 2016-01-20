@@ -6,6 +6,7 @@ require 'json'
 class AuthorizationsController < ApplicationController
   include Integrations::GoogleContactsUtil
   include Integrations::OauthHelper
+  include Integrations::Constants
   include HTTParty
 
   skip_before_filter :check_privilege, :verify_authenticity_token
@@ -19,11 +20,11 @@ class AuthorizationsController < ApplicationController
     Rails.logger.debug "@omniauth "+@omniauth.inspect
     failure if @omniauth.blank?
     @omniauth_origin = session["omniauth.origin"]
-    if @omniauth['provider'] == "twitter"
+    if @omniauth['provider'] == APP_NAMES[:twitter]
       twitter_id = @omniauth['info']['nickname']
-      @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  unless  current_account.blank?
+      @current_user = current_account.all_users.find_by_twitter_id(twitter_id)  if current_account.present?
       create_for_sso(@omniauth)
-    elsif @omniauth['provider'] == "facebook"
+    elsif @omniauth['provider'] == APP_NAMES[:facebook]
       create_for_facebook(params)
     elsif OAUTH2_PROVIDERS.include?(@omniauth['provider'])
       create_for_oauth2(@omniauth['provider'], params)
@@ -72,8 +73,8 @@ class AuthorizationsController < ApplicationController
   end
 
   def load_authorization
-    @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == "facebook"
-    if (@provider == "twitter")
+    @auth = Authorization.find_from_hash(@omniauth, current_account.id) unless @provider == APP_NAMES[:facebook]
+    if (@provider == APP_NAMES[:twitter])
       requires_feature("#{@provider}_signin")
     end
   end
@@ -91,7 +92,7 @@ class AuthorizationsController < ApplicationController
       'oauth_token_secret' => "#{@omniauth.credentials.secret}"
     }
 
-    if (provider == Integrations::Constants::APP_NAMES[:quickbooks])
+    if (provider == APP_NAMES[:quickbooks])
       config_params['company_id'] = params['realmId']
       config_params['token_renewal_date'] = Time.now + Integrations::Quickbooks::Constant::TOKEN_RENEWAL_DAYS.days
     end
@@ -112,13 +113,13 @@ class AuthorizationsController < ApplicationController
     }
 
     case provider
-      when "box"
+      when APP_NAMES[:box]
         config_params['email'] = @omniauth.extra.raw_info.login
-      when "google_contacts"
+      when APP_NAMES[:google_contacts]
         config_params['info'] = {"email" => @omniauth['info']['email'], "first_name" => @omniauth['info']['first_name'],
                                   "last_name" => @omniauth['info']['last_name'], "name" => @omniauth['info']['name']}
         config_params['origin'] = @omniauth_origin
-        config_params['iapp_id'] = @iapp_id
+        config_params['iapp_id'] = @iapp_id        
     end
 
     set_oauth_redirect_url(config_params)
@@ -211,7 +212,7 @@ class AuthorizationsController < ApplicationController
       @new_auth = create_from_hash(hash, account) 
       @current_user = @new_auth.user
     end
-    create_session unless @omniauth['provider'] == "facebook"
+    create_session unless @omniauth['provider'] == APP_NAMES[:facebook]
     return true
   end
   
@@ -220,8 +221,8 @@ class AuthorizationsController < ApplicationController
     user.name = hash['info']['name']
     user.email = hash['info']['email'] if hash['info']['email']
     unless hash['info']['nickname'].blank?
-      user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
-      user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'
+      user.twitter_id = hash['info']['nickname'] if hash['provider'] == APP_NAMES[:twitter]
+      user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == APP_NAMES[:facebook]
     end
     user.helpdesk_agent = false
     user.active = true

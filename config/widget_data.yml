@@ -406,3 +406,29 @@
   id: 25
   description: integrations.magento.desc
   application_type: magento
+
+- options:
+    display_in_pages:
+    - contacts_show_page_side_bar
+  script: |- 
+          <script type="text/javascript">         
+            var infusionsoftBundle={ domain:"https://api.infusionsoft.com", 
+                                    reqEmail:"{{requester.all_emails}}", 
+                                    token:"{{infusionsoft.oauth_token}}", 
+                                    contactFields:"{{infusionsoft.contacts}}", 
+                                    contactLabels:"{{infusionsoft.contact_labels}}", 
+                                    accountLabels:"{{infusionsoft.account_labels}}", 
+                                    accountFields:"{{infusionsoft.accounts}}", 
+                                    reqName:"{{requester.name | escape_html}}", 
+                                    reqCompany : "{{requester.company_name | escape_html}}", 
+                                    accountUrl: "{{infusionsoft.account_url}}" , 
+                                    contactCustomFields: "{{infusionsoft.contact_custom_fields}}", 
+                                    contactDataTypes: "{{infusionsoft.contact_data_types}}", 
+                                    companyCustomFields: "{{infusionsoft.account_custom_fields}}", 
+                                    companyDataTypes: "{{infusionsoft.account_data_types}}" };
+            Fjax.Assets.integration('infusionsoft', function() { new InfusionsoftWidget(infusionsoftBundle); });
+          </script>
+  name: infusionsoft_widget
+  id: 23
+  description: infusionsoft.widgets.infusionsoft_widget.description
+  application_type: infusionsoft

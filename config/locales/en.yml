@@ -6295,7 +6295,21 @@ en:
       send_reply_in_fd: "Notify customer via email"
       add_comment_in_jira: "Add a comment in JIRA"
       update_jira_status: "Update JIRA status"
-      add_attachments_in_jira: "While syncing exclude ticket attachments"
+      add_attachments_in_jira: "While syncing exclude ticket attachments" 
+
+    infusionsoft:
+      label: "Infusionsoft"
+      desc: "You can view contact information from Infusionsoft crm in Freshdesk."
+      helptext: "<h4>Infusionsoft Integration</h4><p><br/>Select the list of fields that need to be displayed in the infusionsoft widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>FirstName and Company are the default fields and cannot be removed.</p>"
+      customfields_error: "Could not fetch Infusionsoft contact fields. Please try after sometime."
+      add_fields:
+        remove: "Remove"
+      form:
+        infusionsoft_settings_info: ""
+        infusionsoft_settings: "Infusionsoft Settings"
+        select: "Select an option"
+        contact: "Contact Fields"
+        account: "Account Fields"
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
@@ -6376,6 +6390,10 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
+        account: "Account Fields"
+        error: "Unable to connect to SugarCRM. Please try after sometime."
     dynamicscrm:
       label: "Dynamics CRM"
       helptext: "<h4>Dynamics CRM Integration Help</h4><p><br/> Once you enable this integration, your agents can access Dynamics CRM contact information right inside the Freshdesk ticket & contact pages. <br /><br /> Please note that your agents can only view those fields that are configured by you in the settings page and the search function is based on the email address mapping."
