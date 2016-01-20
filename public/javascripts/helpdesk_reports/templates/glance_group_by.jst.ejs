@@ -4,18 +4,12 @@
 	var title_name = HelpdeskReports.Constants.Glance.metrics[metric].title;
 	var constants = HelpdeskReports.Constants.Glance;
 %>
-
 <% if (custom_fields.indexOf(data) < 0) { %>
 	<div class="chart-container">
-		<% if (constants.percentage_metrics.indexOf(metric) > -1) { %>
+			<% group_type = I18n.t(fields_hash[data].toLowerCase(),{scope: "helpdesk_reports.chart_title",defaultValue: fields_hash[data].toLowerCase()}) %>
 			<div class="title">
-				<%= title_name %> by <%= fields_hash[data].toLowerCase() %>
+				<%= I18n.t(title_name,{group_by: group_type}) %>
 			</div>
-		<% } else { %>
-			<div class="title">
-				<%= title_name %> split by <%= fields_hash[data].toLowerCase() %>
-			</div>
-		<% } %>
 		<div id="<%= data %>_container" class="half-container" data-group="<%= data %>" data-report="glance-container"></div>
 		<span class="view-more" data-container="view-more" data-group-container="<%= data %>">View more...</span>
 	</div>
@@ -23,11 +17,7 @@
 	<div id="custom_field_group_by" class="chart-container">
 		<div class="title">
 			<span class="rep-title-sub">
-				<% if (constants.percentage_metrics.indexOf(metric) > -1) { %>
-					<%= title_name %> by
-				<% } else { %>
-					<%= title_name %> split by
-				<% } %>
+				<%= I18n.t(title_name,{group_by: ''}) %>
 			</span>
 			<select class="select2 dropdown" >
 				<% for (j=0; j<	custom_fields.length; j++) { %>

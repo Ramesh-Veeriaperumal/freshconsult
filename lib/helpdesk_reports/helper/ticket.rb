@@ -48,7 +48,7 @@ module HelpdeskReports::Helper::Ticket
     @enable_ticket_list_by_plan = !disabled_plans.include?(Account.current.subscription.subscription_plan.name)
   end
 
-  def report_specific_constraints
+  def report_specific_constraints pdf_export
     res = {report_type: report_type}
 
     if [:agent_summary,:group_summary].include?(report_type.to_sym)
@@ -65,6 +65,8 @@ module HelpdeskReports::Helper::Ticket
         end
         res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
         res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
+    elsif report_type.to_sym == :glance
+      res.merge!(pdf_export: pdf_export)
     end
     
     res   
@@ -143,13 +145,12 @@ module HelpdeskReports::Helper::Ticket
     @query_params.each do |param|
       error_list << VALIDATIONS.inject([]) do |errors, func|
         errors << send(func, param)
-        errors.flatten
       end
     end
-  
-    if error_list.map {|e| e if !e.empty? }.any?
+    error_list = error_list.flatten.uniq.compact.reject(&:blank?)
+    if error_list.any?
       Rails.logger.info "INVALID REPORT PARAMS #{error_list}"
-      @processed_result = {"error" => error_list}
+      @filter_err = error_list.uniq
       render_charts
     end
   end
@@ -184,22 +185,23 @@ module HelpdeskReports::Helper::Ticket
   
   def validate_dates param
     begin
-      range = param[:date_range].split("-")
-      start_date = Date.parse(range.first)
-      end_date = range.length > 1 ? Date.parse(range.second) : start_date 
-      if end_date == account_today and @date_lag_by_plan > 0 # Restrict date_range acc to subscription plan
-        start_date -= @date_lag_by_plan
-        end_date -= @date_lag_by_plan
-        param[:date_range] = "#{start_date.strftime("%d %b,%Y")} - #{end_date.strftime("%d %b,%Y")}"
+      range         = param[:date_range].split("-")
+      start_date    = Date.parse(range.first)
+      end_date      = range.length > 1 ? Date.parse(range.second) : start_date 
+      allowed_range = (end_date - start_date) < MAX_ALLOWED_DAYS
+      if allowed_range
+        account_today = Time.now.in_time_zone(Account.current.time_zone).to_date
+        if end_date == account_today and @date_lag_by_plan > 0 # Restrict date_range acc to subscription plan
+          start_date -= @date_lag_by_plan
+          end_date -= @date_lag_by_plan
+          param[:date_range] = "#{start_date.strftime("%d %b,%Y")} - #{end_date.strftime("%d %b,%Y")}"
+        end
+      else
+        ["Maximum allowed days limit exceeded"]
       end
-      []
     rescue ArgumentError
       ["Invalid Date"]
     end
-  end
-  
-  def account_today
-    Time.now.in_time_zone(Account.current.time_zone).to_date
   end
 
   def validate_time_trend param
