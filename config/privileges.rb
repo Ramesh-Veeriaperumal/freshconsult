@@ -47,6 +47,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cti/customer_detail"
     resource :"integrations/quickbook"
     resource :"integrations/dynamicscrm", :only => [:widget_data]
+    resource :"integrations/infusionsoft", :only => [:fetch_user]
     resource :"integrations/xero" , :only => [ :fetch , :render_accounts, :render_currency, :fetch_create_contacts, :get_invoice,  :create_invoices , :edit, :check_item_exists]
     resource :"integrations/hootsuite/home"
     resource :"integrations/hootsuite/ticket"
@@ -423,6 +424,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamicscrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
+    resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"admin/freshfone"
     resource :"admin/freshfone/number"

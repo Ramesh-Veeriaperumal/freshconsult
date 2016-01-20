@@ -350,7 +350,6 @@ module Helpdesk
       :import_customers,
       :export_customers,
       :create_solution_draft,
-      :manage_dashboard,
       :compose_email,
       :solution_view_versions,
       :forum_basic_moderator,
@@ -406,7 +405,6 @@ module Helpdesk
       :assign_group,
       :create_solution_draft,
       :compose_email,
-      :manage_dashboard,
       :view_social,                           #Social_privilege
       :phone_attend_call,                     #FreshFone_privileges
       :phone_make_call,

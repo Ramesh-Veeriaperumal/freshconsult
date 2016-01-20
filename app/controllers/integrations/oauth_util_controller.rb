@@ -1,5 +1,6 @@
 class Integrations::OauthUtilController < ApplicationController
 include Integrations::OauthHelper
+include Integrations::Constants
 
   before_filter { |c| c.check_agent_app_access c.params[:app_name] }
 
@@ -26,10 +27,12 @@ include Integrations::OauthHelper
 				## STORE THE NEW "ACCESS TOKEN" IN DATABASE.
 					if(app.user_specific_auth?)
 						user_credential.auth_info.merge!({'oauth_token' => access_token.token})
-						user_credential.auth_info.merge!({'refresh_token' => access_token.refresh_token}) if app_name == "box"
+						user_credential.auth_info.merge!({'refresh_token' => access_token.refresh_token}) if app_name == APP_NAMES[:box]
 						user_credential.save
 					else
 						inst_app[:configs][:inputs]['oauth_token'] = access_token.token
+						#Update the refresh token as the previous one gets expired.
+						inst_app[:configs][:inputs]['refresh_token'] = access_token.refresh_token if app_name == APP_NAMES[:infusionsoft]
 						inst_app.save
 					end
 				

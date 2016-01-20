@@ -982,4 +982,19 @@ if Integrations::Application.count == 0
                 }
     s.application_type = "slack_v2"
   end
+
+  infusionsoft = Integrations::Application.seed(:name) do |s|
+    s.name = "infusionsoft"
+    s.display_name = "integrations.infusionsoft.label"
+    s.description = "integrations.infusionsoft.desc"
+    s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
+    s.listing_order = 40
+    s.options = {:direct_install => true, 
+                 :edit_url => "infusionsoft/edit",
+                 :oauth_url => "/auth/infusionsoft?origin=id%3D{{account_id}}", 
+                 :default_fields => {:contact => ["First Name"], :account => ["Company"]}
+                 }
+    s.application_type = "infusionsoft"
+  end
+
 end

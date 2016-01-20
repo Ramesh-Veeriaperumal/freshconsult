@@ -3,6 +3,15 @@ module Concerns::ApplicationConcern
 
   private
 
+  def append_info_to_payload(payload)
+    super
+    payload[:domain] = request.env['HTTP_HOST']
+    payload[:ip] = request.env['CLIENT_IP']
+    payload[:url] = request.url
+    payload[:server_ip] = request.env['SERVER_ADDR']
+    payload[:account_id] = Account.current ? Account.current.id : ""
+  end
+
   def day_pass_expired_json
     @error = RequestError.new(:access_denied)
     render template: '/request_error', status: 403

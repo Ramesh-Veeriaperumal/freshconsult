@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -881,6 +881,13 @@ Helpkit::Application.routes.draw do
       get :callback
       get :onedrive_render_application
       get :onedrive_view
+    end
+   
+    namespace :infusionsoft do
+      post :fetch_user
+      post :fields_update
+      get :edit
+      get :install
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action

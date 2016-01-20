@@ -132,7 +132,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :agent_notification => true,
     :agent_template => '<p> Hi,<br><br>Response is due for ticket #{{ticket.id}}.<br><br>Ticket Details: <br><br>
                         Subject - {{ticket.subject}}<br><br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - 
-                        {{ticket.url}}<br><br>This is an reminder email from {{helpdesk_name}}</p>',
+                        {{ticket.url}}<br><br>This is a reminder email from {{helpdesk_name}}</p>',
     :agent_subject_template => 'Response due for {{ticket.subject}}'
 },
 {
@@ -142,7 +142,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :agent_notification => true,
     :agent_template => '<p>Hi,<br><br>Resolution time for ticket #{{ticket.id}} is fast approaching. 
                         The ticket is due by {{ticket.due_by_hrs}}.<br><br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
-                        <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is an escalation 
+                        <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is a 
                         reminder email from {{helpdesk_name}}</p>',
     :agent_subject_template => 'Resolution expected - {{ticket.subject}}'
 },
@@ -151,20 +151,17 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => false, 
     :agent_notification => true,
-    :agent_template => '<p> Hi,<br><br>Response is due for ticket #{{ticket.id}}.<br><br>Ticket Details: <br><br>
-                        Subject - {{ticket.subject}}<br><br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - 
-                        {{ticket.url}}<br><br>This is an reminder email from {{helpdesk_name}}</p>',
-    :agent_subject_template => "Response due for {{ticket.subject}}"
+    :agent_template => '<p>Hi,<br><br>There has been no response from the helpdesk for a ticket. The first response was due by 
+                        {{ticket.fr_due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}<br />{{ticket.url}}</p>',
+    :agent_subject_template => "Response time SLA violated - {{ticket.subject}}"
 },
 {
     :notification_type => EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, 
     :account_id => account.id, 
     :requester_notification => false, 
     :agent_notification => true,
-    :agent_template => '<p>Hi,<br><br>Resolution time for ticket #{{ticket.id}} is fast approaching. 
-                        The ticket is due by {{ticket.due_by_hrs}}.<br><br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br>
-                        <br>Requestor - {{ticket.requester.email}}<br><br>Ticket link - {{ticket.url}}<br><br>This is an escalation 
-                        reminder email from {{helpdesk_name}}</p>',
-    :agent_subject_template => "Resolution expected for  {{ticket.subject}}"
+    :agent_template => '<p>Hi,<br><br>Ticket has not been resolved within the SLA time period. The ticket was due by {{ticket.due_by_hrs}} today.<br>
+                        <br>Ticket Details: <br><br>Subject - {{ticket.subject}}<br><br>Requestor - {{ticket.requester.email}}<br><br>This is an escalation email from {{helpdesk_name}}<br>{{ticket.url}}</p>',
+    :agent_subject_template => "Resolution time SLA violated - {{ticket.subject}}"
 }
 ])

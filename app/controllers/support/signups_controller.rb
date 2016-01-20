@@ -6,7 +6,7 @@ class Support::SignupsController < SupportController
   before_filter :chk_for_logged_in_usr
   before_filter :initialize_user
   skip_before_filter :verify_authenticity_token
-  before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, 
+  before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_language,
                 :set_required_fields, :only => [:create]
   
   def new
@@ -48,6 +48,12 @@ class Support::SignupsController < SupportController
                     (field.field_type == :default_email) ? true : field.required_in_portal }
       @user.required_fields = { :fields => required_signup_fields, 
                                 :error_label => :label_in_portal }
+    end
+
+    def set_language
+      params[:user][:language] ||= ( http_accept_language.compatible_language_from I18n.available_locales || 
+        current_portal.language || current_account.language
+      ).to_s
     end
 
     def set_validatable_custom_fields

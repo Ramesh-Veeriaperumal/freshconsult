@@ -324,6 +324,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     PRIORITY_TOKEN_BY_KEY[priority]
   end
 
+  def sla_policy_name
+    sla_policy.try(:name)
+  end
+
   def get_access_token #for generating access_token for old tickets
     set_token
     schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
