@@ -68,9 +68,9 @@ module HelpdeskReports::Util::Ticket
   def date_part date, trend
     case trend
       when "doy" 
-        date.yday
+        date
       when "w"
-        date.cweek
+        date.beginning_of_week
       when "mon"
         date.strftime('%m').to_i
       when "qtr"

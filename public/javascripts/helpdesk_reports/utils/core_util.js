@@ -4,7 +4,7 @@ HelpdeskReports.locals = HelpdeskReports.locals || {};
 HelpdeskReports.CoreUtil = {
     MULTI_SELECT_SELECTION_LIMIT: 10,
     FILTER_LIMIT: 5,
-    FILTER_LIMIT_MSG: "* You can select a maximum of 5 filters. (Each selected level of nested field counts as one filter)",
+    FILTER_LIMIT_MSG: I18n.t('helpdesk_reports.filter_error_msg'),
     CONST: {
         base_url    : "/reports/v2/",
         metrics_url : "/fetch_metrics",
@@ -338,13 +338,14 @@ HelpdeskReports.CoreUtil = {
              if (e.keyCode == 27) { 
                 // escape key maps to keycode `27`
                 _this.actions.hideTicketList();
+                _this.actions.hideNestedFieldDrillDown();
             }
         }); 
-        jQuery(document).on('mousemove.helpdesk_reports', '.ticket-list-wrapper', function(event) {
+        jQuery(document).on('mousemove.helpdesk_reports', '.ticket-list-wrapper,#view_more_wrapper', function(event) {
             event.preventDefault();
             jQuery('body').addClass('preventscroll');
         });
-        jQuery(document).on('mouseleave.helpdesk_reports', '.ticket-list-wrapper', function(event) {
+        jQuery(document).on('mouseleave.helpdesk_reports', '.ticket-list-wrapper,#view_more_wrapper', function(event) {
             event.preventDefault();
             jQuery('body').removeClass('preventscroll');
         });
@@ -418,8 +419,11 @@ HelpdeskReports.CoreUtil = {
             jQuery('#inner').addClass('openedit');
             this.hideTicketList();
             this.hideViewMore();
+            this.hideNestedFieldDrillDown();
         },
         showTicketList: function (title,value) {
+            //Hide the drill down
+            this.hideNestedFieldDrillDown();
             //Construct Title
             var base_title = HelpdeskReports.locals.base_task_list_title;
             //Refresh the export section for every ticket list.
@@ -443,8 +447,28 @@ HelpdeskReports.CoreUtil = {
                 jQuery('#view_more_wrapper').removeClass('show-all-metrics');
             }
         },
+        hideNestedFieldDrillDown : function(){
+            if(jQuery('#custom_field_wrapper').hasClass('show-drill-down')) {
+                jQuery('#custom_field_wrapper').removeClass('show-drill-down');
+                //Remove the breadcrumb
+                HelpdeskReports.locals.breadcrumb = [];
+                HelpdeskReports.locals.drill_down_hash = [];
+                //Remove any nested field filter conditions added previously
+                for(i = HelpdeskReports.locals.query_hash.length ;i>0 ;i--){
+                    var index = HelpdeskReports.locals.query_hash.length - i; 
+                    var filter = HelpdeskReports.locals.query_hash[index];
+                    if(filter.nested_field_filter != undefined && filter.nested_field_filter){
+                        HelpdeskReports.locals.drill_down_hash.push(HelpdeskReports.locals.query_hash.splice(index,1)[0]);
+                    }
+                }
+            }
+        },
         showViewMore: function () {
             jQuery('#view_more_wrapper').addClass('show-all-metrics');
+        },
+        showNestedFieldDrillDown : function(){
+            this.hideTicketList();
+            jQuery('#custom_field_wrapper').addClass('show-drill-down');
         },
         toggleReportTypeMenu: function () {
             var menu = jQuery('#reports_type_menu');
@@ -500,13 +524,13 @@ HelpdeskReports.CoreUtil = {
 
             if(report_type == "customer_report"){
                 //populate the tab title's
-                var violated_title =  _this.addsuffix(metric_value) + " Violated tickets";
+                var violated_title =  _this.addsuffix(metric_value) + " " + I18n.t('helpdesk_reports.violated_tickets');
                 jQuery(".sla-toggle-tab .link1 .toggle").html(violated_title);
                 jQuery(".sla-toggle-tab .link1 .toggle").attr('data-link','violated');
 
                 //populate the tab title's
                 var complaint_val = 100 - parseInt(metric_value);
-                var complaint_title =  _this.addsuffix(complaint_val) + " Compliant tickets";
+                var complaint_title =  _this.addsuffix(complaint_val) + " " + I18n.t('helpdesk_reports.compliant_tickets');
                 jQuery(".sla-toggle-tab .link2 .toggle").html(complaint_title);
                 jQuery(".sla-toggle-tab .link2 .toggle").attr('data-link','compliant');
                 
@@ -517,13 +541,13 @@ HelpdeskReports.CoreUtil = {
 
             if(report_type == "agent_summary" || report_type == "group_summary"){
                 //populate the tab title's
-                var compliant_title =  _this.addsuffix(metric_value) + " Compliant tickets";
+                var compliant_title =  _this.addsuffix(metric_value) + " " + I18n.t('helpdesk_reports.compliant_tickets');
                 jQuery(".sla-toggle-tab .link1 .toggle").html(compliant_title);
                 jQuery(".sla-toggle-tab .link1 .toggle").attr('data-link','compliant');
 
                 //populate the tab title's
                 var violated_val = 100 - parseInt(metric_value);
-                var violated_title =  _this.addsuffix(violated_val) + " Violated tickets";
+                var violated_title =  _this.addsuffix(violated_val) + " " + I18n.t('helpdesk_reports.violated_tickets');
                 jQuery(".sla-toggle-tab .link2 .toggle").html(violated_title);
                 jQuery(".sla-toggle-tab .link2 .toggle").attr('data-link','violated');
                 
@@ -782,26 +806,28 @@ HelpdeskReports.CoreUtil = {
                 earliestDate: Date.parse('01/01/2010'),
                 latestDate: Date.parse(date.endDate),
                 presetRanges: [{
-                    text: 'Last 7 Days',
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 7 }),
                     dateStart: date[7],
                     dateEnd: date.endDate
                 }, {
-                    text: 'Last 30 Days',
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 30 }),
                     dateStart: date[30],
                     dateEnd: date.endDate
                 }, {
-                    text: 'Last 90 Days',
+                    text: I18n.t('helpdesk_reports.last_num_days',{ num: 90 }),
                     dateStart: date[90],
                     dateEnd: date.endDate
                 }],
                 presets: {
-                    dateRange: 'Date Range'
+                    dateRange: I18n.t('helpdesk_reports.date_range')
                 },
-                rangeStartTitle: 'Start Date',
-                rangeEndTitle: 'End Date',
+                rangeStartTitle: I18n.t('helpdesk_reports.start_date'),
+                rangeEndTitle: I18n.t('helpdesk_reports.end_date'),
                 presetRangesCallback: true, 
                 dateFormat: getDateFormat('datepicker'),
                 closeOnSelect: true,
+                rangeDurationMonths : 24,
+                limitRangeToConstraints : true
             };
 
         //Different date pickers for sprout plan & others
@@ -839,7 +865,7 @@ HelpdeskReports.CoreUtil = {
             },
             error: function (data) {
                 _this.showWrappers();
-                var text = "Something went wrong, please try again";
+                var text = I18n.t('helpdesk_reports.something_went_wrong_msg');
                 _this.populateEmptyChart(["reports_container"], text);
             }
         }
@@ -889,7 +915,7 @@ HelpdeskReports.CoreUtil = {
     appendTicketListError: function () {
         var _this = this;
         var div = ['ticket_list'];
-        var msg = "Something went wrong, please try again";
+        var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
         jQuery("#ticket_list").removeClass('sloading loading-small');
         _this.populateEmptyChart(div, msg);
     },
@@ -930,7 +956,7 @@ HelpdeskReports.CoreUtil = {
     appendExportError: function () {
         var _this = this;
         var div = ['ticket_fields'];
-        var msg = "Something went wrong, please try again";
+        var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
         jQuery("#ticket_fields").removeClass('sloading loading-small');
     },
     exportCSV : function() {
@@ -1042,11 +1068,11 @@ HelpdeskReports.CoreUtil = {
             data: Browser.stringify(params),
             timeout: _this.timeouts.main_request,
             success: function (data) {
-                var text = "<span id='email_reports_msg'>Reports will be sent to your email shortly!</span>";
+                var text = "<span id='email_reports_msg'>"+I18n.t('adv_reports.report_export_success')+"</span>";
                 _this.showResponseMessage(text);     
             },
             error: function (data) {
-                var text = "<span id='email_reports_msg'>Something went wrong, please try again after some time.</span>";
+                var text = "<span id='email_reports_msg'>"+I18n.t('helpdesk_reports.no_data_to_display_msg')+"</span>";
                 _this.showResponseMessage(text);
             }
         }
@@ -1056,33 +1082,40 @@ HelpdeskReports.CoreUtil = {
         var _this = this;
         var pdf_params;
         if(HelpdeskReports.locals.report_type === "glance"){
-            pdf_params = HelpdeskReports.locals.default_params;
-            var bucket_query=[];
-            for (var i = 0; i < pdf_params.length; i++) {
-                var group_by = this.setDefaultGroupByOptions(pdf_params[i].metric);
-                
+            var current_params = [];
+            var date = this.setReportFilters();
+            jQuery.each(_.keys(HelpdeskReports.Constants.Glance.metrics), function (index, value) {
+                var group_by_value = HelpdeskReports.CoreUtil.setDefaultGroupByOptions(value);
                 var custom_grp_by = HelpdeskReports.locals.active_custom_field || HelpdeskReports.locals.custom_fields_group_by[0]
                 if(custom_grp_by){
-                    group_by.push(custom_grp_by)
+                    group_by_value.push(custom_grp_by)
                 }
-                    
-                pdf_params[i].group_by = group_by;
-                if (HelpdeskReports.Constants.Glance.bucket_condition_metrics.indexOf(pdf_params[i].metric) > -1) {
-                    var bucket_conditions = HelpdeskReports.Constants.Glance.metrics[pdf_params[i].metric].bucket;
+                var merge_hash = {
+                    date_range: date,
+                    filter: [],
+                    group_by: group_by_value,
+                    metric: value
+                }
+                var param = jQuery.extend({}, HelpdeskReports.Constants.Glance.params, merge_hash);
+                current_params.push(param);
+                if(HelpdeskReports.Constants.Glance.bucket_condition_metrics.indexOf(value) > -1){
                     var bucket_param = {};
                     var bucket_hash = {};
+                    var bucket_conditions = HelpdeskReports.Constants.Glance.metrics[value].bucket;
                     bucket_hash = {
-                        metric : pdf_params[i].metric,
-                        bucket : true,
-                        bucket_conditions : bucket_conditions,
-                        reference : false,
-                        group_by : []
-                    }
-                    bucket_param = jQuery.extend({},pdf_params[0], bucket_hash);
-                    bucket_query.push(bucket_param);
-                 }
+                                metric : value,
+                                bucket : true,
+                                bucket_conditions : bucket_conditions,
+                                reference : false,
+                                group_by : []
+                                }
+                    bucket_param = jQuery.extend({},param, bucket_hash);
+                    current_params.push(bucket_param);
+                
             }
-            pdf_params = pdf_params.concat(bucket_query);
+            });
+
+            pdf_params = current_params.slice();
         } else {
             pdf_params = HelpdeskReports.locals.params;
         }
@@ -1153,6 +1186,7 @@ HelpdeskReports.CoreUtil = {
         this.flushCharts();
         this.actions.hideTicketList();
         this.actions.hideViewMore();
+        this.actions.hideNestedFieldDrillDown();
         this.actions.closeFilterMenu();
         this.generateCharts(HelpdeskReports.locals.params);
     },
@@ -1168,9 +1202,9 @@ HelpdeskReports.CoreUtil = {
     },
     timeMetricConversion: function( total_seconds ){
         if(typeof total_seconds !== 'number')  return total_seconds;
-        var hrs = '<span class="time-char-format">h</span>';
-        var mins= '<span class="time-char-format">m</span>';
-        var secs= '<span class="time-char-format">s</span>';
+        var hrs = '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.h')+'</span>';
+        var mins= '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.m')+'</span>';
+        var secs= '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.s')+'</span>';
         var h   = Math.floor(total_seconds / 3600);
         var min = Math.floor((total_seconds / 60) % 60);
         var sec = Math.floor(total_seconds % 60);

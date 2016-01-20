@@ -3,7 +3,7 @@ HelpdeskReports.ReportUtil = HelpdeskReports.ReportUtil || {};
 HelpdeskReports.ReportUtil.PerformanceDistribution = (function () {
     var _FD = {
         bindEvents: function () {
-            jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
+            jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action= 'reports-submit']", function () {
                 _FD.actions.submitReports();
             });
             jQuery(document).on("perf_ticket_list.helpdesk_reports", function (ev, data) {

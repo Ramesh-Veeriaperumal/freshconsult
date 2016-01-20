@@ -1,10 +1,9 @@
-class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
-  
+class HelpdeskReports::Request::Ticket
   include TicketConstants
   include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
 
-  attr_accessor :metric, :query_type
+  attr_accessor :req_params, :metric, :query_type
 
   def initialize params, report_type
     @req_params = params
@@ -16,6 +15,7 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
   def build_request
     req_params.merge!(account_id: Account.current.id)
     req_params.merge!(report_type: @report_type)
+    req_params.merge!(account_plan: Account.current.plan_name)
     add_bucketing_condition unless req_params[:bucket_conditions].blank?
     add_time_zone_condition
     
@@ -28,6 +28,18 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
   end
 
   private
+
+  def list_query?
+    req_params[:list]
+  end
+
+  def bucket_query?
+    req_params[:bucket]
+  end
+
+  def time_trend_query?
+    req_params[:time_trend]
+  end
 
   def set_query_type
     if list_query?
@@ -63,33 +75,15 @@ class HelpdeskReports::Request::Ticket < HelpdeskReports::Request::Base
       date  = Date.parse(selected_date)
       year_condition = {
         condition:  "y",
-        operator:   "is_in",
+        operator:   "eql",
         value:      date.year.to_s
       }
       trend_condition = {
         condition: trend,
-        operator: "is_in",
+        operator: "eql",
         value:   date_part(date, trend).to_s
       }
-      # We are using ISO 8601 definition to work with week part of the dates. (In Ruby, Date.cweek follows ISO 8601, Date.strftime("%W") does NOT follow)
-      # By definition (ISO 8601), the first week of a year contains January 4 of that year. (The ISO-8601 week starts on Monday.) 
-      # In other words, the first Thursday of a year is in week 1 of that year
-      # Due to above definiton it can happen that an year has two separate weeks with week number 1, which is an expected behaviour
-      # and in any such case, week number 1 occurring in December is actually week number 1 of next year.
-      # For example, Date.parse("29 Dec, 2014").cweek gives 1 as result, here its the 1st week of 2015 and not 2014.
-      # below piece of code is written in this way because for date = 29 Dec, 2014 (and similar cases) date.year = 2014 and date.cweek = 1
-      # it is logically correct when considered separately, but not when joined together (year = 2014 and week = 1) which will become week = 1 
-      # occurring in January 2014.
-      
-      # Since week trend is limited to show maximum of 31 week, we can safely remove year condition in case of above described
-      # special case (week = 1 occurring in December).
-      
-      # IN FUTURE IF WE EXTEND THIS LIMIT, THIS WOULD BE AN AMBIGIOUS CASE FOR LIST QUERY ON A SPECIFIC WEEK.
-      if trend == "w" and date.cweek == 1 and date.mon > 1
-        req_params[:list_conditions] =  [trend_condition]
-      else
-        req_params[:list_conditions] = [year_condition, trend_condition]
-      end
+      req_params[:list_conditions] = ["doy","w"].include?(trend) ? [trend_condition] : [year_condition, trend_condition]
     end
   end
 

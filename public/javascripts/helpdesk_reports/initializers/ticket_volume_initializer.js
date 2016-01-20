@@ -12,25 +12,34 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             'sunday'   : 0
         },
         DAY_MAPPING: {
-            1 : 'Mondays',
-            2 : 'Tuesdays',
-            3 : 'Wednesdays',
-            4 : 'Thursdays',
-            5 : 'Fridays',
-            6 : 'Saturdays',
-            0 : 'Sundays'
+            1 : 'mondays',
+            2 : 'tuesdays',
+            3 : 'wednesdays',
+            4 : 'thursdays',
+            5 : 'fridays',
+            6 : 'saturdays',
+            0 : 'sundays'
         },
-        trend_subtitle: {
-            'doy': 'Daily',
-            'w'  : 'Weekly',
-            'mon': 'Monthly',
-            'qtr': 'Quarterly',
-            'y'  : 'Yearly'
+        DAY_MAPPING_LABEL: {
+            1 : I18n.t('helpdesk_reports.days_plural.monday'),
+            2 : I18n.t('helpdesk_reports.days_plural.tuesday'),
+            3 : I18n.t('helpdesk_reports.days_plural.wednesday'),
+            4 : I18n.t('helpdesk_reports.days_plural.thursday'),
+            5 : I18n.t('helpdesk_reports.days_plural.friday'),
+            6 : I18n.t('helpdesk_reports.days_plural.saturday'),
+            0 : I18n.t('helpdesk_reports.days_plural.sunday')
+        },
+        trend_title: {
+            'doy': I18n.t('helpdesk_reports.ticket_volume.time_trends_title.doy'),
+            'w'  : I18n.t('helpdesk_reports.ticket_volume.time_trends_title.w'),
+            'mon': I18n.t('helpdesk_reports.ticket_volume.time_trends_title.mon'),
+            'qtr': I18n.t('helpdesk_reports.ticket_volume.time_trends_title.qtr'),
+            'y'  : I18n.t('helpdesk_reports.ticket_volume.time_trends_title.y')
         },
         week_trend: "week_trend",
         series: ["RECEIVED_TICKETS", "RESOLVED_TICKETS"],
-        received_name: "Received",
-        resolved_name: "Resolved",
+        received_name: I18n.t('helpdesk_reports.chart_title.received'),
+        resolved_name: I18n.t('helpdesk_reports.chart_title.resolved'),
         time_trend_chart: "time_trend",
         day_trend_chart: "day_trend",
 
@@ -61,6 +70,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             }
         },
         timeTrend: function (hash) {
+            var disabled_date = I18n.t('helpdesk_reports.disabled_date_range');
             var time_trend_data = [];
             var dateRange = this.dateRangeLimit();
             var current_trend = dateRange.default_trend;
@@ -75,7 +85,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             
             if (dateRange.deactive.length) {
                 jQuery.each(dateRange.deactive, function (i) {
-                    jQuery('[data-format="' + dateRange.deactive[i] + '"]').addClass('deactive').attr('title', 'Disabled for this date range');
+                    jQuery('[data-format="' + dateRange.deactive[i] + '"]').addClass('deactive').attr('title', disabled_date);
                 });
             }
             HelpdeskReports.locals.trend = current_trend;
@@ -89,6 +99,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             });
 
             var labels = _.keys(this.hash_received[current_trend]);
+          
             var settings = {
                 renderTo: this.time_trend_chart + '_chart',
                 xAxisLabel: labels,
@@ -97,14 +108,14 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
             var timeBased = new columnChart(settings);
             timeBased.columnGraph();
             jQuery('span[data-format="' + current_trend + '"]').addClass('active');
-            jQuery("[data-title='trend']").text(this.trend_subtitle[current_trend]);
+            jQuery("[data-title='trend']").text(this.trend_title[current_trend]);
             // _FD.populateAvgAndTotalTicketsLabel();
         },
         dayTrend: function (hash) {
             var defaults = this.findDefaultDay();
             var default_day = defaults.active;
 
-            HelpdeskReports.locals.active_day = this.DAY_MAPPING[default_day];
+            HelpdeskReports.locals.active_day = this.DAY_MAPPING_LABEL[default_day];
             var day_trend_data = [];
             var max = this.maxValue();
             day_trend_data.push({
@@ -121,7 +132,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 xAxisLabel: _.keys(this.hash_received[this.week_trend][default_day]),
                 chartData: day_trend_data,
                 xAxisType: 'number',
-                xAxis_label: 'Hour of the day'
+                xAxis_label: I18n.t('helpdesk_reports.chart_title.hour_of_the_day')
             }
             var day_trend = new lineChart(settings);
             day_trend.lineChartGraph();
@@ -129,10 +140,14 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         pdfDayTrend: function (hash) {
             var defaults = this.findDefaultDay();
             var days =  [];
+            var chart_id = [];
             _.each(defaults.enabled, function(i){
-                days.push(_FD.DAY_MAPPING[i]);
+                days.push(_FD.DAY_MAPPING_LABEL[i]);
+                chart_id.push(_FD.DAY_MAPPING[i]);
             });
-            _FD.constructPdfTmpl(days);
+           
+          
+            _FD.constructPdfTmpl(days,chart_id);
             _.each(defaults.enabled, function(i){
                 var day_trend_data = [];
                 var max = _FD.maxValue();
@@ -144,20 +159,21 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                     data: _.values(_FD.hash_resolved[_FD.week_trend][i]),
                 });
                 var settings = {
-                    renderTo: _FD.DAY_MAPPING[i] + '_chart',
+                    renderTo: i + '_chart',
                     xAxisLabel: _.keys(_FD.hash_received[_FD.week_trend][i]),
                     chartData: day_trend_data,
                     yMax: max,
                     xAxisType: 'number',
-                    xAxis_label: 'Hour of the day'
+                    xAxis_label: I18n.t('helpdesk_reports.chart_title.hour_of_the_day')
                 }
                 var day_trend = new lineChart(settings);
                 day_trend.lineChartGraph();
             });
         },
-        constructPdfTmpl: function (days) {
+        constructPdfTmpl: function (days,chart_id) {
             var tmpl = JST["helpdesk_reports/templates/pdf_day_trend_tmpl"]({
-                data: days
+                data: days,
+                id: chart_id
             });
             jQuery('#pdf_day_trend').html(tmpl);
         },
@@ -183,7 +199,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
 
             _.each(days, function (i) {
                 var data_array = [];
-                var title = i.toUpperCase();
+                var title = I18n.t(i,{scope: "helpdesk_reports.days"}).toUpperCase();
 
                 data_array.push({
                     name: _FD.received_name,
@@ -326,14 +342,14 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
                 jQuery("[data-trend='trend-type']").removeClass('active');
                 jQuery(this).addClass('active');
                 HelpdeskReports.locals.trend = jQuery(this).data('format');
-                jQuery("[data-title='trend']").text(_FD.trend_subtitle[HelpdeskReports.locals.trend]);
+                jQuery("[data-title='trend']").text(_FD.trend_title[HelpdeskReports.locals.trend]);
                 _FD.redrawTimeBased(HelpdeskReports.locals.trend);
                 //Populate the Total & Average Labels
                 _FD.populateAvgAndTotalTicketsLabel();
             });
         },
         redrawDayTrend: function (dow, prev_active, present) {
-            HelpdeskReports.locals.active_day = this.DAY_MAPPING[this.WEEKDAY_MAPPING[dow]];
+            HelpdeskReports.locals.active_day = this.DAY_MAPPING_LABEL[this.WEEKDAY_MAPPING[dow]];
             var chart = jQuery('#day_trend_chart').highcharts();
             for (i = 0; i < this.series.length; i++) {
                 chart.series[i].update({
@@ -361,6 +377,7 @@ HelpdeskReports.ChartsInitializer.TicketVolume = (function () {
         redrawTimeBased: function (trend) {
             var chart = jQuery('#time_trend_chart').highcharts();
             var labels = _.keys(HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.metric][this.series[0]][trend]);
+            
             chart.xAxis[0].update({
                 categories: labels
             }, false);

@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
 <%= render :partial => "layouts/report/v2/shared/pdf_files", :formats => [:html], :locals => {} %>
 <div class="reports-wrapper" id="reports_wrapper">
   <div class="reports-main">
@@ -7,10 +10,10 @@
 <div class="distribution-chart" id="distribution_container">
 
   <div class="row-fluid"> 
-    <div class="chart-container chart-container-pdf">
+    <div class="chart-container">
     
-      <span id="first_response" class="pointer">
-        <%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
+      <span class='title'>
+         <%=t('helpdesk_reports.performance_distribution.first_response_bar').html_safe %>
       </span>
       <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.first_response')%>"> 
                 <i class="ficon-help-icon fsize-14" size="14"></i>
@@ -18,8 +21,8 @@
 
       <div id="first_response_time_bar_chart" class="chart-wrapper" data-bucket-name="first_response_time" data-metric-name="AVG_FIRST_RESPONSE_TIME"></div>
     </div>
-      <div class="chart-container chart-container-pdf">
-      <span id="response" class="pointer">
+      <div class="chart-container">
+      <span class='title'>
         <%=t('helpdesk_reports.performance_distribution.response_bar').html_safe %>
       </span>
       <span class="reports-help-icon tooltip" data-placement="right" data-original-title="<%=t( 'helpdesk_reports.performance_distribution.description.avg_res_time')%>"> 
@@ -28,7 +31,7 @@
       <div id="response_time_bar_chart" class="chart-wrapper" data-bucket-name="response_time" data-metric-name="AVG_RESPONSE_TIME"></div>
     </div>
     
-    <div class="chart-container chart-container-pdf">
+    <div class="chart-container">
 
       <span class='title'>
         <%=t('helpdesk_reports.performance_distribution.resolution_bar').html_safe %>

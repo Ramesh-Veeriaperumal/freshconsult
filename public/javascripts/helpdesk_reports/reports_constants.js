@@ -4,98 +4,99 @@ HelpdeskReports.Constants = {
     Glance: {
         metrics: { 
             "RECEIVED_TICKETS" : { 
-                name : "CREATED TICKETS",
-                title: "Created tickets",
-                description: "The tickets that were created in the helpdesk in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.created_tickets'),
+                title: 'helpdesk_reports.chart_title.created_tickets_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.created_tickets'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 bucket: ["customer_interactions", "agent_interactions"],
                 bucket_graph_map: ['interactions'],
-                ticket_list_title : "All created tickets",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.created_tickets'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/212988"
             },
             "RESOLVED_TICKETS" : { 
-                name : "RESOLVED TICKETS",
-                title: "Resolved tickets",
-                description: "The tickets resolved in the selected time period (that were created any time)",
+                name : I18n.t('helpdesk_reports.metric_name.resolved_tickets'),
+                title: 'helpdesk_reports.chart_title.resolved_tickets_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.resolved_tickets'),
                 css  : ["report-arrow up positive", "report-arrow down negative"],
                 bucket: ["customer_interactions", "agent_interactions"],
                 bucket_graph_map: ['interactions'],
-                ticket_list_title : "All resolved tickets",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.resolved_tickets'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/212989"
             },
             "REOPENED_TICKETS" : { 
-                name : "REOPENED TICKETS",
-                title: "Reopened tickets",
-                description: "The tickets reopened in the selected time period (that were created any time)",
+                name : I18n.t('helpdesk_reports.metric_name.reopened_tickets'),
+                title: 'helpdesk_reports.chart_title.reopened_tickets_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.reopened_tickets'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
                 bucket: ["customer_interactions", "agent_interactions", "reopen_count"],
                 bucket_graph_map: ['interactions', 'reopen'],
-                ticket_list_title : "All reopened tickets",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.reopened_tickets'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213067"
             },
             "AVG_FIRST_RESPONSE_TIME" : { 
-                name : "AVERAGE 1ST RESPONSE TIME",
-                title: "Avg 1st response time",
-                description: "Average first response time of all the first responses made in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.avg_first_response_time'),
+                title: 'helpdesk_reports.chart_title.avg_first_response_time_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.avg_first_response_time'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
-                ticket_list_title : "All tickets with 1st response",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.avg_first_response_time'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213074"
             },
             "AVG_RESPONSE_TIME" : { 
-                name : "AVERAGE RESPONSE TIME",
-                title: "Avg response time",
-                description: "Average response time of all the responses made in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.avg_response_time'),
+                title: 'helpdesk_reports.chart_title.avg_response_time_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.avg_response_time'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
-                ticket_list_title : "All tickets with reponse",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.avg_response_time'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213085"
             },
             "AVG_RESOLUTION_TIME" : { 
-                name : "AVERAGE RESOLUTION TIME",
-                title: "Avg resolution time",
-                description: "Average resolution time of tickets resolved in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.avg_resolution_time'),
+                title: 'helpdesk_reports.chart_title.avg_resolution_time_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.avg_resolution_time'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
-                ticket_list_title : "All resolved tickets",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.avg_resolution_time'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213112"
             },
             "AVG_FIRST_ASSIGN_TIME" : { 
-                name : "AVERAGE 1ST ASSIGN TIME",
-                title: "Avg 1st assign time",
-                description: "Average first assign time of tickets assigned to agents in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.avg_first_assign_time'),
+                title: 'helpdesk_reports.chart_title.avg_first_assign_time_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.avg_first_assign_time'),
                 css  : ["report-arrow up negative", "report-arrow down positive"],
-                ticket_list_title : "All assigned tickets",
+                ticket_list_title : I18n.t('helpdesk_reports.ticket_list_title.avg_first_assign_time'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213121"
             },
             "FCR_TICKETS" : { 
-                name : "FIRST CONTACT RESOLUTION",
-                title: "FCR %",
-                description: "The percentage of tickets that were resolved after a single contact made by the customer in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.fcr_tickets'),
+                title: 'helpdesk_reports.chart_title.fcr_tickets_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.fcr_tickets'),
                 css  : ["report-arrow up positive", "report-arrow down negative"],
                 ticket_list_metric: 'fcr_violation',
-                ticket_list_complaint_title : "All FCR compliant tickets",
-                ticket_list_violated_title  : "All FCR violated tickets",
+                ticket_list_complaint_title : I18n.t('helpdesk_reports.ticket_list_title.fcr_tickets_compliant'),
+                ticket_list_violated_title  : I18n.t('helpdesk_reports.ticket_list_title.fcr_tickets_violated'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213144"
             },
             "RESPONSE_SLA" : { 
-                name : "FIRST RESPONSE SLA",
-                title: "First response SLA %",
-                description: "The percentage of tickets whose first responses were sent within SLA in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.first_response_sla'),
+                title: 'helpdesk_reports.chart_title.first_response_sla_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.first_response_sla'),
                 css  : ["report-arrow up positive", "report-arrow down negative"],
                 ticket_list_metric: 'fr_escalated',
-                ticket_list_complaint_title : "All first response SLA compliant tickets",
-                ticket_list_violated_title : "All first response SLA violated tickets",
+                ticket_list_complaint_title : I18n.t('helpdesk_reports.ticket_list_title.first_response_sla_compliant'),
+                ticket_list_violated_title : I18n.t('helpdesk_reports.ticket_list_title.first_response_sla_violated'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213166"
             },
             "RESOLUTION_SLA" : { 
-                name : "RESOLUTION SLA",
-                title: "Resolution SLA %",
-                description: "The percentage of tickets that were resolved within SLA in the selected time period",
+                name : I18n.t('helpdesk_reports.metric_name.resolution_sla'),
+                title: 'helpdesk_reports.chart_title.resolution_sla_group_by_chart',
+                description: I18n.t('helpdesk_reports.v2_helptext.glance.resolution_sla'),
                 css  : ["report-arrow up positive", "report-arrow down negative"],
                 ticket_list_metric: 'is_escalated',
-                ticket_list_complaint_title : "All resolution SLA compliant tickets",
-                ticket_list_violated_title : "All resolution SLA violated tickets",
+                ticket_list_complaint_title : I18n.t('helpdesk_reports.ticket_list_title.resolution_sla_compliant'),
+                ticket_list_violated_title : I18n.t('helpdesk_reports.ticket_list_title.resolution_sla_violated'),
                 solution_url : "https://support.freshdesk.com/support/solutions/articles/213168"
             }
         },
+        template_metrics: ["GLANCE_CURRENT", "GLANCE_HISTORIC"],
         default_metric: "RECEIVED_TICKETS",
         group_by_with_status: ["source", "priority", "status", "ticket_type"],
         group_by_without_status: ["source", "priority", "ticket_type"],
@@ -109,30 +110,30 @@ HelpdeskReports.Constants = {
         bucket_data : {
             interactions: {
                 series: {
-                    'agent_interactions': 'Agent responses', 
-                    'customer_interactions' : 'Customer responses'
+                    'agent_interactions': I18n.t('helpdesk_reports.agent_responses'), 
+                    'customer_interactions' : I18n.t('helpdesk_reports.customer_responses')
                 },
                 meta_data:{
                     dom_element: 'interactions',
                     legend: true,
-                    xtitle: 'No. of responses',
-                    ytitle: 'No. of tickets',
+                    xtitle: I18n.t('helpdesk_reports.chart_title.no_of_responses'),
+                    ytitle: I18n.t('helpdesk_reports.chart_title.no_of_tickets'),
                     chart_height: '300',
-                    title: 'No. of agent & customer responses in '
+                    title: I18n.t('helpdesk_reports.chart_title.agent_and_customer_response')
                 }
             },
             reopen: {
                 series: {
-                    'reopen_count' : 'Reopens'
+                    'reopen_count' : I18n.t('helpdesk_reports.reopens')
                 },
                 meta_data: {
                     dom_element:  'reopened_tickets',
                     legend: false,
-                    xtitle: 'No. of reopens',
-                    ytitle: 'No. of tickets',
+                    xtitle: I18n.t('helpdesk_reports.chart_title.no_of_reopens'),
+                    ytitle: I18n.t('helpdesk_reports.chart_title.no_of_tickets'),
                     pointWidth: 6,
                     chart_height: '275',
-                    title: 'Reopened tickets'
+                    title: I18n.t('helpdesk_reports.chart_title.reopened_tickets')
                 }
             }
         },
@@ -226,30 +227,30 @@ HelpdeskReports.Constants = {
     CustomerReport: {
         metrics: { 
             "RECEIVED_TICKETS" : { 
-                title: "Tickets submitted",
-                description: "The tickets that were submitted in the helpdesk in the selected time period",
+                title: I18n.t('helpdesk_reports.customer_report.received_tickets'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.received_tickets'),
             },
             "RESOLVED_TICKETS" : { 
-                title: "Tickets resolved",
-                description: "The tickets resolved in the selected time period (that were created any time)",
+                title: I18n.t('helpdesk_reports.customer_report.resolved_tickets'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.resolved_tickets'),
             },
             "RESPONSE_VIOLATED" : { 
-                title: "Response SLA violations %",
-                description: "The percentage of tickets were not responded within SLA in the selected time period",
+                title: I18n.t('helpdesk_reports.customer_report.response_violated'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.response_violated'),
                 ticket_list_metric: 'fr_escalated'
             },
             "RESOLUTION_VIOLATED" : { 
-                title: "Resolution SLA violations %",
-                description: "The percentage of tickets were not resolved within SLA in the selected time period",
+                title: I18n.t('helpdesk_reports.customer_report.resolution_violated'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.resolution_violated'),
                 ticket_list_metric: 'is_escalated'
             },
             "CUSTOMER_INTERACTIONS" : { 
-                title: "Customer responses",
-                description: "No. of customer responses made in the selected time period",
+                title: I18n.t('helpdesk_reports.customer_report.customer_interactions'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.customer_interactions'),
             },
             "AGENT_INTERACTIONS" : { 
-                title: "Agent responses",
-                description: "No. of agent responses made in the selected time period",
+                title: I18n.t('helpdesk_reports.customer_report.agent_interactions'),
+                description: I18n.t('helpdesk_reports.v2_helptext.customer_report.agent_interactions'),
             },
         },
         report_type: "customer_report",

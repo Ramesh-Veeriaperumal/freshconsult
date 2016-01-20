@@ -1,2 +1,7 @@
+
 <%= wicked_pdf_javascript_include_tag 'cdn/app/helpdesk_reports_pdf' %>
 <%= wicked_pdf_stylesheet_link_tag 'cdn/helpdesk_reports_pdf' %>
+ <script type="text/javascript">
+  I18n.defaultLocale = "<%= I18n.default_locale %>";
+  I18n.locale = "<%= I18n.locale %>";
+</script>

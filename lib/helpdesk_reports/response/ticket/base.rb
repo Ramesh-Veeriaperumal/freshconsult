@@ -3,22 +3,24 @@ class HelpdeskReports::Response::Ticket::Base
   include HelpdeskReports::Constants
   include HelpdeskReports::Util::Ticket
 
-  attr_accessor :raw_result, :processed_result, :date_range, :report_type
+  attr_accessor :raw_result, :processed_result, :date_range, :report_type, :start_date, :end_date
 
   def initialize result, date_range, report_type, query_type, pdf_export
     @raw_result       = result
     @date_range       = date_range
     @report_type      = report_type.upcase.to_sym
-    @processed_result = {}
     @query_type       = query_type
     @pdf_export       = pdf_export
+    dates             = date_range.split("-")
+    @start_date       = Date.parse(dates.first)
+    @end_date         = dates.length > 1 ?  Date.parse(dates.second) : start_date   
+    @processed_result = {}
   end
 
   def process
     process_metric if raw_result.present? # return empty hash if ZERO sql rows
-    sort_group_by_values
+    sort_group_by_values if @pdf_export
     map_field_ids_to_values
-    #map_flexifield_to_label # TODO: remove this action. Not required anymore.
     processed_result
   end
 
@@ -79,21 +81,16 @@ class HelpdeskReports::Response::Ticket::Base
       value.delete(k)
     end
   end
-  
+
   def sort_group_by_values
-    return unless sorting_required?
+    return unless report_type == :GLANCE && @query_type != :bucket 
     processed_result.each do |gp_by, values|
       values = values.to_a
       next if gp_by == :general 
-      not_numeric = values.collect{|i| i unless i.second.is_a? Numeric}.compact
-      values = (values - not_numeric).sort_by{|i| i.second}.reverse!
-      processed_result[gp_by] = (values|not_numeric).to_h
-      club_keys_for_export_pdf(gp_by, processed_result[gp_by]) if (@pdf_export && @query_type!=:bucket)
+      values = values.sort_by{|i| i.second}.reverse!
+      processed_result[gp_by] = values.to_h
+      club_keys_for_export_pdf(gp_by, processed_result[gp_by]) if(processed_result[gp_by].size > PDF_GROUP_BY_LIMIT)
     end
-  end
-  
-  def sorting_required?
-    report_type == :GLANCE && @query_type != :bucket
   end
   
   def club_keys_for_export_pdf(column_name, value)
@@ -112,9 +109,10 @@ class HelpdeskReports::Response::Ticket::Base
         val = (value[new_key][:value].to_i + sla_percentage(column_name, k))/percentage_count
       end
       value[new_key] = {value: val, id: nil}
+      value.delete(k)
     end
   end
-
+  
   def merge_empty_fields_with_zero(value,mapping_hash)
     mapping_hash.keys.each do |k|
       value[mapping_hash[k]] ||= 0
@@ -130,132 +128,70 @@ class HelpdeskReports::Response::Ticket::Base
   def benchmark_query?
     !raw_result.blank? and !raw_result.first.blank? and !raw_result.first[COLUMN_MAP[:benchmark]].blank?
   end
-  
-  def explain 
-    puts JSON.pretty_generate @processed_result
-  end
-  
-  def trend_column? column
-    ["doy","w","mon","qtr","y"].include? column
-  end
-  
+
   def range trend
-    dates = date_range.split("-")
-    start_day = Date.parse(dates.first)
-    end_day = dates.length > 1 ?  Date.parse(dates.second) : start_day
     padding_hash = {}
 
     if trend == "y" 
-      (start_day.year..end_day.year).each do |i| 
-          i = label_for_x_axis(i, i, trend, date_range)
+      (start_date.year..end_date.year).each do |i| 
+          i = label_for_x_axis(i, i, trend)
+          padding_hash[i] = 0 
+      end
+    elsif trend == 'w'
+      (start_date.beginning_of_week..end_date.beginning_of_week).each do |i| 
+          i = label_for_x_axis(nil, i, trend)
+          padding_hash[i] = 0 
+      end
+    elsif trend == 'doy'
+      (start_date..end_date).each do |i| 
+          i = label_for_x_axis(nil, i, trend)
           padding_hash[i] = 0 
       end
     else
-      start_year = start_day.year
-      end_year = end_day.year
-      if trend == 'w'
-        start_year = start_day.year - 1 if start_day.month == 1 && start_day.cweek >= 52
-        end_year = end_day.year - 1 if end_day.month == 1 && end_day.cweek >= 52
-      end
-
-      (start_year..end_year).each do |y|
-        start_point  = (start_year == y) ? date_part(start_day, trend) : 1
-        end_point = (end_year == y) ? date_part(end_day, trend) : trend_max_value(trend, y)
+      (start_date.year..end_date.year).each do |y|
+        start_point  = (start_date.year == y) ? date_part(start_date, trend) : 1
+        end_point = (end_date.year == y) ? date_part(end_date, trend) : TREND_MAX_VALUE[trend] 
         
         (start_point..end_point).each do |i|
-          month = trend == "w" ? week_1_specialcase(y) : nil
-          i = label_for_x_axis(y, i, trend, date_range, month)
+          i = label_for_x_axis(y, i, trend)
           padding_hash[i] = 0
         end
       end
     end
     padding_hash
   end
-  
-  def week_1_specialcase year
-    # By definition (ISO 8601), the first week of a year contains January 4 of that year. (The ISO-8601 week starts on Monday.) 
-    # Due to above definiton it can happen that an year has two separate weeks with week number 1, which is an expected behaviour
-    # and in any such case, week number 1 occurring in December is actually week number 1 of next year.
-    # Below code is written to get month as we need month to distinguis between week 1 occuring in Jan or Dec.
-    start_day = Date.parse(date_range.split("-").first)
-    if start_day.year == year and start_day.cweek == 1
-      return start_day.month
-    else
-      nil
-    end
-  end
 
-  def trend_max_value trend, year
+  def label_for_x_axis year, point, trend
+    timestamp_needed = (report_type == :PERFORMANCE_DISTRIBUTION) #Performance Reports need timestamp values for line chart
     case trend
       when "doy"
-        Date.leap?(year) ? TREND_MAX_VALUE["leap_year"] : TREND_MAX_VALUE["year"]
-      else
-        if trend == "w"
-          start_day = Date.parse(date_range.split("-").first)
-          return 1 if start_day.year == year and start_day.cweek == 1 and start_day.month == 12
-        end
-        TREND_MAX_VALUE[trend]
-    end
-  end
-
-  def label_for_x_axis year, point, trend, date_range, month = nil
-    case trend
-      when "doy"
-        date = "#{Date.ordinal(year, point).strftime('%d %b')}, #{year}"
+        date = point.is_a?(Date) ? point : Date.parse(point)
+        timestamp_needed ? convert_date_to_timestamp(date) : "#{date.strftime('%d %b, %Y')}"  
       when "w"
-        date = "#{week_to_date(point, year, date_range, month)}"      
+        week     = point.is_a?(Date) ? point : Date.parse(point)
+        res_date = [week.beginning_of_week,week.end_of_week]
+        if timestamp_needed
+          convert_date_to_timestamp(res_date[0])
+        else
+          start_week = res_date[0] < start_date ? start_date.strftime('%d %b, %Y') : res_date[0].strftime('%d %b, %Y')
+          end_week = res_date[1] > end_date ? end_date.strftime('%d %b, %Y') : res_date[1].strftime('%d %b, %Y')
+          start_week + " - " + end_week
+        end
       when "mon"
-        date = "#{Date::ABBR_MONTHNAMES[point]}, #{year}"      
+        date = "#{Date::ABBR_MONTHNAMES[point.to_i]}, #{year}"
+        timestamp_needed ? convert_date_to_timestamp(date) : "#{date}"
       when "qtr"
-        date = "#{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 1]} - #{Date::ABBR_MONTHNAMES[((point-1)*3 )+ 3]}, #{year}"      
+        qtr = (point.to_i - 1 ) * 3
+        start_month = Date::ABBR_MONTHNAMES[qtr + 1]
+        end_month   = Date::ABBR_MONTHNAMES[qtr + 3]
+        timestamp_needed ? convert_date_to_timestamp("#{start_month}, #{year}") : "#{start_month} - #{end_month}, #{year}"
       when "y"
-        date = "#{point}"
-    end
-    date_according_to_report_type date, trend, year
-  end
-  
-  def date_according_to_report_type date, trend, year
-    r_t_code = REPORT_TYPE_BY_KEY[report_type]
-    case trend
-      when "qtr"
-        r_t_code == 104 ? (Date.parse(date.split("-").first+year.to_s).strftime('%s').to_i * 1000) : date
-      when "y"
-        r_t_code == 104 ? (Date.ordinal(date.to_i).strftime('%s').to_i * 1000) : date
-      else
-        r_t_code == 104 ? (Date.parse(date).strftime('%s').to_i * 1000) : date
+        timestamp_needed ? convert_date_to_timestamp(Date.ordinal(year)) : "#{year}"
       end
-  end
-
-  def week_to_date week, year, date_range, month
-    dates      = date_range.split("-")
-    start_date = Date.parse(dates.first)
-    end_date   = dates.last ? Date.parse(dates.last) : Date.parse(dates.first)
-    res_date   = date_from_week week, month, year #Date.commercial(year, week)
-    if REPORT_TYPE_BY_KEY[report_type] == 104
-      res_date[0]
-    else
-      start_week = res_date[0] < start_date ? start_date.strftime('%d %b, %Y') : res_date[0].strftime('%d %b, %Y')
-      end_week = res_date[1] > end_date ? end_date.strftime('%d %b, %Y') : res_date[1].strftime('%d %b, %Y')
-      start_week + " - " + end_week
     end
-    
-  end
-  
-  def date_from_week week, month, year
-    if month && week == 1 && month == 12
-      year += 1
-      [Date.commercial(year, week),Date.commercial(year, week, 7)]
-    elsif month && week >= 52 && month == 1
-      year -= 1
-      begin
-        [Date.commercial(year, week),Date.commercial(year, week, 7)]
-      rescue
-        year += 1
-        [Date.commercial(year, week),Date.commercial(year, week, 7)]
-      end
-    else
-    [Date.commercial(year, week),Date.commercial(year, week, 7)]
-    end
-  end
 
+    def convert_date_to_timestamp date
+      date = date.is_a?(Date) ? date : Date.parse(date)
+      date.strftime('%s').to_i * 1000
+    end
 end

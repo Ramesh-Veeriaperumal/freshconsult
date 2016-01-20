@@ -7,7 +7,10 @@
 		<% for (i = 0; i < metrics.length; i++) { %>
 			<% if(!jQuery.isEmptyObject(data[metrics[i]]) && data[metrics[i]]['error'] === undefined) { %>
 				
-				<li data-metric= <%= metrics[i] %> >
+				<% var tickets_count = data[metrics[i]].general.tickets_count; %>
+				<% var enable_status = tickets_count == 0 ? 'disable' : 'enable'; %>
+
+				<li data-metric= <%= metrics[i] %> class=<%= enable_status %> >
 					<div class="active-indicator"></div>
 					<div class="metrics-content">
 						<div>

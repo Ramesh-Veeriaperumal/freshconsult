@@ -24,7 +24,13 @@ COLUMN_SERIES = {
     'Resolved': "RESOLVED_TICKETS"
 }
 
+
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+I18N_QTR_NAMES = I18n.t('helpdesk_reports.abbr_qtr') 
+I18N_MONTHS = I18n.t('helpdesk_reports.abbr_month_names')
+
+
 // TODO: Namespace it to helpdesk reports
 function helpdeskReports(opts) {
     Highcharts.dateFormats = {
@@ -36,12 +42,15 @@ function helpdeskReports(opts) {
         },
         qtr: function (timestamp) {
             var current_date = new Date(timestamp),
-                point = current_date.getMonth();
-            return MONTHS[point] + '-' + MONTHS[point+2];
+                point = Math.floor(current_date.getMonth() / 3);
+            return I18N_QTR_NAMES[point];
         }
     };
 
     this.options = {
+        lang: {
+            shortMonths: I18n.t('helpdesk_reports.abbr_month_names'),
+        },
         credits: {
             enabled: false
         },
@@ -70,10 +79,11 @@ helpdeskReports.prototype = {
         Highcharts.setOptions(this.options);
     },
     columnChartTooltip: function () {
+        var y = (this.point.y).toFixed(0);
         if (this.point.series.index == 0) {
-            return '<div class="tooltip"> <p style="margin:0;color:#63b3f5;font-size: 13px;font-weight: 500">' + 'Total tickets ' + this.series.name.toLowerCase() + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
+            return '<div class="tooltip"> <p style="margin:0;color:#63b3f5;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.tooltip.total_tickets_received',{count: y}) + '</p></div>';
         } else {
-            return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + 'Total tickets ' + this.series.name.toLowerCase() + '<strong> : ' + (this.point.y).toFixed(0) + '</strong></p></div>';
+            return '<div class="tooltip"> <p style="margin:0;color:#64b740;font-size: 13px;font-weight: 500">' + I18n.t('helpdesk_reports.chart_title.tooltip.total_tickets_resolved',{count: y}) + '</p></div>';
         }
     },
     perfXAxisTrendLabel: function(timestamp){
@@ -91,50 +101,84 @@ helpdeskReports.prototype = {
                 return Highcharts.dateFormat('%Y', timestamp);
         }  
     },
-    xAxisTrendLabel: function() {    
+    ticketListTrendLabel: function(category) {
+        return helpdeskReports.prototype.xAxisTrendLabel(true,category);
+    },
+    xAxisTrendLabel: function(is_column_chart_clicked,clicked_category) {  
+       
         var trend = HelpdeskReports.locals.trend;
-        var value = this.value;
+        var value = clicked_category || this.value;
 
         //TODO: 
         if (typeof value == 'string') {
             switch (trend) {
 
             case 'doy':
-
-                var regex = /^(.*?)\,/;
-                return regex.exec(value)[1];
+                var chart_label = value.split(/[,\s]/);
+                var label = '';
+                month_index = _.indexOf(MONTHS,chart_label[1].trim());
+                month = I18N_MONTHS[month_index];
+                if (is_column_chart_clicked){
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.day_month_year',{day: chart_label[0], month: month, year: chart_label[3] });
+                }
+                else{
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.day_month',{day: chart_label[0], month: month});
+                }
+                return label;
 
             case 'w':
-
-                var regex = /^(.*?)\,/;
-                return regex.exec(value)[1];
-
+                
+                    var chart_label_array = value.split('-');
+                    var label_day = [];
+                    var label_month = [];
+                    var label_year = [];
+                    var label = '';
+                    for(i=0; i< chart_label_array.length;i++)
+                    {
+                        var chart_label = chart_label_array[i].trim().split(/[,\s]/) 
+                        label_day[i] = chart_label[0];
+                        label_month[i] = I18N_MONTHS[_.indexOf(MONTHS,chart_label[1].trim())];
+                        label_year[i] = chart_label[3];
+                    }
+                    if (is_column_chart_clicked)
+                    {
+                        label = I18n.t('helpdesk_reports.ticket_volume.labels.week_with_year',{start_day: label_day[0], start_month: label_month[0], start_year: label_year[0], end_day: label_day[1], end_month: label_month[1], end_year: label_year[1]});
+                    }
+                    else
+                    {
+                        label = I18n.t('helpdesk_reports.ticket_volume.labels.day_month',{day: label_day[0], month: label_month[0]});
+                    }
+                    return label;
+                    
+                
             case 'mon':
                 
                 var d = Date.parse(value);
-                if (d.getMonth() == 0 || this.isFirst) {
-                    return value;
-                } else {
-                    var regex = /^(.*?)\,/;
-                    return regex.exec(value)[1];
+                var label_split = value.split(",");
+                var label = '';
+                var month = I18N_MONTHS[d.getMonth()];
+                if (d.getMonth() == 0 || this.isFirst || is_column_chart_clicked) {
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.month_year',{month: month, year: label_split[1] });
+                } else { 
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.month',{month: month});
                 }   
+                return label;
 
             case 'qtr':
 
-                var regex = /^(.*?)\,/;
-                var exp = regex.exec(value)[1];
-                var split_val = exp.split('-')[0];
-                var d = Date.parse(split_val);
-                if  (d.getMonth() == 0 || this.isFirst) {
-
-                    return value;
+                var label_split = value.split(/[-,]/);
+                var start_month = I18N_MONTHS[_.indexOf(MONTHS,label_split[0].trim())];
+                var end_month = I18N_MONTHS[_.indexOf(MONTHS,label_split[1].trim())];
+                var d = Date.parse(label_split[0].trim());
+                var label = '';
+                if  (d.getMonth() == 0 || this.isFirst || (is_column_chart_clicked)) {
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.qtr_year',{start_month: start_month, end_month: end_month, year: label_split[2]});  
                 } else {
-
-                    return exp;
+                    label = I18n.t('helpdesk_reports.ticket_volume.labels.qtr',{start_month: start_month, end_month: end_month});
                 }
+                return label;
             case 'y':
                return value;
-
             }
         }
     },
@@ -150,10 +194,11 @@ helpdeskReports.prototype = {
         var x = "<div class='tooltip'>";
         jQuery.each(this.points, function (i, point) {
             var y = (point.y) % 1 === 0 ? (this.y) : (this.point.y).toFixed(2);
-            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">Average tickets ' + point.series.name.toLowerCase() + ' : ' + y + '</p><br/>';
+            var metric = I18n.t(point.series.name.toLowerCase(),{scope: "helpdesk_reports", defaultValue: point.series.name.toLowerCase()});
+            x += '<p style="margin:0;display:inline-block;color:' + point.series.color + '">' + I18n.t('helpdesk_reports.chart_title.tooltip.avg_tickets',{metric: metric,value: y}) + '</p><br/>';
         });
         if(active_day){
-            x += "<p>(Avg of all " + active_day.toLowerCase() + ")</p>"; 
+            x += "<p>(" + I18n.t('helpdesk_reports.chart_title.tooltip.avg_of_all',{day: active_day}) + ")</p>"; 
         }
         x += "</div>";
         return x;
@@ -182,11 +227,11 @@ helpdeskReports.prototype = {
         var fp,sp;
         if (series == 1) {
             fp = this.y;
-            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;"> Compliant: '+ fp +'% </p></div>'
+            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">' + I18n.t('helpdesk_reports.chart_title.tooltip.compliant',{percent_of_tickets: fp})+'% </p></div>'
         } else {
             var index = this.series.data.indexOf(this.point);
             var point = parseInt(100 - this.series.chart.series[1].data[index].y);
-            return '<div class="tooltip"><p style="margin:0;color:#f48f6c;"> Violated: ' + point + '%</p></div>';
+            return '<div class="tooltip"><p style="margin:0;color:#f48f6c;">' + I18n.t('helpdesk_reports.chart_title.tooltip.violated',{percent_of_tickets: point}) + '%</p></div>';
         }
     },
     performanceDistributionBarChartTooltip : function(){
@@ -196,7 +241,7 @@ helpdeskReports.prototype = {
         var pcnt = (value / dataSum) * 100;
         var color = this.points[1].series.color;
         var tooltip_name = this.points[1].series.options.tooltip_name;
-        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '% tickets</p></div>';
+        return '<div class="tooltip"><p style="margin:0;color:'+color+';"> ' + this.points[1].x + ' : '+ Highcharts.numberFormat(pcnt) + '% '+ I18n.t('helpdesk_reports.chart_title.tickets')+'</p></div>';
     },
     barChartTooltip: function(){
         var value = this.points[1].y;
@@ -208,9 +253,9 @@ helpdeskReports.prototype = {
     },
     barChartSeriesTooltip: function () {
         if (this.point.series.index == 0) {
-            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ this.y  + ' tickets with ' + this.x + ' ' + this.series.name.toLowerCase() + '<br/></p></div>';
+            return '<div class="tooltip"><p style="margin:0;color:#63b3f5;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_agent_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
         } else {
-            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ this.y  + ' tickets with ' + this.x + ' ' + this.series.name.toLowerCase() + '<br/></p></div>';
+            return '<div class="tooltip"><p style="margin:0;color:#ffe397;">'+ I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_customer_responses',{ticket_count: this.y, count: this.x}) + '<br/></p></div>';
         }
     },
     numberLabelFormatter: function(number){
@@ -285,7 +330,7 @@ function columnChart(opts) {
             min: 0,
             allowDecimals: false,
             title: {
-                text: (typeof opts['yAxis_label'] === 'undefined') ? 'No. of tickets' : opts['yAxis_label'],
+                text: (typeof opts['yAxis_label'] === 'undefined') ? I18n.t('helpdesk_reports.chart_title.no_of_tickets') : opts['yAxis_label'],
                 align: 'middle',
                 style: {
                     fontSize: '12px',
@@ -322,8 +367,9 @@ function columnChart(opts) {
                         click: function () {
                             trigger_event("timetrend_point_click.helpdesk_reports", {
                                 sub_metric: COLUMN_SERIES[this.series.name],
-                                date: this.category,
-                                value : (this.y).toFixed(0)
+                                value : (this.y).toFixed(0),
+                                date: helpdeskReports.prototype.ticketListTrendLabel(this.category),
+
                             });
                         }
                     }
@@ -423,7 +469,7 @@ function lineChart(opts) {
             allowDecimals: false,
             max: (typeof opts['yMax'] !== 'undefined') ? opts['yMax'] : null,
             title: {
-                text: (typeof opts['yAxis_label'] === 'undefined') ? 'Avg no. of tickets' : opts['yAxis_label'],
+                text: (typeof opts['yAxis_label'] === 'undefined') ? I18n.t('helpdesk_reports.chart_title.avg_no_of_tickets') : opts['yAxis_label'],
                 align: 'middle',
                 style: {
                     fontSize: '13px',

@@ -1,5 +1,6 @@
 <div id="div_ff_<%=condition%>" class="ff_item filter-field" data-type="filter-field" condition="<%=condition%>" operator="<%=operator%>" container="<%=container%>" type="<%=field_type%>" data-label="<%=name%>">
-	<label class="control-label"><%=name%></label>
+  <% filter_type = I18n.t(name.toLowerCase(),{scope: 'helpdesk_reports', defaultValue: name}) %>
+	<label class="control-label"><%=filter_type%></label>
 	<select multiple="multiple" class="filter_item" id="<%=condition%>" name="<%=condition%>[]">
 		<% for (i=0; i<	options.length; i++) {  %>
 	    	<option value="<%=options[i][0]%>"><%=options[i][1]%></option>

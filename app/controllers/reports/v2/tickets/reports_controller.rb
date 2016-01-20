@@ -56,6 +56,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     @query_params[:report_type] = report_type
     @query_params[:portal_url]  = main_portal? ? current_account.host : current_portal.portal_url
     @query_params[:query_hash]  = request_object.fetch_req_params
+    @query_params[:export]      = "tickets_export"
     
     if generate_data_exports_id
       status_code = :ok
@@ -78,8 +79,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def email_reports
     email_report_params
     HelpdeskReports::Workers::Export.perform_async(params)
-    @data = true
-    send_json_result
+    render json: nil, status: :ok
   end
   
   def download_file
@@ -97,16 +97,9 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
 
   def render_charts
-    # Temporary Hack to enable QA to see json result of reports
-    # for which UI is not been done yet.
-    # Constant ~REPORTS_COMPLETED~ is the list of reports which are complete with UI
-    if REPORTS_COMPLETED.include? report_type.to_sym
-      render :partial => "/reports/v2/tickets/reports/#{report_type}/charts"
-    else
-      send_json_result
-    end
+    render :partial => "/reports/v2/tickets/reports/#{report_type}/charts"
   end
-  
+
   def ensure_report_type_or_redirect
     @report_type = params[:report_type]
     redirect_to reports_path unless REPORT_TYPE_BY_NAME.include?(report_type) && has_scope?(report_type)
@@ -115,7 +108,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   def build_and_execute
     requests = []
     @query_params.each_with_index do |param, i|
-      request_object = HelpdeskReports::Request::Ticket.new(param.merge!(index: i),report_type)
+      request_object = HelpdeskReports::Request::Ticket.new(param.merge!(index: i), report_type)
       request_object.build_request
       requests << request_object
     end
@@ -127,7 +120,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       index = res["index"].to_i
       param = requests[index].fetch_req_params
       query_type = requests[index].query_type
-      @results << HelpdeskReports::Response::Ticket.new(res, param, query_type,report_type, @pdf_export.present?)   
+      @results << HelpdeskReports::Response::Ticket.new(res, param, query_type, report_type, @pdf_export.present?)   
     end
   end
 
@@ -149,7 +142,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   
   def format_result
     if formatting_required?
-      @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints).format
+      @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints(@pdf_export.present?)).format
     else
       @data = @processed_result
     end

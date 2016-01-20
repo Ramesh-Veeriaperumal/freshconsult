@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
 <%= render :partial => "layouts/report/v2/shared/pdf_files.html.erb", :formats => [:html], :locals => {} %>
 <div class="reports-wrapper" id="reports_wrapper">
   <div class="reports-main">
@@ -8,7 +11,6 @@
       <div class="row-fluid volume-header">
         <div class="span5 chart-title">
           <span class="trend-subtitle" data-title="trend"></span>
-          <%=t('helpdesk_reports.ticket_volume.time_trends.title').html_safe %>
         </div>
         
       </div>
@@ -53,12 +55,12 @@
         jQuery('#trend_type, #mini_chart_wrapper, .busy_period,.stats').hide();
     } else if (!jQuery.isEmptyObject(locals.chart_hash["error"]) || !jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {
         var div = ['day_trend_chart', 'time_trend_chart'];
-        var msg = 'Something went wrong, please try again';
+        var msg = t('helpdesk_reports.something_went_wrong_msg');
           HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
         jQuery('#trend_type, #mini_chart_wrapper, .busy_period, .stats').hide();
     } else if (jQuery.isEmptyObject(locals.chart_hash[locals.metric])) {
       var div = ['day_trend_chart', 'time_trend_chart'];
-        var msg = 'No data to display';
+        var msg = t('helpdesk_reports.no_data_to_display_msg');
           HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
         jQuery('#trend_type, #mini_chart_wrapper,.busy_period, .stats').hide();
     } else if (!jQuery.isEmptyObject(locals.chart_hash[locals.metric]) && jQuery.isEmptyObject(locals.chart_hash[locals.metric]["error"])) {

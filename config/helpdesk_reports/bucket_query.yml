@@ -93,96 +93,96 @@
 :first_response_time: 
   - operator: less_than_eql
     value: 900
-    label: < 15 mins
+    label: helpdesk_reports.bucket.less_than_fifteen_mins
   - operator: range
     value: "900,1800"
-    label: 15-30 mins
+    label: helpdesk_reports.bucket.fifteen_to_thirty_mins
   - operator: range
     value: "1800,3600"
-    label: 30-60 mins
+    label: helpdesk_reports.bucket.thirty_to_sixty_mins
   - operator: range
     value: "3600,7200"
-    label: 1-2 hrs
+    label: helpdesk_reports.bucket.one_to_two_hrs
   - operator: range
     value: "7200,14400"
-    label: 2-4 hrs
+    label: helpdesk_reports.bucket.two_to_four_hrs
   - operator: range
     value: "14400,28800"
-    label: 4-8 hrs
+    label: helpdesk_reports.bucket.four_to_eight_hrs
   - operator: range
     value: "28800,43200"
-    label: 8-12 hrs
+    label: helpdesk_reports.bucket.eight_to_twelve_hrs
   - operator: range
     value: "43200,86400"
-    label: 12-24 hrs
+    label: helpdesk_reports.bucket.twelve_to_twenty_four_hrs
   - operator: range
     value: "86400,172800"
-    label: 24-48 hrs
+    label: helpdesk_reports.bucket.twenty_four_to_fourty_eight_hrs
   - operator: greater_than_eql
     value: 172800
-    label: 48+ hrs
+    label: helpdesk_reports.bucket.fourty_eight_plus_hrs
 :response_time: 
   - operator: less_than_eql
     value: 900
-    label: < 15 mins
+    label: helpdesk_reports.bucket.less_than_fifteen_mins
   - operator: range
     value: "900,1800"
-    label: 15-30 mins
+    label: helpdesk_reports.bucket.fifteen_to_thirty_mins
   - operator: range
     value: "1800,3600"
-    label: 30-60 mins
+    label: helpdesk_reports.bucket.thirty_to_sixty_mins
   - operator: range
     value: "3600,7200"
-    label: 1-2 hrs
+    label: helpdesk_reports.bucket.one_to_two_hrs
   - operator: range
     value: "7200,14400"
-    label: 2-4 hrs
+    label: helpdesk_reports.bucket.two_to_four_hrs
   - operator: range
     value: "14400,28800"
-    label: 4-8 hrs
+    label: helpdesk_reports.bucket.four_to_eight_hrs
   - operator: range
     value: "28800,43200"
-    label: 8-12 hrs
+    label: helpdesk_reports.bucket.eight_to_twelve_hrs
   - operator: range
     value: "43200,86400"
-    label: 12-24 hrs
+    label: helpdesk_reports.bucket.twelve_to_twenty_four_hrs
   - operator: range
     value: "86400,172800"
-    label: 24-48 hrs
+    label: helpdesk_reports.bucket.twenty_four_to_fourty_eight_hrs
   - operator: greater_than_eql
     value: 172800
-    label: 48+ hrs
+    label: helpdesk_reports.bucket.fourty_eight_plus_hrs
 :resolution_time: 
   - operator: less_than_eql
     value: 18000
-    label: < 5 hrs
+    label: helpdesk_reports.bucket.less_than_5_hrs
   - operator: range
     value: "18000,36000"
-    label: 5-10 hrs
+    label: helpdesk_reports.bucket.5_to_10_hrs
   - operator: range
     value: "36000,54000"
-    label: 10-15 hrs
+    label: helpdesk_reports.bucket.10_to_15_hrs
   - operator: range
     value: "54000,90000"
-    label: 15-25 hrs
+    label: helpdesk_reports.bucket.15_to_25_hrs
   - operator: range
     value: "90000,180000"
-    label: 25-50 hrs
+    label: helpdesk_reports.bucket.25_to_50_hrs
   - operator: range
     value: "180000,360000"
-    label: 50-100 hrs  
+    label: helpdesk_reports.bucket.50_to_100_hrs  
   - operator: range
     value: "360000,720000"
-    label: 100-200 hrs  
+    label: helpdesk_reports.bucket.100_to_200_hrs  
   - operator: range
     value: "720000,1260000"
-    label: 200-350 hrs 
+    label: helpdesk_reports.bucket.200_to_350_hrs 
   - operator: range
     value: "1260000,2520000"
-    label: 350-700 hrs
+    label: helpdesk_reports.bucket.350_to_700_hrs
   - operator: greater_than_eql
     value: 2520000
-    label: 700+ hrs
+    label: helpdesk_reports.bucket.700_plus_hrs
 :reply_count: 
   - operator: eql
     value: 0

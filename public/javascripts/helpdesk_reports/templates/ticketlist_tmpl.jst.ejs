@@ -5,11 +5,11 @@
 				<%= data[i]['avatar']%>
 				<a href="/helpdesk/tickets/<%= data[i]['id']%>" target="_blank" class="ticket-link visited"><%= data[i]['subject']%></a>
 				<span class="ticket-id">#<%= data[i]['id']%></span>
-				<div class="ticket-details">Agent: <span><%=data[i]['agent']%></span>, Status: <span><%=data[i]['status']%></span>, Priority: <span><%=data[i]['priority']%></span></div>
-				<div class="ticket-created">From: <span><%=data[i]['requester']%></span></div>
+				<div class="ticket-details"><%= I18n.t('helpdesk_reports.agent') %>: <span><%=data[i]['agent']%></span>, <%= I18n.t('helpdesk_reports.status') %>: <span><%=data[i]['status']%></span>, <%= I18n.t('helpdesk_reports.priority') %>: <span><%=data[i]['priority']%></span></div>
+				<div class="ticket-created"><%= I18n.t('helpdesk_reports.from') %>: <span><%=data[i]['requester']%></span></div>
 			</li>
 		<% } %>
 	</ul>
 <% } else { %>
-	<h4>No Tickets to display</h4>
+	<h4><%= I18n.t('helpdesk_reports.ticket_list_title.no_tickets') %></h4>
 <% } %>

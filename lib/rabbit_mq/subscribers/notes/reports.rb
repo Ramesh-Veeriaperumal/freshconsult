@@ -35,8 +35,7 @@ module RabbitMq::Subscribers::Notes::Reports
       {
         :action_in_bhrs => action_in_bhrs_flag,
         :action_time_in_bhrs => note.response_time_by_bhrs,
-        :action_time_in_chrs => note.response_time_in_seconds,
-        :valid_key           => Helpdesk::Activity::MIGRATION_KEYS.first
+        :action_time_in_chrs => note.response_time_in_seconds
       }
     end
     

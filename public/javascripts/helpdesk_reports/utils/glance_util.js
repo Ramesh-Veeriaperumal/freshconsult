@@ -6,7 +6,11 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             jQuery('#reports_wrapper').on('click.helpdesk_reports', "[data-action='reports-submit']", function () {
                 _FD.actions.submitReports();
             });
-
+            jQuery(document).on('click.helpdesk_reports.glance', "[data-action='nav-drill-down']", function (event) {
+                _FD.actions.navBack();
+                //Set title for the drill down
+                jQuery("#view_title_custom").html(HelpdeskReports.locals.breadcrumb[0].title);
+            });
             jQuery('#reports_wrapper').on('click.helpdesk_reports', '#glance_sidebar ul li:not(".active"):not(".disable")', function() {
                 var flag = HelpdeskReports.locals.ajaxContainer;
                 if (flag == false) {
@@ -28,11 +32,74 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             });
 
             jQuery(document).on("glance_ticket_list.helpdesk_reports", function (ev, data) {
+                var locals = HelpdeskReports.locals;
                 var flag = HelpdeskReports.locals.ticket_list_flag;
                 if (flag == false) {
-                    HelpdeskReports.locals.ticket_list_flag = true;
-                    _FD.getTicketListTitle(data);
-                    _FD.actions.ticketListEvent(data);
+                    var is_last_level = false;
+                    var ticket_list_for_drill_down = false;
+                    var group_by = data.group_by;
+                    var custom_field_hash = HelpdeskReports.locals.custom_fields_group_by;
+                    if(HelpdeskReports.locals.breadcrumb == undefined){
+                        HelpdeskReports.locals.breadcrumb = [];
+                    }
+                    
+                    if(data.base_chart_click){
+                        HelpdeskReports.locals.breadcrumb = [];
+                        _FD.clearNestedFieldCondition();
+                    }else{
+                        ticket_list_for_drill_down = true;
+                    }
+                    var breadcrumbs = HelpdeskReports.locals.breadcrumb;
+                    //only for non none entries
+                    if(data.id != null){
+                        //Check for custom field group by
+                        if(jQuery.inArray(group_by,custom_field_hash) != -1 || group_by == HelpdeskReports.locals.nested_group_by){
+                            //Check for nested field
+                            var report_field_hash = HelpdeskReports.locals.report_field_hash;
+                            is_last_level = _FD.isLastLevelInNestedField(group_by);
+                            //Set the data to locals object
+                            HelpdeskReports.locals.current_custom_field_event = data;
+                            if(!is_last_level){
+                                
+                                if(breadcrumbs && breadcrumbs.length == 1){
+                                    //show the back link
+                                    jQuery("[data-action='nav-drill-down']").show();
+                                }else if(breadcrumbs && breadcrumbs.length == 0){
+                                    jQuery("[data-action='nav-drill-down']").hide();
+                                    //Add the level to breadcrumb
+                                    var breadcrumb = {
+                                        id : data.id,
+                                        title : _FD.getNestedDrillDownTitle(data)
+                                    };
+                                    HelpdeskReports.locals.breadcrumb.push(breadcrumb);
+                                }
+
+                                //Set title for the drill down
+                                jQuery("#view_title_custom").html(_FD.getNestedDrillDownTitle(data));
+
+                                jQuery('#custom_field_container').attr('data-group', locals.nested_group_by);
+                                jQuery('#custom_field_container').attr('data-id', data.id);
+                                HelpdeskReports.locals.active_custom_field = locals.nested_group_by;
+                                _FD.constructDrillDownParams();
+                                if (!(HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric][locals.nested_group_by] && HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric][locals.nested_group_by].hasOwnProperty(data.id))) {
+                                    _FD.constructCustomFieldParams(locals.nested_group_by,true);
+                                } else {
+                                    HelpdeskReports.ChartsInitializer.Glance.customNestedFieldInit(HelpdeskReports.locals.chart_hash, false);
+                                    _FD.actions.setCustomFieldFlag();
+                                }
+                            }
+                            
+                        }else{
+                            is_last_level = true;  
+                        }
+                    }else{
+                        is_last_level = true;
+                    }
+                    if(is_last_level){
+                        HelpdeskReports.locals.ticket_list_flag = true;
+                        _FD.getTicketListTitle(data);
+                        _FD.actions.ticketListEvent(data,ticket_list_for_drill_down); 
+                    }
                 }
             });
 
@@ -45,10 +112,64 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
             });
 
+            jQuery(document).on("glance_empty_default_view.helpdesk_reports", function (ev, data) {
+                     var el = jQuery('#glance_sidebar ul li[data-metric="RECEIVED_TICKETS"]');
+                    _FD.actions.submitActiveMetric(el);
+            });
+
             _FD.actions.setAjaxContainer();
             _FD.actions.setCustomFieldFlag();
         },
-        
+        isLastLevelInNestedField : function(group_by){
+            //Check for nested field
+            var locals = HelpdeskReports.locals;
+            var report_field_hash = locals.report_field_hash;
+            var custom_field_hash = locals.custom_field_hash;
+
+            var is_last_level = true;
+            if(report_field_hash[group_by] != undefined){
+                if(report_field_hash[group_by].container == "multi_select"){
+                    return true;
+                }
+            }
+
+            for (var hash in custom_field_hash) {
+              if (report_field_hash.hasOwnProperty(hash)) {
+                    var group = report_field_hash[hash];
+                            if(group['container'] == 'nested_field'){
+                                 //check the current node before traversing the children
+                                if(group.condition == group_by){
+                                    if(group['nested_fields'].length > 0){
+                                        is_last_level = false;   
+                                        locals.nested_group_by = group['nested_fields'][0].condition;
+                                        break; 
+                                    }
+                                }
+                                else{
+                                        //group will be active
+                                        var no_of_levels = group['nested_fields'].length;
+                                         //Only two levels
+                                        if( no_of_levels == 2){
+                                            var child_group_1 = group['nested_fields'][0];
+                                            if(child_group_1.condition == group_by){
+                                                locals.nested_group_by = group['nested_fields'][1].condition;
+                                                is_last_level = false;
+                                                break;
+                                            }   
+                                        } 
+                                        if( no_of_levels == 1){
+                                            var child_group = group['nested_fields'][0];
+                                            if(child_group.condition == group_by){
+                                                is_last_level = true;
+                                                break;
+                                            }
+                                        }
+                                }
+                         }
+                }
+            }
+            return is_last_level;
+        },
         getTicketListTitle : function(data){
                 var fields_hash = HelpdeskReports.locals.field_name_mapping;
                 var active_metric = HelpdeskReports.locals.active_metric;
@@ -62,17 +183,38 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
                 if(_FD.constants.percentage_metrics.indexOf(active_metric) > -1){
                     val = _FD.core.addsuffix(val);
-                    ticketListTitle += " by " +  fields_hash[group_by].toLowerCase();
-                }else{
-                    ticketListTitle += " split by " +  fields_hash[group_by].toLowerCase();
                 }
+                group_type = I18n.t(fields_hash[group_by].toLowerCase(),{scope: 'helpdesk_reports.chart_title', defaultValue: fields_hash[group_by].toLowerCase() });
+                ticketListTitle = I18n.t(ticketListTitle,{group_by: group_type});
                 var value = data['label'] + ' : ' + val;
                 _FD.core.actions.showTicketList(ticketListTitle,value);
         },
-
+        getNestedDrillDownTitle : function(data){
+                var fields_hash = HelpdeskReports.locals.field_name_mapping;
+                var active_metric = HelpdeskReports.locals.active_metric;
+                var drillDownTitleKey = HelpdeskReports.Constants.Glance.metrics[active_metric].title;
+                var group_by = data['group_by'];
+               
+                var val = data['value'];
+                
+                if(_FD.constants.time_metrics.indexOf(active_metric) > -1){
+                    val = _FD.core.timeMetricConversion(val);
+                }
+                if(_FD.constants.percentage_metrics.indexOf(active_metric) > -1){
+                    val = _FD.core.addsuffix(val);
+                }
+                var drillDownTitle = I18n.t(drillDownTitleKey, {group_by: fields_hash[group_by].toLowerCase()});
+                var value = drillDownTitle + " : " + data['label'];
+                return value;
+        },
         getBucketTicketListTitle : function(data){
                 var title = "";
-                title = data.y  + ' Tickets with ' + data.x + ' ' + data.series;
+                if (data.series_index == 0){
+                    title = I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_agent_responses',{ticket_count: data.y, count: data.x});
+                }
+                else{
+                    title = I18n.t('helpdesk_reports.chart_title.tooltip.tickets_with_customer_responses',{ticket_count: data.y, count: data.x});
+                }
                 _FD.core.actions.showTicketList(title);
         },
 
@@ -89,9 +231,9 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
                                 
                 var flag = _FD.core.refreshReports();
-                
                 if(flag) {
-                    _FD.setGroupByInParams();
+                    var group_param = _FD.getGroupByConditions(HelpdeskReports.locals.params[0], metric);
+                    HelpdeskReports.locals.params.push(group_param);
                     _FD.core.resetAndGenerate();
                     HelpdeskReports.locals.visited_metrics = [];
                     HelpdeskReports.locals.visited_metrics.push(metric);
@@ -130,6 +272,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             setSolutionLinkUrl : function(active_metric){
                 //Set the solution url for the active metric
                 jQuery(".glance-chart #solution_link").attr('href',_FD.constants.metrics[active_metric].solution_url);
+                jQuery(".glance-chart .active-metric-title").html(_FD.constants.metrics[active_metric].name);
             },
             setDefaultOnFail: function (metric) {
                 _FD.setActiveMetric(metric);
@@ -137,6 +280,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             },
             submitCustomField: function (active) {
                 _FD.core.actions.hideViewMore();
+                _FD.core.actions.hideNestedFieldDrillDown();
                 _FD.core.actions.hideTicketList();
                 _FD.core.actions.hideReportTypeMenu();
                 _FD.core.actions.closeFilterMenu();
@@ -144,9 +288,8 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 HelpdeskReports.locals.active_custom_field = val;
                 jQuery('#custom_field_group_by .half-container').attr('id', val + '_container');
                 jQuery('#custom_field_group_by .half-container').attr('data-group', val);
-                
                 if (!HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric].hasOwnProperty(val)) {
-                    _FD.constructCustomFieldParams(val);
+                    _FD.constructCustomFieldParams(val,false);
                 } else {
                     HelpdeskReports.ChartsInitializer.Glance.customFieldInit(HelpdeskReports.locals.chart_hash, false);
                     _FD.actions.setCustomFieldFlag();
@@ -196,11 +339,27 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 
                 _FD.constructTicketListParams(conditions, metric, bucket_flag);
             },
-            ticketListEvent: function (data) {
+            submitNestedFieldDrillDown : function(){
+
+                if (!jQuery.isEmptyObject(active_metric_hash[attr])) {
+                    _FD.constructChartSettings(active_metric_hash, attr, true, false);
+                } else {
+                    console.log('Data not available');
+                }
+
+                if (!jQuery('#custom_field_wrapper').hasClass('show-drill-down')) {
+                    HelpdeskReports.CoreUtil.actions.showViewMore();
+                }  
+            },
+            ticketListEvent: function (data,ticket_list_for_drill_down) {
 
                 var active_metric = data.metric;
                 var conditions = [];
-
+                
+                if(ticket_list_for_drill_down) {
+                   conditions = conditions.concat(HelpdeskReports.locals.drill_down_hash);
+                   HelpdeskReports.locals.drill_down_hash = [];
+                } 
                 var main_condition = _FD.actions.constructMainListCondition(data.group_by, data.label, data.id);
 
                 if(!jQuery.isEmptyObject(main_condition)) {
@@ -248,6 +407,27 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
 
                 return list_hash;
+            },
+            navBack : function(){
+                var breadcrumbs = HelpdeskReports.locals.breadcrumb;
+                if(breadcrumbs.length == 1){
+                    var state = breadcrumbs[0];
+                    HelpdeskReports.locals.breadcrumbs_active = true;
+                    jQuery("#view_title_custom").html(_FD.getNestedDrillDownTitle(HelpdeskReports.locals.current_custom_field_event));
+
+                    //Get last group by from event data
+                    jQuery('#custom_field_container').attr('data-group', HelpdeskReports.locals.current_custom_field_event.group_by);
+                    jQuery('#custom_field_container').attr('data-id', state.id);
+                    HelpdeskReports.locals.active_custom_field = state.group;
+                    HelpdeskReports.locals.nested_group_by = HelpdeskReports.locals.current_custom_field_event.group_by;
+                    HelpdeskReports.ChartsInitializer.Glance.customNestedFieldInit(HelpdeskReports.locals.chart_hash, false);
+                     _FD.actions.setCustomFieldFlag();
+                     //breadcrumbs.pop();
+                    jQuery("[data-action='nav-drill-down']").hide();
+                }else{
+                    jQuery("[data-action='nav-drill-down']").hide();
+                }
+
             }
         },
         setGroupByInParams: function () {
@@ -297,7 +477,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                     _FD.actions.setAjaxContainer();
                 },
                 error: function (data) {
-                    var text = "Something went wrong, please try again";
+                    var text = I18n.t('helpdesk_reports.something_went_wrong_msg');
                     HelpdeskReports.CoreUtil.populateEmptyChart(["glance_main"], text);
                     jQuery('#glance_chart_wrapper .loading-bar').addClass('hide');
                     jQuery('#view_all_tickets').hide();
@@ -305,26 +485,91 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 }
             }
             _FD.core.makeAjaxRequest(opts);
-        },
-        constructCustomFieldParams: function (field) {
+        }, 
+        constructDrillDownParams: function(){
             var date = HelpdeskReports.locals.date_range;
+            merge_drill_hash = {};
+                //Add the current group by to filter
+                //If none,join other filters
+            if(HelpdeskReports.locals.current_custom_field_event.id == null){
+                var list_hash = {};
+                var hash_group_by = HelpdeskReports.locals.report_options_hash[HelpdeskReports.locals.current_custom_field_event.group_by];
 
-            var merge_hash = {
-                date_range: date,
-                filter: HelpdeskReports.locals.query_hash,
-                group_by: [],
-                metric: HelpdeskReports.locals.active_metric,
-                reference: false
+                if(_.keys(hash_group_by).length){
+                    list_hash = {
+                        condition : HelpdeskReports.locals.current_custom_field_event.group_by,
+                        operator: 'is_not_in',
+                        value: _.keys(hash_group_by).join()
+                    }
+                }
+                HelpdeskReports.locals.query_hash.push(list_hash);
+                
+            } else{
+                //Override the groupby if already added
+                var found = false;
+                var query_hash = HelpdeskReports.locals.query_hash;
+                for( i = 0; i<query_hash.length ; i++){
+                    var query = query_hash[i];
+                    if(query.condition == HelpdeskReports.locals.current_custom_field_event.group_by){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found){
+                    HelpdeskReports.locals.query_hash[i].value = HelpdeskReports.locals.current_custom_field_event.id;
+                }else{
+                    HelpdeskReports.locals.query_hash.push({
+                        condition: HelpdeskReports.locals.current_custom_field_event.group_by,
+                        operator: 'eql',
+                        value: HelpdeskReports.locals.current_custom_field_event.id,
+                        nested_field_filter : true
+                    });    
+                }
+                
             }
+                merge_drill_hash = {
+                    date_range: date,
+                    filter: HelpdeskReports.locals.query_hash,
+                    group_by: [],
+                    metric: HelpdeskReports.locals.active_metric,
+                    reference: false
+                }
+        },
+        constructCustomFieldParams: function (field,isDrillDown) {
+            var date = HelpdeskReports.locals.date_range;
+            var merge_hash = {};
+            
+            if(isDrillDown){
+                merge_hash = merge_drill_hash;
+            }else{
+                merge_hash = {
+                    date_range: date,
+                    filter: HelpdeskReports.locals.query_hash,
+                    group_by: [],
+                    metric: HelpdeskReports.locals.active_metric,
+                    reference: false
+                }    
+            }
+        
             var param = jQuery.extend({}, _FD.constants.params, merge_hash);
             param.group_by.push(field);
 
             var current_params = [];
             current_params.push(param);
 
-            _FD.customFieldJSON(current_params);
+            _FD.customFieldJSON(current_params,isDrillDown);
         },
-        customFieldJSON: function (params) {
+        clearNestedFieldCondition : function() {
+            //Remove any nested field filter conditions added previously
+            for(i = HelpdeskReports.locals.query_hash.length ;i>0 ;i--){
+                var index = HelpdeskReports.locals.query_hash.length - i; 
+                var filter = HelpdeskReports.locals.query_hash[index];
+                if(filter.nested_field_filter != undefined && filter.nested_field_filter){
+                    HelpdeskReports.locals.query_hash.splice(index,1);
+                }
+            }
+        },
+        customFieldJSON: function (params,isDrillDown) {
             var opts = {
                 url: _FD.core.CONST.base_url + HelpdeskReports.locals.report_type + '/fetch_active_metric',
                 type: 'POST',
@@ -333,11 +578,16 @@ HelpdeskReports.ReportUtil.Glance = (function () {
                 data: Browser.stringify(params),
                 timeout: _FD.core.timeouts.custom_field,
                 success: function (data) {
-                    HelpdeskReports.ChartsInitializer.Glance.customFieldInit(data, true);
-                    _FD.actions.setCustomFieldFlag();
+                    if(isDrillDown){
+                        HelpdeskReports.locals.glance_response_hash = true;
+                        HelpdeskReports.ChartsInitializer.Glance.customNestedFieldInit(data, true);
+                    }else{
+                        HelpdeskReports.ChartsInitializer.Glance.customFieldInit(data, true);
+                        _FD.actions.setCustomFieldFlag();    
+                    }
                 },
                 error: function (data) {
-                    var text = "Something went wrong, please try again";
+                    var text = I18n.t('helpdesk_reports.something_went_wrong_msg');
                     HelpdeskReports.CoreUtil.populateEmptyChart([HelpdeskReports.locals.active_custom_field + "_container"], text);
                     _FD.actions.setCustomFieldFlag();
                 }
@@ -368,7 +618,7 @@ HelpdeskReports.ReportUtil.Glance = (function () {
             var date = _FD.core.setReportFilters();
             var active_metric = _FD.constants.default_metric;
             _FD.setActiveMetric(active_metric);
-            jQuery.each(_.keys(_FD.constants.metrics), function (index, value) {
+           jQuery.each(_FD.constants.template_metrics, function (index, value) {
                 var merge_hash = {
                     date_range: date,
                     filter: [],
@@ -386,6 +636,18 @@ HelpdeskReports.ReportUtil.Glance = (function () {
         },
         setActiveMetric: function (metric) {
             HelpdeskReports.locals.active_metric = metric;
+        },
+        getGroupByConditions: function (param, metric){
+            var group_param = {};
+            var group_hash = {};
+            var group_by = HelpdeskReports.locals.current_group_by;
+            group_hash = {
+                metric: metric,
+                group_by: group_by,
+                reference: false 
+            }
+            group_param = jQuery.extend({},param, group_hash);
+            return group_param;
         },
         getBucketConditions: function (param, metric, bucket_conditions) {
             var bucket_param = {};

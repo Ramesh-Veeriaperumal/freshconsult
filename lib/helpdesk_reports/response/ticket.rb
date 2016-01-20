@@ -1,9 +1,9 @@
 class HelpdeskReports::Response::Ticket
   include HelpdeskReports::Constants
   
-  attr_accessor :result, :metric, :query_type, :date_range
+  attr_accessor :result, :metric, :query_type
   
-  def initialize result, params, query_type, report_type, pdf_export
+  def initialize result, params, query_type, report_type, pdf_export = false
     @result     = result
     @metric     = params[:metric]
     @query_type = query_type
@@ -13,7 +13,7 @@ class HelpdeskReports::Response::Ticket
   end
   
   def parse_result
-    @result["errors"].present? ? error_result : query_result
+    result["errors"].present? ? error_result : query_result
   end
     
   private
@@ -23,7 +23,7 @@ class HelpdeskReports::Response::Ticket
   end
   
   def query_result
-    klass(parser_type).new(result["result"], date_range, @report_type, query_type, @pdf_export).process
+    klass(parser_type).new(result["result"], @date_range, @report_type, query_type, @pdf_export).process
   end
   
   def parser_type

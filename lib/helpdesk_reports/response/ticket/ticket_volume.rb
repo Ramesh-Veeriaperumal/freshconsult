@@ -10,8 +10,7 @@ class HelpdeskReports::Response::Ticket::TicketVolume < HelpdeskReports::Respons
 
       row.each do |col_name,col_value|
         next if (AVOIDABLE_COLUMNS.include? col_name)
-
-        col_value = label_for_x_axis(row["y"].to_i, col_value.to_i, col_name, date_range, row["mon"].to_i)
+        col_value = label_for_x_axis(row["y"].to_i, col_value, col_name)
 
         processed_result["RECEIVED_TICKETS"][col_name] ||= {}
         processed_result["RESOLVED_TICKETS"][col_name] ||= {}

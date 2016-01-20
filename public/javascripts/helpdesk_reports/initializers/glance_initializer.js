@@ -14,11 +14,15 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             jQuery(document).on('click.helpdesk_reports.glance', "[data-action='close-view-all']", function (event) {
                 HelpdeskReports.CoreUtil.actions.hideViewMore();
             });
+            jQuery(document).on('click.helpdesk_reports.glance', "[data-action='close-drill-down']", function (event) {
+                HelpdeskReports.CoreUtil.actions.hideNestedFieldDrillDown();
+            });
         },
         actions: {
             viewMoreInit: function (el) {
                 _FD.renderViewMore(el);
-            }
+            },
+            
         },
         constructSidebar: function (hash) {
             var tmpl = JST["helpdesk_reports/templates/glance_sidebar"]({
@@ -30,7 +34,16 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
         setMetricActive: function () {
             var metric = HelpdeskReports.locals.active_metric;
             jQuery('#glance_sidebar ul li').removeClass('active');
-            jQuery('#glance_sidebar ul li[data-metric="'+metric+'"]').addClass('active');
+            if(jQuery('#glance_sidebar ul li[data-metric="'+metric+'"]').hasClass('disable')){
+                if(metric != 'RECEIVED_TICKETS'){
+                    HelpdeskReports.locals.active_metric = 'RECEIVED_TICKETS';
+                    //Trigger event for refresh
+                    trigger_event("glance_empty_default_view.helpdesk_reports",{});
+                }
+                jQuery('#glance_sidebar ul li[data-metric="RECEIVED_TICKETS"]').addClass('active');
+            }else{
+                jQuery('#glance_sidebar ul li[data-metric="'+metric+'"]').addClass('active');
+            }  
         },
         contructCharts: function (hash) {
             var active_metric = HelpdeskReports.locals.active_metric;
@@ -48,9 +61,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                     jQuery('#glance_main').append(group_tmpl);
 
                     if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {
-                        _FD.constructChartSettings(hash_active, group_by[i], false, false);
+                        _FD.constructChartSettings(hash_active, group_by[i], false, false, false);
                     } else {
-                        var msg = 'No data to display';
+                        var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [group_by[i] + '_container'];
                         HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                     }
@@ -64,7 +77,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 }
 
             } else {
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
                 var div = ["glance_main"];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }
@@ -97,9 +110,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                             jQuery(div_id).append(group_tmpl);
 
                             if (!jQuery.isEmptyObject(hash_active[group_by[i]])) {
-                                _FD.constructChartSettings(hash_active, group_by[i], false, active_metric);
+                                _FD.constructChartSettings(hash_active, group_by[i], false, active_metric , false);
                             } else {
-                                var msg = 'No data to display';
+                                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                                 var div = [active_metric+'_'+group_by[i] + '_container'];
                                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                             }
@@ -113,7 +126,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                         }
 
                     } else {
-                        var msg = 'Something went wrong, please try again';
+                        var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [active_metric.toLowerCase()];
                         HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                     }
@@ -121,11 +134,29 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             }
 
         },
-        constructChartSettings: function (hash_active, group_by, view_all, metric) {
+        constructChartSettings: function (hash_active, group_by, view_all, metric,drill_down) {
             var active_metric = metric || HelpdeskReports.locals.active_metric;
             var constants = jQuery.extend({}, HelpdeskReports.Constants.Glance);
             var options = {};
-            var current_hash = _FD.getCurrentHash(hash_active[group_by]) //hash_active[group_by];
+
+            if(drill_down){
+                if(HelpdeskReports.locals.glance_response_hash){
+                    var current_hash = _FD.getCurrentHash(hash_active[group_by]); //hash_active[group_by];
+                    HelpdeskReports.locals.glance_response_hash = false;
+                } else{
+                    //when breadcrumb is clicked use the id from breadcrumb state
+                    var current_hash;
+                    var breadcrumbs = HelpdeskReports.locals.breadcrumb;
+                    if(breadcrumbs && HelpdeskReports.locals.breadcrumbs_active){
+                         current_hash = _FD.getCurrentHash(hash_active[group_by][breadcrumbs[0].id]); //hash_active[group_by];
+                    }else{
+                         current_hash = _FD.getCurrentHash(hash_active[group_by][HelpdeskReports.locals.current_custom_field_event.id]); //hash_active[group_by];
+                    }
+                    HelpdeskReports.locals.breadcrumbs_active = false;
+                }
+            }else{
+                var current_hash = _FD.getCurrentHash(hash_active[group_by]) //hash_active[group_by];    
+            }
 
             var current_value_array = [];
             _.each(_.values(current_hash), function(i) {
@@ -171,9 +202,9 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 }
 
             }
-            _FD.renderCommonChart(current_hash, options, group_by, view_all, current_value_array, metric);
+            _FD.renderCommonChart(current_hash, options, group_by, view_all, current_value_array, metric,drill_down);
         },
-        renderCommonChart: function (current_hash, options, group_by, view_all, current_value_array, metric) {
+        renderCommonChart: function (current_hash, options, group_by, view_all, current_value_array, metric,drill_down) {
             var height, data1, data2, dataLab, labels, container;
             var custom_fields = HelpdeskReports.locals.custom_fields_group_by;
 
@@ -184,6 +215,13 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 data1 = this.fillArray(options.value,current_value_array.length);
                 data2 = current_value_array;
                 container = 'view_all';
+            } else if (drill_down) {
+                labels = _.keys(current_hash);
+                height = _FD.calculateChartheight(labels.length);
+                dataLab = current_value_array;
+                data1 = this.fillArray(options.value,current_value_array.length);
+                data2 = current_value_array;
+                container = 'custom_field';
             } else {
                 var point_limit = _FD.dataPointLimit();
                 if (current_value_array.length > point_limit) {
@@ -338,8 +376,15 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 } else{
                     data.value = el.y;
                 }
-
-                data.id = HelpdeskReports.locals.chart_hash[active_metric][group_by][el.category].id;
+                
+                if(jQuery(container).parent().attr('id') == 'custom_field_container'){
+                     var data_id = jQuery(container).closest('[data-report="glance-container"]').attr('data-id');
+                     data.id = HelpdeskReports.locals.chart_hash[active_metric][group_by][data_id][el.category].id;
+                     data.base_chart_click = false; 
+                } else{
+                    data.id = HelpdeskReports.locals.chart_hash[active_metric][group_by][el.category].id; 
+                    data.base_chart_click = true;                   
+                }
 
                 trigger_event("glance_ticket_list.helpdesk_reports", data);
             }
@@ -354,7 +399,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 if(meta.dom_element == "interactions" ) {
                     var tmpl = JST["helpdesk_reports/templates/bucket_conditions_div"]({
                         id: metric.toLowerCase()+'_'+meta.dom_element,
-                        title: meta.title + HelpdeskReports.Constants.Glance.metrics[metric].title.toLowerCase(),
+                        title: meta.title + HelpdeskReports.Constants.Glance.metrics[metric].name.toLowerCase(),
                         bucket: bucket
                     });    
                 } else{
@@ -418,12 +463,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 bucketChart.barChartSeriesGraph();
 
             } else if (jQuery.isEmptyObject(hash)) {
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var divs = [];
                 divs.push(metric.toLowerCase()+'_'+ meta.dom_element + '_container');
                 HelpdeskReports.CoreUtil.populateEmptyChart(divs, msg);
             } else if (!jQuery.isEmptyObject(hash["error"])) {
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var divs = [];
                 divs.push(metric.toLowerCase()+'_'+ meta.dom_element + '_container');
                 HelpdeskReports.CoreUtil.populateEmptyChart(divs, msg);
@@ -434,12 +479,14 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var bucket_type = jQuery(container).closest('[data-glance-container="bucket"]').data('bucket-name');
             var series_name = ev.series.options.id;
             var series = ev.series.name;
+            var series_index = ev.series.index;
             var hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric + '_BUCKET'].value_map;
             var data = {
                 condition: series_name,
                 operator: hash[series_name][ev.category][1],
                 value: hash[series_name][ev.category][0],
                 series : series,
+                series_index : series_index,
                 x : ev.category,
                 y : ev.y
             };
@@ -454,15 +501,36 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 _FD.renderCustomFieldChart(hash, active_custom_field);
 
             } else if (jQuery.isEmptyObject(hash[locals.active_metric])) {
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = [active_custom_field + '_container'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             
             } else if (!jQuery.isEmptyObject(hash[locals.active_metric]["error"])) {
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
                 var div = [active_custom_field + '_container'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             
+            }
+        },
+        customNestedFields : function(hash){
+            var locals = HelpdeskReports.locals
+            var active_custom_field = locals.active_custom_field;
+            if (jQuery.isEmptyObject(hash[locals.active_metric]["error"]) && !jQuery.isEmptyObject(hash[locals.active_metric])) {
+                _FD.renderCustomFieldChart(hash, 'custom_field');
+
+            } else if (jQuery.isEmptyObject(hash[locals.active_metric])) {
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
+                var div = [active_custom_field + '_container'];
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+            
+            } else if (!jQuery.isEmptyObject(hash[locals.active_metric]["error"])) {
+                var msg = I18n.t('helpdesk_reports.something_went_wrong_msg');
+                var div = [active_custom_field + '_container'];
+                HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
+            
+            }
+             if (!jQuery('#custom_field_wrapper').hasClass('show-drill-down')) {
+                HelpdeskReports.CoreUtil.actions.showNestedFieldDrillDown();
             }
         },
         renderCustomFieldChart: function(hash, id) {
@@ -472,7 +540,11 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             if (custom_field_chart !== undefined) {
                 custom_field_chart.destroy();
             }
-            _FD.constructChartSettings(active_hash, id, false, false);
+            if( id == 'custom_field'){
+                _FD.constructChartSettings(active_hash,HelpdeskReports.locals.nested_group_by, false, false, true);
+            } else{
+                _FD.constructChartSettings(active_hash, id, false, false, false);
+            }
         },
         renderViewMore: function (el) {
             var attr = jQuery(el).data('group-container');
@@ -480,7 +552,7 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
             var active_metric_hash = HelpdeskReports.locals.chart_hash[HelpdeskReports.locals.active_metric];
 
             if (!jQuery.isEmptyObject(active_metric_hash[attr])) {
-                _FD.constructChartSettings(active_metric_hash, attr, true, false);
+                _FD.constructChartSettings(active_metric_hash, attr, true, false , false);
             } else {
                 console.log('Data not available');
             }
@@ -538,6 +610,22 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 }
             };
         },
+        mergeCustomNestedFieldDataHash: function (hash) {
+            var active_metric = HelpdeskReports.locals.active_metric;
+            var group_by = HelpdeskReports.locals.custom_fields_group_by;
+            var current_custom_field_id = HelpdeskReports.locals.current_custom_field_event.id;
+
+            if (HelpdeskReports && HelpdeskReports.locals && HelpdeskReports.locals.chart_hash) {
+                for (var key in hash[active_metric]) {
+                    if (group_by.indexOf(key) > -1 || HelpdeskReports.locals.nested_group_by == key) {
+                        if(HelpdeskReports.locals.chart_hash[active_metric][key] == undefined){
+                            HelpdeskReports.locals.chart_hash[active_metric][key] = {};
+                        }
+                        HelpdeskReports.locals.chart_hash[active_metric][key][current_custom_field_id] = hash[active_metric][key];
+                    }
+                }
+            };
+        },
         constructViewAllTicketsLink: function () {
             var view_all_tmpl = JST["helpdesk_reports/templates/view_all_tickets_template"]();
             jQuery('#view_all_tickets').html(view_all_tmpl);
@@ -562,6 +650,12 @@ HelpdeskReports.ChartsInitializer.Glance = (function () {
                 _FD.mergeCustomFieldDataHash(hash);
             }
             _FD.customFields(hash);
+        },
+        customNestedFieldInit: function (hash, flag) {
+            if(flag === true) {
+                _FD.mergeCustomNestedFieldDataHash(hash);
+            }
+            _FD.customNestedFields(hash);
         },
         pdf: function (hash) {
             _FD.contructPdfCharts(hash);
