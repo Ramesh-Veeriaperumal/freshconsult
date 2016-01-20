@@ -6,6 +6,7 @@ class ApiApplicationController < MetalApiController
   rescue_from DomainNotReady, with: :route_not_found
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from ActiveRecord::StatementInvalid, with: :db_query_error
+  rescue_from RangeError, with: :range_error
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
@@ -19,6 +20,7 @@ class ApiApplicationController < MetalApiController
   # App specific Before filters Starts
   # All before filters should be here. Should not be moved to concern. As the order varies for API and Web
   around_filter :select_shard
+  before_filter :current_shard # should happen first within around filter.
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :set_current_account
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
@@ -124,6 +126,21 @@ class ApiApplicationController < MetalApiController
       render_request_error(:duplicate_value, 409)
     end
 
+    def range_error(e)
+      # http://ruby-doc.org/core-2.1.0/RangeError.html
+      # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb#L18
+      # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
+      if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && @per_page && ((params[:page].to_i - 1) * (@per_page + 1)) > ApiConstants::PAGE_MAX
+        # raised by will_paginate gem
+        render_errors([[:page, :max_limit_page]])
+      else
+        # unexpected exception
+        notify_new_relic_agent(e, description: 'Invalid Offset Error.')
+        render_base_error(:internal_error, 500)
+      end
+      Rails.logger.error("Invalid Offset Error: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+    end
+
     def db_query_error(e)
       notify_new_relic_agent(e, description: 'Invalid/malformed query error occured while processing api request')
       Rails.logger.error("DB Query Invalid Error: #{params.inspect} \n#{e.message} \n#{e.backtrace.join("\n")}")
@@ -131,9 +148,23 @@ class ApiApplicationController < MetalApiController
     end
 
     def record_not_found(e)
-      notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
-      Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
-      head 404
+      # Render 404 if domain is not present else 500.
+      # our locally cached current_shard will be nil if specific domain doesn't belongs to any shards
+      if current_shard.nil?
+        Rails.logger.error("API V2 request for invalid host. Host: #{request.host}")
+        head 404
+      else
+        notify_new_relic_agent(e, description: 'ActiveRecord::RecordNotFound error occured while processing api request')
+        Rails.logger.error("Record not found error. Domain: #{request.domain} \n params: #{params.inspect} \n#{e.message}\n#{e.backtrace.join("\n")}")
+        render_base_error(:internal_error, 500)
+      end
+    end
+
+    # Caching current_shard_selection in local instance variable to find out domain not found error.
+    # As exception ensures connection to be switched to initial shard.
+    def current_shard
+      return @current_shard if defined?(@current_shard)
+      @current_shard ||= Thread.current[:shard_selection].try(:shard)
     end
 
     def invalid_field_handler(exception) # called if extra fields are present in params.
@@ -257,7 +288,7 @@ class ApiApplicationController < MetalApiController
       # The respective filter validation classes would inherit from FilterValidation to include validations on pagination options.
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, *additional_fields)
       @filter = FilterValidation.new(params, nil, true)
-      render_errors(@filter.errors, @filter.error_options) unless @filter.valid?
+      render_query_param_errors(@filter.errors, @filter.error_options) unless @filter.valid?
     end
 
     def validate_url_params
@@ -278,7 +309,7 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
-      add_link_header(page: (get_page + 1)) if next_page_exists
+      add_link_header(page: (page + 1)) if next_page_exists
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 
@@ -331,6 +362,20 @@ class ApiApplicationController < MetalApiController
     # Error options field mappings to rename the keys Say, agent in ticket error will be replaced with responder_id
     def error_options_mappings
       {}
+    end
+
+    def render_query_param_errors(errors, meta = nil)
+      set_query_param_errors(errors, meta)
+      render_errors(errors, meta)
+    end
+
+    def set_query_param_errors(errors, meta)
+      # this will translate generic positive_number error to specific per_page_positive_number
+      # this is being done to get different custom codes with the same error message.
+      if errors[:per_page].present?
+        errors[:per_page] = "per_page_#{errors.to_h[:per_page]}"
+        meta[:per_page].merge!(max_value: ApiConstants::DEFAULT_PAGINATE_OPTIONS[:max_per_page])
+      end
     end
 
     def render_errors(errors, meta = nil)
@@ -405,6 +450,7 @@ class ApiApplicationController < MetalApiController
       current_account.make_current
       User.current = api_current_user
     rescue ActiveRecord::RecordNotFound
+      Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
     rescue ActiveSupport::MessageVerifier::InvalidSignature # Authlogic throw this error if signed_cookie is tampered.
       render_request_error :credentials_required, 401
@@ -430,35 +476,46 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options(is_array = false)
       options = {}
-      @per_page = get_per_page # user given/defualt page number
+      @per_page = per_page # user given/defualt page number
       options[:per_page] =  is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
-      options[:offset] = @per_page * (get_page - 1) unless is_array # assign offset unless scoper is array
-      options[:page] = get_page
+      options[:offset] = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
+      options[:page] = page
       options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
       options
     end
 
-    def get_page
+    def page
       (params[:page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:page]).to_i
     end
 
-    def get_per_page
+    def per_page
       (params[:per_page] || ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).to_i
     end
 
-    def get_fields(constant_name) # retrieves fields that strong params allows by privilege.
+    def get_fields(constant_name, item = @item, owned_by_field = :user_id) # retrieves fields that strong params allows by privilege.
       constant = constant_name.constantize
-      get_fields_from_constant(constant)
+      get_fields_from_constant(constant, item, owned_by_field)
     end
 
-    def get_fields_from_constant(constant, item = @item)
+    def get_fields_from_constant(constant, item, owned_by_field)
       # all_fields is used to differentiate between junk fields and inaccessible_fields in invalid_field_handler.
       # all_fields should not be modified as it a reference to the constant and not a separate object.
       # item is sent to privilege to accomodate owned_by privileges.
       @all_fields = constant
       @fields = constant[:all] || []
-      constant.except(:all).keys.each { |key| @fields += constant[key] if privilege?(key, item) }
+      owned_by_permissions = constant.except(:all).keys & ApiConstants::PRIVILEGES_WITH_OWNEDBY
+      permissions = constant.except(:all, *owned_by_permissions).keys
+      permissions.each { |key| @fields += constant[key] if privilege?(key) }
+      owned_by_permissions.each { |key| @fields += constant[key] if privilege_or_owns_object?(key, item, owned_by_field) }
       @fields
+    end
+
+    def privilege_or_owns_object?(key, item, owned_by_field)
+      # this method assumes that,
+      # when load_object is not called then the action is a create action,
+      # other actions using owned_by permissions is, presently a non-existent and in future also, a rare scenario
+      # when user_id parameter is not present in the request, then api_current_user.id will be assigned eventually to the record.
+      item ? privilege?(key, item) : (privilege?(key) || (params[cname] && (params[cname][owned_by_field].nil? || params[cname][owned_by_field] == api_current_user.id)))
     end
 
     def update?

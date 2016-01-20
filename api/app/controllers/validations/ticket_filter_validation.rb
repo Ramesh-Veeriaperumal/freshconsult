@@ -2,7 +2,7 @@ class TicketFilterValidation < FilterValidation
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :order_type, :conditions, :requester
 
-  validates :company_id, :requester_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param, message: :positive_number }
+  validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }
   validates :filter, custom_inclusion: { in: ApiTicketConstants::FILTER }, allow_nil: true

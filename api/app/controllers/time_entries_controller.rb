@@ -92,12 +92,12 @@ class TimeEntriesController < ApiApplicationController
     def validate_filter_params
       params.permit(*TimeEntryConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       timeentry_filter = TimeEntryFilterValidation.new(params, nil, string_request_params?)
-      render_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
+      render_query_param_errors timeentry_filter.errors, timeentry_filter.error_options unless timeentry_filter.valid?
     end
 
     def validate_params
       @timer_running = update? ? handle_existing_timer_running : handle_default_timer_running
-      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS")
+      fields = get_fields("TimeEntryConstants::#{action_name.upcase}_FIELDS", @item, :agent_id)
       params[cname].permit(*fields)
       @time_entry_val = TimeEntryValidation.new(params[cname], @item, @timer_running)
       render_errors @time_entry_val.errors, @time_entry_val.error_options unless @time_entry_val.valid?(action_name.to_sym)

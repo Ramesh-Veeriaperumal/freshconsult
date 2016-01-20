@@ -744,7 +744,7 @@ class NotesControllerTest < ActionController::TestCase
   def test_notes_with_pagination_exceeds_limit
     get :ticket_notes, controller_params(id: ticket.display_id, per_page: 101)
     assert_response 400
-    match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+    match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
   end
 
   def test_notes_with_link_header

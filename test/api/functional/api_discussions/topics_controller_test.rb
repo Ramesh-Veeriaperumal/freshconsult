@@ -271,7 +271,7 @@ module ApiDiscussions
     def test_update_without_manage_forums_privilege
       forum = Forum.where(forum_type: 2).first
       topic = first_topic
-      @controller.stubs(:privilege?).with(:manage_forums, topic).returns(false)
+      @controller.stubs(:privilege?).with(:manage_forums).returns(false)
       params = { title: 'New', message_html: 'New msg',
                  stamp_type: Topic::FORUM_TO_STAMP_TYPE[forum.forum_type].last,
                  sticky: !topic.sticky, locked: !topic.locked, forum_id: forum.id }
@@ -334,6 +334,15 @@ module ApiDiscussions
 
     def test_update_invalid_forum_id
       put :update, construct_params({ id: first_topic.id }, forum_id: (1000 + Random.rand(11)))
+      match_json([bad_request_error_pattern('forum_id', :"can't be blank")])
+      assert_response 400
+    end
+
+    def test_update_invalid_forum_id_for_topic_with_question_forum_previously
+      forum = create_test_forum(ForumCategory.first)
+      topic = create_test_topic(forum)
+      assert forum.forum_type == 1
+      put :update, construct_params({ id: topic.id }, forum_id: (1000 + Random.rand(11)))
       match_json([bad_request_error_pattern('forum_id', :"can't be blank")])
       assert_response 400
     end
@@ -524,7 +533,7 @@ module ApiDiscussions
     def test_topics_with_pagination_exceeds_limit
       get :forum_topics, controller_params(id: forum_obj.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_topics_with_link_header

@@ -61,9 +61,10 @@ module ApiDiscussions
 
     actions.select { |a| ['index', 'create'].exclude?(a) }.each do |action|
       define_method("test_#{action}_load_object_present") do
+        category = fc 
         ForumCategory.any_instance.stubs(:destroy).returns(true)
-        send(methods[action], action, construct_params({ id: fc.id }, name: 'new'))
-        assert_equal fc.reload, assigns(:item)
+        send(methods[action], action, construct_params({ id: category.id }, name: 'new'))
+        assert_equal category.reload, assigns(:item)
       end
 
       define_method("test_#{action}_load_object_not_present") do
@@ -275,7 +276,7 @@ module ApiDiscussions
     def test_index_with_pagination_exceeds_limit
       get :index, controller_params(per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_index_with_link_header

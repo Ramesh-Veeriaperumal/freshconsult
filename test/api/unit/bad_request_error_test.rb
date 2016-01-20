@@ -6,11 +6,11 @@ class BadRequestErrorTest < ActionView::TestCase
       missing_field: ['missing_field', 'Mandatory attribute missing', 'missing', 'requester_id_mandatory',
                       'phone_mandatory', 'required_and_numericality', 'required_and_inclusion', 'required_and_data_type_mismatch',
                       'required_boolean', 'required_number', 'required_integer', 'required_date', 'required_format',
-                      'fill_a_mandatory_field', 'company_id_required'],
+                      'fill_a_mandatory_field', 'company_id_required', 'required_and_invalid_number'],
       duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
       invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
       invalid_field: ['invalid_field', "Can't update user when timer is running"],
-      datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'positive_number', 'gt_zero_lt_max_per_page'],
+      datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_data_type_mismatch'],
       invalid_size: ['invalid_size'],
       incompatible_field: ['incompatible_field'],
       inaccessible_field: ['inaccessible_field']
@@ -19,11 +19,10 @@ class BadRequestErrorTest < ActionView::TestCase
     assert_equal error_codes, ErrorConstants::API_ERROR_CODES
 
     # this will not save against all the messages for invalid_value custom_code
-    expected = [:"Mandatory attribute missing", :"Email has already been taken", :"Can't update user when timer is running"]
+    expected = [:"Mandatory attribute missing", :"Can't update user when timer is running"]
     actual = ErrorConstants::API_ERROR_CODES.values.flatten.map(&:to_sym) - ErrorConstants::ERROR_MESSAGES.keys
     assert_equal expected, actual
 
-    expected = [:"Mandatory attribute missing", :"Email has already been taken", :"Can't update user when timer is running"]
     actual = ErrorConstants::API_ERROR_CODES.values.flatten.map(&:to_sym) + [:new_key_sans_yml] - ErrorConstants::ERROR_MESSAGES.keys
     assert_not_equal expected, actual
   end
@@ -62,7 +61,7 @@ class BadRequestErrorTest < ActionView::TestCase
   end
 
   def test_data_type_mismatch_code
-    datatype_mismatch_messages = { :"is not a number" => {}, :data_type_mismatch => { data_type: 'date format' }, :"must be an integer" => {}, :positive_number => {} }
+    datatype_mismatch_messages = { :"is not a number" => {}, :data_type_mismatch => { data_type: 'date format' }, :"must be an integer" => {} }
     datatype_mismatch_messages.each do |message, params|
       test = BadRequestError.new('attribute', message, params)
       assert_equal 'datatype_mismatch', test.code.to_s
