@@ -578,6 +578,7 @@ class ApiApplicationController < MetalApiController
 
     def log_error_response(errors)
       # to get printed in the hash format, we have this manipulation.
-      Rails.logger.debug "API V2 Error Response : #{errors.map(&:instance_values).inspect}"
+      hash_format = errors.is_a?(Array) ? errors.map(&:instance_values) : errors.instance_values
+      Rails.logger.debug "API V2 Error Response : #{hash_format.inspect}"
     end
 end
