@@ -19,9 +19,9 @@ json.array! @items do |ticket_field|
   if ticket_field.field_type == 'nested_field'
     json.set! :nested_ticket_fields do
       json.array! ticket_field.nested_ticket_fields do |tf_nested_field|
-        json.cache! CacheLib.key(tf_nested_field, params) do
-          json.extract! tf_nested_field, :description, :id, :label, :label_in_portal, :level, :name, :ticket_field_id
-
+        json.cache! CacheLib.compound_key(tf_nested_field, ApiConstants::CACHE_VERSION[:v2], params) do
+          json.extract! tf_nested_field, :description, :id, :label, :label_in_portal, :level, :ticket_field_id
+          json.set! :name, tf_nested_field.nested_ticket_field_name
           json.partial! 'shared/utc_date_format', item: tf_nested_field
         end
       end

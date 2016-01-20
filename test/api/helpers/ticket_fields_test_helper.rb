@@ -183,8 +183,12 @@ module Helpers::TicketFieldsTestHelper
   end
 
   def ticket_field_nested_pattern(tf, hash = {})
+    nested_ticket_field_pattern = []
+    tf.nested_ticket_fields.each do |x|
+      nested_ticket_field_pattern << nested_ticket_fields_pattern(x)
+    end
     ticket_field_pattern(tf, hash).merge(
-      nested_ticket_fields: Array
+      nested_ticket_fields: nested_ticket_field_pattern
     )
   end
 
@@ -195,7 +199,7 @@ module Helpers::TicketFieldsTestHelper
       label: ntf.label,
       label_in_portal: ntf.label_in_portal,
       level: ntf.level,
-      name: ntf.name,
+      name: ntf.name[0..-3],
       ticket_field_id: ntf.ticket_field_id,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}

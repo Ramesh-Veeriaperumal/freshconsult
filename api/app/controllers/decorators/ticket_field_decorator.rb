@@ -1,7 +1,7 @@
 class TicketFieldDecorator < ApiDecorator
   delegate :id, :default, :description, :label, :position, :required_for_closure,
            :field_type, :required, :required_in_portal, :label_in_portal, :editable_in_portal, :visible_in_portal,
-           :nested_ticket_fields, to: :record
+           :level, :ticket_field_id, to: :record
 
   def portal_cc
     record.field_options.try(:[], 'portalcc')
@@ -17,6 +17,14 @@ class TicketFieldDecorator < ApiDecorator
 
   def name
     default ? record.name : TicketDecorator.display_name(record.name)
+  end
+
+  def nested_ticket_field_name
+    TicketDecorator.display_name(record.name)
+  end
+
+  def nested_ticket_fields
+    @nested_ticket_fields ||= record.nested_ticket_fields.map { |x| TicketFieldDecorator.new(x) }
   end
 
   def ticket_field_choices
