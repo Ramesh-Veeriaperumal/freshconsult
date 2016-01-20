@@ -2139,6 +2139,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json pattern
   end
 
+  def test_index_with_invalid_email_in_params
+    get :index, controller_params(email: Faker::Internet.email)
+    pattern = [bad_request_error_pattern('email', :"can't be blank")]
+    assert_response 400
+    match_json pattern
+  end
+
   def test_index_with_invalid_params_type
     get :index, controller_params(company_id: 'a', requester_id: 'b')
     pattern = [bad_request_error_pattern('company_id', :data_type_mismatch, data_type: 'Positive Integer')]
