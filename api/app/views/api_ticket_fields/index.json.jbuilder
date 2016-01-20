@@ -1,5 +1,5 @@
 json.array! @items do |ticket_field|
-  json.cache! CacheLib.key(ticket_field, params) do
+  json.cache! CacheLib.compound_key(ticket_field, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! ticket_field, :id, :default, :description, :label, :name, :position, :required_for_closure
     json.set! :portal_cc, ticket_field.portal_cc if ticket_field.default_requester?
     json.set! :portal_cc_to, ticket_field.portalcc_to if ticket_field.default_requester?

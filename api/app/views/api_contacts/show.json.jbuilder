@@ -6,7 +6,7 @@ json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v3], param
   json.set! :deleted, @item.deleted if @item.deleted
 end
 json.set! :custom_fields, @item.custom_fields
-json.set! :tags, @item.tags.map(&:name)
+json.set! :tags, @item.tags
 
 if @item.avatar
   json.set! :avatar do
