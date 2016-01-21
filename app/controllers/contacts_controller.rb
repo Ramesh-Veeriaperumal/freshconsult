@@ -113,6 +113,7 @@ class ContactsController < ApplicationController
       @user.active = true #by Shan need to revisit..
       
       if @user.save
+        @user.reset_perishable_token!
         flash[:notice] = t(:'flash.password_resets.update.success')
         redirect_to contact_path(@user)
       else
