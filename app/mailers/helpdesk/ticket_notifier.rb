@@ -273,8 +273,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     return if from_email.empty? || to_emails.empty?
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
+
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
     
-    headers = email_headers(ticket, nil, false).merge({
+    headers = email_headers(ticket, message_id, false).merge({
       :subject    =>  fwd_formatted_subject(ticket),
       :to         =>  to_emails,
       :cc         =>  cc_emails,
@@ -316,6 +318,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     return if from_email.empty? || to_emails.empty?
     bcc_emails = validate_emails(note.bcc_emails, note)
     cc_emails = validate_emails(note.cc_emails, note)
+
+    message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@forward.freshdesk.com"
     
     headers = email_headers(ticket, nil, false).merge({
       :subject    =>  formatted_subject(ticket),
