@@ -15,11 +15,18 @@ class RemoteFile < ::Tempfile
     self.password = password
 
     super Digest::SHA1.hexdigest(path), tmpdir
-    fetch
   end
 
   def fetch
     string_io = OpenURI.send(:open, @remote_path, :http_basic_authentication => [username , password])
+    self.open_uri_path = string_io.path if string_io.respond_to?(:path)
+    self.write string_io.read.force_encoding("UTF-8")
+    self.rewind
+    self
+  end
+
+  def fetch_without_authentication
+    string_io = OpenURI.send(:open, @remote_path)
     self.open_uri_path = string_io.path if string_io.respond_to?(:path)
     self.write string_io.read.force_encoding("UTF-8")
     self.rewind

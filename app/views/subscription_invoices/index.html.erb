@@ -1,0 +1,155 @@
+<%
+@page_title = t("admin.home.index.billing")
+admin_choice = current_account.account_managers.inject([]) { |choice, admin| 
+              choice << "{ id : '#{escape_javascript(admin.email)}',
+                            value : '#{escape_javascript(admin.email)}',
+                            text : '#{escape_javascript(admin.email)}' }"  }
+
+  unless (emails = current_account.invoice_emails).blank?  
+    added_invoice_emails = emails.inject([]) { |choice, email| 
+              choice << "{ id: '#{escape_javascript(email)}',
+                            text: '#{escape_javascript(email)}',
+                            value: '#{escape_javascript(email)}' }" }
+  end
+%>
+<div class="list-page mt20">
+  <%content_for :sidebar do%>
+      <%= form_for current_account.account_configuration, :url => { :controller => 
+    "account_configurations", :action => "update" },  :html => { :method => :put, 
+    :id => "account-details-form"} do |f| %>
+        <div class="sidepanel">
+          <div class="control-group">
+            <h3 class="lead">Send Invoices to</h3>
+              <%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
+              <div class="controls">
+                <%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required invoice-emails" %>
+              </div>
+
+          </div>
+          <div class="row-fluid text-right mt20">
+            <%= f.submit "#{t('update')}".html_safe, :id => "account_form_submit", :class => "btn btn-primary"  %>
+          </div> 
+        </div>      
+    <%end%>
+  <%end%> 
+  <h3 class="lead"><%= link_to(t("admin.home.index.billing"), subscription_path) %> / <%=t("admin.home.index.invoice") %></h3>
+    <div class = "mb10">
+      <%=t("subscription.invoice_title")%>
+    </div>
+    <div class="list-page-body">
+      <table class = "table">
+        <%if @invoices.present?%>
+          <% @invoices.each_with_index do |invoice, index| %>
+            <tr>
+              <td>
+                  <a href =<%=download_invoice_subscription_invoices_path(:invoice_number => invoice.chargebee_invoice_id)%> 
+                    class = "tooltip mr10 invoice-download-icon invoice-download-btn" 
+                    target = "_blank" 
+                    data-original-title = "<%=t("subscription.download")%>" twipsy-content-set="true">
+                    <%= font_icon "download", :size => 15 %>
+                  </a>
+                <div class="inline-block">
+                  <%=link_to invoice.chargebee_invoice_id, "","rel" => "freshdialog", "data-target" => "#invoice-modal-#{index}", "data-template-footer" => ""%>
+                </div>
+              </td>
+              <%
+              currency_symbol = Subscription::Currencies::Constants::CURRENCY_UNITS[invoice.currency]
+              %>
+              <td class = "text-right"> <span class = "invoice-date"><%=currency_symbol%></span>
+                 <span class = "ft-wt"> <%=number_with_precision(invoice.amount, precision: 2)%></span> 
+               </td>
+              <td class = "invoice-date">
+                <%=invoice.generated_on.strftime("%d %b %Y at %I:%M %p")%>
+              </td>
+            </tr>
+          <% end %>
+        <%else%>
+        <tr><td> <center><%=t("subscription.no_invoice")%>:</center> </td></tr>
+        <% end %>
+      </table>
+      <div class="toolbar">
+         <%=will_paginate @invoices, 
+            :renderer => BootstrapPaginationRenderer, 
+            :previous_label => "<b class='arrow-left'></b>",
+            :next_label => "<b class='arrow-right'></b>",
+            :class => "pagination pagination-centered"%>
+      </div>
+
+    </div>
+
+  <%if @invoices.present?%>
+    <%@invoices.each_with_index do |invoice, index|%>
+      <%= render :partial => "/subscription_invoices/invoice_modal", 
+       :locals => { :invoice => invoice, :index => index} %>
+    <%end%>
+  <%end%>
+</div>
+
+<script>
+    
+  jQuery(document).ready(function() { 
+
+    results = function(result, container, query) {
+      return result.text;
+    }
+
+    search_choice_validation = function(term, data) {
+              if (jQuery(data).filter(function() { 
+                return this.text.localeCompare(term)===0; 
+              }).length===0) { 
+                if(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/.test(term)) { 
+                  return {
+                    id : term, 
+                    text : term 
+                  }; 
+                }  
+                else { return null; } 
+             }}
+
+
+    jQuery("#invoice_email_field").select2({
+        data: [ <%= admin_choice.join(",").html_safe  %> ],
+        multiple: true,
+        maximumSelectionSize: 1,
+
+        initSelection : function (element, callback) {
+          callback( [<%= added_invoice_emails.join(",").html_safe if added_invoice_emails %>] );
+        },
+
+        specialFormatting: true,
+        formatResult: results,
+        formatNoMatches: function () { return "Invalid email"; },
+        formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
+
+        createSearchChoice: search_choice_validation    
+    });
+  
+    jQuery("#invoice_email_field").select2("val",[]);
+
+  });
+
+  
+  jQuery(".change-admin-link").live('click', function(event){
+    jQuery("#admin-name, #admin-form").toggle();
+  });
+
+  
+  jQuery('form#account-details-form').validate({
+    submitHandler: function(form){ accountFormSubmit(form); }
+  });
+    
+  var accountFormSubmit = function(form){
+      target = jQuery('#invoice_email_field');
+      if(target.val()){
+        target.val().split(",").each(function(email){
+          target.append(jQuery('<input />').attr({ name: "account_configuration[billing_emails][invoice_emails][]", value: email, type: "hidden" }))
+        })
+      }
+      else{
+        target.append(jQuery('<input />').attr({ name: "account_configuration[billing_emails][invoice_emails]", value: null, type: "hidden" }))
+      }
+      
+      form.submit();
+    }
+
+</script>

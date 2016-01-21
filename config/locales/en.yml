@@ -1955,6 +1955,7 @@ en:
         security: Security
         email_commands_setting: "Email Commands"
         billing: "Plans & Billing"
+        invoice: "Invoices"
         phone-channel: "Phone"
         tags: Tags
         mobihelp: Mobihelp
@@ -3712,6 +3713,7 @@ en:
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
+      invoice_delay: Unable to fetch this invoice right now. Please try again after sometime.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -3720,10 +3722,23 @@ en:
     total: Total
     free: Free
     paid: Paid
+    type: Type
+    date: Date
+    status: Status
+    refund: Refunded
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
     currency-note: "All your future payments will be in "
     free_plan_currency_note: "When you upgrade or add agents, your payment will be in "
+    invoice_title: "List of invoices for all account payments done online "
+    no_invoice: "No invoices present"
+    sub_total: "Sub Total"
+    quantity: "Quantity"
+    unit_price: "Unit Price"
+    invoice: "Invoice"
+    line_items: "Line Items"
+    download: "Download"
+    transaction_details: "Payments and Refund details"
   activate: Activate
   feedbackwidget_button_text: Label
   amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>.

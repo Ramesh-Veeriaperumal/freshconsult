@@ -15,7 +15,6 @@ class SubscriptionsController < ApplicationController
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
   before_filter :build_paying_subscription, :only => :billing
   before_filter :check_for_subscription_errors, :except => [ :calculate_amount, :show, :calculate_plan_amount ]
-
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
   restrict_perform :billing
@@ -83,6 +82,8 @@ class SubscriptionsController < ApplicationController
   end
 
   def show 
+    @offline_subscription = scoper.offline_subscription?
+    @invoice = scoper.subscription_invoices.last unless @offline_subscription
   end
 
   private

@@ -1160,6 +1160,11 @@ input.search{
 
 .sidepanel{
 	.close{ @include right(14px); }
+	.invoice-emails{
+		display: block;
+		width: 100%;
+		word-break: break-all;
+	}
 }
 
 .ui-dialog-form{

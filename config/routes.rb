@@ -1554,6 +1554,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :subscription_invoices, :only => [:index] do
+    collection do
+      get :download_invoice
+    end
+  end
+
   match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
