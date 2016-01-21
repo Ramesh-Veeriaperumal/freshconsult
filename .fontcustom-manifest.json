@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "422b024af947e62d470343ef4fbac17048be1c04b5e0b61e451d581cbf9e928d",
-    "current": "422b024af947e62d470343ef4fbac17048be1c04b5e0b61e451d581cbf9e928d"
+    "previous": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc",
+    "current": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc"
   },
   "fonts": [
-    "public/assets/glyphs_422b024af947e62d470343ef4fbac170.ttf",
-    "public/assets/glyphs_422b024af947e62d470343ef4fbac170.svg",
-    "public/assets/glyphs_422b024af947e62d470343ef4fbac170.woff",
-    "public/assets/glyphs_422b024af947e62d470343ef4fbac170.eot"
+    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.ttf",
+    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.svg",
+    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.woff",
+    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -58,6 +58,10 @@
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
     },
+    "archived-ticket": {
+      "codepoint": 61955,
+      "source": "public/glyphs/vectors/archived-ticket.svg"
+    },
     "arrow-click": {
       "codepoint": 61879,
       "source": "public/glyphs/vectors/arrow-click.svg"
@@ -93,6 +97,10 @@
     "arrow-up-2": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "article": {
+      "codepoint": 61956,
+      "source": "public/glyphs/vectors/article.svg"
     },
     "available-on-mobile": {
       "codepoint": 61878,
@@ -927,7 +935,7 @@
       "source": "public/glyphs/vectors/survey-settings.svg"
     },
     "tags": {
-      "codepoint": 61847,
+      "codepoint": 61957,
       "source": "public/glyphs/vectors/tags.svg"
     },
     "text": {
@@ -1050,6 +1058,7 @@
     },
     "preprocessor_path": "",
     "quiet": false,
+    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",
