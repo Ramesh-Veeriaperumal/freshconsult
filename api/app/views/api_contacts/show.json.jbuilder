@@ -8,10 +8,6 @@ end
 json.set! :custom_fields, @item.custom_fields
 json.set! :tags, @item.tags
 
-json.set! :custom_fields, @item.custom_field
-
-json.set! :tags, @item.tags.map(&:name)
-
 if @item.avatar
   json.set! :avatar do
     json.cache! @item.avatar do
