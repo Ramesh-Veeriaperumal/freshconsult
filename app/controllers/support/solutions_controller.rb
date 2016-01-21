@@ -1,4 +1,6 @@
 class Support::SolutionsController < SupportController
+	before_filter :load_meta, :only => [:show]
+	before_filter :check_version_availability, :only => [:show]
 	before_filter :load_category, :only => [:show]
 	before_filter { |c| c.check_portal_scope :open_solutions }
 
@@ -27,8 +29,13 @@ class Support::SolutionsController < SupportController
   end
 
 	private
+
+    def load_meta
+      @solution_item = @category_meta = current_portal.solution_category_meta.find_by_id(params[:id])
+    end
+
 		def load_category
-			@category = current_portal.solution_categories.find_by_id(params[:id])
+			@category = @category_meta.send("#{Language.current.to_key}_category")
 			(raise ActiveRecord::RecordNotFound and return) if @category.nil?
 		end
 
@@ -53,5 +60,9 @@ class Support::SolutionsController < SupportController
     def alternate_version_languages
       return current_account.applicable_languages unless @category
       @category.solution_category_meta.solution_categories.map { |c| c.language.code}
+    end
+
+    def default_url
+      support_solution_path(@category_meta, :url_locale => current_account.language)
     end
 end

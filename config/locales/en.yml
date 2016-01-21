@@ -4180,6 +4180,10 @@ en:
     properties: Properties
     solution_title: Title
     via: via
+    version_not_available:
+      solution: "This category is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
+      folder: "This folder is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
+      article: "This article is not available in %{current_language}, view it in <a href='%{url}'>%{helpdesk_language}</a>"
     article_properties:
       title_counter_message: 'Recommended: 50-60 characters'
       description_counter_message: 'Recommended: 150-160 characters'

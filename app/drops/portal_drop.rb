@@ -234,6 +234,10 @@ class PortalDrop < BaseDrop
   def settings
     @settings ||= source.template.preferences
   end
+
+  def language_list
+    source.language_list
+  end
   
   def recent_topics
     Forum::RecentTopicsDrop.new(self.source)

@@ -36,7 +36,33 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	line-height: 1.3em;
 	.welcome{ display: inline-block; }
 	a{ color: inherit; }
-}
+  .banner-language-selector {
+    background-color: #151515;
+    @include padding(2px 12px 2px 10px);
+    @include margin-left(10px);
+    @include border-radius(0px 5px 5px 0px);
+    @include border-left(1px solid #fff);
+    .language-options {
+      list-style: none;
+      @include margin-left(0px);
+      .dropdown-menu {
+        min-width: 0px;
+        background-color: #584E4E;
+        right: -24px;
+        @include text-align(left);
+      }
+      a.disabled-link{
+        color: #999;
+        pointer-events: none;
+      }
+    }
+    .caret {
+      color: #fff;
+      border-top-color: #fff;
+      margin-top: 8px;
+    }
+  }
+} 
 
 .page-tabs{
 	@include clearfix;

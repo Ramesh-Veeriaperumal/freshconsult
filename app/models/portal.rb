@@ -8,6 +8,7 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
 
   attr_protected  :account_id
+  attr_accessor :language_list
 
   xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
@@ -182,10 +183,7 @@ class Portal < ActiveRecord::Base
   end
 
   def multilingual?
-    @is_multilingual ||= launched?(:translate_solutions) &&
-      features_included?(:multi_language)  &&
-      features_included?(:enable_multilingual)  &&
-      portal_languages.present?
+    @is_multilingual ||= Account.current.multilingual? && Account.current.portal_languages.present?
   end
 
   def tickets_url

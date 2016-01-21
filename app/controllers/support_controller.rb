@@ -13,6 +13,7 @@ class SupportController < ApplicationController
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Portal::Helpers::SolutionsHelper
+  include Portal::Multilingual
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
@@ -79,6 +80,8 @@ class SupportController < ApplicationController
       @facebook_portal = facebook?
       
       @skip_liquid_compile = false
+      
+      configure_language_switcher
       
       # Setting up page layout variable
       process_page_liquid page_token
@@ -261,4 +264,11 @@ class SupportController < ApplicationController
   def alternate_version_languages
     []
   end
+
+  def check_version_availability
+    return if @solution_item.send("#{Language.current.to_key}_available?")
+    flash[:warning] = version_not_available_msg(controller_name.singularize)
+    redirect_to support_home_path and return
+  end
+  
 end

@@ -4,6 +4,10 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::Feedback
   include Solution::ArticlesVotingMethods
 
+  before_filter :load_meta, :only => [:show]
+
+  before_filter :check_version_availability, :only => [:show]
+
   before_filter :load_and_check_permission, :except => [:index]
 
   before_filter :render_404, :unless => :article_visible?, :only => [:show]
@@ -63,9 +67,13 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
+
+    def load_meta
+      @solution_item = @article_meta = current_account.solution_article_meta.find(params[:id])
+    end
+
     def load_and_check_permission
-      @article_meta = current_account.solution_article_meta.find(params[:id])
-      @article = @article_meta.send("#{params[:url_locale]}_article")
+      @article = @article_meta.send("#{Language.current.to_key}_article")
       unless @article.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)
@@ -149,6 +157,14 @@ class Support::Solutions::ArticlesController < SupportController
 
     def cleanup_params_for_title
       params.slice!("id", "format", "controller", "action", "status", "url_locale")
+    end
+
+    def route_name(language)
+      support_solutions_article_path(@solution_item.send("#{language.to_key}_article") || @solution_item, :url_locale => language.code)
+    end
+
+    def default_url
+      support_solutions_article_path(@article_meta.primary_article, :url_locale => current_account.language)
     end
 
 end

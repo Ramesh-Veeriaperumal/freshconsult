@@ -82,6 +82,8 @@ module SupportHelper
 	def welcome_navigation portal
 		output = []
 
+		output << language_list(portal)
+
 		# Showing welcome text before login link
 		output << %(<div class="welcome">#{ t('header.welcome') })
 
@@ -781,6 +783,20 @@ module SupportHelper
   def archived_ticket? ticket
     ticket and ticket.is_a?(Helpdesk::ArchiveTicket)
   end
+
+	def language_list portal
+		return "" if portal.language_list.blank?
+		output = ""
+		output << %(<div class="banner-language-selector pull-right" data-tabs="tabs">)
+		output << %(<ul class="language-options" role="tablist">)
+		output << %(<li class="dropdown">)
+		output << %(<h5 class="dropdown-toggle" data-toggle="dropdown">)
+		output << %(<span> #{Language.current.name} </span>)
+		output << %(<span class="caret"></span></h5>)
+		output << dropdown_menu(portal.language_list)
+		output << %(</div></li></ul>)
+		output.html_safe
+	end
 
 	private
 

@@ -13,4 +13,11 @@ module Portal::Helpers::SolutionsHelper
     meta_tags.join('').html_safe
   end
   
+  def version_not_available_msg(type)
+    t("solution.version_not_available.#{type}",
+        :url => default_url,
+        :helpdesk_language => Account.current.language_object,
+        :current_language => Language.current
+    ).html_safe
+  end
 end
