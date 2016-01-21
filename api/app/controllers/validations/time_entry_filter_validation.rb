@@ -19,7 +19,7 @@ class TimeEntryFilterValidation < FilterValidation
   end
 
   def valid_company?
-    user = Account.current.companies_from_cache.detect { |x| x.id == @company_id.to_i }
+    user = Account.current.companies.find_by_id(@company_id)
     errors[:company_id] << :blank unless user
   end
 end
