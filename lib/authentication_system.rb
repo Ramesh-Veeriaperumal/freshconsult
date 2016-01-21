@@ -147,7 +147,7 @@ module AuthenticationSystem
     end
   
     def store_location
-      session[:return_to] = request.fullpath
+      session[:return_to] = request.original_fullpath
     end
   
     def redirect_back_or_default(default)

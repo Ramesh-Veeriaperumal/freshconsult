@@ -15,9 +15,7 @@ class Solution::CategoriesController < ApplicationController
   before_filter :set_default_order, :only => :reorder
 
   def index
-    ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-    include_assoc = (current_account.launched?(:meta_read) ? :folders_through_meta : :folders)
-    @categories = current_portal.solution_categories.includes(include_assoc)
+    @categories = current_portal.solution_categories.includes(:folders)
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
@@ -165,8 +163,7 @@ class Solution::CategoriesController < ApplicationController
     end
 
     def load_category_with_folders
-      #META-READ-HACK!!
-      @category = account_scoper.find_by_id!(params[:id], :include => { meta_folder_scope => [:customers]})
+      @category = account_scoper.find_by_id!(params[:id], :include => { :folders => [:customers]})
     end
 
     def set_modal
@@ -189,11 +186,6 @@ class Solution::CategoriesController < ApplicationController
 
     def all_drafts
       current_account.solution_articles.all_drafts.includes(
-        {:folder_through_meta => {:category_through_meta => :portals_through_meta}})
-    end
-
-    #META-READ-HACK!!
-    def meta_folder_scope
-      current_account.launched?(:meta_read) ?  :folders_through_meta : :folders
+        {:folder => {:category => :portals}})
     end
 end

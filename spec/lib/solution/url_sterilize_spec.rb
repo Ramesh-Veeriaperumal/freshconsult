@@ -15,8 +15,8 @@ describe Solution::UrlSterilize do
     "SportsはNBAフューチャーを提供していますか？" => "sportsはnbaフューチャーを提供していますか-",
     "Какой лимит действует по тизерам на матчи NFL?" => "Какой-лимит-действует-по-тизерам-на-матчи-nfl-",
     "≤≥÷…æ“‘«¡™£¢∞§¶•ªº–≠⁄€‹›ﬁﬂ‡°·‚—±¯˘¿ÚÆ”’»" => "-ae-uae-",
-    "And special å∂ßAdhsg ¨ˆ¥ø∑´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π" => "and-special-a-adhsg-i-iaiiai-pi",
-    "However impossible  ≥÷≤…æ“‘«¯¿˘ÆÚ”’»~+_-)(*&^@%$$!&@*)" => "however-impossible-ae-aeu-" 
+    "And special å∂ßAdhsg ¨ˆ¥ø∑´˜√¬∆˚„Ï´ÏÅÎÍÅÏ€ﬁ›‹ﬂ›‡ﬂ“π" => "and-special-a-ßadhsg-ø∑-i-iaiiai-pi",
+    "However impossible  ≥÷≤…æ“‘«¯¿˘ÆÚ”’»~+_-)(*&^@%$$!&@*)" => "however-impossible-ae-aeu-"
   }
 
   self.use_transactional_fixtures = false

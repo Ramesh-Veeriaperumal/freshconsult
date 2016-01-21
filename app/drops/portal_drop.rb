@@ -3,6 +3,8 @@ class PortalDrop < BaseDrop
   include Rails.application.routes.url_helpers
   
   self.liquid_attributes += [:name, :language]
+  
+  FEATURE_BASED_METHODS = [:solution_categories, :folders, :recent_articles, :articles_count]
 
   def initialize(source)
     super source
@@ -190,7 +192,8 @@ class PortalDrop < BaseDrop
   end
 
   def recent_articles
-    @recent_articles ||= source.recent_articles
+    @recent_articles ||= (source.main_portal ? source.account.published_articles.newest(10) :
+      source.account.solution_articles.articles_for_portal(source).visible.newest(10))
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
@@ -198,6 +201,27 @@ class PortalDrop < BaseDrop
   def articles_count
     @articles_count ||= folders.map{ |f| f.published_articles.count }.sum
   end
+  
+  def solution_categories_through_meta
+    @solution_categories ||= @source.solution_category_meta.reject(&:is_default?)
+  end
+
+  def folders_through_meta
+    @folders ||= (solution_categories.map { |c|
+                    c.solution_folder_meta.visible(portal_user) }.reject(&:blank?) || []).flatten
+  end
+
+  def recent_articles_through_meta
+    @recent_articles ||= (source.main_portal ?
+      source.account.solution_article_meta.visible_to_all.published.newest(10) :
+      source.account.solution_article_meta.for_portal(source).published.newest(10))
+  end
+
+  def articles_count_through_meta
+    @articles_count ||= folders.map{ |f| f.solution_article_meta.published.count }.sum
+  end
+  
+  include Solution::MetaAssociationSwitcher
 
   def url_options
     @url_options ||= { :host => source.host }    
