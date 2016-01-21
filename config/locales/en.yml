@@ -5165,6 +5165,7 @@ en:
         helpcard_title: Managing Tags
       tag_search_navigate:
         search: Search Tags starting with...
+        search_tag: Search tags starting with...
         clear: Clear
       tags_table:
         merge_tags: Merge Tags
@@ -5179,6 +5180,8 @@ en:
       tag:
         ticket: Ticket
         tickets: Tickets
+        recent_tickets: Recent Tickets
+        archive_tickets: Archive Tickets 
         customer: Customer
         customers: Customers
         article: Article

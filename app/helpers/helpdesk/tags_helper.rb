@@ -54,8 +54,10 @@ module Helpdesk::TagsHelper
           :count => mod_count,
           :plurals => [t('.ticket'), t('.tickets')],
           :type => "Helpdesk::Ticket",
+          :tooltip => t('.recent_tickets'),
           :dom_type => dom_type,
-          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}"
+          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}",
+          :image => "ticket"
       }
     when "Customers"
       render :partial => 'tag_count', :locals => {
@@ -63,8 +65,10 @@ module Helpdesk::TagsHelper
           :count => mod_count,
           :plurals => [t('.customer'),t('.customers')],
           :type => "User",
+          :tooltip => t('.customers'),
           :dom_type => dom_type,
-          :link => "/contacts/filter/all?tag="+tag.id.to_s
+          :link => "/contacts/filter/all?tag="+tag.id.to_s,
+          :image => "user"
       }
     when "Articles"
       render :partial => 'tag_count', :locals => {
@@ -72,8 +76,22 @@ module Helpdesk::TagsHelper
           :count => mod_count,
           :plurals => [t('.article'),t('.articles')],
           :type => "Solution::Article",
+          :tooltip => t('.articles'),
           :dom_type => dom_type,
-          :link => ""
+          :link => "",
+          :image => "article"
+      }
+    when "Archive"
+      render :partial => 'tag_count', :locals => {
+          :tag => tag,
+          :count => mod_count,
+          :plurals => [t('.archive ticket'),t('.archive tickets')],
+          :type => "Helpdesk::ArchiveTicket",
+          :tooltip => t('.archive_tickets'),
+          :dom_type => dom_type,
+          :link => "/helpdesk/tickets/archived/filter/tags/#{tag.id}",
+          :image => "archived-ticket"
+
       }
     end
   end
