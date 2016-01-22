@@ -64,8 +64,6 @@ Spork.prefork do
   Dir[File.expand_path(File.join(File.dirname(__FILE__),'support',  '*.rb'))].each {|f| require f}
 
  ['spec/support/controller_data_fetcher.rb',
-  'spec/support/searchv2/test_cluster.rb',
-  'spec/support/searchv2/search_helper.rb',
   'spec/support/upload_images.rb',
   'spec/support/va/operator_helper/dispatcher.rb',
   'spec/support/va/operator_helper/supervisor.rb',
@@ -114,8 +112,6 @@ Spork.prefork do
     config.include CompanyHelper
     config.include JiraHelper
     config.include APIHelper, :type => :controller
-    config.include Searchv2::TestCluster
-    config.include Searchv2::SearchHelper
     config.include SurveyHelper
     config.include CannedResponsesHelper
     config.include AutomationsHelper

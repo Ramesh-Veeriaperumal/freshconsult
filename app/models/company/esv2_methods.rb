@@ -20,7 +20,7 @@ class Company < ActiveRecord::Base
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:name, :note, :description].merge(esv2_company_field_data_columns)
+    @@esv2_columns ||= [:name, :note, :description, :domains].concat(esv2_company_field_data_columns)
   end
 
   # Flexifield denormalized

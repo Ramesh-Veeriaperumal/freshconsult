@@ -10,7 +10,7 @@ module Searchv2
     }
 
     def start
-      print("\n...Starting elasticsearch test cluster...".ansi(:bold, :cyan))
+      print("\n...Starting elasticsearch test cluster...\n".ansi(:bold, :cyan))
 
       unless running?
         command = <<-COMMAND
@@ -37,12 +37,12 @@ module Searchv2
           sleep 1
         end
       else
-        print("\nNote: ES for test is already running".ansi(:faint))
+        print("\nNote: ES for test is already running\n".ansi(:faint))
       end
     end
 
     def stop
-      print("\n...Stopping elasticsearch test cluster...".ansi(:bold, :cyan))
+      print("\n...Stopping elasticsearch test cluster...\n".ansi(:bold, :cyan))
 
       if running?
         begin
@@ -59,10 +59,10 @@ module Searchv2
             end
           end
         rescue
-          print("\nFailed to stop elasticsearch for test!!".ansi(:red))
+          print("\nFailed to stop elasticsearch for test!!\n".ansi(:red))
         end
       else
-        print("\nNote: ES for test is already halted".ansi(:faint))
+        print("\nNote: ES for test is already halted\n".ansi(:faint))
       end
     end
 
