@@ -6,6 +6,9 @@ module ApiConstants
     page: 1
   }
 
+  # https://github.com/mislav/will_paginate/blob/master/lib/will_paginate/page_number.rb
+  PAGE_MAX = WillPaginate::PageNumber::BIGINT
+
   DEFAULT_PARAMS = %w(version format k id).freeze
   DEFAULT_INDEX_FIELDS = %w(version format k id per_page page).freeze
   PAGINATE_FIELDS = %w(page per_page).freeze
@@ -29,7 +32,9 @@ module ApiConstants
   MAX_LENGTH_STRING = 255
 
   TAG_MAX_LENGTH_STRING = 32
-  CACHE_VERSION = { v2: 'V2' }.freeze
+  CACHE_VERSION = { v2: 'V2', v3: 'V3' }.freeze
+
+  PRIVILEGES_WITH_OWNEDBY = ABILITIES.values.flatten.select(&:owned_by).map(&:name).uniq
 
   # Wrap parameters args
   WRAP_PARAMS = [exclude: [], format: :json].freeze

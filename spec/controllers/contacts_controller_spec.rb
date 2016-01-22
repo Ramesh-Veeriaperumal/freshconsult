@@ -141,6 +141,18 @@ describe ContactsController do
     response.body.should =~ /#{blocked_contact.email}/
   end
 
+  it "should not display the contact which has been blocked in future" do
+    current_timezone = @agent.time_zone
+    @agent.time_zone = "Astana"
+    blocked_contact = FactoryGirl.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
+                              :user_role => 3, :active => false,
+                              :blocked => true, :blocked_at =>  Time.now + 5.days + 3.hours, :whitelisted => false)
+    blocked_contact.save
+    get :index, {:state => "blocked", :letter => []}
+    response.body.should_not =~ /#{blocked_contact.email}/
+    @agent.time_zone = current_timezone
+  end
+
   it "should list all deleted contacts" do
     deleted_contact = FactoryGirl.build(:user, :account => @account, :phone => "234234234234", :email => Faker::Internet.email,
                               :user_role => 3, :active => false, 

@@ -14,6 +14,9 @@ oauth_options:
   google_oauth2:
     site: https://accounts.google.com
     token_url: /o/oauth2/token
+  infusionsoft:
+     authorize_url: "https://signin.infusionsoft.com/app/oauth/authorize"
+     token_url: "https://api.infusionsoft.com/token"
   box:
     site: https://www.box.com
     token_url: /api/oauth2/token
@@ -92,6 +95,9 @@ development:
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu
 
 defaults: &defaults
  salesforce:
@@ -217,6 +223,9 @@ staging:
  slack:
    consumer_token: "3575209657.3577656254"
    consumer_secret: 40e3176389a2255436efedfdd5f9d76a
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu
 
 production:
  salesforce:
@@ -283,3 +292,6 @@ production:
  slack:
    consumer_token: "3575209657.3866308321"
    consumer_secret: 19210e220ec23853881fdbbaa9aa0a5b
+ infusionsoft:
+   consumer_token:  pymmum7erkmq5vm4vsbqamut
+   consumer_secret: DzWRNku2hu

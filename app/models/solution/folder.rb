@@ -4,7 +4,7 @@ class Solution::Folder < ActiveRecord::Base
   include Solution::Constants
   include Cache::Memcache::Mobihelp::Solution
 
-  concerned_with :associations, :meta_associations
+  concerned_with :associations
 
   CACHEABLE_ATTRS = ["is_default","name","id","article_count"]
   attr_protected :category_id, :account_id
@@ -31,11 +31,6 @@ class Solution::Folder < ActiveRecord::Base
   has_many :customers, :through => :customer_folders
 
   validate :companies_limit_check
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  default_scope proc {
-    Account.current.launched?(:meta_read) ? joins(:solution_folder_meta).preload(:solution_folder_meta) : unscoped
-  }
   
   scope :alphabetical, :order => 'name ASC'
 
@@ -49,7 +44,6 @@ class Solution::Folder < ActiveRecord::Base
 
   include Solution::MetaMethods
   include Solution::LanguageMethods
-  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def to_s
     name
@@ -89,9 +83,13 @@ class Solution::Folder < ActiveRecord::Base
     end
   end
   
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  scope :visible, lambda {|user| visibility_hash(user) }
-
+  scope :visible, lambda { |user| 
+    {
+      :order => "position",
+      :conditions => visibility_condition(user)
+    }
+  }
+    
   # scope :visible, lambda {|user| {
   #                   :order => "position" ,
   #                   # :joins => "LEFT JOIN `solution_customer_folders` ON 
@@ -99,33 +97,6 @@ class Solution::Folder < ActiveRecord::Base
   #                               # solution_customer_folders.account_id = solution_folders.account_id",
   #                   :conditions => visiblity_condition(user) } }
 
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def self.visibility_hash(user)
-    {
-      :order => "position",
-      :conditions => visibility_condition(user)
-    }
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def self.visibility_hash_through_meta(user)
-    {
-      :joins => :solution_folder_meta,
-      :order => "solution_folder_meta.position",
-      :conditions => visibility_condition(user)
-    }
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def self.visibility_hash_with_association(user)
-    if Account.current.launched?(:meta_read)
-      visibility_hash_through_meta(user)
-    else
-      visibility_hash_without_association(user)
-    end
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
   def self.visibility_condition(user)
     condition = "solution_folders.visibility IN (#{ self.get_visibility_array(user).join(',') })"
     condition +=   " OR 
@@ -139,37 +110,6 @@ class Solution::Folder < ActiveRecord::Base
                 # solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
 
     return condition
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def self.visibility_condition_through_meta(user)
-    condition = "solution_folder_meta.visibility IN (#{ self.get_visibility_array(user).join(',') })"
-    condition +=   " OR 
-            (solution_folder_meta.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
-              solution_folder_meta.id in (SELECT solution_customer_folders.folder_meta_id 
-                                        FROM solution_customer_folders WHERE 
-                                        solution_customer_folders.customer_id =
-                                         #{user.company_id} AND 
-                                         solution_customer_folders.account_id = 
-                                         #{user.account_id}))" if (user && user.has_company?)
-                # solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
-
-    return condition
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def self.visibility_condition_with_association(user)
-    if Account.current.launched?(:meta_read)
-      visibility_condition_through_meta(user)
-    else
-      visibility_condition_without_association(user)
-    end
-  end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  class << self
-    alias_method_chain :visibility_hash, :association
-    alias_method_chain :visibility_condition, :association
   end
 
   def customer_folders_attributes=(cust_attr)
@@ -244,7 +184,7 @@ class Solution::Folder < ActiveRecord::Base
     end
 
     def backup_category
-      @category_obj = Account.current.launched?(:meta_read) ? category.solution_category_meta : category
+      @category_obj = category
     end
 
     def visibility_updated?

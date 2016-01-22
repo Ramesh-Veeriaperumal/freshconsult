@@ -44,7 +44,6 @@
     <%end%>
   </div>
   <div id="rightCol" class="contentCol <%="hasRightCol" unless (['deleted', 'spam', 'monitored_by'].include?(@current_view)) %>">
-    <%= render :partial => "helpdesk/tickets/new_view_flash" %>
     <%= render :partial => "helpdesk/shared/ticket_view", :locals => { :items => @items, :current_view => @current_view } , :inline => true %>
   </div>
 <% content_for :pagefixed do %>

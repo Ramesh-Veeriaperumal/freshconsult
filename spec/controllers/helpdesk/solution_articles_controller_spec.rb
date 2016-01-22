@@ -454,10 +454,9 @@ describe Solution::ArticlesController do
   it "should check the language utility methods" do
     test_language_article = create_article( {:title => "#{Faker::Lorem.sentence(3)}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder.id,
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
-    test_language_article.reload
     old_language_id = test_language_article.language_id
-    test_language_article.language = "fr"
-    test_language_article.save
+    test_language_article.update_column(:language_id, 11)
+    test_language_article.reload
     lang = Language.find_by_code("fr")
     test_language_article.language_id.should be_eql(lang.id)
     test_language_article.language_name.should be_eql(lang.name)
@@ -531,8 +530,8 @@ describe Solution::ArticlesController do
       :user_id => @agent.id, :status => "2", :art_type => "1" } )
     test_language_article.reload
     folder_meta = test_language_article.solution_folder_meta
-    indexed_json = JSON.parse(test_language_article.to_indexed_json)
-    indexed_json["solution/article"]["language_id"].should be_eql(test_language_article.language_id)
+    indexed_json = JSON.parse(test_language_article.to_indexed_json)["solution/article"]
+    indexed_json["language_id"].should be_eql(test_language_article.language_id)
     indexed_json["folder_id"].should be_eql(folder_meta.id)
     indexed_json["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
     indexed_json["folder"]["visibility"].should be_eql(folder_meta.visibility)

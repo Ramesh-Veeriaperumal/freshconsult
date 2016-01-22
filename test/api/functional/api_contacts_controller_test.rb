@@ -570,17 +570,30 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(deleted: false)
   end
 
-  def test_contact_filter_state
-    @account.all_contacts.update_all(blocked: false)
-    sample_user = @account.all_contacts.first
-    sample_user.update_attribute(:blocked, true)
-    sample_user.update_attribute(:deleted, true)
-    sample_user.update_attribute(:blocked_at, Time.now)
-    sample_user.update_attribute(:deleted_at, Time.now)
+  def test_contact_filter_state_blocked
+    @account.all_contacts.update_all(whitelisted: false)
+    @account.all_contacts.update_all(blocked: true)
+    @account.all_contacts.update_all(blocked_at: Time.zone.now)
+    @account.all_contacts.first.update_attribute(:whitelisted, true)
+    count = @account.all_contacts.count - 1
     get :index, controller_params(state: 'blocked')
     assert_response 200
     response = parse_response @response.body
-    assert_equal 1, response.size
+    assert_equal count, response.size
+    @account.all_contacts.update_all(blocked: false)
+    @account.all_contacts.update_all(whitelisted: false)
+  end
+
+  def test_contact_filter_state_blocked_whitelisted_true
+    @account.all_contacts.update_all(whitelisted: true)
+    @account.all_contacts.update_all(blocked: true)
+    @account.all_contacts.update_all(blocked_at: Time.zone.now)
+    get :index, controller_params(state: 'blocked')
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 0, response.size
+    @account.all_contacts.update_all(blocked: false)
+    @account.all_contacts.update_all(whitelisted: false)
   end
 
   def test_contact_filter_phone

@@ -31,7 +31,14 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var data_array = [];
             var chart_data = hash[chart_name];
             if (!jQuery.isEmptyObject(chart_data)) {
+                var labels = []
                 var current_data   = _.values(chart_data);
+                var label_key = _.keys(hash[chart_name]);
+                for (i = 0; i < label_key.length; i++)
+                {
+                    var label_text = I18n.t(label_key[i]);
+                    labels.push(label_text);
+                }
                 data_array.push({
                     animation: false,
                     dataLabels: { enabled: false },
@@ -47,7 +54,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                         events: {
                             click: function () {
                                 var ev = this; 
-                                _FD.ticketListEvent(ev);
+                                _FD.ticketListEvent(ev,label_key);
                             }
                         }
                     },
@@ -58,7 +65,6 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     },
                     total: hash["tickets_count"][chart_name]
                 });
-                var labels = _.keys(hash[chart_name]);
                 var settings = {
                     renderTo: chart_name+'_bar_chart', 
                     height: this.calculateChartheight(labels.length),
@@ -73,23 +79,23 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 var groupByCharts = new barChart(settings);
                 groupByCharts.barChartGraph();
             }else {
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = [chart_name+'_bar_chart'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }
         },
-        ticketListEvent: function (ev) {
+        ticketListEvent: function (ev, label_key) {
             var data = {};
             var hash = HelpdeskReports.locals.chart_hash;
             var chart = ev.series.chart.container;
-            var label = ev.category;
+            var label = label_key[ev.x];
 
             data.bucket = jQuery(chart).closest('.chart-wrapper').data('bucket-name');
             data.metric = jQuery(chart).closest('.chart-wrapper').data('metric-name');
             data.value = hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][0];
             data.operator =  hash[data.metric+'_BUCKET']['value_map'][data.bucket][label][1];
-            data.y = ev.y;
-            data.category = label;
+            data.y = ev.y; 
+            data.category = ev.category;
 
             trigger_event("perf_ticket_list.helpdesk_reports", data);
         },
@@ -107,12 +113,12 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var chart_data = hash["AVG_RESPONSE_TIME"];
             
             if (!jQuery.isEmptyObject(hash["error"]) || !jQuery.isEmptyObject(chart_data["error"])) {
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ['response_time_trend_chart'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                 jQuery('.response_time_trend.trend-type').hide();
             }else if (jQuery.isEmptyObject(chart_data)) {
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ['response_time_trend_chart'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                 jQuery('.response_time_trend.trend-type').hide();
@@ -120,7 +126,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             else {
 
                 var data_length         = _.size(hash["AVG_RESPONSE_TIME"][current_trend]);
-                var plot_type           = (_.max(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]) > 3600 || _.max(hash["AVG_RESPONSE_TIME"][current_trend]) > 3600 ) ? 'Hours' : 'Mins';                
+                var plot_type           = (_.max(hash["AVG_FIRST_RESPONSE_TIME"][current_trend]) > 3600 || _.max(hash["AVG_RESPONSE_TIME"][current_trend]) > 3600 ) ? 'Hours' : 'Mins' ;               
                 var start_value         = _.keys(hash["AVG_RESPONSE_TIME"][current_trend])[0];
                 var end_value           = _.keys(hash["AVG_RESPONSE_TIME"][current_trend])[data_length-1];
                 var markerStatus = data_length > 90 ? false : true;
@@ -136,7 +142,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 HelpdeskReports.locals.response_plot_type = plot_type;
     
                 time_trend_data.push({
-                    name: 'Avg first response time',
+                    name: I18n.t('helpdesk_reports.chart_title.performance_distribution.avg_first_response_time'),
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['first_response_time'],
@@ -144,7 +150,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                     marker: markerValue,
                     pointInterval: this.TICK_INTERVAL_MAPPING[current_trend]
                 },{
-                    name: 'Avg response time',
+                    name: I18n.t('helpdesk_reports.chart_title.avg_response_time'),
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['response_time'],
@@ -170,12 +176,12 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var chart_data = hash["AVG_RESOLUTION_TIME"];
             
             if (!jQuery.isEmptyObject(hash["error"]) || !jQuery.isEmptyObject(chart_data["error"])) {
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ['resolution_time_trend_chart'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                 jQuery('.resolution_time_trend.trend-type').hide();
             }else if (jQuery.isEmptyObject(chart_data)) {
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ['resolution_time_trend_chart'];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                 jQuery('.resolution_time_trend.trend-type').hide();
@@ -198,7 +204,7 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
                 HelpdeskReports.locals.resolution_plot_type = plot_type;
                     
                 time_trend_data.push({
-                    name: 'Avg resolution time',
+                    name: I18n.t('helpdesk_reports.chart_title.avg_resolution_time'),
                     fillOpacity: 0.1,
                     type: 'area',
                     color: this.COLORS['resolution_time'],
@@ -214,19 +220,21 @@ HelpdeskReports.ChartsInitializer.PerformanceDistribution = (function () {
             var responseObj   = HelpdeskReports.locals.chart_hash['AVG_RESPONSE_TIME']['doy'];
             var resolutionObj = HelpdeskReports.locals.chart_hash['AVG_RESOLUTION_TIME']['doy'];
             
-            if(responseObj){
-                HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
-            } else if (resolutionObj){
-                HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
+            if(HelpdeskReports.locals.startTimestamp == undefined){
+                if(responseObj){
+                    HelpdeskReports.locals.startTimestamp = _.keys(responseObj)[0];
+                } else if (resolutionObj){
+                    HelpdeskReports.locals.startTimestamp = _.keys(resolutionObj)[0];
+                }
             }
 
             var stepValue = Math.ceil(length/11);                
             stepValue = stepValue <= 0 ? 1 : stepValue;
-
+            var I18n_plot_type = (plot_type == 'Hours') ? I18n.t('helpdesk_reports.hours') : I18n.t('helpdesk_reports.mins') ;
             var settings = {
                     renderTo: charttype+'_time_trend_chart',
                     chartData: hash,
-                    yAxis_label: plot_type,
+                    yAxis_label: I18n_plot_type,
                     report_type: "perf",
                     start_date: start_value,
                     end_date: end_value,

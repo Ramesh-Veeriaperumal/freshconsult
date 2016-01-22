@@ -226,6 +226,9 @@
 					$widget_attr.iframeLoaded = true;
 				}
 			});
+
+			// triggering message listening event
+	 		childFrameMessage();
 		}
 	 };
 
@@ -245,28 +248,9 @@
 			body_overflow = document.body.style.overflow;
 			document.body.style.overflow='hidden'
 		}
-	 	if(Browser.Version() > 8 && options.screenshot == ""){
-	        html2canvas( [ document.body ], {
-					ignoreIds: "FreshWidget|freshwidget-button",
-					proxy:false,
-				    onrendered: function( canvas ) {
-				      	var img = canvas.toDataURL();
-				      	var message = img;
-
-						 sendMessage = setInterval(function() {
-						 	if ($widget_attr.iframeLoaded) {
-							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
-							 	clearInterval(sendMessage);
-						 	}else {
-						 		//console.log('waiting for iframe to load');
-						 	}
-						 }, 500);
-				    }
-			});
-    	}
 	 	if(!$widget_attr.iframeLoaded) {
 	 		widgetFormUrl();
-	 	}
+	 	}	 	
 	 }
 
 	 function close(){
@@ -277,7 +261,6 @@
 		}
 	 	widgetFormUrl();
 	 }
-
 	 function initialize(params){
 		extend(params);
 
@@ -321,7 +304,30 @@
 		destroyContainer();
 		delete window.FreshWidget;
 	 }
-
+   // listening for message from child
+   function childFrameMessage() {
+   		bind(window, 'message', function(e) {
+	  		var message = e.data;
+	   		if(message=="screenshot") {
+	    		// move to screenshot function
+	    		TakeScreenShot();
+	    	}
+      	});
+   }
+   // taking screenshot while child frame requests
+   function TakeScreenShot() {
+   	if(Browser.Version() > 8 && options.screenshot == ""){
+   		html2canvas( [ document.body ], {
+			ignoreIds: "FreshWidget|freshwidget-button",
+			proxy:false,
+		    onrendered: function( canvas ) {
+		      	var img = canvas.toDataURL();
+		      	var message={type:'screenshot',img:img};
+				document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
+		    }
+		});
+    }
+   }
 	 // Defining Public methods
      var FreshWidget = {
 	 	init 		: function(apikey, params){
@@ -331,7 +337,7 @@
 						catchException(function(){ return createWidget(); });
 					  },
 		show 		: function(){
-						catchException(function(){ return showContainer(); });
+						catchException(function(){return showContainer(); });
 					  },
 		close		: function(){
 						catchException(function(){ return close(); });

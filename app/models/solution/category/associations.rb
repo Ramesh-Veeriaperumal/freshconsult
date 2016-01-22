@@ -42,6 +42,10 @@ class Solution::Category < ActiveRecord::Base
     :through => :mobihelp_app_solutions ,
     :source => :app
 
+	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta', :foreign_key => "parent_id"
+
+  has_many :solution_folder_meta, :class_name => 'Solution::FolderMeta', :through => :solution_category_meta, :foreign_key => :solution_category_meta_id
+
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'

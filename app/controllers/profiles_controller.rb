@@ -61,6 +61,7 @@ class ProfilesController < ApplicationController
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.active = true #by Shan need to revisit..
     result = @user.save
+    @user.reset_perishable_token! if result
     flash[:error] = @user.errors.full_messages.join("<br/>").html_safe if @user.errors.any?
     result
   end

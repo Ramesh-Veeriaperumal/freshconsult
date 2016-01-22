@@ -31,7 +31,9 @@ module HelpdeskReports::Constants::Ticket
     [:AGENT_SUMMARY_CURRENT,       "Base"],
     [:GROUP_SUMMARY_HISTORIC,      "Base"],
     [:GROUP_SUMMARY_CURRENT,       "Base"],
-    [:CUSTOMER_CURRENT_HISTORIC,   "Base"]
+    [:CUSTOMER_CURRENT_HISTORIC,   "Base"],
+    [:GLANCE_CURRENT,              "Base"],
+    [:GLANCE_HISTORIC,             "Base"]
   ]
 
   METRICS               = METRIC_AND_QUERY.map { |i| i[0].to_s } + TEMPLATE_METRICS_AND_QUERY.map { |i| i[0].to_s }
@@ -89,8 +91,6 @@ module HelpdeskReports::Constants::Ticket
   
   REQUIRED_PARAMS = [:model, :metric, :date_range, :reference, :bucket, :time_trend, :list]
   
-  REPORTS_COMPLETED = [:glance, :ticket_volume, :agent_summary, :group_summary, :performance_distribution, :customer_report]
-  
   FORMATTING_REQUIRED = [:glance, :agent_summary, :group_summary, :customer_report]
   
   PARAM_INCLUSION_VALUES = {
@@ -102,19 +102,15 @@ module HelpdeskReports::Constants::Ticket
     :list        =>  [true, false]   
   }
   
-  common = ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "REOPENED_TICKETS", "FCR_TICKETS"]
+  common = ["RECEIVED_TICKETS", "RESOLVED_TICKETS", "REOPENED_TICKETS"]
   
   BUCKET_DIMENSIONS_TO_METRIC = {
     :customer_interactions   =>  common,
     :agent_interactions      =>  common,
-    :agent_reassign_count    =>  common,
-    :group_reassign_count    =>  common,
-    :reopen_count            =>  common,
+    :reopen_count            =>  ["REOPENED_TICKETS"],
     :response_time           =>  ["AVG_RESPONSE_TIME"],
     :first_response_time     =>  ["AVG_FIRST_RESPONSE_TIME"],
     :resolution_time         =>  ["AVG_RESOLUTION_TIME"],
-    :reply_count             =>  ["REPLIES"],
-    :private_note_count      =>  ["PRIVATE_NOTES"]
   }
   
   TRENDS = [
@@ -133,9 +129,6 @@ module HelpdeskReports::Constants::Ticket
   MAX_DATE_RANGE_FOR_TREND  = Hash[*TRENDS.map { |i| [i[0], i[1]] }.flatten]
   
   TREND_MAX_VALUE = {
-    "leap_year" => 366,
-    "year"      => 365,
-    "w"         => 52,
     "mon"       => 12,
     "qtr"       => 4
   }     
@@ -155,10 +148,12 @@ module HelpdeskReports::Constants::Ticket
   
   NA_PLACEHOLDER_GLANCE = 0
   
-  TICKET_FILTER_LIMIT = 5
+  TICKET_FILTER_LIMIT = 8
   
   MULTI_SELECT_LIMIT = 10
   
   TICKET_LIST_LIMIT = 25
   
+  MAX_ALLOWED_DAYS = 731 # Span of 2 years
+
 end

@@ -1,7 +1,8 @@
-<li class='muted'>Filtered by:</li>
+<li class='muted'><%= I18n.t('adv_reports.filtered_by') %>:</li>
 <% if (data && data.length) { %>
 	<% for (i = 0; i < data.length; i++) { %>
-        <li> <%= escapeHtml(data[i].name) %> : <strong> <%= escapeHtml(data[i].value) %> </strong></li>
+				<% field_type = I18n.t(data[i].name.toLowerCase(),{scope: 'helpdesk_reports', defaultValue: data[i].name})  %>
+        <li> <%= escapeHtml(field_type) %> : <strong> <%= escapeHtml(data[i].value) %> </strong></li>
     <% } %>
 <%  } %>
-<li>Time Period : <strong> <%= jQuery("#date_range").val() || HelpdeskReports.locals.date_range %> </strong></li>
+<li><%= I18n.t('adv_reports.time_period') %>: <strong> <%= jQuery("#date_range").val() || HelpdeskReports.locals.date_range %> </strong></li>

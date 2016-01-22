@@ -191,6 +191,14 @@ module TicketConstants
 
   BACKGROUND_THRESHOLD = 5
 
+  # Used in reports ETL
+  VISIBILITY_MAPPING = {
+    :active => 1,
+    :deleted => 2,
+    :spam => 3,
+    :merged_ticket => 4
+  }
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end

@@ -9,7 +9,7 @@ class ApiAgentsController < ApiApplicationController
     def validate_filter_params
       params.permit(*AgentConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @agent_filter = AgentFilterValidation.new(params)
-      render_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
+      render_query_param_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
     end
 
     def load_objects

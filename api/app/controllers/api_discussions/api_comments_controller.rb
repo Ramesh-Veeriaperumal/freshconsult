@@ -10,8 +10,8 @@ module ApiDiscussions
 
     private
 
-      def check_privilege
-        # skipping check_privilege for update as different params(body_html & answer) require different privileges.
+      def allowed_to_access?
+        # skipping allowed_to_access? for update as different params(body_html & answer) require different privileges.
         update? ? true : super
       end
 

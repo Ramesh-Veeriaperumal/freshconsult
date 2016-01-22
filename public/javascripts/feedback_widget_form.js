@@ -168,16 +168,13 @@
 	 	});
 
 
-		jQuery('#takescreen-btn a').bind("click", function(ev){
-			console.log("Image loaded");
+		jQuery('#takescreen-btn a').on("click", function(ev){
+			// sending message to the parent window
+			parent.postMessage('screenshot',"*");
 			ev.preventDefault();
-
 			screenshot_flag=0;
-			jQuery('#takescreen-btn').hide();
-			jQuery('#screenshot-wrap').show();
 
-			if(!jQuery.browser.msie && !jQuery.browser.opera)
-				jQuery('.flash').show();
+			
 		});
 
 		// Uses the date format specified in the data attribute [date-format], else the default one 'yy-mm-dd'
@@ -203,9 +200,20 @@
 
 var screenshot_flag=1;
 
-jQuery(window).bind("message", function(e) {
+jQuery(window).on("message", function(e) {
     var data = e.originalEvent.data;
-    loadCanvas(data);
+    if(data.type=="screenshot")
+    {
+    	var loaded=loadCanvas(data.img);
+    if(loaded)
+    {
+    	console.log('image loaded');
+    	jQuery('#takescreen-btn').hide();
+			jQuery('#screenshot-wrap').show();
+			if(!jQuery.browser.msie && !jQuery.browser.opera)
+				jQuery('.flash').show();
+    }
+    }
 });
 
 function remove_screenshot(){
@@ -226,7 +234,9 @@ function postscreenshot(name,value){
 
 function loadCanvas(dataURL) {
     var canvas = document.getElementById("f-screenshot");
+
     var context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
     // load image from data url
     var imageObj = new Image();
 	    imageObj.onload = function() {
@@ -234,8 +244,7 @@ function loadCanvas(dataURL) {
     };
     imageObj.src = dataURL;
     img_data = dataURL;
-	console.log("Screenshot");
-    // onchecked();
+	return true;
 }
 
 // Additional util methods for support helpdesk

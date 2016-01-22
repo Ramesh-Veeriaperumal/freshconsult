@@ -188,7 +188,7 @@ module ApiDiscussions
     def test_create
       category = ForumCategory.first
       post :create, construct_params({ id: category.id }, description: 'desc', forum_visibility: 1,
-                                                                     forum_type: 1, name: 'test')
+                                                          forum_type: 1, name: 'test')
       match_json(forum_pattern Forum.last)
       match_json(forum_response_pattern Forum.last, description: 'desc', forum_visibility: 1, forum_type: 1, name: 'test', forum_category_id: category.id)
       assert_response 201
@@ -566,7 +566,7 @@ module ApiDiscussions
       category = fc_obj
       get :category_forums, controller_params(id: category.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_category_forums_with_link_header

@@ -1,7 +1,5 @@
 class Solution::Folder < ActiveRecord::Base
 
-  FEATURE_BASED_METHODS = [:articles, :published_articles, :category, :customer_folders]
-
 	belongs_to_account
 
   belongs_to :category, :class_name => 'Solution::Category'
@@ -13,6 +11,15 @@ class Solution::Folder < ActiveRecord::Base
 
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
 
+  belongs_to :solution_folder_meta, :class_name => 'Solution::FolderMeta', :foreign_key => 'parent_id'
+
+  has_many :solution_article_meta, :class_name => 'Solution::ArticleMeta', :through => :solution_folder_meta
+
+  has_one :solution_category_meta, 
+    :readonly => false,
+    :class_name => "Solution::CategoryMeta", 
+    :through => :solution_folder_meta
+		
   has_many :activities, :class_name => 'Helpdesk::Activity', :as => 'notable'
 
 end
