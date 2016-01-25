@@ -1,13 +1,15 @@
 require_relative '../unit_test_helper'
 
-class ForumValidationsTest < ActionView::TestCase
+class ForumValidationTest < ActionView::TestCase
   def test_presence_params_invalid
     controller_params = {}
     item = nil
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?(:update)
-    assert_equal ['Name missing', 'Forum category required_and_numericality', 'Forum visibility required_and_inclusion',
-                  'Forum type required_and_inclusion'], forum.errors.full_messages
+    assert forum.errors.full_messages.include?('Name required_and_data_type_mismatch')
+    assert forum.errors.full_messages.include?('Forum category required_and_data_type_mismatch')
+    assert forum.errors.full_messages.include?('Forum visibility required_and_inclusion')
+    assert forum.errors.full_messages.include?( 'Forum type required_and_inclusion')
   end
 
   def test_numericality_params_invalid

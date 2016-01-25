@@ -159,7 +159,7 @@ class TicketValidationTest < ActionView::TestCase
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
-    assert ticket.errors.full_messages.include?('Description missing')
+    assert ticket.errors.full_messages.include?('Description required_and_data_type_mismatch')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
 
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }

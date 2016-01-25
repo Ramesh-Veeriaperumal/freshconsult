@@ -26,7 +26,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => 's', 'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
   end
 
   def test_create_with_empty_attachment_array
@@ -104,7 +104,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.cc_email[:cc_emails].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array)])
       assert_response 400
 
       put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers

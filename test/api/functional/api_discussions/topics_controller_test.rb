@@ -56,15 +56,15 @@ module ApiDiscussions
     def test_create_without_title_and_message_html_invalid
       post :create, construct_params({ id: forum_obj.id },
                                      message_html: true)
-      match_json([bad_request_error_pattern('title', :missing_field),
-                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: 'String')])
+      match_json([bad_request_error_pattern('title', :required_and_data_type_mismatch, data_type: String),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
     def test_create_without_message
       post :create, construct_params({ id: forum_obj.id },
                                      title: 'test title')
-      match_json([bad_request_error_pattern('message_html', :missing_field)])
+      match_json([bad_request_error_pattern('message_html', :required_and_data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
@@ -286,7 +286,7 @@ module ApiDiscussions
       topic = first_topic
       params = { forum_id: [1] }
       put :update, construct_params({ id: topic.id }, params)
-      match_json([bad_request_error_pattern('forum_id', :invalid_field)])
+      match_json([bad_request_error_pattern('forum_id', :data_type_mismatch, data_type: 'Positive Integer')])
       assert_response 400
     end
 
@@ -365,9 +365,9 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', :required_and_numericality),
-                  bad_request_error_pattern('title', :"can't be blank"),
-                  bad_request_error_pattern('message_html', :"can't be blank")
+      match_json([bad_request_error_pattern('forum_id', :required_and_data_type_mismatch, data_type: 'Positive Integer' ),
+                  bad_request_error_pattern('title', :data_type_mismatch, data_type: String),
+                  bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)
                  ])
       assert_response 400
     end

@@ -6,18 +6,19 @@ class TicketsControllerTest < ActionController::TestCase
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
-  VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text)
+  VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
 
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Pursuit of Happiness', 'date' => '2015-09-09' }
   UPDATE_CUSTOM_FIELDS_VALUES = { 'country' => 'Australia', 'state' => 'Queensland', 'city' => 'Brisbane', 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Armaggedon', 'date' => '2015-09-09' }
-  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph, 'date' => '31-13-09' }
-  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  Faker::Lorem.paragraph, 'date' => '2015-09-09T09:00' }
+  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  12345, 'date' => '31-13-09' }
+  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3543534, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
     'number' => [:data_type_mismatch, data_type: 'Integer'],
     'decimal' => [:data_type_mismatch, data_type: 'number'],
     'checkbox' => [:data_type_mismatch, data_type: 'Boolean'],
     'text' => [:"is too long (maximum is 255 characters)"],
+    'paragraph' => [:data_type_mismatch, data_type: String],
     'date' => [:invalid_date]
   }
 
@@ -25,8 +26,8 @@ class TicketsControllerTest < ActionController::TestCase
     'number' => [:required_integer],
     'decimal' => [:required_number],
     'checkbox' => [:required_boolean],
-    'text' => [:missing],
-    'paragraph' => [:missing],
+    'text' => [:required_string],
+    'paragraph' => [:required_string],
     'date' => [:required_date]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
@@ -322,8 +323,8 @@ class TicketsControllerTest < ActionController::TestCase
     cc_emails = "#{Faker::Internet.email},#{Faker::Internet.email}"
     params = ticket_params_hash.merge(cc_emails: cc_emails, tags: 'tag1,tag2', custom_fields: [1])
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: 'Array'),
-                bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),
+    match_json([bad_request_error_pattern('cc_emails', :data_type_mismatch, data_type: Array),
+                bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
                 bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
     assert_response 400
   end
@@ -506,8 +507,8 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('requester_id', :requester_id_mandatory),
-                bad_request_error_pattern('subject', :missing),
-                bad_request_error_pattern('description', :missing),
+                bad_request_error_pattern('subject', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('priority', :required_and_inclusion, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :required_and_inclusion, list: '2,3,4,5,6,7')])
   end
@@ -515,8 +516,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_datatype_invalid
     post :create, construct_params({}, ticket_params_hash.merge(description: true, description_html: true))
     assert_response 400
-    match_json([bad_request_error_pattern('description', :data_type_mismatch, data_type: 'String'),
-                bad_request_error_pattern('description_html', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('description_html', :data_type_mismatch, data_type: String)])
   end
 
   def test_create_with_existing_user
@@ -624,7 +625,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => 'test')
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
   end
 
   def test_create_with_invalid_empty_attachment
@@ -790,7 +791,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -803,7 +804,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -816,7 +817,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -899,7 +900,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -913,7 +914,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params_hash)
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required_for_closure: false)
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -928,7 +929,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
     assert_response 400
     pattern = []
-    (VALIDATABLE_CUSTOM_FIELDS + ['paragraph', 'date']).each do |custom_field|
+    (VALIDATABLE_CUSTOM_FIELDS).each do |custom_field|
       pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_REQUIRED_PARAMS[custom_field]))
     end
     match_json(pattern)
@@ -1644,7 +1645,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.merge(tags: 'tag1,tag2', custom_fields: [1])
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
                 bad_request_error_pattern('custom_fields', :data_type_mismatch, data_type: 'key/value pair')])
   end
 
@@ -2423,7 +2424,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash
     t = create_ticket
     put :update, construct_params({ id: t.display_id }, tags: [1, 2], custom_fields: {})
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: String)])
     assert_response 400
   end
 
@@ -2466,8 +2467,8 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     post :create, construct_params({},  requester_id: @agent.id)
-    match_json([bad_request_error_pattern('description', :missing),
-                bad_request_error_pattern('subject', :missing),
+    match_json([bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('subject', :required_and_data_type_mismatch, data_type: String),
                 bad_request_error_pattern('group_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('responder_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('product_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
@@ -2514,8 +2515,8 @@ class TicketsControllerTest < ActionController::TestCase
                                                       source: nil,
                                                       type: nil
                                  )
-    match_json([bad_request_error_pattern('description', :"can't be blank"),
-                bad_request_error_pattern('subject', :"can't be blank"),
+    match_json([bad_request_error_pattern('description',  :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('subject',  :data_type_mismatch, data_type: String ),
                 bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),

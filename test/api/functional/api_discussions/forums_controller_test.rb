@@ -173,7 +173,7 @@ module ApiDiscussions
 
     def test_create_validate_presence
       post :create, construct_params({ id: ForumCategory.first.id }, description: 'test')
-      match_json([bad_request_error_pattern('name', :missing_field),
+      match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String),
                   bad_request_error_pattern('forum_visibility', :required_and_inclusion, list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', :required_and_inclusion, list: '1,2,3,4')])
       assert_response 400
@@ -212,7 +212,7 @@ module ApiDiscussions
 
     def test_create_no_params
       post :create, construct_params(id: ForumCategory.first.id)
-      match_json([bad_request_error_pattern('name', :missing_field),
+      match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String),
                   bad_request_error_pattern('forum_visibility', :required_and_inclusion, list: '1,2,3,4'),
                   bad_request_error_pattern('forum_type', :required_and_inclusion, list: '1,2,3,4')])
       assert_response 400
@@ -314,7 +314,7 @@ module ApiDiscussions
       customer = company
       params = { description: 'desc', forum_visibility: 4, forum_type: 1, name: Faker::Name.name, company_ids: "#{customer.id}" }
       post :create, construct_params({ id: ForumCategory.first.id }, params)
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
       assert_response 400
     end
 
@@ -323,7 +323,7 @@ module ApiDiscussions
       forum = f_obj
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: 4, company_ids: "#{customer.id}")
-      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
       assert_response 400
     end
 
@@ -344,8 +344,8 @@ module ApiDiscussions
       forum = create_test_forum(fc_obj)
       customer = company
       put :update, construct_params({ id: forum.id }, forum_visibility: nil, forum_type: nil, forum_category_id: nil, name: nil)
-      pattern = [bad_request_error_pattern('name', :"can't be blank"),
-                 bad_request_error_pattern('forum_category_id', :required_and_numericality),
+      pattern = [bad_request_error_pattern('name', :data_type_mismatch, data_type: String),
+                 bad_request_error_pattern('forum_category_id', :data_type_mismatch, data_type: 'Positive Integer'),
                  bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4'),
                  bad_request_error_pattern('forum_type', :not_included, list: '1,2,3,4')]
       match_json(pattern)
@@ -514,7 +514,7 @@ module ApiDiscussions
     def test_is_following_without_privilege_invalid_user_id
       get :is_following, controller_params({ user_id: ['1'], id: f_obj.id }, false)
       assert_response 400
-      match_json([bad_request_error_pattern('user_id', :invalid_field)])
+      match_json([bad_request_error_pattern('user_id', :data_type_mismatch, data_type: 'Positive Integer')])
     end
 
     def test_is_following_without_privilege_valid

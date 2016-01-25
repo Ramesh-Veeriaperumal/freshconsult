@@ -53,7 +53,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: { company_ids: '1,2' })
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :data_type_mismatch, data_type: Array)])
   end
 
   def test_update_with_empty_conditions
@@ -61,7 +61,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: Array)])
   end
 
   def test_update_with_nil_conditions
@@ -69,7 +69,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = quick_create_sla_policy
     put :update, construct_params({ id: sla_policy.id }, applicable_to: {})
     assert_response 400
-    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('company_ids', :required_and_data_type_mismatch, data_type: Array)])
   end
 
   def test_update_emptying_conditions_with_blank_company_ids

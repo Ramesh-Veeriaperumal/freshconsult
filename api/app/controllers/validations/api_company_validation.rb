@@ -5,7 +5,7 @@ class ApiCompanyValidation < ApiValidation
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: CompanyConstants::DEFAULT_FIELD_VALIDATIONS
                               }
-  validates :name, required: true, data_type: { rules: String }
+  validates :name, data_type: { rules: String, required: true}
   validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
 
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.

@@ -40,13 +40,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Required validator for string field based on condition
   def validate_custom_text(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Required validator for string field based on condition
   def validate_custom_paragraph(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
   end
 
   # Numericality validator for number field
@@ -107,7 +109,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
   end
 
   def validate_custom_phone_number(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 

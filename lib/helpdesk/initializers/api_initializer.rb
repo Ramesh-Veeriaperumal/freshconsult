@@ -73,6 +73,17 @@ if Infra['API_LAYER']
       end
     end
 
+    module ActionController
+      Parameters.class_eval do
+
+      private
+
+        def permitted_scalar?(value)
+          (Parameters::PERMITTED_SCALAR_TYPES | [Array, Hash]).any? {|type| value.is_a?(type)}
+        end
+      end
+    end
+
     # Metal changes has to be included irrespective of whether the layer is API or not. 
     # This is required as in some cases, API and web requests can be served from the same box.
     ActionController::Metal.send(:include, AbstractController::Callbacks )
