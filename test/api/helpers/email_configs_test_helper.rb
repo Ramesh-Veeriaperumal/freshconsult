@@ -1,4 +1,4 @@
-module Helpers::EmailConfigsTestHelper
+module EmailConfigsTestHelper
   include EmailConfigsHelper
 
   def email_config_pattern(expected_output = {}, email_config)

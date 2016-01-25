@@ -10,7 +10,7 @@ class BadRequestErrorTest < ActionView::TestCase
       duplicate_value: ['has already been taken', 'already exists in the selected category', 'Email has already been taken'],
       invalid_value: ["can't be blank", 'is not included in the list', 'invalid_user'],
       invalid_field: ['invalid_field', "Can't update user when timer is running"],
-      datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_data_type_mismatch'],
+      datatype_mismatch: ['is not a number', 'data_type_mismatch', 'must be an integer', 'per_page_data_type_mismatch', 'not_included_datatype'],
       invalid_size: ['invalid_size'],
       incompatible_field: ['incompatible_field'],
       inaccessible_field: ['inaccessible_field']

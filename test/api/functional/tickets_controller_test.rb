@@ -2,7 +2,7 @@
 require_relative '../test_helper'
 
 class TicketsControllerTest < ActionController::TestCase
-  include Helpers::TicketsTestHelper
+  include TicketsTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -224,6 +224,15 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Lead'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9')])
+    assert_response 400
+  end
+
+  def test_create_inclusion_invalid_datatype
+    params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('priority', :not_included_datatype, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :not_included_datatype, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('source', :not_included_datatype, list: '1,2,3,7,8,9')])
     assert_response 400
   end
 
@@ -592,12 +601,13 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_with_attachment
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    params = ticket_params_hash.merge('attachments' => [file, file2])
+    params = ticket_params_hash.merge('attachments' => [file, file2], status: '2', priority: '2', source: '2')
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    @request.env["CONTENT_TYPE"] = "multipart/form-data"
     post :create, construct_params({}, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
-    match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+    match_json(ticket_pattern(params.merge(status: 2, priority: 2, source: 2), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert_response 201
     assert Helpdesk::Ticket.last.attachments.count == 2

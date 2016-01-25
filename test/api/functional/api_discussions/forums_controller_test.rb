@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ForumsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
 
     def f_obj
       Forum.first || create_test_forum(fc)
@@ -66,6 +66,22 @@ module ApiDiscussions
       put :update, construct_params({ id: forum.id }, forum_visibility: 7897)
       assert_response 400
       match_json([bad_request_error_pattern('forum_visibility', :not_included, list: '1,2,3,4')])
+    end
+
+    def test_update_invalid_forum_type_datatype
+      fc = fc_obj
+      forum = create_test_forum(fc)
+      put :update, construct_params({ id: forum.id }, forum_type: '1')
+      assert_response 400
+      match_json([bad_request_error_pattern('forum_type', :not_included_datatype, list: '1,2,3,4')])
+    end
+
+    def test_update_invalid_forum_visibility_datatype
+      fc = fc_obj
+      forum = f_obj
+      put :update, construct_params({ id: forum.id }, forum_visibility: '1')
+      assert_response 400
+      match_json([bad_request_error_pattern('forum_visibility', :not_included_datatype, list: '1,2,3,4')])
     end
 
     def test_update_duplicate_name

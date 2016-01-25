@@ -1,4 +1,4 @@
-module Helpers::TicketFieldsTestHelper
+module TicketFieldsTestHelper
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
 
   def create_custom_field(name, type)

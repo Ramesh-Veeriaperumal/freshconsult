@@ -1,4 +1,4 @@
-module Helpers::UsersTestHelper
+module UsersTestHelper
   include CompanyHelper
   # Patterns
   def contact_pattern(expected_output = {}, ignore_extra_keys = true, contact)

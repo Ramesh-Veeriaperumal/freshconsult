@@ -41,7 +41,7 @@ class TicketValidation < ApiValidation
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments }
 
   # Email related validations
@@ -57,7 +57,7 @@ class TicketValidation < ApiValidation
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.custom_non_dropdown_fields(x) },
+                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param
@@ -143,10 +143,10 @@ class TicketValidation < ApiValidation
 
   def default_field_validations
     {
-      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param } },
-      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
-      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param } },
-      ticket_type: { custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } } },
+      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, discern_datatype: true } },
+      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, discern_datatype: true } },
+      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, discern_datatype: true } },
+      ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },

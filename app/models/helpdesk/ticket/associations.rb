@@ -44,7 +44,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many :tag_uses, :as => :taggable, :class_name => 'Helpdesk::TagUse', :dependent => :destroy
 
-  has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses
+  # Used after_remove & after_add callbacks for updating ticket if there are any modifications to tags collection of ticket.
+  # TODO: after_remove has issues from RAILS 4 onwards.  https://github.com/rails/rails/issues/14365 Need to find a better way to do this.
+  has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses, after_remove: :update_ticket, after_add: :update_ticket
 
   has_many :ticket_issues, :class_name => 'Helpdesk::TicketIssue', :dependent => :destroy
 

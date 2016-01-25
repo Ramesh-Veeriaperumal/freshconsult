@@ -1,4 +1,4 @@
-module Helpers::ContactFieldsTestHelper
+module ContactFieldsTestHelper
   include ContactFieldsHelper
   # Patterns
   def contact_field_pattern_without_choices(expected_output = {}, contact_field)

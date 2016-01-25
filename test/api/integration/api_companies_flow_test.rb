@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::CompaniesTestHelper
+  include CompaniesTestHelper
   include CompanyHelper
   include ContactFieldsHelper
 

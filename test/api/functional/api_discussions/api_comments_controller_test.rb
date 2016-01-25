@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class ApiCommentsControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
 
     def wrap_cname(params)
       { api_comment: params }

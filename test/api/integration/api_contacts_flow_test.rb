@@ -2,7 +2,7 @@ require_relative '../test_helper'
 
 class ApiContactsFlowTest < ActionDispatch::IntegrationTest
   include ContactFieldsHelper
-  include Helpers::UsersTestHelper
+  include UsersTestHelper
 
   def get_user
     @account.all_contacts.where(deleted: false).first
