@@ -286,13 +286,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_post_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
     @write_headers = set_custom_auth_headers(@write_headers, @agent.reload.email, 'tester')
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
@@ -306,13 +304,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_get_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
 
     @headers = set_custom_auth_headers(@headers, @agent.reload.email, 'tes')
     get '/api/discussions/categories', nil, @headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     get '/api/discussions/categories', nil, @headers
     assert_response 401

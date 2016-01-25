@@ -15,18 +15,18 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       v1 = {}
       v2_expected = {
         api_create: 3,
-        api_update: 4,
+        api_update: 5,
         api_show: 3,
         api_index: 2,
         api_destroy: 6,
         api_make_agent: 4,
 
         create: 37,
-        update: 32,
+        update: 38,
         show: 18,
         index: 18,
         destroy: 22,
-        make_agent: 46
+        make_agent: 49
       }
 
       # Assigning in prior so that query invoked as part of contruction of this payload will not be counted.
@@ -45,6 +45,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
 
       id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
       id2 = User.where(helpdesk_agent: false, deleted: false).last.id
+
+      User.update_all({customer_id: nil}, id: [id1, id2])
 
       # update
       v1[:update] = count_queries do
