@@ -13,6 +13,7 @@ class Middleware::GlobalRestriction
     env['CLIENT_IP'] = req.ip()
     if ip && ip.include?(env['CLIENT_IP'])
   		@status, @headers, @response = set_response(req_path)
+      Rails.logger.error "Request from blacklisted ip. IP: #{env['CLIENT_IP']}"
       return [@status, @headers, @response]
     end
   	@status, @headers, @response = @app.call(env)

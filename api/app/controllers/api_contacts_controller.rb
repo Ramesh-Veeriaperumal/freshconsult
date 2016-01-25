@@ -61,15 +61,11 @@ class ApiContactsController < ApiApplicationController
       custom_field.each_with_object({}) { |(name, value), hash| hash[name] = CustomFieldDecorator.display_name(name) } if custom_field
     end
 
-    def load_object
-      @item = scoper.find_by_id(params[:id])
-      head :not_found unless @item
-    end
-
     def after_load_object
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       scope = ContactConstants::DELETED_SCOPE[action_name]
       if !scope.nil? && @item.deleted != scope
+        Rails.logger.debug "Contact id: #{@item.id} with deleted attribute value as #{@item.deleted} for #{params[:action]} action"
         head 404
         return false
       end

@@ -66,7 +66,7 @@ class TimeEntriesController < ApiApplicationController
     def load_parent_ticket
       # Load only non deleted ticket.
       @ticket = current_account.tickets.where(display_id: params[:id], deleted: false, spam: false).first
-      head 404 unless @ticket
+      log_and_render_404 unless @ticket
       @ticket
     end
 

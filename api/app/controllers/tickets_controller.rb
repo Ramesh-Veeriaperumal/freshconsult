@@ -208,7 +208,7 @@ class TicketsController < ApiApplicationController
       action_scopes.each_pair do |scope_attribute, value|
         item_value = @item.send(scope_attribute)
         if item_value != value
-          Rails.logger.error "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
+          Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
           head(404)
           return false
         end
@@ -246,7 +246,7 @@ class TicketsController < ApiApplicationController
 
     def load_object
       @item = scoper.find_by_display_id(params[:id])
-      head(:not_found) unless @item
+      log_and_render_404 unless @item
     end
 
     def load_ticket_status
