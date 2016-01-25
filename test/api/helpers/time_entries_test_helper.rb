@@ -1,4 +1,4 @@
-module Helpers::TimeEntriesTestHelper
+module TimeEntriesTestHelper
   include TicketHelper
   include CompanyHelper
   include GroupHelper

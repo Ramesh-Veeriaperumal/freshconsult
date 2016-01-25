@@ -1,4 +1,4 @@
-class Helpers::TicketsValidationHelper
+class TicketsValidationHelper
   class << self
     def ticket_type_values
       Account.current ? Account.current.ticket_types_from_cache.map(&:value) : []

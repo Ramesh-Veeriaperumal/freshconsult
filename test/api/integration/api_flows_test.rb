@@ -1,8 +1,8 @@
 require_relative '../test_helper'
 
 class ApiFlowsTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
-  include Helpers::TicketFieldsTestHelper
+  include DiscussionsTestHelper
+  include TicketFieldsTestHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers

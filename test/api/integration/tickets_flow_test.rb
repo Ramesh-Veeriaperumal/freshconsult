@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class TicketsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::TicketsTestHelper
+  include TicketsTestHelper
 
   JSON_ROUTES = { '/api/tickets/1/restore' => 'put' }
 

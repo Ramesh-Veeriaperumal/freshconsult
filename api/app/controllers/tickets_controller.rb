@@ -152,7 +152,7 @@ class TicketsController < ApiApplicationController
       params[cname][:manual_dueby] = true if params[cname][:due_by] || params[cname][:fr_due_by]
 
       if params[cname][:custom_fields]
-        checkbox_names = Helpers::TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
+        checkbox_names = TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
         ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
       end
 
@@ -180,7 +180,7 @@ class TicketsController < ApiApplicationController
     def validate_params
       # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
       @ticket_fields = Account.current.ticket_fields_from_cache
-      @name_mapping = Helpers::TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+      @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
       # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
       custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
       field = "ApiTicketConstants::#{action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]

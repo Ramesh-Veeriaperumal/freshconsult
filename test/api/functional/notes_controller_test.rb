@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class NotesControllerTest < ActionController::TestCase
-  include Helpers::NotesTestHelper
+  include NotesTestHelper
   def wrap_cname(params)
     { note: params }
   end

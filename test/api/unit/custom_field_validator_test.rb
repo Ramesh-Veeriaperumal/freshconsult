@@ -7,14 +7,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute3, :attribute4, :error_options, :closed_status, :allow_string_param
     validates :attribute3, :attribute4, custom_field:  { attribute3: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                          attribute4: {
-                                                           validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_data_type_validatable_custom_fields },
+                                                           validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_data_type_validatable_custom_fields },
                                                            required_based_on_status: proc { |x| x.required_for_closure? },
                                                            required_attribute: :required
                                                          }
@@ -34,14 +34,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute5, :attribute6, :error_options, :closed_status, :allow_string_param
     validates :attribute5, :attribute6, custom_field:  { attribute5: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_closure_choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_closure_choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                          attribute6: {
-                                                           validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_closure_data_type_validatable_custom_fields },
+                                                           validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_closure_data_type_validatable_custom_fields },
                                                            required_based_on_status: proc { |x| x.required_for_closure? },
                                                            required_attribute: :required
                                                          }
@@ -62,14 +62,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                                                                      attribute2: {
-                                                                                                       validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.data_type_validatable_custom_fields },
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.data_type_validatable_custom_fields },
                                                                                                        required_based_on_status: proc { |x| x.required_for_closure? },
                                                                                                        required_attribute: :required
                                                                                                      }
@@ -90,7 +90,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, custom_field: { attribute1: {
-      validatable_custom_fields: [Helpers::CustomFieldValidatorTestHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
+      validatable_custom_fields: [CustomFieldValidatorTestHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     }
@@ -237,7 +237,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
+    CustomFieldValidatorTestHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
   end
