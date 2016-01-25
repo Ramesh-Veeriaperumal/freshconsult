@@ -1,4 +1,4 @@
-json.cache! CacheLib.key(@item, params) do # ticket caching
+json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v2], params) do # ticket caching
   json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
   json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
   json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)

@@ -29,10 +29,8 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :logging_details
   include AuthenticationSystem
   include HelpdeskSystem
-  include ControllerLogger
   include SubscriptionSystem
   # App specific Before filters Ends
 
@@ -136,7 +134,7 @@ class ApiApplicationController < MetalApiController
       # We are rescuing the exception without validating in order to avoid manipulations in every request to validate a rare scenario.
       if e.message.starts_with?('invalid offset') && params[:page].respond_to?(:to_i) && @per_page && ((params[:page].to_i - 1) * (@per_page + 1)) > ApiConstants::PAGE_MAX
         # raised by will_paginate gem
-        render_errors([[:page, :page_invalid_offset]], page: { max_value: ((ApiConstants::PAGE_MAX / (@per_page + 1)) + 1) })
+        render_errors([[:page, :max_limit_page]])
       else
         # unexpected exception
         notify_new_relic_agent(e, description: 'Invalid Offset Error.')

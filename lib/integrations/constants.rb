@@ -32,10 +32,14 @@ module Integrations::Constants
     :github => "github",
     :ilos => "ilos",
     :magento => "magento",
-    :slack_v2 => "slack_v2"
+    :slack_v2 => "slack_v2",
+    :infusionsoft => "infusionsoft",
+    :pivotal_tracker => "pivotal_tracker",
+    :twitter => "twitter",
+    :facebook => "facebook"
   }
 
-  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks]
+  CRM_APPS= [:sugarcrm, :salesforce, :batchbook, :highrise, :nimble, :zohocrm, :capsule_crm, :dynamicscrm, :quickbooks, :freshbooks, :infusionsoft]
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,

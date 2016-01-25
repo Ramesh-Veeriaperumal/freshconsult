@@ -76,6 +76,8 @@ class User < ActiveRecord::Base
     c.password_expiry_timeout = { :if => :password_expiry_enabled?, 
                                   :duration => :password_expiry_duration}
 
+    c.disable_perishable_token_maintenance(true)
+
     # enable for Phase 2
     # c.periodic_logged_in_timeout = { :if => :periodic_login_enabled?, 
     #                                  :duration => :periodic_login_duration}
@@ -694,6 +696,7 @@ class User < ActiveRecord::Base
       self.company = nil
       self.address = nil
       self.role_ids = [account.roles.find_by_name("Agent").id] 
+      self.tags.clear
       agent = build_agent()
       agent.occasional = !!args[:occasional]
       self.set_password_expiry({:password_expiry_date => 

@@ -10,19 +10,19 @@
 	<tr>
     	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.ticket').html_safe %> </b> </td>
     	<td> : </td>
-    	<td> 
-            <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host, :protocol => @ticket.url_protocol)%>'> 
-                #<%=@ticket.display_id%> <%=@ticket.subject%> 
-            </a> 
-        </td>
+    	<td>
+            <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host, :protocol => @ticket.url_protocol)%>'>
+                #<%=@ticket.display_id%> <%=@ticket.subject%>
+            </a>
+      </td>
     </tr>
     <tr>
     	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.requester') %> </b> </td>
     	<td> : </td>
-    	<td> 
-            <%=@ticket.requester.name%>  
+    	<td>
+            <%=@ticket.requester.name%>
             &lt;<%=@ticket.requester.email unless @ticket.requester.email.blank? %>&gt;
-        </td> <br /><br />
+      </td>
     </tr>
 </table>
 
@@ -32,7 +32,7 @@
     ---------- <%= t('helpdesk.tickets.add_watcher.mail.agent_response').html_safe %> ---------- <br /> <br />
 <% end %>
 
-<%= @note.body_html.html_safe%> <br /> <br /> 
+<%= @note.body_html.html_safe%> <br /> <br />
 ---------- ---------- ----------<br /><br />
 
 

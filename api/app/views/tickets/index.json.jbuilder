@@ -1,5 +1,5 @@
 json.array! @items do |tkt|
-  json.cache! CacheLib.compound_key(tkt, tkt.schema_less_ticket, params) do
+  json.cache! CacheLib.compound_key(tkt, tkt.schema_less_ticket, ApiConstants::CACHE_VERSION[:v2], params) do
     json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
     json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)
     json.set! :reply_cc_emails, tkt.cc_email.try(:[], :reply_cc)

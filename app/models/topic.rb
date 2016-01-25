@@ -454,7 +454,7 @@ class Topic < ActiveRecord::Base
   end
 
   def mark_post_as_unanswered
-    posts.answered_posts.map(&:toggle_answer) if forum_was.questions? && !forum.questions?
+    posts.answered_posts.map(&:toggle_answer) if forum && forum_was.questions? && !forum.questions?
   end
 
   def forum_was

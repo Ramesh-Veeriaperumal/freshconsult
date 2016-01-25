@@ -93,6 +93,7 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
+    config.middleware.insert_after 'Middleware::TrustedIp', 'Middleware::MultilingualSolutionRouter'
     config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
     config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
       # during the ddos attack uncomment the below line
@@ -157,7 +158,7 @@ module Helpkit
 
       oauth_keys = Integrations::OauthHelper::get_oauth_keys
       oauth_keys.map { |oauth_provider, key_hash|
-        next if ['github', 'salesforce', 'shopify', 'slack'].include?(oauth_provider)
+        next if ['github', 'salesforce', 'shopify', 'slack', 'infusionsoft'].include?(oauth_provider)
       if key_hash["options"].blank?
         provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
       elsif key_hash["options"]["name"].blank?

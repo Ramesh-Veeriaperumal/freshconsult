@@ -1,5 +1,5 @@
 json.array! @items do |api_company|
-  json.cache! CacheLib.key(api_company, params) do
+  json.cache! CacheLib.compound_key(api_company, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! api_company, :id, :name, :description, :note, :domains
     json.partial! 'shared/utc_date_format', item: api_company
   end

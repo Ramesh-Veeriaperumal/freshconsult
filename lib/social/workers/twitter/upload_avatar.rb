@@ -34,7 +34,7 @@ class Social::Workers::Twitter::UploadAvatar
   def self.avatar_sandbox
     begin
       hash = yield
-      file = RemoteFile.new(hash[:profile_image_url])
+      file = RemoteFile.new(hash[:profile_image_url]).fetch
       if file
         avatar = hash[:item].build_avatar({:content => file })
         avatar.save

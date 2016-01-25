@@ -1,5 +1,5 @@
 json.array! @items do |contact_field|
-  json.cache! CacheLib.compound_key(contact_field, contact_field.choices, params) do
+  json.cache! CacheLib.compound_key(contact_field, contact_field.choices, ApiConstants::CACHE_VERSION[:v2], params) do
     json.extract! contact_field, :editable_in_signup, :id, :label, :name, :position
 
     json.set! :type, contact_field.field_type

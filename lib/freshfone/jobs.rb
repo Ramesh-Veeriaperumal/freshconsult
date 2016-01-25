@@ -100,7 +100,7 @@ module Freshfone::Jobs
 
 			def self.download_data
 				begin
-					@data = RemoteFile.new(@file_url,'','',@file_name)
+					@data = RemoteFile.new(@file_url,'','',@file_name).fetch
 				rescue OpenURI::HTTPError => e
 					Rails.logger.error "Error in in Call Recording attachment Job Account Id: #{@account.id} Call id: #{@call.id}\n Exception: #{e.message}\n Stacktrace: #{e.backtrace.join('\n\t')}"
 					raise e if e.io.status.present? && e.io.status[0] != '404' # preventing retry of recordings which are not found

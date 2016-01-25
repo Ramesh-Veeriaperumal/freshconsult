@@ -30,9 +30,12 @@ class HttpRequestProxyController < ApplicationController
           params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
         elsif params[:app_name] == APP_NAMES[:shopify]
           params[:custom_auth_header] = {'X-Shopify-Access-Token' => "#{installed_app.configs[:inputs]['oauth_token']}"}
-        elsif params[:app_name] == "harvest"
+        elsif params[:app_name] == APP_NAMES[:harvest]
           harvest_auth(installed_app)
-        elsif params[:app_name] == "pivotal_tracker"
+        elsif params[:app_name] == APP_NAMES[:infusionsoft]
+          params[:rest_url] += "#{installed_app.configs[:inputs]['oauth_token']}" 
+
+        elsif params[:app_name] == APP_NAMES[:pivotal_tracker]
           params[:custom_auth_header] = {"X-Trackertoken" => "#{installed_app.configs[:inputs]['api_key']}" }
         elsif params[:app_name] == APP_NAMES[:seoshop]
           params[:username] = "#{installed_app.configs[:inputs]['api_key']}"

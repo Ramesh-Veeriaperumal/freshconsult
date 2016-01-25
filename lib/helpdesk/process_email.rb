@@ -80,7 +80,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     end
   end
-  
+
   # ITIL Related Methods starts here
 
   def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
@@ -120,7 +120,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def encoded_display_id_regex account
     Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
   end
-  
+
   # ITIL Related Methods ends here
 
   def create_article(account, from_email, to_email)
@@ -147,7 +147,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     Helpdesk::KbaseArticles.create_article_from_email(article_params)
   end
-  
+
   private
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
@@ -177,7 +177,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
       end
     end
-    
+
     def parse_email(email_text)
       
       parsed_email = parse_email_text(email_text)
@@ -203,7 +203,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       reply_to_email
     end
-    
+
     def orig_email_from_text #To process mails fwd'ed from agents
       @orig_email_user ||= begin
         content = params[:text] || cleansed_html
@@ -219,7 +219,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         {}
       end
     end
-    
+
     def parse_to_email
       envelope = params[:envelope]
       unless envelope.nil?
@@ -246,7 +246,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     def valid_from_email? f_email, reply_to_feature
       (f_email[:email] =~ /(noreply)|(no-reply)/i or f_email[:email].blank?) and !reply_to_feature and parse_reply_to_email
     end
-    
+
     def parse_cc_email
       cc_array = []
       unless params[:cc].nil?
@@ -390,7 +390,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket.spam = true if ticket.requester.deleted?
       ticket  
     end
-  
+
     def check_for_chat_scources(ticket,from_email)
       ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
@@ -400,7 +400,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       ticket
     end
-    
+
     def check_for_auto_responders(model)
       headers = params[:headers]
       if(!headers.blank? && ((headers =~ /Auto-Submitted: auto-(.)+/i) || (headers =~ /Precedence: auto_reply/) || (headers =~ /Precedence: (bulk|junk)/i)))
@@ -480,7 +480,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids)),
+        :private => (
+           (from_fwd_recipients or reply_to_private_note?(all_message_ids)) or 
+           (Account.find_by_id(ticket.account_id).features?(:threading_without_user_check) && reply_to_forward(in_reply_to))
+          ),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -499,7 +502,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if ticket.agent_performed?(user)
       check_for_auto_responders(note)
       check_support_emails_from(ticket.account, note, user, from_email)
-      
+
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket, note)
         if (ticket.agent_performed?(user) && !user.deleted?)
@@ -514,7 +517,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      
+
       # Creating attachments without attachable info
       # Hitting S3 outside create-note transaction
       self.class.trace_execution_scoped(['Custom/Sendgrid/note_attachments']) do
@@ -544,7 +547,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
       (from_email[:email] == ticket.sender_email) or
-      belong_to_same_company?(ticket,user))
+      belong_to_same_company?(ticket,user) or
+      Account.find_by_id(ticket.account_id).features?(:threading_without_user_check))
     end
     
     def belong_to_same_company?(ticket,user)
@@ -556,7 +560,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
                                              Helpdesk::HTMLSanitizer.plain(params[:html])
                                             }
     end
-    
+
     def get_user(account, from_email, email_config)
       user = existing_user(account, from_email)
       unless user
@@ -791,14 +795,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       html.gsub!("&amp;amp;", "&amp;")
       html
     end
-    
+
   def add_ticket_tags(tags_to_be_added, ticket)
     tags_to_be_added.each do |tag|
       ticket.tags << tag
     end
   rescue Exception => e
     NewRelic::Agent.notice_error(e) 
-  end 
+  end
 
   def check_primary(ticket,account)
     parent_ticket_id = ticket.schema_less_ticket.parent_ticket
@@ -816,7 +820,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     else
       return ticket.parent
     end
-  end   
+  end
 
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new

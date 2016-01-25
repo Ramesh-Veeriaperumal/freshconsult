@@ -4,8 +4,8 @@ class HelpdeskReports::Formatter::Ticket
   
   def initialize data, args
     @result = data
+    @args   = args
     @report_type = args[:report_type]
-    @args = args
   end
   
   def format

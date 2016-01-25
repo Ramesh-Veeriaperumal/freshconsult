@@ -123,7 +123,7 @@ class Support::Solutions::ArticlesController < SupportController
 
     def adapt_attachments
       return true unless draft_preview?
-      flash[:notice] = t('solution.articles.draft.portal_preview_msg')
+      flash[:notice] = t('solution.articles.draft.portal_preview_msg_v2')
       @article[:current_attachments] = active_attachments(:attachments)
       @article[:current_cloud_files] = active_attachments(:cloud_files)
     end

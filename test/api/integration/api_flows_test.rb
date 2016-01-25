@@ -772,7 +772,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
     assert_response 400
 
     get 'api/discussions/categories?page=9223372036854775808&per_page=100', nil, @headers
-    match_json([bad_request_error_pattern('page', :page_invalid_offset, max_value: 91_320_515_216_383_919)])
+    match_json([bad_request_error_pattern('page', :max_limit_page)])
     assert_response 400
 
     get 'api/discussions/categories?page=91320515216383919&per_page=100', nil, @headers

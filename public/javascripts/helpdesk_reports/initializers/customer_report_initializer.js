@@ -25,11 +25,11 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
 
             //Redundant Check Reason : Handling straight fwd & templates type queries
             if(jQuery.isEmptyObject(hash)){  
-                var msg = 'No data to display';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ["customer_report_main"];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }else if(!jQuery.isEmptyObject(hash['error'])){
-                var msg = 'Something went wrong, please try again';
+                var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                 var div = ["customer_report_main"];
                 HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
             }else  {
@@ -39,12 +39,12 @@ HelpdeskReports.ChartsInitializer.CustomerReport = (function () {
                     });
                     jQuery('#customer_report_main').append(tmpl);
                     if(jQuery.isEmptyObject(hash[metrics[i]])){
-                        var msg = 'No data to display';
+                        var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [metrics[i] + '_container'];
                         jQuery("[data-chart='"+ metrics[i] +"']").hide();
                         HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
                     }else if(!jQuery.isEmptyObject(hash[metrics[i]]['error'])){
-                        var msg = 'Something went wrong, please try again';
+                        var msg = I18n.t('helpdesk_reports.no_data_to_display_msg');
                         var div = [metrics[i] + '_container'];
                         jQuery("[data-chart='"+ metrics[i] +"']").hide();
                         HelpdeskReports.CoreUtil.populateEmptyChart(div, msg);
