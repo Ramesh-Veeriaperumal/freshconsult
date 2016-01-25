@@ -10,8 +10,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
 
     # Include string representation of values also in the list if ignore_string is true.
     # When URL params or multipart/form-data request params are validated, ignore_string will be true.
-    allow_string = !options[:ignore_string].nil? && record.send(options[:ignore_string])
-    inclusion_list = (inclusion_list | inclusion_list.map(&:to_s)) if allow_string
+    inclusion_list = (inclusion_list | inclusion_list.map(&:to_s)) if !options[:ignore_string].nil? && record.send(options[:ignore_string])
 
     # In the case of dependant fields it is possible to have choices as empty array. Hence, the below check is included.
     record.errors[attribute] << :should_be_blank if value.present? && inclusion_list.empty?
@@ -20,7 +19,7 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
 
       # message should be different if the attribute is required but not defined.
       message = options[:message]
-      message ||= required_attribute_not_defined?(record, attribute, value) ? :required_and_inclusion : error_msg(allow_string, inclusion_list, value)
+      message ||= required_attribute_not_defined?(record, attribute, value) ? :required_and_inclusion : :not_included
       record.errors[attribute] << message
 
       # In order to give the permissible list in the error message, below check is done.
@@ -28,11 +27,6 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
         (record.error_options ||= {}).merge!(attribute => { list: inclusion_list.map(&:to_s).uniq.join(',') })
       end
     end
-  end
-
-  def error_msg(allow_string, inclusion_list, value)
-    discern_datatype = options[:discern_datatype] && !allow_string && inclusion_list.any? {|x| x.to_s == value}
-    discern_datatype ? :not_included_datatype : :not_included
   end
 
   def required_attribute_not_defined?(record, attribute, _value)

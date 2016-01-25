@@ -24,8 +24,8 @@ class ForumValidationsTest < ActionView::TestCase
     forum = ApiDiscussions::ForumValidation.new(controller_params, item)
     refute forum.valid?
     error = forum.errors.full_messages
-    assert error.include?('Forum visibility not_included_datatype')
-    assert error.include?('Forum type not_included_datatype')
+    assert error.include?('Forum visibility not_included')
+    assert error.include?('Forum type not_included')
     assert forum.errors[:company_ids].blank?
 
     controller_params = { 'forum_type' => 'x', 'forum_visibility' => 'x', 'company_ids' => ['test'] }

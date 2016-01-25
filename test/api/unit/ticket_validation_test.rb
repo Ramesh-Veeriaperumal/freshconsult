@@ -117,25 +117,12 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-  def test_status_priority_source_invalid
+  def test_status_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { status: true, priority: true, source: '3', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    controller_params = { status: true, status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
-    errors = ticket.errors.full_messages
-    assert errors.include?('Status not_included')
-    assert errors.include?('Priority not_included')
-    assert errors.include?('Source not_included_datatype')
-
-    controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }    
-    ticket = TicketValidation.new(controller_params, item)
-    refute ticket.valid?
-    errors = ticket.errors.full_messages
-    assert errors.include?('Status not_included_datatype')
-    assert errors.include?('Priority not_included_datatype')
-    assert errors.include?('Source not_included')
-  ensure
     Account.unstub(:current)
   end
 
