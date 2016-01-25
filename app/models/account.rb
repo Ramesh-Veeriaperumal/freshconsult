@@ -25,7 +25,6 @@ class Account < ActiveRecord::Base
   concerned_with :associations, :constants, :validations, :callbacks, :rabbitmq, :solution_associations, :multilingual
 
   include CustomerDeprecationMethods
-  include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
   
   xss_sanitize  :only => [:name,:helpdesk_name], :plain_sanitizer => [:name,:helpdesk_name]
   

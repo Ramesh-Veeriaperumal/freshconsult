@@ -10,29 +10,27 @@ class Solution::Category < ActiveRecord::Base
   include Cache::Memcache::Mobihelp::Solution
   include Mobihelp::AppSolutionsUtils
   include Solution::MetaMethods
-    
+
   self.table_name =  "solution_categories"
-  
+
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id]
-  after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
   
+  after_update :clear_cache, :if => Proc.new { |c| c.name_changed? && c.primary? }
   after_create :add_activity_new
-
   after_save    :set_mobihelp_solution_updated_time
   before_destroy :set_mobihelp_app_updated_time, :add_activity_delete
 
-  concerned_with :associations, :meta_associations
+  concerned_with :associations
 
   attr_accessible :name, :description, :import_id, :is_default, :portal_ids, :position
-  
+
   scope :customer_categories, {:conditions => {:is_default=>false}}
 
   alias_method :parent, :solution_category_meta
 
   include Solution::LanguageMethods
-  # include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 
   def to_s
     name
@@ -43,34 +41,27 @@ class Solution::Category < ActiveRecord::Base
      options[:indent] ||= 2
       xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root]) 
+      super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root])
   end
-  
+
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
     super options
   end
 
   def self.folder_names(account)
-    account.solution_categories.map { |category| 
+    account.solution_categories.map { |category|
       [ category.name, category.folders.map {|folder| [folder.id, folder.name] } ]
     }
   end
-  
+
   def self.get_default_categories_visibility(user)
     user.customer? ? {:is_default=>false} : {}
   end
-  
+
   def to_liquid
     @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
-
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def portal_ids_with_meta
-    account.launched?(:meta_read) ? portals_through_metum_ids : portal_ids_without_meta
-  end
-
-  alias_method_chain :portal_ids, :meta
 
   def primary?
     (language_id == Language.for_current_account.id)
@@ -83,11 +74,11 @@ class Solution::Category < ActiveRecord::Base
   private 
 
     def set_mobihelp_solution_updated_time
-      category_obj.update_mh_solutions_category_time
+      self.update_mh_solutions_category_time
     end
 
     def set_mobihelp_app_updated_time
-      category_obj.update_mh_app_time
+      self.update_mh_app_time
     end
 
     def add_activity_delete
@@ -115,13 +106,7 @@ class Solution::Category < ActiveRecord::Base
       )
     end
 
-    def category_obj
-      self.reload
-      Account.current.launched?(:meta_read) ? self.solution_category_meta : self
-    end
- 
     def clear_cache(obj=nil)
       account.clear_solution_categories_from_cache
     end
-
 end

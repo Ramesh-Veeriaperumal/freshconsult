@@ -22,7 +22,6 @@ RSpec.describe Solution::ArticlesController do
     post :create, params.merge!(:category_id=>@solution_category_meta.id,:folder_id=>@solution_folder_meta.id, 
       :tags => {:name => "new"},:format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
-
     expect(response.status).to be_eql(201)
     expect(assert_array(result["article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS)).to be_truthy
     expect(result["article"]["status"]).to be_eql(2)
@@ -51,7 +50,6 @@ RSpec.describe Solution::ArticlesController do
     put :update, params.merge!(:category_id=>@solution_category_meta.id,:folder_id=>@solution_folder_meta.id,:id=>@test_article_meta.id,
       :tags => {:name => "new"}, :format => 'json'), :content_type => 'application/json'
     result = parse_json(response)
-
     expect(response.status).to be_eql(200)
     expect(assert_array(result["article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS)).to be_truthy
     expect(result["article"]["status"]).to be_eql(2)

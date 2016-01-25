@@ -275,5 +275,4 @@ module Cache::Memcache::Account
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
     end
-
 end

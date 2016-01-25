@@ -376,12 +376,10 @@ describe Solution::ArticlesController do
 
   it "should check the language utility methods" do
     test_language_article = create_article({:folder_id => @test_folder_meta.id}).primary_article
-
     lang = Language.find_by_code("fr")
     old_language_id = test_language_article.language_id
     test_language_article.language_id = Language.find_by_code("fr").id
     test_language_article.save
-
     test_language_article.reload
     test_language_article.language_id.should be_eql(lang.id)
     test_language_article.language.name.should be_eql(lang.name)
@@ -450,12 +448,12 @@ describe Solution::ArticlesController do
     test_language_article = @test_article_meta = create_article({:folder_id => folder_meta.id}).primary_article
     test_language_article.reload
     folder_meta = test_language_article.solution_folder_meta
-    indexed_json = JSON.parse(test_language_article.to_indexed_json)
-    indexed_json["solution/article"]["language_id"].should be_eql(test_language_article.language_id)
-    indexed_json["solution/article"]["folder_id"].should be_eql(folder_meta.id)
-    indexed_json["solution/article"]["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
-    indexed_json["solution/article"]["folder"]["visibility"].should be_eql(folder_meta.visibility)
-    indexed_json["solution/article"]["folder"]["customer_folders"].each_with_index do |cf,i|
+    indexed_json = JSON.parse(test_language_article.to_indexed_json)["solution/article"]
+    indexed_json["language_id"].should be_eql(test_language_article.language_id)
+    indexed_json["folder_id"].should be_eql(folder_meta.id)
+    indexed_json["folder"]["category_id"].should be_eql(folder_meta.solution_category_meta_id)
+    indexed_json["folder"]["visibility"].should be_eql(folder_meta.visibility)
+    indexed_json["folder"]["customer_folders"].each_with_index do |cf,i|
       cf["customer_id"].should be_eql(folder_meta.customer_folders[i].customer_id)
     end
   end

@@ -218,15 +218,10 @@ class Solution::CategoriesController < ApplicationController
 
     def all_drafts
       current_account.solution_articles.all_drafts.includes(
-        {:folder_through_meta => {:category_through_meta => :portals_through_meta}})
+        {:folder => {:category => :portals}})
     end
 
     def load_portal_solution_category_ids
       @portal_solution_category_ids = Hash[@portal.portal_solution_categories.map{|psc| [psc.solution_category_meta_id , psc.id] }]
-    end
-
-    #META-READ-HACK!!
-    def meta_folder_scope
-      current_account.launched?(:meta_read) ?  :folders_through_meta : :folders
     end
 end

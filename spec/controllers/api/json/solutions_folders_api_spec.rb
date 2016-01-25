@@ -42,7 +42,6 @@ RSpec.describe Solution::FoldersController do
       :folder_id => @test_folder.id, :user_id => @agent.id, :status => "2", :art_type => "1" } )
     get :show, { :category_id => @solution_category_meta.id, :id=>@test_folder.id, :format => 'json'}
     result = parse_json(response)
-
     expect(response.status).to be_eql(200)
     expect(assert_array(result["folder"].keys-["articles"], APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_truthy
     expect(assert_array(result["folder"]["articles"].first.keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS-["tags", "folder"])).to be_truthy

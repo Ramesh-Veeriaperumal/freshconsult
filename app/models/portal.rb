@@ -173,11 +173,6 @@ class Portal < ActiveRecord::Base
     self.ssl_enabled? ? 'https' : 'http'
   end
 
-  ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-  def solution_category_ids
-    account.launched?(:meta_read) ? solution_categories_through_metum_ids : super
-  end
-
   def full_url
     main_portal ? "#{Account.current.full_url}/support/home" : "#{url_protocol}://#{portal_url}/support/home"
   end
@@ -295,7 +290,7 @@ class Portal < ActiveRecord::Base
     
     def add_default_solution_category
       # Remove this method when new solution UI goes out
-      return if account.solution_categories_without_association.empty?
+      return if account.solution_categories.empty?
       default_category = account.solution_categories.find_by_is_default(true)
       self.solution_category_ids = self.solution_category_ids | [default_category.id] if default_category.present?
     end

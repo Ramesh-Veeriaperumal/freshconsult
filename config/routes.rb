@@ -2249,9 +2249,32 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    
     match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
     
     match '/articles/:id/' => 'solutions/articles#show'
+    
+    namespace :multilingual do
+      resources :solutions, :only => [:index, :show]
+
+      namespace :solutions do
+        match '/folders/:id/page/:page' => 'folders#show'
+        resources :folders, :only => :show
+
+        resources :articles, :only => [:show, :destroy, :index] do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            post :create_ticket
+            get :hit
+          end
+        end
+      end
+      
+      match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
+      
+      match '/articles/:id/' => 'solutions/articles#show'
+    end
 
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
@@ -2363,6 +2386,21 @@ Helpkit::Application.routes.draw do
     resources :solutions do
       collection do
         get :articles
+      end
+    end
+
+    namespace :multilingual do
+      resources :articles do 
+        member do
+          put :thumbs_up
+          put :thumbs_down
+        end
+      end
+      
+      resources :solutions do
+        collection do
+          get :articles
+        end
       end
     end
 

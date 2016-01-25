@@ -7,6 +7,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	include Mobihelp::AppSolutionsUtils
 	include Solution::LanguageAssociations
+	include Solution::Constants
+	include Solution::ApiDelegator
 
 	belongs_to_account
 
@@ -18,7 +20,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	has_many :solution_article_meta, :class_name => "Solution::ArticleMeta", :through => :solution_folder_meta
 
-	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory', 
+	has_many :portal_solution_categories, :class_name => 'PortalSolutionCategory',
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :delete_all
 
@@ -26,15 +28,27 @@ class Solution::CategoryMeta < ActiveRecord::Base
     :after_add => :clear_cache,
     :after_remove => :clear_cache
 
-	has_many :mobihelp_app_solutions, 
-		:class_name => 'Mobihelp::AppSolution', 
+	has_many :mobihelp_app_solutions,
+		:class_name => 'Mobihelp::AppSolution',
 		:foreign_key => :solution_category_meta_id,
 		:dependent => :destroy
-		
-	has_many :mobihelp_apps, 
-		:class_name => 'Mobihelp::App', 
+
+	has_many :mobihelp_apps,
+		:class_name => 'Mobihelp::App',
 		:through => :mobihelp_app_solutions,
 		:source => :app
+
+	has_many :solution_folder_meta,
+		:class_name => "Solution::FolderMeta",
+		:foreign_key => :solution_category_meta_id,
+		:order => "`solution_folder_meta`.position",
+		:dependent => :destroy
+
+	has_many :public_folder_meta,
+		:class_name =>'Solution::FolderMeta',
+		:foreign_key => :solution_category_meta_id,
+		:order => "`solution_folder_meta`.position",
+		:conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
@@ -46,11 +60,17 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	after_destroy :clear_cache
 
 	alias_method :children, :solution_categories
+	
+	scope :customer_categories, {:conditions => {:is_default=>false}}
 
 	def as_cache
 	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
 	    res.merge({ attribute => self.send(attribute) })
 	  end).with_indifferent_access
+	end
+	
+	def to_liquid
+		@solution_category_meta_drop ||= (Solution::CategoryMetaDrop.new self)
 	end
 
 	private

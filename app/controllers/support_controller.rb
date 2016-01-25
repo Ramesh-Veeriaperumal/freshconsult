@@ -4,6 +4,11 @@ class SupportController < ApplicationController
   layout :resolve_layout
   before_filter :portal_context
   before_filter :set_language
+  around_filter :run_on_slave , :only => [:index,:show],
+    :if => proc {|controller| 
+      path = controller.controller_path
+      path.include?("/solutions") || path.include?("/home")
+    }
   
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -94,6 +99,10 @@ class SupportController < ApplicationController
     end
 
   private
+  
+    def run_on_slave(&block)
+      Sharding.run_on_slave(&block)
+    end
 
     def portal_context
       @portal ||= current_portal
