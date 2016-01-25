@@ -1,13 +1,13 @@
 <% if (HelpdeskReports.Constants.Glance.percentage_metrics.indexOf(HelpdeskReports.locals.active_metric) > -1) { %>
 	<div class="view-all-tickets compliant" data-ticket="view_all" data-sla="false">
-		View all compliant tickets
+		<%= I18n.t('helpdesk_reports.view_all_compliant_tickets') %>
 	</div>
 
 	<div class="view-all-tickets violated" data-ticket="view_all" data-sla="true">
-		View all violated tickets
+		<%= I18n.t('helpdesk_reports.view_all_violated_tickets') %>
 	</div>	
 <% } else { %>
 	<div class="view-all-tickets compliant" data-ticket="view_all">
-		View all tickets
+		<%= I18n.t('helpdesk_reports.view_all_tickets') %>
 	</div>
 <% } %>

@@ -7,6 +7,7 @@
 			</div>
 		</div>
 		<div class="glance-chart">
+			<div class="active-metric-title"></div>
 			<div class="solution-article">
 				 <a target="_blank" id="solution_link" href=""><%=t('helpdesk_reports.solution_article_text') %></a>
 			</div>
@@ -35,6 +36,7 @@
 	    //Set the solution url for the active metric
 	    var constants = HelpdeskReports.Constants.Glance;
 	    var default_metric = constants.default_metric;
-        jQuery(".glance-chart #solution_link").attr('href',constants.metrics[default_metric].solution_url);
+        jQuery(".glance-chart #solution_link").attr('href',constants.metrics[HelpdeskReports.locals.active_metric].solution_url);
+        jQuery(".glance-chart .active-metric-title").html(constants.metrics[HelpdeskReports.locals.active_metric].name);
 	});
 </script>

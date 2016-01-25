@@ -112,7 +112,7 @@ class TicketsController < ApiApplicationController
     def validate_filter_params
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
-      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+      render_query_param_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
     def scoper
@@ -128,7 +128,7 @@ class TicketsController < ApiApplicationController
     end
 
     def sanitize_params
-      prepare_array_fields [:cc_emails, :tags, :attachments]
+      prepare_array_fields [:cc_emails, :attachments] # Tags not included as it requires more manipulation.
 
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  params[cname][:cc_emails]
@@ -152,12 +152,17 @@ class TicketsController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
 
-      @tags = Array.wrap(params[cname][:tags]).map! { |x| x.to_s.strip } if params[cname].key?(:tags)
-      params[cname][:tags] = construct_tags(@tags) if @tags
+      # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
+      prepare_tags
 
       # build ticket body attributes from description and description_html
       build_ticket_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
+    end
+
+    def prepare_tags
+      tags = Array.wrap(params[cname][:tags]).map! { |x| RailsFullSanitizer.sanitize(x.to_s.strip) }.uniq(&:downcase).reject(&:blank?) if create? || params[cname].key?(:tags)
+      params[cname][:tags] = construct_tags(tags) if tags
     end
 
     def validate_params

@@ -174,15 +174,6 @@ class ApplicationController < ActionController::Base
       response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def append_info_to_payload(payload)
-    super
-    payload[:domain] = request.env['HTTP_HOST']
-    payload[:ip] = request.env['CLIENT_IP']
-    payload[:url] = request.url
-    payload[:server_ip] = request.env['SERVER_ADDR']
-    payload[:account_id] = Account.current ? Account.current.id : ""
-  end
-
   protected
     # Possible dead code
     def silence_logging

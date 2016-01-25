@@ -15,7 +15,7 @@ class TicketValidation < ApiValidation
                                 field_validations: proc { |x| x.default_field_validations }
                               }
 
-  validates :requester_id, :email_config_id, custom_numericality: { allow_nil: true, ignore_string: :allow_string_param  }
+  validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
   validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
@@ -147,9 +147,9 @@ class TicketValidation < ApiValidation
       priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
       source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param } },
       ticket_type: { custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } } },
-      group: { custom_numericality: { ignore_string: :allow_string_param } },
-      agent: { custom_numericality: { ignore_string: :allow_string_param } },
-      product: { custom_numericality: { ignore_string: :allow_string_param } },
+      group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
+      agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
+      product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       subject: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
     }
   end

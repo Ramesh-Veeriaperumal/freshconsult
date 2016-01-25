@@ -197,7 +197,7 @@ end
         if img_tag['src'].start_with?("/attachments")
           image_url = "#{params[:zendesk][:url]}#{img_tag['src']}"
           begin
-            file = RemoteFile.new(image_url, username, password)
+            file = RemoteFile.new(image_url, username, password).fetch
             attachment = @current_account.attachments.build(
                                                           :content => file, 
                                                           :description => "public",

@@ -48,14 +48,26 @@
           <li class="muted"> <%= t('suspended_since', :days => distance_of_time_in_words(@subscription.next_renewal_at, Time.now.to_s) ) %> </li>
         <% end %>
         <li class="muted"> <%= formated_date(@subscription.next_renewal_at, {:format => :short_day_with_week, :include_year => true}) %> </li>
+        <%if !@offline_subscription and @invoice%>
+          <li class ="mt10">
+            View Invoices 
+            <%=link_to "Latest", "","rel" => "freshdialog", "data-target" => "#invoice-modal-0", "data-template-footer" => ""%> |
+            <%= link_to "All", subscription_invoices_path %>
+          </li>
+        <%end%>
       </ul>
     </div>
-  </div>
+
+    <%if !@offline_subscription and @invoice%>
+    <%= render :partial => "/subscription_invoices/invoice_modal", 
+       :locals => { :invoice => @invoice, :index => 0} %>
+  <%end%>
+</div>
 </div>
 
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
 
-<% unless @subscription.offline_subscription? %>
+<% unless @offline_subscription %>
 <div class="plan-section-title">
   <div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
   <%= content_tag(:h5, t('downgrade_plan'), :class => "lead-note pb15") %>

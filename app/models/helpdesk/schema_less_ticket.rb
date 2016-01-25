@@ -32,6 +32,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :reports_hash, :text_tc02
 	alias_attribute :sla_response_reminded, :boolean_tc04
 	alias_attribute :sla_resolution_reminded, :boolean_tc05
+	alias_attribute :dirty_attributes, :text_tc03	
+
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10
@@ -39,6 +41,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :to_emails
 	serialize :text_tc01, Hash
 	serialize :text_tc02, Hash
+	serialize :text_tc03, Hash
 
 	def self.trashed_column
 		:boolean_tc02

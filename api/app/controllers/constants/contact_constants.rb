@@ -49,5 +49,5 @@ module ContactConstants
     email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
   }.freeze
 
-  FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, base: :email, 'primary_email.email'.to_sym => :email }.freeze
+  FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, 'primary_email.email'.to_sym => :email, base: :email }.freeze
 end.freeze

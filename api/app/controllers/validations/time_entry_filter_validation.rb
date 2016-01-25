@@ -5,7 +5,7 @@ class TimeEntryFilterValidation < FilterValidation
   validates :billable, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }
 
   validates :executed_after, :executed_before, date_time: { allow_nil: true }
-  validates :agent_id, :company_id, custom_numericality: { allow_nil: true, only_integer: true, ignore_string: :allow_string_param }
+  validates :agent_id, :company_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0 }
   validate :valid_user?, if: -> { agent_id && errors[:agent_id].blank? }
   validate :valid_company?, if: -> { company_id && errors[:company_id].blank? }
 

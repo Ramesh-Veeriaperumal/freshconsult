@@ -156,8 +156,9 @@ body, .feedback-wrapper{
 	}
 	.embedded-search-input {
 		margin-top: 50px;
+		@include padding-right(8px);
 	}
-	overflow:scroll;
+	overflow: auto;
 }
 .fw-thankyou-page .embedded-footer .copyright{
 	width: 100%;

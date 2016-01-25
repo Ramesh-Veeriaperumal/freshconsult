@@ -146,17 +146,4 @@ class Solution::DraftsController < ApplicationController
 				current_account.solution_drafts.send(*scope)
 			end
 		end
-
-		#META-READ-HACK!!
-		def meta_folder_scope
-		  current_account.launched?(:meta_read) ?  :folder_through_meta : :folder
-		end
-
-		#META-READ-HACK!!
-		def folder_scope_with_categories
-		  unless Account.current.present? && Account.current.launched?(:meta_read)
-		    return { :folder => {:category => :portals} }
-		  end
-		  { :folder_through_meta => {:category_through_meta => :portals_through_meta} }
-		end
 end

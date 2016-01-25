@@ -527,6 +527,7 @@ class Helpdesk::TicketsController < ApplicationController
       item.spam = true
       req = item.requester
       req_list << req.id if req.customer?
+      store_dirty_tags(item)
       item.save
     end
 
@@ -554,7 +555,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def unspam
     @items.each do |item|
-      item.spam = false
+      item.spam = false 
+      restore_dirty_tags(item)
       item.save
       #mark_requester_deleted(item,false)
     end

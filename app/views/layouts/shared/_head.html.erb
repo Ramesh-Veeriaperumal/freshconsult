@@ -75,6 +75,9 @@
 	
 	<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
 
+	<!-- for i18n-js translations -->
+  <%= javascript_include_tag :"cdn/i18n/#{I18n.locale.to_s}" %>
+
 	<script type="text/javascript">
 		Fjax.pjax_parallel_request = null;
 		$LAB.setGlobalDefaults({
@@ -83,6 +86,11 @@
 		Fjax.Assets.setup(<%= asset_manifest(:js).to_json.html_safe %>, {app:[], plugins:[]}, "", cloudfront_host_url);
 		Fjax.Manager.start();
 	</script>
+
+	<script type="text/javascript">
+    	I18n.defaultLocale = "<%= I18n.default_locale %>";
+    	I18n.locale = "<%= I18n.locale %>";
+  </script>
 
 	<%= yield :head %>
 

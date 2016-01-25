@@ -35,11 +35,7 @@ class WebhookWorker < BaseWorker
         }
         Throttler::WebhookThrottler.perform_async(throttler_args)
       else
-        # error_notification_key = error_notification_redis_key(args[:account_id], args[:rule_id])
-        # unless redis_key_exists?(error_notification_key)
-        #   set_others_redis_key( error_notification_key, true, ERROR_NOTIFICATION_TIMEOUT)
-        #   notify_failure(args)
-        # end
+        notify_failure(args)
       end
     end
   rescue => e
@@ -83,13 +79,16 @@ class WebhookWorker < BaseWorker
     end
 
     def notify_failure(args)
+      error_notification_key = error_notification_redis_key(args[:account_id], args[:rule_id])
+      return if redis_key_exists?(error_notification_key)
       executing_rule = nil
       Sharding.select_shard_of(args[:account_id]) do
         current_account = Account.find(args[:account_id]).make_current
         execute_on_db do
           executing_rule = VaRule.find_by_id(args[:rule_id])
-          return unless executing_rule.present?
+          return unless executing_rule.present? && (executing_rule.observer_rule? || executing_rule.dispatchr_rule?)
         end
+        set_others_redis_key( error_notification_key, true, ERROR_NOTIFICATION_TIMEOUT)
         email_list =  Account.current.account_managers.map { |admin|
           admin.email
         }.join(",")
@@ -103,4 +102,3 @@ class WebhookWorker < BaseWorker
       end
     end
 end
-

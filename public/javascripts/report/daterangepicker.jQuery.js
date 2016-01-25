@@ -56,6 +56,7 @@ jQuery.fn.daterangepicker = function(settings){
 		onOpen: function(){},
 		onChange: function(){},
 		rangeDurationMonths: null,
+		limitRangeToConstraints : false,
 		presetRangesCallback: false,
 		datepickerOptions: null //object containing native UI datepicker API options
 	}, settings);
@@ -299,15 +300,37 @@ jQuery.fn.daterangepicker = function(settings){
 		}
 
 		if(options.rangeDurationMonths){
-			if (which == 'range-start') {
-				var maxDate = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
-				rp.find('.range-end').datepicker( "option", "maxDate", maxDate);
+			if(options.limitRangeToConstraints){
+				if (which == 'range-start') {
+					 var maxDateAccRange = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
+					 var maxDateAccLimit = options.latestDate;
+					 if(Date.compare(maxDateAccLimit,maxDateAccRange) == -1){
+					 	rp.find('.range-end').datepicker( "option", "maxDate", maxDateAccLimit);
+					 }else{
+					 	rp.find('.range-end').datepicker( "option", "maxDate", maxDateAccRange);
+					 }
+				}
+				if (which == 'range-end') {
+					var minDateAccRange = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
+					var minDateAccLimit = options.earliestDate;
+					if(Date.compare(minDateAccLimit,minDateAccRange) == -1){
+						rp.find('.range-start').datepicker( "option", "minDate", minDateAccRange);
+					}else{
+						rp.find('.range-start').datepicker( "option", "minDate", minDateAccLimit);
+					}
+				}
+			}else{
+				if (which == 'range-start') {
+				 var maxDate = Date.parse(fDate(rp.find('.range-start').datepicker('getDate'))).add(options.rangeDurationMonths).months();
+				 rp.find('.range-end').datepicker( "option", "maxDate", maxDate);
+				
+				}
+				if (which == 'range-end') {
+					var minDate = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
+					rp.find('.range-start').datepicker( "option", "minDate", minDate);
+				}
 			}
-			if (which == 'range-end') {
-				var minDate = Date.parse(fDate(rp.find('.range-end').datepicker('getDate'))).add(-options.rangeDurationMonths).months();
-				rp.find('.range-start').datepicker( "option", "minDate", minDate);
-			}
-		}
+		} 
 	}
 
 	// rpPickers.find('.range-start, .range-end')	

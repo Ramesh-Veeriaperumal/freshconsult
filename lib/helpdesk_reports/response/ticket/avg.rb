@@ -13,7 +13,7 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
       row.each do |column,value|
         next if (AVOIDABLE_COLUMNS.include? column)
           
-        value = label_for_x_axis(row["y"].to_i, value.to_i, column, date_range, row["mon"].to_i) if trend_column? column
+        value = label_for_x_axis(row["y"].to_i, value, column) if ["doy","w","mon","qtr","y"].include? column
         
         processed_result[column] ||= {}
         @helper_hash[column] ||= {}
@@ -73,8 +73,10 @@ class HelpdeskReports::Response::Ticket::Avg < HelpdeskReports::Response::Ticket
 
   def pad_result_with_complete_time_range
     ["doy", "w","mon","qtr", "y"].each do |trend|
-      original_hash, padding_hash     = processed_result[trend], range(trend)
-      processed_result[trend] = padding_hash.merge(original_hash){|k, old_val, new_val| old_val + new_val} if original_hash.present?
+      if processed_result[trend].present?
+        original_hash, padding_hash = processed_result[trend], range(trend)
+        processed_result[trend]     = padding_hash.merge(original_hash){|k, old_val, new_val| old_val + new_val} 
+      end
     end
   end
 

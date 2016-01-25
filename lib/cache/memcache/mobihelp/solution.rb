@@ -52,16 +52,11 @@ module Cache::Memcache::Mobihelp::Solution
 
     def solutions(category_id)
       MemcacheKeys.fetch(mobihelp_solutions_key_with_category_id(category_id)) {
-        ### MULTILINGUAL SOLUTIONS - META READ HACK!!
-        include_hash = (Account.current.launched?(:meta_read) ? 
-                        {:public_folders_through_meta => {:published_articles_through_meta => [:tags]}} : 
-                        {:public_folders => {:published_articles => [:tags]}}) 
-
         category = Solution::Category.find_by_id(category_id)
 
-        category.to_json(:except => :account_id, :include => {:public_folders => 
+        category.to_json(:except => [:account_id, :import_id], :include => {:public_folders => 
           {:include => {:published_articles => {:include => {:tags => {:only => :name }}, 
-          :except => :account_id}}, :except => :account_id}})
+          :except => [:account_id, :import_id]}}, :except => [:account_id, :import_id]}})
       }
     end
 

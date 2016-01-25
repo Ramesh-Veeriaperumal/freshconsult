@@ -20,9 +20,9 @@ HelpdeskReports.ReportUtil.TicketVolume = (function () {
         getTicketListTitle : function(data){
                 var title = "";
                 if( data.sub_metric == "RECEIVED_TICKETS"){
-                    title = "Tickets Received" ;
+                    title = I18n.t('adv_reports.tickets_received') ;
                 }else{
-                    title = "Tickets Resolved" ;
+                    title = I18n.t('adv_reports.tickets_resolved') ;
                 }
                 var value = data.date + " : " + data.value;
                 _FD.core.actions.showTicketList(title,value);

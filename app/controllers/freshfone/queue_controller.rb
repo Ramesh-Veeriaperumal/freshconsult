@@ -7,7 +7,7 @@ class Freshfone::QueueController < FreshfoneBaseController
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   
-  before_filter :load_hunt_options_for_conf, :only => [:enqueue]
+  before_filter :load_hunt_options_for_conf, :only => [:enqueue, :hangup]
   before_filter :add_caller_to_redis_queue, :only => [:enqueue]
   before_filter :cleanup_redis_on_queue_complete, 
               :only => [:hangup, :trigger_voicemail, :trigger_non_availability, :quit_queue_on_voicemail, :dequeue]
