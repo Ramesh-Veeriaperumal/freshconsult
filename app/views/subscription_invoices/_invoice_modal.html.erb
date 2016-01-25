@@ -1,0 +1,93 @@
+<%
+  currency_symbol = Subscription::Currencies::Constants::CURRENCY_UNITS[invoice.currency]
+  refund = invoice.details[:transaction_details].find{|txn| 
+          txn[:transaction_type] == "refund" }
+%>
+<div style = "display:none" id = "invoice-modal-<%=index%>">
+  <div class="row-fluid">
+    <div class="span6">
+      <p class="m0 p0">
+        <h4><%=t("subscription.invoice")%> - <%=invoice.chargebee_invoice_id%></h4>
+      </p>
+      <p><%=invoice.customer_name%></p>
+
+    </div>
+    <div class="span6 text-right">
+      <a href=<%=download_invoice_subscription_invoices_path(:invoice_number => invoice.chargebee_invoice_id)%> class="btn btn-primary mb20 invoice-modal-download-btn" target="_blank">
+        <%= font_icon "download", :size => 12%>
+        <%=t("subscription.download")%>
+      </a>
+      <p>
+        <span class = "invoice-modal-config"><%=t("subscription.invoice")%> <%=t("date_title")%> : </span> <%=invoice.generated_on.strftime("%d %b %Y")%>
+      </p>
+      <p>
+        <span class = "invoice-modal-config">
+          <%=t("amount")%> (<%=invoice.currency%>): <%=currency_symbol%></span> 
+        <%=invoice.amount%>
+      </p>
+      <p>
+        <span class = "ft-wt invoice-status"><%=t("subscription.paid").upcase%></span>
+        <%if refund.present?%>
+        - <span class = "ft-wt invoice-refund"><%=t("subscription.refund")%>  </span>
+        <%end%>
+      </p>
+
+    </div>
+  </div>
+  <div>
+    <div class = "mb20">
+      <span class = "ft-wt"><%=t("subscription.line_items")%></span>
+    </div>
+    <table class = "table invoice-table">
+      <tr class = "invoice-modal-config">
+        <th> <%=t("description")%></th>
+        <th> <%=t("subscription.quantity")%></th>
+        <th> <%=t("subscription.unit_price")%></th>
+        <th class="text-right"><%=t("amount")%></th>
+      </tr>
+      <%invoice.details[:line_items].each do |line_item|%>
+        <tr>
+          <td><%=line_item[:description]%></td>
+          <td><%=line_item[:quantity]%></td>
+          <td><%=line_item[:unit_price]%></td>
+          <td class="text-right"><%=currency_symbol%> <%=line_item[:amount]%></td>
+        </tr>
+      <%end%>
+      <tr>
+        <td colspan = 3 class = "text-right">
+          <span class = "ft-wt"><%=t("subscription.sub_total")%></span>
+        </td>
+        <td class="text-right">
+          <span class = "ft-wt"><%=currency_symbol%> <%=invoice.sub_total%></span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan = 3 class = "text-right">
+          <span class = "ft-wt"><%=t("subscription.total")%></span>
+        </td>
+        <td class="text-right">
+          <span class = "ft-wt"><%=currency_symbol%> <%=invoice.amount%></span>
+        </td>
+      </tr>
+    </table>
+    <div class = "mb20">
+      <span class = "ft-wt"><%=t("subscription.transaction_details")%></span>
+    </div>
+    <table class = "table invoice-table">
+      <tr class = "invoice-modal-config">
+        <th> <%=t("subscription.date")%></th>
+        <th> <%=t("subscription.type")%></th>
+        <th> <%=t("subscription.status")%></th>
+        <th class="text-right"><%=t("amount")%></th>
+      </tr>
+      <%invoice.details[:transaction_details].each do |txn_item|%>
+        <tr>
+          <td><%=txn_item[:transaction_date].strftime("%d %b, %Y %H:%M %Z")%></td>
+          <td><%=txn_item[:transaction_type].capitalize%></td>
+          <td><%=txn_item[:transaction_status].capitalize%></td>
+          <td class="text-right"><%=currency_symbol%> <%=txn_item[:transaction_amount]%></td>
+        </tr>
+      <%end%>
+    </table>
+  </div>
+</div>

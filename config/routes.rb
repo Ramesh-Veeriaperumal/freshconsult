@@ -1554,6 +1554,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :subscription_invoices, :only => [:index] do
+    collection do
+      get :download_invoice
+    end
+  end
+
   match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
@@ -1567,7 +1573,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
-    
+    match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
     resources :archive_tickets, :only => [:index, :show] do
       collection do 
         post :custom_search
@@ -2246,9 +2252,32 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    
     match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
     
     match '/articles/:id/' => 'solutions/articles#show'
+    
+    namespace :multilingual do
+      resources :solutions, :only => [:index, :show]
+
+      namespace :solutions do
+        match '/folders/:id/page/:page' => 'folders#show'
+        resources :folders, :only => :show
+
+        resources :articles, :only => [:show, :destroy, :index] do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            post :create_ticket
+            get :hit
+          end
+        end
+      end
+      
+      match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
+      
+      match '/articles/:id/' => 'solutions/articles#show'
+    end
 
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
@@ -2360,6 +2389,21 @@ Helpkit::Application.routes.draw do
     resources :solutions do
       collection do
         get :articles
+      end
+    end
+
+    namespace :multilingual do
+      resources :articles do 
+        member do
+          put :thumbs_up
+          put :thumbs_down
+        end
+      end
+      
+      resources :solutions do
+        collection do
+          get :articles
+        end
       end
     end
 

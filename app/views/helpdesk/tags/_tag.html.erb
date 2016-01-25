@@ -1,24 +1,31 @@
 <% ticket_tags =  tag.tickets.visible.size
    customer_tags = tag.contacts.visible.size
    article_tags =  tag.solution_articles.size
+   archive_tags = tag.archive_tickets.size
 %>
 <tr class="<%= cycle('stripe', '') %>" id="<%= dom_id(tag) %>" data-tag-id="<%=tag.id%>" >
   <td class="name">
-    <%= check_box_tag('ids[]', tag.to_param,  false, :class => 'selector') %>
-    <span class="tags-checkbox-label">
-        <span class="tags-total-counter"><%= ticket_tags + article_tags + customer_tags  %></span>
-        <span> <strong>
-          <a href="#" class="tag_name tooltip" id="tag_name_<%= tag.id.to_s %>" data-tag-name="<%= tag.name %>" title="<%= if tag.name.length>12 then  h(tag.name) end %>" ><%= tag.name.length>12 ? h(tag.name).slice(0,10)+"..." : h(tag.name) %></a> </strong>
+          <%= check_box_tag('ids[]', tag.to_param,  false, :class => 'selector') %>
+          <span class="edittag">
+              <i class="symbols-tag-edit tooltip fsize-12" title="Rename Tag"></i>
+          </span>
+          <span class="tag-name">
+          <a href="#" class="tag_name <% if tag.name.length > 20 %> tooltip <% end %>" id="tag_name_<%= tag.id.to_s %>" <% if tag.name.length > 20 %> data-original-title="<%= h(tag.name) %>" <% end %> data-tag-name="<%= tag.name %>" >
+            <%= h(tag.name) %>
+          </a>
+        </span>
         <span id="tag_text_container_<%= tag.id.to_s %>" class="hide">
           <input type="text" tag_id="<%= tag.id.to_s %>" class="textbox tag_text" value="<%= tag.name %>" >
         </span>
-    </span>
-      <a class="edittag"><i class="symbols-tag-edit tooltip" title="Rename Tag"></i> </a>
    </span>
   </td>
 
+  <%= tagged_module tag, "Archive", archive_tags %>
   <%= tagged_module tag, "Tickets", ticket_tags %>
   <%= tagged_module tag, "Customers", customer_tags %>
   <%= tagged_module tag, "Articles", article_tags %>
 
+  <td class="total">
+    <span class="tags-total-counter"><%= ticket_tags + article_tags + customer_tags + archive_tags %></span>
+  </td>
 </tr>

@@ -22,7 +22,7 @@ class Solution::FoldersController < ApplicationController
 
   def show
     #META-READ-HACK!!    
-    @folder = current_account.folders.find(params[:id], :include => { meta_article_scope => [:draft, :user]})
+    @folder = current_account.folders.find(params[:id], :include => { :articles => [:draft, :user]})
     @page_title = @folder.name
     respond_to do |format|
       format.html {
@@ -277,11 +277,6 @@ class Solution::FoldersController < ApplicationController
                       :count => items.count - 1,
                       :folder_name => h(items.first.name.truncate(30))
         ).html_safe
-    end
-
-    #META-READ-HACK!!    
-    def meta_article_scope
-      current_account.launched?(:meta_read) ?  :articles_through_meta : :articles
     end
 
     def clear_cache

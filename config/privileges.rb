@@ -473,6 +473,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :account_configuration
     resource :"admin/data_export"
     resource :subscription # plans and billing
+    resource :subscription_invoice
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"

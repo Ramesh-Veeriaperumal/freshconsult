@@ -19,14 +19,4 @@ class Portal < ActiveRecord::Base
 		:order => "portal_solution_categories.position",
 		:after_add => :clear_solution_cache,
 		:after_remove => :clear_solution_cache
-
-	has_many :solution_categories_through_meta,
-		:class_name => 'Solution::Category',
-		:through => :solution_category_meta,
-		:source => :solution_categories,
-		:order => "portal_solution_categories.position",
-		:conditions => proc { "solution_categories.language_id = '#{Language.for_current_account.id}'" },
-		:readonly => false
-
-	include Solution::MetaAssociationSwitcher### MULTILINGUAL SOLUTIONS - META READ HACK!!
 end

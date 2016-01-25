@@ -51,6 +51,7 @@ class Support::SignupsController < SupportController
     end
 
     def set_language
+      return unless current_account.features_included?(:multi_language)
       params[:user][:language] ||= ( http_accept_language.compatible_language_from I18n.available_locales || 
         current_portal.language || current_account.language
       ).to_s
