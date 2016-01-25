@@ -7,6 +7,7 @@ module TicketHelper
       requester_id = user.id
     end
     cc_emails = params[:cc_emails] || []
+    fwd_emails = params[:fwd_emails] || []
     subject = params[:subject] || Faker::Lorem.words(10).join(" ")
     account_id =  group ? group.account_id : @account.id
     test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
@@ -15,7 +16,7 @@ module TicketHelper
                                          :subject => subject,
                                          :responder_id => params[:responder_id],
                                          :source => params[:source] || 2,
-                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails),
+                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
                                          :custom_field => params[:custom_field])

@@ -32,34 +32,34 @@ class Search::V2::TicketsControllerTest < ActionController::TestCase
     assert_not_includes res_body, ticket.id
   end
 
-  def test_ticket_by_requester_name_reversed
+  def test_ticket_by_requester_random_name
     requester = add_new_user(@account)
     ticket = create_ticket({ requester_id: requester.id })
     sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
-    get :index, :search_field => 'requester', :term => requester.name.reverse
+    get :index, :search_field => 'requester', :term => Faker::Name.name
 
     res_body = parsed_attr(response.body, 'id')
     assert_not_includes res_body, ticket.id
   end
 
-  def test_ticket_by_requester_email_reversed
+  def test_ticket_by_requester_random_email
     requester = add_new_user(@account)
     ticket = create_ticket({ requester_id: requester.id })
     sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
-    get :index, :search_field => 'requester', :term => requester.email.reverse
+    get :index, :search_field => 'requester', :term => Faker::Internet.email
 
     res_body = parsed_attr(response.body, 'id')
     assert_not_includes res_body, ticket.id
   end
 
-  def test_ticket_by_requester_phone_reversed
+  def test_ticket_by_requester_random_phone
     requester = add_new_user_without_email(@account)
     ticket = create_ticket({ requester_id: requester.id })
     sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
 
-    get :index, :search_field => 'requester', :term => requester.phone.reverse
+    get :index, :search_field => 'requester', :term => Faker::PhoneNumber.phone_number
 
     res_body = parsed_attr(response.body, 'id')
     assert_not_includes res_body, ticket.id

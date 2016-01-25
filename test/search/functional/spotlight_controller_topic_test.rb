@@ -86,7 +86,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
     topic = create_test_topic_with_attachments(@account.forums.first, @agent)
     sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
-    get :forums, term: topic.posts.first.attachments.first.content_file_name
+    get :forums, term: topic.posts.first.attachments.first.content_file_name.split('.').first
 
     res_body = parsed_attr(response.body, 'id')
     assert_includes res_body, topic.id
@@ -96,7 +96,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
     topic = create_test_topic_with_attachments(@account.forums.first, @agent)
     sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
     
-    get :forums, term: topic.posts.first.attachments.first.content_file_name, category_id: topic.forum_category_id
+    get :forums, term: topic.posts.first.attachments.first.content_file_name.split('.').first, category_id: topic.forum_category_id
 
     res_body = parsed_attr(response.body, 'id')
     assert_includes res_body, topic.id

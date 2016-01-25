@@ -49,6 +49,10 @@ class ActionController::TestCase
     parse_response(response)['results'].map { |item| item[attribute] }
   end
 
+  def parsed_support_attr(response, attribute)
+    parse_response(response).map { |item| item[attribute] }
+  end
+
   def log_in(user)
     refute_nil user
     session = UserSession.create!(user)
