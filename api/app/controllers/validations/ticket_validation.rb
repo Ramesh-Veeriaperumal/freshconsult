@@ -149,9 +149,9 @@ class TicketValidation < ApiValidation
 
   def default_field_validations
     {
-      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, discern_datatype: true } },
-      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, discern_datatype: true } },
-      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, discern_datatype: true } },
+      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
+      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } },
+      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true } },
       ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },

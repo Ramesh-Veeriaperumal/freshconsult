@@ -31,8 +31,8 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
   end
 
   def error_msg(allow_string, inclusion_list, value)
-    discern_datatype = options[:discern_datatype] && !allow_string && inclusion_list.any? {|x| x.to_s == value}
-    discern_datatype ? :not_included_datatype : :not_included
+    detect_type = options[:detect_type] && !allow_string && inclusion_list.any? {|x| x.to_s == value}
+    detect_type ? :datatype_and_inclusion : :not_included
   end
 
   def required_attribute_not_defined?(record, attribute, _value)

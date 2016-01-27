@@ -22,7 +22,7 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
         api_make_agent: 4,
 
         create: 37,
-        update: 38,
+        update: 37,
         show: 18,
         index: 18,
         destroy: 22,
@@ -46,7 +46,8 @@ class ApiContactsIntegrationTest < ActionDispatch::IntegrationTest
       id1 = User.where(helpdesk_agent: false, deleted: false).last(2).first.id
       id2 = User.where(helpdesk_agent: false, deleted: false).last.id
 
-      User.update_all({customer_id: nil}, id: [id1, id2])
+      User.find(id1).update_attributes(customer_id: nil)
+      User.find(id2).update_attributes(customer_id: nil)
 
       # update
       v1[:update] = count_queries do

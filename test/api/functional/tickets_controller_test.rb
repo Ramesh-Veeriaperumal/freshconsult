@@ -231,9 +231,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_inclusion_invalid_datatype
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern('priority', :not_included_datatype, list: '1,2,3,4'),
-                bad_request_error_pattern('status', :not_included_datatype, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('source', :not_included_datatype, list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('priority', :datatype_and_inclusion, list: '1,2,3,4'),
+                bad_request_error_pattern('status', :datatype_and_inclusion, list: '2,3,4,5,6,7'),
+                bad_request_error_pattern('source', :datatype_and_inclusion, list: '1,2,3,7,8,9')])
     assert_response 400
   end
 
