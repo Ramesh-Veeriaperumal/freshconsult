@@ -9,8 +9,10 @@
     "oauth.api.secret" : "98436661440156758", 
     "event.vendor.type" : "polling", 
     "event.notification.enabled" : "true", 
-    "event.objects" : "Contact,Account"
-    }, 
+    "event.objects" : "Contact,Account",
+    "event.poller.refresh_interval": "5",
+    "event.notification.callback.url": "https://jagdamba.ngrok.io/integrations/cloud_elements/crm/event_notification"
+    },
 
     "tags" : [], 
 

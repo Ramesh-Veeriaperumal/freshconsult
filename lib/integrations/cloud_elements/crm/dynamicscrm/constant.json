@@ -1,6 +1,12 @@
 {
 
-    "objects" : {"contact" : "contact", "account" : "account"},
+    "objects" : {"contact" : "contact", "account" : "account", "lead" : "lead"},
 
-    "parameters" : ["username","password","dynamicscrm_url"]
+    "parameters" : ["username","password","dynamicscrm_url"],
+
+    "existing_companies" : [{"fd_field" : "name", "sf_field" : "attributes.name"}],
+
+    "existing_contacts" : [{"fd_field" : "name", "sf_field" : "attributes.fullname"}, {"fd_field" : "email", "sf_field" : "attributes.emailaddress1"}, {"fd_field" : "mobile", "sf_field" : "attributes.telephone1"}],
+
+    "default_fields" : ["attributes.telephone1"]
 }   

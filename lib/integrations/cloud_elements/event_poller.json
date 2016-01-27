@@ -13,22 +13,23 @@
               "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
           },
 
-          "pageSize": 10000
+          "pageSize": 1000
     },
 
-   "accounts": { 
+    "accounts": { 
 
          "url": "/hubs/helpdesk/accounts",
 
          "idField": "customer.id",
-         
+
          "datesConfiguration": {
-                "updatedDateField": "user.updated_at",
-                "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
-                "createdDateField": "user.created_at",
-                "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
+              "updatedDateField": "user.updated_at",
+              "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
+              "createdDateField": "user.created_at",
+              "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
           },
 
-          "pageSize": 10000
+          "pageSize": 1000
     }
+
 }

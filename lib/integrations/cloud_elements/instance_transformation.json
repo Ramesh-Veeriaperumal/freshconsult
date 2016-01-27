@@ -10,7 +10,7 @@
       {
         "type" : "passThrough",
         "properties" : {
-          "fromVendor" : false,
+          "fromVendor" : true,
           "toVendor" : false
         }
       }

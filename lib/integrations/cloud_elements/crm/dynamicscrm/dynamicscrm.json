@@ -8,9 +8,10 @@
         "dynamics.tenant" : "%{dynamicscrm_url}",
         "document.tagging" : false,
         "event.notification.enabled" : "true",
-        "event.vendor.type" : "polling"
+        "event.vendor.type" : "polling",
+        "event.objects" : "contact,account"
       },
 
     "name" : "%{element_name}"
-    
+
 }       

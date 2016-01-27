@@ -1,9 +1,11 @@
 class Integrations::CloudElements::CrmController < Integrations::CloudElementsController
 
+  before_filter :verify_authenticity, :only => [:instances, :install, :edit, :update]
   before_filter :build_installed_app, :only => [:instances, :install]
-  before_filter :get_app_configs, :create_obj_transformation, :formula_instance, :only => [:install]
+  before_filter :get_app_configs, :create_obj_transformation, :only => [:install]
   before_filter :load_installed_app, :only => [:edit, :update]
   before_filter :update_obj_transformation, :only => [:update]
+  before_filter :formula_instance, :only => [:install, :update]
   
   def instances
     el_response = create_element_instance( crm_payload, @metadata )
@@ -15,6 +17,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     @action = 'install'
     @installed_app = nil
     render_settings
+  rescue => e
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+    flash[:error] = t(:'flash.application.install.error')
+    redirect_to integrations_applications_path
   end
 
   def install
@@ -38,6 +44,14 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     default_mapped_fields
     construct_synced_contacts
     render_settings
+  rescue => e
+    NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+    flash[:error] = t(:'flash.application.install.error')
+    redirect_to integrations_applications_path
+  end
+
+  def event_notification
+    render :json => {:status => '200 Ok'}
   end
 
   def update
@@ -63,8 +77,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def fd_payload
-      json_payload = File.read("lib/integrations/cloud_elements/freshdesk.json")
-      json_payload % {:api_key => 'WMhJrGqFy1qNxMdDLT', :subdomain => 'sumitjagdambacom', :fd_instance_name => "freshdesk_#{current_account.id}" }
+      json_payload = JSON.parse(File.read("lib/integrations/cloud_elements/freshdesk.json"))
+      event_poller_config = File.read("lib/integrations/cloud_elements/event_poller.json")
+      json_payload['configuration']['event.poller.configuration'] = event_poller_config
+      JSON.generate(json_payload) % {:api_key => 'WMhJrGqFy1qNxMdDLT', :subdomain => 'sumitjagdambacom', :fd_instance_name => "freshdesk_#{element}_#{current_account.id}" }
     end
 
     def instance_hash
@@ -134,7 +150,12 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       key_options = { :account_id => current_account.id, :provider => app.name}
       kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
       kv_store.group = :integration
-      @app_config = JSON.parse(kv_store.get_key)
+      app_config = kv_store.get_key
+      if app_config.blank?
+        flash[:error] = t(:'flash.application.install.error')
+        redirect_to integrations_applications_path and return
+      end
+      @app_config = JSON.parse(app_config)
     end
 
     def get_synced_objects
@@ -148,6 +169,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @account_metadata = @metadata.merge({:object => 'fdCompany', :method => 'post'})
       crm_element_object_transformation
       freshdesk_object_transformation
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path
     end
 
     def update_obj_transformation
@@ -156,6 +181,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       @account_metadata = @metadata.merge({:object => 'fdCompany', :method => 'put'})
       crm_element_object_transformation
       freshdesk_object_transformation
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path
     end
 
     def crm_element_object_transformation
@@ -219,15 +248,46 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     end
 
     def formula_instance
-      formula_id = Integrations::CloudElements::Crm::Constant::FORMULA_ID[params[:state].to_sym]
-      metadata = @metadata.merge({:formula_id => formula_id})
-      response = create_formula_instance(formula_instance_payload, metadata)
-      @app_config['formula_instance_id'] = response['id']
+      sync_type = params[:crm_sync_type]
+      crm_sync_types = Integrations::CloudElements::Crm::Constant::CRM_SYNC_TYPE
+      case sync_type
+      when crm_sync_types[:import]
+        crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
+      when crm_sync_types[:export]
+        helpdesk_to_crm_formula_instance unless @app_config['helpdesk_to_crm_formula_instance'].present?
+      else
+        crm_to_helpdesk_formula_instance unless @app_config['crm_to_helpdesk_formula_instance'].present?
+        helpdesk_to_crm_formula_instance unless @app_config['helpdesk_to_crm_formula_instance'].present?
+      end
     end
 
-    def formula_instance_payload
+    def formula_instance_payload instance_name, source, target
       json_payload = File.read("lib/integrations/cloud_elements/formula_instance.json")
-      json_payload % {:formula_instance => "Formula_#{params[:state]}_#{current_account.id}", :element_instance_id => @app_config['element_instance_id'],:fd_instance_id => @app_config['fd_instance_id']}
+      json_payload % {:formula_instance => instance_name, :source => source ,:target => target}
+    end
+
+    def crm_to_helpdesk_formula_instance
+      formula_id = Integrations::CloudElements::Crm::Constant::CRM_TO_HELPDESK_FORMULA_ID[params[:state].to_sym]
+      metadata = @metadata.merge({:formula_id => formula_id})
+      payload = formula_instance_payload( "#{element}=>freshdesk:#{current_account.id}", @app_config['element_instance_id'], @app_config['fd_instance_id'])
+      response = create_formula_instance(payload, metadata)
+      @app_config['crm_to_helpdesk_formula_instance'] = response['id']
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path and return 
+    end
+
+    def helpdesk_to_crm_formula_instance
+      formula_id = Integrations::CloudElements::Crm::Constant::HELPDESK_TO_CRM_FORMULA_ID[params[:state].to_sym]
+      metadata = @metadata.merge({:formula_id => formula_id})
+      payload = formula_instance_payload( "freshdesk=>#{element}:#{current_account.id}", @app_config['fd_instance_id'], @app_config['element_instance_id'])
+      response = create_formula_instance(payload, metadata)
+      @app_config['helpdesk_to_crm_formula_instance'] = response['id']
+    rescue => e
+      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in installing the application : #{e.message}"}})
+      flash[:error] = t(:'flash.application.install.error')
+      redirect_to integrations_applications_path
     end
 
     def get_metadata_fields
