@@ -10,6 +10,7 @@ class ApiApplicationController < MetalApiController
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
+  rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
@@ -188,6 +189,16 @@ class ApiApplicationController < MetalApiController
       return false unless exception_params.join == '_json'
       render_request_error :invalid_json, 400
       true
+    end
+
+    def login_error_handler(e)
+      if e.failed_login_count
+        Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
+        render_request_error :password_lockout, 403
+      else
+        Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
+        render_base_error(:internal_error, 500)
+      end
     end
 
     def ensure_proper_fd_domain # 404
@@ -402,6 +413,7 @@ class ApiApplicationController < MetalApiController
 
     def access_denied
       if api_current_user
+        Rails.logger.error "API 403 Error: customer  = #{api_current_user.customer?}"
         render_request_error :access_denied, 403
       else
         render_request_error :invalid_credentials, 401
@@ -413,18 +425,32 @@ class ApiApplicationController < MetalApiController
       if get_request?
         if current_user_session # fall back to old session based auth
           @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
-          if @current_user && @current_user.failed_login_count != 0
+          stale_record = current_user_session.stale_record
+          if @current_user && @current_user.failed_login_count != 0 && login_via_email?
             @current_user.update_failed_login_count(true)
+          elsif stale_record && stale_record.password_expired
+            @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
           end
         end
       else
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
           # string check for @ is used to avoid a query.
-          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
         end
       end
-      @current_user
+
+      # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
+      @current_user ||= nil
+    end
+
+    def email_given?(username)
+      return @email_given if defined?(@email_given)
+      @email_given ||= username.include?('@')
+    end
+
+    def login_via_email?
+      email_given?(params[:k])
     end
 
     def qualify_for_day_pass? # this method is redefined because of api_current_user
@@ -435,8 +461,17 @@ class ApiApplicationController < MetalApiController
       if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
         access_denied
         return false
+      elsif verify_password_expired?
+        Rails.logger.debug "API V2 Password expired error"
+        render_request_error :password_expired, 403
+        return false
       end
       true
+    end
+
+    def verify_password_expired?
+      return @pwd_expired if defined?(@pwd_expired)
+      @pwd_expired ||= (login_via_email? && (api_current_user.password_expired || api_current_user.password_expired?))
     end
 
     def allowed_to_access? # this method is redefined because of api_current_user
