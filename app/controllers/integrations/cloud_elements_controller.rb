@@ -1,7 +1,7 @@
 class Integrations::CloudElementsController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
-  before_filter :build_installed_app, :only => [:oauth_url]
+  before_filter :verify_authenticity, :build_installed_app, :only => [:oauth_url]
 
   def oauth_url
     metadata = @metadata.merge({:element => params[:state]})
@@ -56,6 +56,10 @@ class Integrations::CloudElementsController < ApplicationController
 
     def delete_formula_instance payload, metadata
       service_obj(payload, metadata).receive(:delete_formula_instance)
+    end
+
+    def verify_authenticity
+      render :status => 401 if current_user.blank? || !current_user.agent?
     end
 
 end

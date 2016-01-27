@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -437,6 +437,7 @@ Helpkit::Application.routes.draw do
         post :unhold
         post :transfer_unhold
         post :transfer_fallback_unhold
+        post :quit
       end
     end
 
@@ -461,6 +462,7 @@ Helpkit::Application.routes.draw do
         post :in_call
         post :update_recording
         post :save_call_notes
+        put :acw
         get :call_notes
       end
     end
@@ -662,9 +664,6 @@ Helpkit::Application.routes.draw do
 
     namespace :cloud_elements do
        get :oauth_url
-       post :install
-       get :edit
-       put :update
     end
 
     namespace :cloud_elements do
@@ -673,6 +672,7 @@ Helpkit::Application.routes.draw do
         post :install
         get :edit
         put :update
+        post :event_notification
       end
     end
 
@@ -895,6 +895,13 @@ Helpkit::Application.routes.draw do
       get :callback
       get :onedrive_render_application
       get :onedrive_view
+    end
+   
+    namespace :infusionsoft do
+      post :fetch_user
+      post :fields_update
+      get :edit
+      get :install
     end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
@@ -1561,6 +1568,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :subscription_invoices, :only => [:index] do
+    collection do
+      get :download_invoice
+    end
+  end
+
   match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
@@ -1574,7 +1587,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
-    
+    match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
     resources :archive_tickets, :only => [:index, :show] do
       collection do 
         post :custom_search
@@ -2253,9 +2266,32 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+    
     match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
     
     match '/articles/:id/' => 'solutions/articles#show'
+    
+    namespace :multilingual do
+      resources :solutions, :only => [:index, :show]
+
+      namespace :solutions do
+        match '/folders/:id/page/:page' => 'folders#show'
+        resources :folders, :only => :show
+
+        resources :articles, :only => [:show, :destroy, :index] do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            post :create_ticket
+            get :hit
+          end
+        end
+      end
+      
+      match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
+      
+      match '/articles/:id/' => 'solutions/articles#show'
+    end
 
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
@@ -2367,6 +2403,21 @@ Helpkit::Application.routes.draw do
     resources :solutions do
       collection do
         get :articles
+      end
+    end
+
+    namespace :multilingual do
+      resources :articles do 
+        member do
+          put :thumbs_up
+          put :thumbs_down
+        end
+      end
+      
+      resources :solutions do
+        collection do
+          get :articles
+        end
       end
     end
 

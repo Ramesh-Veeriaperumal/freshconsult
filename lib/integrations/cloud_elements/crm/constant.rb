@@ -3,11 +3,18 @@ module Integrations::CloudElements
 
     APP_NAMES = {
         :sfdc => 'salesforce',
-        :freshdesk => 'freshdesk'
+        :freshdesk => 'freshdesk',
+        :dynamicscrm => 'dynamicscrm'
     }
 
-    FORMULA_ID = {
-        :sfdc => '547'
+    CRM_TO_HELPDESK_FORMULA_ID = {
+        :sfdc => '758',
+        :dynamicscrm => '758'
+    }
+
+    HELPDESK_TO_CRM_FORMULA_ID = {
+        :sfdc => '760',
+        :dynamicscrm => '760'
     }
 
     CRM_SYNC_TYPE = {
