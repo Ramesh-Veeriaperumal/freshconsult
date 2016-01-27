@@ -1,6 +1,6 @@
-<div class="sf-title-wrapper">
-      <label for="enble_sync"> Enable Sync </label> 
-      <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">   
+<div class="sf-title-wrapper floatr">
+  <label for="enable_sync"> Salesforce Sync </label> 
+  <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @salesforce_config['enable_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
 </div>
 <div class="field-mapping">
   <div id="field-wrap"></div>
@@ -9,23 +9,25 @@
       <div class="radio-btn-title"> Sync contact and company... </div>
 
       <div class="radio-btn">
-        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="<%=@sync_type[:import]%>">  
+        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="SF_to_FD">  
         <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a>
-        <label for="crm_sync_type_1"> from Salesforce </label>   
-      </div>
-      <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="<%=@sync_type[:export]%>"> 
-        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
-        <label for="crm_sync_type_2"> from Freshdesk </label> 
-      </div>
-      <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="<%=@sync_type[:bidirectional]%>"> 
-        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
-        <label for="crm_sync_type_3"> both Freshdesk and Salesforce </label> 
+        <label for="crm_sync_type_1"> from Salesforce to freshdesk </label>   
       </div>
 
+      <div class="radio-btn">
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="FD_to_SF"> 
+        <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
+        <label for="crm_sync_type_2"> from Freshdesk to salesforce</label> 
+      </div>
+
+      <div class="radio-btn">
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="FD_AND_SF"> 
+        <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a> 
+        <label for="crm_sync_type_3"> Two way sync</label> 
+      </div>
     </div>
   </div>
+
   <div class="sf-title-wrapper mb10 mt10">
     <span> Field Mapping </span>
   </div>
@@ -50,7 +52,7 @@
             </div>
             <div class="contact-tabel-data field-3"> <span> Salesforce Account Fields </span> </div>
           </div>
-          <div rel="construct_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
+          <div rel="construct_company_rules" id="construct_company_rule" class="rules_wrapper" data-render-template = '.construct_company' ></div>
         </div>
       </div>
 
@@ -63,34 +65,157 @@
             </div>
             <div class="contact-tabel-data field-3"> <span> Salesforce Contact Fields </span> </div>
           </div>
-          <div rel="construct_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
+          <div rel="construct_contact_rules" id="construct_contact_rule" class="rules_wrapper" data-render-template = '.construct_contact' ></div>
         </div>
       </div>
     </div>
   </div>
-
+  <div class="button-container">
+    <a id="submit-sync" href="#field-visibility-tab" data-toggle="tab" class="btn btn-primary">Done Syncing >>></a>
+  </div>
 </div>
 
 <script class="construct_company" type="text/html" data-default-value = '<%= existing_companies.to_json.html_safe %>'>
-    <% fd_company = @element_config["fd_company"] %>
-    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k]}), 
+    <% fd_company = @salesforce_config["fd_company"] %>
+    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [k,v,{'data-field-type' => "text"} ]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-    <% sf_company = @element_config["account_fields"] %>
-    <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k]}), 
+    <% sf_company = @salesforce_config["account_fields"] %>
+    <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k,{'data-field-type' => "text"} ]}),  
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script>   
 
 <script class="construct_contact" type="text/html" data-default-value='<%= existing_contacts.to_json.html_safe %>'>
-  <% fd_contact = @element_config["fd_contact"] %>
-  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k]}), 
+  <% fd_contact = @salesforce_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [k,v,{'data-field-type' => @salesforce_config['fd_contact_types'][k]} ]}), 
           { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-  <% sf_contact = @element_config["contact_fields"] %>
-  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k]}), 
+  <% sf_contact = @salesforce_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k,{'data-field-type' => @salesforce_config['contact_fields_types'][v]} ]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script> 
 
 <script>
-jQuery(function(){
-  jQuery('[rel="construct_rules"]').constructRules();
-})
+    fdContactTypeValidator = {
+                 "text": ["text", "string", "textarea", "paragraph"],
+                 "paragraph": ["text", "string", "textarea", "paragraph"],
+                 "email": ["email", "string"],
+                 "phone_number": ["string", "number", "phonenumber", "mobilenumber"]
+                }
+    sfContactTypeValidator ={
+                  "string": ["text", "paragraph", "email"],
+                  "date": ["custom_date"],
+                  "number": ["phone_number"],
+                  "boolean": ["checkbox"]
+                }
+    maximumSelectionSizeContact = 10;
+    maximumSelectionSizeAccount = 10;
+    fdCompanyTypeValidator ={}                
+    sfCompanyTypeValidator ={}
+
+    jQuery(function(){
+      jQuery('[rel="construct_contact_rules"]').syncConstructRules({fdContactTypeValidator, sfContactTypeValidator, maximumSelectionSizeContact});
+      jQuery('[rel="construct_company_rules"]').syncConstructRules({fdCompanyTypeValidator, sfCompanyTypeValidator, maximumSelectionSizeAccount});
+    })
+  
+    fdContactLabelTypes = {};
+    fdContactLabelTypes = <%=raw @salesforce_config['fd_contact_types'].to_json%>;    
+    sfContactLabelTypes = {};
+    sfContactLabelTypes = <%=raw @salesforce_config['contact_fields_types'].to_json%>;
+    jQuery('#submit-sync').on("click", function(e){
+      jQuery('#submit-sync').addClass("loading-fb");
+      jQuery('#submit-sync').addClass("disabled");
+
+      if(!validateFields()){
+        jQuery('#submit-sync').removeClass("loading-fb");
+        jQuery('#submit-sync').removeClass("disabled");
+        return false;
+      }
+      else{
+        //removing those contact fields that are selected in the sync from the view
+        var selectedContacts = [];
+        jQuery('#construct_contact_rule .dropdown_2 .select2-chosen').each(function(){
+          selectedContacts.push(jQuery(this).text());
+        })
+
+        jQuery('#s2id_contacts .select2-choices').remove();
+        jQuery("#contacts option").each(function(){
+          var contactField = jQuery(this).text();
+          if(selectedContacts.indexOf(contactField) != -1){
+            jQuery(this).remove();
+          }
+        })
+        jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+
+        //removing those account fields that are selected in the sync from the view
+        var selectedAccounts = [];
+        jQuery('#construct_company_rule .dropdown_2 .select2-chosen').each(function(){
+          selectedAccounts.push(jQuery(this).text());
+        })
+
+        jQuery('#s2id_accounts .select2-choices').remove();
+        jQuery("#accounts option").each(function(){
+          var accountField = jQuery(this).text();
+          if(selectedAccounts.indexOf(accountField) != -1){
+            jQuery(this).remove();
+          }
+        })
+        jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+
+      }
+    })
+
+    function validateFields(){
+      var errorLog=[];
+      jQuery("#error-log").html("");
+      jQuery('#construct_contact_rule .rules_list_wrapper .list').not('.overlay').each(function(index, list){
+        var FDContactSelected = jQuery(this).find('.dropdown_1 .select2-chosen').text();
+        var SFContactSelected = jQuery(this).find('.dropdown_2 .select2-chosen').text();
+        if(FDContactSelected.toLowerCase() == "select" || SFContactSelected.toLowerCase() == "select" ){
+          errorLog.push([index+1, "select all the values"]);
+          return true;
+        }
+         var fdDataType = fdContactLabelTypes[FDContactSelected];
+         var sfDataType = sfContactLabelTypes[SFContactSelected];
+         debugger
+         if(sfDataType == undefined || sfDataType == null){
+          errorLog.push([index+1, "Cannot sync '"+ SFContactSelected +"' field"]);
+          return true;
+         }
+
+         if(fdContactTypeValidator[fdDataType].indexOf(sfDataType) == -1){
+          errorLog.push([index+1, "Cannot sync a '"+ fdDataType +"' with '"+ sfDataType+ "'"]);
+         }
+      })
+      if(errorLog.length==0){
+        return true;
+      }
+      else{
+        var errorString = "<div id='error-log'>";
+        for(var i=0; i<errorLog.length; i++){          
+          errorString += "<label>" + errorLog[i][0] + " : " + errorLog[i][1] + "</label>";
+        }
+        errorString += "</div>";
+        jQuery('#contact-mapping-tab').after(errorString);
+        return false;
+      }
+    }
+
+    jQuery(document).ready(function(){
+      //setting first 3 contact fields as compulsary and  disabled
+      jQuery('#construct_contact_rule .rules_list_wrapper .list').slice(0,3).each(function(){
+          jQuery(this).find('.list-icon').remove();
+          jQuery(this).find('.select2-choice').addClass('disabled');
+          jQuery(this).addClass('overlay');
+        })
+
+      //setting the first field of account as compulsary and  disabled
+      jQuery('#construct_company_rule .rules_list_wrapper .list').slice(0,1).each(function(){
+          jQuery(this).find('.list-icon').remove();
+          jQuery(this).find('.select2-choice').addClass('disabled');
+          jQuery(this).addClass('overlay');
+      })
+  })
+  //jQuery('#field-mapping-tab').on('click','.add_new_list .list-data', (function(ev){
+  //     ev.preventDefault();
+  //     jQuery(document).find('.dropdown_2 a').addClass('disabled');
+  // }));
 </script>

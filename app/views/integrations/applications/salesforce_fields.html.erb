@@ -3,56 +3,45 @@
       <%=t("integrations.salesforce.helptext").html_safe%>
   </div>
 <%- end %>
-  <h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
-  <% method_type = (@action == 'install' ) ? 'post' : 'put' %>
-  <%= form_tag("/integrations/cloud_elements/crm/#{@action}", :method => method_type )  do %>
-  <%= hidden_field_tag  'state', params[:state] %>
+	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
+  <% method_type = (@action == "install") ? "post" : "put" %>
+  <%= form_tag("/integrations/salesforce/#{@action}", :method => method_type)  do %>
 
-  <ul class="nav nav-pills">
-    <li class="active">
-      <a href="#field-visibility-tab" data-toggle="tab">Field Visibility</a>
-    </li>
-    <li>
-      <a href="#field-mapping-tab" data-toggle="tab">Field Mapping</a>
-    </li>
-  </ul>
-  
   <div class="well">
     <div class="tab-content row-fluid">
       <label class="caption span3">
         <div class="logo application-logo-salesforce"></div>
         <div class="logo info-data">
-          <%= t('integrations.salesforce.desc') %>
+          <%=t('integrations.salesforce.desc')%>
         </div>
       </label>
-      <div class="tab-pane span9" id="field-mapping-tab">
-
-        <% existing_companies = @element_config['existing_companies']
-           existing_contacts = @element_config['existing_contacts']
-           existing_companies = @installed_app.configs_companies unless @installed_app.nil?
-           existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? 
-           default_fields = @element_config['default_fields']
-        %>
-        <%= render :partial => "/integrations/applications/salesforce/mapping",
-                   :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>
-          
-      </div>
-      <div class="tab-pane active span9" id="field-visibility-tab">
-        <%= render :partial => "/integrations/applications/salesforce/visibility", 
-                     :locals => { :default_fields =>  default_fields }  %>
-      </div>
-
+      <% if @salesforce_config["features"]%>
+        <div class="tab-pane span9 active" id="field-mapping-tab">
+           <% existing_companies = [{"fd_field" => "name", "sf_field" => "Name"}]
+             existing_contacts = [{"fd_field" => "email", "sf_field" => "Email"}, {"fd_field" => "phone", "sf_field" => "HomePhone"}, {"fd_field" => "mobile", "sf_field" => "MobilePhone"}]
+             existing_companies = @installed_app.configs_companies unless @installed_app.nil?
+             existing_contacts = @installed_app.configs_contacts unless @installed_app.nil? %>
+             <%= render :partial => "/integrations/applications/salesforce/mapping",
+                     :locals => { :existing_companies => existing_companies, :existing_contacts => existing_contacts } %>   
+        </div>
+        <div class="tab-pane span9" id="field-visibility-tab">
+      <%else%>
+        <div class="tab-pane span9 active" id="field-visibility-tab">         
+      <% end %>
+         <%= render :partial => "/integrations/applications/salesforce/visibility" %>
+        </div>
     </div>
   </div>
-
   <div class="button-container">
-    <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
+    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
     <%= submit_tag t('update'), :class => "btn btn-primary",:onclick => "return fillLabels();" %>
   </div>
 
   <%end%>
 
+
 <script type="text/javascript">
+
 function fillLabels(){
    var selectedValues = []; 
    var leadValues =[];   
@@ -61,47 +50,90 @@ function fillLabels(){
         selectedValues.push(jQuery(this).text()); 
     });
     jQuery('#contact_labels').val(selectedValues);
+
     jQuery("#leads :selected").each(function(){
         leadValues.push(jQuery(this).text()); 
     });
     jQuery('#lead_labels').val(leadValues);
+
     jQuery("#accounts :selected").each(function(){
         accountValues.push(jQuery(this).text()); 
     });
     jQuery('#account_labels').val(accountValues);
     return true;
 }
+  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+
+  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+
+  jQuery("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+
+  //setting the Name as default field(can't be removed.)
+  jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Full Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Full Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+  jQuery("#sfaccounts ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Account Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
   jQuery("#field_mapping").click(function(){
     jQuery("#field_mapping_div").show();
     jQuery("#field_visiblity_div").hide();
     jQuery("#company_div").show();
   });
-  jQuery("#field_visiblity").click(function(){
-    jQuery("#field_mapping_div").hide();
-    jQuery("#field_visiblity_div").show();
-    jQuery("#company_div").hide();
-    jQuery("#contact_div").hide();
+
+  jQuery("#field-visibility").click(function(){
+      jQuery("#field-mapping").hide();
+      jQuery("#field-visibility").show();
+      jQuery("#company_div").hide();
+      jQuery("#contact_div").hide();
   });
+
   jQuery("#contact").click(function(){
     jQuery("#contact_div").show();
     jQuery("#company_div").hide();
   });
+
   jQuery("#company").click(function(){
     jQuery("#company_div").show();
     jQuery("#contact_div").hide();
   });
+
   jQuery(document).ready(function(){
     if(!jQuery('#enble_sync').is(':checked')){
       change();
     }
-    jQuery('#enble_sync').prop('checked', "<%= @element_config['enble_sync'] %>");
-    jQuery('input[name="crm_sync_type"][value="' + "<%= @element_config['crm_sync_type'] %>" + '"]').attr('checked', true);
+    jQuery('#enable_sync').prop('checked', "<%= @salesforce_config['enable_sync'] %>");
+    // jQuery('input[name="contacts_sync_type"][value="' + "<%= @salesforce_config['contacts_sync_type'] %>" + '"]').attr('checked', true);
+    jQuery('input[name="crm_sync_type"][value="' + "<%= @salesforce_config['crm_sync_type'] %>" + '"]').attr('checked', true);
   });
+
   function change(){ 
-    jQuery('#field-wrap').toggleClass('field-disable')
+    jQuery('#field-wrap').toggleClass('field-disable');
+    if(jQuery('.field-disable').length > 0){
+      jQuery("#field-mapping-tab #submit-sync").text("Skip Syncing >>>");
+    }else{
+      jQuery("#field-mapping-tab #submit-sync").text("Done Syncing >>>");
+    }
+
   }
+
   jQuery(document).on('click','.sync-radio-btn', function(){
     var clone_element = jQuery(this).siblings('.sync-icon').children().clone();
     jQuery('.center-icon').html('').html(clone_element);
   })
+
 </script>

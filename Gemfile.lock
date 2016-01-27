@@ -166,16 +166,6 @@ GIT
       railties (>= 3.0)
 
 GIT
-  remote: git@github.com:TinderBox/dynamics_crm.git
-  revision: b45d285149cec3e6f52a4ea6eb510952ecefebb1
-  branch: master
-  specs:
-    dynamics_crm (0.6.0)
-      builder (>= 3.0.0, < 4.0.0)
-      curb (~> 0.8, >= 0.8.5)
-      mimemagic (~> 0.2, >= 0.2.1)
-
-GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 30a7b6deb34c992e84498facdec397527c551b47
   branch: dynamic_rules
@@ -528,11 +518,15 @@ GEM
     doorkeeper (2.2.1)
       railties (>= 3.2)
     dynamic_form (1.1.4)
+    dynamics_crm (0.4.1)
+      builder (>= 3.0.0, < 4.0.0)
+      curb (~> 0.8, >= 0.8.5)
+      mimemagic (~> 0.2, >= 0.2.1)
     ejs (1.1.1)
     encryptor (1.1.3)
     equalizer (0.0.9)
     erubis (2.7.0)
-    ethon (0.8.0)
+    ethon (0.7.4)
       ffi (>= 1.3.0)
     eventmachine (1.0.7)
     excon (0.31.0)
@@ -592,7 +586,7 @@ GEM
     hashie (3.2.0)
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.2)
+    hitimes (1.2.3)
     htmlentities (4.3.1)
     http (0.5.1)
       http_parser.rb
@@ -722,6 +716,9 @@ GEM
       rack-openid (~> 1.3.1)
     omniauth-quickbooks (0.0.2)
       omniauth-oauth (~> 1.0)
+    omniauth-surveymonkey (1.0.0)
+      omniauth (~> 1.0)
+      omniauth-oauth2
     open4 (1.3.0)
     paperclip (2.8.0)
       activerecord (>= 2.3.0)
@@ -947,7 +944,7 @@ GEM
     thread_safe (0.3.4)
     tilt (1.4.1)
     timecop (0.7.3)
-    timers (4.0.1)
+    timers (4.0.4)
       hitimes
     treetop (1.4.15)
       polyglot
@@ -1033,7 +1030,7 @@ DEPENDENCIES
   dev_notification!
   doorkeeper (= 2.2.1)
   dynamic_form
-  dynamics_crm!
+  dynamics_crm (~> 0.4.1)
   ebayr!
   ejs (= 1.1.1)
   encryptor (= 1.1.3)
@@ -1100,6 +1097,7 @@ DEPENDENCIES
   omniauth-openid
   omniauth-quickbooks
   omniauth-salesforce!
+  omniauth-surveymonkey (= 1.0.0)
   open_id_authentication!
   paperclip (~> 2.8.0)
   paperclip_ext!
@@ -1187,6 +1185,3 @@ DEPENDENCIES
   xml-simple (= 1.1.4)
   xss!
   yui-compressor!
-
-BUNDLED WITH
-   1.10.6

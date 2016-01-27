@@ -15,19 +15,19 @@ class ContactField < ActiveRecord::Base
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   
   DEFAULT_FIELD_PROPS = {
-    :default_name           => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
-    :default_job_title      => { :type => 2,  :dom_type => :text, :label => 'user.title' },
-    :default_email          => { :type => 3,  :dom_type => :email, :label => 'user.email' },
-    :default_phone          => { :type => 4,  :dom_type => :phone_number, :label => 'user.work_phone' },
-    :default_mobile         => { :type => 5,  :dom_type => :phone_number, :label => 'user.mobile_phone' },
-    :default_twitter_id     => { :type => 6,  :dom_type => :text, :label => 'user.twitter_id' },
-    :default_company_name   => { :type => 7,  :dom_type => :text, :label => 'user.company' },
-    :default_client_manager => { :type => 8,  :dom_type => :checkbox, :label => 'contacts.role.info' },
-    :default_address        => { :type => 9,  :dom_type => :paragraph, :label => 'user.address' },
-    :default_time_zone      => { :type => 10, :dom_type => :dropdown, :label => 'account.time_zone' },
-    :default_language       => { :type => 11, :dom_type => :dropdown, :label => 'account.language' },
-    :default_tag_names      => { :type => 12, :dom_type => :text, :label => 'tag.title' },
-    :default_description    => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info',
+    :default_name           => { :type => 1,  :dom_type => :text, :label => 'user.full_name', :db_column_type => :varchar_255 },
+    :default_job_title      => { :type => 2,  :dom_type => :text, :label => 'user.title', :db_column_type => :varchar_255 },
+    :default_email          => { :type => 3,  :dom_type => :email, :label => 'user.email', :db_column_type => :varchar_255 },
+    :default_phone          => { :type => 4,  :dom_type => :phone_number, :label => 'user.work_phone', :db_column_type => :varchar_255  },
+    :default_mobile         => { :type => 5,  :dom_type => :phone_number, :label => 'user.mobile_phone', :db_column_type => :varchar_255  },
+    :default_twitter_id     => { :type => 6,  :dom_type => :text, :label => 'user.twitter_id', :db_column_type => :varchar_255 },
+    :default_company_name   => { :type => 7,  :dom_type => :text, :label => 'user.company', :db_column_type => :varchar_255  },
+    :default_client_manager => { :type => 8,  :dom_type => :checkbox, :label => 'contacts.role.info', :db_column_type => :varchar_255 },
+    :default_address        => { :type => 9,  :dom_type => :paragraph, :label => 'user.address', :db_column_type => :varchar_255 },
+    :default_time_zone      => { :type => 10, :dom_type => :dropdown, :label => 'account.time_zone', :db_column_type => :date_time },
+    :default_language       => { :type => 11, :dom_type => :dropdown, :label => 'account.language', :db_column_type => :varchar_255 },
+    :default_tag_names      => { :type => 12, :dom_type => :text, :label => 'tag.title', :db_column_type => :varchar_255 },
+    :default_description    => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info', :db_column_type => :varchar_255, 
                                  :dom_placeholder => 'contacts.info_example' }
   }
 

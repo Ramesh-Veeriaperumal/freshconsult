@@ -116,7 +116,7 @@ class Company < ActiveRecord::Base
     @custom_field_types ||=  custom_form.custom_company_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
   end
   
-end
+ end
 
   def domains
     read_attribute(:domains) && read_attribute(:domains).gsub(/^\,/, '').chomp(',')
@@ -142,4 +142,4 @@ end
     }
   end
 end
-end
+

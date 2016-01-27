@@ -16,7 +16,6 @@ class OmniauthCallbacksController < ApplicationController
       :app => app,
       :omniauth => @omniauth,
     )
-
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     return failure if result.failed?
@@ -74,7 +73,8 @@ class OmniauthCallbacksController < ApplicationController
     account = origin_account
     portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
     port = ''
-    @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+    # @portal_url = "#{portal.url_protocol}://#{portal.host}#{port}"
+    @portal_url = "http://localhost.freshdesk-dev.com:3000"
   end
 
 end

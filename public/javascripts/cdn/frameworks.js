@@ -52,3 +52,4 @@
 //= require frameworks/plugins/jquery.dataTables.js
 //= require frameworks/plugins/dataTable.fixedColumns.js
 //= require marketplace/freshapp.js
+//= require integrations/sync_construct_rule.js

@@ -106,6 +106,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
 
     def crm_element_metadata_fields(element_token)
       @element_config = Hash.new
+      @element_config['features']= current_account.features?(:cloud_elements_crm_sync)
       metadata = @metadata.merge({ :element_token => element_token })
       constant_file = JSON.parse(File.read("lib/integrations/cloud_elements/crm/#{element}/constant.json"))
       constant_file['objects'].each do |key, obj|
