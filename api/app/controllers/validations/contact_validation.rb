@@ -25,7 +25,7 @@ class ContactValidation < ApiValidation
 
   validate :check_update_email, if: -> { email }, on: :update
 
-  validates :company_name, required: { allow_nil: false, message: :company_id_required }, custom_numericality: { allow_nil: false },  if: -> { view_all_tickets.to_s == 'true' }
+  validates :company_name, required: { allow_nil: false, message: :company_id_required }, custom_numericality: { allow_nil: false, ignore_string: :allow_string_param },  if: -> { view_all_tickets.to_s == 'true' }
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {

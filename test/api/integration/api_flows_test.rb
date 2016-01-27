@@ -757,8 +757,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_pagination_with_invalid_datatype_array
     get 'api/discussions/categories?page[]=1&per_page[]=1', nil, @headers
-    match_json([bad_request_error_pattern('page', :invalid_field),
-                bad_request_error_pattern('per_page', :invalid_field)])
+    match_json([bad_request_error_pattern('page', :data_type_mismatch, data_type: 'Positive Integer'),
+                bad_request_error_pattern('per_page', :per_page_data_type_mismatch, max_value: 100)])
     assert_response 400
   end
 
