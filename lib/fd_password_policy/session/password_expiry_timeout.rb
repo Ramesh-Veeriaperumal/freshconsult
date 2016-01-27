@@ -18,11 +18,7 @@ module FDPasswordPolicy
       module InstanceMethods
 
         def password_stale?
-          !stale_record.nil? || (web_or_api_request? && record && record.password_expired?)
-        end
-
-        def web_or_api_request?
-          controller.cookies['_helpkit_session'] || controller.request.path.starts_with?("/api/")
+          !stale_record.nil? || (controller.cookies['_helpkit_session'] && record && record.password_expired?)
         end
     
         private

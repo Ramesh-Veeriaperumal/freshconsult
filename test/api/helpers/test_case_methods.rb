@@ -13,27 +13,6 @@ module TestCaseMethods
     Bullet.enable = original_value
   end
 
-  def exceed_failed_login_count(value, rewind_updated_at = false)
-    original_value = @agent.failed_login_count
-    updated_at = @agent.updated_at
-    new_updated_at = UserSession.failed_login_ban_for.seconds.ago - 1.minute
-    @agent.update_attribute(:failed_login_count, value)
-    @agent.update_column(:updated_at, new_updated_at) if rewind_updated_at
-    yield original_value, value
-  ensure
-    @agent.update_attribute(:failed_login_count, original_value) if @agent.reload.failed_login_count == value
-    @agent.update_column(:updated_at, updated_at) if rewind_updated_at && @agent.updated_at.to_s == new_updated_at
-  end
-
-  def set_password_expiry(value)
-    @agent.update_attribute(:failed_login_count, 0)
-    original_value = @agent.password_expiry
-    @agent.set_password_expiry(password_expiry_date: value)
-    yield
-  ensure
-    @agent.set_password_expiry(password_expiry_date: original_value)
-  end
-
   def stub_current_account
     Account.stubs(:current).returns(@account)
     yield

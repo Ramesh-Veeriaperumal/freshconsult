@@ -17,8 +17,6 @@ api_error_messages:
   invalid_user: "You are not authorized to perform this action on behalf of this user. id:%{id}, name:%{name}"
   "should be a valid email address": "Should not be invalid_value/blank"
   access_denied: "You are not authorized to perform this action."
-  password_expired: "Password expired. Please reset the password via portal and use the same in API"
-  password_lockout: "Maximum failed login attempts reached."
   require_feature: "The %{feature} feature is not supported in your plan. Please upgrade your account to use it."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
