@@ -14,7 +14,13 @@ toolbar ||= false
       <div class="sticky_search">
         <input class="community-search solution-placeholder" data-search-url="<%=search_url%>" placeholder="<%= search_placeholder(page) %>" type='text'>
       </div>
-      <span id="search-hide" class="search-hide ficon-cross"></span>
+      <span class="search-lang" id="search-hide">
+        <%= select_tag :language_id,
+              options_from_collection_for_select(current_account.all_language_objects,:id, :name, Language.for_current_account.id),
+              :class => 'select2',
+              :id => "language_select" if current_account.multilingual? %>
+        <span class="search-hide ficon-cross"></span>
+      </span>
     </div>
   <% end %>
 

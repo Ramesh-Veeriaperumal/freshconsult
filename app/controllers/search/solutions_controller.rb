@@ -47,7 +47,7 @@ class Search::SolutionsController < Search::SearchController
 				if @suggest
 					f.filter :term,  { 'language_id' => (params[:language_id] || Language.for_user(@ticket.requester).id) }
 				else
-					f.filter :term,  { 'language_id' => Language.for_current_account.id }
+					f.filter :term,  { 'language_id' => (params[:language_id] || Language.for_current_account.id) }
 				end
 			end
 		end

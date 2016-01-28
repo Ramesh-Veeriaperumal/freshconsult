@@ -8,20 +8,27 @@ window.App.Solutions = window.App.Solutions || {};
   App.Solutions.SearchConfig = {
     
     currentString: "",
+    languageChange: false,
 
     onVisit: function () {
       this.bindHandlers();
     },
 
     bindHandlers: function () {
-      $('.community-search').bind("keyup", this.searchStrategy.bind(this));
-      $("body").on('click.community-search', '#search-show', this.showSearch);
-      $("body").on('click.community-search', '#search-hide', this.hideSearch);
+      var $this = this;
+      $('.community-search').bind("keyup", $this.searchStrategy.bind($this));
+      $("body").on('click.community-search', '#search-show', $this.showSearch);
+      $("body").on('click.community-search', '#search-hide', $this.hideSearch);
+      $('#language_select').bind("change", function () {
+        $this.languageChange = true;
+        $('.community-search').trigger('keyup');
+      });
+
     },
 
     searchStrategy: function (e) {
       var searchString = e.target.value.replace(/^\s+|\s+$/g, ""), resultList = $('#page_search_results'), $this = this;
-      if (!searchString.empty() && searchString.length > 1 && this.currentString !== searchString) {
+      if (!searchString.empty() && searchString.length > 1 && (this.currentString !== searchString || this.languageChange)) {
         this.currentString = searchString;
         resultList.hide().empty();
         setTimeout(function () {
@@ -78,13 +85,22 @@ window.App.Solutions = window.App.Solutions || {};
     fetchSearchResults: function (searchString) {
       var $this = this;
       $.ajax({
-        url: $('.community-search').data('search-url') + encodeURIComponent(searchString),
+        url: $this.ajaxURL(searchString),
         dataType: "json",
         success: function (data) {
           $this.searchCallback(data);
         }
       });
     },
+
+    ajaxURL: function (searchString) {
+      if (this.languageChange){
+        return $('.community-search').data('search-url') + encodeURIComponent(searchString) + '&language_id=' + $('#language_select').val();
+      } else {
+        return $('.community-search').data('search-url') + encodeURIComponent(searchString);
+      } 
+    },
+
     onLeave: function () {
       $('body').off('.community-search');
     }
