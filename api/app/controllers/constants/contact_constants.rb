@@ -4,7 +4,7 @@ module ContactConstants
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CONTACT_FIELDS = %w(address avatar view_all_tickets company_id description email job_title language mobile name phone time_zone twitter_id).freeze | ARRAY_FIELDS | HASH_FIELDS
 
-  STATES = %w( verified unverified all deleted blocked ).freeze
+  STATES = %w( verified unverified deleted blocked ).freeze
 
   INDEX_FIELDS = %w( state email phone mobile company_id ).freeze
 

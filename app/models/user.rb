@@ -235,7 +235,7 @@ class User < ActiveRecord::Base
         blocked: {
           conditions: [ "((blocked = true and blocked_at <= ?) or (deleted = true and deleted_at <= ?)) and whitelisted = false", Time.zone.now+5.days, Time.zone.now+5.days ]
         },
-        all: {
+        default: {
           conditions: { deleted: false, blocked: false }
         },
         company_id: {

@@ -6,9 +6,10 @@ class ContactFilterValidation < FilterValidation
   validates :company_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :check_company, if: -> { company_id && errors[:company_id].blank? }
 
-  def initialize(request_params, item, allow_string_param = true)
-    request_params['state'] = 'all' if request_params['state'].nil?
-    @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS) - ['state'] + [request_params['state']].compact
+  def initialize(request_params, item=nil, allow_string_param = true)
+    @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
+    filter_name = request_params.fetch('state', 'default')
+    @conditions = @conditions - ['state'] + [filter_name].compact
     super(request_params, item, allow_string_param)
   end
 
