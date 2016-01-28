@@ -981,4 +981,19 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
       assert_response 201
     end
   end
+
+  def test_cors
+    get '/api/contacts', nil, @headers.merge('HTTP_ORIGIN' => '*')
+    assert_response 200
+    assert '*', response.headers['Access-Control-Allow-Origin']
+  end
+
+  def test_cors_preflight_request
+    # one hack to test options request in 3.2.18
+    integration_session.__send__ :process, 'options', '/api/contacts', nil, @headers.except('HTTP_AUTHORIZATION').merge('HTTP_ORIGIN' => '*', 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET', 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'authorization')
+    assert '*', response.headers['Access-Control-Allow-Origin']
+    assert 'authorization', response.headers['Access-Control-Allow-Headers']
+    assert 'GET, POST, PUT, DELETE, OPTIONS', response.headers['Access-Control-Allow-Methods']
+    assert 'X-Path, X-Method, X-Query-String, X-Ua-Compatible, X-Meta-Request-Version, X-Request-Id, X-Runtime', response.header['Access-Control-Expose-Headers']
+  end
 end
