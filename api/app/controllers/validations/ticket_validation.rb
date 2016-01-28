@@ -37,7 +37,7 @@ class TicketValidation < ApiValidation
   validate :fr_due_gt_created_at, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
   # Due by should be greater than or equal to fr_due_by
   validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
-  
+
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
@@ -69,7 +69,6 @@ class TicketValidation < ApiValidation
   validates :twitter_id, :phone, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:twitter_id].blank? }
   validates :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:phone].blank? }
-  
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params

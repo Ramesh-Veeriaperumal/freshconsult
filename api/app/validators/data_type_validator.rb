@@ -9,7 +9,7 @@ class DataTypeValidator < ActiveModel::EachValidator
     message = options[:message]
     message ||= required_attribute_not_defined?(record, attribute, values) ? :required_and_data_type_mismatch : :data_type_mismatch
 
-    if valid_type?(options[:rules], values, record, attribute) 
+    if valid_type?(options[:rules], values, record, attribute)
       record.errors[attribute] = :blank if options[:required] && !present_or_false?(values)
     else
       record.errors[attribute] << message

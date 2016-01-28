@@ -9,7 +9,7 @@ class ForumValidationTest < ActionView::TestCase
     assert forum.errors.full_messages.include?('Name required_and_data_type_mismatch')
     assert forum.errors.full_messages.include?('Forum category required_and_data_type_mismatch')
     assert forum.errors.full_messages.include?('Forum visibility required_and_inclusion')
-    assert forum.errors.full_messages.include?( 'Forum type required_and_inclusion')
+    assert forum.errors.full_messages.include?('Forum type required_and_inclusion')
   end
 
   def test_numericality_params_invalid

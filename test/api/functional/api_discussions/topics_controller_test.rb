@@ -365,7 +365,7 @@ module ApiDiscussions
     def test_update_with_nil_values
       put :update, construct_params({ id: first_topic.id }, forum_id: nil,
                                                             title: nil, message_html: nil)
-      match_json([bad_request_error_pattern('forum_id', :required_and_data_type_mismatch, data_type: 'Positive Integer' ),
+      match_json([bad_request_error_pattern('forum_id', :required_and_data_type_mismatch, data_type: 'Positive Integer'),
                   bad_request_error_pattern('title', :data_type_mismatch, data_type: String),
                   bad_request_error_pattern('message_html', :data_type_mismatch, data_type: String)
                  ])

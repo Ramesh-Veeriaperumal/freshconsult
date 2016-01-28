@@ -277,7 +277,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
     assert_response 400
     match_json([bad_request_error_pattern('code', :required_and_data_type_mismatch, data_type: String)])
-    ensure 
+    ensure
       cf.update_attribute(:required_for_agent, false)
   end
 

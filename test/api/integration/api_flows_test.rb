@@ -807,7 +807,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   ensure
     ApiDiscussions::CategoriesController.any_instance.unstub(:set_time_zone, :notify_new_relic_agent)
   end
-  
+
   def test_failed_login_count_exceeded_invalid_password
     headers = set_custom_auth_headers(@headers, @agent.email, 'test1234')
 

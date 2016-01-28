@@ -134,10 +134,10 @@ class CustomFieldValidatorTest < ActionView::TestCase
       check1_1: { data_type: 'Boolean' },
       check2_1: { data_type: 'Boolean' },
       number2_1: { data_type: :Integer },
-      number1_1: { data_type: :Integer }, 
-      single_1: { data_type: String},
-      multi_1: { data_type: String},
-      phone: { data_type: String}
+      number1_1: { data_type: :Integer },
+      single_1: { data_type: String },
+      multi_1: { data_type: String },
+      phone: { data_type: String }
     }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
@@ -220,8 +220,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
                    number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
-                   number4_1: { data_type: :Integer }, single_1: { data_type: String}, single2_1: { data_type: String}, single3_1: { data_type: String},
-                   multi_1: { data_type: String}, multi2_1: { data_type: String}, multi3_1: { data_type: String}, phone: { data_type: String },
+                   number4_1: { data_type: :Integer }, single_1: { data_type: String }, single2_1: { data_type: String }, single3_1: { data_type: String },
+                   multi_1: { data_type: String }, multi2_1: { data_type: String }, multi3_1: { data_type: String }, phone: { data_type: String },
                    phone_1: { data_type: String }, phone2_1: { data_type: String },
                    check2_1: { data_type: 'Boolean' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
@@ -235,9 +235,9 @@ class CustomFieldValidatorTest < ActionView::TestCase
                    dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
                    dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
                    number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
-                   number4_1: { data_type: :Integer }, single_1: { data_type: String}, single2_1: { data_type: String}, single3_1: { data_type: String},
-                   multi_1: { data_type: String}, multi2_1: { data_type: String}, multi3_1: { data_type: String}, phone: { data_type: String},
-                   phone_1: { data_type: String}, phone2_1: { data_type: String},
+                   number4_1: { data_type: :Integer }, single_1: { data_type: String }, single2_1: { data_type: String }, single3_1: { data_type: String },
+                   multi_1: { data_type: String }, multi2_1: { data_type: String }, multi3_1: { data_type: String }, phone: { data_type: String },
+                   phone_1: { data_type: String }, phone2_1: { data_type: String },
                    check2_1: { data_type: 'Boolean' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 

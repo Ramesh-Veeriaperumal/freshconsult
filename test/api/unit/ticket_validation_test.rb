@@ -128,7 +128,7 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Priority not_included')
     assert errors.include?('Source datatype_and_inclusion')
 
-    controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }    
+    controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
     errors = ticket.errors.full_messages

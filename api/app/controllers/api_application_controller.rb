@@ -464,7 +464,7 @@ class ApiApplicationController < MetalApiController
         access_denied
         return false
       elsif verify_password_expired?
-        Rails.logger.debug "API V2 Password expired error"
+        Rails.logger.debug 'API V2 Password expired error'
         render_request_error :password_expired, 403
         return false
       end

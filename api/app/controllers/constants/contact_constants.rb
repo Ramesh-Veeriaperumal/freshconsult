@@ -47,7 +47,7 @@ module ContactConstants
     address: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     twitter_id: { data_type: { rules: String },  length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
     email: { format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } },
-    description: {data_type: {rules: String}}
+    description: { data_type: { rules: String } }
   }.freeze
 
   FIELD_MAPPINGS = { company_name: :company_id, tag_names: :tags, company: :company_id, 'primary_email.email'.to_sym => :email, base: :email }.freeze

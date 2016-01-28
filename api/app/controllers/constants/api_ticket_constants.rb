@@ -5,10 +5,10 @@ module ApiTicketConstants
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   CREATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                     ).freeze | ARRAY_FIELDS | HASH_FIELDS
+                  ).freeze | ARRAY_FIELDS | HASH_FIELDS
   UPDATE_FIELDS = %w(description description_html due_by email_config_id fr_due_by group_id priority
                      email phone twitter_id facebook_id requester_id name responder_id source status subject type product_id
-                     ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
+                  ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   SHOW_FIELDS = ['include']
   ALLOWED_INCLUDE_PARAMS = ['notes']
   ORDER_TYPE = TicketsFilter::SORT_ORDER_FIELDS.map(&:first).map(&:to_s).freeze

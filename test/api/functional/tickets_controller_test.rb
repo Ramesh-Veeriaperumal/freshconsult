@@ -10,8 +10,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Pursuit of Happiness', 'date' => '2015-09-09' }
   UPDATE_CUSTOM_FIELDS_VALUES = { 'country' => 'Australia', 'state' => 'Queensland', 'city' => 'Brisbane', 'number' => 12, 'decimal' => '8900.89',  'checkbox' => false, 'text' => Faker::Name.name, 'paragraph' =>  Faker::Lorem.paragraph, 'dropdown' => 'Armaggedon', 'date' => '2015-09-09' }
-  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  12345, 'date' => '31-13-09' }
-  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3543534, 'date' => '2015-09-09T09:00' }
+  CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.90', 'decimal' => 'dd', 'checkbox' => 'iu', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  12_345, 'date' => '31-13-09' }
+  UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3_543_534, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
     'number' => [:data_type_mismatch, data_type: 'Integer'],
@@ -604,7 +604,7 @@ class TicketsControllerTest < ActionController::TestCase
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = ticket_params_hash.merge('attachments' => [file, file2], status: '2', priority: '2', source: '2')
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    @request.env["CONTENT_TYPE"] = "multipart/form-data"
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     post :create, construct_params({}, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
@@ -2516,7 +2516,7 @@ class TicketsControllerTest < ActionController::TestCase
                                                       type: nil
                                  )
     match_json([bad_request_error_pattern('description',  :data_type_mismatch, data_type: String),
-                bad_request_error_pattern('subject',  :data_type_mismatch, data_type: String ),
+                bad_request_error_pattern('subject',  :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('group_id', :data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('responder_id', :data_type_mismatch, data_type: 'Positive Integer'),
                 bad_request_error_pattern('product_id', :data_type_mismatch, data_type: 'Positive Integer'),
