@@ -1,6 +1,6 @@
 <div class="sf-title-wrapper floatr">
-  <label for="enable_sync"> Salesforce Sync </label> 
-  <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @salesforce_config['enable_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
+  <label for="enble_sync"> Salesforce Sync </label> 
+  <input type="checkbox" rel="toggle" name="enble_sync" id="enble_sync" data-checked-label="ON" data-unchecked-label="OFF" <% if @element_config['enble_sync'] == "on" %> checked=checked <% end %> onchange="change(this)">
 </div>
 <div class="field-mapping">
   <div id="field-wrap"></div>
@@ -9,21 +9,21 @@
       <div class="radio-btn-title"> Sync contact and company... </div>
 
       <div class="radio-btn">
-        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="SF_to_FD">  
+        <input type="radio" checked=checked class="sync-radio-btn" id="crm_sync_type_1" name="crm_sync_type" value="<%=@sync_type[:import]%>">  
         <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a>
         <label for="crm_sync_type_1"> from Salesforce to freshdesk </label>   
       </div>
 
       <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="FD_to_SF"> 
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_2" name="crm_sync_type"  value="<%=@sync_type[:export]%>"> 
         <a class="sync-icon"><%= font_icon "right-direction", { :size => 12 } %></a> 
         <label for="crm_sync_type_2"> from Freshdesk to salesforce</label> 
       </div>
 
       <div class="radio-btn">
-        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="FD_AND_SF"> 
+        <input type="radio" class="sync-radio-btn" id="crm_sync_type_3" name="crm_sync_type"  value="<%=@sync_type[:bidirectional]%>"> 
         <a class="sync-icon"><%= font_icon "left-direction", { :size => 12 } %></a> 
-        <label for="crm_sync_type_3"> Two way sync</label> 
+        <label for="crm_sync_type_3"> Two way sync </label> 
       </div>
     </div>
   </div>
@@ -70,26 +70,28 @@
       </div>
     </div>
   </div>
+
   <div class="button-container">
+    <%= link_to t('back'), {:controller => '/integrations/applications', :action => 'index'}, :class => "btn" %>
     <a id="submit-sync" href="#field-visibility-tab" data-toggle="tab" class="btn btn-primary">Done Syncing >>></a>
   </div>
 </div>
 
 <script class="construct_company" type="text/html" data-default-value = '<%= existing_companies.to_json.html_safe %>'>
-    <% fd_company = @salesforce_config["fd_company"] %>
-    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [k,v,{'data-field-type' => "text"} ]}), 
+    <% fd_company = @element_config["fd_company"] %>
+    <%= select_tag('inputs[companies][][fd_field]', options_for_select(fd_company.collect{ |k,v| [v,k,{'data-field-type' => "text"} ]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-    <% sf_company = @salesforce_config["account_fields"] %>
+    <% sf_company = @element_config["account_fields"] %>
     <%= select_tag('inputs[companies][][sf_field]', options_for_select(sf_company.collect{ |k,v| [v,k,{'data-field-type' => "text"} ]}),  
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script>   
 
 <script class="construct_contact" type="text/html" data-default-value='<%= existing_contacts.to_json.html_safe %>'>
-  <% fd_contact = @salesforce_config["fd_contact"] %>
-  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [k,v,{'data-field-type' => @salesforce_config['fd_contact_types'][k]} ]}), 
+  <% fd_contact = @element_config["fd_contact"] %>
+  <%= select_tag('inputs[contacts][][fd_field]', options_for_select(fd_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['fd_contact_types'][v]} ]}), 
           { :class => "" , :rel => "dropdown", "data-refer-key" => 'fd_field', 'data-header-label' => ''}) %>
-  <% sf_contact = @salesforce_config["contact_fields"] %>
-  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k,{'data-field-type' => @salesforce_config['contact_fields_types'][v]} ]}), 
+  <% sf_contact = @element_config["contact_fields"] %>
+  <%= select_tag('inputs[contacts][][sf_field]', options_for_select(sf_contact.collect{ |k,v| [v,k,{'data-field-type' => @element_config['contact_fields_types'][v]} ]}), 
             { :class => "" , :rel => "dropdown", "data-refer-key" => 'sf_field', 'data-header-label' => ''}) %>
 </script> 
 
@@ -117,9 +119,9 @@
     })
   
     fdContactLabelTypes = {};
-    fdContactLabelTypes = <%=raw @salesforce_config['fd_contact_types'].to_json%>;    
+    fdContactLabelTypes = <%=raw @element_config['fd_contact_types'].to_json%>;    
     sfContactLabelTypes = {};
-    sfContactLabelTypes = <%=raw @salesforce_config['contact_fields_types'].to_json%>;
+    sfContactLabelTypes = <%=raw @element_config['contact_fields_types'].to_json%>;
     jQuery('#submit-sync').on("click", function(e){
       jQuery('#submit-sync').addClass("loading-fb");
       jQuery('#submit-sync').addClass("disabled");

@@ -50,10 +50,6 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     redirect_to integrations_applications_path
   end
 
-  def event_notification
-    render :json => {:status => '200 Ok'}
-  end
-
   def update
     @installed_app.set_configs get_metadata_fields
     @installed_app.save!
@@ -63,6 +59,10 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Problem in updating the application : #{e.message}"}})
     flash[:error] = t(:'flash.application.install.error')
     redirect_to integrations_applications_path
+  end
+
+  def event_notification
+    render :json => {:status => '200 Ok'}
   end
 
   private
@@ -112,31 +112,44 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
       constant_file['objects'].each do |key, obj|
         metadata[:object] = obj
         element_metadata = service_obj({},metadata).receive("#{key}_metadata".to_sym)
-        @element_config["#{key}_fields"] = map_fields( element_metadata )
+        hash = map_fields( element_metadata )
+        @element_config["#{key}_fields"] = hash['fields_hash']
+        @element_config["#{key}_fields_types"] = hash['data_type_hash']
       end
     end
 
     def fd_metadata_fields
+      binding.pry
       contact_metadata = current_account.contact_form.fields
       company_metadata = current_account.company_form.fields
-      @element_config['fd_contact'] = fd_fields_hash( contact_metadata )
-      @element_config['fd_company'] = fd_fields_hash( company_metadata )
+      contact_hash = fd_fields_hash( contact_metadata )
+      account_hash = fd_fields_hash( company_metadata )
+      @element_config['fd_contact'] = contact_hash['fields_hash']
+      @element_config['fd_contact_types'] = contact_hash['data_type_hash']
+      @element_config['fd_company'] = account_hash['fields_hash']
+      @element_config['fd_company_types'] = account_hash['data_type_hash']
     end
 
     def map_fields(metadata)
-      hash = {}
+      fields_hash = {}
+      data_type_hash = {}
       metadata['fields'].each do |field|
-        hash[field['vendorPath']] = field['vendorDisplayName'] || field['vendorPath']
+        label = field['vendorDisplayName'] || field['vendorPath']
+        fields_hash[field['vendorPath']] = label
+        data_type_hash[label] = field['type']
       end
-      hash
+      {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
 
     def fd_fields_hash(object)
-      hash = {}
+      contact_data_types = Integrations::CloudElements::Constant::CONTACT_TYPES
+      fields_hash = {}
+      data_type_hash = {}
       object.each do |field|
-        hash[field[:name]] = field[:label]
+        fields_hash[field[:name]] = field[:label]
+        data_type_hash[field[:label]] = contact_data_types[field[:field_type]]
       end
-      hash
+      {'fields_hash' => fields_hash, 'data_type_hash' => data_type_hash }
     end
 
     def render_settings

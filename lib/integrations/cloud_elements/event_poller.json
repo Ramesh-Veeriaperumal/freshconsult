@@ -2,34 +2,34 @@
 {
    "contacts": { 
 
-         "url": "/hubs/helpdesk/contacts",
+     "url": "/hubs/helpdesk/contacts",
 
-         "idField": "user.id",
+     "idField": "user.id",
 
-         "datesConfiguration": {
-              "updatedDateField": "user.updated_at",
-              "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
-              "createdDateField": "user.created_at",
-              "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
-          },
+     "datesConfiguration": {
+          "updatedDateField": "user.updated_at",
+          "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
+          "createdDateField": "user.created_at",
+          "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
+      },
 
-          "pageSize": 1000
+      "pageSize": 1000
     },
 
     "accounts": { 
 
-         "url": "/hubs/helpdesk/accounts",
+     "url": "/hubs/helpdesk/accounts",
 
-         "idField": "customer.id",
+     "idField": "customer.id",
 
-         "datesConfiguration": {
-              "updatedDateField": "user.updated_at",
-              "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
-              "createdDateField": "user.created_at",
-              "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
-          },
+     "datesConfiguration": {
+          "updatedDateField": "user.updated_at",
+          "updatedDateFormat": "yyyy-MM-dd'T'HH:mm:ssX",
+          "createdDateField": "user.created_at",
+          "createdDateFormat": "yyyy-MM-dd'T'HH:mm:ssX"
+      },
 
-          "pageSize": 1000
+      "pageSize": 1000
     }
 
 }
