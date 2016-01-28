@@ -51,13 +51,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # ES v2 specific methods
   #
   def es_v2_attachments
-    attachments.pluck(:content_file_name).collect { |file_name| 
-      f_name = file_name.rpartition('.')
-      {
-        name: f_name.first,
-        type: f_name.last
-      }
-    }
+    attachments.pluck(:content_file_name)
   end
 
   #############################
@@ -161,13 +155,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Being re-used in V2
   #
   def es_cc_emails
-    cc_email_hash[:cc_emails] if cc_email_hash
+    get_email_array(cc_email_hash[:cc_emails]) if cc_email_hash
   end
 
   # Being re-used in V2
   #
   def es_fwd_emails
-    cc_email_hash[:fwd_emails] if cc_email_hash
+    get_email_array(cc_email_hash[:fwd_emails]) if cc_email_hash
   end
 
   # _Note_: Will be deprecated and removed in near future

@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
                       :job_title, :phone, :mobile, :twitter_id, 
                       :description, :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent ], 
-              methods: [ :company_name, :emails, :company_id, :tag_ids ]
+              methods: [ :company_names, :emails, :company_ids, :tag_ids ]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
 
@@ -27,8 +27,14 @@ class User < ActiveRecord::Base
     flexifield.as_json(root: false, only: esv2_contact_field_data_columns)
   end
 
-  def company_name
-    company.name
+  # Note: [*] for handling one-contact multiple-companies later.
+  def company_ids
+    [*company_id]
+  end
+
+  # Note: [*] for handling one-contact multiple-companies later.
+  def company_names
+    [*company_name]
   end
 
   def emails

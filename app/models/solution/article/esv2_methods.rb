@@ -22,13 +22,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def es_v2_attachments
-    attachments.pluck(:content_file_name).collect { |file_name| 
-      f_name = file_name.rpartition('.')
-      {
-        name: f_name.first,
-        type: f_name.last
-      }
-    }
+    attachments.pluck(:content_file_name)
   end
 
   # _Note_: If these attributes will be delegated in future, 
