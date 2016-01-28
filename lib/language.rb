@@ -91,7 +91,7 @@ class Language
 		end
 
 		def fetch_from_portal params
-			Language.find_by_code(Portal.current.language)
+			Language.find_by_code(Portal.current.language) if Portal.current
 		end
 
 		def fetch_from_primary params
@@ -99,7 +99,7 @@ class Language
 		end
 
 		def current
-			Thread.current[:language]
+			Thread.current[:language] ||= for_current_account
 		end
 
 		def current?
