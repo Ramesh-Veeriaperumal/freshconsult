@@ -28,4 +28,19 @@ class ContactFilterValidationTest < ActionView::TestCase
     error = contact_filter.errors.full_messages
     assert error.include?('State not_included')
   end
+
+   def test_nil
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:companies).returns(Company.scoped)
+    ActiveRecord::Relation.any_instance.stubs(:find_by_id).returns(true)
+    contact_filter = ContactFilterValidation.new(state: nil, email: nil, 
+                                    phone: nil, mobile: nil, company_id: nil)
+    refute contact_filter.valid?
+    error = contact_filter.errors.full_messages
+    assert error.include?('State not_included')
+    assert error.include?('Email not_a_valid_email')
+    assert error.include?('Phone data_type_mismatch')
+    assert error.include?('Mobile data_type_mismatch')
+    assert error.include?('Company data_type_mismatch')
+  end
 end

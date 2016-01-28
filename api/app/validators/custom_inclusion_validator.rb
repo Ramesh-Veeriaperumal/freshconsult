@@ -2,7 +2,7 @@
 
 class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
   def validate_each(record, attribute, value)
-    return if record.errors[attribute].present?
+    return if record.errors[attribute].present? || allow_unset?(record, attribute)
 
     # delimiter is an ActiveModel::Validations::InclusionValidator method.
     # It returns options[:in] || options[:within]
@@ -37,5 +37,9 @@ class CustomInclusionValidator < ActiveModel::Validations::InclusionValidator
 
   def required_attribute_not_defined?(record, attribute, _value)
     options[:required] && !record.instance_variable_defined?("@#{attribute}")
+  end
+
+  def allow_unset?(record, attribute)
+    options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}")
   end
 end
