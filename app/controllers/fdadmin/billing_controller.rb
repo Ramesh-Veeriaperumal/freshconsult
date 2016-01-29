@@ -51,6 +51,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   ACTIVE = "active"  
   SUSPENDED = "suspended"              
 
+  ONLINE_CUSTOMER = "on"
   
   def trigger
     if not_api_source? or sync_for_all_sources?
@@ -237,11 +238,16 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       payment = @account.subscription.subscription_payments.create(payment_info(content))
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
+      store_invoice(content)
     end
 
     def payment_refunded(content)
       @account.subscription.subscription_payments.create(
               :account => @account, :amount => -(content[:transaction][:amount]/100))
+      invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+      invoice =  @account.subscription.subscription_invoices.find_by_chargebee_invoice_id(invoice_hash[:chargebee_invoice_id])
+      
+      invoice.update_attributes(invoice_hash) if invoice.present?
     end
 
     #Plans, addons & features
@@ -301,6 +307,13 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     def build_meta_info(invoice)
       meta_info = META_INFO.inject({}) { |h, (k, v)| h[k] = @account.subscription.send(v); h }
       meta_info.merge({ :description => invoice[:line_items][0][:description] })
+    end
+
+    def store_invoice(content)
+      if content["invoice"]["id"] and content['customer']['auto_collection'] == ONLINE_CUSTOMER
+        invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+        @account.subscription.subscription_invoices.create(invoice_hash)
+      end
     end
 
     def auto_collection_off_trigger
