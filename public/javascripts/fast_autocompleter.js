@@ -166,6 +166,7 @@ Autocompleter.MultiValue = Class.create({
     this.form = outputElement.up('form');
     this.dataFetcher = dataFetcher;
     this.active = false;
+    this.options.ignoreQuotedComma = this.options.ignoreQuotedComma || false;
     this.acceptNewValues      = this.options.acceptNewValues || false;
     this.options.frequency    = this.options.frequency || 0.4;
     this.options.allowSpaces  = this.options.allowSpaces || false;
@@ -369,8 +370,14 @@ Autocompleter.MultiValue = Class.create({
   addEntry: function(id, title, skip_separatorRegEx) {
     var items = [id],index,titleArr=[title];
     if(!skip_separatorRegEx && this.options.separatorRegEx){
-        items = id.split(this.options.separatorRegEx);
-        titleArr = title.split(this.options.separatorRegEx);
+        if(this.options.ignoreQuotedComma){
+          items = id.match(this.options.separatorRegEx);
+          titleArr = title.match(this.options.separatorRegEx);
+        }
+        else{
+          items = id.split(this.options.separatorRegEx);
+          titleArr = title.split(this.options.separatorRegEx);
+        }
     }
     for(index=0;index<items.length;index++){
       id = items[index],title=titleArr[index];
