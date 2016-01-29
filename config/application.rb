@@ -94,7 +94,7 @@ module Helpkit
     config.middleware.use "Middleware::GlobalRestriction"
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000
     config.middleware.use "Middleware::TrustedIp"
-    config.middleware.insert_after 'Middleware::TrustedIp', 'Middleware::MultilingualSolutionRouter'
+    # config.middleware.insert_after 'Middleware::TrustedIp', 'Middleware::MultilingualSolutionRouter'
     config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
     config.middleware.insert_after "Middleware::GlobalRestriction",RateLimiting do |r|
       # during the ddos attack uncomment the below line
