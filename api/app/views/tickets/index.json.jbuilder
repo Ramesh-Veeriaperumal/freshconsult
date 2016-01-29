@@ -1,5 +1,5 @@
 json.array! @items do |tkt|
-  json.cache! CacheLib.compound_key(tkt, tkt.schema_less_ticket, params) do
+  json.cache! CacheLib.compound_key(tkt, tkt.schema_less_ticket, ApiConstants::CACHE_VERSION[:v2], params) do
     json.set! :cc_emails, tkt.cc_email.try(:[], :cc_emails)
     json.set! :fwd_emails, tkt.cc_email.try(:[], :fwd_emails)
     json.set! :reply_cc_emails, tkt.cc_email.try(:[], :reply_cc)
@@ -19,10 +19,8 @@ json.array! @items do |tkt|
   end
 
   # Not caching the body as it has a bigger impact for tickets having huge body
-  json.set! :description, tkt.description
-  json.set! :description_html, tkt.description_html
-
-  # Not caching as decimal values are read as big decimal object
+  # Not caching custom field as decimal values are read as big decimal object
   # which in turn causes cache to be regenerated for every request as objects will be different.
-  json.set! :custom_fields, CustomFieldDecorator.utc_format(tkt.custom_field)
+
+  json.extract! tkt, :description, :description_html, :custom_fields
 end

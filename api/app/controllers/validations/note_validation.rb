@@ -13,7 +13,7 @@ class NoteValidation < ApiValidation
 
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments }
 
   def initialize(request_params, item, allow_string_param = false)

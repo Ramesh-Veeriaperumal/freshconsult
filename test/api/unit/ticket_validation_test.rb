@@ -60,7 +60,7 @@ class TicketValidationTest < ActionView::TestCase
   def test_attachment_multiple_errors
     Account.stubs(:current).returns(Account.first)
     String.any_instance.stubs(:size).returns(20_000_000)
-    Helpers::TicketsValidationHelper.stubs(:attachment_size).returns(100)
+    TicketsValidationHelper.stubs(:attachment_size).returns(100)
     controller_params = { requester_id: 1, description: Faker::Lorem.paragraph, ticket_fields: [], attachments: ['file.png'] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
@@ -69,7 +69,7 @@ class TicketValidationTest < ActionView::TestCase
     assert errors.include?('Attachments data_type_mismatch')
     assert errors.count == 1
     Account.unstub(:current)
-    Helpers::TicketsValidationHelper.unstub(:attachment_size)
+    TicketsValidationHelper.unstub(:attachment_size)
   end
 
   def test_tags_multiple_errors
@@ -85,14 +85,14 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_custom_fields_multiple_errors
     Account.stubs(:current).returns(Account.first)
-    Helpers::TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(Helpers::CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
+    TicketsValidationHelper.stubs(:data_type_validatable_custom_fields).returns(CustomFieldValidatorTestHelper.data_type_validatable_custom_fields)
     controller_params = { 'requester_id' => 1, description: Faker::Lorem.paragraph,  ticket_fields: [], custom_fields: 'number1_1 = uioo' }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
     errors = ticket.errors.full_messages
     assert errors.include?('Custom fields data_type_mismatch')
-    Helpers::TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
+    TicketsValidationHelper.unstub(:data_type_validatable_custom_fields)
     Account.unstub(:current)
   end
 

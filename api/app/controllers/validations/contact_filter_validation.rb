@@ -13,7 +13,7 @@ class ContactFilterValidation < FilterValidation
   end
 
   def check_company
-    company = Account.current.companies_from_cache.find { |x| x.id == @company_id.to_i }
+    company = Account.current.companies.find_by_id(@company_id)
     errors[:company_id] << :blank unless company
   end
 end

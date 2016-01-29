@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class ApiDiscussionsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
+  include DiscussionsTestHelper
   def fc
     ForumCategory.last || create_test_category
   end

@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class ApiAgentsFlowTest < ActionDispatch::IntegrationTest
-  include Helpers::AgentsTestHelper
+  include AgentsTestHelper
 
   def sample_user
     @account.all_agents.first

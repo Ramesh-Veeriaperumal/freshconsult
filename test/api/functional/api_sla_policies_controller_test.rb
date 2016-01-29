@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 class ApiSlaPoliciesControllerTest < ActionController::TestCase
-  include Helpers::SlaPoliciesTestHelper
+  include SlaPoliciesTestHelper
   def wrap_cname(params)
     { api_sla_policy: params }
   end

@@ -7,14 +7,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute3, :attribute4, :error_options, :closed_status, :allow_string_param
     validates :attribute3, :attribute4, custom_field:  { attribute3: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                          attribute4: {
-                                                           validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_data_type_validatable_custom_fields },
+                                                           validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_data_type_validatable_custom_fields },
                                                            required_based_on_status: proc { |x| x.required_for_closure? },
                                                            required_attribute: :required
                                                          }
@@ -34,14 +34,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
 
     attr_accessor :attribute5, :attribute6, :error_options, :closed_status, :allow_string_param
     validates :attribute5, :attribute6, custom_field:  { attribute5: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_closure_choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_closure_choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                          attribute6: {
-                                                           validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.required_closure_data_type_validatable_custom_fields },
+                                                           validatable_custom_fields: proc { CustomFieldValidatorTestHelper.required_closure_data_type_validatable_custom_fields },
                                                            required_based_on_status: proc { |x| x.required_for_closure? },
                                                            required_attribute: :required
                                                          }
@@ -62,14 +62,14 @@ class CustomFieldValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :attribute2, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, :attribute2, data_type: { rules: Hash, allow_nil: true }, custom_field: { attribute1: {
-      validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.choices_validatable_custom_fields },
-      drop_down_choices: proc { Helpers::CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
-      nested_field_choices: proc { Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
+      validatable_custom_fields: proc { CustomFieldValidatorTestHelper.choices_validatable_custom_fields },
+      drop_down_choices: proc { CustomFieldValidatorTestHelper.dropdown_choices_by_field_name },
+      nested_field_choices: proc { CustomFieldValidatorTestHelper.nested_fields_choices_by_name },
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     },
                                                                                                      attribute2: {
-                                                                                                       validatable_custom_fields: proc { Helpers::CustomFieldValidatorTestHelper.data_type_validatable_custom_fields },
+                                                                                                       validatable_custom_fields: proc { CustomFieldValidatorTestHelper.data_type_validatable_custom_fields },
                                                                                                        required_based_on_status: proc { |x| x.required_for_closure? },
                                                                                                        required_attribute: :required
                                                                                                      }
@@ -90,7 +90,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     attr_accessor :attribute1, :error_options, :closed_status, :allow_string_param
 
     validates :attribute1, custom_field: { attribute1: {
-      validatable_custom_fields: [Helpers::CustomFieldValidatorTestHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
+      validatable_custom_fields: [CustomFieldValidatorTestHelper.new(id: 14, account_id: 1, name: 'second_1', label: 'second', label_in_portal: 'second', description: nil, active: true, field_type: 'junk_field', position: 22, required: false, visible_in_portal: false, editable_in_portal: false, required_in_portal: false, required_for_closure: false, flexifield_def_entry_id: 4, created_at: '2015-08-10 09:19:28', updated_at: '2015-08-10 14:56:52', field_options: nil, default: false, level: 2, parent_id: 13, prefered_ff_col: nil, import_id: nil)],
       required_based_on_status: proc { |x| x.required_for_closure? },
       required_attribute: :required
     }
@@ -112,22 +112,22 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_choices_validatable_fields_invalid
-    test = TestValidation.new(attribute1: { 'country_1' => 'klk', 'dropdown2_1' => 'jkjk', 'dropdown_3' => 'efgh' })
+    test = TestValidation.new(attribute1: { 'country_1' => 'klk', 'dropdown2_1' => 'jkjk', 'dropdown3_1' => 'efgh' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: :not_included, dropdown2_1: :not_included, dropdown_3: :not_included }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country_1: { list: 'Usa,india' }, dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' } }.sort.to_h, test.error_options.sort.to_h)
+    assert_equal({ country_1: :not_included, dropdown2_1: :not_included, dropdown3_1: :not_included }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: { list: 'Usa,india' }, dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_format_validatable_fields_invalid
-    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff', 'url_1' => 'udp:/testurl', 'url_2' => 'http:/testurl.123' })
+    test = TestValidation.new(attribute2: { 'single_1' => 'w', 'check1_1' => 'ds', 'check2_1' => 'sd', 'decimal1_1' => 'sds', 'decimal2_1' => 'sd', 'number1_1' => 909.898, 'number2_1' => 'dd', 'multi_1' => 'dff', 'url1_1' => 'udp:/testurl', 'url2_1' => 'http:/testurl.123' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal(
       {
         check1_1: :data_type_mismatch, check2_1: :data_type_mismatch, decimal1_1: 'is not a number',
         decimal2_1: 'is not a number', number1_1: :data_type_mismatch,
-        number2_1: :data_type_mismatch, url_1: 'invalid_format', url_2: 'invalid_format'
+        number2_1: :data_type_mismatch, url1_1: 'invalid_format', url2_1: 'invalid_format'
       }.sort.to_h,
       errors.sort.to_h)
     assert_equal({
@@ -135,7 +135,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
       check2_1: { data_type: 'Boolean' },
       number2_1: { data_type: :Integer },
       number1_1: { data_type: :Integer }
-    }.sort.to_h, test.error_options.sort.to_h)
+    }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_format_validatable_fields_valid
@@ -155,7 +155,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :not_included }, errors)
-    assert_equal({ country_1: { list: 'Usa,india' } }, test.error_options)
+    assert_equal({ country_1: { list: 'Usa,india' } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_invalid_second_field
@@ -163,7 +163,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ state_1: :not_included }, errors)
-    assert_equal({ state_1: { list: 'california' } }, test.error_options)
+    assert_equal({ state_1: { list: 'california' } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_invalid_third_field
@@ -171,23 +171,33 @@ class CustomFieldValidatorTest < ActionView::TestCase
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ city_1: :not_included }, errors)
-    assert_equal({ city_1: { list: 'los angeles,san fransico,san diego' } }, test.error_options)
+    assert_equal({ city_1: { list: 'los angeles,san fransico,san diego' } }.stringify_keys, test.error_options)
   end
 
   def test_nested_fields_without_parent_field_second
+    acc = Account.new
+    acc.id = 1
+    Account.stubs(:current).returns(acc)
     test = TestValidation.new(attribute1: { 'state_1' => 'california', 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :conditional_not_blank }, errors)
-    assert_equal({ country_1: { child: 'state_1' } }, test.error_options)
+    assert_equal({ country_1: { child: 'state' } }.stringify_keys, test.error_options)
+  ensure
+    Account.unstub(:current)
   end
 
   def test_nested_fields_without_parent_field_third
+    acc = Account.new
+    acc.id = 1
+    Account.stubs(:current).returns(acc)
     test = TestValidation.new(attribute1: { 'city_1' => 'ddd' })
     refute test.valid?
     errors = test.errors.to_h
     assert_equal({ country_1: :conditional_not_blank, state_1: :conditional_not_blank }.sort.to_h, errors.sort.to_h)
-    assert_equal({ country_1: { child: 'city_1' }, state_1: { child: 'city_1' } }.sort.to_h, test.error_options.sort.to_h)
+    assert_equal({ country_1: { child: 'city' }, state_1: { child: 'city' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
+  ensure
+    Account.unstub(:current)
   end
 
   def test_attribute_with_errors
@@ -202,32 +212,32 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = RequiredTestValidation.new
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown_3: :required_and_inclusion, dropdown_4: :required_and_inclusion, check_2: :required_boolean, check_3: :required_boolean, decimal_3: 'required_number', decimal_4: 'required_number', multi_2: :missing, multi_3: :missing, number_3: :required_integer, number_4: :required_integer, phone_1: :missing, phone_2: :missing, single_2: :missing, single_3: :missing, url_1: 'required_format', url_2: 'required_format', date_1: :required_date  }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown3_1: :required_and_inclusion, dropdown4_1: :required_and_inclusion, check2_1: :required_boolean, check3_1: :required_boolean, decimal3_1: 'required_number', decimal4_1: 'required_number', multi2_1: :missing, multi3_1: :missing, number3_1: :required_integer, number4_1: :required_integer, phone_1: :missing, phone2_1: :missing, single2_1: :missing, single3_1: :missing, url1_1: 'required_format', url2_1: 'required_format', date_1: :required_date  }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
-                   dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
-                   dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number_3: { data_type: :Integer },
-                   number_4: { data_type: :Integer },
-                   check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
+                   dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
+                   dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
+                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
+                   number4_1: { data_type: :Integer },
+                   check2_1: { data_type: 'Boolean' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_nested_fields_without_required_closure_fields
     test = RequiredClosureTestValidation.new(closed_status: true)
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown_3: :required_and_inclusion, dropdown_4: :required_and_inclusion, check_2: :required_boolean, check_3: :required_boolean, decimal_3: 'required_number', decimal_4: 'required_number', multi_2: :missing, multi_3: :missing, number_3: :required_integer, number_4: :required_integer, phone_1: :missing, phone_2: :missing, single_2: :missing, single_3: :missing, url_1: 'required_format', url_2: 'required_format', date_1: :required_date }.sort.to_h, errors.sort.to_h)
+    assert_equal({ country_1: :required_and_inclusion, first_1: :required_and_inclusion, check2_1: :required_boolean, dropdown2_1: :required_and_inclusion, dropdown1_1: :required_and_inclusion, check1_1: :required_boolean, decimal1_1: 'required_number', decimal2_1: 'required_number', number1_1: :required_integer, number2_1: :required_integer, single_1: :missing, multi_1: :missing, phone: :missing, dropdown3_1: :required_and_inclusion, dropdown4_1: :required_and_inclusion, check2_1: :required_boolean, check3_1: :required_boolean, decimal3_1: 'required_number', decimal4_1: 'required_number', multi2_1: :missing, multi3_1: :missing, number3_1: :required_integer, number4_1: :required_integer, phone_1: :missing, phone2_1: :missing, single2_1: :missing, single3_1: :missing, url1_1: 'required_format', url2_1: 'required_format', date_1: :required_date }.sort.to_h, errors.sort.to_h)
     assert_equal({ country_1: { list: 'Usa,india' }, first_1: { list: 'category 1,category 2' },
-                   dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown_3: { list: 'first,second' }, check_2: { data_type: 'Boolean' }, check_3: { data_type: 'Boolean' },
-                   dropdown1_1: { list: '1st,2nd' }, dropdown_4: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
-                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number_3: { data_type: :Integer },
-                   number_4: { data_type: :Integer },
-                   check2_1: { data_type: 'Boolean' } }.sort.to_h, test.error_options.sort.to_h)
+                   dropdown2_1: { list: 'first11,second22,third33,four44' }, dropdown3_1: { list: 'first,second' }, check2_1: { data_type: 'Boolean' }, check3_1: { data_type: 'Boolean' },
+                   dropdown1_1: { list: '1st,2nd' }, dropdown4_1: { list: 'third,fourth' }, check1_1: { data_type: 'Boolean' },
+                   number1_1: { data_type: :Integer }, number2_1: { data_type: :Integer }, number3_1: { data_type: :Integer },
+                   number4_1: { data_type: :Integer },
+                   check2_1: { data_type: 'Boolean' } }.stringify_keys.sort.to_h, test.error_options.sort.to_h)
   end
 
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    Helpers::CustomFieldValidatorTestHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
+    CustomFieldValidatorTestHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
   end

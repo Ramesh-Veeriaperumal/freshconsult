@@ -34,6 +34,8 @@ class ApiApplicationController < MetalApiController
   include SubscriptionSystem
   # App specific Before filters Ends
 
+  include DecoratorConcern
+
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
@@ -82,7 +84,7 @@ class ApiApplicationController < MetalApiController
 
   def destroy
     @item.destroy
-    head :no_content
+    head 204
   end
 
   def route_not_found
@@ -96,7 +98,7 @@ class ApiApplicationController < MetalApiController
       render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
-      head :not_found
+      head 404
     end
   end
 
@@ -190,7 +192,10 @@ class ApiApplicationController < MetalApiController
 
     def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+      unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+        Rails.logger.error "API V2 request for not allowed domain. Domain: #{request.domain}"
+        head 404
+      end
     end
 
     def ensure_proper_protocol
@@ -200,11 +205,13 @@ class ApiApplicationController < MetalApiController
 
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
+      log_error_response @error
       render '/request_error', status: status
     end
 
     def render_base_error(code, status, params_hash = {})
       @error = BaseError.new(code, params_hash)
+      log_error_response @error
       render '/base_error', status: status
     end
 
@@ -238,9 +245,7 @@ class ApiApplicationController < MetalApiController
 
     def load_object(items = scoper)
       @item = items.find_by_id(params[:id])
-      unless @item
-        head 404 # Do we need to put message inside response body for 404?
-      end
+      log_and_render_404 unless @item
     end
 
     def after_load_object
@@ -381,6 +386,7 @@ class ApiApplicationController < MetalApiController
     def render_errors(errors, meta = nil)
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
+        log_error_response @errors
         render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
       else
         # before_callbacks may return false without populating the errors hash.
@@ -567,5 +573,16 @@ class ApiApplicationController < MetalApiController
 
     def increment_api_credit_by(value)
       RequestStore.store[:extra_credits] += value
+    end
+
+    def log_error_response(errors)
+      # to get printed in the hash format, we have this manipulation.
+      hash_format = errors.is_a?(Array) ? errors.map(&:instance_values) : errors.instance_values
+      Rails.logger.debug "API V2 Error Response : #{hash_format.inspect}"
+    end
+
+    def log_and_render_404
+      Rails.logger.debug "API V2 Item not present. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+      head 404
     end
 end

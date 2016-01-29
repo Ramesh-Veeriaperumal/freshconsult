@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module ApiDiscussions
   class CategoriesControllerTest < ActionController::TestCase
-    include Helpers::DiscussionsTestHelper
+    include DiscussionsTestHelper
     actions = Rails.application.routes.routes.select { |x| x.defaults[:controller] == 'api_discussions/categories' }.map { |x| x.defaults[:action] }.uniq
     methods = { 'index' => :get, 'create' => :post, 'update' => :put, 'destroy' => :delete, 'show' => :get, 'forums' => :get }
 
@@ -61,7 +61,7 @@ module ApiDiscussions
 
     actions.select { |a| ['index', 'create'].exclude?(a) }.each do |action|
       define_method("test_#{action}_load_object_present") do
-        category = fc 
+        category = fc
         ForumCategory.any_instance.stubs(:destroy).returns(true)
         send(methods[action], action, construct_params({ id: category.id }, name: 'new'))
         assert_equal category.reload, assigns(:item)

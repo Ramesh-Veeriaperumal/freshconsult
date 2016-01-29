@@ -11,6 +11,6 @@ class ApiProductsController < ApiApplicationController
 
     def load_object
       @item = scoper.detect { |product| product.id == params[:id].to_i }
-      head :not_found unless @item
+      log_and_render_404 unless @item
     end
 end

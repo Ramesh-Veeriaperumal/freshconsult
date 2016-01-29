@@ -1,8 +1,8 @@
 require_relative '../test_helper'
 
 class ApiFlowsTest < ActionDispatch::IntegrationTest
-  include Helpers::DiscussionsTestHelper
-  include Helpers::TicketFieldsTestHelper
+  include DiscussionsTestHelper
+  include TicketFieldsTestHelper
 
   def test_json_format
     get '/api/discussions/categories.json', nil, @headers
@@ -192,8 +192,8 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   def test_multipart_data_with_valid_data_types
     tkt_field1 = create_custom_field('test_custom_decimal', 'decimal')
     tkt_field2 = create_custom_field('test_custom_checkbox', 'checkbox')
-    field1 = tkt_field1.name
-    field2 = tkt_field2.name
+    field1 = tkt_field1.name[0..-3]
+    field2 = tkt_field2.name[0..-3]
     headers, params = encode_multipart({  'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2', 'requester_id' => "#{@agent.id}", 'custom_fields' => { "#{field1}" => '2.34', "#{field2}" => 'false' } }, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post '/api/tickets', params, @headers.merge(headers)
@@ -286,13 +286,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_post_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
     ApiDiscussions::CategoriesController.expects(:current_user_session).never
     @write_headers = set_custom_auth_headers(@write_headers, @agent.reload.email, 'tester')
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     post '/api/discussions/categories', v2_category_payload, @write_headers
     assert_response 401
@@ -306,13 +304,11 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
 
   def test_authenticating_get_request_with_consecutive_invalid_pwd
     flc = @agent.failed_login_count || 0
-    pt = @agent.perishable_token
 
     @headers = set_custom_auth_headers(@headers, @agent.reload.email, 'tes')
     get '/api/discussions/categories', nil, @headers
     assert_response 401
     assert_equal flc + 1, @agent.reload.failed_login_count
-    assert pt != @agent.perishable_token
 
     get '/api/discussions/categories', nil, @headers
     assert_response 401

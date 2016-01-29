@@ -37,7 +37,7 @@ module ApiDiscussions
 
       def load_forum
         @forum = current_account.forums.find_by_id(params[:id])
-        head 404 unless @forum
+        log_and_render_404 unless @forum
         @forum
       end
 
