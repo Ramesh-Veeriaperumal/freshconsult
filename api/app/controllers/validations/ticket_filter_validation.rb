@@ -15,7 +15,7 @@ class TicketFilterValidation < FilterValidation
     @email = request_params.delete('email') if request_params.key?('email')# deleting email and replacing it with requester_id
     if @email
       @requester = Account.current.user_emails.user_for_email(@email)
-      request_params['requester_id'] = @requester.try(:id)
+      request_params['requester_id'] = @requester.try(:id) if @requester
     end
     @conditions = (request_params.keys & ApiTicketConstants::INDEX_FIELDS)
     filter_name = request_params.fetch('filter', 'default')
