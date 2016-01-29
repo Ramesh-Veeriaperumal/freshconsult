@@ -763,6 +763,8 @@ HelpdeskReports.CoreUtil = {
         }
         
         jQuery('#date_range').val(daterange);
+        jQuery('#sprout-datepicker').val(daterange);
+
         var date = jQuery('#date_range').val();
         _this.constructDateRangePicker();
 
