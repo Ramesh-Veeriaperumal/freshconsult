@@ -51,7 +51,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Numericality validator for number field
   def validate_custom_number(record, field_name)
-    numericality_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, allow_negative: true, only_integer: true, allow_nil: !@is_required }, :required_integer)
+    numericality_options = construct_options({ ignore_string: :allow_string_param, only_integer: true, attributes: field_name, allow_nil: !@is_required }, :required_integer)
     CustomNumericalityValidator.new(numericality_options).validate(record)
   end
 

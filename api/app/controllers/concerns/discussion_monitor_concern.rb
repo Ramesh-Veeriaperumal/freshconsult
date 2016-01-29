@@ -99,12 +99,12 @@ module DiscussionMonitorConcern
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && is_not_current_user_id? && !privilege?(:manage_forums)
+      if params[:user_id].present? && not_current_user_id? && !privilege?(:manage_forums)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end
 
-    def is_not_current_user_id?
+    def not_current_user_id?
       !params[:user_id].respond_to?(:to_i) || params[:user_id].to_i != api_current_user.id
     end
 end

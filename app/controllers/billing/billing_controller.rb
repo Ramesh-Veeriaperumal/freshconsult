@@ -54,6 +54,7 @@ class Billing::BillingController < ApplicationController
   ACTIVE = "active"  
   SUSPENDED = "suspended"              
 
+  ONLINE_CUSTOMER = "on"
   
   def trigger
     if not_api_source? or sync_for_all_sources?
@@ -240,11 +241,16 @@ class Billing::BillingController < ApplicationController
       payment = @account.subscription.subscription_payments.create(payment_info(content))
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
+      store_invoice(content)
     end
 
     def payment_refunded(content)
       @account.subscription.subscription_payments.create(
               :account => @account, :amount => -(content[:transaction][:amount]/100))
+      invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+      invoice =  @account.subscription.subscription_invoices.find_by_chargebee_invoice_id(invoice_hash[:chargebee_invoice_id])
+      
+      invoice.update_attributes(invoice_hash) if invoice.present?
     end
 
     #Plans, addons & features
@@ -328,6 +334,13 @@ class Billing::BillingController < ApplicationController
       Rails.logger.error "Redirecting to the correct billing endpoint. Redirect URL is #{redirect_url}"
 
       redirect_to redirect_url
+    end
+
+    def store_invoice(content)
+      if content["invoice"]["id"] and content['customer']['auto_collection'] == ONLINE_CUSTOMER
+        invoice_hash = Billing::WebhookParser.new(content).invoice_hash
+        @account.subscription.subscription_invoices.create(invoice_hash)
+      end
     end
 
     def auto_collection_off_trigger

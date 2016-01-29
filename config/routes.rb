@@ -182,7 +182,7 @@ Helpkit::Application.routes.draw do
   match '/google_sync' => 'authorizations#sync', :as => :google_sync
   match '/auth/google_login/callback' => 'google_login#create_account_from_google', :as => :callback
   match '/auth/google_gadget/callback' => 'google_login#create_account_from_google', :as => :gadget_callback
-  ["github","salesforce", "magento", "shopify", "slack"].each do |provider|
+  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft"].each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -882,6 +882,13 @@ Helpkit::Application.routes.draw do
       get :onedrive_render_application
       get :onedrive_view
     end
+   
+    namespace :infusionsoft do
+      post :fetch_user
+      post :fields_update
+      get :edit
+      get :install
+    end
 
     match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
     match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
@@ -1551,6 +1558,12 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  resources :subscription_invoices, :only => [:index] do
+    collection do
+      get :download_invoice
+    end
+  end
+
   match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
   match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
@@ -1564,7 +1577,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/filter/company/:company_id' => 'archive_tickets#index', :as => :archive_company_filter, via: :get
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
-    
+    match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
     resources :archive_tickets, :only => [:index, :show] do
       collection do 
         post :custom_search

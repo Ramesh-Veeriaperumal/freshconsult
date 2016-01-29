@@ -926,24 +926,6 @@ $animation_timing: .1s;
 .highcharts-container text{
 	text-shadow: none;
 }
-
-.reports_page{
-	.twipsy-inner{
-		width:150px;
-	}
-}
-.twipsy.below .twipsy-arrow{
- @include left(12%);	
-}
-
-.reports_page{
-	.twipsy-inner{
-		width:150px;
-	}
-}
-.twipsy.below .twipsy-arrow{
- @include left(12%);	
-}
 .report-no-external-msg{
 	float: left;
 	font-size:12px;

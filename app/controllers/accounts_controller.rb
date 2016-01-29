@@ -65,6 +65,7 @@ class AccountsController < ApplicationController
    @signup = Signup.new(params[:signup])
    
    if @signup.save
+   @signup.account.agents.first.user.reset_perishable_token! 
       add_to_crm
       respond_to do |format|
         format.html {

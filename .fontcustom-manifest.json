@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "0c949ecfebd2c8803c7c9fb050d38658e2f48526c64f973c3fd90f7987d75eeb",
-    "current": "0c949ecfebd2c8803c7c9fb050d38658e2f48526c64f973c3fd90f7987d75eeb"
+    "previous": "ea8dd93e4521a70140cd1a6d507820d753ec4f8ed98bf655ee2125e8553a6708",
+    "current": "ea8dd93e4521a70140cd1a6d507820d753ec4f8ed98bf655ee2125e8553a6708"
   },
   "fonts": [
-    "public/assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.ttf",
-    "public/assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.svg",
-    "public/assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.woff",
-    "public/assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.eot"
+    "public/assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.ttf",
+    "public/assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.svg",
+    "public/assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.woff",
+    "public/assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -58,6 +58,10 @@
       "codepoint": 61702,
       "source": "public/glyphs/vectors/apple.svg"
     },
+    "archived-ticket": {
+      "codepoint": 61956,
+      "source": "public/glyphs/vectors/archived-ticket.svg"
+    },
     "arrow-click": {
       "codepoint": 61879,
       "source": "public/glyphs/vectors/arrow-click.svg"
@@ -93,6 +97,10 @@
     "arrow-up-2": {
       "codepoint": 61710,
       "source": "public/glyphs/vectors/arrow-up-2.svg"
+    },
+    "article": {
+      "codepoint": 61957,
+      "source": "public/glyphs/vectors/article.svg"
     },
     "available-on-mobile": {
       "codepoint": 61878,
@@ -305,6 +313,10 @@
     "dots": {
       "codepoint": 61746,
       "source": "public/glyphs/vectors/dots.svg"
+    },
+    "download": {
+      "codepoint": 61958,
+      "source": "public/glyphs/vectors/download.svg"
     },
     "dropbox": {
       "codepoint": 61747,

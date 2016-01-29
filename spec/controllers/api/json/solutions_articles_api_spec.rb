@@ -61,7 +61,7 @@ RSpec.describe Solution::ArticlesController do
     get :show, { :category_id=>@solution_category_meta.id,:folder_id=>@solution_folder_meta.id,:id => @test_article_meta.id, :format => 'json'}
     result = parse_json(response)
     expect(response.status).to be_eql(200)
-    expect(assert_array(result["article"].keys,APIHelper::SOLUTION_ARTICLE_ATTRIBS)).to be_truthy
+    expect(assert_array(result["article"].keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS)).to be_truthy
   end
 
   it "should be able to delete a solution article" do

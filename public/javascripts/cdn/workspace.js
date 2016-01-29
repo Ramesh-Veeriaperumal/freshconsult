@@ -32,3 +32,5 @@
 //= require app/merge.js
 //= require app/autosave.js
 //= require plugins/jquery.placeholder.js
+//= require i18n
+//= require i18n/translations

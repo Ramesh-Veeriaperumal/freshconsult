@@ -118,11 +118,11 @@
 
       @font-face {
   font-family: "glyphs";
-  src: url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.eot");
-  src: url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.eot?#iefix") format("embedded-opentype"),
-       url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.woff") format("woff"),
-       url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.ttf") format("truetype"),
-       url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.svg#glyphs") format("svg");
+  src: url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.eot");
+  src: url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.eot?#iefix") format("embedded-opentype"),
+       url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.woff") format("woff"),
+       url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.ttf") format("truetype"),
+       url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -130,7 +130,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: url("../../assets/glyphs_0c949ecfebd2c8803c7c9fb050d38658.svg#glyphs") format("svg");
+    src: url("../../assets/glyphs_ea8dd93e4521a70140cd1a6d507820d7.svg#glyphs") format("svg");
   }
 }
 
@@ -149,6 +149,7 @@
 .ficon-answer-checked:before,
 .ficon-answer-unchecked:before,
 .ficon-apple:before,
+.ficon-archived-ticket:before,
 .ficon-arrow-click:before,
 .ficon-arrow-down:before,
 .ficon-arrow-down-2:before,
@@ -158,6 +159,7 @@
 .ficon-arrow-right-2:before,
 .ficon-arrow-up:before,
 .ficon-arrow-up-2:before,
+.ficon-article:before,
 .ficon-available-on-mobile:before,
 .ficon-bell:before,
 .ficon-billing:before,
@@ -211,6 +213,7 @@
 .ficon-dislike:before,
 .ficon-dispatcher:before,
 .ficon-dots:before,
+.ficon-download:before,
 .ficon-dropbox:before,
 .ficon-dropdown-circle:before,
 .ficon-dropdown_blank:before,
@@ -419,6 +422,7 @@
 .ficon-answer-checked:before { content: "\f104"; }
 .ficon-answer-unchecked:before { content: "\f105"; }
 .ficon-apple:before { content: "\f106"; }
+.ficon-archived-ticket:before { content: "\f204"; }
 .ficon-arrow-click:before { content: "\f1b7"; }
 .ficon-arrow-down:before { content: "\f107"; }
 .ficon-arrow-down-2:before { content: "\f108"; }
@@ -428,6 +432,7 @@
 .ficon-arrow-right-2:before { content: "\f10c"; }
 .ficon-arrow-up:before { content: "\f10d"; }
 .ficon-arrow-up-2:before { content: "\f10e"; }
+.ficon-article:before { content: "\f205"; }
 .ficon-available-on-mobile:before { content: "\f1b6"; }
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
@@ -481,6 +486,7 @@
 .ficon-dislike:before { content: "\f130"; }
 .ficon-dispatcher:before { content: "\f131"; }
 .ficon-dots:before { content: "\f132"; }
+.ficon-download:before { content: "\f206"; }
 .ficon-dropbox:before { content: "\f133"; }
 .ficon-dropdown-circle:before { content: "\f202"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
@@ -677,7 +683,7 @@
 
   <body class="characters-off">
     <header>
-      <h1>Font Icons (256)</h1>
+      <h1>Font Icons (259)</h1>
       <p>We can use font icon classes or use helper method as follows <code>&lt;%= font_icon "icon-name", :size => 18 %&gt;</code>, which generates the Markup</p>
     </header>
     <div id="page" class="container">
@@ -793,6 +799,15 @@
       
       <div class="glyph">
         <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-archived-ticket" class="ficon-archived-ticket"></i></span>
+        </div>
+        <div class="usage">
+          <span>archived-ticket</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
           <span class="step size-24"><span class="letters">Pp</span><i id="ficon-arrow-click" class="ficon-arrow-click"></i></span>
         </div>
         <div class="usage">
@@ -869,6 +884,15 @@
         </div>
         <div class="usage">
           <span>arrow-up-2</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-article" class="ficon-article"></i></span>
+        </div>
+        <div class="usage">
+          <span>article</span>
         </div>
       </div>
       
@@ -1346,6 +1370,15 @@
         </div>
         <div class="usage">
           <span>dots</span>
+        </div>
+      </div>
+      
+      <div class="glyph">
+        <div class="preview-glyphs">
+          <span class="step size-24"><span class="letters">Pp</span><i id="ficon-download" class="ficon-download"></i></span>
+        </div>
+        <div class="usage">
+          <span>download</span>
         </div>
       </div>
       

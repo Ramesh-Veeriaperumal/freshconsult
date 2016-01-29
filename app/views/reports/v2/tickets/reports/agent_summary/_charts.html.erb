@@ -84,7 +84,7 @@
             HelpdeskReports.ChartsInitializer.AgentSummary.init(locals.chart_hash);
         } else if (!err && locals.chart_hash.length === 0) {
             var div = ['data_table'];
-            HelpdeskReports.CoreUtil.populateEmptyChart(div, "No data to display");
+            HelpdeskReports.CoreUtil.populateEmptyChart(div, I18n.t('helpdesk_reports.no_data_to_display_msg'));
         } else {
             var div = ["data_table"];
             HelpdeskReports.CoreUtil.populateEmptyChart(div, err);

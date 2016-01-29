@@ -36,7 +36,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "source"           =>   source,
       "requester_id"     =>   requester_id,
       "ticket_type"      =>   ticket_type,
-      "visible"          =>   !spam && !deleted && !parent_ticket ,
+      "visible"          =>   visibility_state,
       "responder_name"   =>   responder.nil? ? "" : responder.name,
       "subject"          =>   subject,
       "requester_name"   =>   requester.name,
@@ -80,6 +80,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
         "ticket_properties"     =>  mq_reports_ticket_properties(action),
         "subscriber_properties" =>  { "reports" => mq_reports_subscriber_properties(action).merge(options)  }     
     }
+  end
+
+  def visibility_state
+    # We have a priority in deciding the visibility state. Deleted is the first check we make, 
+    # then spam and parent ticket
+    case 
+    when deleted
+      VISIBILITY_MAPPING[:deleted]
+    when spam
+      VISIBILITY_MAPPING[:spam]
+    when parent_ticket
+      VISIBILITY_MAPPING[:merged_ticket]
+    else
+      VISIBILITY_MAPPING[:active]
+    end
   end
   
   def return_specific_keys(hash, keys)

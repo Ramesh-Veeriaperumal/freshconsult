@@ -27,6 +27,5 @@ module APIAuthHelper
   def assert_array(first_input, second_input, exclusions = [])
     ((first_input - second_input) - exclusions).empty?
   end
-
 end
  

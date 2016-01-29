@@ -45,14 +45,27 @@ module ApiDiscussions
       assert_response 200
 
       comment.update_column(:user_id, @agent.id)
-      @controller.stubs(:privilege?).with(:view_forums, comment).returns(false)
-      @controller.stubs(:privilege?).with(:edit_topic, comment).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(false)
+      User.any_instance.stubs(:privilege?).with(:edit_topic, comment).returns(true)
       put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
       match_json([bad_request_error_pattern('answer', :inaccessible_field)])
       assert_response 400
+
+      @controller.stubs(:api_current_user).returns(nil)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      @controller.unstub(:api_current_user)
+      match_json(request_error_pattern(:invalid_credentials))
+      assert_response 401
+
+      User.any_instance.stubs(:customer?).returns(true)
+      put :update, construct_params({ id: comment.id }, answer: true, body_html: 'test reply 2')
+      match_json(request_error_pattern(:access_denied))
+      assert_response 403
     ensure
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:customer?)
       @controller.unstub(:privilege?)
+      @controller.unstub(:api_current_user)
     end
 
     def test_update
@@ -231,7 +244,7 @@ module ApiDiscussions
       t = Topic.where('posts_count > ?', 1).first || create_test_post(topic_obj, User.first).topic
       get :topic_comments, controller_params(id: t.id, per_page: 101)
       assert_response 400
-      match_json([bad_request_error_pattern('per_page', :gt_zero_lt_max_per_page, data_type: 'Positive Integer')])
+      match_json([bad_request_error_pattern('per_page', :per_page_invalid_number, max_value: 100)])
     end
 
     def test_comments_with_link_header

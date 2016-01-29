@@ -13,7 +13,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
   
     def prepare_params
       @query_params = params[:query_hash].each{|k| k.symbolize_keys!}
-      @file_format  = report_file_format
+      @file_format  = ["agent_summary", "group_summary"].include?(report_type) ? "csv" : "pdf"
     end
 
     def build_and_email_file
@@ -21,7 +21,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
         generate_report_data
       
         file_path = generate_and_upload_file if @data.present?
-        options   = build_options_for_email
+        options   = {:filters => params[:select_hash]} if file_format == "csv"
         send_email( options, file_path, PDF_EXPORT_TYPE )
       end
     end
@@ -35,6 +35,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     def build_and_execute
       requests = []
       @query_params.each_with_index do |param, i|
+        param.merge!(export: "pdf_export")
         request_object = HelpdeskReports::Request::Ticket.new(param.merge!(index: i),report_type)
         request_object.build_request
         requests << request_object
@@ -47,7 +48,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
         index = res["index"].to_i
         param = requests[index].fetch_req_params
         query_type = requests[index].query_type
-        @results << HelpdeskReports::Response::Ticket.new(res, param, query_type,report_type, @pdf_export.present?)   
+        @results << HelpdeskReports::Response::Ticket.new(res, param, query_type,report_type, true)   
       end
     end
 
@@ -60,15 +61,11 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
     end
 
     def format_result
-      if formatting_required?
-        @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints).format
+      if FORMATTING_REQUIRED.include?(report_type.to_sym)
+        @data = HelpdeskReports::Formatter::Ticket.new(@processed_result, report_specific_constraints(true)).format
       else
         @data = @processed_result
       end
-    end
-
-    def formatting_required?
-      FORMATTING_REQUIRED.include?(report_type.to_sym)
     end
 
     def generate_and_upload_file
@@ -107,11 +104,4 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       pdf = WickedPdf.new.pdf_from_string(pdf_html, :pdf => report_type, :page_size => "A3", :javascript_delay => 1000)
     end
 
-    def build_options_for_email
-      {:filters => params[:select_hash]} if file_format == "csv"
-    end
-
-    def report_file_format
-      ["agent_summary", "group_summary"].include?(report_type) ? "csv" : "pdf"
-    end
 end

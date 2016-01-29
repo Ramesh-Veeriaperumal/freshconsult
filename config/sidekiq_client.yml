@@ -49,6 +49,7 @@ defaults: &defaults
     - [archive_build_create_ticket]
     - [archive_modify_ticket_association]
     - [archive_delete_ticket]
+    - [chargebee_invoice]
     - [update_ticket_states]
     - [ticket_observer]
     - [password_expiry]
