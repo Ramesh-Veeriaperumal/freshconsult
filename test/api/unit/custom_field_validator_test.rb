@@ -177,6 +177,19 @@ class CustomFieldValidatorTest < ActionView::TestCase
     assert_equal({ city_1: { list: 'los angeles,san fransico,san diego' } }.stringify_keys, test.error_options)
   end
 
+  def test_nested_fields_same_second_level_choice_invalid
+    test = TestValidation.new(attribute1: { 'first_1' => 'category 1', 'second_1' => 'subcategory 1', 'third_1' => '123' })
+    refute test.valid?
+    errors = test.errors.to_h
+    assert_equal({ third_1: :not_included }, errors)
+    assert_equal({ third_1: { list: 'abc,def' } }.stringify_keys, test.error_options)
+  end
+
+  def test_nested_fields_same_second_level_choice_valid
+    test = TestValidation.new(attribute1: { 'first_1' => 'category 1', 'second_1' => 'subcategory 1', 'third_1' => 'abc' })
+    assert test.valid?
+  end
+
   def test_nested_fields_without_parent_field_second
     acc = Account.new
     acc.id = 1
@@ -244,7 +257,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
   def test_nested_fields_with_changed_child_value
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     refute test.valid?
-    CustomFieldValidatorTestHelper.nested_fields_choices_by_name = { second_level_choices: { 'country_1' => { 'Usa' => ['california', 'new york'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } } }
+    CustomFieldValidatorTestHelper.nested_fields_choices_by_name ={ 'country_1' => {'Usa' => {'california' =>  ['los angeles', 'san fransico', 'san diego'], 'new york' => []}, 'india' => {'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag']}}, 
+                     'first_1' =>  {"category 1"=> {"subcategory 1"=>["abc", "def"], "subcategory 2"=>["mno", "pqr"], "subcategory 3"=>[]}, "category 2"=>{"subcategory 1"=>["123", "456"]}}}
     test = TestValidation.new(attribute1: { 'country_1' => 'Usa', 'state_1' => 'new york' })
     assert test.valid?
   end
