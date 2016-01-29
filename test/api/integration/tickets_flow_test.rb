@@ -67,6 +67,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     email = [Faker::Internet.email, Faker::Internet.email]
     params_hash = { body: body, notify_emails: email, private: true, user_id: @agent.id }
     parent_ticket = Helpdesk::Ticket.last
+    previous_updated_at = parent_ticket.updated_at
     headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post "/api/tickets/#{parent_ticket.display_id}/notes", params, @headers.merge(headers)
@@ -74,6 +75,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert_response 201
     assert_equal true, Helpdesk::Note.last.private
     assert_equal @agent.id, Helpdesk::Note.last.user_id
+    assert Helpdesk::Ticket.find(parent_ticket.id).updated_at > previous_updated_at
   end
 
   def test_multipart_create_reply_with_all_params
@@ -82,12 +84,14 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     bcc_emails = [Faker::Internet.email, Faker::Internet.email]
     params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, user_id: @agent.id }
     parent_ticket = Helpdesk::Ticket.last
+    previous_updated_at = parent_ticket.updated_at
     headers, params = encode_multipart(params_hash, 'attachments[]', File.join(Rails.root, 'test/api/fixtures/files/image33kb.jpg'), 'image/jpg', true)
     skip_bullet do
       post "/api/tickets/#{parent_ticket.display_id}/reply", params, @headers.merge(headers)
     end
     assert_response 201
     assert_equal @agent.id, Helpdesk::Note.last.user_id
+    assert Helpdesk::Ticket.find(parent_ticket.id).updated_at > previous_updated_at
   end
 
   def test_empty_tags_and_cc_emails
@@ -144,5 +148,194 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     parsed_response = JSON.parse(response.body)['custom_fields']
     assert_equal time.utc.iso8601, parsed_response['custom_date']
     Helpdesk::Ticket.any_instance.unstub(:custom_field)
+  end
+
+  def test_updated_at_of_ticket_with_description_update
+    # IN API
+    ticket = Helpdesk::Ticket.first
+    previous_updated_at = ticket.updated_at
+    skip_bullet do
+      put "/api/tickets/#{ticket.id}", { description: Faker::Lorem.paragraph }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+    
+    #IN WEB
+    # previous_updated_at_for_web = ticket.updated_at
+    # skip_bullet do
+    #   put "helpdesk/tickets/#{ticket.id}", { helpdesk_ticket: { ticket_body_attributes: { description: Faker::Lorem.paragraph } } }.to_json, @write_headers
+    # end
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
+
+    #IN API V1
+    previous_updated_at_for_api_v1 = ticket.updated_at
+    skip_bullet do
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: Faker::Lorem.paragraph } } }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+  end
+
+  def test_updated_at_of_ticket_with_no_description_update
+    # IN API
+    ticket = create_ticket(requested_id: @agent.id)
+    previous_updated_at = ticket.updated_at
+    skip_bullet do
+      put "/api/tickets/#{ticket.id}", { description: ticket.description }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+    
+    #IN WEB
+    # skip_bullet do
+    #   put "helpdesk/tickets/#{ticket.id}", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description } } }.to_json, @write_headers
+    # end
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+
+    #IN API V1
+    skip_bullet do
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description, description_html: ticket.description_html } } }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+  end
+
+  def test_updated_at_of_ticket_with_tags_add
+    # IN API
+    ticket = Helpdesk::Ticket.first
+    previous_updated_at = ticket.updated_at
+    skip_bullet do
+      put "/api/tickets/#{ticket.id}", { tags: [Faker::Name.name] }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+    
+    # #IN WEB
+    # previous_updated_at_for_web = ticket.updated_at
+    # skip_bullet do
+    #   put "helpdesk/tickets/#{ticket.id}", { helpdesk: {  tags: "#{Faker::Name.name}" } }.to_json, @write_headers
+    # end
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
+
+    #IN API V1
+    previous_updated_at_for_api_v1 = ticket.updated_at
+    skip_bullet do
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{Faker::Name.name}"  } }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+  end
+
+  def test_updated_at_of_ticket_with_tags_remove
+    # IN API
+    ticket = Helpdesk::Ticket.first
+    ticket.tags = [Helpdesk::Tag.first]
+    previous_updated_at = ticket.updated_at
+    sleep 1
+    skip_bullet do
+      put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+    
+    #IN WEB
+    # ticket.tags = [Helpdesk::Tag.first]
+    # previous_updated_at_for_web = ticket.updated_at
+    # sleep 1
+    # skip_bullet do
+    #   put "helpdesk/tickets/#{ticket.id}", { helpdesk: {  tags: "" } }.to_json, @write_headers
+    # end
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
+
+    #IN API V1
+    ticket.tags = [Helpdesk::Tag.first]
+    previous_updated_at_for_api_v1 = ticket.updated_at
+    sleep 1
+    skip_bullet do
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "" }  }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+  end
+
+  def test_updated_at_of_ticket_with_no_changes_to_tags
+    # IN API
+    ticket = Helpdesk::Ticket.first
+    tag = Helpdesk::Tag.first
+    ticket.tags = [tag]
+    previous_updated_at = ticket.updated_at
+    skip_bullet do
+      put "/api/tickets/#{ticket.id}", { tags: [tag.name] }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+    
+    #IN WEB
+    # skip_bullet do
+    #   put "helpdesk/tickets/#{ticket.id}", { helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
+    # end
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+
+    #IN API V1
+    skip_bullet do
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
+    end
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
+  end
+
+  def test_updated_at_of_ticket_with_note_update
+    # In API
+    note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    ticket = note.notable
+    previous_updated_at = ticket.updated_at
+    put("/api/notes/#{note.id}", v2_note_update_payload, @write_headers)
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+
+    # IN Web 
+    # previous_updated_at_for_web = ticket.updated_at
+    # put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}", { helpdesk_note: { body: Faker::Lorem.paragraph }}.to_json, @write_headers)
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
+
+    # In API V1
+    previous_updated_at_for_api_v1 = ticket.updated_at
+    put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph }}.to_json, @write_headers)
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
+  end
+
+  def test_updated_at_of_ticket_with_note_destroy
+    # In API
+    note = Helpdesk::Note.exclude_source('meta').visible.first
+    ticket = note.notable
+    previous_updated_at = ticket.updated_at
+    sleep 1
+    delete("/api/notes/#{note.id}", nil, @headers)
+    assert_response 204
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
+
+    # In Web
+    # note = Helpdesk::Note.exclude_source('meta').visible.first
+    # ticket = note.notable 
+    # previous_updated_at_for_web = ticket.updated_at
+    # delete("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}", nil, @headers)
+    # assert_response 302
+    # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
+
+    # In API V1
+    note = Helpdesk::Note.exclude_source('meta').visible.first
+    ticket = note.notable
+    previous_updated_at_for_api_v1 = ticket.updated_at
+    sleep 1
+    delete("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", nil, @headers)
+    assert_response 200
+    assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
   end
 end
