@@ -165,7 +165,7 @@ gem "aws-sdk-resources", '~> 2'
 gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
 
-# gem "therubyracer"
+gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
