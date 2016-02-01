@@ -567,18 +567,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def latest_public_comment
-    notes.visible.public.newest_first.first
+    notes.visible.exclude_source('meta').public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.private.newest_first.first
+    notes.visible.exclude_source('meta').private.newest_first.first
   end
   
-  def liquidize_comment(comm)
+  def liquidize_comment(comm, html=true)
     if comm
-      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
-      all_attachments = comm.all_attachments
-      unless all_attachments.empty?
+      c_descr = "#{comm.user ? comm.user.name : 'System'} : #{html ? comm.body_html : comm.body}"
+      all_attachments = nil
+      if html && (all_attachments = comm.all_attachments).present?
         c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(all_attachments)}\n"
       end
       c_descr
