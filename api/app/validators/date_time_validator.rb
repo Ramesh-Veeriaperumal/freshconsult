@@ -13,7 +13,7 @@ class DateTimeValidator < ActiveModel::EachValidator
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
 
   def validate_each(record, attribute, values)
-    return if record.errors[attribute].present?
+    return if record.errors[attribute].present? || allow_unset?(record, attribute)
     unless parse_time(values)
       message = options[:message] || get_message
       record.errors[attribute] << message
@@ -90,5 +90,9 @@ class DateTimeValidator < ActiveModel::EachValidator
       hh = zone[0..1]
       mm = zone[-1..-2] if zone.size != 2
       hh.to_i.between?(0, 23) && mm.to_i.between?(0, 59)
+    end
+
+    def allow_unset?(record, attribute)
+      options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}")
     end
 end

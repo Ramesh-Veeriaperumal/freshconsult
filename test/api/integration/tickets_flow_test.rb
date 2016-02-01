@@ -26,7 +26,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       post '/api/tickets', { 'ticket' => { 'email' => 'test@abc.com', 'attachments' => 's', 'subject' => 'Test Subject', 'description' => 'Test', 'priority' => '1', 'status' => '2' } }, @headers.merge('CONTENT_TYPE' => 'multipart/form-data')
     end
     assert_response 400
-    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('attachments', :data_type_mismatch, data_type: Array)])
   end
 
   def test_create_with_empty_attachment_array
@@ -104,7 +104,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
       assert ticket.cc_email[:cc_emails].count == 1
 
       put "/api/tickets/#{ticket.id}", { tags: nil }.to_json, @write_headers
-      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
+      match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array)])
       assert_response 400
 
       put "/api/tickets/#{ticket.id}", { tags: [] }.to_json, @write_headers
@@ -159,8 +159,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
-    
-    #IN WEB
+
+    # IN WEB
     # previous_updated_at_for_web = ticket.updated_at
     # skip_bullet do
     #   put "helpdesk/tickets/#{ticket.id}", { helpdesk_ticket: { ticket_body_attributes: { description: Faker::Lorem.paragraph } } }.to_json, @write_headers
@@ -168,7 +168,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
 
-    #IN API V1
+    # IN API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: Faker::Lorem.paragraph } } }.to_json, @write_headers
@@ -186,15 +186,15 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
-    
-    #IN WEB
+
+    # IN WEB
     # skip_bullet do
     #   put "helpdesk/tickets/#{ticket.id}", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description } } }.to_json, @write_headers
     # end
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
 
-    #IN API V1
+    # IN API V1
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: { ticket_body_attributes: { description: ticket.description, description_html: ticket.description_html } } }.to_json, @write_headers
     end
@@ -211,7 +211,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
-    
+
     # #IN WEB
     # previous_updated_at_for_web = ticket.updated_at
     # skip_bullet do
@@ -220,7 +220,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
 
-    #IN API V1
+    # IN API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{Faker::Name.name}"  } }.to_json, @write_headers
@@ -240,8 +240,8 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
-    
-    #IN WEB
+
+    # IN WEB
     # ticket.tags = [Helpdesk::Tag.first]
     # previous_updated_at_for_web = ticket.updated_at
     # sleep 1
@@ -251,12 +251,12 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_web
 
-    #IN API V1
+    # IN API V1
     ticket.tags = [Helpdesk::Tag.first]
     previous_updated_at_for_api_v1 = ticket.updated_at
     sleep 1
     skip_bullet do
-      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "" }  }.to_json, @write_headers
+      put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: '' }  }.to_json, @write_headers
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
@@ -273,15 +273,15 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     end
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
-    
-    #IN WEB
+
+    # IN WEB
     # skip_bullet do
     #   put "helpdesk/tickets/#{ticket.id}", { helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
     # end
     # assert_response 302
     # assert Helpdesk::Ticket.find(ticket.id).updated_at.to_i == previous_updated_at.to_i
 
-    #IN API V1
+    # IN API V1
     skip_bullet do
       put "helpdesk/tickets/#{ticket.id}.json", { helpdesk_ticket: {}, helpdesk: { tags: "#{tag.name}" } }.to_json, @write_headers
     end
@@ -298,7 +298,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at
 
-    # IN Web 
+    # IN Web
     # previous_updated_at_for_web = ticket.updated_at
     # put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}", { helpdesk_note: { body: Faker::Lorem.paragraph }}.to_json, @write_headers)
     # assert_response 302
@@ -306,7 +306,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # In API V1
     previous_updated_at_for_api_v1 = ticket.updated_at
-    put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph }}.to_json, @write_headers)
+    put("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}.json", { helpdesk_note: { body: Faker::Lorem.paragraph } }.to_json, @write_headers)
     assert_response 200
     assert Helpdesk::Ticket.find(ticket.id).updated_at > previous_updated_at_for_api_v1
   end
@@ -323,7 +323,7 @@ class TicketsFlowTest < ActionDispatch::IntegrationTest
 
     # In Web
     # note = Helpdesk::Note.exclude_source('meta').visible.first
-    # ticket = note.notable 
+    # ticket = note.notable
     # previous_updated_at_for_web = ticket.updated_at
     # delete("/helpdesk/tickets/#{ticket.id}/notes/#{note.id}", nil, @headers)
     # assert_response 302

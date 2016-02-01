@@ -14,7 +14,7 @@ class ApiGroupValidationTest < ActionView::TestCase
                                      agent_ids: 123 }, nil)
     refute group.valid?
     errors = group.errors.full_messages
-    assert errors.include?('Name missing')
+    assert errors.include?('Name required_and_data_type_mismatch')
     assert errors.include?('Unassigned for not_included')
     assert errors.include?('Escalate to data_type_mismatch')
     assert errors.include?('Agent ids data_type_mismatch')

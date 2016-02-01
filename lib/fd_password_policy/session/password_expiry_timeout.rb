@@ -18,7 +18,12 @@ module FDPasswordPolicy
       module InstanceMethods
 
         def password_stale?
-          !stale_record.nil? || (controller.cookies['_helpkit_session'] && record && record.password_expired?)
+          !stale_record.nil? || (web_or_api_request? && record && record.password_expired?)
+        end
+
+        # Can't be made private as it is being used by intercept_api_request module also. 
+        def api_request?
+          controller.request.path.try(:starts_with?, "/api/")
         end
     
         private
@@ -29,6 +34,17 @@ module FDPasswordPolicy
               self.stale_record = record
               self.record = nil
             end
+          end
+
+          def web_or_api_request?
+            # 1.Should be checked if cookies has session.
+            # 2.Should be checked only for api requests with email in authorization header.
+            controller.cookies['_helpkit_session'] || (api_request? && !request_via_api_key?)
+          end
+
+          # Used by intercept_api_request module also. 
+          def request_via_api_key?
+            !controller.params[:k].try(:include?, "@")
           end
 
       end

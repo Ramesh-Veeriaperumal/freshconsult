@@ -153,7 +153,7 @@ module ApiDiscussions
       comment =  comment_obj
       put :update, construct_params({ id: comment.id }, body_html: nil)
       assert_response 400
-      match_json([bad_request_error_pattern('body_html', :"can't be blank")])
+      match_json([bad_request_error_pattern('body_html', :data_type_mismatch, data_type: String)])
     end
 
     def test_destroy
@@ -173,7 +173,7 @@ module ApiDiscussions
     def test_create_no_params
       post :create, construct_params({ id: topic_obj.id }, {})
       assert_response 400
-      match_json [bad_request_error_pattern('body_html', :missing_field)]
+      match_json [bad_request_error_pattern('body_html', :required_and_data_type_mismatch, data_type: String)]
     end
 
     def test_create_mandatory_params

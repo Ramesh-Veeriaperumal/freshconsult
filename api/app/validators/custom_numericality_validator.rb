@@ -5,7 +5,7 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
   MUST_BE_LESS_THAN = 'must be less than'
 
   def validate_each(record, attribute, value)
-    return if record.errors[attribute].present?
+    return if record.errors[attribute].present? || allow_unset?(record, attribute)
 
     message = options[:message]
 
@@ -72,5 +72,9 @@ class CustomNumericalityValidator < ActiveModel::Validations::NumericalityValida
 
     def required_attribute_not_defined?(record, attribute, _value)
       options[:required] && !record.instance_variable_defined?("@#{attribute}")
+    end
+
+    def allow_unset?(record, attribute)
+      options[:allow_unset] && !record.instance_variable_defined?("@#{attribute}")
     end
 end

@@ -13,7 +13,7 @@ class NoteValidationTest < ActionView::TestCase
     item = nil
     note = NoteValidation.new(controller_params, item)
     refute note.valid?(:create)
-    assert note.errors.full_messages.include?('Body missing')
+    assert note.errors.full_messages.include?('Body required_and_data_type_mismatch')
     refute note.errors.full_messages.include?('Body html data_type_mismatch')
 
     controller_params = { 'user_id' => 1, body: '', body_html: '' }

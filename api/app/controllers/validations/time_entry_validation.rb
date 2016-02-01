@@ -4,6 +4,7 @@ class TimeEntryValidation < ApiValidation
   # do not change validation order
   # Common validations
   validates :billable, :timer_running, data_type: { rules: 'Boolean' }
+  validates :note, data_type: { rules: String, allow_nil: true }
   validates :executed_at, date_time: { allow_nil: true }
   validates :time_spent, format: { with: /^\d+:[0-5][0-9]$/, message: 'invalid_time_spent', allow_nil: true }
 
