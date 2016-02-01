@@ -33,7 +33,7 @@ class NoteValidation < ApiValidation
   def max_email_count
     NoteConstants::EMAIL_FIELDS.each do |field|
       array_elements = send(field)
-      if array_elements && errors[field].blank? && array_elements.count > ApiTicketConstants::MAX_EMAIL_COUNT
+      if array_elements && errors[field].blank? && array_elements.count >= ApiTicketConstants::MAX_EMAIL_COUNT
         errors[field] << :max_count_exceeded
         (self.error_options ||= {}).merge!(field => { max_count: "#{ApiTicketConstants::MAX_EMAIL_COUNT}" })
       end

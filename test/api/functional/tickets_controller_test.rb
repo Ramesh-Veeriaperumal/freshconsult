@@ -439,7 +439,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_due_by_and_cc_emails_count
     cc_emails = []
-    51.times do
+    50.times do
       cc_emails << Faker::Internet.email
     end
     params = ticket_params_hash.merge(due_by: 30.days.ago.iso8601, cc_emails: cc_emails)
