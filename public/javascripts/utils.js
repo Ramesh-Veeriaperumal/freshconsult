@@ -881,6 +881,23 @@ function unescapeHtml(escapedStr) {
         return child ? child.nodeValue : '';
 };
 
+//Alternative to escapeHtml, also escapes quotes
+function htmlEntities(str) {
+  var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  };
+  return String(str).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    return entityMap[s];
+  });
+};
+
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,

@@ -235,7 +235,7 @@ GithubWidget.prototype = {
   displayFormContent: function () {
     return this.GITHUB_FORM.evaluate({
       github_milestone: githubBundle.can_set_milestone === '1' ? this.GITHUB_MILESTONE_TEMPLATE : '',
-      github_title: githubBundle.ticketSubject
+      github_title: htmlEntities(githubBundle.ticketSubject)
     });
   },
 
