@@ -74,7 +74,7 @@ var UnresolvedTickets = (function () {
 			}else{
 				var agentQuery = (filteredData.agent.length ? "&agent="+Array.prototype.slice.call(filteredData.agent).join(',') : '');
 				var groupQuery = (filteredData.group.length ? "&group="+Array.prototype.slice.call(filteredData.group).join(',') : '');
-				metricurl = "status="+_currentData.status+agentQuery+groupQuery;
+				metricurl = ( agentQuery.length === 0 && groupQuery.length === 0 ) ? (currentTab+"="+_currentData.id+"&status="+_currentData.status) : ("status="+_currentData.status+agentQuery+groupQuery)
 			}
 			window.open(CONST.ticketlist_url+metricurl, '_blank');
 		},
