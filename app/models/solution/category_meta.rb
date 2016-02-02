@@ -18,7 +18,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:order => 'solution_folder_meta.position', 
 		:dependent => :destroy
 
-	has_many :solution_folders, :through => :solution_folder_meta, :order => 'solution_folder_meta.position'
+	has_many :solution_folders, :through => :solution_folder_meta
 
 	has_many :solution_categories, :class_name => "Solution::Category", :foreign_key => "parent_id", :autosave => true, :inverse_of => :solution_category_meta, :dependent => :destroy
 

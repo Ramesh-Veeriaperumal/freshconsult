@@ -43,7 +43,7 @@ class Solution::FolderMeta < ActiveRecord::Base
  		:conditions => "`solution_articles`.status = 
 			#{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
 
-	acts_as_list :scope => :solution_category_meta
+	acts_as_list :scope => :solution_category_meta, :column => "`solution_folder_meta`.position"
 
 	COMMON_ATTRIBUTES = ["visibility", "position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES  = ["is_default","name","id","article_count"]

@@ -26,7 +26,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 			
 	has_one :solution_folder, :class_name => "Solution::Folder", :through => :solution_folder_meta
 
-	acts_as_list :scope => :solution_folder_meta
+	acts_as_list :scope => :solution_folder_meta, :column => "`solution_article_meta`.position"
 
 	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 
