@@ -400,6 +400,18 @@ ActiveRecord::Schema.define(:version => 20151221042435) do
 
   add_index "chat_widgets", ["account_id", "widget_id"], :name => "account_id_and_widget_id"
 
+  create_table "company_domains", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "company_id",       :limit => 8
+    t.string   "domain"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_domains", ["account_id", "company_id"], :name => "index_for_company_domains_on_account_id_and_company_id"
+  add_index "company_domains", ["account_id", "domain"], :name => "index_for_company_domains_on_account_id_and_domain", :length => {"account_id"=>nil, "domain"=>20}
+
+
   create_table "company_field_choices", :force => true do |t|
     t.integer  "account_id",       :limit => 8
     t.integer  "company_field_id", :limit => 8

@@ -4243,6 +4243,7 @@ en:
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: "You don't have any companies with the letter '%{alphabet}'"
+    valid_comapany_domain: "Enter valid domains"
   billing_info_update: Your billing information has been updated.
   wrong_portal:
     content_not_available: The content you are looking for is, not available in this portal.
