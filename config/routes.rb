@@ -2523,6 +2523,8 @@ Helpkit::Application.routes.draw do
           put :remove_feature
           put :whitelist
           put :block_account
+          get :user_info
+          put :reset_login_count
         end
       end
 
@@ -2587,6 +2589,7 @@ Helpkit::Application.routes.draw do
           put :hard_block   
           put :spam_user   
           put :internal_whitelist
+          put :unspam_user
         end
       end
 
