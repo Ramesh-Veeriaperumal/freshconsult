@@ -36,7 +36,7 @@
       render: function(){
         if(CURRENT_ACCOUNT.chat_enabled){
           if(userCollection.availabilityAgentsCount >= 0){
-            jQuery('#livechat_online_agent_count').html(userCollection.availabilityAgentsCount);
+            this.setAgentsCount();
           }
           if(!CURRENT_USER.isAdmin){
             jQuery("#livechat_online_agent_count").unwrap();
@@ -53,19 +53,19 @@
       },
   
       reduceOpacity: function(){
-        this.$el.find('#chat-dashboard .widget-title')
+        this.$el.find('#chat-dashboard')
           .addClass('chat_aside_widget')
           .end()
-          .find('h3')
+          .find('h3.widget-title')
           .addClass('fc_widget_refresh_on')
           .removeClass('fc_widget_refresh_off');
       },
   
       normalOpacity: function(){
-        this.$el.find('#chat-dashboard .widget-title')
+        this.$el.find('#chat-dashboard')
           .removeClass('chat_aside_widget')
           .end()
-          .find('h3')
+          .find('h3.widget-title')
           .addClass('fc_widget_refresh_off')
           .removeClass('fc_widget_refresh_on');      
       },

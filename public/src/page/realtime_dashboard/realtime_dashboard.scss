@@ -262,6 +262,24 @@
       min-height: 142px;
       padding: 40px 20px;
     }
+
+    /* ----- Chat refresh button ----- */
+    .fc_widget_refresh_off {
+      .chat_icon_connection, .refresh_wrap.tooltip{
+        display: none;
+      }
+    }
+
+    .refresh_wrap.tooltip .ficon-refresh{
+      display: none;
+    }
+
+    .fc_widget_refresh_on{
+      color: #D00;
+      .refresh_wrap.tooltip .ficon-refresh{
+        display: block;
+      }
+    }
   }
 }
 
