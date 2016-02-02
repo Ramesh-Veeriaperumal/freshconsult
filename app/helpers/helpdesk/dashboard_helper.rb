@@ -16,11 +16,11 @@ module Helpdesk::DashboardHelper
     :sprout_classic     =>  "type1",
     :blossom            =>  "type2",
     :blossom_classic    =>  "type2",
-    :garden            =>  'type2',
+    :garden            =>   "type2",
     :garden_classic     =>  "type2",
-    :estate             =>  "type3",
-    :estate_classic     =>  "type3",
-    :forest             =>  "type3"
+    :estate             =>  "type2",
+    :estate_classic     =>  "type2",
+    :forest             =>  "type2"
   }
 
   DASHBOARD_WIDGETS = { 
@@ -64,6 +64,8 @@ module Helpdesk::DashboardHelper
     }
   }
 
+  ALL_WIDGET_TYPE = "type3"
+
   def check_widget_privilege
     privilege_object = {
       :unresolved_tickets_by_group_id     =>  (@manage_dashboard && @global_dashboard && current_user.privilege?(:view_reports)),
@@ -83,9 +85,10 @@ module Helpdesk::DashboardHelper
 
   def widget_list
     type = PLAN_TYPE_MAPPING[current_account.plan_name]
-    privilege = check_widget_privilege
+    type = ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
     dashboard_widget = DASHBOARD_WIDGETS[type][:widgets]
 
+    privilege = check_widget_privilege
     widget_object = Dashboard::Grid.new
     widgets = widget_object.process_widgets(dashboard_widget, privilege, type)
 
