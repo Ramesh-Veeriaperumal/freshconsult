@@ -947,6 +947,10 @@ function getFromLocalStorage(key_name) {
   return JSON.parse(localStorage.getItem(key_name))
 }
 
+function removeFromLocalStorage(key) {
+  localStorage.removeItem(key);
+}
+
 function highlight_code() {
     jQuery('[rel="highlighter"]').each(function(i,element){
         var brush, attr = jQuery(element).attr('code-brush');
@@ -1003,4 +1007,18 @@ jQuery.fn.hasScrollBar = function() {
 function nativePlaceholderSupport() {
   var i = document.createElement('input');
   return i.placeholder !== undefined;
+}
+
+/**
+ * Creating instance for DataFactory and setting Unique key as 'id' (By default).
+ */
+var DataStore = new DataFactory('id');
+
+function createDataStore(data){
+  for (var key in data) {
+    if(data.hasOwnProperty(key)){
+      DataStore.set(key, data[key]);
+    }
+  };
+  return DataStore;
 }

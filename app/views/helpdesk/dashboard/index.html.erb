@@ -1,8 +1,4 @@
-<% @page_title = "Dashboard" %>
-<% if current_user && current_user.privilege?(:view_admin) %>
-  <%= check_fb_reauth_required  %>
-  <%= check_twitter_reauth_required %>
-<% end %>
+<%= render :partial => 'check_reauth_required' %>
 
 <div class="index-page-content">
 <% unless current_account.dashboard_disabled? %>
@@ -13,7 +9,5 @@
 </div>
 
 <%= render :partial => 'sidebar' %>
-<% if chat_activated? %>
-	<%= javascript_include_tag :'cdn/livechat_mini_dashboard' %>
-	<%= stylesheet_link_tag_with_rtl :'cdn/livechat_mini_dashboard' %>
-<% end %>
+
+<%= render :partial => 'chat_activate' %>

@@ -1076,7 +1076,25 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def load_cached_ticket_filters
-      if custom_filter?
+      if dashboard_filter?
+        filter_params = {"unsaved_view" => true}
+        action_hash = []
+        TicketConstants::DASHBOARD_FILTER_MAPPING.each do |key,val|
+            action_hash.push({ "condition" => val, "operator" => "is_in", "value" => params[key].to_s}) if params[key].present?
+        end
+        action_hash.push({ "condition" => "status", "operator" => "is_in", "value" => 0}) if params[:status].blank? and (params[:filter_name] != "new")
+        if params[:filter_name].present?
+          custom_tkt_filter = Helpdesk::Filters::CustomTicketFilter.new
+          action_hash.push(custom_tkt_filter.default_filter(params[:filter_name])).flatten!
+        end
+        filter_params.merge!("data_hash" => action_hash.to_json)
+        set_tickets_redis_key(redis_key,filter_params.to_json,86400)
+        @cached_filter_data = get_cached_filters
+        @cached_filter_data.symbolize_keys!
+        handle_unsaved_view
+        initialize_ticket_filter
+        params.merge!(@cached_filter_data)
+      elsif custom_filter?
         @cached_filter_data = report_filter? ? report_ticket_filter : get_cached_filters
         if @cached_filter_data
           @cached_filter_data.symbolize_keys!
@@ -1084,27 +1102,6 @@ class Helpdesk::TicketsController < ApplicationController
           initialize_ticket_filter
           params.merge!(@cached_filter_data)
         end
-      elsif dashboard_filter?
-          dash_filter_value = get_others_redis_key(dashboard_filter_redis_key)
-          filter_params = {"unsaved_view" => true}
-          action_hash = [{ "condition" => "status", "operator" => "is_in", "value" => params[:filter_key].to_s }]
-          action_hash.push({ "condition" => TicketConstants::DASHBOARD_FILTER_MAPPING[params[:unassigned].to_sym], "operator" => "is_in", "value" => "-1"}) if params[:unassigned].present?
-          TicketConstants::DASHBOARD_FILTER_MAPPING.each do |key,val|
-            action_hash.push({ "condition" => val, "operator" => "is_in", "value" => params[key].to_s}) if params[key].present?
-          end
-          if dash_filter_value
-            filter_hash = JSON.parse(dash_filter_value)
-            filter_hash.each do |k,v|
-              action_hash.push({ "condition" => k.to_s, "operator" => "is_in", "value" => v })
-            end
-          end
-          filter_params.merge!("data_hash" => action_hash.to_json)
-          set_tickets_redis_key(redis_key,filter_params.to_json,86400)
-          @cached_filter_data = get_cached_filters
-          @cached_filter_data.symbolize_keys!
-          handle_unsaved_view
-          initialize_ticket_filter
-          params.merge!(@cached_filter_data)
       else
         remove_tickets_redis_key(redis_key)
       end
@@ -1158,7 +1155,8 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def dashboard_filter?
-      (params[:filter_type] == "status") and params[:filter_key].present?
+      #(params[:filter_type] == "status") and params[:filter_key].present?
+      [:agent,:status,:group,:priority,:type,:source].any? {|type| params[type].present?}
     end
 
     def is_custom_filter_ticket?

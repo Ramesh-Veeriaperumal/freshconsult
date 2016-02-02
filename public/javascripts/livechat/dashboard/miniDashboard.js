@@ -6,7 +6,6 @@
     var miniDashboard =  Backbone.View.extend({
       initialize: function(){
         this.setElement('#chat-dashboard');
-        this.dashboardTemplate = window.JST['livechat/templates/dashboard/miniDashboard'];
         this.render();
         this.listenToCollection();
         this.listenToEvents();
@@ -19,10 +18,10 @@
   
       listenToEvents: function(){
         var that = this;
-        document.addEventListener('chat disConnect', function(options){
-          if(options.reason === 'forced close'){
-            that.reduceOpacity();
-          }
+        document.addEventListener('chat disConnect', function(disconnect){
+            if(disconnect){
+              that.reduceOpacity();
+            }
         }, false);
         document.addEventListener('chat onConnect', function(){
           that.normalOpacity();
@@ -35,14 +34,13 @@
       },
   
       render: function(){
-        this.$el.html(this.dashboardTemplate).show();
         if(CURRENT_ACCOUNT.chat_enabled){
           if(userCollection.availabilityAgentsCount >= 0){
-            jQuery('#online_agent_count').html(userCollection.availabilityAgentsCount);
+            jQuery('#livechat_online_agent_count').html(userCollection.availabilityAgentsCount);
           }
           if(!CURRENT_USER.isAdmin){
-            this.$el.find("#online_agent_count").unwrap();
-            this.$el.find("#online_agent_count").parent("li").removeClass();
+            jQuery("#livechat_online_agent_count").unwrap();
+            jQuery("#livechat_online_agent_count").parent("li").removeClass();
           }
   
           visitorCollection.fetchCount();
@@ -55,7 +53,7 @@
       },
   
       reduceOpacity: function(){
-        this.$el.find('.panel-list')
+        this.$el.find('#chat-dashboard .widget-title')
           .addClass('chat_aside_widget')
           .end()
           .find('h3')
@@ -64,7 +62,7 @@
       },
   
       normalOpacity: function(){
-        this.$el.find('.panel-list')
+        this.$el.find('#chat-dashboard .widget-title')
           .removeClass('chat_aside_widget')
           .end()
           .find('h3')
@@ -73,13 +71,15 @@
       },
   
       setVisitorsCount: function(){
-        this.$el.find("#inconversation_visitors_count").html(visitorCollection.count.inConversation);
-        this.$el.find("#new_visitors_count").html(visitorCollection.count.newVisitor);
-        this.$el.find("#return_visitors_count").html(visitorCollection.count.returnVisitor);
+        jQuery("#inconversation_visitors_count").html(visitorCollection.count.inConversation);
+        jQuery("#return_visitors_count").html(visitorCollection.count.returnVisitor);
       },
   
       setAgentsCount: function(){
-        this.$el.find("#online_agent_count").html(userCollection.availabilityAgentsCount);
+        var agentCount = userCollection.availabilityAgentsCount;
+        jQuery("#livechat_online_agent_count").html(agentCount);
+
+        (agentCount == 0) ?  jQuery('#agent_status_chat').addClass('disabled') :  jQuery('#agent_status_chat').removeClass('disabled');
       }
     });
   

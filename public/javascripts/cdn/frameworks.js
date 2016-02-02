@@ -1,6 +1,7 @@
 //= require jquery-1.8.3.min.js
 //= require jquery_ujs.js
 //= require jquery.pjax.js
+//= require js-data-model.js
 //= require utils.js
 //= require frameworks/sprintf.js
 //= require frameworks/plugins/jquery.cookie.js
@@ -52,3 +53,5 @@
 //= require frameworks/plugins/jquery.dataTables.js
 //= require frameworks/plugins/dataTable.fixedColumns.js
 //= require marketplace/freshapp.js
+//= require app/realtime_dashboard/plugins/lodash.min.js
+//= require app/realtime_dashboard/plugins/gridstack.js

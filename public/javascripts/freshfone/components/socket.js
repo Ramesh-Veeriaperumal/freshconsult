@@ -284,7 +284,14 @@ var FreshfoneSocket;
 			this.$liveCalls.text(this.activeCalls);
       this.$queuedCalls.text(this.queuedCalls);
       this.$busyAgents.text(this.busyAgents);
+
+      this.dashboardToggler();
 		},
+    dashboardToggler: function () {
+      (this.totalAgents == 0) ? this.$availableAgents.parents('li').addClass('disabled') : this.$availableAgents.parents('li').removeClass('disabled');
+      (this.activeCalls == 0) ? this.$liveCalls.parents('li').addClass('disabled') : this.$liveCalls.parents('li').removeClass('disabled');
+      (this.queuedCalls == 0) ? this.$queuedCalls.parents('li').addClass('disabled') : this.$queuedCalls.parents('li').removeClass('disabled');
+    },
 		onlineUserCount: function () {
 			var offset = freshfoneuser.isOnline() ? -1 : 0;
 			return (this.totalAgents + offset < 0) ? 0 : (this.totalAgents + offset) || 0 ;

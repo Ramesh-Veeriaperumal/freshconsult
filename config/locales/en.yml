@@ -5249,6 +5249,35 @@ en:
         title: "Reply to %{user}"
       history:
         recent_item: Recent Items
+    realtime_dashboard:
+      view_all: View all
+      ticket: Ticket
+      ticket_summary: Ticket Summary
+      filter_by: Filter by
+      all_groups: All Groups
+      unresolved: Unresolved
+      open: Open
+      on_hold: On Hold
+      due_today: Due Today
+      new: Unassigned
+      overdue: Overdue
+      unresolved_tickets_by_status: Unresolved Tickets by Status
+      unresolved_tickets_by_type: Unresolved Tickets by Ticket Type
+      unresolved_tickets_by_group: Unresolved Tickets by Group
+      unresolved_tickets_by_priority: Unresolved Tickets by Priority
+      unresolved_tickets_by_agent: Unresolved Tickets by Agent
+      leader_Board: Leader Board
+      achievements: Achievements
+      forum_moderation: Forum Moderation
+      phone: Phone
+      global_view: Global View
+      my_view: My View
+      live_chat: Live Chat
+      in_conversation: In-conversation
+      returning_visitors: Returning Visitors
+      visitors: Visitors
+      chat_history: Chat History
+      view_group_vs_status_summary: View Group vs Status summary
     dashboard:
       agent_availability: Agent Availability
       round_robin:
@@ -7378,6 +7407,7 @@ en:
   dislikes: Dislikes
   export: Export
   helpdesk_quests:
+    view_all: View All
     see_all: See all
     available_quests: Available Quests
     all: All
@@ -7909,10 +7939,11 @@ en:
       title: "Phone"
       in_conversation: "In-conversation"
       in_queue: "In-queue"
+      waiting: "Waiting"
       available_agents: "Available Agents"
       unavailable_agents: "Busy Agents"
-      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please recharge to continue."
-      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a> to continue."
+      freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please contact your account admin."
+      admin_freshfone_recharge_alert_new: "Your phone credit is too low to make or receive calls. Please <a href='/subscription'> recharge </a>"
     widget:
       ignore: "Ignore"
       accept: "Accept"
