@@ -981,12 +981,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       self.update_column(:updated_at, Time.zone.now) unless @touched || new_record? # update_column can't be invoked in new record.
       @touched ||= true
     end
-
-    # Used by after_add and after_removal hooks in tag association. Expects tag argument to be accepted in method signature.
-    def update_ticket(tag)
-      update_timestamp
-    end
-    
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
