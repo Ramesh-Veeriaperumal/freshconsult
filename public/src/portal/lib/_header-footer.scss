@@ -47,9 +47,23 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
       @include margin-left(0px);
       .dropdown-menu {
         min-width: 0px;
-        background-color: #584E4E;
-        right: -24px;
+        @include right(-13px);
+        top: 35px;
         @include text-align(left);
+        a{
+					color: #444;
+					text-shadow: none;
+					&:hover{
+						background-color: #efefef;
+					}
+					&.active{
+						font-weight: 500;
+					}
+					.icon-dd-tick-dark{
+						position: absolute;
+						@include left(2px);
+					}
+				}
       }
       a.disabled-link{
         color: #999;

@@ -89,6 +89,10 @@ module Solution::LanguageAssociations
       define_method "primary_#{col}?" do
         send("#{Language.for_current_account.to_key}_#{col}?")
       end
+
+      define_method "current_#{col}?" do
+        send("#{Language.current.to_key}_#{col}?")
+      end
     end
 
     base::BINARIZE_COLUMNS.each do |meth_name|

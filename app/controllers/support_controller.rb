@@ -266,8 +266,8 @@ class SupportController < ApplicationController
   end
 
   def check_version_availability
-    return if @solution_item.send("#{Language.current.to_key}_available?")
-    flash[:warning] = version_not_available_msg(controller_name.singularize)
+    return if @solution_item && @solution_item.current_available?
+    flash[:warning] = @solution_item ? version_not_available_msg(controller_name.singularize) : t('wrong_portal.content_not_available')
     redirect_to support_home_path and return
   end
   

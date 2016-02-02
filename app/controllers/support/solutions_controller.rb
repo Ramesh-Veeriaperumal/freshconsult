@@ -35,7 +35,7 @@ class Support::SolutionsController < SupportController
     end
 
 		def load_category
-			@category = @category_meta.send("#{Language.current.to_key}_category")
+			@category = @category_meta.current_category
 			(raise ActiveRecord::RecordNotFound and return) if @category.nil?
 		end
 

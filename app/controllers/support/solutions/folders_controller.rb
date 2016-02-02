@@ -26,9 +26,9 @@ class Support::Solutions::FoldersController < SupportController
 		end
 
 		def scoper
-			@folder = @folder_meta.send("#{Language.current.to_key}_folder")
+			@folder = @folder_meta.current_folder
 			(raise ActiveRecord::RecordNotFound and return) if @folder_meta.nil?
-			@category = @folder_meta.solution_category_meta.send("#{params[:url_locale]}_category")
+			@category = @folder_meta.solution_category_meta.current_category
 		end
     
     def load_page_meta

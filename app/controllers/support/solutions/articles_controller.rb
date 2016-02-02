@@ -73,7 +73,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def load_and_check_permission
-      @article = @article_meta.send("#{Language.current.to_key}_article")
+      @article = @article_meta.current_article
       unless @article.visible?(current_user)    
         unless logged_in?
           session[:return_to] = solution_category_folder_article_path(@article.folder.category_id, @article.folder_id, @article.id)

@@ -787,11 +787,12 @@ module SupportHelper
 	def language_list portal
 		return "" if portal.language_list.blank?
 		output = ""
-		output << %(<div class="banner-language-selector pull-right" data-tabs="tabs">)
+		output << %(<div class="banner-language-selector pull-right" data-tabs="tabs" 
+								data-toggle='tooltip' data-placement="bottom" title="#{Language.current.name if Language.current.name.length > 10}">)
 		output << %(<ul class="language-options" role="tablist">)
 		output << %(<li class="dropdown">)
 		output << %(<h5 class="dropdown-toggle" data-toggle="dropdown">)
-		output << %(<span> #{Language.current.name} </span>)
+		output << %(<span>#{Language.current.name.truncate(10)}</span>)
 		output << %(<span class="caret"></span></h5>)
 		output << dropdown_menu(portal.language_list)
 		output << %(</div></li></ul>)
