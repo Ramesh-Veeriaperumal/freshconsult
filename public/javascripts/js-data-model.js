@@ -95,4 +95,19 @@ var DataModel = {
 		}.bind(this));
 	}
 }
+
 DataFactory.prototype = DataModel;
+
+/**
+ * Creating instance for DataFactory and setting Unique key as 'id' (By default).
+ */
+var DataStore = new DataFactory('id');
+
+function createDataStore(data){
+  for (var key in data) {
+    if(data.hasOwnProperty(key)){
+      DataStore.set(key, data[key]);
+    }
+  };
+  return DataStore;
+}
