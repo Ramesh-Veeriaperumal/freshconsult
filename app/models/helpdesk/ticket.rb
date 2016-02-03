@@ -976,11 +976,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   end
 
-    # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
-    def update_timestamp
-      self.update_column(:updated_at, Time.zone.now) unless @touched || new_record? # update_column can't be invoked in new record.
-      @touched ||= true
-    end
+  # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
+  def update_timestamp
+    self.update_column(:updated_at, Time.zone.now) unless @touched || new_record? # update_column can't be invoked in new record.
+    @touched ||= true
+  end
+
+  def schedule_round_robin_for_agents
+    next_agent = group.next_available_agent
+
+    return if next_agent.nil? #There is no agent available to assign ticket.
+    self.responder_id = next_agent.user_id
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

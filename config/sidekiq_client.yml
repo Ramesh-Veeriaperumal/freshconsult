@@ -71,6 +71,11 @@ defaults: &defaults
     - [bulk_ticket_actions]
     - [bulk_ticket_reply]
     - [api_webhook_rule]
+    - [premium_dispatcher]
+    - [dispatcher]
+    - [trial_dispatcher]
+    - [free_dispatcher]
+    - [active_dispatcher]
 
 development:
   <<: *defaults

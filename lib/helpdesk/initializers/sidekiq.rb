@@ -26,7 +26,12 @@ Sidekiq.configure_client do |config|
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Admin::Dispatcher::Worker",
+      "Admin::Dispatcher::Trial",
+      "Admin::Dispatcher::Free",
+      "Admin::Dispatcher::Active",
+      "Admin::Dispatcher::Premium"
     ]
   end
 end
@@ -57,7 +62,12 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Admin::Dispatcher::Worker",
+      "Admin::Dispatcher::Trial",
+      "Admin::Dispatcher::Free",
+      "Admin::Dispatcher::Active",
+      "Admin::Dispatcher::Premium"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -79,7 +89,12 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
       "Tickets::BulkTicketActions",
-      "Tickets::BulkTicketReply"
+      "Tickets::BulkTicketReply",
+      "Admin::Dispatcher::Worker",
+      "Admin::Dispatcher::Trial",
+      "Admin::Dispatcher::Free",
+      "Admin::Dispatcher::Active",
+      "Admin::Dispatcher::Premium"
     ]
   end
 end
