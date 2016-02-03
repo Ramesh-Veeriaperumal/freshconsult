@@ -2299,6 +2299,7 @@ en:
           success: Review request has been sent successfully
           failure: There was a problem sending the review request
       empty_spam:
+        delay_delete: Please wait while we delete all tickets from spam. This might take a few minutes.
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
@@ -4812,6 +4813,8 @@ en:
     spam_header: Spam
     delete_forever: Delete Forever
     empty_trash: Empty Trash
+    empty_spam: Empty Spam
+    empty_view_confirmation: "All the tickets in %{current_view} will be deleted permanently. Please note that this action cannot be undone. Are you sure you want to proceed?"
     assign_to_agent: Assign to Agent
     assign_to: Assign
     select_to_agent: Select an Agent

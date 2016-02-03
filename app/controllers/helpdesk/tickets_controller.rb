@@ -43,11 +43,11 @@ class Helpdesk::TicketsController < ApplicationController
 
   layout :choose_layout
 
-  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :execute_bulk_scenario]
+  before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario]
   before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
 
   before_filter :load_items, :only => [ :destroy, :restore, :spam, :unspam, :assign,
-    :close_multiple ,:pick_tickets, :delete_forever ]
+    :close_multiple ,:pick_tickets, :delete_forever, :delete_forever_spam ]
 
   skip_before_filter :load_item
   alias :load_ticket :load_item
@@ -127,6 +127,7 @@ class Helpdesk::TicketsController < ApplicationController
         end
         @current_view = @ticket_filter.id || @ticket_filter.name if is_custom_filter_ticket?
         flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete') if @current_view == "deleted" and key_exists?(empty_trash_key)
+        flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete') if @current_view == "spam" and key_exists?(empty_spam_key)
         @is_default_filter = (!is_num?(view_context.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -574,34 +575,36 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def delete_forever
-    ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
-      st.ticket_id= t.id and st.account_id=#{current_account.id}
-      set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
-      t.id in (#{@items.map(&:id).join(',')}) and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash,{:account_id => current_account.id} )
-    flash[:notice] = render_to_string(
-        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
-    respond_to do |format|
-      format.html { redirect_to :back }
-      format.nmobile { render :json => {:success => true , :success_message => render_to_string(
-        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
-    end
+    set_trashed_column
+    Tickets::ClearTickets::EmptyTrash.perform_async({
+      :ticket_ids => @items.map(&:id)
+    })
+    render_delete_forever
+  end
+
+  def delete_forever_spam
+    set_trashed_column
+    Tickets::ClearTickets::EmptySpam.perform_async({
+      :ticket_ids => @items.map(&:id)
+    })
+    render_delete_forever
   end
 
   def empty_trash
-    # ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets
-    #  st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
-    #    set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1
-    #    where t.deleted=1 and t.account_id=#{current_account.id}")
     set_tickets_redis_key(empty_trash_key, true, 1.day)
-    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id, :empty_trash => true} )
+    Tickets::ClearTickets::EmptyTrash.perform_async({
+      :clear_all => true
+    })
     flash[:notice] = t(:'flash.tickets.empty_trash.delay_delete')
     redirect_to :back
   end
 
-  def empty_spam # Possible dead code
-    Helpdesk::Ticket.destroy_all(:spam => true)
-    flash[:notice] = t(:'flash.tickets.empty_spam.success')
+  def empty_spam
+    set_tickets_redis_key(empty_spam_key, true, 1.day)
+    Tickets::ClearTickets::EmptySpam.perform_async({
+      :clear_all => true
+    })
+    flash[:notice] = t(:'flash.tickets.empty_spam.delay_delete')
     redirect_to :back
   end
 
@@ -944,6 +947,23 @@ class Helpdesk::TicketsController < ApplicationController
 
   private
 
+    def set_trashed_column
+      ActiveRecord::Base.connection.execute("update helpdesk_schema_less_tickets st inner join helpdesk_tickets t on
+        st.ticket_id= t.id and st.account_id=#{current_account.id} and t.account_id=#{current_account.id}
+        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where
+        t.id in (#{@items.map(&:id).join(',')})")
+    end
+    
+    def render_delete_forever
+      flash[:notice] = render_to_string(
+          :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
+      respond_to do |format|
+        format.html { redirect_to :back }
+        format.nmobile { render :json => {:success => true , :success_message => render_to_string(
+          :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
+      end 
+    end
+
 
     def scoper_ticket_actions
       # check for mobile can be removed when mobile apps perform bulk actions as background job
@@ -1275,6 +1295,10 @@ class Helpdesk::TicketsController < ApplicationController
 
   def empty_trash_key
     EMPTY_TRASH_TICKETS % {:account_id =>  current_account.id}
+  end
+
+  def empty_spam_key
+    EMPTY_SPAM_TICKETS % {:account_id =>  current_account.id}
   end
 
   def set_selected_tab

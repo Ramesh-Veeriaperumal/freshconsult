@@ -1619,6 +1619,7 @@ Helpkit::Application.routes.draw do
         delete :empty_trash
         delete :empty_spam
         delete :delete_forever
+        delete :delete_forever_spam
         get :user_ticket
         get :search_tweets
         post :custom_search

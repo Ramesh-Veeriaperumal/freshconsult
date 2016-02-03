@@ -11,7 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/reminder"
     resource :"helpdesk/authorization"
     resource :"search/autocomplete", :only => [:requesters, :agents, :companies, :tags]
-    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets, :empty_trash, :empty_spam,
+    resource :"helpdesk/ticket", :only => [:show, :new, :create, :compose_email, :show, :index, :user_tickets,
                                            :user_ticket, :search_tweets, :custom_search, :export_csv, :latest_ticket_count, :add_requester, :view_ticket,
                                            :spam, :unspam, :execute_scenario, :pick_tickets,
                                            :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
@@ -167,7 +167,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_ticket do
-    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :empty_trash]
+    resource :"helpdesk/ticket", :only => [:destroy, :restore, :delete_forever, :delete_forever_spam,  :empty_trash, :empty_spam]
     
     # Used for API V2
     resource :"ticket", :only => [:restore, :destroy]
