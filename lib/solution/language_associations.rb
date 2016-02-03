@@ -22,8 +22,7 @@ module Solution::LanguageAssociations
     end
 
     base.has_one :"current_#{base_name}",
-      :conditions => proc {  ["`#{base_class_table_name}`.language_id = ? AND `#{base_class_table_name}`.account_id = ?",
-                Language.current.id, Account.current.id] },
+      :conditions => proc { { language_id: Language.for_current_account.id } },
       :class_name => base_class,
       :foreign_key => :parent_id,
       :readonly => false,
@@ -31,8 +30,7 @@ module Solution::LanguageAssociations
       :inverse_of => table_name
       
     base.has_one :"primary_#{base_name}",
-      :conditions => proc {  ["`#{base_class_table_name}`.language_id = ? AND `#{base_class_table_name}`.account_id = ?",
-                Language.for_current_account.id, Account.current.id] },
+      :conditions => proc { { language_id: Language.for_current_account.id } },
       :class_name => base_class,
       :foreign_key => :parent_id, 
       :readonly => false,
