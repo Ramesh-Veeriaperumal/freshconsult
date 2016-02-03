@@ -99,7 +99,7 @@ class Language
 		end
 
 		def current
-			Thread.current[:language] ||= for_current_account
+			Thread.current[:language]
 		end
 
 		def current?

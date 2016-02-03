@@ -61,7 +61,7 @@ module Solution::LanguageAssociations
       }
     }
 
-    default_scope lambda {current}
+    default_scope lambda { Language.current ? current : unscoped }
         
     after_find :handle_date_time
 
@@ -118,8 +118,6 @@ module Solution::LanguageAssociations
   			super
   		rescue NoMethodError => e
   			Rails.logger.debug "#{self.class.name} :: method_missing :: args is #{args.inspect} and method:: #{method}"
-        return send(method.to_s.sub("`#{self.class.table_name}`.", "")) if (args.blank? &&
-             method.to_s.include?("`#{self.class.table_name}`."))
   			args = args.first if args.present? && args.is_a?(Array)
         child_assoc = self.class.name.chomp('Meta').gsub("Solution::", '').downcase
   			return ((args.present? || args.nil?) ? self.send("current_#{child_assoc}").send(method, args) :
