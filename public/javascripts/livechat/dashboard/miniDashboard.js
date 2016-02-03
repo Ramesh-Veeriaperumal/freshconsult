@@ -78,8 +78,6 @@
       setAgentsCount: function(){
         var agentCount = userCollection.availabilityAgentsCount;
         jQuery("#livechat_online_agent_count").html(agentCount);
-
-        (agentCount == 0) ?  jQuery('#agent_status_chat').addClass('disabled') :  jQuery('#agent_status_chat').removeClass('disabled');
       }
     });
   

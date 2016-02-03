@@ -14,8 +14,8 @@
 					</li>
 					<% end %>
 
-					<% if freshfone_active? %>
-					<li class="disabled" id="agent_status_phone">
+					<% if current_account.freshfone_active? %>
+					<li class="<%= 'disabled' unless freshfone_active? %>" id="agent_status_phone">
 						<a href="/helpdesk/agent_status#phone">
 							<h4 class="live-available-agents">0</h4>
 							<p class="muted"><%= t("helpdesk.dashboard.freshfone.phone") %></p>
@@ -23,8 +23,8 @@
 					</li>
 					<% end %>
 
-					<% if chat_active? %>
-					<li class="disabled" id="agent_status_chat">
+					<% if chat_activated? %>
+					<li class="<%= 'disabled' unless chat_active? %>" id="agent_status_chat">
 						<a href="/helpdesk/agent_status#lc-availability">
 							<h4 id="livechat_online_agent_count">0</h4>
 							<p class="muted"><%= t("helpdesk.dashboard.livechat.chat") %></p>
