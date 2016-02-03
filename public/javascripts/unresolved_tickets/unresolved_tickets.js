@@ -179,13 +179,10 @@ var UnresolvedTickets = (function () {
 				var agent_filter = ((agent_data.length !== 0) ? agent_data : ["All"]);
 				templateData = {"agentfilter" : agent_filter, "groupfilter" : group_filter};
 			}
-			_.templateSettings = {
-				interpolate : /\{\{=(.+?)\}\}/g,
-				escape : /\{\{-(.+?)\}\}/g,
-				evaluate: /\{\{(.+?)\}\}/g,
-			};
-			var template = _.template(jQuery( "script#filter-data-template" ).html());
-			jQuery("#filter_text").html(template(templateData));
+			
+			var templatedata  = jQuery.tmpl(jQuery("#filter-data-template").template(), templateData);
+			jQuery("#filter_text").html(templatedata);
+			
 		},
 		saveFilterData: function(data){
 			if (typeof (Storage) !== "undefined") {
