@@ -35,7 +35,7 @@ window.App = window.App || {};
     },
 		
 		toggleViews: function () {
-			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container').toggleClass('hide');
+			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container, #show_master_article').toggleClass('hide');
 		},
     
     startEditing: function () {

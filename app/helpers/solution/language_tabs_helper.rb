@@ -112,7 +112,8 @@ module Solution::LanguageTabsHelper
         #{language.short_code.capitalize}
       </span>
     </span>
-    <span class='language_label'>
+    <span class='language_label tooltip' 
+      title='#{t('solution.articles.not_in_portal') unless Account.current.all_portal_language_objects.include?(language)}'>
       #{language.name}
     </span>".html_safe
   end

@@ -597,6 +597,14 @@
       color: #333;
       padding: 15px 0 0;
     }
+    .portal-visible{
+      margin-top: 10px;
+      .ficon-notice-o{
+        color: #DE3431;
+        position: relative;
+        top: 2px;
+      }
+    }
   }
   .feedback{
     ul{

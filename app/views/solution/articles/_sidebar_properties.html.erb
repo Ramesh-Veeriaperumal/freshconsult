@@ -15,6 +15,14 @@
 					<p><%= formated_date(@article.modified_at) %></p>
 			</div>
 		<% end %>
+
+		<% if Account.current.multilingual? && !Account.current.all_portal_language_objects.include?(@article.language) %>
+			<div class="portal-visible">
+				<%= content_tag :i, "", :class => font_class("notice-o", 18) %>  
+				<%= t('solution.articles.language_not_in_portal') %> - 
+				<%= link_to t('.edit'), manage_languages_account_path %>
+			</div>
+		<% end %>
     
     <div class="published-label">
     	<span> 

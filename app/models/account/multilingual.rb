@@ -25,26 +25,26 @@ class Account < ActiveRecord::Base
   end
 
   def language_object
-    Language.find_by_code(language)
+    @language_object ||= Language.find_by_code(language)
   end
 
   def supported_languages_objects
-    supported_languages.map { |l| Language.find_by_code(l) }
+    @supported_languages_objects ||= supported_languages.map { |l| Language.find_by_code(l) }
   end
 
   def all_language_ids
-    [language_object.id] + applicable_language_ids
+    @all_language_ids ||= [language_object.id] + applicable_language_ids
   end
 
   def all_language_objects
-    [language_object] + supported_languages_objects
+    @all_language_objects ||= [language_object] + supported_languages_objects
   end
 
   def portal_languages_objects
-    portal_languages.map { |l| Language.find_by_code(l) }
+    @portal_languages_objects ||= portal_languages.map { |l| Language.find_by_code(l) }
   end
 
   def all_portal_language_objects
-    [language_object] + portal_languages_objects
+    @all_portal_language_objects ||= [language_object] + portal_languages_objects
   end
 end
