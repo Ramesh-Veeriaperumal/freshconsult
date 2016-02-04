@@ -28,7 +28,7 @@ class ApiCompaniesFlowTest < ActionDispatch::IntegrationTest
 
   def test_empty_domains
     skip_bullet do
-      params = api_company_params.merge(domains: [Faker::Name.name])
+      params = api_company_params.merge(domains: [Faker::Lorem.characters(10)])
       post '/api/companies', params.to_json, @write_headers
       assert_response 201
       company = Company.find_by_name(params[:name])

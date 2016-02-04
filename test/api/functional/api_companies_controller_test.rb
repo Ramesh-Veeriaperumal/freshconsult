@@ -345,7 +345,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_array_fields_with_compacting_array
-    domain = Faker::Name.name
+    domain = Faker::Lorem.characters(10)
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [domain, '', '', nil])
     assert_response 200
@@ -386,7 +386,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         note: Faker::Lorem.characters(15),
                                         description: Faker::Lorem.characters(300),
-                                        domains: [Faker::Name.name, Faker::Name.name]
+                                        domains: [Faker::Lorem.characters(15),  Faker::Lorem.characters(15)]
                                   )
     assert_response 201
   ensure
