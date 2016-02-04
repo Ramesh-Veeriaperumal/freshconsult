@@ -1605,12 +1605,7 @@ module ApplicationHelper
   end
 
   def get_store_data
-    @DataStore = {}
-    @DataStore['current_user'] = current_user
-    @DataStore['current_account'] = current_account
-    @DataStore['agent'] = Account.current.agents_from_cache
-    @DataStore['group'] = Account.current.groups_from_cache
-    @DataStore.to_json
+    {:current_user => current_user, :agent => current_account.agents_from_cache, :group => current_account.groups_from_cache}.to_json
   end
 
 end
