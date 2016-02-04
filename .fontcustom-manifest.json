@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc",
-    "current": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc"
+    "previous": "45a613950a192d9c160aed72532ef8363f075b1b0e312eb1d54cf140eb6314e1",
+    "current": "45a613950a192d9c160aed72532ef8363f075b1b0e312eb1d54cf140eb6314e1"
   },
   "fonts": [
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.ttf",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.svg",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.woff",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.eot"
+    "public/assets/glyphs_45a613950a192d9c160aed72532ef836.ttf",
+    "public/assets/glyphs_45a613950a192d9c160aed72532ef836.svg",
+    "public/assets/glyphs_45a613950a192d9c160aed72532ef836.woff",
+    "public/assets/glyphs_45a613950a192d9c160aed72532ef836.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -285,6 +285,30 @@
     "day_pass": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "db-calendar": {
+      "codepoint": 61958,
+      "source": "public/glyphs/vectors/db-calendar.svg"
+    },
+    "db-feedback": {
+      "codepoint": 61959,
+      "source": "public/glyphs/vectors/db-feedback.svg"
+    },
+    "db-interactions": {
+      "codepoint": 61960,
+      "source": "public/glyphs/vectors/db-interactions.svg"
+    },
+    "db-message": {
+      "codepoint": 61961,
+      "source": "public/glyphs/vectors/db-message.svg"
+    },
+    "db-sand-clock": {
+      "codepoint": 61962,
+      "source": "public/glyphs/vectors/db-sand-clock.svg"
+    },
+    "db-unassigned": {
+      "codepoint": 61963,
+      "source": "public/glyphs/vectors/db-unassigned.svg"
     },
     "decimal": {
       "codepoint": 61897,
@@ -1058,7 +1082,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

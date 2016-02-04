@@ -1,8 +1,7 @@
 var UnresolvedTickets = (function () {
 	var CONST = {
 		unresolved_url    : "/helpdesk/unresolved_tickets_data",
-		ticketlist_url	  : "/helpdesk/tickets/dashboard/status/",
-		splitter		  : "::",
+		ticketlist_url	  : "/helpdesk/tickets?",
 		dynamicWidth 	  :( jQuery('body')[0].clientWidth * 0.9 - 40 - 60 - 150 ),
 		visibleColumn	  : 5,
 		visibleRow		  : 10
@@ -53,17 +52,31 @@ var UnresolvedTickets = (function () {
 		unbindEvents: function(){
 			jQuery("#supervisor-dashboard").off('.unresolved');
 		},
+		getFilterData: function(){
+			var filterData = [];
+			var group_list = jQuery("[data-filterkey='group_id']").children("option:selected").map(function(){
+					return jQuery(this).val();
+			});
+			var agent_list = jQuery("[data-filterkey='responder_id']").children("option:selected").map(function(){
+					return jQuery(this).val();
+			});
+			filterData['group'] = group_list;
+			filterData['agent'] = agent_list;
+			return filterData;
+		},
 		showTickets: function(evt){
 			var _currentData = jQuery(evt.currentTarget).data(),
 				currentTab = jQuery("#unresolved-tab li.active").data('redirect'),
-				metricurl, 
-				baseurl = CONST.ticketlist_url+_currentData.status+"?";
-
-			metricurl = (_currentData.id !== "unassigned") ? 
-									currentTab+"="+_currentData.id : _currentData.id+"="+currentTab;
-			
-			window.open(baseurl+metricurl, '_blank');
-
+				metricurl, filteredData = _FD.getFilterData();
+			if( _currentData.id === 'unassigned' ){
+				//Marking it as -1 as its per norm in custom ticket filter for unassigned.
+				metricurl = currentTab+"=-1"+"&status="+_currentData.status;
+			}else{
+				var agentQuery = (filteredData.agent.length ? "&agent="+Array.prototype.slice.call(filteredData.agent).join(',') : '');
+				var groupQuery = (filteredData.group.length ? "&group="+Array.prototype.slice.call(filteredData.group).join(',') : '');
+				metricurl = ( agentQuery.length === 0 && groupQuery.length === 0 ) ? (currentTab+"="+_currentData.id+"&status="+_currentData.status) : ("status="+_currentData.status+agentQuery+groupQuery)
+			}
+			window.open(CONST.ticketlist_url+metricurl, '_blank');
 		},
 		switchTab: function(e){
 			if(!jQuery(e.currentTarget).hasClass('active')){
@@ -166,18 +179,41 @@ var UnresolvedTickets = (function () {
 				var agent_filter = ((agent_data.length !== 0) ? agent_data : ["All"]);
 				templateData = {"agentfilter" : agent_filter, "groupfilter" : group_filter};
 			}
-			_.templateSettings = {
-				interpolate : /\{\{=(.+?)\}\}/g,
-				escape : /\{\{-(.+?)\}\}/g,
-				evaluate: /\{\{(.+?)\}\}/g,
-			};
-			var template = _.template(jQuery( "script#filter-data-template" ).html());
-			jQuery("#filter_text").html(template(templateData));
+			
+			var templatedata  = jQuery.tmpl(jQuery("#filter-data-template").template(), templateData);
+			jQuery("#filter_text").html(templatedata);
+			
 		},
 		saveFilterData: function(data){
 			if (typeof (Storage) !== "undefined") {
 				window.localStorage.setItem('unresolved-tickets-filters', Browser.stringify(data));
 			}
+		},
+		columnDefs_des: function(data){
+			var selectedTab = jQuery("#unresolved-tab li.active").data('redirect');
+			return data.tickets_data.data.map(function(val, i){
+				return {
+					"render": function ( data, type, row ) {
+						var _data;
+						if(i === 0) {
+							var _store = DataStore.get(selectedTab),
+							_data = jQuery.capitalize(data);
+							if(selectedTab === 'group' && _store.findById(data)){
+								_data = _store.findById(data)[selectedTab]['name'];
+							}else if(selectedTab === 'agent' && _store.find(data, 'user_id')){
+								_data = _store.find(data, 'user_id')[selectedTab]['user']['name'];
+							}
+						} else if(i === row.length - 1) {
+							_data = data;
+						} else {	
+							var data_url = "<a data-id="+(row[0])+" data-status="+status_filtered_array[i][0]+" href='javascript:void(0)'>"+data+"</a>";
+							_data = (data === 0) ? data : data_url;
+						}
+						return _data;
+					},
+					"targets": i
+				};
+			});
 		},
 		tableDrawCallback: function(dataLength){
 			if(jQuery('#unresolved-tickets tbody .dataTables_empty').length === 1){
@@ -215,23 +251,7 @@ var UnresolvedTickets = (function () {
 						"asSorting": [ "desc", "asc" ]
 					};
 			});
-			columnDefs_des = data.tickets_data.data.map(function(val, i){
-				return {
-					"render": function ( data, type, row ) {
-						var _data;
-						if(i === 0) {
-							_data = data.split(CONST.splitter)[0];
-						} else if(i === row.length - 1) {
-							_data = data;
-						} else {	
-							var data_url = "<a data-id="+(row[0].split(CONST.splitter)[1])+" data-status="+status_filtered_array[i][0]+" href='javascript:void(0)'>"+data+"</a>";
-							_data = (data === 0) ? data : data_url;
-						}
-						return _data;
-					},
-					"targets": i
-				};
-			});
+			columnDefs_des = _FD.columnDefs_des(data);
 			var unresolved_ticket = jQuery('#unresolved-tickets').dataTable({	
 				"sDom": 'f<"standard-table"t>p',
 				"bAutoWidth": false,
@@ -276,23 +296,7 @@ var UnresolvedTickets = (function () {
 					'sTitle': arrowtemplate,
 					'sClass': "center"
 			});
-			var columnDefs_des = data.tickets_data.data.map(function(val, i){
-				return {
-					"render": function ( data, type, row ) {
-						var _data;
-						if(i === 0) {
-							_data = data.split(CONST.splitter)[0];
-						} else if(i === row.length - 2) {
-							_data = data;
-						} else {	
-							var data_url = "<a data-id="+(row[0].split(CONST.splitter)[1])+" data-status="+status_filtered_array[i][0]+" href='javascript:void(0)'>"+data+"</a>";
-							_data = (data === 0) ? data : data_url;
-						}
-						return _data;
-					},
-					"targets": i
-				};
-			});
+			var columnDefs_des = _FD.columnDefs_des(data);
 
 			columnDefs_des.push({
 				"targets": data.tickets_data.data.length,

@@ -238,7 +238,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       payment = @account.subscription.subscription_payments.create(payment_info(content))
       Resque.enqueue(Subscription::UpdateResellerSubscription, { :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
-      store_invoice(content)
+      store_invoice(content) if @account.subscription.affiliate.nil?
     end
 
     def payment_refunded(content)

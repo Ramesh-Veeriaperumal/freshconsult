@@ -2,10 +2,10 @@
 
 // Sidepanel on Helpdesk dashboard
 #chat-dashboard{
-	.refresh_wrap.tooltip .icon-refresh{
+	 .refresh_wrap.tooltip .ficon-refresh{
 		display: none;
 	}
-	.fc_widget_refresh_on{
+	 .fc_widget_refresh_on{
 		color: #D00;
 		.chat_icon_connection{
 			position: relative;
@@ -13,7 +13,7 @@
 		}
 		.refresh_wrap.tooltip{
 			float: right;
-			.icon-refresh{
+			.ficon-refresh{
 				display: inline-block;
 				position: relative;
 				top: -2px;

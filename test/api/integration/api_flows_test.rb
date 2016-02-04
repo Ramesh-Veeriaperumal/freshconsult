@@ -983,7 +983,7 @@ class ApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_cors
-    get '/api/contacts', nil, @headers.merge('HTTP_ORIGIN' => '*')
+    get '/api/discussions/categories', nil, @headers.merge('HTTP_ORIGIN' => '*')
     assert_response 200
     assert '*', response.headers['Access-Control-Allow-Origin']
   end

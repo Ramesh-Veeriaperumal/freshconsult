@@ -50,73 +50,6 @@ ul.activityfeed, ul.summary{
 	list-style:none;
 	padding:0;
 }
-ul.summary{
-	@include border-radius(6px);
-	background:#fafafa;
-	/* @include background-with-css2-fallback(linear-gradient(white, #fafafa)); */
-	border:1px solid #efefef;
-	margin-bottom:10px;
-	li{
-		@include float(left);
-		@include text-align(left);
-		width:20%;
-		margin:0;
-		a{
-			text-decoration:none;
-			color:$default_txt_color;
-			@include text-align(left);
-			padding-top: 10px;
-			padding-bottom: 5px;
-			@include border-right(1px solid #e8e8e8);
-			display: inline-block;
-			width:100%;
-			@include box-sizing(border-box);
-			&:hover{
-				@include box-shadow(inset 0px 5px 6px -3px rgba(130, 130, 130, 0.1));
-				background: #f6f6f6;
-			}
-			span, h4{
-				display:block;
-				@include padding-left(15px);
-				color:$default_txt_color;
-			}
-			h4{
-				font-size:36px;
-				font-weight:300;
-			}
-			&.overdue{
-				span, h4{ color:#a00; }
-			}
-		}
-		&.last a{
-			border:0;
-		}
-	}
-}
-
-ul.activityfeed li{
-	border-bottom:1px solid #f7f7f7;
-	@include padding(10px 20px 8px 56px);
-	display:block;
-	color:#666666;
-	font-size:1.1em; line-height:1.6;
-	.preview_pic{
-		@include margin-left(-52px);
-		@include margin-right(0px);
-
-	}
-	.username{
-	   font-weight:bold;
-	   text-transform:capitalize;
-	}
-	a{
-		@include link-colors(#4D769F, #3e71a4, #4D769F, #4D769F, #4D769F);
-   		text-decoration:none;
-	}
-	.activity_time{ color:#a6a6a6; padding-top:3px; text-transform:lowercase;}
-	div.preview_pic img{ &.preview_pic{margin-left: 0;}width:40px; height:40px;@include border-radius(50%); }
-}
-
 // ----------------------------------------------------------------------------
 //									 SIDEBAR CONTAINERS
 // ----------------------------------------------------------------------------
@@ -2418,11 +2351,11 @@ a.mobile_switchBtn {
 			@include transition(background-color 400ms linear);
 		}
 	}
-	
+
 	.sloading {
 		margin: 0 0 0 0px;
 		padding: 6px 5px 6px 10px;
-	} 
+	}
 	.admin_select_all_disabled {
 		color: #aaa;
 		font-weight: 500;

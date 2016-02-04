@@ -9,6 +9,7 @@ module Ecommerce
         msg_performer.process_sent_messages
         Rails.logger.debug "Message processed with params #{args} at time #{msg_performer.end_time}"
       rescue Exception => e
+        NewRelic::Agent.notice_error(e)
         Rails.logger.debug "ebay_message_worker::ERROR  => #{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end

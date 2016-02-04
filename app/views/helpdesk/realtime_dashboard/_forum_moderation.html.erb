@@ -1,0 +1,11 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
+	<div class="grid-stack-item-content widget-inner">
+		<div class="widget-title">
+			<%=t('helpdesk.realtime_dashboard.forum_moderation') %>
+		</div>
+		<div class="widget-content">
+			<%= content_tag :div, "", :rel => "remote", :class => "", :id=> "moderation-stats",
+							"data-remote-url" => '/discussions/unpublished/moderation_count' %>
+		</div>
+	</div>
+</div>

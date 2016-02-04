@@ -448,7 +448,7 @@ class ApiApplicationController < MetalApiController
 
     def email_given?(username)
       return @email_given if defined?(@email_given)
-      @email_given ||= username.include?('@')
+      @email_given ||= username.try(:include?, '@')
     end
 
     def login_via_email?
