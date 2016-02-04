@@ -90,7 +90,7 @@ module Spam
         when Net::HTTPRedirection then return check_spam_url(response['location'], limit - 1)
         else
           Rails.logger.debug "Invalid response - #{response} came while processing uri - #{uri.to_s}"
-          notify_error({ :account_id => Account.current.id, :invalid_response => response, :failed_uri => uri.to_s }, nil)
+          notify_error({ :account_id => Account.current.id, :invalid_response => response, :failed_uri => uri.to_s }, nil) if notify_by_email
           return SpamResult::ERROR
         end
       rescue Exception => e
