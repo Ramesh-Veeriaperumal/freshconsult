@@ -134,6 +134,7 @@
     background-color: #ebeff0;
     box-sizing: border-box;
     padding-bottom: 20px;
+    left: 0;
   }
   .widget-inner{
     background-color: #fff;
@@ -198,8 +199,8 @@
               &:first-child:nth-last-child(#{$i}) ~ li {
                 width: 100% / $i }
               }
-            @include border-right(1px #eee solid);
-            &:last-child{ @include border-right(none);}
+            border-right: 1px #eee solid;
+            &:last-child{ border-right: none;}
             &.disabled a{ color: $grayLight;}
             float: left;
             box-sizing: border-box;
@@ -402,7 +403,7 @@
   *{ box-sizing: border-box;}
   .trial_expiry{
     margin-bottom: 3px;
-    @include margin-right(20px);
+    margin-right: 20px;
     .span8{ p{ margin-bottom: 5px;}}
     .trial-background{ margin-top: 34px;}
   }
@@ -518,4 +519,8 @@ $i: 0;
     color: #333;
   }
 
+}
+
+html[dir="rtl"] .ficon-arrow-right:before{ 
+  content: "\f109" !important;
 }

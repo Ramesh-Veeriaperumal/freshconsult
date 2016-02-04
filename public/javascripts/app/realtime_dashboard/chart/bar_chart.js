@@ -69,6 +69,7 @@
 			this.group.selectAll('text.value').attr("x",function(d) {return _self.xscale(d.value) + _self.width - 5;})
 
 			this.textEllipsis();
+			this.checkRtl();
 		},
 		calculateHeight: function () {
 			return this.data.length * 45;
@@ -178,6 +179,7 @@
 				.text( function(d) {return  d.value ;})
 
 			this.textEllipsis();
+			this.checkRtl();
 		},
 		textEllipsis: function () {
 			var self = this;
@@ -193,6 +195,19 @@
 					$(element).text(text.slice(0, desiredTextLength) + "…");
 				}
 			})
+		},
+		checkRtl: function () {
+			var self = this;
+			if(this.options.isRtl) {
+				this.group.selectAll('text.label').attr("x",function(d, i) { 
+					return this.getComputedTextLength();
+				})
+
+				this.group.selectAll('text.value').attr("x",function(d, i) { 
+					return self.width - this.getComputedTextLength();
+				})
+
+			}
 		},
 		updateChartData: function(options) {
 			this.options = $.extend({}, this.options, options);

@@ -216,6 +216,7 @@ window.App = window.App || {};
 				data: chartData,
 				sliceDataAfter: sliceData,
 				name: chartname,
+				isRtl: ($("html").attr("dir") == "rtl") ? true : false,
 				callback: function(id) { 
 					var chartname = {
 						"unresolved_tickets_by_priority"	: "priority",
