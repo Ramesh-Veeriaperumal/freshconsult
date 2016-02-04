@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_45a613950a192d9c160aed72532ef836.eot");
-  src: font-url("glyphs_45a613950a192d9c160aed72532ef836.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_45a613950a192d9c160aed72532ef836.woff") format("woff"),
-       font-url("glyphs_45a613950a192d9c160aed72532ef836.ttf") format("truetype"),
-       font-url("glyphs_45a613950a192d9c160aed72532ef836.svg#glyphs") format("svg");
+  src: font-url("glyphs_929de5a8820595f443774fc3628673d7.eot");
+  src: font-url("glyphs_929de5a8820595f443774fc3628673d7.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_929de5a8820595f443774fc3628673d7.woff") format("woff"),
+       font-url("glyphs_929de5a8820595f443774fc3628673d7.ttf") format("truetype"),
+       font-url("glyphs_929de5a8820595f443774fc3628673d7.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_45a613950a192d9c160aed72532ef836.svg#glyphs") format("svg");
+    src: font-url("glyphs_929de5a8820595f443774fc3628673d7.svg#glyphs") format("svg");
   }
 }
 
@@ -50,6 +50,8 @@
 .ficon-bell:before,
 .ficon-billing:before,
 .ficon-blank-file:before,
+.ficon-block:before,
+.ficon-blocked-call:before,
 .ficon-book:before,
 .ficon-book-hollow:before,
 .ficon-bulb:before,
@@ -159,6 +161,7 @@
 .ficon-group-summary:before,
 .ficon-grouping-disable:before,
 .ficon-grouping-enable:before,
+.ficon-hangup:before,
 .ficon-help:before,
 .ficon-help-icon:before,
 .ficon-helpdesk:before,
@@ -167,6 +170,7 @@
 .ficon-ie:before,
 .ficon-ilos-icon:before,
 .ficon-import:before,
+.ficon-incoming-call:before,
 .ficon-infinity-5:before,
 .ficon-integrations:before,
 .ficon-ios:before,
@@ -208,6 +212,7 @@
 .ficon-open-in-new-window:before,
 .ficon-open-in-portal:before,
 .ficon-opera:before,
+.ficon-outgoing-call:before,
 .ficon-paperplane:before,
 .ficon-paragraph:before,
 .ficon-pencil:before,
@@ -327,6 +332,8 @@
 .ficon-bell:before { content: "\f10f"; }
 .ficon-billing:before { content: "\f110"; }
 .ficon-blank-file:before { content: "\f111"; }
+.ficon-block:before { content: "\f20c"; }
+.ficon-blocked-call:before { content: "\f20d"; }
 .ficon-book:before { content: "\f112"; }
 .ficon-book-hollow:before { content: "\f1da"; }
 .ficon-bulb:before { content: "\f113"; }
@@ -436,6 +443,7 @@
 .ficon-group-summary:before { content: "\f1c1"; }
 .ficon-grouping-disable:before { content: "\f156"; }
 .ficon-grouping-enable:before { content: "\f157"; }
+.ficon-hangup:before { content: "\f20e"; }
 .ficon-help:before { content: "\f158"; }
 .ficon-help-icon:before { content: "\f1d9"; }
 .ficon-helpdesk:before { content: "\f1ca"; }
@@ -444,6 +452,7 @@
 .ficon-ie:before { content: "\f159"; }
 .ficon-ilos-icon:before { content: "\f200"; }
 .ficon-import:before { content: "\f15a"; }
+.ficon-incoming-call:before { content: "\f20f"; }
 .ficon-infinity-5:before { content: "\f15b"; }
 .ficon-integrations:before { content: "\f15c"; }
 .ficon-ios:before { content: "\f15d"; }
@@ -485,6 +494,7 @@
 .ficon-open-in-new-window:before { content: "\f176"; }
 .ficon-open-in-portal:before { content: "\f1e0"; }
 .ficon-opera:before { content: "\f177"; }
+.ficon-outgoing-call:before { content: "\f210"; }
 .ficon-paperplane:before { content: "\f178"; }
 .ficon-paragraph:before { content: "\f179"; }
 .ficon-pencil:before { content: "\f17a"; }

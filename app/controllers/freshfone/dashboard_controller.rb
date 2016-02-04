@@ -2,6 +2,7 @@ class Freshfone::DashboardController < ApplicationController
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Freshfone::NodeEvents
+  include Freshfone::CallHistory
 
   before_filter :load_stats_count, :only => [:dashboard_stats]
 
@@ -22,6 +23,20 @@ class Freshfone::DashboardController < ApplicationController
   def calls_limit_notificaiton
     notify_live_dashboard_calls_count_exceeded(params[:call_type])
     render :json => {:result =>  true}
+  end
+
+  def mute
+     begin 
+      if current_call.inprogress?
+        telephony.mute_supervisor(current_call, params[:isMute])
+        render :json => {:result =>  :true}
+      else
+        render :json => {:result =>  :error}
+      end
+     rescue Exception => e
+       Rails.logger.error "Error in Muting Supervisor | CallSid: #{params[:CallSid]} :: #{current_account.id} \n #{e.message}\n #{e.backtrace.join("\n\t")}"  
+       render :json => {:result => :exception}
+     end
   end
 
   private
@@ -60,6 +75,11 @@ class Freshfone::DashboardController < ApplicationController
           :from       => FreshfoneConfig['ops_alert']['mail']['from'],
           :subject    => "Dashboard calls count exceeds the limit",
           :message    => "#{call_type} calls count exceeds the limit for Account :: #{(current_account || {})[:id]} <br>"})
+    end
+
+    def telephony
+      current_number ||= current_call.freshfone_number
+      @telephony ||= Freshfone::Telephony.new(params, current_account, current_number)
     end
 
 

@@ -31,6 +31,8 @@ class Freshfone::Call < ActiveRecord::Base
 
   has_one :recording_audio, :as => :attachable, :class_name => 'Helpdesk::Attachment', :dependent => :destroy
 
+  has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
+
   delegate :number, :to => :freshfone_number
   delegate :name, :to => :agent, :allow_nil => true, :prefix => true
   delegate :name, :to => :customer, :allow_nil => true, :prefix => true
@@ -105,7 +107,7 @@ class Freshfone::Call < ActiveRecord::Base
   scope :active_calls, lambda {
     { :conditions => [ 'call_status = ? AND updated_at >= ?', 
         CALL_STATUS_HASH[:'in-progress'], 4.hours.ago.to_s(:db)
-      ], :order => "created_at DESC"
+      ], :order => "created_at DESC", :include => [ :supervisor_controls] 
     }
   }
 
@@ -300,7 +302,7 @@ class Freshfone::Call < ActiveRecord::Base
       :ticket_body_attributes => { :description_html => description_html(true) },
       :email => params[:requester_email],
       :name => requester_name,
-      :phone => caller_number,
+      :phone => params[:phone_number].present? ? params[:phone_number] : caller_number,
       :requester_id => params[:custom_requester_id] || customer_id,
       :responder => params[:agent],
       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
@@ -527,6 +529,12 @@ class Freshfone::Call < ActiveRecord::Base
 
   def update_missed_abandon_status
     update_abandon_state(CALL_ABANDON_TYPE_HASH[:missed])
+  end
+
+  def call_ended?
+    [ Freshfone::Call::CALL_STATUS_HASH[:completed], Freshfone::Call::CALL_STATUS_HASH[:busy],
+          Freshfone::Call::CALL_STATUS_HASH[:'no-answer'], Freshfone::Call::CALL_STATUS_HASH[:failed],
+          Freshfone::Call::CALL_STATUS_HASH[:canceled], Freshfone::Call::CALL_STATUS_HASH[:voicemail] ].include?(self.call_status)
   end
 
   private

@@ -475,6 +475,7 @@ Helpkit::Application.routes.draw do
         post :trigger_voicemail
         post :trigger_non_availability
         post :hangup
+        post :redirect_to_queue
       end
     end
 
@@ -594,6 +595,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :dashboard_stats
         get :calls_limit_notificaiton
+        post :mute
       end
     end
   end

@@ -43,7 +43,8 @@ module FreshfoneSpecHelper
         :number_type => 1,
         :state => 1,
         :deleted => false,
-        :skip_in_twilio => true )
+        :skip_in_twilio => true,
+        :max_queue_length => 3 )
     else
       @number ||= @account.freshfone_numbers.first
     end
@@ -64,6 +65,14 @@ module FreshfoneSpecHelper
   def create_freshfone_call_meta(call,external_number)
     @call_meta = call.create_meta(:account_id=> @account.id, :transfer_by_agent => @agent.id,
               :meta_info => external_number, :device_type => Freshfone::CallMeta::USER_AGENT_TYPE_HASH[:external_transfer])
+  end
+
+  def create_supervisor_call(call=@freshfone_call, call_status = Freshfone::SupervisorControl::CALL_STATUS_HASH[:default])
+    @supervisor_control= call.supervisor_controls.create(:account_id => @account.id,
+         :supervisor_id => @agent.id,
+         :supervisor_control_type => Freshfone::SupervisorControl::CALL_TYPE_HASH[:monitoring],
+         :supervisor_control_status => call_status,
+         :sid => "SCALL")
   end
 
   def create_freshfone_customer_call(call_sid = "CA2db76c748cb6f081853f80dace462a04")
@@ -146,6 +155,54 @@ module FreshfoneSpecHelper
       "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER" }
   end
 
+  def supervisor_params
+    { :AccountSid =>"AC626dc6e5b03904e6270f353f4a2f068f",
+      :Direction =>"inbound", 
+      :ApplicationSid =>"APca64694c6df44b0bbcfb34058c567555",
+      :CallSid =>"SCALL", 
+      :CallStatus =>"ringing", 
+      :type => "supervisor",
+      :From => "client:1",
+      :agent => @agent.id,
+      :call => @freshfone_call.id
+    }
+  end
+
+  def outgoing_params
+    { :AccountSid =>"AC626dc6e5b03904e6270f353f4a2f068f",
+      :Direction =>"inbound", 
+      :ApplicationSid =>"APca64694c6df44b0bbcfb34058c567555",
+      :CallSid =>"SCALL", 
+      :CallStatus =>"ringing", 
+      :From => "client:1",
+      :type => "outgoing",
+      :agent => @agent.id
+    }
+  end
+
+  def sip_params
+    { :AccountSid =>"AC626dc6e5b03904e6270f353f4a2f068f",
+      :Direction =>"inbound", 
+      :ApplicationSid =>"APca64694c6df44b0bbcfb34058c567555",
+      :CallSid =>"SCALL", 
+      :CallStatus =>"ringing", 
+      :From => "sip:1",
+      :type => "sip",
+      :agent => @agent.id
+    }
+  end
+
+  def supervisor_call_status_params 
+    { "CallSid"=>"SCALL",
+      "ConferenceSid"=>"ConSid",
+      "DialCallSid"=>"DiCalSid",
+      "RecordingUrl"=>"",
+      "DialCallDuration"=>"6",
+      "From"=>"client:1",
+      "CallDuration"=>"6"
+    }
+  end
+
   def ivr_flow_params
     {"AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", "ToZip"=>"79097", "FromState"=>"CA", 
       "Called"=>"+12407433321", "FromCountry"=>"US", "CallerCountry"=>"US", "CalledZip"=>"79097", 
@@ -155,6 +212,14 @@ module FreshfoneSpecHelper
       "CallStatus"=>"in-progress", "ToCity"=>"WHITE DEER", "ToState"=>"TX", "To"=>"+12407433321", "Digits"=>"1", 
       "ToCountry"=>"US", "msg"=>"Gather End", "CallerCity"=>"BAKERSFIELD", "ApiVersion"=>"2010-04-01", 
       "Caller"=>"+16617480240", "CalledCity"=>"WHITE DEER", "menu_id"=>"0"}
+  end
+
+  def agent_call_leg_params
+    {"ApiVersion"=>"2010-04-01", "Called"=>"client:1", :CallStatus => "busy", "Duration"=>"0","From"=>"+16463928103", 
+    "Direction"=>"outbound-api",:CallDuration => "0", "Timestamp"=>"Wed, 06 Jan 2016 06:47:56 +0000", "AccountSid"=>"AC626dc6e5b03904e6270f353f4a2f068f", 
+    "CallbackSource"=>"call-progress-events", "SipResponseCode"=>"[FILTERED]", "Caller"=>"+16463928103", "SequenceNumber"=>"0", 
+    :CallSid => "CA2db76c748cb6f081853f80dace462a04", "To"=>"client:1", 
+    :agent_id => "1", "leg_type"=>"disconnect"}
   end
 
   def fallback_params

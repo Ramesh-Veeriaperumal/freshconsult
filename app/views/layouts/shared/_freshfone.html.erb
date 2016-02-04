@@ -24,6 +24,9 @@
 <div class="freshfone-context-container hide" >
 	<%=render 'layouts/shared/freshfone/freshfone_context_container' %>
 </div>
+<div class="popupbox-content supervisor_call_details hide">
+		<%= render 'layouts/shared/freshfone/freshfone_supervisor_call_details' %>
+</div>
 <div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
 <div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
 	<%= render 'layouts/shared/freshfone/freshfone_popupbox_content' %>
@@ -67,6 +70,7 @@
 	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
 	freshfone.isDebuggingMode = "<%= current_account.features?(:client_debugging)%>";
 	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
+	freshfone.isCallMonitoringMode = <%= current_account.features?(:freshfone_call_monitoring)%>;
   freshfone.ringingTime = <%= current_account_freshfone_numbers.present? ?  current_account_freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
   freshfone.current_user_details = {
