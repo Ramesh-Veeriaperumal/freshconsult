@@ -63,7 +63,7 @@ class Search::V2::SpotlightController < ApplicationController
     def search
       begin
         @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            @search_context,
+                                                            Search::Utils.template_context(@search_context, @exact_match),
                                                             searchable_types
                                                           ).fetch(construct_es_params)
         @result_set = Search::Utils.load_records(
@@ -81,7 +81,7 @@ class Search::V2::SpotlightController < ApplicationController
         @search_results = []
         @result_set = []
 
-        Rails.logger.error "Searchv2 exception - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
       end
 
@@ -123,12 +123,7 @@ class Search::V2::SpotlightController < ApplicationController
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        if Search::Utils.exact_match?(@search_key)
-          es_params[:search_term] = Search::Utils.extract_term(@search_key)
-          es_params[:exact_match] = true
-        else
-          es_params[:search_term] = @search_key
-        end
+        es_params[:search_term] = @search_key
 
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
@@ -224,6 +219,11 @@ class Search::V2::SpotlightController < ApplicationController
       @offset         = @size * (@current_page - 1)
       @result_json    = { :results => [], :current_page => Search::Utils::DEFAULT_PAGE }
       @es_results     = []
+
+      if Search::Utils.exact_match?(@search_key)
+        @search_key   = Search::Utils.extract_term(@search_key)
+        @exact_match  = true
+      end
     end
 
     # ESType - [model, associations] mapping

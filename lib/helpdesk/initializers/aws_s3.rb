@@ -19,5 +19,5 @@ $s3_client = Aws::S3::Client.new(
 
 # using dummy credentials. To be changed before QA starts
 $dynamo_client = (Rails.env.development? || Rails.env.test?) ? 
-                  Aws::DynamoDB::Client.new(endpoint: 'http://localhost:8000', access_key_id: 'dummy', secret_access_key: 'dummy') :
+                  Aws::DynamoDB::Client.new(endpoint: 'http://localhost:4569', access_key_id: 'dummy', secret_access_key: 'dummy') :
                   Aws::DynamoDB::Client.new(region: S3_CONFIG[:region], access_key_id: S3_CONFIG[:access_key_id], secret_access_key: S3_CONFIG[:secret_access_key])

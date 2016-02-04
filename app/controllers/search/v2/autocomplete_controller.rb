@@ -10,8 +10,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :agent_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key,
-      exact_match: @exact_match
+      search_term: @search_key
     }.merge(ES_V2_BOOST_VALUES[:agent_autocomplete])
 
     search.each do |document|
@@ -28,8 +27,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :requester_autocomplete
     @searchable_klass = 'User'
     @es_params        = {
-      search_term: @search_key,
-      exact_match: @exact_match
+      search_term: @search_key
     }.merge(ES_V2_BOOST_VALUES[:requester_autocomplete])
 
     search.each do |document|
@@ -42,8 +40,7 @@ class Search::V2::AutocompleteController < ApplicationController
     @search_context   = :company_autocomplete
     @searchable_klass = 'Company'
     @es_params        = {
-      search_term: @search_key,
-      exact_match: @exact_match
+      search_term: @search_key
     }
 
     search.each do |document|
@@ -76,8 +73,8 @@ class Search::V2::AutocompleteController < ApplicationController
     #
     def search
       begin
-        es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            @search_context,
+        es_results = Search::V2::SearchRequestHandler.new(current_account.id, 
+                                                            Search::Utils.template_context(@search_context, @exact_match),
                                                             searchable_type.to_a
                                                           ).fetch(@es_params)
         @records_from_db = Search::Utils.load_records(
@@ -90,7 +87,7 @@ class Search::V2::AutocompleteController < ApplicationController
                                                         }
                                                       )
       rescue => e
-        Rails.logger.error "Searchv2 exception - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
         @records_from_db = []
       end

@@ -11,24 +11,38 @@ class Search::Utils
   # _Note_: Query Template name to use in ES.
   #
   TEMPLATE_BY_CONTEXT   = {
-    portal_spotlight_global:    'portalSpotlightGlobal',
-    portal_spotlight_ticket:    'portalSpotlightTicket',
-    portal_spotlight_solution:  'portalSpotlightSolution',
-    portal_spotlight_topic:     'portalSpotlightTopic',
-    portal_related_articles:    'portalRelatedArticles',
-    agent_autocomplete:         'agentAutocomplete',
-    requester_autocomplete:     'requesterAutocomplete',
-    company_autocomplete:       'companyAutocomplete',
-    tag_autocomplete:           'tagAutocomplete',
-    agent_spotlight_global:     'agentSpotlightGlobal',
-    agent_spotlight_ticket:     'agentSpotlightTicket',
-    agent_spotlight_solution:   'agentSpotlightSolution',
-    agent_spotlight_topic:      'agentSpotlightTopic',
-    agent_spotlight_customer:   'agentSpotlightCustomer',
-    merge_display_id:           'mergeDisplayId',
-    merge_subject:              'mergeSubject',
-    merge_requester:            'mergeRequester',
-    merge_topic_search:         'mergeTopicSearch'
+    portal_spotlight_global:          'portalSpotlightGlobal',
+    portal_spotlight_global_exact:    'portalSpotlightGlobalExact',
+    portal_spotlight_ticket:          'portalSpotlightTicket',
+    portal_spotlight_ticket_exact:    'portalSpotlightTicketExact',
+    portal_spotlight_solution:        'portalSpotlightSolution',
+    portal_spotlight_solution_exact:  'portalSpotlightSolutionExact',
+    portal_spotlight_topic:           'portalSpotlightTopic',
+    portal_spotlight_topic_exact:     'portalSpotlightTopicExact',
+    portal_related_articles:          'portalRelatedArticles',
+    agent_autocomplete:               'agentAutocomplete',
+    agent_autocomplete_exact:         'agentAutocompleteExact',
+    requester_autocomplete:           'requesterAutocomplete',
+    requester_autocomplete_exact:     'requesterAutocompleteExact',
+    company_autocomplete:             'companyAutocomplete',
+    company_autocomplete_exact:       'companyAutocompleteExact',
+    tag_autocomplete:                 'tagAutocomplete',
+    agent_spotlight_global:           'agentSpotlightGlobal',
+    agent_spotlight_global_exact:     'agentSpotlightGlobalExact',
+    agent_spotlight_ticket:           'agentSpotlightTicket',
+    agent_spotlight_ticket_exact:     'agentSpotlightTicketExact',
+    agent_spotlight_solution:         'agentSpotlightSolution',
+    agent_spotlight_solution_exact:   'agentSpotlightSolutionExact',
+    agent_spotlight_topic:            'agentSpotlightTopic',
+    agent_spotlight_topic_exact:      'agentSpotlightTopicExact',
+    agent_spotlight_customer:         'agentSpotlightCustomer',
+    agent_spotlight_customer_exact:   'agentSpotlightCustomerExact',
+    merge_display_id:                 'mergeDisplayId',
+    merge_subject:                    'mergeSubject',
+    merge_subject_exact:              'mergeSubjectExact',
+    merge_requester:                  'mergeRequester',
+    merge_topic_search:               'mergeTopicSearch',
+    merge_topic_search_exact:         'mergeTopicSearchExact'
   }
 
   # _Note_: Parent ID to be used for routing.
@@ -94,6 +108,14 @@ class Search::Utils
 
   def self.extract_term(search_term)
     search_term.to_s.gsub(/^<?"?|"?>?$/,'').squish
+  end
+
+  # Returns partial/exact match template
+  #
+  def self.template_context(context, exact_match)
+    template_key = (exact_match ? "#{context}_exact" : context).to_sym
+    template_key = context unless TEMPLATE_BY_CONTEXT.has_key?(template_key) # To-do: Bad hack. Revisit.
+    template_key
   end
   
   private

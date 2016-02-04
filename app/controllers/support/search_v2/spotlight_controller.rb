@@ -68,7 +68,7 @@ class Support::SearchV2::SpotlightController < SupportController
     def search
       begin
         @es_results = Search::V2::SearchRequestHandler.new(current_account.id,
-                                                            @search_context,
+                                                            Search::Utils.template_context(@search_context, @exact_match),
                                                             searchable_types
                                                           ).fetch(construct_es_params)
         @result_set = Search::Utils.load_records(
@@ -86,7 +86,7 @@ class Support::SearchV2::SpotlightController < SupportController
         @search_results = []
         @result_set = []
 
-        Rails.logger.error "Searchv2 exception - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
       end
 
@@ -105,12 +105,7 @@ class Support::SearchV2::SpotlightController < SupportController
     #
     def construct_es_params
       Hash.new.tap do |es_params|
-        if Search::Utils.exact_match?(@search_key)
-          es_params[:search_term] = Search::Utils.extract_term(@search_key)
-          es_params[:exact_match] = true
-        else
-          es_params[:search_term] = @search_key
-        end
+        es_params[:search_term] = @search_key
 
         if current_user
           if privilege?(:client_manager)
@@ -274,6 +269,11 @@ class Support::SearchV2::SpotlightController < SupportController
                         params[:max_matches].to_i < Search::Utils::MAX_PER_PAGE) ? Search::Utils::MAX_PER_PAGE : params[:max_matches]
       @page           = (params[:page].to_i.zero? ? Search::Utils::DEFAULT_PAGE : params[:page].to_i)
       @offset         = @size * (@page - 1)
+
+      if Search::Utils.exact_match?(@search_key)
+        @search_key   = Search::Utils.extract_term(@search_key)
+        @exact_match  = true
+      end
     end
 
     # ESType - [model, associations] mapping

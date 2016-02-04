@@ -74,7 +74,7 @@ class Search::V2::TicketsController < Search::V2::SpotlightController
                                                                 )
         @requester_ids  = es_results['hits']['hits'].collect { |doc| doc['_id'].to_i }
       rescue => e
-        Rails.logger.error "Searchv2 exception - #{e.message}"
+        Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
         @requester_ids  = []
       end
