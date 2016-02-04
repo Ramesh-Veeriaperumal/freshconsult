@@ -25,7 +25,7 @@ RSpec.describe Solution::FoldersController do
     result = parse_json(response)
 
     expect(response.status).to be_eql(201)
-    expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_truthy
+    expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
   end
 
   it "should be able to update a solution folder" do
@@ -43,8 +43,8 @@ RSpec.describe Solution::FoldersController do
     get :show, { :category_id => @solution_category_meta.id, :id=>@test_folder.id, :format => 'json'}
     result = parse_json(response)
     expect(response.status).to be_eql(200)
-    expect(assert_array(result["folder"].keys-["articles"], APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_truthy
-    expect(assert_array(result["folder"]["articles"].first.keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS-["tags", "folder"])).to be_truthy
+    expect(assert_array(result["folder"].keys-["articles"], APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
+    expect(assert_array(result["folder"]["articles"].first.keys, APIHelper::SOLUTION_ARTICLE_ATTRIBS - ["tags", "folder"])).to be_empty
   end
 
   it "should be able to delete a solution folder" do
@@ -61,7 +61,7 @@ RSpec.describe Solution::FoldersController do
     customer_id = @account.folders.find_by_name(params["solution_folder"]["name"] ).solution_folder_meta.customer_folders.first.customer.id
 
     expect(response.status).to be_eql(201)
-    expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_truthy
+    expect(assert_array(result["folder"].keys, APIHelper::SOLUTION_FOLDER_ATTRIBS)).to be_empty
     expect(customer_id).to be_eql(@new_company.id)
   end
 

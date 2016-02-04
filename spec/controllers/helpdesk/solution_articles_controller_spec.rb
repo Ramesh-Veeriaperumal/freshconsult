@@ -99,7 +99,7 @@ describe Solution::ArticlesController do
     }
     article = @account.solution_articles.find_by_title(name)
     article.should be_an_instance_of(Solution::Article)
-    response.should redirect_to(solution_article_version_path(article.parent_id, article.language.code))
+    response.should redirect_to(solution_article_version_path(article, article.language.code))
   end
 
   it "should create a new solution article and the content must be saved in article bodies table" do

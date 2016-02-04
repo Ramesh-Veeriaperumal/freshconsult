@@ -43,8 +43,8 @@ class Solution::ArticlesController < ApplicationController
           end
         end
       }
-      format.xml  { render :xml => @article }
-      format.json { render :json => @article }
+      format.xml  { render :xml => @article_meta, :include => [:folder] }
+      format.json { render :json => @article_meta, :include => [:folder] }
     end    
   end
 
@@ -57,7 +57,7 @@ class Solution::ArticlesController < ApplicationController
       format.html {
         render "new"
       }
-      format.xml  { render :xml => @article }
+      format.xml  { render :xml => @article_meta }
     end
   end
 
@@ -83,8 +83,8 @@ class Solution::ArticlesController < ApplicationController
           flash[:notice] = flash_message if publish?
           redirect_to solution_article_version_path(@article_meta, @article.language.code)
         }
-        format.xml  { render :xml => @article, :status => :created, :location => @article }
-        format.json  { render :json => @article, :status => :created, :location => @article }
+        format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }
+        format.json  { render :json => @article_meta, :include => [:folder], :status => :created, :location => @article }
       else
         format.html { 
           render "new"
@@ -389,8 +389,8 @@ class Solution::ArticlesController < ApplicationController
             flash[:notice] = flash_message if publish?
             redirect_to multilingual_article_path(@article)
           }
-          format.xml  { render :xml => @article, :status => :created, :location => @article }     
-          format.json  { render :json => @article, :status => :ok, :location => @article }
+          format.xml  { render :xml => @article_meta, :include => [:folder], :status => :created, :location => @article }     
+          format.json  { render :json => @article_meta, :include => [:folder], :status => :ok, :location => @article }
           format.js {
             flash[:notice] = t('solution.articles.prop_updated_msg')
           }

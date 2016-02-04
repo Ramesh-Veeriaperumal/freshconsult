@@ -1,5 +1,6 @@
 module Solution::LanguageAssociations
   extend ActiveSupport::Concern
+  include Solution::ApiDelegator
 
   included do |base|
     base.include Binarize
@@ -61,7 +62,7 @@ module Solution::LanguageAssociations
       }
     }
 
-    default_scope lambda { Language.current ? current : unscoped }
+    default_scope lambda { Language.current? ? current : unscoped }
         
     after_find :handle_date_time
 

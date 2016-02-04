@@ -21,7 +21,7 @@ RSpec.describe Solution::CategoriesController do
     result = parse_json(response)
 
     expect(response.status).to be_eql(201)
-    expect(assert_array(result["category"].keys, APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
+    expect(assert_array(result["category"].keys, APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_empty
   end
 
   it "should be able to update a solution category" do
@@ -38,7 +38,7 @@ RSpec.describe Solution::CategoriesController do
     result = parse_json(response)
 
     expect(response.status).to be_eql(200)
-    expect(assert_array(result["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
+    expect(assert_array(result["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_empty
   end
 
   it "should be able to view all solution categories" do
@@ -49,7 +49,7 @@ RSpec.describe Solution::CategoriesController do
     result = parse_json(response)
 
     expect(response.status).to be_eql(200)
-    expect(assert_array(result.first["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_truthy
+    expect(assert_array(result.first["category"].keys-["folders"], APIHelper::SOLUTION_CATEGORY_ATTRIBS)).to be_empty
   end
 
   it "should be able to delete a solution category" do
@@ -66,11 +66,11 @@ RSpec.describe Solution::CategoriesController do
     expect(response.status).to be_eql(422)
   end
 
-    def solution_category_api_params
-      { :solution_category=> {:name => Faker::Lorem.words(10).join(" "),
-          :description => Faker::Lorem.paragraph }
-      }
-    end
+  def solution_category_api_params
+    { :solution_category=> {:name => Faker::Lorem.words(10).join(" "),
+        :description => Faker::Lorem.paragraph }
+    }
+  end
 
 
 end

@@ -23,9 +23,8 @@ class Solution::CategoriesController < ApplicationController
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb
-      format.xml  { render :xml => @categories }
-      format.json  { render :json => @categories.to_json(:except => [:account_id,:import_id],
-                                                         :include => folder_scope) }
+      format.xml  { render :xml => @categories.as_json(:root => false).to_xml(:root => "solution_categories") }
+      format.json  { render :json => @categories.as_json(:include => folder_scope) }
     end
   end
 
@@ -44,8 +43,7 @@ class Solution::CategoriesController < ApplicationController
         redirect_to solution_my_drafts_path('all') if @category.is_default?
       }
       format.xml {  render :xml => @category.to_xml(:include => folder_scope) }
-      format.json  { render :json => @category.to_json(:except => [:account_id,:import_id],
-                                                  :include => folder_scope) }
+      format.json  { render :json => @category.to_json(:include => folder_scope) }
     end
   end
   
@@ -81,8 +79,8 @@ class Solution::CategoriesController < ApplicationController
       if @category.errors.blank?
         format.html { redirect_to solution_category_path(@category) }
         format.js { render 'after_save', :formats => [:rjs] }
-        format.xml  { render :xml => @category.primary_category, :status => :created, :location => @category.primary_category }
-        format.json { render :json => @category.primary_category, :status => :created, :location => @category.primary_category }
+        format.xml  { render :xml => @category, :status => :created, :location => @category.primary_category }
+        format.json { render :json => @category, :status => :created, :location => @category.primary_category }
       else
         format.html { render :action => "new" }
         format.js { render 'after_save', :formats => [:rjs] }
