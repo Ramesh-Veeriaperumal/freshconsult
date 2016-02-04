@@ -13,7 +13,8 @@ class ContactValidation < ApiValidation
                                 field_validations: ContactConstants::DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, required: true, data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+  validates :name, data_type: { rules: String, required: true }
+  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
 
   validate :contact_detail_missing, on: :create
@@ -24,7 +25,7 @@ class ContactValidation < ApiValidation
 
   validate :check_update_email, if: -> { email }, on: :update
 
-  validates :company_name, required: { allow_nil: false, message: :company_id_required }, if: -> { view_all_tickets.to_s == 'true' }
+  validates :company_name, required: { allow_nil: false, message: :company_id_required }, custom_numericality: { allow_nil: false, ignore_string: :allow_string_param },  if: -> { view_all_tickets.to_s == 'true' }
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {

@@ -9,7 +9,9 @@ class DataTypeValidator < ActiveModel::EachValidator
     message = options[:message]
     message ||= required_attribute_not_defined?(record, attribute, values) ? :required_and_data_type_mismatch : :data_type_mismatch
 
-    unless valid_type?(options[:rules], values, record, attribute)
+    if valid_type?(options[:rules], values, record, attribute)
+      record.errors[attribute] = :blank if options[:required] && !present_or_false?(values)
+    else
       record.errors[attribute] << message
       data_type = DATA_TYPE_MAPPING.key?(options[:rules]) ? DATA_TYPE_MAPPING[options[:rules]] : options[:rules]
       (record.error_options ||= {}).merge!(attribute => { data_type: data_type })
@@ -26,13 +28,9 @@ class DataTypeValidator < ActiveModel::EachValidator
         allow_unset?(type) && !record.instance_variable_defined?("@#{attribute}")
       when type
         true
-      when TrueClass
+      when TrueClass, FalseClass
         type == 'Boolean'
-      when FalseClass
-        type == 'Boolean'
-      when 'true'
-        type == 'Boolean' && allow_string?(record)
-      when 'false'
+      when 'true', 'false'
         type == 'Boolean' && allow_string?(record)
       else
         false
@@ -49,5 +47,9 @@ class DataTypeValidator < ActiveModel::EachValidator
 
     def allow_unset?(type)
       !options[:required] && ([Hash, Array, 'Boolean'].include?(type) || options[:allow_unset])
+    end
+
+    def present_or_false?(value)
+      value.present? || value.is_a?(FalseClass)
     end
 end

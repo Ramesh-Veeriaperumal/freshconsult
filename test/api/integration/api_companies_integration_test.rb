@@ -7,11 +7,11 @@ class ApiCompaniesIntegrationTest < ActionDispatch::IntegrationTest
       v2 = {}
       v1 = {}
       v2_expected = {
-        api_create: 7,
+        api_create: 9,
         api_show: 1,
         api_index: 2,
-        api_update: 8,
-        api_destroy: 8,
+        api_update: 10,
+        api_destroy: 10,
 
         create: 21,
         show: 17,

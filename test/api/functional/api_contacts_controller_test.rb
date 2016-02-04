@@ -53,7 +53,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_without_name
     post :create, construct_params({},  email: Faker::Internet.email)
-    match_json([bad_request_error_pattern('name', :missing_field)])
+    match_json([bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)])
     assert_response 400
   end
 
@@ -149,7 +149,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: 'tag1, tag2, tag3')
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array')])
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array)])
     assert_response 400
   end
 
@@ -276,8 +276,9 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         email: Faker::Internet.email)
 
     assert_response 400
-    match_json([bad_request_error_pattern('code', :missing_field)])
-    cf.update_attribute(:required_for_agent, false)
+    match_json([bad_request_error_pattern('code', :required_and_data_type_mismatch, data_type: String)])
+    ensure
+      cf.update_attribute(:required_for_agent, false)
   end
 
   def test_create_contact_with_invalid_custom_fields
@@ -813,7 +814,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                         company_id: comp.id,
                                         language: 'en',
                                         tags: [1, 2, 3])
-    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'String')])
+    match_json([bad_request_error_pattern('tags', :data_type_mismatch, data_type: String)])
     assert_response 400
   end
 
@@ -850,13 +851,13 @@ class ApiContactsControllerTest < ActionController::TestCase
     post :create, construct_params({},  name: Faker::Name.name)
     assert_response 400
     match_json([bad_request_error_pattern('email', :missing),
-                bad_request_error_pattern('job_title', :required_and_data_type_mismatch, data_type: 'String'),
-                bad_request_error_pattern('mobile', :missing),
-                bad_request_error_pattern('address', :missing),
-                bad_request_error_pattern('description', :missing),
-                bad_request_error_pattern('twitter_id', :missing),
-                bad_request_error_pattern('phone', :missing),
-                bad_request_error_pattern('tags', :required_and_data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('job_title', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('mobile', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('address', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('description', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('twitter_id', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('phone', :required_and_data_type_mismatch, data_type: String),
+                bad_request_error_pattern('tags', :required_and_data_type_mismatch, data_type: Array),
                 bad_request_error_pattern('company_id', :missing),
                 bad_request_error_pattern('language', :required_and_inclusion,
                                           list: I18n.available_locales.map(&:to_s).join(',')),
@@ -906,14 +907,14 @@ class ApiContactsControllerTest < ActionController::TestCase
                                  )
     assert_response 400
     match_json([bad_request_error_pattern('email', :"can't be blank"),
-                bad_request_error_pattern('job_title', :data_type_mismatch, data_type: 'String'),
-                bad_request_error_pattern('mobile', :"can't be blank"),
-                bad_request_error_pattern('address', :"can't be blank"),
-                bad_request_error_pattern('description', :"can't be blank"),
+                bad_request_error_pattern('job_title', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('mobile', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('address', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('description', :data_type_mismatch, data_type: String),
                 bad_request_error_pattern('view_all_tickets', :data_type_mismatch, data_type: 'Boolean'),
-                bad_request_error_pattern('twitter_id', :"can't be blank"),
-                bad_request_error_pattern('phone', :"can't be blank"),
-                bad_request_error_pattern('tags', :data_type_mismatch, data_type: 'Array'),
+                bad_request_error_pattern('twitter_id', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('phone', :data_type_mismatch, data_type: String),
+                bad_request_error_pattern('tags', :data_type_mismatch, data_type: Array),
                 bad_request_error_pattern('company_id', :"can't be blank"),
                 bad_request_error_pattern('language', :not_included,
                                           list: I18n.available_locales.map(&:to_s).join(',')),

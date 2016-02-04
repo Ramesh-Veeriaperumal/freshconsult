@@ -1,11 +1,8 @@
 class CustomFieldValidatorTestHelper
   attr_accessor :id, :nested_fields_choices_by_name, :account_id, :name, :label, :label_in_portal, :description, :active, :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, :required_for_closure, :flexifield_def_entry_id, :created_at, :updated_at, :field_options, :default, :level, :parent_id, :prefered_ff_col, :import_id
 
-  NESTED_CHOICES = {
-    first_level_choices: { 'country_1' => ['Usa', 'india'], 'first_1' => ['category 1', 'category 2'] },
-    second_level_choices: { 'country_1' => { 'Usa' => ['california'], 'india' => ['tamil nadu', 'kerala', 'andra pradesh'] }, 'first_1' => { 'category 1' => ['subcategory 1', 'subcategory 2', 'subcategory 3'], 'category 2' => ['subcategory 1'] } },
-    third_level_choices: { 'country_1' => { 'california' => ['los angeles', 'san fransico', 'san diego'], 'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag'] }, 'first_1' => { 'subcategory 1' => ['item 1', 'item 2'], 'subcategory 2' => ['item 1', 'item 2'], 'subcategory 3' => [] } }
-  }
+  NESTED_CHOICES = { 'country_1' => {'Usa' => {'california' =>  ['los angeles', 'san fransico', 'san diego']}, 'india' => {'tamil nadu' => ['chennai', 'trichy'], 'kerala' => [], 'andra pradesh' => ['hyderabad', 'vizag']}}, 
+                     'first_1' =>  {"category 1"=> {"subcategory 1"=>["abc", "def"], "subcategory 2"=>["mno", "pqr"], "subcategory 3"=>[]}, "category 2"=>{"subcategory 1"=>["123", "456"]}}}
 
   def initialize(params = {})
     params.each { |key, value| instance_variable_set("@#{key}", value) }

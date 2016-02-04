@@ -178,7 +178,7 @@ module ApiDiscussions
     def test_create_missing_params
       post :create, construct_params({}, {})
       pattern = [
-        bad_request_error_pattern('name', :missing_field)
+        bad_request_error_pattern('name', :required_and_data_type_mismatch, data_type: String)
       ]
       assert_response 400
       match_json(pattern)
@@ -214,7 +214,7 @@ module ApiDiscussions
 
     def test_update_with_nil_name
       put :update, construct_params({ id: fc.id }, name: nil)
-      match_json([bad_request_error_pattern('name', :"can't be blank")])
+      match_json([bad_request_error_pattern('name', :data_type_mismatch, data_type: String)])
       assert_response 400
     end
 
