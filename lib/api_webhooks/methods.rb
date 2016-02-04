@@ -31,26 +31,33 @@ module ApiWebhooks::Methods
 				) ? filtered.merge!({change_key => change_value}) : filtered
 	end
 
-	def map_class class_name
+  def map_class class_name
     attr_map = {"Helpdesk::Ticket" => :tickets, "User" => :users, "Helpdesk::Note" => :notes}
     attr_map[class_name]
   end
 
-	def send_subscribe_events(event_changes)
-		evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
-		Resque.enqueue(Workers::Subscriber,
-						{ :event_id => evaluate_on_id, :current_events => event_changes, 
-							:association => map_class(self.class.name)})
-	end
+  def send_subscribe_events(event_changes)
+    evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
+    if redis_key_exists?(Redis::RedisKeys::SUBSCRIBER_SIDEKIQ_ENABLED)
+      Integrations::ApiWebhookRuleWorker.perform_async(
+        {:evaluate_on_id => evaluate_on_id,
+         :current_events => event_changes, 
+         :association => map_class(self.class.name)}
+      )
+    else
+      Resque.enqueue(Workers::Subscriber, {:event_id => evaluate_on_id, :current_events => event_changes, 
+              :association => map_class(self.class.name)})
+    end
+  end
 
-	def rule_exists?(constant_rule)
-		rule_flag = false
-		account.api_webhooks_rules_from_cache.each do |va|
-			va.filter_data[:events].each do |e|
-				e.symbolize_keys
-				return rule_flag = true if(constant_rule[e[:name].to_sym] == e[:value].to_sym)
-			end
-		end
-		rule_flag
-	end
+  def rule_exists?(constant_rule)
+    rule_flag = false
+    account.api_webhooks_rules_from_cache.each do |va|
+      va.filter_data[:events].each do |e|
+        e = e.symbolize_keys
+        return rule_flag = true if(constant_rule[e[:name].to_sym] == e[:value].to_sym)
+      end
+    end
+    rule_flag
+  end
 end

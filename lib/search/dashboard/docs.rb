@@ -2,21 +2,18 @@
 class Search::Dashboard::Docs < Search::Filters::Docs
   attr_accessor :params, :group_by, :negative_params
 
-  def initialize(values=[], negative_values=[],group_by=[])
-    @params = (values.presence || [])
+  def initialize(values=[], negative_values=[], group_by=[])
+    @params           = (values.presence || [])
     @negative_params  = (negative_values.presence || [])
-    @group_by = (group_by.presence || [])
+    @group_by         = (group_by.presence || [])
   end
 
   def aggregation(model_class)
-    response = es_request(model_class,'_search?search_type=count',aggregation_query)
-    return JSON.parse(response)["aggregations"]["name"]["buckets"]
+    response = es_request(model_class,'_search?search_type=count', aggregation_query)
+    JSON.parse(response)["aggregations"]["name"]["buckets"]
   end
 
-  def missing(model_class, missing_field)
-    response = es_request(model_class,'_search?search_type=count', aggregation_query)
-    return JSON.parse(response)["aggregations"]["name"]["buckets"]
-  end
+  private 
 
   #only 2 group bys can be represented in UI. So directly using it instead of looping
   def aggregation_query
@@ -33,7 +30,16 @@ class Search::Dashboard::Docs < Search::Filters::Docs
   end
 
   def aggregation_base(field_name, size = 1000)
-    {:aggs => {:name => {:terms => {:field => field_name, :size => size}}}}
+    { 
+      :aggs => {
+        :name => {
+          :terms => {
+            :field  => field_name, 
+            :size   => size
+          }
+        }
+      }
+    }
   end
 
 end

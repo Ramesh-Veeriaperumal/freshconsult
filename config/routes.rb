@@ -1619,6 +1619,7 @@ Helpkit::Application.routes.draw do
         delete :empty_trash
         delete :empty_spam
         delete :delete_forever
+        delete :delete_forever_spam
         get :user_ticket
         get :search_tweets
         post :custom_search
@@ -1831,6 +1832,7 @@ Helpkit::Application.routes.draw do
     match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter
     
     match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
+    match '/dashboard/show/:resource_id' => 'dashboard#show'
     match '/dashboard/activity_list' => 'dashboard#activity_list'
     match '/dashboard/latest_activities' => 'dashboard#latest_activities'
     match '/dashboard/latest_summary' => 'dashboard#latest_summary'
@@ -1838,6 +1840,8 @@ Helpkit::Application.routes.draw do
     match '/sales_manager' => 'dashboard#sales_manager'
     match '/unresolved_tickets' => 'dashboard#unresolved_tickets'
     match '/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
+    match '/tickets_summary' => 'dashboard#tickets_summary'
+    match '/achievements' => 'dashboard#achievements'
     match '/agent_status' => 'dashboard#agent_status'
 
     # For mobile apps backward compatibility.
@@ -2520,6 +2524,8 @@ Helpkit::Application.routes.draw do
           put :remove_feature
           put :whitelist
           put :block_account
+          get :user_info
+          put :reset_login_count
         end
       end
 
@@ -2584,6 +2590,7 @@ Helpkit::Application.routes.draw do
           put :hard_block   
           put :spam_user   
           put :internal_whitelist
+          put :unspam_user
         end
       end
 

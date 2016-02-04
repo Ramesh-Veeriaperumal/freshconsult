@@ -4,20 +4,8 @@
 window.App = window.App || {};
 (function ($) {
 	"use strict";
-	
-	App.Dashboard = {
-		init: function () {
-			setTimeout(function() {
-			  $('#quests-section-container, #mini-leaderboard, #Activity, #sales-manager-container, #moderation-stats').trigger('afterShow');
-			},50);
 
-			$('#sales-manager-container').on('remoteLoaded', function(e){
-			  if($('#sales-manager-container').children().hasClass('details-container')){
-			    $(this).slideDown();
-			  }
-			});
-			this.checkAgentsList();
-		},
+	App.DashboardAgentStatus = {
 		bindToggle: function () {
 			var self=this;
 			$('.filter_item').itoggle({
@@ -37,39 +25,39 @@ window.App = window.App || {};
 						'id': $el.data('id')
 					},
 					success: function () {
-						var row=$("#agent_status_"+$el.data('id')).clone(true);			
-						
+						var row=$("#agent_status_"+$el.data('id')).clone(true);
+
 						if($("#agent_status_"+$el.data('id')).data("id")=="available"){
-							
+
 							$("#agent_status_"+$el.data('id')).remove();
 							row.prependTo($('#not-accepting-table'));
 						    $("#agent_status_"+$el.data('id')).data("id","unavailable");
-						 
-						
+
+
 						}
 						else{
-							
+
 							$("#agent_status_"+$el.data('id')).remove();
 							row.prependTo($('#accepting-table'));
 							$("#agent_status_"+$el.data('id')).data("id","available");
-						
-						}	
+
+						}
 							self.resetToggleButton($el.data('id'));
 							self.checkAgentsList();
 							self.updateAgentCount();
-							
+
 							$("#agent_status_" + $el.data('id') + ' .filter_item').data('availablity', !$el.data('availability'));
 							$("#agent_status_" + $el.data('id') + ' .active_since')
 								.html($('#agents-list').data('textSince'))
-								.animateHighlight();	
+								.animateHighlight();
 
 
 					}
 				});
 			});
-			
+
 		},
-		
+
 		resetToggleButton : function(agent_id){
 			$("#agent_status_"+agent_id).find('.toggle-button').remove();
 			$("#agent_available_"+agent_id).data("itoggle", false);
@@ -84,7 +72,7 @@ window.App = window.App || {};
 			if($(table).length>0){
 				$(title_id).hide();
 			}
-			
+
 		},
 		updateAgentList : function(){
 			    this.updateAgentCount();
@@ -103,7 +91,7 @@ window.App = window.App || {};
 			this.checkAgentListLength("#not-accepting-table","#ticket-not-accepting");
 			$(" #ticket-available").hide();
 			$(" #ticket-unavailable").hide();
-		} 
+		}
 
 	};
 }(window.jQuery));

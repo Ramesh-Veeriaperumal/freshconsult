@@ -1263,7 +1263,7 @@ module ApplicationHelper
     (element.blank? || field_value.nil? || field_value == "" || field_value == "..." || ((field.field_type == "custom_checkbox") && !field_value))
   end
 
-  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "" )
+  def pageless(total_pages, url, message=t("loading.items"), params = {}, data_type = "html", complete = "")
     opts = {
       :totalPages   => total_pages,
       :url          => url,
@@ -1602,6 +1602,15 @@ module ApplicationHelper
     end
     
     content_tag :ul, &list
+  end
+
+  def get_store_data
+    @DataStore = {}
+    @DataStore['current_user'] = current_user
+    @DataStore['current_account'] = current_account
+    @DataStore['agent'] = Account.current.agents_from_cache
+    @DataStore['group'] = Account.current.groups_from_cache
+    @DataStore.to_json
   end
 
 end

@@ -17,6 +17,7 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
                :whitelisted => @user.whitelisted?,
                :spam => @user.spam?,
                :blocked => @user.blocked?,
+               :blocked_at => @user.blocked_at,
                :internal_whitelisted => !WhitelistUser.find_by_user_id(params[:user_id]).blank?
              }
     result[:user] = {:name => @user.name , :email => @user.email , :helpdesk_agent => @user.helpdesk_agent}
@@ -50,6 +51,12 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
   def spam_user
     if params[:user_id]
       render :json => {:status => "success"} if User.update_all({:deleted => true, :deleted_at => Time.now}, {:id => params[:user_id]})
+    end
+  end
+
+  def unspam_user
+    if params[:user_id]
+      render :json => {:status => "success"} if User.update_all({:deleted => false, :deleted_at => nil}, {:id => params[:user_id]})
     end
   end
 

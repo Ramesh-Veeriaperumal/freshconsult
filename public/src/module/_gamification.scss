@@ -17,6 +17,15 @@ $badges-layout:smart;
 $badges-a-layout:smart;
 @include all-badges-a-sprites;
 
+@import "cdn-ignored/sprites/badges-small/*.png";
+$badges-layout:smart;
+@include all-badges-small-sprites;
+
+@import "cdn-ignored/sprites/badges-a-small/*.png";
+$badges-a-layout:smart;
+@include all-badges-a-small-sprites;
+
+
 .trophy{ @include inline-block; }
 
 .gamesettings .admin_list{ margin: 0 -16px; }
@@ -74,6 +83,13 @@ $badges-a-layout:smart;
   		position: relative;
   		top:53px;
   	}
+  	&.badges-small{
+  		width: 32px;
+		height: 32px;
+		.label.points {
+			top: 40px;
+		}
+	}
 }
 
 .badges.center{

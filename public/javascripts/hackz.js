@@ -110,3 +110,10 @@ var measureScrollbar = function(){
     $c.remove();
     return dim;
 };
+
+// Capitalize
+jQuery.fn.extend(jQuery, { 
+    capitalize: function() {
+        return jQuery.camelCase("-"+arguments[0]); 
+    } 
+});

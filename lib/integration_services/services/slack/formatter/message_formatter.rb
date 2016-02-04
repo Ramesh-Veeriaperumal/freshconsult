@@ -6,7 +6,7 @@ module IntegrationServices::Services::Slack::Formatter
       return "." if message.blank?
       triggered_event = @payload[:triggered_event]
       Liquid::Template.parse(message).render( 'ticket' => @ticket, 'helpdesk_name' => @ticket.account.portal_name,
-                                          'comment' => @ticket.notes.last, 'triggered_event' => triggered_event)
+                                          'comment' => @ticket.notes.visible.exclude_source('meta').last, 'triggered_event' => triggered_event)
     end
 
   end

@@ -773,21 +773,6 @@ RSpec.describe Helpdesk::TicketsController do
       assigns(:previous_ticket).to_i.should eql last_ticket.display_id + 1
     end
 
-
-    # Empty Trash
-    it "should empty(delete) all tickets in trash view" do
-      tkt1 = create_ticket({ :status => 2 }, @group)
-      tkt2 = create_ticket({ :status => 2 }, @group)
-      delete_tkt_arr = []
-      delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
-      delete :destroy, :id => "multiple", :ids => delete_tkt_arr
-      Resque.inline = true
-      delete :empty_trash
-      Resque.inline = false
-      @account.tickets.find_by_id(tkt1.id).should be_nil
-      @account.tickets.find_by_id(tkt2.id).should be_nil
-    end
-    
     # Ticket actions
     it "should split the note and as ticket" do
       tkt = create_ticket({ :status => 2, :source => 0})
@@ -958,4 +943,32 @@ RSpec.describe Helpdesk::TicketsController do
     Sidekiq::Testing.disable!
   end
   # test cases for bulk scenario automations ends here
+
+  # Empty Spam
+  it "should empty(delete) all tickets in spam view" do
+    Sidekiq::Testing.inline!
+    tkt1 = create_ticket({ :status => 2 }, @group)
+    tkt2 = create_ticket({ :status => 2 }, @group)
+    spam_tkt_arr = []
+    spam_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+    put :spam, :id => "multiple", :ids => spam_tkt_arr
+    delete :empty_spam
+    @account.tickets.find_by_id(tkt1.id).should be_nil
+    @account.tickets.find_by_id(tkt2.id).should be_nil
+    Sidekiq::Testing.disable!
+  end
+
+  # Empty Trash
+  it "should empty(delete) all tickets in trash view" do
+    Sidekiq::Testing.inline!
+    tkt1 = create_ticket({ :status => 2 }, @group)
+    tkt2 = create_ticket({ :status => 2 }, @group)
+    delete_tkt_arr = []
+    delete_tkt_arr.push(tkt1.display_id.to_s, tkt2.display_id.to_s)
+    delete :destroy, :id => "multiple", :ids => delete_tkt_arr
+    delete :empty_trash
+    @account.tickets.find_by_id(tkt1.id).should be_nil
+    @account.tickets.find_by_id(tkt2.id).should be_nil
+    Sidekiq::Testing.disable!
+  end
 end

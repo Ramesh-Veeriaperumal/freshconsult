@@ -16,4 +16,9 @@ class Company < ActiveRecord::Base
            :foreign_key => 'customer_id'
   
   has_many :archive_tickets , :class_name => 'Helpdesk::ArchiveTicket' , :foreign_key => "owner_id"
+
+  has_many :company_domains, :dependent => :destroy
+
+  accepts_nested_attributes_for :company_domains, :allow_destroy => true
+
 end

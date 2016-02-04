@@ -27,7 +27,7 @@
           <% if application.name == "slack" %> 
             <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
           <% end %>
-          <%next if (!feature?(:timesheets) && (application.name == 'freshbooks' or application.name == 'harvest' or application.name == 'workflow_max'))%>
+          <%next if (!feature?(:timesheets) && (application.name == 'harvest' or application.name == 'workflow_max'))%>
             <% if application.system_app? %>
               <li class="app-native">
                 <div class="application">

@@ -1,0 +1,16 @@
+<div class="ticket-summary">
+  <div class="sidebar-dropdown db-filter clear">
+      <div data-tabs="tabs">
+        <% if current_account.features?(:custom_dashboard) %>
+          <% if @manage_dashboard %>
+            <%= render :partial => "/helpdesk/realtime_dashboard/filter" %>
+          <% end %>
+        <% end %>
+      </div>
+  </div>
+    <% unless current_account.dashboard_disabled? %>
+        <ul class="db-summary clearfix pb20 pt20 clear" id="ticket-summary">
+            <li class="sloading loading-small loading-block"></li>
+        </ul>
+    <% end %>
+</div>

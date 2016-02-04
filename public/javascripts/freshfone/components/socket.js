@@ -284,6 +284,7 @@ var FreshfoneSocket;
 			this.$liveCalls.text(this.activeCalls);
       this.$queuedCalls.text(this.queuedCalls);
       this.$busyAgents.text(this.busyAgents);
+
 		},
 		onlineUserCount: function () {
 			var offset = freshfoneuser.isOnline() ? -1 : 0;

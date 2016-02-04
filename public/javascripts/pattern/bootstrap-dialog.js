@@ -39,7 +39,12 @@
 									.attr('id', this.$dialogid)
 									.addClass(this.options.classes) // Adding classes if send via options
 									.css(this.$placement)
-									.appendTo('body') // Appending to the end of the body														
+									.appendTo('body') // Appending to the end of the body		
+		
+		if(this.options.modalType == "slide"){
+			this.$dynamicTarget.addClass('slider-modal');
+			this.$element.data('backdrop', false);
+		}												
         
         if(this.options.templateHeader != ""){
         	// Title for the header        
@@ -152,6 +157,7 @@
 		classes: 			'',      
       	closeOnSubmit: 		false,
 		keyboard: 			true, 
+		modalType:          'modal', // modal | slide - default type MODAL
 		templateHeader: 	'<div class="modal-header">' +
 								'<h3 class="ellipsis modal-title"></h3>' +
 							'</div>',
@@ -182,6 +188,11 @@
 	    if(!$this.data('freshdialog')){
 	    	var targetId = $this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''));
 	    	$this.data("targetId", targetId);
+
+	    	if($this.data('modalType') == "slide"){
+	    		$($this.data("targetId")).modal('hide');
+	    	}
+
 	    	$this.freshdialog();
 
 	    	if($this.data("group")){
@@ -201,6 +212,10 @@
 	    	$target.modal(option);
 	    }else{
 	    	$target.modal("toggle");
+	    }
+
+	    if($this.data("modalType") == "slide"){
+			$('body').removeClass('modal-open')
 	    }
 	})
 

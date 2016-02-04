@@ -1,14 +1,23 @@
-<h3 class="lead"><%=t('recent_activity')%></h3>
-<div id="recent_activities_count" class='more-tweets'></div>
+<h3 class="lead"><%=t('recent_activity')%>
+</h3>
+<div id="recent_activities_count" class='more-tweets more-activities'></div>
 <div id="recent_activities" class='hide'></div>
-<ul id="Pages" class="activityfeed">		
+<ul id="Pages" class="activityfeed">
 	<% @items.each_with_index do |item, i| %>
-		<%= render(:partial => "ticket_note", :object => item) %> 
+		<%= render(:partial => "ticket_note", :object => item) %>
 	<% end %>
 </ul>
 <%= will_paginate @items %>
-<%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities"), { :activity_id => @items.first.id}) unless @items.empty?%>
-<%= pageless(@items.total_pages, helpdesk_dashboard_path, t("loading.activities")) if @items.empty? %>
+
+<%= load_more({
+  :totalPages   => @items.total_pages,
+  :url          => helpdesk_dashboard_path,
+  :params       => { :activity_id => @items.first.id},
+  :container    => '.activityfeed',
+  :currentPage  => 1,
+  :pageIncrement => true,
+  :complete     => '$this.$el.append(data);$this.loadMoreButton.button("reset");App.RealtimeDashboard.scrollTopOnLoadMore()'
+   }) %>
 
 <%= javascript_tag do %>
   activity_count = 0;
@@ -21,7 +30,7 @@
       function(data) {
           jQuery('#recent_activities').prepend(data);
           if(jQuery('#recent_activities li.activity').length > 0)
-          {   
+          {
             activity_count = jQuery('#recent_activities li.activity').length;
             jQuery('#recent_activities_count')
               .html(plural(activity_count, "<%= t('recent_activity') %>", "<%= t('recent_activities') %>"));
@@ -35,13 +44,12 @@
   jQuery('#recent_activities').livequery(function(){}, function(){
     latest_activities_timer.stop();
   });
-  
+
   jQuery('#recent_activities_count').click(function() {
-    var new_activites = jQuery("<div />").addClass("borderbottom").hide().prepend(jQuery("#recent_activities").html());   
+    var new_activites = jQuery("<div />").addClass("borderbottom").hide().prepend(jQuery("#recent_activities").html());
     jQuery('#Pages').prepend(new_activites);
     new_activites.slideDown();
-    jQuery("#recent_activities").empty();     
-    jQuery(this).hide();  
+    jQuery("#recent_activities").empty();
+    jQuery(this).hide();
   });
 <%end%>
-

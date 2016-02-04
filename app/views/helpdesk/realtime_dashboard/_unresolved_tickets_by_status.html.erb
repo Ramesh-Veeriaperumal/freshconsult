@@ -1,0 +1,23 @@
+<div data-gs-x="<%= x %>" data-gs-y="<%= y %>" data-gs-width="<%= width %>" data-gs-height="<%= height %>" class="grid-stack-item widget">
+    <div class="grid-stack-item-content widget-inner">
+		<h3 class="widget-title">
+	        <%=t('helpdesk.realtime_dashboard.unresolved_tickets_by_status') %>
+	    </h3>
+		<div class="widget-content">
+			<div id="unresolved_tickets_by_status">
+				<div class="sloading loading-small loading-block"></div>
+			</div>
+		</div>
+		<a  href="#unresolved_tickets_by_status"
+	        class="widget-more-link view_all_link text-center hide"
+	        rel="freshdialog"
+	        data-title="<span class='pull-left'>Unresolved Tickets by Status</span> <a href='/helpdesk/unresolved_tickets' data-pjax='#body-container' class='pull-right group_vs_status mr40'> <%=t('helpdesk.realtime_dashboard.view_group_vs_status_summary') %> </a>"
+	        data-template-footer="false"
+	        data-target="#unresolved_tickets"
+	        data-modal-type="slide"
+	        data-width = "570"
+	        data-destroy-on-close="true"
+	        data-content="unresolved_tickets_by_status"
+	        > <%=t('helpdesk.realtime_dashboard.view_all') %> </a>
+	</div>
+</div>
