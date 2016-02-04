@@ -76,9 +76,9 @@ module Helpdesk::DashboardHelper
       :todo                               =>  true,
       :gamification                       =>  (gamification_feature?(current_account)),
       :phone                              =>  (current_account.freshfone_active?),
-      :chat                               =>  (chat_activated?),
+      :chat                               =>  (chat_activated? && current_account.chat_setting.active),
       :forum_moderation                   =>  (current_account.features?(:forums) && privilege?(:delete_topic)),
-      :agent_status                       =>  (round_robin? or current_account.freshfone_active? or chat_activated?)
+      :agent_status                       =>  (round_robin? || current_account.freshfone_active? || (chat_activated? && current_account.chat_setting.active))
     }
     privilege_object
   end

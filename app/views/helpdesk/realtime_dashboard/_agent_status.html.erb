@@ -23,7 +23,7 @@
 					</li>
 					<% end %>
 
-					<% if chat_activated? %>
+					<% if (chat_activated? && current_account.chat_setting.active) %>
 					<li class="<%= 'disabled' unless chat_active? %>" id="agent_status_chat">
 						<a href="/helpdesk/agent_status#lc-availability">
 							<h4 id="livechat_online_agent_count">0</h4>
