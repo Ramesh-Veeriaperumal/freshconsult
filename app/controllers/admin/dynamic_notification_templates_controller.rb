@@ -1,22 +1,23 @@
 class Admin::DynamicNotificationTemplatesController < Admin::AdminController
   include LiquidSyntaxParser
+  include Spam::SpamAction
 
-  before_filter :load_item, :validate_liquid
+  before_filter :load_item, :validate_liquid, :detect_spam_action
 
-	def update
+  def update
     if @errors.present?
-      flash_msg = @errors.join("<br>").html_safe
+      flash_msg = @errors.uniq.join("<br>").html_safe
       render :json => { :success => false, :msg => flash_msg }
     else
-  		if @dynamic_notification.update_attributes(params[:dynamic_notification_template])
-    		flash[:notice] = t(:'flash.email_notifications.update.success')
-    	else
-     		flash[:notice] = t(:'flash.email_notifications.update.failure') 	
-     	end	
-
+      if @dynamic_notification.update_attributes(params[:dynamic_notification_template])
+        template_spam_check
+        flash[:notice] = t(:'flash.email_notifications.update.success')
+      else
+        flash[:notice] = t(:'flash.email_notifications.update.failure') 	
+      end
       render :json => { :success => true, :url => redirect_url }
-    end 
-	end	
+    end
+  end
 
   private
 
@@ -49,5 +50,10 @@ class Admin::DynamicNotificationTemplatesController < Admin::AdminController
     else
       "requester_template"
     end
+  end
+
+  def extract_subject_and_message
+    dynamic_notfn = params[:dynamic_notification_template]
+    return dynamic_notfn["subject"], dynamic_notfn["description"]
   end
 end	

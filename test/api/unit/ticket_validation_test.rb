@@ -117,12 +117,25 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
-  def test_status_invalid
+  def test_status_priority_source_invalid
     Account.stubs(:current).returns(Account.first)
-    controller_params = { status: true, status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    controller_params = { status: true, priority: true, source: '3', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?
+    errors = ticket.errors.full_messages
+    assert errors.include?('Status not_included')
+    assert errors.include?('Priority not_included')
+    assert errors.include?('Source datatype_and_inclusion')
+
+    controller_params = { status: '2', priority: '2', source: '', status_ids: [2, 3, 4, 5, 6], ticket_fields: [] }
+    ticket = TicketValidation.new(controller_params, item)
+    refute ticket.valid?
+    errors = ticket.errors.full_messages
+    assert errors.include?('Status datatype_and_inclusion')
+    assert errors.include?('Priority datatype_and_inclusion')
+    assert errors.include?('Source not_included')
+  ensure
     Account.unstub(:current)
   end
 
@@ -146,7 +159,7 @@ class TicketValidationTest < ActionView::TestCase
     item = nil
     ticket = TicketValidation.new(controller_params, item)
     refute ticket.valid?(:create)
-    assert ticket.errors.full_messages.include?('Description missing')
+    assert ticket.errors.full_messages.include?('Description required_and_data_type_mismatch')
     refute ticket.errors.full_messages.include?('Description html data_type_mismatch')
 
     controller_params = { 'requester_id' => 1, ticket_fields: [], description: '' }

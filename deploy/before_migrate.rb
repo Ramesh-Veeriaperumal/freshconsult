@@ -7,6 +7,8 @@ run "ln -nfs #{shared_path}/config/elasticsearch.yml  #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/redshift.yml  #{node[:rel_path]}/config/redshift.yml"
 run "ln -nfs #{shared_path}/config/node_js.yml  #{node[:rel_path]}/config/node_js.yml"
 run "ln -nfs #{shared_path}/config/gnip.yml  #{node[:rel_path]}/config/gnip.yml"
+run "ln -nfs #{shared_path}/config/facebook.yml  #{node[:rel_path]}/config/facebook.yml"
+run "ln -nfs #{shared_path}/config/twitter.yml  #{node[:rel_path]}/config/twitter.yml"
 run "ln -nfs #{shared_path}/config/redis.yml #{node[:rel_path]}/config/redis.yml"
 run "ln -nfs #{shared_path}/config/opsworks.yml #{node[:rel_path]}/config/opsworks.yml"
 run "ln -nfs #{shared_path}/config/newrelic.yml #{node[:rel_path]}/config/newrelic.yml"

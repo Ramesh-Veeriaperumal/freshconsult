@@ -40,13 +40,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Required validator for string field based on condition
   def validate_custom_text(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
   # Required validator for string field based on condition
   def validate_custom_paragraph(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
   end
 
   # Numericality validator for number field
@@ -69,7 +71,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
   # Inclusion validator for nested field level 0
   def validate_nested_field_level_0(record, field_name)
-    choices = get_choices(record, field_name, nil, 0)
+    choices = get_choices(record, field_name, nil, nil, 0)
     CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
   end
 
@@ -77,7 +79,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # will not be validated if parent value (i.e., level 0 value) is nil
   def validate_nested_field_level_2(record, field_name)
     return unless @parent[:value]
-    choices = get_choices(record, @parent[:name], @parent[:value], 2)
+    choices = get_choices(record, @parent[:name], @parent[:value], nil, 2)
     unless choices.nil?
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
     end
@@ -87,7 +89,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   # will not be validated if parent value (i.e., level 1 value) or ancestor value (i.e., level 0 value) is nil
   def validate_nested_field_level_3(record, field_name)
     return unless @parent[:value] && @parent[:ancestor_value]
-    choices = get_choices(record, @parent[:name], @parent[:value], 3)
+    choices = get_choices(record, @parent[:name], @parent[:value], @parent[:ancestor_value], 3)
     unless choices.nil?
       CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices, allow_nil: !@is_required,  required: @is_required)).validate(record)
     end
@@ -107,7 +109,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
   end
 
   def validate_custom_phone_number(record, field_name)
-    RequiredValidator.new(options.merge(attributes: field_name)).validate(record) if @is_required
+    string_options = construct_options({ ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required }, :required_string)
+    DataTypeValidator.new(string_options).validate(record)
     ActiveModel::Validations::LengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long)).validate(record) if record.errors[field_name].blank?
   end
 
@@ -200,15 +203,15 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # Get choices based on level, field name & parent value for nested fields
-    def get_choices(record, field_name, parent_value, level = 0)
+    def get_choices(record, field_name, parent_value, ancestor_value, level = 0)
       @nested_fields ||= proc_to_object(@nested_field_choices, record) if @nested_field_choices.present?
       case level
       when 0
-        return @nested_fields[:first_level_choices][field_name.to_s]
+        return @nested_fields[field_name.to_s].try(:keys)
       when 2
-        return @nested_fields[:second_level_choices][field_name.to_s].try(:[], parent_value)
+        return @nested_fields[field_name.to_s].try(:[], parent_value).try(:keys)
       when 3
-        return @nested_fields[:third_level_choices][field_name.to_s].try(:[], parent_value)
+        return @nested_fields[field_name.to_s].try(:[], ancestor_value).try(:[], parent_value)
       end
     end
 end
