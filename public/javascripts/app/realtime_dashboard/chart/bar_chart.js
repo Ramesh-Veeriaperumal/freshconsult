@@ -211,17 +211,27 @@
 		},
 		updateChartData: function(options) {
 			this.options = $.extend({}, this.options, options);
+			this.data = this.options.data;
+
+			$(this.options.renderTo).find(".no_data_to_display").remove();
 
 			delete this.group;
 			$(this.element).find('g').remove();
 
-			this.calculateTotal();
-			this.sliceData();
-			this.calculate();
+			if( this.options.data.length > 0) {
 
-			this.createGroupe();
-			this.createBar();
-			this.createLabel();	
+				this.calculateTotal();
+				this.sliceData();
+				this.calculate();
+
+				this.createGroupe();
+				this.createBar();
+				this.createLabel();	
+
+			} else {
+				this.height = this.calculateHeight();
+				this.renderNoData();
+			}
 
 			this.svg.attr("height", this.height);
 		},
