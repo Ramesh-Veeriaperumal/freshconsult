@@ -8,7 +8,7 @@ class ApiCompaniesController < ApiApplicationController
     elsif @item.save
       render_201_with_location(item_id: @item.id)
     else
-      render_errors(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -18,7 +18,7 @@ class ApiCompaniesController < ApiApplicationController
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif !@item.update_attributes(params[cname])
-      render_errors(@item.errors)
+      render_custom_errors
     end
   end
 
@@ -52,7 +52,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def set_custom_errors(item = @item)
-      ErrorHelper.rename_error_fields(@name_mapping, item)
+      ErrorHelper.rename_error_fields({ base: :domains }.merge(@name_mapping), item)
     end
 
     def error_options_mappings

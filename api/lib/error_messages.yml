@@ -26,6 +26,7 @@ api_error_messages:
   account_suspended: "Your account has been suspended."
   invalid_multipart: "Multipart data is not properly formatted."
   method_not_allowed: "Allowed methods are %{methods}"
+  Enter valid domains: "Should have valid domain"
   internal_error: "We're sorry, but something went wrong."
   ssl_required: "SSL certificate verification failed."
   invalid_content_type: "Content-Type header should have application/json"
