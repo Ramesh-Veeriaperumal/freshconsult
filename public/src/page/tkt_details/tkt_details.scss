@@ -2957,16 +2957,15 @@ $collision_delay: 1s;
 	position: absolute;
  	@include right(20px);
 	display: block;
-	width: 300px;
 	top: 20px;
 
 	.select2-container{
-		width: 34%;
+		width: 100px;
 		margin-bottom: 3px;
 	}
 
 	input {
-		width: 63%;
+		width: 200px;
 		box-sizing: border-box;
 		@include margin-left(5px);
 	}

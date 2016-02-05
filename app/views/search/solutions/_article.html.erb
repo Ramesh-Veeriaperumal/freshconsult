@@ -1,5 +1,7 @@
 <% unless article.nil? %>
-	<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
+	<% url_opts = { :host => @ticket.solution_article_host(article) }
+		url_opts.merge!({ :url_locale => article.language.code }) if current_account.multilingual?
+		article_url = support_solutions_article_url(article, url_opts) %> 
 	<tr class="show-menu-on-hover">
 		<td>
 			<div class="search-solution-content">

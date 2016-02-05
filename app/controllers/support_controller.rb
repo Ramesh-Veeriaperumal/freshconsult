@@ -254,7 +254,7 @@ class SupportController < ApplicationController
       url_locale: params[:url_locale])
     override_default_locale unless Language.current.code.to_sym == I18n.locale
     redirect_to request.fullpath.prepend("/#{Language.current.code}") if 
-        params[:url_locale] != Language.current.code
+        params[:url_locale] && params[:url_locale] != Language.current.code
   end
 
   def override_default_locale

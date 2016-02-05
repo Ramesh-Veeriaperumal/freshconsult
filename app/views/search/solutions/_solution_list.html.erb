@@ -1,5 +1,5 @@
 <form id="searchmoreform" class="searchmoreform" action="#">
-	<%= select_tag "language_id", options_from_collection_for_select(Account.current.all_language_objects, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"} %>
+	<%= select_tag("language_id", options_from_collection_for_select(Account.current.all_portal_language_objects, "id", "name", Language.for_user(@ticket.requester).id), {:class => "select2", :id => "language-select"}) if Account.current.multilingual? %>
 
 	  <input class="text search_text_box" name="solution[search]" id="solution_search" placeholder="Search solutions">
 	  <span class="searchicon"></span>
@@ -135,10 +135,11 @@ jQuery('#language-select').on('change', function(ev){
 jQuery("#searchmoreform").submit(function(ev){
 	ev.preventDefault();
 	var query = $('solution_search').value;
-	var lang_id = $('language-select').value;
 	if(query.length>0) {
-		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+encodeURIComponent(query) + 
-			'&language_id=' + lang_id
+		url = '/search/search_solutions/ticket/' + <%=@ticket.id%> + '?q='+encodeURIComponent(query)
+		if($('language-select') !== null){
+			url = url + '&language_id=' + $('language-select').value;
+		}
 		fetchAndDisplayResults(url)
 	}
 	  
