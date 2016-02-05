@@ -1,10 +1,9 @@
 class EmailNotification < ActiveRecord::Base
   self.primary_key = :id
   has_many :dynamic_notification_templates
-  belongs_to_account
+  belongs_to :account
   attr_protected  :account_id
   before_create :set_default_version
-  include AccountOverrider
 
   xss_sanitize  :only => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template], :decode_calm_sanitizer => [:requester_template, :agent_template, :requester_subject_template, :agent_subject_template]
 
