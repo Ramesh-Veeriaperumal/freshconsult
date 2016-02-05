@@ -124,6 +124,7 @@ module HelpdeskReports::Field::Ticket
 
   #Adding None as extra options.
   def default_choices(field)
+    return [] if [:agent_id, :company_id].include?(field) # A
     none_choice = [:priority,:status,:source].include?(field) ? "" : [-1,"-None-"]
     choice_hash = get_default_choices(field)
     choice_hash.unshift(none_choice) if !choice_hash.empty? && !none_choice.empty?

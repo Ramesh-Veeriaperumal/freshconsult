@@ -143,11 +143,19 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def latest_public_comment
-		@last_public_comment ||= @source.liquidize_comment(@source.latest_public_comment)
+		@last_public_comment ||= @source.liquidize_comment(@source.latest_public_comment, true)
 	end
 
 	def latest_private_comment
-		@last_private_comment ||= @source.liquidize_comment(@source.latest_private_comment)
+		@last_private_comment ||= @source.liquidize_comment(@source.latest_private_comment, true)
+	end
+
+	def latest_public_comment_text
+		@last_public_comment_text ||= @source.liquidize_comment(@source.latest_public_comment, false)
+	end
+
+	def latest_private_comment_text
+		@last_private_comment_text ||= @source.liquidize_comment(@source.latest_private_comment, false)
 	end
 
 	def public_comments

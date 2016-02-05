@@ -98,6 +98,7 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
+  has_many :company_domains
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false,

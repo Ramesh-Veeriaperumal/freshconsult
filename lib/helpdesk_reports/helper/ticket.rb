@@ -196,6 +196,7 @@ module HelpdeskReports::Helper::Ticket
           end_date -= @date_lag_by_plan
           param[:date_range] = "#{start_date.strftime("%d %b,%Y")} - #{end_date.strftime("%d %b,%Y")}"
         end
+        []
       else
         ["Maximum allowed days limit exceeded"]
       end

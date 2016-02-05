@@ -46,7 +46,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   DEFAULT_FILTERS ={ 
-                      "spam" => [spam_condition(true),deleted_condition(false)],
+                      "spam" => [spam_condition(true),deleted_condition(false),trashed_condition(false)],
                       "deleted" =>  [deleted_condition(true),trashed_condition(false)],
                       "overdue" =>  [{ "condition" => "due_by", "operator" => "due_by_op", "value" => TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]},spam_condition(false),deleted_condition(false) ],
                       "pending" => [{ "condition" => "status", "operator" => "is_in", "value" => PENDING},spam_condition(false),deleted_condition(false)],

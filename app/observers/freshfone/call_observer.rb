@@ -4,6 +4,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   include Freshfone::NodeEvents
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
+  include Freshfone::CallsRedisMethods
 
 	def before_create(freshfone_call)
 		initialize_data_from_params(freshfone_call)
@@ -20,6 +21,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
   def after_update(freshfone_call)
     publish_new_call_status(freshfone_call) if freshfone_call.call_status_changed?
+    remove_value_from_set(pinged_agents_key(freshfone_call.id,freshfone_call.account),freshfone_call.call_sid) if freshfone_call.call_ended?
     trigger_cost_job freshfone_call if freshfone_call.account.features? :freshfone_conference
     freshfone_call.update_metrics if freshfone_call.account.features? :freshfone_call_metrics
   end    
@@ -89,12 +91,6 @@ class Freshfone::CallObserver < ActiveRecord::Observer
       caller
     end
 
-    def call_ended?(freshfone_call)
-      [ Freshfone::Call::CALL_STATUS_HASH[:completed], Freshfone::Call::CALL_STATUS_HASH[:busy],
-          Freshfone::Call::CALL_STATUS_HASH[:'no-answer'], Freshfone::Call::CALL_STATUS_HASH[:failed],
-          Freshfone::Call::CALL_STATUS_HASH[:canceled], Freshfone::Call::CALL_STATUS_HASH[:voicemail] ].include?(freshfone_call.call_status)
-    end
-
     def add_cost_job(freshfone_call)
       cost_params = { :account_id => freshfone_call.account_id, :call =>  freshfone_call.id}
       Resque::enqueue_at(2.minutes.from_now, Freshfone::Jobs::CallBilling, cost_params) 
@@ -103,7 +99,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
 
     def trigger_cost_job(freshfone_call)
       return unless freshfone_call.call_status_changed? && freshfone_call.call_cost.blank?
-      add_cost_job freshfone_call if call_ended? freshfone_call
+      add_cost_job freshfone_call if freshfone_call.call_ended? 
     end
 
     def publish_new_call_status(freshfone_call)

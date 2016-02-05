@@ -25,6 +25,9 @@
 				freshfoneNotification.popAllNotification();
 				freshfonecalls.resetRecordingState();
 				freshfonewidget.resetPreviewButton();
+				if(freshfoneSupervisorCall.isSupervisorOnCall){
+					freshfoneSupervisorCall.resetJoinCallButton();
+				}
 				// if ($.inArray(error.code, [400, 401, 31204, 31205]) > -1) {
 					// freshfoneuser.getCapabilityToken(undefined, true);
 				// }
@@ -54,10 +57,15 @@
 	     } 
 			var accecptedConnection = freshfonecalls.conferenceMode ? freshfonecalls.conferenceConn : conn
 			freshfoneNotification.popAllNotification(accecptedConnection);
-			freshfonetimer.startCallTimer();
 			freshfonewidget.toggleWidgetInactive(false);
 			freshfonewidget.hideTransfer();
-			freshfonewidget.handleWidgets('ongoing');
+			if(freshfoneSupervisorCall.isSupervisorOnCall){
+				freshfoneSupervisorCall.startCallTimer();
+				freshfoneSupervisorCall.handleConnect();
+			} else {
+				freshfonetimer.startCallTimer();
+				freshfonewidget.handleWidgets('ongoing');
+			}
 			freshfonecalls.disableCallButton();
 			if (previewMode()) {
 				freshfonewidget.enablePreviewMode();
@@ -96,6 +104,9 @@
 			freshfonecalls.tConn = conn;
 			if (freshfonecalls.hasUnfinishedAction()) {
 				return;
+			} else if(freshfoneSupervisorCall.isSupervisorConnected)
+			{
+				freshfoneSupervisorCall.resetToDefaultState();
 			} else if (!freshfonecalls.dontShowEndCallForm()) {
 				var in_call_time = parseInt($(freshfonetimer.timerElement).data('runningTime') || 0, 10)
 				if ( in_call_time < 3){ // less than 3 seconds is an invalid case.

@@ -32,6 +32,7 @@ class Middleware::TrustedIp
           unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'], req_path)
             @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
                                                         'Your IPAddress is blocked by the administrator')
+            Rails.logger.error "Request from invalid ip for ip whitelisting enabled account. Account Id: #{@current_account.id}, IP: #{env['CLIENT_IP']}"
             return [@status, @headers, @response]
           end
         end

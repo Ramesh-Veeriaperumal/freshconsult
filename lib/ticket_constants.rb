@@ -179,7 +179,8 @@ module TicketConstants
     :group => "group_id",
     :priority => "priority",
     :type => "ticket_type",
-    :source => "source"
+    :source => "source",
+    :status => "status"
   }
   # CC emails count
   MAX_EMAIL_COUNT = 50

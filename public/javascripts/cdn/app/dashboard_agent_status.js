@@ -1,0 +1,1 @@
+//= require app/dashboard_agent_status.js

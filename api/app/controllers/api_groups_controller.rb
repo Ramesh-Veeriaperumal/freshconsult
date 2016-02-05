@@ -33,9 +33,7 @@ class ApiGroupsController < ApiApplicationController
 
     def load_object
       @item = scoper.detect { |group| group.id == params[:id].to_i }
-      unless @item
-        head :not_found # Do we need to put message inside response body for 404?
-      end
+      log_and_render_404 unless @item
     end
 
     def scoper

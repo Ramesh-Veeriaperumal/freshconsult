@@ -8,4 +8,6 @@
 //= require helpdesk_reports/reports_constants
 //= require_tree ../../helpdesk_reports/utils
 //= require_tree ../../helpdesk_reports/initializers
+//= require app/kissmetrics
 //= require helpdesk_reports/helpdeskreports
+//= require helpdesk_reports/helpdeskreports_metrics

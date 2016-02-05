@@ -46,8 +46,6 @@ $freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
 .incoming_call_icon { @include freshfone-sprite(call-history-incoming); }
 .incoming_missed_call_icon { @include freshfone-sprite(call-history-incoming-miss); }
 .blocked_call_icon { @include freshfone-sprite(call-history-incomplete); }
-.blacklisted { @include freshfone-sprite(caller-blocked); }
-.blacklist { @include freshfone-sprite(caller-block); }
 .recent_call_entry {
 	.incoming_call_icon, .incoming_missed_call_icon {
 		@include freshfone-sprite(recentcall-incoming);

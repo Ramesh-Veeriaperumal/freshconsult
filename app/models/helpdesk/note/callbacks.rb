@@ -22,6 +22,8 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
 
+  after_update ->(obj) { obj.notable.update_timestamp }, :if => :human_note_for_ticket?
+
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher

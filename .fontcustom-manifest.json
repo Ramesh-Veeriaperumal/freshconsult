@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc",
-    "current": "59975e3978020c614af9ff67d195d462ac32f66e9f0ff30d766de1ec1ddcfebc"
+    "previous": "929de5a8820595f443774fc3628673d7f0e8d6db5fe0025297ce230231b6ab91",
+    "current": "929de5a8820595f443774fc3628673d7f0e8d6db5fe0025297ce230231b6ab91"
   },
   "fonts": [
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.ttf",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.svg",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.woff",
-    "public/assets/glyphs_59975e3978020c614af9ff67d195d462.eot"
+    "public/assets/glyphs_929de5a8820595f443774fc3628673d7.ttf",
+    "public/assets/glyphs_929de5a8820595f443774fc3628673d7.svg",
+    "public/assets/glyphs_929de5a8820595f443774fc3628673d7.woff",
+    "public/assets/glyphs_929de5a8820595f443774fc3628673d7.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -117,6 +117,14 @@
     "blank-file": {
       "codepoint": 61713,
       "source": "public/glyphs/vectors/blank-file.svg"
+    },
+    "block": {
+      "codepoint": 61964,
+      "source": "public/glyphs/vectors/block.svg"
+    },
+    "blocked-call": {
+      "codepoint": 61965,
+      "source": "public/glyphs/vectors/blocked-call.svg"
     },
     "book": {
       "codepoint": 61714,
@@ -285,6 +293,30 @@
     "day_pass": {
       "codepoint": 61742,
       "source": "public/glyphs/vectors/day_pass.svg"
+    },
+    "db-calendar": {
+      "codepoint": 61958,
+      "source": "public/glyphs/vectors/db-calendar.svg"
+    },
+    "db-feedback": {
+      "codepoint": 61959,
+      "source": "public/glyphs/vectors/db-feedback.svg"
+    },
+    "db-interactions": {
+      "codepoint": 61960,
+      "source": "public/glyphs/vectors/db-interactions.svg"
+    },
+    "db-message": {
+      "codepoint": 61961,
+      "source": "public/glyphs/vectors/db-message.svg"
+    },
+    "db-sand-clock": {
+      "codepoint": 61962,
+      "source": "public/glyphs/vectors/db-sand-clock.svg"
+    },
+    "db-unassigned": {
+      "codepoint": 61963,
+      "source": "public/glyphs/vectors/db-unassigned.svg"
     },
     "decimal": {
       "codepoint": 61897,
@@ -530,6 +562,10 @@
       "codepoint": 61783,
       "source": "public/glyphs/vectors/grouping-enable.svg"
     },
+    "hangup": {
+      "codepoint": 61966,
+      "source": "public/glyphs/vectors/hangup.svg"
+    },
     "help": {
       "codepoint": 61784,
       "source": "public/glyphs/vectors/help.svg"
@@ -561,6 +597,10 @@
     "import": {
       "codepoint": 61786,
       "source": "public/glyphs/vectors/import.svg"
+    },
+    "incoming-call": {
+      "codepoint": 61967,
+      "source": "public/glyphs/vectors/incoming-call.svg"
     },
     "infinity-5": {
       "codepoint": 61787,
@@ -725,6 +765,10 @@
     "opera": {
       "codepoint": 61815,
       "source": "public/glyphs/vectors/opera.svg"
+    },
+    "outgoing-call": {
+      "codepoint": 61968,
+      "source": "public/glyphs/vectors/outgoing-call.svg"
     },
     "paperplane": {
       "codepoint": 61816,
@@ -1058,7 +1102,6 @@
     },
     "preprocessor_path": "",
     "quiet": false,
-    "skip_first": false,
     "templates": [
       "scss",
       "_glyphs-variables.scss",

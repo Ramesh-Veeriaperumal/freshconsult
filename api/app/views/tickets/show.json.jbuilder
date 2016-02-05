@@ -1,4 +1,4 @@
-json.cache! CacheLib.key(@item, params) do # ticket caching
+json.cache! CacheLib.compound_key(@item, ApiConstants::CACHE_VERSION[:v2], params) do # ticket caching
   json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
   json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
   json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
@@ -17,10 +17,7 @@ json.cache! CacheLib.key(@item, params) do # ticket caching
   json.set! :is_escalated, @item.isescalated
 end
 
-json.set! :description, @item.description
-json.set! :description_html, @item.description_html
-
-json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field) # revisit caching.
+json.extract! @item, :description, :description_html, :custom_fields
 
 json.set! :tags, @item.tag_names # does not have timestamps, hence no caching
 

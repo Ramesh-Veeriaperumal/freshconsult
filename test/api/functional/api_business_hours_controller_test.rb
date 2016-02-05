@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 class ApiBusinessHoursControllerTest < ActionController::TestCase
-  include Helpers::BusinessHoursTestHelper
+  include BusinessHoursTestHelper
   def wrap_cname(params)
     { api_business_hour: params }
   end

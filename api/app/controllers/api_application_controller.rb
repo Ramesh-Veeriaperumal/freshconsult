@@ -10,6 +10,7 @@ class ApiApplicationController < MetalApiController
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
+  rescue_from ConsecutiveFailedLoginError, with: :login_error_handler
 
   # Check if content-type is appropriate for specific endpoints.
   # This check should be done before any app specific filter starts.
@@ -33,6 +34,8 @@ class ApiApplicationController < MetalApiController
   include HelpdeskSystem
   include SubscriptionSystem
   # App specific Before filters Ends
+
+  include DecoratorConcern
 
   before_filter { |c| c.requires_feature feature_name if feature_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
@@ -82,7 +85,7 @@ class ApiApplicationController < MetalApiController
 
   def destroy
     @item.destroy
-    head :no_content
+    head 204
   end
 
   def route_not_found
@@ -96,7 +99,7 @@ class ApiApplicationController < MetalApiController
       render_base_error(:method_not_allowed, 405, methods: allows.join(', '))
       response.headers['Allow'] = allows.join(', ')
     else # route not present.
-      head :not_found
+      head 404
     end
   end
 
@@ -170,7 +173,7 @@ class ApiApplicationController < MetalApiController
     def invalid_field_handler(exception) # called if extra fields are present in params.
       return if handle_invalid_multipart_form_data(exception.params) || handle_invalid_parseable_json(exception.params)
       Rails.logger.error("API Unpermitted Parameters. Params : #{params.inspect} Exception: #{exception.class}  Exception Message: #{exception.message}")
-      inaccessible_fields = @all_fields ? (@all_fields.flat_map(&:last) & exception.params) - @fields : []
+      inaccessible_fields = @all_fields ? @all_fields.flat_map(&:last) & exception.params : []
       invalid_fields = exception.params - inaccessible_fields
       errors = Hash[invalid_fields.map { |v| [v, :invalid_field] } + inaccessible_fields.map { |v| [v, :inaccessible_field] }]
       render_errors errors
@@ -188,9 +191,22 @@ class ApiApplicationController < MetalApiController
       true
     end
 
+    def login_error_handler(e)
+      if e.failed_login_count
+        Rails.logger.debug "API V2 #{e.message}. Attempt: #{e.failed_login_count}"
+        render_request_error :password_lockout, 403
+      else
+        Rail.logger.debug "Exception: ConsecutiveFailedLoginError, Message: #{e.message}, Backtrace: #{e.backtrace}"
+        render_base_error(:internal_error, 500)
+      end
+    end
+
     def ensure_proper_fd_domain # 404
       return true if Rails.env.development?
-      head 404 unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+      unless ApiConstants::ALLOWED_DOMAIN == request.domain && current_account.full_domain != ApiConstants::DEMOSITE_URL # API V2 not permitted on Demosites
+        Rails.logger.error "API V2 request for not allowed domain. Domain: #{request.domain}"
+        head 404
+      end
     end
 
     def ensure_proper_protocol
@@ -200,11 +216,13 @@ class ApiApplicationController < MetalApiController
 
     def render_request_error(code, status, params_hash = {})
       @error = RequestError.new(code, params_hash)
+      log_error_response @error
       render '/request_error', status: status
     end
 
     def render_base_error(code, status, params_hash = {})
       @error = BaseError.new(code, params_hash)
+      log_error_response @error
       render '/base_error', status: status
     end
 
@@ -238,9 +256,7 @@ class ApiApplicationController < MetalApiController
 
     def load_object(items = scoper)
       @item = items.find_by_id(params[:id])
-      unless @item
-        head 404 # Do we need to put message inside response body for 404?
-      end
+      log_and_render_404 unless @item
     end
 
     def after_load_object
@@ -381,6 +397,7 @@ class ApiApplicationController < MetalApiController
     def render_errors(errors, meta = nil)
       if errors.present?
         @errors = ErrorHelper.format_error(errors, meta)
+        log_error_response @errors
         render '/bad_request_error', status: ErrorHelper.find_http_error_code(@errors)
       else
         # before_callbacks may return false without populating the errors hash.
@@ -396,6 +413,7 @@ class ApiApplicationController < MetalApiController
 
     def access_denied
       if api_current_user
+        Rails.logger.error "API 403 Error: customer  = #{api_current_user.customer?}"
         render_request_error :access_denied, 403
       else
         render_request_error :invalid_credentials, 401
@@ -407,18 +425,34 @@ class ApiApplicationController < MetalApiController
       if get_request?
         if current_user_session # fall back to old session based auth
           @current_user = (session.key?(:assumed_user)) ? (current_account.users.find session[:assumed_user]) : current_user_session.record
-          if @current_user && @current_user.failed_login_count != 0
-            @current_user.update_failed_login_count(true)
+          stale_record = current_user_session.stale_record
+          if @current_user
+            @current_user.update_failed_login_count(true) if @current_user.failed_login_count != 0 && login_via_email?
+            # to avoid query to check for password expiry. We know for sure that passowrd won't be expired if record is not nil
+            @current_user.password_expired = false
+          elsif stale_record && stale_record.password_expired
+            @current_user = stale_record # stale_record would be set in case of password expiry. record would be nil.
           end
         end
       else
         # authenticate using auth headers
         authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
           # string check for @ is used to avoid a query.
-          @current_user = username.include?('@') ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+          @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
         end
       end
-      @current_user
+
+      # should be defined in case of invalid credentials as api_current_user gets called repeatedly.
+      @current_user ||= nil
+    end
+
+    def email_given?(username)
+      return @email_given if defined?(@email_given)
+      @email_given ||= username.try(:include?, '@')
+    end
+
+    def login_via_email?
+      email_given?(params[:k])
     end
 
     def qualify_for_day_pass? # this method is redefined because of api_current_user
@@ -429,8 +463,23 @@ class ApiApplicationController < MetalApiController
       if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
         access_denied
         return false
+      elsif verify_password_expired?
+        Rails.logger.debug 'API V2 Password expired error'
+        render_request_error :password_expired, 403
+        return false
       end
       true
+    end
+
+    def verify_password_expired?
+      return @pwd_expired if defined?(@pwd_expired)
+      @pwd_expired ||= (login_via_email? && (api_current_user.password_expired || password_expired_for_user?))
+    end
+
+    def password_expired_for_user?
+      # password_expired attribute would be nil if check was not done previously.
+      # This check is to avoid queries getting fired in password_expired? method.
+      api_current_user.password_expired.nil? && api_current_user.password_expired?
     end
 
     def allowed_to_access? # this method is redefined because of api_current_user
@@ -502,12 +551,12 @@ class ApiApplicationController < MetalApiController
       # all_fields should not be modified as it a reference to the constant and not a separate object.
       # item is sent to privilege to accomodate owned_by privileges.
       @all_fields = constant
-      @fields = constant[:all] || []
+      fields = constant[:all] || []
       owned_by_permissions = constant.except(:all).keys & ApiConstants::PRIVILEGES_WITH_OWNEDBY
       permissions = constant.except(:all, *owned_by_permissions).keys
-      permissions.each { |key| @fields += constant[key] if privilege?(key) }
-      owned_by_permissions.each { |key| @fields += constant[key] if privilege_or_owns_object?(key, item, owned_by_field) }
-      @fields
+      permissions.each { |key| fields += constant[key] if privilege?(key) }
+      owned_by_permissions.each { |key| fields += constant[key] if privilege_or_owns_object?(key, item, owned_by_field) }
+      fields
     end
 
     def privilege_or_owns_object?(key, item, owned_by_field)
@@ -567,5 +616,16 @@ class ApiApplicationController < MetalApiController
 
     def increment_api_credit_by(value)
       RequestStore.store[:extra_credits] += value
+    end
+
+    def log_error_response(errors)
+      # to get printed in the hash format, we have this manipulation.
+      hash_format = errors.is_a?(Array) ? errors.map(&:instance_values) : errors.instance_values
+      Rails.logger.debug "API V2 Error Response : #{hash_format.inspect}"
+    end
+
+    def log_and_render_404
+      Rails.logger.debug "API V2 Item not present. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+      head 404
     end
 end

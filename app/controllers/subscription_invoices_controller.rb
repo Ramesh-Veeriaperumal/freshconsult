@@ -22,7 +22,7 @@ class SubscriptionInvoicesController < Admin::AdminController
     end
 
     def check_subscription_payment_mode
-      if scoper.offline_subscription? or !scoper.active?
+      if scoper.offline_subscription? or !scoper.active? or scoper.affiliate.present?
         redirect_to subscription_url
       end
     end

@@ -39,6 +39,9 @@ if Infra['API_LAYER']
     # Authentication
     config.middleware.delete OpenIdAuthentication
 
+    # Rerouting support and mobilhelp solution related endpoints.
+    config.middleware.delete Middleware::MultilingualSolutionRouter
+
     # Authentication
     config.middleware.delete OmniAuth::Builder
 
@@ -67,6 +70,20 @@ if Infra['API_LAYER']
           hash
         end
 
+      end
+    end
+
+    module ActionController
+      Parameters.class_eval do
+
+      private
+
+        # Adding array/hash also in permitted scalar to allow the key with complex values to be passed through strong params.
+        # for ex: user_id:[] used to fail at strong params as [] is not a permitted scalar value.
+        # Now user_id:[] will pass through strong params and corresponding data_type validation will occur in controller.
+        def permitted_scalar?(value)
+          (Parameters::PERMITTED_SCALAR_TYPES | [Array, Hash]).any? {|type| value.is_a?(type)}
+        end
       end
     end
 

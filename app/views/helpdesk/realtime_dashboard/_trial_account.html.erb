@@ -1,0 +1,4 @@
+<% if current_account.subscription.trial? %>
+		<%= content_tag :div, "", :rel => "remote", :class => "hide",
+				:id => "sales-manager-container"," data-remote-url" => '/helpdesk/sales_manager' %>
+<% end %>

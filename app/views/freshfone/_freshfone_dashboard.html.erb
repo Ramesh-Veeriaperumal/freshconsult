@@ -1,49 +1,28 @@
-<div class="sidepanel freshfone_dashboard">
-	<h3 class="title"><%= t('freshfone.dashboard.title')%></h3>
-	
-	<div class="freshfone_alert alert hide" rel="permanent">
-	<% if current_user.privilege?(:manage_account) %>
-		<%= t('freshfone.dashboard.admin_freshfone_recharge_alert_new').html_safe %>
-	<% else %>
-		<%= t('freshfone.dashboard.freshfone_recharge_alert_new') %>
-	<% end %>
+<div class="innerbox">
+	<div class="freshfone_alert alert alert-danger hide" rel="permanent">
+		<% if current_user.privilege?(:manage_account) %>
+			<%= t('freshfone.dashboard.admin_freshfone_recharge_alert_new').html_safe %>
+		<% else %>
+			<%= t('freshfone.dashboard.freshfone_recharge_alert_new') %>
+		<% end %>
 	</div>
-	
-	<div class="freshfone_realtime">
-		<a class="freshfone_dashboard_cells <%= "disabled" unless freshfone_active? %> " href="/phone/dashboard/#queued_calls">
-			<h4> <span class="live-queued-calls">0</span></h4>
-			<span class="dash-lbl">
-				<%=t('freshfone.dashboard.in_queue')%>
-			</span>
-		</a>
-		<a class="freshfone_dashboard_cells <%= "disabled" unless freshfone_active? %>" href="/phone/dashboard/#active_calls">
-			<h4> <span class="live-active-calls">0</span></h4>
-			<span class="dash-lbl">
-				<%= t('freshfone.dashboard.in_conversation')%>
-			</span>
-		</a>
 
-		<a class="available_agents_cells <%= "disabled" unless freshfone_active? %> " href="/helpdesk/agent_status#phone">
-			<span class='available_agents_count_cell'>
-				<h4> <span class="live-available-agents">0</span></h4>
-				<span class="dash-lbl"><%= t('freshfone.dashboard.available_agents') %> </span>
-			</span>
-			<span class='busy_agents_count_cell'>
-				<h4> <span class="live-busy-agents">0</span></h4>
-				<span class="dash-lbl"><%= t('freshfone.dashboard.unavailable_agents') %> </span>
-			</span>
-		</a>
-	</div>
-	<!-- <div class="freshfone_dashboard_cells">
-		<h4 class="daily-burn"> $18.75 </h4>
-		<span class="dash-lbl">Daily Burn Rate</span>
-	</div>
-	<div class="freshfone_dashboard_cells">
-		<h4 class="available-credit"> $100.56 </h4>
-		<span class="dash-lbl">Available Credit</span>
-	</div> -->
-	<%= link_to 'Call History', freshfone_call_history_index_path,
-							:class => 'dashboard_call_history_link',
-							:'data-pjax' => "#body-container" %>
+	<ul class="clearfix mt20 freshfone_realtime">
+		<li class="<%= 'disabled' unless freshfone_active? %>">
+			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#queued_calls">
+				<h4> <span class="live-queued-calls">0</span></h4>
+				<p class="dash-lbl muted"> <%= t('freshfone.dashboard.waiting') %> </p>
+			</a>
+		</li>
+		<li class="<%= 'disabled' unless freshfone_active? %>">
+			<a class="freshfone_dashboard_cells" href="/phone/dashboard/#active_calls">
+				<h4> <span class="live-active-calls">0</span></h4>
+				<p class="dash-lbl muted"> <%= t('freshfone.dashboard.in_conversation') %> </p>
+			</a>
+		</li>
+	</ul>
+
 </div>
-
+<%= link_to 'Call History', freshfone_call_history_index_path,
+						:class => 'widget-more-link',
+						:'data-pjax' => "#body-container" %>

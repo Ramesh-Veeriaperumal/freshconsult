@@ -84,7 +84,7 @@
 // Placeholder text
 // -------------------------
 @mixin placeholder($color: $placeholderText) {
-  .placeholder{  
+  .placeholder{
     color: $color;
   }
   input:-moz-placeholder {
@@ -382,7 +382,7 @@
 }
 
 // Icon replacements for mobile
-// Text in icon container will be replaced with icon alternative 
+// Text in icon container will be replaced with icon alternative
 // -------------------------------------------------------------
 
 /* TODO_RAILS3 Migrate this in to a sprite helper than a sprite include */
@@ -390,7 +390,7 @@
   .mobile-icon-#{$class}{
     &:before{
       content:"";
-      @if lightness($bg_color) > 50% {        
+      @if lightness($bg_color) > 50% {
         @include dynamic-icon-sprite(#{$class}-dark);
       } @else {
         @include dynamic-icon-sprite(#{$class});
@@ -405,15 +405,15 @@
 // Formatting used for solutions
 @mixin text-formatting(){
     font-size: 13px;
-    p, li, div{ 
+    p, li, div{
       font-size: 13px;
       line-height: 18px;
       margin:0;
     }
-    code, pre, p, li, div{ 
+    code, pre, p, li, div{
       word-break: normal;
       word-wrap: break-word;
-    }              
+    }
     pre {
       white-space: pre-wrap;       /* css-3 */
       white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -425,7 +425,7 @@
     h5 {font-size: .83em}
     h6 {font-size: .75em}
     img, iframe { border:0; max-width: 100%; }
-    table { cursor:default; border:1px solid #afafaf; } 
+    table { cursor:default; border:1px solid #afafaf; }
     table td, table th {cursor:text; font-size: inherit; font-size: 13px; border:1px solid #afafaf; padding: 4px; }
     em{ font-style:italic; }
     ins {border-bottom:1px solid green; text-decoration: none; color:green}

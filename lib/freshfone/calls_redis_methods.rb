@@ -23,6 +23,18 @@ module Freshfone::CallsRedisMethods
     remove_key preview_ivr_key
   end
 
+  def register_supervisor_leg(account_id, agent_id, sid, call_id)
+    set_key supervisor_leg_key(account_id, agent_id, sid), call_id#, 1800
+  end
+
+  def get_call_id_from_redis(account_id,agent_id, sid)
+    get_key supervisor_leg_key(account_id, agent_id, sid)
+  end
+
+  def remove_supervisor_leg(account_id, agent_id, sid)
+    remove_key supervisor_leg_key(account_id, agent_id, sid)
+  end
+
   def transfer_sid
     call_sid = params[:call_sid] || params[:CallSid]
     (params[:outgoing].to_bool) ? call_sid : 
@@ -50,6 +62,10 @@ module Freshfone::CallsRedisMethods
 
   def preview_ivr_key
     @preview_ivr_key  ||= FRESHFONE_PREVIEW_IVR % { :account_id => current_account.id, :call_sid => params[:CallSid] }
+  end
+
+  def supervisor_leg_key(account_id, agent_id, sid)
+    @supervisor_leg_key  ||= FRESHFONE_SUPERVISOR_LEG % { :account_id =>  account_id, :user_id => agent_id, :call_sid => sid }
   end
 
   def autorecharge_key(account_id)
@@ -97,8 +113,8 @@ module Freshfone::CallsRedisMethods
     integ_set_members(pinged_agents_key(call_id))
   end
 
-  def pinged_agents_key(call_id)
-    @pinged_agents_key ||= FRESHFONE_PINGED_AGENTS % { :account_id => current_account.id, :call_id => call_id } 
+  def pinged_agents_key(call_id, account = current_account)
+    @pinged_agents_key ||= FRESHFONE_PINGED_AGENTS % { :account_id => account.id, :call_id => call_id } 
   end
 
 end

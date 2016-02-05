@@ -42,6 +42,7 @@ var FreshfoneWidget;
 			this.$ticketsLoading = $('.tickets-loading');
 			this.callerUserId = "";
 			this.widgetLoaded = false;
+			freshfoneSupervisorCall.intializeWidgets();
 		},
 		loadDependencies: function (freshfonecalls, freshfoneuser) {
 			this.freshfoneuser = freshfoneuser;
@@ -56,12 +57,15 @@ var FreshfoneWidget;
 			} else if (type === "ongoing") {
 				this.showOngoing();
 				this.$lastDial.val(this.$dialNumber.val());
+			} else if (type === "supervisor") {
+				this.hideAllWidgets();
+				freshfoneSupervisorCall.showWidgets();
 			} else {
 				this.showOutgoing();
 				this.$dialNumber.val(this.$lastDial.val());
 				this.freshfonecalls.updateCountriesPreferred();
 			}
-			this.toggleSidebarTabsContainer(type === "ongoing");
+			this.toggleSidebarTabsContainer(type === "ongoing" || type === "supervisor");
 		},
 		incoming: function () {
 			this.handleWidgets('incoming');
@@ -210,6 +214,7 @@ var FreshfoneWidget;
 			this.closeNotesTextArea();
 			this.$contextContainer.hide();
 			this.desktopNotifierWidget.hide();
+			freshfoneSupervisorCall.hideWidgets();
 		},
 		closeRecentTickets: function(){
 			if(this.$recentTicketsContent.css('display')!="none")

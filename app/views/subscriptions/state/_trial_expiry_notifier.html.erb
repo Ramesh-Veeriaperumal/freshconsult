@@ -1,27 +1,34 @@
-<div class="sidepanel trial_expiry <%= trial_days > 10 ? 'more_than_ten' : 'less_than_ten' %>">  
-  <i class="<%= trial_days > 10 ? '' : 'symbols-trial-red-alert' %>"></i>
-  <h3 class="title">
-    <%= trial_expiry_title(trial_days) %>
-  </h3>
-  <p>
-    <% if trial_days == 0 %>
-    	<%= t('trail_expiry_one_more_day').html_safe%>
-    <% elsif trial_days > 0 %>
-    	<%= t('trail_expiry_during_trial').html_safe %>
-    <% else trial_days < 0 %>
-    	<%= t('trail_expiry_after_trial', :no_of_days => pluralize(6+trial_days, t('trial_day'), t('days')) ).html_safe%>
-    <% end %>
-  </p>
+<div class="clearfix trial_expiry <%= trial_days > 10 ? 'more_than_ten' : 'less_than_ten' %>">
 
-  <% if current_user.privilege?(:manage_account) and trial_days %>
-    <%= complimentary_demo_link.html_safe %>
-    <div class="trial-background" >
-    	<%= link_to("#{t('choose_a_plan')} <b class='arrow-right'></b>".html_safe, subscription_url) %>
-    </div>
+  <div class="span8 m0">
+    <i class="<%= trial_days > 10 ? '' : 'symbols-trial-red-alert' %>"></i>
+    <h3 class="title" style="display:block">
+      <%= trial_expiry_title(trial_days) %>
+    </h3>
+    <p>
+      <% if trial_days == 0 %>
+      	<%= t('trail_expiry_one_more_day').html_safe%>
+      <% elsif trial_days > 0 %>
+      	<%= t('trail_expiry_during_trial').html_safe %>
+      <% else trial_days < 0 %>
+      	<%= t('trail_expiry_after_trial', :no_of_days => pluralize(6+trial_days, t('trial_day'), t('days')) ).html_safe%>
+      <% end %>
+    </p>
+
+
+    <% if current_user.privilege?(:manage_account) and trial_days %>
+      <%= complimentary_demo_link.html_safe %>
+  </div>
+
+  <div class="span4 pull-right">
+      <div class="trial-background" >
+        <%= link_to("#{t('choose_a_plan')} <b class='arrow-right'></b>".html_safe, subscription_url) %>
+      </div>
+    <% end %>
+  </div>
+  <%= javascript_tag do %>
+    jQuery(".trial-background").bind("click", function(ev){
+          window.location = '<%= subscription_url %>';
+      });
   <% end %>
-</div>
-<%= javascript_tag do %>
-	jQuery(".trial-background").bind("click", function(ev){
-        window.location = '<%= subscription_url %>';  
-    });
-<% end %>
+  </div>
