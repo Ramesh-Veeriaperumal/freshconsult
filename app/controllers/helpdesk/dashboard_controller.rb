@@ -98,7 +98,7 @@ class Helpdesk::DashboardController < ApplicationController
         else
           tickets_count    = fetch_widget_count(:status)
           unresolved_count = tickets_count.values.sum
-          open_count       = tickets_count[Helpdesk::Ticketfields::TicketStatus::OPEN]
+          open_count       = tickets_count[Helpdesk::Ticketfields::TicketStatus::OPEN].to_i
           on_hold_count    = onhold_statuses.collect {|st| tickets_count[st]}.compact.sum
         end
 
