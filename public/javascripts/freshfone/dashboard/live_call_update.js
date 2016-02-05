@@ -69,9 +69,12 @@ window.App.Freshfonedashboard = window.App.Freshfonedashboard || {};
       }
     },
     joinCallBtnDom: function(call_id){
+      var dom=[];
+      if(freshfone.isCallMonitoringMode){
         var disable = freshfoneSupervisorCall.isSupervisorOnCall ? 'disabled' : '';
-        var dom= ["<a data-callid='",call_id , "' class='btn call_to_join ", disable ,"'>Join</a>"];
-        return dom.join('');
+        dom= ["<a data-callid='",call_id , "' class='btn call_to_join ", disable ,"'>Join</a>"];
+       }
+      return dom.join('');
     },
     timestampDom: function(callTimestamp) {
       var formatedDate = moment.unix(callTimestamp).format("dddd, MMM D, h:mm A"), dom;
