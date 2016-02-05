@@ -292,7 +292,7 @@ window.App = window.App || {};
 				docTop 	     = $(ele).scrollTop(),
 				frameEle 	 = ele,
 			    frame 		 = $(frameEle).height() + docTop,
-			    percent 	 = 90,
+			    percent 	 = 40,
 			    scrollTo 	 = Math.floor($(frameEle).height() * percent / 100);
 
 			   	$(ele).animate({
