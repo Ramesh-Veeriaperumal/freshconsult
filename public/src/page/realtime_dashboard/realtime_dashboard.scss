@@ -304,7 +304,7 @@
         @include size(34px, 34px);
         top: 4px;
         cursor: pointer;
-        img{ 
+        img{
           vertical-align: middle;
           @include micro-position(-4px);
         }
@@ -521,6 +521,25 @@ $i: 0;
 
 }
 
-html[dir="rtl"] .ficon-arrow-right:before{ 
+html[dir="rtl"] .ficon-arrow-right:before{
   content: "\f109" !important;
+}
+// Chrome scroll overflow fix
+.activityfeed, .widget-scroll{
+ overflow: auto;
+ &::-webkit-scrollbar{
+  -webkit-appearance: none;
+ }
+
+ &::-webkit-scrollbar-thumb {
+     background-color: rgba(0,0,0,0.3);
+     border: 3px solid transparent;
+     border-radius: 9px;
+     background-clip: content-box;
+ }
+
+ &::-webkit-scrollbar-track {
+     background-color: #fff;
+     width: 12px;
+ }
 }
