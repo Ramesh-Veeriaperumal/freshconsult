@@ -240,7 +240,7 @@
 		},
 		renderNoData: function() {
 			// Move to options in Feature
-			$(this.options.renderTo).append("<div class='no_data_to_display text-center muted'><i class='ficon-no-data fsize-72'></i></div>");
+			$(this.options.renderTo).append("<div class='no_data_to_display text-center muted mt20'><i class='ficon-no-data fsize-72'></i><div class='mt10'>No Data to Display </div></div>");
 		},
 		destroy: function () {
 			delete this.group;

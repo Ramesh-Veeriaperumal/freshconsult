@@ -7,6 +7,11 @@
           <% end %>
         <% end %>
       </div>
+      <% if current_user.privilege?(:view_reports) %>
+        <div class="pull-right">
+          <a href="/helpdesk/unresolved_tickets" target="_blank" class="unresolved-ticket-link pull-right"> <%= t('helpdesk.realtime_dashboard.unresolve_tickets')%> </a>
+        </div>
+      <% end %>
   </div>
     <% unless current_account.dashboard_disabled? %>
         <ul class="db-summary clearfix pb20 pt20 clear" id="ticket-summary">

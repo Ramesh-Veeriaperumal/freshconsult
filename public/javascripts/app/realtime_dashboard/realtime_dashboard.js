@@ -9,7 +9,7 @@ window.App = window.App || {};
 	App.RealtimeDashboard = {
 		tickets_data : {},
 		interval:0,
-		intervalPeriod: 60000,
+		intervalPeriod: 300000, // 5min interval
 		isGlobalView: false,
 		requestData: {},
 		isResponder: false,
@@ -282,13 +282,6 @@ window.App = window.App || {};
 		sidebarModalChart: function (key) {
 			if (this.isResponder && key == 'unresolved_tickets_by_group_id') {
 				key = 'unresolved_tickets_by_responder_id';
-				var title = $('.tickets_by_agent').text();
-				$('#unresolved_tickets .modal-title span').html(title);
-				$('#unresolved_tickets .modal-title .group_vs_status').html("View Agent vs Status summary");
-			} 
-
-			if(!this.isGlobalView) {
-				$('#unresolved_tickets .modal-title .group_vs_status').remove();
 			}
 
 			$('.unresolved_tickets').data('chartName', key);

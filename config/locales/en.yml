@@ -5265,8 +5265,9 @@ en:
       due_today: Due Today
       new: Unassigned
       overdue: Overdue
+      unresolve_tickets: Unresolved Tickets
       unresolved_tickets_by_status: Unresolved Tickets by Status
-      unresolved_tickets_by_type: Unresolved Tickets by Ticket Type
+      unresolved_tickets_by_type: Unresolved Tickets by Type
       unresolved_tickets_by_group: Unresolved Tickets by Group
       unresolved_tickets_by_priority: Unresolved Tickets by Priority
       unresolved_tickets_by_agent: Unresolved Tickets by Agent
