@@ -50,7 +50,7 @@ class Solution::FoldersController < ApplicationController
   def edit
     @folder = @folder_meta.send(language_scoper)
     @primary = @folder_meta.primary_folder
-    @folder = current_account.solution_folders_without_association.new unless @folder
+    @folder = current_account.solution_folders.new unless @folder
     @customer_id = @folder_meta.customer_folders.collect { |cf| cf.customer_id.to_s }
     respond_to do |format|
       if @folder_meta.is_default?
