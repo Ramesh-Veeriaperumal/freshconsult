@@ -59,6 +59,8 @@ Sidekiq.configure_server do |config|
       "Tickets::BulkTicketActions",
       "Tickets::BulkTicketReply"
     ]
+
+    chain.add Middleware::Sidekiq::Server::JobDetailsLogger
   end
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [

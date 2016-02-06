@@ -10,6 +10,7 @@ module Redis::RedisKeys
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"account_id\":%{account_id},\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMPTY_TRASH_TICKETS = "EMPTY_TRASH_TICKETS:%{account_id}"
+	EMPTY_SPAM_TICKETS = "EMPTY_SPAM_TICKETS:%{account_id}"
 
 	HELPDESK_ARCHIVE_TICKET_FILTERS = "HELPDESK_ARCHIVE_TICKET_FILTERS:%{account_id}:%{user_id}:%{session_id}"
 	HELPDESK_ARCHIVE_TICKET_ADJACENTS 			= "HELPDESK_ARCHIVE_TICKET_ADJACENTS:%{account_id}:%{user_id}:%{session_id}"
@@ -22,6 +23,7 @@ module Redis::RedisKeys
 	GROUP_AGENT_TICKET_ASSIGNMENT = "GROUP_AGENT_TICKET_ASSIGNMENT:%{account_id}:%{group_id}"
 	GROUP_ROUND_ROBIN_AGENTS = "GROUP_ROUND_ROBIN_AGENTS:%{account_id}:%{group_id}"
 	ADMIN_ROUND_ROBIN_FILTER = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}"
+	SUBSCRIBER_SIDEKIQ_ENABLED = "SUBSCRIBER_SIDEKIQ_ENABLED"
 
 	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
 	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
@@ -64,6 +66,7 @@ module Redis::RedisKeys
 	FRESHFONE_CALL_NOTE = "FRESHFONE:CALL_NOTE:%{account_id}:%{call_sid}"
 	FACEBOOK_APP_RATE_LIMIT = "FACEBOOK_APP_RATE_LIMIT"
 
+	FRESHFONE_SUPERVISOR_LEG = "FRESHFONE:SUPERVISOR_LEG:%{account_id}:%{user_id}:%{call_sid}"
 	FRESHFONE_PREVIEW_IVR = "FRESHFONE:PREVIEW_IVR:%{account_id}:%{call_sid}"
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
@@ -130,6 +133,8 @@ module Redis::RedisKeys
   EMAIL_TEMPLATE_SPAM_DOMAINS = "EMAIL_TEMPLATE_SPAM_DOMAINS"
   SPAM_USER_EMAIL_DOMAINS = "SPAM_USER_EMAIL_DOMAINS"
   SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY = "SPAM_NOTIFICATION_WHITELISTED_DOMAINS:%{account_id}"
+
+  DISPATCHER_SIDEKIQ_ENABLED = "DISPATCHER_SIDEKIQ_ENABLED"
   
 	def newrelic_begin_rescue
 	    begin

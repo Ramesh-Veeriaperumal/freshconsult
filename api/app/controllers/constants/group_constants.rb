@@ -1,6 +1,6 @@
 module GroupConstants
   ARRAY_FIELDS = ['agent_ids'].freeze
-  FIELDS = %w(name description escalate_to unassigned_for auto_ticket_assign agent_ids).freeze | ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
+  FIELDS = %w(name description escalate_to unassigned_for auto_ticket_assign).freeze | ARRAY_FIELDS
 
   FIELDS_WITHOUT_TICKET_ASSIGN = %w(name description escalate_to unassigned_for agent_ids).freeze | ARRAY_FIELDS
 

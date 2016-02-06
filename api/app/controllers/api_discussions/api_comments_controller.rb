@@ -28,7 +28,7 @@ module ApiDiscussions
 
       def load_topic
         @topic = current_account.topics.find_by_id(params[:id])
-        head 404 unless @topic
+        log_and_render_404 unless @topic
         @topic
       end
 

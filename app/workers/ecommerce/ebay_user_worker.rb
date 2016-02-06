@@ -12,6 +12,7 @@ module Ecommerce
           Ecommerce::Ebay::TransactionalUser.new(args).update_user_details
         end
       rescue Exception => e
+        NewRelic::Agent.notice_error(e)
         Rails.logger.debug "ebay_user_worker::ERROR  => #{e.message}\n#{e.backtrace.join("\n\t")}"
       end
     end

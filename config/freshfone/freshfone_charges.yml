@@ -3288,3 +3288,5 @@ VOICEMAIL:
 MISSED_OR_BUSY: 
   :incoming: 0.0075
   :outgoing: 0.0025
+SUPERVISOR:
+  :per_participant: 0.0020

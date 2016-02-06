@@ -2,7 +2,7 @@ module DiscussionConstants
   # ControllerConstants
   CATEGORY_FIELDS = ['name', 'description'].freeze
   FORUM_ARRAY_FIELDS = ['company_ids'].freeze
-  CREATE_FORUM_FIELDS = %w(name description forum_type forum_visibility company_ids).freeze | FORUM_ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
+  CREATE_FORUM_FIELDS = %w(name description forum_type forum_visibility).freeze | FORUM_ARRAY_FIELDS
   UPDATE_FORUM_FIELDS = CREATE_FORUM_FIELDS << 'forum_category_id'
   UPDATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type sticky locked), manage_forums: ['forum_id'] }.freeze
   CREATE_TOPIC_FIELDS = { all: %w(title message_html stamp_type sticky locked) }.freeze

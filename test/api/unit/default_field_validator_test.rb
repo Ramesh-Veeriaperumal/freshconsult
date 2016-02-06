@@ -12,8 +12,8 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     validates :source, :status, :priority, :type, :group_id, :responder_id, :product_id, :subject, :description,
               :email, :phone, :mobile, :client_manager, :company_id, :tags, :address, :job_title, :twitter_id, :language, :time_zone,
               :domains, :note, default_field: {
-                required_fields: Helpers::DefaultFieldValidatorTestHelper.required_fields,
-                field_validations: Helpers::DefaultFieldValidatorTestHelper.default_field_validations
+                required_fields: DefaultFieldValidatorTestHelper.required_fields,
+                field_validations: DefaultFieldValidatorTestHelper.default_field_validations
               }
     validates :attribute1, default_field: {
       required_fields: [],
@@ -41,7 +41,7 @@ class DefaultFieldValidatorTest < ActionView::TestCase
     end
 
     validates :attribute1, default_field: {
-      required_fields: [Helpers::DefaultFieldValidatorTestHelper.new(name: 'attribute1')],
+      required_fields: [DefaultFieldValidatorTestHelper.new(name: 'attribute1')],
       field_validations: { attribute1: { data_time: { allow_nil: false } } }
     }
   end

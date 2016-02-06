@@ -1,4 +1,4 @@
-module Helpers::NotesTestHelper
+module NotesTestHelper
   include NoteHelper
   include TicketHelper
 

@@ -23,7 +23,7 @@ module ApiDiscussions
 
       def load_category
         @category = current_account.forum_categories.find_by_id(params[:id])
-        head 404 unless @category
+        log_and_render_404 unless @category
         @category
       end
 

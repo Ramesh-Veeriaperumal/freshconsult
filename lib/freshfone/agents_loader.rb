@@ -2,13 +2,13 @@ module Freshfone::AgentsLoader
 
   def load_available_and_busy_agents
     load_group_hunt_agents(current_number.group_id) and return if current_number.group.present?
-    initialize_agents freshfone_users.load_agents(current_number)
+    load_agents(current_number)
     self.routing_type = :simple_routing
     @call_actions.save_conference_meta(:simple_routing)
   end
 
   def load_group_hunt_agents(group_id)
-    initialize_agents freshfone_users.load_agents(current_number, group_id)
+    load_agents(current_number, group_id)
     @call_actions.save_conference_meta(:group, group_id)
   end
 
@@ -19,9 +19,18 @@ module Freshfone::AgentsLoader
     @call_actions.save_conference_meta(:agent, agent_id)
   end
 
+  def load_agents(current_number,group_id=nil)
+    initialize_agents freshfone_users.load_agents(current_number,group_id)
+  end
+
   def initialize_agents(agents)
     self.available_agents = agents[:available_agents]
     self.busy_agents      = agents[:busy_agents]
+  end
+
+  def check_available_and_busy_agents
+     load_agents(current_number, current_number.group_id) and return if current_number.group.present?
+     load_agents(current_number)
   end
 
 end

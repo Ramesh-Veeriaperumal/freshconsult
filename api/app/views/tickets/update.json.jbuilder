@@ -1,7 +1,7 @@
 json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
 json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
 json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
-json.extract! @item, :description, :description_html, :spam, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject
+json.extract! @item, :description, :description_html, :spam, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :custom_fields
 json.set! :id, @item.display_id
 json.set! :type, @item.ticket_type
 json.set! :to_emails, @item.schema_less_ticket.to_emails
@@ -20,6 +20,5 @@ end
 
 json.set! :is_escalated, @item.isescalated
 json.set! :tags, @item.tag_names
-json.set! :custom_fields, CustomFieldDecorator.utc_format(@item.custom_field)
 
 json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }

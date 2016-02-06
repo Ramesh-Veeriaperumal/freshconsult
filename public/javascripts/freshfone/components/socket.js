@@ -215,6 +215,13 @@ var FreshfoneSocket;
             self.decrementActiveCallsCount();
             $("#freshfone_dashboard_events").trigger(data.type, data);
             break;
+        case 'disable_supervisor_call':
+        case 'enable_supervisor_call':
+            if(data.call_details.user_id != freshfone.current_user)
+            {
+              $("#freshfone_dashboard_events").trigger(data.type, data);
+            }
+            break;
 				}
         self.tryUpdateDashboard();
 			});
@@ -273,7 +280,7 @@ var FreshfoneSocket;
 				self.$liveCalls = self.$dashboard.find('.live-active-calls');
         self.$queuedCalls = self.$dashboard.find('.live-queued-calls');
         self.$busyAgents = self.$dashboard.find('.live-busy-agents');
-
+        self.getAgents();
 				self.tryUpdateDashboard();
 			});
 		},
@@ -284,6 +291,7 @@ var FreshfoneSocket;
 			this.$liveCalls.text(this.activeCalls);
       this.$queuedCalls.text(this.queuedCalls);
       this.$busyAgents.text(this.busyAgents);
+
 		},
 		onlineUserCount: function () {
 			var offset = freshfoneuser.isOnline() ? -1 : 0;
@@ -714,6 +722,12 @@ var FreshfoneSocket;
     },
     decrementActiveCallsCount: function() { 
      if(this.activeCalls>0) {  this.activeCalls-=1; }
+    },
+    getAgents: function() {
+      if(this.$dashboard.length){
+          this.getAvailableAgents();
+      }
     }
+
 	};
 }(jQuery));

@@ -3,7 +3,7 @@ class ApiAgentsController < ApiApplicationController
 
     def load_object
       @item = scoper.find_by_user_id(params[:id])
-      head :not_found unless @item
+      log_and_render_404 unless @item
     end
 
     def validate_filter_params

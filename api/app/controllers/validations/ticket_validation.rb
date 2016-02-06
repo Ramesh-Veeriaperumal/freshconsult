@@ -18,8 +18,9 @@ class TicketValidation < ApiValidation
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, greater_than: 0  }
 
   validates :requester_id, required: { allow_nil: false, message: :requester_id_mandatory }, if: :requester_id_mandatory? # No
-  validates :name, required: { allow_nil: false, message: :phone_mandatory }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :name_required?  # No
-  validates :description, required: true, data_type: { rules: String }
+  validates :name, required: { allow_nil: false, message: :phone_mandatory }, if: :name_required?  # No
+  validates :name, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
+  validates :description, data_type: { rules: String, required: true }
   validates :description_html, data_type: { rules: String, allow_nil: true }
 
   # Due by and First response due by validations
@@ -36,16 +37,18 @@ class TicketValidation < ApiValidation
   validate :fr_due_gt_created_at, if: -> { @fr_due_by_set && fr_due_by && errors[:fr_due_by].blank? }
   # Due by should be greater than or equal to fr_due_by
   validate :due_by_gt_fr_due_by, if: -> { (@due_by_set || @fr_due_by_set) && due_by && fr_due_by && errors[:due_by].blank? && errors[:fr_due_by].blank? }
+
   # Attachment validations
   validates :attachments, presence: true, if: -> { request_params.key? :attachments } # for attachments empty array scenario
   validates :attachments, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: false } }
   validates :attachments, file_size:  {
     min: nil, max: ApiConstants::ALLOWED_ATTACHMENT_SIZE,
-    base_size: proc { |x| Helpers::TicketsValidationHelper.attachment_size(x.item) }
+    base_size: proc { |x| TicketsValidationHelper.attachment_size(x.item) }
   }, if: -> { attachments }
 
   # Email related validations
-  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: :email_required?
+  validates :email, format: { with: ApiConstants::EMAIL_VALIDATOR, message: 'not_a_valid_email' }, if: :email_required?
+  validates :email, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:name].blank? }
   validates :cc_emails, data_type: { rules: Array }, array: { format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, message: 'not_a_valid_email' } }
   validate :cc_emails_max_count, if: -> { cc_emails && errors[:cc_emails].blank? }
 
@@ -57,13 +60,15 @@ class TicketValidation < ApiValidation
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields:
                               {
-                                validatable_custom_fields: proc { |x| Helpers::TicketsValidationHelper.custom_non_dropdown_fields(x) },
+                                validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_non_dropdown_fields(x) },
                                 required_based_on_status: proc { |x| x.required_based_on_status? },
                                 required_attribute: :required,
                                 ignore_string: :allow_string_param
                               }
                            }
-  validates :twitter_id, :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }
+  validates :twitter_id, :phone, data_type: { rules: String, allow_nil: true }
+  validates :twitter_id, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:twitter_id].blank? }
+  validates :phone, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long }, if: -> { errors[:phone].blank? }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -143,14 +148,14 @@ class TicketValidation < ApiValidation
 
   def default_field_validations
     {
-      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param } },
-      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
-      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param } },
-      ticket_type: { custom_inclusion: { in: proc { Helpers::TicketsValidationHelper.ticket_type_values } } },
+      status: { custom_inclusion: { in: proc { |x| x.status_ids }, ignore_string: :allow_string_param, detect_type: true } },
+      priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param, detect_type: true } },
+      source: { custom_inclusion: { in: ApiTicketConstants::SOURCES, ignore_string: :allow_string_param, detect_type: true } },
+      ticket_type: { custom_inclusion: { in: proc { TicketsValidationHelper.ticket_type_values } } },
       group: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       agent: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
       product: { custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param, greater_than: 0 } },
-      subject: { length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
+      subject: { data_type: { rules: String }, length: { maximum: ApiConstants::MAX_LENGTH_STRING, message: :too_long } }
     }
   end
 end

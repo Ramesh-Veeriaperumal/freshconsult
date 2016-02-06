@@ -80,7 +80,6 @@
   	    </div>
       </div><!-- end captch_wrap -->
       <input type="hidden" name="check_captcha" value="true" />
-      <input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
     </div>
   </div>
   <% end %>
@@ -101,6 +100,7 @@
 				<% end %>
 			</div>
 		</div>
+      	<input type="hidden" id="submit_message" value="<%= params[:submitThanks] %>" />
 		<input type="hidden" name="retainParams" id="retainParams" value= "<%=  ActiveSupport::JSON.encode params.except(:controller).except(:action) %>" />
 		<div class="span2 omega">
 			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary omega",

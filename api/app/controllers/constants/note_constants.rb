@@ -4,9 +4,9 @@ module NoteConstants
   REPLY_ARRAY_FIELDS = %w(cc_emails bcc_emails attachments).freeze
   UPDATE_ARRAY_FIELDS = ['attachments'].freeze
 
-  REPLY_FIELDS = %w(body body_html user_id cc_emails bcc_emails attachments).freeze | REPLY_ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
-  CREATE_FIELDS = %w(body body_html private incoming user_id notify_emails attachments).freeze | CREATE_ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
-  UPDATE_FIELDS = %w(body body_html attachments).freeze | UPDATE_ARRAY_FIELDS.map { |x| Hash[x, [nil]] }
+  REPLY_FIELDS = %w(body body_html user_id).freeze | REPLY_ARRAY_FIELDS
+  CREATE_FIELDS = %w(body body_html private incoming user_id).freeze | CREATE_ARRAY_FIELDS
+  UPDATE_FIELDS = %w(body body_html).freeze | UPDATE_ARRAY_FIELDS
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
     'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],

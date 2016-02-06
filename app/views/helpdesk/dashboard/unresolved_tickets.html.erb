@@ -29,15 +29,16 @@
 	<%= render :partial => "helpdesk/dashboard/shared/filter" %>
 </div>	
 
-<script type="text/template" id="filter-data-template">
+<script id="filter-data-template" type="text/x-jquery-tmpl">
 	<li class="muted"><%=t('unresolved_tickets.filtered_by_label') %>:</li>
 	<li>
-		<%=t('unresolved_tickets.group_label') %> : <strong> {{= Array.prototype.join.call(groupfilter, ", ")}} </strong>
+		<%=t('unresolved_tickets.group_label') %> : <strong> {{html Array.prototype.join.call(groupfilter, ", ") }} </strong>
 	</li>
 	<li>
-		<%=t('unresolved_tickets.agent_label') %> : <strong> {{= Array.prototype.join.call(agentfilter, ", ")}} </strong>
+		<%=t('unresolved_tickets.agent_label') %> : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
 	</li>
 </script>
+
 <%= javascript_tag do %>
 		var connection_error = "<%=t('unresolved_tickets.connection_error') %>";
 		var no_data = "<%=t('unresolved_tickets.no_data') %>";

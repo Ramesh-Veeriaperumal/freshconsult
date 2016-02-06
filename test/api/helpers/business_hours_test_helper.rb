@@ -1,4 +1,4 @@
-module Helpers::BusinessHoursTestHelper
+module BusinessHoursTestHelper
   include BusinessCalendarsHelper
   # Patterns
   def business_hour_pattern(expected_output = {}, business_hour)
