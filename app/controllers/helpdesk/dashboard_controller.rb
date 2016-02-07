@@ -350,11 +350,12 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def default_scoper
-    if global_dashboard?
-      current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved
-    else
-      current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved.where(responder_id: current_user.id)
-    end
+    current_account.tickets.visible.permissible(current_user).unresolved
+    # if global_dashboard?
+    #   current_account.tickets.visible.permissible(current_user).unresolved
+    # else
+    #   current_account.tickets.visible.permissible(current_user).unresolved.where(responder_id: current_user.id)
+    # end
   end
 
   def ticket_trends_count(trends)
