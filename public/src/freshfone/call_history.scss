@@ -215,6 +215,7 @@
 		display: block;
 		font-weight: 700;
 		@include text-align(center);
+		padding-right:15px;
 		color: $ch-child-call-text;
 	}
 	.no_call_history {
