@@ -402,7 +402,7 @@ class Helpdesk::DashboardController < ApplicationController
   def plan_based_count
     plan_name = current_account.plan_name
     plan_type = Helpdesk::DashboardHelper::PLAN_TYPE_MAPPING[plan_name]
-    plan_type = Helpdesk::DashboardHelper::ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
+    #plan_type = Helpdesk::DashboardHelper::ALL_WIDGET_TYPE if current_account.features?(:custom_dashboard)
     ACTIVITY_LIMIT[plan_type] || 10
   end
 
