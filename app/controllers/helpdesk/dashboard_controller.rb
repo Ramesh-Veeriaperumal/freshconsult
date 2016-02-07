@@ -350,9 +350,9 @@ class Helpdesk::DashboardController < ApplicationController
 
   def default_scoper
     if global_dashboard?
-      current_account.tickets.visible.permissible(current_user).unresolved
+      current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved
     else
-      current_account.tickets.visible.permissible(current_user).unresolved.where(responder_id: current_user.id)
+      current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved.where(responder_id: current_user.id)
     end
   end
 
@@ -376,7 +376,7 @@ class Helpdesk::DashboardController < ApplicationController
     else
       filter_params = {:data_hash => action_hash.to_json}
       if unassigned_filter_type?(filter_type)
-        current_account.tickets.visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
+        current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
       else
         default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
       end
