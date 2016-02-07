@@ -28,7 +28,7 @@ module Helpdesk::DashboardHelper
       :widgets => [# ['NAME', XSIZE, YSIZE]
         [:activity, 2, 4],
         [:todo, 1, 1],
-        [:unresolved_tickets_by_group_id, 1, 1],
+        # [:unresolved_tickets_by_group_id, 1, 1],
         [:phone, 1, 1],
         [:agent_status, 1, 1]
       ]
