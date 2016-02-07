@@ -107,7 +107,7 @@ class Helpdesk::DashboardController < ApplicationController
         #trends_count_hash.merge!({ :open         => { :value => open_count,        :label => t("helpdesk.realtime_dashboard.open") }})
         #trends_count_hash.merge!({ :on_hold      => { :value => on_hold_count,     :label => t("helpdesk.realtime_dashboard.on_hold") }})
 
-        trends_count_hash.merge!(ticket_trends_count(["new"])) unless current_user.assigned_ticket_permission
+        #trends_count_hash.merge!(ticket_trends_count(["new"])) unless current_user.assigned_ticket_permission
       end
       unresolved_hash = {:ticket_trend => trends_count_hash, :widgets => response_hash}
     rescue Exception => ex
@@ -377,11 +377,12 @@ class Helpdesk::DashboardController < ApplicationController
       Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
     else
       filter_params = {:data_hash => action_hash.to_json}
-      if unassigned_filter_type?(filter_type)
-        current_account.tickets.visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
-      else
-        default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
-      end
+      default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
+      # if unassigned_filter_type?(filter_type)
+      #   current_account.tickets.visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
+      # else
+      #   default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
+      # end
     end
   end
 
