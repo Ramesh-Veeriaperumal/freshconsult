@@ -201,8 +201,10 @@ window.App = window.App || {};
 			this.Utils.renderChart('Progress', options);
 		},
 		renderTicketSummary: function () {
-			this.Utils.renderTemplate('#ticket-summary', 
+			if (!$.isEmptyObject(this.tickets_data.ticket_trend)) {
+				this.Utils.renderTemplate('#ticket-summary', 
 				'app/realtime_dashboard/template/ticket_summary', this.tickets_data.ticket_trend);
+			}
 		},
 		changeDropdownText: function (event, parentSelector, appendSelctor) {
 			$(parentSelector).removeClass('active');
