@@ -89,22 +89,23 @@ class Helpdesk::DashboardController < ApplicationController
 
       unless current_account.dashboard_disabled?
         onhold_statuses  = Helpdesk::TicketStatus::onhold_statuses(current_account)
-        if response_hash["unresolved_tickets_by_status"]
-          tickets_count    = response_hash["unresolved_tickets_by_status"]
-          unresolved_count = tickets_count.collect {|tc| tc[:value].to_i}.sum
-          open_count       = tickets_count.collect {|tc| tc[:value].to_i if tc[:id] == Helpdesk::Ticketfields::TicketStatus::OPEN }.compact.sum
-          on_hold_count    = tickets_count.collect {|tc| tc[:value].to_i if onhold_statuses.include?(tc[:id])}.compact.sum
-        else
-          tickets_count    = fetch_widget_count(:status)
-          unresolved_count = tickets_count.values.sum
-          open_count       = tickets_count[Helpdesk::Ticketfields::TicketStatus::OPEN].to_i
-          on_hold_count    = onhold_statuses.collect {|st| tickets_count[st]}.compact.sum
-        end
+        # if response_hash["unresolved_tickets_by_status"]
+        #   tickets_count    = response_hash["unresolved_tickets_by_status"]
+        #   unresolved_count = tickets_count.collect {|tc| tc[:value].to_i}.sum
+        #   open_count       = tickets_count.collect {|tc| tc[:value].to_i if tc[:id] == Helpdesk::Ticketfields::TicketStatus::OPEN }.compact.sum
+        #   on_hold_count    = tickets_count.collect {|tc| tc[:value].to_i if onhold_statuses.include?(tc[:id])}.compact.sum
+        # else
+        #   tickets_count    = fetch_widget_count(:status)
+        #   unresolved_count = tickets_count.values.sum
+        #   open_count       = tickets_count[Helpdesk::Ticketfields::TicketStatus::OPEN].to_i
+        #   on_hold_count    = onhold_statuses.collect {|st| tickets_count[st]}.compact.sum
+        # end
 
-        trends_count_hash = ticket_trends_count(["overdue", "due_today"])
-        trends_count_hash.merge!({ :unresolved   => { :value => unresolved_count,  :label => t("helpdesk.realtime_dashboard.unresolved")} })
-        trends_count_hash.merge!({ :open         => { :value => open_count,        :label => t("helpdesk.realtime_dashboard.open") }})
-        trends_count_hash.merge!({ :on_hold      => { :value => on_hold_count,     :label => t("helpdesk.realtime_dashboard.on_hold") }})
+        trends_count_hash = ticket_trends_count(["overdue", "due_today", "on_hold", "open", "unresolved"])
+        #trends_count_hash = ticket_trends_count(["overdue", "due_today"])
+        #trends_count_hash.merge!({ :unresolved   => { :value => unresolved_count,  :label => t("helpdesk.realtime_dashboard.unresolved")} })
+        #trends_count_hash.merge!({ :open         => { :value => open_count,        :label => t("helpdesk.realtime_dashboard.open") }})
+        #trends_count_hash.merge!({ :on_hold      => { :value => on_hold_count,     :label => t("helpdesk.realtime_dashboard.on_hold") }})
 
         trends_count_hash.merge!(ticket_trends_count(["new"])) unless current_user.assigned_ticket_permission
       end
@@ -320,7 +321,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   def fetch_unresolved_tickets_from_db
     begin
-      ticket_counts = current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").permissible(current_user).unresolved.visible.where(@filter_condition).group(@group_by).group(:status).count
+      ticket_counts = current_account.tickets.permissible(current_user).unresolved.visible.where(@filter_condition).group(@group_by).group(:status).count
       map_id_to_names(ticket_counts)
     rescue Exception => ex
       NewRelic::Agent.notice_error(ex)
@@ -376,7 +377,7 @@ class Helpdesk::DashboardController < ApplicationController
     else
       filter_params = {:data_hash => action_hash.to_json}
       if unassigned_filter_type?(filter_type)
-        current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
+        current_account.tickets.visible.permissible(current_user).unresolved.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
       else
         default_scoper.filter(:params => filter_params, :filter => 'Helpdesk::Filters::CustomTicketFilter').count
       end
@@ -388,6 +389,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def plan_based_widgets
+    return []
     #When group id filter is present, then we group by agent for the unresolved tickets by group widget.
     widgets = current_account.features?(:custom_dashboard) ? [:status, :priority, :ticket_type] : []
     global_dashboard? ? @group_id.present? ? widgets.push(:responder_id) : widgets.push(:group_id) : widgets

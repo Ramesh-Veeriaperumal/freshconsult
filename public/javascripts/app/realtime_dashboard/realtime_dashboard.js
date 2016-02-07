@@ -77,7 +77,7 @@ window.App = window.App || {};
 			this.isGlobalView = $('#realtime-dashboard-content').data('widgetType'); //view_type;
 			
 			this.getTicketSummaryData();
-			this.getSummaryOnInterval();
+			// this.getSummaryOnInterval();
 			this.bindEvents();
 		},
 		onLeave: function (data) {
@@ -156,8 +156,8 @@ window.App = window.App || {};
 		},
 		onSuccess: function () {
 			this.renderTicketSummary();
-			this.renderChartData();
-			this.checkIsSidebarViewing();
+			// this.renderChartData();
+			// this.checkIsSidebarViewing();
 			$('#filter_by_group_dropdown').removeClass('disabled sloading');
 		},
 		getAchievements: function () {
