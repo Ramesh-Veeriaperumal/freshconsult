@@ -98,19 +98,19 @@ window.App = window.App || {};
 				self.getTicketSummaryData($(this).data('groupId'));
 			})
 
-			this.Utils.bindEvent('click', '.summery-filter', function (e) {
-				var queryString = $(this).attr('href').split(/[?#]/)[0];
-				var groupId = self.requestData['group_id'];
+			// this.Utils.bindEvent('click', '.summery-filter', function (e) {
+			// 	var queryString = $(this).attr('href').split(/[?#]/)[0];
+			// 	var groupId = self.requestData['group_id'];
 
-				if (self.isGlobalView){
-					queryString += ( groupId != undefined && groupId != '-' ) ? '?group=' + groupId : ''
-				} else {
+			// 	if (self.isGlobalView){
+			// 		queryString += ( groupId != undefined && groupId != '-' ) ? '?group=' + groupId : ''
+			// 	} else {
 
-					queryString += ($(this).data('origName') != "new") ? '?agent=' + DataStore.get('current_user').currentData.user.id : '?group=0' ; //current_user has took from DataStore object
-				} 
+			// 		queryString += ($(this).data('origName') != "new") ? '?agent=' + DataStore.get('current_user').currentData.user.id : '?group=0' ; //current_user has took from DataStore object
+			// 	} 
 
-				$(this).attr('href', queryString);
-			})
+			// 	$(this).attr('href', queryString);
+			// })
 
 			this.Utils.bindEvent('click', '.group_vs_status', function() {
 				var requestData = {}
