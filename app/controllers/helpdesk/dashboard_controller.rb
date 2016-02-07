@@ -27,7 +27,6 @@ class Helpdesk::DashboardController < ApplicationController
   around_filter :run_on_slave,            :only => [:unresolved_tickets_data, :tickets_summary]
   before_filter :load_unresolved_filter,  :only => [:unresolved_tickets_data]
   before_filter :load_widget_filter,      :only => [:tickets_summary]
-  around_filter :run_on_slave, :only => [:unresolved_tickets_data]
   skip_after_filter :set_last_active_time, :only => [:latest_activities]
 
   def index
