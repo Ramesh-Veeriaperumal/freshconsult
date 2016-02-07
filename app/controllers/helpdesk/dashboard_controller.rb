@@ -320,7 +320,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   def fetch_unresolved_tickets_from_db
     begin
-      ticket_counts = current_account.tickets.permissible(current_user).unresolved.visible.where(@filter_condition).group(@group_by).group(:status).count
+      ticket_counts = current_account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").permissible(current_user).unresolved.visible.where(@filter_condition).group(@group_by).group(:status).count
       map_id_to_names(ticket_counts)
     rescue Exception => ex
       NewRelic::Agent.notice_error(ex)
