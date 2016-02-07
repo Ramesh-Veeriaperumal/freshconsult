@@ -2116,7 +2116,7 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id)
+    Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(responder_id: @agent.id, created_at: Time.zone.now)
     get :index, controller_params
     assert_response 200
     Agent.any_instance.unstub(:ticket_permission)
