@@ -2,13 +2,11 @@ require 'spec_helper'
 
 include FacebookHelper
 include SocialHelper
-include Facebook::Core::Util
+include Facebook::Util
 
 describe Facebook::Core::Post do
   
   before(:all) do
-    #@account = create_test_account
-    @account.features.send(:facebook_realtime).create
     @account.make_current
     @fb_page = create_test_facebook_page(@account, true)
     Social::FacebookPage.update_all("import_visitor_posts = true", "page_id = #{@fb_page.page_id}")

@@ -1,76 +1,66 @@
-class Facebook::Core::ReplyToComment < Facebook::Core::Comment
-  
-  include Facebook::Constants 
+module Facebook
+  module Core
+    class ReplyToComment < Comment
+      
+      def initialize(fan_page, comment_id, koala_comment = nil)
+        super(fan_page, comment_id, koala_comment)
+        @type = POST_TYPE[:reply_to_comment]
+      end  
+      
+      # convert_comment - Flag to decide if the comment has to be converted to a fd_item
+      # can_dynamo_push - Flag to decide if the comment has to be converted to a ticket or not
+      # parent_present  - Set to true when called from a parent class
+      def process(convert_comment = false, can_dynamo_push = true, parent_in_dynamo = false)
+        convert_post_to_ticket    = false
+        push_post_tree_to_dynamo  = parent_in_dynamo ? false : !parent_post_in_dynamo?
+        
+        #Reply is not converted to a note as yet
+        if self.fd_item.nil?
+          fb_post    = fd_post_obj(self.koala_comment.parent_post_id) 
+          fb_comment = fd_post_obj(self.koala_comment.parent[:id]) 
+          
+          #Parent comment is an fd_item
+          if fb_comment
+            #Parent Comment is a ticket
+            self.fd_item = add_as_note(fb_comment.postable, self.koala_comment) if fb_comment.is_ticket?
+            #Parent Comment is a note
+            self.fd_item = add_as_note(fb_post.postable, self.koala_comment) if fb_comment.is_note?
+            
+            convert_post_to_ticket = false
+          #Parent Post is converted to a ticket, but the parent comment is not added as a note (edge case)
+          elsif fb_post
+            fetch_and_process_comment(can_dynamo_push)
+            can_dynamo_push = false
+          else
+            convert_post_to_ticket = convert_post?(!push_post_tree_to_dynamo) unless parent_in_dynamo
+          end
+          
+        end
+        
+        unless parent_in_dynamo
+          process_post(convert_post_to_ticket, push_post_tree_to_dynamo) 
+          
+          #If post is fetched from Dynamo or DB the current note will not be converted to a fd_item         
+          if (self.fd_item.nil? && add_as_note?(convert_comment))
+            self.fd_item = add_as_note(parent_post.postable, self.koala_comment) 
+          end
+        end
+        
+        insert_reply_in_dynamo if (!push_post_tree_to_dynamo && can_dynamo_push)
+      end        
+      alias :add :process     
 
-  def initialize(fan_page, koala_comment)
-    super(fan_page, koala_comment)
-    @type = POST_TYPE[:reply_to_comment]
-  end
-
-  def add(feed)
-    @feed       = feed
-    @comment_id = feed.comment_id
-    process
-  end
-
-  def process(koala_comment = nil)
-    @koala_comment = koala_comment.nil? ? @koala_comment : koala_comment
-    return if feed_converted?(@koala_post.feed_id)
-    
-    comment_converted = @account.facebook_posts.find_by_post_id(@koala_comment.parent[:id])   
-    post_converted    = @account.facebook_posts.find_by_post_id(@koala_comment.parent_post)
-    
-    if comment_converted || post_converted
-      if comment_converted && comment_converted.is_ticket?
-        note = add_as_note(comment_converted.postable, @koala_comment)
-      elsif post_converted && post_converted.is_ticket?
-        add_comment_as_note(post_converted)
-      else
-        add_as_new_ticket(post_converted, comment_converted)
+      def in_reply_to
+        self.koala_comment.parent[:id] if koala_comment.parent
       end
-    else
-      add_as_post_and_note
+      
+      private 
+      
+      #Post is a ticket but the parent comment is not converted to a note
+      def fetch_and_process_comment(can_dynamo_push)
+        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(true, can_dynamo_push)
+      end
+      
     end
-   
   end
-
-  def in_reply_to
-    @koala_comment.parent[:id] if koala_comment.parent
-  end
-  
-  def feed_id
-    @koala_comment.comment_id
-  end
-  
-  private
-    def add_as_post_and_note
-      koala_post = parent_post
-      type = koala_post.company_post? ? POST_TYPE[:status] : POST_TYPE[:post]
-      convert = true if @koala_comment.visitor_post? and @fan_page.import_company_posts
-      ("facebook/core/"+"#{type}").camelize.constantize.new(@fan_page, koala_post).process(koala_post, convert)
-    end 
-    
-    def parent_post
-      koala_parent_post = Facebook::KoalaWrapper::Post.new(@fan_page)
-      koala_parent_post.fetch(koala_comment.parent_post)
-      koala_parent_post
-    end
-  
-    def add_comment_as_note(post_ticket)
-      parent_comment_id = @koala_comment.parent[:id]
-      parent_fb_post = @account.facebook_posts.find_by_post_id(parent_comment_id, :select => :id)
-      parent_fb_post.blank? ? fetch_parent_comment : add_as_note(post_ticket.postable, @koala_comment)
-    end
-  
-    def fetch_parent_comment
-      koala_parent_comment = Facebook::KoalaWrapper::Comment.new(@fan_page)
-      koala_parent_comment.fetch(in_reply_to)
-      core_comment = Facebook::Core::Comment.new(@fan_page, koala_parent_comment)
-      core_comment.process
-    end
-    
-    def add_as_new_ticket(post, comment)
-      archived_post = (comment ? comment.postable : false) || (post ? post.postable : false)
-      add_as_ticket(@fan_page, @koala_comment, convert_args, archived_post)
-    end
 end

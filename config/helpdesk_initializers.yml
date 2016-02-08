@@ -57,6 +57,7 @@ helpdesk:
     - text_datastore
     - time_formats
     - twitter_config
+    - social_config
     - virtual_agent
     - white_list_formatted_content
     - will_paginate

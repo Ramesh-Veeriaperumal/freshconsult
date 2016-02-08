@@ -111,14 +111,14 @@ RSpec.describe Social::TwitterController do
       reply_tweet_id = twitter_feed[:id]
       twitter_feed[:in_reply_to_status_id_str] = tweet_id
       twitter_feed = Social::Twitter::Feed.new(twitter_feed)
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
       
       tweet = @account.tweets.find_by_tweet_id(reply_tweet_id)
       tweet.should_not be_nil
       tweet.is_note?.should be_truthy
       
       #Covering exception
-      Social::Workers::Stream::Twitter.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
+      Social::CustomStreamTwitter.new.process_stream_feeds([twitter_feed], stream, reply_tweet_id)
       tweet.is_note?.should be_truthy
     end
   end

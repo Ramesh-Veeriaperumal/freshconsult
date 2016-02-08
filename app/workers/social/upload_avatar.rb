@@ -33,10 +33,12 @@ module Social
     def avatar_sandbox
       begin
         hash = yield
-        file = RemoteFile.new(hash[:profile_image_url]).fetch
-        if file
-          avatar = hash[:item].build_avatar({:content => file })
-          avatar.save
+        if hash[:item]
+          file = RemoteFile.new(hash[:profile_image_url])
+          if file
+            avatar = hash[:item].build_avatar({:content => file })
+            avatar.save
+          end
         end
       rescue Exception => e
         Rails.logger.debug "Exception in UploadAvatarWorker :: #{e.to_s} :: #{e.backtrace.join("\n")}"

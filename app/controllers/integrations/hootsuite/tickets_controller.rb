@@ -1,7 +1,7 @@
 class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::HootsuiteController
 
   include Helpdesk::TicketsHelper
-  include Facebook::Core::Util
+  include Facebook::TicketActions::Util
   include Helpdesk::TagMethods
   include Social::Twitter::Common
 

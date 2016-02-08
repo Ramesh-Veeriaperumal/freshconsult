@@ -27,6 +27,7 @@ defaults: &defaults
     - [twitter]
     - [premium_twitter]
     - [trial_facebook]
+    - [facebook_delta]
     - [trial_twitter]
     - [custom_twitter]
     - [rabbitmq_publish]

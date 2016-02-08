@@ -1,10 +1,9 @@
 class Social::Stream::TwitterFeed < Social::Stream::Feed
 
   include Social::Twitter::Util
-  include Social::Dynamo::Twitter
   include Social::Twitter::TicketActions
   
-  attr_accessor :user_mentions, :favorited
+  attr_accessor :user_mentions, :favorited , :dynamo_helper
 
   def initialize(feed_obj)
     @stream_id          = feed_obj[:stream_id][:s]
@@ -30,6 +29,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     @favorited   = (feed_obj[:favorite].nil? || feed_obj[:favorite][:n].to_i == 0) ? false : true
     @ticket_id   = feed_obj[:fd_link][:ss][0] unless feed_obj[:fd_link].nil?
     @agent_name  = feed_obj[:replied_by][:ss][0] unless feed_obj[:replied_by].nil?
+    @dynamo_helper = Social::Dynamo::Twitter.new
   end
 
   def convert_to_fd_item(stream, options)
@@ -44,7 +44,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     if tweet
       notable = tweet.tweetable
       user   = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
-      update_fd_link(self.stream_id, self.feed_id, notable, user)
+      dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user)
       return notable
     end
 
@@ -65,7 +65,7 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
         notable = add_as_ticket(feed_obj, handle, :mention, options) 
       end
     end
-    update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
+    dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user) if notable
     notable
   end
 
