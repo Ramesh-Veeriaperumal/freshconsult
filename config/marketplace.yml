@@ -24,19 +24,18 @@ test:
 
 staging:
   <<: *defaults
-  dev_portal_url: "http://freshapps-devportal-1799075120.us-east-1.elb.amazonaws.com"
-  admin_url: "http://freshapps-admin-62698598.us-east-1.elb.amazonaws.com"
-  api_url: "http://freshapps-admin-62698598.us-east-1.elb.amazonaws.com"
-  acc_api_url: "http://freshapps-admin-62698598.us-east-1.elb.amazonaws.com"
+  dev_portal_url: "https://freshapps-devportal-2-280229087.us-east-1.elb.amazonaws.com"
+  admin_url: "https://freshapps-admin-2-1398437070.us-east-1.elb.amazonaws.com"
+  api_url: "http://freshapps-global-api-2-661604820.us-east-1.elb.amazonaws.com"
+  acc_api_url: "http://freshapps-account-api-2-1479636878.us-east-1.elb.amazonaws.com"
   s3_assets: "freshapps-staging-pub/app-assets"
   cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets"
 
 production:
   <<: *defaults
-  dev_portal_url: "http://freshappsdev.freshdesk.com"
-  admin_url: "http://freshappsadmin.freshdesk.com"
-  api_url: "http://marketplace.freshdesk.com"
-  acc_api_url: "http://marketplace.freshdesk.com"
+  dev_portal_url: "https://freshappsdev.freshdesk.com"
+  admin_url: "https://freshappsadmin.freshdesk.com"
+  api_url: "https://api.freshdev.io"
+  acc_api_url: "" #POD specific account api url
   s3_assets: "freshapps-pub/app-assets"
   cdn_static_assets: ""
-  cache_invalidation_time: 7200 ### In Seconds

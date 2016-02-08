@@ -653,7 +653,7 @@ Helpkit::Application.routes.draw do
     resources :installed_applications do
       member do
         put :install
-        get :uninstall
+        delete :uninstall
       end
     end
 
@@ -788,6 +788,7 @@ Helpkit::Application.routes.draw do
       post :refresh_access_token
       get :render_success
       post :create_company
+      get :uninstall
     end
 
     namespace :marketplace do

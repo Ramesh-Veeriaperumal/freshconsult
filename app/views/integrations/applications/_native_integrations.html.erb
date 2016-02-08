@@ -50,7 +50,7 @@
                     <%elsif application[:options][:edit_url].present?%>
                       <%=link_to "Edit", application[:options][:edit_url], :class => "btn tooltip", :title => t("application.configure_addon") %>
                     <% end %>
-                    <%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>
+                    <%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(installed_applications[i_app_index]), :method => :delete, :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>
                   <%end%>
                 </div>
                 <div class="col-center">
