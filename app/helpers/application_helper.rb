@@ -1478,12 +1478,12 @@ module ApplicationHelper
 		elsif call.incoming?
 			(call.completed? || call.inprogress?) ? "ficon-incoming-call" : abandon_or_missed_call_icon(call)
 		elsif call.outgoing?
-			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-right"
+			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-left"
 		end
 	end
 
   def abandon_or_missed_call_icon(call)
-    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-left"
+    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-right"
   end
 # helpers for fresfone callable links -- ends
 
