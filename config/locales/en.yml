@@ -3496,6 +3496,7 @@ en:
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     browse_community: Browse Community
+    privacy_policy: "Privacy Policy"
   tkt_unattended_in_grp: Ticket Unattended in Group
   agent_solves_tkt: Agent Solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com or https://acme.zendesk.com
