@@ -94,6 +94,10 @@ class Solution::FolderMeta < ActiveRecord::Base
   def has_company_visiblity?
     visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
+	
+	def to_liquid
+		@solution_folder_meta_drop ||= Solution::FolderMetaDrop.new self
+	end
 
 	private
 
@@ -170,9 +174,5 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def visible_in? portal
 	  solution_category_meta.portal_ids.include?(portal.id)
-	end
-
-	def to_liquid
-		@solution_folder_meta_drop ||= (Solution::FolderMetaDrop.new self)
 	end
 end
